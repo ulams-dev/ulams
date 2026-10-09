@@ -109,16 +109,16 @@ export const GiftQuizStatistics: React.FC<Props> = ({ quizTopics }) => {
     if (!topic_id) return { success: false, data: [], total: 0 };
     const response = await getTopicStats(topic_id, TopicStatsKey.QuizSummary);
 
-    if (
-      !response.success ||
-      !response.data?.[TopicStatsKey.QuizSummary as keyof typeof response.data]
-    ) {
+    // API.TopicStats is keyed by the stat's class name (the TopicStatsKey value).
+    const stats = response.success
+      ? (response.data as unknown as Partial<Record<TopicStatsKey, API.GiftQuizTopicStat[]>>)
+      : undefined;
+    const rows = stats?.[TopicStatsKey.QuizSummary];
+    if (!rows) {
       return { success: false, data: [], total: 0 };
     }
 
-    const [responseColumns, ...data] = response.data[
-      TopicStatsKey.QuizSummary as keyof typeof response.data
-    ] as API.GiftQuizTopicStat[];
+    const [responseColumns, ...data] = rows;
     setDynamicColumns(getQuestionColumns(responseColumns));
 
     return {

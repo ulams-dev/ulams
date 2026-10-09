@@ -1,0 +1,10 @@
+---
+import Studio from "../../layouts/Studio.astro";
+import StudioThread from "../../components/StudioThread.astro";
+
+if (!Astro.locals.tenant) return Astro.redirect("/tenants");
+---
+
+<Studio title="New course" crumb="New course" status="Draft · not published" active="builder">
+  <StudioThread sessionId={null} />
+</Studio>

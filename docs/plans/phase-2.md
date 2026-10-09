@@ -762,3 +762,36 @@ Commits 2–19 need the Laravel 13 upgrade merged; 20–21 can start earlier aga
 15. **New permission `course_builder_use`** for admin and tutor roles; sessions visible to their author
     and tenant admins only.
 16. **Namespace `Ulams\…`** for new packages.
+
+Taken during M2.1 implementation (2026-10-09), to confirm:
+
+17. **A2UI surfaces as AG-UI `ACTIVITY_SNAPSHOT` events with activity type `a2ui-surface`**
+    (whole-surface snapshots, our `kind` extension, actions validated against open surfaces).
+    `@ag-ui/core` 1.0.2 has no A2UI convention (ADR 0023).
+18. **Fake driver**: cassettes keyed by a hash of the request with generated ids replaced by ordinal
+    placeholders, and deterministic synthetic answers for demos and the e2e when no cassette matches
+    (`AI_FAKE_MODE`); tests that must not drift run in strict cassette mode (ADR 0024).
+19. **Blueprint → LMS mapping**: module → lesson; lesson → RichText topic plus a GIFT quiz topic;
+    final test → an extra "Final test" lesson; landing → an inactive page `course-<id>`; re-apply by
+    entity-map fingerprints, deletions first, ordering through `CourseServiceContract::sort` (ADR 0025).
+20. **Stage order** lessons → grounding (one regeneration, then flags) → quizzes and final test →
+    metadata → assemble; lessons in a sliding window of 4 queued steps; quiz answers must share two
+    content words with their cited text (ADR 0028).
+21. **SSE wakes on a cache key** bumped by every event instead of Valkey pub/sub (ADR 0029).
+22. **Studio author session**: separate httpOnly cookie `ulams_author`, password sign-in at
+    `/studio/login`, demo admin on demo tenants; BFF `/studio/api/*` with an allow-list (ADR 0022).
+23. **Admins see every session read-only; only the author acts** (ADR 0027).
+24. **Chat-editable elements in M2.1**: course (title, subtitle, description), module, lesson, block
+    and quiz question. Objectives are edited inline at the outline gate; quizzes as a whole and the
+    final test as a whole are not chat targets yet.
+25. **Interview fixed keys**: six questions (audience, level, duration with lesson length, tone,
+    assessments, language); the model picks the control per key and writes options, defaults and
+    "why"; code renders and validates the controls.
+26. **Prompt-cache layout per task**: the system prompt differs per task, so each task builds its own
+    cache (the source block is shared by the lesson calls and by the quiz calls of a run). Measured in
+    the live eval: USD 0.20 for the coffee fixture (3 lessons, 14 questions, one chat edit), cache
+    reads on every call after the first of its task.
+27. **Course landing preview** at `/studio/s/{id}/landing` renders the blueprint's landing document
+    with the catalogue `Render`; the learner front does not serve pages from the `pages` package yet.
+28. **Lockfile entries for `@ag-ui/core` and `diff` were written by hand** (the disk was full during
+    implementation); a normal `yarn install` should normalise `yarn.lock`.

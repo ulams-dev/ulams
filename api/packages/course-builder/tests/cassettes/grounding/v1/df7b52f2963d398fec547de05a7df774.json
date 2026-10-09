@@ -1,0 +1,17 @@
+{
+    "task": "grounding",
+    "prompt_id": "course-builder/grounding",
+    "prompt_version": 1,
+    "hash": "df7b52f2963d398fec547de05a7df774",
+    "model": "claude-haiku-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 2003,
+        "output_tokens": 551,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 0,
+        "cache_read_tokens": 644
+    },
+    "text": "{\"unsupported\":[]}"
+}

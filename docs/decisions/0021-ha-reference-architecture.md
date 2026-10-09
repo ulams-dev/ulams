@@ -1,6 +1,6 @@
 # 0021. High-availability reference architecture
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement

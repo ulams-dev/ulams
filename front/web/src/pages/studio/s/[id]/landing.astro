@@ -1,0 +1,40 @@
+---
+/**
+ * Preview of the generated course landing: the blueprint's landing document (catalogue format,
+ * ADR 0008) rendered by the same <Render> as the tenant landings, with the tenant's theme.
+ */
+import Base from "../../../../layouts/Base.astro";
+import Render from "@ulams/ui/Render.astro";
+import { ApiError } from "@ulams/sdk";
+import { builderFor } from "../../../../lib/studio.ts";
+import { getSettings } from "../../../../lib/data.ts";
+import { themeFor } from "../../../../lib/theme.ts";
+
+const id = Astro.params.id ?? "";
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 });
+const cb = builderFor(tenant, Astro.locals.authorToken!);
+let state;
+try {
+  state = await cb.sessions.get(id);
+} catch (e) {
+  if (e instanceof ApiError) return new Response("Not found", { status: 404 });
+  throw e;
+}
+const versionId = state.session.appliedVersionId ?? state.session.currentVersionId;
+if (!versionId) return Astro.redirect(`/studio/s/${id}`);
+const version = await cb.versions.get(versionId);
+const doc = version.document.pages.landing as Parameters<typeof Render>[0]["doc"] | null;
+if (!doc) return Astro.redirect(`/studio/s/${id}`);
+const settings = await getSettings(tenant).catch(() => null);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const data = {
+  site: { theme, brand: settings?.global?.companyName ?? version.document.course.title },
+  course: { startHref: state.session.courseId ? `/courses/${state.session.courseId}` : "/" },
+};
+---
+
+<Base theme={theme} accent={settings?.theme?.accent} title={`Preview: ${version.document.course.title}`}>
+  <Render doc={doc} data={data} />
+</Base>

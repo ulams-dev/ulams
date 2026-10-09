@@ -10,5 +10,7 @@ declare namespace App {
     token: string | null;
     /** How the session was obtained on this request. */
     sessionVia: "cookie" | "demo" | "password" | null;
+    /** Author token for the Course Builder studio (httpOnly cookie), set on /studio routes. */
+    authorToken: string | null;
   }
 }

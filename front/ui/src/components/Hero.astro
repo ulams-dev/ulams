@@ -24,6 +24,9 @@ interface Props {
     title?: string;
     note?: string;
     lines: Array<{ time?: string; tag?: string; text: string; tone?: string }>;
+    prompt?: string;
+    values?: number[];
+    valuesLabel?: string;
   };
   diff?: {
     title?: string;
@@ -51,6 +54,13 @@ const {
   panel,
   diff,
 } = Astro.props;
+
+// Sparkline from real values (e.g. minutes per module): points across the width, peak at the top.
+const values = panel?.values ?? [];
+const max = Math.max(1, ...values);
+const pts = values.map((v, i) => [values.length > 1 ? (i / (values.length - 1)) * 300 : 150, 56 - (v / max) * 34] as const);
+const sparkLine = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
+const sparkArea = pts.length ? `${sparkLine} L300 60 L0 60 Z` : "";
 
 const at = titleAccent ? title.indexOf(titleAccent) : -1;
 const before = at >= 0 ? title.slice(0, at) : title;
@@ -113,10 +123,15 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
             </span>
             <span class="u-panel__title">{panel.title}</span>
           </div>
-          <svg class="u-panel__spark" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true">
-            <path class="u-spark__area" d="M0 50 L40 48 L70 46 L95 30 L115 8 L140 14 L165 40 L200 47 L240 49 L300 48 L300 60 L0 60 Z" />
-            <path class="u-spark__line" d="M0 50 L40 48 L70 46 L95 30 L115 8 L140 14 L165 40 L200 47 L240 49 L300 48" />
-          </svg>
+          {pts.length > 1 && (
+            <div class="u-panel__chart">
+              {panel.valuesLabel && <span class="u-panel__chart-label">{panel.valuesLabel}</span>}
+              <svg class="u-panel__spark" viewBox="0 0 300 60" preserveAspectRatio="none" aria-hidden="true">
+                <path class="u-spark__area" d={sparkArea} />
+                <path class="u-spark__line" d={sparkLine} />
+              </svg>
+            </div>
+          )}
           <ol class="u-panel__log">
             {panel.lines.map((line, i) => (
               <li data-tone={line.tone ?? "neutral"} style={`--i:${i}`}>
@@ -127,7 +142,7 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
             ))}
           </ol>
           <p class="u-panel__prompt" aria-hidden="true">
-            <span>$</span> tail -f incident.log<i class="u-caret" />
+            <span>$</span> {panel.prompt ?? "help"}<i class="u-caret" />
           </p>
           {panel.note && <p class="u-panel__note">{panel.note}</p>}
         </div>
@@ -397,17 +412,28 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
   .u-panel__lights i:nth-child(3) {
     background: var(--ulams-color-positive);
   }
-  .u-panel__spark {
-    width: 100%;
-    height: 64px;
+  .u-panel__chart {
+    position: relative;
     border-bottom: 1px solid var(--ulams-color-border);
   }
+  .u-panel__chart-label {
+    position: absolute;
+    top: 6px;
+    left: 14px;
+    font-size: 0.6875rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-panel__spark {
+    display: block;
+    width: 100%;
+    height: 64px;
+  }
   .u-spark__area {
-    fill: color-mix(in srgb, var(--ulams-color-error) 18%, transparent);
+    fill: color-mix(in srgb, var(--ulams-color-primary) 16%, transparent);
   }
   .u-spark__line {
     fill: none;
-    stroke: var(--ulams-color-error);
+    stroke: var(--ulams-color-primary);
     stroke-width: 2;
     vector-effect: non-scaling-stroke;
     stroke-dasharray: 600;

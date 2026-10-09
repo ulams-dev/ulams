@@ -60,9 +60,12 @@ class ResetDemoCommand extends Command
             'migrate' => ['migrate:fresh', '--force'],
             'passport_client' => ['passport:client', '--personal', '--name=' . config('app.name') . ' Personal Access Client'],
             'permissions' => ['db:seed', '--class=PermissionsSeeder', '--force'],
+            // LTI key set (packages/lti), kept in the tenant database like the Passport client
+            'lti_keys' => $this->hasCommand('ulams:lti:rotate-keys') ? ['ulams:lti:rotate-keys', '--init'] : null,
             'demo_users' => DemoBaseline::seedDemoArguments($settings),
             'demo_content' => ['ulams:demo:seed'],
         ];
+        $steps = array_filter($steps);
 
         $started = microtime(true);
         $this->info("Resetting demo tenant {$host}");
@@ -125,6 +128,11 @@ class ResetDemoCommand extends Command
         foreach ($result['failed'] as $id => $message) {
             $this->warn("  H5P content {$id} not deleted, the next reset retries: {$message}");
         }
+    }
+
+    private function hasCommand(string $name): bool
+    {
+        return $this->getApplication()?->has($name) ?? false;
     }
 
     private function host(): string

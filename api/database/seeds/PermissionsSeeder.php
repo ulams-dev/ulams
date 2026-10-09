@@ -23,6 +23,7 @@ use Ulams\Lrs\Database\Seeders\LrsPermissionSeeder;
 use Ulams\ModelFields\Database\Seeders\PermissionTableSeeder as ModelFieldsPermissionTableSeeder;
 use Ulams\Adapt\Database\Seeders\AdaptPermissionSeeder;
 use Ulams\LiaScript\Database\Seeders\LiaScriptPermissionSeeder;
+use Ulams\CourseBuilder\Database\Seeders\CourseBuilderPermissionSeeder;
 use Ulams\Lti\Database\Seeders\LtiPermissionSeeder;
 use Ulams\Notifications\Database\Seeders\NotificationsPermissionsSeeder;
 use Ulams\Pages\Database\Seeders\PermissionTableSeeder as PagesPermissionTableSeeder;
@@ -103,6 +104,7 @@ class PermissionsSeeder extends Seeder
         $this->call(DictionariesPermissionSeeder::class);
         $this->call(LtiPermissionSeeder::class);
         $this->call(LiaScriptPermissionSeeder::class);
+        $this->call(CourseBuilderPermissionSeeder::class);
         $this->call(AdaptPermissionSeeder::class);
 
         // if there are no users, we need to create first admin 

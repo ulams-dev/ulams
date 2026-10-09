@@ -2,15 +2,18 @@
 
 namespace Ulams\Courses\Http\Requests;
 
-use Ulams\Courses\Models\Course;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ListCourseAPIRequest extends FormRequest
 {
+    /**
+     * The public catalogue: anyone may list it, logged in or not. What a caller sees is decided
+     * in CourseAPIController::index (users who cannot create courses only get published,
+     * findable ones), not here.
+     */
     public function authorize(): bool
     {
-        $user = auth()->user();
-        return isset($user) ? $user->can('list', Course::class) : true;
+        return true;
     }
 
     public function rules(): array

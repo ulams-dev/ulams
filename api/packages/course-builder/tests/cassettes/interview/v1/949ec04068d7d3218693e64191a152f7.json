@@ -1,0 +1,17 @@
+{
+    "task": "interview",
+    "prompt_id": "course-builder/interview",
+    "prompt_version": 1,
+    "hash": "949ec04068d7d3218693e64191a152f7",
+    "model": "claude-haiku-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 41,
+        "output_tokens": 1000,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 3935,
+        "cache_read_tokens": 0
+    },
+    "text": "{\"message\":\"This is a short handbook on brewing better filter coffee at home, covering extraction, brew ratio, grind size, water temperature and tasting. I'll ask a few quick questions and use sensible defaults for anything you skip.\",\"questions\":[{\"key\":\"audience\",\"label\":\"Who is this course for?\",\"why\":\"The handbook speaks to people who want to brew better coffee at home, so the course should match their everyday setup.\",\"component\":\"ChoiceChips\",\"options\":[{\"value\":\"home baristas\",\"label\":\"Home coffee brewers\"},{\"value\":\"coffee enthusiasts\",\"label\":\"Coffee enthusiasts with some equipment\"},{\"value\":\"curious beginners\",\"label\":\"Complete beginners\"}],\"defaultValue\":\"home baristas\"},{\"key\":\"level\",\"label\":\"What level should the course start at?\",\"why\":\"The source moves from basic ratios to extraction chemistry and TDS, so the starting point affects how much you need to explain.\",\"component\":\"SingleChoice\",\"options\":[{\"value\":\"beginner\",\"label\":\"Beginner\"},{\"value\":\"intermediate\",\"label\":\"Intermediate\"},{\"value\":\"advanced\",\"label\":\"Advanced\"}],\"defaultValue\":\"beginner\"},{\"key\":\"duration\",\"label\":\"How long should the whole course take?\",\"why\":\"The handbook has about ten short sections covering ratio, grind, temperature, bloom and tasting, which fits a single focused session.\",\"component\":\"DurationSlider\",\"options\":[{\"value\":\"30\",\"label\":\"30 minutes\"},{\"value\":\"60\",\"label\":\"60 minutes\"},{\"value\":\"120\",\"label\":\"120 minutes\"}],\"defaultValue\":\"60|10\"},{\"key\":\"tone\",\"label\":\"What tone should the course use?\",\"why\":\"The source is a practical, friendly handbook with plenty of hands-on tips, so the tone should suit a home brewer learning by doing.\",\"component\":\"ChoiceChips\",\"options\":[{\"value\":\"friendly\",\"label\":\"Friendly\"},{\"value\":\"professional\",\"label\":\"Professional\"},{\"value\":\"playful\",\"label\":\"Playful\"},{\"value\":\"academic\",\"label\":\"Academic\"}],\"defaultValue\":\"friendly\"},{\"key\":\"assessments\",\"label\":\"Should learners be tested?\",\"why\":\"The source gives concrete recipes and tasting steps, so short quizzes can check the ratio maths and the sour-versus-bitter fixes.\",\"component\":\"ChoiceChips\",\"options\":[{\"value\":\"quiz\",\"label\":\"Quiz after each lesson\"},{\"value\":\"final\",\"label\":\"Final test only\"},{\"value\":\"quiz,final\",\"label\":\"Quizzes and a final test\"}],\"defaultValue\":\"quiz\"},{\"key\":\"language\",\"label\":\"In which language should the course be delivered?\",\"why\":\"The source is written in English, so the course should be delivered in the same language unless you prefer otherwise.\",\"component\":\"LanguagePicker\",\"options\":[{\"value\":\"en\",\"label\":\"English\"},{\"value\":\"de\",\"label\":\"German\"},{\"value\":\"fr\",\"label\":\"French\"},{\"value\":\"es\",\"label\":\"Spanish\"}],\"defaultValue\":\"en\"}]}"
+}

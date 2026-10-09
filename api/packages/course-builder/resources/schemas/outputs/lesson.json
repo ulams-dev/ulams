@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lesson blocks",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "blocks"
+  ],
+  "properties": {
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "markdown",
+          "citations",
+          "objectiveIds"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "paragraph",
+              "callout",
+              "steps",
+              "code",
+              "table",
+              "example"
+            ]
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Block content, Markdown subset without HTML",
+            "maxLength": 20000,
+            "minLength": 1
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$",
+              "description": "A fragment id from the source"
+            },
+            "minItems": 1,
+            "maxItems": 6,
+            "description": "Fragment ids the item is based on"
+          },
+          "objectiveIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "An objective id from task_input"
+            },
+            "minItems": 1,
+            "maxItems": 3
+          }
+        }
+      },
+      "minItems": 1,
+      "maxItems": 10
+    }
+  }
+}

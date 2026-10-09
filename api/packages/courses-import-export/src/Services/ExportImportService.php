@@ -48,6 +48,22 @@ class ExportImportService implements ExportImportServiceContract
         'Ulams\\TopicTypes\\Models\\TopicContent\\H5P',
     ];
 
+    /**
+     * Import strategies registered by other packages (topic type class => strategy class), e.g.
+     * LiaScript, whose topics carry their own source files in the export.
+     *
+     * @var array<string, class-string<TopicImportStrategy>>
+     */
+    private static array $registeredStrategies = [];
+
+    /**
+     * @param class-string<TopicImportStrategy> $strategy
+     */
+    public static function registerTopicStrategy(string $topicType, string $strategy): void
+    {
+        self::$registeredStrategies[$topicType] = $strategy;
+    }
+
     public function __construct(
         CourseRepositoryContract        $courseRepository,
         LessonRepositoryContract        $lessonRepository,
@@ -311,7 +327,7 @@ class ExportImportService implements ExportImportServiceContract
         $topicData = array_merge($topicData, $topicData['topicable'] ?? []);
         unset($topicData['topicable']);
 
-        if (in_array($topicData['topicable_type'], $this->topicTypes)) {
+        if (in_array($topicData['topicable_type'], $this->topicTypes) || isset(self::$registeredStrategies[$topicData['topicable_type']])) {
             $strategy = $this->getTopicTypeImportStrategy($topicData['topicable_type']);
             $topicData['value'] = $strategy->make($dirFullPath, $topicData);
         }
@@ -390,6 +406,9 @@ class ExportImportService implements ExportImportServiceContract
 
     private function getTopicTypeImportStrategy(string $topicType): TopicImportStrategy
     {
+        if (isset(self::$registeredStrategies[$topicType])) {
+            return app(self::$registeredStrategies[$topicType]);
+        }
         $strategy = 'Ulams\\CoursesImportExport\\Strategies\\' . substr(strrchr($topicType, "\\"), 1) . 'TopicTypeStrategy';
         return new $strategy();
     }

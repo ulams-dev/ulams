@@ -1,0 +1,1796 @@
+{
+  "catalogId": "https://ulams.dev/catalogue/builder/v1",
+  "a2uiVersion": "v0.9",
+  "components": {
+    "Column": {
+      "description": "Vertical layout of its children (A2UI basic layout).",
+      "modelSelectable": false,
+      "children": true,
+      "props": {
+        "type": "object",
+        "properties": {
+          "gap": {
+            "type": "string",
+            "enum": [
+              "sm",
+              "md",
+              "lg"
+            ],
+            "description": "Space between children"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "Text": {
+      "description": "A short assistant message in plain text. Never course content.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Plain text",
+            "maxLength": 4000
+          },
+          "variant": {
+            "type": "string",
+            "enum": [
+              "body",
+              "lead",
+              "muted"
+            ],
+            "description": "Emphasis"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ChoiceChips": {
+      "description": "Interview question answered with chips. Use for short categorical answers (tone, audience, assessments); `multiple` allows several chips. The author can also type a custom answer when `allowCustom` is true.",
+      "modelSelectable": "interview",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "questionKey": {
+            "type": "string",
+            "description": "Brief field the question fills",
+            "maxLength": 40
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, short and plain",
+            "maxLength": 200
+          },
+          "why": {
+            "type": "string",
+            "description": "One sentence on why the question matters for this source",
+            "maxLength": 300
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "answered",
+              "upcoming"
+            ],
+            "description": "Card state"
+          },
+          "decidedBy": {
+            "type": "string",
+            "enum": [
+              "author",
+              "default"
+            ],
+            "description": "Who decided the value"
+          },
+          "step": {
+            "type": "integer",
+            "description": "Position in the interview, from 1",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "total": {
+            "type": "integer",
+            "description": "Number of questions",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "Value sent back when chosen",
+                  "maxLength": 120
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Visible text",
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Chips, 2 to 6",
+            "maxItems": 6
+          },
+          "multiple": {
+            "type": "boolean",
+            "description": "Several chips can be selected"
+          },
+          "allowCustom": {
+            "type": "boolean",
+            "description": "Offer a free-text answer"
+          },
+          "value": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Selected value",
+              "maxLength": 120
+            },
+            "description": "Selected values",
+            "maxItems": 6
+          },
+          "defaultValue": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Default value",
+              "maxLength": 120
+            },
+            "description": "Values used by Decide for me",
+            "maxItems": 6
+          }
+        },
+        "required": [
+          "questionKey",
+          "label",
+          "options",
+          "status",
+          "defaultValue"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "SingleChoice": {
+      "description": "Interview question with one answer from a short list shown as radio cards (e.g. level).",
+      "modelSelectable": "interview",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "questionKey": {
+            "type": "string",
+            "description": "Brief field the question fills",
+            "maxLength": 40
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, short and plain",
+            "maxLength": 200
+          },
+          "why": {
+            "type": "string",
+            "description": "One sentence on why the question matters for this source",
+            "maxLength": 300
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "answered",
+              "upcoming"
+            ],
+            "description": "Card state"
+          },
+          "decidedBy": {
+            "type": "string",
+            "enum": [
+              "author",
+              "default"
+            ],
+            "description": "Who decided the value"
+          },
+          "step": {
+            "type": "integer",
+            "description": "Position in the interview, from 1",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "total": {
+            "type": "integer",
+            "description": "Number of questions",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "Value sent back when chosen",
+                  "maxLength": 120
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Visible text",
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Choices, 2 to 5",
+            "maxItems": 5
+          },
+          "value": {
+            "type": "string",
+            "description": "Selected value",
+            "maxLength": 120
+          },
+          "defaultValue": {
+            "type": "string",
+            "description": "Value used by Decide for me",
+            "maxLength": 120
+          }
+        },
+        "required": [
+          "questionKey",
+          "label",
+          "options",
+          "status",
+          "defaultValue"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "DurationSlider": {
+      "description": "Interview question for the total course length and the lesson length, in minutes.",
+      "modelSelectable": "interview",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "questionKey": {
+            "type": "string",
+            "description": "Brief field the question fills",
+            "maxLength": 40
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, short and plain",
+            "maxLength": 200
+          },
+          "why": {
+            "type": "string",
+            "description": "One sentence on why the question matters for this source",
+            "maxLength": 300
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "answered",
+              "upcoming"
+            ],
+            "description": "Card state"
+          },
+          "decidedBy": {
+            "type": "string",
+            "enum": [
+              "author",
+              "default"
+            ],
+            "description": "Who decided the value"
+          },
+          "step": {
+            "type": "integer",
+            "description": "Position in the interview, from 1",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "total": {
+            "type": "integer",
+            "description": "Number of questions",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "totalOptions": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "description": "Minutes",
+              "minimum": 5,
+              "maximum": 2400
+            },
+            "description": "Total duration presets",
+            "maxItems": 6
+          },
+          "lessonOptions": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "description": "Minutes",
+              "minimum": 2,
+              "maximum": 120
+            },
+            "description": "Lesson length presets",
+            "maxItems": 6
+          },
+          "value": {
+            "type": "object",
+            "properties": {
+              "totalMinutes": {
+                "type": "integer",
+                "description": "Total minutes",
+                "minimum": 0
+              },
+              "lessonMinutes": {
+                "type": "integer",
+                "description": "Lesson minutes",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "totalMinutes",
+              "lessonMinutes"
+            ],
+            "additionalProperties": false
+          },
+          "defaultValue": {
+            "type": "object",
+            "properties": {
+              "totalMinutes": {
+                "type": "integer",
+                "description": "Total minutes",
+                "minimum": 0
+              },
+              "lessonMinutes": {
+                "type": "integer",
+                "description": "Lesson minutes",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "totalMinutes",
+              "lessonMinutes"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "questionKey",
+          "label",
+          "totalOptions",
+          "lessonOptions",
+          "status",
+          "defaultValue"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "LanguagePicker": {
+      "description": "Interview question for the course language (ISO 639-1 codes).",
+      "modelSelectable": "interview",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "questionKey": {
+            "type": "string",
+            "description": "Brief field the question fills",
+            "maxLength": 40
+          },
+          "label": {
+            "type": "string",
+            "description": "The question, short and plain",
+            "maxLength": 200
+          },
+          "why": {
+            "type": "string",
+            "description": "One sentence on why the question matters for this source",
+            "maxLength": 300
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "answered",
+              "upcoming"
+            ],
+            "description": "Card state"
+          },
+          "decidedBy": {
+            "type": "string",
+            "enum": [
+              "author",
+              "default"
+            ],
+            "description": "Who decided the value"
+          },
+          "step": {
+            "type": "integer",
+            "description": "Position in the interview, from 1",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "total": {
+            "type": "integer",
+            "description": "Number of questions",
+            "minimum": 1,
+            "maximum": 10
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "Value sent back when chosen",
+                  "maxLength": 120
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Visible text",
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Languages, value is the ISO code",
+            "maxItems": 12
+          },
+          "value": {
+            "type": "string",
+            "description": "Selected code",
+            "maxLength": 8
+          },
+          "defaultValue": {
+            "type": "string",
+            "description": "Default code",
+            "maxLength": 8
+          }
+        },
+        "required": [
+          "questionKey",
+          "label",
+          "options",
+          "status",
+          "defaultValue"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "DecideForMe": {
+      "description": "Button that fills every open interview question with its default and explains the choices.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "description": "Button text",
+            "maxLength": 60
+          },
+          "open": {
+            "type": "integer",
+            "description": "Questions still open",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "label"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "SourceCard": {
+      "description": "An uploaded source: file, processing status and its section tree with fragment ids.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "description": "Source id",
+            "maxLength": 32
+          },
+          "name": {
+            "type": "string",
+            "description": "File name",
+            "maxLength": 255
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "uploaded",
+              "processing",
+              "ready",
+              "failed"
+            ],
+            "description": "Processing state"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "description": "File size",
+            "minimum": 0
+          },
+          "pages": {
+            "type": "integer",
+            "description": "PDF pages",
+            "minimum": 0
+          },
+          "tokens": {
+            "type": "integer",
+            "description": "Estimated tokens",
+            "minimum": 0
+          },
+          "fragmentCount": {
+            "type": "integer",
+            "description": "Fragments",
+            "minimum": 0
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fragmentId": {
+                  "type": "string",
+                  "description": "First fragment of the section",
+                  "maxLength": 16
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Section label",
+                  "maxLength": 160
+                },
+                "level": {
+                  "type": "integer",
+                  "description": "Depth",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "fragmentId",
+                "label",
+                "level"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Sections",
+            "maxItems": 400
+          },
+          "error": {
+            "type": "string",
+            "description": "Why processing failed",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "sourceId",
+          "name",
+          "status"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "CitationChip": {
+      "description": "Amber chip linking an element to the source fragment it comes from.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "fragmentId": {
+            "type": "string",
+            "description": "Fragment id (frg_…)",
+            "maxLength": 16
+          },
+          "label": {
+            "type": "string",
+            "description": "Section label shown on the chip, e.g. §2.3 Brewing ratios",
+            "maxLength": 120
+          }
+        },
+        "required": [
+          "fragmentId",
+          "label"
+        ],
+        "additionalProperties": false,
+        "description": "A source citation"
+      }
+    },
+    "OutlineDiff": {
+      "description": "Proposed course outline as a reviewable diff: modules, lessons with learning objectives and citations, added/changed/removed marks, inline objective edits, approve or request changes.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "versionId": {
+            "type": "string",
+            "description": "Blueprint version",
+            "maxLength": 32
+          },
+          "number": {
+            "type": "integer",
+            "description": "Version number",
+            "minimum": 0
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "approved",
+              "rejected",
+              "superseded"
+            ],
+            "description": "Decision state"
+          },
+          "editable": {
+            "type": "boolean",
+            "description": "Objectives can be edited inline"
+          },
+          "targetMinutes": {
+            "type": "integer",
+            "description": "Minutes from the brief",
+            "minimum": 0
+          },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "modules": {
+                "type": "integer",
+                "description": "Modules",
+                "minimum": 0
+              },
+              "lessons": {
+                "type": "integer",
+                "description": "Lessons",
+                "minimum": 0
+              },
+              "minutes": {
+                "type": "integer",
+                "description": "Minutes",
+                "minimum": 0
+              },
+              "objectives": {
+                "type": "integer",
+                "description": "Objectives",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "modules",
+              "lessons",
+              "minutes",
+              "objectives"
+            ],
+            "additionalProperties": false
+          },
+          "course": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Course title",
+                "maxLength": 200
+              },
+              "subtitle": {
+                "type": "string",
+                "description": "Subtitle",
+                "maxLength": 300
+              },
+              "objectives": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Objective id",
+                      "maxLength": 32
+                    },
+                    "text": {
+                      "type": "string",
+                      "description": "Measurable learning objective",
+                      "maxLength": 400
+                    },
+                    "change": {
+                      "type": "string",
+                      "enum": [
+                        "added",
+                        "changed",
+                        "removed",
+                        "unchanged"
+                      ],
+                      "description": "Change against the previous version"
+                    },
+                    "before": {
+                      "type": "string",
+                      "description": "Previous text when changed",
+                      "maxLength": 400
+                    },
+                    "citations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "fragmentId": {
+                            "type": "string",
+                            "description": "Fragment id (frg_…)",
+                            "maxLength": 16
+                          },
+                          "label": {
+                            "type": "string",
+                            "description": "Section label shown on the chip, e.g. §2.3 Brewing ratios",
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "fragmentId",
+                          "label"
+                        ],
+                        "additionalProperties": false,
+                        "description": "A source citation"
+                      },
+                      "description": "Fragments the objective comes from",
+                      "maxItems": 20
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "text",
+                    "citations"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Course outcomes",
+                "maxItems": 12
+              }
+            },
+            "required": [
+              "title",
+              "objectives"
+            ],
+            "additionalProperties": false
+          },
+          "modules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Module id",
+                  "maxLength": 32
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Module title",
+                  "maxLength": 200
+                },
+                "summary": {
+                  "type": "string",
+                  "description": "One-line summary",
+                  "maxLength": 600
+                },
+                "change": {
+                  "type": "string",
+                  "enum": [
+                    "added",
+                    "changed",
+                    "removed",
+                    "unchanged"
+                  ],
+                  "description": "Change against the previous version"
+                },
+                "lessons": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Lesson id",
+                        "maxLength": 32
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Lesson title",
+                        "maxLength": 200
+                      },
+                      "before": {
+                        "type": "string",
+                        "description": "Previous title when changed",
+                        "maxLength": 200
+                      },
+                      "summary": {
+                        "type": "string",
+                        "description": "One-line summary",
+                        "maxLength": 600
+                      },
+                      "minutes": {
+                        "type": "integer",
+                        "description": "Minutes",
+                        "minimum": 0
+                      },
+                      "change": {
+                        "type": "string",
+                        "enum": [
+                          "added",
+                          "changed",
+                          "removed",
+                          "unchanged"
+                        ],
+                        "description": "Change against the previous version"
+                      },
+                      "objectives": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "Objective id",
+                              "maxLength": 32
+                            },
+                            "text": {
+                              "type": "string",
+                              "description": "Measurable learning objective",
+                              "maxLength": 400
+                            },
+                            "change": {
+                              "type": "string",
+                              "enum": [
+                                "added",
+                                "changed",
+                                "removed",
+                                "unchanged"
+                              ],
+                              "description": "Change against the previous version"
+                            },
+                            "before": {
+                              "type": "string",
+                              "description": "Previous text when changed",
+                              "maxLength": 400
+                            },
+                            "citations": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "fragmentId": {
+                                    "type": "string",
+                                    "description": "Fragment id (frg_…)",
+                                    "maxLength": 16
+                                  },
+                                  "label": {
+                                    "type": "string",
+                                    "description": "Section label shown on the chip, e.g. §2.3 Brewing ratios",
+                                    "maxLength": 120
+                                  }
+                                },
+                                "required": [
+                                  "fragmentId",
+                                  "label"
+                                ],
+                                "additionalProperties": false,
+                                "description": "A source citation"
+                              },
+                              "description": "Fragments the objective comes from",
+                              "maxItems": 20
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "text",
+                            "citations"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Lesson objectives",
+                        "maxItems": 8
+                      },
+                      "citations": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "fragmentId": {
+                              "type": "string",
+                              "description": "Fragment id (frg_…)",
+                              "maxLength": 16
+                            },
+                            "label": {
+                              "type": "string",
+                              "description": "Section label shown on the chip, e.g. §2.3 Brewing ratios",
+                              "maxLength": 120
+                            }
+                          },
+                          "required": [
+                            "fragmentId",
+                            "label"
+                          ],
+                          "additionalProperties": false,
+                          "description": "A source citation"
+                        },
+                        "description": "Fragments the lesson draws on",
+                        "maxItems": 20
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title",
+                      "minutes",
+                      "objectives",
+                      "citations"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Lessons",
+                  "maxItems": 30
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "lessons"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Modules",
+            "maxItems": 20
+          },
+          "removed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Title",
+                  "maxLength": 200
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "module",
+                    "lesson"
+                  ],
+                  "description": "Kind"
+                }
+              },
+              "required": [
+                "title",
+                "kind"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Removed since the previous version",
+            "maxItems": 40
+          },
+          "comment": {
+            "type": "string",
+            "description": "Author comment the version answers",
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "versionId",
+          "status",
+          "summary",
+          "course",
+          "modules"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "GenerationProgress": {
+      "description": "Stage timeline, per-lesson status with retry for a failed step, and the running cost.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "runId": {
+            "type": "string",
+            "description": "Run id",
+            "maxLength": 32
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "running",
+              "needs_attention",
+              "finished",
+              "failed",
+              "cancelled"
+            ],
+            "description": "Run state"
+          },
+          "stages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "description": "Stage key",
+                  "maxLength": 32
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Stage label",
+                  "maxLength": 60
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "running",
+                    "done",
+                    "failed"
+                  ],
+                  "description": "Stage state"
+                }
+              },
+              "required": [
+                "key",
+                "label",
+                "status"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Stages",
+            "maxItems": 10
+          },
+          "lessons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Lesson id",
+                  "maxLength": 32
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Lesson title",
+                  "maxLength": 200
+                },
+                "module": {
+                  "type": "string",
+                  "description": "Module title",
+                  "maxLength": 200
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "pending",
+                    "running",
+                    "done",
+                    "failed",
+                    "flagged"
+                  ],
+                  "description": "Lesson state"
+                },
+                "citations": {
+                  "type": "integer",
+                  "description": "Citations in the lesson",
+                  "minimum": 0
+                },
+                "questions": {
+                  "type": "integer",
+                  "description": "Quiz questions",
+                  "minimum": 0
+                },
+                "costMicroUsd": {
+                  "type": "integer",
+                  "description": "Cost so far",
+                  "minimum": 0
+                },
+                "stepId": {
+                  "type": "string",
+                  "description": "Failed step to retry",
+                  "maxLength": 32
+                },
+                "error": {
+                  "type": "string",
+                  "description": "Failure reason",
+                  "maxLength": 500
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "status"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Lessons",
+            "maxItems": 200
+          },
+          "cost": {
+            "type": "object",
+            "properties": {
+              "usedMicroUsd": {
+                "type": "integer",
+                "description": "Spent",
+                "minimum": 0
+              },
+              "budgetMicroUsd": {
+                "type": "integer",
+                "description": "Session budget",
+                "minimum": 0
+              },
+              "inputTokens": {
+                "type": "integer",
+                "description": "Input tokens",
+                "minimum": 0
+              },
+              "outputTokens": {
+                "type": "integer",
+                "description": "Output tokens",
+                "minimum": 0
+              },
+              "cacheReadTokens": {
+                "type": "integer",
+                "description": "Cached input tokens",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "usedMicroUsd",
+              "budgetMicroUsd"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "runId",
+          "status",
+          "stages",
+          "lessons",
+          "cost"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "LessonPreviewCard": {
+      "description": "A generated lesson rendered for review, with citation chips and actions (edit in chat, view sources).",
+      "modelSelectable": "chat-reply",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "lessonId": {
+            "type": "string",
+            "description": "Lesson id",
+            "maxLength": 32
+          },
+          "title": {
+            "type": "string",
+            "description": "Lesson title",
+            "maxLength": 200
+          },
+          "minutes": {
+            "type": "integer",
+            "description": "Minutes",
+            "minimum": 0
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Block id",
+                  "maxLength": 32
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "paragraph",
+                    "callout",
+                    "steps",
+                    "code",
+                    "table",
+                    "example"
+                  ],
+                  "description": "Block kind"
+                },
+                "markdown": {
+                  "type": "string",
+                  "description": "Block content (Markdown subset, no HTML)",
+                  "maxLength": 20000
+                },
+                "citations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "fragmentId": {
+                        "type": "string",
+                        "description": "Fragment id (frg_…)",
+                        "maxLength": 16
+                      },
+                      "label": {
+                        "type": "string",
+                        "description": "Section label shown on the chip, e.g. §2.3 Brewing ratios",
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "fragmentId",
+                      "label"
+                    ],
+                    "additionalProperties": false,
+                    "description": "A source citation"
+                  },
+                  "description": "Cited fragments",
+                  "maxItems": 20
+                }
+              },
+              "required": [
+                "id",
+                "kind",
+                "markdown",
+                "citations"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Content blocks",
+            "maxItems": 60
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Unsupported claim or warning",
+              "maxLength": 500
+            },
+            "description": "Grounding flags",
+            "maxItems": 20
+          }
+        },
+        "required": [
+          "lessonId",
+          "title",
+          "blocks"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "QuizQuestionCard": {
+      "description": "One quiz question with its answers, the correct ones marked, the explanation and its cited fragment.",
+      "modelSelectable": "chat-reply",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "questionId": {
+            "type": "string",
+            "description": "Question id",
+            "maxLength": 32
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "single",
+              "multiple",
+              "truefalse",
+              "short"
+            ],
+            "description": "Question type"
+          },
+          "stem": {
+            "type": "string",
+            "description": "Question",
+            "maxLength": 1000
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Option id",
+                  "maxLength": 32
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Answer",
+                  "maxLength": 500
+                },
+                "correct": {
+                  "type": "boolean",
+                  "description": "Correct"
+                }
+              },
+              "required": [
+                "id",
+                "text",
+                "correct"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Answers",
+            "maxItems": 8
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Why the answer is right",
+            "maxLength": 2000
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fragmentId": {
+                  "type": "string",
+                  "description": "Fragment id (frg_…)",
+                  "maxLength": 16
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Section label shown on the chip, e.g. §2.3 Brewing ratios",
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "fragmentId",
+                "label"
+              ],
+              "additionalProperties": false,
+              "description": "A source citation"
+            },
+            "description": "Cited fragments",
+            "maxItems": 10
+          }
+        },
+        "required": [
+          "questionId",
+          "type",
+          "stem",
+          "options",
+          "explanation",
+          "citations"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "DiffView": {
+      "description": "Before/after of a proposed change to one element, block by block with word-level marks; approve or reject.",
+      "modelSelectable": "chat-reply",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "versionId": {
+            "type": "string",
+            "description": "Proposed version",
+            "maxLength": 32
+          },
+          "elementId": {
+            "type": "string",
+            "description": "Changed element",
+            "maxLength": 32
+          },
+          "elementLabel": {
+            "type": "string",
+            "description": "Element shown to the author, e.g. Lesson 2.1 › Q2",
+            "maxLength": 200
+          },
+          "reason": {
+            "type": "string",
+            "description": "The author's request",
+            "maxLength": 1000
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "approved",
+              "rejected",
+              "superseded"
+            ],
+            "description": "Decision state"
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Field path",
+                  "maxLength": 200
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Readable field name",
+                  "maxLength": 200
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "added",
+                    "removed",
+                    "changed"
+                  ],
+                  "description": "Change"
+                },
+                "before": {
+                  "type": "string",
+                  "description": "Old text",
+                  "maxLength": 20000
+                },
+                "after": {
+                  "type": "string",
+                  "description": "New text",
+                  "maxLength": 20000
+                }
+              },
+              "required": [
+                "path",
+                "label",
+                "kind"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Changes",
+            "maxItems": 100
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fragmentId": {
+                  "type": "string",
+                  "description": "Fragment id (frg_…)",
+                  "maxLength": 16
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Section label shown on the chip, e.g. §2.3 Brewing ratios",
+                  "maxLength": 120
+                }
+              },
+              "required": [
+                "fragmentId",
+                "label"
+              ],
+              "additionalProperties": false,
+              "description": "A source citation"
+            },
+            "description": "Fragments the new version cites",
+            "maxItems": 20
+          }
+        },
+        "required": [
+          "versionId",
+          "elementId",
+          "elementLabel",
+          "status",
+          "changes"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ApplySummary": {
+      "description": "What applying the blueprint will create, update and delete in the LMS, with warnings; approve to apply.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "versionId": {
+            "type": "string",
+            "description": "Version to apply",
+            "maxLength": 32
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "applying",
+              "applied",
+              "failed"
+            ],
+            "description": "Apply state"
+          },
+          "firstApply": {
+            "type": "boolean",
+            "description": "Creates the course"
+          },
+          "create": {
+            "type": "object",
+            "properties": {
+              "courses": {
+                "type": "integer",
+                "description": "Courses",
+                "minimum": 0
+              },
+              "lessons": {
+                "type": "integer",
+                "description": "Lessons (modules)",
+                "minimum": 0
+              },
+              "topics": {
+                "type": "integer",
+                "description": "Topics (lesson pages and quizzes)",
+                "minimum": 0
+              },
+              "questions": {
+                "type": "integer",
+                "description": "Quiz questions",
+                "minimum": 0
+              },
+              "pages": {
+                "type": "integer",
+                "description": "Pages",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "courses",
+              "lessons",
+              "topics",
+              "questions",
+              "pages"
+            ],
+            "additionalProperties": false
+          },
+          "update": {
+            "type": "object",
+            "properties": {
+              "courses": {
+                "type": "integer",
+                "description": "Courses",
+                "minimum": 0
+              },
+              "lessons": {
+                "type": "integer",
+                "description": "Lessons (modules)",
+                "minimum": 0
+              },
+              "topics": {
+                "type": "integer",
+                "description": "Topics (lesson pages and quizzes)",
+                "minimum": 0
+              },
+              "questions": {
+                "type": "integer",
+                "description": "Quiz questions",
+                "minimum": 0
+              },
+              "pages": {
+                "type": "integer",
+                "description": "Pages",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "courses",
+              "lessons",
+              "topics",
+              "questions",
+              "pages"
+            ],
+            "additionalProperties": false
+          },
+          "delete": {
+            "type": "object",
+            "properties": {
+              "courses": {
+                "type": "integer",
+                "description": "Courses",
+                "minimum": 0
+              },
+              "lessons": {
+                "type": "integer",
+                "description": "Lessons (modules)",
+                "minimum": 0
+              },
+              "topics": {
+                "type": "integer",
+                "description": "Topics (lesson pages and quizzes)",
+                "minimum": 0
+              },
+              "questions": {
+                "type": "integer",
+                "description": "Quiz questions",
+                "minimum": 0
+              },
+              "pages": {
+                "type": "integer",
+                "description": "Pages",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "courses",
+              "lessons",
+              "topics",
+              "questions",
+              "pages"
+            ],
+            "additionalProperties": false
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Warning",
+              "maxLength": 500
+            },
+            "description": "Warnings",
+            "maxItems": 40
+          },
+          "courseId": {
+            "type": "integer",
+            "description": "Course id after apply",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "versionId",
+          "status",
+          "create",
+          "update",
+          "delete",
+          "warnings"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "VersionList": {
+      "description": "Blueprint version history with origin and status; restore any version.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "currentVersionId": {
+            "type": "string",
+            "description": "Current version",
+            "maxLength": 32
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Version id",
+                  "maxLength": 32
+                },
+                "number": {
+                  "type": "integer",
+                  "description": "Number",
+                  "minimum": 0
+                },
+                "kind": {
+                  "type": "string",
+                  "description": "outline, content, patch, author, restore",
+                  "maxLength": 16
+                },
+                "origin": {
+                  "type": "string",
+                  "enum": [
+                    "ai",
+                    "author",
+                    "restore"
+                  ],
+                  "description": "Who made it"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "proposed",
+                    "approved",
+                    "rejected",
+                    "superseded"
+                  ],
+                  "description": "State"
+                },
+                "reason": {
+                  "type": "string",
+                  "description": "Why",
+                  "maxLength": 1000
+                },
+                "createdAt": {
+                  "type": "string",
+                  "description": "ISO time",
+                  "maxLength": 40
+                }
+              },
+              "required": [
+                "id",
+                "number",
+                "origin",
+                "status"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Versions",
+            "maxItems": 500
+          }
+        },
+        "required": [
+          "versions"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "CostMeter": {
+      "description": "Running AI cost of the session against its budget.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "usedMicroUsd": {
+            "type": "integer",
+            "description": "Spent",
+            "minimum": 0
+          },
+          "budgetMicroUsd": {
+            "type": "integer",
+            "description": "Budget",
+            "minimum": 0
+          },
+          "tokens": {
+            "type": "integer",
+            "description": "Tokens used",
+            "minimum": 0
+          },
+          "label": {
+            "type": "string",
+            "description": "Profile label",
+            "maxLength": 60
+          }
+        },
+        "required": [
+          "usedMicroUsd",
+          "budgetMicroUsd"
+        ],
+        "additionalProperties": false
+      }
+    }
+  }
+}

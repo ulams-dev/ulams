@@ -1,0 +1,93 @@
+---
+title: Course Builder settings
+description: Turn the Course Builder on, give tutors access, set upload limits and AI budgets, read the cost log and run the queue and event stream.
+sidebar:
+  order: 25
+modules:
+  - ai
+  - course-builder
+adminRoutes:
+  - /courses/builder
+---
+
+The admin link **Courses → Build with AI** (`/courses/builder`) opens the studio in the web app; the studio itself is described in the [author guide](/creators/course-builder/).
+
+## Turning it on
+
+The builder calls Claude through the official Anthropic SDK. Set in the API environment (`api/.env`,
+or the tenant's `.env.<host>`):
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `AI_DRIVER` | `anthropic` | `anthropic`, `fake` (no network: recorded or synthetic answers, for demos and tests) or `disabled` |
+| `ANTHROPIC_API_KEY` | – | API key. The legacy spelling `ANTROPHIC_API_KEY` is accepted second. Without a key the driver is `disabled` |
+| `AI_MODEL_DEFAULT` / `AI_MODEL_LIGHT` / `AI_MODEL_PREMIUM` | `claude-sonnet-5-5` / `claude-haiku-5-5` / `claude-opus-5-5` | Models of the three profiles. The premium profile is only used when a task is switched to it |
+| `AI_TASK_<TASK>_PROFILE` | see below | Switch one task to another profile, e.g. `AI_TASK_OUTLINE_PROFILE=premium` |
+| `AI_CACHE_TTL` | `1h` | Prompt cache TTL for the source (`5m` or `1h`) |
+
+When AI is disabled, every builder endpoint answers 503 with a message and the studio says so; the
+rest of the LMS works as before.
+
+Tasks and their default profiles: interview (light), outline (default), lesson (default), quiz
+(default), grounding (light), metadata (light), patch (default).
+
+The web app needs nothing new. The admin link derives the studio address from the admin host
+(`coffee.admin.example` → `coffee.app.example`); set `REACT_APP_STUDIO_URL` in the admin's runtime
+environment when your hosts differ.
+
+## Who can use it
+
+The permission `course_builder_use` is given to the **admin** and **tutor** roles. On an existing
+tenant, run the permissions seeder once after deploying:
+
+```bash
+php artisan db:seed --class=PermissionsSeeder --force --domain=<tenant host>
+```
+
+Sessions are visible to their author and to admins; only the author can act on a session.
+
+## Limits and budgets
+
+| Variable | Default | |
+|---|---|---|
+| `COURSE_BUILDER_SOURCE_MB` | 20 | Upload size |
+| `COURSE_BUILDER_PDF_PAGES` | 300 | PDF pages |
+| `COURSE_BUILDER_SOURCE_TOKENS` | 400000 | Source tokens per session |
+| `COURSE_BUILDER_SESSION_TOKENS` | 3000000 | Tokens per session (cache reads count 10 %) |
+| `COURSE_BUILDER_SESSION_COST_USD` | 5 | AI cost per session |
+| `COURSE_BUILDER_CONCURRENT_RUNS` | 2 | AI runs at once per author |
+| `COURSE_BUILDER_SESSIONS_PER_DAY` | 10 | New sessions per author per day |
+| `COURSE_BUILDER_LESSON_CONCURRENCY` | 4 | Lessons generated at once per run |
+| `AI_LIMIT_TENANT_MONTHLY_USD` | 50 | AI spend per tenant per month (all tasks) |
+| `COURSE_BUILDER_EVAL_MONTHLY_USD` | 20 | Spend cap of the eval command |
+
+A session over budget stops cleanly with "Budget reached"; nothing is lost, and the author can
+continue when the limit is raised.
+
+## Cost and usage
+
+Every model call is logged in the `ai_calls` table of the tenant: task, prompt version, profile,
+model requested and served, input, output and cache tokens, cost in micro-USD, latency, status and
+the session. Totals per day and task:
+
+```bash
+php artisan ai:usage --days=30 --domain=<tenant host>
+```
+
+The studio shows the running cost per course; `GET /api/admin/course-builder/sessions/{id}/usage`
+returns it per task and model.
+
+## Queues and streaming
+
+Generation runs in queued jobs (`COURSE_BUILDER_QUEUE_CONNECTION`, `COURSE_BUILDER_QUEUE`; default:
+the default queue). Make sure a worker (Horizon) runs for each tenant. The event stream
+(`/api/admin/course-builder/sessions/{id}/events`) holds a PHP worker for up to 25 s per open
+browser tab (`COURSE_BUILDER_SSE_SECONDS`); in production route it to a small separate PHP-FPM pool.
+Old events are deleted by `php artisan course-builder:prune-events` (30 days,
+`COURSE_BUILDER_EVENTS_RETENTION_DAYS`); schedule it daily.
+
+## Data
+
+Uploaded sources are stored on a private disk (`COURSE_BUILDER_DISK`, default
+`storage/app/private`), never in the public bucket. Removing a builder session does not remove a
+course it created.

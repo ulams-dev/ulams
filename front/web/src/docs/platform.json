@@ -29,6 +29,10 @@
             "href": "#self-host"
           },
           {
+            "label": "Compare",
+            "href": "#compare"
+          },
+          {
             "label": "Demos",
             "href": "#demos"
           }
@@ -209,6 +213,29 @@
                 "status": "coming"
               }
             ]
+          }
+        },
+        {
+          "component": "ComparisonTable",
+          "props": {
+            "id": "compare",
+            "eyebrow": "compare",
+            "title": "How ulams compares",
+            "intro": "What buyers usually weigh, product by product. Our own roadmap items are marked Coming.",
+            "caption": "Feature comparison of ulams with Moodle, Canvas LMS, Open edX, TalentLMS, Thinkific and LearnDash",
+            "asOf": {
+              "$data": "/comparison/asOf"
+            },
+            "columns": {
+              "$data": "/comparison/columns"
+            },
+            "rows": {
+              "$data": "/comparison/rows"
+            },
+            "sources": {
+              "$data": "/comparison/sources"
+            },
+            "note": "Product names are trademarks of their owners and are used only to identify the products. Corrections are welcome."
           }
         },
         {

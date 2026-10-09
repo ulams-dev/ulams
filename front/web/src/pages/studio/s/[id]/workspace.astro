@@ -1,0 +1,44 @@
+---
+import Studio from "../../../../layouts/Studio.astro";
+
+const id = Astro.params.id ?? "";
+if (!Astro.locals.tenant) return Astro.redirect("/tenants");
+if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 });
+---
+
+<Studio title="Workspace" crumb="Workspace" sessionId={id} active="workspace">
+  <div class="st-ws" data-studio-workspace data-session={id}>
+    <nav class="st-ws-col" aria-labelledby="st-tree-title">
+      <h2 id="st-tree-title" class="cb-eyebrow">Curriculum tree</h2>
+      <div data-tree><p class="cb-muted">Loading the course…</p></div>
+    </nav>
+    <main id="main" class="st-ws-col" tabindex="-1">
+      <h1 class="cb-sr">Workspace</h1>
+      <div class="st-toolbar">
+        <button type="button" class="cb-btn cb-btn-small" data-undo disabled>Undo</button>
+        <button type="button" class="cb-btn cb-btn-small" data-redo disabled>Redo</button>
+        <span data-apply style="display:contents"></span>
+      </div>
+      <div data-preview aria-live="off"></div>
+      <details class="cb-card" style="margin-top:24px">
+        <summary>Version history</summary>
+        <div data-history></div>
+      </details>
+    </main>
+    <aside class="st-ws-col" aria-labelledby="st-chat-title">
+      <h2 id="st-chat-title" class="cb-h3">Refine with the assistant</h2>
+      <p data-scope><span class="cb-muted">Select an element in the tree to edit it in chat.</span></p>
+      <div class="st-chat" data-chat aria-label="Element chat"></div>
+      <form class="st-composer cb-card" data-composer>
+        <label class="cb-sr" for="st-ws-message">Change request</label>
+        <textarea id="st-ws-message" rows="3" maxlength="4000" placeholder="e.g. Make the distractors less obvious"></textarea>
+        <button class="cb-btn cb-btn-primary" type="submit">Propose a change</button>
+        <p class="cb-muted cb-small st-hint">Every change is shown as a diff; nothing changes until you approve it.</p>
+      </form>
+    </aside>
+  </div>
+</Studio>
+
+<script>
+  import "../../../../studio/workspace.ts";
+</script>

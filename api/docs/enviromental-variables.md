@@ -129,7 +129,8 @@ Read on the platform by `ulams:tenant:*`, see [multidomain.md](multidomain.md).
 | `DB_ADMIN_PASSWORD`          | Its password                                                                                  | `DB_PASSWORD`                                |
 | `TENANCY_PHP_BINARY`         | PHP binary for tenant subprocesses                                                           | current PHP binary                           |
 | `TENANCY_PROCESS_TIMEOUT`    | Timeout of one tenant subprocess, seconds                                                    | `900`                                        |
-| `QUEUE_IDLE_SLEEP`           | Seconds `queue.sh`/`broadcast.sh` sleep after a pass over all domains                         | `3`                                          |
+| `WORKERS_CHECK_INTERVAL`     | Seconds between `workers.sh` checks of the domain list and of exited processes               | `10`                                         |
+| `WORKERS_MAX_TIME`           | Seconds a per-domain worker or scheduler loop runs before it is restarted (fresh code/config) | `3600`                                       |
 
 Set per tenant in `.env.<host>` (do not set them on the platform): `TENANT_SLUG`,
 `REDIS_PREFIX`, `CACHE_PREFIX`, `HORIZON_PREFIX`, `CONTENT_ORIGIN`, `INITIAL_USER_EMAIL`,
@@ -206,4 +207,17 @@ virus-scan hook), see [packages/uploads/README.md](../packages/uploads/README.md
 | `ADAPT_BUILDER_TOKEN`   | `X-Internal-Token` for the worker                                  | (empty)                     |
 | `ADAPT_BUILDER_TIMEOUT` | Seconds to wait for a build                                        | `300`                       |
 | `ADAPT_MAX_SOURCE_KB`   | Largest JSON source                                                | `4096`                      |
+
+## Performance and runtime profile
+
+| Variable name                       | Description                                                                                          | Default                    |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------- |
+| `DEMO_PERF`                         | Demo profile of the api container (`make demo-up`): production PHP settings, cached config/routes/events, vendor in a named volume. See `php-profile.sh` | `0`                        |
+| `ULAMS_OPTIMIZE`                    | Build config/route/event/view caches per domain at start (set in the production image)               | `false` (`true` in `Dockerfile`) |
+| `LOG_LEVEL`                         | Minimum log level of the file/stderr channels (production template: `warning`)                      | `APP_LOG_LEVEL`, then `debug` |
+| `REDIS_CLIENT`                      | `phpredis` (C extension) or `predis`                                                                  | `phpredis`                 |
+| `RESPONSE_CACHE_DRIVER`             | Cache store of the response cache; must support tags (Redis) for targeted invalidation               | the default cache store    |
+| `HTTP_CACHE_PUBLIC`                 | `Cache-Control: public, s-maxage` on anonymous catalogue GETs (`config/http_cache.php`)              | `true`                     |
+| `HTTP_CACHE_S_MAXAGE`               | Shared-cache lifetime of those responses, seconds                                                    | `60`                       |
+| `HTTP_CACHE_STALE_WHILE_REVALIDATE` | Seconds a shared cache may serve them stale while it revalidates                                     | `300`                      |
 

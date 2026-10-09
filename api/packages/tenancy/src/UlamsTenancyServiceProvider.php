@@ -6,7 +6,9 @@ use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Tenancy\Console\CreateTenantCommand;
 use Ulams\Tenancy\Console\DeleteTenantCommand;
+use Ulams\Tenancy\Console\ExportH5PServiceConfigCommand;
 use Ulams\Tenancy\Console\ListTenantsCommand;
+use Ulams\Tenancy\Console\ScheduleLoopCommand;
 use Ulams\Tenancy\Console\SeedTenantDemoCommand;
 use Ulams\Tenancy\Console\SyncTenantEnvCommand;
 use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
@@ -14,6 +16,7 @@ use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
 use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
+use Ulams\Tenancy\Services\H5PServiceConfigExporter;
 use Ulams\Tenancy\Services\MultidomainRegistry;
 use Ulams\Tenancy\Services\PostgresDatabaseProvisioner;
 use Ulams\Tenancy\Services\ProcessTenantCommandRunner;
@@ -41,6 +44,12 @@ class UlamsTenancyServiceProvider extends ServiceProvider
             (string) config(self::CONFIG_KEY . '.php_binary', 'php'),
             (int) config(self::CONFIG_KEY . '.process_timeout', 900),
         ));
+        $this->app->singleton(H5PServiceConfigExporter::class, fn ($app) => new H5PServiceConfigExporter(
+            $app->make(\Illuminate\Filesystem\Filesystem::class),
+            rtrim($app->environmentPath(), DIRECTORY_SEPARATOR),
+            storage_path(),
+            config(self::CONFIG_KEY . '.h5p_service_config_dir'),
+        ));
     }
 
     public function boot(): void
@@ -59,6 +68,8 @@ class UlamsTenancyServiceProvider extends ServiceProvider
                 DeleteTenantCommand::class,
                 SyncTenantEnvCommand::class,
                 SeedTenantDemoCommand::class,
+                ExportH5PServiceConfigCommand::class,
+                ScheduleLoopCommand::class,
             ]);
             $this->publishes([
                 __DIR__ . '/config.php' => config_path(self::CONFIG_KEY . '.php'),

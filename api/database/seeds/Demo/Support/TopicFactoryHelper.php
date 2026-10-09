@@ -24,6 +24,7 @@ use Ulams\TopicTypes\Models\TopicContent\PDF;
 use Ulams\TopicTypes\Models\TopicContent\RichText;
 use Ulams\TopicTypes\Models\TopicContent\ScormSco;
 use Ulams\TopicTypes\Models\TopicContent\Video;
+use Ulams\LiaScript\Models\LiaScriptTopic;
 
 /**
  * Creates topics the way the admin API does: a CreateTopicAPIRequest with the
@@ -45,6 +46,7 @@ class TopicFactoryHelper
         'cmi5' => Cmi5Au::class,
         'gift' => GiftQuiz::class,
         'project' => Project::class,
+        'liascript' => LiaScriptTopic::class,
     ];
 
     private TopicRepositoryContract $topics;

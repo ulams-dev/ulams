@@ -70,6 +70,11 @@ export interface AppConfig {
         reloadCheckMs: number;
         /** Postgres pool size per tenant. */
         dbPoolMax: number;
+        /**
+         * A tenant without requests for this long (ms) is closed (DB pool, S3
+         * client) and rebuilt on its next request; 0 keeps tenants forever.
+         */
+        idleEvictMs?: number;
     };
     paths: {
         libraries: string;
@@ -177,7 +182,8 @@ function tenancyConfig(): AppConfig['tenancy'] {
         platformHosts: list('PLATFORM_HOSTS', 'api.localhost').map((h) => h.toLowerCase()),
         frontOriginPatterns: list('TENANT_FRONT_ORIGIN_PATTERNS', DEFAULT_FRONT_ORIGIN_PATTERNS),
         reloadCheckMs: int('TENANT_RELOAD_CHECK_MS', 2000),
-        dbPoolMax: int('TENANT_DB_POOL_MAX', 5)
+        dbPoolMax: int('TENANT_DB_POOL_MAX', 5),
+        idleEvictMs: int('TENANT_IDLE_EVICT_MS', 30 * 60 * 1000)
     };
 }
 

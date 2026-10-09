@@ -11,6 +11,12 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-09) ADRs 0013–0034 accepted
+- [x] (2026-10-09) Phase 1 defaults confirmed: students get `scorm_track-update`; SVG served as attachment
+      with CSP (no sanitiser); LTI Instructor → tutor, never admin, no e-mail account linking; LiaScript player
+      fetched at image build time; production content origin on a separate registrable domain
+- [x] (2026-10-09) GHCR images are public; the upstream EscolaLMS security reports stay as public issues
+- [x] (2026-10-09) Replace the illustrative incident log on the On-Call landing with real course content
 - [x] (2026-10-09) Phase 1 and Phase 2 plans approved; ADRs 0008 (reference frontend: Astro SSR, plain TS SDK,
       agent UI catalogue), 0009 (LLM layer), 0010 (Course Blueprint), 0011 (AG-UI over SSE) and 0012 (LTI 1.3)
       accepted
@@ -155,14 +161,17 @@ stale content.
 ### 0.2 Framework upgrade
 - [x] Upgrade plan from Laravel 9 (EOL) to supported Laravel/PHP: order, breaking changes,
       forks/patches needed, risks (docs/plans/phase-0.md: 9 → 10 → 11 → 12 → 13 on PHP 8.4)
-- [ ] Implement after approval with test suite green at every step
-      (steps 1–4 done, step 4 uncommitted — Laravel 13.35 on PHP 8.4 (Passport 13 with data migration for the
+- [x] Implement after approval with test suite green at every step
+      (steps 1–4 done and merged to main in PR #1 — Laravel 13.35 on PHP 8.4 (Passport 13 with data migration for the
       platform and every tenant, Testbench 11, PHPUnit 12; query cache dropped, `treestoneit/shopping-cart` vendored
       as `api/packages/shopping-cart`, Mattermost Laravel wrapper replaced), no new test failures; see
-      docs/plans/phase-0.md B.11–B.14. Tick after the step-4 commit is merged)
-- [ ] (new) Decide on Passport 13's device-code routes (`oauth/device*`, exposed by default, unused): keep or disable
+      docs/plans/phase-0.md B.11–B.14)
+- [x] (new) Decide on Passport 13's device-code routes (`oauth/device*`, exposed by default, unused): keep or disable
+      (disabled, `e6c21b9e`)
 - [ ] (new) Move the `@OA\` docblock annotations (223 files) to PHP attributes and drop the abandoned
       `doctrine/annotations`
+- [ ] (new) Smaller admin and front images: nginx-unprivileged instead of Apache+PHP, with runtime settings
+      injected without PHP (approved 2026-10-09; after Phase 1)
 
 ---
 
@@ -180,9 +189,9 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`.
       liascript.github.io (the LiaScript SCORM 1.2 build, fetched at image build time with a pinned version
       and SHA-256, runs on the tenant content origin with our SCORM API page; completion at the last section
       or on completed/passed; `docs/plans/phase-1.md` 5.5)
-- [ ] (new) LiaScript topic type (learners), admin editor with preview and version diff, export/import strategy
-      (partial: topic type, Astro `LiaScriptLesson`, admin editor with versions, diff and restore done;
-      live preview of unsaved text and the course export/import strategy pending)
+- [x] (new) LiaScript topic type (learners), admin editor with preview and version diff, export/import strategy
+      (topic type, Astro `LiaScriptLesson`, admin editor with versions, diff, restore and a live preview of
+      unsaved text; course export carries the current text and assets, import creates a new document; ADR 0016)
 - [ ] (new) Run `sh packages/liascript/bin/fetch-player.sh` in the dev api container once (the image build does
       it; the bind mount hides it)
 
@@ -191,17 +200,18 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`.
       admin tag; generated spoor-style fixture)
 - [ ] Path B (feature flag): JSON source, schema-validated, isolated build worker (partial: `packages/adapt`
       behind `ADAPT_SOURCE_ENABLED` with versioned sources, structural validation, queued build and import
-      through Path A, worker contract in ADR 0013 (Proposed); the GPL worker image `api/adapt-builder` and an
-      admin screen pending)
+      through Path A; GPL worker `api/adapt-builder` (adapt_framework v5.56.2, compose profile `adapt`,
+      real build round trip in the nightly conformance workflow); ADR 0013 (Proposed); an admin screen pending)
 
 ### 1.3 LTI 1.3 (high priority)
-- [ ] LTI Platform: launch external tools, AGS grade passback, deep linking (partial: API, admin screens and
-      topic form with "pick content from the tool", players in the old and the Astro front and tests done
-      (ADR 0012); the saLTIre round trip pending)
-- [ ] LTI Tool: expose our courses to Moodle, Canvas etc. (partial: launch, user/role mapping, course access,
-      deep-linking course picker, grade passback, admin platform screens and landing pages in both fronts done;
-      the Moodle `lti-e2e` round trip pending; inside an LMS iframe the front's session cookie can be blocked as
-      third-party, so platforms should open ulams in a new window)
+- [x] LTI Platform: launch external tools, AGS grade passback, deep linking (API, admin screens and topic
+      form with "pick content from the tool", players in both fronts, ADR 0012; launching a Moodle 5.0
+      course and receiving Moodle's grade verified in the nightly conformance workflow; the saLTIre job
+      needs an operator run)
+- [x] LTI Tool: expose our courses to Moodle, Canvas etc. (launch, user/role mapping, course access,
+      deep-linking course picker, grade passback, admin platform screens and landing pages in both fronts;
+      Moodle 5.0 launch and grade passback verified in the nightly conformance workflow; inside an LMS iframe
+      the front's session cookie can be blocked as third-party, so platforms should open ulams in a new window)
 - [x] Key rotation, nonce/state validation, per-tenant registrations (`ulams:lti:rotate-keys` monthly,
       provisioning step `lti_keys`, single-use hints/state/nonce/jti in `lti_nonces`, registrations in the
       tenant database, isolation tests)
@@ -235,16 +245,28 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`.
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
       `api/docs/content-origin.md`; deployment pending)
 - [ ] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector
-- [ ] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (partial: env-file
-      resolver live; per-tenant `H5P_INTERNAL_TOKEN` in the env file and library administration limited to the
-      platform done; production mounts limited to env files and key directories, and idle-tenant eviction pending)
-- [ ] (new) H5P: refresh the player model when the 5-minute Passport token rotates; redact `_token`
-      in all proxies' access logs (partial: Caddy and the H5P service redact `_token`; the token refresh in the
-      players is pending)
-- [ ] Policies, OpenAPI annotations, fixtures and tests (LiaScript, Adapt A+B, LTI round-trip) (partial:
-      permissions `lti_manage`, `liascript_manage`, `adapt_manage`, OpenAPI for every new endpoint, generated
-      fixtures and tests for LiaScript, Adapt A+B and LTI against in-test fakes; the nightly saLTIre/Moodle and
-      Adapt-worker round trips pending)
+- [x] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (env-file
+      resolver; per-tenant `H5P_INTERNAL_TOKEN`; library administration limited to the platform; production
+      mounts limited to an exported least-privilege config (`ulams:h5p:export-config`, `compose.h5p.prod.yml`);
+      idle-tenant eviction (`TENANT_IDLE_EVICT_MS`); ADR 0015)
+- [x] (new) H5P: refresh the player model when the 5-minute Passport token rotates; redact `_token`
+      in all proxies' access logs (Caddy and the H5P service redact `_token`; embed pages swap refreshed
+      tokens in order, unit-tested; the old React front now refreshes the token before it expires)
+- [x] Policies, OpenAPI annotations, fixtures and tests (LiaScript, Adapt A+B, LTI round-trip) (permissions
+      `lti_manage`, `liascript_manage`, `adapt_manage`, OpenAPI for every new endpoint, fixtures and tests
+      against in-test fakes; `.github/workflows/nightly-conformance.yml` (opt-in) with the Adapt worker build,
+      Moodle 5.0 in both LTI directions (passed locally) and an operator-driven saLTIre job; ADR 0019)
+- [x] (new) `TopicFinished` fired before the learner's progress was saved, so listeners running at once
+      (sync queue) sent the previous LTI score; now dispatched after saving (found by the Moodle run, ADR 0018)
+- [ ] (new) Turn on the nightly conformance runs (`NIGHTLY_CONFORMANCE=true`) and run the saLTIre job once
+      with an operator
+- [ ] (new) Adapt Path B admin screen (sources, versions, build status)
+- [ ] (new) Astro front: H5P plays without a token, so learner state is not restored (decide: a short-lived
+      H5P token from the BFF, or state through the BFF)
+- [ ] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service
+      with `compose.h5p.prod.yml`
+- [ ] (new) `yarn install` on Node 24 fails in admin's postinstall (`max setup`: umi's esmi feature loads
+      `http-deceiver`, which needs the removed `http_parser` binding); CI and `.nvmrc` use Node 22
 
 ---
 
@@ -259,60 +281,95 @@ M2.1 "chat course building": upload → interview → outline diff → approved 
 approved apply through domain services → element chat edits. Designs:
 `front/docs/design/stitch/course-builder/`.
 
-- [ ] (new) Course Builder author area in the reference web app (`front/web`, `/studio`); the admin only
-      links to it
-- [ ] (new) AG-UI event log and SSE stream from Laravel, carrying A2UI surfaces (ADR 0011)
-- [ ] (new) Builder components in `@ulams/ui` and the course landing document in the catalogue format
+- [x] (new) Course Builder author area in the reference web app (`front/web`, `/studio`); the admin only
+      links to it (M2.1, branch `phase-2/course-builder`; ADR 0022)
+- [x] (new) AG-UI event log and SSE stream from Laravel, carrying A2UI surfaces (ADR 0011; A2UI as
+      `a2ui-surface` activity snapshots, ADR 0023; cache-key wake instead of pub/sub, ADR 0029)
+- [x] (new) Builder components in `@ulams/ui` and the course landing document in the catalogue format
+- [ ] (new) Studio: edit the Course Brief from the brief panel (partial: `PUT …/brief` with stale
+      marking done; the panel is read-only)
+- [ ] (new) Detect admin edits made after an apply before re-applying (ADR 0010 drift check)
+- [ ] (new) Vendor the A2UI v0.9 JSON Schemas in `@ulams/ui` for dev-mode validation (plan 13.2); the
+      builder catalogue is validated, the A2UI envelope is not
+- [ ] (new) Operations for the builder: a separate PHP-FPM pool and Caddy route for
+      `…/sessions/{id}/events`, a daily `course-builder:prune-events`, a Horizon queue for builder jobs
+- [ ] (new) Run the opt-in cross-tenant check `TenantIsolationTest::testCourseBuilderSessionsDoNotCrossTenants`
+      (written; needs `TENANCY_INTEGRATION=1` and two probe tenants)
+- [ ] (new) Regenerate the OpenAPI spec and SDK path types for the builder endpoints (the SDK uses
+      hand-written types; the API carries the annotations)
+- [ ] (new) Normalise `yarn.lock` with a real `yarn install` (entries for `@ag-ui/core` 1.0.2 and
+      `diff` 9.0.0 were added by hand while the disk was full)
+- [ ] (new) Delete the RichText/GIFT content row when a topic is deleted (topic repository leaves it;
+      the applier deletes topics through the repository)
 
 ### 2.1 LLM layer
-- [ ] Provider abstraction, model per task via config (Sonnet default, Haiku for light steps)
-- [ ] Structured outputs validated by JSON Schema, retry then graceful failure
-- [ ] Prompt caching for sources
-- [ ] Per-call logging: model, tokens, cost, latency, tenant, course; running cost per course
-- [ ] Hard limits (source size, tokens per course, concurrency)
-- [ ] Versioned prompt files with README
+- [x] Provider abstraction, model per task via config (Sonnet default, Haiku for light steps)
+      (`api/packages/ai`; Anthropic, fake and disabled drivers; other providers in 8.2)
+- [x] Structured outputs validated by JSON Schema, retry then graceful failure
+- [x] Prompt caching for sources (live eval: lesson and quiz calls after the first read ~4.8k cached
+      tokens)
+- [x] Per-call logging: model, tokens, cost, latency, tenant, course; running cost per course
+      (`ai_calls`, `ai:usage`, cost streamed to the studio)
+- [x] Hard limits (source size, tokens per course, concurrency) (plus per-session cost, daily sessions,
+      tenant monthly spend, eval spend)
+- [x] Versioned prompt files with README (`api/packages/course-builder/resources/prompts`)
 
 ### 2.2 Ingestion
-- [ ] PDF, Markdown, DOCX → **Source Document** with stable fragment IDs
-- [ ] Untrusted content handling + prompt-injection tests
-- [ ] Design (don't build) image/video ingestion
+- [x] PDF, Markdown, DOCX → **Source Document** with stable fragment IDs (first-party DOCX converter,
+      ADR 0026)
+- [x] Untrusted content handling + prompt-injection tests (feature tests and a live eval fixture)
+- [x] Design (don't build) image/video ingestion (design note in `docs/plans/phase-2.md` 6.4)
 
 ### 2.3 Interview
-- [ ] Adaptive chips/buttons with defaults and "decide for me"
+- [x] Adaptive chips/buttons with defaults and "decide for me"
 - [ ] Audience, duration, tone, theme preset + accent, free/paid (via `CommerceProvider`;
-      interim: existing `payments`), assessments, language
-- [ ] Editable **Course Brief**
+      interim: existing `payments`), assessments, language (partial: audience, level, duration and
+      lesson length, tone, assessments, language done; theme and free/paid are M2.2)
+- [ ] Editable **Course Brief** (partial: schema-validated brief with decided-by per field, editable
+      through the API with stale marking; studio panel read-only, see the new item above)
 
 ### 2.4 Generation pipeline (queued, resumable, streamed)
-- [ ] **Learning objectives** proposed and **approved by the author** first
-- [ ] Outline mapped to source fragments and objectives
-- [ ] Lessons in parallel from the component registry (rich text, LiaScript, H5P)
-- [ ] Assessments with explanations, each traceable to a fragment
-- [ ] Metadata (title, description, SEO, pricing)
-- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid
-- [ ] **Course Blueprint**: versioned JSON, stable IDs, citations; entities created via domain
-      services; persisted per stage; progress streamed (SSE/websockets)
+- [x] **Learning objectives** proposed and **approved by the author** first (with inline edits)
+- [x] Outline mapped to source fragments and objectives
+- [ ] Lessons in parallel from the component registry (rich text, LiaScript, H5P) (partial: rich text
+      in a concurrency window; LiaScript and H5P lessons are M2.3)
+- [x] Assessments with explanations, each traceable to a fragment (per-lesson quizzes and a final test,
+      GIFT rendered by our code, support check against the cited text)
+- [ ] Metadata (title, description, SEO, pricing) (partial: no pricing, M2.2)
+- [ ] Tenant provisioning: subdomain, theme, publish, commerce channel/product if paid (M2.2; publish
+      is done as a separate action)
+- [x] **Course Blueprint**: versioned JSON, stable IDs, citations; entities created via domain
+      services; persisted per stage; progress streamed (SSE/websockets) (ADR 0010, 0025)
 
 ### 2.5 Element-level chat editing
-- [ ] Select element → chat → structured patch → diff → apply
-- [ ] Blueprint versions: undo/redo/restore; global edits via queued pipeline
+- [x] Select element → chat → structured patch → diff → apply (course, module, lesson, block, question)
+- [ ] Blueprint versions: undo/redo/restore; global edits via queued pipeline (partial: undo, redo and
+      restore with re-apply done; global edits are M2.3)
 
 ### 2.6 Author UX
-- [ ] Upload → interview → live progress → tree + preview → element chat
-- [ ] Sources panel; retry a single failed step; themed learner frontend
+- [x] Upload → interview → live progress → tree + preview → element chat (e2e on the fake driver)
+- [ ] Sources panel; retry a single failed step; themed learner frontend (partial: retry of a single
+      step and source passages behind every citation done; the learner front is the existing one with
+      the tenant theme; a full sources panel in the workspace is missing)
 
 ### 2.7 Generative UI
 Architecture
-- [ ] Verify current A2UI / AG-UI versions and choose renderer (CopilotKit vs own)
+- [x] Verify current A2UI / AG-UI versions and choose renderer (CopilotKit vs own) (A2UI v0.9,
+      `@ag-ui/core` 1.0.2, own renderer; ADR 0011, 0023)
 - [ ] UI component catalogue: name, props JSON Schema, model description, accessible
-      implementation, text fallback
-- [ ] `render_ui` validated server-side; invalid/unknown → text fallback
-- [ ] Progressive streaming with skeletons; interactions sent back as structured events
+      implementation, text fallback (partial: the 17 builder components; learner layout components
+      are M2.5)
+- [x] `render_ui` validated server-side; invalid/unknown → text fallback (structured output choice
+      validated against the `@ulams/ui` manifest)
+- [x] Progressive streaming with skeletons; interactions sent back as structured events
 
 Builder components (MVP)
-- [ ] Interview controls · theme picker with live preview · drag-and-drop outline editor
-- [ ] Lesson preview card · variant comparison · quiz question card
-- [ ] Diff view · generation progress with retry and cost · publish summary with warnings
+- [ ] Interview controls · theme picker with live preview · drag-and-drop outline editor (partial:
+      interview controls done; theme picker M2.2, drag-and-drop editor M2.3)
+- [ ] Lesson preview card · variant comparison · quiz question card (partial: lesson preview and quiz
+      question cards done; variant comparison M2.3)
+- [ ] Diff view · generation progress with retry and cost · publish summary with warnings (partial:
+      diff view, progress and the apply summary with warnings done; publish summary M2.2/M2.4)
 
 Learner layouts (feature flag)
 - [ ] AI-composed declarative lesson layouts from approved components, stored in blueprint
@@ -344,8 +401,11 @@ Impact measurement
 
 Quality
 - [ ] Component playground (Storybook) with model-facing descriptions
-- [ ] Schema, fallback, interaction round-trip and accessibility tests per component
+- [x] Schema, fallback, interaction round-trip and accessibility tests per component (builder
+      catalogue: vitest + axe in jsdom; axe on every studio screen in the e2e)
 - [ ] Evals: right component choice, no raw markup outside `simulation`, simulation pass rate
+      (partial: `course-builder:eval` checks interview component choice, DiffView for chat edits and no
+      raw markup; simulations are M2.5)
 
 ---
 

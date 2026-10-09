@@ -1,0 +1,17 @@
+{
+    "task": "metadata",
+    "prompt_id": "course-builder/metadata",
+    "prompt_version": 1,
+    "hash": "1ae46b0c142dd601710d6dd101bcfa57",
+    "model": "claude-haiku-5-5",
+    "stop_reason": "end_turn",
+    "refusal_category": null,
+    "usage": {
+        "input_tokens": 17,
+        "output_tokens": 768,
+        "cache_write_5m_tokens": 0,
+        "cache_write_1h_tokens": 4596,
+        "cache_read_tokens": 0
+    },
+    "text": "{\"title\":\"Coffee Brewing Fundamentals for Home Baristas\",\"subtitle\":\"For beginner home baristas who want to brew a balanced cup by weighing, adjusting grind and temperature, and tasting with confidence.\",\"description\":\"This 30-minute beginner course teaches you how extraction works and how to recognise under-extracted and over-extracted coffee by taste. You will learn to separate strength from extraction, and to weigh coffee and water at a chosen brew ratio so every cup is repeatable. The course then shows how grind size and water temperature change the cup for espresso, pour-over, French press and light or dark roasts. You finish by tasting your results and changing one variable at a time to improve the next brew.\",\"seoTitle\":\"Coffee Brewing Fundamentals for Home Baristas | Online Course\",\"seoDescription\":\"Learn extraction, brew ratios, grind size and water temperature in this beginner home coffee course. Taste, diagnose and improve every cup.\",\"faq\":[{\"question\":\"Who is this course for?\",\"answer\":\"It is designed for home baristas at beginner level who want to brew better coffee at home and understand why their cups taste the way they do.\",\"citations\":[]},{\"question\":\"Do I need special equipment?\",\"answer\":\"A kitchen scale is recommended, because the course teaches you to weigh coffee and water rather than measure with spoons. A thermometer is helpful for water temperature, but the course also explains a way to rest boiled water without one. Grinding with a burr grinder is recommended for more even particles.\",\"citations\":[\"{{frg_4}}\",\"{{frg_8}}\",\"{{frg_7}}\"]},{\"question\":\"How long does the course take?\",\"answer\":\"The course takes about 30 minutes in total, split into three 10-minute lessons, and each lesson ends with a short quiz. A final test is also included.\",\"citations\":[]},{\"question\":\"What will I be able to do after completing it?\",\"answer\":\"You will be able to identify under- and over-extracted coffee by taste, calculate coffee and water weights for a given ratio and dose, choose a grind size and water temperature for your method and roast, and adjust one variable to improve your next brew.\",\"citations\":[\"{{frg_2}}\",\"{{frg_5}}\",\"{{frg_13}}\"]}]}"
+}

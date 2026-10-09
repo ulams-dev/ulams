@@ -27,6 +27,8 @@ class LessonWithTopicsResource extends JsonResource
     {
         $lesson = $this->getResource();
 
+        // TopicResource checks $topic->lesson: hand it the loaded lesson instead of a query per topic
+        $lesson->topics->each(fn (Topic $topic) => $topic->setRelation('lesson', $lesson));
         $topics = $lesson->topics->filter(fn (Topic $topic) => $topic->active)->sortBy('order');
         $lessons = $lesson->lessons->filter(fn (Lesson $lesson) => $lesson->active)->sortBy('order');
 

@@ -222,6 +222,8 @@ return [
         Ulams\Uploads\UlamsUploadsServiceProvider::class,
         Ulams\Lti\UlamsLtiServiceProvider::class,
         Ulams\LiaScript\UlamsLiaScriptServiceProvider::class,
+        Ulams\Ai\UlamsAiServiceProvider::class,
+        Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider::class,
         Ulams\Adapt\UlamsAdaptServiceProvider::class,
         Ulams\Translations\UlamsTranslationsServiceProvider::class,
         Ulams\Video\UlamsVideoServiceProvider::class,

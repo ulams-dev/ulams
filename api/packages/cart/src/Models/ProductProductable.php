@@ -52,14 +52,36 @@ class ProductProductable extends Model
         return $this->morphTo();
     }
 
+    /** Memoised: list resources read the canonical productable several times per row. */
+    private ?Productable $canonicalProductable = null;
+
     public function getCanonicalProductableAttribute(): ?Productable
     {
+        if ($this->canonicalProductable !== null) {
+            return $this->canonicalProductable;
+        }
         $productable = $this->productable;
         if ($productable instanceof Productable) {
-            return $productable;
+            return $this->canonicalProductable = $productable;
+        }
+        if (!$productable instanceof Model) {
+            return null;
         }
         try {
-            return app(ProductServiceContract::class)->findProductable(get_class($productable), $productable->getKey());
+            $service = app(ProductServiceContract::class);
+            $class = $service->canonicalProductableClass(get_class($productable));
+            $canonical = new $class();
+            // The canonical productable class extends the loaded model and shares its table:
+            // build it from the row already loaded instead of fetching it again.
+            if ($canonical instanceof Model && $canonical->getTable() === $productable->getTable()) {
+                $model = $canonical->newFromBuilder($productable->getAttributes(), $productable->getConnectionName());
+                $model->setRelations($productable->getRelations());
+                if ($model instanceof Productable) {
+                    return $this->canonicalProductable = $model;
+                }
+            }
+
+            return $this->canonicalProductable = $service->findProductable(get_class($productable), $productable->getKey());
         } catch (Throwable $ex) {
             // do nothing
         }

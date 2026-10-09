@@ -6,6 +6,7 @@ import {
   ExportOutlined,
   FireOutlined,
   PlusCircleFilled,
+  ThunderboltFilled,
 } from '@ant-design/icons';
 import ProCard from '@ant-design/pro-card';
 import { PageContainer } from '@ant-design/pro-layout';
@@ -21,6 +22,7 @@ import Tags from '@/components/Tags';
 import UserSelect from '@/components/UserSelect';
 import PERMISSIONS from '@/consts/permissions';
 import { usePermissions } from '@/hooks/usePermissions';
+import { studioUrl } from '@/services/studio';
 import { cloneCourse, course, exportCourse, removeCourse } from '@/services/ulams/course';
 import { createTableOrderObject, roundTo } from '@/utils/utils';
 import './style.less';
@@ -314,6 +316,40 @@ const TableList: React.FC = () => {
             </Title>
           </Link>
         </ProCard>
+        {checkPermission(PERMISSIONS.CourseBuilderUse) && (
+          <ProCard
+            layout="center"
+            style={{
+              height: '100%',
+            }}
+          >
+            <a
+              href={studioUrl('/studio/new')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+              }}
+            >
+              <ThunderboltFilled
+                style={{
+                  fontSize: '32px',
+                }}
+              />
+              <Title
+                level={5}
+                style={{
+                  marginBottom: 0,
+                }}
+              >
+                <FormattedMessage
+                  id="course_builder.card"
+                  defaultMessage="Build a course with AI"
+                />
+              </Title>
+            </a>
+          </ProCard>
+        )}
         {checkPermission(PERMISSIONS.CourseImport) && (
           <ProCard
             layout="center"

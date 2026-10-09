@@ -22,8 +22,23 @@ replacement.
 | [0010](0010-course-blueprint-and-builder.md) | Course Builder: a versioned Course Blueprint applied through domain services | Accepted |
 | [0011](0011-ag-ui-over-sse-from-laravel.md) | Builder streaming: AG-UI events over SSE from Laravel, carrying A2UI surfaces | Accepted |
 | [0012](0012-lti-package-and-libraries.md) | LTI 1.3: one `lti` package, first-party platform side, packbackbooks tool side | Accepted |
-| [0013](0013-adapt-build-worker.md) | Adapt Path B: JSON sources in the API, builds in an isolated GPL-3.0 worker | Proposed |
-| [0021](0021-ha-reference-architecture.md) | High-availability reference architecture | Proposed |
+| [0013](0013-adapt-build-worker.md) | Adapt Path B: JSON sources in the API, builds in an isolated GPL-3.0 worker | Accepted |
+| [0014](0014-content-origin.md) | Third-party packages on a per-tenant content origin, files served through the API | Accepted |
+| [0015](0015-h5p-service-tenancy.md) | H5P service per tenant: derived internal token, platform-only libraries, least-privilege mounts | Accepted |
+| [0016](0016-liascript-without-scorm-package.md) | LiaScript: versioned Markdown documents played without a SCORM package | Accepted |
+| [0017](0017-upload-guard.md) | One upload guard and safe extractor for every upload path | Accepted |
+| [0018](0018-completion-events.md) | External content completes topics; completion events fire after progress is saved | Accepted |
+| [0019](0019-nightly-conformance.md) | Conformance against real LMSs and builders in an opt-in nightly workflow | Accepted |
+| [0020](0020-public-competitor-comparison.md) | Public comparison with other learning platforms: sourced data, neutral values | Accepted |
+| [0021](0021-ha-reference-architecture.md) | High-availability reference architecture | Accepted |
+| [0022](0022-course-builder-studio-in-web-app.md) | Course Builder studio in the reference web app, with its own author session | Accepted |
+| [0023](0023-a2ui-surfaces-as-ag-ui-activity-snapshots.md) | A2UI surfaces travel as AG-UI activity snapshots (`a2ui-surface`) | Accepted |
+| [0024](0024-fake-llm-driver-cassettes-and-synthetic-answers.md) | Fake LLM driver: normalised cassettes and synthetic answers | Accepted |
+| [0025](0025-blueprint-to-lms-mapping.md) | How a Course Blueprint maps to LMS entities | Accepted |
+| [0026](0026-first-party-docx-converter.md) | A first-party DOCX converter instead of PhpWord | Accepted |
+| [0027](0027-course-builder-access.md) | Course Builder access: one permission, author acts, admins look | Accepted |
+| [0028](0028-generation-stages-and-grounding.md) | Generation stages, grounding check and quiz support check | Accepted |
+| [0029](0029-sse-wake-without-pubsub.md) | The SSE endpoint wakes on a cache key, not Valkey pub/sub | Accepted |
 | [0030](0030-living-course-revisions-and-update-proposals.md) | Living Course: source revisions and update proposals on top of the Course Blueprint | Accepted |
 | [0031](0031-deterministic-fragment-change-detection.md) | Fragment-level change detection is deterministic | Accepted |
 | [0032](0032-source-connectors-as-plugins.md) | Source connectors as plugins; Git through host APIs; one SSRF-safe HTTP client | Accepted |

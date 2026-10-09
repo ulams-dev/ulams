@@ -1,0 +1,307 @@
+---
+/**
+ * Feature comparison table. No JavaScript: sticky header and first column in CSS, horizontal
+ * scroll with an edge shadow on narrow screens, scroll reveal and hover highlight in CSS.
+ */
+interface Cell {
+  value: string;
+  note?: string;
+}
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  caption: string;
+  asOf?: string;
+  columns: Array<{ label: string; note?: string; highlight?: boolean }>;
+  rows: Array<{ label: string; help?: string; cells: Cell[] }>;
+  sources?: Array<{ label: string; href: string; checked?: string }>;
+  note?: string;
+}
+const { id = "compare", eyebrow, title, intro, caption, asOf, columns, rows, sources = [], note } = Astro.props;
+
+type Kind = "yes" | "no" | "partial" | "plugin" | "paid" | "unknown" | "coming" | "text";
+const KIND: Record<string, Kind> = {
+  yes: "yes",
+  no: "no",
+  partial: "partial",
+  "via plugin": "plugin",
+  "paid add-on": "paid",
+  "not documented": "unknown",
+  coming: "coming",
+};
+const kindOf = (value: string): Kind => KIND[value.trim().toLowerCase()] ?? "text";
+const MARK: Record<Kind, string> = { yes: "✓", no: "–", partial: "◐", plugin: "+", paid: "€", unknown: "?", coming: "…", text: "" };
+const highlighted = columns.findIndex((c) => c.highlight);
+---
+
+<section class="u-section u-compare" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <div class="u-container">
+    <div class="u-section-head u-section-head--center" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+      {intro && <p class="u-lead">{intro}</p>}
+    </div>
+
+    <p class="u-compare__hint" aria-hidden="true">Scroll sideways to see every product →</p>
+    <div class="u-compare__scroll" tabindex="0" role="region" aria-labelledby={`${id}-caption`} data-reveal>
+      <table class="u-compare__table" style={`--cols:${columns.length}`}>
+        <caption id={`${id}-caption`}>{caption}{asOf && <span>, as of {asOf}</span>}</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="u-compare__corner"><span class="u-visually-hidden">Feature</span></th>
+            {
+              columns.map((c, i) => (
+                <th scope="col" class:list={["u-compare__col", { "is-ours": i === highlighted }]}>
+                  <span class="u-compare__name">{c.label}</span>
+                  {c.note && <span class="u-compare__colnote">{c.note}</span>}
+                </th>
+              ))
+            }
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rows.map((row) => (
+              <tr>
+                <th scope="row">
+                  <span class="u-compare__feature">{row.label}</span>
+                  {row.help && <span class="u-compare__help">{row.help}</span>}
+                </th>
+                {columns.map((_, i) => {
+                  const cell = row.cells[i] ?? { value: "Not documented" };
+                  const kind = kindOf(cell.value);
+                  return (
+                    <td class:list={[{ "is-ours": i === highlighted }]} data-kind={kind}>
+                      <span class="u-compare__value">
+                        {MARK[kind] && (
+                          <span class="u-compare__mark" aria-hidden="true">
+                            {MARK[kind]}
+                          </span>
+                        )}
+                        {cell.value}
+                      </span>
+                      {cell.note && <span class="u-compare__note">{cell.note}</span>}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="u-compare__foot">
+      {asOf && <p class="u-compare__asof">As of {asOf}. Facts about other products come from their official documentation, pricing pages and licences; they change, so check the sources.</p>}
+      {note && <p class="u-compare__asof">{note}</p>}
+      {
+        sources.length > 0 && (
+          <details class="u-compare__sources">
+            <summary>Sources ({sources.length})</summary>
+            <ol>
+              {sources.map((s) => (
+                <li>
+                  <span>{s.label}</span>{" "}
+                  <a href={s.href} rel="noopener noreferrer nofollow" target="_blank">
+                    {s.href.replace(/^https?:\/\//, "")}
+                  </a>
+                  {s.checked && <span class="u-compare__checked"> (checked {s.checked})</span>}
+                </li>
+              ))}
+            </ol>
+          </details>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .u-compare__hint {
+    display: none;
+    margin: 0 0 8px;
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-compare__scroll {
+    position: relative;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background:
+      /* edge shadows that only show while there is more to scroll (background-attachment trick) */
+      linear-gradient(to right, var(--ulams-color-card-bg) 30%, transparent) left / 40px 100% no-repeat local,
+      linear-gradient(to left, var(--ulams-color-card-bg) 30%, transparent) right / 40px 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, rgb(0 0 0 / 0.16), transparent) left / 14px 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, rgb(0 0 0 / 0.16), transparent) right / 14px 100% no-repeat scroll,
+      var(--ulams-color-card-bg);
+  }
+  .u-compare__scroll:focus-visible {
+    outline: 2px solid var(--ulams-color-primary);
+    outline-offset: 3px;
+  }
+  .u-compare__table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+  caption {
+    padding: 14px 18px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--ulams-color-muted);
+    font-size: 0.8125rem;
+  }
+  th,
+  td {
+    padding: 12px 14px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid var(--ulams-color-border);
+  }
+  thead th {
+    position: sticky;
+    top: 68px; /* below the sticky site header */
+    z-index: 2;
+    background: var(--ulams-color-card-bg);
+    border-top: 0;
+    border-bottom: 1px solid var(--ulams-color-border);
+    vertical-align: bottom;
+  }
+  tbody th {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--ulams-color-card-bg);
+    min-width: 190px;
+    font-weight: 600;
+    box-shadow: 1px 0 0 var(--ulams-color-border);
+  }
+  .u-compare__corner {
+    left: 0;
+    z-index: 3;
+  }
+  .u-compare__name {
+    display: block;
+    font-family: var(--ulams-font-family);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ulams-color-header);
+  }
+  .u-compare__colnote,
+  .u-compare__help,
+  .u-compare__note {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--ulams-color-muted);
+  }
+  .is-ours {
+    background: color-mix(in srgb, var(--ulams-color-primary) 7%, var(--ulams-color-card-bg));
+  }
+  thead .is-ours {
+    background: color-mix(in srgb, var(--ulams-color-primary) 12%, var(--ulams-color-card-bg));
+    box-shadow: inset 0 3px 0 var(--ulams-color-primary);
+  }
+  thead .is-ours .u-compare__name {
+    color: var(--ulams-color-primary-on-light);
+  }
+  tbody tr {
+    transition: background-color 0.2s;
+  }
+  tbody tr:hover > * {
+    background-color: color-mix(in srgb, var(--ulams-color-primary) 5%, var(--ulams-color-card-bg));
+  }
+  tbody tr:hover > .is-ours {
+    background-color: color-mix(in srgb, var(--ulams-color-primary) 12%, var(--ulams-color-card-bg));
+  }
+  .u-compare__value {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+  }
+  .u-compare__mark {
+    display: inline-grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    background: var(--ulams-color-border);
+    color: var(--ulams-color-text);
+  }
+  [data-kind="yes"] .u-compare__mark {
+    background: color-mix(in srgb, var(--ulams-color-positive) 18%, transparent);
+    color: var(--ulams-color-positive);
+  }
+  [data-kind="coming"] .u-compare__mark {
+    background: color-mix(in srgb, var(--ulams-color-primary) 14%, transparent);
+    color: var(--ulams-color-primary-on-light);
+  }
+  [data-kind="coming"] .u-compare__value {
+    color: var(--ulams-color-primary-on-light);
+  }
+  [data-kind="unknown"] .u-compare__value,
+  [data-kind="no"] .u-compare__value {
+    font-weight: 500;
+    color: var(--ulams-color-muted);
+  }
+  .u-compare__foot {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .u-compare__asof {
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-compare__sources summary {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  .u-compare__sources ol {
+    margin: 8px 0 0;
+    padding-left: 1.4em;
+    display: grid;
+    gap: 6px;
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-compare__sources a {
+    color: var(--ulams-color-primary-on-light);
+    overflow-wrap: anywhere;
+  }
+  @media (max-width: 1180px) {
+    .u-compare__scroll {
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+    }
+    .u-compare__table {
+      min-width: calc(190px + var(--cols) * 150px);
+    }
+    thead th {
+      top: 0;
+    }
+    .u-compare__hint {
+      display: block;
+    }
+  }
+  @media (max-width: 640px) {
+    tbody th {
+      min-width: 140px;
+    }
+    .u-compare__table {
+      min-width: calc(140px + var(--cols) * 132px);
+      font-size: 0.8125rem;
+    }
+  }
+</style>

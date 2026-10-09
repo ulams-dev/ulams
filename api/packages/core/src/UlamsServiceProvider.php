@@ -2,6 +2,10 @@
 
 namespace Ulams\Core;
 
+use Illuminate\Database\Events\MigrationsEnded;
+use Illuminate\Database\Events\SchemaLoaded;
+use Illuminate\Support\Facades\Event;
+use Ulams\Core\Support\SchemaColumns;
 use Ulams\Core\Http\Middleware\SetTimezoneForUserMiddleware;
 use Ulams\Core\Services\Contracts\HealthCheckServiceContract;
 use Ulams\Core\Services\HealthCheckService;
@@ -33,6 +37,9 @@ class UlamsServiceProvider extends ServiceProvider
         $this->loadConfig();
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrations();
+
+        // memoised column listings must not outlive a schema change in this process
+        Event::listen([MigrationsEnded::class, SchemaLoaded::class], fn () => SchemaColumns::flush());
     }
 
     private function loadConfig(): void

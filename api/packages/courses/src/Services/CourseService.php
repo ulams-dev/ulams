@@ -71,7 +71,7 @@ class CourseService implements CourseServiceContract
             ->with([
                 'categories',
                 'tags',
-                'authors',
+                'authors.categories',
                 'authors.interests',
             ])
             ->withCount(['lessons', 'users', 'topics', 'authors']);

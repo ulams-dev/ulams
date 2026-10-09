@@ -1,0 +1,205 @@
+---
+/**
+ * Course Builder studio shell: dark app rail, top bar with the breadcrumb, the session status and
+ * the running cost, and the page. Platform brand ("Editorial Intelligence"), not a tenant theme.
+ */
+import { Font } from "astro:assets";
+import studioCss from "@ulams/ui/builder/studio.css?inline";
+import "../styles/studio-pages.css";
+
+interface Props {
+  title: string;
+  /** Breadcrumb after "Course Builder". */
+  crumb?: string;
+  /** Status pill text (e.g. "Draft · not published"). */
+  status?: string;
+  sessionId?: string | null;
+  active?: "builder" | "workspace" | "done" | "sessions";
+}
+
+const { title, crumb, status, sessionId, active = "builder" } = Astro.props;
+const nav = [
+  { key: "sessions", href: "/studio", label: "Sessions" },
+  ...(sessionId
+    ? [
+        { key: "builder", href: `/studio/s/${sessionId}`, label: "Builder" },
+        { key: "workspace", href: `/studio/s/${sessionId}/workspace`, label: "Workspace" },
+        { key: "done", href: `/studio/s/${sessionId}/done`, label: "Course" },
+      ]
+    : [{ key: "builder", href: "/studio/new", label: "New course" }]),
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · Course Builder</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <Font cssVariable="--font-newsreader" preload={[{ weight: "400", style: "normal" }]} />
+    <Font cssVariable="--font-inter" preload={[{ weight: "400" }]} />
+    <Font cssVariable="--font-jetbrains" />
+    <style is:inline set:html={studioCss}></style>
+  </head>
+  <body class="ulams-studio">
+    <a class="st-skip" href="#main">Skip to content</a>
+    <div class="st-app">
+      <nav class="st-rail" aria-label="Course Builder">
+        <a class="st-logo" href="/studio" aria-label="Course Builder home">u</a>
+        <ul>
+          {
+            nav.map((item) => (
+              <li>
+                <a href={item.href} aria-current={item.key === active ? "page" : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <div class="st-frame">
+        <header class="st-top">
+          <p class="st-crumb">
+            <a href="/studio">Course Builder</a>
+            {crumb && <span aria-hidden="true"> / </span>}
+            {crumb && <span class="st-crumb-current" data-crumb>{crumb}</span>}
+          </p>
+          {status && <span class="st-status" data-status-pill>{status}</span>}
+          <span class="st-cost" data-cost-pill hidden></span>
+          <span class="st-conn" data-connection role="status" aria-live="polite"></span>
+        </header>
+        <slot />
+      </div>
+    </div>
+    <div class="cb-sr" aria-live="polite" data-announcer></div>
+  </body>
+</html>
+
+<style is:global>
+  body.ulams-studio {
+    --ulams-studio-serif: var(--font-newsreader), "Newsreader", Georgia, serif;
+    --ulams-studio-sans: var(--font-inter), "Inter", system-ui, sans-serif;
+    --ulams-studio-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
+    margin: 0;
+    min-height: 100vh;
+  }
+  .st-skip {
+    position: absolute;
+    left: -999px;
+    top: 8px;
+    background: #fff;
+    padding: 8px 12px;
+    z-index: 10;
+  }
+  .st-skip:focus {
+    left: 8px;
+  }
+  .st-app {
+    display: grid;
+    grid-template-columns: 88px 1fr;
+    min-height: 100vh;
+  }
+  .st-rail {
+    background: var(--ulams-studio-ink);
+    color: #fff;
+    padding: 16px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+  .st-rail ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+  .st-rail a {
+    color: #e8e8f0;
+    text-decoration: none;
+    display: block;
+    padding: 10px 4px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 0.78rem;
+  }
+  .st-rail a[aria-current="page"] {
+    background: #262b3d;
+    color: #fff;
+    box-shadow: inset 3px 0 0 #8c8cff;
+  }
+  .st-logo {
+    font-family: var(--ulams-studio-serif);
+    font-size: 1.6rem !important;
+    background: #262b3d;
+    width: 44px;
+    height: 44px;
+    display: grid !important;
+    place-items: center;
+    padding: 0 !important;
+  }
+  .st-frame {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .st-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--ulams-studio-line);
+    background: var(--ulams-studio-paper);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+  .st-crumb {
+    margin: 0;
+    font-size: 1.05rem;
+    flex: 1 1 auto;
+  }
+  .st-crumb a {
+    color: var(--ulams-studio-muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .st-crumb-current {
+    font-weight: 600;
+  }
+  .st-status,
+  .st-cost {
+    font-family: var(--ulams-studio-mono);
+    font-size: 0.8rem;
+    background: var(--ulams-studio-sunken);
+    border: 1px solid var(--ulams-studio-line);
+    border-radius: 999px;
+    padding: 4px 12px;
+  }
+  .st-conn:empty {
+    display: none;
+  }
+  .st-conn {
+    font-size: 0.8rem;
+    color: var(--ulams-studio-danger);
+  }
+  @media (max-width: 720px) {
+    .st-app {
+      grid-template-columns: 1fr;
+    }
+    .st-rail {
+      flex-direction: row;
+      padding: 8px;
+    }
+    .st-rail ul {
+      flex-direction: row;
+    }
+  }
+</style>

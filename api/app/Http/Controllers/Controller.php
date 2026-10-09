@@ -12,9 +12,7 @@ class Controller extends UlamsBaseController
     public static function getColumnTable($table)
     {
         $columns = array();
-        $prefix = \DB::getTablePrefix();
-        foreach (\DB::getSchemaBuilder()->getColumnListing($prefix . $table) as $column) {
-            //print_r($column);
+        foreach (\Ulams\Core\Support\SchemaColumns::listing($table) as $column) {
             $columns[$column] = '';
         }
 

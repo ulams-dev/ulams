@@ -269,6 +269,39 @@ class NightSkyExperience extends DemoExperience
                         'make' => fn () => $this->scorm('connect-the-stars.zip', 'constellations'),
                     ],
                     [
+                        'type' => 'liascript', 'title' => 'Phases of the Moon', 'duration' => '8 min',
+                        'introduction' => 'An interactive LiaScript lesson: why the Moon changes shape, with a mini quiz.',
+                        'summary' => 'New Moon, first quarter, full Moon, last quarter: one cycle takes about 29.5 days.',
+                        'make' => fn () => $this->liascript('Phases of the Moon', <<<'MD'
+# Phases of the Moon
+
+The Moon does not glow by itself. We see the part of it that the Sun lights up, and that part
+changes as the Moon travels around the Earth.
+
+## New Moon to full Moon
+
+At **new Moon** the lit side faces away from us, so we see almost nothing. Night by night the lit
+part grows: **first quarter** (half), then **full Moon** (the whole disc).
+
+## And back again
+
+After the full Moon the lit part shrinks: **last quarter**, then new Moon again. One full cycle
+takes about **29.5 days**.
+
+## Mini quiz
+
+When can you see the whole lit disc of the Moon?
+
+- [( )] New Moon
+- [( )] First quarter
+- [(X)] Full Moon
+
+About how many days does one cycle of phases take?
+
+[[29.5]]
+MD),
+                    ],
+                    [
                         'type' => 'cmi5', 'title' => 'Sky safari', 'duration' => '15 min',
                         'introduction' => 'A backyard observation challenge. Go outside with a grown-up and check in what you saw.',
                         'summary' => 'Spot four things to unlock the Star Finder badge.',

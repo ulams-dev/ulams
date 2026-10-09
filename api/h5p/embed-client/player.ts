@@ -12,9 +12,9 @@ import {
     readConfig,
     reportHeight,
     requestJson,
-    showError,
-    swapToken
+    showError
 } from './common';
+import { normaliseToken, RefreshSequence, refreshIntegrations, tokenTransition } from './token';
 
 const config = readConfig();
 const root = document.getElementById('root') as HTMLElement;
@@ -84,8 +84,11 @@ function mount(bridge: ReturnType<typeof connect>): void {
     };
 }
 
-/** Token refreshed: re-fetch the model and swap the AJAX URLs in place. */
+const refreshes = new RefreshSequence();
+
+/** Token refreshed: re-fetch the model and swap the AJAX URLs in place (no reload). */
 async function refreshToken(oldToken: string, newToken: string): Promise<void> {
+    const ticket = refreshes.start();
     const integrations = new Set<any>();
     if ((window as any).H5PIntegration) integrations.add((window as any).H5PIntegration);
     try {
@@ -94,19 +97,16 @@ async function refreshToken(oldToken: string, newToken: string): Promise<void> {
     } catch {
         // ignore
     }
+    let model: any;
     try {
-        const model = await requestJson<any>(playUrl(config.contentId), newToken);
-        for (const integration of integrations) {
-            integration.ajax = { ...integration.ajax, ...model.integration?.ajax };
-            if (model.integration?.ajaxPath) {
-                integration.ajaxPath = model.integration.ajaxPath;
-            }
-        }
+        model = await requestJson<any>(playUrl(config.contentId), newToken);
     } catch {
-        for (const integration of integrations) {
-            swapToken(integration, oldToken, newToken);
-        }
+        model = undefined;
     }
+    if (!refreshes.isLatest(ticket) || token !== newToken) {
+        return;
+    }
+    refreshIntegrations(integrations, model, oldToken, newToken);
 }
 
 function main(): void {
@@ -117,17 +117,20 @@ function main(): void {
                 style = applyStyle(config, message);
                 break;
             case 'ulams-h5p:token': {
-                const next = typeof message.token === 'string' && message.token ? message.token : null;
+                const next = normaliseToken(message.token);
                 const previous = token;
                 token = next;
-                if (!started) {
-                    started = true;
-                    mount(bridge);
-                } else if (Boolean(previous) !== Boolean(next)) {
-                    // anonymous <-> signed in changes what may be saved: reload
-                    mount(bridge);
-                } else if (previous && next && previous !== next) {
-                    void refreshToken(previous, next);
+                switch (tokenTransition(started, previous, next)) {
+                    case 'mount':
+                    case 'remount':
+                        started = true;
+                        mount(bridge);
+                        break;
+                    case 'refresh':
+                        void refreshToken(previous as string, next as string);
+                        break;
+                    default:
+                        break;
                 }
                 break;
             }

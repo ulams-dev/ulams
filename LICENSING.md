@@ -13,6 +13,7 @@ that has no closer licence file. This page is an engineering summary, not legal 
 | `api/packages/*` | MIT (one package: see its `LICENSE`) | Imported from EscolaLMS / Wellms; original copyright notices are kept, ulams contributors are added |
 | `api/packages/h5p` | MIT | Read-only index and HTTP client; contains no H5P code |
 | `api/h5p` | **GPL-3.0-or-later** | Separate program (Lumi `h5p-nodejs-library`, H5P core and editor). See below |
+| `api/adapt-builder` | **GPL-3.0-or-later** | Separate program: builds Adapt course JSON with `adapt_framework` and its plugins (GPL-3.0), reached over HTTP (ADR 0013). The image carries the framework and plugin sources and their versions; rule 3 applies if it is distributed |
 | `api/pdf` | MIT | PDF renderer service (pdfme, MIT); bundled fonts under SIL OFL 1.1, see `api/pdf/fonts/README.md` |
 | `front/` | MIT | `front/package.json` |
 | `front/src/lib/*` | MIT | Imported libraries, see each README; `scorm-player` relicensed MIT by its owner |
@@ -40,6 +41,19 @@ that has no closer licence file. This page is an engineering summary, not legal 
    private, publish the h5p source elsewhere first.
 4. New dependencies are checked for their licence before they are added (see `CLAUDE.md`).
 5. Imported code keeps its original copyright notices.
+
+## AI Course Builder dependencies
+
+| Package | Licence | Where | Notes |
+|---|---|---|---|
+| `anthropic-ai/sdk` | MIT | `api/packages/ai` | Official Claude SDK; only used with `AI_DRIVER=anthropic` |
+| `opis/json-schema` | Apache-2.0 | `api/packages/ai` | JSON Schema validation of model outputs, briefs and blueprints |
+| `smalot/pdfparser` | LGPL-3.0 | `api/packages/course-builder` | Already in the lock file; used unmodified as a library to read PDF text (LGPL permits linking; changes to the library itself would have to be shared) |
+| `@ag-ui/core` | MIT | `front/sdk` | AG-UI event types; its schemas subpath (zod) is only used in tests |
+| `diff` (jsdiff) | BSD-3-Clause | `front/ui` | Word-level diffs in the builder's DiffView; keep its notice in distributed bundles |
+
+DOCX is read by a first-party converter (no PhpWord, which is LGPL-3.0-only; ADR 0026). No A2UI or
+CopilotKit code is bundled: the studio renders its own catalogue.
 
 ## PDF templates and certificates
 

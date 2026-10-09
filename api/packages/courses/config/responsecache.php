@@ -28,7 +28,8 @@ return [
          * to store requests. This can be the name of any store
          * that is configured in your app's cache.php config
          */
-        'store' => env('RESPONSE_CACHE_DRIVER', 'file'),
+        // null: the default cache store (Redis in docker, with the tenant's CACHE_PREFIX)
+        'store' => env('RESPONSE_CACHE_DRIVER'),
 
         /*
          * The default number of seconds responses will be cached
@@ -43,6 +44,10 @@ return [
          *
          * You may use a string or an array here.
          */
+        // Empty: every entry carries only its route tags (catalogue, progress), so clearing one tag
+        // leaves the others (a base tag here would be part of every entry and every clear).
+        // Clear through Ulams\Courses\Support\ResponseCacheTags, never with a bare
+        // ResponseCache::clear(): on Redis that flushes the cache database of every tenant.
         'tag' => env('RESPONSE_CACHE_TAG', ''),
     ],
 

@@ -1,6 +1,6 @@
 # 0013. Adapt Path B: JSON sources in the API, builds in an isolated GPL-3.0 worker
 
-- Status: Proposed
+- Status: Accepted (2026-10-09)
 - Date: 2026-10-09
 
 ## Context and problem statement
@@ -37,9 +37,14 @@ Option 2, off by default (`ADAPT_SOURCE_ENABLED=false`, compose profile `adapt`)
 
 ## Consequences
 
-- The API side, the contract and a fake worker in tests exist; the worker image itself
-  (`adapt_framework` 5.19.x and core plugins, about 500–700 MB) is still to be built, with a GPL
-  source offer like `api/h5p`.
+- The worker is `api/adapt-builder` (GPL-3.0-or-later, Node built-ins only): `adapt_framework`
+  v5.56.2 (released 2026-04-13; the plan named 5.19.x) with the plugins of its
+  `adapt.json` installed by `adapt-cli` 3.4.0 at image build time, versions recorded in the image.
+  Image about 430 MB; the fixture course builds in about 8 s on two CPUs. Compose service
+  `adapt-builder` in the profile `adapt` on an internal network shared with the API only, read-only
+  root, CPU/memory/PID limits; one build at a time, `ADAPT_MAX_QUEUED` waiting, then 503.
+- The real build runs in the nightly conformance workflow (`AdaptBuilderRoundTripTest`, skipped
+  without `ADAPT_BUILDER_E2E_URL`); unit tests use a fake worker (API) and a fake framework (worker).
 - Builds run from the queue, one at a time per source; a failed build keeps the last error on the
   source.
 - Path A works without any of this.

@@ -407,6 +407,57 @@ describe('EnvFileTenantResolver', () => {
         await cached.close();
     });
 
+    it('evicts idle tenants and rebuilds them on the next request', async () => {
+        let now = 0;
+        cfg.tenancy.idleEvictMs = 1000;
+        const builds: string[] = [];
+        const idle = new EnvFileTenantResolver({
+            app: cfg,
+            logger: silent,
+            now: () => now,
+            closeGraceMs: 0,
+            idleSweepMs: 0,
+            build: async (settings) => {
+                builds.push(settings.id);
+                return fakeTenant(settings);
+            }
+        });
+        const coffee = await idle.resolve(host('coffee.localhost'));
+        const platform = await idle.resolve(host('api.localhost'));
+        now = 600;
+        await idle.resolve(host('api.localhost'));
+        now = 1100;
+        expect(idle.evictIdle()).toEqual(['coffee_localhost']);
+        expect(coffee?.close).toHaveBeenCalledTimes(1);
+        expect(platform?.close).not.toHaveBeenCalled();
+        expect(idle.active().map((t) => t.id)).toEqual(['default']);
+
+        const again = await idle.resolve(host('coffee.localhost'));
+        expect(again).not.toBe(coffee);
+        expect(builds).toEqual(['coffee_localhost', 'default', 'coffee_localhost']);
+        await idle.close();
+    });
+
+    it('keeps tenants forever with TENANT_IDLE_EVICT_MS=0 and ignores background iteration', async () => {
+        let now = 0;
+        cfg.tenancy.idleEvictMs = 0;
+        const keep = new EnvFileTenantResolver({ app: cfg, logger: silent, now: () => now, build: async (s) => fakeTenant(s) });
+        await keep.resolve(host('coffee.localhost'));
+        now = 10 * 60 * 60 * 1000;
+        expect(keep.evictIdle()).toEqual([]);
+        expect(keep.active()).toHaveLength(1);
+        await keep.close();
+
+        cfg.tenancy.idleEvictMs = 1000;
+        now = 0;
+        const jobs = new EnvFileTenantResolver({ app: cfg, logger: silent, now: () => now, idleSweepMs: 0, closeGraceMs: 0, build: async (s) => fakeTenant(s) });
+        await jobs.resolve(host('coffee.localhost'));
+        now = 2000;
+        jobs.active(); // background jobs iterate tenants without keeping them alive
+        expect(jobs.evictIdle()).toEqual(['coffee_localhost']);
+        await jobs.close();
+    });
+
     it('gets tenants by id or domain', async () => {
         writeTenant('nightsky');
         expect((await resolver.get('default')).id).toBe('default');
