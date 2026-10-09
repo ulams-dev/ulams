@@ -20,7 +20,7 @@ class MoveToNewSiteJob implements ShouldQueue
 
     public int $tries = 1;
 
-    public int $timeout = 3600;
+    public int $timeout = 1800;
 
     public function __construct(public readonly string $sessionId)
     {
