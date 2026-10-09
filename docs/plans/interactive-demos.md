@@ -747,9 +747,10 @@ demo-content/poland/
 **Built in M5 (2026-10-09).** Shared by the five: `demo-content/shared/ulam-shell.{js,css}` (the step card, Back
 and Next inside the lesson's step range, the bridge wiring with `whenReady`, reduced motion, poster mode and the
 notebook look), copied into each package's `vendor/` by `sync-bridge`, and `tests/e2e/ulam-common.mjs` (the checks
-every package must pass). The package fetches its own manifest, which is the one source of step titles and texts.
+every package must pass). The package fetches its own manifest, which is the one source of step titles and texts, and hands the shell any
+data it loads with `load` so `ready` waits for it.
 The lesson page asks for `chrome: full` when it plays a package inline, so the package shows its step card;
-with `none` (background display) only the interactive shows. Done so far: `spiral` (M5a), `monte-carlo` (M5b), `automaton` (M5c).
+with `none` (background display) only the interactive shows. Done so far: `spiral` (M5a), `monte-carlo` (M5b), `automaton` (M5c), `scottish-book` (M5d, placeholder data).
 
 ```
 demo-content/ulam/

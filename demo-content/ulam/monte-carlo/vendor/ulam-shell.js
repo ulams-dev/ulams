@@ -22,7 +22,9 @@
  *   onPause?: () => void,
  *   onResume?: () => void,
  *   manifestUrl?: string,
+ *   load?: Promise<unknown>,
  * }} options
+ * `load` is the package's own data (fetched at the top of main.js): `ready` and the first step wait for it.
  * @returns {Promise<Shell>}
  */
 export async function startShell(options) {
@@ -45,9 +47,11 @@ export async function startShell(options) {
   let resolveInit = () => {};
   const initReceived = new Promise((resolve) => (resolveInit = resolve));
 
-  const manifestPromise = fetch(options.manifestUrl || "ulams-interactive.json")
-    .then((r) => { if (!r.ok) throw new Error(`manifest ${r.status}`); return r.json(); })
-    .then((m) => {
+  const manifestPromise = Promise.all([
+    fetch(options.manifestUrl || "ulams-interactive.json").then((r) => { if (!r.ok) throw new Error(`manifest ${r.status}`); return r.json(); }),
+    options.load || Promise.resolve(),
+  ])
+    .then(([m]) => {
       shell.steps = m.steps.map((s) => ({ id: s.id, title: s.title[shell.lang] || s.title[m.defaultLocale], text: s.text[shell.lang] || s.text[m.defaultLocale], poster: s.poster }));
       shell.range.hi = shell.steps.length - 1;
     });
