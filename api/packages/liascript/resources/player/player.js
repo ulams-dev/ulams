@@ -4,6 +4,7 @@
  * same-origin iframe and reports through window.API; this page forwards slide position and status
  * to the API with a topic-scoped token. Launch parameters arrive in the URL fragment:
  *   #api=<tenant API>&topic=<topic id>&token=<progress token>&course=<path of the Markdown>&sections=<n>
+ * The admin editor's live preview opens it with #preview=1&course=<draft>: nothing is reported.
  */
 (function () {
   'use strict';
@@ -14,6 +15,7 @@
   var topic = params.get('topic');
   var token = params.get('token');
   var course = params.get('course');
+  var preview = params.get('preview') === '1';
   window.history.replaceState(null, '', window.location.pathname);
 
   function fail(message) {
@@ -21,17 +23,20 @@
     status.hidden = false;
   }
 
-  if (!api || !topic || !token || !course || course.charAt(0) !== '/') {
+  if (!course || course.charAt(0) !== '/' || (!preview && (!api || !topic || !token))) {
     fail('This course could not be started. Close it and open the lesson again.');
     return;
   }
 
-  var endpoint = api.replace(/\/+$/, '') + '/api/liascript/progress/' + encodeURIComponent(topic);
+  var endpoint = preview ? '' : api.replace(/\/+$/, '') + '/api/liascript/progress/' + encodeURIComponent(topic);
   var state = { location: null, status: null, score: null };
   var timer = null;
 
   function send() {
     timer = null;
+    if (preview) {
+      return;
+    }
     fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json', 'X-Ulams-Tracking-Token': token },

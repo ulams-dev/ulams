@@ -9,4 +9,8 @@ return [
     'player_build_path' => env('LIASCRIPT_PLAYER_BUILD_PATH'),
     // lifetime of the content-origin player's progress token, seconds
     'progress_token_ttl' => (int) env('LIASCRIPT_PROGRESS_TOKEN_TTL', 14400),
+    // editor live preview: drafts (preview-<random>.md next to the current version) live this many
+    // seconds; at most preview_keep older drafts per version are kept
+    'preview_ttl' => (int) env('LIASCRIPT_PREVIEW_TTL', 3600),
+    'preview_keep' => (int) env('LIASCRIPT_PREVIEW_KEEP', 4),
 ];

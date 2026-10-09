@@ -9,6 +9,7 @@ use Ulams\Courses\Enum\ProgressStatus;
 use Ulams\Courses\Models\Course;
 use Ulams\Courses\Models\Lesson;
 use Ulams\Courses\Models\Topic;
+use Ulams\LiaScript\Models\LiaScriptDocument;
 use Ulams\LiaScript\Models\LiaScriptTopic;
 use Ulams\LiaScript\Services\LiaScriptPlayer;
 use Ulams\LiaScript\Services\LiaScriptService;
@@ -152,6 +153,88 @@ class LiaScriptPlayerTest extends TestCase
         ])->assertCreated()->assertJsonPath('data.topicable.version', 2);
 
         $this->actingAs($admin, 'api')->deleteJson("/api/admin/liascript/{$this->documentId}")->assertStatus(409);
+    }
+
+    public function testTheEditorPreviewsUnsavedTextWithTheCurrentAssets(): void
+    {
+        $admin = $this->makeAdmin();
+        $draft = self::COURSE . "\n## Draft section\n\nNot saved yet.\n";
+
+        $data = $this->actingAs($admin, 'api')
+            ->postJson("/api/admin/liascript/{$this->documentId}/preview", ['markdown' => $draft])
+            ->assertOk()
+            ->json('data');
+
+        $this->assertSame(4, $data['sections']);
+        $this->assertStringStartsWith('http://coffee.content.localhost/liascript/_player/index.html#', $data['url']);
+        parse_str(parse_url($data['url'], PHP_URL_FRAGMENT), $fragment);
+        $this->assertSame('1', $fragment['preview']);
+        $this->assertArrayNotHasKey('token', $fragment);
+        $this->assertMatchesRegularExpression("#^/liascript/{$this->documentId}/v2/preview-[0-9a-f]{32}\\.md\$#", $fragment['course']);
+
+        $disk = Storage::disk(config('filesystems.default'));
+        $this->assertSame(trim($draft), trim($disk->get(ltrim($fragment['course'], '/'))));
+        // relative asset links of the draft resolve: the current version's assets are next to it
+        $this->assertTrue($disk->exists("liascript/{$this->documentId}/v2/img/x.png"));
+        $this->assertTrue($disk->exists('liascript/_player/index.html'));
+        // nothing was saved
+        $this->assertSame(2, LiaScriptDocument::query()->find($this->documentId)->current_version);
+    }
+
+    public function testOldPreviewsArePruned(): void
+    {
+        $admin = $this->makeAdmin();
+        config(['ulams_liascript.preview_keep' => 2]);
+        $disk = Storage::disk(config('filesystems.default'));
+        $folder = "liascript/{$this->documentId}/v2";
+        $previews = fn () => array_values(array_filter($disk->files($folder), fn ($f) => str_contains($f, '/preview-')));
+
+        for ($i = 0; $i < 5; $i++) {
+            $this->actingAs($admin, 'api')->postJson("/api/admin/liascript/{$this->documentId}/preview", ['markdown' => "# Draft {$i}"])->assertOk();
+        }
+        $this->assertCount(3, $previews());
+
+        config(['ulams_liascript.preview_ttl' => -1]);
+        $this->actingAs($admin, 'api')->postJson("/api/admin/liascript/{$this->documentId}/preview", ['markdown' => '# Last'])->assertOk();
+        $this->assertCount(1, $previews());
+        $this->assertSame('# Last', $disk->get($previews()[0]));
+    }
+
+    public function testThePreviewValidatesTheTextAndNeedsPermissionAndAContentOrigin(): void
+    {
+        $admin = $this->makeAdmin();
+        $url = "/api/admin/liascript/{$this->documentId}/preview";
+
+        $this->postJson($url, ['markdown' => '# x'])->assertUnauthorized();
+        $this->actingAs($this->makeStudent(), 'api')->postJson($url, ['markdown' => '# x'])->assertForbidden();
+        $this->actingAs($admin, 'api')->postJson($url, ['markdown' => '   '])->assertUnprocessable();
+        $this->actingAs($admin, 'api')->postJson($url, ['markdown' => "ba\0d"])->assertUnprocessable();
+        $this->actingAs($admin, 'api')->postJson('/api/admin/liascript/999999999/preview', ['markdown' => '# x'])->assertNotFound();
+
+        config(['ulams_uploads.content_origin' => null, 'scorm.content_origin' => null]);
+        $this->actingAs($admin, 'api')->postJson($url, ['markdown' => '# x'])->assertStatus(503);
+    }
+
+    public function testThePreviewStaysOnTheRequestingTenantsOriginAndDisk(): void
+    {
+        $admin = $this->makeAdmin();
+        $coffeeDisk = Storage::disk(config('filesystems.default'));
+
+        // another tenant: its own content origin and its own bucket
+        config(['ulams_uploads.content_origin' => 'http://oncall.content.localhost', 'ulams_liascript.disk' => 'oncall']);
+        config(['filesystems.disks.oncall' => ['driver' => 'local', 'root' => sys_get_temp_dir() . '/oncall-' . bin2hex(random_bytes(4))]]);
+        $oncallDisk = Storage::fake('oncall');
+        app(LiaScriptService::class)->update(LiaScriptDocument::query()->find($this->documentId), null, "# Oncall\n", null, null, null);
+
+        $url = $this->actingAs($admin, 'api')
+            ->postJson("/api/admin/liascript/{$this->documentId}/preview", ['markdown' => '# Draft'])
+            ->assertOk()
+            ->json('data.url');
+
+        $this->assertStringStartsWith('http://oncall.content.localhost/', $url);
+        parse_str(parse_url($url, PHP_URL_FRAGMENT), $fragment);
+        $this->assertTrue($oncallDisk->exists(ltrim($fragment['course'], '/')));
+        $this->assertFalse($coffeeDisk->exists(ltrim($fragment['course'], '/')));
     }
 
     private function enrolledStudent()

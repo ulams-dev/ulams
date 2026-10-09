@@ -14,6 +14,7 @@ Route::group(['prefix' => 'api/admin/liascript', 'middleware' => ['auth:api'], '
     Route::get('{id}/versions', [LiaScriptController::class, 'versions']);
     Route::post('{id}/versions', [LiaScriptController::class, 'addVersion']);
     Route::post('{id}/versions/{version}/restore', [LiaScriptController::class, 'restore']);
+    Route::post('{id}/preview', [LiaScriptController::class, 'preview'])->middleware('throttle:60,1');
 });
 
 // Learners: play on the content origin; the player reports progress with a topic-scoped token
