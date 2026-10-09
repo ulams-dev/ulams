@@ -651,7 +651,11 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       `login` (token/password/demo), `whoami`, `ulams api`, `schema`, `describe`
 - [x] (new) M2 noun commands generated from OpenAPI + overrides, topic uploads of every type, pagination,
       `--dry-run`, `--wait`, `apply -f`, coverage matrix enforced in CI
-- [ ] (new) M4 course builder commands with AG-UI events as NDJSON; Living Course commands after the Phase 3 merge
+- [x] (new) M4 course builder commands with AG-UI events as NDJSON, `--wait` on run status, builder and Living Course commands as MCP tools (ADR 0084; e2e on a fake-driver tenant)
+- [x] (new) CLI device login against the real server, `ulams tokens`, `logout --revoke`, `ulams login --scopes` (e2e with a Playwright approval)
+- [x] (new) `make dev-reload` rebuilds the class map and per-domain caches; device login endpoints get their own rate limit buckets
+- [x] (new) OpenAPI covers the course builder and Living Course; SDK types and CLI spec regenerated (504 of 547 operations covered, 0 missing)
+- [x] (new) "My tokens" on the web account page (create, list, revoke; axe)
 - [ ] (new) M5 course-as-code: Blueprint v2, Markdown + directives format, sync base and conflict diffs
       (after Phase 3; citations for author blocks pending #78)
 - [ ] (new) M6 CLI release: npm `ulams` (pending #77), bun-compiled binaries (signing pending #76), Docker image
@@ -669,7 +673,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [x] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
       log, `Idempotency-Key`, `X-Request-Id`, `GET /api/meta`; admin "API tokens" page (ADR 0074)
 - [x] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075; pending #74)
-- [ ] (new) S3 platform tenant API with queued provisioning (ADR 0078; pending #79)
+- [x] (new) S3 platform tenant API with queued provisioning, off by default, `ulams tenants …` (ADR 0078, 0085; #79 default "off by default"; ADR acceptance pending)
 - [x] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
 - [ ] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds
 - [ ] `npx create-ulams` / `docker compose up` with seed data
