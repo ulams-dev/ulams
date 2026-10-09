@@ -99,7 +99,9 @@ test.beforeAll(async () => {
   bridgeJs = readFileSync(join(front, "interactive-bridge", "dist", "interactive-bridge.js"), "utf8");
   elementJs = (await esbuild.build({ entryPoints: [join(front, "ui", "src", "elements", "interactive.ts")], bundle: true, format: "esm", platform: "browser", write: false })).outputFiles[0]!.text;
   const component = readFileSync(join(front, "ui", "src", "components", "InteractiveLesson.astro"), "utf8");
-  css = [readFileSync(join(front, "ui", "src", "styles", "base.css"), "utf8"), readFileSync(join(front, "ui", "src", "styles", "themes", "coffee.css"), "utf8"), /<style is:global>([\s\S]*?)<\/style>/.exec(component)![1]].join("\n");
+  // the component's styles first: in a real page the order of the sheets is not the component's to choose, so
+  // the shared button and base rules must not be able to override its state rules
+  css = [/<style is:global>([\s\S]*?)<\/style>/.exec(component)![1], readFileSync(join(front, "ui", "src", "styles", "base.css"), "utf8"), readFileSync(join(front, "ui", "src", "styles", "themes", "coffee.css"), "utf8")].join("\n");
 
   const contentServer = createServer(serveContent);
   const appServer = createServer((req, res) => void serveApp(req, res));
@@ -280,6 +282,9 @@ test.describe("background mode", () => {
     const stage = await root.locator(".u-ix__stage").boundingBox();
     expect(stage!.width).toBeGreaterThanOrEqual(page.viewportSize()!.width - 1);
     expect(stage!.height).toBeGreaterThanOrEqual(page.viewportSize()!.height - 1);
+
+    // the way back only shows while exploring (the shared .u-btn rule must not win over it)
+    await expect(root.getByRole("button", { name: "Back to the lesson" })).toBeHidden();
 
     // goToStep round trip: Next step in the card, the package shows it and answers stepChanged
     await root.getByRole("button", { name: "Next step" }).click();
