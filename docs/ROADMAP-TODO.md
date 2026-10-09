@@ -54,6 +54,11 @@ small commits → tests → summary.
       `ulams mcp`); course-as-code after Phase 3. Plan `docs/plans/cli.md` (draft, waiting for approval),
       ADRs 0072–0079 Proposed; open owner questions #74–#79
 
+- [ ] (2026-10-09) Interactive topic type and three new demo academies (gravity, poland, ulam): plan
+      `docs/plans/interactive-demos.md` (draft, waiting for approval), ADRs 0086–0089 Proposed; owner questions
+      #146 (approve), #147 (gravity repo), #148 (content licences), #149 (poland scope), #150 (on by default),
+      #151 (Ulam fact review)
+
 ## Open decisions
 
 - [ ] Final name (favourite **ULAMS**; alternatives Wellam, Monte, Spiral, Automata, UlamOS)
@@ -320,6 +325,17 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [ ] (new) `yarn install` on Node 24 fails in admin's postinstall (`max setup`: umi's esmi feature loads
       `http-deceiver`, which needs the removed `http_parser` binding); CI and `.nvmrc` use Node 22
 
+### 1.5 Interactive packages (new)
+Plan: `docs/plans/interactive-demos.md` (M1–M2); ADRs 0086, 0087.
+- [ ] (new) Interactive topic type: versioned zip packages with a `ulams-interactive.json` manifest, played in an
+      opaque sandbox on the content origin with a CSP per version, steps and step ranges per topic, text
+      alternatives, background mode (ADR 0086; on by default pending #150)
+- [ ] (new) `ulams-ix` v1 bridge protocol and the MIT `@ulams/interactive-bridge` library (ADR 0087)
+- [ ] (new) `InteractiveLesson` catalogue component with background (full-bleed) mode, reduced-motion posters,
+      WebGL and timeout fallbacks, keyboard flow
+- [ ] (new) Interactive package library and topic editor in the admin; `ulams topics create-interactive` and its MCP
+      tool; docs pages for creators, the bridge and the content origin
+
 ---
 
 ## Phase 2: AI Course Builder
@@ -434,6 +450,8 @@ Learner layouts (feature flag)
 - [ ] AI-composed declarative lesson layouts from approved components, stored in blueprint
       (partial: the approved components and their manifest are done (L2-20); the Layout topic type
       and generation are L2-21)
+- [ ] (new) Layout topic type, rendering only (ADR 0052; `docs/plans/interactive-demos.md` M6): catalogue documents
+      as LMS topics so flip cards, timelines and practice activities can be course items; generation stays in L2-21
 
 Pedagogical guardrails
 - [ ] Mandatory scaffolding: intro → toolbox → graded challenges → tiered hints →
@@ -565,6 +583,15 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
       account area; webinars/events/consultations pages (partial: implemented and tested, uncommitted;
       see `docs/plans/phase-5-reference-frontend.md`, batch 2)
+- [ ] (new) Three new free demo academies, `gravity` (Gravity Lab, 3D simulation), `poland` (Poland, Measured /
+      Polska w liczbach, map in the background, EN and PL) and `ulam` (The Scottish Book: Stanisław Ulam and the Lwów
+      School, five MIT interactives), each with a preset, landing, certificate, demo users and the hourly reset
+      (ADR 0089; `docs/plans/interactive-demos.md` M3–M9)
+- [ ] (new) Six demos on the platform landing with one-click learner and admin login; `make demo-seed-tenants`
+      seeds all six; README and docs site updated (M10)
+- [ ] (new) `demo-content/`: separately licensed content packages (gravity GPL-3.0 from `qunabu/Gravity` by
+      checksum, never committed; poland and ulam under the owner's chosen licence, pending #148) with a boundary lint
+      (ADR 0088)
 
 ---
 
