@@ -24,7 +24,7 @@ Every tenant gets four host names, built from patterns in the API configuration
 | `TENANCY_API_HOST` | `{slug}.localhost` | `{slug}.api.lms.example.com` |
 | `TENANCY_FRONT_HOST` | `{slug}.app.localhost` | `{slug}.app.lms.example.com` |
 | `TENANCY_ADMIN_HOST` | `{slug}.admin.localhost` | `{slug}.admin.lms.example.com` |
-| `TENANCY_CONTENT_HOST` | `{slug}.content.localhost` | `{slug}.example-content.net` |
+| `TENANCY_CONTENT_HOST` | `{slug}.content.localhost` | `{slug}.example-content.net`, or same-site `{slug}.content.lms.example.com` |
 | `TENANCY_PLATFORM_HOSTS` | `api.localhost,localhost,127.0.0.1,caddy,api` | `api.lms.example.com,caddy,api,localhost,127.0.0.1` |
 
 The patterns are applied when a tenant is created or synced; they end up in its env file as
@@ -47,8 +47,7 @@ which sets those headers itself.
 ## DNS records
 
 See [Requirements](/operators/requirements/#dns). In short: explicit wildcard records for
-`*.api`, `*.app` and `*.admin` under the application domain, plus a wildcard on the separate
-content domain.
+`*.api`, `*.app` and `*.admin` under the application domain, plus a wildcard on the content domain (separate, or under the application domain in the same-site mode).
 
 ## Certificates
 

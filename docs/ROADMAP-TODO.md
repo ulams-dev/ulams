@@ -20,6 +20,8 @@ small commits → tests → summary.
 - [x] (2026-10-09) Phase 1 defaults confirmed: students get `scorm_track-update`; SVG served as attachment
       with CSP (no sanitiser); LTI Instructor → tutor, never admin, no e-mail account linking; LiaScript player
       fetched at image build time; production content origin on a separate registrable domain
+- [x] (2026-10-09) Production content origin is a same-site subdomain (`{slug}.content.ulams.app`), not a
+      separate domain (supersedes the earlier default); mitigations shipped, ADR 0014 amended
 - [x] (2026-10-09) GHCR images are public; the upstream EscolaLMS security reports stay as public issues
 - [x] (2026-10-09) Replace the illustrative incident log on the On-Call landing with real course content
 - [x] (2026-10-09) Phase 1 and Phase 2 plans approved; ADRs 0008 (reference frontend: Astro SSR, plain TS SDK,
@@ -248,7 +250,10 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`.
       `PermissionsSeeder` on existing tenants). SCORM completion now completes the SCORM topics using the SCO
 - [ ] (new) Production: serve content origins from a separate registrable domain (not same-site with the
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
-      `api/docs/content-origin.md`; deployment pending)
+      `api/docs/content-origin.md`; deployment pending). Note 2026-10-09: the owner chose the same-site
+      `*.content.ulams.app` instead; the separate domain stays supported (ADR 0014, amended)
+- [x] (new) Same-site content subdomain hardening: `__Host-` cookies, exact-Origin checks on front and API,
+      sandboxed player frames, COOP/CORP headers, both modes documented
 - [ ] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector
 - [x] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (env-file
       resolver; per-tenant `H5P_INTERNAL_TOKEN`; library administration limited to the platform; production
