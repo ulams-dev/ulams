@@ -130,6 +130,29 @@ export async function scormLaunch(tenant: Tenant, token: string, uuid: string): 
 }
 
 /**
+ * Starts a LiaScript topic on the tenant content origin. Returns the player URL and the number of
+ * sections, or the API's explanation when it cannot be played (no content origin or player build).
+ */
+export async function liascriptLaunch(
+  tenant: Tenant,
+  token: string,
+  topicId: number
+): Promise<{ url: string; sections?: number } | { error: string }> {
+  try {
+    const response = await fetch(`${tenant.apiUrl}/api/liascript/launches/${topicId}`, {
+      method: "POST",
+      headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
+      signal: AbortSignal.timeout(8000),
+    });
+    const body = (await response.json().catch(() => null)) as { data?: { url?: string; sections?: number }; message?: string } | null;
+    if (response.ok && typeof body?.data?.url === "string") return { url: body.data.url, sections: body.data.sections };
+    return { error: body?.message ?? "This course cannot be opened right now." };
+  } catch {
+    return { error: "This course cannot be opened right now." };
+  }
+}
+
+/**
  * Whether a SCORM package's entry file can be loaded. The API serves packages from
  * /storage/scorm/…, which 404s for tenants whose public storage is not linked; then the
  * player shows an explanation instead of a frame with a 404 page inside.

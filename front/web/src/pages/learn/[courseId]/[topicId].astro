@@ -10,7 +10,7 @@ import Prose from "@ulams/ui/components/Prose.astro";
 import { formatLabel, formatMinutes } from "@ulams/ui/format";
 import { completionPercent, flattenTopics, topicNeighbours, type TopicProgress } from "@ulams/sdk";
 import Base from "../../../layouts/Base.astro";
-import { apiFor, getProgram, getSettings, scormAvailable, scormLaunch } from "../../../lib/data.ts";
+import { apiFor, getProgram, getSettings, liascriptLaunch, scormAvailable, scormLaunch } from "../../../lib/data.ts";
 import { completionMode, formatOf, topicDoc, topicMinutes } from "../../../lib/page-docs.ts";
 import { themeFor } from "../../../lib/theme.ts";
 import { splitLessonTitle, topicHref } from "../../../lib/view-model.ts";
@@ -62,7 +62,9 @@ const scormUuid = (topic.topicable as { uuid?: string } | undefined)?.uuid;
 // SCORM: the player on the tenant content origin (tracks through a SCO-scoped token), else the legacy API player.
 const contentOriginSrc = scormUuid && access ? await scormLaunch(tenant, token, scormUuid) : null;
 const packageAvailable = scormUuid && !contentOriginSrc ? await scormAvailable(tenant, scormUuid) : true;
-const doc = topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc });
+// LiaScript: player on the content origin; it reports progress and completes the topic itself.
+const liascript = topic.topicable_type.endsWith("\\LiaScriptTopic") && access ? await liascriptLaunch(tenant, token, topic.id) : null;
+const doc = topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, liascript });
 const format = formatOf(topic);
 const minutes = topicMinutes(topic);
 const lessonNoun = { coffee: "Chapter", oncall: "Module", nightsky: "Mission" }[theme];

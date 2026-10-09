@@ -99,13 +99,15 @@ export interface TopicDocInput {
   packageAvailable?: boolean;
   /** For SCORM topics: player on the tenant content origin (see scormLaunch), preferred when set. */
   contentOriginSrc?: string | null;
+  /** For LiaScript topics: the launch result (see liascriptLaunch). */
+  liascript?: { url: string; sections?: number } | { error: string } | null;
 }
 
 const str = (v: unknown): string | undefined => (typeof v === "string" && v.trim() !== "" ? v : undefined);
 const num = (v: unknown): number | undefined => (typeof v === "number" && Number.isFinite(v) ? v : typeof v === "string" && v !== "" && !Number.isNaN(Number(v)) ? Number(v) : undefined);
 
 /** Body of the lesson player for one topic. */
-export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null }: TopicDocInput): UiNode {
+export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, liascript = null }: TopicDocInput): UiNode {
   const kind = topicKind(topic.topicable_type);
   const t = (topic.topicable ?? {}) as Record<string, unknown>;
   const children: UiNode[] = [];
@@ -197,6 +199,17 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
       if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
       break;
     }
+    case "liascript":
+      children.push(
+        liascript && "url" in liascript
+          ? { component: "LiaScriptLesson", props: { src: liascript.url, title: topic.title, ...(liascript.sections ? { sections: liascript.sections } : {}) } }
+          : {
+              component: "Callout",
+              props: { tone: "warning", title: topic.title, text: liascript && "error" in liascript ? liascript.error : "This course opens once you are enrolled." },
+            }
+      );
+      if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
+      break;
     case "quiz":
       children.push({
         component: "QuizRunner",
@@ -253,6 +266,7 @@ export function completionMode(topic: Topic): "view" | "manual" | "media" | "h5p
     case "quiz":
       return "quiz";
     case "scorm":
+    case "liascript":
     case "cmi5":
     case "project":
       return "manual";

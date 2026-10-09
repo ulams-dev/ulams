@@ -82,6 +82,23 @@ describe("lesson documents", () => {
     expect(legacy.children?.[0]).toMatchObject({ component: "PackageFrame", props: { src: "http://coffee.localhost/api/scorm/play/abc" } });
   });
 
+  it("plays LiaScript from the content origin, or explains why it cannot", () => {
+    const topic = {
+      ...flattenTopics(COFFEE_PROGRAM)[0]!,
+      topicable_type: "Ulams\\LiaScript\\Models\\LiaScriptTopic",
+      topicable: { id: 1, value: 3 },
+    };
+    const url = "http://coffee.content.localhost/liascript/_player/index.html#topic=1&token=t";
+    const doc = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: true, nextHref: "/", liascript: { url, sections: 4 } });
+    expect(validateDocument(doc)).toEqual([]);
+    expect(doc.children?.[0]).toMatchObject({ component: "LiaScriptLesson", props: { src: url, sections: 4 } });
+    expect(completionMode(topic)).toBe("manual");
+
+    const unavailable = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: true, nextHref: "/", liascript: { error: "No player" } });
+    expect(validateDocument(unavailable)).toEqual([]);
+    expect(unavailable.children?.[0]).toMatchObject({ component: "Callout", props: { text: "No player" } });
+  });
+
   it("shows a locked card for topics without content", () => {
     const topic = { ...flattenTopics(COFFEE_PROGRAM)[3]!, topicable: undefined };
     const doc = topicDoc({ tenant, theme: "coffee", course: COFFEE_PROGRAM, lesson: undefined, topic, access: false, nextHref: "/" });
