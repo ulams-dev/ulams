@@ -23,7 +23,9 @@ use Ulams\Courses\Repositories\TopicResourceRepository;
 use Ulams\Courses\Services\Contracts\CourseServiceContract;
 use Ulams\Courses\Services\Contracts\DeadlineCalculatorServiceContract;
 use Ulams\Courses\Services\Contracts\LessonServiceContract;
+use Ulams\Courses\Services\Contracts\CourseCompletionGuardContract;
 use Ulams\Courses\Services\Contracts\ProgressServiceContract;
+use Ulams\Courses\Services\AlwaysMayUnfinish;
 use Ulams\Courses\Services\Contracts\TopicServiceContract;
 use Ulams\Courses\Services\CourseService;
 use Ulams\Courses\Services\DeadlineCalculatorService;
@@ -47,6 +49,7 @@ class UlamsCourseServiceProvider extends ServiceProvider
         CourseRepositoryContract::class => CourseRepository::class,
         CourseServiceContract::class => CourseService::class,
         ProgressServiceContract::class => ProgressService::class,
+        CourseCompletionGuardContract::class => AlwaysMayUnfinish::class,
         TopicRepositoryContract::class => TopicRepository::class,
         TopicResourceRepositoryContract::class => TopicResourceRepository::class,
         LessonRepositoryContract::class => LessonRepository::class,
