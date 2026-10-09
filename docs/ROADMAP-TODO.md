@@ -342,18 +342,34 @@ Quality
 
 ## Phase 5: UX and reference frontend
 
-- [ ] Audit Wellms frontends; evolve or build new reference app (justify; SSR/SEO)
-- [ ] Themeable from builder presets; per-tenant theme
+- [ ] Audit Wellms frontends; evolve or build new reference app (justify; SSR/SEO) (partial: new Astro
+      SSR app `front/web`, ADR 0008 Proposed; landing, course, lesson player, quiz, finish for the three
+      demo tenants; plan and numbers in `docs/plans/phase-5-reference-frontend.md`; uncommitted)
+- [ ] Themeable from builder presets; per-tenant theme (partial: `--ulams-*` theme files per demo
+      preset in `front/ui/src/styles/themes`, chosen from `theme.theme`; accent from `theme.accent`
+      applied server-side with AA contrast; builder presets not connected yet)
 - [ ] PWA offline mode with tested sync/conflict rules
 - [ ] Single frontend for LMS **and** Sylius commerce (catalogue, checkout, account)
-- [ ] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge)
-- [ ] TypeScript SDK from OpenAPI; widget docs with live examples
+- [ ] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge) (partial:
+      `<ulams-quiz>`, `<ulams-h5p>`, `<ulams-video>`, `<ulams-progress>` in `front/ui/src/elements`)
+- [ ] TypeScript SDK from OpenAPI; widget docs with live examples (partial: `@ulams/sdk` in `front/sdk`,
+      fetch-only; request paths typed from the generated spec, response types hand-written because the
+      spec has no response schemas; no widget docs yet)
 - [ ] Learner UX: "continue", "what's next", progress and time estimates, short lessons
 - [ ] Semantic search with cited AI answers
-- [ ] **WCAG 2.2 AA** + European Accessibility Act; axe in CI
+- [ ] **WCAG 2.2 AA** + European Accessibility Act; axe in CI (partial: reference frontend has landmarks,
+      skip link, focus-visible, reduced motion, 360 px layout and a theme contrast test; axe scan of
+      every page type in the Playwright e2e passes, not wired into CI yet)
 - [ ] Admin UX: templates, guided empty states, sample course, bulk operations, saved filters
 - [ ] AI transparency everywhere (diffs, citations, reasons one click away)
 - [ ] Metrics: time to first course, time to first enrolment, admin task times
+- [ ] (new) Reference frontend for the demos: UI catalogue `@ulams/ui` (JSON-schema registry, renderer
+      with fallbacks, landing pages as A2UI-shaped documents), BFF with httpOnly session, demo auto-login,
+      SWR cache of public API data (partial: implemented and tested, uncommitted; needs the Caddy switch
+      of `*.app.localhost` to :4321 and the API fixes listed in the plan)
+- [ ] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
+      account area; webinars/events/consultations pages (partial: implemented and tested, uncommitted;
+      see `docs/plans/phase-5-reference-frontend.md`, batch 2)
 
 ---
 
