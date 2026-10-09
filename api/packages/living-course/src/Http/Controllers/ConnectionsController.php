@@ -6,6 +6,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Validation\Rule;
+use Ulams\LivingCourse\Connectors\ConnectorException;
+use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
 use Ulams\LivingCourse\Http\Controllers\Concerns\ResolvesLivingCourse;
 use Ulams\LivingCourse\Models\Connection;
 use Ulams\LivingCourse\Services\AuditLog;
@@ -26,7 +28,7 @@ class ConnectionsController extends Controller
 {
     use ResolvesLivingCourse;
 
-    public function __construct(private readonly AuditLog $audit)
+    public function __construct(private readonly AuditLog $audit, private readonly SourceConnectorRegistry $connectors)
     {
     }
 
@@ -40,11 +42,32 @@ class ConnectionsController extends Controller
             'settings' => ['sometimes', 'array'],
             'settings.show_pending_to_learners' => ['sometimes', 'boolean'],
             'settings.notify_learners_of_updates' => ['sometimes', 'boolean'],
+            'config' => ['sometimes', 'array'],
+            'secrets' => ['sometimes', 'array'],
         ]);
         if (isset($data['schedule']) && $c->connector === 'upload' && $data['schedule'] !== 'manual') {
             return self::fail('An uploaded source has nothing to check on a schedule; new versions appear when you upload them.', 422);
         }
         $changes = [];
+        if (isset($data['config']) || isset($data['secrets'])) {
+            if ($c->connector === 'upload' || !$this->connectors->has($c->connector)) {
+                return self::fail('This source has no connection settings to change.', 422);
+            }
+            $connector = $this->connectors->get($c->connector);
+            $config = $data['config'] ?? (array) $c->config;
+            $secrets = array_merge((array) $c->secrets, array_intersect_key((array) ($data['secrets'] ?? []), array_flip($connector->secretFields())));
+            try {
+                $connector->validate($config, $secrets);
+            } catch (ConnectorException $e) {
+                return self::fail($e->getMessage(), 422);
+            }
+            $c->config = $config;
+            $c->secrets = $secrets;
+            // names only: a secret value is never written to the audit trail
+            $changes['config'] = isset($data['config']) ? array_keys($data['config']) : null;
+            $changes['secrets'] = array_keys(array_intersect_key((array) ($data['secrets'] ?? []), array_flip($connector->secretFields())));
+            $changes = array_filter($changes, fn ($v) => $v !== null && $v !== []);
+        }
         if (isset($data['schedule'])) {
             $changes['schedule'] = $data['schedule'];
             $c->schedule = $data['schedule'];

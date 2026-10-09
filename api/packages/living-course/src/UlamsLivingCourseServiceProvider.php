@@ -3,6 +3,7 @@
 namespace Ulams\LivingCourse;
 
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
@@ -34,6 +35,7 @@ use Ulams\LivingCourse\Connectors\GitConnector;
 use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
 use Ulams\LivingCourse\Connectors\UploadConnector;
 use Ulams\LivingCourse\Console\BackfillCommand;
+use Ulams\LivingCourse\Console\PollCommand;
 use Ulams\LivingCourse\Fake\UpdateResponder;
 use Ulams\LivingCourse\Models\Proposal;
 use Ulams\LivingCourse\Models\ProposalItem;
@@ -87,7 +89,7 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         SessionState::extendSummary('living-course', fn (Session $s) => ['freshness' => $this->app->make(StalenessService::class)->summary($s)]);
 
         if ($this->app->runningInConsole()) {
-            $this->commands([BackfillCommand::class]);
+            $this->commands([BackfillCommand::class, PollCommand::class]);
         }
 
         Event::listen(ProposalApplied::class, fn (ProposalApplied $e) => ProgressRulesJob::dispatchFor($e->proposal->id));
@@ -99,6 +101,9 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
                 ->whereIn('proposal_id', Proposal::query()->where('session_id', $e->session->id)->whereIn('status', Proposal::OPEN)->select('id'))
                 ->whereIn('kind', ['update', 'no_change', 'remove'])->update(['status' => 'stale']);
         });
+
+        // per tenant: `schedule:run` runs for the platform and for every tenant domain (docker/conf/supervisor)
+        $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command('living-course:poll')->everyFifteenMinutes()->withoutOverlapping());
 
         // revision 1 of every source of a builder session
         Event::listen(SourceIngested::class, fn (SourceIngested $e) => $this->app->make(RevisionService::class)->ensureInitial($e->source));
