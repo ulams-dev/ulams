@@ -77,7 +77,7 @@ so the API rejects new users until that setting is filled in on the **Package Au
 
 ## Editing a user
 
-The edit screen has three tabs; the tab is part of the URL (`/users/:user/:tab`).
+The edit screen has two tabs; the tab is part of the URL (`/users/:user/:tab`).
 
 <Screenshot name="admin-users-user-tab" alt="The edit user screen with its tabs" />
 
@@ -104,13 +104,6 @@ Setting **Active** off blocks the account and dispatches `AccountBlocked`; integ
 A category tree with checkboxes. The selection is stored as the user's interests
 (`PUT /api/admin/users/{id}/interests`). Frontends can show it, for example as a tutor's field
 of expertise. Categories are managed in [Categories and tags](/admin/categories-and-tags/).
-
-### User logs (`logs`)
-
-A table of the API requests recorded for this user (date, method, path), read from
-`/api/admin/tracks/routes`. That endpoint belongs to the `tracker` package, which is not in
-`api/packages`, so the tab stays empty. The same applies to Analytics → Logs; see
-[Reports and analytics](/admin/reports-and-analytics/).
 
 ## Import users from CSV or Excel
 

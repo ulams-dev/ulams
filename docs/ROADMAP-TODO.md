@@ -139,7 +139,7 @@ open Phase 0, 1 and 2 item as work packages L0-01â€¦L2-24; owner questions #41â€
 - [x] (new) Authenticate the Jitsi recording webhook and restrict the downloaded URL (SSRF)
 - [x] (new) Verify JWT signatures in the LRS guard
 - [x] (new) Fix the ungrouped `orWhere` in `CourseAccessService::getUserCourseIds` and similar queries
-- [ ] (new) Remove the tracker Logs screen in admin and other tracker leftovers
+- [x] (new) Remove the tracker Logs screen in admin and other tracker leftovers
 - [x] (new) Fix the tenant video processing queue (jobs dispatched to a queue no tenant worker consumes)
 - [ ] (new) `Relation::enforceMorphMap` for topic types so class renames never orphan data
 - [x] (new) ADR for the tenancy package (docs/decisions/0007)
