@@ -74,6 +74,46 @@
     {
       "key": "pricing",
       "label": "Pricing model"
+    },
+    {
+      "key": "data_residency",
+      "label": "Data residency",
+      "help": "Choose the region where data is stored, or self-host",
+      "groups": [
+        "enterprise"
+      ]
+    },
+    {
+      "key": "sso",
+      "label": "SSO (SAML / OIDC)",
+      "help": "Single sign-on with the company identity provider",
+      "groups": [
+        "enterprise"
+      ]
+    },
+    {
+      "key": "scim",
+      "label": "SCIM provisioning",
+      "help": "Users and groups provisioned from the identity provider",
+      "groups": [
+        "enterprise"
+      ]
+    },
+    {
+      "key": "authoring_tool",
+      "label": "Built-in authoring tool",
+      "help": "Build courses without a separate authoring product",
+      "groups": [
+        "enterprise"
+      ]
+    },
+    {
+      "key": "content_library",
+      "label": "Content library / marketplace",
+      "help": "Ready-made courses or third-party content to buy or include",
+      "groups": [
+        "enterprise"
+      ]
     }
   ],
   "systems": [
@@ -108,15 +148,15 @@
           "checkedAt": "2026-10-09"
         },
         "ai_generation": {
-          "value": "Coming",
-          "note": "Course Builder: interview, objectives, outline from your sources",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "value": "Yes",
+          "note": "Course Builder: upload sources, interview, outline, lessons and quizzes, applied after author approval",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/course-builder/README.md",
           "checkedAt": "2026-10-09"
         },
         "ai_citations": {
-          "value": "Coming",
-          "note": "Every generated element linked to its source fragment",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "value": "Yes",
+          "note": "Generated elements cite source fragments; every AI change is a reviewable diff",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/decisions/0028-generation-stages-and-grounding.md",
           "checkedAt": "2026-10-09"
         },
         "source_sync": {
@@ -162,9 +202,9 @@
           "checkedAt": "2026-10-09"
         },
         "generative_ui": {
-          "value": "Coming",
-          "note": "Schema-validated UI catalogue built; AI-composed interfaces coming",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/decisions/0008-reference-frontend.md",
+          "value": "Partial",
+          "note": "Studio screens stream A2UI surfaces from the catalogue; learner-facing generative layouts coming",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/decisions/0023-a2ui-surfaces-as-ag-ui-activity-snapshots.md",
           "checkedAt": "2026-10-09"
         },
         "pricing": {
@@ -172,8 +212,42 @@
           "note": "Open core; paid cloud and enterprise features coming",
           "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
           "checkedAt": "2026-10-09"
+        },
+        "data_residency": {
+          "value": "Yes",
+          "note": "Self-hosted on your servers or cloud region; a database per tenant",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/README.md",
+          "checkedAt": "2026-10-09"
+        },
+        "sso": {
+          "value": "Partial",
+          "note": "Google and Facebook sign-in built; SAML 2.0 and OIDC per tenant are roadmap",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/auth/src/Enums/SocialiteProvidersEnum.php",
+          "checkedAt": "2026-10-09"
+        },
+        "scim": {
+          "value": "Coming",
+          "note": "SCIM 2.0 is a Phase 6 roadmap item",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "checkedAt": "2026-10-09"
+        },
+        "authoring_tool": {
+          "value": "Yes",
+          "note": "Admin course editor: rich text, H5P, LiaScript, quizzes, SCORM",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/front/docs-site/src/content/docs/creators/create-a-course.mdx",
+          "checkedAt": "2026-10-09"
+        },
+        "content_library": {
+          "value": "No",
+          "note": "No bundled content library; plugin marketplace is roadmap",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "checkedAt": "2026-10-09"
         }
-      }
+      },
+      "groups": [
+        "community",
+        "enterprise"
+      ]
     },
     {
       "key": "moodle",
@@ -267,7 +341,10 @@
           "checkedAt": "2026-10-09",
           "note": "MoodleCloud annual plans and Moodle Partner hosting"
         }
-      }
+      },
+      "groups": [
+        "community"
+      ]
     },
     {
       "key": "canvas",
@@ -361,7 +438,10 @@
           "checkedAt": "2026-10-09",
           "note": "No public price list; free Canvas Lite for individual educators"
         }
-      }
+      },
+      "groups": [
+        "community"
+      ]
     },
     {
       "key": "openedx",
@@ -455,7 +535,10 @@
           "checkedAt": "2026-10-09",
           "note": "No licence fees; hosting via your team or third-party providers"
         }
-      }
+      },
+      "groups": [
+        "community"
+      ]
     },
     {
       "key": "talentlms",
@@ -549,7 +632,10 @@
           "checkedAt": "2026-10-09",
           "note": "Core, Grow, Pro and Enterprise plans"
         }
-      }
+      },
+      "groups": [
+        "community"
+      ]
     },
     {
       "key": "thinkific",
@@ -642,7 +728,10 @@
           "checkedAt": "2026-10-09",
           "note": "Published Basic, Start and Grow plans; free trial"
         }
-      }
+      },
+      "groups": [
+        "community"
+      ]
     },
     {
       "key": "learndash",
@@ -736,7 +825,802 @@
           "checkedAt": "2026-10-09",
           "note": "Essentials, Pro and Elite tiers; hosted Cloud plan separate"
         }
+      },
+      "groups": [
+        "community"
+      ]
+    },
+    {
+      "key": "articulate",
+      "name": "Articulate 360",
+      "note": "authoring suite",
+      "groups": [
+        "enterprise"
+      ],
+      "cells": {
+        "self_hosting": {
+          "value": "Not documented",
+          "note": "Terms cover hosted cloud services and desktop apps; no on-premises option found. Authoring+distribution suite",
+          "source": "https://www.articulate.com/360-terms-of-service/",
+          "checkedAt": "2026-10-09"
+        },
+        "licence": {
+          "value": "Proprietary",
+          "note": "Subscription right to use cloud services; revocable licence for desktop apps",
+          "source": "https://www.articulate.com/360-terms-of-service/",
+          "checkedAt": "2026-10-09"
+        },
+        "multi_tenant": {
+          "value": "Not documented",
+          "note": "Reach offers custom domain and branding; separate portals per audience not found",
+          "source": "https://www.articulate.com/360/reach/",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_api": {
+          "value": "Partial",
+          "note": "Reach 360 has an API (courses, users, enrollments, reports, webhooks); Rise and Storyline have none found",
+          "source": "https://access.articulate.com/support/article/Reach-360-API-Endpoints-Reference-Guide",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_generation": {
+          "value": "Yes",
+          "note": "AI Assistant in Rise and Storyline drafts outlines and lessons from uploaded source material or prompts",
+          "source": "https://www.articulate.com/blog/ai-assistant-is-here/",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_citations": {
+          "value": "Not documented",
+          "note": "Output is editable by the author; source citations and diff review not found in pages checked",
+          "source": "https://www.articulate.com/blog/ai-assistant-is-here/",
+          "checkedAt": "2026-10-09"
+        },
+        "source_sync": {
+          "value": "Not documented",
+          "note": "No update-from-source feature found in the Rise feature pages checked",
+          "source": "https://www.articulate.com/360/rise/all/",
+          "checkedAt": "2026-10-09"
+        },
+        "adaptive_paths": {
+          "value": "Partial",
+          "note": "Author-built branching: Storyline variables, triggers and branching; Rise via button-based branching",
+          "source": "https://www.articulate.com/360/storyline/",
+          "checkedAt": "2026-10-09"
+        },
+        "h5p": {
+          "value": "Not documented",
+          "note": "Not listed in Rise 360 features; H5P native support not found in official pages checked",
+          "source": "https://www.articulate.com/360/rise/all/",
+          "checkedAt": "2026-10-09"
+        },
+        "scorm": {
+          "value": "Yes",
+          "note": "Courses export as SCORM (also AICC) for any LMS; Reach hosts them. Export, not import of external packages",
+          "source": "https://www.articulate.com/features/flexible-publishing/",
+          "checkedAt": "2026-10-09"
+        },
+        "cmi5_xapi": {
+          "value": "Yes",
+          "note": "Both cmi5 and xAPI export are documented for Articulate 360 courses",
+          "source": "https://www.articulate.com/features/flexible-publishing/",
+          "checkedAt": "2026-10-09"
+        },
+        "lti13": {
+          "value": "Not documented",
+          "note": "LTI is not listed among publishing formats (SCORM, AICC, cmi5, xAPI)",
+          "source": "https://www.articulate.com/features/flexible-publishing/",
+          "checkedAt": "2026-10-09"
+        },
+        "commerce": {
+          "value": "Not documented",
+          "note": "Reach page lists sharing and tracking; no payments or course sales found",
+          "source": "https://www.articulate.com/360/reach/",
+          "checkedAt": "2026-10-09"
+        },
+        "generative_ui": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://www.articulate.com/blog/ai-assistant-is-here/",
+          "checkedAt": "2026-10-09"
+        },
+        "pricing": {
+          "value": "Per-seat subscription; Reach by learners",
+          "note": "Reach 360 Pro from $3,600/yr for 1,200 active learners",
+          "source": "https://www.articulate.com/360/pricing/",
+          "checkedAt": "2026-10-09"
+        },
+        "sso": {
+          "value": "Yes",
+          "note": "SAML 2.0 for Teams sign-in; Reach 360 learner SSO; OIDC not documented",
+          "source": "https://access.articulate.com/support/article/Articulate-360-Teams-Single-Sign-On",
+          "checkedAt": "2026-10-09"
+        },
+        "scim": {
+          "value": "No",
+          "note": "Support article states Articulate 360 does not support SCIM provisioning and deprovisioning",
+          "source": "https://access.articulate.com/support/article/Articulate-360-Teams-Single-Sign-On",
+          "checkedAt": "2026-10-09"
+        },
+        "authoring_tool": {
+          "value": "Yes",
+          "note": "Rise 360 (web) and Storyline 360 (desktop) are the authoring tools; Reach is the distribution layer",
+          "source": "https://www.articulate.com/360/pricing/",
+          "checkedAt": "2026-10-09"
+        },
+        "content_library": {
+          "value": "Yes",
+          "note": "Content Library 360 assets and templates included with subscription; no complete prebuilt courses stated",
+          "source": "https://www.articulate.com/360/content-library/",
+          "checkedAt": "2026-10-09"
+        },
+        "data_residency": {
+          "value": "Yes",
+          "note": "US or EU hosting location for subscriptions started after 2025-02-21; some processing may occur elsewhere",
+          "source": "https://www.articulate.com/trust/regional-data-hosting/",
+          "checkedAt": "2026-10-09"
+        }
       }
+    },
+    {
+      "key": "docebo",
+      "name": "Docebo",
+      "note": "enterprise LMS",
+      "groups": [
+        "enterprise"
+      ],
+      "cells": {
+        "self_hosting": {
+          "value": "No",
+          "note": "MSA grants remote access to software located on Docebo's server; no on-premises option",
+          "source": "https://tos.docebo.com/Docebo_MSA.pdf",
+          "checkedAt": "2026-10-09"
+        },
+        "licence": {
+          "value": "Proprietary",
+          "note": "Proprietary SaaS subscription under the Master Services Agreement",
+          "source": "https://tos.docebo.com/Docebo_MSA.pdf",
+          "checkedAt": "2026-10-09"
+        },
+        "multi_tenant": {
+          "value": "Yes",
+          "note": "Extended Enterprise: separate client domains with own branding, SSO and catalogs",
+          "source": "https://help.docebo.com/hc/en-us/articles/360020124899-Managing-the-Extended-enterprise-app",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_api": {
+          "value": "Yes",
+          "note": "Public REST API (JSON, bearer token) with reference in the in-platform API browser",
+          "source": "https://developer.docebo.com/docs/api-general-information",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_generation": {
+          "value": "Partial",
+          "note": "Creator generates lessons from uploaded PDF/DOCX; may not be on all plans (Creator Pack)",
+          "source": "https://help.docebo.com/hc/en-us/articles/22017806044946-Creating-and-managing-Creator-lessons",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_citations": {
+          "value": "Not documented",
+          "note": "No source citations or diff-style approval of AI lessons found; editor offers draft review/edit",
+          "source": "https://help.docebo.com/hc/en-us/articles/26032328516114-Editing-lessons-with-the-Creator-tool",
+          "checkedAt": "2026-10-09"
+        },
+        "source_sync": {
+          "value": "Not documented",
+          "note": "Knowledge connectors sync source systems for AI search; no course auto-update documented",
+          "source": "https://help.docebo.com/hc/en-us/articles/39155940536082-Knowledge-connectors",
+          "checkedAt": "2026-10-09"
+        },
+        "adaptive_paths": {
+          "value": "Partial",
+          "note": "AI content recommendations from history and skills; per-learner path adaptation not documented",
+          "source": "https://help.docebo.com/hc/en-us/articles/4410338779922-Content-recommendation",
+          "checkedAt": "2026-10-09"
+        },
+        "h5p": {
+          "value": "Not documented",
+          "note": "H5P not listed among supported training material types in system requirements",
+          "source": "https://help.docebo.com/hc/en-us/articles/360021001819-Docebo-system-requirements",
+          "checkedAt": "2026-10-09"
+        },
+        "scorm": {
+          "value": "Yes",
+          "note": "SCORM 1.2 and 2004 3rd Edition; 2004 sequencing not supported",
+          "source": "https://help.docebo.com/hc/en-us/articles/360020128479-Uploading-and-managing-SCORM-as-training-material",
+          "checkedAt": "2026-10-09"
+        },
+        "cmi5_xapi": {
+          "value": "Partial",
+          "note": "xAPI (Tin Can 1.0) with built-in LRS supported; cmi5 not documented",
+          "source": "https://help.docebo.com/hc/en-us/articles/360020128459-Uploading-xAPI-formerly-Tin-Can-API-content",
+          "checkedAt": "2026-10-09"
+        },
+        "lti13": {
+          "value": "Partial",
+          "note": "LTI 1.3 basic content only; advanced capabilities such as Deep Linking not supported",
+          "source": "https://help.docebo.com/hc/en-us/articles/360020082660-Managing-LTI-training-material",
+          "checkedAt": "2026-10-09"
+        },
+        "commerce": {
+          "value": "Paid add-on",
+          "note": "E-commerce available only with the e-commerce pack; payment gateways incl. Stripe, PayPal",
+          "source": "https://help.docebo.com/hc/en-us/articles/360020124559-Selling-content-online-with-e-commerce",
+          "checkedAt": "2026-10-09"
+        },
+        "generative_ui": {
+          "value": "Not documented",
+          "note": "No runtime AI-composed learner interface found in the public documentation checked",
+          "source": "https://help.docebo.com/hc/en-us/articles/360020125779-FAQs-on-Docebo-artificial-intelligence-features",
+          "checkedAt": "2026-10-09"
+        },
+        "pricing": {
+          "value": "Quote-based",
+          "note": "Per-active-user subscription by tier (Elevate/Enterprise) plus add-ons; prices not published",
+          "source": "https://www.docebo.com/pricing/",
+          "checkedAt": "2026-10-09"
+        },
+        "sso": {
+          "value": "Yes",
+          "note": "SAML 2.0 and OpenID Connect (Authorization Code flow) supported",
+          "source": "https://help.docebo.com/hc/en-us/articles/360020125299-Docebo-for-OpenID-Connect",
+          "checkedAt": "2026-10-09"
+        },
+        "scim": {
+          "value": "Not documented",
+          "note": "SCIM not found; SSO just-in-time provisioning and Okta connector documented",
+          "source": "https://help.docebo.com/hc/en-us/articles/28938055525906-General-guidance-for-SSO-configuration",
+          "checkedAt": "2026-10-09"
+        },
+        "authoring_tool": {
+          "value": "Partial",
+          "note": "Creator lessons built in; plan-dependent, listed as Creator Pack; Shape is a separate tool",
+          "source": "https://help.docebo.com/hc/en-us/articles/22017806044946-Creating-and-managing-Creator-lessons",
+          "checkedAt": "2026-10-09"
+        },
+        "content_library": {
+          "value": "Partial",
+          "note": "Content marketplace built in; Docebo Content/Go1 need no licence, external providers need subscription",
+          "source": "https://help.docebo.com/hc/en-us/articles/360020082700-Managing-the-content-marketplace",
+          "checkedAt": "2026-10-09"
+        },
+        "data_residency": {
+          "value": "Yes",
+          "note": "Data hosting in any of Docebo's global data centers (Elevate and Enterprise)",
+          "source": "https://www.docebo.com/company/docebo-service-descriptions-ee/",
+          "checkedAt": "2026-10-09"
+        }
+      }
+    },
+    {
+      "key": "cornerstone",
+      "name": "Cornerstone",
+      "note": "talent and learning suite",
+      "groups": [
+        "enterprise"
+      ],
+      "cells": {
+        "self_hosting": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://www.cornerstoneondemand.com/platform/learning/",
+          "checkedAt": "2026-10-09"
+        },
+        "licence": {
+          "value": "Proprietary",
+          "note": "Commercial SaaS; no open-source licence stated",
+          "source": "https://trustcenter.cornerstoneondemand.com/",
+          "checkedAt": "2026-10-09"
+        },
+        "multi_tenant": {
+          "value": "Partial",
+          "note": "Extended Enterprise serves external audiences; separate branded portals not confirmed",
+          "source": "https://www.cornerstoneondemand.com/resources/article/cornerstone-extended-enterprise-datasheet/",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_api": {
+          "value": "Yes",
+          "note": "REST APIs with OAuth 2.0 client credentials; Developer Portal lists endpoints",
+          "source": "https://help.csod.com/help/csod_0/Content/User/Edge/Overview_Topics_-_Edge/APIs_Overview.htm",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_generation": {
+          "value": "Not documented",
+          "note": "AI curation/summarization described; no generation from uploaded documents found",
+          "source": "https://www.cornerstoneondemand.com/platform/content-curation/",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_citations": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://www.cornerstoneondemand.com/platform/content-curation/",
+          "checkedAt": "2026-10-09"
+        },
+        "source_sync": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://www.cornerstoneondemand.com/platform/learning/",
+          "checkedAt": "2026-10-09"
+        },
+        "adaptive_paths": {
+          "value": "Yes",
+          "note": "Describes AI-driven personalized and adaptive learning paths based on skills and roles",
+          "source": "https://www.cornerstoneondemand.com/platform/learning-experience-lxp/",
+          "checkedAt": "2026-10-09"
+        },
+        "h5p": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://www.cornerstoneondemand.com/platform/learning/",
+          "checkedAt": "2026-10-09"
+        },
+        "scorm": {
+          "value": "Yes",
+          "note": "SCORM, AICC and xAPI content formats listed",
+          "source": "https://www.cornerstoneondemand.com/platform/learning/",
+          "checkedAt": "2026-10-09"
+        },
+        "cmi5_xapi": {
+          "value": "Partial",
+          "note": "xAPI courses can be uploaded and launched; cmi5 not mentioned",
+          "source": "https://help.csod.com/help/csod_0/Content/Catalog/xAPI_Package_Support/xAPI_Package_Support_-_Overview.htm",
+          "checkedAt": "2026-10-09"
+        },
+        "lti13": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://www.cornerstoneondemand.com/platform/learning/",
+          "checkedAt": "2026-10-09"
+        },
+        "commerce": {
+          "value": "Yes",
+          "note": "E-commerce engine in Extended Enterprise: paid assets, multi-currency, card processing",
+          "source": "https://help.csod.com/help/csod_0/Content/Extended_Enterprise/E-Commerce_-_Extended_Enterprise_Overview.htm",
+          "checkedAt": "2026-10-09"
+        },
+        "generative_ui": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://www.cornerstoneondemand.com/platform/learning/",
+          "checkedAt": "2026-10-09"
+        },
+        "pricing": {
+          "value": "Quote-based; not published",
+          "note": "Packages sold via demo request; no prices listed",
+          "source": "https://www.cornerstoneondemand.com/platform/content/",
+          "checkedAt": "2026-10-09"
+        },
+        "sso": {
+          "value": "Yes",
+          "note": "Inbound SAML 2.0 (with provisioning) and OIDC; also AES",
+          "source": "https://help.csod.com/help/csod_0/Content/Edge/Single_Sign-on_Configurations/SSO_Configurations.htm",
+          "checkedAt": "2026-10-09"
+        },
+        "scim": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked; SSO page lists no SCIM",
+          "source": "https://help.csod.com/help/csod_0/Content/Edge/Single_Sign-on_Configurations/SSO_Configurations.htm",
+          "checkedAt": "2026-10-09"
+        },
+        "authoring_tool": {
+          "value": "Partial",
+          "note": "Create tool listed in Platinum content subscription tier; page gives few details",
+          "source": "https://www.cornerstoneondemand.com/platform/content/",
+          "checkedAt": "2026-10-09"
+        },
+        "content_library": {
+          "value": "Yes",
+          "note": "Content subscriptions from 200+ providers in Silver/Gold/Platinum tiers; inclusion not stated",
+          "source": "https://www.cornerstoneondemand.com/platform/content/",
+          "checkedAt": "2026-10-09"
+        },
+        "data_residency": {
+          "value": "Not documented",
+          "note": "Trust Center lists Hosting Regions but choice of region could not be read",
+          "source": "https://trustcenter.cornerstoneondemand.com/",
+          "checkedAt": "2026-10-09"
+        }
+      }
+    },
+    {
+      "key": "sap",
+      "name": "SAP SuccessFactors Learning",
+      "note": "HCM learning module",
+      "groups": [
+        "enterprise"
+      ],
+      "cells": {
+        "self_hosting": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.sap.com/docs/successfactors-learning/implementing-structured-content/scorm-overview",
+          "checkedAt": "2026-10-09"
+        },
+        "licence": {
+          "value": "Proprietary",
+          "note": "Proprietary commercial software sold by SAP",
+          "source": "https://www.sap.com/products/hcm/corporate-lms/pricing.html",
+          "checkedAt": "2026-10-09"
+        },
+        "multi_tenant": {
+          "value": "Partial",
+          "note": "Learning-only extended-enterprise users via basic access or sites; one Learning instance",
+          "source": "https://help.sap.com/docs/successfactors-learning/offering-learning-to-extended-enterprise/sap-successfactors-learning-in-extended-enterprise",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_api": {
+          "value": "Yes",
+          "note": "Learning OData APIs (V4 microservices, REST endpoints); OAuth token access",
+          "source": "https://help.sap.com/doc/cd753f29622244df98e335af737b5422/2511/en-US/SF_LRN_Web_Svc_Integ.pdf",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_generation": {
+          "value": "Partial",
+          "note": "Generates course details and task checklists from a text prompt (up to 500 chars), not uploaded documents",
+          "source": "https://help.sap.com/docs/successfactors-learning/managing-sap-successfactors-learning-for-administrators/generating-courses-using-ai-assistance",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_citations": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.sap.com/docs/successfactors-learning/managing-sap-successfactors-learning-for-administrators/generating-courses-using-ai-assistance",
+          "checkedAt": "2026-10-09"
+        },
+        "source_sync": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.sap.com/docs/successfactors-learning/managing-sap-successfactors-learning-for-administrators/generating-courses-using-ai-assistance",
+          "checkedAt": "2026-10-09"
+        },
+        "adaptive_paths": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.sap.com/docs/successfactors-learning/implementing-structured-content/scorm-overview",
+          "checkedAt": "2026-10-09"
+        },
+        "h5p": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.sap.com/docs/successfactors-learning/implementing-structured-content/scorm-overview",
+          "checkedAt": "2026-10-09"
+        },
+        "scorm": {
+          "value": "Yes",
+          "note": "SCORM 1.2 and SCORM 2004 supported for structured content; AICC also supported",
+          "source": "https://help.sap.com/docs/successfactors-learning/implementing-structured-content/scorm-overview",
+          "checkedAt": "2026-10-09"
+        },
+        "cmi5_xapi": {
+          "value": "Not documented",
+          "note": "xAPI/cmi5 not found in Learning help portal search",
+          "source": "https://help.sap.com/docs/successfactors-learning/implementing-structured-content/scorm-overview",
+          "checkedAt": "2026-10-09"
+        },
+        "lti13": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.sap.com/docs/successfactors-learning/implementing-structured-content/scorm-overview",
+          "checkedAt": "2026-10-09"
+        },
+        "commerce": {
+          "value": "Yes",
+          "note": "Shopping cart, credit card/prepaid payment, coupons and vouchers for external Learning-only users",
+          "source": "https://help.sap.com/docs/successfactors-learning/offering-learning-to-extended-enterprise/shopping-account-types-for-learning-only-users",
+          "checkedAt": "2026-10-09"
+        },
+        "generative_ui": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://help.sap.com/docs/successfactors-learning/managing-sap-successfactors-learning-for-administrators/generating-courses-using-ai-assistance",
+          "checkedAt": "2026-10-09"
+        },
+        "pricing": {
+          "value": "Quote-based; not published",
+          "note": "Pricing page offers a request-a-quote form only",
+          "source": "https://www.sap.com/products/hcm/corporate-lms/pricing.html",
+          "checkedAt": "2026-10-09"
+        },
+        "sso": {
+          "value": "Yes",
+          "note": "SAML 2.0 via SuccessFactors/Identity Authentication; Learning-only users require Identity Authentication",
+          "source": "https://help.sap.com/doc/0a7a999a75874cd394bba2d4c2ae6619/2611/en-US/SF_PLT_SF-IAS_Integration_Admin_en.pdf",
+          "checkedAt": "2026-10-09"
+        },
+        "scim": {
+          "value": "Not documented",
+          "note": "Learning is an Identity Provisioning target; SCIM for Learning not stated",
+          "source": "https://help.sap.com/docs/identity-provisioning/identity-provisioning/target-sap-successfactors-learning",
+          "checkedAt": "2026-10-09"
+        },
+        "authoring_tool": {
+          "value": "Not documented",
+          "note": "No built-in course authoring tool found; AI-assisted course detail generation only",
+          "source": "https://help.sap.com/docs/successfactors-learning/managing-sap-successfactors-learning-for-administrators/generating-courses-using-ai-assistance",
+          "checkedAt": "2026-10-09"
+        },
+        "content_library": {
+          "value": "Partial",
+          "note": "Open Content Network links third-party provider content; provider subscription arranged separately",
+          "source": "https://help.sap.com/docs/successfactors-learning/implementing-open-content-network/open-content-network-ocn-implementation",
+          "checkedAt": "2026-10-09"
+        },
+        "data_residency": {
+          "value": "Partial",
+          "note": "SAP lists SuccessFactors data centers; says customers can select the DC for only some SAP cloud services",
+          "source": "https://www.sap.com/docs/download/agreements/product-use-and-support-terms/cls/en/list-of-data-centers-for-sap-cloud-services-english-v.2-2021.pdf",
+          "checkedAt": "2026-10-09"
+        }
+      }
+    },
+    {
+      "key": "absorb",
+      "name": "Absorb LMS",
+      "note": "enterprise LMS",
+      "groups": [
+        "enterprise"
+      ],
+      "cells": {
+        "self_hosting": {
+          "value": "Not documented",
+          "note": "Terms describe a licensed Service; no on-premises install found",
+          "source": "https://www.absorbai.com/uploads/AbsorbServiceTermsandConditions-Masterv2.1.pdf",
+          "checkedAt": "2026-10-09"
+        },
+        "licence": {
+          "value": "Proprietary",
+          "note": "Service terms: Service is licensed, not sold",
+          "source": "https://www.absorbai.com/uploads/AbsorbServiceTermsandConditions-Masterv2.1.pdf",
+          "checkedAt": "2026-10-09"
+        },
+        "multi_tenant": {
+          "value": "Yes",
+          "note": "Separate portals per audience via departments; own domain, logo, fonts, colours",
+          "source": "https://www.absorbai.com/solutions/partner-enablement",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_api": {
+          "value": "Yes",
+          "note": "Public REST Integration API docs with changelog; also SCIM API; Infuse API needs sign-in, paid add-on",
+          "source": "https://docs.myabsorb.com/",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_generation": {
+          "value": "Partial",
+          "note": "Absorb Create generates from a short description or outline; PowerPoint conversion; upload-based AI not stated",
+          "source": "https://www.absorbai.com/products/absorb-create-online-course-builder",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_citations": {
+          "value": "Not documented",
+          "note": "Approval workflows exist; AI source citations not found in pages checked",
+          "source": "https://www.absorbai.com/products/absorb-create-online-course-builder",
+          "checkedAt": "2026-10-09"
+        },
+        "source_sync": {
+          "value": "Not documented",
+          "note": "Create publishes one-way to the LMS; source sync not found",
+          "source": "https://www.absorbai.com/products/absorb-create-online-course-builder",
+          "checkedAt": "2026-10-09"
+        },
+        "adaptive_paths": {
+          "value": "Partial",
+          "note": "Absorb Skills auto-assigns training by role, goals and skill gaps; adaptive paths not described",
+          "source": "https://www.absorbai.com/",
+          "checkedAt": "2026-10-09"
+        },
+        "h5p": {
+          "value": "Not documented",
+          "note": "H5P not found in the public pages checked",
+          "source": "https://www.absorbai.com/features",
+          "checkedAt": "2026-10-09"
+        },
+        "scorm": {
+          "value": "Yes",
+          "note": "SCORM compliance listed; Create publishes to SCORM",
+          "source": "https://www.absorbai.com/features",
+          "checkedAt": "2026-10-09"
+        },
+        "cmi5_xapi": {
+          "value": "Partial",
+          "note": "Create publishes to xAPI; cmi5 not found in pages checked",
+          "source": "https://www.absorbai.com/products/absorb-create-online-course-builder",
+          "checkedAt": "2026-10-09"
+        },
+        "lti13": {
+          "value": "Not documented",
+          "note": "LTI 1.3 not found in the pages checked",
+          "source": "https://www.absorbai.com/features/integrations/apis",
+          "checkedAt": "2026-10-09"
+        },
+        "commerce": {
+          "value": "Yes",
+          "note": "Built-in eCommerce cart with 70+ gateways, coupons, bundles; no transaction commission",
+          "source": "https://www.absorbai.com/features/ecommerce",
+          "checkedAt": "2026-10-09"
+        },
+        "generative_ui": {
+          "value": "Not documented",
+          "note": "Not found in the public documentation checked",
+          "source": "https://www.absorbai.com/features",
+          "checkedAt": "2026-10-09"
+        },
+        "pricing": {
+          "value": "Quote-based; not published",
+          "note": "Pricing form by learner count (1-50 to 25,000+)",
+          "source": "https://www.absorbai.com/get-pricing",
+          "checkedAt": "2026-10-09"
+        },
+        "sso": {
+          "value": "Yes",
+          "note": "SAML 2.0 and LDAPS stated; OpenID Connect and OAuth also listed in FAQ",
+          "source": "https://www.absorbai.com/features/integrations/apis",
+          "checkedAt": "2026-10-09"
+        },
+        "scim": {
+          "value": "Yes",
+          "note": "SCIM 2.0 API for users and groups; Azure and Okta guides",
+          "source": "https://docs.myabsorb.com/",
+          "checkedAt": "2026-10-09"
+        },
+        "authoring_tool": {
+          "value": "Yes",
+          "note": "Absorb Create, described as a content creation tool within the LMS",
+          "source": "https://www.absorbai.com/products",
+          "checkedAt": "2026-10-09"
+        },
+        "content_library": {
+          "value": "Partial",
+          "note": "Absorb Amplify tiers, 500 to 20,000+ courses; appears sold separately, price not stated",
+          "source": "https://www.absorbai.com/features/content-libraries",
+          "checkedAt": "2026-10-09"
+        },
+        "data_residency": {
+          "value": "Not documented",
+          "note": "Hosting region choice not stated on pages read",
+          "source": "https://www.absorbai.com/support/compliance",
+          "checkedAt": "2026-10-09"
+        }
+      }
+    },
+    {
+      "key": "360learning",
+      "name": "360Learning",
+      "note": "collaborative learning",
+      "groups": [
+        "enterprise"
+      ],
+      "cells": {
+        "self_hosting": {
+          "value": "Not documented",
+          "note": "Hosted on Microsoft Azure per security page; no self-managed install found",
+          "source": "https://360learning.com/privacy-and-security/",
+          "checkedAt": "2026-10-09"
+        },
+        "licence": {
+          "value": "Proprietary",
+          "note": "Commercial subscription; no open-source licence found",
+          "source": "https://360learning.com/pricing/",
+          "checkedAt": "2026-10-09"
+        },
+        "multi_tenant": {
+          "value": "Partial",
+          "note": "Branded Academies and Extended Academies (custom URL/domain) within one platform",
+          "source": "https://360learning.com/product/academies/",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_api": {
+          "value": "Yes",
+          "note": "API v2 documented (users, courses, groups, paths, webhooks); built for integrations",
+          "source": "https://360learning.readme.io/docs",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_generation": {
+          "value": "Yes",
+          "note": "AI Content Builder builds courses from documents (e.g. PDFs, presentations) and/or a prompt",
+          "source": "https://360learning.com/product/authoring-tool/",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_citations": {
+          "value": "Not documented",
+          "note": "No source citations or diff-style approval found on the pages checked",
+          "source": "https://360learning.com/product/authoring-tool/",
+          "checkedAt": "2026-10-09"
+        },
+        "source_sync": {
+          "value": "Not documented",
+          "note": "No sync with changing source documents found in pages checked",
+          "source": "https://360learning.com/product/authoring-tool/",
+          "checkedAt": "2026-10-09"
+        },
+        "adaptive_paths": {
+          "value": "Partial",
+          "note": "Positioning quiz waives mastered content; no AI-adaptive paths described",
+          "source": "https://360learning.com/product/learning-management-system/",
+          "checkedAt": "2026-10-09"
+        },
+        "h5p": {
+          "value": "Not documented",
+          "note": "H5P not mentioned on the authoring or LMS product pages",
+          "source": "https://360learning.com/product/authoring-tool/",
+          "checkedAt": "2026-10-09"
+        },
+        "scorm": {
+          "value": "Yes",
+          "note": "SCORM 1.2 and 2004 import and bulk import; AICC also listed",
+          "source": "https://360learning.com/product/authoring-tool/",
+          "checkedAt": "2026-10-09"
+        },
+        "cmi5_xapi": {
+          "value": "Yes",
+          "note": "Both xAPI and cmi5 listed as supported standards",
+          "source": "https://360learning.com/product/authoring-tool/",
+          "checkedAt": "2026-10-09"
+        },
+        "lti13": {
+          "value": "Not documented",
+          "note": "LTI content launch listed; version (1.3) not stated",
+          "source": "https://360learning.com/product/authoring-tool/",
+          "checkedAt": "2026-10-09"
+        },
+        "commerce": {
+          "value": "Yes",
+          "note": "E-commerce integration to sell courses incl. catalogue and payment processing",
+          "source": "https://360learning.com/product/learning-management-system/",
+          "checkedAt": "2026-10-09"
+        },
+        "generative_ui": {
+          "value": "Not documented",
+          "note": "No runtime AI-composed learner interface found",
+          "source": "https://360learning.com/product/artificial-intelligence/",
+          "checkedAt": "2026-10-09"
+        },
+        "pricing": {
+          "value": "Team $8/user/month (up to 100); Business/Enterprise custom",
+          "note": "Billed on active users; 30-day trial; higher tiers quote-based",
+          "source": "https://360learning.com/pricing/",
+          "checkedAt": "2026-10-09"
+        },
+        "sso": {
+          "value": "Yes",
+          "note": "SAML 2.0 cited in LMS FAQ; providers incl. Microsoft, Google, Okta",
+          "source": "https://360learning.com/product/learning-management-system/",
+          "checkedAt": "2026-10-09"
+        },
+        "scim": {
+          "value": "Not documented",
+          "note": "Help-centre SCIM pages were not readable; not on public product pages checked",
+          "source": "https://360learning.com/product/learning-management-system/",
+          "checkedAt": "2026-10-09"
+        },
+        "authoring_tool": {
+          "value": "Yes",
+          "note": "Native AI Content Builder authoring tool with collaboration workflows",
+          "source": "https://360learning.com/product/authoring-tool/",
+          "checkedAt": "2026-10-09"
+        },
+        "content_library": {
+          "value": "Partial",
+          "note": "Third-party catalogue connectors (LinkedIn Learning, Udemy, Go1); inclusion/cost not stated",
+          "source": "https://360learning.com/product/learning-management-system/",
+          "checkedAt": "2026-10-09"
+        },
+        "data_residency": {
+          "value": "Not documented",
+          "note": "Azure hosting outside Patriot Act scope; no customer region choice stated",
+          "source": "https://360learning.com/privacy-and-security/",
+          "checkedAt": "2026-10-09"
+        }
+      }
+    }
+  ],
+  "groups": [
+    {
+      "key": "community",
+      "label": "Open source & creator platforms",
+      "caption": "Feature comparison of ulams with Moodle, Canvas LMS, Open edX, TalentLMS, Thinkific and LearnDash"
+    },
+    {
+      "key": "enterprise",
+      "label": "Enterprise suites",
+      "caption": "Feature comparison of ulams with Articulate 360, Docebo, Cornerstone, SAP SuccessFactors Learning, Absorb LMS and 360Learning"
     }
   ]
 }

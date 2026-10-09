@@ -150,6 +150,12 @@ and `tests/unit/comparison.test.ts` fails when a cell has no https source or dat
 change the cell, its source and `checkedAt`, and the top-level `asOf`; the table shows "As of …" and
 a Sources list under it. Plain product names only, no logos.
 
+The table has two groups behind a segmented control built from radio inputs and CSS (no JavaScript;
+without `:has()` support both tables simply show): "Open source & creator platforms" and "Enterprise
+suites", ulams in both. `comparison.json` has top-level `groups`; a system lists the groups it is in,
+a row lists `groups` or applies to all. The component takes `groups` (2 to 4 tables) instead of
+`columns` and `rows`. Enterprise-only rows: data residency, SSO, SCIM, authoring tool, content library.
+
 ## Performance budget
 
 Production build, measured with `yarn workspace @ulams/web perf` (Chromium, local API): see

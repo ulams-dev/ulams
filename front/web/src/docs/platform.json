@@ -221,16 +221,13 @@
             "id": "compare",
             "eyebrow": "compare",
             "title": "How ulams compares",
-            "intro": "What buyers usually weigh, product by product. Our own roadmap items are marked Coming.",
-            "caption": "Feature comparison of ulams with Moodle, Canvas LMS, Open edX, TalentLMS, Thinkific and LearnDash",
+            "intro": "What buyers usually weigh, product by product, in two groups: open-source and creator platforms, and enterprise suites. Our own roadmap items are marked Coming.",
+            "caption": "Feature comparison of ulams with open-source and creator platforms, and with enterprise learning suites",
             "asOf": {
               "$data": "/comparison/asOf"
             },
-            "columns": {
-              "$data": "/comparison/columns"
-            },
-            "rows": {
-              "$data": "/comparison/rows"
+            "groups": {
+              "$data": "/comparison/groups"
             },
             "sources": {
               "$data": "/comparison/sources"
