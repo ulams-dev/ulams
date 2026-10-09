@@ -8,17 +8,27 @@
 import { chromium } from "@playwright/test";
 
 const port = process.env.WEB_BASE_PORT ?? "4321";
+// course and topic ids come from the tenant API (the demo data is reseeded)
+async function ids(slug) {
+  const list = await (await fetch(`http://${slug}.localhost/api/courses`, { headers: { Accept: "application/json" } })).json();
+  const course = list.data[0].id;
+  const detail = await (await fetch(`http://${slug}.localhost/api/courses/${course}`, { headers: { Accept: "application/json" } })).json();
+  const topics = detail.data.lessons.flatMap((l) => l.topics);
+  const reading = topics.find((t) => t.topicable_type.endsWith("RichText")) ?? topics[0];
+  return { course, topic: reading.id };
+}
+const [coffee, oncall, nightsky] = await Promise.all(["coffee", "oncall", "nightsky"].map(ids));
 const pages = [
   ["platform landing", `http://app.localhost:${port}/`],
   ["coffee landing", `http://coffee.app.localhost:${port}/`],
-  ["coffee course", `http://coffee.app.localhost:${port}/courses/1`],
-  ["coffee lesson", `http://coffee.app.localhost:${port}/learn/1/11`],
+  ["coffee course", `http://coffee.app.localhost:${port}/courses/${coffee.course}`],
+  ["coffee lesson", `http://coffee.app.localhost:${port}/learn/${coffee.course}/${coffee.topic}`],
   ["oncall landing", `http://oncall.app.localhost:${port}/`],
-  ["oncall course", `http://oncall.app.localhost:${port}/courses/1`],
-  ["oncall lesson", `http://oncall.app.localhost:${port}/learn/1/4`],
+  ["oncall course", `http://oncall.app.localhost:${port}/courses/${oncall.course}`],
+  ["oncall lesson", `http://oncall.app.localhost:${port}/learn/${oncall.course}/${oncall.topic}`],
   ["nightsky landing", `http://nightsky.app.localhost:${port}/`],
-  ["nightsky course", `http://nightsky.app.localhost:${port}/courses/2`],
-  ["nightsky lesson", `http://nightsky.app.localhost:${port}/learn/2/16`],
+  ["nightsky course", `http://nightsky.app.localhost:${port}/courses/${nightsky.course}`],
+  ["nightsky lesson", `http://nightsky.app.localhost:${port}/learn/${nightsky.course}/${nightsky.topic}`],
   ["coffee account", `http://coffee.app.localhost:${port}/account`],
   ["oncall events", `http://oncall.app.localhost:${port}/events`],
 ];

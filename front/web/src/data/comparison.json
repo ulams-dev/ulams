@@ -1,0 +1,742 @@
+{
+  "asOf": "October 2026",
+  "rows": [
+    {
+      "key": "self_hosting",
+      "label": "Self-hosting",
+      "help": "Run it on your own servers"
+    },
+    {
+      "key": "licence",
+      "label": "Open-source licence",
+      "help": "Licence of the core"
+    },
+    {
+      "key": "multi_tenant",
+      "label": "Site per customer",
+      "help": "Separate white-label sites/tenants from one install"
+    },
+    {
+      "key": "headless_api",
+      "label": "Headless API",
+      "help": "Documented API to build your own frontend"
+    },
+    {
+      "key": "ai_generation",
+      "label": "AI course generation",
+      "help": "Courses drafted by AI from your own sources"
+    },
+    {
+      "key": "ai_citations",
+      "label": "Cited AI, approved diffs",
+      "help": "Generated content cites sources; changes are diffs the author approves"
+    },
+    {
+      "key": "source_sync",
+      "label": "Courses in sync with sources",
+      "help": "Updates proposed when the sources change"
+    },
+    {
+      "key": "adaptive_paths",
+      "label": "Adaptive learner paths",
+      "help": "Paths that adapt to each learner"
+    },
+    {
+      "key": "h5p",
+      "label": "H5P",
+      "help": "Interactive H5P content"
+    },
+    {
+      "key": "scorm",
+      "label": "SCORM",
+      "help": "SCORM packages"
+    },
+    {
+      "key": "cmi5_xapi",
+      "label": "cmi5 / xAPI",
+      "help": "cmi5 activities and xAPI tracking"
+    },
+    {
+      "key": "lti13",
+      "label": "LTI 1.3",
+      "help": "LTI 1.3 / LTI Advantage"
+    },
+    {
+      "key": "commerce",
+      "label": "Built-in commerce",
+      "help": "Selling courses and taking payments"
+    },
+    {
+      "key": "generative_ui",
+      "label": "Generative UI",
+      "help": "Interfaces composed by AI at runtime"
+    },
+    {
+      "key": "pricing",
+      "label": "Pricing model"
+    }
+  ],
+  "systems": [
+    {
+      "key": "ulams",
+      "name": "ulams",
+      "note": "open core",
+      "ours": true,
+      "cells": {
+        "self_hosting": {
+          "value": "Yes",
+          "note": "Docker Compose; the API, admin, frontend and H5P service run on your servers",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/README.md",
+          "checkedAt": "2026-10-09"
+        },
+        "licence": {
+          "value": "MIT open core",
+          "note": "API application Apache-2.0; H5P runs as a separate GPL-3.0 service",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/LICENSING.md",
+          "checkedAt": "2026-10-09"
+        },
+        "multi_tenant": {
+          "value": "Yes",
+          "note": "A subdomain, theme and database per tenant",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/decisions/0007-tenancy-package.md",
+          "checkedAt": "2026-10-09"
+        },
+        "headless_api": {
+          "value": "Yes",
+          "note": "REST API with an OpenAPI spec and a TypeScript SDK",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/front/web/README.md",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_generation": {
+          "value": "Coming",
+          "note": "Course Builder: interview, objectives, outline from your sources",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "checkedAt": "2026-10-09"
+        },
+        "ai_citations": {
+          "value": "Coming",
+          "note": "Every generated element linked to its source fragment",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "checkedAt": "2026-10-09"
+        },
+        "source_sync": {
+          "value": "Coming",
+          "note": "Living Course: update proposals as reviewable diffs",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "checkedAt": "2026-10-09"
+        },
+        "adaptive_paths": {
+          "value": "Coming",
+          "note": "Learner Insights package",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "checkedAt": "2026-10-09"
+        },
+        "h5p": {
+          "value": "Yes",
+          "note": "Isolated H5P service, framed in the player",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/decisions/0003-h5p-as-isolated-gpl-service.md",
+          "checkedAt": "2026-10-09"
+        },
+        "scorm": {
+          "value": "Yes",
+          "note": "SCORM 1.2 and 2004 packages",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/README.md",
+          "checkedAt": "2026-10-09"
+        },
+        "cmi5_xapi": {
+          "value": "Yes",
+          "note": "cmi5 activities and a built-in xAPI LRS",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/README.md",
+          "checkedAt": "2026-10-09"
+        },
+        "lti13": {
+          "value": "Partial",
+          "note": "Platform and tool built; interoperability round trips in testing",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "checkedAt": "2026-10-09"
+        },
+        "commerce": {
+          "value": "Partial",
+          "note": "Course sales with Stripe or Przelewy24 today; Sylius shop coming",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "checkedAt": "2026-10-09"
+        },
+        "generative_ui": {
+          "value": "Coming",
+          "note": "Schema-validated UI catalogue built; AI-composed interfaces coming",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/decisions/0008-reference-frontend.md",
+          "checkedAt": "2026-10-09"
+        },
+        "pricing": {
+          "value": "Free self-hosted",
+          "note": "Open core; paid cloud and enterprise features coming",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
+          "checkedAt": "2026-10-09"
+        }
+      }
+    },
+    {
+      "key": "moodle",
+      "name": "Moodle",
+      "note": "open source",
+      "cells": {
+        "self_hosting": {
+          "value": "Yes",
+          "source": "https://download.moodle.org/",
+          "checkedAt": "2026-10-09",
+          "note": "Self-hosted download alongside the MoodleCloud SaaS option"
+        },
+        "licence": {
+          "value": "GPL-3.0-or-later",
+          "source": "https://moodledev.io/general/license",
+          "checkedAt": "2026-10-09",
+          "note": "GPL v3 or any later version for Moodle 2.x and later"
+        },
+        "multi_tenant": {
+          "value": "Paid add-on",
+          "source": "https://docs.moodle.org/en/Multi-tenancy",
+          "checkedAt": "2026-10-09",
+          "note": "Multi-tenancy is a Moodle Workplace feature, available through Moodle Partners"
+        },
+        "headless_api": {
+          "value": "Yes",
+          "source": "https://docs.moodle.org/en/Using_web_services",
+          "checkedAt": "2026-10-09",
+          "note": "Web services with REST, SOAP and other protocols, per-user tokens"
+        },
+        "ai_generation": {
+          "value": "Partial",
+          "source": "https://docs.moodle.org/en/AI_placements",
+          "checkedAt": "2026-10-09",
+          "note": "AI subsystem generates text and images from prompts; generation from uploaded sources not documented"
+        },
+        "ai_citations": {
+          "value": "Not documented",
+          "source": "https://docs.moodle.org/en/AI_subsystem",
+          "checkedAt": "2026-10-09"
+        },
+        "source_sync": {
+          "value": "Not documented",
+          "source": "https://docs.moodle.org/en/AI_subsystem",
+          "checkedAt": "2026-10-09"
+        },
+        "adaptive_paths": {
+          "value": "Yes",
+          "source": "https://docs.moodle.org/en/Restrict_access",
+          "checkedAt": "2026-10-09",
+          "note": "Rule-based: restrict access by date, grade, group or completion"
+        },
+        "h5p": {
+          "value": "Yes",
+          "source": "https://docs.moodle.org/en/H5P_activity",
+          "checkedAt": "2026-10-09",
+          "note": "H5P activity and content bank in the standard distribution"
+        },
+        "scorm": {
+          "value": "Yes",
+          "source": "https://docs.moodle.org/en/SCORM_FAQ",
+          "checkedAt": "2026-10-09",
+          "note": "SCORM 1.2; SCORM 2004 not supported"
+        },
+        "cmi5_xapi": {
+          "value": "Partial",
+          "source": "https://moodledev.io/docs/apis/subsystems/xapi/",
+          "checkedAt": "2026-10-09",
+          "note": "Core xAPI library (not a full LRS); cmi5 through plugins"
+        },
+        "lti13": {
+          "value": "Yes",
+          "source": "https://docs.moodle.org/en/Publish_as_LTI_tool",
+          "checkedAt": "2026-10-09",
+          "note": "External tool (consumer) and publish as LTI tool (provider), LTI Advantage"
+        },
+        "commerce": {
+          "value": "Yes",
+          "source": "https://docs.moodle.org/en/Payment_gateways",
+          "checkedAt": "2026-10-09",
+          "note": "Enrolment on payment with payment gateways; PayPal built in"
+        },
+        "generative_ui": {
+          "value": "Not documented",
+          "source": "https://docs.moodle.org/en/AI_subsystem",
+          "checkedAt": "2026-10-09"
+        },
+        "pricing": {
+          "value": "Free (GPL); paid hosting",
+          "source": "https://moodle.com/solutions/moodlecloud/",
+          "checkedAt": "2026-10-09",
+          "note": "MoodleCloud annual plans and Moodle Partner hosting"
+        }
+      }
+    },
+    {
+      "key": "canvas",
+      "name": "Canvas LMS",
+      "note": "open source",
+      "cells": {
+        "self_hosting": {
+          "value": "Yes",
+          "source": "https://github.com/instructure/canvas-lms/wiki/Production-Start",
+          "checkedAt": "2026-10-09",
+          "note": "Official production install guide for the open-source edition"
+        },
+        "licence": {
+          "value": "AGPL-3.0",
+          "source": "https://github.com/instructure/canvas-lms",
+          "checkedAt": "2026-10-09",
+          "note": "Open-source canvas-lms repository"
+        },
+        "multi_tenant": {
+          "value": "Partial",
+          "source": "https://community.instructure.com/en/kb/articles/661410-how-do-i-create-a-theme-for-an-account-using-the-theme-editor",
+          "checkedAt": "2026-10-09",
+          "note": "Sub-accounts with their own theme; separate per-customer domains not verified"
+        },
+        "headless_api": {
+          "value": "Yes",
+          "source": "https://canvas.instructure.com/doc/api/",
+          "checkedAt": "2026-10-09",
+          "note": "Documented REST API"
+        },
+        "ai_generation": {
+          "value": "Partial",
+          "source": "https://community.instructure.com/en/kb/articles/664235-how-do-i-use-igniteai-question-authoring-for-quizzes",
+          "checkedAt": "2026-10-09",
+          "note": "Hosted Canvas: opt-in IgniteAI generates quiz questions from course content or files"
+        },
+        "ai_citations": {
+          "value": "Not documented",
+          "source": "https://www.instructure.com/igniteai",
+          "checkedAt": "2026-10-09"
+        },
+        "source_sync": {
+          "value": "Not documented",
+          "source": "https://www.instructure.com/igniteai",
+          "checkedAt": "2026-10-09"
+        },
+        "adaptive_paths": {
+          "value": "Yes",
+          "source": "https://community.instructure.com/en/kb/articles/660914-how-do-i-use-mastery-paths-in-course-modules",
+          "checkedAt": "2026-10-09",
+          "note": "Mastery Paths assign follow-up work based on scores"
+        },
+        "h5p": {
+          "value": "Via plugin",
+          "source": "https://h5p.com/",
+          "checkedAt": "2026-10-09",
+          "note": "Third-party H5P.com through LTI (paid H5P plan)"
+        },
+        "scorm": {
+          "value": "Yes",
+          "source": "https://community.instructure.com/en/kb/articles/660683-how-do-i-import-scorm-files-as-an-assignment",
+          "checkedAt": "2026-10-09",
+          "note": "Hosted Canvas: SCORM LTI enabled by the admin; SCORM 1.2 and 2004"
+        },
+        "cmi5_xapi": {
+          "value": "Partial",
+          "source": "https://canvas.instructure.com/doc/api/file.xapi.html",
+          "checkedAt": "2026-10-09",
+          "note": "Small xAPI piece for LTI tool activity time; cmi5 not documented"
+        },
+        "lti13": {
+          "value": "Yes",
+          "source": "https://canvas.instructure.com/doc/api/file.lti_dev_key_config.html",
+          "checkedAt": "2026-10-09",
+          "note": "LTI 1.3 / LTI Advantage tools via Developer Keys"
+        },
+        "commerce": {
+          "value": "Paid add-on",
+          "source": "https://www.instructure.com/canvas/catalog",
+          "checkedAt": "2026-10-09",
+          "note": "Selling courses needs Canvas Catalog, a separate Instructure product"
+        },
+        "generative_ui": {
+          "value": "Not documented",
+          "source": "https://www.instructure.com/igniteai",
+          "checkedAt": "2026-10-09"
+        },
+        "pricing": {
+          "value": "Free to self-host (AGPL); hosted by quote",
+          "source": "https://www.instructure.com/try-canvas",
+          "checkedAt": "2026-10-09",
+          "note": "No public price list; free Canvas Lite for individual educators"
+        }
+      }
+    },
+    {
+      "key": "openedx",
+      "name": "Open edX",
+      "note": "open source",
+      "cells": {
+        "self_hosting": {
+          "value": "Yes",
+          "source": "https://openedx.org/faq/",
+          "checkedAt": "2026-10-09",
+          "note": "On-premises or any cloud; Tutor is the official Docker distribution"
+        },
+        "licence": {
+          "value": "AGPL-3.0",
+          "source": "https://github.com/openedx/edx-platform/blob/master/LICENSE",
+          "checkedAt": "2026-10-09",
+          "note": "Core platform repository licence"
+        },
+        "multi_tenant": {
+          "value": "Yes",
+          "source": "https://docs.openedx.org/en/latest/site_ops/install_configure_run_guide/configuration/sites/index.html",
+          "checkedAt": "2026-10-09",
+          "note": "Several sites per install, each with its own domain, theme and courses"
+        },
+        "headless_api": {
+          "value": "Yes",
+          "source": "https://docs.openedx.org/projects/edx-platform/en/latest/how-tos/use_the_api.html",
+          "checkedAt": "2026-10-09",
+          "note": "Documented REST APIs with JWT; the default UI is micro-frontends on them"
+        },
+        "ai_generation": {
+          "value": "Via plugin",
+          "source": "https://openedx.org/blog/introducing-the-ai-course-creator-for-the-open-edx-platform/",
+          "checkedAt": "2026-10-09",
+          "note": "Third-party AI Course Creator works from uploaded documents"
+        },
+        "ai_citations": {
+          "value": "Not documented",
+          "source": "https://docs.openedx.org/projects/openedx-ai-extensions/en/latest/",
+          "checkedAt": "2026-10-09"
+        },
+        "source_sync": {
+          "value": "Not documented",
+          "source": "https://openedx.org/platform/features/",
+          "checkedAt": "2026-10-09"
+        },
+        "adaptive_paths": {
+          "value": "Partial",
+          "source": "https://openedx.org/marketplace/flow-control-xblock/",
+          "checkedAt": "2026-10-09",
+          "note": "Content experiments, randomised blocks, score-based flow control XBlock"
+        },
+        "h5p": {
+          "value": "Via plugin",
+          "source": "https://openedx.org/marketplace/h5p-xblock/",
+          "checkedAt": "2026-10-09",
+          "note": "H5P XBlock (community) in the Open edX marketplace"
+        },
+        "scorm": {
+          "value": "Via plugin",
+          "source": "https://docs.openedx.org/en/latest/educators/how-tos/course_development/exercise_tools/manage_scorm_content.html",
+          "checkedAt": "2026-10-09",
+          "note": "SCORM XBlock, enabled per course in Studio"
+        },
+        "cmi5_xapi": {
+          "value": "Via plugin",
+          "source": "https://docs.openedx.org/en/latest/developers/references/internal_data_formats/xapi_events.html",
+          "checkedAt": "2026-10-09",
+          "note": "xAPI through event-routing-backends; cmi5 through a marketplace XBlock"
+        },
+        "lti13": {
+          "value": "Yes",
+          "source": "https://docs.openedx.org/en/latest/educators/concepts/exercise_tools/about_lti_component.html",
+          "checkedAt": "2026-10-09",
+          "note": "LTI 1.3 consumer with LTI Advantage; can also be an LTI tool provider"
+        },
+        "commerce": {
+          "value": "Via plugin",
+          "source": "https://openedx.org/faq/",
+          "checkedAt": "2026-10-09",
+          "note": "No built-in ecommerce; WooCommerce integration"
+        },
+        "generative_ui": {
+          "value": "Not documented",
+          "source": "https://openedx.org/platform/features/",
+          "checkedAt": "2026-10-09"
+        },
+        "pricing": {
+          "value": "Free (AGPL); self-funded hosting",
+          "source": "https://openedx.org/faq/",
+          "checkedAt": "2026-10-09",
+          "note": "No licence fees; hosting via your team or third-party providers"
+        }
+      }
+    },
+    {
+      "key": "talentlms",
+      "name": "TalentLMS",
+      "note": "hosted SaaS LMS",
+      "cells": {
+        "self_hosting": {
+          "value": "No",
+          "source": "https://www.talentlms.com/efrontlearning",
+          "checkedAt": "2026-10-09",
+          "note": "Cloud only; the vendor's eFront is its on-premises product"
+        },
+        "licence": {
+          "value": "Proprietary",
+          "source": "https://www.talentlms.com/terms",
+          "checkedAt": "2026-10-09",
+          "note": "Hosted service under the vendor's terms"
+        },
+        "multi_tenant": {
+          "value": "Yes",
+          "source": "https://help.talentlms.com/hc/en-us/articles/10730422769436-How-to-work-with-branches-in-TalentLMS",
+          "checkedAt": "2026-10-09",
+          "note": "Branches: sub-portals with own URL, theme and users (paid plans)"
+        },
+        "headless_api": {
+          "value": "Partial",
+          "source": "https://help.talentlms.com/hc/en-us/articles/24874457011356-TalentLMS-API-V2",
+          "checkedAt": "2026-10-09",
+          "note": "REST API v2 for users, courses, groups and enrolments; paid plans"
+        },
+        "ai_generation": {
+          "value": "Yes",
+          "source": "https://help.talentlms.com/hc/en-us/articles/12618676903068-How-to-generate-AI-content-from-your-documents-in-TalentCraft",
+          "checkedAt": "2026-10-09",
+          "note": "TalentCraft builds a unit from an uploaded docx, pptx or pdf; AI credits by plan"
+        },
+        "ai_citations": {
+          "value": "Not documented",
+          "source": "https://help.talentlms.com/hc/en-us/articles/18209693273372-What-are-the-TalentLMS-AI-features",
+          "checkedAt": "2026-10-09"
+        },
+        "source_sync": {
+          "value": "Not documented",
+          "source": "https://help.talentlms.com/hc/en-us/articles/18209693273372-What-are-the-TalentLMS-AI-features",
+          "checkedAt": "2026-10-09"
+        },
+        "adaptive_paths": {
+          "value": "Partial",
+          "source": "https://help.talentlms.com/hc/en-us/articles/21712800370204-How-to-create-and-manage-Learning-Paths-in-TalentLMS",
+          "checkedAt": "2026-10-09",
+          "note": "Learning paths with order and completion rules (Grow plan and above)"
+        },
+        "h5p": {
+          "value": "Partial",
+          "source": "https://help.talentlms.com/hc/en-us/articles/9651766450716-Which-content-types-are-supported-by-the-TalentLMS-mobile-app",
+          "checkedAt": "2026-10-09",
+          "note": "H5P content listed as playable on the web, not in the mobile app"
+        },
+        "scorm": {
+          "value": "Yes",
+          "source": "https://help.talentlms.com/hc/en-us/articles/9651360207132-How-to-work-with-the-supported-eLearning-protocols-SCORM-1-2-xAPI-and-cmi5-in-TalentLMS",
+          "checkedAt": "2026-10-09",
+          "note": "SCORM 1.2"
+        },
+        "cmi5_xapi": {
+          "value": "Yes",
+          "source": "https://help.talentlms.com/hc/en-us/articles/9651360207132-How-to-work-with-the-supported-eLearning-protocols-SCORM-1-2-xAPI-and-cmi5-in-TalentLMS",
+          "checkedAt": "2026-10-09",
+          "note": "xAPI and cmi5 content"
+        },
+        "lti13": {
+          "value": "Yes",
+          "source": "https://help.talentlms.com/hc/en-us/articles/18600381592476-How-to-enable-LTI-1-3-in-TalentLMS",
+          "checkedAt": "2026-10-09",
+          "note": "LTI 1.3 external tools as course units (Grow plan and above)"
+        },
+        "commerce": {
+          "value": "Yes",
+          "source": "https://help.talentlms.com/hc/en-us/articles/9651801532188-How-to-set-up-your-Stripe-payment-gateway",
+          "checkedAt": "2026-10-09",
+          "note": "Course sales and subscriptions through Stripe or PayPal"
+        },
+        "generative_ui": {
+          "value": "Not documented",
+          "source": "https://help.talentlms.com/hc/en-us/articles/18209693273372-What-are-the-TalentLMS-AI-features",
+          "checkedAt": "2026-10-09"
+        },
+        "pricing": {
+          "value": "SaaS by monthly active users; free tier",
+          "source": "https://www.talentlms.com/prices",
+          "checkedAt": "2026-10-09",
+          "note": "Core, Grow, Pro and Enterprise plans"
+        }
+      }
+    },
+    {
+      "key": "thinkific",
+      "name": "Thinkific",
+      "note": "course-creator platform",
+      "cells": {
+        "self_hosting": {
+          "value": "Not documented",
+          "source": "https://www.thinkific.com/ai-info-page/",
+          "checkedAt": "2026-10-09",
+          "note": "Offered as a SaaS subscription; no install option found"
+        },
+        "licence": {
+          "value": "Proprietary",
+          "source": "https://www.thinkific.com/terms-of-service/",
+          "checkedAt": "2026-10-09",
+          "note": "Hosted service under the vendor's terms"
+        },
+        "multi_tenant": {
+          "value": "Yes",
+          "source": "https://support.thinkific.com/hc/en-us/articles/360048085513-Creating-Multiple-Thinkific-Environments",
+          "checkedAt": "2026-10-09",
+          "note": "Plus plan: multiple independent, separately branded environments"
+        },
+        "headless_api": {
+          "value": "Partial",
+          "source": "https://support.thinkific.dev/hc/en-us/articles/5700872617111-api-overview",
+          "checkedAt": "2026-10-09",
+          "note": "Admin REST API, GraphQL and webhooks for integrations (Grow and Plus)"
+        },
+        "ai_generation": {
+          "value": "Partial",
+          "source": "https://support.thinkific.com/hc/en-us/articles/16342787791511-AI-at-Thinkific",
+          "checkedAt": "2026-10-09",
+          "note": "Outline (titles) from a prompt; quiz questions from existing lesson content"
+        },
+        "ai_citations": {
+          "value": "Not documented",
+          "source": "https://support.thinkific.com/hc/en-us/articles/16342787791511-AI-at-Thinkific",
+          "checkedAt": "2026-10-09"
+        },
+        "source_sync": {
+          "value": "Not documented",
+          "source": "https://support.thinkific.com/hc/en-us/articles/16342787791511-AI-at-Thinkific",
+          "checkedAt": "2026-10-09"
+        },
+        "adaptive_paths": {
+          "value": "Partial",
+          "source": "https://support.thinkific.com/hc/en-us/articles/24607767184407-Learning-Recommendations",
+          "checkedAt": "2026-10-09",
+          "note": "Prerequisites and drip; Plus adds learning paths and quiz-based recommendations"
+        },
+        "h5p": {
+          "value": "Partial",
+          "source": "https://support.thinkific.com/hc/en-us/articles/360030740653-Adding-H5P-org-Tools-to-Your-Course",
+          "checkedAt": "2026-10-09",
+          "note": "Embeds externally hosted H5P content in a lesson"
+        },
+        "scorm": {
+          "value": "Yes",
+          "source": "https://support.thinkific.com/hc/en-us/articles/24607412212119-Create-SCORM-Compliant-Courses",
+          "checkedAt": "2026-10-09",
+          "note": "Plus plans; SCORM 1.2 and 2004 4th edition"
+        },
+        "cmi5_xapi": {
+          "value": "No",
+          "source": "https://www.thinkific.com/ai-info-page/",
+          "checkedAt": "2026-10-09",
+          "note": "Vendor states xAPI and cmi5 packages are not supported"
+        },
+        "lti13": {
+          "value": "Not documented",
+          "source": "https://www.thinkific.com/ai-info-page/",
+          "checkedAt": "2026-10-09"
+        },
+        "commerce": {
+          "value": "Yes",
+          "source": "https://support.thinkific.com/hc/en-us/articles/1500012376321-Thinkific-Payments-Supported-Countries-and-Transaction-Fees",
+          "checkedAt": "2026-10-09",
+          "note": "Thinkific Payments (Stripe) and PayPal built in"
+        },
+        "generative_ui": {
+          "value": "Not documented",
+          "source": "https://www.thinkific.com/updates/learning-paths-quizzes-and-the-latest-august-updates/",
+          "checkedAt": "2026-10-09"
+        },
+        "pricing": {
+          "value": "SaaS plans; Plus by quote",
+          "source": "https://www.thinkific.com/pricing/",
+          "checkedAt": "2026-10-09",
+          "note": "Published Basic, Start and Grow plans; free trial"
+        }
+      }
+    },
+    {
+      "key": "learndash",
+      "name": "LearnDash",
+      "note": "WordPress plugin",
+      "cells": {
+        "self_hosting": {
+          "value": "Yes",
+          "source": "https://docs.nexcess.com/software/learndash/learndash-cloud/",
+          "checkedAt": "2026-10-09",
+          "note": "WordPress plugin on your own hosting; a hosted Cloud plan also exists"
+        },
+        "licence": {
+          "value": "GPL-2.0-or-later, paid licence",
+          "source": "https://www.liquidweb.com/policies/learndash-terms-and-conditions/",
+          "checkedAt": "2026-10-09",
+          "note": "Updates, add-ons and support need an active annual licence"
+        },
+        "multi_tenant": {
+          "value": "No",
+          "source": "https://docs.nexcess.com/software/learndash/requirements/",
+          "checkedAt": "2026-10-09",
+          "note": "Requirements state WordPress Multisite is not supported"
+        },
+        "headless_api": {
+          "value": "Yes",
+          "source": "https://developers.learndash.com/learndash-rest-api-ldlms-v2/",
+          "checkedAt": "2026-10-09",
+          "note": "REST API ldlms/v2 with an OpenAPI spec endpoint"
+        },
+        "ai_generation": {
+          "value": "Partial",
+          "source": "https://docs.nexcess.com/software/learndash/quiz-ai-builder/",
+          "checkedAt": "2026-10-09",
+          "note": "AI outline (lesson titles) and quiz builder from course content; own OpenAI key"
+        },
+        "ai_citations": {
+          "value": "Not documented",
+          "source": "https://docs.nexcess.com/software/learndash/course-outline-builder/",
+          "checkedAt": "2026-10-09"
+        },
+        "source_sync": {
+          "value": "Not documented",
+          "source": "https://docs.nexcess.com/software/learndash/overview/",
+          "checkedAt": "2026-10-09"
+        },
+        "adaptive_paths": {
+          "value": "Partial",
+          "source": "https://docs.nexcess.com/software/learndash/drip-feeding/",
+          "checkedAt": "2026-10-09",
+          "note": "Prerequisites and drip-feed scheduling"
+        },
+        "h5p": {
+          "value": "Via plugin",
+          "source": "https://learndash.com/support/kb/learndash-app/uncategorized/add-h5p-content/",
+          "checkedAt": "2026-10-09",
+          "note": "H5P WordPress plugin and its block inside lessons"
+        },
+        "scorm": {
+          "value": "Via plugin",
+          "source": "https://docs.nexcess.com/software/learndash/scorm-xapi/",
+          "checkedAt": "2026-10-09",
+          "note": "Third-party add-ons; native content is not SCORM"
+        },
+        "cmi5_xapi": {
+          "value": "Via plugin",
+          "source": "https://docs.nexcess.com/software/learndash/scorm-xapi/",
+          "checkedAt": "2026-10-09",
+          "note": "xAPI through third-party add-ons and an LRS; cmi5 not mentioned"
+        },
+        "lti13": {
+          "value": "No",
+          "source": "https://docs.nexcess.com/software/learndash/lti-support/",
+          "checkedAt": "2026-10-09",
+          "note": "Docs state there is no built-in LTI support"
+        },
+        "commerce": {
+          "value": "Yes",
+          "source": "https://docs.nexcess.com/software/learndash/payments/",
+          "checkedAt": "2026-10-09",
+          "note": "Built-in Stripe Connect and PayPal; WooCommerce integration"
+        },
+        "generative_ui": {
+          "value": "Not documented",
+          "source": "https://docs.nexcess.com/software/learndash/overview/",
+          "checkedAt": "2026-10-09"
+        },
+        "pricing": {
+          "value": "Annual licence per site tier",
+          "source": "https://www.liquidweb.com/software/learndash/",
+          "checkedAt": "2026-10-09",
+          "note": "Essentials, Pro and Elite tiers; hosted Cloud plan separate"
+        }
+      }
+    }
+  ]
+}

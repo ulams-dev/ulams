@@ -6,6 +6,7 @@ import { siteModel } from "../../src/lib/view-model.ts";
 import { completionMode, topicDoc } from "../../src/lib/page-docs.ts";
 import { flattenTopics } from "@ulams/sdk";
 import { COFFEE_PROGRAM, raw } from "./fixtures.ts";
+import { comparisonModel } from "../../src/lib/comparison.ts";
 
 describe("platform landing", () => {
   const demo = (title: string, theme: string) => ({
@@ -17,7 +18,10 @@ describe("platform landing", () => {
     secondary: { label: "Open as admin", href: "http://coffee.admin.localhost" },
   });
   it("is valid against the catalogue with three demo cards", () => {
-    const data = { demos: [demo("The Coffee Atlas", "coffee"), demo("On-Call", "oncall"), demo("Night Sky Explorers", "nightsky")] };
+    const data = {
+      demos: [demo("The Coffee Atlas", "coffee"), demo("On-Call", "oncall"), demo("Night Sky Explorers", "nightsky")],
+      comparison: comparisonModel(),
+    };
     expect(validateDocument(landingDocs.platform!, data)).toEqual([]);
   });
   it("labels roadmap items as coming and invents no numbers", () => {
