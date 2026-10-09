@@ -32,7 +32,9 @@
 # cookies. Arguments: <API host> <API origin> <frame ancestors>
 (content_origin) {
 	header {
-		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'; report-uri {args[1]}/api/csp-report; report-to csp-endpoint"
+		# `?`: only when the API did not set one. The API sets the CSP of interactive packages itself,
+		# per version (ADR 0086); every other package type gets this one.
+		?Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'; report-uri {args[1]}/api/csp-report; report-to csp-endpoint"
 		Reporting-Endpoints `csp-endpoint="{args[1]}/api/csp-report"`
 		>X-Content-Type-Options nosniff
 		# Own browsing-context group (no window.opener link to the app); public package files
@@ -48,7 +50,7 @@
 
 	@package {
 		method GET HEAD
-		path /scorm/* /cmi5/* /adapt/* /liascript/*
+		path /scorm/* /cmi5/* /adapt/* /liascript/* /interactive/*
 	}
 	handle @package {
 		request_header -Cookie
@@ -204,7 +206,7 @@
 		}
 	}
 
-	@large_uploads path /api/admin/scorm/upload /api/admin/scorm/parse /api/admin/cmi5 /api/admin/courses/zip/import
+	@large_uploads path /api/admin/scorm/upload /api/admin/scorm/parse /api/admin/cmi5 /api/admin/interactive /api/admin/interactive/*/versions /api/admin/courses/zip/import
 	handle @large_uploads {
 		request_body {
 			max_size 1100MB

@@ -18,7 +18,7 @@ in `.env`. Without `CONTENT_ORIGIN` the legacy SCORM player is used (feature fla
 
 `docker/conf/Caddyfile` (`content_origin` snippet):
 
-- only `GET`/`HEAD` of `/scorm/*`, `/cmi5/*`, `/adapt/*`, `/liascript/*`, proxied to the tenant API's
+- only `GET`/`HEAD` of `/scorm/*`, `/cmi5/*`, `/adapt/*`, `/liascript/*`, `/interactive/*`, proxied to the tenant API's
   `GET /api/content/<path>` (`packages/uploads`, `ContentFileController`) with the header
   `X-Ulams-Content-Origin: 1`. The API reads the file from the package type's disk, local or bucket
   (`ulams_uploads.content_disks`), so one design covers both. Without a configured content origin, or
@@ -87,6 +87,7 @@ acceptable; each has a test:
    |---|---|
    | SCORM, cmi5, Adapt | The SCO finds `window.API` / `API_1484_11` by walking its parent frames; an opaque origin makes the player and the SCO cross-origin, so tracking never starts (verified in the Playwright harness) |
    | LiaScript | The build is a SCORM 1.2 SCO and also uses a Worker, localStorage/IndexedDB and a service worker; without the flag it fails with "Failed to construct 'Worker'" |
+   | Interactive (the exception: it does run opaque) | `SANDBOX_INTERACTIVE` has no `allow-same-origin`. The package talks to the lesson page only through the `ulams-ix` bridge (nonce and `origin === "null"` checks) and holds no token; the API sets its CSP per version (no `unsafe-eval`, `connect-src 'self'`). See ADR 0086 and 0087 |
    | H5P | The embed page calls its own service with fetch and a bearer token, and the resize handshake needs real origins; H5P runs on the app host (`/h5p`), not the content origin |
 
    For these, mitigations 1, 2 and 4 carry the protection: package code has no ambient credentials to

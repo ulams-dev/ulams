@@ -1,6 +1,6 @@
 ---
 title: Content origin
-description: Why SCORM, cmi5, Adapt and LiaScript packages are served from a per-tenant content origin, the separate-domain and same-site modes, and how to configure it in production.
+description: Why SCORM, cmi5, Adapt, LiaScript and Interactive packages are served from a per-tenant content origin, the separate-domain and same-site modes, and how to configure it in production.
 sidebar:
   order: 5
 modules:
@@ -8,13 +8,14 @@ modules:
   - scorm
   - cmi5
   - liascript
+  - interactive
   - adapt
   - tenancy
 ---
 
 import { Aside, Steps } from "@astrojs/starlight/components";
 
-Uploaded packages (SCORM, cmi5, Adapt builds, LiaScript) run arbitrary third-party JavaScript.
+Uploaded packages (SCORM, cmi5, Adapt builds, LiaScript, Interactive) run arbitrary third-party JavaScript.
 ulams serves them from a **content origin**: a host per tenant that holds nothing but package
 files. It has no API routes, accepts and sets no cookies, and sends its own Content Security
 Policy. The full design is in
@@ -120,15 +121,23 @@ H5P is not served from the content origin; see [H5P in production](/operators/h5
 
 The `content_origin` snippet, copied from the development Caddyfile with HTTPS hosts:
 
-- answers only `GET` and `HEAD` for `/scorm/*`, `/cmi5/*`, `/adapt/*` and `/liascript/*`, and 404
+- answers only `GET` and `HEAD` for `/scorm/*`, `/cmi5/*`, `/adapt/*`, `/liascript/*` and `/interactive/*`, and 404
   for everything else;
 - rewrites them to `GET /api/content/...` on the tenant API (php-fpm) with
   `Host`/`X-Forwarded-Host` set to the tenant API host and `X-Ulams-Content-Origin: 1`;
 - drops `Cookie` and `Authorization` on the way in and `Set-Cookie` on the way out;
-- sends `Content-Security-Policy` (scripts allowed, `connect-src` limited to the tenant API,
+- sends `Content-Security-Policy` only when the API did not (`header ?Content-Security-Policy`; the API sets
+  the policy of every `/interactive/*` file itself, from the package version's manifest, see
+  [Interactive](/creators/interactive/#limits-and-the-csp)), and otherwise (scripts allowed, `connect-src` limited to the tenant API,
   `frame-ancestors` limited to the tenant front and admin, `form-action 'none'`),
   `X-Content-Type-Options: nosniff`, `Cross-Origin-Opener-Policy: same-origin`,
   `Cross-Origin-Resource-Policy: cross-origin` and `Referrer-Policy: no-referrer`.
+
+Interactive packages are the exception to the shared policy: the frame that plays them is sandboxed
+without `allow-same-origin`, so the package runs in an opaque origin, and the API answers each file
+with a policy of its own (no `'unsafe-eval'`, `connect-src 'self'` unless the tenant allows the
+manifest's network list, `frame-ancestors` limited to the tenant front and admin). Keep
+`/interactive/*` in the proxy's package matcher and do not override the header there.
 
 The API sites strip `X-Ulams-Content-Origin` from client requests, and the API answers 404 to
 `/api/content/...` without it, so package HTML never runs on the API origin.

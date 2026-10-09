@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/ulams-ix/v1/event.json",
+  "title": "event",
+  "description": "Package to parent. xAPI-like; the verb is an IRI.",
+  "type": "object",
+  "required": [
+    "ulams-ix",
+    "type",
+    "nonce",
+    "verb",
+    "object"
+  ],
+  "properties": {
+    "ulams-ix": {
+      "const": 1
+    },
+    "type": {
+      "const": "event"
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "verb": {
+      "type": "string",
+      "maxLength": 200,
+      "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:\\S+$"
+    },
+    "object": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+    },
+    "result": {
+      "type": "object",
+      "properties": {
+        "response": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "success": {
+          "type": "boolean"
+        },
+        "score": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

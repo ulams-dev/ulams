@@ -143,6 +143,47 @@ class TenantIsolationTest extends TestCase
         $this->assertSame(401, $this->request(self::B, 'GET', "/api/admin/liascript/{$id}/source", $tokenA)->getStatusCode());
     }
 
+    public function testInteractivePackagesDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $zipPath = tempnam(sys_get_temp_dir(), 'isolation-') . '.zip';
+        $zip = new \ZipArchive();
+        $zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        $zip->addFromString('index.html', '<p>Only on A</p>');
+        $zip->addFromString('ulams-interactive.json', json_encode([
+            'id' => 'isolation', 'title' => ['en' => 'Isolation probe'], 'version' => '1.0.0', 'licence' => 'MIT',
+            'locales' => ['en'], 'defaultLocale' => 'en', 'bridge' => 1,
+            'steps' => [['id' => 'only', 'title' => ['en' => 'Only'], 'text' => ['en' => 'Only on A.']]],
+        ]));
+        $zip->close();
+
+        $created = $this->request(self::A, 'POST', '/api/admin/interactive', $tokenA, null, [
+            ['name' => 'file', 'contents' => fopen($zipPath, 'r'), 'filename' => 'isolation.zip'],
+        ]);
+        @unlink($zipPath);
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['id'];
+
+        $this->assertSame(200, $this->request(self::A, 'GET', "/api/admin/interactive/{$id}", $tokenA)->getStatusCode());
+        foreach ([['GET', "/api/admin/interactive/{$id}"], ['GET', "/api/admin/interactive/{$id}/versions"], ['GET', "/api/admin/interactive/{$id}/preview"], ['DELETE', "/api/admin/interactive/{$id}"]] as [$method, $uri]) {
+            $onB = $this->request(self::B, $method, $uri, $tokenB);
+            $this->assertNotSame(200, $onB->getStatusCode(), "{$method} {$uri}");
+            $this->assertStringNotContainsString('Isolation probe', (string) $onB->getBody());
+            $this->assertSame(401, $this->request(self::B, $method, $uri, $tokenA)->getStatusCode(), "{$method} {$uri} with A's token");
+        }
+        $list = $this->request(self::B, 'GET', '/api/admin/interactive', $tokenB);
+        $this->assertSame(200, $list->getStatusCode());
+        $this->assertStringNotContainsString('Isolation probe', (string) $list->getBody());
+
+        // the learner endpoints: another tenant knows neither the topic nor the token
+        foreach ([['POST', '/api/interactive/launches/1'], ['POST', '/api/interactive/topics/1/events']] as [$method, $uri]) {
+            $this->assertSame(401, $this->request(self::B, $method, $uri, $tokenA, ['events' => [['type' => 'complete']]])->getStatusCode(), "{$method} {$uri} with A's token");
+        }
+        $this->assertSame(200, $this->request(self::A, 'GET', "/api/admin/interactive/{$id}", $tokenA)->getStatusCode());
+        $this->assertSame(200, $this->request(self::A, 'DELETE', "/api/admin/interactive/{$id}", $tokenA)->getStatusCode());
+    }
+
     /**
      * Course Builder sessions, versions and events stay in their tenant: tenant B with its own token
      * cannot read tenant A's session, events or versions, and A's token is not valid on B. (Needs
@@ -189,7 +230,7 @@ class TenantIsolationTest extends TestCase
         return array_column(json_decode((string) $response->getBody(), true)['data'] ?? [], 'title');
     }
 
-    private function request(string $slugOrHost, string $method, string $uri, ?string $token = null, ?array $json = null): ResponseInterface
+    private function request(string $slugOrHost, string $method, string $uri, ?string $token = null, ?array $json = null, ?array $multipart = null): ResponseInterface
     {
         $host = str_contains($slugOrHost, '.') ? $slugOrHost : "{$slugOrHost}.localhost";
         $options = ['headers' => array_filter([
@@ -199,6 +240,9 @@ class TenantIsolationTest extends TestCase
         ])];
         if ($json !== null) {
             $options['json'] = $json;
+        }
+        if ($multipart !== null) {
+            $options['multipart'] = $multipart;
         }
 
         return self::$http->request($method, $uri, $options);

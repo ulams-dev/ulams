@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/ulams-ix/v1/init.json",
+  "title": "init",
+  "description": "Parent to package. Carries the per-launch nonce.",
+  "type": "object",
+  "required": [
+    "ulams-ix",
+    "type",
+    "nonce",
+    "locale",
+    "theme",
+    "reducedMotion",
+    "display",
+    "chrome"
+  ],
+  "properties": {
+    "ulams-ix": {
+      "const": 1
+    },
+    "type": {
+      "const": "init"
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "locale": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 16
+    },
+    "theme": {
+      "type": "object",
+      "maxProperties": 64,
+      "propertyNames": {
+        "pattern": "^--[a-z0-9-]{1,64}$"
+      },
+      "additionalProperties": {
+        "type": "string",
+        "maxLength": 200
+      }
+    },
+    "reducedMotion": {
+      "type": "boolean"
+    },
+    "display": {
+      "enum": [
+        "inline",
+        "background",
+        "fullscreen"
+      ]
+    },
+    "chrome": {
+      "enum": [
+        "full",
+        "minimal",
+        "none"
+      ]
+    },
+    "startStep": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+    },
+    "range": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        },
+        "to": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "readOnly": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": false
+}
