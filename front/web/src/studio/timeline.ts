@@ -105,6 +105,13 @@ export class Timeline {
   private surface(event: AgUiEvent): void {
     const surface = surfaceFromEvent(event);
     if (!surface) return;
+    // Development only: check the envelope against the vendored A2UI v0.9 schema (never shipped).
+    if (import.meta.env.DEV) {
+      void import("@ulams/ui/builder/a2ui-validate.ts").then(({ validateSurfaceContent }) => {
+        const issues = validateSurfaceContent((event as { content?: unknown }).content);
+        if (issues.length) console.warn(`a2ui-surface ${surface.surfaceId} is not valid A2UI v0.9`, issues);
+      });
+    }
     const kind = surface.kind ?? "";
     if (!this.started && kind === this.options.startAfterKind) this.started = true;
     if (this.options.kinds && !this.options.kinds.includes(kind)) return;

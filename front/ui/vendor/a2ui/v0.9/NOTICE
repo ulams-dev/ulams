@@ -1,0 +1,11 @@
+A2UI v0.9 JSON Schemas (vendored)
+
+Copyright the A2UI project authors.
+Licensed under the Apache License, Version 2.0 (see LICENSE in this directory).
+
+Source:   https://github.com/a2ui-project/a2ui (formerly google/A2UI)
+Path:     specification/v0_9/json/
+Commit:   03b77ae95a12f5040754f8cc48a8fa9ab761c377 (2026-10-09)
+Files:    server_to_client.json, common_types.json, client_to_server.json,
+          client_capabilities.json, client_data_model.json, server_capabilities.json
+Changes:  none; the files are byte-for-byte copies of the upstream files at that commit.
