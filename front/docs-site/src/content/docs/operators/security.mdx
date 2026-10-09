@@ -52,12 +52,13 @@ hostile input.
 |---|---|---|
 | Content origins | Enforced CSP, `nosniff`, `Referrer-Policy: no-referrer`, cookies stripped | Caddy `content_origin` snippet |
 | Learner front (`web`) | `nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, same-origin check on state-changing requests (CSRF) | `front/web/src/middleware.ts` |
-| Front and admin | `Content-Security-Policy-Report-Only` | Caddy `app_csp_report_only` snippet |
+| Learner front (`web`) | `Content-Security-Policy` (enforced in development, report-only in the production image until `CSP_ENFORCE=true`) with `frame-src` for the tenant's registered tools, and `Reporting-Endpoints` | `front/web/src/middleware.ts` |
+| Admin | The same, with `frame-src 'self' <content origins> https:` | Caddy `app_csp_admin` snippet |
 | H5P embed pages | `frame-ancestors` per tenant, `Referrer-Policy: no-referrer` | `api/h5p` |
 
-<Badge text="Recommended" variant="tip" /> Collect the report-only CSP reports for a while, then
-switch the front and admin to an enforced `Content-Security-Policy`, and add
-`Strict-Transport-Security` once HTTPS works on every host. Neither is in the example by default.
+<Badge text="Recommended" variant="tip" /> Collect the CSP reports for about a week, then enforce the
+policy of the front and admin (see [Security headers](/operators/security-headers/)), and add
+`Strict-Transport-Security` once HTTPS works on every host. HSTS is not in the example by default.
 
 <Aside type="caution" title="CORS on the API">
   The API site in the development Caddyfile, and therefore in the example, echoes any request

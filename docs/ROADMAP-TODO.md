@@ -252,15 +252,16 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [x] (new) Admin UI for LTI: tools and platforms screens, external-tool topic form with "pick content from
       tool" (Integrations → LTI)
 - [ ] (new) LTI: Client-Side OIDC (platform storage via `postMessage`) on the tool side, NRPS on the platform
-      side, per-tool `frame-src` in the CSP
+      side, per-tool `frame-src` in the CSP (partial: per-tool `frame-src` done, the front reads
+      `GET /api/lti/frame-origins`; Client-Side OIDC and NRPS pending)
 - [x] (new) Run `ulams:lti:rotate-keys --init` for existing tenants (new tenants get it at provisioning) (done by `ulams:upgrade`, step `lti_keys`, ADR 0081)
 
 ### 1.4 Shared
 - [x] Upload hardening (zip-slip, MIME, size limits, virus-scan hook) (`packages/uploads`: SCORM, cmi5,
       course import, file manager; clamd hook tested with a fake clamd, compose profile `av` not run in CI)
-- [ ] Isolated origin / strict CSP for third-party JS (partial: SCORM, Adapt and LiaScript play from the
-      per-tenant content origin with a strict CSP, files served by `/api/content` from local or bucket disks;
-      cmi5 plays from the content origin too (ADR 0046); front/admin CSP is report-only)
+- [x] Isolated origin / strict CSP for third-party JS (SCORM, Adapt, LiaScript and cmi5 play from the
+      per-tenant content origin with a strict CSP, files served by `/api/content` from local or bucket disks
+      (ADR 0046); the front/admin CSP is enforced in development and switches with `CSP_ENFORCE` (ADR 0044))
 - [x] (new) Zip-slip: SCORM (`ScormService::unzipScormArchive`) and cmi5 (`Cmi5UploadService`) extract
       archives with `ZipArchive::extractTo` and no entry-path checks; replace with a safe extractor (M1.1)
 - [x] (new) The SCORM player loads `scorm-again` from the jsDelivr CDN; vendor it (air-gapped installs)
@@ -278,10 +279,13 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
       `api/docs/content-origin.md`; deployment pending). Note 2026-10-09: the owner chose the same-site
       `*.content.ulams.app` instead; the separate domain stays supported (ADR 0014, amended)
-      (partial: deployment docs with DNS and TLS steps done (operators/content-origin); the real domain is owner decision #24 and `frame-src` is L1-05)
+      (partial: deployment docs with DNS and TLS steps done (operators/content-origin) and the registered LTI tool origins are in the front's `frame-src` (ADR 0044); the real domain is owner decision #24)
 - [x] (new) Same-site content subdomain hardening: `__Host-` cookies, exact-Origin checks on front and API,
       sandboxed player frames, COOP/CORP headers, both modes documented
-- [ ] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector
+- [x] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector (collector
+      `POST /api/csp-report`, admin list `GET /api/admin/csp-reports`, `report-uri`/`report-to` on every policy,
+      the front builds its CSP per request, `CSP_ENFORCE` and `ULAMS_CSP_HEADER` switch enforcement; ADR 0044;
+      production turns it on after a clean week, see `operators/security-headers`)
 - [x] (new) H5P service multitenancy via its `TenantResolver` (per-tenant key, database, bucket) (env-file
       resolver; per-tenant `H5P_INTERNAL_TOKEN`; library administration limited to the platform; production
       mounts limited to an exported least-privilege config (`ulams:h5p:export-config`, `compose.h5p.prod.yml`);
