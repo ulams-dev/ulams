@@ -5,8 +5,9 @@
  */
 import { durationToMinutes, topicKind, type Course, type Lesson, type Tenant, type Topic } from "@ulams/sdk";
 import type { UiNode } from "@ulams/ui/render-core";
-import type { ThemeName } from "@ulams/ui/registry";
+import { LEARNER_LAYOUT_COMPONENTS, registry, type ComponentName, type ThemeName } from "@ulams/ui/registry";
 import { stripLeadingTitle } from "@ulams/ui/markdown";
+import { validate } from "@ulams/ui/schema";
 import { interactiveNode, type InteractiveResult } from "./interactive.ts";
 import { FORMAT_BY_KIND, type CourseModel, type SiteModel } from "./view-model.ts";
 
@@ -114,6 +115,29 @@ export interface TopicDocInput {
 
 const str = (v: unknown): string | undefined => (typeof v === "string" && v.trim() !== "" ? v : undefined);
 const num = (v: unknown): number | undefined => (typeof v === "number" && Number.isFinite(v) ? v : typeof v === "string" && v !== "" && !Number.isNaN(Number(v)) ? Number(v) : undefined);
+
+const LAYOUT_COMPONENTS: readonly string[] = LEARNER_LAYOUT_COMPONENTS;
+
+/**
+ * The document of a Layout topic when it is safe to render: a non-empty list of nodes that use only the
+ * approved layout components, with props that match the catalogue. The API checks the same rules when the
+ * topic is saved; this check protects the page from content that predates a catalogue change. `null`
+ * means "show the Markdown fallback instead".
+ */
+export function layoutNodes(topicable: unknown): UiNode[] | null {
+  const document = (topicable as { document?: unknown } | null)?.document;
+  if (!Array.isArray(document) || document.length === 0) return null;
+  const nodes: UiNode[] = [];
+  for (const raw of document) {
+    const node = raw as { component?: unknown; props?: unknown; id?: unknown } | null;
+    if (!node || typeof node !== "object" || typeof node.component !== "string" || !LAYOUT_COMPONENTS.includes(node.component)) return null;
+    const props = node.props === undefined ? {} : node.props;
+    if (!props || typeof props !== "object" || Array.isArray(props)) return null;
+    if (validate(registry[node.component as ComponentName].props, props).issues.length > 0) return null;
+    nodes.push({ component: node.component, props: props as Record<string, unknown>, ...(typeof node.id === "string" ? { id: node.id } : {}) });
+  }
+  return nodes;
+}
 
 /** Body of the lesson player for one topic. */
 export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, cmi5Src = null, liascript = null, interactive = null, lti = null, preview = false }: TopicDocInput): UiNode {
@@ -262,6 +286,14 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
       if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
       break;
     }
+    case "layout": {
+      // catalogue components from the stored document (ADR 0052); an invalid document shows the fallback
+      const nodes = layoutNodes(t);
+      if (nodes) children.push(...nodes);
+      else children.push({ component: "Prose", props: { markdown: str(t.markdown_fallback) ?? "" } });
+      if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
+      break;
+    }
     case "quiz":
       children.push({
         component: "QuizRunner",
@@ -323,6 +355,9 @@ export function completionMode(topic: Topic): "view" | "manual" | "media" | "h5p
     case "interactive":
       // the package completes the topic through the bridge: `ulams:complete` from <ulams-interactive>
       return "external";
+    case "layout":
+      // viewed, except that a practice activity completes the topic with its first checked attempt
+      return layoutNodes(topic.topicable)?.some((node) => node.component === "PracticeActivity") ? "external" : "view";
     case "quiz":
       return "quiz";
     case "scorm":
