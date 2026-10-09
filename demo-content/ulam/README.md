@@ -7,7 +7,7 @@ MIT code and CC BY 4.0 text (`LICENSE`, `LICENSE-content`, `CREDITS.md`, shared 
 | Package | Steps | What the learner does | Completes |
 |---|---|---|---|
 | [`spiral/`](spiral) | `grid`, `primes`, `diagonals`, `explore` | Writes the integers on a square spiral, marks the primes (a sieve), highlights n² + n + 41 | `complete` after `explore` |
-| `monte-carlo/` | `idea`, `throw`, `converge`, `error` | Throws random points to estimate π (coming) | coming |
+| [`monte-carlo/`](monte-carlo) | `idea`, `throw`, `converge`, `error` | Throws seeded random points into a square to estimate π and watches the error shrink on a log-log chart | `complete` after 10,000 throws |
 | `automaton/` | `rule30`, `rule90`, `rule110`, `life`, `ulam-growth` | Runs cellular automata (coming) | coming |
 | `scottish-book/` | `intro` and one step per problem | Reads notebook cards and guesses outcomes (coming) | coming |
 | `lwow-map/` | `lwow` … `santa-fe` | Follows a journey on a map (coming) | coming |
