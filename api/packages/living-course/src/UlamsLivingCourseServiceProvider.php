@@ -2,7 +2,10 @@
 
 namespace Ulams\LivingCourse;
 
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Ai\Fake\FakeResponders;
 use Ulams\Ai\Prompts\PromptRegistry;
@@ -68,6 +71,7 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        RateLimiter::for('living-course-webhook', fn (Request $request) => Limit::perMinute(60)->by('lc-webhook:' . $request->route('webhookId')));
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 

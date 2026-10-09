@@ -7,6 +7,7 @@ use Ulams\LivingCourse\Http\Controllers\ConnectionsController;
 use Ulams\LivingCourse\Http\Controllers\NoticesController;
 use Ulams\LivingCourse\Http\Controllers\ProposalsController;
 use Ulams\LivingCourse\Http\Controllers\SourcesController;
+use Ulams\LivingCourse\Http\Controllers\WebhookController;
 use Ulams\LivingCourse\Http\Controllers\StalenessController;
 
 // Authors and admins (session policy). Detection and staleness work with AI disabled; only the
@@ -55,3 +56,6 @@ Route::group([
     Route::post('notices/{notice}/dismiss', [NoticesController::class, 'dismiss'])->whereNumber('notice');
     Route::get('courses/{course}/freshness', [NoticesController::class, 'freshness'])->whereNumber('course');
 });
+
+// Webhooks of source hosts: no login, the signature with the connection's secret is the credential.
+Route::post('api/living-course/webhooks/{webhookId}', [WebhookController::class, 'receive'])->middleware('throttle:living-course-webhook');
