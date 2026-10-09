@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import axe from "axe-core";
 import type { ProposalDetail, ProposalItem, ProposalSummary } from "@ulams/sdk";
 import { detail, item, question } from "./updates-fixtures.ts";
@@ -135,6 +135,12 @@ const button = (root: ParentNode, text: string): HTMLButtonElement => {
 };
 const ready = (root: HTMLElement) => wait(() => expect(root.querySelector("[data-items] article"), root.innerHTML.slice(0, 500)).not.toBeNull());
 const item3 = () => [item(), question(), item({ id: "i3", kind: "citation_remap", status: "accepted", elementId: "b2", label: "Lesson 1.1 › Paragraph 2" })];
+
+// Warm axe up once: its first run is slow on a loaded CI runner and used to land inside a test's 5 s limit.
+beforeAll(async () => {
+  document.body.innerHTML = "<main></main>";
+  await axe.run(document.body, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+}, 60_000);
 
 afterEach(() => vi.unstubAllGlobals());
 
