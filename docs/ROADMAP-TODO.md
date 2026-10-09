@@ -156,13 +156,17 @@ open Phase 0, 1 and 2 item as work packages L0-01â€¦L2-24; owner questions #41â€
       (ADR 0071); pending: review `POST api/cmi5/fetch` (L0-09))
 - [ ] (new) Stripe: handle the 3-D Secure redirect in the front and document the webhook setup
       (`PAYMENTS_STRIPE_WEBHOOK_SECRET`, `/api/payments-gateways/webhook/stripe`); RevenueCat receipt verifier
-- [ ] (new) Jitsi: confirm the JaaS webhook signature format against the JaaS docs; configure
+      (partial: 3-D Secure redirect in the legacy front and webhook docs done; the RevenueCat verifier is
+      obsolete by default, pending owner decision #46)
+- [x] (new) Jitsi: confirm the JaaS webhook signature format against the JaaS docs; configure
       `JITSI_RECORDING_HOSTS`
 - [ ] (new) Drop the unused `analyze_enabled` columns (consultations, webinars) and clean up stored meeting
       frames in tenant buckets
-- [ ] (new) Remove the Stripe test key committed in `api/docker/envs/*.example`
+- [x] (new) Remove the Stripe test key committed in `api/docker/envs/*.example` (keys emptied in the six env
+      files; rolling the key at Stripe is an owner action, #49)
 - [ ] (new) Responsible disclosure: the payment-callback, LRS-token, webcam-upload and course-access issues
       exist in the upstream EscolaLMS packages; notify upstream users
+      (partial: notice drafted in `docs/security/upstream-notice.md`; sending it is an owner action, #50)
 
 - [ ] (new) mjml: the `mjml` compose service is not on the `ulams` network and `MJML_API_URL` is not set
       (templates fall back silently); wire it or drop the service
