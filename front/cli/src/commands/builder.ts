@@ -708,6 +708,40 @@ export const builderCommands: AnyCommand[] = [
       return { data: await builderCall(ctx, "POST", "/sessions/{session}/publish", { params: { session: i.session } }) };
     },
   }),
+  defineCommand({
+    ...common,
+    id: "builder.publish-check",
+    summary: "List what blocks publishing the applied course, plus warnings",
+    description: "Runs the same checks `builder publish` runs and returns data.blocking, data.warnings and data.facts without publishing anything.",
+    kind: "read",
+    scopes: READ,
+    endpoints: ["GET /api/admin/course-builder/sessions/{session}/publish-check"],
+    positionals: ["session"],
+    input: z.object({ session }),
+    output: z.unknown(),
+    examples: [{ title: "Before publishing", argv: "builder publish-check <session> --json" }],
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "GET", "/sessions/{session}/publish-check", { params: { session: i.session } }) };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "builder.new-site",
+    summary: "Create a new site (tenant) for the course in this session",
+    description: "Starts creating a new site and returns its status (the request is queued). Only available to users allowed to create sites (a 403 otherwise). The slug defaults to the one in the Course Brief.",
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: ["POST /api/admin/course-builder/sessions/{session}/new-site"],
+    positionals: ["session"],
+    input: z.object({ session, slug: z.string().optional().describe("Site slug (default: the brief's site slug)."), name: z.string().max(120).optional().describe("Site name.") }),
+    output: z.unknown(),
+    examples: [{ title: "A new site", argv: "builder new-site <session> --slug coffee-atlas --json" }],
+    plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/new-site`, { ...(i.slug ? { slug: i.slug } : {}), ...(i.name ? { name: i.name } : {}) }),
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "POST", "/sessions/{session}/new-site", { params: { session: i.session }, body: { ...(i.slug ? { slug: i.slug } : {}), ...(i.name ? { name: i.name } : {}) } }) };
+    },
+  }),
 
   /* ---- element chat and patches */
   defineCommand({

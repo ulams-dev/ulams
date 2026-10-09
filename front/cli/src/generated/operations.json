@@ -313,8 +313,20 @@
  },
  {
   "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/new-site",
+  "summary": "Create a new site and move the session there (platform operators; TENANCY_NEW_SITES)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
   "path": "/api/admin/course-builder/sessions/{session}/publish",
-  "summary": "Publish the applied course",
+  "summary": "Publish the applied course (409 while blocking items or unacknowledged warnings remain; body acknowledgedWarnings)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/sessions/{session}/publish-check",
+  "summary": "Blocking items and warnings before publishing",
   "tag": "Admin Course Builder"
  },
  {
@@ -2769,6 +2781,12 @@
   "method": "POST",
   "path": "/api/lti/tool/launch",
   "summary": "LTI launch (resource link or deep-linking request) from a registered platform",
+  "tag": "LTI"
+ },
+ {
+  "method": "POST",
+  "path": "/api/lti/tool/launch/verify",
+  "summary": "Second step of a launch whose login used the platform's storage (Client Side postMessage Storage)",
   "tag": "LTI"
  },
  {

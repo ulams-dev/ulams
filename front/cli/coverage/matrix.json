@@ -1,5 +1,5 @@
 {
- "summary": "512/557 covered, 45 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "514/560 covered, 46 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -314,9 +314,21 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/course-builder/sessions/{session}/new-site",
+   "summary": "Create a new site and move the session there (platform operators; TENANCY_NEW_SITES)",
+   "command": "builder.new-site",
+   "status": "covered"
+  },
+  {
    "key": "POST /api/admin/course-builder/sessions/{session}/publish",
-   "summary": "Publish the applied course",
+   "summary": "Publish the applied course (409 while blocking items or unacknowledged warnings remain; body acknowledgedWarnings)",
    "command": "builder.publish",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}/publish-check",
+   "summary": "Blocking items and warnings before publishing",
+   "command": "builder.publish-check",
    "status": "covered"
   },
   {
@@ -2770,6 +2782,12 @@
   {
    "key": "POST /api/lti/tool/launch",
    "summary": "LTI launch (resource link or deep-linking request) from a registered platform",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/lti/tool/launch/verify",
+   "summary": "Second step of a launch whose login used the platform's storage (Client Side postMessage Storage)",
    "command": "",
    "status": "excluded: browser-only"
   },
