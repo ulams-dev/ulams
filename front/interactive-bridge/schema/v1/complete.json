@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/ulams-ix/v1/complete.json",
+  "title": "complete",
+  "description": "Package to parent.",
+  "type": "object",
+  "required": [
+    "ulams-ix",
+    "type",
+    "nonce"
+  ],
+  "properties": {
+    "ulams-ix": {
+      "const": 1
+    },
+    "type": {
+      "const": "complete"
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    }
+  },
+  "additionalProperties": false
+}
