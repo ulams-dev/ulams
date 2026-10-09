@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/ulams-dev/ulams/security/advisories/new
+    about: Report vulnerabilities privately. Never open a public issue for a security problem.
+  - name: Documentation
+    url: https://ulams-dev.github.io/ulams/
+    about: Guides for course authors, administrators, developers and operators.
+  - name: Questions and ideas
+    url: https://github.com/ulams-dev/ulams/discussions
+    about: Ask questions and discuss ideas in GitHub Discussions (if enabled for the repository).
