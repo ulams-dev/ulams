@@ -1,5 +1,9 @@
 <?php
 
+// Application copy of packages/courses/config/responsecache.php. spatie/laravel-responsecache is
+// auto-discovered and merges its own defaults (store: file) before the courses package can, so
+// the values that matter live here, where they take precedence over both.
+
 /*
  * spatie/laravel-responsecache 8 configuration, a full copy of the package defaults.
  *
