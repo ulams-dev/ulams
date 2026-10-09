@@ -135,7 +135,7 @@ final class ApplyService
             $this->versions->setCurrent($session, $version);
             // the new text becomes the live fragments first: lesson sources and labels are rendered from them
             $this->revisions->promote($to->refresh(), $userId);
-            $courseId = $this->applier->apply($session, $version, $author, (bool) ($run->input['overwrite'] ?? false));
+            $courseId = $this->applier->apply($session, $version, $author, (bool) ($run->input['overwrite'] ?? false), $proposal->id);
             $session->forceFill(['course_id' => $courseId, 'applied_version_id' => $version->id])->save();
             $this->staleness->set($session, $applied->pluck('element_id')->all(), 'in_sync');
             $this->staleness->settleOpen($session, 'dismissed');

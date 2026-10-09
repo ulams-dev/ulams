@@ -7,6 +7,10 @@ use Ulams\Ai\Fake\FakeResponders;
 use Ulams\Ai\Prompts\PromptRegistry;
 use Ulams\Ai\UlamsAiServiceProvider;
 use Ulams\CourseBuilder\Apply\BlueprintApplier;
+use Ulams\CourseBuilder\Apply\DeleteEverything;
+use Ulams\CourseBuilder\Contracts\FragmentArchive;
+use Ulams\CourseBuilder\Contracts\RemovalPolicy;
+use Ulams\CourseBuilder\Ingestion\NoFragmentArchive;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
 use Ulams\CourseBuilder\Console\EvalCommand;
 use Ulams\CourseBuilder\Console\PruneEventsCommand;
@@ -53,6 +57,8 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         PatchService::class => PatchService::class,
         BlueprintApplier::class => BlueprintApplier::class,
         RunService::class => RunService::class,
+        RemovalPolicy::class => DeleteEverything::class,
+        FragmentArchive::class => NoFragmentArchive::class,
     ];
 
     public function register(): void

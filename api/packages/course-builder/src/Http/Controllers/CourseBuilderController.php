@@ -10,6 +10,7 @@ use InvalidArgumentException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Ulams\Ai\Models\AiCall;
 use Ulams\CourseBuilder\Apply\BlueprintApplier;
+use Ulams\CourseBuilder\Contracts\FragmentArchive;
 use Ulams\CourseBuilder\Blueprint\BlueprintDiff;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Exceptions\BuilderException;
@@ -171,7 +172,15 @@ class CourseBuilderController extends Controller
         $f = preg_match('/^frg_[a-z2-7]{12}$/', $fragment) ? Fragment::query()->find($fragment) : null;
         $source = $f?->source;
         if ($f === null || $source === null) {
-            throw new NotFoundHttpException('Fragment not found.');
+            // a fragment the source no longer has: the archive keeps what the course was written from
+            $old = preg_match('/^frg_[a-z2-7]{12}$/', $fragment) ? app(FragmentArchive::class)->find($fragment) : null;
+            if ($old === null) {
+                throw new NotFoundHttpException('Fragment not found.');
+            }
+            $this->sessionFor($request, $old['sessionId']);
+            unset($old['sessionId']);
+
+            return self::ok($old + ['removed' => true]);
         }
         $this->sessionFor($request, $source->session_id);
 

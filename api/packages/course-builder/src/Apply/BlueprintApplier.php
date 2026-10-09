@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
+use Ulams\CourseBuilder\Contracts\FragmentArchive;
+use Ulams\CourseBuilder\Contracts\RemovalPolicy;
 use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\CourseBuilder\Exceptions\BuilderException;
 use Ulams\CourseBuilder\Models\EntityMapEntry;
@@ -47,6 +49,8 @@ final class BlueprintApplier
         private readonly GiftQuestionServiceContract $questions,
         private readonly CourseServiceContract $courseService,
         private readonly PageServiceContract $pages,
+        private readonly RemovalPolicy $removal,
+        private readonly FragmentArchive $archive,
     ) {
     }
 
@@ -143,11 +147,11 @@ final class BlueprintApplier
             }
         }
         foreach ($map as $key => $entry) {
-            if (!isset($desired[$key])) {
+            if (!isset($desired[$key]) && $entry->retired_at === null) {
                 $delete[$bucket($entry->entity_type)]++;
             }
         }
-        $known = array_fill_keys($session->fragmentIds(), true);
+        $known = array_fill_keys([...$session->fragmentIds(), ...$this->archive->knownIds($session->id)], true);
         $warnings = array_map(fn ($e) => str_starts_with($e, 'warning: ') ? substr($e, 9) : $e, Checks::blueprint($doc, $known));
         foreach ($this->drift($session, $doc) as $title) {
             $warnings[] = "Edited in the admin after the last apply: {$title}. The apply stops until you confirm overwriting it.";
@@ -197,7 +201,7 @@ final class BlueprintApplier
      * Applies a version as the author. Returns the course id. Stops (409) when an element to change
      * was edited in the admin after the last apply, unless the author confirmed with `$overwrite`.
      */
-    public function apply(Session $session, Version $version, Authenticatable $author, bool $overwrite = false): int
+    public function apply(Session $session, Version $version, Authenticatable $author, bool $overwrite = false, ?string $proposalId = null): int
     {
         if (!$overwrite && ($drift = $this->drift($session, $version->document)) !== []) {
             throw new BuilderException(sprintf(
@@ -208,7 +212,7 @@ final class BlueprintApplier
         $previous = Auth::user();
         Auth::setUser($author);
         try {
-            return DB::transaction(fn () => $this->applyAs($session, $version, $author));
+            return DB::transaction(fn () => $this->applyAs($session, $version, $author, $proposalId));
         } finally {
             if ($previous !== null) {
                 Auth::setUser($previous);
@@ -218,7 +222,7 @@ final class BlueprintApplier
         }
     }
 
-    private function applyAs(Session $session, Version $version, Authenticatable $author): int
+    private function applyAs(Session $session, Version $version, Authenticatable $author, ?string $proposalId = null): int
     {
         $doc = $version->document;
         $desired = $this->desired($doc, (array) $session->brief);
@@ -227,19 +231,40 @@ final class BlueprintApplier
         foreach ($map as $key => $entry) {
             $ids[$key] = $entry->entity_id;
         }
-        $remember = function (array $item, int $entityId) use ($session, $version, &$ids) {
+        $remember = function (array $item, int $entityId) use ($session, $version, &$ids, &$map, $proposalId) {
+            $attributes = ['entity_id' => $entityId, 'fingerprint' => $item['fingerprint'], 'applied_version_id' => $version->id, 'retired_at' => null];
+            if ($proposalId !== null && !isset($map["{$item['type']}:{$item['element']}"])) {
+                // entities created by a source update: the completion guard tells them from the original course
+                $attributes['added_by_proposal_id'] = $proposalId;
+            }
             EntityMapEntry::query()->updateOrCreate(
                 ['session_id' => $session->id, 'element_id' => $item['element'], 'entity_type' => $item['type']],
-                ['entity_id' => $entityId, 'fingerprint' => $item['fingerprint'], 'applied_version_id' => $version->id],
+                $attributes,
             );
             $ids["{$item['type']}:{$item['element']}"] = $entityId;
         };
         $changed = fn (string $key, array $item) => !isset($map[$key]) || $map[$key]->fingerprint !== $item['fingerprint'];
 
-        // deletions first (questions, topics, lessons), so removed elements never linger
+        // deletions first (questions, topics, lessons), so removed elements never linger; the removal
+        // policy may keep an entity that learners have data on (deactivated or archived instead)
         foreach (['gift_question', 'quiz_topic', 'topic', 'lesson', 'page'] as $type) {
             foreach ($map as $key => $entry) {
-                if ($entry->entity_type !== $type || isset($desired[$key])) {
+                if ($entry->entity_type !== $type || isset($desired[$key]) || $entry->retired_at !== null) {
+                    continue;
+                }
+                if ($type !== 'page' && !$this->removal->shouldDelete($type, $entry->entity_id)) {
+                    match ($type) {
+                        'gift_question' => $this->questions->archive($entry->entity_id),
+                        'quiz_topic', 'topic' => $this->topics->update(['active' => false], $entry->entity_id),
+                        'lesson' => $this->lessons->update(['active' => false], $entry->entity_id),
+                    };
+                    if ($type === 'gift_question') {
+                        $entry->delete();
+                        unset($ids[$key]);
+                    } else {
+                        // kept: a later re-add of the same element reactivates it
+                        $entry->forceFill(['retired_at' => now(), 'fingerprint' => null])->save();
+                    }
                     continue;
                 }
                 match ($type) {
@@ -294,7 +319,7 @@ final class BlueprintApplier
     {
         $data = $item['data'] + ['order' => $item['order'], 'course_id' => $courseId, 'active' => true];
         if ($existing !== null) {
-            return $this->lessons->update(array_intersect_key($data, array_flip(['title', 'summary', 'order'])), $existing)->getKey();
+            return $this->lessons->update(array_intersect_key($data, array_flip(['title', 'summary', 'order', 'active'])), $existing)->getKey();
         }
 
         return $this->lessons->create(Validator::make($data, \Ulams\Courses\Models\Lesson::$rules)->validate())->getKey();
