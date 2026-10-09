@@ -310,8 +310,8 @@ approved apply through domain services → element chat edits. Designs:
 - [ ] (new) Studio: edit the Course Brief from the brief panel (partial: `PUT …/brief` with stale
       marking done; the panel is read-only)
 - [ ] (new) Detect admin edits made after an apply before re-applying (ADR 0010 drift check)
-- [ ] (new) Vendor the A2UI v0.9 JSON Schemas in `@ulams/ui` for dev-mode validation (plan 13.2); the
-      builder catalogue is validated, the A2UI envelope is not
+- [x] (new) Vendor the A2UI v0.9 JSON Schemas in `@ulams/ui` for dev-mode validation (plan 13.2; L2-02;
+      the studio validates `a2ui-surface` envelopes in dev, tests cover every surface kind)
 - [ ] (new) Operations for the builder: a separate PHP-FPM pool and Caddy route for
       `…/sessions/{id}/events`, a daily `course-builder:prune-events`, a Horizon queue for builder jobs
 - [ ] (new) Run the opt-in cross-tenant check `TenantIsolationTest::testCourseBuilderSessionsDoNotCrossTenants`

@@ -134,7 +134,10 @@ The catalogue JSON for prompts and tools: `yarn workspace @ulams/ui catalogue`.
   `STEP_*`, `TEXT_MESSAGE_*`, `STATE_SNAPSHOT`/`STATE_DELTA`, `ACTIVITY_*`) to a
   `course_builder_events` table; the row id is the SSE `id`.
 - A2UI messages (`createSurface`, `updateComponents`, `updateDataModel`, `deleteSurface`) travel
-  inside AG-UI events, behind one adapter on each side.
+  inside AG-UI events, behind one adapter on each side. The A2UI v0.9 message schemas are vendored
+  unmodified in `front/ui/vendor/a2ui/v0.9` (Apache-2.0, pinned commit in its `NOTICE`); the
+  studio validates every incoming `a2ui-surface` envelope against them in development and tests
+  validate one surface of every kind the API emits. Production builds skip the check.
 - `GET …/sessions/{id}/events` streams with `Last-Event-ID` resume and a snapshot on connect.
   Connections close after 25 s and the client reconnects, so php-fpm workers are not held; the
   route gets its own small FPM pool and wakes on a Valkey pub/sub ping.
