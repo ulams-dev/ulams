@@ -24,7 +24,7 @@ describe("comparison data (public claims about other products)", () => {
       for (const name of names) expect(comparisonData.systems.find((s) => s.name === name)?.cells[key], `${name} · ${key}`).toBeDefined();
     }
     // keeps every existing row for the enterprise group too
-    for (const key of ["self_hosting", "licence", "headless_api", "ai_generation", "scorm", "lti13", "pricing"]) {
+    for (const key of ["self_hosting", "licence", "headless_api", "mcp", "ai_generation", "scorm", "lti13", "pricing"]) {
       expect(rowsOf("enterprise").map((r) => r.key)).toContain(key);
     }
   });
@@ -71,13 +71,47 @@ describe("comparison data (public claims about other products)", () => {
     expect(model.groups.map((g) => g.label)).toEqual(["Open source & creator platforms", "Enterprise suites"]);
     for (const group of model.groups) {
       expect(group.columns[0]).toMatchObject({ label: "ulams", highlight: true });
-      expect(group.rows.every((r) => r.cells.length === group.columns.length)).toBe(true);
+      expect(group.sections.every((sec) => sec.rows.every((r) => r.cells.length === group.columns.length))).toBe(true);
     }
     expect(model.groups[0]!.columns).toHaveLength(7);
     expect(model.groups[1]!.columns).toHaveLength(7);
-    expect(model.groups[0]!.rows).toHaveLength(15);
-    expect(model.groups[1]!.rows).toHaveLength(20);
+    const count = (g: (typeof model.groups)[number]) => g.sections.reduce((n, sec) => n + sec.rows.length, 0);
+    expect(count(model.groups[0]!)).toBe(22);
+    expect(count(model.groups[1]!)).toBe(27);
     const urls = new Set(comparisonData.systems.flatMap((s) => Object.values(s.cells).map((c) => c.source)));
     expect(new Set(model.sources.map((s) => s.href))).toEqual(urls);
+  });
+
+  it("leads both groups with Developer & headless, then AI, content standards and business", () => {
+    expect(comparisonData.sections.map((x) => x.label)).toEqual(["Developer & headless", "AI", "Content standards", "Business"]);
+    for (const group of comparisonModel().groups) {
+      expect(group.sections.map((x) => x.label)).toEqual(["Developer & headless", "AI", "Content standards", "Business"]);
+      expect(group.sections[0]!.rows.map((r) => r.label)).toEqual([
+        "REST API",
+        "Headless course management",
+        "Published OpenAPI spec",
+        "Typed SDK (TypeScript)",
+        "CLI for authors and developers",
+        "MCP server",
+        "Webhooks / events",
+        "Course-as-code / Git sync",
+        "Self-hosting",
+        "Generative UI",
+      ]);
+    }
+    const sectionKeys = new Set(comparisonData.sections.map((x) => x.key));
+    for (const row of comparisonData.rows) expect(sectionKeys.has(row.section), row.key).toBe(true);
+  });
+
+  it("links every ulams cell to the repository on origin/main and keeps roadmap items honest", () => {
+    const ulams = comparisonData.systems.find((s) => s.ours)!;
+    for (const [row, cell] of Object.entries(ulams.cells)) {
+      expect(cell.source, row).toMatch(/^https:\/\/github\.com\/ulams-dev\/ulams\/blob\/main\//);
+    }
+    expect(ulams.cells.mcp?.value).toBe("Yes");
+    expect(ulams.cells.webhooks?.value).toBe("Coming");
+    expect(ulams.cells.course_as_code?.value).toBe("Coming");
+    expect(ulams.cells.cli?.value).toBe("Yes");
+    expect(ulams.cells.generative_ui?.value).toBe("Partial");
   });
 });
