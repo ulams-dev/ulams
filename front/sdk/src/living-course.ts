@@ -258,6 +258,29 @@ export interface ProposalDetail extends ProposalSummary {
   items: ProposalItem[];
 }
 
+export interface ItemResult {
+  item: ProposalItem;
+  proposal: ProposalSummary;
+}
+
+export interface AnalyseResult {
+  state: string;
+  estimateMicroUsd: number | null;
+  runId: string | null;
+  message: string | null;
+}
+
+/** The machine-readable part of an error response: `code` and `data` (for example the conflicting items). */
+export function apiErrorInfo(error: unknown): { status: number; code: string | null; data: Record<string, unknown> | null } {
+  if (!(error instanceof ApiError)) return { status: 0, code: null, data: null };
+  const body = (error.body ?? {}) as { code?: unknown; data?: unknown };
+  return {
+    status: error.status,
+    code: typeof body.code === "string" ? body.code : null,
+    data: body.data && typeof body.data === "object" ? (body.data as Record<string, unknown>) : null,
+  };
+}
+
 const PREFIX = "/api/admin/living-course";
 
 export type LivingCourseClient = ReturnType<typeof createLivingCourseClient>;
@@ -270,15 +293,20 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
   const base = options.baseUrl.replace(/\/+$/, "") + (options.prefix ?? PREFIX);
   const doFetch = options.fetch ?? ((input: RequestInfo | URL, init?: RequestInit) => fetch(input, init));
 
-  async function call<T>(method: string, path: string, form?: FormData): Promise<{ status: number; data: T }> {
+  async function call<T>(method: string, path: string, form?: FormData, json_?: unknown): Promise<{ status: number; data: T }> {
     const headers: Record<string, string> = {
       Accept: "application/json",
       ...options.headers,
       ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
     };
+    let payload: BodyInit | undefined = form;
+    if (!form && json_ !== undefined) {
+      headers["Content-Type"] = "application/json";
+      payload = JSON.stringify(json_);
+    }
     let response: Response;
     try {
-      response = await doFetch(`${base}${path}`, { method, headers, body: form, signal: AbortSignal.timeout(options.timeoutMs ?? 60_000) });
+      response = await doFetch(`${base}${path}`, { method, headers, body: payload, signal: AbortSignal.timeout(options.timeoutMs ?? 60_000) });
     } catch (error) {
       throw new ApiError(0, path, null, `API unreachable on ${path}: ${(error as Error).message}`);
     }
@@ -306,6 +334,28 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
       list: async (sessionId: string) => (await call<ProposalSummary[]>("GET", `/sessions/${id(sessionId)}/proposals`)).data,
       /** Summary, items grouped by lesson, and the analysis steps. */
       get: async (proposalId: string) => (await call<ProposalDetail>("GET", `/proposals/${id(proposalId)}`)).data,
+      /**
+       * Starts or resumes the AI analysis. Throws `ApiError` 409 with code `confirm_estimate` (the
+       * estimate is above the automatic limit: call again with `confirmEstimate`), 422 `budget_blocked`
+       * or 503 `ai_disabled`; read them with `apiErrorInfo`.
+       */
+      analyse: async (proposalId: string, confirmEstimate = false) =>
+        (await call<AnalyseResult>("POST", `/proposals/${id(proposalId)}/analyse`, undefined, { confirmEstimate })).data,
+      accept: async (proposalId: string, itemId: string) => (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/accept`)).data,
+      reject: async (proposalId: string, itemId: string) => (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/reject`)).data,
+      reset: async (proposalId: string, itemId: string) => (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/reset`)).data,
+      /** One new call for one element; at most three per item. */
+      regenerate: async (proposalId: string, itemId: string, comment: string) =>
+        (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/regenerate`, undefined, { comment })).data,
+      acceptAll: async (proposalId: string) => (await call<{ accepted: number; proposal: ProposalSummary }>("POST", `/proposals/${id(proposalId)}/accept-all`)).data,
+      /** Rejects the whole proposal and acknowledges the source revision. */
+      rejectAll: async (proposalId: string) => (await call<ProposalSummary>("POST", `/proposals/${id(proposalId)}/reject`)).data,
+      /**
+       * Applies the accepted items as a new course version (202). Throws 409 with code `conflicts`
+       * (`data.conflicts`: items) or `admin_edits` (`data.drift`: element labels; repeat with `overwrite`).
+       */
+      apply: async (proposalId: string, overwrite = false) =>
+        (await call<{ runId: string; proposal: ProposalSummary }>("POST", `/proposals/${id(proposalId)}/apply`, undefined, { overwrite })).data,
     },
     sources: {
       /** Sources of a builder session with connection and sync state. */

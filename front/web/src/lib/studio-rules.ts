@@ -45,6 +45,8 @@ export const LIVING_COURSE_RULES: Array<{ method: string; pattern: RegExp }> = [
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/staleness$`) },
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/proposals$`) },
   { method: "GET", pattern: new RegExp(`^/proposals/${ID}$`) },
+  { method: "POST", pattern: new RegExp(`^/proposals/${ID}/(analyse|accept-all|reject|apply)$`) },
+  { method: "POST", pattern: new RegExp(`^/proposals/${ID}/items/${ID}/(accept|reject|reset|regenerate)$`) },
 ];
 
 /** `path` is relative to the BFF root, e.g. `/living-course/sources/{id}/revisions`. */

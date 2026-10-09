@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { ApiError } from "../src/client.ts";
-import { createLivingCourseClient } from "../src/living-course.ts";
+import { apiErrorInfo, createLivingCourseClient } from "../src/living-course.ts";
 
 type Call = { url: string; init: RequestInit };
 
@@ -75,6 +75,60 @@ describe("living course client", () => {
       }) as unknown as typeof fetch,
     });
     await expect(lc.sources.list("s")).rejects.toBeInstanceOf(ApiError);
+  });
+
+  it("sends decisions and JSON bodies to the proposal endpoints", async () => {
+    const item = { id: "i1", status: "accepted" };
+    const proposal = { id: "p1", status: "ready" };
+    const { fn, calls } = fakeFetch([
+      { body: { data: { item, proposal } } },
+      { body: { data: { item, proposal } } },
+      { body: { data: { item, proposal } } },
+      { body: { data: { item, proposal } } },
+      { body: { data: { accepted: 3, proposal } } },
+      { body: { data: proposal } },
+      { status: 202, body: { data: { runId: "r1", proposal } } },
+      { status: 202, body: { data: { state: "started", estimateMicroUsd: 420000, runId: "r2", message: null } } },
+    ]);
+    const lc = createLivingCourseClient({ baseUrl: "/studio/api", prefix: "/living-course", fetch: fn });
+    expect((await lc.proposals.accept("p1", "i1")).item.id).toBe("i1");
+    await lc.proposals.reject("p1", "i1");
+    await lc.proposals.reset("p1", "i1");
+    await lc.proposals.regenerate("p1", "i1", "Keep the example");
+    expect((await lc.proposals.acceptAll("p1")).accepted).toBe(3);
+    await lc.proposals.rejectAll("p1");
+    expect((await lc.proposals.apply("p1", true)).runId).toBe("r1");
+    expect((await lc.proposals.analyse("p1", true)).runId).toBe("r2");
+    expect(calls.map((c) => `${c.init.method} ${c.url.replace("/studio/api/living-course", "")}`)).toEqual([
+      "POST /proposals/p1/items/i1/accept",
+      "POST /proposals/p1/items/i1/reject",
+      "POST /proposals/p1/items/i1/reset",
+      "POST /proposals/p1/items/i1/regenerate",
+      "POST /proposals/p1/accept-all",
+      "POST /proposals/p1/reject",
+      "POST /proposals/p1/apply",
+      "POST /proposals/p1/analyse",
+    ]);
+    expect(calls[0]!.init.body).toBeUndefined();
+    expect(JSON.parse(String(calls[3]!.init.body))).toEqual({ comment: "Keep the example" });
+    expect((calls[3]!.init.headers as Record<string, string>)["Content-Type"]).toBe("application/json");
+    expect(JSON.parse(String(calls[6]!.init.body))).toEqual({ overwrite: true });
+    expect(JSON.parse(String(calls[7]!.init.body))).toEqual({ confirmEstimate: true });
+  });
+
+  it("exposes the code and data of a refused apply or analysis", async () => {
+    const { fn } = fakeFetch([
+      { status: 409, body: { success: false, code: "conflicts", message: "You edited some elements.", data: { conflicts: [{ id: "i1" }] } } },
+      { status: 409, body: { success: false, code: "confirm_estimate", message: "About $0.42.", data: { estimateMicroUsd: 420000 } } },
+      { status: 500, body: { message: "boom" } },
+    ]);
+    const lc = createLivingCourseClient({ baseUrl: "/studio/api", prefix: "/living-course", fetch: fn });
+    const conflict = await lc.proposals.apply("p1").catch((e) => e);
+    expect(conflict).toBeInstanceOf(ApiError);
+    expect(apiErrorInfo(conflict)).toEqual({ status: 409, code: "conflicts", data: { conflicts: [{ id: "i1" }] } });
+    expect(apiErrorInfo(await lc.proposals.analyse("p1").catch((e) => e)).data).toEqual({ estimateMicroUsd: 420000 });
+    expect(apiErrorInfo(await lc.proposals.apply("p1").catch((e) => e))).toEqual({ status: 500, code: null, data: null });
+    expect(apiErrorInfo(new Error("x"))).toEqual({ status: 0, code: null, data: null });
   });
 
   it("reads staleness and proposals", async () => {

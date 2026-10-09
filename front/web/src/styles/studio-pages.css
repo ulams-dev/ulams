@@ -498,3 +498,150 @@
 .st-session-fresh {
   margin: 8px 0 0;
 }
+
+/* update review */
+.st-review > div[data-studio-review] {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.st-review-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+.st-review-head h2 {
+  flex: 1 1 260px;
+}
+.st-review-body {
+  display: grid;
+  grid-template-columns: minmax(260px, 380px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.st-review-changes {
+  position: sticky;
+  top: 72px;
+  max-height: calc(100vh - 160px);
+  overflow: auto;
+}
+.st-review-changes > summary {
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+.st-review-items,
+.st-items,
+.st-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.st-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.st-group-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.st-group-head h3 {
+  margin: 0;
+}
+.st-bulk,
+.st-state {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.st-bulk p,
+.st-state h2,
+.st-state p {
+  margin: 0;
+}
+.st-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.st-step-failed {
+  color: var(--ulams-studio-danger);
+}
+.st-confirm {
+  border: 2px solid var(--ulams-studio-ink);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.st-confirm p,
+.st-confirm h3 {
+  margin: 0;
+}
+.st-notices:empty {
+  display: none;
+}
+.st-notices p {
+  margin: 0;
+}
+.st-apply-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  background: var(--ulams-studio-surface);
+  border: 1px solid var(--ulams-studio-ink);
+  border-radius: var(--ulams-studio-radius);
+  padding: 12px 16px;
+  margin-top: 8px;
+}
+.st-apply-bar[hidden] {
+  display: none;
+}
+.st-apply-bar p {
+  margin: 0;
+}
+.st-apply-text {
+  flex: 1 1 240px;
+  font-weight: 600;
+}
+.st-apply-bar [data-apply-slot] {
+  flex-basis: 100%;
+}
+.st-apply-bar [data-apply-slot]:empty {
+  display: none;
+}
+.st-table-wrap {
+  overflow-x: auto;
+}
+.st-updates th,
+.st-updates td {
+  text-align: left;
+  vertical-align: top;
+  padding: 8px 10px;
+}
+@media (max-width: 960px) {
+  .st-review-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .st-review-changes {
+    position: static;
+    max-height: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .st-review * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

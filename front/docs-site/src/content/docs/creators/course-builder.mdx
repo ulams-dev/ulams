@@ -15,6 +15,8 @@ learnerRoutes:
   - /studio/s/[id]/landing
   - /studio/s/[id]/done
   - /studio/s/[id]/sources
+  - /studio/s/[id]/updates
+  - /studio/s/[id]/updates/[proposal]
   - /studio/api/[...path]
 ---
 
@@ -111,6 +113,57 @@ available**), the revision your course reflects (**In your course**) and the lat
 
 Uploading a new version does not change your course. The course keeps reading from the revision it
 reflects until you accept updates.
+
+## 9. See what is out of date
+
+When a source changes, the course is marked **stale** until you decide what to do with the change.
+The marks always use words and an icon, never colour alone:
+
+- In the **session list** each course shows **In sync**, **Stale · 3 days** (how long ago the
+  source changed) or **Updates dismissed**. Select it to open the update.
+- In the **workspace** a banner at the top says how many elements are out of date and links to the
+  review. In the course tree, lessons and questions carry **Update pending**, **Answer may be wrong**
+  or **Source removed**, and the affected passages are highlighted with a note such as "Based on
+  §3.2 Ratios, changed 3 days ago".
+- Staleness works without AI: it only needs the source to have changed.
+
+## 10. Review an update
+
+**Updates** (in the left navigation) lists every update proposal for the course, newest first, with
+the source revisions it compares, its status, how many elements and quiz answers it touches, how
+many items you decided, and its cost. Open one to review it. Nothing in the course changes until you
+accept changes and apply them.
+
+- The **source changes** are on the left, with the old and new text of every changed passage.
+- The **proposed changes** are in the middle, grouped by lesson. Each item says why it changes, shows
+  the old and new text with removed and added words marked in words as well as colour, and cites the
+  passages it relies on. **Accept** and **Reject** are toggle buttons; **Undo my decision** takes a
+  decision back. After you decide, focus moves to the next undecided item and a screen reader
+  announces the decision.
+- **Ask for changes** lets you write what should be different; the assistant writes a new version of
+  that one element (up to three times per item). Without AI you edit the element in the workspace.
+- Warnings are explicit: **Possibly unsupported** (a claim the source does not back), **Answer may be
+  wrong** (the source changed where an answer comes from) and **Answer changed** (the correct answer
+  is different now; learners' earlier scores stay on record).
+- Quiet changes are shown too: **Citation update** (only the references moved), **No change
+  needed** (the assistant found nothing to change), **Removal** (the source no longer covers it),
+  **New in the source** (a section no lesson covers yet) and **Update by hand**.
+- An item you edited in the workspace after the analysis is marked **Conflict** or **Edited after
+  the analysis**. Ask for a new version of it, or reject it.
+
+**Accept all** accepts every undecided update, removal and no-change item. **Reject all** keeps your
+course as it is and marks the new source revision as reviewed, so the same changes are not proposed
+again; the page asks you to confirm first.
+
+When the estimated AI cost is above the automatic limit, the proposal waits with an **Analyse (about
+$0.42)** button and asks you to confirm. While the analysis runs you see its progress per lesson. If
+a lesson fails, **Retry this group** runs only that part again. If the AI budget is used up or AI is
+turned off, the changed elements are listed for you to update by hand in the workspace.
+
+The bar at the bottom shows how many changes are accepted. **Apply N accepted changes** creates a new
+version of the course (named "Source update r1 → r2" in the version history) and keeps what learners
+have done. If you edited elements after the analysis, the apply stops and lists them; if elements
+were edited in the admin after the last apply, you confirm **Overwrite and apply**.
 
 ## Tips
 

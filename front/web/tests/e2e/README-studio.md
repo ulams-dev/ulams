@@ -41,6 +41,12 @@ screen. It is skipped unless `STUDIO_E2E=1`.
    STUDIO_E2E=1 yarn workspace @ulams/web test:e2e tests/e2e/studio.spec.ts --project=desktop
    ```
 
+`studio-sources.spec.ts` and `studio-updates.spec.ts` (Living Course) run the same way and in both
+projects (`desktop` and `phone`, 360 px): `STUDIO_E2E=1 yarn workspace @ulams/web test:e2e
+tests/e2e/studio-updates.spec.ts`. The updates spec builds a course from `coffee-brewing.v1.md`,
+uploads `coffee-brewing.v2.md` through the sources API, then reviews and applies the proposal; it
+needs the queue to run jobs (`QUEUE_CONNECTION=sync`).
+
 Variables: `STUDIO_BASE_URL` (default `http://e2e.app.localhost:4329`), `STUDIO_API_URL`
 (`http://127.0.0.1:18081`), `STUDIO_AUTHOR_EMAIL`, `STUDIO_AUTHOR_PASSWORD`. Each run creates one
 course in the database.

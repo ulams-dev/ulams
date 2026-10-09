@@ -43,6 +43,14 @@ describe("studio BFF allow-list", () => {
     ["GET", `/living-course/sessions/${S}/staleness`],
     ["GET", `/living-course/sessions/${S}/proposals`],
     ["GET", `/living-course/proposals/${S}`],
+    ["POST", `/living-course/proposals/${S}/analyse`],
+    ["POST", `/living-course/proposals/${S}/accept-all`],
+    ["POST", `/living-course/proposals/${S}/reject`],
+    ["POST", `/living-course/proposals/${S}/apply`],
+    ["POST", `/living-course/proposals/${S}/items/${S}/accept`],
+    ["POST", `/living-course/proposals/${S}/items/${S}/reject`],
+    ["POST", `/living-course/proposals/${S}/items/${S}/reset`],
+    ["POST", `/living-course/proposals/${S}/items/${S}/regenerate`],
   ])("forwards living course %s %s", (method, path) => {
     expect(isLivingCourseCall(method, path)).toBe(true);
     expect(isStudioCall(method, path)).toBe(false);
@@ -63,6 +71,13 @@ describe("studio BFF allow-list", () => {
     ["DELETE", `/living-course/proposals/${S}`],
     ["GET", `/living-course/proposals/${S}/items`],
     ["GET", `/living-course/proposals/${S}/../x`],
+    ["GET", `/living-course/proposals/${S}/apply`],
+    ["PUT", `/living-course/proposals/${S}/apply`],
+    ["POST", `/living-course/proposals/${S}/learner-note`],
+    ["POST", `/living-course/proposals/${S}/items/${S}/delete`],
+    ["POST", `/living-course/proposals/${S}/items/${S}`],
+    ["POST", `/living-course/proposals/${S}/items/../apply`],
+    ["DELETE", `/living-course/proposals/${S}/items/${S}/accept`],
   ])("refuses living course %s %s", (method, path) => {
     expect(isLivingCourseCall(method, path)).toBe(false);
   });
