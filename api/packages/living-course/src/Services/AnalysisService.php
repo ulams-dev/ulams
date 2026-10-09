@@ -47,6 +47,7 @@ final class AnalysisService
         private readonly AuditLog $audit,
         private readonly StalenessService $staleness,
         private readonly EventLog $events,
+        private readonly Notifier $notifier,
     ) {
     }
 
@@ -245,6 +246,7 @@ final class AnalysisService
                 'data' => ['number' => $proposal->number, 'costMicroUsd' => $proposal->cost_micro_usd, 'analysed' => $proposal->counts['analysed'] ?? 0],
             ]);
             $this->events->text($finished->session, $finished, 'The update proposal is ready for your review. Nothing changes in the course until you approve it.');
+            $this->notifier->proposalReady($proposal);
         }
     }
 

@@ -33,6 +33,7 @@ final class ProposalService
         private readonly EventLog $events,
         private readonly LlmClient $llm,
         private readonly AnalysisService $analysis,
+        private readonly Notifier $notifier,
     ) {
     }
 
@@ -92,6 +93,8 @@ final class ProposalService
             $this->analysis->begin($proposal, false, $userId);
             $proposal->refresh();
         }
+        $this->notifier->revisionDetected($proposal);
+        $this->notifier->proposalReady($proposal);
 
         return ['proposal' => $proposal, 'state' => 'created'];
     }

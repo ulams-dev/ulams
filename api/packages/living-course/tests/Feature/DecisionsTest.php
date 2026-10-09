@@ -175,4 +175,21 @@ class DecisionsTest extends TestCase
         $this->assertSame('stale', $item->refresh()->status);
         $this->assertSame('pending', $other->refresh()->status);
     }
+
+    public function testReanalysisStartsAgainFromTheNewestRevisionAndDropsOldDecisions(): void
+    {
+        [$author, $session, $proposal] = $this->ready();
+        $item = ProposalItem::query()->where('proposal_id', $proposal->id)->where('kind', 'update')->first();
+        $this->actingAs($author, 'api')->postJson($this->url($proposal, "/items/{$item->id}/accept"))->assertOk();
+
+        $response = $this->actingAs($author, 'api')->postJson($this->url($proposal, '/reanalyse'))->assertCreated();
+
+        $this->assertSame('superseded', $proposal->refresh()->status);
+        $new = Proposal::query()->findOrFail($response->json('data.proposal.id'));
+        $this->assertSame(2, $new->number);
+        $this->assertSame('ready', $new->status);
+        $this->assertSame(0, ProposalItem::query()->where('proposal_id', $new->id)->whereNotNull('decided_by')->count());
+        $this->actingAs($author, 'api')->postJson($this->url($proposal, '/reanalyse'))->assertStatus(409);
+        $this->actingAs($this->tutor(), 'api')->postJson($this->url($new, '/reanalyse'))->assertStatus(403);
+    }
 }

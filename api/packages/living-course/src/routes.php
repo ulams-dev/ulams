@@ -31,6 +31,7 @@ Route::group([
     Route::post('proposals/{proposal}/items/{item}/reject', [ProposalsController::class, 'reject']);
     Route::post('proposals/{proposal}/items/{item}/reset', [ProposalsController::class, 'reset']);
     Route::post('proposals/{proposal}/items/{item}/regenerate', [ProposalsController::class, 'regenerate']);
+    Route::post('proposals/{proposal}/reanalyse', [ProposalsController::class, 'reanalyse']);
     Route::put('proposals/{proposal}/learner-note', [ProposalsController::class, 'learnerNote']);
     Route::put('connections/{connection}', [ConnectionsController::class, 'update']);
     Route::delete('connections/{connection}', [ConnectionsController::class, 'destroy']);

@@ -18,7 +18,11 @@ use Ulams\LivingCourse\Exceptions\ProposalException;
 use Ulams\LivingCourse\Services\AnalysisService;
 use Ulams\LivingCourse\Services\ApplyService;
 use Ulams\LivingCourse\Services\DecisionService;
+use Ulams\LivingCourse\Services\AuditLog;
 use Ulams\LivingCourse\Services\ProgressRules;
+use Ulams\LivingCourse\Services\ProposalService;
+use Ulams\LivingCourse\Models\Connection;
+use Ulams\LivingCourse\Models\Revision;
 use Ulams\LivingCourse\Models\ProposalItem;
 use Ulams\LivingCourse\Models\RevisionFragment;
 use Ulams\LivingCourse\Support\Presenter;
@@ -54,6 +58,8 @@ use Ulams\LivingCourse\Support\Presenter;
  * @OA\Post(path="/api/admin/living-course/proposals/{proposal}/reject", summary="Reject the whole proposal and acknowledge the source revision", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Response(response=200, description="the proposal"), @OA\Response(response=403, description="not allowed"), @OA\Response(response=409, description="already settled"))
+ * @OA\Post(path="/api/admin/living-course/proposals/{proposal}/reanalyse", summary="Replace the proposal by a new one from the newest source revision", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=201, description="the new proposal"), @OA\Response(response=409, description="already settled"))
  * @OA\Put(path="/api/admin/living-course/proposals/{proposal}/learner-note", summary="The text learners see for updated lessons (plain text, up to 500 characters)", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="note", type="string"))),
@@ -67,7 +73,7 @@ class ProposalsController extends Controller
 {
     use ResolvesLivingCourse;
 
-    public function __construct(private readonly AnalysisService $analysis, private readonly LlmClient $llm, private readonly DecisionService $decisions, private readonly ApplyService $applying, private readonly ProgressRules $rules)
+    public function __construct(private readonly AnalysisService $analysis, private readonly LlmClient $llm, private readonly DecisionService $decisions, private readonly ApplyService $applying, private readonly ProgressRules $rules, private readonly ProposalService $proposals, private readonly AuditLog $audit)
     {
     }
 
@@ -114,6 +120,25 @@ class ProposalsController extends Controller
         }
 
         return self::ok(['item' => Presenter::item($i), 'proposal' => Presenter::proposalSummary($p->refresh())]);
+    }
+
+    /** Starts again from the newest revision; decisions already made are not carried over (plan 8.3). */
+    public function reanalyse(Request $request, string $proposal): JsonResponse
+    {
+        [$session, $p] = $this->proposalFor($request, $proposal, 'act');
+        if (!$p->isOpen()) {
+            return self::fail('This proposal is already settled.', 409);
+        }
+        $connection = Connection::query()->where('source_id', $p->source_id)->firstOrFail();
+        $latest = Revision::query()->findOrFail($connection->latest_revision_id);
+        $p->forceFill(['status' => 'superseded'])->save();
+        $this->audit->record('proposal.superseded', [
+            'session_id' => $session->id, 'subject_type' => 'proposal', 'subject_id' => $p->id, 'source_id' => $p->source_id, 'revision_id' => $latest->id,
+            'actor_id' => (int) $request->user()->getKey(), 'data' => ['number' => $p->number, 'reanalysed' => true, 'by_revision' => $latest->number],
+        ]);
+        $created = $this->proposals->createFor($latest, 'manual', (int) $request->user()->getKey());
+
+        return self::ok(['state' => $created['state'], 'proposal' => $created['proposal'] ? Presenter::proposalSummary($created['proposal']) : null], 201);
     }
 
     public function learnerNote(Request $request, string $proposal): JsonResponse

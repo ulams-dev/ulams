@@ -27,7 +27,7 @@ final class ProgressRules
 {
     public const REATTEMPT_MESSAGE = 'One question was corrected. Your previous score stays on record. Retake the quiz to update your result.';
 
-    public function __construct(private readonly AuditLog $audit)
+    public function __construct(private readonly AuditLog $audit, private readonly Notifier $notifier)
     {
     }
 
@@ -156,6 +156,9 @@ final class ProgressRules
             'actor_type' => 'system', 'data' => ['number' => $proposal->number, 'notices' => $created, 'unchanged' => 'completion, scores, attempts and answers'],
         ]);
         if (array_sum($created) > 0) {
+            if ($inform) {
+                $this->notifier->learnersNotified($proposal);
+            }
             $this->audit->record('notice.created', [
                 'session_id' => $session->id, 'subject_type' => 'proposal', 'subject_id' => $proposal->id, 'source_id' => $proposal->source_id, 'actor_type' => 'system', 'data' => $created,
             ]);

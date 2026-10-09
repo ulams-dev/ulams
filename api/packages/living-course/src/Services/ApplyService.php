@@ -41,6 +41,7 @@ final class ApplyService
         private readonly AuditLog $audit,
         private readonly EventLog $events,
         private readonly ImpactAnalyzer $impact,
+        private readonly Notifier $notifier,
     ) {
     }
 
@@ -155,6 +156,7 @@ final class ApplyService
             $this->events->custom($session, $run, 'update_applied', ['proposalId' => $proposal->id, 'versionId' => $version->id, 'versionNumber' => $version->number]);
         });
         event(new ProposalApplied($proposal->refresh()));
+        $this->notifier->proposalApplied($proposal);
     }
 
     /**
