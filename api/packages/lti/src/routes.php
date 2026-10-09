@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Ulams\Lti\Http\Controllers\Admin\LtiAdminController;
+use Ulams\Lti\Http\Controllers\FrameOriginsController;
 use Ulams\Lti\Http\Controllers\JwksController;
 use Ulams\Lti\Http\Controllers\Platform\AgsController;
 use Ulams\Lti\Http\Controllers\Platform\PlatformController;
@@ -10,6 +11,9 @@ use Ulams\Lti\Http\Controllers\Tool\ToolController;
 // Public key set (both sides)
 Route::get('api/lti/jwks', JwksController::class);
 Route::get('.well-known/jwks.json', JwksController::class);
+
+// Origins the front's CSP must allow in frame-src (public, cached)
+Route::get('api/lti/frame-origins', FrameOriginsController::class);
 
 // Admin registrations (permission lti_manage, checked in the form requests)
 Route::group(['prefix' => 'api/admin/lti', 'middleware' => ['auth:api']], function () {

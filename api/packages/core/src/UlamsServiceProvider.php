@@ -12,7 +12,11 @@ use Ulams\Core\Http\Middleware\Idempotency;
 use Ulams\Core\Http\Middleware\ProtectJsonResponses;
 use Ulams\Core\Http\Middleware\RequestId;
 use Ulams\Core\Http\Middleware\SetTimezoneForUserMiddleware;
+use Ulams\Core\Console\PruneCspReportsCommand;
+use Ulams\Core\Services\Contracts\CspReportServiceContract;
 use Ulams\Core\Services\Contracts\HealthCheckServiceContract;
+use Ulams\Core\Services\CspReportService;
+use Illuminate\Console\Scheduling\Schedule;
 use Ulams\Core\Services\HealthCheckService;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
@@ -21,6 +25,7 @@ class UlamsServiceProvider extends ServiceProvider
 {
     public const SERVICES = [
         HealthCheckServiceContract::class => HealthCheckService::class,
+        CspReportServiceContract::class => CspReportService::class,
     ];
 
     public array $bindings = self::SERVICES;
@@ -47,6 +52,13 @@ class UlamsServiceProvider extends ServiceProvider
         $this->loadConfig();
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrations();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([PruneCspReportsCommand::class]);
+            $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+                $schedule->command('csp-reports:prune')->dailyAt('03:20');
+            });
+        }
 
         // memoised column listings must not outlive a schema change in this process
         Event::listen([MigrationsEnded::class, SchemaLoaded::class], fn () => SchemaColumns::flush());
