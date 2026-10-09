@@ -25,11 +25,11 @@
     "astro-mermaid": "2.1.0",
     "cookie": "2.0.1",
     "mermaid": "11.17.2",
-    "sharp": "0.34.5"
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
-    "@playwright/test": "1.48.2",
+    "@playwright/test": "1.63.0",
     "starlight-links-validator": "0.26.0",
     "typescript": "5.9.3",
     "yaml": "2.9.1"
