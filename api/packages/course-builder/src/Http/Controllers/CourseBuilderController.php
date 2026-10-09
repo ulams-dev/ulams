@@ -28,6 +28,7 @@ use Ulams\CourseBuilder\Pipeline\OutlineService;
 use Ulams\CourseBuilder\Pipeline\PatchService;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
 use Ulams\CourseBuilder\Publish\PublishCheck;
+use Ulams\CourseBuilder\Site\NewSite;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\RunStatus;
 use Ulams\CourseBuilder\Services\SessionState;
@@ -84,6 +85,7 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  * @OA\Post(path="/api/admin/course-builder/sessions/{id}/redo", summary="Redo", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="current version"))
  * @OA\Post(path="/api/admin/course-builder/sessions/{id}/apply", summary="Approve the apply of the current version", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=202, description="apply run"))
  * @OA\Get(path="/api/admin/course-builder/sessions/{id}/publish-check", summary="Blocking items and warnings before publishing", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="blocking, warnings and facts"))
+ * @OA\Post(path="/api/admin/course-builder/sessions/{id}/new-site", summary="Create a new site and move the session there (platform operators; TENANCY_NEW_SITES)", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\RequestBody(@OA\JsonContent(type="object")), @OA\Response(response=202, description="queued"), @OA\Response(response=403, description="not allowed"))
  * @OA\Post(path="/api/admin/course-builder/sessions/{id}/publish", summary="Publish the applied course (409 while blocking items or unacknowledged warnings remain; body acknowledgedWarnings)", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="published"))
  * @OA\Get(path="/api/admin/course-builder/sessions/{id}/usage", summary="AI calls of the session by task and model", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="usage"))
  */
@@ -96,6 +98,7 @@ class CourseBuilderController extends Controller
         private readonly VersionService $versions,
         private readonly BriefService $briefs,
         private readonly PublishCheck $publishChecks,
+        private readonly NewSite $newSites,
         private readonly SourceIngestor $ingestor,
         private readonly BlueprintApplier $applier,
         private readonly EventLog $events,
@@ -441,6 +444,23 @@ class CourseBuilderController extends Controller
         $run = $this->runs->start($s, 'apply', ['versionId' => $v->id, 'overwrite' => $request->boolean('overwrite')], (int) $request->user()->getKey());
 
         return self::ok(['runId' => $run->id], 202);
+    }
+
+    public function newSite(Request $request, string $session): JsonResponse
+    {
+        $s = $this->sessionFor($request, $session, 'update');
+        if (!$this->newSites->available($request->user())) {
+            return self::fail('Creating a new site is not available to you.', 403);
+        }
+        $data = $request->validate(['slug' => ['nullable', 'string'], 'name' => ['nullable', 'string', 'max:120']]);
+        $slug = (string) ($data['slug'] ?? ($s->brief['site']['slug'] ?? ''));
+        try {
+            $this->newSites->start($s, $slug, $data['name'] ?? null);
+        } catch (InvalidArgumentException $e) {
+            return self::fail($e->getMessage(), 422);
+        }
+
+        return self::ok($this->newSites->status($s->refresh()), 202);
     }
 
     public function publishCheck(Request $request, string $session): JsonResponse

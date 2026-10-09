@@ -47,6 +47,8 @@ class IsolationTest extends TestCase
             ['POST', "{$p}/sessions/{$s->id}/undo"],
             ['POST', "{$p}/sessions/{$s->id}/redo"],
             ['POST', "{$p}/sessions/{$s->id}/apply"],
+            ['GET', "{$p}/sessions/{$s->id}/publish-check"],
+            ['POST', "{$p}/sessions/{$s->id}/new-site"],
             ['POST', "{$p}/sessions/{$s->id}/publish"],
             ['GET', "{$p}/sessions/{$s->id}/usage"],
         ];
