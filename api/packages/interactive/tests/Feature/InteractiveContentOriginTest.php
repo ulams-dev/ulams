@@ -84,13 +84,30 @@ class InteractiveContentOriginTest extends TestCase
 
     public function testOnlyTheTenantsFrontAndAdminMayFrameAPackage(): void
     {
+        config(['app.env' => 'production']);
+        $this->app['env'] = 'production';
+        config(['ulams.core.security.trusted_origins' => ['https://staging.example.com', 'javascript:alert(1)', 'not a url']]);
         $csp = $this->csp();
 
-        $this->assertStringContainsString('frame-ancestors http://coffee.app.localhost:4321 http://coffee.admin.localhost;', $csp . ';');
+        $this->assertStringContainsString('frame-ancestors http://coffee.app.localhost:4321 http://coffee.admin.localhost https://staging.example.com;', $csp . ';');
         $this->assertStringNotContainsString('*', $csp);
 
-        config(['app.frontend_url' => 'javascript:alert(1)', 'ulams.core.security.admin_url' => null]);
+        config(['app.frontend_url' => 'javascript:alert(1)', 'ulams.core.security.admin_url' => null, 'ulams.core.security.trusted_origins' => []]);
         $this->assertStringContainsString("frame-ancestors 'none'", $this->csp());
+    }
+
+    public function testTheDevFrontOnItsOwnPortMayFrameAPackageOutsideProduction(): void
+    {
+        // the dev front runs on :4321 while the tenant env says http://coffee.app.localhost
+        config(['app.frontend_url' => 'http://coffee.app.localhost', 'ulams.core.security.admin_url' => 'http://coffee.admin.localhost', 'ulams.core.security.trust_localhost_outside_production' => true]);
+        $this->assertStringContainsString('frame-ancestors http://coffee.app.localhost:* http://coffee.admin.localhost:*;', $this->csp() . ';');
+
+        // a real host never gets a wildcard port, and neither does production
+        config(['app.frontend_url' => 'https://acme.ulams.app']);
+        $this->assertStringContainsString('frame-ancestors https://acme.ulams.app http://coffee.admin.localhost:*;', $this->csp() . ';');
+        $this->app['env'] = 'production';
+        config(['app.frontend_url' => 'http://coffee.app.localhost']);
+        $this->assertStringContainsString('frame-ancestors http://coffee.app.localhost http://coffee.admin.localhost;', $this->csp() . ';');
     }
 
     public function testTheNetworkAllowListNeedsBothTheTenantSettingAndTheManifest(): void
