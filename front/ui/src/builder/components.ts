@@ -117,11 +117,14 @@ function answerLabel(p: Props): string {
   if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "totalMinutes" in p.value) {
     return `${p.value.totalMinutes} min · ${p.value.lessonMinutes}-min lessons`;
   }
-  if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "mode" in p.value) {
+  if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "mode" in p.value && (p.value.mode === "free" || p.value.mode === "paid")) {
     return p.value.mode === "paid" ? (p.value.amountMinor ? `${minorToMajor(Number(p.value.amountMinor))} ${p.value.currency ?? ""}`.trim() : "Paid (price to confirm)") : "Free";
   }
   if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "preset" in p.value) {
     return `${THEME_PRESETS[p.value.preset as keyof typeof THEME_PRESETS]?.label ?? p.value.preset}${p.value.accent ? ` · ${p.value.accent}` : ""}`;
+  }
+  if (p.value && typeof p.value === "object" && !Array.isArray(p.value) && "mode" in p.value && ("slug" in p.value || p.value.mode === "current" || p.value.mode === "new")) {
+    return p.value.mode === "new" ? `New site: ${p.value.slug ?? ""}`.trim() : "This site";
   }
   if (Array.isArray(p.value)) return p.value.map(label).join(", ") || "None";
   return p.value !== undefined ? label(p.value) : "";
@@ -185,6 +188,34 @@ const LanguagePicker: Renderer = (p, ctx, id) => {
   const select = h("select", { id: selectId, class: "cb-select" },
     (p.options as Props[]).map((o) => h("option", { value: o.value, selected: o.value === (p.value ?? p.defaultValue) }, String(o.label))));
   return questionShell(p, id, [h("label", { for: selectId, class: "cb-label" }, "Language"), select], ctx, () => select.value);
+};
+
+const SitePicker: Renderer = (p, ctx, id) => {
+  const current = (p.value ?? p.defaultValue ?? { mode: "current" }) as Props;
+  const modes = radioGroup(uid("site"), "Where to publish", [{ value: "current", label: "This site" }, { value: "new", label: "A new site" }], current.mode);
+  modes.classList.add("cb-radios-cards");
+  const slugId = uid("slug");
+  const slug = h("input", { id: slugId, class: "cb-input", type: "text", maxlength: 40, autocomplete: "off", spellcheck: "false", value: current.slug ?? "", "aria-describedby": `${slugId}-hint` });
+  const hint = h("p", { id: `${slugId}-hint`, class: "cb-muted cb-small" }, "Letters, digits and dashes, 3 to 40 characters. The site gets its own address, theme and learners.");
+  const error = h("p", { class: "cb-error", role: "alert", hidden: true });
+  const field = h("div", { class: "cb-price-field" }, h("label", { for: slugId, class: "cb-label" }, "Name of the new site"), slug, hint, error);
+  const selected = () => modes.querySelector<HTMLInputElement>("input:checked")?.value ?? "current";
+  const sync = () => {
+    field.hidden = selected() !== "new";
+  };
+  modes.addEventListener("change", sync);
+  sync();
+  return questionShell(p, id, [modes, field], ctx, () => {
+    if (selected() !== "new") return { mode: "current" };
+    const value = slug.value.trim().toLowerCase();
+    if (!/^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/.test(value)) {
+      error.hidden = false;
+      error.textContent = "Use 3 to 40 letters, digits or dashes.";
+      slug.setAttribute("aria-invalid", "true");
+      return undefined;
+    }
+    return { mode: "new", slug: value };
+  });
 };
 
 const minorToMajor = (minor: number): string => (minor / 100).toFixed(2);
@@ -1006,6 +1037,7 @@ export const builderComponents: Record<string, Renderer> = {
   LanguagePicker,
   PriceInput,
   ThemePicker,
+  SitePicker,
   DecideForMe,
   SourceCard,
   CitationChip,

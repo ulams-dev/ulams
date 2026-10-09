@@ -210,6 +210,8 @@ Platform environment variables of the tenancy package (defaults in
 | `TENANT_DEMO_PASSWORD` | `secret` | Password of the seeded accounts. Development only. |
 | `TENANCY_PROCESS_TIMEOUT` | `900` | Timeout of each child `artisan` process, in seconds. |
 | `TENANCY_PLATFORM_API` | `false` | Turn on the [platform tenant API](/operators/platform-api/) (`/api/platform/*`, `ulams tenants`). Platform hosts only. |
+| `TENANCY_NEW_SITES` | `false` | Lets an author with the `platform_admin` permission create a new site for a course from the Course Builder. |
+| `TENANCY_PLATFORM_HOST` | `api.localhost` | The host platform commands run under when a tenant's queue worker has to create a tenant. |
 
 See also [Environment variables](/reference/environment-variables/) and
 [Artisan commands](/reference/artisan-commands/).

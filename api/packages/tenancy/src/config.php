@@ -17,6 +17,11 @@ return [
      * instead of silently falling back to the platform `.env`.
      */
     'enforce_known_hosts' => filter_var(env('TENANCY_ENFORCE_HOSTS', true), FILTER_VALIDATE_BOOLEAN),
+    // The host platform commands run under (`php artisan … --domain=<host>`): the platform env. A tenant's
+    // queue worker uses it to create a tenant for "new site" in the course builder.
+    'platform_command_host' => env('TENANCY_PLATFORM_HOST', 'api.localhost'),
+    // "New site" in the course builder (ADR 0048): off unless switched on; needs `platform_admin`.
+    'new_sites' => filter_var(env('TENANCY_NEW_SITES', false), FILTER_VALIDATE_BOOLEAN),
     'platform_hosts' => $list(env('TENANCY_PLATFORM_HOSTS', 'api.localhost,localhost,127.0.0.1,caddy,api')),
 
     /*
