@@ -37,6 +37,19 @@ practical map.
 - Mock the LLM in tests; no model names outside config.
 - Commits: Conventional Commits, one concern per commit, tests in the same commit, no AI attribution.
 
+## Decisions and documentation
+
+- Every decision gets an ADR: architecture, dependencies, protocols, data model, infrastructure,
+  security trade-offs and product decisions that shape the code. Write it in `docs/decisions/NNNN-title.md`
+  (MADR, status Proposed), add a row to `docs/decisions/README.md` and link it from the tracker. The
+  product owner accepts it; superseded ADRs stay and link to their replacement. The documentation
+  site renders the ADRs, so they can be browsed there (`front/docs-site`, Decisions section).
+- Every change that is big enough to matter to a user, author, admin, developer or operator updates
+  the documentation site in the same branch: new or changed features, modules, admin screens,
+  topic types, endpoints, permissions, settings, environment variables, commands and deployment
+  steps. Mark unbuilt roadmap items as "Coming". The docs coverage check fails the build when a
+  module, admin route or topic type has no page.
+
 ## Running things
 
 - Stack: `corepack yarn dev:api` (Docker), apps: `corepack yarn dev`.
