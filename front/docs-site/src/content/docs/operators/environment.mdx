@@ -1,0 +1,75 @@
+---
+title: Environment
+description: How configuration reaches each ulams container - LARAVEL_ variables, tenant env files, service variables - and the main categories to set in production.
+sidebar:
+  order: 3
+modules:
+  - api
+  - tenancy
+  - api-h5p
+  - api-pdf
+  - web
+  - admin
+  - front
+---
+
+import { Aside, LinkCard } from "@astrojs/starlight/components";
+
+Every variable with its default is listed on the generated
+[environment variables reference](/reference/environment-variables/). This page explains how the
+values travel and which groups matter for an operator.
+
+## How values reach each container
+
+| Container | Mechanism | Source |
+|---|---|---|
+| `api` (platform) | `init.sh` runs `docker/envs/envs.php`: each `LARAVEL_<NAME>` variable is written to `.env` as `<NAME>=value`; Laravel reads `.env` | `api/docker/envs/envs.php` |
+| `api` (tenants) | `ulams:tenant:create` and `ulams:tenant:sync-env` write `.env.<tenant API host>`: a copy of the platform `.env` with the tenant's values on top (database, bucket, keys, URLs, Redis prefix) | `packages/tenancy/src/Support/TenantNaming.php` |
+| `api` (scripts) | Read directly by `init.sh` and the worker scripts: `JWT_*_KEY_BASE64`, `DISABLE_*`, `MULTI_DOMAINS`, `QUEUE_IDLE_SLEEP`, `LONG_JOB_*` | `api/init.sh`, `api/queue.sh` |
+| `h5p` | Its own variables, plus each tenant's database, bucket and token from the Laravel env files (`ENV_DIR`) | `api/h5p/src/config.ts` |
+| `pdf` | Its own variables (`PDF_*`) | `api/pdf/README.md` |
+| `web` | `ULAMS_*` variables read when the server starts | `front/web/.env.example` |
+| `admin`, `front` | `REACT_APP_*` / `VITE_APP_*` variables injected into `index.html` on every page load by a small PHP script | `admin/config/php/index.php` |
+
+<Aside type="caution" title="Values written to .env">
+  `envs.php` writes values unquoted. A value with spaces must carry its own quotes, e.g.
+  `LARAVEL_MAIL_FROM_NAME: '"My Academy"'`, or the `.env` file will not parse. Values that
+  contain `$` must be escaped as `$$` in Compose files.
+</Aside>
+
+Changing a `LARAVEL_*` value needs a restart of `api` (the file is rewritten on start); tenant
+env files pick up platform changes on the next `ulams:tenant:sync-env`, which also runs on start.
+The H5P service re-reads the env files every `TENANT_RELOAD_CHECK_MS` (2 s).
+
+## Categories
+
+| Category | Set where | Main variables |
+|---|---|---|
+| Application | `api` | `APP_KEY`, `APP_URL`, `APP_ENV=production`, `APP_DEBUG=false` |
+| Platform keys | `api` | `JWT_PRIVATE_KEY_BASE64`, `JWT_PUBLIC_KEY_BASE64` |
+| Database | `api` | `DB_*`; `DB_ADMIN_*` for the role that creates tenant databases |
+| Redis protocol | `api`, `h5p` | `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`; prefixes are set per tenant |
+| Object storage | `api`, `h5p` | `FILESYSTEM_DRIVER=s3`, `AWS_*`; `TENANCY_S3_*` for bucket creation; `S3_*` on `h5p` |
+| Tenancy | `api` | `TENANCY_*` host patterns, `TENANCY_PLATFORM_HOSTS`, `TENANT_DEMO_PASSWORD` |
+| Content origin | `api` | `CONTENT_ORIGIN` (platform), `TENANCY_CONTENT_HOST` (tenants) |
+| Services | `api`, `h5p`, `pdf` | `H5P_SERVICE_URL`, `H5P_INTERNAL_TOKEN`, `PDF_SERVICE_URL`, `PDF_INTERNAL_TOKEN` |
+| E-mail | `api` | `MAIL_*`, `MJML_API_URL` |
+| First admin | `api` | `INITIAL_USER_EMAIL`, `INITIAL_USER_PASSWORD` |
+| Uploads | `api` | `UPLOADS_*` size and archive limits, `UPLOADS_SCANNER` |
+| LTI | `api` | `LTI_*` (issuer defaults to `APP_URL`) |
+| Error tracking | `api`, `admin` | `SENTRY_LARAVEL_DSN` or `SENTRY_DSN`, `SENTRY_ENVIRONMENT`; `REACT_APP_SENTRYDSN` |
+| Process control | `api` | `DISABLE_PHP_FPM`, `DISABLE_HORIZON`, `DISABLE_QUEUE`, `DISABLE_SCHEDULER`, `DISABLE_DB_MIGRATE`, `DISABLE_DB_SEED`, `DISABLE_TENANT_SYNC` |
+| Front routing | `web`, `admin` | `ULAMS_TENANT_HOSTS`, `ULAMS_PLATFORM_HOSTS`, `REACT_APP_TENANT_API_HOST_PATTERN` |
+
+Do not set tenant-only values on the platform: `TENANT_SLUG`, `REDIS_PREFIX`, `CACHE_PREFIX`,
+`HORIZON_PREFIX`, `FRONTEND_URL`, `ADMIN_URL` and `DEMO_MODE` are written into each tenant's file.
+
+## Repository documents
+
+The API keeps the long-form notes; this site does not repeat them:
+
+- [`api/docs/enviromental-variables.md`](https://github.com/ulams-dev/ulams/blob/main/api/docs/enviromental-variables.md): `LARAVEL_` prefix, legacy `MULTI_DOMAINS`, tenancy, uploads, LTI, Adapt.
+- [`api/docs/init-script.md`](https://github.com/ulams-dev/ulams/blob/main/api/docs/init-script.md): the start-up script.
+- [`api/h5p/README.md`](https://github.com/ulams-dev/ulams/blob/main/api/h5p/README.md): every H5P service variable.
+
+<LinkCard title="Environment variables reference" href="/reference/environment-variables/" description="The generated list of every variable with its default." />

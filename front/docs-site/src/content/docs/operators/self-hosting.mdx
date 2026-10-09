@@ -1,0 +1,152 @@
+---
+title: Self-hosting on one server
+description: Install ulams on a single server with the published GHCR images, Docker Compose and Caddy, from DNS and secrets to the first health check.
+sidebar:
+  order: 2
+modules:
+  - api
+  - api-h5p
+  - api-pdf
+  - web
+  - admin
+  - tenancy
+needsReview: "The example compose file and Caddyfile pass `docker compose config` and were derived from api/docker-compose.yml, api/docker/conf/Caddyfile and the image entrypoints, but have not been run end to end with TLS: check a full install (on-demand TLS ask check, H5P env file copy loop, profile calls through caddy:8081)."
+---
+
+import { Aside, Badge, Code, Steps } from "@astrojs/starlight/components";
+import compose from "../../../../examples/production/docker-compose.yml?raw";
+import caddyfile from "../../../../examples/production/Caddyfile?raw";
+import envExample from "../../../../examples/production/.env.example?raw";
+
+This guide installs the whole platform on one Linux server with Docker Compose and the images
+that CI publishes to `ghcr.io/ulams-dev`. The three files below live in the repository at
+[`front/docs-site/examples/production/`](https://github.com/ulams-dev/ulams/blob/main/front/docs-site/examples/production/docker-compose.yml);
+this page renders them from there, so the page and the files cannot drift apart.
+
+<Aside type="caution" title="Example configuration">
+  <Badge text="Recommended" variant="tip" /> The project tests the development stack, not this
+  production example. It is built from the same images, scripts and Caddy rules, and the compose
+  file is validated with `docker compose config`, but run it on a staging server first.
+</Aside>
+
+## Before you start
+
+- A server that meets the [requirements](/operators/requirements/), with Docker and Compose v2.
+- Two domains and the [DNS records](/operators/requirements/#dns) pointing at the server.
+- An SMTP relay and, unless you use the bundled MinIO, an S3-compatible bucket service.
+
+## Install
+
+<Steps>
+
+1. **Copy the three files** into an empty directory on the server, e.g. `/opt/ulams`:
+   `docker-compose.yml`, `Caddyfile` and `.env.example` (save it as `.env`).
+
+2. **Fill in `.env`.** Every `CHANGE` value is required; the compose file refuses to start
+   without the critical ones. Generate the secrets on the server and paste them in:
+
+   ```bash
+   echo "base64:$(openssl rand -base64 32)"          # APP_KEY
+   openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4096 -out oauth-private.key
+   openssl rsa -in oauth-private.key -pubout -out oauth-public.key
+   base64 < oauth-private.key | tr -d '\n'           # JWT_PRIVATE_KEY_BASE64
+   base64 < oauth-public.key | tr -d '\n'            # JWT_PUBLIC_KEY_BASE64
+   openssl rand -hex 32                              # POSTGRES_PASSWORD, VALKEY_PASSWORD,
+                                                     # H5P_INTERNAL_TOKEN, PDF_INTERNAL_TOKEN
+   ```
+
+   Store `APP_KEY` and the key pair in your password manager as well: tenant secrets in the
+   platform database are encrypted with `APP_KEY` (see [Backups](/operators/backups/)).
+
+3. **Choose object storage.** Either point the `S3_*` values at an external S3-compatible
+   service with an existing platform bucket, or start the bundled MinIO with
+   `--profile minio` (see [Object storage](/operators/storage/)).
+
+4. **Pull and start.**
+
+   ```bash
+   docker compose pull
+   docker compose up -d            # add --profile minio for the bundled object store
+   docker compose logs -f api      # first start: migrations, permissions, platform admin
+   ```
+
+   The `api` container is ready when supervisord has started php-fpm, Horizon, the queue workers
+   and the scheduler. Its image health check runs `php artisan health:check` every 30 seconds.
+
+5. **Check the platform.**
+
+   ```bash
+   curl -fsS https://api.lms.example.com/api/health
+   curl -fsS https://api.lms.example.com/h5p/health
+   ```
+
+   Sign in to the admin panel of the platform as `PLATFORM_ADMIN_EMAIL` (see
+   [First admin and first tenant](/operators/first-tenant/) for which URL to use).
+
+6. **Create the first tenant** and open its learner front and admin panel:
+   [First admin and first tenant](/operators/first-tenant/).
+
+</Steps>
+
+## What happens when the `api` container starts
+
+`init.sh` in the API image runs on every start (`api/init.sh`):
+
+1. Writes the platform `.env` from every `LARAVEL_<NAME>` variable (`<NAME>=value`), see
+   [Environment](/operators/environment/).
+2. Writes the platform Passport keys from `JWT_PRIVATE_KEY_BASE64` / `JWT_PUBLIC_KEY_BASE64`
+   into `storage/`.
+3. Runs `php artisan migrate --force` for the platform, unless `DISABLE_DB_MIGRATE=true`.
+4. Runs `php artisan ulams:tenant:sync-env --migrate`: rebuilds every tenant's `.env.<host>` file,
+   domain registration and Passport keys from the `tenants` table, then migrates each tenant
+   database. `DISABLE_TENANT_SYNC=true` skips it.
+5. Only if `storage/oauth-private.key` is still missing: `key:generate --force`,
+   `passport:keys` and `passport:client --personal`.
+6. Seeds permissions (`PermissionsSeeder`), which also creates the first platform admin while the
+   users table is empty and `INITIAL_USER_PASSWORD` is set. `DISABLE_DB_SEED=true` skips it.
+7. Starts supervisord with php-fpm, Horizon (`DISABLE_HORIZON`), the tenant queue loop
+   `queue.sh` (`DISABLE_QUEUE`) and the scheduler loop `scheduler.sh` (`DISABLE_SCHEDULER`).
+
+<Aside type="danger" title="Always set the platform key pair">
+  Step 5 generates a new `APP_KEY` as well as new keys. The new key replaces the one from
+  `LARAVEL_APP_KEY` in the running container's `.env`; anything encrypted with it (tenant
+  database passwords and keys) becomes unreadable after the next restart restores the
+  configured key. Setting `JWT_PRIVATE_KEY_BASE64` and `JWT_PUBLIC_KEY_BASE64` skips step 5, which
+  is why the example makes them mandatory.
+</Aside>
+
+## How the example differs from the development stack
+
+| Topic | Development (`api/docker-compose.yml`) | This example |
+|---|---|---|
+| Images | Built from source | `ghcr.io/ulams-dev/*:${ULAMS_VERSION}` |
+| Hosts | `*.localhost`, plain HTTP | Your domains, HTTPS (see [DNS and TLS](/operators/dns-and-tls/)) |
+| Laravel env files for H5P | The `api/` source tree mounted read-only | A loop in the `api` command copies `.env*` to the `tenant_env` volume every 5 seconds |
+| Passport keys for H5P | Same mount | The `api_storage` volume mounted read-only |
+| H5P profile calls | `http://caddy` | `http://caddy:8081`, an internal plain-HTTP listener (port 80 redirects to HTTPS) |
+| Object storage | MinIO always on | External S3, or MinIO behind `--profile minio` |
+| Tools | Adminer, MailHog, Soketi | None; broadcasting stays on the `log` driver as in development |
+| PostgreSQL | `postgres:12` (also used in CI) | `postgres:17-alpine` <Badge text="Recommended" variant="tip" /> |
+
+<Aside>
+  PostgreSQL 12 is what CI tests against, and it is out of upstream support. The example uses
+  17; the project has not run its test suite on it.
+</Aside>
+
+## The files
+
+<Code code={compose} lang="yaml" title="docker-compose.yml" />
+
+<Code code={caddyfile} lang="text" title="Caddyfile" />
+
+<Code code={envExample} lang="ini" title=".env.example" />
+
+## Optional services
+
+- **ClamAV** (`--profile av`): virus scanning of uploads; also set `LARAVEL_UPLOADS_SCANNER: clamd`
+  on `api`. See [Security](/operators/security/).
+- **The older React front** (`ghcr.io/ulams-dev/front`): not in the example. It takes
+  `VITE_APP_*` variables at runtime, including `VITE_APP_TENANT_API_HOST_PATTERN`.
+- **Platform admin panel host**: the admin image maps `{slug}.admin.<domain>` to tenant APIs; the
+  bare `admin.<domain>` host has no slug and falls back to the API URL baked in at build time. See
+  [First admin and first tenant](/operators/first-tenant/#the-platform-admin-panel).

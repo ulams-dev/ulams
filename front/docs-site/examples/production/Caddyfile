@@ -1,0 +1,252 @@
+# Production Caddyfile for the single-server example (docker-compose.yml next to it).
+# Derived from the development config api/docker/conf/Caddyfile, with HTTPS host names.
+# Not tested end to end by the project.
+#
+# Hosts (D = ULAMS_DOMAIN, C = ULAMS_CONTENT_DOMAIN, <slug> = tenant):
+#   api.D, <slug>.api.D        Laravel API (php-fpm) and /h5p/* (H5P service)
+#   app.D, <slug>.app.D        learner front (web)
+#   admin.D, <slug>.admin.D    admin panel
+#   platform.C, <slug>.C       content origins (SCORM, cmi5, Adapt, LiaScript packages)
+#   storage.C                  bundled MinIO (only with the `minio` profile)
+#
+# Certificates: fixed host names get regular certificates. Tenant host names use on-demand
+# TLS: a certificate is requested on the first TLS handshake, after the `ask` check below
+# confirms the tenant exists (its env file is present in /tenant-env).
+
+{
+	email {$ACME_EMAIL}
+	on_demand_tls {
+		ask http://localhost:5555/check
+	}
+}
+
+(on_demand) {
+	tls {
+		on_demand
+	}
+}
+
+# Content origin (api/docs/content-origin.md): package files only, read-only, own CSP, no
+# cookies. Arguments: <API host> <API origin> <frame ancestors>
+(content_origin) {
+	header {
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'"
+		>X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		-Set-Cookie
+		-Server
+	}
+
+	@package {
+		method GET HEAD
+		path /scorm/* /cmi5/* /adapt/* /liascript/*
+	}
+	handle @package {
+		request_header -Cookie
+		request_header -Authorization
+		rewrite * /api/content{uri}
+		reverse_proxy api:9000 {
+			header_up Host {args[0]}
+			header_up X-Forwarded-Host {args[0]}
+			header_up X-Ulams-Content-Origin 1
+			header_down -Set-Cookie
+			header_down -Access-Control-Allow-Origin
+			transport fastcgi {
+				env SCRIPT_FILENAME /var/www/html/index.php
+				env HTTP_HOST {args[0]}
+				env SERVER_NAME {args[0]}
+				env REQUEST_URI {http.request.uri}
+			}
+		}
+	}
+
+	handle {
+		respond "Not found" 404
+	}
+}
+
+# Report-only CSP for the front and admin; enforce it once the reports are clean.
+(app_csp_report_only) {
+	header Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://*.{$ULAMS_DOMAIN} https://*.{$ULAMS_CONTENT_DOMAIN}; media-src 'self' blob: https://*.{$ULAMS_DOMAIN} https://*.{$ULAMS_CONTENT_DOMAIN}; connect-src 'self' https://*.{$ULAMS_DOMAIN} wss://*.{$ULAMS_DOMAIN}; frame-src 'self' https://*.{$ULAMS_DOMAIN} https://*.{$ULAMS_CONTENT_DOMAIN}; frame-ancestors 'self'; object-src 'none'; base-uri 'self'"
+}
+
+# Laravel API and the H5P service on one host
+(api) {
+	encode zstd gzip
+
+	# H5P core sends the access token as ?_token=: keep it and the auth headers out of the log
+	log {
+		format filter {
+			wrap json
+			fields {
+				request>uri query {
+					replace _token REDACTED
+				}
+				request>headers>Authorization delete
+				request>headers>X-Internal-Token delete
+			}
+		}
+	}
+
+	@h5p path /h5p /h5p/*
+	handle @h5p {
+		request_body {
+			max_size 300MB
+		}
+		reverse_proxy h5p:8080 {
+			header_up X-Forwarded-Host {host}
+			transport http {
+				read_timeout 10m
+				write_timeout 10m
+			}
+		}
+	}
+
+	@large_uploads path /api/admin/scorm/upload /api/admin/scorm/parse /api/admin/cmi5 /api/admin/courses/zip/import
+	handle @large_uploads {
+		request_body {
+			max_size 1100MB
+		}
+		reverse_proxy api:9000 {
+			header_up -Access-Control-Allow-Origin
+			header_down -Access-Control-Allow-Origin
+			transport fastcgi {
+				env SCRIPT_FILENAME /var/www/html/index.php
+			}
+		}
+		@origin_upload header Origin {http.request.header.Origin}
+		header @origin_upload Access-Control-Allow-Origin {http.request.header.Origin}
+		header Access-Control-Allow-Credentials true
+	}
+
+	# Only the content origin's proxy may set this header
+	request_header -X-Ulams-Content-Origin
+
+	handle {
+		request_body {
+			max_size 600MB
+		}
+		reverse_proxy api:9000 {
+			header_up -Access-Control-Allow-Origin
+			header_down -Access-Control-Allow-Origin
+			transport fastcgi {
+				env SCRIPT_FILENAME /var/www/html/index.php
+			}
+		}
+
+		@origin header Origin {http.request.header.Origin}
+		header @origin Access-Control-Allow-Origin {http.request.header.Origin}
+		@excluded {
+			not header Origin {http.request.header.Origin}
+		}
+		header @excluded Access-Control-Allow-Origin *
+		header Access-Control-Allow-Credentials true
+	}
+}
+
+(web) {
+	import app_csp_report_only
+	encode zstd gzip
+	reverse_proxy web:4321
+}
+
+(admin) {
+	import app_csp_report_only
+	encode zstd gzip
+	reverse_proxy admin:80
+}
+
+api.{$ULAMS_DOMAIN} {
+	import api
+}
+
+*.api.{$ULAMS_DOMAIN} {
+	import on_demand
+	import api
+}
+
+app.{$ULAMS_DOMAIN} {
+	import web
+}
+
+*.app.{$ULAMS_DOMAIN} {
+	import on_demand
+	import web
+}
+
+admin.{$ULAMS_DOMAIN} {
+	import admin
+}
+
+*.admin.{$ULAMS_DOMAIN} {
+	import on_demand
+	import admin
+}
+
+# Platform content origin -> platform API
+platform.{$ULAMS_CONTENT_DOMAIN} {
+	import content_origin api.{$ULAMS_DOMAIN} https://api.{$ULAMS_DOMAIN} "https://app.{$ULAMS_DOMAIN} https://admin.{$ULAMS_DOMAIN}"
+}
+
+# Tenant content origins: <slug>.C -> tenant API <slug>.api.D
+*.{$ULAMS_CONTENT_DOMAIN} {
+	import on_demand
+	import content_origin {labels.2}.api.{$ULAMS_DOMAIN} https://{labels.2}.api.{$ULAMS_DOMAIN} "https://{labels.2}.app.{$ULAMS_DOMAIN} https://{labels.2}.admin.{$ULAMS_DOMAIN}"
+}
+
+# Bundled MinIO (profile `minio`). Uploaded files must not run as active content here: no MIME
+# sniffing, and SVG/HTML/XML opened directly run no script. The dev config covers SVG only.
+storage.{$ULAMS_CONTENT_DOMAIN} {
+	header >X-Content-Type-Options nosniff
+	@active path *.svg *.svgz *.html *.htm *.xhtml *.xml
+	header @active Content-Security-Policy "script-src 'none'; sandbox"
+	reverse_proxy minio:9000
+}
+
+# Internal listener (not published): the H5P service calls GET /api/profile/me here with the
+# tenant API host in the Host header (LARAVEL_API_URL=http://caddy:8081).
+http://:8081 {
+	request_header -X-Ulams-Content-Origin
+	reverse_proxy api:9000 {
+		transport fastcgi {
+			env SCRIPT_FILENAME /var/www/html/index.php
+		}
+	}
+}
+
+# On-demand TLS check (not published). 200 only for host names of a provisioned tenant, i.e.
+# when /tenant-env/.env.<slug>.api.D exists; everything else gets 404 and no certificate.
+http://:5555 {
+	@lms_host vars_regexp lms {query.domain} ^([a-z][a-z0-9]{1,29})\.(api|app|admin)\.{$ULAMS_DOMAIN}$
+	@content_host vars_regexp content {query.domain} ^([a-z][a-z0-9]{1,29})\.{$ULAMS_CONTENT_DOMAIN}$
+
+	handle @lms_host {
+		@lms_known file {
+			root /tenant-env
+			try_files /.env.{re.lms.1}.api.{$ULAMS_DOMAIN}
+		}
+		handle @lms_known {
+			respond 200
+		}
+		handle {
+			respond 404
+		}
+	}
+
+	handle @content_host {
+		@content_known file {
+			root /tenant-env
+			try_files /.env.{re.content.1}.api.{$ULAMS_DOMAIN}
+		}
+		handle @content_known {
+			respond 200
+		}
+		handle {
+			respond 404
+		}
+	}
+
+	handle {
+		respond 404
+	}
+}

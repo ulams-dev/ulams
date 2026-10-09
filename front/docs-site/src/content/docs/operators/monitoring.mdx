@@ -1,0 +1,77 @@
+---
+title: Monitoring and logs
+description: Health checks of every ulams container, the HTTP health endpoints to probe, where logs go, Horizon, and Sentry error tracking.
+sidebar:
+  order: 11
+modules:
+  - api
+  - api-h5p
+  - api-pdf
+  - web
+  - admin
+needsReview: "Check how /api/health and /api/healthcheck behave on tenant hosts: spatie/laravel-health stores results in the file cache per storage directory, and only the platform runs health:check from the image HEALTHCHECK."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Container health checks
+
+| Container | Built-in check | What it tests |
+|---|---|---|
+| `api` | `php artisan health:check` every 30 s | Platform database connection and Redis (`app/Providers/HealthCheckProvider.php`) |
+| `h5p` | `GET http://127.0.0.1:8080/h5p/health` | Liveness and Redis (loopback host, no tenant) |
+| `pdf` | `GET http://127.0.0.1:3000/health` | Process up, fonts loaded |
+| `web` | `GET http://127.0.0.1:4321/healthz` | Process up (answers `ok`) |
+| `admin`, `front` | none | Apache serving static files |
+
+`docker compose ps` shows the state; restart policies in the example restart crashed containers
+but not unhealthy ones. An external monitor should probe the HTTP endpoints below.
+
+## HTTP endpoints to probe
+
+| URL | Answer |
+|---|---|
+| `https://api.<domain>/api/health` | 200 or 503 from the last stored `health:check` result (spatie/laravel-health) |
+| `https://api.<domain>/api/healthcheck` | JSON with each check's status |
+| `https://<slug>.api.<domain>/h5p/health` | `{ok, tenant, db, redis, s3}` for that tenant; 503 if a dependency is down, 404 for an unknown tenant |
+| `https://<slug>.app.<domain>/healthz` | `ok` from the learner front |
+| `https://<slug>.api.<domain>/api/settings` | The tenant's public settings: a cheap end-to-end check of routing, the tenant env file and its database |
+
+Probe at least the platform API, one tenant's `/h5p/health` (it covers the tenant database, Redis
+and the bucket) and the front.
+
+## Workers and the scheduler
+
+- **Horizon** runs the platform queues (default and the long-job queue for video). Its dashboard
+  at `/horizon` is open only when `APP_ENV` is `local` or `stage`, or for users allowed by the
+  `viewHorizon` gate, which lists nobody by default. Keep `APP_ENV=production`.
+- **Tenant queues** are processed by `queue.sh`, which loops over all tenant hosts and runs
+  `queue:work --stop-when-empty --domain=<host>` for each. Watch for growing Redis lists under the
+  tenant prefixes (`ulams_<slug>_queues:default`) if jobs seem stuck.
+- **Scheduler**: `scheduler.sh` runs `schedule:run` for the platform and every tenant once a minute.
+  Failed scheduled jobs show up in the `api` log.
+
+## Logs
+
+- Container stdout/stderr: supervisord forwards php-fpm, Horizon, the queue loops and the scheduler
+  to the `api` container log; the Node services log JSON (pino) to stdout; Caddy logs requests
+  with the H5P `_token` parameter and auth headers redacted. The example caps Docker's
+  `json-file` logs at 5 x 20 MB per container.
+- Laravel application logs go to the `daily` file channel by default:
+  `storage/logs/laravel-<date>.log` for the platform and `storage/<host with dots as underscores>/logs/` for each tenant,
+  on the `api_storage` volume. Rotate or ship them; set `LOG_CHANNEL=stderr` to send them to the
+  container log instead (not the project's default).
+
+## Error tracking
+
+| Component | Variables |
+|---|---|
+| API | `SENTRY_LARAVEL_DSN` (or `SENTRY_DSN`), `SENTRY_ENVIRONMENT`, `SENTRY_RELEASE`, `SENTRY_TRACES_SAMPLE_RATE`, `SENTRY_PROFILES_SAMPLE_RATE`, `SENTRY_SEND_DEFAULT_PII` (default off) |
+| Admin | `REACT_APP_SENTRYDSN` on the container; the release is taken from the image version |
+| Older React front | `VITE_APP_SENTRYDSN` on the container |
+
+<Aside>
+  Tenants inherit the platform's Sentry settings through their env files. Keep
+  `SENTRY_SEND_DEFAULT_PII` off unless your data-processing agreements cover it: errors can carry
+  learner data.
+</Aside>

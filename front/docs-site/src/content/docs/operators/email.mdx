@@ -1,0 +1,69 @@
+---
+title: E-mail
+description: Outgoing e-mail for ulams - SMTP settings, the MJML rendering service, per-tenant sender addresses and what to check with SPF and DKIM.
+sidebar:
+  order: 7
+modules:
+  - api
+  - templates-email
+  - tenancy
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+ulams sends e-mail from the API through SMTP. Message bodies come from e-mail templates written in
+[MJML](https://mjml.io), which a small rendering service turns into HTML.
+
+## SMTP
+
+Set on `api` (with the `LARAVEL_` prefix in Compose):
+
+| Variable | Example | Notes |
+|---|---|---|
+| `MAIL_DRIVER` | `smtp` | The config uses the legacy `mail.driver` key, so this is `MAIL_DRIVER`, not `MAIL_MAILER` |
+| `MAIL_HOST`, `MAIL_PORT` | `smtp.example.com`, `587` | |
+| `MAIL_USERNAME`, `MAIL_PASSWORD` | | |
+| `MAIL_ENCRYPTION` | `tls` | Default `tls` |
+| `MAIL_FROM_ADDRESS`, `MAIL_FROM_NAME` | `no-reply@example.com`, `ulams` | Platform sender; quote names with spaces, see [Environment](/operators/environment/) |
+
+Each tenant's env file overrides the sender: `MAIL_FROM_ADDRESS=no-reply@<email domain>` and
+`MAIL_FROM_NAME=<tenant name>`, where the e-mail domain comes from `TENANCY_EMAIL_DOMAIN`
+(default `{slug}.ulams.app`; the production example uses `{slug}.<your domain>`). All tenants
+share the platform's SMTP credentials.
+
+<Aside type="caution" title="Deliverability">
+  Your relay must accept every sender domain you use. With one sub-domain per tenant
+  (`no-reply@acme.lms.example.com`) you need SPF, DKIM and DMARC for each, or a relay that signs
+  for the parent domain. If that is impractical, set `TENANCY_EMAIL_DOMAIN` to a single domain
+  you control before creating tenants; it also determines the initial admin address
+  (`admin@<email domain>`).
+</Aside>
+
+## MJML rendering
+
+The API image contains no `mjml` binary (no Node.js in the PHP image). Templates are rendered by
+an MJML HTTP service:
+
+| Variable | Value in the example |
+|---|---|
+| `MJML_API_URL` | `http://mjml:15500/v1` |
+
+Setting `MJML_API_URL` switches the renderer to the API (`config/ulams_templates_email.php`). The
+example runs `danihodovic/mjml-server` on the internal network; it needs no inbound or outbound
+access. Alternatives are the hosted MJML API (`MJML_API_ID`, `MJML_API_SECRET`) or a binary path
+(`MJML_BINARY_PATH`) in a custom image.
+
+## Queues and the scheduler
+
+Template e-mails are sent by an event listener (`packages/templates`) in the process that raised
+the event: in the web request for most actions, in a queue worker for events raised by jobs.
+Reminders and deadline notices come from scheduled jobs (webinar and consultation reminders,
+course deadlines, overdue tasks), so they need the scheduler and the workers: Horizon for the
+platform and `queue.sh` for tenants, both inside `api` unless disabled with `DISABLE_HORIZON`,
+`DISABLE_QUEUE` or `DISABLE_SCHEDULER` (see [Monitoring](/operators/monitoring/)).
+
+## Testing
+
+Use a staging relay or a capture service (the development stack uses MailHog on port 8025)
+before pointing a server at real learners. A password-reset request from the sign-in page is a
+quick end-to-end test of SMTP, MJML and the queue.

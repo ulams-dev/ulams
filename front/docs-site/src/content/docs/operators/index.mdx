@@ -1,0 +1,68 @@
+---
+title: Operators
+description: Run ulams in production - requirements, a single-server install from the published images, TLS, tenants, backups, upgrades and high availability.
+sidebar:
+  order: 0
+modules:
+  - api
+---
+
+import { Aside, Badge, Card, CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+This section is for the people who install and run ulams: a multi-tenant Laravel API with an H5P
+service, a PDF renderer, an admin panel and a learner front, backed by PostgreSQL, a
+Redis-protocol server (Valkey) and S3-compatible object storage.
+
+<Aside type="caution" title="What is tested">
+  The project develops and tests ulams with the development stack in `api/docker-compose.yml`
+  (plain HTTP on `*.localhost`) and builds the production images in CI. The production setup in
+  this section is derived from that stack and from the image entrypoints, but it is **not tested
+  end to end by the project**. Setups marked <Badge text="Recommended" variant="tip" /> are
+  advice, not verified configurations.
+</Aside>
+
+## Start here
+
+<CardGrid>
+  <LinkCard title="Requirements" href="/operators/requirements/" description="Server sizing (estimates), OS, Docker and DNS." />
+  <LinkCard title="Self-hosting on one server" href="/operators/self-hosting/" description="Step by step with the published GHCR images, Docker Compose and Caddy." />
+  <LinkCard title="Environment" href="/operators/environment/" description="How configuration reaches each container, by category." />
+  <LinkCard title="High availability" href="/operators/high-availability/" description="What is stateless, what is not, and a reference topology." />
+</CardGrid>
+
+## Run it
+
+<CardGrid>
+  <Card title="Hosts and certificates">
+    [DNS and TLS](/operators/dns-and-tls/), [content origin](/operators/content-origin/)
+  </Card>
+  <Card title="Tenants and users">
+    [First admin and first tenant](/operators/first-tenant/), [e-mail](/operators/email/)
+  </Card>
+  <Card title="Data">
+    [Object storage](/operators/storage/), [backups and restore](/operators/backups/)
+  </Card>
+  <Card title="Day 2">
+    [Upgrades](/operators/upgrades/), [monitoring and logs](/operators/monitoring/),
+    [security](/operators/security/), [licensing](/operators/licensing/)
+  </Card>
+</CardGrid>
+
+## The pieces
+
+| Container | Image | Role | State |
+|---|---|---|---|
+| `api` | `ghcr.io/ulams-dev/api` | Laravel API (php-fpm on port 9000), Horizon, tenant queue workers, scheduler | Laravel `storage/` (keys, logs, local disks), generated env files |
+| `h5p` | `ghcr.io/ulams-dev/h5p` | H5P player, editor and content API (GPL-3.0-or-later) | Installed libraries in `/data/libraries` |
+| `pdf` | `ghcr.io/ulams-dev/pdf` | PDF renderer for certificates | None |
+| `web` | `ghcr.io/ulams-dev/web` | Learner front (Astro SSR, port 4321) | None (in-memory cache) |
+| `admin` | `ghcr.io/ulams-dev/admin` | Admin and author panel (static build behind Apache, port 80) | None |
+| `front` | `ghcr.io/ulams-dev/front` | The older React learner front, optional | None |
+| PostgreSQL | upstream | Platform database plus one database per tenant | Yes |
+| Valkey | upstream | Queues, cache, locks, H5P caches | Queues (persist it) |
+| Object storage | any S3-compatible service | Platform bucket plus one bucket per tenant | Yes |
+| Caddy | upstream | TLS, routing by host, content origins, CSP headers | Certificates |
+
+The architecture is explained for developers in [Architecture](/developers/architecture/) and
+[Tenancy](/developers/tenancy/); image details are in
+[Container images](/developers/container-images/).
