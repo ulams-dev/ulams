@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/course-brief/v2.json",
+  "title": "Course Brief v2",
+  "description": "The author's answers from the interview. Every field records who decided it. v2 adds optional theme, pricing and site; a v1 document is a valid v2 document.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "audience",
+    "level",
+    "totalMinutes",
+    "lessonMinutes",
+    "tone",
+    "assessments",
+    "language",
+    "decidedBy"
+  ],
+  "properties": {
+    "audience": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 200
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "beginner",
+        "intermediate",
+        "advanced"
+      ]
+    },
+    "totalMinutes": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 2400
+    },
+    "lessonMinutes": {
+      "type": "integer",
+      "minimum": 2,
+      "maximum": 120
+    },
+    "tone": {
+      "type": "string",
+      "enum": [
+        "friendly",
+        "professional",
+        "playful",
+        "academic"
+      ]
+    },
+    "assessments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "perLessonQuiz",
+        "finalTest",
+        "passScore"
+      ],
+      "properties": {
+        "perLessonQuiz": {
+          "type": "boolean"
+        },
+        "finalTest": {
+          "type": "boolean"
+        },
+        "passScore": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      }
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^[a-z]{2}$"
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "decidedBy": {
+      "description": "Field \u2192 who decided it (author or default); an empty list when nothing is decided yet",
+      "type": [
+        "object",
+        "array"
+      ],
+      "additionalProperties": {
+        "type": "string",
+        "enum": [
+          "author",
+          "default"
+        ]
+      },
+      "items": false
+    },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preset"
+      ],
+      "properties": {
+        "preset": {
+          "type": "string",
+          "enum": [
+            "coffee",
+            "oncall",
+            "nightsky"
+          ]
+        },
+        "accent": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        }
+      }
+    },
+    "pricing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "free",
+            "paid"
+          ]
+        },
+        "amountMinor": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000000
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        }
+      }
+    },
+    "site": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "current",
+            "new"
+          ]
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]([a-z0-9-]{1,38})[a-z0-9]$"
+        }
+      }
+    }
+  }
+}

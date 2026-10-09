@@ -7,12 +7,18 @@ use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
 use Ulams\CourseBuilder\Models\Session;
 
 /**
- * The Course Brief: interview answers, schema-validated (`course-brief/v1`), each field marked as
+ * The Course Brief: interview answers, schema-validated (`course-brief/v2`; v1 documents are read as v2), each field marked as
  * decided by the author or by default. Interview question keys map onto brief fields here.
  */
 final class BriefService
 {
+    /** Questions the model asks (one each, in this order). */
     public const KEYS = ['audience', 'level', 'duration', 'tone', 'assessments', 'language'];
+
+    /** Questions code adds after the model's: fixed options, no model call. */
+    public const EXTRA_KEYS = ['pricing', 'theme'];
+
+    public const THEMES = ['coffee', 'oncall', 'nightsky'];
 
     public function __construct(private readonly SchemaRegistry $schemas)
     {
@@ -40,7 +46,18 @@ final class BriefService
 
     public function current(Session $session): array
     {
-        return $session->brief ?? $this->defaults($session);
+        return self::upgrade($session->brief ?? $this->defaults($session));
+    }
+
+    /**
+     * Reads a brief of any schema version as v2 without rewriting stored data: a v1 brief has no
+     * pricing, which means free, and no theme or site, which means "keep the site as it is".
+     */
+    public static function upgrade(array $brief): array
+    {
+        $brief['pricing'] ??= ['mode' => 'free'];
+
+        return $brief;
     }
 
     /**
@@ -81,6 +98,14 @@ final class BriefService
                 $brief['language'] = strtolower(substr((string) (is_array($value) ? ($value[0] ?? '') : $value), 0, 2));
                 $fields = ['language'];
                 break;
+            case 'pricing':
+                $brief['pricing'] = self::pricing($value);
+                $fields = ['pricing'];
+                break;
+            case 'theme':
+                $brief['theme'] = self::theme($value);
+                $fields = ['theme'];
+                break;
             default:
                 throw new InvalidArgumentException("Unknown brief field {$key}");
         }
@@ -103,12 +128,87 @@ final class BriefService
         return [(int) $parts[0], isset($parts[1]) && (int) $parts[1] > 0 ? (int) $parts[1] : $lessonDefault];
     }
 
+    /**
+     * @return array{mode:string,amountMinor?:int,currency?:string} from "free", "paid" or an object
+     *
+     * @throws InvalidArgumentException
+     */
+    public static function pricing(mixed $value): array
+    {
+        $mode = is_array($value) ? (string) ($value['mode'] ?? '') : strtolower(trim((string) $value));
+        if ($mode === 'free') {
+            return ['mode' => 'free'];
+        }
+        if ($mode !== 'paid') {
+            throw new InvalidArgumentException('Pricing is "free" or "paid".');
+        }
+        $pricing = ['mode' => 'paid'];
+        $amount = is_array($value) ? ($value['amountMinor'] ?? null) : null;
+        if ($amount !== null && $amount !== '') {
+            if (!is_numeric($amount) || (int) $amount < 1) {
+                throw new InvalidArgumentException('The price must be a positive amount.');
+            }
+            $pricing['amountMinor'] = (int) $amount;
+            $pricing['currency'] = strtoupper((string) ($value['currency'] ?? config('course_builder.currency', 'USD')));
+        }
+
+        return $pricing;
+    }
+
+    /** @return array{preset:string,accent?:string} from a preset name or an object */
+    public static function theme(mixed $value): array
+    {
+        $preset = is_array($value) ? (string) ($value['preset'] ?? '') : (string) $value;
+        if (!in_array($preset, self::THEMES, true)) {
+            throw new InvalidArgumentException('Theme is one of: ' . implode(', ', self::THEMES) . '.');
+        }
+        $theme = ['preset' => $preset];
+        $accent = is_array($value) ? trim((string) ($value['accent'] ?? '')) : '';
+        if ($accent !== '') {
+            if (!preg_match('/^#[0-9a-fA-F]{6}$/', $accent)) {
+                throw new InvalidArgumentException('The accent is a colour like #c2552d.');
+            }
+            $theme['accent'] = strtolower($accent);
+        }
+
+        return $theme;
+    }
+
+    /** @return array{mode:string,slug?:string} */
+    public static function site(mixed $value): array
+    {
+        $mode = is_array($value) ? (string) ($value['mode'] ?? '') : (string) $value;
+        if (!in_array($mode, ['current', 'new'], true)) {
+            throw new InvalidArgumentException('Site is "current" or "new".');
+        }
+        if ($mode === 'current') {
+            return ['mode' => 'current'];
+        }
+        $slug = strtolower(trim((string) (is_array($value) ? ($value['slug'] ?? '') : '')));
+        if (!preg_match('/^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$/', $slug)) {
+            throw new InvalidArgumentException('Give the new site a name of 3 to 40 letters, digits or dashes.');
+        }
+
+        return ['mode' => 'new', 'slug' => $slug];
+    }
+
     public function assertValid(array $brief): void
     {
-        $errors = $this->schemas->validate('course-brief/v1', $brief);
+        $errors = $this->schemas->validate('course-brief/v2', $brief);
         if ($errors !== []) {
             throw new InvalidArgumentException('Invalid brief: ' . implode('; ', array_slice($errors, 0, 5)));
         }
+    }
+
+    public static function priceLabel(array $pricing): string
+    {
+        if (($pricing['mode'] ?? 'free') !== 'paid') {
+            return 'Free';
+        }
+
+        return isset($pricing['amountMinor'])
+            ? sprintf('%s %s', number_format($pricing['amountMinor'] / 100, 2, '.', ''), $pricing['currency'] ?? 'USD')
+            : 'Paid (price to confirm)';
     }
 
     /** Readable summary rows for the brief panel. */
@@ -126,6 +226,8 @@ final class BriefService
             ['key' => 'tone', 'label' => 'Tone', 'value' => ucfirst((string) ($brief['tone'] ?? ''))],
             ['key' => 'assessments', 'label' => 'Assessments', 'value' => $assess ? implode(', ', $assess) : 'None'],
             ['key' => 'language', 'label' => 'Language', 'value' => strtoupper((string) ($brief['language'] ?? ''))],
+            ['key' => 'pricing', 'label' => 'Price', 'value' => self::priceLabel($brief['pricing'] ?? ['mode' => 'free'])],
+            ...(isset($brief['theme']) ? [['key' => 'theme', 'label' => 'Theme', 'value' => ucfirst($brief['theme']['preset']) . (isset($brief['theme']['accent']) ? ' · ' . $brief['theme']['accent'] : '')]] : []),
         ];
     }
 }

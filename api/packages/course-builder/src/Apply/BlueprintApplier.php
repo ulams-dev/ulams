@@ -51,6 +51,7 @@ final class BlueprintApplier
         private readonly PageServiceContract $pages,
         private readonly RemovalPolicy $removal,
         private readonly FragmentArchive $archive,
+        private readonly SiteTheme $theme,
     ) {
     }
 
@@ -153,6 +154,9 @@ final class BlueprintApplier
         }
         $known = array_fill_keys([...$session->fragmentIds(), ...$this->archive->knownIds($session->id)], true);
         $warnings = array_map(fn ($e) => str_starts_with($e, 'warning: ') ? substr($e, 9) : $e, Checks::blueprint($doc, $known));
+        if (isset($session->brief['theme']) && !$this->theme->authorMayChange($session->author, (array) $session->brief)) {
+            $warnings[] = 'The theme in your brief will not be applied: only site admins can change the site theme.';
+        }
         foreach ($this->drift($session, $doc) as $title) {
             $warnings[] = "Edited in the admin after the last apply: {$title}. The apply stops until you confirm overwriting it.";
         }
@@ -308,6 +312,9 @@ final class BlueprintApplier
 
         $courseId = (int) $ids["course:{$doc['course']['id']}"];
         $this->sort($desired, $ids);
+        $themeResult = $this->theme->apply($session, $author);
+        $session->putState('applyNotes', array_values(array_filter([$themeResult['note']])));
+        $session->save();
         // everything above was written by this apply: later edits in the admin are newer than this mark
         EntityMapEntry::query()->where('session_id', $session->id)->update(['updated_at' => now()]);
 
