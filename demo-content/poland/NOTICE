@@ -1,0 +1,31 @@
+Poland, measured / Polska w liczbach (demo content for ulams)
+=============================================================
+
+Copyright (c) 2026 Mateusz Wojczal. Code: MIT (LICENSE). Text and data: CC BY 4.0 (LICENSE-content).
+
+Origin
+------
+The map and charts are the owner's own project, https://github.com/qunabu/poland-october-2026 (no licence file
+there), imported at commit 541fa94 ("Add economy-size slide; stop the map re-framing on mobile scroll") and
+rebuilt for ulams (2026-10-09, issues #148 and #149, ADR 0088): the inline page was split into index.html, app.js and
+data/*.json; the story was rewritten as neutral public statistics in English and Polish; the bridge and the
+shared map engine were added.
+
+Not used on purpose
+-------------------
+- The saved copy of the third-party article this page was once written in reply to, its _files folder, and every
+  sentence, framing, chapter title and link that referred to it.
+- src/world.topo.json from that repository: it was copied from the article page. The map is regenerated from
+  Natural Earth (scripts/build-topo.mjs).
+- The screen recording and the research dumps of the repository.
+- Every source entry that came only from the article, from press or aggregator reports or from an encyclopedia.
+  A figure stays only when the institution that published it is linked (checked by scripts/check.mjs).
+  Where a number could not be confirmed at its publisher it was replaced by the number the publisher gives or
+  removed; see README.md, "What changed in the figures".
+
+Third-party material
+--------------------
+- Map: Natural Earth (public domain), via world-atlas 2.0.2 (ISC), simplified.
+- Fonts: Barlow, Barlow Semi Condensed and JetBrains Mono, SIL Open Font License 1.1 (fonts/OFL.txt), via
+  @fontsource.
+- @ulams/interactive-bridge (MIT) and the shared atlas engine (MIT) in vendor/.

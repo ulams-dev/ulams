@@ -1,0 +1,516 @@
+{
+  "$schema": "https://ulams.dev/schemas/ulams-interactive/v1.json",
+  "id": "poland",
+  "title": {
+    "en": "Poland, measured: a map and charts",
+    "pl": "Polska w liczbach: mapa i wykresy"
+  },
+  "version": "1.0.0",
+  "entry": "index.html",
+  "licence": "MIT",
+  "attribution": "© 2026 Mateusz Wojczal. Code: MIT. Text and data: CC BY 4.0. Map: Natural Earth (public domain) through world-atlas (ISC). Fonts: Barlow, Barlow Semi Condensed, JetBrains Mono (SIL OFL 1.1). Every figure links to the institution that published it.",
+  "source": {
+    "url": "https://github.com/ulams-dev/ulams/tree/main/demo-content/poland",
+    "ref": "main"
+  },
+  "locales": [
+    "en",
+    "pl"
+  ],
+  "defaultLocale": "en",
+  "bridge": 1,
+  "capabilities": {
+    "steps": true,
+    "reducedMotion": true,
+    "score": false,
+    "background": true
+  },
+  "requires": [],
+  "network": [],
+  "steps": [
+    {
+      "id": "hero",
+      "title": {
+        "en": "Poland, measured",
+        "pl": "Polska w liczbach"
+      },
+      "text": {
+        "en": "35 years of change in public statistics: what improved and what is still hard. One map, one autumn and the numbers behind it: energy, prosperity, security, business, daily life, mobility, health and people. Every figure links to the institution that published it, and the last chapter lists what is still hard.",
+        "pl": "35 lat zmian w statystyce publicznej: co się poprawiło, a co wciąż jest trudne. Jedna mapa, jedna jesień i liczby, które za nią stoją: energia, dobrobyt, bezpieczeństwo, biznes, codzienność, mobilność, zdrowie i ludzie. Każda liczba ma link do instytucji, która ją opublikowała, a ostatni rozdział wylicza to, co wciąż jest trudne."
+      },
+      "poster": "posters/hero.webp"
+    },
+    {
+      "id": "c-energy",
+      "title": {
+        "en": "Where the energy comes from",
+        "pl": "Skąd bierze się energia"
+      },
+      "text": {
+        "en": "A pipe from the Norwegian shelf, solar panels on the roofs, the first offshore wind farm and a farming sector that feeds its neighbours.",
+        "pl": "Rura z norweskiego szelfu, panele słoneczne na dachach, pierwsza morska farma wiatrowa i rolnictwo, które żywi sąsiadów."
+      },
+      "poster": "posters/c-energy.webp"
+    },
+    {
+      "id": "gas",
+      "title": {
+        "en": "Gas storage is 99% full",
+        "pl": "Magazyny gazu są pełne w 99%"
+      },
+      "text": {
+        "en": "On 29 September 2026, Gas Storage Poland reported its facilities 99% full, about 3.3 billion cubic metres of working gas. The gas arrives through the Baltic and the North Sea: Baltic Pipe from Norway, up to 10 bcm a year since October 2022, and the Świnoujście LNG terminal, expanded to 8.3 bcm a year in January 2025.",
+        "pl": "29 września 2026 Gas Storage Poland podał, że jego magazyny są pełne w 99%, to około 3,3 mld m³ gazu roboczego. Gaz płynie przez Bałtyk i Morze Północne: Baltic Pipe z Norwegii, do 10 mld m³ rocznie od października 2022, oraz terminal LNG w Świnoujściu, rozbudowany do 8,3 mld m³ rocznie w styczniu 2025."
+      },
+      "poster": "posters/gas.webp"
+    },
+    {
+      "id": "solar",
+      "title": {
+        "en": "1.6 million power stations on Polish roofs",
+        "pl": "1,6 miliona elektrowni na polskich dachach"
+      },
+      "text": {
+        "en": "At the end of 2025 Poland had 1,636,673 renewable micro-installations, mostly rooftop solar, with about 13.9 GW of capacity. In 2025 they fed 8.95 TWh into the grid. The regulator counts over 1.61 million prosumers: households that both use and make electricity. Each light on the map stands for 10,000 installations.",
+        "pl": "Na koniec 2025 roku Polska miała 1 636 673 mikroinstalacje OZE, głównie fotowoltaikę na dachach, o mocy około 13,9 GW. W 2025 roku oddały do sieci 8,95 TWh. Regulator liczy ponad 1,61 mln prosumentów, czyli gospodarstw, które prąd zarówno zużywają, jak i wytwarzają. Każde światełko na mapie to 10 000 instalacji."
+      },
+      "poster": "posters/solar.webp"
+    },
+    {
+      "id": "coal",
+      "title": {
+        "en": "Coal’s share of power generation: from 79.7% to 61.3% in four years",
+        "pl": "Udział węgla w produkcji prądu: z 79,7% do 61,3% w cztery lata"
+      },
+      "text": {
+        "en": "In the national power system, coal (hard coal and lignite) produced 79.7% of electricity in 2021 and 61.3% in 2025, according to the grid operator PSE. Wind and other renewables more than doubled, from 19.0 to 42.7 TWh. On 10 July 2026, Baltic Power, Poland’s first offshore wind farm, sent its first electricity to the grid.",
+        "pl": "W krajowym systemie elektroenergetycznym węgiel (kamienny i brunatny) wyprodukował 79,7% energii elektrycznej w 2021 roku i 61,3% w 2025, według operatora sieci PSE. Wiatr i inne OZE wzrosły ponad dwukrotnie, z 19,0 do 42,7 TWh. 10 lipca 2026 Baltic Power, pierwsza polska morska farma wiatrowa, dostarczyła do sieci pierwszy prąd."
+      },
+      "poster": "posters/coal.webp"
+    },
+    {
+      "id": "food",
+      "title": {
+        "en": "€58.4 billion of agri-food exports",
+        "pl": "58,4 mld € eksportu rolno-spożywczego"
+      },
+      "text": {
+        "en": "In 2025 Polish agri-food exports reached €58.4 billion, with a €19.8 billion surplus. About a quarter of export value went outside the EU.",
+        "pl": "W 2025 roku eksport rolno-spożywczy osiągnął 58,4 mld euro, z nadwyżką 19,8 mld euro. Mniej więcej ćwierć wartości eksportu trafiła poza UE."
+      },
+      "poster": "posters/food.webp"
+    },
+    {
+      "id": "c-money",
+      "title": {
+        "en": "Catching up",
+        "pl": "Doganianie"
+      },
+      "text": {
+        "en": "Bond yields make headlines. Incomes rarely do. This is what thirty-five years of catching up look like in 2026.",
+        "pl": "Rentowności obligacji trafiają na nagłówki. Dochody rzadko. Tak wygląda w 2026 roku trzydzieści pięć lat doganiania."
+      },
+      "poster": "posters/c-money.webp"
+    },
+    {
+      "id": "pps",
+      "title": {
+        "en": "As rich as Portugal, closing on Spain",
+        "pl": "Tak zamożni jak Portugalia, coraz bliżej Hiszpanii"
+      },
+      "text": {
+        "en": "GDP per person in purchasing-power terms reached 81% of the EU average in 2025, level with Portugal and ahead of Hungary and Greece. Actual individual consumption, which counts what households really get including public services, is at 88%, up from 85% a year earlier.",
+        "pl": "PKB na osobę według parytetu siły nabywczej osiągnął w 2025 roku 81% średniej UE, tyle co Portugalia i więcej niż Węgry czy Grecja. Rzeczywista konsumpcja indywidualna, czyli to, co gospodarstwa faktycznie dostają, łącznie z usługami publicznymi, wynosi 88%, wobec 85% rok wcześniej."
+      },
+      "poster": "posters/pps.webp"
+    },
+    {
+      "id": "eight",
+      "title": {
+        "en": "Poland’s economy is as large as these eight countries combined",
+        "pl": "Polska gospodarka jest tak duża jak tych osiem krajów razem"
+      },
+      "text": {
+        "en": "IMF figures for 2025 put Polish GDP at $1.036 trillion. Estonia, Latvia, Lithuania, Belarus, Ukraine, Moldova, Romania and Bulgaria together come to $1.076 trillion. Those eight countries have more than twice as many people, 75.4 million against 36.5 million. So output per person in Poland is about twice as high: roughly $28.4k of GDP per person against $14.3k.",
+        "pl": "Według danych MFW za 2025 rok PKB Polski wynosi 1,036 bln dolarów. Estonia, Łotwa, Litwa, Białoruś, Ukraina, Mołdawia, Rumunia i Bułgaria razem mają 1,076 bln dolarów. Te osiem krajów ma ponad dwa razy więcej ludzi, 75,4 mln wobec 36,5 mln. Na jednego Polaka przypada więc mniej więcej dwa razy więcej: około 28,4 tys. dolarów PKB na osobę wobec 14,3 tys."
+      },
+      "poster": "posters/eight.webp"
+    },
+    {
+      "id": "growth",
+      "title": {
+        "en": "Growing three times faster than the EU",
+        "pl": "Rośniemy trzy razy szybciej niż UE"
+      },
+      "text": {
+        "en": "GDP grew 3.7% year on year in the second quarter of 2026, against 1.2% in the EU and 2.1% in the United States (Eurostat’s flash estimates of 14 August). In 2025 average disposable income per person rose 6.7% after inflation, and spending took a smaller share of it, 57.6% instead of 59.3%.",
+        "pl": "PKB wzrósł o 3,7% rok do roku w drugim kwartale 2026, wobec 1,2% w UE i 2,1% w Stanach Zjednoczonych (szybkie szacunki Eurostatu z 14 sierpnia). W 2025 roku przeciętny dochód rozporządzalny na osobę wzrósł realnie o 6,7%, a wydatki pochłaniały z niego mniej: 57,6% zamiast 59,3%."
+      },
+      "poster": "posters/growth.webp"
+    },
+    {
+      "id": "consumption",
+      "title": {
+        "en": "Household spending up 32% in real terms since 2016",
+        "pl": "Konsumpcja gospodarstw domowych realnie o 32% większa niż w 2016"
+      },
+      "text": {
+        "en": "Eurostat’s national accounts show real household consumption in Poland 31.8% higher in 2025 than in 2016, against 10.4% in the euro area and 10.1% in Germany. Consumer prices are 73% of the EU average, the third-lowest level in the Union, so each złoty still goes further than a euro does in Berlin.",
+        "pl": "Rachunki narodowe Eurostatu pokazują, że realna konsumpcja gospodarstw domowych w Polsce była w 2025 roku o 31,8% większa niż w 2016, wobec 10,4% w strefie euro i 10,1% w Niemczech. Ceny konsumpcyjne to 73% średniej UE, trzeci najniższy poziom w Unii, więc złotówka wciąż starcza na więcej niż euro w Berlinie."
+      },
+      "poster": "posters/consumption.webp"
+    },
+    {
+      "id": "poverty",
+      "title": {
+        "en": "Fewer people left behind",
+        "pl": "Mniej osób zostaje w tyle"
+      },
+      "text": {
+        "en": "85 in 100 Poles are not at risk of poverty or social exclusion, against 79 across the EU. Only Czechia does better. Average gross pay in the enterprise sector reached PLN 9,401.58 in June 2026.",
+        "pl": "85 na 100 Polaków nie jest zagrożonych ubóstwem ani wykluczeniem społecznym, wobec 79 w całej UE. Lepiej jest tylko w Czechach. Przeciętne wynagrodzenie brutto w sektorze przedsiębiorstw osiągnęło w czerwcu 2026 roku 9401,58 zł."
+      },
+      "poster": "posters/poverty.webp"
+    },
+    {
+      "id": "c-security",
+      "title": {
+        "en": "Security in numbers",
+        "pl": "Bezpieczeństwo w liczbach"
+      },
+      "text": {
+        "en": "Defence spending, allied battlegroups, the shipyards and how safe people say they feel.",
+        "pl": "Wydatki na obronę, grupy bojowe sojuszników, stocznie i to, jak bezpiecznie czują się ludzie."
+      },
+      "poster": "posters/c-security.webp"
+    },
+    {
+      "id": "flank",
+      "title": {
+        "en": "Nine battlegroups, from Finland to Bulgaria",
+        "pl": "Dziewięć grup bojowych, od Finlandii po Bułgarię"
+      },
+      "text": {
+        "en": "NATO now reports nine multinational battlegroups along its eastern flank. In 2025 it added two standing operations: Eastern Sentry, guarding the airspace along the eastern border, and Baltic Sentry, watching the cables and pipelines on the Baltic seabed. The moving lights on the map trace both.",
+        "pl": "NATO ma dziś dziewięć wielonarodowych grup bojowych na wschodniej flance. W 2025 roku doszły dwie stałe operacje: Eastern Sentry, która pilnuje przestrzeni powietrznej wzdłuż wschodniej granicy, i Baltic Sentry, która strzeże kabli i rurociągów na dnie Bałtyku. Ruchome światła na mapie pokazują obie."
+      },
+      "poster": "posters/flank.webp"
+    },
+    {
+      "id": "defence",
+      "title": {
+        "en": "4.68% of GDP on defence, more than the US",
+        "pl": "4,68% PKB na obronę, więcej niż USA"
+      },
+      "text": {
+        "en": "NATO’s 2026 estimates put Polish defence spending at 4.68% of GDP (an estimated 4.25% in 2025), against 3.17% for the United States and 2.53% for European allies and Canada together. In the same table the three Baltic states, which border Russia or Kaliningrad, report higher shares.",
+        "pl": "Szacunki NATO na 2026 rok mówią o 4,68% PKB wydatków obronnych w Polsce (w 2025 szacowano 4,25%), wobec 3,17% w Stanach Zjednoczonych i 2,53% łącznie dla europejskich sojuszników i Kanady. W tej samej tabeli trzy państwa bałtyckie, które graniczą z Rosją lub obwodem królewieckim, mają wyższe odsetki."
+      },
+      "poster": "posters/defence.webp"
+    },
+    {
+      "id": "yards",
+      "title": {
+        "en": "A frigate, satellites, a wind farm and a gas terminal",
+        "pl": "Fregata, satelity, farma wiatrowa i terminal gazowy"
+      },
+      "text": {
+        "en": "In August 2026 Gdynia launched ORP Wicher, a 138.7-metre frigate and the first of three Miecznik-class ships. It is planned to enter service in 2029, and the programme is due to finish in 2032. ICEYE agreed in May 2025 to supply satellites to the Polish Armed Forces. Baltic Power sent its first electricity to the grid on 10 July 2026, and the Świnoujście LNG terminal has run at 8.3 bcm a year since January 2025.",
+        "pl": "W sierpniu 2026 w Gdyni zwodowano ORP Wicher, fregatę o długości 138,7 m i pierwszy z trzech okrętów typu Miecznik. Ma wejść do służby w 2029, a cały program ma się zakończyć w 2032. ICEYE zgodził się w maju 2025 dostarczyć satelity Siłom Zbrojnym RP. Baltic Power dostarczył do sieci pierwszy prąd 10 lipca 2026, a terminal LNG w Świnoujściu działa z przepustowością 8,3 mld m³ rocznie od stycznia 2025."
+      },
+      "poster": "posters/yards.webp"
+    },
+    {
+      "id": "safe",
+      "title": {
+        "en": "89% say Poland is a safe place to live",
+        "pl": "89% mówi, że w Polsce żyje się bezpiecznie"
+      },
+      "text": {
+        "en": "In an April 2026 survey, 97% described their own neighbourhood or village as safe and peaceful, and 89% said people live safely in Poland. The share afraid of becoming a crime victim fell five points, to 36%. The Global Peace Index 2026 ranks Poland 22nd, up 23 places from 45th a year earlier.",
+        "pl": "W badaniu z kwietnia 2026 97% określiło swoją okolicę lub wieś jako bezpieczną i spokojną, a 89% uznało, że w Polsce żyje się bezpiecznie. Odsetek bojących się, że padną ofiarą przestępstwa, spadł o pięć punktów, do 36%. Global Peace Index 2026 plasuje Polskę na 22. miejscu, o 23 miejsca wyżej niż rok wcześniej (45.)."
+      },
+      "poster": "posters/safe.webp"
+    },
+    {
+      "id": "c-made",
+      "title": {
+        "en": "Made in Poland, used by the world",
+        "pl": "Zrobione w Polsce, używane na świecie"
+      },
+      "text": {
+        "en": "Companies and people from Poland at work around the world: AI, parcel lockers, buses, games and science in orbit.",
+        "pl": "Firmy i ludzie z Polski w świecie: AI, paczkomaty, autobusy, gry i nauka na orbicie."
+      },
+      "poster": "posters/c-made.webp"
+    },
+    {
+      "id": "ai",
+      "title": {
+        "en": "Poles at the frontier of AI",
+        "pl": "Polacy na froncie AI"
+      },
+      "text": {
+        "en": "ElevenLabs, founded by two Poles, was valued at $22 billion in a staff share sale announced on 30 September 2026, after ending 2025 with $330 million in annual recurring revenue. OpenAI’s chief scientist is Jakub Pachocki; Wojciech Zaremba was one of its founders. The University of Warsaw has reached the ICPC programming world finals 31 years in a row.",
+        "pl": "ElevenLabs, założony przez dwóch Polaków, został wyceniony na 22 mld dolarów w sprzedaży udziałów pracowniczych ogłoszonej 30 września 2026, po tym jak zakończył 2025 rok z 330 mln dolarów rocznych przychodów powtarzalnych. Głównym naukowcem OpenAI jest Jakub Pachocki, a Wojciech Zaremba był jednym z założycieli firmy. Uniwersytet Warszawski awansował do finałów ICPC 31 lat z rzędu."
+      },
+      "poster": "posters/ai.webp"
+    },
+    {
+      "id": "parcels",
+      "title": {
+        "en": "Europe picks up its parcels from a Polish box",
+        "pl": "Europa odbiera paczki z polskiej skrzynki"
+      },
+      "text": {
+        "en": "InPost ended 2025 with 61,196 parcel machines, more than half of them outside Poland, and handled about 1.4 billion parcels, up 25%. Just over half its revenue now comes from abroad. Żabka runs 12,339 stores, including 173 in Romania, and BLIK is piloting links with Spain’s Bizum and Portugal’s MB WAY.",
+        "pl": "InPost zakończył 2025 rok z 61 196 paczkomatami, z czego ponad połowa stoi poza Polską, i obsłużył około 1,4 mld paczek, o 25% więcej. Już nieco ponad połowa jego przychodów pochodzi z zagranicy. Żabka ma 12 339 sklepów, w tym 173 w Rumunii, a BLIK testuje połączenia z hiszpańskim Bizum i portugalskim MB WAY."
+      },
+      "poster": "posters/parcels.webp"
+    },
+    {
+      "id": "brands",
+      "title": {
+        "en": "Buses for Vancouver, stories for 85 million",
+        "pl": "Autobusy dla Vancouver, opowieści dla 85 milionów"
+      },
+      "text": {
+        "en": "Solaris delivered 1,631 vehicles to 15 countries in 2025, 86% of them low- or zero-emission, and won a firm order for 107 trolleybuses for Vancouver. The Witcher games have sold 85 million copies and Cyberpunk 2077 35 million.",
+        "pl": "Solaris dostarczył w 2025 roku 1631 pojazdów do 15 krajów, w 86% nisko- lub zeroemisyjnych, i zdobył wiążące zamówienie na 107 trolejbusów dla Vancouver. Gry z serii Wiedźmin sprzedały się w 85 mln egzemplarzy, a Cyberpunk 2077 w 35 mln."
+      },
+      "poster": "posters/brands.webp"
+    },
+    {
+      "id": "orbit",
+      "title": {
+        "en": "Polish science, in orbit",
+        "pl": "Polska nauka na orbicie"
+      },
+      "text": {
+        "en": "In summer 2025 Sławosz Uznański-Wiśniewski launched on a Falcon 9 and Dragon to the International Space Station, the first Pole in space since 1978. His 20-day mission, Ignis, carried 13 Polish-led experiments. The dot on the map follows the station’s ground track.",
+        "pl": "Latem 2025 roku Sławosz Uznański-Wiśniewski poleciał Falconem 9 i Dragonem na Międzynarodową Stację Kosmiczną, jako pierwszy Polak w kosmosie od 1978 roku. Jego 20-dniowa misja Ignis zabrała 13 eksperymentów prowadzonych przez Polaków. Punkt na mapie podąża za śladem stacji nad Ziemią."
+      },
+      "poster": "posters/orbit.webp"
+    },
+    {
+      "id": "jobs",
+      "title": {
+        "en": "Work for almost everyone who wants it",
+        "pl": "Praca dla prawie każdego, kto jej chce"
+      },
+      "text": {
+        "en": "Unemployment was 3.1% in 2025 on the EU’s harmonised measure, and 78.8% of people aged 20–64 were in work.",
+        "pl": "Bezrobocie wyniosło w 2025 roku 3,1% według zharmonizowanej miary UE, a pracowało 78,8% osób w wieku 20–64 lata."
+      },
+      "poster": "posters/jobs.webp"
+    },
+    {
+      "id": "c-daily",
+      "title": {
+        "en": "Public services on a phone",
+        "pl": "Usługi publiczne w telefonie"
+      },
+      "text": {
+        "en": "Digital ID, tax returns, payments and parcels: how an ordinary day looks in 2026.",
+        "pl": "Cyfrowy dowód, zeznania podatkowe, płatności i paczki: jak wygląda zwykły dzień w 2026 roku."
+      },
+      "poster": "posters/c-daily.webp"
+    },
+    {
+      "id": "mob",
+      "title": {
+        "en": "11 million ID cards in a phone",
+        "pl": "11 milionów dowodów w telefonie"
+      },
+      "text": {
+        "en": "mObywatel has issued 11 million mDowód digital ID cards and averaged 1.5 million logins a day in 2025. Nearly 7.5 million people have reserved their PESEL number against identity fraud, three quarters of them through the app, and 20 million have activated an Internet Patient Account. The pulses on the map scale with city size.",
+        "pl": "mObywatel wydał 11 mln mDowodów i notował średnio 1,5 mln logowań dziennie w 2025 roku. Prawie 7,5 mln osób zastrzegło PESEL przed wyłudzeniami, w trzech czwartych przez aplikację, a 20 mln aktywowało Internetowe Konto Pacjenta. Pulsowanie na mapie rośnie z wielkością miasta."
+      },
+      "poster": "posters/mob.webp"
+    },
+    {
+      "id": "pit",
+      "title": {
+        "en": "A tax return in under five minutes",
+        "pl": "Zeznanie podatkowe w mniej niż pięć minut"
+      },
+      "text": {
+        "en": "In the 2026 season almost 24 million income-tax returns were filed electronically, against about one million on paper. The pre-filled Twój e-PIT service handled 14.8 million of them, and more than 35% were done in under five minutes.",
+        "pl": "W sezonie 2026 prawie 24 mln zeznań PIT złożono elektronicznie, wobec około miliona na papierze. Wstępnie wypełniona usługa Twój e-PIT obsłużyła 14,8 mln z nich, a ponad 35% zajęło mniej niż pięć minut."
+      },
+      "poster": "posters/pit.webp"
+    },
+    {
+      "id": "blik",
+      "title": {
+        "en": "An ordinary Tuesday, without a single queue",
+        "pl": "Zwykły wtorek bez ani jednej kolejki"
+      },
+      "text": {
+        "en": "BLIK processed about 2.9 billion transactions worth PLN 441.5 billion in 2025, across 20.7 million active accounts. 735 million of them were phone-number transfers between people.",
+        "pl": "BLIK obsłużył w 2025 roku około 2,9 mld transakcji o wartości 441,5 mld zł, na 20,7 mln aktywnych kont. 735 mln z nich to przelewy na numer telefonu."
+      },
+      "poster": "posters/blik.webp"
+    },
+    {
+      "id": "c-move",
+      "title": {
+        "en": "Roads, rails and runways",
+        "pl": "Drogi, tory i pasy startowe"
+      },
+      "text": {
+        "en": "Roads, railways, airports and ports in 2025, and where people travelled.",
+        "pl": "Drogi, koleje, lotniska i porty w 2025 roku oraz dokąd Polacy podróżowali."
+      },
+      "poster": "posters/c-move.webp"
+    },
+    {
+      "id": "roads",
+      "title": {
+        "en": "5,466 km of motorways and expressways",
+        "pl": "5466 km autostrad i dróg ekspresowych"
+      },
+      "text": {
+        "en": "At the end of 2025 Poland had about 5,466 km of motorways and expressways. Almost 400 km opened in 2025 alone, and about 1,373 km more were under construction. The road authority GDDKiA plans to open 290.8 km in 2026. The lines on the map are a simplified sketch of the main corridors.",
+        "pl": "Na koniec 2025 roku Polska miała około 5466 km autostrad i dróg ekspresowych. Prawie 400 km oddano w samym 2025 roku, a około 1373 km było w budowie. GDDKiA planuje oddać w 2026 roku 290,8 km. Linie na mapie to uproszczony szkic głównych korytarzy."
+      },
+      "poster": "posters/roads.webp"
+    },
+    {
+      "id": "transit",
+      "title": {
+        "en": "The busiest railways in 30 years, record airports",
+        "pl": "Najwięcej pasażerów kolei od 30 lat, rekord lotnisk"
+      },
+      "text": {
+        "en": "Trains carried 438.97 million passengers in 2025, the most in 30 years. Polish airports handled 66.1 million passenger movements, Warsaw Chopin alone 24.1 million. Gdańsk’s terminals moved a record 2.8 million containers (TEU).",
+        "pl": "Pociągi przewiozły w 2025 roku 438,97 mln pasażerów, najwięcej od 30 lat. Polskie lotniska obsłużyły 66,1 mln pasażerów, samo Lotnisko Chopina 24,1 mln. Terminale w Gdańsku przeładowały rekordowe 2,8 mln kontenerów (TEU)."
+      },
+      "poster": "posters/transit.webp"
+    },
+    {
+      "id": "travel",
+      "title": {
+        "en": "44% travelled abroad, a record since 1993",
+        "pl": "44% wyjechało za granicę, rekord od 1993"
+      },
+      "text": {
+        "en": "In 2025, 44% of adults travelled abroad, the highest share in a series that began in 1993, and 64% took a leisure trip, the highest since the question was first asked in 2006.",
+        "pl": "W 2025 roku 44% dorosłych wyjechało za granicę, najwięcej w serii prowadzonej od 1993, a 64% wyjechało w celach wypoczynkowych, najwięcej od 2006, gdy pierwszy raz zadano to pytanie."
+      },
+      "poster": "posters/travel.webp"
+    },
+    {
+      "id": "c-health",
+      "title": {
+        "en": "Longer, safer lives",
+        "pl": "Dłuższe, bezpieczniejsze życie"
+      },
+      "text": {
+        "en": "Life expectancy, road deaths and air quality: slow trends that rarely make the news.",
+        "pl": "Długość życia, ofiary wypadków drogowych i jakość powietrza: powolne trendy, o których rzadko słychać w wiadomościach."
+      },
+      "poster": "posters/c-health.webp"
+    },
+    {
+      "id": "life",
+      "title": {
+        "en": "Men live 8.7 years longer than in 1990, women 7",
+        "pl": "Mężczyźni żyją o 8,7 roku dłużej niż w 1990, kobiety o 7"
+      },
+      "text": {
+        "en": "In 2024 life expectancy reached 74.93 years for men and 82.26 for women, 8.7 and 7 years more than in 1990. Healthy life years rose again too, to 61.6 for men and 65.3 for women.",
+        "pl": "W 2024 roku przeciętne trwanie życia wyniosło 74,93 roku dla mężczyzn i 82,26 dla kobiet, o 8,7 i 7 lat więcej niż w 1990. Wzrosła też liczba lat w zdrowiu: do 61,6 dla mężczyzn i 65,3 dla kobiet."
+      },
+      "poster": "posters/life.webp"
+    },
+    {
+      "id": "roaddeaths",
+      "title": {
+        "en": "Road deaths down 45% since 2016",
+        "pl": "O 45% mniej ofiar na drogach niż w 2016"
+      },
+      "text": {
+        "en": "1,660 people died on Polish roads in 2025, against 3,026 in 2016 and 1,896 a year earlier. Each dot below is 20 lives. The ones that fade are the people who, compared with 2016, came home.",
+        "pl": "Na polskich drogach zginęło w 2025 roku 1660 osób, wobec 3026 w 2016 i 1896 rok wcześniej. Każda kropka to 20 osób. Te, które gasną, to ludzie, którzy w porównaniu z 2016 rokiem wrócili do domu."
+      },
+      "poster": "posters/roaddeaths.webp"
+    },
+    {
+      "id": "air",
+      "title": {
+        "en": "Kraków can breathe",
+        "pl": "Kraków może oddychać"
+      },
+      "text": {
+        "en": "Kraków has banned burning coal and wood in boilers and fireplaces since 2019. All eight monitoring stations met the annual PM10 limit in 2023 and 2024. At Bujaka, days over the limit fell from 78 in 2016 to 23 in 2024, and in 2024 every benzo[a]pyrene station met its legal limit for the first time.",
+        "pl": "Kraków zakazał palenia węglem i drewnem w kotłach i kominkach od 2019 roku. Wszystkie osiem stacji pomiarowych spełniło roczną normę PM10 w 2023 i 2024 roku. Na stacji Bujaka liczba dni z przekroczeniem spadła z 78 w 2016 do 23 w 2024, a w 2024 wszystkie stacje mierzące benzo[a]piren po raz pierwszy zmieściły się w normie."
+      },
+      "poster": "posters/air.webp"
+    },
+    {
+      "id": "c-people",
+      "title": {
+        "en": "How people live",
+        "pl": "Jak żyją ludzie"
+      },
+      "text": {
+        "en": "How satisfied people say they are with their lives, and how they spend their time.",
+        "pl": "Jak bardzo ludzie są zadowoleni z życia i jak spędzają czas."
+      },
+      "poster": "posters/c-people.webp"
+    },
+    {
+      "id": "happy",
+      "title": {
+        "en": "81% are satisfied with their lives",
+        "pl": "81% jest zadowolonych ze swojego życia"
+      },
+      "text": {
+        "en": "In a late-2025 survey, 81% said they were satisfied with their lives, 86% with where they live and 70% with their material conditions. 55% looked at their own future with satisfaction, and financial satisfaction rose six points in a year.",
+        "pl": "W badaniu z końca 2025 roku 81% zadeklarowało zadowolenie z życia, 86% z miejsca zamieszkania i 70% z warunków materialnych. 55% patrzyło z zadowoleniem na własną przyszłość, a zadowolenie z finansów wzrosło w ciągu roku o sześć punktów."
+      },
+      "poster": "posters/happy.webp"
+    },
+    {
+      "id": "social",
+      "title": {
+        "en": "Readers, hosts and givers",
+        "pl": "Czytamy, gościmy, pomagamy"
+      },
+      "text": {
+        "en": "In 2025, 80% went to a restaurant with family or friends, 71% hosted friends at home, 67% gave money to charity and 64% read a book for pleasure. Recorded alcohol consumption fell to 8.3 litres per person, about 15% less than in 2019.",
+        "pl": "W 2025 roku 80% chodziło do restauracji z rodziną lub znajomymi, 71% gościło znajomych w domu, 67% wpłaciło pieniądze na cele charytatywne, a 64% przeczytało książkę dla przyjemności. Rejestrowane spożycie alkoholu spadło do 8,3 litra na osobę, o około 15% mniej niż w 2019."
+      },
+      "poster": "posters/social.webp"
+    },
+    {
+      "id": "c-ledger",
+      "title": {
+        "en": "The unfinished work",
+        "pl": "Niedokończona robota"
+      },
+      "text": {
+        "en": "Things can be hard and getting better at the same time. Here is what is still hard, next to what is moving.",
+        "pl": "Coś może być trudne i jednocześnie się poprawiać. Oto co wciąż jest trudne, obok tego, co idzie do przodu."
+      },
+      "poster": "posters/c-ledger.webp"
+    },
+    {
+      "id": "ledger",
+      "title": {
+        "en": "Bad, and better, at the same time",
+        "pl": "Źle i lepiej jednocześnie"
+      },
+      "text": {
+        "en": "Not everything is solved. None of these problems cancels the progress, and none of the progress cancels them.",
+        "pl": "Nie wszystko jest rozwiązane. Żaden z tych problemów nie przekreśla postępu, a postęp nie przekreśla żadnego z nich."
+      },
+      "poster": "posters/ledger.webp"
+    }
+  ],
+  "a11y": {
+    "keyboard": "The map is a picture: the places on it are listed as text for screen readers, and the figures are charts with data tables. Step navigation is provided by the lesson page; on a narrow screen a native button shows or hides the figures panel.",
+    "notes": "Every step has a text alternative in English and Polish and a still poster. With reduced motion the map stops moving and the charts show their final values."
+  }
+}
