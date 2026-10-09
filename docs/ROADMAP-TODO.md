@@ -327,14 +327,15 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 
 ### 1.5 Interactive packages (new)
 Plan: `docs/plans/interactive-demos.md` (M1–M2); ADRs 0086, 0087.
-- [ ] (new) Interactive topic type: versioned zip packages with a `ulams-interactive.json` manifest, played in an
+- [x] (new) Interactive topic type: versioned zip packages with a `ulams-interactive.json` manifest, played in an
       opaque sandbox on the content origin with a CSP per version, steps and step ranges per topic, text
-      alternatives, background mode (ADR 0086; on by default pending #150)
-- [ ] (new) `ulams-ix` v1 bridge protocol and the MIT `@ulams/interactive-bridge` library (ADR 0087)
-- [ ] (new) `InteractiveLesson` catalogue component with background (full-bleed) mode, reduced-motion posters,
-      WebGL and timeout fallbacks, keyboard flow
-- [ ] (new) Interactive package library and topic editor in the admin; `ulams topics create-interactive` and its MCP
-      tool; docs pages for creators, the bridge and the content origin
+      alternatives, background mode (ADR 0086; on by default pending #150) (PRs #162, #174; network origins
+      need a confirmation on upload, #172)
+- [x] (new) `ulams-ix` v1 bridge protocol and the MIT `@ulams/interactive-bridge` library (ADR 0087) (PR #162)
+- [x] (new) `InteractiveLesson` catalogue component with background (full-bleed) mode, reduced-motion posters,
+      WebGL and timeout fallbacks, keyboard flow (PR #173; "Mark as complete" stays as a fallback, #171)
+- [x] (new) Interactive package library and topic editor in the admin; `ulams topics create-interactive` and its MCP
+      tool; docs pages for creators, the bridge and the content origin (PR #173)
 
 ---
 
