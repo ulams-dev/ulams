@@ -99,7 +99,9 @@ acceptable; each has a test:
    `/studio/api/*` of the front), so a content page cannot embed it in no-cors mode. CORP does not
    restrict CORS-mode `fetch`, which the SPAs use. Caddy also never reflects `Origin: null` or a
    content origin in `Access-Control-Allow-Origin`/`-Credentials`; only the tracking endpoints answer
-   any origin, without credentials and with `Cookie` and `Authorization` dropped. Tests:
+   any origin, without credentials and with `Cookie` and `Authorization` dropped, and the cmi5
+   endpoints (`/api/cmi5/fetch`, `/trax/api/*/xapi/std/*`), which answer any origin without credentials,
+   drop `Cookie` and keep `Authorization` (it carries the LRS session token; the preflight names it). Tests:
    `tests/Integrations/ContentOriginHeadersConfigTest.php`, `ContentFileTest`, `ProtectJsonResponsesTest`.
 5. **Config.** `TENANCY_CONTENT_HOST` accepts `{slug}.content.ulams.app`; the tenancy env writer and
    `ulams:tenant:sync-env` write it as `CONTENT_ORIGIN` (`TenantNamingTest`,

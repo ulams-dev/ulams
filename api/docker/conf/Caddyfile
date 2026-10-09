@@ -200,6 +200,36 @@ http://*.localhost {
         }
     }
 
+    # cmi5 AUs on the content origin (ADR 0046): the one-time launch token in the fetch URL and the LRS
+    # session token (`Authorization: Basic ulrs1.<...>`, valid on the LRS only) are the credentials, never
+    # cookies. Any origin may call these routes without credentials; no cookie is passed on, and
+    # Authorization stays because the session token travels in it.
+    @cmi5 path /api/cmi5/fetch /trax/api/*/xapi/std/*
+    handle @cmi5 {
+        request_header -Cookie
+        header Access-Control-Allow-Origin *
+        header Access-Control-Expose-Headers "ETag, Last-Modified, X-Experience-API-Consistent-Through, X-Experience-API-Version"
+        @cmi5_preflight method OPTIONS
+        handle @cmi5_preflight {
+            header {
+                Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+                Access-Control-Allow-Headers "Content-Type, Authorization, X-Experience-API-Version, If-Match, If-None-Match, Accept"
+                Access-Control-Max-Age 600
+            }
+            respond 204
+        }
+        handle {
+            reverse_proxy api:9000 {
+                header_up -Access-Control-Allow-Origin
+                header_down -Access-Control-Allow-Origin
+                header_down -Set-Cookie
+                transport fastcgi {
+                    env SCRIPT_FILENAME /var/www/html/index.php
+                }
+            }
+        }
+    }
+
     # CORS preflights for the Laravel API, answered here without booting PHP. Same policy as
     # config/cors.php (any origin, method and requested headers) plus the credentials header the
     # API responses carry below; Max-Age lets the browser reuse the answer for 10 minutes. The
