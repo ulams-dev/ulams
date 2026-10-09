@@ -22,7 +22,6 @@ class ConsultationDto extends BaseDto implements ModelDtoContract
     protected ?int $authorId = null;
     protected $imagePath = null;
     protected $logotypePath = null;
-    protected ?bool $analyzeEnabled;
 
     public function model(): Consultation
     {
@@ -99,10 +98,5 @@ class ConsultationDto extends BaseDto implements ModelDtoContract
     protected function setTeachers(array $teachers): void
     {
         $this->relations['teachers'] = $teachers;
-    }
-
-    public function setAnalyzeEnabled(bool $analyzeEnabled): void
-    {
-        $this->analyzeEnabled = $analyzeEnabled;
     }
 }

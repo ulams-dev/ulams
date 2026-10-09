@@ -3,7 +3,6 @@ import ProForm, {
   ProFormDatePicker,
   ProFormDigit,
   ProFormSelect,
-  ProFormSwitch,
   ProFormText,
 } from '@ant-design/pro-form';
 import { Alert, Button, Col, Row, Spin } from 'antd';
@@ -347,14 +346,6 @@ const ConsultationForm = () => {
                 min={1}
                 max={99}
                 fieldProps={{ step: 1 }}
-              />
-            </ProForm.Group>
-            <ProForm.Group>
-              <ProFormSwitch
-                name="analyze_enabled"
-                label={<FormattedMessage id="ai_analysis_enable_label" />}
-                tooltip={<FormattedMessage id="ai_analysis_enable_tooltip" />}
-                width="lg"
               />
             </ProForm.Group>
             <ProForm.Group>
