@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Scottish Book: problem cards</title>
+<link rel="stylesheet" href="vendor/ulam-shell.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="ix-app">
+  <header id="ix-card" class="ix-card" hidden>
+    <p class="ix-step-no"></p>
+    <h1 class="ix-title"></h1>
+    <p class="ix-text"></p>
+    <nav class="ix-nav" aria-label="Steps">
+      <button type="button" class="ix-prev">Back</button>
+      <button type="button" class="ix-next ix-primary">Next step</button>
+    </nav>
+  </header>
+
+  <main id="ix-stage" class="ix-stage">
+    <h2 class="ix-sr">The Scottish Book: problem cards</h2>
+    <p id="banner" class="sb-banner" role="note" hidden></p>
+    <div class="ix-controls" id="filters">
+      <div class="ix-field"><label for="poser">Show problems posed by</label><select id="poser"><option value="">Everyone</option></select></div>
+      <p id="score" class="ix-summary" aria-live="polite"></p>
+    </div>
+    <div id="cards" class="sb-cards"></div>
+  </main>
+  <p id="ix-live" class="ix-sr" aria-live="polite"></p>
+</div>
+<script type="module" src="main.js"></script>
+</body>
+</html>

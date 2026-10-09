@@ -1,0 +1,44 @@
+{
+  "placeholder": true,
+  "note": "Placeholder content: the posers, dates, summaries, prizes and outcomes below are not facts. They are replaced when the fact sheet is cleared (plan section 7.3, M9a and M9b).",
+  "options": [
+    { "value": "solved", "label": "Solved" },
+    { "value": "open", "label": "Still open" },
+    { "value": "disproved", "label": "Answered the other way" }
+  ],
+  "problems": [
+    {
+      "id": "problem-19",
+      "number": 19,
+      "poser": "Placeholder poser A",
+      "date": "Placeholder date",
+      "summary": "Placeholder: the statement of problem 19 in plain language is added when the fact sheet is cleared.",
+      "prize": "Placeholder: prize, if any",
+      "outcome": "Placeholder: what became of the problem.",
+      "answer": "disproved",
+      "sources": []
+    },
+    {
+      "id": "problem-153",
+      "number": 153,
+      "poser": "Placeholder poser B",
+      "date": "Placeholder date",
+      "summary": "Placeholder: the statement of problem 153 in plain language is added when the fact sheet is cleared.",
+      "prize": "Placeholder: prize, if any",
+      "outcome": "Placeholder: what became of the problem.",
+      "answer": "solved",
+      "sources": []
+    },
+    {
+      "id": "problem-193",
+      "number": 193,
+      "poser": "Placeholder poser A",
+      "date": "Placeholder date",
+      "summary": "Placeholder: the statement of problem 193 in plain language is added when the fact sheet is cleared.",
+      "prize": "Placeholder: prize, if any",
+      "outcome": "Placeholder: what became of the problem.",
+      "answer": "open",
+      "sources": []
+    }
+  ]
+}

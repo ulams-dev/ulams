@@ -1,0 +1,46 @@
+{
+  "$schema": "https://ulams.dev/schemas/ulams-interactive/v1.json",
+  "id": "ulam-scottish-book",
+  "title": { "en": "The Scottish Book: problem cards" },
+  "version": "0.1.0",
+  "entry": "index.html",
+  "licence": "MIT",
+  "attribution": "© 2026 Mateusz Wojczal. Code: MIT. Text: CC BY 4.0. Placeholder content until the fact sheet is cleared.",
+  "source": { "url": "https://github.com/ulams-dev/ulams/tree/main/demo-content/ulam/scottish-book", "ref": "main" },
+  "locales": ["en"],
+  "defaultLocale": "en",
+  "bridge": 1,
+  "capabilities": { "steps": true, "reducedMotion": true, "score": true, "background": false },
+  "requires": [],
+  "network": [],
+  "steps": [
+    {
+      "id": "intro",
+      "title": { "en": "Cards from a notebook" },
+      "text": { "en": "Placeholder text: these cards are notebook pages, one per problem, each with a number, who posed it, when, a plain-language summary and a prize. The summaries, posers, dates, prizes and outcomes are filled in when the fact sheet has been cleared. Use the filter to show the problems of one poser." },
+      "poster": "posters/intro.webp"
+    },
+    {
+      "id": "problem-19",
+      "title": { "en": "Problem 19" },
+      "text": { "en": "Placeholder text: problem 19. Read the card, then guess its outcome and check your guess. The statement, the poser, the date and the outcome are filled in when the fact sheet has been cleared." },
+      "poster": "posters/problem-19.webp"
+    },
+    {
+      "id": "problem-153",
+      "title": { "en": "Problem 153" },
+      "text": { "en": "Placeholder text: problem 153. Read the card, then guess its outcome and check your guess. The statement, the poser, the date, the prize and the outcome are filled in when the fact sheet has been cleared." },
+      "poster": "posters/problem-153.webp"
+    },
+    {
+      "id": "problem-193",
+      "title": { "en": "Problem 193" },
+      "text": { "en": "Placeholder text: problem 193. Read the card, then guess its outcome and check your guess. The statement, the poser, the date and the outcome are filled in when the fact sheet has been cleared." },
+      "poster": "posters/problem-193.webp"
+    }
+  ],
+  "a11y": {
+    "keyboard": "Everything is a native control: a select for the filter, radio buttons for the guess and buttons to check it. After a guess the focus returns to the card's heading and the result is announced.",
+    "notes": "Nothing animates, so reduced motion needs no change. The card text comes from data/problems.json and is shown as text, never as markup."
+  }
+}
