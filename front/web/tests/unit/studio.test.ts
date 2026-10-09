@@ -54,6 +54,8 @@ describe("studio BFF allow-list", () => {
     ["GET", `/living-course/sessions/${S}/audit`],
     ["GET", `/living-course/sessions/${S}/audit/verify`],
     ["GET", `/living-course/sessions/${S}/audit/export`],
+    ["PUT", `/living-course/proposals/${S}/learner-note`],
+    ["PUT", `/living-course/connections/${S}`],
   ])("forwards living course %s %s", (method, path) => {
     expect(isLivingCourseCall(method, path)).toBe(true);
     expect(isStudioCall(method, path)).toBe(false);
@@ -89,6 +91,12 @@ describe("studio BFF allow-list", () => {
     ["GET", `/living-course/sessions/${S}/audit/other`],
     ["GET", `/living-course/sessions/${S}/audit/export/x`],
     ["GET", `/living-course/sessions/${S}/audit/../staleness/x`],
+    // a connection cannot be removed or read from the browser BFF; the note cannot be read or deleted
+    ["DELETE", `/living-course/connections/${S}`],
+    ["POST", `/living-course/connections/${S}`],
+    ["PUT", `/living-course/connections/${S}/secret`],
+    ["GET", `/living-course/proposals/${S}/learner-note`],
+    ["DELETE", `/living-course/proposals/${S}/learner-note`],
     // the academy-wide trail is for admins in the admin app
     ["GET", "/living-course/audit/export"],
     ["GET", "/living-course/audit/verify"],

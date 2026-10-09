@@ -2448,6 +2448,51 @@
         "additionalProperties": false
       }
     },
+    "LearnerImpact": {
+      "description": "What an update does for learners, in plain words: how many learners will see the 'updated since you completed it' notice, how many get one extra attempt for a corrected quiz question, how many had completed a lesson that is retired and how many finished the course before a lesson was added, and the reassurance that completion and past scores stay as they are. When learner notices for updated lessons are switched off for the course it says so. After the update is applied the same facts are in the past tense. Props come from the update proposal, never from the model.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "applied": {
+            "type": "boolean",
+            "description": "The update was applied; the sentences are in the past tense"
+          },
+          "noticesOff": {
+            "type": "boolean",
+            "description": "Notices about updated, retired and new lessons are switched off for this course"
+          },
+          "topicUpdated": {
+            "type": "integer",
+            "description": "Learners who completed or started a lesson that changed",
+            "minimum": 0
+          },
+          "questionReattempt": {
+            "type": "integer",
+            "description": "Learners with an answer to a corrected quiz question",
+            "minimum": 0
+          },
+          "topicRetired": {
+            "type": "integer",
+            "description": "Learners who had completed a lesson that is removed",
+            "minimum": 0
+          },
+          "courseExtended": {
+            "type": "integer",
+            "description": "Learners who finished the course before a lesson was added",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "topicUpdated",
+          "questionReattempt",
+          "topicRetired",
+          "courseExtended"
+        ],
+        "additionalProperties": false
+      }
+    },
     "AuditTable": {
       "description": "The audit trail of a course's sources and updates as a table, newest first: when, what happened, who did it (a person, the system or an agent) and a short summary, with a Details button per row that opens the full record: the source revision, the course versions it moved between, the number of AI calls, the recorded data and the two hashes that chain the entries. Props come from the audit API, never from the model.",
       "modelSelectable": false,

@@ -25,6 +25,12 @@ interface Server {
   apply: (body: { overwrite?: boolean }) => { status: number; body: unknown };
   analyse: (body: { confirmEstimate?: boolean }) => { status: number; body: unknown };
   aiEnabled: boolean;
+  /** The sources of the session (their connections carry the learner notice settings). */
+  sources: unknown[];
+  /** Called for PUT learner-note. */
+  note: (body: { note: string }) => { status: number; body: unknown };
+  /** Called for PUT connections/{id}. */
+  connection: (body: { settings?: Record<string, boolean> }) => { status: number; body: unknown };
   /** Called on every GET of the proposal, to move a running state forward. */
   onGet?: (s: Server) => void;
   /** Serve an open event stream (otherwise the endpoint answers 404 and the page polls). */
@@ -41,7 +47,10 @@ const summary = (d: ProposalDetail): ProposalSummary => {
 
 function stub(initial: ProposalDetail, over: Partial<Server> = {}): Server {
   if (typeof AbortSignal.timeout !== "function") (AbortSignal as unknown as { timeout: () => AbortSignal }).timeout = () => new AbortController().signal;
-  const server: Server = { detail: initial, calls: [], getCount: 0, aiEnabled: true, apply: () => ({ status: 202, body: { data: { runId: "run2", proposal: summary(initial) } } }), analyse: () => ({ status: 202, body: { data: { state: "started", estimateMicroUsd: 420000, runId: "run1", message: null } } }), ...over };
+  const server: Server = { detail: initial, calls: [], getCount: 0, aiEnabled: true, sources: [],
+    note: (b) => ({ status: 200, body: { data: { learnerNote: b.note || null, effectiveNote: b.note || "Section 3.2 changed the ratio." } } }),
+    connection: (b) => ({ status: 200, body: { data: { id: "c1", settings: b.settings ?? {} } } }),
+    apply: () => ({ status: 202, body: { data: { runId: "run2", proposal: summary(initial) } } }), analyse: () => ({ status: 202, body: { data: { state: "started", estimateMicroUsd: 420000, runId: "run1", message: null } } }), ...over };
   const setItem = (id: string, patch: Partial<ProposalItem>): ProposalItem => {
     const next = server.detail.items.map((i) => (i.id === id ? { ...i, ...patch } : i));
     server.detail = { ...server.detail, items: next, groups: server.detail.groups.map((g) => ({ ...g, items: g.items.map((i) => next.find((n) => n.id === i.id)!) })) };
@@ -62,6 +71,15 @@ function stub(initial: ProposalDetail, over: Partial<Server> = {}): Server {
       server.getCount += 1;
       server.onGet?.(server);
       return json(server.detail);
+    }
+    if (path === `/sessions/${S}/sources` && method === "GET") return json(server.sources);
+    if (/^\/proposals\/[^/]+\/learner-note$/.test(path) && method === "PUT") {
+      const result = server.note(body as { note: string });
+      return new Response(JSON.stringify(result.body), { status: result.status });
+    }
+    if (/^\/connections\/[^/]+$/.test(path) && method === "PUT") {
+      const result = server.connection(body as { settings?: Record<string, boolean> });
+      return new Response(JSON.stringify(result.body), { status: result.status });
     }
     const decide = /^\/proposals\/[^/]+\/items\/([^/]+)\/(accept|reject|reset)$/.exec(path);
     if (decide) {
@@ -135,7 +153,7 @@ describe("update review: ready", () => {
     expect(button(root, "Show 1 cosmetic change")).toBeTruthy();
     expect(root.querySelector("[data-apply-summary]")?.textContent).toBe("1 accepted · 2 undecided · 0 rejected");
     expect(button(root, "Apply 1 accepted change").disabled).toBe(false);
-    expect(root.querySelector("[data-extension='learner-impact']")).not.toBeNull();
+    expect(root.querySelector("[data-learner-impact]")).not.toBeNull();
   });
 
   it("is accessible", async () => {
@@ -395,5 +413,148 @@ describe("update review: analysis states", () => {
     stub(detail([], { status: "no_impact", groups: [] }));
     root = mount();
     await wait(() => expect(root.querySelector("[data-state]")?.textContent).toContain("does not affect your course"));
+  });
+});
+
+const source = (settings: Record<string, unknown> = {}) => ({
+  id: "src", name: "x.md", status: "ready", kind: "markdown", size: 1, tokens: 1, fragments: 3, title: null, revisionCount: 2,
+  connection: { id: "c1", connector: "upload", schedule: "manual", status: "active", autoAnalyse: false, settings, config: {}, syncedRevision: { id: "r1", number: 1 }, latestRevision: { id: "r2", number: 2, status: "ingested" }, lastCheckedAt: null, nextCheckAt: null, lastChangeAt: null, failureCount: 0, lastError: null, secretsSet: [] },
+});
+const panel = (root: HTMLElement) => root.querySelector<HTMLElement>("[data-learner-impact]")!;
+const note = (root: HTMLElement) => root.querySelector<HTMLTextAreaElement>("[data-note]")!;
+const typeNote = (root: HTMLElement, value: string) => {
+  note(root).value = value;
+  note(root).dispatchEvent(new Event("input", { bubbles: true }));
+};
+
+describe("update review: learners", () => {
+  it("says in plain words how many learners each rule reaches, and what stays as it is", async () => {
+    stub(detail(item3()));
+    const root = mount();
+    await ready(root);
+    const text = panel(root).textContent ?? "";
+    expect(text).toContain("What learners will see");
+    expect(text).toContain("12 learners will see an \u201Cupdated since you completed it\u201D notice");
+    expect(text).toContain("3 learners get one extra attempt for the corrected question.");
+    expect(text).toContain("Completion and past scores stay as they are.");
+    expect(panel(root).hasAttribute("hidden")).toBe(false);
+  });
+
+  it("shows the suggested note in an editable field with a character count", async () => {
+    stub(detail(item3()));
+    const root = mount();
+    await ready(root);
+    expect(note(root).value).toBe("Section 3.2 changed the ratio.");
+    expect(note(root).getAttribute("maxlength")).toBe("500");
+    expect(root.querySelector("label[for]")?.textContent).toContain("Note for learners");
+    expect(panel(root).textContent).toContain("30 of 500 characters");
+    typeNote(root, "The brew ratio is 1:16 now.");
+    expect(panel(root).textContent).toContain("27 of 500 characters");
+  });
+
+  it("saves the note before apply, and keeps what the author typed while the page refreshes", async () => {
+    const s = stub(detail(item3()));
+    s.apply = () => {
+      s.detail = { ...s.detail, status: "applying" };
+      return { status: 202, body: { data: { runId: "run2", proposal: summary(s.detail) } } };
+    };
+    const root = mount();
+    await ready(root);
+    typeNote(root, "The brew ratio is 1:16 now.");
+    // a refresh from the server does not wipe the typed note
+    s.detail = { ...s.detail };
+    button(root, "Accept all").click();
+    await wait(() => expect(s.calls.some((c) => c.path.endsWith("/accept-all"))).toBe(true));
+    await wait(() => expect(root.querySelector("[data-apply]")).not.toBeNull());
+    expect(note(root).value).toBe("The brew ratio is 1:16 now.");
+    button(root, "Apply ").click();
+    await wait(() => expect(s.calls.some((c) => c.path.endsWith("/apply"))).toBe(true));
+    const methods = s.calls.map((c) => `${c.method} ${c.path.replace(/proposals\/[^/]+/, "proposals/P")}`);
+    expect(methods.indexOf("PUT /proposals/P/learner-note")).toBeGreaterThan(-1);
+    expect(methods.indexOf("PUT /proposals/P/learner-note")).toBeLessThan(methods.findIndex((m) => m.endsWith("/apply")));
+    expect(s.calls.find((c) => c.method === "PUT")?.body).toEqual({ note: "The brew ratio is 1:16 now." });
+  });
+
+  it("does not apply when the note cannot be saved, and says why", async () => {
+    const s = stub(detail(item3()));
+    s.note = () => ({ status: 422, body: { success: false, message: "The note may not be greater than 500 characters." } });
+    const root = mount();
+    await ready(root);
+    typeNote(root, "A different note.");
+    button(root, "Apply 1 accepted change").click();
+    await wait(() => expect(root.querySelector("[data-notices]")?.textContent).toContain("could not be saved, so nothing was applied"));
+    expect(s.calls.some((c) => c.path.endsWith("/apply"))).toBe(false);
+    expect(root.querySelector("[data-note-error]")?.textContent).toContain("may not be greater than 500 characters");
+  });
+
+  it("saves the note from its own button and brings the suggested note back on request", async () => {
+    const s = stub(detail(item3()));
+    const root = mount();
+    await ready(root);
+    typeNote(root, "Use 16 g now.");
+    button(panel(root), "Save the note").click();
+    await wait(() => expect(root.querySelector("[data-note-status]")?.textContent).toBe("Note saved."));
+    expect(s.calls.filter((c) => c.method === "PUT").map((c) => c.body)).toEqual([{ note: "Use 16 g now." }]);
+    button(panel(root), "Use the suggested note").click();
+    await wait(() => expect(root.querySelector("[data-note-status]")?.textContent).toBe("The suggested note is back."));
+    expect(s.calls.filter((c) => c.method === "PUT").at(-1)?.body).toEqual({ note: "" });
+    expect(note(root).value).toBe("Section 3.2 changed the ratio.");
+  });
+
+  it("shows the note read-only once the update is applied, in the past tense", async () => {
+    stub(detail(item3(), { status: "applied", learnerNote: "Use 16 g now." }));
+    const root = mount();
+    await wait(() => expect(root.querySelector("[data-learner-impact]")?.textContent).toContain("What learners saw"));
+    expect(panel(root).textContent).toContain("12 learners were shown");
+    expect(root.querySelector("[data-note-form]")?.hasAttribute("hidden")).toBe(true);
+    expect(root.querySelector("[data-note-readonly]")?.textContent).toContain("Note shown to learners: Section 3.2 changed the ratio.");
+  });
+
+  it("offers the two switches, saves a change at once and puts the box back when saving fails", async () => {
+    const s = stub(detail(item3()), { sources: [source({ show_pending_to_learners: false, notify_learners_of_updates: true })] });
+    const root = mount();
+    await ready(root);
+    await wait(() => expect(root.querySelector("[data-learner-switches]")).not.toBeNull());
+    const pending = root.querySelector<HTMLInputElement>("[data-switch=show_pending_to_learners]")!;
+    const notify = root.querySelector<HTMLInputElement>("[data-switch=notify_learners_of_updates]")!;
+    expect(pending.checked).toBe(false);
+    expect(notify.checked).toBe(true);
+    expect(root.querySelector(`label[for="${pending.id}"]`)?.textContent).toBe("Show that an update is under review");
+    pending.checked = true;
+    pending.dispatchEvent(new Event("change"));
+    await wait(() => expect(root.querySelector("[data-switch-status]")?.textContent).toBe("Saved."));
+    expect(s.calls.find((c) => c.path === "/connections/c1")?.body).toEqual({ settings: { show_pending_to_learners: true } });
+    s.connection = () => ({ status: 403, body: { success: false, message: "Not allowed." } });
+    notify.checked = false;
+    notify.dispatchEvent(new Event("change"));
+    await wait(() => expect(root.querySelector("[data-switch-error]")?.textContent).toContain("Not allowed."));
+    expect(notify.checked).toBe(true);
+  });
+
+  it("explains that notices are off, hides the note and still reports the extra attempts", async () => {
+    stub(detail(item3()), { sources: [source({ notify_learners_of_updates: false })] });
+    const root = mount();
+    await ready(root);
+    await wait(() => expect(panel(root).textContent).toContain("switched off for this course"));
+    expect(panel(root).textContent).toContain("3 learners get one extra attempt");
+    expect(panel(root).textContent).not.toContain("will see an");
+    expect(root.querySelector("[data-note-form]")?.hasAttribute("hidden")).toBe(true);
+  });
+
+  it("hides the panel on an API without learner impact, and still works without the sources", async () => {
+    stub({ ...detail(item3()), learnerImpact: undefined });
+    const root = mount();
+    await ready(root);
+    expect(panel(root).hasAttribute("hidden")).toBe(true);
+    expect(root.querySelector("[data-learner-switches]")).toBeNull();
+  });
+
+  it("is accessible with the note editor and the switches", async () => {
+    stub(detail(item3()), { sources: [source()] });
+    const root = mount();
+    await ready(root);
+    await wait(() => expect(root.querySelector("[data-learner-switches]")).not.toBeNull());
+    const result = await axe.run(root, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+    expect(result.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.html).join(" | ")}`)).toEqual([]);
   });
 });

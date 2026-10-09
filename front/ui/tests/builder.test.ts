@@ -363,6 +363,45 @@ describe("interactions round-trip as A2UI actions", () => {
     expect(mount(single("StalenessBadge", { state: "stale", days: 1 })).textContent).toContain("Stale · 1 day");
   });
 
+  describe("learner impact", () => {
+    it("counts learners per rule in plain words and ends with what never changes", () => {
+      const main = mount(single("LearnerImpact"));
+      const lines = [...main.querySelectorAll("li")].map((li) => li.textContent);
+      expect(main.querySelector("h3")?.textContent).toBe("What learners will see");
+      expect(lines).toEqual([
+        "12 learners will see an \u201Cupdated since you completed it\u201D notice, with the note below.",
+        "1 learner had completed a lesson that is removed; it stays in their history as \u201CRetired lesson\u201D.",
+        "3 learners get one extra attempt for the corrected question.",
+        "Completion and past scores stay as they are.",
+      ]);
+    });
+
+    it("says when no learner needs a notice, and uses the past tense once applied", () => {
+      const none = mount(single("LearnerImpact", { applied: false, topicUpdated: 0, questionReattempt: 0, topicRetired: 0, courseExtended: 0 }));
+      expect([...none.querySelectorAll("li")].map((li) => li.textContent)).toEqual(["No learner needs a notice for these changes.", "Completion and past scores stay as they are."]);
+      const done = mount(single("LearnerImpact", { applied: true, topicUpdated: 1, questionReattempt: 1, topicRetired: 0, courseExtended: 2 }));
+      expect(done.querySelector("h3")?.textContent).toBe("What learners saw");
+      const text = done.textContent ?? "";
+      expect(text).toContain("1 learner was shown");
+      expect(text).toContain("1 learner got one extra attempt");
+      expect(text).toContain("2 learners who finished the course were shown \u201CNew since you finished\u201D");
+    });
+
+    it("explains switched-off notices but still reports the re-attempt", () => {
+      const main = mount(single("LearnerImpact", { noticesOff: true, topicUpdated: 5, questionReattempt: 2, topicRetired: 1, courseExtended: 1 }));
+      const lines = [...main.querySelectorAll("li")].map((li) => li.textContent);
+      expect(lines[0]).toContain("switched off for this course");
+      expect(lines).toContain("2 learners get one extra attempt for the corrected question.");
+      expect(main.textContent).not.toContain("will see an");
+    });
+
+    it("passes axe", async () => {
+      const main = mount(single("LearnerImpact"));
+      const result = await axe.run(main, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+      expect(result.violations).toEqual([]);
+    });
+  });
+
   describe("audit table", () => {
     it("is a captioned table with column headers, who and what in words, and a scrollable labelled region", () => {
       const main = mount(single("AuditTable"));

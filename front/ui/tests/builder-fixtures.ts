@@ -218,6 +218,7 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
   },
   StalenessBadge: { state: "stale", days: 3, pendingElements: 4, href: "/studio/s/01s/updates" },
   CostMeter: { usedMicroUsd: 710000, budgetMicroUsd: 5000000, tokens: 120000, label: "Sonnet" },
+  LearnerImpact: { applied: false, noticesOff: false, topicUpdated: 12, questionReattempt: 3, topicRetired: 1, courseExtended: 0 },
   AuditTable: {
     caption: "Audit trail of this course, newest first",
     emptyText: "No entries match these filters.",

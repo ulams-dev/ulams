@@ -8,6 +8,7 @@ import { renderSurface, type FlatComponent } from "@ulams/ui/builder/renderer.ts
 import type { A2uiActionOut } from "@ulams/ui/builder/components.ts";
 import { h, uid } from "@ulams/ui/builder/dom.ts";
 import { announce, livingClient, message } from "./common.ts";
+import { learnerSwitches } from "./learners.ts";
 import { ACCEPTED_FILES, cardProps, changeProps, cosmeticToggleLabel, emptyChangesText, splitChanges, timelineProps, uploadMessage } from "./living.ts";
 
 export function mountSources(root: HTMLElement): void {
@@ -39,7 +40,7 @@ export function mountSources(root: HTMLElement): void {
     const toggle = h("button", { type: "button", class: "cb-btn cb-btn-small", hidden: true, "aria-pressed": "false" }) as HTMLButtonElement;
     const changesBody = h("div", { class: "st-changes", role: "region", "data-changes": "", "aria-labelledby": `${fileId}-changes` });
     const el = h("section", { class: "st-source", "data-source-block": source.id, "aria-label": source.title ?? source.name },
-      card, drop, h("h2", { class: "cb-h3 st-sub" }, "Revisions"), timeline,
+      card, source.connection ? learnerSwitches(lc, source.connection) : null, drop, h("h2", { class: "cb-h3 st-sub" }, "Revisions"), timeline,
       h("div", { class: "st-changes-head" }, changesTitle, toggle), changesBody);
 
     const onAction = (a: A2uiActionOut) => {

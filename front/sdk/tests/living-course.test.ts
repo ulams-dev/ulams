@@ -150,6 +150,27 @@ describe("living course client", () => {
     );
   });
 
+  it("saves the learner note and the learner settings of a connection", async () => {
+    const { fn, calls } = fakeFetch([
+      { body: { data: { learnerNote: "The ratio is 1:16 now.", effectiveNote: "The ratio is 1:16 now." } } },
+      { body: { data: { learnerNote: null, effectiveNote: "Section 3.2 changed the ratio." } } },
+      { body: { data: { id: "c1", connector: "upload", settings: { show_pending_to_learners: true } } } },
+    ]);
+    const lc = createLivingCourseClient({ baseUrl: "/studio/api", prefix: "/living-course", fetch: fn });
+    expect(await lc.proposals.setLearnerNote("p1", "The ratio is 1:16 now.")).toEqual({ learnerNote: "The ratio is 1:16 now.", effectiveNote: "The ratio is 1:16 now." });
+    expect((await lc.proposals.setLearnerNote("p1", "")).learnerNote).toBeNull();
+    const connection = await lc.connections.update("c 1", { settings: { show_pending_to_learners: true } });
+    expect(connection.settings).toEqual({ show_pending_to_learners: true });
+    expect(calls.map((c) => `${c.init.method} ${c.url}`)).toEqual([
+      "PUT /studio/api/living-course/proposals/p1/learner-note",
+      "PUT /studio/api/living-course/proposals/p1/learner-note",
+      "PUT /studio/api/living-course/connections/c%201",
+    ]);
+    expect(JSON.parse(String(calls[0]!.init.body))).toEqual({ note: "The ratio is 1:16 now." });
+    expect(JSON.parse(String(calls[1]!.init.body))).toEqual({ note: "" });
+    expect(JSON.parse(String(calls[2]!.init.body))).toEqual({ settings: { show_pending_to_learners: true } });
+  });
+
   it("reads staleness and proposals", async () => {
     const summary = { state: "stale", since: "2026-10-01T00:00:00+00:00", days: 3, pendingElements: 2, openProposalId: "p1", syncedRevision: 1, latestRevision: 2, lastCheckedAt: null, tracked: true };
     const { fn, calls } = fakeFetch([

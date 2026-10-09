@@ -788,6 +788,33 @@ const StalenessBadge: Renderer = (p) => {
     : h("span", { class: `cb-fresh cb-fresh-${state}` }, glyph, text, pending);
 };
 
+const learners = (n: number): string => `${n} ${n === 1 ? "learner" : "learners"}`;
+
+/** The sentences of the learner impact panel; the rules are in ADR 0033. Completion and scores are never touched. */
+export function learnerImpactLines(p: Props): string[] {
+  const done = p.applied === true;
+  const lines: string[] = [];
+  if (p.noticesOff) {
+    lines.push("Notices about updated, retired and new lessons are switched off for this course, so learners are not told about those changes.");
+  } else {
+    if (p.topicUpdated > 0) lines.push(`${learners(p.topicUpdated)} ${done ? (p.topicUpdated === 1 ? "was shown" : "were shown") : "will see"} an “updated since you completed it” notice, with the note below.`);
+    if (p.topicRetired > 0) lines.push(`${learners(p.topicRetired)} had completed a lesson that is removed; it stays in their history as “Retired lesson”.`);
+    if (p.courseExtended > 0) lines.push(`${learners(p.courseExtended)} who finished the course ${done ? (p.courseExtended === 1 ? "was shown" : "were shown") : "will see"} “New since you finished” for the new lessons; their completion is kept.`);
+  }
+  if (p.questionReattempt > 0) lines.push(`${learners(p.questionReattempt)} ${done ? "got" : "get"} one extra attempt for the corrected question.`);
+  if (lines.length === 0) lines.push("No learner needs a notice for these changes.");
+  lines.push("Completion and past scores stay as they are.");
+  return lines;
+}
+
+const LearnerImpact: Renderer = (p) => {
+  const headingId = uid("learn");
+  const lines = learnerImpactLines(p);
+  return h("section", { class: "cb-card cb-learner-impact", "aria-labelledby": headingId },
+    h("h3", { id: headingId, class: "cb-serif cb-h3" }, p.applied ? "What learners saw" : "What learners will see"),
+    h("ul", { class: "cb-learner-lines" }, lines.map((line) => h("li", {}, line))));
+};
+
 const ACTOR_TYPE_LABEL: Record<string, string> = { user: "Person", system: "System", agent: "Agent" };
 
 const AuditTable: Renderer = (p) => {
@@ -859,5 +886,6 @@ export const builderComponents: Record<string, Renderer> = {
   ImpactSummary,
   StalenessBadge,
   CostMeter,
+  LearnerImpact,
   AuditTable,
 };

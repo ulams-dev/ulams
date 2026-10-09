@@ -706,3 +706,78 @@
 .st-pager p {
   margin: 0;
 }
+
+/* Learner impact, the learner note and the learner notice switches */
+.st-learners {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.st-learners[hidden],
+.st-learners [hidden] {
+  display: none;
+}
+.st-learners .cb-learner-impact {
+  border: 0;
+  padding: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.st-note-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.st-note-form p {
+  margin: 0;
+}
+.st-note-label {
+  font-weight: 600;
+}
+.st-note {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 84px;
+  resize: vertical;
+}
+.st-note-readonly {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.st-note-form .cb-error:empty {
+  display: none;
+}
+.st-switches {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  min-width: 0;
+}
+.st-switches legend {
+  padding: 0 4px;
+}
+.st-switch {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.st-switch input {
+  width: 20px;
+  height: 20px;
+  margin: 3px 0 0;
+  flex: none;
+}
+.st-switch label {
+  font-weight: 600;
+}
+.st-switch p {
+  margin: 2px 0 0;
+}
+.st-switches p {
+  margin: 0;
+}
+.st-switches .cb-error:empty,
+.st-switches [role="status"]:empty {
+  display: none;
+}

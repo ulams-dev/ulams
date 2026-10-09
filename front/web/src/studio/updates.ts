@@ -148,7 +148,7 @@ export function impactProps(p: ProposalSummary): Props {
     lessons: c?.groups || undefined,
     estimatedCostMicroUsd: p.estimatedCostMicroUsd ?? undefined,
     costMicroUsd: p.costMicroUsd ?? undefined,
-    // EXTENSION POINT (learner impact, a later milestone): set `learnerImpact` here from the API.
+    // what this means for learners has its own panel with the editable note (learners.ts)
   });
 }
 

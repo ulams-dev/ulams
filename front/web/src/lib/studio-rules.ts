@@ -47,6 +47,9 @@ export const LIVING_COURSE_RULES: Array<{ method: string; pattern: RegExp }> = [
   { method: "GET", pattern: new RegExp(`^/proposals/${ID}$`) },
   { method: "POST", pattern: new RegExp(`^/proposals/${ID}/(analyse|accept-all|reject|apply)$`) },
   { method: "POST", pattern: new RegExp(`^/proposals/${ID}/items/${ID}/(accept|reject|reset|regenerate)$`) },
+  // the note learners see under "updated since you completed it", and the learner notice settings of a connection
+  { method: "PUT", pattern: new RegExp(`^/proposals/${ID}/learner-note$`) },
+  { method: "PUT", pattern: new RegExp(`^/connections/${ID}$`) },
   // audit trail: read, verify the hash chain, export (all GET; the trail cannot be changed from here)
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/audit$`) },
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/audit/(verify|export)$`) },

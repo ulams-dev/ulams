@@ -335,3 +335,7 @@ a.cb-fresh:hover { border-color: var(--ulams-studio-iris); }
 .cb-audit-facts dt { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ulams-studio-muted); padding-top: 3px; }
 .cb-audit-facts dd { margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
 .cb-audit-empty { padding: 16px 0; }
+
+/* learner impact of an update */
+.cb-learner-impact { display: flex; flex-direction: column; gap: 8px; }
+.cb-learner-lines { margin: 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 4px; }

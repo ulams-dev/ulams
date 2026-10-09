@@ -252,7 +252,32 @@ export interface AnalysisStep {
   error: string | null;
 }
 
+/**
+ * How many learners each notice rule reaches (distinct learners per kind), and the text learners
+ * see under "Updated since you completed it": the author's note, else the reasons of the major changes.
+ */
+export interface LearnerImpact {
+  learners: Record<"topic_updated" | "question_reattempt" | "topic_retired" | "course_extended", number>;
+  note: string;
+}
+
+export interface LearnerNoteResult {
+  /** What the author saved; null when the suggested note is in use. */
+  learnerNote: string | null;
+  effectiveNote: string;
+}
+
+/** What the author may change on a source connection from the studio. */
+export interface ConnectionPatch {
+  schedule?: string;
+  autoAnalyse?: boolean;
+  status?: "active" | "paused";
+  settings?: { show_pending_to_learners?: boolean; notify_learners_of_updates?: boolean };
+}
+
 export interface ProposalDetail extends ProposalSummary {
+  /** Absent on an API older than the learner notices. */
+  learnerImpact?: LearnerImpact;
   steps?: AnalysisStep[];
   groups: ProposalGroup[];
   items: ProposalItem[];
@@ -408,6 +433,9 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
       /** One new call for one element; at most three per item. */
       regenerate: async (proposalId: string, itemId: string, comment: string) =>
         (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/regenerate`, undefined, { comment })).data,
+      /** Saves the note learners see (plain text, up to 500 characters); an empty note brings back the suggested one. Only while the proposal is open. */
+      setLearnerNote: async (proposalId: string, note: string) =>
+        (await call<LearnerNoteResult>("PUT", `/proposals/${id(proposalId)}/learner-note`, undefined, { note })).data,
       acceptAll: async (proposalId: string) => (await call<{ accepted: number; proposal: ProposalSummary }>("POST", `/proposals/${id(proposalId)}/accept-all`)).data,
       /** Rejects the whole proposal and acknowledges the source revision. */
       rejectAll: async (proposalId: string) => (await call<ProposalSummary>("POST", `/proposals/${id(proposalId)}/reject`)).data,
@@ -417,6 +445,10 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
        */
       apply: async (proposalId: string, overwrite = false) =>
         (await call<{ runId: string; proposal: ProposalSummary }>("POST", `/proposals/${id(proposalId)}/apply`, undefined, { overwrite })).data,
+    },
+    connections: {
+      /** Changes a connection: schedule, automatic analysis, paused, and the two learner notice settings. */
+      update: async (connectionId: string, patch: ConnectionPatch) => (await call<SourceConnection>("PUT", `/connections/${id(connectionId)}`, undefined, patch)).data,
     },
     audit: {
       /** Newest first. */

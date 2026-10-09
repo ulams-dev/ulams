@@ -19,6 +19,6 @@ export const detail = (items: ProposalItem[], over: Partial<ProposalDetail> = {}
   ({
     id: "p1", number: 1, sessionId: "s", sourceId: "src", status: "ready", trigger: "manual", counts: { items: items.length, elements: 2, remaps: 1, uncovered: 0, major: 1, answerChecks: 1, groups: 1 },
     fromRevision: { id: "r1", number: 1 }, toRevision: { id: "r2", number: 2, detectedAt: null }, runId: "run1", baseVersionId: null, resultVersionId: null, estimatedCostMicroUsd: 420000, costMicroUsd: 130000,
-    decisions: {}, learnerNote: null, error: null, createdAt: null, decidedAt: null, appliedAt: null, steps: [],
+    decisions: {}, learnerNote: null, learnerImpact: { learners: { topic_updated: 12, question_reattempt: 3, topic_retired: 0, course_extended: 0 }, note: "Section 3.2 changed the ratio." }, error: null, createdAt: null, decidedAt: null, appliedAt: null, steps: [],
     groups: [{ key: "lesson:l1", label: "Lesson 1.1: Ratios", items }], items, ...over,
   }) as ProposalDetail;

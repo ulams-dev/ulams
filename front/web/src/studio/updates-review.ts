@@ -10,6 +10,7 @@ import type { A2uiActionOut } from "@ulams/ui/builder/components.ts";
 import { h, uid } from "@ulams/ui/builder/dom.ts";
 import { announce, livingClient, message, showCitation, studioClient } from "./common.ts";
 import { changeProps, cosmeticToggleLabel, countsSentence, splitChanges } from "./living.ts";
+import { createLearnerPanel, learnerSettings, learnerSwitches, type LearnerSettings } from "./learners.ts";
 import {
   analyseLabel,
   applyLabel,
@@ -44,6 +45,9 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
   const pollMs = options.pollMs ?? 3000;
 
   const header = h("div", { "data-header": "" });
+  const learnerPanel = createLearnerPanel(lc, proposalId);
+  const switchesHost = h("div", { "data-switches": "" });
+  let settings: LearnerSettings = learnerSettings(null);
   const notices = h("div", { class: "st-notices", "data-notices": "" });
   const statePanel = h("div", { "data-state": "" });
   const changesCol = h("details", { class: "st-review-changes cb-card", "data-source-changes": "", open: true });
@@ -128,8 +132,27 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     }
     root.replaceChildren(header, notices, statePanel, h("div", { class: "st-review-body" }, changesCol, itemsCol), applyBar);
     await load();
+    void loadLearnerSettings();
     void cb.events(sessionId, { onEvent: onEvent, onStatus: (s) => (sseOpen = s === "open") }, { signal: abort.signal });
     window.addEventListener("pagehide", () => abort.abort(), { once: true });
+  }
+
+  /** The two learner notice switches belong to the source's connection; without them the defaults apply. */
+  async function loadLearnerSettings(): Promise<void> {
+    try {
+      const connection = (await lc.sources.list(sessionId)).find((source) => source.id === detail?.sourceId)?.connection;
+      if (!connection) return;
+      settings = learnerSettings(connection);
+      switchesHost.replaceChildren(
+        learnerSwitches(lc, connection, (next) => {
+          settings = next;
+          if (detail) learnerPanel.update(detail, settings);
+        })
+      );
+      if (detail) learnerPanel.update(detail, settings);
+    } catch {
+      /* the panel keeps the defaults; the switches stay hidden */
+    }
   }
 
   function schedule(): void {
@@ -171,6 +194,7 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
   function render(): void {
     if (!detail) return;
     renderHeader();
+    learnerPanel.update(detail, settings);
     renderState();
     renderItemsIfChanged();
     renderApplyBar();
@@ -192,8 +216,8 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
         ` Proposal ${p.number}`,
         p.status === "ready" || p.status === "applied" ? ` · ${d.accepted ?? 0} accepted · ${d.rejected ?? 0} rejected · ${d.pending ?? 0} undecided` : ""),
       surface("ImpactSummary", impactProps(p)),
-      // EXTENSION POINT (learner impact and learner note, a later milestone): the panel renders here.
-      h("div", { "data-extension": "learner-impact" })
+      learnerPanel.el,
+      switchesHost
     );
   }
 
@@ -542,6 +566,11 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     applyBar.querySelector("[data-apply-slot]")?.replaceChildren();
     setBusy(true);
     try {
+      // the note learners see is saved before the notices are created
+      if (!(await learnerPanel.saveIfDirty())) {
+        notify("The note for learners could not be saved, so nothing was applied. Fix the note or use the suggested one, then apply again.", "error");
+        return;
+      }
       await lc.proposals.apply(proposalId, overwrite);
       announce("Applying the accepted changes.");
       detail = { ...detail, status: "applying" };
