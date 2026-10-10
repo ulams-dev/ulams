@@ -12,7 +12,9 @@ use Ulams\Courses\Models\UserTopicTime;
 use Ulams\Courses\Repositories\Contracts\CourseProgressRepositoryContract;
 use Ulams\Courses\ValueObjects\CourseProgressCollection;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CourseProgressRepository extends BaseRepository implements CourseProgressRepositoryContract
 {
@@ -56,9 +58,7 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
             $update['finished_at'] = Carbon::now();
         }
 
-        $courseProgress = $topic->progress()->updateOrCreate([
-            'user_id' => $user->getKey(),
-        ], $update);
+        $courseProgress = $this->saveProgress($topic, $user, $update);
 
         if ($newAttempt && $status === ProgressStatus::INCOMPLETE && !$courseProgress->wasRecentlyCreated && $courseProgress->wasChanged()) {
             $courseProgress->increment('attempt');
@@ -85,6 +85,27 @@ class CourseProgressRepository extends BaseRepository implements CourseProgressR
         if ($finished) {
             event(new TopicFinished($user, $topic));
             CheckFinishedLessons::dispatch($topic->getKey(), $user->getKey());
+        }
+    }
+
+    /**
+     * One row per learner and topic (unique index). Two requests building the same learner's
+     * progress at once both miss the row and both insert: the loser reads the winner's row.
+     */
+    private function saveProgress(Topic $topic, Authenticatable $user, array $update): CourseProgress
+    {
+        $keys = ['user_id' => $user->getKey()];
+
+        try {
+            // a savepoint, so a violation does not abort an enclosing transaction
+            return DB::transaction(fn () => $topic->progress()->updateOrCreate($keys, $update));
+        } catch (UniqueConstraintViolationException) {
+            // a bare "not started" row must not reset what the winner has saved since
+            if ($update === ['status' => ProgressStatus::INCOMPLETE]) {
+                return $topic->progress()->where($keys)->firstOrFail();
+            }
+
+            return $topic->progress()->updateOrCreate($keys, $update);
         }
     }
 
