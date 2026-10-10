@@ -173,11 +173,13 @@ test("axe: the hero has no WCAG 2.2 AA violations", async ({ page }) => {
 });
 
 test("the script is a few hundred bytes: under 2 KB gzip", async ({ page }) => {
+  // the minifier may emit "ulams-orbit" with double quotes or backticks
+  const orbitDefine = /define\(["`]ulams-orbit["`]/;
   await page.goto(url);
   const html = await page.content();
   const scripts = [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)]
     .map((m) => m[1] ?? "")
-    .filter((s) => s.includes('define("ulams-orbit"'));
+    .filter((s) => orbitDefine.test(s));
   let size = 0;
   if (scripts.length) size = gzipSync(scripts[0] ?? "").length;
   else {
@@ -187,7 +189,7 @@ test("the script is a few hundred bytes: under 2 KB gzip", async ({ page }) => {
       .evaluateAll((els) => els.map((e) => (e as HTMLScriptElement).src));
     for (const src of srcs) {
       const body = await (await page.request.get(src)).text();
-      if (body.includes('define("ulams-orbit"')) size = gzipSync(body).length;
+      if (orbitDefine.test(body)) size = gzipSync(body).length;
     }
   }
   expect(size, "orbit script found").toBeGreaterThan(100);
