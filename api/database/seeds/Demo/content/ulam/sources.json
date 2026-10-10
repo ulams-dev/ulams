@@ -1,0 +1,287 @@
+{
+  "U-01": {
+    "title": "MacTutor, \"Stanisław Marcin Ulam\"",
+    "publisher": "",
+    "url": "https://mathshistory.st-andrews.ac.uk/Biographies/Ulam/",
+    "note": "read"
+  },
+  "U-04": {
+    "title": "LANL Center for Nonlinear Studies, \"Stanislaw Marcin Ulam\"",
+    "publisher": "",
+    "url": "https://cnls.lanl.gov/External/Ulam/Biography.html",
+    "note": "read; text follows an older MacTutor version"
+  },
+  "U-05": {
+    "title": "IEEE Computer Society, Computer Pioneers, \"S. M. Ulam\"",
+    "publisher": "",
+    "url": "https://history.computer.org/pioneers/ulam.html",
+    "note": "read"
+  },
+  "U-06": {
+    "title": "American Philosophical Society, Stanislaw M. Ulam Papers, Mss.Ms.Coll.54",
+    "publisher": "",
+    "url": "https://search.amphilsoc.org/collections/style/pdfoutput/Mss.Ms.Coll.54-ead.pdf",
+    "note": "R0"
+  },
+  "U-07": {
+    "title": "MacTutor, \"Stanisław Mazur\"",
+    "publisher": "",
+    "url": "https://mathshistory.st-andrews.ac.uk/Biographies/Mazur/",
+    "note": "read"
+  },
+  "U-09": {
+    "title": "MacTutor, \"Stefan Banach\"",
+    "publisher": "",
+    "url": "https://mathshistory.st-andrews.ac.uk/Biographies/Banach/",
+    "note": "read"
+  },
+  "U-10": {
+    "title": "MacTutor, \"Hugo Steinhaus\"",
+    "publisher": "",
+    "url": "https://mathshistory.st-andrews.ac.uk/Biographies/Steinhaus/",
+    "note": "read"
+  },
+  "U-11": {
+    "title": "MacTutor, \"Juliusz Schauder\"",
+    "publisher": "",
+    "url": "https://mathshistory.st-andrews.ac.uk/Biographies/Schauder/",
+    "note": "read"
+  },
+  "U-12": {
+    "title": "MacTutor, \"The Scottish Book\" (Ulam's preface to the 1957 translation)",
+    "publisher": "",
+    "url": "https://mathshistory.st-andrews.ac.uk/HistTopics/Scottish_Book/",
+    "note": "read in full"
+  },
+  "U-15": {
+    "title": "R. D. Mauldin (ed.), The Scottish Book, 2nd ed., Birkhäuser 2015, doi:10.1007/978-3-319-22897-6",
+    "publisher": "",
+    "url": "https://doi.org/10.1007/978-3-319-22897-6",
+    "note": "Crossref record; content through [33] and [52]"
+  },
+  "U-16": {
+    "title": "D. Ryabogin, \"A negative answer to Ulam's Problem 19 from the Scottish Book\", Annals of Mathematics 195(3) (2022) 1111–1150, doi:10.4007/annals.2022.195.3.5",
+    "publisher": "",
+    "url": "https://doi.org/10.4007/annals.2022.195.3.5",
+    "note": "abstract read"
+  },
+  "U-17": {
+    "title": "R. Eckhardt, \"Stan Ulam, John von Neumann, and the Monte Carlo Method\", Los Alamos Science 15 (1987) 131–141",
+    "publisher": "",
+    "url": "https://mcnp-green.lanl.gov/pdf_files/Article_1987_LAS_Eckhardt_131--141.pdf",
+    "note": "read"
+  },
+  "U-18": {
+    "title": "N. Metropolis, \"The Beginning of the Monte Carlo Method\", Los Alamos Science 15 (1987) 125–130",
+    "publisher": "",
+    "url": "https://mcnpx.lanl.gov/pdf_files/Article_1987_LAS_Metropolis_125--130.pdf",
+    "note": "read"
+  },
+  "U-19": {
+    "title": "K. W. Ford, \"Building the H-Bomb: The Big Idea\", APS News, The Back Page (June 2015)",
+    "publisher": "",
+    "url": "https://www.aps.org/apsnews/2015/06/the-back-page",
+    "note": "read"
+  },
+  "U-22": {
+    "title": "Stanford Encyclopedia of Philosophy, \"Cellular Automata\" (rev. 15 Dec 2023)",
+    "publisher": "",
+    "url": "https://plato.stanford.edu/entries/cellular-automata/",
+    "note": "read"
+  },
+  "U-24": {
+    "title": "T. Dauxois, \"Fermi, Pasta, Ulam, and a mysterious lady\", Physics Today 61(1) (2008) 55–57, doi:10.1063/1.2835154",
+    "publisher": "",
+    "url": "https://arxiv.org/abs/0801.1590",
+    "note": "read"
+  },
+  "U-25": {
+    "title": "D. H. Hyers, \"On the Stability of the Linear Functional Equation\", PNAS 27(4) (1941) 222–224, doi:10.1073/pnas.27.4.222",
+    "publisher": "",
+    "url": "https://doi.org/10.1073/pnas.27.4.222",
+    "note": "Crossref record; scan not readable"
+  },
+  "U-26": {
+    "title": "C. J. Everett and S. M. Ulam, LAMS-1955 (1955)",
+    "publisher": "",
+    "url": "https://generalstaff.org/Space/Orion/LAMS-1955.pdf",
+    "note": "R0; superseded by [48] for the citation"
+  },
+  "U-28": {
+    "title": "Mathematics Genealogy Project, \"Stanisław Marcin Ulam\"",
+    "publisher": "",
+    "url": "https://mathgenealogy.org/id.php?id=12682",
+    "note": "read"
+  },
+  "U-29": {
+    "title": "Encyclopaedia Britannica, \"Stanislaw Ulam\"",
+    "publisher": "",
+    "url": "https://www.britannica.com/biography/Stanislaw-Ulam",
+    "note": "403 to every fetch; search summary only, so it never stands alone"
+  },
+  "U-30": {
+    "title": "Atomic Heritage Foundation / National Museum of Nuclear Science & History, \"Françoise Aron Ulam\"",
+    "publisher": "",
+    "url": "https://ahf.nuclearmuseum.org/ahf/profile/francoise-aron-ulam/",
+    "note": "read"
+  },
+  "U-31": {
+    "title": "O. Summerscales (ed.), \"Hitting the Jackpot: The Birth of the Monte Carlo Method\", Actinide Research Quarterly, LANL, 1 Nov 2023",
+    "publisher": "",
+    "url": "https://www.lanl.gov/media/publications/actinide-research-quarterly/1123-hitting-the-jackpot-the-birth-of-the-monte-carlo-method",
+    "note": "read"
+  },
+  "U-32": {
+    "title": "Defense Nuclear Agency, Operation IVY: 1952, DNA 6036F (1982)",
+    "publisher": "",
+    "url": "https://www.govinfo.gov/content/pkg/GOVPUB-D15-PURL-gpo222810/pdf/GOVPUB-D15-PURL-gpo222810.pdf",
+    "note": "read"
+  },
+  "U-33": {
+    "title": "S. Domoradzki, M. Stawiska, M. Zarichnyi, \"90+ years of the Scottish Book\", arXiv:2603.27867 (2026)",
+    "publisher": "",
+    "url": "https://arxiv.org/abs/2603.27867",
+    "note": "read; it quotes problem texts from Mauldin 2015"
+  },
+  "U-34": {
+    "title": "MacTutor, \"Kazimierz Kuratowski\"",
+    "publisher": "",
+    "url": "https://mathshistory.st-andrews.ac.uk/Biographies/Kuratowski/",
+    "note": "read"
+  },
+  "U-35": {
+    "title": "MacTutor, \"Władysław Orlicz\"",
+    "publisher": "",
+    "url": "https://mathshistory.st-andrews.ac.uk/Biographies/Orlicz/",
+    "note": "read"
+  },
+  "U-36": {
+    "title": "K. Borsuk, \"Drei Sätze über die n-dimensionale euklidische Sphäre\", Fundamenta Mathematicae 20 (1933) 177–190, doi:10.4064/fm-20-1-177-190",
+    "publisher": "",
+    "url": "https://doi.org/10.4064/fm-20-1-177-190",
+    "note": "scan read, footnote 7"
+  },
+  "U-38": {
+    "title": "P. Enflo, \"A counterexample to the approximation problem in Banach spaces\", Acta Mathematica 130 (1973) 309–317, doi:10.1007/BF02392270",
+    "publisher": "",
+    "url": "https://doi.org/10.1007/BF02392270",
+    "note": "Crossref record"
+  },
+  "U-39": {
+    "title": "N. Metropolis and S. Ulam, \"The Monte Carlo Method\", JASA 44(247) (1949) 335–341, doi:10.1080/01621459.1949.10483310",
+    "publisher": "",
+    "url": "https://doi.org/10.1080/01621459.1949.10483310",
+    "note": "Crossref record"
+  },
+  "U-40": {
+    "title": "M. L. Stein, S. M. Ulam, M. B. Wells, \"A Visual Display of Some Properties of the Distribution of Primes\", Amer. Math. Monthly 71(5) (1964) 516–520, doi:10.2307/2312588",
+    "publisher": "",
+    "url": "https://doi.org/10.2307/2312588",
+    "note": "Crossref record"
+  },
+  "U-41": {
+    "title": "S. L. Aletheia-Zomlefer, L. Fukshansky, S. R. Garcia, \"The Bateman–Horn conjecture: heuristics, history, and applications\", arXiv:1807.08899",
+    "publisher": "",
+    "url": "",
+    "note": "read; quotes Gardner 1964 at length"
+  },
+  "U-42": {
+    "title": "M. Gardner, \"Mathematical Games: The remarkable lore of the prime numbers\", Scientific American 210(3) (March 1964) 120–128",
+    "publisher": "",
+    "url": "",
+    "note": "issue contents page read; column text through [41]"
+  },
+  "U-43": {
+    "title": "S. M. Ulam, \"On some mathematical problems connected with patterns of growth of figures\", in R. E. Bellman (ed.), Mathematical Problems in the Biological Sciences, Proc. Symp. Applied Math. 14, AMS 1962, 215–224",
+    "publisher": "",
+    "url": "",
+    "note": "bibliographic record through [44]"
+  },
+  "U-44": {
+    "title": "OEIS A170896, \"Number of ON cells after n generations of the Schrandt-Ulam cellular automaton on the square grid\"",
+    "publisher": "",
+    "url": "https://oeis.org/A170896",
+    "note": "read"
+  },
+  "U-45": {
+    "title": "E. Jen, \"Café Roots & Fruits\", in Foundational Papers in Complexity Science, SFI Press, doi:10.37911/9781947864535.22",
+    "publisher": "",
+    "url": "https://www.sfipress.org/22-ulam-1962",
+    "note": "read"
+  },
+  "U-46": {
+    "title": "N. J. Zabusky and M. D. Kruskal, Physical Review Letters 15(6) (1965) 240–243, doi:10.1103/PhysRevLett.15.240",
+    "publisher": "",
+    "url": "https://doi.org/10.1103/PhysRevLett.15.240",
+    "note": "Crossref record"
+  },
+  "U-47": {
+    "title": "S. Ulam, \"John von Neumann 1903–1957\", Bull. AMS 64(3) part 2 (1958) 1–49, doi:10.1090/S0002-9904-1958-10189-5",
+    "publisher": "",
+    "url": "https://doi.org/10.1090/S0002-9904-1958-10189-5",
+    "note": "403; not read"
+  },
+  "U-48": {
+    "title": "LANL report library record, LAMS-1955, \"On a method of propulsion of projectiles by means of external nuclear explosions, part I\", Aug. 1955, mirrored at",
+    "publisher": "",
+    "url": "https://sgp.fas.org/othergov/doe/lanl/lib-www/la-pubs/00350011.html",
+    "note": "read"
+  },
+  "U-49": {
+    "title": "University of Florida, Department of Mathematics, \"Ulam Colloquium\"",
+    "publisher": "",
+    "url": "https://math.ufl.edu/research/ulam-colloquium/",
+    "note": "search summary; agrees with [5]"
+  },
+  "U-50": {
+    "title": "Wikimedia Commons file pages in section 10, checked through the API on 2026-10-09",
+    "publisher": "",
+    "url": ""
+  },
+  "U-51": {
+    "title": "Wikimedia Commons, Template:PD-LosAlamos (the LANL notice to reproduce)",
+    "publisher": "",
+    "url": "https://commons.wikimedia.org/wiki/Template:PD-LosAlamos",
+    "note": "read"
+  },
+  "U-52": {
+    "title": "S. Ulam, \"An Anecdotal History of the Scottish Book\", in Mauldin (ed.) 2015, 3–11",
+    "publisher": "",
+    "url": "https://ideas.repec.org/h/spr/sprchp/978-3-319-22897-6_1.html",
+    "note": "abstract only"
+  },
+  "U-54": {
+    "title": "MacTutor, \"The Scottish Café in Lwów\"",
+    "publisher": "",
+    "url": "https://mathshistory.st-andrews.ac.uk/Extras/Scottish_Cafe/",
+    "note": "read; \"T. Shevchenko Prospekt 27\""
+  },
+  "U-57": {
+    "title": "IMUS (University of Seville) blog, \"Scottish Café Stories 3. The Scottish Notebook\" (search summary; (2nd))",
+    "publisher": "",
+    "url": "https://institucional.us.es/blogimus/?p=10118"
+  },
+  "U-60": {
+    "title": "MacTutor, \"Enrico Fermi\"",
+    "publisher": "",
+    "url": "https://mathshistory.st-andrews.ac.uk/Biographies/Fermi/",
+    "note": "read; died 28 November 1954"
+  },
+  "U-61": {
+    "title": "Isthmus, \"From the University of Wisconsin to Los Alamos\" (search summary; (2nd))",
+    "publisher": "",
+    "url": "https://isthmus.com/news/news/from-the-university-of-wisconsin-to-los-alamos/"
+  },
+  "U-62": {
+    "title": "R. Fox, \"On a problem of S. Ulam concerning Cartesian products\", Fundamenta Mathematicae 34 (1947) 278-287, doi:10.4064/fm-34-1-278-287",
+    "publisher": "",
+    "url": "https://doi.org/10.4064/fm-34-1-278-287",
+    "note": "Crossref record and the journal's page (title and pages); the paper itself was not opened"
+  },
+  "U-63": {
+    "title": "A. Eremenko, \"A problem of Stanislaw Saks\", Matematychni Studii 52 (2019) 173-175",
+    "publisher": "",
+    "url": "",
+    "note": "cited in U-33 (the result is quoted there); the paper itself was not opened"
+  }
+}

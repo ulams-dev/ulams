@@ -70,8 +70,23 @@ admin or front (`demo-content/scripts/check-demo-content-boundary.mjs`, part of 
 | Package | Code | Provenance and third-party material |
 |---|---|---|
 | `poland` | MIT, © 2026 Mateusz Wojczal; text and data CC BY 4.0 | The owner's own project (`github.com/qunabu/poland-october-2026`, no licence file there), rebuilt for ulams (#148, #149). Not used: the saved third-party article and its files, the `world.topo.json` copied from that article, the mp4. Map: Natural Earth (public domain) through `world-atlas` (ISC), regenerated. Fonts: Barlow, Barlow Semi Condensed, JetBrains Mono, SIL OFL 1.1 (`fonts/OFL.txt`). Figures link to their publishers |
-| `ulam/*` | MIT, © 2026 Mateusz Wojczal; text and data CC BY 4.0 | Original work: small interactives for the Ulam course (the spiral so far). Third-party material, if any, is listed in `demo-content/ulam/CREDITS.md` and per package |
+| `ulam/*` | MIT, © 2026 Mateusz Wojczal; text and data CC BY 4.0 | Original work: the five interactives of the Ulam course (spiral, monte-carlo, automaton, scottish-book, lwow-map) and their fact and source lists (`facts.json`, `sources.json`). Map: Natural Earth (public domain) through `world-atlas` (ISC); place coordinates: Wikidata (CC0). Third-party material is listed in `demo-content/ulam/CREDITS.md` and per package |
 | `gravity` | MIT, © 2026 Mateusz Wojczal | The owner's own simulator (`github.com/qunabu/Gravity`, originally GPL-3.0), relicensed by its copyright holder (#147). Left out: commits bc9d770 and 9db0edc (David Frankel, Docker files), commit 4adaa1b (jin, the Chinese translation), the music track and the Moon photograph (no stated licence). Earth day map: Solar System Scope, CC BY 4.0. Three.js: MIT. Inter and Roboto Mono: SIL OFL 1.1 (via `@fontsource`), licence texts ship in the package |
+
+### The Ulam course: photographs
+
+The Ulam course (`api/database/seeds/Demo/content/ulam/`, text CC BY 4.0) shows four photographs from Wikimedia Commons, kept in
+`api/database/seeds/Demo/assets/ulam/images/` and listed with their licences in `demo-content/ulam/CREDITS.md`. They are not under
+the licence of the course text:
+
+| Photograph | Licence | Obligation |
+|---|---|---|
+| Ulam's Los Alamos badge photo (1940s) and his portrait (about 1945) | Los Alamos National Laboratory allows any use (Commons: PD-LosAlamos) | Credit "Los Alamos National Laboratory" and reproduce the laboratory's notice (in the last lesson and in `CREDITS.md`) |
+| The FERMIAC in the Bradbury Science Museum (Mark Pellegrini, 2009) | CC BY-SA 1.0 | Credit, link the licence, say it was resized, keep the share-alike licence |
+| The building at 27 Shevchenko Avenue, Lviv (Rbrechko, 2015) | CC BY-SA 4.0 | The same |
+
+Photographs of Polish-law public domain, "Ulam holding the FERMIAC" and photographs of Scottish Book pages are not used (ADR 0089, fact sheet
+section 10).
 
 ## PDF templates and certificates
 

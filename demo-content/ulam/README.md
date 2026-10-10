@@ -9,7 +9,7 @@ MIT code and CC BY 4.0 text (`LICENSE`, `LICENSE-content`, `CREDITS.md`, shared 
 | [`spiral/`](spiral) | `grid`, `primes`, `diagonals`, `explore` | Writes the integers on a square spiral, marks the primes (a sieve), highlights n² + n + 41 | `complete` after `explore` |
 | [`monte-carlo/`](monte-carlo) | `idea`, `throw`, `converge`, `error` | Throws seeded random points into a square to estimate π and watches the error shrink on a log-log chart | `complete` after 10,000 throws |
 | [`automaton/`](automaton) | `rule30`, `rule90`, `rule110`, `life`, `ulam-growth` | Runs elementary rules (any number 0 to 255), Conway's Life (editable by keyboard) and a growth rule from one cell | `complete` once three different steps were visited |
-| [`scottish-book/`](scottish-book) | `intro` and one step per problem (19, 153, 193) | Reads notebook cards, filters by poser and guesses the outcome of each problem; every guess sends a score | the topic's `on_score` rule (pass 60%), never `complete` |
+| [`scottish-book/`](scottish-book) | `intro` and one step per problem (1, 19, 38, 43, 59, 152, 153, 184, 193) | Reads notebook cards with their sources, filters by poser and guesses the outcome of the four problems that have a recorded yes or no; every guess sends a score | the topic's `on_score` rule (pass 60%), never `complete` |
 | [`lwow-map/`](lwow-map) | `lwow`, `princeton`, `harvard`, `madison`, `los-alamos`, `boulder`, `santa-fe` | Follows a journey on a map (the shared map engine, great-circle legs, a schematic inset of central Lwów); the stops are also a button list | the end of the topic's step range (`on_range_end`) |
 
 ## How a package is built
@@ -25,9 +25,15 @@ MIT code and CC BY 4.0 text (`LICENSE`, `LICENSE-content`, `CREDITS.md`, shared 
   With `none` (background display) only the interactive shows. `?ulams-poster#<step>` renders a still.
 - The package fetches its own manifest, so it holds `ready` back until it knows its steps (`whenReady`).
 
-`scottish-book` and `lwow-map` contain **placeholder text** until the fact sheet is cleared (plan section 7.3, M9a);
-their data files (`data/problems.json`, `data/route.json`, `data/places.json`) are filled in M9b. The package
-says so on screen and its unit test pins it, so a placeholder cannot ship as a fact.
+`scottish-book` and `lwow-map` carry the sourced content of the fact sheet (`facts.json`, `sources.json`): the nine problem
+cards (`data/problems.json`, each with the source ids it rests on) and the stops of the journey (`data/route.json`,
+`data/places.json`, `ulams-interactive.json`). `demo-content/tests/unit/ulam-*.test.mjs` pin the facts, and that no
+placeholder text is left. Problem 77(a) is not on a card: its statement could not be sourced (fact `3b/77a`).
+
+`facts.json` records every fact the course may state (`{text, sources, status}`, ids as in
+`docs/plans/interactive-demos-ulam-facts.md`) and `sources.json` the numbered sources `U-nn` (the fact sheet's source
+numbers); the seeder's copy of `sources.json` is `api/database/seeds/Demo/content/ulam/sources.json`, and
+`demo-content/tests/unit/ulam-course.test.mjs` keeps the two equal and checks every quiz question against its fact ids.
 
 ## Rules every package follows
 
