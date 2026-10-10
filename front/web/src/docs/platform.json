@@ -269,7 +269,10 @@
             "lesson": {
               "title": "Severity levels",
               "text": "Sev 1 means customers cannot check out. Page the on-call lead and open an incident channel straight away.",
-              "citations": ["runbook p.3 · Severity", "runbook p.4 · Paging"]
+              "citations": [
+                "runbook p.3 · Severity",
+                "runbook p.4 · Paging"
+              ]
             },
             "quiz": {
               "question": "Who declares a Sev 1?",
@@ -304,6 +307,234 @@
             },
             "tabs": {
               "$data": "/workflows/tabs"
+            }
+          }
+        },
+        {
+          "component": "WhiteLabelStory",
+          "props": {
+            "id": "white-label",
+            "eyebrow": "white label",
+            "title": "Your brand, your academy, one course per source",
+            "intro": "Bring your style and your content. ulams gives you a branded academy on its own subdomain, a separate cited course for every source, and the learner analytics for each of them.",
+            "valueLine": "Your look, your subdomain, your content, and clear numbers per course.",
+            "description": "An animated example in four steps. One: an agent such as Claude Code, with the ulams CLI and the Figma or Stitch MCP attached, reads a design (a Figma file, a Stitch DESIGN.md, a brand guide PDF or a logo and colours), extracts colours, fonts, logo and corner radius, and runs ulams theme set and ulams settings set; a custom front built on the headless API is shown as the alternative. Two: a themed academy appears on its own subdomain, acme.ulams.app, with a landing page, a course catalogue and an admin, all in the extracted brand. Three: documents, PDFs, a Git repository and a web page each become their own cited course, built by the course builder and kept in sync by Living Course. Four: a per-course dashboard shows learner progress, quiz performance, learners at risk and the sections that confuse people. All names and values are an example.",
+            "exampleNote": "Example brand and data",
+            "primaryCta": {
+              "label": "Try a live demo",
+              "href": "#demos"
+            },
+            "secondaryCta": {
+              "label": "Self-host it",
+              "href": "#self-host"
+            },
+            "steps": [
+              {
+                "title": "Bring your brand",
+                "text": "Attach the ulams CLI or MCP and your design tool's MCP to your agent. It reads your design and applies it to the theme, or builds your own front on the headless API.",
+                "points": [
+                  "Figma, Stitch (DESIGN.md), a brand guide PDF, or a logo and colours",
+                  "Colours, fonts, logo and radius become theme settings",
+                  "Or your own front on the API and @ulams/sdk"
+                ],
+                "today": "Works today through your agent. A built-in brand importer (no agent needed) is on the roadmap."
+              },
+              {
+                "title": "Get your academy",
+                "text": "A themed site appears on its own subdomain, in your brand, with a landing page, a course catalogue and an admin.",
+                "points": [
+                  "One subdomain per customer, for example acme.ulams.app",
+                  "Landing, catalogue and admin share the brand"
+                ]
+              },
+              {
+                "title": "Bring your content",
+                "text": "Add documents, PDFs, a Git repo or web pages. Each source becomes its own course, built with citations.",
+                "points": [
+                  "One course per source",
+                  "Every generated element cites its source",
+                  "Kept in sync by Living Course"
+                ],
+                "today": "Upload, Git and web page sources work today. Keeping courses in sync automatically is on the roadmap."
+              },
+              {
+                "title": "See everything",
+                "text": "Every course has its own learner analytics for the author and the admin.",
+                "points": [
+                  "Progress and completion",
+                  "Quiz performance",
+                  "At-risk learners",
+                  "Sections that confuse people"
+                ],
+                "status": "coming",
+                "today": "On the roadmap: per-course analytics and at-risk learners are planned, not built yet."
+              }
+            ],
+            "brand": {
+              "agentLabel": "Claude Code · ulams CLI · Figma MCP",
+              "sourcesLabel": "Your design",
+              "sources": [
+                {
+                  "kind": "figma",
+                  "label": "Figma file",
+                  "file": "acme-brand.fig"
+                },
+                {
+                  "kind": "stitch",
+                  "label": "Stitch design",
+                  "file": "DESIGN.md"
+                },
+                {
+                  "kind": "pdf",
+                  "label": "Brand guide",
+                  "file": "acme-guide.pdf"
+                },
+                {
+                  "kind": "logo",
+                  "label": "Logo and colours",
+                  "file": "logo.svg"
+                }
+              ],
+              "alternative": {
+                "label": "Or your own front",
+                "text": "A custom template on the headless API and @ulams/sdk"
+              },
+              "tokensLabel": "Tokens the agent extracts",
+              "colors": [
+                {
+                  "name": "Primary",
+                  "value": "#0E7C66"
+                },
+                {
+                  "name": "Secondary",
+                  "value": "#1B2A41"
+                },
+                {
+                  "name": "Accent",
+                  "value": "#F5B841"
+                },
+                {
+                  "name": "Surface",
+                  "value": "#F6F4EF"
+                },
+                {
+                  "name": "Text",
+                  "value": "#16202B"
+                }
+              ],
+              "fonts": [
+                {
+                  "role": "Headings",
+                  "name": "Fraunces"
+                },
+                {
+                  "role": "Body",
+                  "name": "Inter"
+                }
+              ],
+              "logo": "acme",
+              "radius": 12,
+              "commands": [
+                "ulams theme set --accent '#0E7C66' --json",
+                "ulams settings set global companyName \"Acme Academy\" --json"
+              ]
+            },
+            "site": {
+              "host": "acme.ulams.app",
+              "pages": [
+                "Landing",
+                "Catalogue",
+                "Admin"
+              ],
+              "headline": "Learn the Acme way",
+              "action": "Browse courses"
+            },
+            "content": {
+              "builderLabel": "Course builder",
+              "citedLabel": "cited",
+              "syncLabel": "Living Course keeps each one in sync",
+              "syncStatus": "coming",
+              "sources": [
+                {
+                  "kind": "doc",
+                  "label": "handbook.docx",
+                  "course": "Onboarding"
+                },
+                {
+                  "kind": "pdf",
+                  "label": "safety.pdf",
+                  "course": "Safety basics"
+                },
+                {
+                  "kind": "git",
+                  "label": "github.com/acme/docs",
+                  "course": "Product docs"
+                },
+                {
+                  "kind": "url",
+                  "label": "acme.com/help",
+                  "course": "Help centre"
+                }
+              ]
+            },
+            "dashboard": {
+              "kpis": [
+                {
+                  "label": "Progress",
+                  "value": 64
+                },
+                {
+                  "label": "Completion",
+                  "value": 41
+                },
+                {
+                  "label": "Quiz average",
+                  "value": 72
+                }
+              ],
+              "quiz": {
+                "label": "Quiz performance",
+                "bars": [
+                  {
+                    "label": "Module 1",
+                    "value": 85
+                  },
+                  {
+                    "label": "Module 2",
+                    "value": 70
+                  },
+                  {
+                    "label": "Module 3",
+                    "value": 48
+                  }
+                ]
+              },
+              "atRisk": {
+                "label": "At-risk learners",
+                "learners": [
+                  {
+                    "name": "Learner A",
+                    "reason": "Stalled in module 2"
+                  },
+                  {
+                    "name": "Learner B",
+                    "reason": "Failed quiz twice"
+                  }
+                ]
+              },
+              "confusing": {
+                "label": "Confusing sections",
+                "sections": [
+                  {
+                    "title": "Lesson 2.3",
+                    "level": 5
+                  },
+                  {
+                    "title": "Lesson 3.1",
+                    "level": 3
+                  }
+                ]
+              }
             }
           }
         },

@@ -83,6 +83,10 @@ readers a text description or a plain transcript. The commands of the workflow t
 `front/web/src/data/workflows.json` together with their true status (the Claude Code, MCP and CLI tabs are
 labelled Coming until the CLI is released, roadmap item M6). `ULAMS_LANDING_STATUS` only changes how that status is displayed.
 
+The white-label section (`WhiteLabelStory`) uses the same player for a four-step story (brand, subdomain site, one
+course per source, per-course analytics) and a numbered list. Its steps carry a `status` and a `today` caption that
+`ULAMS_LANDING_STATUS=final` removes; in `actual` mode the analytics step and the Living Course sync line read Coming.
+
 All variables of every app are in [Environment variables](/reference/environment-variables/). The
 production image is described in [Container images](/developers/container-images/).
 

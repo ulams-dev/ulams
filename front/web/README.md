@@ -192,6 +192,15 @@ when visible, loops or auto-advances slowly, pauses on hover, focus and a Pause 
 screen readers get a description or a plain transcript. The workflow commands and each tab's true
 status are in `src/data/workflows.json` (`available`, `preview`, `coming`).
 
+The white-label section (`WhiteLabelStory`, id `white-label`, after the workflow tabs) is a four-step story on the same
+player, with no extra JavaScript: bring your brand (an agent with the ulams CLI and a design tool's MCP reads Figma or
+Stitch and runs `ulams theme set` / `ulams settings set`, or builds a custom front on the headless API), get a themed site
+on its own subdomain, bring content (one cited course per source), see per-course analytics. A numbered list under the
+stage says the same in words. Its steps carry `status` and a `today` caption: in `actual` mode the per-course analytics
+step and the Living Course sync line read Coming (the built-in brand importer is a roadmap item, the agent route works
+today); in `final` mode statuses and `today` captions are removed. Under reduced motion the four scenes stack, each in
+its final state. Every name, colour and bar in the stage is an example.
+
 The hero's right side is the capability orbit (`Hero` prop `capabilities`, component `CapabilityOrbit`
 in `front/ui`): the Orbital Folio book with ten capability cards on three elliptical orbits, one highlighted
 every few seconds with a one-line caption; hover or focus pauses it, a Pause button stops it for good, and
