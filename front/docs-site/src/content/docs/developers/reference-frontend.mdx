@@ -63,10 +63,10 @@ never inlined into the build). Defaults are in `src/lib/config.ts` and `front/we
 | `ULAMS_ADMIN_URL` | `http://{slug}.admin.localhost` | Tenant admin URL (demo badge) |
 | `ULAMS_PLATFORM_HOSTS` | `app.localhost,localhost,127.0.0.1` | Hosts that serve the platform landing instead of a tenant |
 | `ULAMS_DEFAULT_TENANT` | `coffee` | Tenant for hosts without a rule (for example a LAN IP); empty shows the tenant picker |
-| `ULAMS_DEMO_TENANTS` | `coffee,oncall,nightsky,gravity,poland,ulam` | Demo tenants listed on the platform landing |
+| `ULAMS_DEMO_TENANTS` | `gravity,poland,ulam,coffee,oncall,nightsky` | Demo tenants listed on the platform landing |
 | `ULAMS_LANDING_STATUS` | `final` | What the platform landing shows for roadmap items: `final` (also used for any other value) renders everything as delivered, `actual` keeps the honest Coming and Partial labels. Run `actual` (or confirm everything shipped) before a public launch; see [Environment](/operators/environment/#the-platform-landing-switch) |
 | `ULAMS_CACHE_TTL` | `45` | Seconds public API data stays fresh in the server cache (minimum 5) |
-| `ULAMS_WARM_TENANTS` | `coffee,oncall,nightsky,gravity,poland,ulam` | Tenants whose public data is fetched at server start |
+| `ULAMS_WARM_TENANTS` | `gravity,poland,ulam,coffee,oncall,nightsky` | Tenants whose public data is fetched at server start |
 | `DEMO_STUDENT_EMAIL`, `DEMO_STUDENT_PASSWORD` | `student1@{slug}.ulams.app`, empty | Fallback login when a tenant has no demo mode; never sent to the browser |
 
 ### The platform landing's stories
