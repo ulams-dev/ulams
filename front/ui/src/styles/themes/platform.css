@@ -99,3 +99,9 @@
 [data-theme="platform"] .u-prod__peek-bar i {
   background: linear-gradient(90deg, var(--ulams-brand-indigo), var(--ulams-brand-orange));
 }
+
+/* Simplified Chinese: the Latin web fonts first, then the system CJK faces (no CJK web font is shipped) */
+:root[data-theme="platform"]:lang(zh) {
+  --ulams-font-family: var(--font-inter-tight), "Inter Tight", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC", system-ui, sans-serif;
+  --ulams-font-family-body: var(--font-inter), Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC", system-ui, sans-serif;
+}

@@ -1,4 +1,5 @@
 ---
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
 import Icon from "./Icon.astro";
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
   id?: string;
 }
 const { variant = "banner", eyebrow, title, text, code = [], cta, secondary, id = "join" } = Astro.props;
+const t = uiStrings(pageLocale(Astro));
 ---
 
 <section class={`u-section u-cta u-cta--${variant}`} id={id} aria-labelledby={`${id}-title`}>
@@ -24,7 +26,7 @@ const { variant = "banner", eyebrow, title, text, code = [], cta, secondary, id 
       </div>
       {
         variant === "terminal" && code.length > 0 && (
-          <pre class="u-cta__term" aria-label="Terminal" tabindex="0">
+          <pre class="u-cta__term" aria-label={t.terminal} tabindex="0">
             <span class="u-cta__bar" aria-hidden="true"><i /><i /><i /></span>
             {code.map((line, i) => (
               <code style={`--i:${i}`} data-cmd={line.startsWith("$") ? "true" : undefined}>{line}</code>

@@ -1,4 +1,5 @@
 ---
+import { uiStrings, pageLocale, fill } from "../lib/i18n.ts";
 /**
  * Feature comparison table. No JavaScript: sticky header and first column in CSS, horizontal
  * scroll with an edge shadow on narrow screens, scroll reveal and hover highlight in CSS.
@@ -6,6 +7,8 @@
 interface Cell {
   value: string;
   note?: string;
+  /** Neutral kind of a translated value (yes, no, partial, plugin, paid, unknown, coming). */
+  kind?: string;
 }
 interface Column {
   label: string;
@@ -35,6 +38,7 @@ interface Props {
   sources?: Array<{ label: string; href: string; checked?: string }>;
   note?: string;
 }
+const t = uiStrings(pageLocale(Astro));
 const { id = "compare", eyebrow, title, intro, caption, asOf, columns = [], rows = [], groups, sources = [], note } = Astro.props;
 const panels = (groups?.length ? groups.slice(0, 4) : [{ label: "", caption, columns, rows }]).map((g) => ({
   ...g,
@@ -55,7 +59,7 @@ const KIND: Record<string, Kind> = {
   "not documented": "unknown",
   coming: "coming",
 };
-const kindOf = (value: string): Kind => KIND[value.trim().toLowerCase()] ?? "text";
+const kindOf = (value: string, kind?: string): Kind => (kind && kind in MARK ? (kind as Kind) : (KIND[value.trim().toLowerCase()] ?? "text"));
 const MARK: Record<Kind, string> = { yes: "✓", no: "–", partial: "◐", plugin: "+", paid: "€", unknown: "?", coming: "…", text: "" };
 ---
 
@@ -67,12 +71,12 @@ const MARK: Record<Kind, string> = { yes: "✓", no: "–", partial: "◐", plug
       {intro && <p class="u-lead">{intro}</p>}
     </div>
 
-    <p class="u-compare__hint" aria-hidden="true">Scroll sideways to see every product →</p>
+    <p class="u-compare__hint" aria-hidden="true">{t.compareHint}</p>
     <div class="u-compare__groups" data-reveal>
       {
         tabbed && (
           <fieldset class="u-compare__radios">
-            <legend class="u-visually-hidden">Which products to compare</legend>
+            <legend class="u-visually-hidden">{t.compareLegend}</legend>
             {panels.map((_, gi) => (
               <input type="radio" class="u-compare__radio u-visually-hidden" name={`${id}-group`} id={`${id}-group-${gi}`} checked={gi === 0} />
             ))}
@@ -91,10 +95,10 @@ const MARK: Record<Kind, string> = { yes: "✓", no: "–", partial: "◐", plug
               {tabbed && <h3 class="u-compare__group-title">{g.label}</h3>}
               <div class="u-compare__scroll" tabindex="0" role="region" aria-labelledby={`${id}-caption-${gi}`}>
                 <table class="u-compare__table" style={`--cols:${g.columns.length}`}>
-                  <caption id={`${id}-caption-${gi}`}>{g.caption}{asOf && <span>, as of {asOf}</span>}</caption>
+                  <caption id={`${id}-caption-${gi}`}>{g.caption}{asOf && <span>{fill(t.compareAsOfCaption, { date: asOf })}</span>}</caption>
                   <thead>
                     <tr>
-                      <th scope="col" class="u-compare__corner"><span class="u-visually-hidden">Feature</span></th>
+                      <th scope="col" class="u-compare__corner"><span class="u-visually-hidden">{t.compareFeature}</span></th>
                       {g.columns.map((c, i) => (
                         <th scope="col" class:list={["u-compare__col", { "is-ours": i === g.highlighted }]}>
                           <span class="u-compare__name">{c.label}</span>
@@ -119,8 +123,8 @@ const MARK: Record<Kind, string> = { yes: "✓", no: "–", partial: "◐", plug
                             {row.help && <span class="u-compare__help">{row.help}</span>}
                           </th>
                           {g.columns.map((_, i) => {
-                            const cell = row.cells[i] ?? { value: "Not documented" };
-                            const kind = kindOf(cell.value);
+                            const cell = row.cells[i] ?? { value: t.notDocumented, kind: "unknown" };
+                            const kind = kindOf(cell.value, cell.kind);
                             return (
                               <td class:list={[{ "is-ours": i === g.highlighted }]} data-kind={kind}>
                                 <span class="u-compare__value">
@@ -148,12 +152,12 @@ const MARK: Record<Kind, string> = { yes: "✓", no: "–", partial: "◐", plug
     </div>
 
     <div class="u-compare__foot">
-      {asOf && <p class="u-compare__asof">As of {asOf}. Facts about other products come from their official documentation, pricing pages and licences; they change, so check the sources.</p>}
+      {asOf && <p class="u-compare__asof">{fill(t.compareAsOf, { date: asOf })}</p>}
       {note && <p class="u-compare__asof">{note}</p>}
       {
         sources.length > 0 && (
           <details class="u-compare__sources">
-            <summary>Sources ({sources.length})</summary>
+            <summary>{fill(t.sourcesCount, { n: sources.length })}</summary>
             <ol>
               {sources.map((s) => (
                 <li>
@@ -161,7 +165,7 @@ const MARK: Record<Kind, string> = { yes: "✓", no: "–", partial: "◐", plug
                   <a href={s.href} rel="noopener noreferrer nofollow" target="_blank">
                     {s.href.replace(/^https?:\/\//, "")}
                   </a>
-                  {s.checked && <span class="u-compare__checked"> (checked {s.checked})</span>}
+                  {s.checked && <span class="u-compare__checked">{fill(t.checked, { date: s.checked })}</span>}
                 </li>
               ))}
             </ol>

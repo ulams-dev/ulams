@@ -456,6 +456,46 @@ html.is-navigating body {
   }
 }
 
+/* CJK typography: no synthetic italics, no tight tracking, a little more leading, strict line breaking */
+:lang(zh) {
+  line-break: strict;
+}
+:lang(zh) body {
+  line-height: 1.75;
+}
+:lang(zh) h1,
+:lang(zh) h2,
+:lang(zh) h3,
+:lang(zh) h4 {
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+:lang(zh) em,
+:lang(zh) i,
+:lang(zh) .u-hero__accent {
+  font-style: normal;
+}
+:lang(zh) .u-h2,
+:lang(zh) .u-hero__title {
+  letter-spacing: 0;
+}
+/* the accent phrase of a title stays on one line */
+:lang(zh) .u-hero__accent {
+  white-space: nowrap;
+}
+:lang(zh) .u-eyebrow {
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+/* Polish: long words wrap with hyphens inside narrow cards and lists instead of overflowing them */
+:lang(pl) li,
+:lang(pl) .u-card p {
+  hyphens: auto;
+}
+:lang(pl) {
+  overflow-wrap: break-word;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

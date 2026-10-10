@@ -125,6 +125,16 @@ export const LINK: JsonSchema = obj(
   ["label", "href"],
   "A link or call to action"
 );
+export const LANGUAGE: JsonSchema = obj(
+  {
+    code: text("Language code of the page it links to (BCP 47)", { maxLength: 10 }),
+    label: text("Name of the language in that language, e.g. PL or 中文", { maxLength: 20 }),
+    href: href("URL of the page in that language"),
+    current: bool("True for the language of this page", false),
+  },
+  ["code", "label", "href"],
+  "One language of the switcher"
+);
 export const IMAGE: JsonSchema = obj(
   {
     src: href("Image URL (local /images/… or the tenant storage)"),
@@ -272,6 +282,8 @@ export const registry = {
         links: list(LINK, "Navigation links", { maxItems: 6 }),
         cta: LINK,
         signIn: LINK,
+        homeHref: href("Where the brand links to; the language home on a translated landing"),
+        languages: list(LANGUAGE, "Language switcher: one entry per language, in display order; the current one is marked", { maxItems: 4 }),
       },
       ["brand"]
     ),
@@ -1040,6 +1052,7 @@ export const registry = {
                   {
                     value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }),
                     note: text("Short neutral note", { maxLength: 120 }),
+                    kind: text("Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming", { maxLength: 16 }),
                   },
                   ["value"]
                 ),
@@ -1075,7 +1088,7 @@ export const registry = {
               label: text("Feature", { maxLength: 60 }),
               help: text("What the row means", { maxLength: 160 }),
               cells: list(
-                obj({ value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }), note: text("Short neutral note", { maxLength: 120 }) }, ["value"]),
+                obj({ value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }), note: text("Short neutral note", { maxLength: 120 }), kind: text("Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming", { maxLength: 16 }) }, ["value"]),
                 "One cell per column, same order",
                 { maxItems: 8 }
               ),
@@ -1095,7 +1108,7 @@ export const registry = {
                     label: text("Feature", { maxLength: 60 }),
                     help: text("What the row means", { maxLength: 160 }),
                     cells: list(
-                      obj({ value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }), note: text("Short neutral note", { maxLength: 120 }) }, ["value"]),
+                      obj({ value: text("Yes, No, Partial, Via plugin, Paid add-on, Not documented, Coming, or a short phrase", { maxLength: 60 }), note: text("Short neutral note", { maxLength: 120 }), kind: text("Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming", { maxLength: 16 }) }, ["value"]),
                       "One cell per column, same order",
                       { maxItems: 8 }
                     ),

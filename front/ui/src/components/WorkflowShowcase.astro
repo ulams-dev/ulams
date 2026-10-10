@@ -1,4 +1,5 @@
 ---
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
 /**
  * "Run your academy from anywhere": tabs of realistic windows (Claude Code, Claude chat with the
  * ulams MCP server, a plain shell, REST/SDK, the studio) whose commands, tool calls and answers are
@@ -40,24 +41,10 @@ interface Props {
 }
 const { id = "agents", eyebrow, title, intro, valueLine, description, footnote, legal, tabs } = Astro.props;
 
-const STATUS = { available: "Available", preview: "Preview", coming: "Coming" } as const;
+const t = uiStrings(pageLocale(Astro));
+const STATUS = { available: t.available, preview: t.preview, coming: t.coming } as const;
 const GLYPH: Partial<Record<Kind, string>> = { prompt: ">", cmd: "$", agent: "●", add: "+", del: "−", ctx: " ", out: " ", note: " ", cont: " " };
-const SR: Record<Kind, string> = {
-  prompt: "You ask Claude Code",
-  cmd: "Command",
-  cont: "Command, continued",
-  agent: "Claude Code",
-  out: "Output",
-  spin: "Running",
-  tool: "Tool call",
-  add: "Added line",
-  del: "Removed line",
-  ctx: "Unchanged line",
-  note: "Comment",
-  user: "You",
-  assistant: "Claude",
-  card: "Proposal",
-};
+const SR: Record<Kind, string> = t.sr;
 
 const RATE: Partial<Record<Kind, number>> = { prompt: 24, cmd: 26, cont: 20, user: 22, agent: 8, assistant: 9 };
 const GAP: Partial<Record<Kind, number>> = { prompt: 500, cmd: 500, cont: 120, user: 600, agent: 350, assistant: 450, out: 220, tool: 450, spin: 250, card: 500 };
@@ -91,7 +78,7 @@ const panels = tabs.map((tab, i) => ({ ...tab, ...schedule(tab.lines), i, tabId:
     <ulams-workflows dwell="3500">
       {description && <p class="u-visually-hidden">{description}</p>}
       <div class="u-wf__tabbar">
-        <div class="u-wf__tabs" role="tablist" aria-label="Ways to run ulams">
+        <div class="u-wf__tabs" role="tablist" aria-label={t.waysToRun}>
           {
             panels.map((p) => (
               <button type="button" role="tab" id={p.tabId} aria-selected={p.i === 0 ? "true" : "false"} aria-controls={p.panelId} tabindex={p.i === 0 ? 0 : -1} class="u-wf__tab">
@@ -101,7 +88,7 @@ const panels = tabs.map((tab, i) => ({ ...tab, ...schedule(tab.lines), i, tabId:
             ))
           }
         </div>
-        <button type="button" class="u-wf__pause" data-pause aria-pressed="false">Pause</button>
+        <button type="button" class="u-wf__pause" data-pause aria-pressed="false" data-label-pause={t.pause} data-label-play={t.play}>{t.pause}</button>
       </div>
       <div class="u-stage u-wf__stage">
         <div class="u-wf__panels">
@@ -169,7 +156,7 @@ const panels = tabs.map((tab, i) => ({ ...tab, ...schedule(tab.lines), i, tabId:
                       <li>
                         {SR[l.kind]}: {l.text}
                         {l.args ? ` ${l.args}` : ""}
-                        {l.result ? ` returned ${l.result}` : ""}
+                        {l.result ? ` ${t.returned} ${l.result}` : ""}
                       </li>
                     ))}
                   </ul>

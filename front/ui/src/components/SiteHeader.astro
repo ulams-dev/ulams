@@ -1,4 +1,5 @@
 ---
+import { uiStrings, pageLocale, fill } from "../lib/i18n.ts";
 import Icon from "./Icon.astro";
 import Logo from "../brand/Logo.astro";
 
@@ -13,13 +14,18 @@ interface Props {
   links?: Link[];
   cta?: Link;
   signIn?: Link;
+  /** Where the brand links to (the language home of a translated landing). */
+  homeHref?: string;
+  /** Language switcher, a control of its own (not one of the six links). */
+  languages?: Array<{ code: string; label: string; href: string; current?: boolean }>;
 }
-const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.props;
+const { brand, tagline, mark = "wordmark", links = [], cta, signIn, homeHref = "/", languages = [] } = Astro.props;
+const t = uiStrings(pageLocale(Astro));
 ---
 
 <header class={`u-header u-header--${mark}`}>
   <div class="u-container u-header__bar">
-    <a class="u-brand" href="/" aria-label={`${brand}, home`}>
+    <a class="u-brand" href={homeHref} aria-label={fill(t.home, { brand })}>
       {mark === "terminal" && <span class="u-brand__mark" aria-hidden="true"><Icon name="terminal" /></span>}
       {mark === "rocket" && <span class="u-brand__mark" aria-hidden="true"><Icon name="rocket" /></span>}
       {mark === "orbit" && <span class="u-brand__mark" aria-hidden="true"><Icon name="planet" /></span>}
@@ -37,7 +43,7 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
     </a>
     {
       links.length > 0 && (
-        <nav class="u-nav" aria-label="Main">
+        <nav class="u-nav" aria-label={t.navMain}>
           <ul>
             {links.map((link) => (
               <li>
@@ -49,6 +55,21 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
       )
     }
     <div class="u-header__actions">
+      {
+        languages.length > 1 && (
+          <nav class="u-lang" aria-label={t.language}>
+            <ul role="list">
+              {languages.map((l) => (
+                <li>
+                  <a href={l.href} data-lang-switch data-base={l.href} lang={l.code} hreflang={l.code} aria-current={l.current ? "true" : undefined}>
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
       {signIn && <a class="u-header__signin" href={signIn.href}>{signIn.label}</a>}
       {
         cta && (
@@ -60,11 +81,11 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
       {
         links.length > 0 && (
           <details class="u-menu">
-            <summary aria-label="Menu">
+            <summary aria-label={t.menu}>
               <Icon name="menu" class="u-menu__open" />
               <Icon name="close" class="u-menu__close" />
             </summary>
-            <nav class="u-menu__panel" aria-label="Mobile">
+            <nav class="u-menu__panel" aria-label={t.navMobile}>
               <ul>
                 {links.map((link) => (
                   <li>
@@ -84,6 +105,10 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
     </div>
   </div>
 </header>
+
+<script>
+  import "../elements/lang-switch.ts";
+</script>
 
 <style>
   .u-header {
@@ -196,6 +221,37 @@ const { brand, tagline, mark = "wordmark", links = [], cta, signIn } = Astro.pro
   .u-header__signin:hover {
     text-decoration: underline;
     text-underline-offset: 4px;
+  }
+  .u-lang ul {
+    list-style: none;
+    display: flex;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+  }
+  .u-lang a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--ulams-color-muted);
+    border-radius: var(--ulams-radius);
+  }
+  .u-lang a:hover {
+    color: var(--ulams-color-text);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .u-lang a[aria-current="true"] {
+    color: var(--ulams-color-text);
+    font-weight: 700;
+    box-shadow: inset 0 -2px 0 currentColor;
+    border-radius: 0;
   }
   .u-menu {
     display: none;
