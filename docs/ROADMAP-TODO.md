@@ -145,6 +145,9 @@ open Phase 0, 1 and 2 item as work packages L0-01â€¦L2-24; owner questions #41â€
       large test fixtures; revisit exact pins (`faker-markdown-generator`, `tzsk/sms`) (no LFS: CI rejects new files over 2 MB
       and the 24 MB and 6.8 MB SCORM mocks are generated minimal packages; `faker-markdown-generator` moved to
       `require-dev`; `tzsk/sms` stays `^10.0`; owner confirmation of no LFS pending #48)
+- [x] (new) Lean workers for local development and the demo profile (`ULAMS_WORKERS_MODE=lean`: one loop over the
+      domains with `ulams:tenant:work-once`, one builder/long-job process, one scheduler loop, no Horizon,
+      php-fpm `ondemand`; ADR 0083 amendment; `per-tenant` stays the production default)
 
 ### 0.1c Security and audit follow-ups (new)
 - [x] (new) Replace the GPL PHP libraries `trax2/framework` (lrs) and `laraveldaily/laravel-invoices` with first-party code

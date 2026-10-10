@@ -73,8 +73,8 @@ You do not need PHP or Composer on the host: every PHP command runs inside the `
    On restart the container runs [`api/init.sh`](https://github.com/ulams-dev/ulams/blob/main/api/init.sh):
    it writes the `LARAVEL_*` variables of the compose file into `api/.env`, runs migrations,
    rebuilds tenant env files (`ulams:tenant:sync-env --migrate`), creates Passport keys if
-   they are missing, seeds permissions and starts php-fpm, Horizon, the tenant queue workers
-   and the scheduler under supervisord.
+   they are missing, seeds permissions and starts php-fpm, the lean queue workers and the scheduler under
+   supervisord (Horizon stays off, see [Memory](#memory)).
 
 4. Load the platform database and the H5P content types:
 
@@ -104,7 +104,7 @@ Services in `api/docker-compose.yml`, all on the `ulams` network:
 | Service | Image | What it does | Reachable at |
 |---|---|---|---|
 | `caddy` | `caddy` | Routes every `*.localhost` host (config: `api/docker/conf/Caddyfile`) | ports 80 and 443 |
-| `api` | built from `api/Dockerfile.develop` | php-fpm on port 9000, plus Horizon, queue workers and scheduler | `http://api.localhost`, `http://<slug>.localhost` |
+| `api` | built from `api/Dockerfile.develop` | php-fpm on port 9000, plus the queue workers and the scheduler (lean mode) | `http://api.localhost`, `http://<slug>.localhost` |
 | `h5p` | built from `api/h5p/Dockerfile` | H5P player, editor and content API | `/h5p/*` on every API host |
 | `pdf` | built from `api/pdf/Dockerfile` | PDF renderer for certificates and templates | internal only |
 | `postgres` | `postgres:12` | Database; data in `api/docker/postgres-data` | internal; Adminer |
@@ -275,12 +275,29 @@ into the site) and `astro dev --port 4322`.
 The Node services can also run from source with `tsx watch`: `corepack yarn workspace api-h5p dev`
 and `corepack yarn workspace api-pdf dev`. In the default setup they run in Docker.
 
+## Memory
+
+The `api` container is sized for a laptop. Docker Desktop on a 16 GB Mac gives the VM about 7.6 GB, and
+with seven domains the old layout (a long-lived `queue:work` for three queues per tenant, a scheduler
+loop per tenant and Horizon) was 29 PHP processes and about 4 GB at idle, enough to take the Docker VM
+down.
+
+- `ULAMS_WORKERS_MODE=lean` (the default here) runs the background work from one loop per kind and no
+  long-lived PHP process per tenant. Set `ULAMS_WORKERS_MODE=per-tenant` in the environment of
+  `docker compose` to get the old layout back. Details, timeouts and trade-offs:
+  [Queues and the scheduler](/operators/queues-and-scheduler/#lean-mode).
+- Horizon is off in lean mode; set `ENABLE_HORIZON=true` if you need its dashboard.
+- php-fpm runs `pm = ondemand` with at most `PHP_FPM_MAX_CHILDREN` (default 8) children that exit after
+  `PHP_FPM_IDLE_TIMEOUT` (default 20s) without a request. The demo profile also lowers opcache to 192 MB,
+  16 MB of interned strings and a 32 MB JIT buffer (`api/docker/conf/php/ulams-demo-sizing-php.ini`).
+- Check it with `docker stats --no-stream` and `docker exec api-api-1 ps aux`.
+
 ## Useful URLs
 
 | URL | What |
 |---|---|
 | http://api.localhost/api/documentation | Swagger UI of the platform API |
-| http://api.localhost/horizon | Horizon dashboard (open in the `local` environment) |
+| http://api.localhost/horizon | Horizon dashboard (only with `ENABLE_HORIZON=true`; off in lean mode) |
 | http://api.localhost/api/healthcheck | Health check results (database, Redis) as JSON |
 | http://localhost:8025 | MailHog |
 | http://localhost:8078 | Adminer |

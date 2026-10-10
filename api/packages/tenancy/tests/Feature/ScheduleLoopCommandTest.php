@@ -84,4 +84,27 @@ class ScheduleLoopCommandTest extends TestCase
 
         $this->assertFalse($ran);
     }
+
+    public function testOnceWithLockTicksTheMinuteOnlyOnce(): void
+    {
+        config(['cache.default' => 'array']);
+        $ran = 0;
+        $this->app->make(Schedule::class)->call(function () use (&$ran) {
+            $ran++;
+        })->everyMinute();
+        Carbon::setTestNow(Carbon::parse('2026-10-10 09:30:10'));
+
+        try {
+            $this->artisan('ulams:tenant:schedule-loop', ['--once' => true, '--lock' => true])->assertExitCode(0);
+            // the same minute again (another replica, or a second pass): claimed already
+            $this->artisan('ulams:tenant:schedule-loop', ['--once' => true, '--lock' => true])->assertExitCode(0);
+            $this->assertSame(1, $ran);
+
+            Carbon::setTestNow(Carbon::parse('2026-10-10 09:31:10'));
+            $this->artisan('ulams:tenant:schedule-loop', ['--once' => true, '--lock' => true])->assertExitCode(0);
+            $this->assertSame(2, $ran);
+        } finally {
+            Carbon::setTestNow();
+        }
+    }
 }

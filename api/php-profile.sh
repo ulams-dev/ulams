@@ -12,6 +12,10 @@
 #  - demo (DEMO_PERF=1, `make demo-up`): production PHP settings (no timestamp checks, JIT,
 #    APP_DEBUG=false), cached config/routes/events per domain, vendor/ and bootstrap/cache in
 #    named volumes (vendor installed without dev dependencies). Apply edits with `make dev-reload`.
+#  Development and demo size php-fpm and opcache for a laptop (local_sizing): pm = ondemand with
+#  PHP_FPM_MAX_CHILDREN (default 8) children that exit after PHP_FPM_IDLE_TIMEOUT (default 20s)
+#  without a request, instead of the image default of idle children held for ever. The production
+#  image keeps its own settings.
 #  - production image: ULAMS_OPTIMIZE=true (set in Dockerfile) builds the caches at start;
 #    its PHP settings are baked into the image.
 set -e
@@ -54,6 +58,19 @@ dump_autoload() {
   fi
 }
 
+# php-fpm pool and opcache memory for one developer machine (see the header); not for the production image
+local_sizing() {
+  if [ "${ULAMS_OPTIMIZE:-false}" = "true" ]; then
+    return
+  fi
+  printf '[www]\npm = ondemand\npm.max_children = %s\npm.process_idle_timeout = %s\npm.max_requests = 500\n' \
+    "${PHP_FPM_MAX_CHILDREN:-8}" "${PHP_FPM_IDLE_TIMEOUT:-20s}" > "$FPM_D/zz-ulams-sizing.conf"
+  if demo; then
+    # the production ini above asks for 256 MB opcache, 32 MB interned strings and a 64 MB JIT buffer
+    cp docker/conf/php/ulams-demo-sizing-php.ini "$CONF_D/zz-ulams-demo-sizing-php.ini"
+  fi
+}
+
 prepare() {
   if demo; then
     echo "php-profile: demo (DEMO_PERF=1)"
@@ -73,8 +90,9 @@ prepare() {
       fi
     fi
   else
-    rm -f "$CONF_D/zz-ulams-production-php.ini" "$CONF_D/zz-ulams-demo-php.ini" "$FPM_D/zz-ulams-demo.conf"
+    rm -f "$CONF_D/zz-ulams-production-php.ini" "$CONF_D/zz-ulams-demo-php.ini" "$CONF_D/zz-ulams-demo-sizing-php.ini" "$FPM_D/zz-ulams-demo.conf"
   fi
+  local_sizing
   dump_autoload
   rebuild_manifest
 }

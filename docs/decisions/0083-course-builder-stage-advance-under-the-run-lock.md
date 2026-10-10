@@ -63,3 +63,28 @@ call, double cost). The same held for other long jobs that ran on the default co
   worker and Horizon timeouts match.
 - Jobs already queued on the old connection (`default` queue) finish there; set the variables above, restart the
   workers (`queue:restart`) and run a worker for `builder`.
+
+## Amendment (2026-10-10): lean workers for local development and the demo profile
+
+With seven domains `workers.sh` started 29 long-lived PHP processes in the `api` container (a default,
+builder and long-job `queue:work` per tenant, a scheduler loop per tenant, Horizon with its supervisors),
+about 140 MB each and 4.1 GB at idle, in a Docker VM of 7.65 GB. Docker Desktop went down four times on
+9 and 10 October 2026.
+
+- `ULAMS_WORKERS_MODE=lean|per-tenant` (default of the script: `per-tenant`; `docker-compose.yml` sets
+  `lean`, so local development and the demo profile; opt-in for production).
+- Lean: `workers.sh queue` is one loop that runs `ulams:tenant:work-once` (queue:work `--stop-when-empty`,
+  ADR 0091) for the default queues of the platform and every tenant, plus one helper process that runs the
+  builder and long-job queues, one domain at a time, with the per-tenant timeouts (`--timeout=1800` on
+  `<driver>-builder`, `--timeout=18000` on `<driver>-long-job`). The worker timeout stays at least the job
+  timeout and below `retry_after`, so the rule of the first amendment holds in both modes.
+  `workers.sh scheduler` is one loop that runs `ulams:tenant:schedule-loop --once --lock` for every domain
+  at the start of each minute (the minute lock of ADR 0068 still applies).
+- Horizon is off in lean mode (`ENABLE_HORIZON=true` brings it back); it only served the platform queues and
+  its dashboard.
+- php-fpm in development and demo uses `pm = ondemand` with `PHP_FPM_MAX_CHILDREN` (8); the demo profile
+  lowers opcache to 192 MB, 16 MB interned strings and a 32 MB JIT buffer.
+- Consequences: a job waits for the next pass (about 10 s for the default queues, 20 s for builder and
+  long jobs, plus the pass over the domains); a running builder step on one tenant delays the builder
+  queue of the others; each pass boots Laravel once per domain. `tests/Integrations/WorkersModeTest.php`
+  asserts the lean commands, connections and timeouts.
