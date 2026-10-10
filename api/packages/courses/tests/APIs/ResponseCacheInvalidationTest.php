@@ -57,7 +57,7 @@ class ResponseCacheInvalidationTest extends TestCase
         $r = $this->getJson('/api/courses');
 
         Event::fake([CacheMissedEvent::class, ResponseCacheHitEvent::class]);
-        CourseProgress::create(['user_id' => $this->student->getKey(), 'topic_id' => $this->topic->getKey(), 'status' => 1]);
+        CourseProgress::updateOrCreate(['user_id' => $this->student->getKey(), 'topic_id' => $this->topic->getKey()], ['status' => 1]);
 
         // anonymous again (the public catalogue)
         $this->app['auth']->forgetGuards();
