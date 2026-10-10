@@ -20,6 +20,8 @@ async function ids(slug) {
 const [coffee, oncall, nightsky, gravity, poland, ulam] = await Promise.all(["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"].map(ids));
 const pages = [
   ["platform landing", `http://app.localhost:${port}/`],
+  ["platform landing pl", `http://app.localhost:${port}/pl/`],
+  ["platform landing zh", `http://app.localhost:${port}/zh/`],
   ["coffee landing", `http://coffee.app.localhost:${port}/`],
   ["coffee course", `http://coffee.app.localhost:${port}/courses/${coffee.course}`],
   ["coffee lesson", `http://coffee.app.localhost:${port}/learn/${coffee.course}/${coffee.topic}`],

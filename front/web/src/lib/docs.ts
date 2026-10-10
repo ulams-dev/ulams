@@ -1,6 +1,7 @@
 import type { UiNode } from "@ulams/ui/render-core";
 import { resolveBindings } from "@ulams/ui/render-core";
 import type { ThemeName } from "@ulams/ui/registry";
+import type { Locale } from "../i18n/locales.ts";
 
 /**
  * Landing documents, one per tenant theme (src/docs/<theme>.json). They have the shape the
@@ -11,6 +12,21 @@ const modules = import.meta.glob<{ default: UiNode }>("../docs/*.json", { eager:
 export const landingDocs: Partial<Record<ThemeName, UiNode>> = Object.fromEntries(
   Object.entries(modules).map(([path, mod]) => [path.replace(/^.*\/(\w+)\.json$/, "$1"), mod.default])
 );
+
+/**
+ * Translated landing documents (src/docs/i18n/<theme>.<locale>.json): the same tree as the English one
+ * (a unit test keeps them parallel), with the visible text translated.
+ */
+const localized = import.meta.glob<{ default: UiNode }>("../docs/i18n/*.json", { eager: true });
+export const localizedDocs: Record<string, Partial<Record<Exclude<Locale, "en">, UiNode>>> = {};
+for (const [path, mod] of Object.entries(localized)) {
+  const match = /\/(\w+)\.(pl|zh)\.json$/.exec(path);
+  if (match) (localizedDocs[match[1]!] ??= {})[match[2] as "pl" | "zh"] = mod.default;
+}
+
+/** The landing document of a theme in a language (English when there is no translation). */
+export const landingDocFor = (theme: ThemeName, locale: Locale = "en"): UiNode | undefined =>
+  locale === "en" ? landingDocs[theme] : (localizedDocs[theme]?.[locale] ?? landingDocs[theme]);
 
 /** Title, description and language from the document's root Page node. */
 export function pageMeta(doc: UiNode, data: unknown): { title: string; description?: string; lang: string } {
@@ -62,6 +78,15 @@ export function withSessionLink(doc: UiNode, loggedIn: boolean): UiNode {
     if (node.component === "SiteHeader") {
       return { ...node, props: { ...(node.props ?? {}), signIn: { label: "My learning", href: "/account" } } };
     }
+    return node.children ? { ...node, children: node.children.map(visit) } : node;
+  };
+  return visit(doc);
+}
+
+/** The site header gets the language switcher and the language home (the brand link). */
+export function withLanguages(doc: UiNode, languages: Array<{ code: string; label: string; href: string; current: boolean }>, homeHref: string): UiNode {
+  const visit = (node: UiNode): UiNode => {
+    if (node.component === "SiteHeader") return { ...node, props: { ...(node.props ?? {}), languages, homeHref } };
     return node.children ? { ...node, children: node.children.map(visit) } : node;
   };
   return visit(doc);

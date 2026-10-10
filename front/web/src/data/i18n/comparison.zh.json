@@ -1,0 +1,168 @@
+{
+  "asOf": "2026 年 10 月",
+  "groups": {
+    "community": {
+      "label": "开源与创作者平台",
+      "caption": "ulams 与 Moodle、Canvas LMS、Open edX、TalentLMS、Thinkific 和 LearnDash 的功能对比"
+    },
+    "enterprise": {
+      "label": "企业级套件",
+      "caption": "ulams 与 Articulate 360、Docebo、Cornerstone、SAP SuccessFactors Learning、Absorb LMS 和 360Learning 的功能对比"
+    }
+  },
+  "sections": {
+    "developer": "开发者与无头架构",
+    "ai": "AI",
+    "standards": "内容标准",
+    "business": "商务"
+  },
+  "rows": {
+    "headless_api": {
+      "label": "REST API",
+      "help": "有文档的 REST API，覆盖整个平台，而不仅限于报表或用户同步"
+    },
+    "headless_authoring": {
+      "label": "通过 API 管理课程",
+      "help": "完全通过 API 创建、编辑和发布课程、课时与内容"
+    },
+    "openapi": {
+      "label": "公开的 OpenAPI 规范",
+      "help": "机器可读的 API 描述"
+    },
+    "sdk": {
+      "label": "带类型的 SDK（TypeScript）",
+      "help": "面向 TypeScript 或 JavaScript 的官方客户端库"
+    },
+    "cli": {
+      "label": "面向作者和开发者的 CLI",
+      "help": "在终端里管理课程内容（声明式 apply、导出、构建器命令）"
+    },
+    "mcp": {
+      "label": "MCP 服务器",
+      "help": "官方服务器，让 AI 智能体和助手能够操作课程"
+    },
+    "webhooks": {
+      "label": "Webhook 与事件",
+      "help": "向你的系统推送的外发事件"
+    },
+    "course_as_code": {
+      "label": "课程即代码 / Git 同步",
+      "help": "以文本文件形式保存在 Git 中的课程"
+    },
+    "self_hosting": {
+      "label": "自托管",
+      "help": "运行在你自己的服务器上；开源情况见许可证一行"
+    },
+    "generative_ui": {
+      "label": "生成式界面",
+      "help": "由 AI 在运行时组合的界面（A2UI）"
+    },
+    "ai_generation": {
+      "label": "AI 生成课程",
+      "help": "AI 基于你自己的资料起草课程"
+    },
+    "ai_citations": {
+      "label": "AI 带引用，改动经批准",
+      "help": "生成的内容标明出处；改动以差异对比呈现，由作者批准"
+    },
+    "source_sync": {
+      "label": "课程与来源同步",
+      "help": "来源变化时自动提出更新建议"
+    },
+    "adaptive_paths": {
+      "label": "自适应学习路径",
+      "help": "根据每位学员调整的学习路径"
+    },
+    "h5p": {
+      "label": "H5P",
+      "help": "H5P 交互式内容"
+    },
+    "scorm": {
+      "label": "SCORM",
+      "help": "SCORM 内容包"
+    },
+    "cmi5_xapi": {
+      "label": "cmi5 / xAPI",
+      "help": "cmi5 活动与 xAPI 追踪"
+    },
+    "lti13": {
+      "label": "LTI 1.3",
+      "help": "LTI 1.3 / LTI Advantage"
+    },
+    "multi_tenant": {
+      "label": "每个客户一个站点",
+      "help": "一套安装即可提供多个独立的白标站点（租户）"
+    },
+    "commerce": {
+      "label": "内置电商",
+      "help": "销售课程并收款"
+    },
+    "licence": {
+      "label": "开源许可证",
+      "help": "核心的许可证"
+    },
+    "pricing": {
+      "label": "定价模式"
+    },
+    "data_residency": {
+      "label": "数据驻留",
+      "help": "可选择数据存储区域，或自行托管"
+    },
+    "sso": {
+      "label": "SSO（SAML / OIDC）",
+      "help": "通过企业身份提供商单点登录"
+    },
+    "scim": {
+      "label": "SCIM 账号同步",
+      "help": "从身份提供商自动开通用户和用户组"
+    },
+    "authoring_tool": {
+      "label": "内置创作工具",
+      "help": "无需另购创作产品即可制作课程"
+    },
+    "content_library": {
+      "label": "内容库 / 市场",
+      "help": "可购买或引入的现成课程和第三方内容"
+    }
+  },
+  "systems": {
+    "ulams": "开源核心",
+    "moodle": "开源",
+    "canvas": "开源",
+    "openedx": "开源",
+    "talentlms": "托管式 SaaS LMS",
+    "thinkific": "课程创作者平台",
+    "learndash": "WordPress 插件",
+    "articulate": "创作工具套件",
+    "docebo": "企业级 LMS",
+    "cornerstone": "人才与学习套件",
+    "sap": "HCM 学习模块",
+    "absorb": "企业级 LMS",
+    "360learning": "协作式学习"
+  },
+  "values": {
+    "Yes": "支持",
+    "No": "不支持",
+    "Partial": "部分支持",
+    "Via plugin": "需插件",
+    "Paid add-on": "付费扩展",
+    "Not documented": "未说明",
+    "Coming": "即将推出",
+    "Proprietary": "专有",
+    "Quote-based; not published": "按报价；未公开",
+    "AGPL-3.0": "AGPL-3.0",
+    "MIT open core": "MIT 许可的开源核心",
+    "Free self-hosted": "免费自托管",
+    "GPL-3.0-or-later": "GPL-3.0-or-later",
+    "Free (GPL); paid hosting": "免费（GPL）；托管服务收费",
+    "Free to self-host (AGPL); hosted by quote": "自托管免费（AGPL）；托管服务按报价",
+    "Free (AGPL); self-funded hosting": "免费（AGPL）；托管费用自理",
+    "SaaS by monthly active users; free tier": "SaaS，按月活跃用户计费；有免费档",
+    "SaaS plans; Plus by quote": "SaaS 套餐；Plus 版按报价",
+    "GPL-2.0-or-later, paid licence": "GPL-2.0-or-later，付费许可",
+    "Annual licence per site tier": "按站点档位的年度许可",
+    "Per-seat subscription; Reach by learners": "按席位订阅；Reach 版按学员数计费",
+    "Quote-based": "按报价",
+    "Team $8/user/month (up to 100); Business/Enterprise custom": "Team 版每用户每月 8 美元（最多 100 人）；Business/Enterprise 版定制"
+  }
+}

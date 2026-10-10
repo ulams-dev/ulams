@@ -3,7 +3,8 @@
   "props": {
     "theme": "platform",
     "title": "ulams — the open, AI-native LMS",
-    "description": "Courses that stay true to their sources: an open-source, AI-native LMS with cited generation, a site per customer and standards built in."
+    "description": "Courses that stay true to their sources: an open-source, AI-native LMS with cited generation, a site per customer and standards built in.",
+    "lang": "en"
   },
   "children": [
     {

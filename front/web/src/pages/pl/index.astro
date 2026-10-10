@@ -1,11 +1,11 @@
 ---
-/** Platform product landing (app.localhost / localhost): ulams sold as a product, with the live demos. English at `/`; see pl/ and zh/. */
+/** Platform product landing in Polishpl. Only on a platform host; tenant sites have no language prefix. */
 import Render from "@ulams/ui/Render.astro";
-import Base from "../layouts/Base.astro";
-import { platformPage } from "../lib/platform-page.ts";
+import Base from "../../layouts/Base.astro";
+import { platformPage } from "../../lib/platform-page.ts";
 
 if (!Astro.locals.platform) return Astro.rewrite("/404");
-const page = await platformPage("en", Astro.request, Astro.url);
+const page = await platformPage("pl", Astro.request, Astro.url);
 if (!page) return Astro.rewrite("/404");
 ---
 

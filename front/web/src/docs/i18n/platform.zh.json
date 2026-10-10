@@ -1,0 +1,789 @@
+{
+  "component": "Page",
+  "props": {
+    "theme": "platform",
+    "title": "ulams — 开放的 AI 原生 LMS",
+    "description": "课程始终忠于来源：开源的 AI 原生 LMS，生成内容带引用，每个客户一个独立站点，内置行业标准。",
+    "lang": "zh-Hans"
+  },
+  "children": [
+    {
+      "component": "SiteHeader",
+      "props": {
+        "brand": "ulams",
+        "mark": "logo",
+        "links": [
+          {
+            "label": "产品",
+            "href": "#product"
+          },
+          {
+            "label": "Living Course",
+            "href": "#how"
+          },
+          {
+            "label": "自托管",
+            "href": "#self-host"
+          },
+          {
+            "label": "对比",
+            "href": "#compare"
+          },
+          {
+            "label": "演示",
+            "href": "#demos"
+          },
+          {
+            "label": "文档",
+            "href": "https://ulams-dev.github.io/ulams/"
+          }
+        ],
+        "signIn": {
+          "label": "GitHub",
+          "href": "https://github.com/ulams-dev"
+        },
+        "cta": {
+          "label": "体验演示",
+          "href": "#demos"
+        }
+      }
+    },
+    {
+      "component": "Main",
+      "children": [
+        {
+          "component": "Hero",
+          "props": {
+            "variant": "product",
+            "eyebrow": "开源 · AI 原生 · 无头架构",
+            "title": "课程，始终忠于来源。",
+            "titleAccent": "忠于来源。",
+            "subtitle": "开放的 LMS：AI 起草，作者定夺，每一个生成的内容都标明出处。",
+            "primaryCta": {
+              "label": "体验在线演示",
+              "href": "#demos"
+            },
+            "secondaryCta": {
+              "label": "自行部署（MIT）",
+              "href": "#self-host"
+            },
+            "body": "课程紧跟你的文档和代码仓库，以白标站点的形式交付给每个客户，也可以部署在你自己的服务器上。",
+            "capabilities": [
+              {
+                "icon": "sync",
+                "label": "Living Course",
+                "caption": "来源一变，课程自动更新",
+                "href": "#living",
+                "ring": 1,
+                "status": "coming",
+                "angle": 173
+              },
+              {
+                "icon": "sparkle",
+                "label": "AI 课程构建器",
+                "caption": "几分钟内把文档变成带引用的课程",
+                "href": "#builder",
+                "ring": 1,
+                "angle": 63
+              },
+              {
+                "icon": "eye",
+                "label": "预览与讨论",
+                "caption": "每个内容上线前都可预览、可讨论",
+                "href": "#product",
+                "ring": 1,
+                "angle": 138
+              },
+              {
+                "icon": "chart",
+                "label": "学情分析与 AI 导师",
+                "caption": "看清谁卡住了，并为每位学员配备 AI 导师",
+                "href": "#product",
+                "ring": 2,
+                "angle": 323
+              },
+              {
+                "icon": "terminal",
+                "label": "CLI · MCP · REST API",
+                "caption": "用终端、智能体或 API 管理你的学院",
+                "href": "#agents",
+                "ring": 2,
+                "status": "coming",
+                "angle": 196
+              },
+              {
+                "icon": "code",
+                "label": "Claude 与 Claude Code",
+                "caption": "在 Claude 和 Claude Code 中创建并管理课程",
+                "href": "#agents",
+                "ring": 2,
+                "status": "coming",
+                "angle": 224
+              },
+              {
+                "icon": "layers",
+                "label": "每个客户一个站点",
+                "caption": "为每个客户提供品牌化的学院站点",
+                "href": "#demos",
+                "ring": 3,
+                "angle": 245
+              },
+              {
+                "icon": "puzzle",
+                "label": "H5P · SCORM · LTI 1.3",
+                "caption": "H5P、SCORM、cmi5 和 LTI 1.3：随处交付",
+                "href": "#standards",
+                "ring": 3,
+                "angle": 131
+              },
+              {
+                "icon": "cart",
+                "label": "电商",
+                "caption": "用内置电商功能销售课程和订阅",
+                "href": "#compare",
+                "ring": 3,
+                "status": "coming",
+                "angle": 15
+              },
+              {
+                "icon": "server",
+                "label": "自托管、开源",
+                "caption": "MIT 许可，自行托管：你的服务器，你的数据",
+                "href": "#self-host",
+                "ring": 3,
+                "angle": 299
+              }
+            ]
+          }
+        },
+        {
+          "component": "LivingCourseStory",
+          "props": {
+            "id": "living",
+            "eyebrow": "Living Course",
+            "title": "来源一变，课程自动更新",
+            "intro": "你编辑一份文档，或向仓库合并一次改动。ulams 会找出所有引用它的课时和题目，并提出更新建议。你批准后，学员的学习进度完整保留。",
+            "status": "coming",
+            "valueLine": "课程不再过时，没有你的批准什么都不会改动。",
+            "description": "三步动画示例。第一步，docs/slo.md 中的一行从 99.9 % 改为 99.95 %，并新增一行关于 30 天预算的内容。第二步，ulams 找到引用 docs/slo.md 第 2 节的课时段落和测验题。第三步，出现一份带红绿差异对比的更新建议，作者点击“批准”，课时文字随即更新，并显示徽标确认学员进度已保留。",
+            "beats": [
+              {
+                "title": "你的来源发生变化",
+                "text": "docs/slo.md 中的一行被修改。"
+              },
+              {
+                "title": "ulams 找出所有引用它的课时",
+                "text": "课时段落和一道测验题随之高亮。"
+              },
+              {
+                "title": "你批准，学员进度不丢",
+                "text": "更新建议以差异对比呈现，一键即可更新课时。"
+              }
+            ],
+            "source": {
+              "file": "docs/slo.md",
+              "heading": "错误预算",
+              "context": "错误预算 = (1 − SLO) × 时间窗口",
+              "lead": "结账服务的默认 SLO：",
+              "before": "99.9 %",
+              "after": "99.95 %",
+              "added": "30 天的预算：21.6 分钟"
+            },
+            "lesson": {
+              "title": "第 2 课 · SLO 与错误预算",
+              "lead": "结账服务的默认 SLO：",
+              "citation": "docs/slo.md §2",
+              "question": "结账服务的默认 SLO 是多少？",
+              "questionCite": "docs/slo.md §2"
+            },
+            "proposal": {
+              "title": "更新建议 · 1 个课时，1 道题",
+              "approve": "批准",
+              "done": "已更新 · 学员进度已保留"
+            }
+          }
+        },
+        {
+          "component": "BuilderStory",
+          "props": {
+            "id": "builder",
+            "eyebrow": "课程构建器",
+            "title": "几分钟内，把一份文档做成课程",
+            "intro": "放入一份运维手册，回答三个问题，在任何内容上线之前，先审阅带引用的大纲和草稿。",
+            "valueLine": "从 PDF 到发布的带引用课程，每一步都由你批准。",
+            "description": "课程构建器的动画示例。用户放入名为 incident-runbook.pdf 的文件，随后出现三个访谈回答（工程师、45 分钟、每课一份测验），由三个模块、五个课时组成的大纲逐步生成，每个课时旁都有来源标签；一个课时带着引用逐字写出，一道测验题也标明了出处，示例费用计数器涨到 18 美分，最后点击“应用”即可发布课程。",
+            "file": {
+              "name": "incident-runbook.pdf",
+              "label": "PDF"
+            },
+            "interview": [
+              {
+                "question": "受众",
+                "answer": "工程师"
+              },
+              {
+                "question": "时长",
+                "answer": "45 分钟"
+              },
+              {
+                "question": "练习",
+                "answer": "每课一份测验"
+              }
+            ],
+            "outline": [
+              {
+                "title": "发现并宣告",
+                "lessons": [
+                  {
+                    "title": "什么算作故障",
+                    "source": "runbook 第 2 页"
+                  },
+                  {
+                    "title": "严重等级",
+                    "source": "runbook 第 3 页"
+                  }
+                ]
+              },
+              {
+                "title": "分级与止损",
+                "lessons": [
+                  {
+                    "title": "最初的十分钟",
+                    "source": "runbook 第 5 页"
+                  },
+                  {
+                    "title": "回滚还是向前修复",
+                    "source": "runbook 第 6 页"
+                  }
+                ]
+              },
+              {
+                "title": "从中学习",
+                "lessons": [
+                  {
+                    "title": "不追责的复盘",
+                    "source": "runbook 第 9 页"
+                  }
+                ]
+              }
+            ],
+            "lesson": {
+              "title": "严重等级",
+              "text": "Sev 1 表示客户无法完成结账。请立即呼叫值班负责人，并开设故障沟通频道。",
+              "citations": [
+                "runbook 第 3 页 · Severity",
+                "runbook 第 4 页 · Paging"
+              ]
+            },
+            "quiz": {
+              "question": "谁来宣告 Sev 1？",
+              "source": "runbook 第 3 页"
+            },
+            "cost": {
+              "label": "目前费用",
+              "amount": 0.18,
+              "note": "示例运行，并非报价"
+            },
+            "apply": {
+              "label": "应用",
+              "publishedTitle": "故障响应",
+              "publishedMeta": "· 5 个课时 · 1 份测验 · 已发布"
+            }
+          }
+        },
+        {
+          "component": "WorkflowShowcase",
+          "props": {
+            "id": "agents",
+            "eyebrow": "随处运行",
+            "title": "在 Claude、Claude Code 或终端里管理你的学院",
+            "intro": "你可以使用 Claude Code、Claude 或任何兼容 MCP 的智能体，也可以用命令行或 API。工作室只是运行 ulams 的方式之一，而不是唯一的方式。",
+            "valueLine": "一个平台，覆盖团队已经在用的每一种界面。",
+            "legal": "Claude 和 Claude Code 是 Anthropic 的产品。ulams 是独立产品，与 Anthropic 没有关联，也未获其背书。",
+            "description": {
+              "$data": "/workflows/description"
+            },
+            "footnote": {
+              "$data": "/workflows/footnote"
+            },
+            "tabs": {
+              "$data": "/workflows/tabs"
+            }
+          }
+        },
+        {
+          "component": "WhiteLabelStory",
+          "props": {
+            "id": "white-label",
+            "eyebrow": "白标",
+            "title": "你的品牌，你的学院，每个来源一门课程",
+            "intro": "带上你的风格和内容。ulams 为你提供独立子域名下的品牌学院，每个来源对应一门带引用的独立课程，并为每门课程提供学员数据分析。",
+            "valueLine": "你的外观、你的子域名、你的内容，以及每门课程清晰的数据。",
+            "description": "四步动画示例。第一步：Claude Code 之类的智能体接入 ulams CLI 以及 Figma 或 Stitch 的 MCP，读取一份设计（Figma 文件、Stitch 的 DESIGN.md、品牌指南 PDF，或者标志和色彩），提取颜色、字体、标志和圆角，并运行 ulams theme set 与 ulams settings set；另一种方式是基于无头 API 构建自己的前端。第二步：一个带品牌主题的学院出现在独立子域名 acme.ulams.app 上，包含落地页、课程目录和管理后台，全部采用提取出的品牌风格。第三步：文档、PDF、Git 仓库和网页各自生成一门带引用的课程，由课程构建器创建，并由 Living Course 保持同步。第四步：每门课程都有自己的看板，展示学员进度、测验表现、有掉队风险的学员，以及让人困惑的章节。所有名称和数值均为示例。",
+            "exampleNote": "示例品牌与数据",
+            "primaryCta": {
+              "label": "体验在线演示",
+              "href": "#demos"
+            },
+            "secondaryCta": {
+              "label": "自行部署",
+              "href": "#self-host"
+            },
+            "steps": [
+              {
+                "title": "带上你的品牌",
+                "text": "把 ulams 的 CLI 或 MCP，以及设计工具的 MCP，接入你的智能体。它会读取你的设计并应用到主题上，也可以基于无头 API 构建你自己的前端。",
+                "points": [
+                  "Figma、Stitch（DESIGN.md）、品牌指南 PDF，或标志与色彩",
+                  "颜色、字体、标志和圆角会变成主题设置",
+                  "或者基于 API 和 @ulams/sdk 构建自己的前端"
+                ],
+                "today": "现在即可通过你的智能体使用。内置的品牌导入功能（无需智能体）已列入路线图。"
+              },
+              {
+                "title": "获得你的学院",
+                "text": "带你品牌主题的站点会出现在独立子域名上，包含落地页、课程目录和管理后台。",
+                "points": [
+                  "每个客户一个子域名，例如 acme.ulams.app",
+                  "落地页、目录和后台共用同一套品牌"
+                ]
+              },
+              {
+                "title": "带上你的内容",
+                "text": "添加文档、PDF、Git 仓库或网页。每个来源都会生成一门独立的、带引用的课程。",
+                "points": [
+                  "每个来源一门课程",
+                  "每个生成的内容都标明出处",
+                  "由 Living Course 保持同步"
+                ],
+                "today": "上传文件、Git 和网页来源现已可用。课程的自动同步已列入路线图。"
+              },
+              {
+                "title": "一览全局",
+                "text": "每门课程都有独立的学员数据分析，供作者和管理员查看。",
+                "points": [
+                  "进度与完成率",
+                  "测验表现",
+                  "有掉队风险的学员",
+                  "让人困惑的章节"
+                ],
+                "status": "coming",
+                "today": "已列入路线图：按课程的数据分析和掉队学员识别已在规划中，尚未开发。"
+              }
+            ],
+            "brand": {
+              "agentLabel": "Claude Code · ulams CLI · Figma MCP",
+              "sourcesLabel": "你的设计",
+              "sources": [
+                {
+                  "kind": "figma",
+                  "label": "Figma 文件",
+                  "file": "acme-brand.fig"
+                },
+                {
+                  "kind": "stitch",
+                  "label": "Stitch 设计稿",
+                  "file": "DESIGN.md"
+                },
+                {
+                  "kind": "pdf",
+                  "label": "品牌指南",
+                  "file": "acme-guide.pdf"
+                },
+                {
+                  "kind": "logo",
+                  "label": "标志与色彩",
+                  "file": "logo.svg"
+                }
+              ],
+              "alternative": {
+                "label": "或自建前端",
+                "text": "基于无头 API 和 @ulams/sdk 的自定义模板"
+              },
+              "tokensLabel": "智能体提取的设计变量",
+              "colors": [
+                {
+                  "name": "主色",
+                  "value": "#0E7C66"
+                },
+                {
+                  "name": "辅色",
+                  "value": "#1B2A41"
+                },
+                {
+                  "name": "强调色",
+                  "value": "#F5B841"
+                },
+                {
+                  "name": "背景色",
+                  "value": "#F6F4EF"
+                },
+                {
+                  "name": "文字色",
+                  "value": "#16202B"
+                }
+              ],
+              "fonts": [
+                {
+                  "role": "标题",
+                  "name": "Fraunces"
+                },
+                {
+                  "role": "正文",
+                  "name": "Inter"
+                }
+              ],
+              "logo": "acme",
+              "radius": 12,
+              "commands": [
+                "ulams theme set --accent '#0E7C66' --json",
+                "ulams settings set global companyName \"Acme Academy\" --json"
+              ]
+            },
+            "site": {
+              "host": "acme.ulams.app",
+              "pages": [
+                "落地页",
+                "目录",
+                "后台"
+              ],
+              "headline": "用 Acme 的方式学习",
+              "action": "浏览课程"
+            },
+            "content": {
+              "builderLabel": "课程构建器",
+              "citedLabel": "带引用",
+              "syncLabel": "Living Course 让每一门都保持同步",
+              "syncStatus": "coming",
+              "sources": [
+                {
+                  "kind": "doc",
+                  "label": "handbook.docx",
+                  "course": "入职培训"
+                },
+                {
+                  "kind": "pdf",
+                  "label": "safety.pdf",
+                  "course": "安全基础"
+                },
+                {
+                  "kind": "git",
+                  "label": "github.com/acme/docs",
+                  "course": "产品文档"
+                },
+                {
+                  "kind": "url",
+                  "label": "acme.com/help",
+                  "course": "帮助中心"
+                }
+              ]
+            },
+            "dashboard": {
+              "kpis": [
+                {
+                  "label": "进度",
+                  "value": 64
+                },
+                {
+                  "label": "完成率",
+                  "value": 41
+                },
+                {
+                  "label": "测验平均分",
+                  "value": 72
+                }
+              ],
+              "quiz": {
+                "label": "测验表现",
+                "bars": [
+                  {
+                    "label": "模块 1",
+                    "value": 85
+                  },
+                  {
+                    "label": "模块 2",
+                    "value": 70
+                  },
+                  {
+                    "label": "模块 3",
+                    "value": 48
+                  }
+                ]
+              },
+              "atRisk": {
+                "label": "有掉队风险的学员",
+                "learners": [
+                  {
+                    "name": "学员 A",
+                    "reason": "卡在模块 2"
+                  },
+                  {
+                    "name": "学员 B",
+                    "reason": "测验两次未通过"
+                  }
+                ]
+              },
+              "confusing": {
+                "label": "让人困惑的章节",
+                "sections": [
+                  {
+                    "title": "第 2.3 课",
+                    "level": 5
+                  },
+                  {
+                    "title": "第 3.1 课",
+                    "level": 3
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "component": "FeatureList",
+          "props": {
+            "id": "product",
+            "variant": "grid",
+            "eyebrow": "为什么选 ulams",
+            "title": "值得信赖的 LMS",
+            "intro": "专为开发者教育和客户教育打造：内容随每次发布而变化，并面向多类受众销售和交付。",
+            "items": [
+              {
+                "icon": "sync",
+                "title": "Living Course",
+                "text": "课程与其来源的文档和仓库保持同步，并能适应每一位学员。",
+                "status": "coming"
+              },
+              {
+                "icon": "quote",
+                "title": "天生带引用",
+                "text": "AI 生成的每个内容都会标明所依据的来源片段。AI 提出建议，作者审核并批准每一处改动。"
+              },
+              {
+                "icon": "layers",
+                "title": "每个客户一个站点",
+                "text": "每个租户都有自己的子域名、主题和相互隔离的数据库：为客户和合作伙伴提供白标学院。"
+              },
+              {
+                "icon": "server",
+                "title": "可自托管，开源核心",
+                "text": "MIT 许可的核心，可运行在你自己的服务器上。你的内容和学员数据始终归你所有，没有供应商锁定。"
+              },
+              {
+                "icon": "puzzle",
+                "title": "标准优先",
+                "text": "H5P、SCORM、cmi5 和 xAPI 现已可用，同一门课程可以交付到任何地方。下一步是 LTI 1.3。"
+              },
+              {
+                "icon": "cart",
+                "title": "内置电商",
+                "text": "目录、结账和订阅通过无头的 Sylius 商店实现；只有经过验证的订单才会开通访问权限。",
+                "status": "coming"
+              }
+            ]
+          },
+          "final": {
+            "items": [
+              {
+                "icon": "sync",
+                "title": "Living Course",
+                "text": "课程与其来源的文档和仓库保持同步，并能适应每一位学员。",
+                "status": "coming"
+              },
+              {
+                "icon": "quote",
+                "title": "天生带引用",
+                "text": "AI 生成的每个内容都会标明所依据的来源片段。AI 提出建议，作者审核并批准每一处改动。"
+              },
+              {
+                "icon": "layers",
+                "title": "每个客户一个站点",
+                "text": "每个租户都有自己的子域名、主题和相互隔离的数据库：为客户和合作伙伴提供白标学院。"
+              },
+              {
+                "icon": "server",
+                "title": "可自托管，开源核心",
+                "text": "MIT 许可的核心，可运行在你自己的服务器上。你的内容和学员数据始终归你所有，没有供应商锁定。"
+              },
+              {
+                "icon": "puzzle",
+                "title": "标准优先",
+                "text": "H5P、SCORM、cmi5 和 xAPI 现已可用，同一门课程可以交付到任何地方。LTI 1.3 同样支持。"
+              },
+              {
+                "icon": "cart",
+                "title": "内置电商",
+                "text": "目录、结账和订阅通过无头的 Sylius 商店实现；只有经过验证的订单才会开通访问权限。",
+                "status": "coming"
+              }
+            ]
+          }
+        },
+        {
+          "component": "Steps",
+          "props": {
+            "eyebrow": "Living Course",
+            "title": "课程如何跟上来源的变化",
+            "intro": "我们路线图上的杀手级功能：文档一变，课程就会自己提出更新建议，而决定权始终在你手里。",
+            "status": "coming",
+            "items": [
+              {
+                "icon": "code",
+                "title": "接入来源",
+                "text": "让 ulams 指向文档、仓库和发布说明，它们将成为课程唯一的事实依据。"
+              },
+              {
+                "icon": "quote",
+                "title": "带引用地生成",
+                "text": "课时、测验和互动练习根据已批准的学习目标起草，每个内容都链接到对应的来源片段。"
+              },
+              {
+                "icon": "sync",
+                "title": "来源变化时审阅差异",
+                "text": "上游的改动会变成一份更新建议：你可以审阅这份差异，并选择批准、修改或拒绝。"
+              }
+            ]
+          },
+          "final": {
+            "intro": "杀手级功能：文档一变，课程就会自己提出更新建议，而决定权始终在你手里。"
+          }
+        },
+        {
+          "component": "Showcase",
+          "props": {
+            "eyebrow": "在线演示",
+            "title": "六所学院，一个平台",
+            "intro": "每个演示都是一个独立租户，有自己的主题、课程和数据，运行在同一套 ulams 之上。你可以以学员身份打开，也可以进入它的管理后台。",
+            "items": {
+              "$data": "/demos"
+            },
+            "note": "演示每小时重置一次，无需注册，系统会自动为你登录。"
+          }
+        },
+        {
+          "component": "Chips",
+          "props": {
+            "eyebrow": "行业标准",
+            "title": "随处交付",
+            "intro": "以标准对抗锁定：沿用现有内容包，随处追踪学习，通过 API 集成。",
+            "items": [
+              {
+                "label": "H5P",
+                "note": "交互式内容"
+              },
+              {
+                "label": "SCORM 1.2 / 2004"
+              },
+              {
+                "label": "cmi5"
+              },
+              {
+                "label": "xAPI",
+                "note": "内置 LRS"
+              },
+              {
+                "label": "LTI 1.3",
+                "status": "coming"
+              },
+              {
+                "label": "OpenAPI",
+                "note": "REST API"
+              },
+              {
+                "label": "Webhooks",
+                "status": "coming"
+              }
+            ]
+          }
+        },
+        {
+          "component": "ComparisonTable",
+          "props": {
+            "id": "compare",
+            "eyebrow": "对比",
+            "title": "ulams 与同类产品对比",
+            "intro": "ulams 首先为开发者和 AI 智能体而生：课程通过 REST API 和 TypeScript SDK 管理，面向智能体的 CLI 和 MCP 服务器即将推出。对比对象包括开源平台、创作者平台和企业级套件；路线图上的功能标注为“即将推出”。",
+            "caption": "ulams 与开源平台、创作者平台及企业学习套件的功能对比",
+            "asOf": {
+              "$data": "/comparison/asOf"
+            },
+            "groups": {
+              "$data": "/comparison/groups"
+            },
+            "sources": {
+              "$data": "/comparison/sources"
+            },
+            "note": "产品名称为其各自所有者的商标，在此仅用于指代相应产品。欢迎指正。"
+          },
+          "final": {
+            "intro": "采购方通常关注的各项指标，逐个产品对比，分为两组：开源与创作者平台、企业级套件。"
+          }
+        },
+        {
+          "component": "CtaBand",
+          "props": {
+            "id": "self-host",
+            "variant": "terminal",
+            "eyebrow": "自托管",
+            "title": "你的服务器，你的数据。",
+            "text": "核心采用 MIT 许可，用 Docker Compose 即可运行：API、管理后台、这个前端和 H5P 服务。付费的云服务与企业功能只是在此之上的增值，绝不取代核心。",
+            "code": [
+              "$ git clone https://github.com/ulams-dev/ulams",
+              "$ cd ulams && yarn install",
+              "$ yarn dev:api",
+              "✓ api, admin, h5p and storage are up",
+              "$ yarn dev:web",
+              "✓ http://coffee.app.localhost:4321"
+            ],
+            "cta": {
+              "label": "在 GitHub 上查看",
+              "href": "https://github.com/ulams-dev"
+            },
+            "secondary": {
+              "label": "体验演示",
+              "href": "#demos"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "component": "SiteFooter",
+      "props": {
+        "brand": "ulams",
+        "text": "开放的 AI 原生 LMS。MIT 许可的开源核心。",
+        "links": [
+          {
+            "label": "产品",
+            "href": "#product"
+          },
+          {
+            "label": "Living Course",
+            "href": "#how"
+          },
+          {
+            "label": "演示",
+            "href": "#demos"
+          },
+          {
+            "label": "标准",
+            "href": "#standards"
+          },
+          {
+            "label": "自托管",
+            "href": "#self-host"
+          },
+          {
+            "label": "文档",
+            "href": "https://ulams-dev.github.io/ulams/"
+          },
+          {
+            "label": "GitHub",
+            "href": "https://github.com/ulams-dev"
+          }
+        ],
+        "note": "MIT 许可的开源核心"
+      }
+    }
+  ]
+}
