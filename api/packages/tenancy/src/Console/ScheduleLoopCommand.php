@@ -18,13 +18,15 @@ use Symfony\Component\Console\Output\NullOutput;
  *
  * With several API replicas every replica runs this loop, so each minute is claimed with a lock
  * in the shared cache (ADR 0021, ADR 0068): the replica that gets it runs the tick, the others
- * skip that minute. `--once` is a manual tick and does not take the lock.
+ * skip that minute. `--once` is a manual tick and does not take the lock, unless `--lock` is given: the
+ * lean workers (workers.sh, ULAMS_WORKERS_MODE=lean) call `--once --lock` for every domain each minute.
  */
 class ScheduleLoopCommand extends Command
 {
     protected $signature = 'ulams:tenant:schedule-loop
         {--max-time=3600 : Exit after this many seconds (the supervisor starts it again with fresh code and config)}
-        {--once : Run one scheduler tick now and exit}';
+        {--once : Run one scheduler tick now and exit}
+        {--lock : With --once, claim the minute with the shared lock first (workers.sh lean mode: one process ticks every domain each minute)}';
 
     protected $description = 'Run the scheduler of this domain every minute in one long-lived process';
 
@@ -33,6 +35,12 @@ class ScheduleLoopCommand extends Command
     public function handle(): int
     {
         if ($this->option('once')) {
+            if ($this->option('lock')) {
+                $this->runMinute(Carbon::now());
+
+                return self::SUCCESS;
+            }
+
             return $this->tick();
         }
 
