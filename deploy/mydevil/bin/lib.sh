@@ -36,3 +36,10 @@ post_deploy() {
     ( cd "$ULAMS_API" && "$ULAMS_PHP" artisan optimize --no-interaction --domain="$domain" ) || say "warning: optimize failed for $domain"
   done
 }
+
+# The web IP that sites and certificates are bound to: ULAMS_PUBLIC_IP, else the public address whose reverse DNS
+# is webN.mydevil.net (the first address of the list is the server's own, which `devil ssl www add` refuses).
+public_ip() {
+  if [ -n "${ULAMS_PUBLIC_IP:-}" ]; then printf '%s\n' "$ULAMS_PUBLIC_IP"; return; fi
+  devil vhost list public 2>/dev/null | awk '/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/ { if ($2 ~ /^web/) { print $1; exit } if (!first) first = $1 } END { if (first) print first }' | head -1
+}

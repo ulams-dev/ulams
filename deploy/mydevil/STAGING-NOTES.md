@@ -1,4 +1,4 @@
-# ulams staging on MyDevil s51: what was installed (2026-10-09)
+# ulams staging on MyDevil s51: what was installed (2026-10-09, updated 2026-10-10: current main and the six demos)
 
 A STAGING install on the product owner's MyDevil account (issue #159), done from the runbook in
 `README.md`. The same text is kept on the server as `~/ulams/DEPLOY-NOTES.md`. No secrets are written
@@ -19,6 +19,14 @@ here: they are on the server only (see "Where the secrets are").
 | `coffee-staging.ulams.app` | tenant `coffee` front (Astro SSR) | MyDevil, Passenger, node22 |
 | `coffee-staging-admin.ulams.app` | tenant `coffee` admin | MyDevil, static |
 | `coffee-staging-content.ulams.app` | tenant `coffee` content origin | Cloudflare Worker `ulams-staging-content` |
+| `{gravity,poland,ulam,oncall,nightsky}-staging-api.ulams.app` | tenant APIs (added 2026-10-10) | MyDevil, PHP 8.4 |
+| `{...}-staging.ulams.app` | tenant fronts | MyDevil, Passenger, node22, one process each, the same `~/ulams/web` build and the same `app.js` settings as the platform front |
+| `{...}-staging-admin.ulams.app` | tenant admins | MyDevil, static (`public_html` -> `~/ulams/admin`) |
+| `{...}-staging-content.ulams.app` | tenant content origins | Cloudflare Worker `ulams-staging-content` |
+
+All six demos (coffee, oncall, nightsky, gravity, poland, ulam) run on staging: the platform landing `https://staging.ulams.app` shows six cards linking to
+`<slug>-staging.ulams.app/learn/1` and `<slug>-staging-admin.ulams.app` (`ULAMS_DEMO_TENANTS` and `ULAMS_WARM_TENANTS` in every front's `app.js`). The budget held
+(see "Resources"), so no card is shown as unavailable.
 
 `/h5p/*` on both API hosts is routed by the Worker `ulams-staging-h5p-proxy` to `staging-h5p.ulams.app`
 with `X-Forwarded-Host` (the Caddy snippet of `api/h5p` has no MyDevil equivalent: a MyDevil host is PHP
@@ -32,11 +40,11 @@ The Astro front uses `ULAMS_TENANT_HOSTS={slug}-staging.ulams.app=>https://{slug
 
 ## MyDevil objects created
 
-- Sites (`devil www add`): the 8 hosts marked MyDevil above. Origin certificate (Cloudflare Origin CA, covers
+- Sites (`devil www add`): the 8 hosts marked MyDevil above and, for each of the five added tenants, `<slug>-staging-api` (php), `<slug>-staging-admin` (php, `public_html` symlink to `~/ulams/admin`) and `<slug>-staging` (nodejs) via `bin/add-flat-hosts.sh <slug>`. Origin certificate (Cloudflare Origin CA, covers
   `ulams.app` and `*.ulams.app`, valid to 2041) installed with SNI per host: `devil ssl www add 77.79.248.122 ~/ulams/tls/origin.pem ~/ulams/tls/origin.key <host>`.
 - PHP sites: `php_openbasedir` extended with `~/ulams`, `php_exec on`, `sslonly on`. Passenger sites: `processes 1`.
   The placeholder `public/index.html` of each Node site was removed (Passenger served it instead of the app).
-- PostgreSQL (`devil pgsql db add`): `p1157_ulams` (platform), `p1157_u_coffee` (tenant coffee). **MyDevil truncates
+- PostgreSQL (`devil pgsql db add`): `p1157_ulams` (platform), `p1157_u_coffee` (tenant coffee), and since 2026-10-10 `p1157_u_gravity`, `p1157_u_poland`, `p1157_u_ulam`, `p1157_u_oncall`, `p1157_u_nightsky` (passwords in `~/ulams/.dbpass.<slug>`; `devil` demands at least one digit, one lower and one upper case letter, fed on stdin). **MyDevil truncates
   database names at 16 characters including the `p1157_` prefix**, so `TENANCY_DATABASE=p1157_u_{slug}` (slugs up to 10 characters).
   The H5P service uses the tenant database (schema `h5p`), no extra database.
 - Port reserved: `22166/tcp` (Redis on 127.0.0.1, password; the H5P service cannot use a unix socket).
@@ -45,12 +53,17 @@ The Astro front uses `ULAMS_TENANT_HOSTS={slug}-staging.ulams.app=>https://{slug
 - Crontab (saved before as `~/ulams/crontab.before.txt`: the account had no crontab): the five lines of `crontab`
   (default, builder, long queue passes every minute under `flock`; backup 03:17; log rotation) plus
   `ULAMS_REDIS_PORT=22166`, `@reboot` and `*/5` Redis start lines.
+- Interactive demo packages (`gravity.zip`, `poland.zip`, `ulam-*.zip`, built locally with `make -C api demo-packages`) are uploaded to `~/ulams/api/database/seeds/Demo/assets/cache/interactive/`; `upgrade.sh` keeps that cache directory.
 - Files: `~/ulams/{api,bin,admin,web,pdf,h5p,h5p-config,h5p-data,redis,tls,backups,logs,releases,run}`; `~/domains/<host>` for the new hosts only.
 
 ## Cloudflare objects created (zone `ulams.app`, account `b754865d6ccf05c90d33e35f213c7214`)
 
 - DNS, proxied A to 77.79.248.122: `staging`, `staging-api`, `staging-admin`, `coffee-staging`, `coffee-staging-api`, `coffee-staging-admin`,
   `staging-pdf`, `staging-h5p`. The Worker custom domains `staging-content`, `coffee-staging-content`, `staging-storage` created their own records.
+- 2026-10-10: DNS (proxied A to 77.79.248.122) `<slug>-staging`, `<slug>-staging-api`, `<slug>-staging-admin` for gravity, poland, ulam, oncall, nightsky; Worker custom domains `<slug>-staging-content` (service `ulams-staging-content`);
+  Worker routes `<slug>-staging-api.ulams.app/h5p*` (`ulams-staging-h5p-proxy`); R2 buckets `ulams-staging-<slug>`; the storage Worker has a binding for each bucket;
+  the policy of the token `ulams-staging-r2-server` lists the five new buckets too (the credentials on the server did not change).
+  `ulams-staging-content` now also allows `/interactive/*` and keeps the CSP that the API sets for a package version. Sources of the three Workers: `deploy/mydevil/cloudflare/`.
 - Zone settings: SSL mode `strict` (was `full`), Always Use HTTPS `on`.
 - Rulesets: response header `X-Robots-Tag: noindex, nofollow, noarchive` for every host containing `staging` (`http_response_headers_transform`);
   request header `X-Ulams-Content-Origin` removed on `*staging-api.ulams.app` (`http_request_late_transform`, verified: a client that sends it gets 404, the content Worker still works).
@@ -81,6 +94,18 @@ Keep APP_KEY in a password manager (ADR 0066). `AI_DRIVER=fake`, `ANTHROPIC_API_
 - `php_openbasedir` also lists `/home/wojczal/ulams` (the home directory is reachable under two paths); `~/ulams` must be mode 711 (nginx traverses it).
 - Intermittent: one `ulams:demo:reset` run failed in `getimagesize()` of the R2 endpoint URL (not the public URL) twice and then passed twice; cause not found. Watch the hourly demo reset.
 
+## Update 2026-10-10 (main at `45a191f1`)
+
+- `upgrade.sh` with the release tarball; migrations ran for the platform and coffee. The front (`front/web/dist`, built with `ULAMS_IMAGE_SERVICE=noop`, plus `front/ui`, `front/sdk`, `front/interactive-bridge`) and the admin
+  (`REACT_APP_API_URL=https://staging-api.ulams.app`, `REACT_APP_TENANT_API_HOST_PATTERN={slug}-staging-admin.ulams.app=>https://{slug}-staging-api.ulams.app`) were rebuilt locally and rsynced.
+- Env: no new variable in `.env.example` since the install; the lean-workers mode is a Docker setting and does not apply to the cron passes. `AI_DRIVER=fake` unchanged.
+- The branch `fix/runtime-no-dev-deps` was not merged on main, so the release has a `--no-dev` vendor tree: the Course Builder apply was not exercised on staging and may fail.
+- New tenants: `ulams:tenant:create <slug> --name --theme --accent --db-password --demo=on`, then `db:seed --class=DemoCoursesSeeder` with `DEMO_EXPERIENCE=<slug>`; the cron lines needed no change
+  (`domains.sh` lists every tenant). A reset of gravity took 54 s; the six hourly resets run one after another in the `default` pass.
+- Fixed in the scripts: `upgrade.sh` made the Passport keys mode 775 (the platform API answered 500 until `chmod 600`, about 20 minutes), now 600; `upgrade.sh` keeps the demo cache directory;
+  `add-vhost.sh` picked the server's own IP (`devil ssl www add` refused it), now the `webN` address (`lib.sh` `public_ip`, or `ULAMS_PUBLIC_IP`).
+- Not verified: playing the landing showcase and an interactive in a real browser (the browser extension was not connected). Verified over HTTP: every front, API config, admin, demo logins, a lesson page, the content-origin iframe (200 with CSP) and the progress ping (API and the front's `/bff`).
+
 ## Unknowns from the README, now answered
 
 | Question | Answer |
@@ -102,15 +127,19 @@ Platform and coffee `/api/config` 200; platform admin login returns a token; adm
 project); H5P embed page, core and params answer 200 through the front; the SCORM player file is served by the content origin; `/_image` works;
 Studio (`/studio`, `/studio/new`) loads with `AI_DRIVER=fake`. Playing an H5P or SCORM item in a real browser was not done.
 
-## Resources (idle, a few minutes after the last request)
+## Resources
+
+2026-10-10, after the six demos and a reset: 19 processes of the account (limit 70), about 1.4 GB resident in total including the other sites' mail processes. Seven Passenger fronts of about 145 to 180 MB each, h5p 285 MB, Redis 13 MB.
+The first install (idle, a few minutes after the last request):
 
 18 processes of the account (limit 70). Resident memory: Passenger node apps pdf 268 MB, h5p 200 MB, platform front 157 MB, coffee front 145 MB; php-fpm workers about 125 MB each
 (shared with the other PHP sites); Redis 13 MB. A cron pass takes 4 seconds for `default` and `builder`; a video pass up to a minute with ffmpeg.
 
 ## Not done / later
 
-- Real mail (`MAIL_DRIVER=log`), Anthropic key (owner decision, `AI_DRIVER=fake`), tenants `oncall` and `nightsky` (each needs a database, R2 bucket, Worker binding, three hosts), Cloudflare Workers for the fronts (the Astro app can move there).
-- The Cloudflare admin token used for this deploy is temporary and must be revoked by the owner.
+- Real mail (`MAIL_DRIVER=log`), Anthropic key (owner decision, `AI_DRIVER=fake`), Cloudflare Workers for the fronts (the Astro app can move there).
+- The Cloudflare admin token used for this deploy is temporary and must be revoked by the owner (the token used on 2026-10-10 expires 2026-10-16).
+- Risks: the hourly resets of six tenants run sequentially (about 50 s each); a reset that outlives the `--timeout=60` of its pass would fail until the next hour. The VPS `Caddyfile` of `deploy/vps-cloudflare` does not list `/interactive/*` in its content-origin path matcher (#215).
 
 ## Remove everything
 
@@ -118,10 +147,11 @@ Studio (`/studio`, `/studio/new`) loads with `AI_DRIVER=fake`. Playing an H5P or
 # on the server
 crontab -r                                            # it had no crontab before; ~/ulams/crontab.before.txt
 screen -S ulams-redis -X quit; devil port del tcp 22166
-for h in staging-api staging-admin coffee-staging-api coffee-staging-admin staging coffee-staging staging-pdf staging-h5p; do
+for h in staging-api staging-admin coffee-staging-api coffee-staging-admin staging coffee-staging staging-pdf staging-h5p \
+  $(for s in gravity poland ulam oncall nightsky; do echo $s-staging-api $s-staging-admin $s-staging; done); do
   devil ssl www del 77.79.248.122 $h.ulams.app; devil www del $h.ulams.app --remove; done
-devil pgsql db del p1157_u_coffee; devil pgsql db del p1157_ulams
+for d in coffee gravity poland ulam oncall nightsky; do devil pgsql db del p1157_u_$d; done; devil pgsql db del p1157_ulams
 rm -rf ~/ulams
 # Cloudflare (zone ulams.app): delete the DNS records and Worker domains above, the Workers and routes, the two rulesets,
-# the R2 buckets (empty them first) and the token `ulams-staging-r2-server`, revoke the Origin CA certificate, set SSL mode back to `full`.
+# the R2 buckets of all six tenants (empty them first), the DNS records and Worker domains `<slug>-staging*` of the five added tenants and the token `ulams-staging-r2-server`, revoke the Origin CA certificate, set SSL mode back to `full`.
 ```

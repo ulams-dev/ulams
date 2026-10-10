@@ -50,7 +50,7 @@ devil www options "$HOST" php_exec on || say "warning: php_exec not set"
 devil www options "$HOST" sslonly on || true
 
 if [ -n "${ULAMS_ORIGIN_CERT:-}" ] && [ -n "${ULAMS_ORIGIN_KEY:-}" ]; then
-  IP="$(devil vhost list public 2>/dev/null | awk '/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/ {print $1; exit}')"
+  IP="$(public_ip)"
   [ -n "$IP" ] || die "no public IP found in 'devil vhost list public'"
   devil ssl www add "$IP" "$ULAMS_ORIGIN_CERT" "$ULAMS_ORIGIN_KEY" "$HOST"
 fi
