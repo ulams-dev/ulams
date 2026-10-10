@@ -30,6 +30,16 @@ updates:
       # ProForm.Item props resolve to any and admin typecheck fails. Held at pro-components 2.8.4.
       - dependency-name: "@ant-design/pro-components"
         versions: [">= 2.8.5, <= 2.8.10"]
+      # Prettier 3 would reformat all of front/src (front pins 2.4.1, admin 2.8.8) and admin's CI step resolves
+      # prettier/bin-prettier.js, which 3 does not ship. Deferred, see docs/ROADMAP-TODO.md.
+      - dependency-name: "prettier"
+        update-types: [version-update:semver-major]
+      # @stripe/react-stripe-js 7 needs @stripe/stripe-js 10 (front has 1.x); the cart has no payment test, so
+      # the pair is held together. Deferred, see docs/ROADMAP-TODO.md.
+      - dependency-name: "@stripe/react-stripe-js"
+        update-types: [version-update:semver-major]
+      - dependency-name: "@stripe/stripe-js"
+        update-types: [version-update:semver-major]
     commit-message:
       prefix: "build(deps)"
 
