@@ -34,6 +34,12 @@ done
 rm -rf "$NEW/api/storage"
 cp -Rp "$ULAMS_API/storage" "$NEW/api/storage"
 mkdir -p "$NEW/api/bootstrap/cache"
+# demo seeding assets (H5P samples, the interactive package zips uploaded by hand): not in the tarball, needed by the hourly demo reset
+DEMO_CACHE=database/seeds/Demo/assets/cache
+if [ -d "$ULAMS_API/$DEMO_CACHE" ]; then
+  mkdir -p "$NEW/api/$DEMO_CACHE"
+  cp -Rp "$ULAMS_API/$DEMO_CACHE/." "$NEW/api/$DEMO_CACHE/"
+fi
 
 say "-- swap"
 # the cron lines keep running scripts from bin/, so replace it first (a script already running is not affected)
@@ -44,6 +50,8 @@ mv "$ULAMS_API" "$ULAMS_HOME/api.previous"
 mv "$NEW/api" "$ULAMS_API"
 rm -rf "$NEW"
 chmod -R 0775 "$ULAMS_API/storage" "$ULAMS_API/bootstrap/cache"
+# league/oauth2-server refuses key files that are group or world accessible: the recursive chmod above made them 775
+find "$ULAMS_API/storage" -name 'oauth-*.key' -exec chmod 600 {} +
 
 say "-- migrate and rebuild caches"
 cd "$ULAMS_API"
