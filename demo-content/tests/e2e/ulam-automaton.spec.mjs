@@ -57,15 +57,16 @@ test("ulam-automaton: the Game of Life grid can be edited with the arrow keys an
   await expect(frame.locator("#status")).toContainText("Generation 50:");
 });
 
-test("ulam-automaton: the growth rule counts 1, 5, 9, 21 cells", async ({ page }) => {
+test("ulam-automaton: the Schrandt-Ulam rule counts 1, 5, 9, 13, 25 cells (OEIS A170896)", async ({ page }) => {
   const frame = await suite.open(page, { startStep: "ulam-growth" });
   await waitForMessage(page, "stepChanged", { step: "ulam-growth" });
   await expect(frame.locator("#status")).toContainText("Generation 0: 1 cells on.");
-  for (const [g, n] of [[1, 5], [2, 9], [3, 21]]) {
+  for (const [g, n] of [[1, 5], [2, 9], [3, 13], [4, 25]]) {
     await frame.locator("#step").click();
     await expect(frame.locator("#status")).toContainText(`Generation ${g}: ${n} cells on.`);
   }
-  await expect(frame.locator("#hint")).toContainText("not as a reconstruction");
+  await expect(frame.locator("#hint")).toContainText("Schrandt-Ulam rule");
+  await expect(frame.locator("#hint")).toContainText("A170896");
 });
 
 test("ulam-automaton: three different steps visited complete it, once; with reduced motion there is no Play button", async ({ page }) => {

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { LIFE_PRESETS, countOn, elementaryNext, evolveElementary, lifeStep, placePreset, ruleTable, singleCell, uwCounts } from "../../ulam/automaton/logic.js";
+import { LIFE_PRESETS, countOn, elementaryNext, evolveElementary, lifeStep, placePreset, ruleTable, singleCell, suCounts, suStart, suStep } from "../../ulam/automaton/logic.js";
 
 const show = (rows) => rows.map((r) => [...r].map((v) => (v ? "#" : ".")).join(""));
 
@@ -63,8 +63,30 @@ test("Life presets have the right number of cells and fit the grid", () => {
   assert.deepEqual(Object.fromEntries(Object.keys(LIFE_PRESETS).map((k) => [k, countOn(placePreset(k, 64, 40))])), { glider: 5, blinker: 3, toad: 6, "r-pentomino": 5, acorn: 7 });
 });
 
-test("the growth rule counts: 1, 5, 9, 21, 25, 37, 49, 85, 89, 101, 113, 149, 161, and (4^(k+1) - 1)/3 after 2^k - 1 generations", () => {
-  const c = uwCounts(31);
-  assert.deepEqual(c.slice(0, 13), [1, 5, 9, 21, 25, 37, 49, 85, 89, 101, 113, 149, 161]);
-  for (const k of [1, 2, 3, 4, 5]) assert.equal(c[2 ** k - 1], (4 ** (k + 1) - 1) / 3, `generation ${2 ** k - 1}`);
+// OEIS A170896, "Number of ON cells after n generations of the Schrandt-Ulam cellular automaton on the square grid" (n = 0..66,
+// read on oeis.org on 2026-10-10): a(0) = 0 and the single starting cell is generation 1, so our generation g is a(g + 1).
+const A170896 = [0, 1, 5, 9, 13, 25, 29, 41, 53, 65, 85, 97, 117, 145, 157, 169, 181, 201, 229, 249, 285, 321, 365, 409, 445, 497, 549, 577, 605, 633, 669, 713, 757, 825, 893, 969, 1045, 1105, 1173, 1241, 1309, 1377, 1437, 1473, 1541, 1609, 1693, 1793, 1869, 1945, 2037, 2105, 2189, 2281, 2381, 2521, 2621, 2753, 2869, 2969, 3053, 3129, 3237, 3377, 3485, 3585, 3685, 3817, 3909];
+
+test("the Schrandt-Ulam growth rule reproduces OEIS A170896: 1, 5, 9, 13, 25, 29, 41, ... for 66 generations", () => {
+  const counts = suCounts(66);
+  assert.deepEqual(counts.slice(0, 8), [1, 5, 9, 13, 25, 29, 41, 53]);
+  assert.deepEqual(counts, A170896.slice(1, 68));
+});
+
+test("the Schrandt-Ulam rule: the first generations by hand", () => {
+  const size = 15;
+  const cells = (g) => [...g.on].flatMap((v, i) => (v ? [[(i % size) - 7, Math.floor(i / size) - 7]] : [])).sort().join(";");
+  let s = suStart(size);
+  assert.equal(cells(s), "0,0");
+  s = suStep(s, size); // the four edge-neighbours of the middle
+  assert.equal(cells(s), "-1,0;0,-1;0,0;0,1;1,0");
+  s = suStep(s, size); // each of them turns on its far neighbour; the diagonal cells have two fresh neighbours and stay off
+  assert.equal(countOn(s.on), 9);
+  assert.equal(cells(s).includes("2,0") && cells(s).includes("0,-2") && !cells(s).includes("1,1"), true);
+  s = suStep(s, size); // 13: the cells at distance 3 on the axes; the side cells next to them are cancelled by rule (c)
+  assert.equal(countOn(s.on), 13);
+  assert.equal(cells(s).includes("3,0") && !cells(s).includes("2,1"), true);
+  // cells that are on never turn off
+  const before = s.on.slice(); s = suStep(s, size);
+  for (let i = 0; i < before.length; i++) if (before[i]) assert.equal(s.on[i], 1);
 });

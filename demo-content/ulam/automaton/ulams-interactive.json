@@ -1,47 +1,79 @@
 {
   "$schema": "https://ulams.dev/schemas/ulams-interactive/v1.json",
   "id": "ulam-automaton",
-  "title": { "en": "Cellular automata: simple rules, surprising patterns" },
-  "version": "1.0.0",
+  "title": {
+    "en": "Cellular automata: simple rules, surprising patterns"
+  },
+  "version": "1.1.0",
   "entry": "index.html",
   "licence": "MIT",
   "attribution": "© 2026 Mateusz Wojczal. Code: MIT. Text: CC BY 4.0.",
-  "source": { "url": "https://github.com/ulams-dev/ulams/tree/main/demo-content/ulam/automaton", "ref": "main" },
-  "locales": ["en"],
+  "source": {
+    "url": "https://github.com/ulams-dev/ulams/tree/main/demo-content/ulam/automaton",
+    "ref": "main"
+  },
+  "locales": [
+    "en"
+  ],
   "defaultLocale": "en",
   "bridge": 1,
-  "capabilities": { "steps": true, "reducedMotion": true, "score": false, "background": false },
+  "capabilities": {
+    "steps": true,
+    "reducedMotion": true,
+    "score": false,
+    "background": false
+  },
   "requires": [],
   "network": [],
   "steps": [
     {
       "id": "rule30",
-      "title": { "en": "Rule 30: order from one cell" },
-      "text": { "en": "A row of cells, each on or off. The next row follows from one rule: a cell's new state depends on itself and its two neighbours. Start from a single cell and apply rule 30. Press Step, or Play, and watch a pattern that looks irregular grow from a very simple start." },
+      "title": {
+        "en": "Rule 30: order from one cell"
+      },
+      "text": {
+        "en": "A row of cells, each on or off. The next row follows from one rule: a cell's new state depends on itself and its two neighbours. Start from a single cell and apply rule 30. Press Step, or Play, and watch a pattern that looks irregular grow from a very simple start."
+      },
       "poster": "posters/rule30.webp"
     },
     {
       "id": "rule90",
-      "title": { "en": "Rule 90: a triangle inside a triangle" },
-      "text": { "en": "Change the rule number and the picture changes completely. Rule 90 draws a pattern of nested triangles that repeats itself at every scale. There are only 256 rules of this kind, because a rule is an answer for each of the eight possible neighbourhoods, and rule numbers are those answers written as bits." },
+      "title": {
+        "en": "Rule 90: a triangle inside a triangle"
+      },
+      "text": {
+        "en": "Change the rule number and the picture changes completely. Rule 90 draws a pattern of nested triangles that repeats itself at every scale. There are only 256 rules of this kind, because a rule is an answer for each of the eight possible neighbourhoods, and rule numbers are those answers written as bits."
+      },
       "poster": "posters/rule90.webp"
     },
     {
       "id": "rule110",
-      "title": { "en": "Rule 110: neither order nor noise" },
-      "text": { "en": "Rule 110 grows a mixture of regular stripes and small structures that move and collide. Try other rule numbers between 0 and 255 and look for the ones that settle quickly, the ones that repeat, and the ones that never seem to." },
+      "title": {
+        "en": "Rule 110: neither order nor noise"
+      },
+      "text": {
+        "en": "Rule 110 grows a mixture of regular stripes and small structures that move and collide. Try other rule numbers between 0 and 255 and look for the ones that settle quickly, the ones that repeat, and the ones that never seem to."
+      },
       "poster": "posters/rule110.webp"
     },
     {
       "id": "life",
-      "title": { "en": "The Game of Life" },
-      "text": { "en": "Now cells live on a grid and the rule looks at all eight neighbours: a live cell with two or three live neighbours stays alive, and an empty cell with exactly three live neighbours comes alive. Choose a pattern, press Play, and then edit the grid yourself: click a cell, or move with the arrow keys and press Space." },
+      "title": {
+        "en": "The Game of Life"
+      },
+      "text": {
+        "en": "Now cells live on a grid and the rule looks at all eight neighbours: a live cell with two or three live neighbours stays alive, and an empty cell with exactly three live neighbours comes alive. Choose a pattern, press Play, and then edit the grid yourself: click a cell, or move with the arrow keys and press Space."
+      },
       "poster": "posters/life.webp"
     },
     {
       "id": "ulam-growth",
-      "title": { "en": "Growing a pattern from one cell" },
-      "text": { "en": "One more rule: an empty cell turns on when exactly one of its four neighbours was on. Start from one cell and step. The pattern grows into a square lattice of holes and branches, and the number of cells on after each generation follows a sequence you can count. This is an illustration of a pattern grown from a single cell, not a reconstruction of any historical experiment." },
+      "title": {
+        "en": "The Schrandt-Ulam growth rule"
+      },
+      "text": {
+        "en": "One more rule, on a grid of squares, from a single cell. Cells that are on stay on, and only the cells that turned on in the last generation can turn others on. An off cell turns on when exactly one of its four edge-neighbours is on and that neighbour is brand new, unless one of the two cells at the far corners is already on, or the cell is a far corner of another new cell (then both stay off). This is the rule of R. G. Schrandt and S. M. Ulam; the number of cells on after each generation is OEIS A170896: 1, 5, 9, 13, 25, 29, 41, and so on. Press Step and compare."
+      },
       "poster": "posters/ulam-growth.webp"
     }
   ],

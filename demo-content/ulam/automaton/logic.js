@@ -1,6 +1,6 @@
 // @ts-check
 // The pure logic of the cellular automata interactive: elementary rules, Conway's Game of Life and the
-// Ulam-Warburton growth rule. No DOM, so the unit tests run it in Node.
+// Schrandt-Ulam growth rule. No DOM, so the unit tests run it in Node.
 
 /** @param {number} rule 0 … 255 @returns {Uint8Array} out[v] is the next state for a neighbourhood v = left·4 + centre·2 + right */
 export function ruleTable(rule) {
@@ -65,33 +65,57 @@ export function placePreset(/** @type {keyof typeof LIFE_PRESETS} */ name, /** @
 }
 
 /**
- * The Ulam-Warburton growth rule on a square grid that does not wrap: an off cell turns on when exactly one of
- * its four orthogonal neighbours is on. Start from a single cell in the middle.
+ * The Schrandt-Ulam growth rule on a square grid that does not wrap (OEIS A170896, after Schrandt and Ulam):
+ * cells that are on stay on, and only the cells that turned on in the last generation ("fresh" cells) try to turn
+ * their four edge-neighbours on. An off cell Q turns on in the next generation when
+ *   (a) exactly one of its edge-neighbours is on, and that one is a fresh cell P;
+ *   (b) the two cells that touch Q only at a corner on the far side from P (its "outer squares") are not on; and
+ *   (c) Q is not an outer square of another cell that passed (a) and (b) (both are then left off).
+ * The state is `{ on, fresh }`, two size x size grids. Start from a single cell in the middle ({@link suStart}).
  */
-export function uwStep(/** @type {Uint8Array} */ grid, /** @type {number} */ size) {
-  const out = grid.slice();
+export function suStep(/** @type {{ on: Uint8Array, fresh: Uint8Array }} */ state, /** @type {number} */ size) {
+  const { on, fresh } = state;
+  const at = (/** @type {Uint8Array} */ a, /** @type {number} */ x, /** @type {number} */ y) => (x >= 0 && y >= 0 && x < size && y < size && a[y * size + x] === 1 ? 1 : 0);
+  const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+  /** @type {{ x: number, y: number, outer: number[][] }[]} */
+  const prospects = [];
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
-      if (grid[y * size + x]) continue;
-      const n = (x > 0 ? grid[y * size + x - 1] : 0) + (x < size - 1 ? grid[y * size + x + 1] : 0) + (y > 0 ? grid[(y - 1) * size + x] : 0) + (y < size - 1 ? grid[(y + 1) * size + x] : 0);
-      if (n === 1) out[y * size + x] = 1;
+      if (on[y * size + x]) continue;
+      let alive = 0, freshN = 0, dx = 0, dy = 0;
+      for (const [ax, ay] of dirs) {
+        alive += at(on, x + ax, y + ay);
+        if (at(fresh, x + ax, y + ay)) { freshN++; dx = ax; dy = ay; }
+      }
+      if (alive !== 1 || freshN !== 1) continue;                        // (a)
+      const outer = [[x - dx - dy, y - dy + dx], [x - dx + dy, y - dy - dx]];
+      if (outer.some(([ox, oy]) => at(on, ox, oy))) continue;            // (b)
+      prospects.push({ x, y, outer });
     }
   }
-  return out;
+  const blocked = new Set(prospects.flatMap((p) => p.outer.map(([ox, oy]) => oy * size + ox)));
+  const next = { on: on.slice(), fresh: new Uint8Array(size * size) };
+  for (const p of prospects) {
+    const i = p.y * size + p.x;
+    if (blocked.has(i)) continue;                                        // (c)
+    next.on[i] = 1; next.fresh[i] = 1;
+  }
+  return next;
 }
 
-export function uwStart(/** @type {number} */ size) {
-  const grid = new Uint8Array(size * size);
-  grid[Math.floor(size / 2) * size + Math.floor(size / 2)] = 1;
-  return grid;
+export function suStart(/** @type {number} */ size) {
+  const on = new Uint8Array(size * size), fresh = new Uint8Array(size * size);
+  const middle = Math.floor(size / 2) * size + Math.floor(size / 2);
+  on[middle] = 1; fresh[middle] = 1;
+  return { on, fresh };
 }
 
-/** The number of live cells after g generations of the growth rule (g = 0 is the single cell). */
-export function uwCounts(/** @type {number} */ generations) {
-  const size = 2 * generations + 3;
-  let grid = uwStart(size);
+/** The number of cells on after g generations of the rule (g = 0 is the single cell): 1, 5, 9, 13, 25, 29, 41, ... */
+export function suCounts(/** @type {number} */ generations) {
+  const size = 2 * generations + 5;
+  let state = suStart(size);
   const counts = [1];
-  for (let g = 0; g < generations; g++) { grid = uwStep(grid, size); counts.push(countOn(grid)); }
+  for (let g = 0; g < generations; g++) { state = suStep(state, size); counts.push(countOn(state.on)); }
   return counts;
 }
 
