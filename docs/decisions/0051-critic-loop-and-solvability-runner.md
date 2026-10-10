@@ -40,3 +40,17 @@ Option 1:
 - Good: works without the runner; interactives are marked "not checked".
 - Bad: a ~400 MB optional image, and more cost per course.
 - Default pending #55.
+
+## Implementation notes (M2.4, critics)
+
+- A `critique` stage runs after the quizzes, one step per lesson. Mechanics and accessibility use the
+  existing deterministic checks; pedagogy (with the four pillars) and UX are light-model tasks
+  (`critic_pedagogy`, `critic_ux`); grounding records the result of the existing grounding step.
+- A failure that concerns the lesson text goes to the `refine` task (the lesson patch schema and validators),
+  at most `COURSE_BUILDER_REFINE_MAX_ITERATIONS` (2) times. What remains becomes a lesson flag and a publish
+  warning.
+- The model critics and fixes share `COURSE_BUILDER_CRITIC_USD` (USD 1) per course; afterwards they are
+  `skipped` and the summary says so. `COURSE_BUILDER_LLM_CRITICS=false` turns the model critics off,
+  `COURSE_BUILDER_QUALITY=false` the whole stage.
+- The recorded coffee cassettes predate the model critics; the replay test switches them off. New cassettes
+  are recorded with the eval command when the prompts are final.

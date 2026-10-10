@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "UX critique",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["verdict", "issues"],
+  "properties": {
+    "verdict": { "type": "string", "enum": ["pass", "fail"] },
+    "issues": {
+      "type": "array",
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["elementId", "problem"],
+        "properties": { "elementId": { "type": "string" }, "problem": { "type": "string", "maxLength": 400 } }
+      }
+    }
+  }
+}

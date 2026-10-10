@@ -30,6 +30,10 @@ use Ulams\CourseBuilder\Fake\SyntheticResponders;
 use Ulams\CourseBuilder\Ingestion\SourceIngestor;
 use Ulams\CourseBuilder\Pipeline\BriefService;
 use Ulams\CourseBuilder\Pipeline\GenerationService;
+use Ulams\CourseBuilder\Quality\AccessibilityCritic;
+use Ulams\CourseBuilder\Quality\CriticLoop;
+use Ulams\CourseBuilder\Quality\CritiqueWarnings;
+use Ulams\CourseBuilder\Quality\MechanicsCritic;
 use Ulams\CourseBuilder\Pipeline\GlobalEditService;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
@@ -82,6 +86,9 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         OutlineEditor::class => OutlineEditor::class,
         GenerationService::class => GenerationService::class,
         GlobalEditService::class => GlobalEditService::class,
+        CriticLoop::class => CriticLoop::class,
+        MechanicsCritic::class => MechanicsCritic::class,
+        AccessibilityCritic::class => AccessibilityCritic::class,
         PatchService::class => PatchService::class,
         BlueprintApplier::class => BlueprintApplier::class,
         SiteTheme::class => SiteTheme::class,
@@ -126,6 +133,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         }
 
         $this->app->make(PromptRegistry::class)->addPath(Llm::PROMPTS, __DIR__ . '/../resources/prompts');
+        PublishCheck::extendWarnings('critiques', fn (Session $session) => CritiqueWarnings::for($session));
         RunService::extend(GlobalEditService::HANDLER, fn (Run $run, Session $session) => $this->app->make(GlobalEditService::class)->handleRun($run, $session));
         RunService::extendRetry(GlobalEditService::HANDLER, fn (Step $step) => $this->app->make(GlobalEditService::class)->retry($step));
         SyntheticResponders::register($this->app->make(FakeResponders::class));

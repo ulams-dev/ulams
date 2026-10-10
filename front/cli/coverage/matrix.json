@@ -1,5 +1,5 @@
 {
- "summary": "518/565 covered, 47 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "519/566 covered, 47 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -311,6 +311,12 @@
    "key": "GET /api/admin/course-builder/sessions/{session}/citations",
    "summary": "Sources panel: sections with the elements that cite them",
    "command": "builder.citations",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}/critiques",
+   "summary": "Critique results of the generated course: per lesson and critic, the last verdict and its issues",
+   "command": "builder.critiques",
    "status": "covered"
   },
   {

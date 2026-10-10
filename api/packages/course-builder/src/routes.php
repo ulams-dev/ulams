@@ -16,6 +16,7 @@ Route::group([
 
     Route::post('sessions/{session}/sources', [CourseBuilderController::class, 'upload']);
     Route::get('sessions/{session}/sources/{source}', [CourseBuilderController::class, 'source']);
+    Route::get('sessions/{session}/critiques', [CourseBuilderController::class, 'critiques']);
     Route::get('sessions/{session}/citations', [CourseBuilderController::class, 'citations']);
     Route::get('fragments/{fragment}', [CourseBuilderController::class, 'fragment']);
 

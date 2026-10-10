@@ -209,6 +209,17 @@ describe("interactions round-trip as A2UI actions", () => {
     });
   });
 
+  it("the publish summary shows the quality review per critic", () => {
+    const main = mount(single("PublishSummary"));
+    const rows = [...main.querySelectorAll(".cb-quality tbody tr")].map((r) => r.textContent);
+    expect(rows).toHaveLength(3);
+    expect(rows[0]).toContain("Pedagogy");
+    expect(rows[0]).toContain("41");
+    expect(main.textContent).toContain("rewritten up to 2 times");
+    const none = mount(single("PublishSummary", { ...builderFixtures.PublishSummary!, quality: undefined }));
+    expect(none.querySelector(".cb-quality")).toBeNull();
+  });
+
   it("request changes sends the comment", () => {
     const c = ctx();
     const main = mount(single("OutlineDiff"), c);

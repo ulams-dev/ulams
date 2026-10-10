@@ -2661,6 +2661,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/course-builder/sessions/{session}/critiques": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Critique results of the generated course: per lesson and critic, the last verdict and its issues */
+        get: operations["e857c4d0b5bdd8d5d831b57ada9c2761"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/course-builder/fragments/{fragment}": {
         parameters: {
             query?: never;
@@ -15854,6 +15871,26 @@ export interface operations {
             };
             /** @description over the cost limit */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    e857c4d0b5bdd8d5d831b57ada9c2761: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description critiques */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };

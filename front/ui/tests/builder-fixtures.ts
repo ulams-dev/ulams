@@ -122,6 +122,7 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
     blocking: [],
     warnings: [{ code: "accessibility", message: "“Grinding”: heading level jumps from h2 to h4." }],
     notes: [],
+    quality: { critics: [{ critic: "pedagogy", pass: 4, fail: 1, skipped: 0 }, { critic: "mechanics", pass: 5, fail: 0, skipped: 0 }, { critic: "ux", pass: 3, fail: 0, skipped: 2 }], iterations: 2 },
   },
   SitePicker: {
     questionKey: "site",

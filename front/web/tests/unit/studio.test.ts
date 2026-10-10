@@ -19,6 +19,7 @@ describe("studio BFF allow-list", () => {
     ["POST", `/sessions/${S}/publish`],
     ["GET", `/sessions/${S}/publish-check`],
     ["GET", `/sessions/${S}/citations`],
+    ["GET", `/sessions/${S}/critiques`],
     ["POST", `/sessions/${S}/outline`],
     ["POST", `/sessions/${S}/global-edit`],
     ["POST", `/sessions/${S}/elements/${S}/variants`],

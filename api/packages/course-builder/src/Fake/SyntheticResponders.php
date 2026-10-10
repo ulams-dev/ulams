@@ -20,6 +20,9 @@ final class SyntheticResponders
         $responders->register('lesson', fn (DriverRequest $r) => self::lesson($r));
         $responders->register('grounding', fn (DriverRequest $r) => ['unsupported' => []]);
         $responders->register('quiz', fn (DriverRequest $r) => self::quiz($r));
+        $responders->register('critic_pedagogy', fn (DriverRequest $r) => self::pedagogy($r));
+        $responders->register('critic_ux', fn (DriverRequest $r) => ['verdict' => 'pass', 'issues' => []]);
+        $responders->register('refine', fn (DriverRequest $r) => self::refine($r));
         $responders->register('global', fn (DriverRequest $r) => self::global($r));
         $responders->register('selfcheck', fn (DriverRequest $r) => self::quiz($r));
         $responders->register('interaction_h5p', fn (DriverRequest $r) => self::h5p($r));
@@ -266,6 +269,29 @@ final class SyntheticResponders
         }
 
         return ['questions' => $questions];
+    }
+
+    private static function pedagogy(DriverRequest $r): array
+    {
+        $ok = ['ok' => true, 'reason' => 'Fine for this lesson.'];
+
+        return [
+            'objectives' => array_map(fn ($o) => ['id' => $o['id'], 'covered' => true, 'reason' => 'The blocks teach it.'], (array) (self::input($r)['objectives'] ?? [])),
+            'difficultyIncreases' => $ok, 'noAnswerLeak' => $ok,
+            'pillars' => ['alignment' => $ok, 'agency' => $ok, 'scaffolding' => $ok, 'feedback' => $ok],
+            'issues' => [],
+        ];
+    }
+
+    /** A stand-in for the fix step: the same blocks with a visible mark. */
+    private static function refine(DriverRequest $r): array
+    {
+        $lesson = (array) (self::input($r)['lesson'] ?? []);
+
+        return ['reply' => 'I tightened the blocks the reviewers pointed at.', 'ui' => 'DiffView', 'replacement' => [
+            'title' => $lesson['title'], 'summary' => $lesson['summary'] ?? '', 'minutes' => $lesson['minutes'],
+            'blocks' => array_map(fn ($b) => ['id' => $b['id'], 'kind' => $b['kind'], 'markdown' => rtrim($b['markdown']) . ' (revised)', 'citations' => $b['citations'], 'objectiveIds' => $b['objectiveIds']], $lesson['blocks']),
+        ]];
     }
 
     /** A stand-in for a whole-course edit: the same text with a visible mark, so tests and demos see what changed. */

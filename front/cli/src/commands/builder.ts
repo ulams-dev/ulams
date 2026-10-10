@@ -773,6 +773,22 @@ export const builderCommands: AnyCommand[] = [
 
   defineCommand({
     ...common,
+    id: "builder.critiques",
+    summary: "Show what the quality critics said about each lesson of the generated course",
+    description: "The last verdict (pass, fail, skipped) per lesson and critic (pedagogy, grounding, mechanics, ux, accessibility), the issues behind a failure, how many fix rounds were needed (data.iterations) and a count per critic (data.critics). A failure is a warning in `builder publish-check`, never a blocker.",
+    kind: "read",
+    scopes: READ,
+    endpoints: ["GET /api/admin/course-builder/sessions/{session}/critiques"],
+    positionals: ["session"],
+    input: z.object({ session }),
+    output: z.unknown(),
+    examples: [{ title: "What still needs review", argv: "builder critiques <session> --json" }],
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "GET", "/sessions/{session}/critiques", { params: { session: i.session } }) };
+    },
+  }),
+  defineCommand({
+    ...common,
     id: "builder.outline-edit",
     summary: "Edit the course structure: rename, move, add or remove modules and lessons",
     description:

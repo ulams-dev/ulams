@@ -72,6 +72,8 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="kind", type="string"), @OA\Property(property="value", type="string"), @OA\Property(property="confirmed", type="boolean"))),
  *     @OA\Response(response=200, description="estimate, needs confirmation"), @OA\Response(response=202, description="run started"), @OA\Response(response=409, description="over the cost limit"))
+ * @OA\Get(path="/api/admin/course-builder/sessions/{session}/critiques", summary="Critique results of the generated course: per lesson and critic, the last verdict and its issues", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="critiques"))
  * @OA\Get(path="/api/admin/course-builder/fragments/{fragment}", summary="One source fragment (citation popover)", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="fragment", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="fragment"))
  * @OA\Get(path="/api/admin/course-builder/sessions/{session}/brief", summary="Course Brief", tags={"Admin Course Builder"}, security={{"passport": {}}},
@@ -511,6 +513,13 @@ class CourseBuilderController extends Controller
         }
 
         return self::ok($body, $result['state'] === 'started' ? 202 : 200);
+    }
+
+    public function critiques(Request $request, string $session): JsonResponse
+    {
+        $s = $this->sessionFor($request, $session);
+
+        return self::ok(['versionId' => $s->current_version_id, 'items' => \Ulams\CourseBuilder\Quality\CritiqueWarnings::latest($s)] + \Ulams\CourseBuilder\Quality\CritiqueWarnings::summary($s));
     }
 
     public function variants(Request $request, string $session, string $element): JsonResponse

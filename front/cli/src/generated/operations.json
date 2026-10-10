@@ -312,6 +312,12 @@
   "tag": "Admin Course Builder"
  },
  {
+  "method": "GET",
+  "path": "/api/admin/course-builder/sessions/{session}/critiques",
+  "summary": "Critique results of the generated course: per lesson and critic, the last verdict and its issues",
+  "tag": "Admin Course Builder"
+ },
+ {
   "method": "POST",
   "path": "/api/admin/course-builder/sessions/{session}/elements/{element}/variants",
   "summary": "Give me options: 2 or 3 proposals for one element, compared side by side",

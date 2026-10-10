@@ -16,7 +16,9 @@ use Ulams\CourseBuilder\ContentTypes\InteractiveType;
 use Ulams\CourseBuilder\ContentTypes\LiaScriptRenderer;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Jobs\StepJob;
+use Ulams\CourseBuilder\Models\Critique;
 use Ulams\CourseBuilder\Models\Fragment;
+use Ulams\CourseBuilder\Quality\CriticLoop;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Step;
@@ -34,7 +36,7 @@ use Ulams\CourseBuilder\Ui\Surfaces;
  */
 final class GenerationService
 {
-    public const STAGES = ['lessons' => 'Lessons', 'grounding' => 'Grounding check', 'interactions' => 'Interactive elements', 'quizzes' => 'Quizzes', 'metadata' => 'Metadata & landing'];
+    public const STAGES = ['lessons' => 'Lessons', 'grounding' => 'Grounding check', 'interactions' => 'Interactive elements', 'quizzes' => 'Quizzes', 'critique' => 'Quality review', 'metadata' => 'Metadata & landing'];
 
     public function __construct(
         private readonly Llm $llm,
@@ -46,6 +48,7 @@ final class GenerationService
         private readonly PriceService $prices,
         private readonly ContentTypeRegistry $types,
         private readonly H5pLibraries $h5p,
+        private readonly CriticLoop $critics,
     ) {
     }
 
@@ -80,6 +83,7 @@ final class GenerationService
                 ...(!empty($brief['assessments']['perLessonQuiz']) ? array_map(fn ($i) => 'quiz:' . $i['lesson']['id'], iterator_to_array(Blueprint::lessons($outline), false)) : []),
                 ...(!empty($brief['assessments']['finalTest']) ? ['final_test'] : []),
             ],
+            'critique' => config('course_builder.quality.enabled', true) ? array_map(fn ($i) => 'critique:' . $i['lesson']['id'], iterator_to_array(Blueprint::lessons($outline), false)) : [],
             'metadata' => ['metadata'],
         };
     }
@@ -245,6 +249,7 @@ final class GenerationService
         return match (true) {
             str_starts_with($step->key, 'lesson:') => $this->lesson($session, $run, $outline, $found, $known),
             str_starts_with($step->key, 'grounding:') => $this->grounding($session, $run, $outline, $found, $known),
+            str_starts_with($step->key, 'critique:') => $this->critique($session, $run, $outline, $found, $known),
             str_starts_with($step->key, 'selfcheck:') => $this->selfChecks($session, $run, $outline, $found, $known),
             str_starts_with($step->key, 'interaction:') => $this->interaction($session, $run, $outline, $found, $known),
             str_starts_with($step->key, 'quiz:') => $this->quiz($session, $run, $outline, $found, $known),
@@ -359,6 +364,21 @@ final class GenerationService
         ];
 
         return $this->questions($session, $run, $outline, $known, array_column($lesson['objectives'], 'id'), $input, "Write {$count} quiz questions for the lesson in task_input.");
+    }
+
+    /** The quality loop over one finished lesson: critics, fixes, flags (ADR 0051). */
+    private function critique(Session $session, Run $run, array $outline, array $found, array $known): array
+    {
+        $lesson = $found['node'];
+        $steps = Step::query()->where('run_id', $run->id)->get()->keyBy('key');
+        $lesson['blocks'] = $this->lessonBlocks($run, $lesson['id']);
+        $lesson['selfChecks'] = $steps["selfcheck:{$lesson['id']}"]->output['questions'] ?? [];
+        $lesson['interaction'] = $steps["interaction:{$lesson['id']}"]->output['interaction'] ?? null;
+        $quiz = $steps["quiz:{$lesson['id']}"] ?? null;
+        $lesson['quiz'] = $quiz?->output ? ['id' => 'q', 'questions' => $quiz->output['questions']] : null;
+        $out = $this->critics->run($session, $run, $outline, $lesson, $steps["grounding:{$lesson['id']}"]->output['flags'] ?? [], $known);
+
+        return ['data' => ['blocks' => $out['blocks'], 'flags' => $out['flags'], 'rounds' => $out['rounds']], 'cost' => $out['cost']];
     }
 
     /** The inline questions of a LiaScript lesson (rendered into the lesson text by our code). */
@@ -561,6 +581,11 @@ final class GenerationService
                 $doc['modules'][$m]['lessons'][$l]['blocks'] = $blocks;
                 $doc['modules'][$m]['lessons'][$l]['status'] = $blocks === [] ? 'failed' : 'generated';
                 $doc['modules'][$m]['lessons'][$l]['flags'] = $steps["grounding:{$lesson['id']}"]->output['flags'] ?? [];
+                $review = $steps["critique:{$lesson['id']}"]->output ?? null;
+                if ($review !== null) {
+                    $doc['modules'][$m]['lessons'][$l]['blocks'] = $review['blocks'];
+                    $doc['modules'][$m]['lessons'][$l]['flags'] = array_slice([...$doc['modules'][$m]['lessons'][$l]['flags'], ...$review['flags']], 0, 20);
+                }
                 $checks = $steps["selfcheck:{$lesson['id']}"]->output['questions'] ?? null;
                 if ($checks !== null) {
                     $doc['modules'][$m]['lessons'][$l]['selfChecks'] = $checks;
@@ -587,6 +612,7 @@ final class GenerationService
         $doc['pages'] = ['landing' => LandingDocument::landing($doc, $session->brief), 'header' => LandingDocument::header($doc, $session->brief)];
 
         $version = $this->versions->create($session, $doc, 'content', 'ai', Version::PROPOSED, $outlineVersion, 'Generated lessons, quizzes and metadata');
+        $this->recordCritiques($session, $version, $steps);
         $session->current_version_id = $version->id;
         $session->status = Session::APPLY_REVIEW;
         $session->title = $doc['course']['title'];
@@ -609,6 +635,24 @@ final class GenerationService
         $this->events->runFinished($run, ['versionId' => $version->id]);
 
         return $version;
+    }
+
+    /** Stores what the critics said, per lesson, critic and iteration, against the version they produced. */
+    private function recordCritiques(Session $session, Version $version, $steps): void
+    {
+        foreach ($steps as $key => $step) {
+            if (!str_starts_with($key, 'critique:') || empty($step->output['rounds'])) {
+                continue;
+            }
+            foreach ($step->output['rounds'] as $round) {
+                foreach ($round['critics'] as $c) {
+                    Critique::query()->create([
+                        'session_id' => $session->id, 'version_id' => $version->id, 'element_id' => substr($key, 9), 'critic' => $c['critic'],
+                        'iteration' => (int) $round['iteration'], 'verdict' => $c['verdict'], 'issues' => $c['issues'] ?: null, 'ai_call_id' => $c['callId'] ?? null,
+                    ]);
+                }
+            }
+        }
     }
 
     public function publishProgress(Run $run): void
@@ -637,7 +681,7 @@ final class GenerationService
         $lessons = [];
         foreach (Blueprint::lessons($outline) as $item) {
             $id = $item['lesson']['id'];
-            $parts = array_filter([$steps["lesson:{$id}"] ?? null, $steps["grounding:{$id}"] ?? null, $steps["selfcheck:{$id}"] ?? null, $steps["interaction:{$id}"] ?? null, $steps["quiz:{$id}"] ?? null]);
+            $parts = array_filter([$steps["lesson:{$id}"] ?? null, $steps["grounding:{$id}"] ?? null, $steps["selfcheck:{$id}"] ?? null, $steps["interaction:{$id}"] ?? null, $steps["quiz:{$id}"] ?? null, $steps["critique:{$id}"] ?? null]);
             $failed = collect($parts)->first(fn (Step $s) => $s->status === 'failed');
             $blocks = $this->lessonBlocksFrom($steps, $id);
             $flags = $steps["grounding:{$id}"]->output['flags'] ?? [];
@@ -682,6 +726,7 @@ final class GenerationService
         return match (true) {
             str_starts_with($step->key, 'lesson:') => ($found['label'] ?? 'A lesson'),
             str_starts_with($step->key, 'grounding:') => 'The grounding check of ' . ($found['label'] ?? 'a lesson'),
+            str_starts_with($step->key, 'critique:') => 'The quality review of ' . ($found['label'] ?? 'a lesson'),
             str_starts_with($step->key, 'selfcheck:') => 'The self-checks of ' . ($found['label'] ?? 'a lesson'),
             str_starts_with($step->key, 'interaction:') => 'The interactive part of ' . ($found['label'] ?? 'a lesson'),
             str_starts_with($step->key, 'quiz:') => 'The quiz of ' . ($found['label'] ?? 'a lesson'),

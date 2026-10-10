@@ -121,6 +121,8 @@ ulams builder global-edit <session> --kind translate --value pl             # th
 ulams builder global-edit <session> --kind translate --value pl --confirm   # one proposed version with the whole diff
 ```
 
+`ulams builder critiques <session>` lists the quality critics' verdicts per lesson (a failure is a publish warning, never a blocker).
+
 Each outline edit is saved as an approved author version and re-applied; `builder variants` makes proposed versions that share a group,
 which you approve one of (`builder patches approve`) or reject.
 

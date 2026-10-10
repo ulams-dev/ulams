@@ -44,6 +44,10 @@ return [
         'quiz' => ['profile' => env('AI_TASK_QUIZ_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
         'metadata' => ['profile' => env('AI_TASK_METADATA_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 4000],
         // lesson formats (ADR 0050): inline questions of a LiaScript lesson, an H5P activity, an interactive from the library
+        // quality loop (ADR 0051): model critics on the structured lesson and the fix they trigger
+        'critic_pedagogy' => ['profile' => env('AI_TASK_CRITIC_PEDAGOGY_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 4000],
+        'critic_ux' => ['profile' => env('AI_TASK_CRITIC_UX_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 3000],
+        'refine' => ['profile' => env('AI_TASK_REFINE_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
         // whole-course edits: translate, change level or tone, one call per lesson
         'global' => ['profile' => env('AI_TASK_GLOBAL_PROFILE', 'default'), 'effort' => 'low', 'max_tokens' => 32000],
         'selfcheck' => ['profile' => env('AI_TASK_SELFCHECK_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 8000],
