@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Dialog cards (H5P.Dialogcards)",
+  "description": "Flash cards: a prompt on the front, the answer on the back. Every back must be stated in the cited source text.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["title", "instruction", "cards"],
+  "properties": {
+    "title": { "type": "string", "description": "Title of the card set", "minLength": 2, "maxLength": 120 },
+    "instruction": { "type": "string", "description": "One sentence telling the learner what to do", "minLength": 3, "maxLength": 300 },
+    "cards": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["front", "back", "tip"],
+        "properties": {
+          "front": { "type": "string", "description": "A term or question", "minLength": 2, "maxLength": 300 },
+          "back": { "type": "string", "description": "The answer or definition, one to three sentences", "minLength": 2, "maxLength": 600 },
+          "tip": { "type": "string", "description": "A hint shown on request; empty for none", "maxLength": 150 }
+        }
+      }
+    }
+  }
+}

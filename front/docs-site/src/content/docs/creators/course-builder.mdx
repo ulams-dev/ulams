@@ -67,14 +67,41 @@ The outline appears as a proposal: modules, lessons with their length, measurabl
 objectives and amber **citation chips**. Select a chip to read the source passage.
 
 - **Edit** an objective inline, then **Approve outline & generate**.
+- Choose each lesson's **format** (see below) before you approve.
 - Or write what you want changed and press **Request changes**; you get a new proposal with the
   differences marked (added, changed, removed).
 
 Nothing is generated before you approve the outline.
 
+### Lesson formats
+
+Every lesson is **rich text** unless you choose otherwise in the outline. The other formats are only
+offered when your academy can create them:
+
+| Format | What learners get | Offered when |
+|---|---|---|
+| Rich text | Formatted text and a list of the sections it draws on | always |
+| LiaScript | An interactive lesson with two or three questions inside the text that they answer as they read (single choice, multiple choice or a short answer) and see the explanation at once | LiaScript is available (it is by default) |
+| Lesson with an H5P activity | The lesson text followed by one activity: fill in the blanks, drag the words or flash cards | the H5P libraries Blanks, Drag the Words and Dialog Cards are installed |
+| Lesson with an interactive | The lesson text followed by one of the interactive packages in your library, played between the steps the builder picks, with a short cited text beside it | your library holds at least one [interactive package](/creators/interactive/) |
+
+The builder never writes LiaScript, H5P or interactive code. For a LiaScript lesson it writes the
+questions and our code lays them out in the LiaScript syntax; for an H5P activity it fills a small
+form of its own (sentences with blanks, words, cards) that our code turns into the H5P content; for
+an interactive it only chooses a package from your library and the steps. **Every question, blank
+and card cites the passage it comes from**, answers have to appear in that passage, and the activity
+is a diff you approve like every other change. An interactive package is never created or edited by
+the builder (it is software someone uploaded and answers for).
+
+After the lessons are written you see the extra parts in the lesson preview (**Self-check 1**, the
+activity, each with its citations); you can ask the assistant to change a self-check like any other
+question. To change a lesson's format later, ask in that lesson's chat or choose the format in a new
+outline. Switching a lesson back to rich text removes its LiaScript document or H5P content when you
+apply.
+
 ## 4. Watch the lessons being written
 
-The progress card shows the stages (lessons, grounding check, quizzes, metadata) and each lesson
+The progress card shows the stages (lessons, grounding check, interactive elements, quizzes, metadata) and each lesson
 with its citations, questions and cost. The running AI cost is shown at the top.
 
 - A **grounding check** compares every lesson with the passages it cites; claims it cannot find are

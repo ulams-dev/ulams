@@ -134,8 +134,9 @@ final class Checks
      * @param array<string,bool> $known
      * @return string[] errors and warnings prefixed with "warning:"
      */
-    public static function blueprint(array $doc, array $known): array
+    public static function blueprint(array $doc, array $known, ?\Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry $types = null): array
     {
+        $types ??= app(\Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry::class);
         $errors = [];
         foreach (Blueprint::lessons($doc) as $item) {
             $lesson = $item['lesson'];
@@ -157,6 +158,7 @@ final class Checks
                 $w = "{$where} Q" . ($q + 1);
                 $errors = [...$errors, ...self::citations($question['citations'] ?? [], $known, $w), ...self::questionShape($question, $w)];
             }
+            $errors = [...$errors, ...$types->forLesson($lesson)->check($lesson, $where, $known)];
             foreach ($lesson['flags'] ?? [] as $flag) {
                 $errors[] = "warning: {$where}: {$flag}";
             }

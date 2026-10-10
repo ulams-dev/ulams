@@ -36,6 +36,20 @@ return [
         'poll_ms' => (int) env('COURSE_BUILDER_SSE_POLL_MS', 500),
     ],
 
+    // Lesson formats beyond rich text (ADR 0050). Each can be switched off for the installation; the
+    // builder also checks at runtime that the package is present, the H5P libraries are installed and
+    // the library holds an interactive package.
+    'content_types' => [
+        'liascript' => filter_var(env('COURSE_BUILDER_LIASCRIPT', true), FILTER_VALIDATE_BOOLEAN),
+        'h5p' => filter_var(env('COURSE_BUILDER_H5P', true), FILTER_VALIDATE_BOOLEAN),
+        'interactive' => filter_var(env('COURSE_BUILDER_INTERACTIVE', true), FILTER_VALIDATE_BOOLEAN),
+    ],
+    // H5P libraries the builder may create (a subset of the supported three, checked against the installed ones)
+    'h5p_libraries' => ['H5P.Blanks', 'H5P.DragText', 'H5P.Dialogcards'],
+    // Let the outline pick a format by rule (a LiaScript lesson for every lesson with two or more
+    // objectives, when LiaScript is available). Off: lessons are rich text until the author changes them.
+    'auto_formats' => filter_var(env('COURSE_BUILDER_AUTO_FORMATS', false), FILTER_VALIDATE_BOOLEAN),
+
     // Quiz answers must share words with the cited fragments (deterministic support check)
     'quiz_support_min_overlap' => 2,
 

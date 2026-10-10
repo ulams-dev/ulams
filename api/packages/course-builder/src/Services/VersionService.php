@@ -4,6 +4,7 @@ namespace Ulams\CourseBuilder\Services;
 
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Blueprint\BlueprintDiff;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Version;
@@ -30,6 +31,8 @@ final class VersionService
         ?int $decidedBy = null,
         ?array $sourceRevisions = null,
     ): Version {
+        $document = Blueprint::upgrade($document);
+
         return DB::transaction(function () use ($session, $document, $kind, $origin, $status, $parent, $reason, $elementId, $callIds, $decidedBy, $sourceRevisions) {
             Session::query()->whereKey($session->id)->lockForUpdate()->first(['id']);
             $number = (int) Version::query()->where('session_id', $session->id)->max('number') + 1;

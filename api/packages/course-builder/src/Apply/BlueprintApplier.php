@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
+use Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry;
 use Ulams\CourseBuilder\Contracts\FragmentArchive;
 use Ulams\CourseBuilder\Contracts\RemovalPolicy;
 use Ulams\CourseBuilder\Blueprint\Checks;
@@ -34,8 +35,9 @@ use Ulams\TopicTypes\Models\TopicContent\RichText;
  * requests (the pattern of courses-import-export), the GIFT question service with GIFT rendered by
  * our code, `CourseServiceContract::sort` and the pages service for the landing document.
  *
- * Mapping: course → course; module → lesson; blueprint lesson → RichText topic (+ a GIFT quiz topic
- * when it has a quiz); final test → a "Final test" lesson with a GIFT quiz topic; landing → page.
+ * Mapping: course → course; module → lesson; blueprint lesson → the topics of its content type
+ * (RichText; a LiaScript topic; RichText plus an H5P or Interactive topic: ADR 0050) and a GIFT quiz
+ * topic when it has a quiz; final test → a "Final test" lesson with a GIFT quiz topic; landing → page.
  * The entity map holds a fingerprint of each element as applied, so a re-apply creates new elements,
  * updates changed ones, deletes removed ones and leaves the rest untouched. Everything runs in one
  * transaction as the author; the course is created unpublished.
@@ -53,6 +55,8 @@ final class BlueprintApplier
         private readonly FragmentArchive $archive,
         private readonly SiteTheme $theme,
         private readonly CourseCommerce $commerce,
+        private readonly ContentTypeRegistry $types,
+        private readonly TopicWriter $writer,
     ) {
     }
 
@@ -84,16 +88,19 @@ final class BlueprintApplier
         $sourceTitle = (string) ($doc['sources'][0]['title'] ?? '');
         foreach ($doc['modules'] as $m => $module) {
             $add('lesson', $module['id'], array_filter(['title' => $module['title'], 'summary' => $module['summary'] ?? null]), "course:{$course['id']}", $m + 1);
+            $base = 0;
             foreach ($module['lessons'] as $l => $lesson) {
-                $add('topic', $lesson['id'], [
-                    'title' => $lesson['title'],
-                    'summary' => $lesson['summary'] ?? null,
-                    'duration' => $lesson['minutes'] . ' min',
-                    'value' => LessonMarkdown::render($lesson, $labels, $sourceTitle),
-                ], "lesson:{$module['id']}", $l * 2 + 1);
-                if (is_array($lesson['quiz'] ?? null) && $lesson['quiz']['questions'] !== []) {
-                    $this->addQuiz($add, $lesson['quiz'], 'Quiz: ' . $lesson['title'], "Check what you learned in “{$lesson['title']}”.", "lesson:{$module['id']}", $l * 2 + 2, null);
+                $topics = $this->types->forLesson($lesson)->topics($lesson, $labels, $sourceTitle, (string) ($course['language'] ?? 'en'));
+                $extra = count($topics) - 1;
+                foreach ($topics as $topic) {
+                    $primary = $topic['slot'] === 'primary';
+                    $data = $topic['class'] === RichText::class ? $topic['data'] : ['class' => $topic['class']] + $topic['data'];
+                    $add($primary ? 'topic' : 'interaction_topic', $topic['element'], $data, "lesson:{$module['id']}", $base + ($primary ? 1 : 2));
                 }
+                if (is_array($lesson['quiz'] ?? null) && $lesson['quiz']['questions'] !== []) {
+                    $this->addQuiz($add, $lesson['quiz'], 'Quiz: ' . $lesson['title'], "Check what you learned in “{$lesson['title']}”.", "lesson:{$module['id']}", $base + 2 + $extra, null);
+                }
+                $base += 2 + $extra;
             }
         }
         if (is_array($doc['finalTest'] ?? null) && $doc['finalTest']['questions'] !== []) {
@@ -137,7 +144,7 @@ final class BlueprintApplier
         $bucket = fn (string $type) => match ($type) {
             'course' => 'courses',
             'lesson' => 'lessons',
-            'topic', 'quiz_topic' => 'topics',
+            'topic', 'interaction_topic', 'quiz_topic' => 'topics',
             'gift_question' => 'questions',
             'page' => 'pages',
         };
@@ -157,6 +164,12 @@ final class BlueprintApplier
         $warnings = array_map(fn ($e) => str_starts_with($e, 'warning: ') ? substr($e, 9) : $e, Checks::blueprint($doc, $known));
         if (isset($session->brief['theme']) && !$this->theme->authorMayChange($session->author, (array) $session->brief)) {
             $warnings[] = 'The theme in your brief will not be applied: only site admins can change the site theme.';
+        }
+        foreach (Blueprint::lessons($doc) as $item) {
+            $wanted = (string) ($item['lesson']['contentType'] ?? 'richtext');
+            if ($wanted !== 'richtext' && !$this->types->for($wanted)->enabled()) {
+                $warnings[] = 'Lesson ' . $item['number'] . ': ' . $this->types->for($wanted)->label() . ' is not available on this installation right now.';
+            }
         }
         foreach ($this->drift($session, $doc) as $title) {
             $warnings[] = "Edited in the admin after the last apply: {$title}. The apply stops until you confirm overwriting it.";
@@ -188,7 +201,7 @@ final class BlueprintApplier
             $model = match ($entry->entity_type) {
                 'course' => \Ulams\Courses\Models\Course::class,
                 'lesson' => \Ulams\Courses\Models\Lesson::class,
-                'topic', 'quiz_topic' => \Ulams\Courses\Models\Topic::class,
+                'topic', 'interaction_topic', 'quiz_topic' => \Ulams\Courses\Models\Topic::class,
                 'gift_question' => \Ulams\TopicTypeGift\Models\GiftQuestion::class,
                 'page' => \Ulams\Pages\Models\Page::class,
                 default => null,
@@ -261,15 +274,15 @@ final class BlueprintApplier
 
         // deletions first (questions, topics, lessons), so removed elements never linger; the removal
         // policy may keep an entity that learners have data on (deactivated or archived instead)
-        foreach (['gift_question', 'quiz_topic', 'topic', 'lesson', 'page'] as $type) {
+        foreach (['gift_question', 'quiz_topic', 'interaction_topic', 'topic', 'lesson', 'page'] as $type) {
             foreach ($map as $key => $entry) {
                 if ($entry->entity_type !== $type || isset($desired[$key]) || $entry->retired_at !== null) {
                     continue;
                 }
-                if ($type !== 'page' && !$this->removal->shouldDelete($type, $entry->entity_id)) {
+                if ($type !== 'page' && !$this->removal->shouldDelete($type === 'interaction_topic' ? 'topic' : $type, $entry->entity_id)) {
                     match ($type) {
                         'gift_question' => $this->questions->archive($entry->entity_id),
-                        'quiz_topic', 'topic' => $this->topics->update(['active' => false], $entry->entity_id),
+                        'quiz_topic', 'interaction_topic', 'topic' => $this->topics->update(['active' => false], $entry->entity_id),
                         'lesson' => $this->lessons->update(['active' => false], $entry->entity_id),
                     };
                     if ($type === 'gift_question') {
@@ -281,9 +294,12 @@ final class BlueprintApplier
                     }
                     continue;
                 }
+                if (in_array($type, ['topic', 'interaction_topic'], true)) {
+                    $this->writer->release($entry->entity_id);
+                }
                 match ($type) {
                     'gift_question' => $this->questions->delete($entry->entity_id),
-                    'quiz_topic', 'topic' => $this->topics->delete($entry->entity_id),
+                    'quiz_topic', 'interaction_topic', 'topic' => $this->topics->delete($entry->entity_id),
                     'lesson' => $this->lessons->delete($entry->entity_id),
                     'page' => $this->pages->deleteById($entry->entity_id),
                 };
@@ -292,7 +308,7 @@ final class BlueprintApplier
             }
         }
 
-        foreach (['course', 'lesson', 'topic', 'quiz_topic', 'gift_question', 'page'] as $type) {
+        foreach (['course', 'lesson', 'topic', 'interaction_topic', 'quiz_topic', 'gift_question', 'page'] as $type) {
             foreach ($desired as $key => $item) {
                 if ($item['type'] !== $type || !$changed($key, $item)) {
                     continue;
@@ -302,8 +318,8 @@ final class BlueprintApplier
                 $entityId = match ($type) {
                     'course' => $this->course($item, $existing, (int) $author->getAuthIdentifier()),
                     'lesson' => $this->lesson($item, $existing, (int) $parentId),
-                    'topic' => $this->topic($item, $existing, (int) $parentId, RichText::class),
-                    'quiz_topic' => $this->topic($item, $existing, (int) $parentId, GiftQuiz::class),
+                    'topic', 'interaction_topic' => $this->topic($item, $existing, (int) $parentId, (string) ($item['data']['class'] ?? RichText::class), (int) $author->getAuthIdentifier()),
+                    'quiz_topic' => $this->topic($item, $existing, (int) $parentId, GiftQuiz::class, (int) $author->getAuthIdentifier()),
                     'gift_question' => $this->question($item, $existing, (int) $parentId),
                     'page' => $this->page($item, $existing, (int) $ids["course:{$doc['course']['id']}"], (int) $author->getAuthIdentifier()),
                 };
@@ -343,9 +359,16 @@ final class BlueprintApplier
         return $this->lessons->create(Validator::make($data, \Ulams\Courses\Models\Lesson::$rules)->validate())->getKey();
     }
 
-    private function topic(array $item, ?int $existing, int $lessonId, string $class): int
+    private function topic(array $item, ?int $existing, int $lessonId, string $class, int $authorId): int
     {
-        $data = array_filter($item['data'], fn ($v) => $v !== null) + [
+        if ($existing !== null && ($current = $this->writer->classOf($existing)) !== null && $current !== $class) {
+            // the lesson changed format (rich text ⇄ LiaScript): a topic cannot change its content class
+            $this->writer->release($existing);
+            $this->topics->delete($existing);
+            $existing = null;
+        }
+        $fields = $this->writer->prepare($class, $item['data'], $existing, $authorId);
+        $data = array_filter($fields, fn ($v) => $v !== null) + [
             'lesson_id' => $lessonId,
             'order' => $item['order'],
             'active' => true,
@@ -398,7 +421,7 @@ final class BlueprintApplier
             }
             if ($item['type'] === 'lesson') {
                 $lessons[] = [$ids[$key], $item['order']];
-            } elseif (in_array($item['type'], ['topic', 'quiz_topic'], true)) {
+            } elseif (in_array($item['type'], ['topic', 'interaction_topic', 'quiz_topic'], true)) {
                 $topics[$item['parent']][] = [$ids[$key], $item['order']];
             }
         }

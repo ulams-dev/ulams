@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Self-check questions",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "questions"
+  ],
+  "properties": {
+    "questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "stem",
+          "options",
+          "explanation",
+          "citations",
+          "objectiveIds"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "single",
+              "multiple",
+              "truefalse",
+              "short"
+            ]
+          },
+          "stem": {
+            "type": "string",
+            "description": "The question",
+            "maxLength": 1000,
+            "minLength": 3
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "text",
+                "correct"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "description": "Answer",
+                  "maxLength": 500,
+                  "minLength": 1
+                },
+                "correct": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "minItems": 1,
+            "maxItems": 6
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Why the answer is right",
+            "maxLength": 2000,
+            "minLength": 3
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$",
+              "description": "A fragment id from the source"
+            },
+            "minItems": 1,
+            "maxItems": 3
+          },
+          "objectiveIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "An objective id from task_input"
+            },
+            "minItems": 1,
+            "maxItems": 3
+          }
+        }
+      },
+      "minItems": 1,
+      "maxItems": 12
+    }
+  }
+}

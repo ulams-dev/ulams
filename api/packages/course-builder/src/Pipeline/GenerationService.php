@@ -9,6 +9,11 @@ use Ulams\CourseBuilder\Apply\BlueprintApplier;
 use Ulams\CourseBuilder\Apply\LandingDocument;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Blueprint\Checks;
+use Ulams\CourseBuilder\ContentTypes\ContentType;
+use Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry;
+use Ulams\CourseBuilder\ContentTypes\H5pLibraries;
+use Ulams\CourseBuilder\ContentTypes\InteractiveType;
+use Ulams\CourseBuilder\ContentTypes\LiaScriptRenderer;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Jobs\StepJob;
 use Ulams\CourseBuilder\Models\Fragment;
@@ -20,14 +25,16 @@ use Ulams\CourseBuilder\Services\VersionService;
 use Ulams\CourseBuilder\Ui\Surfaces;
 
 /**
- * Stages 3–6: lessons (in parallel, with a concurrency window), grounding check with one
- * regeneration, quizzes and the final test, metadata; then the content version is assembled and
+ * Stages 3–7: lessons (in parallel, with a concurrency window), grounding check with one
+ * regeneration, the format-specific parts (self-checks of a LiaScript lesson, an H5P activity or an
+ * interactive from the library; a stage without steps for rich text courses), quizzes and the final
+ * test, metadata; then the content version is assembled and
  * the apply proposal shown. Every unit is a step keyed by element id: a `done` step is skipped on
  * resume, a failed step can be retried alone, and the rest of the course stays usable.
  */
 final class GenerationService
 {
-    public const STAGES = ['lessons' => 'Lessons', 'grounding' => 'Grounding check', 'quizzes' => 'Quizzes', 'metadata' => 'Metadata & landing'];
+    public const STAGES = ['lessons' => 'Lessons', 'grounding' => 'Grounding check', 'interactions' => 'Interactive elements', 'quizzes' => 'Quizzes', 'metadata' => 'Metadata & landing'];
 
     public function __construct(
         private readonly Llm $llm,
@@ -37,6 +44,8 @@ final class GenerationService
         private readonly EventLog $events,
         private readonly BlueprintApplier $applier,
         private readonly PriceService $prices,
+        private readonly ContentTypeRegistry $types,
+        private readonly H5pLibraries $h5p,
     ) {
     }
 
@@ -62,6 +71,11 @@ final class GenerationService
         return match ($stage) {
             'lessons' => array_map(fn ($i) => 'lesson:' . $i['lesson']['id'], iterator_to_array(Blueprint::lessons($outline), false)),
             'grounding' => array_map(fn ($i) => 'grounding:' . $i['lesson']['id'], iterator_to_array(Blueprint::lessons($outline), false)),
+            'interactions' => array_values(array_filter(array_map(function ($i) {
+                $follow = $this->types->forLesson($i['lesson'], true)->followUp();
+
+                return $follow === ContentType::FOLLOW_SELF_CHECKS ? 'selfcheck:' . $i['lesson']['id'] : ($follow === ContentType::FOLLOW_INTERACTION ? 'interaction:' . $i['lesson']['id'] : null);
+            }, iterator_to_array(Blueprint::lessons($outline), false)))),
             'quizzes' => [
                 ...(!empty($brief['assessments']['perLessonQuiz']) ? array_map(fn ($i) => 'quiz:' . $i['lesson']['id'], iterator_to_array(Blueprint::lessons($outline), false)) : []),
                 ...(!empty($brief['assessments']['finalTest']) ? ['final_test'] : []),
@@ -231,6 +245,8 @@ final class GenerationService
         return match (true) {
             str_starts_with($step->key, 'lesson:') => $this->lesson($session, $run, $outline, $found, $known),
             str_starts_with($step->key, 'grounding:') => $this->grounding($session, $run, $outline, $found, $known),
+            str_starts_with($step->key, 'selfcheck:') => $this->selfChecks($session, $run, $outline, $found, $known),
+            str_starts_with($step->key, 'interaction:') => $this->interaction($session, $run, $outline, $found, $known),
             str_starts_with($step->key, 'quiz:') => $this->quiz($session, $run, $outline, $found, $known),
             $step->key === 'final_test' => $this->finalTest($session, $run, $outline, $known),
             $step->key === 'metadata' => $this->metadata($session, $run, $outline, $known),
@@ -345,6 +361,102 @@ final class GenerationService
         return $this->questions($session, $run, $outline, $known, array_column($lesson['objectives'], 'id'), $input, "Write {$count} quiz questions for the lesson in task_input.");
     }
 
+    /** The inline questions of a LiaScript lesson (rendered into the lesson text by our code). */
+    private function selfChecks(Session $session, Run $run, array $outline, array $found, array $known): array
+    {
+        $lesson = $found['node'];
+        $count = max(2, min(3, (int) round($lesson['minutes'] / 5)));
+        $input = [
+            'count' => $count,
+            'lesson' => ['title' => $lesson['title'], 'objectives' => array_map(fn ($o) => ['id' => $o['id'], 'text' => $o['text']], $lesson['objectives'])],
+            'blocks' => array_map(fn ($b) => ['markdown' => $b['markdown'], 'citations' => $b['citations']], $this->lessonBlocks($run, $lesson['id'])),
+        ];
+
+        return $this->questions($session, $run, $outline, $known, array_column($lesson['objectives'], 'id'), $input, "Write {$count} self-check questions for the lesson in task_input.", 'selfcheck');
+    }
+
+    /** One H5P activity or one interactive from the library, after the lesson text. */
+    private function interaction(Session $session, Run $run, array $outline, array $found, array $known): array
+    {
+        $lesson = $found['node'];
+        $objectiveIds = array_column($lesson['objectives'], 'id');
+        $blocks = $this->lessonBlocks($run, $lesson['id']);
+        $map = $this->context->fragmentMap($session);
+        $base = ['lesson' => ['title' => $lesson['title'], 'objectives' => array_map(fn ($o) => ['id' => $o['id'], 'text' => $o['text']], $lesson['objectives'])],
+            'blocks' => array_map(fn ($b) => ['markdown' => $b['markdown'], 'citations' => $b['citations']], $blocks)];
+        $check = function (array $i, string $where) use ($known, $objectiveIds) {
+            $errors = Checks::citations($i['citations'] ?? [], $known, $where);
+            foreach ($i['objectiveIds'] ?? [] as $oid) {
+                if (!in_array($oid, $objectiveIds, true)) {
+                    $errors[] = "{$where}: objective {$oid} is not an objective of this lesson";
+                }
+            }
+
+            return [...$errors, ...Checks::markup((string) ($i['title'] ?? ''), "{$where}/title")];
+        };
+
+        if ($lesson['contentType'] === 'interactive') {
+            $library = InteractiveType::library();
+            $ids = array_column($library, 'id');
+            $stepIds = array_column($library, 'steps', 'id');
+            $result = $this->llm->generate($session, $run, 'interaction_interactive', [
+                $this->context->sourceBlock($session),
+                $this->context->contextBlock($session, $outline),
+                $this->context->instruction('Attach one interactive from the library to the lesson in task_input.', $base + ['library' => $library]),
+            ], function (array $data) use ($check, $ids, $stepIds) {
+                $i = (array) ($data['interaction'] ?? []);
+                $errors = $check($i, 'interaction');
+                if (!in_array($i['packageId'] ?? null, $ids, true)) {
+                    $errors[] = 'interaction/packageId: choose one of the ids in task_input.library';
+                } else {
+                    $steps = array_column($stepIds[$i['packageId']], 'id');
+                    foreach (['startStep', 'endStep'] as $f) {
+                        if (($i[$f] ?? '') !== '' && !in_array($i[$f], $steps, true)) {
+                            $errors[] = "interaction/{$f}: \"{$i[$f]}\" is not a step of that package";
+                        }
+                    }
+                    if (($i['startStep'] ?? '') !== '' && ($i['endStep'] ?? '') !== '' && array_search($i['startStep'], $steps, true) > array_search($i['endStep'], $steps, true)) {
+                        $errors[] = 'interaction/endStep: comes before startStep';
+                    }
+                }
+
+                return [...$errors, ...Checks::markup((string) ($i['caption'] ?? ''), 'interaction/caption')];
+            });
+            $i = $result->data['interaction'];
+
+            return ['data' => ['interaction' => array_filter([
+                'id' => Blueprint::newId(), 'kind' => 'interactive', 'packageId' => (int) $i['packageId'], 'title' => trim($i['title']),
+                'startStep' => ($i['startStep'] ?? '') !== '' ? $i['startStep'] : null, 'endStep' => ($i['endStep'] ?? '') !== '' ? $i['endStep'] : null,
+                'caption' => trim($i['caption']), 'citations' => array_values(array_unique($i['citations'])), 'objectiveIds' => array_values(array_unique($i['objectiveIds'])),
+            ], fn ($v) => $v !== null)], 'cost' => $result->costMicroUsd];
+        }
+
+        $libraries = array_keys($this->h5p->installed());
+        if ($libraries === []) {
+            throw new LlmException(LlmException::INVALID_OUTPUT, 'No H5P library is installed on this platform.');
+        }
+        $minOverlap = (int) config('course_builder.quiz_support_min_overlap', 2);
+        $result = $this->llm->generate($session, $run, 'interaction_h5p', [
+            $this->context->sourceBlock($session),
+            $this->context->contextBlock($session, $outline),
+            $this->context->instruction('Design one H5P activity for the lesson in task_input.', $base + ['libraries' => $libraries]),
+        ], function (array $data) use ($check, $libraries, $map, $minOverlap) {
+            $i = (array) ($data['interaction'] ?? []);
+            if (!in_array($i['library'] ?? null, $libraries, true)) {
+                return ['interaction/library: not an installed library'];
+            }
+            $texts = array_map(fn ($id) => isset($map[$id]) ? $map[$id]->text : '', $i['citations'] ?? []);
+
+            return [...$check($i, 'interaction'), ...H5pLibraries::errors($i['library'], (array) $i['data'], 'interaction'), ...H5pLibraries::unsupported($i['library'], (array) $i['data'], array_filter($texts), 'interaction', $minOverlap)];
+        }, H5pLibraries::outputSchema($libraries));
+        $i = $result->data['interaction'];
+
+        return ['data' => ['interaction' => [
+            'id' => Blueprint::newId(), 'kind' => 'h5p', 'library' => $i['library'], 'title' => trim($i['title']), 'data' => $i['data'],
+            'citations' => array_values(array_unique($i['citations'])), 'objectiveIds' => array_values(array_unique($i['objectiveIds'])),
+        ]], 'cost' => $result->costMicroUsd];
+    }
+
     private function finalTest(Session $session, Run $run, array $outline, array $known): array
     {
         $lessons = iterator_to_array(Blueprint::lessons($outline), false);
@@ -360,15 +472,15 @@ final class GenerationService
             "Write a final test of {$count} questions covering the course objectives in task_input, at most one question per objective.");
     }
 
-    private function questions(Session $session, Run $run, array $outline, array $known, array $objectiveIds, array $input, string $instruction): array
+    private function questions(Session $session, Run $run, array $outline, array $known, array $objectiveIds, array $input, string $instruction, string $task = 'quiz'): array
     {
         $map = $this->context->fragmentMap($session);
         $minOverlap = (int) config('course_builder.quiz_support_min_overlap', 2);
-        $result = $this->llm->generate($session, $run, 'quiz', [
+        $result = $this->llm->generate($session, $run, $task, [
             $this->context->sourceBlock($session),
             $this->context->contextBlock($session, $outline),
             $this->context->instruction($instruction, $input),
-        ], function (array $data) use ($known, $objectiveIds, $map, $minOverlap) {
+        ], function (array $data) use ($known, $objectiveIds, $map, $minOverlap, $task) {
             $errors = [];
             foreach ($data['questions'] ?? [] as $q => $question) {
                 $w = "questions/{$q}";
@@ -380,6 +492,9 @@ final class GenerationService
                     if (!in_array($oid, $objectiveIds, true)) {
                         $errors[] = "{$w}: objective {$oid} is not in task_input";
                     }
+                }
+                if ($task === 'selfcheck' && LiaScriptRenderer::unsafe(($question['stem'] ?? '') . ' ' . ($question['explanation'] ?? '') . ' ' . implode(' ', array_column($question['options'] ?? [], 'text')))) {
+                    $errors[] = "{$w}: contains a macro, script or import; write plain text";
                 }
                 $texts = array_map(fn ($id) => isset($map[$id]) ? $map[$id]->text : '', $question['citations'] ?? []);
                 $errors = [...$errors, ...Checks::quizSupport($question, array_filter($texts), $w, $minOverlap)];
@@ -446,6 +561,14 @@ final class GenerationService
                 $doc['modules'][$m]['lessons'][$l]['blocks'] = $blocks;
                 $doc['modules'][$m]['lessons'][$l]['status'] = $blocks === [] ? 'failed' : 'generated';
                 $doc['modules'][$m]['lessons'][$l]['flags'] = $steps["grounding:{$lesson['id']}"]->output['flags'] ?? [];
+                $checks = $steps["selfcheck:{$lesson['id']}"]->output['questions'] ?? null;
+                if ($checks !== null) {
+                    $doc['modules'][$m]['lessons'][$l]['selfChecks'] = $checks;
+                }
+                $interaction = $steps["interaction:{$lesson['id']}"]->output['interaction'] ?? null;
+                if ($interaction !== null) {
+                    $doc['modules'][$m]['lessons'][$l]['interaction'] = $interaction;
+                }
                 $quiz = $steps["quiz:{$lesson['id']}"] ?? null;
                 $doc['modules'][$m]['lessons'][$l]['quiz'] = $quiz?->output ? ['id' => Blueprint::newId(), 'questions' => $quiz->output['questions']] : null;
             }
@@ -514,7 +637,7 @@ final class GenerationService
         $lessons = [];
         foreach (Blueprint::lessons($outline) as $item) {
             $id = $item['lesson']['id'];
-            $parts = array_filter([$steps["lesson:{$id}"] ?? null, $steps["grounding:{$id}"] ?? null, $steps["quiz:{$id}"] ?? null]);
+            $parts = array_filter([$steps["lesson:{$id}"] ?? null, $steps["grounding:{$id}"] ?? null, $steps["selfcheck:{$id}"] ?? null, $steps["interaction:{$id}"] ?? null, $steps["quiz:{$id}"] ?? null]);
             $failed = collect($parts)->first(fn (Step $s) => $s->status === 'failed');
             $blocks = $this->lessonBlocksFrom($steps, $id);
             $flags = $steps["grounding:{$id}"]->output['flags'] ?? [];
@@ -559,6 +682,8 @@ final class GenerationService
         return match (true) {
             str_starts_with($step->key, 'lesson:') => ($found['label'] ?? 'A lesson'),
             str_starts_with($step->key, 'grounding:') => 'The grounding check of ' . ($found['label'] ?? 'a lesson'),
+            str_starts_with($step->key, 'selfcheck:') => 'The self-checks of ' . ($found['label'] ?? 'a lesson'),
+            str_starts_with($step->key, 'interaction:') => 'The interactive part of ' . ($found['label'] ?? 'a lesson'),
             str_starts_with($step->key, 'quiz:') => 'The quiz of ' . ($found['label'] ?? 'a lesson'),
             $step->key === 'final_test' => 'The final test',
             default => 'The metadata step',

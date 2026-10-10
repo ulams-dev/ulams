@@ -11,6 +11,7 @@ use Ulams\LiaScript\Http\Resources\LiaScriptTopicResource;
 use Ulams\LiaScript\Import\LiaScriptTopicImportStrategy;
 use Ulams\LiaScript\Models\LiaScriptTopic;
 use Ulams\LiaScript\Services\LiaScriptPlayer;
+use Ulams\LiaScript\Services\Contracts\LiaScriptServiceContract;
 use Ulams\LiaScript\Services\LiaScriptService;
 use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
 use Ulams\Uploads\UlamsUploadsServiceProvider;
@@ -25,6 +26,7 @@ class UlamsLiaScriptServiceProvider extends ServiceProvider
 
     public $singletons = [
         LiaScriptService::class => LiaScriptService::class,
+        LiaScriptServiceContract::class => LiaScriptService::class,
         LiaScriptPlayer::class => LiaScriptPlayer::class,
     ];
 

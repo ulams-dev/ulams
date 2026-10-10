@@ -1279,6 +1279,11 @@
                         },
                         "description": "Fragments the lesson draws on",
                         "maxItems": 20
+                      },
+                      "format": {
+                        "type": "string",
+                        "description": "Lesson format key: richtext, liascript, h5p or interactive",
+                        "maxLength": 20
                       }
                     },
                     "required": [
@@ -1331,6 +1336,36 @@
             },
             "description": "Removed since the previous version",
             "maxItems": 40
+          },
+          "formats": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "Format key",
+                  "maxLength": 20
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Name",
+                  "maxLength": 80
+                },
+                "description": {
+                  "type": "string",
+                  "description": "What learners get",
+                  "maxLength": 300
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Lesson formats the author may choose from while the outline is proposed",
+            "maxItems": 8
           },
           "comment": {
             "type": "string",
@@ -1616,6 +1651,82 @@
             },
             "description": "Grounding flags",
             "maxItems": 20
+          },
+          "format": {
+            "type": "string",
+            "description": "Lesson format, e.g. LiaScript · 3 self-checks or H5P · Fill in the blanks · 4 blanks",
+            "maxLength": 200
+          },
+          "extras": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Element id",
+                  "maxLength": 32
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "check",
+                    "activity"
+                  ],
+                  "description": "A self-check question, or the H5P activity or interactive after the text"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Where it is, e.g. Self-check 1",
+                  "maxLength": 120
+                },
+                "text": {
+                  "type": "string",
+                  "description": "The question or a description of the activity",
+                  "maxLength": 1000
+                },
+                "editable": {
+                  "type": "boolean",
+                  "description": "The assistant can edit it in chat"
+                },
+                "citations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "fragmentId": {
+                        "type": "string",
+                        "description": "Fragment id (frg_…)",
+                        "maxLength": 16
+                      },
+                      "label": {
+                        "type": "string",
+                        "description": "Section label shown on the chip, e.g. §2.3 Brewing ratios",
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "fragmentId",
+                      "label"
+                    ],
+                    "additionalProperties": false,
+                    "description": "A source citation"
+                  },
+                  "description": "Cited fragments",
+                  "maxItems": 10
+                }
+              },
+              "required": [
+                "id",
+                "kind",
+                "label",
+                "text",
+                "citations"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Self-checks and the activity of a LiaScript, H5P or interactive lesson",
+            "maxItems": 12
           }
         },
         "required": [

@@ -10,6 +10,13 @@ use Ulams\CourseBuilder\Apply\BlueprintApplier;
 use Ulams\CourseBuilder\Apply\CourseCommerce;
 use Ulams\CourseBuilder\Apply\DeleteEverything;
 use Ulams\CourseBuilder\Apply\SiteTheme;
+use Ulams\CourseBuilder\Apply\TopicWriter;
+use Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry;
+use Ulams\CourseBuilder\ContentTypes\H5pLibraries;
+use Ulams\CourseBuilder\ContentTypes\H5pType;
+use Ulams\CourseBuilder\ContentTypes\InteractiveType;
+use Ulams\CourseBuilder\ContentTypes\LiaScriptType;
+use Ulams\CourseBuilder\ContentTypes\RichTextType;
 use Ulams\CourseBuilder\Contracts\FragmentArchive;
 use Ulams\CourseBuilder\Contracts\RemovalPolicy;
 use Ulams\CourseBuilder\Ingestion\NoFragmentArchive;
@@ -39,6 +46,9 @@ use Ulams\CourseBuilder\Ui\Surfaces;
 use Ulams\CourseBuilder\Ui\UiCatalogue;
 use Ulams\Commerce\UlamsCommerceServiceProvider;
 use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\H5P\UlamsH5PServiceProvider;
+use Ulams\Interactive\UlamsInteractiveServiceProvider;
+use Ulams\LiaScript\UlamsLiaScriptServiceProvider;
 use Ulams\Pages\UlamsPagesServiceProvider;
 use Ulams\Settings\UlamsSettingsServiceProvider;
 use Ulams\TopicTypeGift\UlamsTopicTypeGiftServiceProvider;
@@ -68,6 +78,13 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         PatchService::class => PatchService::class,
         BlueprintApplier::class => BlueprintApplier::class,
         SiteTheme::class => SiteTheme::class,
+        TopicWriter::class => TopicWriter::class,
+        ContentTypeRegistry::class => ContentTypeRegistry::class,
+        RichTextType::class => RichTextType::class,
+        LiaScriptType::class => LiaScriptType::class,
+        H5pType::class => H5pType::class,
+        H5pLibraries::class => H5pLibraries::class,
+        InteractiveType::class => InteractiveType::class,
         CourseCommerce::class => CourseCommerce::class,
         PriceService::class => PriceService::class,
         PublishCheck::class => PublishCheck::class,
@@ -82,7 +99,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/course_builder.php', 'course_builder');
-        foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class, UlamsSettingsServiceProvider::class, UlamsCommerceServiceProvider::class] as $provider) {
+        foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class, UlamsSettingsServiceProvider::class, UlamsCommerceServiceProvider::class, UlamsLiaScriptServiceProvider::class, UlamsH5PServiceProvider::class, UlamsInteractiveServiceProvider::class] as $provider) {
             $this->app->register($provider);
         }
     }

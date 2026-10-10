@@ -116,6 +116,8 @@ final class Surfaces
             return $out;
         };
         $stats = Blueprint::stats($doc);
+        $registry = app(\Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry::class);
+        $formats = $status === 'proposed' ? array_values(array_map(fn ($t) => ['value' => $t->key(), 'label' => $t->label(), 'description' => $t->description()], $registry->enabled())) : [];
         $removed = [];
         foreach ($changes as $c) {
             if ($c['kind'] === 'removed' && in_array($c['type'], ['module', 'lesson'], true)) {
@@ -148,6 +150,7 @@ final class Surfaces
                         'change' => $mark($l['id']),
                         'objectives' => array_map($objective, $l['objectives'] ?? []),
                         'citations' => $cite($l['citations'] ?? []),
+                        'format' => $l['contentType'] ?? 'richtext',
                     ], fn ($v) => $v !== null);
                     foreach ($byId[$l['id']]['fields'] ?? [] as $f) {
                         if ($f['field'] === 'title' && is_string($f['before'])) {
@@ -159,6 +162,7 @@ final class Surfaces
                 }, $m['lessons']),
             ], fn ($v) => $v !== null), $doc['modules']),
             'removed' => $removed,
+            'formats' => count($formats) > 1 ? $formats : null,
             'comment' => $comment,
         ], fn ($v) => $v !== null);
 

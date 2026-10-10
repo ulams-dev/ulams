@@ -5,6 +5,7 @@ namespace Ulams\CourseBuilder\Pipeline;
 use InvalidArgumentException;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Blueprint\Checks;
+use Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
@@ -25,6 +26,7 @@ final class OutlineService
         private readonly VersionService $versions,
         private readonly Surfaces $surfaces,
         private readonly EventLog $events,
+        private readonly ContentTypeRegistry $types,
     ) {
     }
 
@@ -43,6 +45,9 @@ final class OutlineService
         $result = $this->llm->generate($session, $run, 'outline', $blocks, fn (array $data) => self::validate($data, $known, (int) $brief['totalMinutes']));
 
         $doc = $this->document($session, $result->data);
+        if (config('course_builder.auto_formats')) {
+            $doc = $this->suggestFormats($doc);
+        }
         $version = $this->versions->create($session, $doc, 'outline', 'ai', Version::PROPOSED, $previous, $comment ?? 'Proposed outline', null, $result->callIds);
         $session->current_version_id = $version->id;
         $session->status = Session::OUTLINE_REVIEW;
@@ -53,6 +58,45 @@ final class OutlineService
         $this->surfaces->outline($session, $run, $version, $previous?->document, 'proposed', $comment);
 
         return $version;
+    }
+
+    /**
+     * The rule behind `course_builder.auto_formats`: a lesson with two or more objectives gets the
+     * LiaScript format (its self-checks make sense), when LiaScript is available. The author can change
+     * every lesson's format before approving the outline.
+     */
+    public function suggestFormats(array $doc): array
+    {
+        foreach ($doc['modules'] as $m => $module) {
+            foreach ($module['lessons'] as $l => $lesson) {
+                if (in_array('liascript', $this->types->suggest($lesson), true)) {
+                    $doc['modules'][$m]['lessons'][$l]['contentType'] = 'liascript';
+                }
+            }
+        }
+
+        return $doc;
+    }
+
+    /** Sets a lesson's content type; only a type this installation can create, and only before the lesson is written. */
+    public function setContentType(array $doc, string $lessonId, string $key): array
+    {
+        if (!$this->types->has($key) || !isset($this->types->enabled()[$key])) {
+            throw new InvalidArgumentException('That lesson format is not available here.');
+        }
+        foreach ($doc['modules'] as $m => $module) {
+            foreach ($module['lessons'] as $l => $lesson) {
+                if ($lesson['id'] === $lessonId) {
+                    if (($lesson['status'] ?? 'planned') !== 'planned') {
+                        throw new InvalidArgumentException('The format of a written lesson changes by asking for it in the chat of that lesson.');
+                    }
+                    $doc['modules'][$m]['lessons'][$l]['contentType'] = $key;
+
+                    return $doc;
+                }
+            }
+        }
+        throw new InvalidArgumentException('Unknown lesson.');
     }
 
     /** @return string[] */
@@ -126,20 +170,25 @@ final class OutlineService
      * Approves the proposal, applying inline objective edits as an author version on top.
      *
      * @param array<int,array{objectiveId:string,text:string}> $edits
+     * @param array<int,array{lessonId:string,contentType:string}> $formats lesson formats the author chose
      */
-    public function approve(Session $session, ?Run $run, Version $version, array $edits, int $userId): Version
+    public function approve(Session $session, ?Run $run, Version $version, array $edits, int $userId, array $formats = []): Version
     {
         if ($version->kind !== 'outline') {
             throw new InvalidArgumentException('Not an outline proposal.');
         }
         $this->versions->approve($version, $userId);
         $approved = $version;
-        if ($edits !== []) {
+        if ($edits !== [] || $formats !== []) {
             $doc = $version->document;
             foreach ($edits as $edit) {
                 $doc = self::editObjective($doc, (string) ($edit['objectiveId'] ?? ''), trim((string) ($edit['text'] ?? '')));
             }
-            $approved = $this->versions->create($session, $doc, 'outline', 'author', Version::APPROVED, $version, 'Objectives edited by the author', null, [], $userId);
+            foreach ($formats as $choice) {
+                $doc = $this->setContentType($doc, (string) ($choice['lessonId'] ?? ''), (string) ($choice['contentType'] ?? ''));
+            }
+            $reason = $edits !== [] && $formats !== [] ? 'Objectives and lesson formats edited by the author' : ($formats !== [] ? 'Lesson formats chosen by the author' : 'Objectives edited by the author');
+            $approved = $this->versions->create($session, $doc, 'outline', 'author', Version::APPROVED, $version, $reason, null, [], $userId);
         }
         $this->versions->setCurrent($session, $approved);
         $this->surfaces->outline($session, $run, $approved, $version->parent?->document, 'approved');
