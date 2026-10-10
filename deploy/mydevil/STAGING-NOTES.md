@@ -106,6 +106,17 @@ Keep APP_KEY in a password manager (ADR 0066). `AI_DRIVER=fake`, `ANTHROPIC_API_
   `add-vhost.sh` picked the server's own IP (`devil ssl www add` refused it), now the `webN` address (`lib.sh` `public_ip`, or `ULAMS_PUBLIC_IP`).
 - Not verified: playing the landing showcase and an interactive in a real browser (the browser extension was not connected). Verified over HTTP: every front, API config, admin, demo logins, a lesson page, the content-origin iframe (200 with CSP) and the progress ping (API and the front's `/bff`).
 
+## Update 2026-10-10, second pass (main at `2861aec6`)
+
+- Redeployed with `upgrade.sh` (release `ulams-2861aec6.tar.gz`, built with `build-release.sh`), then the front (`ULAMS_IMAGE_SERVICE=noop astro build`, plus `front/ui`, `front/sdk`, `front/interactive-bridge` rsynced) and the admin
+  (same two `REACT_APP_*` variables as above) rebuilt locally and rsynced; every front restarted with `tmp/restart.txt`. The release has the no-dev runtime fixes (#217) and the landing Docs link and demo order (#218).
+- Passport keys stay mode 600 after `upgrade.sh` (verified: `storage/oauth-*.key` `-rw-------`, the `storage/app` links intact).
+- Verified over HTTP: landing shows the Docs link and the cards gravity, poland, ulam, coffee, oncall, nightsky; all seven `/api/config` and all fronts and admins answer 200; the demo login of each front
+  (`POST /login` with `demo=1` and an `Origin` header, otherwise Astro answers 403) opens `/account` and the first lesson (`/learn/1/1`); `POST /api/auth/login` of the platform admin and of `admin@<slug>.ulams.app` answers 200.
+- Course Builder apply on coffee (`AI_DRIVER=fake`, `ulams builder start --from <md> --defaults --approve-outline --apply` with a profile for `https://coffee-staging-api.ulams.app`): the session reached `applied` and created a draft course, so #217 holds on staging.
+  The test course and session were deleted afterwards. The first attempt returned one 500 while polling (`file_put_contents` in `framework/cache/data/..: No such file or directory` at provider boot, a transient race on the file cache); the retry on the same session passed.
+- Found: the scheduled hourly `ulams:demo:reset` has failed on every tenant since the install (`The "--force" option does not accept a value`: `Schedule::command()` renders `['--force' => true]` as `--force=1`). Fixed in PR #219; until it is deployed the demos are not reset hourly.
+
 ## Unknowns from the README, now answered
 
 | Question | Answer |
