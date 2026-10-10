@@ -33,3 +33,16 @@ Option 1:
 - Good: no model-written markup, and output can be validated and diffed.
 - Good: adding a library means adding one schema and one mapper.
 - Bad: only a few H5P types at first; complex libraries need their own mapper.
+
+## Implementation notes (M2.3)
+
+- **Interactive.** A fourth type, `interactive`, reuses the Interactive topic type (ADR 0086): the builder
+  chooses a package from the library, its start and end step and writes the cited text beside it. It never
+  creates or edits a package.
+- **Who picks the format.** The outline task is unchanged (so recorded outline cassettes stay valid). Lessons
+  are rich text; the author chooses a format per lesson when approving the outline (`approve_outline.formats`).
+  `COURSE_BUILDER_AUTO_FORMATS` gives lessons with two or more objectives LiaScript by rule.
+- **Shape.** H5P and interactive lessons are the rich text topic followed by an activity topic
+  (`interaction_topic` in the entity map); a LiaScript lesson is one LiaScript topic. A format change replaces the topic.
+- **Safety.** LiaScript code macros and `import:` lines never come from model output.
+- **Tasks.** `selfcheck`, `interaction_h5p`, `interaction_interactive`, in a new generation stage `interactions`.

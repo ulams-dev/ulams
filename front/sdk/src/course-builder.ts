@@ -159,6 +159,12 @@ export interface BlueprintQuestion {
   citations: string[];
   objectiveIds: string[];
 }
+export type LessonFormat = "richtext" | "liascript" | "h5p" | "interactive";
+export type H5pLibrary = "H5P.Blanks" | "H5P.DragText" | "H5P.Dialogcards";
+/** The activity after the text of an h5p or interactive lesson (ADR 0050). */
+export type BlueprintInteraction =
+  | { id: string; kind: "h5p"; library: H5pLibrary; title: string; data: Record<string, unknown>; citations: string[]; objectiveIds: string[] }
+  | { id: string; kind: "interactive"; packageId: number; title: string; startStep?: string; endStep?: string; caption: string; citations: string[]; objectiveIds: string[] };
 export interface BlueprintLesson {
   id: string;
   title: string;
@@ -166,14 +172,18 @@ export interface BlueprintLesson {
   minutes: number;
   objectives: BlueprintObjective[];
   citations: string[];
-  contentType: "richtext";
+  contentType: LessonFormat;
   status: "planned" | "generated" | "failed";
   blocks: BlueprintBlock[];
+  /** LiaScript lessons: the questions inside the text. */
+  selfChecks?: BlueprintQuestion[];
+  interaction?: BlueprintInteraction | null;
   quiz: { id: string; questions: BlueprintQuestion[] } | null;
   flags: string[];
 }
 export interface Blueprint {
-  schemaVersion: 1;
+  /** v1 documents read as v2: only the number differs. */
+  schemaVersion: 1 | 2;
   sources: Array<{ id: string; title: string; fragmentCount: number }>;
   course: {
     id: string;

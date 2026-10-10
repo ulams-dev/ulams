@@ -168,7 +168,7 @@ class EvalCommand extends Command
         $known = array_fill_keys($session->fragmentIds(), true);
         $fragments = Fragment::query()->whereIn('id', array_keys($known))->get()->keyBy('id');
 
-        $schemaErrors = app(SchemaRegistry::class)->validate('course-blueprint/v1', $doc);
+        $schemaErrors = app(SchemaRegistry::class)->validateBlueprint($doc);
         $check('blueprint.schema', $schemaErrors === [], implode('; ', array_slice($schemaErrors, 0, 3)));
         $errors = array_filter(Checks::blueprint($doc, $known), fn ($e) => !str_starts_with($e, 'warning: '));
         $check('citations.coverage', $errors === [], implode('; ', array_slice($errors, 0, 3)));

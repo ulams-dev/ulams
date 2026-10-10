@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Interactive attached to a lesson",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["interaction"],
+  "properties": {
+    "interaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["packageId", "title", "startStep", "endStep", "caption", "citations", "objectiveIds"],
+      "properties": {
+        "packageId": { "type": "integer", "description": "Id of a package from task_input.library" },
+        "title": { "type": "string", "description": "Title of the interactive in this lesson", "minLength": 2, "maxLength": 200 },
+        "startStep": { "type": "string", "description": "First step id to play; empty for the start of the package", "maxLength": 64 },
+        "endStep": { "type": "string", "description": "Last step id to play; empty for the end of the package", "maxLength": 64 },
+        "caption": { "type": "string", "description": "Markdown shown beside the interactive", "minLength": 1, "maxLength": 4000 },
+        "citations": { "type": "array", "items": { "type": "string", "pattern": "^frg_[a-z2-7]{12}$", "description": "A fragment id the caption is based on" }, "minItems": 1, "maxItems": 6 },
+        "objectiveIds": { "type": "array", "items": { "type": "string", "description": "An objective id from task_input" }, "minItems": 1, "maxItems": 3 }
+      }
+    }
+  }
+}

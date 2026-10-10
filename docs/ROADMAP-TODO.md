@@ -421,8 +421,10 @@ approved apply through domain services → element chat edits. Designs:
 ### 2.4 Generation pipeline (queued, resumable, streamed)
 - [x] **Learning objectives** proposed and **approved by the author** first (with inline edits)
 - [x] Outline mapped to source fragments and objectives
-- [ ] Lessons in parallel from the component registry (rich text, LiaScript, H5P) (partial: rich text
-      in a concurrency window; LiaScript and H5P lessons are M2.3)
+- [x] Lessons in parallel from the component registry (rich text, LiaScript, H5P) (rich text in a
+      concurrency window; LiaScript lessons with cited self-checks, lessons with an H5P activity from
+      three allow-listed libraries and lessons with an interactive from the library, chosen per lesson in
+      the outline; ADR 0050, L2-11, L2-12)
 - [x] Assessments with explanations, each traceable to a fragment (per-lesson quizzes and a final test,
       GIFT rendered by our code, support check against the cited text)
 - [x] Metadata (title, description, SEO, pricing) (a suggested price for a paid course, confirmed by

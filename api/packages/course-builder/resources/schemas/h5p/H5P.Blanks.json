@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Fill in the blanks (H5P.Blanks)",
+  "description": "Sentences with blanks. Write each blank as {1}, {2}, … in the sentence and list its answer in the same order. Every answer must appear in the cited source text.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["instruction", "items"],
+  "properties": {
+    "instruction": { "type": "string", "description": "One sentence telling the learner what to do", "minLength": 3, "maxLength": 300 },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text", "blanks"],
+        "properties": {
+          "text": { "type": "string", "description": "A sentence from the lesson with placeholders {1}, {2}, … where the blanks are", "minLength": 8, "maxLength": 500 },
+          "blanks": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 4,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["answer", "alternatives", "tip"],
+              "properties": {
+                "answer": { "type": "string", "description": "The correct word or short phrase, without * / :", "minLength": 1, "maxLength": 60 },
+                "alternatives": { "type": "array", "description": "Other accepted spellings or synonyms found in the source; may be empty", "maxItems": 5, "items": { "type": "string", "minLength": 1, "maxLength": 60 } },
+                "tip": { "type": "string", "description": "A hint that does not give the answer away; empty for none", "maxLength": 100 }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -5,12 +5,22 @@ namespace Ulams\CourseBuilder\Blueprint;
 use Illuminate\Support\Str;
 
 /**
- * Helpers over a Course Blueprint v1 document (a plain array). Element ids are ULIDs assigned here,
- * never by the model.
+ * Helpers over a Course Blueprint document (a plain array, schema v2; v1 documents read as v2 with
+ * only the version number changed). Element ids are ULIDs assigned here, never by the model.
  */
 final class Blueprint
 {
-    public const SCHEMA_VERSION = 1;
+    public const SCHEMA_VERSION = 2;
+
+    /** v1 → v2 changes no data: v2 only allows more lesson content types and the optional selfChecks and interaction. */
+    public static function upgrade(array $doc): array
+    {
+        if ((int) ($doc['schemaVersion'] ?? 1) < self::SCHEMA_VERSION) {
+            $doc['schemaVersion'] = self::SCHEMA_VERSION;
+        }
+
+        return $doc;
+    }
 
     public static function newId(): string
     {
@@ -75,6 +85,14 @@ final class Blueprint
                         return ['type' => 'block', 'path' => [...$base, 'blocks', $b], 'node' => $block, 'label' => "{$lLabel} › block " . ($b + 1), 'lessonId' => $lesson['id']];
                     }
                 }
+                foreach ($lesson['selfChecks'] ?? [] as $c => $check) {
+                    if ($check['id'] === $id) {
+                        return ['type' => 'question', 'path' => [...$base, 'selfChecks', $c], 'node' => $check, 'label' => "{$lLabel} › check " . ($c + 1), 'lessonId' => $lesson['id']];
+                    }
+                }
+                if (is_array($lesson['interaction'] ?? null) && $lesson['interaction']['id'] === $id) {
+                    return ['type' => 'interaction', 'path' => [...$base, 'interaction'], 'node' => $lesson['interaction'], 'label' => "{$lLabel} › activity", 'lessonId' => $lesson['id']];
+                }
                 $quiz = $lesson['quiz'] ?? null;
                 if (is_array($quiz)) {
                     if ($quiz['id'] === $id) {
@@ -129,10 +147,10 @@ final class Blueprint
         return array_keys($ids);
     }
 
-    /** @return array{modules:int,lessons:int,minutes:int,objectives:int,questions:int,blocks:int} */
+    /** @return array{modules:int,lessons:int,minutes:int,objectives:int,questions:int,blocks:int,interactions:int} */
     public static function stats(array $doc): array
     {
-        $stats = ['modules' => count($doc['modules'] ?? []), 'lessons' => 0, 'minutes' => 0, 'objectives' => count($doc['course']['objectives'] ?? []), 'questions' => 0, 'blocks' => 0];
+        $stats = ['modules' => count($doc['modules'] ?? []), 'lessons' => 0, 'minutes' => 0, 'objectives' => count($doc['course']['objectives'] ?? []), 'questions' => 0, 'blocks' => 0, 'interactions' => 0];
         foreach (self::lessons($doc) as $item) {
             $lesson = $item['lesson'];
             $stats['lessons']++;
@@ -140,6 +158,7 @@ final class Blueprint
             $stats['objectives'] += count($lesson['objectives'] ?? []);
             $stats['blocks'] += count($lesson['blocks'] ?? []);
             $stats['questions'] += count($lesson['quiz']['questions'] ?? []);
+            $stats['interactions'] += count($lesson['selfChecks'] ?? []) + (is_array($lesson['interaction'] ?? null) ? 1 : 0);
         }
         $stats['questions'] += count($doc['finalTest']['questions'] ?? []);
 

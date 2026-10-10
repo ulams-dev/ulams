@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Drag the words (H5P.DragText)",
+  "description": "A short text with gaps the learner fills by dragging words. Write each gap as {1}, {2}, … in the text and list the words in the same order. Every word must appear in the cited source text.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["instruction", "text", "words", "distractors"],
+  "properties": {
+    "instruction": { "type": "string", "description": "One sentence telling the learner what to do", "minLength": 3, "maxLength": 300 },
+    "text": { "type": "string", "description": "A paragraph of the lesson with placeholders {1}, {2}, … where the draggable words go", "minLength": 20, "maxLength": 1500 },
+    "words": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 12,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["answer", "tip"],
+        "properties": {
+          "answer": { "type": "string", "description": "The word that belongs in the gap, without * : /", "minLength": 1, "maxLength": 60 },
+          "tip": { "type": "string", "description": "A hint that does not give the answer away; empty for none", "maxLength": 100 }
+        }
+      }
+    },
+    "distractors": { "type": "array", "description": "Up to 4 wrong words that look plausible; may be empty", "maxItems": 4, "items": { "type": "string", "minLength": 1, "maxLength": 60 } }
+  }
+}

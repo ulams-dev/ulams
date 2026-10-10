@@ -9,6 +9,7 @@ import { h } from "@ulams/ui/builder/dom.ts";
 import { announce, connectionStatus, livingClient, settleApplied, showCitation, studioClient, updateTopBar } from "./common.ts";
 import { bannerModel, lessonMarker, markerFor, reviewHref, staleMap, staleNote, type Marker } from "./staleness.ts";
 import { Timeline } from "./timeline.ts";
+import { lessonExtras } from "./formats.ts";
 
 type Selection = { id: string; label: string; type: "lesson" | "question" | "block" | "module" | "course" };
 
@@ -260,6 +261,7 @@ export function mountWorkspace(root: HTMLElement): void {
     const lessonCard = (l: (typeof lessons)[number]) => ({
       id: "root", component: "LessonPreviewCard", lessonId: l.id, title: l.title, minutes: l.minutes, flags: l.flags,
       blocks: l.blocks.map((b) => ({ id: b.id, kind: b.kind, markdown: b.markdown, citations: cite(b.citations) })),
+      ...lessonExtras(l, cite),
     });
     if (selection?.type === "question") {
       const q = [...lessons.flatMap((l) => l.quiz?.questions ?? []), ...(doc.finalTest?.questions ?? [])].find((x) => x.id === selection!.id);

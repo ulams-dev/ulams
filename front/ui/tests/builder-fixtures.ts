@@ -134,8 +134,12 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
         id: "m1",
         title: "Extraction",
         change: "added",
-        lessons: [{ id: "l1", title: "What extraction means", minutes: 10, change: "added", objectives: [{ id: "o1", text: "Explain extraction", citations: [cite(1)] }], citations: [cite(1)] }],
+        lessons: [{ id: "l1", title: "What extraction means", minutes: 10, change: "added", objectives: [{ id: "o1", text: "Explain extraction", citations: [cite(1)] }], citations: [cite(1)], format: "richtext" }],
       },
+    ],
+    formats: [
+      { value: "richtext", label: "Rich text", description: "Formatted text." },
+      { value: "liascript", label: "LiaScript", description: "Questions inside the text." },
     ],
     removed: [],
   },
@@ -161,6 +165,8 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
       { id: "b2", kind: "table", markdown: "| A | B |\n|---|---|\n| 1 | 2 |", citations: [cite(2)] },
     ],
     flags: [],
+    format: "LiaScript · 1 self-check",
+    extras: [{ id: "q9", kind: "check", label: "Self-check 1", text: "Which grind suits an espresso?", editable: true, citations: [cite(2)] }],
   },
   QuizQuestionCard: {
     questionId: "q1",

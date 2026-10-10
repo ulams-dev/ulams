@@ -304,6 +304,7 @@ export const builderCatalogue = {
                     change: CHANGE,
                     objectives: list(OBJECTIVE, "Lesson objectives", 8),
                     citations: list(CITATION, "Fragments the lesson draws on", 20),
+                    format: str("Lesson format key: richtext, liascript, h5p or interactive", 20),
                   },
                   ["id", "title", "minutes", "objectives", "citations"]
                 ),
@@ -317,6 +318,7 @@ export const builderCatalogue = {
           20
         ),
         removed: list(obj({ title: str("Title", 200), kind: oneOf(["module", "lesson"], "Kind") }, ["title", "kind"]), "Removed since the previous version", 40),
+        formats: list(obj({ value: str("Format key", 20), label: str("Name", 80), description: str("What learners get", 300) }, ["value", "label"]), "Lesson formats the author may choose from while the outline is proposed", 8),
         comment: str("Author comment the version answers", 1000),
       },
       ["versionId", "status", "summary", "course", "modules"]
@@ -377,6 +379,22 @@ export const builderCatalogue = {
         minutes: int("Minutes"),
         blocks: list(BLOCK, "Content blocks", 60),
         flags: list(str("Unsupported claim or warning", 500), "Grounding flags", 20),
+        format: str("Lesson format, e.g. LiaScript · 3 self-checks or H5P · Fill in the blanks · 4 blanks", 200),
+        extras: list(
+          obj(
+            {
+              id: str("Element id", 32),
+              kind: oneOf(["check", "activity"], "A self-check question, or the H5P activity or interactive after the text"),
+              label: str("Where it is, e.g. Self-check 1", 120),
+              text: str("The question or a description of the activity", 1000),
+              editable: bool("The assistant can edit it in chat"),
+              citations: list(CITATION, "Cited fragments", 10),
+            },
+            ["id", "kind", "label", "text", "citations"]
+          ),
+          "Self-checks and the activity of a LiaScript, H5P or interactive lesson",
+          12
+        ),
       },
       ["lessonId", "title", "blocks"]
     ),

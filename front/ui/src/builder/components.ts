@@ -334,6 +334,23 @@ const CitationChip: Renderer = (p, ctx) => citationChip(p, ctx);
 const OutlineDiff: Renderer = (p, ctx, id) => {
   const proposed = p.status === "proposed";
   const edits = new Map<string, string>();
+  const formats = new Map<string, string>();
+  const formatChoices: Props[] = p.formats ?? [];
+  const formatName = (key: unknown): string => String(formatChoices.find((f) => f.value === key)?.label ?? "");
+  const formatPicker = (l: Props): HTMLElement | null => {
+    if (!proposed || !p.editable || formatChoices.length < 2) return l.format && l.format !== "richtext" ? h("span", { class: "cb-tag" }, formatName(l.format) || String(l.format)) : null;
+    const selectId = uid("format");
+    const select = h("select", { id: selectId, class: "cb-input" }, formatChoices.map((f) => h("option", { value: String(f.value), selected: f.value === (l.format ?? "richtext") ? "" : null }, String(f.label)))) as HTMLSelectElement;
+    select.value = String(l.format ?? "richtext");
+    select.addEventListener("change", () => {
+      if (select.value === (l.format ?? "richtext")) formats.delete(String(l.id));
+      else formats.set(String(l.id), select.value);
+      editedNote.textContent = [edits.size ? `${edits.size} objective${edits.size === 1 ? "" : "s"} edited` : "", formats.size ? `${formats.size} lesson format${formats.size === 1 ? "" : "s"} changed` : ""].filter(Boolean).join(" · ");
+    });
+    const description = h("span", { class: "cb-muted cb-small" }, String(formatChoices.find((f) => f.value === select.value)?.description ?? ""));
+    select.addEventListener("change", () => (description.textContent = String(formatChoices.find((f) => f.value === select.value)?.description ?? "")));
+    return h("p", { class: "cb-lesson-format" }, h("label", { for: selectId, class: "cb-label" }, "Lesson format "), select, " ", description);
+  };
   const objective = (o: Props): HTMLElement => {
     const li = h("li", { class: `cb-objective cb-change-${o.change ?? "unchanged"}` });
     const text = h("span", { class: "cb-objective-text" }, String(o.text));
@@ -387,6 +404,7 @@ const OutlineDiff: Renderer = (p, ctx, id) => {
             h("h5", { class: "cb-serif" }, `${mi + 1}.${li + 1} `, l.before ? wordDiff(String(l.before), String(l.title)) : String(l.title)),
             h("span", { class: "cb-mono cb-muted" }, `${l.minutes} min`), changeBadge(l.change)),
           l.summary ? h("p", { class: "cb-muted" }, String(l.summary)) : null,
+          formatPicker(l),
           h("ul", { class: "cb-objectives", "aria-label": "Learning objectives" }, (l.objectives as Props[]).map(objective)),
           citations(l.citations, ctx)))))));
   const removed = p.removed?.length
@@ -399,7 +417,7 @@ const OutlineDiff: Renderer = (p, ctx, id) => {
     const comment = h("textarea", { id: commentId, class: "cb-textarea", rows: 3, maxlength: 2000, placeholder: "e.g. Fewer modules, more on grind size" });
     const approve = h("button", { type: "button", class: "cb-btn cb-btn-primary" }, icon("spark"), "Approve outline & generate");
     const reject = h("button", { type: "button", class: "cb-btn" }, "Request changes");
-    approve.addEventListener("click", () => act(ctx, id, "approve_outline", { versionId: p.versionId, edits: [...edits].map(([objectiveId, text]) => ({ objectiveId, text })) }));
+    approve.addEventListener("click", () => act(ctx, id, "approve_outline", { versionId: p.versionId, edits: [...edits].map(([objectiveId, text]) => ({ objectiveId, text })), formats: [...formats].map(([lessonId, contentType]) => ({ lessonId, contentType })) }));
     reject.addEventListener("click", () => act(ctx, id, "reject_outline", { versionId: p.versionId, comment: comment.value.trim() }));
     footer.append(
       h("label", { for: commentId, class: "cb-label" }, "Comment for a revision (optional)"), comment, editedNote,
@@ -474,10 +492,23 @@ const LessonPreviewCard: Renderer = (p, ctx) => {
     return block;
   });
   body.append(...blocks);
+  const extras = (p.extras as Props[] | undefined) ?? [];
+  if (extras.length > 0) {
+    body.append(h("ul", { class: "cb-extras", "aria-label": "Interactive parts of the lesson" }, extras.map((x) => {
+      const item = h("li", { class: `cb-extra cb-extra-${x.kind}`, "data-extra": x.id },
+        h("p", { class: "cb-eyebrow" }, String(x.label)), h("p", {}, String(x.text)), citations(x.citations, ctx) ?? "");
+      if (x.editable) {
+        const editExtra = h("button", { type: "button", class: "cb-btn cb-btn-small" }, "Edit in chat");
+        editExtra.addEventListener("click", () => ctx.onSelect?.(String(x.id), String(x.label)));
+        item.append(editExtra);
+      }
+      return item;
+    })));
+  }
   const edit = h("button", { type: "button", class: "cb-btn cb-btn-small" }, "Edit in chat");
   edit.addEventListener("click", () => ctx.onSelect?.(String(p.lessonId), String(p.title)));
   return h("article", { class: "cb-card cb-lesson-preview", "aria-label": `Lesson ${p.title}` },
-    h("header", {}, h("h3", { class: "cb-serif cb-h2" }, String(p.title)), p.minutes ? h("p", { class: "cb-mono cb-muted" }, `${p.minutes} min`) : null, edit),
+    h("header", {}, h("h3", { class: "cb-serif cb-h2" }, String(p.title)), p.minutes ? h("p", { class: "cb-mono cb-muted" }, `${p.minutes} min`) : null, p.format ? h("p", { class: "cb-tag" }, String(p.format)) : null, edit),
     p.flags?.length ? h("ul", { class: "cb-flags", "aria-label": "Grounding flags" }, (p.flags as string[]).map((f) => h("li", {}, icon("alert"), f))) : null,
     body);
 };

@@ -39,6 +39,47 @@ class H5PServiceClient implements H5PServiceClientContract
         return (int) $contentId;
     }
 
+    public function create(string $library, array $params, array $metadata): int
+    {
+        $response = $this->send(fn () => $this->request()->post($this->url('contents'), $this->saveBody($library, $params, $metadata)));
+        $contentId = $response->json('data.contentId');
+        if ($contentId === null || !is_numeric($contentId)) {
+            throw new H5PServiceException('H5P service did not return a content id.', $response->status());
+        }
+
+        return (int) $contentId;
+    }
+
+    public function update(int $id, string $library, array $params, array $metadata): void
+    {
+        $this->send(fn () => $this->request()->patch($this->url("contents/{$id}"), $this->saveBody($library, $params, $metadata)));
+    }
+
+    public function libraries(): array
+    {
+        $rows = $this->send(fn () => $this->request()->timeout(10)->get($this->url('libraries')))->json();
+        $rows = is_array($rows) && isset($rows['data']) && is_array($rows['data']) ? $rows['data'] : (is_array($rows) ? $rows : []);
+        $found = [];
+        foreach ($rows as $row) {
+            if (!is_array($row) || !isset($row['machineName'], $row['majorVersion'], $row['minorVersion'])) {
+                continue;
+            }
+            $name = (string) $row['machineName'];
+            $version = [(int) $row['majorVersion'], (int) $row['minorVersion']];
+            if (!isset($found[$name]) || $version > $found[$name][0]) {
+                $found[$name] = [$version, "{$name} {$version[0]}.{$version[1]}"];
+            }
+        }
+
+        return array_map(fn (array $entry) => $entry[1], $found);
+    }
+
+    /** @return array{library:string,params:array{params:array,metadata:array}} */
+    private function saveBody(string $library, array $params, array $metadata): array
+    {
+        return ['library' => $library, 'params' => ['params' => $params, 'metadata' => $metadata + ['language' => 'en', 'license' => 'U']]];
+    }
+
     public function download(int $id): string
     {
         $target = tempnam(sys_get_temp_dir(), 'h5p-export-');

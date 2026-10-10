@@ -66,6 +66,26 @@ HTTP checks in `packages/tenancy/tests/Integration/TenantIsolationTest`, opt-in)
 4. Register a synthetic responder in `src/Fake/SyntheticResponders.php` so demos and the e2e keep
    working without a key, and record cassettes with the eval command.
 
+## Lesson formats (content types)
+
+A blueprint lesson has a `contentType`: `richtext`, `liascript`, `h5p` or `interactive` (Course Blueprint v2, `resources/schemas/course-blueprint/v2.json`;
+v1 documents read as v2, only `schemaVersion` differs). `ContentTypes\ContentTypeRegistry` maps the key to a `ContentType`
+(`topics()`, `check()`, `followUp()`, `enabled()`); an unknown key resolves to rich text. The pipeline gets one extra stage,
+`interactions`, which has a step only for the formats that need one (so a rich text course is unchanged):
+
+| Format | Step | Task | Result in the blueprint | LMS entities |
+|---|---|---|---|---|
+| `liascript` | `selfcheck:<lesson>` | `selfcheck` | `lesson.selfChecks[]` (questions, cited) | one LiaScript topic (document through `LiaScriptServiceContract`, a version per apply) |
+| `h5p` | `interaction:<lesson>` | `interaction_h5p` | `lesson.interaction` `{kind:"h5p", library, data}` | RichText topic, then an H5P topic (content through `H5PServiceClientContract::create/update`) |
+| `interactive` | `interaction:<lesson>` | `interaction_interactive` | `lesson.interaction` `{kind:"interactive", packageId, startStep, endStep, caption}` | RichText topic, then an Interactive topic created through the topic repository |
+
+LiaScript Markdown is rendered by `ContentTypes\LiaScriptRenderer` (golden file in `tests/Unit/golden/`); code execution macros
+(`@eval`, `@input`, `<script>`) and `import:` lines never come from model output and are rejected and stripped. H5P `params` are
+mapped by `ContentTypes\H5pLibraries` from a schema of our own per library (`resources/schemas/h5p/<library>.json`): add a library by adding its
+schema, its `params()` mapping and its answer check there. Blanks and drag words must appear in the cited text; dialog card backs
+must share content words with it. The entity map keeps the lesson's text topic as `topic:<lesson id>` and the activity as
+`interaction_topic:<interaction id>`.
+
 ## AG-UI stream
 
 `GET /api/admin/course-builder/sessions/{id}/events` (`text/event-stream`):
@@ -83,7 +103,7 @@ The full endpoint list, payloads and a `curl` example are in the [Course Builder
 
 UI actions: `POST /sessions/{id}/runs` with a `RunAgentInput`:
 `forwardedProps.action = {name, surfaceId, sourceComponentId, context}`. Actions:
-`answer {key, value}`, `decide_for_me {key?}`, `approve_outline {versionId, edits:[{objectiveId,text}]}`,
+`answer {key, value}`, `decide_for_me {key?}`, `approve_outline {versionId, edits:[{objectiveId,text}], formats:[{lessonId,contentType}]}`,
 `reject_outline {versionId, comment}`, `retry_step {stepId}`, `approve_apply {versionId}`,
 `approve_patch|reject_patch {versionId}`, `retry` (the interview or outline step that failed). Typed text goes in `messages`, scoped by
 `forwardedProps.selection.elementId`.

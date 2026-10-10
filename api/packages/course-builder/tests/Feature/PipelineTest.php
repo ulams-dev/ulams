@@ -58,7 +58,7 @@ class PipelineTest extends TestCase
         $outline = $session->currentVersion;
         $this->assertSame('outline', $outline->kind);
         $this->assertSame(Version::PROPOSED, $outline->status);
-        $this->assertSame([], app(SchemaRegistry::class)->validate('course-blueprint/v1', $outline->document));
+        $this->assertSame([], app(SchemaRegistry::class)->validateBlueprint($outline->document));
         foreach (Blueprint::lessons($outline->document) as $item) {
             $this->assertNotEmpty($item['lesson']['objectives']);
             $this->assertNotEmpty($item['lesson']['citations']);
@@ -74,7 +74,7 @@ class PipelineTest extends TestCase
         $content = $session->currentVersion;
         $this->assertSame('content', $content->kind);
         $doc = $content->document;
-        $this->assertSame([], app(SchemaRegistry::class)->validate('course-blueprint/v1', $doc));
+        $this->assertSame([], app(SchemaRegistry::class)->validateBlueprint($doc));
         $known = array_fill_keys($session->fragmentIds(), true);
         $this->assertSame([], array_values(array_filter(Checks::blueprint($doc, $known), fn ($e) => !str_starts_with($e, 'warning'))));
         $this->assertNotNull($doc['finalTest']);

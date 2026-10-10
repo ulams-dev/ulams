@@ -20,6 +20,9 @@ final class SyntheticResponders
         $responders->register('lesson', fn (DriverRequest $r) => self::lesson($r));
         $responders->register('grounding', fn (DriverRequest $r) => ['unsupported' => []]);
         $responders->register('quiz', fn (DriverRequest $r) => self::quiz($r));
+        $responders->register('selfcheck', fn (DriverRequest $r) => self::quiz($r));
+        $responders->register('interaction_h5p', fn (DriverRequest $r) => self::h5p($r));
+        $responders->register('interaction_interactive', fn (DriverRequest $r) => self::interactive($r));
         $responders->register('metadata', fn (DriverRequest $r) => self::metadata($r));
         $responders->register('price', fn (DriverRequest $r) => self::price($r));
         $responders->register('patch', fn (DriverRequest $r) => self::patch($r));
@@ -262,6 +265,86 @@ final class SyntheticResponders
         }
 
         return ['questions' => $questions];
+    }
+
+    /** Sentences of the lesson's cited fragments, each with its fragment id. @return array<int,array{id:string,text:string}> */
+    private static function lessonSentences(DriverRequest $r): array
+    {
+        $all = self::fragments($r);
+        $out = [];
+        foreach ((array) (self::input($r)['blocks'] ?? []) as $block) {
+            foreach ($block['citations'] ?? [] as $id) {
+                foreach (isset($all[$id]) ? self::sentences($all[$id]['text']) : [] as $sentence) {
+                    $out[$sentence] = ['id' => $id, 'text' => $sentence];
+                }
+            }
+        }
+
+        return array_values($out);
+    }
+
+    /** A word of at least five letters to blank out of a sentence: letters only, so the markers stay valid. */
+    private static function pickWord(string $sentence): ?string
+    {
+        preg_match_all('/\b\p{L}{5,}\b/u', $sentence, $m);
+
+        return $m[0][0] ?? null;
+    }
+
+    private static function h5p(DriverRequest $r): array
+    {
+        $input = self::input($r);
+        $library = (string) ($input['libraries'][0] ?? 'H5P.Blanks');
+        $sentences = self::lessonSentences($r);
+        $objective = $input['lesson']['objectives'][0]['id'] ?? '';
+        $title = (string) ($input['lesson']['title'] ?? 'Practice');
+        $usable = array_values(array_filter($sentences, fn ($s) => self::pickWord($s['text']) !== null));
+        $cited = array_values(array_unique(array_column($usable ?: $sentences, 'id')));
+        $data = match ($library) {
+            'H5P.DragText' => (function () use ($usable) {
+                $take = array_slice($usable, 0, 3);
+                $text = '';
+                $words = [];
+                foreach ($take as $i => $s) {
+                    $word = self::pickWord($s['text']);
+                    $text .= ($i > 0 ? ' ' : '') . preg_replace('/\\b' . preg_quote($word, '/') . '\\b/u', '{' . (count($words) + 1) . '}', $s['text'], 1);
+                    $words[] = ['answer' => $word, 'tip' => ''];
+                }
+
+                return ['instruction' => 'Drag each word into the gap where it belongs.', 'text' => $text, 'words' => $words, 'distractors' => []];
+            })(),
+            'H5P.Dialogcards' => ['title' => mb_substr($title, 0, 100), 'instruction' => 'Turn each card and check your answer.', 'cards' => array_map(
+                fn ($s, $i) => ['front' => 'What does the source say? (' . ($i + 1) . ')', 'back' => mb_substr($s['text'], 0, 500), 'tip' => ''],
+                array_slice($sentences, 0, 3),
+                array_keys(array_slice($sentences, 0, 3)),
+            )],
+            default => ['instruction' => 'Fill in the missing word in each sentence.', 'items' => array_map(function ($s) {
+                $word = (string) self::pickWord($s['text']);
+
+                return ['text' => preg_replace('/\\b' . preg_quote($word, '/') . '\\b/u', '{1}', $s['text'], 1), 'blanks' => [['answer' => $word, 'alternatives' => [], 'tip' => '']]];
+            }, array_slice($usable, 0, 3))],
+        };
+
+        return ['interaction' => ['library' => $library, 'title' => 'Practice: ' . mb_substr($title, 0, 150), 'citations' => array_slice($cited, 0, 3) ?: [array_key_first(self::fragments($r))], 'objectiveIds' => [$objective], 'data' => $data]];
+    }
+
+    private static function interactive(DriverRequest $r): array
+    {
+        $input = self::input($r);
+        $package = (array) ($input['library'][0] ?? []);
+        $steps = array_column((array) ($package['steps'] ?? []), 'id');
+        $sentences = self::lessonSentences($r);
+        $ids = array_values(array_unique(array_column($sentences, 'id'))) ?: [array_key_first(self::fragments($r))];
+
+        return ['interaction' => [
+            'packageId' => (int) ($package['id'] ?? 0),
+            'title' => (string) ($package['title'] ?? 'Interactive'),
+            'startStep' => $steps[0] ?? '',
+            'endStep' => $steps !== [] ? $steps[array_key_last($steps)] : '',
+            'caption' => implode(' ', array_slice(array_column($sentences, 'text'), 0, 2)) ?: 'Explore the interactive and compare it with the lesson text.',
+            'citations' => array_slice($ids, 0, 2),
+            'objectiveIds' => [$input['lesson']['objectives'][0]['id'] ?? ''],
+        ]];
     }
 
     private static function price(DriverRequest $r): array

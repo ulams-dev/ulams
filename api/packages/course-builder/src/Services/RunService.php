@@ -368,7 +368,7 @@ final class RunService
             case 'approve_outline':
                 $version = $this->version($session, (string) $context['versionId']);
                 try {
-                    $approved = $this->outline->approve($session, null, $version, array_values((array) ($context['edits'] ?? [])), $userId);
+                    $approved = $this->outline->approve($session, null, $version, array_values((array) ($context['edits'] ?? [])), $userId, array_values((array) ($context['formats'] ?? [])));
                 } catch (InvalidArgumentException $e) {
                     return $this->reply($session, $e->getMessage(), false);
                 }

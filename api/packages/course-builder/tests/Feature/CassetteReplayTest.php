@@ -41,7 +41,7 @@ class CassetteReplayTest extends TestCase
         $this->assertSame(Session::APPLY_REVIEW, $session->status);
 
         $doc = $session->currentVersion->document;
-        $this->assertSame([], app(SchemaRegistry::class)->validate('course-blueprint/v1', $doc));
+        $this->assertSame([], app(SchemaRegistry::class)->validateBlueprint($doc));
         $known = array_fill_keys($session->fragmentIds(), true);
         $this->assertSame([], array_values(array_filter(Checks::blueprint($doc, $known), fn ($e) => !str_starts_with($e, 'warning'))));
         $calls = AiCall::query()->forSubject(Session::SUBJECT_TYPE, $session->id)->get();
