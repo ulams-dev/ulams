@@ -2644,6 +2644,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/course-builder/sessions/{session}/global-edit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Whole-course edit: translate, change level or tone. Without confirmed=true it returns the estimate only */
+        post: operations["231bc98695beabbf5bed9e8ce4cdc368"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/course-builder/fragments/{fragment}": {
         parameters: {
             query?: never;
@@ -15795,6 +15812,48 @@ export interface operations {
         responses: {
             /** @description run id */
             202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "231bc98695beabbf5bed9e8ce4cdc368": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    kind?: string;
+                    value?: string;
+                    confirmed?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description estimate, needs confirmation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description run started */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description over the cost limit */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -202,13 +202,13 @@ final class Surfaces
         $doc = $version->document;
         $parent = $version->parent?->document ?? [];
         $fragments = self::labels($doc);
-        $rows = self::changeRows($doc, $parent, $elementId);
-        $element = Blueprint::find($doc, $elementId);
-        $cited = $element ? array_values(array_unique(array_filter(Blueprint::citations($element['node'])))) : [];
+        $rows = self::changeRows($doc, $parent, $elementId, $elementId === '' ? 3000 : 20000);
+        $element = $elementId === '' ? ['node' => $doc['course']] : Blueprint::find($doc, $elementId);
+        $cited = $elementId === '' ? [] : ($element ? array_values(array_unique(array_filter(Blueprint::citations($element['node'])))) : []);
         $components = [
             ['id' => 'root', 'component' => 'Column', 'gap' => 'md', 'children' => $preview !== null ? ['diff', 'preview'] : ['diff']],
             ['id' => 'diff', 'component' => 'DiffView', 'versionId' => $version->id, 'elementId' => $elementId, 'elementLabel' => mb_substr($label, 0, 200),
-                'reason' => mb_substr($reason, 0, 1000), 'status' => $status, 'changes' => array_slice($rows, 0, 100),
+                'reason' => mb_substr($reason . (count($rows) > 100 ? sprintf(' (the first 100 of %d changes are shown here; the course version holds all of them)', count($rows)) : ''), 0, 1000), 'status' => $status, 'changes' => array_slice($rows, 0, 100),
                 'citations' => array_map(fn ($id) => ['fragmentId' => $id, 'label' => $fragments[$id] ?? $id], array_slice($cited, 0, 20))],
         ];
         if ($preview !== null) {
@@ -221,17 +221,19 @@ final class Surfaces
     }
 
     /** @return array<int,array<string,string>> DiffView rows for one element between two documents */
-    private static function changeRows(array $doc, array $parent, string $elementId): array
+    private static function changeRows(array $doc, array $parent, string $elementId, int $textLimit = 20000): array
     {
         $rows = [];
-        foreach (BlueprintDiff::forElement(BlueprintDiff::compare($parent, $doc), $elementId) as $c) {
+        $changes = BlueprintDiff::compare($parent, $doc);
+        // an empty element id is the whole course (a whole-course edit)
+        foreach ($elementId === '' ? $changes : BlueprintDiff::forElement($changes, $elementId) as $c) {
             foreach ($c['fields'] as $f) {
                 $rows[] = array_filter([
                     'path' => $c['id'] . '.' . $f['field'],
                     'label' => $c['label'] . ' · ' . $f['label'],
                     'kind' => $c['kind'] === 'changed' ? 'changed' : $c['kind'],
-                    'before' => is_scalar($f['before']) ? mb_substr(self::scalar($f['before']), 0, 20000) : null,
-                    'after' => is_scalar($f['after']) ? mb_substr(self::scalar($f['after']), 0, 20000) : null,
+                    'before' => is_scalar($f['before']) ? mb_substr(self::scalar($f['before']), 0, $textLimit) : null,
+                    'after' => is_scalar($f['after']) ? mb_substr(self::scalar($f['after']), 0, $textLimit) : null,
                 ], fn ($v) => $v !== null);
             }
         }

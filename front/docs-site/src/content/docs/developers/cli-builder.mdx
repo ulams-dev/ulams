@@ -116,6 +116,11 @@ ulams builder outline-edit <session> --action remove --id <lesson>
 ulams builder variants <session> <element> --instruction "Harder distractors" --count 2   # 2–3 options, one model call each
 ```
 
+```bash
+ulams builder global-edit <session> --kind translate --value pl             # the estimate only (data.steps, data.estimateMicroUsd)
+ulams builder global-edit <session> --kind translate --value pl --confirm   # one proposed version with the whole diff
+```
+
 Each outline edit is saved as an approved author version and re-applied; `builder variants` makes proposed versions that share a group,
 which you approve one of (`builder patches approve`) or reject.
 

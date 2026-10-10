@@ -20,6 +20,7 @@ final class SyntheticResponders
         $responders->register('lesson', fn (DriverRequest $r) => self::lesson($r));
         $responders->register('grounding', fn (DriverRequest $r) => ['unsupported' => []]);
         $responders->register('quiz', fn (DriverRequest $r) => self::quiz($r));
+        $responders->register('global', fn (DriverRequest $r) => self::global($r));
         $responders->register('selfcheck', fn (DriverRequest $r) => self::quiz($r));
         $responders->register('interaction_h5p', fn (DriverRequest $r) => self::h5p($r));
         $responders->register('interaction_interactive', fn (DriverRequest $r) => self::interactive($r));
@@ -265,6 +266,30 @@ final class SyntheticResponders
         }
 
         return ['questions' => $questions];
+    }
+
+    /** A stand-in for a whole-course edit: the same text with a visible mark, so tests and demos see what changed. */
+    private static function global(DriverRequest $r): array
+    {
+        $input = self::input($r);
+        $instruction = (array) json_decode((string) self::tag($r, 'global_instruction'), true);
+        $mark = ($instruction['kind'] ?? '') === 'translate' ? '[' . ($instruction['value'] ?? 'xx') . '] ' : '[' . ($instruction['value'] ?: 'edited') . '] ';
+        $t = fn (string $text) => $text === '' ? '' : $mark . $text;
+        $questions = fn (array $qs) => array_map(fn ($q) => ['id' => $q['id'], 'stem' => $t($q['stem']), 'options' => array_map(fn ($o) => ['id' => $o['id'], 'text' => $t($o['text'])], $q['options']), 'explanation' => $t($q['explanation'])], $qs);
+        if (isset($input['blocks'])) {
+            return ['title' => $t($input['title']), 'summary' => $t((string) $input['summary']),
+                'objectives' => array_map(fn ($o) => ['id' => $o['id'], 'text' => $t($o['text'])], $input['objectives']),
+                'blocks' => array_map(fn ($b) => ['id' => $b['id'], 'markdown' => $t($b['markdown'])], $input['blocks']),
+                'questions' => $questions($input['questions']), 'selfChecks' => $questions($input['selfChecks'] ?? [])];
+        }
+        if (isset($input['modules'])) {
+            return ['title' => $t($input['title']), 'subtitle' => $t((string) $input['subtitle']), 'description' => $t((string) $input['description']),
+                'objectives' => array_map(fn ($o) => ['id' => $o['id'], 'text' => $t($o['text'])], $input['objectives']),
+                'modules' => array_map(fn ($m) => ['id' => $m['id'], 'title' => $t($m['title']), 'summary' => $t((string) $m['summary'])], $input['modules']),
+                'faq' => array_map(fn ($f) => ['question' => $t($f['question']), 'answer' => $t($f['answer'])], $input['faq'])];
+        }
+
+        return ['questions' => $questions($input['questions'])];
     }
 
     /** Sentences of the lesson's cited fragments, each with its fragment id. @return array<int,array{id:string,text:string}> */

@@ -325,6 +325,12 @@
  },
  {
   "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/global-edit",
+  "summary": "Whole-course edit: translate, change level or tone. Without confirmed=true it returns the estimate only",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
   "path": "/api/admin/course-builder/sessions/{session}/new-site",
   "summary": "Create a new site and move the session there (platform operators; TENANCY_NEW_SITES)",
   "tag": "Admin Course Builder"

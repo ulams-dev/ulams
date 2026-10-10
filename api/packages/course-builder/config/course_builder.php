@@ -50,6 +50,13 @@ return [
     // objectives, when LiaScript is available). Off: lessons are rich text until the author changes them.
     'auto_formats' => filter_var(env('COURSE_BUILDER_AUTO_FORMATS', false), FILTER_VALIDATE_BOOLEAN),
 
+    // Whole-course edits (translate, change level or tone): the author confirms the estimate first
+    'global_edit' => [
+        // refused when the estimate is above this (USD); the session budget still applies per call
+        'max_usd' => (float) env('COURSE_BUILDER_GLOBAL_EDIT_MAX_USD', 3),
+        'output_factor' => 1.2,
+    ],
+
     // Quiz answers must share words with the cited fragments (deterministic support check)
     'quiz_support_min_overlap' => 2,
 
