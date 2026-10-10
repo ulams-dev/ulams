@@ -9,6 +9,9 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const stripTags = (s) => String(s).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").replace(/ ([.,;:])/g, "$1").trim();
 
+/** The steps the landing hero cycles through: the map with a data layer lit and no figures panel (see ADR 0093). */
+export const SHOWCASE_STEPS = ["solar", "roads", "parcels", "gas"];
+
 export function buildManifest() {
   const data = JSON.parse(readFileSync(join(root, "data", "steps.json"), "utf8"));
   const text = (st, lang) => {
@@ -39,6 +42,7 @@ export function buildManifest() {
     requires: [],
     network: [],
     steps,
+    showcase: { steps: SHOWCASE_STEPS, poster: "posters/showcase.webp" },
     a11y: {
       keyboard:
         "The map is a picture: the places on it are listed as text for screen readers, and the figures are charts with data tables. Step navigation is provided by the lesson page; on a narrow screen a native button shows or hides the figures panel.",

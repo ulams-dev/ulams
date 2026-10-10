@@ -509,6 +509,15 @@
       "poster": "posters/ledger.webp"
     }
   ],
+  "showcase": {
+    "steps": [
+      "solar",
+      "roads",
+      "parcels",
+      "gas"
+    ],
+    "poster": "posters/showcase.webp"
+  },
   "a11y": {
     "keyboard": "The map is a picture: the places on it are listed as text for screen readers, and the figures are charts with data tables. Step navigation is provided by the lesson page; on a narrow screen a native button shows or hides the figures panel.",
     "notes": "Every step has a text alternative in English and Polish and a still poster. With reduced motion the map stops moving and the charts show their final values."

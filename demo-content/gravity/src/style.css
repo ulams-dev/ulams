@@ -542,6 +542,16 @@ body.ulams-chrome-none .tour-lag,
 body.ulams-chrome-none .tour-sg { background: var(--panel); border: 1px solid var(--line); padding: 12px; margin-bottom: 8px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 body.ulams-poster .tour-panel { display: none !important; }
 
+/* Showcase (the landing hero): the scene alone. The tour panel, the labels, the legends and the captions go. */
+body.ulams-showcase #app,
+body.ulams-showcase .tour-panel,
+body.ulams-showcase .tour-cta,
+body.ulams-showcase .label-layer,
+body.ulams-showcase .lag-legend,
+body.ulams-showcase .lag-caption,
+body.ulams-showcase .tide-panel,
+body.ulams-showcase .tide-graph { display: none !important; }
+
 /* The lesson page draws its own header (about 115 px) and footer (about 70 px) over the frame, so the
    controls start below the header and stop above the footer. */
 body.ulams-embed:not(.ulams-poster) .tour-panel { top: 128px; right: 24px; max-height: calc(100vh - 212px); }

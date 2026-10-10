@@ -18,5 +18,6 @@
     { "id": "middle", "title": { "en": "Middle", "pl": "Srodek" }, "text": { "en": "Halfway.", "pl": "Polowa." } },
     { "id": "last", "title": { "en": "Last", "pl": "Koniec" }, "text": { "en": "The end.", "pl": "Koniec." } }
   ],
+  "showcase": { "steps": ["intro", "last"], "poster": "posters/intro.webp" },
   "a11y": { "keyboard": "Everything is a button.", "notes": "Each step has a text alternative." }
 }

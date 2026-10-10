@@ -623,6 +623,10 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [x] (new) Six demos on the platform landing with one-click learner and admin login; `make demo-seed-tenants`
       seeds all six, `make demo-reset-all` resets them; README and docs site updated (M10; the phone layout of the lesson
       player no longer overflows with a long course title or a long source URL)
+- [x] (new) The demo landing heroes are clean, self-running showcase visuals instead of the lesson player (ADR 0093
+      amendment): `init.showcase` in the bridge, a manifest `showcase` (loop steps and still), a `<ulams-showcase>`
+      hero that paints a still, starts after first paint, pauses off screen, stays a still under reduced motion and
+      keeps a small "Try it" link; gravity (scene alone), poland (map layers, no panel) and ulam (the spiral winding out)
 - [x] (new) `demo-content/`: content packages (ADR 0088, amended 2026-10-09) with a boundary lint (workspace, lint,
       harness, the gravity (M3), poland (M4) and five Ulam (M5) packages, all with sourced content after M9b)
   - [x] (new) gravity package: the owner's simulator, MIT, 44 steps EN and PL, posters, bridge adapter, Playwright

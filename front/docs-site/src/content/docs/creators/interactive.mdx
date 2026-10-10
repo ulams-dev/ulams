@@ -76,6 +76,7 @@ A zip file with, at its root:
 | `requires` | no | `["webgl"]`: the lesson shows the poster and the text when the browser has no WebGL |
 | `network` | no | Exact `https://host[:port]` origins the package may call; see [Limits and the CSP](#limits-and-the-csp) |
 | `steps` | yes | 1 to 200 steps: `id`, `title` and `text` per locale, and an optional `poster` image in the zip |
+| `showcase` | no | The loop of a landing hero: `steps` (1 to 12 step ids) and an optional `poster` image in the zip; see [As the hero of a landing page](#as-the-hero-of-a-landing-page) |
 | `a11y` | no | Notes on keyboard use and alternatives |
 
 Every step needs a `text` in **every** locale: it is the text alternative that learners with a screen
@@ -156,8 +157,26 @@ not exist in the played version.
 The landing pages of the free demo academies (`gravity`, `poland`, `ulam`) can open with the course's own
 interactive. The reference frontend asks the public, throttled endpoint `GET /api/interactive/showcase`, which
 returns the launch data of the first interactive topic of the first public course, with no sign-in and no
-progress recorded. The hero plays it in the usual sandbox, with the poster and the text version. A tenant
-without such a topic answers 404 and the hero shows a drawn scene instead.
+progress recorded. The hero is not the lesson player: it is a decorative, self-running loop, with no step text
+and no controls. A tenant without such a topic answers 404 and the hero shows a drawn scene instead.
+
+To make a package look good there, add a `showcase` to the manifest and support `init.showcase` in the package:
+
+```json
+"showcase": { "steps": ["diagonals", "primes"], "poster": "posters/showcase.webp" }
+```
+
+- `steps` is the loop, in order, one step every nine seconds. Pick the steps that look best on their own.
+- `poster` is the still the page paints first, and the only picture shown under reduced motion. Render it from
+  the package with the same view the hero shows (the demo packages use `?ulams-poster&ulams-showcase#<step>`).
+  Without a `showcase`, the hero loops the first four steps and shows the poster of the first.
+- With `init.showcase` the package hides its text and controls, takes no focus and moves slowly by itself;
+  the page moves it between the steps with `goToStep`.
+
+The hero never delays the page: the still is an image of fixed size, the frame starts only after the page has
+loaded and the browser is idle, it runs only while it is on screen and the tab is visible, and a package that
+fails or does not answer leaves the still. The picture is hidden from screen readers and has a text alternative.
+A small link ("Try it") goes to the lesson, and a button stops the motion.
 
 ## Limits and the CSP
 

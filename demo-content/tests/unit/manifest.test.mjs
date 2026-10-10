@@ -42,3 +42,12 @@ test("the licence must be on the allow-list and the files must exist and be allo
   assert.ok(problems.some((p) => p.includes(".env")));
   assert.ok(validateManifest(good(), new Set(["index.html"])).some((p) => p.includes("poster")));
 });
+
+test("a showcase must name real steps and, when it has one, a poster in the package", () => {
+  const m = { ...good(), showcase: { steps: ["a"], poster: "p/showcase.webp" } };
+  assert.deepEqual(validateManifest(m, new Set(["index.html", "p/a.webp", "p/showcase.webp"])), []);
+  assert.ok(validateManifest(m, new Set(["index.html", "p/a.webp"])).some((p) => p.includes("showcase.poster")));
+  assert.ok(validateManifest({ ...m, showcase: { steps: ["nope"] } }).some((p) => p.includes('showcase.steps[0]: "nope"')));
+  assert.ok(validateManifest({ ...m, showcase: { steps: [] } }).length > 0);
+  assert.ok(validateManifest({ ...m, showcase: { steps: ["a"], loop: true } }).length > 0);
+});

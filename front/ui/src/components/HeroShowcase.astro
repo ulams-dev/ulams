@@ -1,0 +1,119 @@
+---
+/**
+ * The landing hero's interactive (ADR 0093): a decorative, self-running loop of a package, not a tool. It paints
+ * a still (the package's showcase poster) at a fixed aspect ratio, so nothing shifts; after the page has loaded
+ * and the browser is idle the sandboxed frame starts on top of it (elements/showcase.ts) with no text and no
+ * controls, and the still stays under reduced motion. The picture is aria-hidden and has a text alternative; the
+ * only things to reach are the small link to the lesson and a button that stops the motion (WCAG 2.2.2).
+ * Nothing is tracked: this takes no topic or course id and sends no progress.
+ */
+import { SANDBOX_INTERACTIVE } from "@ulams/sdk/frames";
+import type { StepInfo } from "../lib/interactive.ts";
+
+interface Props {
+  src: string;
+  title: string;
+  steps: StepInfo[];
+  showcase: { steps: string[]; poster?: string };
+  href?: string;
+  tryLabel?: string;
+  locale?: string;
+  requires?: string[];
+  licence?: string;
+  attribution?: string;
+}
+const { src, title, steps, showcase, href, tryLabel = "Try it", locale = "en", requires = [], licence, attribution } = Astro.props;
+const loop = showcase.steps;
+const loopTitles = loop.map((id) => steps.find((s) => s.id === id)?.title).filter(Boolean);
+const alternative = [`${title}.`, loopTitles.length ? `A slow loop through: ${loopTitles.join("; ")}.` : "", attribution ?? (licence ? `Licence: ${licence}.` : "")].filter(Boolean).join(" ");
+---
+
+<ulams-showcase class="u-sc" src={src} locale={locale} steps={loop.join(" ")} requires={requires.join(" ")} state="still">
+  <div class="u-sc__stage" aria-hidden="true">
+    {showcase.poster && <img class="u-sc__still" src={showcase.poster} alt="" width="1280" height="720" decoding="async" />}
+    <iframe
+      class="u-sc__frame"
+      data-src={src}
+      title={title}
+      sandbox={SANDBOX_INTERACTIVE}
+      referrerpolicy="no-referrer"
+      tabindex="-1"
+      aria-hidden="true"
+      inert
+    ></iframe>
+  </div>
+  <p class="u-visually-hidden">{alternative}</p>
+  <div class="u-sc__actions">
+    {href && <a class="u-btn u-btn--sm u-sc__try" href={href} aria-label={`${tryLabel}: ${title}`}>{tryLabel}</a>}
+    <button class="u-btn u-btn--ghost u-btn--sm u-sc__toggle" type="button" data-toggle aria-pressed="false" data-pause-label={locale === "pl" ? "Zatrzymaj animację" : "Pause animation"} data-play-label={locale === "pl" ? "Odtwórz animację" : "Play animation"}>{locale === "pl" ? "Zatrzymaj animację" : "Pause animation"}</button>
+  </div>
+</ulams-showcase>
+
+<script>
+  import "../elements/showcase.ts";
+</script>
+
+<style is:global>
+  ulams-showcase.u-sc {
+    display: block;
+    position: relative;
+  }
+  .u-sc__stage {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--ulams-color-card-bg);
+  }
+  @media (max-width: 720px) {
+    .u-sc__stage {
+      aspect-ratio: 1;
+    }
+  }
+  .u-sc__still,
+  .u-sc__frame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .u-sc__still {
+    object-fit: cover;
+  }
+  /* the frame fades in over the still once the package is up; it never takes a pointer or the focus */
+  .u-sc__frame {
+    opacity: 0;
+    pointer-events: none;
+    background: transparent;
+    transition: opacity 0.9s ease;
+  }
+  ulams-showcase[state="playing"] .u-sc__frame {
+    opacity: 1;
+  }
+  .u-sc__actions {
+    position: absolute;
+    inset: auto 12px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .u-sc__actions > * {
+    pointer-events: auto;
+  }
+  .u-sc__toggle {
+    background: color-mix(in srgb, var(--ulams-color-surface) 82%, transparent);
+    backdrop-filter: blur(6px);
+  }
+  /* there is nothing to pause until something moves */
+  ulams-showcase:not([state="playing"]) .u-sc__toggle {
+    display: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .u-sc__frame {
+      transition: none;
+    }
+  }
+</style>

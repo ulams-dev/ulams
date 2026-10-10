@@ -120,6 +120,16 @@ class ManifestValidatorTest extends TestCase
         $this->assertRejected(['entry' => 'app.js'] + $this->base(), 'must be an .html file', ['app.js', 'posters/intro.webp']);
     }
 
+    public function testTheShowcaseNamesRealStepsAndAPosterInTheArchive(): void
+    {
+        $this->assertSame([], $this->errors($this->base()));
+        $this->assertRejected(['showcase' => ['steps' => ['intro', 'nowhere']]] + $this->base(), 'showcase.steps[1]: "nowhere" is not a step');
+        $this->assertRejected(['showcase' => ['steps' => ['intro'], 'poster' => 'posters/showcase.webp']] + $this->base(), 'showcase.poster: "posters/showcase.webp" is not in the archive');
+        $this->assertRejected(['showcase' => ['steps' => []]] + $this->base(), '/showcase');
+        $this->assertRejected(['showcase' => ['steps' => ['intro'], 'poster' => '../x.webp']] + $this->base(), '/showcase');
+        $this->assertRejected(['showcase' => ['steps' => ['intro'], 'loop' => true]] + $this->base(), '/showcase');
+    }
+
     public function testAtMostTwoHundredSteps(): void
     {
         $m = $this->base();

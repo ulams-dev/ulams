@@ -20,6 +20,8 @@ var $$ = function (s, r) { return Array.prototype.slice.call((r || document).que
 
 var poster = /[?&]ulams-poster\b/.test(location.search);
 var embedded = window.parent !== window;
+/* Showcase (landing hero, ADR 0093): the map and its layers only, no figures panel, no text, nothing to focus. */
+var showcase = /[?&]ulams-showcase\b/.test(location.search);
 var stepMode = embedded || poster;
 var chrome = stepMode ? "none" : "full";
 var reduced = (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) || /[?&]instant\b/.test(location.search);
@@ -445,6 +447,7 @@ var atlas, ctx, W = 0, H = 0, NICE = [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 
 var hasPanel = false; // step mode, "none" chrome: the figures sit in a panel on the right
 
 function focusRect(name, w, h) {
+  if (showcase) return { x: 16, y: 20, w: Math.max(240, w - 32), h: Math.max(160, h - 40) };
   var top = stepMode && !poster ? 124 : 64; // the lesson page draws a header over the top of the frame
   if (w < 900) return name === "orbit" ? { x: 8, y: top - 4, w: w - 16, h: h * 0.40 } : { x: 16, y: top, w: w - 32, h: h * 0.36 };
   var left = Math.min(w * 0.44, 560);
@@ -580,13 +583,13 @@ function goTo(id, announce) {
   $("#story").scrollTop = 0;
   stage.setAttribute("data-hero", "0"); stage.setAttribute("data-step", st.id);
   if (chrome === "minimal") addStepNav(el);
-  var newHasPanel = chrome === "none" && hasFigs;
+  var newHasPanel = chrome === "none" && hasFigs && !showcase;
   if (newHasPanel !== hasPanel) { hasPanel = newHasPanel; }
   setView(st.view, reduced);
   if (reduced) { /* a layout change of the panel must not leave the map off-centre */ atlas.reframe(); }
   runFigures(el);
   if (reduced) pauseFigureAnimations(el);
-  var tgl = $("#paneltoggle"); if (tgl) tgl.hidden = !(chrome === "none" && hasFigs);
+  var tgl = $("#paneltoggle"); if (tgl) tgl.hidden = !(chrome === "none" && hasFigs) || showcase;
   renderFixed();
   dirty = true;
   if (announce !== false && changed) { bridge.stepChanged(id); bridge.progress(STEPS.length > 1 ? i / (STEPS.length - 1) : 1); }
@@ -662,6 +665,7 @@ var bridge = connect({
 
 function applyInit(init) {
   chrome = init.chrome;
+  if (init.showcase) showcase = true;
   if (init.reducedMotion) reduced = true;
   var l = String(init.locale || "en").slice(0, 2); if (l === "en" || l === "pl") lang = l;
   if (init.range) {
@@ -675,6 +679,7 @@ function boot() {
   if (stepMode) {
     body.classList.add("ix", "ix-" + chrome); if (poster) body.classList.add("ix-poster"); document.body.classList.add("ix-" + chrome);
     if (poster) { document.body.classList.add("ix-poster"); chrome = "none"; }
+    if (showcase) { chrome = "none"; body.classList.add("ix-showcase"); document.body.setAttribute("inert", ""); }
   }
   if (reduced) body.classList.add("reduced");
   hasPanel = false;

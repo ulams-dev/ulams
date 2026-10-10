@@ -16,6 +16,7 @@ const init: InitPayload = {
   reducedMotion: q.get("reducedMotion") === "1",
   display: (q.get("display") ?? "inline") as Display,
   chrome: (q.get("chrome") ?? "none") as Chrome,
+  ...(q.get("showcase") === "1" ? { showcase: true } : {}),
   ...(q.get("startStep") ? { startStep: q.get("startStep") as string } : {}),
   ...(q.get("from") || q.get("to") ? { range: { ...(q.get("from") ? { from: q.get("from") as string } : {}), ...(q.get("to") ? { to: q.get("to") as string } : {}) } } : {}),
 };

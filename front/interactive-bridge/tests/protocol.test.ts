@@ -45,6 +45,19 @@ describe("guards agree with the schemas", () => {
   });
 });
 
+describe("init showcase flag", () => {
+  const withShowcase = { ...env(VALID.init!), chrome: "none", showcase: true };
+  it("is accepted as a boolean by the guard and the schema", () => {
+    expect(parseMessage(withShowcase, "toPackage", NONCE)).not.toBeNull();
+    expect(validate(schema("init"), JSON.parse(JSON.stringify(withShowcase)))).toEqual([]);
+  });
+  it("is rejected when it is not a boolean", () => {
+    const bad = { ...withShowcase, showcase: "yes" };
+    expect(parseMessage(bad, "toPackage", NONCE)).toBeNull();
+    expect(validate(schema("init"), bad)).not.toEqual([]);
+  });
+});
+
 describe("parseMessage", () => {
   it("drops a wrong nonce, an unknown type, a wrong version and junk", () => {
     expect(parseMessage(env(VALID.complete!, "x".repeat(32)), "toParent", NONCE)).toBeNull();

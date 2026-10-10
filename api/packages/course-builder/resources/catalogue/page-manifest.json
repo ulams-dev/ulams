@@ -637,22 +637,45 @@
                 "maxItems": 200,
                 "minItems": 1
               },
-              "height": {
-                "type": "integer",
-                "description": "Frame height px",
-                "minimum": 240,
-                "default": 440,
-                "maximum": 1000
+              "showcase": {
+                "type": "object",
+                "properties": {
+                  "steps": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "Step id",
+                      "maxLength": 64
+                    },
+                    "description": "Steps the hero loops through, slowly, in order",
+                    "default": [],
+                    "maxItems": 12,
+                    "minItems": 1
+                  },
+                  "poster": {
+                    "type": "string",
+                    "format": "href",
+                    "description": "Still shown until the frame runs, and under reduced motion",
+                    "maxLength": 2048
+                  }
+                },
+                "required": [
+                  "steps"
+                ],
+                "description": "The self-running loop: no step text and no controls, a still first, and a static frame under reduced motion",
+                "additionalProperties": false
               },
-              "startStep": {
+              "href": {
                 "type": "string",
-                "description": "First step of the range",
-                "maxLength": 64
+                "format": "href",
+                "description": "Where the small link goes (the lesson)",
+                "maxLength": 2048
               },
-              "endStep": {
+              "tryLabel": {
                 "type": "string",
-                "description": "Last step of the range",
-                "maxLength": 64
+                "description": "Label of the small link",
+                "maxLength": 40,
+                "default": "Try it"
               },
               "locale": {
                 "type": "string",
@@ -698,7 +721,8 @@
             "required": [
               "src",
               "title",
-              "steps"
+              "steps",
+              "showcase"
             ],
             "description": "A live interactive package for the cosmos, atlas and notebook variants; without it the variant draws its own picture. Nothing is tracked.",
             "additionalProperties": false

@@ -978,7 +978,9 @@ them:
 - The **landing hero interactives** use a new public endpoint, `GET api/interactive/showcase` (no auth,
   `public` courses only, throttled). It returns `{url, steps, posters}` for the first interactive topic
   of the first public course, with no tracking. It gets a tenant isolation test, a policy (public),
-  OpenAPI docs and a CSP check.
+  OpenAPI docs and a CSP check. (Amended 2026-10-10, ADR 0093: the hero plays the package as a clean,
+  self-running loop, with a manifest `showcase`, `init.showcase` and a `<ulams-showcase>` element, not
+  the lesson player.)
 - Design references: `front/docs/design/stitch/interactive-demos/` (prompts saved; the screens timed
   out on 2026-10-09 and can be regenerated from `PROMPTS.md`).
 

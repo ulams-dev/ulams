@@ -7,6 +7,9 @@ import { readSteps } from "./steps.mjs";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 export const version = JSON.parse(readFileSync(join(root, "package.json"), "utf8")).version;
 
+/** The steps the landing hero cycles through: the solar system orbiting, with no tour panel (ADR 0093). */
+export const SHOWCASE_STEPS = ["solar-system", "venus-rose", "sun-moving", "resonance"];
+
 /** @param {{posters?: boolean}} options posters: reference posters/<id>.webp for every step */
 export async function buildManifest({ posters = true } = {}) {
   const steps = (await readSteps()).map((s) => ({ ...s, ...(posters ? { poster: `posters/${s.id}.webp` } : {}) }));
@@ -27,6 +30,7 @@ export async function buildManifest({ posters = true } = {}) {
     requires: ["webgl"],
     network: [],
     steps,
+    ...(posters ? { showcase: { steps: SHOWCASE_STEPS, poster: "posters/showcase.webp" } } : {}),
     a11y: {
       keyboard:
         "The 3D view itself is pointer-only (drag to rotate). The time-speed slider, the Lagrange shot buttons and the stopped-galaxy buttons are native controls and work with the keyboard. The lesson page provides the stepper.",

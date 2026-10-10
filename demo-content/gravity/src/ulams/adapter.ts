@@ -30,6 +30,8 @@ export function startAdapter(options: AdapterOptions): Bridge {
   const applyInit = (init: InitPayload) => {
     const tour = options.getTour();
     document.body.classList.add('ulams-embed', `ulams-chrome-${init.chrome}`);
+    // The landing hero: the scene alone, drifting. No tour panel, no labels, no legends, nothing to focus.
+    if (init.showcase) { document.body.classList.add('ulams-showcase'); document.body.setAttribute('inert', ''); }
     if (!tour) return; // the scene could not be created: the error below tells the lesson page
     const lang = init.locale.slice(0, 2) as Lang;
     if (LANGS.includes(lang)) tour.setLanguage(lang);

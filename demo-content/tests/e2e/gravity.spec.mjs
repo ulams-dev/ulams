@@ -171,3 +171,19 @@ test("axe: no WCAG 2.2 AA violation in the lesson host with the package, or in t
   const alone = await new AxeBuilder({ page }).withTags(tags).analyze();
   expect(alone.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(" | ")}`)).toEqual([]);
 });
+
+test("showcase mode is the scene alone: no tour panel, labels or controls, nothing to focus, and the loop's steps open", async ({ page }) => {
+  expect(manifest.showcase.steps).toEqual(["solar-system", "venus-rose", "sun-moving", "resonance"]);
+  expect(statSync(join(dir, manifest.showcase.poster)).size).toBeGreaterThan(4_000);
+  await page.goto(harness.hostUrl({ chrome: "none", showcase: "1", startStep: "solar-system" }));
+  await waitForMessage(page, "ready");
+  await waitForMessage(page, "stepChanged", { step: "solar-system" });
+  const frame = page.frames().find((f) => f.url().includes("/interactive/k/v1/"));
+  await expect(frame.locator("body")).toHaveClass(/ulams-showcase/);
+  for (const hidden of [".tour-panel", ".tour-cta", "#app", ".label-layer", "#info-btn", "#about"]) await expect(frame.locator(hidden).first(), hidden).toBeHidden();
+  expect(await frame.locator("body").getAttribute("inert")).not.toBeNull();
+  for (const id of manifest.showcase.steps.slice(1)) {
+    await page.evaluate((s) => window.__host.goToStep(s), id);
+    await waitForMessage(page, "stepChanged", { step: id }, 20_000);
+  }
+});

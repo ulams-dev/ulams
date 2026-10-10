@@ -31,11 +31,13 @@ if (!noPosters) {
   const server = await serveFolder(dist, { csp: false });
   const browser = await chromium.launch({ args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist", "--enable-webgl"] });
   const context = await browser.newContext({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1, reducedMotion: "no-preference" });
-  const queue = manifest.steps.map((s) => s.id);
+  // one still per step, and the hero's still: the first showcase step with the scene alone
+  const queue = [...manifest.steps.map((s) => ({ id: s.id, file: `${s.id}.webp`, query: "ulams-poster" })), { id: manifest.showcase.steps[0], file: "showcase.webp", query: "ulams-poster&ulams-showcase" }];
   const worker = async () => {
     const page = await context.newPage();
-    for (let id = queue.shift(); id; id = queue.shift()) {
-      await page.goto(`${server.url}/index.html?ulams-poster#${id}`);
+    for (let job = queue.shift(); job; job = queue.shift()) {
+      const { id, file, query } = job;
+      await page.goto(`${server.url}/index.html?${query}#${id}`);
       await page.waitForFunction(() => document.body.classList.contains("ulams-booted"), null, { timeout: 60_000 });
       // let the step's animation develop; a slow software GL (CI) may still show a blank frame, so look again
       let webp;
@@ -44,9 +46,9 @@ if (!noPosters) {
         webp = await sharp(await page.screenshot({ type: "png" })).webp({ quality: 70 }).toBuffer();
         if (webp.length > MIN_POSTER_BYTES) break;
       }
-      if (webp.length <= MIN_POSTER_BYTES) throw new Error(`the poster of "${id}" is blank (${webp.length} bytes): WebGL did not render`);
-      writeFileSync(join(dist, "posters", `${id}.webp`), webp);
-      process.stdout.write(`poster ${id}\n`);
+      if (webp.length <= MIN_POSTER_BYTES) throw new Error(`the poster ${file} is blank (${webp.length} bytes): WebGL did not render`);
+      writeFileSync(join(dist, "posters", file), webp);
+      process.stdout.write(`poster ${file}\n`);
     }
     await page.close();
   };

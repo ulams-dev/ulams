@@ -82,6 +82,10 @@ export function validateManifest(manifest, files = null) {
       }
     }
   });
+  if (m.showcase) {
+    m.showcase.steps.forEach((id, i) => { if (!seen.has(id)) errors.push(`showcase.steps[${i}]: "${id}" is not a step of this package`); });
+    if (files && m.showcase.poster && !files.has(m.showcase.poster)) errors.push(`showcase.poster: "${m.showcase.poster}" is not in the package`);
+  }
   if (files) {
     const entry = m.entry ?? "index.html";
     if (!files.has(entry)) errors.push(`entry: "${entry}" is not in the package`);

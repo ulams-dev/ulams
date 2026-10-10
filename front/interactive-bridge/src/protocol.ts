@@ -29,6 +29,11 @@ export interface InitPayload {
   startStep?: string;
   range?: { from?: string; to?: string };
   readOnly?: boolean;
+  /**
+   * A decorative, self-running view for a landing hero: no controls and no text, nothing focusable, slow
+   * motion, and the package follows `goToStep` from the page, which cycles the manifest's `showcase.steps`.
+   */
+  showcase?: boolean;
 }
 
 export type ParentMessage =
@@ -89,7 +94,8 @@ export function isParentMessage(m: Record<string, unknown>): boolean {
         (m.chrome === "full" || m.chrome === "minimal" || m.chrome === "none") &&
         optStep(m.startStep) &&
         (r === undefined || (isObj(r) && optStep(r.from) && optStep(r.to))) &&
-        (m.readOnly === undefined || typeof m.readOnly === "boolean")
+        (m.readOnly === undefined || typeof m.readOnly === "boolean") &&
+        (m.showcase === undefined || typeof m.showcase === "boolean")
       );
     }
     case "goToStep":

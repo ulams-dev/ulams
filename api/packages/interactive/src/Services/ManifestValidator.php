@@ -91,6 +91,18 @@ class ManifestValidator
             }
         }
 
+        if (isset($manifest['showcase'])) {
+            foreach ($manifest['showcase']['steps'] as $i => $id) {
+                if (!isset($ids[$id])) {
+                    $errors[] = "showcase.steps[{$i}]: \"{$id}\" is not a step of this package.";
+                }
+            }
+            $poster = $manifest['showcase']['poster'] ?? null;
+            if ($poster !== null && !isset($files[$poster])) {
+                $errors[] = "showcase.poster: \"{$poster}\" is not in the archive.";
+            }
+        }
+
         if ($errors !== []) {
             throw ValidationException::withMessages(['manifest' => $errors]);
         }

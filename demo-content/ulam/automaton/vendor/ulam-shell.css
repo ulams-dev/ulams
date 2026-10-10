@@ -61,3 +61,9 @@ label { font-weight: 500; }
 .paused *, .paused *::before, .paused *::after { animation-play-state: paused !important; }
 canvas { display: block; max-width: 100%; background: var(--ix-surface); border: 1px solid var(--ix-line); }
 canvas:focus-visible { outline: 3px solid var(--ix-margin); outline-offset: 2px; }
+
+/* showcase (landing hero): the picture only, centred, with nothing to read, click or focus */
+.ix-showcase .ix-app { grid-template-columns: minmax(0, 1fr); min-height: 100vh; padding: 8px; align-items: center; }
+.ix-showcase .ix-card, .ix-showcase .ix-controls, .ix-showcase .ix-sr, .ix-showcase .ix-summary, .ix-showcase .ix-note { display: none; }
+.ix-showcase .ix-stage { display: grid; place-items: center; }
+.ix-showcase canvas { border: 0; }
