@@ -12,10 +12,10 @@ const TENANTS: Array<{ slug: string; title: RegExp; kinds: string[]; syllabusMin
   { slug: "coffee", title: /Learn coffee/, kinds: ["RichText", "Video", "H5P", "GiftQuiz"] },
   { slug: "oncall", title: /Stay calm/, kinds: ["RichText", "Video"] },
   { slug: "nightsky", title: /adventure to the stars/i, kinds: ["preview"] },
-  // the free interactive demos: one welcome lesson each until the real courses land (plan milestones M8 and M9)
-  { slug: "gravity", title: /solar system|gravity|orbit/i, kinds: ["preview"], syllabusMin: 1 },
-  { slug: "poland", title: /poland|polska/i, kinds: ["preview"], syllabusMin: 1 },
-  { slug: "ulam", title: /scottish|ulam|mathematic/i, kinds: ["preview"], syllabusMin: 1 },
+  // the free interactive demos (plan milestones M8 and M9): a welcome lesson, the modules, a final test and the sources
+  { slug: "gravity", title: /solar system|gravity|orbit/i, kinds: ["preview"], syllabusMin: 10 },
+  { slug: "poland", title: /poland|polska/i, kinds: ["preview"], syllabusMin: 10 },
+  { slug: "ulam", title: /scottish|ulam|mathematic/i, kinds: ["preview"], syllabusMin: 9 },
 ];
 
 async function noHorizontalScroll(page: Page) {
@@ -102,6 +102,19 @@ test("platform landing sells the product and links every demo", async ({ page })
     await expect(page.locator(`#demos a[href^="http://${slug}.admin.localhost"]`)).toHaveCount(1);
   }
   await expect(page.locator("#demos")).toContainText("reset every hour");
+  // one click into each demo: the learner link opens the course's first lesson (the front logs in as the demo student)
+  // and the admin link opens the tenant's admin, for all six
+  for (const slug of ["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"]) {
+    const card = page.locator("#demos li", { has: page.locator(`a[href^="http://${slug}.app.localhost"]`) });
+    await expect(card.locator("h3")).not.toHaveText("");
+    await expect(card.locator(".u-demo-card__text")).not.toHaveText("");
+    const learner = await card.locator(`a[href^="http://${slug}.app.localhost"]`).getAttribute("href");
+    const learn = await page.request.get(learner!);
+    expect(learn.status(), `${slug}: the learner link`).toBe(200);
+    expect(learner, `${slug}: the learner link goes to a lesson`).toMatch(/\/learn\/\d+/);
+    const admin = await card.locator(`a[href^="http://${slug}.admin.localhost"]`).getAttribute("href");
+    expect((await page.request.get(admin!)).status(), `${slug}: the admin link`).toBe(200);
+  }
   // The landing shows roadmap badges in `actual` mode only (src/lib/landing-status.ts). Run this test with the
   // same ULAMS_LANDING_STATUS as the server (unset = final); both modes are asserted.
   const coming = await page.locator(".u-status--coming").count();

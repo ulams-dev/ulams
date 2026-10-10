@@ -46,7 +46,11 @@ corepack yarn dev                           # admin on :8000 and front on :3000
 
 Six demo sites, each with its own database, bucket, theme, landing page and seeded course
 (designs and content: [`front/docs/design/experiences.md`](front/docs/design/experiences.md)). The last three are free
-and interactive; their courses are placeholders until the content milestones land:
+and interactive: Gravity Lab (a live 3D solar system), Poland, Measured (a map and charts, in English and Polish) and The
+Scottish Book (Stanisław Ulam and the Lwów School, with five small interactives). Their lessons play packages from
+[`demo-content/`](demo-content), and every statement of their text is cited to a source. The platform landing
+(http://app.localhost:4321 with the reference frontend) shows all six, each with "Open as learner" and "Open as admin":
+demo mode logs you in with one click, and every tenant is wiped and seeded again every hour.
 
 | Tenant | Learner site | Admin | API |
 |---|---|---|---|
@@ -68,10 +72,13 @@ php artisan ulams:tenant:create gravity --name="Gravity Lab" --theme=gravity --a
 php artisan ulams:tenant:create poland --name="Poland, Measured" --theme=poland --accent="#C8102E"
 php artisan ulams:tenant:create ulam --name="The Scottish Book" --theme=ulam --accent="#1D3B8F"
 exit
-make -C api demo-seed demo-seed-tenants
+make -C api demo-packages demo-seed demo-seed-tenants
 ```
 
-`make -C api demo-create-tenants` runs the six create commands in one go.
+`make -C api demo-create-tenants` runs the six create commands in one go and `make -C api demo-mode-on` turns demo mode
+on for all six. `make -C api demo-packages` builds the interactive packages of Gravity Lab, Poland and The Scottish Book
+on the host first (the API container cannot see `demo-content/`; Chromium is needed once for the gravity posters). To
+start over: `make -C api demo-reset-all` resets the six tenants now, `make -C api demo-reset DOMAIN=ulam.localhost` one.
 
 Demo users per tenant: `admin@<slug>.ulams.app`, `tutor@<slug>.ulams.app`,
 `student1…5@<slug>.ulams.app`, password `TENANT_DEMO_PASSWORD` (dev only, see `api/.env.example`).

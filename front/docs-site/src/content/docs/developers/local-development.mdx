@@ -176,6 +176,7 @@ All targets are in [`api/makefile`](https://github.com/ulams-dev/ulams/blob/main
 | `demo-create-tenants` | `ulams:tenant:create` for the six demo tenants with their names, themes and accents |
 | `demo-mode-on` | Turns demo mode on for the six demo tenants (`ulams:tenant:create <slug> --demo=on`) |
 | `demo-reset` | Resets one demo tenant now: `make -C api demo-reset DOMAIN=coffee.localhost` |
+| `demo-reset-all` | Resets all six demo tenants now, one after the other |
 | `swagger-generate` | `php artisan l5-swagger:generate` |
 | `test-phpunit` | `./vendor/bin/phpunit` (see [Testing](/developers/testing/) for the database settings) |
 | `backup-postgres` | `pg_dump` into `api/docker/postgres-backups` (`backup-<date>.sql` and `backup-latest.sql`) |

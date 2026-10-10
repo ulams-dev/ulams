@@ -351,6 +351,12 @@ const resources = topic.resources ?? [];
     border-radius: 3px;
     background: linear-gradient(90deg, var(--ulams-color-positive) var(--progress), var(--ulams-color-border) var(--progress));
   }
+  /* long source URLs and callout text wrap instead of widening the page on a phone (WCAG 1.4.10 reflow) */
+  .u-player :global(.u-prose a),
+  .u-player :global(.u-callout),
+  .u-player :global(.u-callout *) {
+    overflow-wrap: anywhere;
+  }
   .u-player__tree {
     grid-area: tree;
     position: sticky;
@@ -629,7 +635,8 @@ const resources = topic.resources ?? [];
   }
   @media (max-width: 960px) {
     .u-player {
-      grid-template-columns: 1fr;
+      /* minmax(0, ...): a long course title in the top bar must not widen the column past the viewport */
+      grid-template-columns: minmax(0, 1fr);
       grid-template-areas:
         "top"
         "tree"

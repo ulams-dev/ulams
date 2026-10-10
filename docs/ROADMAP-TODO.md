@@ -606,10 +606,10 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
       account area; webinars/events/consultations pages (partial: implemented and tested, uncommitted;
       see `docs/plans/phase-5-reference-frontend.md`, batch 2)
-- [ ] (new) Three new free demo academies, `gravity` (Gravity Lab, 3D simulation), `poland` (Poland, Measured /
+- [x] (new) Three new free demo academies, `gravity` (Gravity Lab, 3D simulation), `poland` (Poland, Measured /
       Polska w liczbach, map in the background, EN and PL) and `ulam` (The Scottish Book: Stanisław Ulam and the Lwów
       School, five MIT interactives), each with a preset, landing, certificate, demo users and the hourly reset
-      (ADR 0089; `docs/plans/interactive-demos.md` M3–M9) (partial: M9a Ulam research done as docs,
+      (ADR 0089; `docs/plans/interactive-demos.md` M3–M10) (done: M9a Ulam research as docs,
       `docs/plans/interactive-demos-ulam-facts.md` and `docs/plans/interactive-demos-ulam-outline.md`; the owner
       raised no objection in #151; M9b done (ADR 0095): the Ulam course (welcome, eight modules, sixteen lessons, 38 module
       quiz questions and a 14-question final test, five interactives, four licensed photographs), seeded by the demo seeders,
@@ -619,12 +619,12 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       courses (ADR 0093: public showcase endpoint behind the landing heroes); M8 done (ADR 0094): the gravity course (nine
       modules, 56 questions, final test) and the two poland courses (EN and PL, nine chapters each), fact-checked
       (`demo-content/*/FACTCHECK.md`), heroes playing the real scene and map; the landing hero of the Ulam course plays
-      the spiral)
-- [ ] (new) Six demos on the platform landing with one-click learner and admin login; `make demo-seed-tenants`
-      seeds all six; README and docs site updated (M10)
-- [ ] (new) `demo-content/`: content packages (ADR 0088, amended 2026-10-09) with a boundary lint (partial:
-      workspace, lint, harness, the gravity (M3) and poland (M4) packages done; the Ulam interactives (M5) are
-      in progress)
+      the spiral; open owner questions: #205 FACTCHECK reading, #209 the café photo, #210 Problem 77(a))
+- [x] (new) Six demos on the platform landing with one-click learner and admin login; `make demo-seed-tenants`
+      seeds all six, `make demo-reset-all` resets them; README and docs site updated (M10; the phone layout of the lesson
+      player no longer overflows with a long course title or a long source URL)
+- [x] (new) `demo-content/`: content packages (ADR 0088, amended 2026-10-09) with a boundary lint (workspace, lint,
+      harness, the gravity (M3), poland (M4) and five Ulam (M5) packages, all with sourced content after M9b)
   - [x] (new) gravity package: the owner's simulator, MIT, 44 steps EN and PL, posters, bridge adapter, Playwright
         and axe on a throwaway server (M3)
   - [x] (new) poland package: map and charts in EN and PL, 40 steps, regenerated Natural Earth map, primary
