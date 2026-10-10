@@ -79,6 +79,9 @@
     },
     "readOnly": {
       "type": "boolean"
+    },
+    "showcase": {
+      "type": "boolean"
     }
   },
   "additionalProperties": false

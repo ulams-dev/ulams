@@ -77,6 +77,7 @@ class InteractiveLearnerTest extends TestCase
         $this->assertArrayNotHasKey('poster', $data['manifest']['steps'][1]);
         $this->assertSame('CC-BY-4.0', $data['manifest']['licence']);
         $this->assertSame(['webgl'], $data['manifest']['requires']);
+        $this->assertSame(['steps' => ['intro', 'last'], 'poster' => "http://coffee.content.localhost/interactive/{$key}/v1/posters/intro.webp"], $data['manifest']['showcase']);
         $this->assertSame(['start_step' => 'middle', 'end_step' => 'last', 'completion_rule' => 'on_range_end', 'pass_score' => null, 'display' => 'background', 'height' => 640, 'text' => 'Read this'], $data['topic']);
         // nothing that looks like a credential reaches the frame
         $this->assertStringNotContainsString('token', strtolower(json_encode($data)));

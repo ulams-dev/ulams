@@ -26,7 +26,7 @@ opaque sandbox from the tenant content origin, talking to the lesson page throug
 | GET / POST | `/api/admin/interactive/{id}/versions` | list, upload a new version (the manifest `id` must match) |
 | GET | `/api/admin/interactive/{id}/preview?version=` | `{url, nonce, version, manifest}` for an admin preview, nothing tracked |
 | POST | `/api/interactive/launches/{topic}` | learner (`attend` gate): `{url, version, manifest, topic}`; 404 when disabled, 503 without a content origin |
-| GET | `/api/interactive/showcase` | public, throttled (60/min), nothing tracked: the first Interactive topic of the first published public course that has one, in the shape of a launch; 404 when there is none or the type is off, 503 without a content origin. For landing pages |
+| GET | `/api/interactive/showcase` | public, throttled (60/min), nothing tracked: the first Interactive topic of the first published public course that has one, in the shape of a launch (its manifest carries the optional `showcase` loop and still of the landing hero, ADR 0093); 404 when there is none or the type is off, 503 without a content origin. For landing pages |
 | POST | `/api/interactive/topics/{topic}/events` | learner, throttled: a batch of at most 40 bridge events, validated against `resources/schemas/ulams-ix/v1` |
 
 ## Settings

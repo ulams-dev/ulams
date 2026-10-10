@@ -141,6 +141,10 @@ class InteractiveLearnerController extends Controller
                 'attribution' => $manifest['attribution'] ?? null,
                 'source' => $manifest['source'] ?? null,
                 'a11y' => $manifest['a11y'] ?? null,
+                'showcase' => isset($manifest['showcase']) ? array_filter([
+                    'steps' => $manifest['showcase']['steps'],
+                    'poster' => isset($manifest['showcase']['poster']) ? $origin . '/' . $directory . '/' . $manifest['showcase']['poster'] : null,
+                ], fn ($v) => $v !== null) : null,
             ],
             'topic' => [
                 'start_step' => $content->start_step,
