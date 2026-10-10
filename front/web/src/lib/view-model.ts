@@ -463,6 +463,6 @@ export function siteModel(raw: RawSiteData, tenant: { slug: string; adminUrl: st
     webinar: events.find((e) => e.kind === "webinar"),
     inPerson: events.find((e) => e.kind === "in-person"),
     consoleLog: consoleLog(course, events),
-    showcase: raw.showcase ? showcaseProps(raw.showcase, raw.course?.language) : undefined,
+    showcase: raw.showcase ? showcaseProps(raw.showcase, raw.course?.language, course?.previewHref) : undefined,
   };
 }

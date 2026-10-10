@@ -33,6 +33,29 @@ export function startMode(input: { reducedMotion: boolean; reducedMotionSupporte
   return "frame";
 }
 
+/** How long the landing hero stays on one step of its loop (the package animates inside that time). */
+export const SHOWCASE_DWELL_MS = 9000;
+
+export type ShowcaseMode = "loop" | "still";
+
+/**
+ * Whether the landing hero plays its loop or stays on the still (ADR 0093). Reduced motion always means the
+ * still, whatever the package supports: the hero is decoration, so nothing there may move for that visitor.
+ * A package that needs WebGL stays a still when the browser has none.
+ */
+export function showcaseMode(input: { reducedMotion: boolean; requires: readonly string[]; webgl: boolean }): ShowcaseMode {
+  if (input.reducedMotion) return "still";
+  if (input.requires.includes("webgl") && !input.webgl) return "still";
+  return "loop";
+}
+
+/** The step after `current` in the loop (wraps around); the first step for an unknown one. */
+export function nextShowcaseStep(loop: readonly string[], current: string | undefined): string | undefined {
+  if (loop.length === 0) return undefined;
+  const at = current === undefined ? -1 : loop.indexOf(current);
+  return loop[(at + 1) % loop.length];
+}
+
 /** The `--ulams-*` tokens sent to the package in `init` (name to value; empty values are skipped). */
 export const THEME_TOKENS = [
   "--ulams-color-primary",

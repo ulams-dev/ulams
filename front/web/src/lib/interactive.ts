@@ -18,6 +18,8 @@ export interface InteractiveManifest {
   licence: string;
   attribution?: string | null;
   source?: { url: string; ref?: string } | null;
+  /** The landing hero's loop: the steps to cycle through and the still shown until the frame runs (absolute URL). */
+  showcase?: { steps: string[]; poster?: string } | null;
 }
 
 export interface InteractiveLaunch {
@@ -148,20 +150,28 @@ function playerProps(result: InteractiveLaunch, courseLanguage?: string | null):
   };
 }
 
-/** The hero stage height of a package that plays full-bleed (gravity, poland): the stage is a fixed window onto it. */
-const HERO_HEIGHT = 440;
+/** How many steps a package without its own `showcase.steps` loops through in the hero. */
+const FALLBACK_LOOP = 4;
 
 /**
  * Props of the landing hero's live package (the Hero `showcase` prop): the first interactive topic of the first
- * public course, as the public showcase endpoint returns it. Nothing is tracked, so no topic or course id. A topic
- * that plays inline (a small widget with its own step card, such as the Ulam spiral) brings its own height, so the
- * card and the picture both fit; a background topic gets the fixed hero window.
+ * public course, as the public showcase endpoint returns it. Nothing is tracked, so no topic or course id. The hero
+ * plays the package as a decorative loop (ADR 0093): the manifest's `showcase.steps` and still, or, for a package
+ * that declares none, its first steps and the poster of the first. `href` is where "Try it" goes (the lesson).
  */
-export function showcaseProps(launch: InteractiveLaunch, courseLanguage?: string | null): Record<string, unknown> {
+export function showcaseProps(launch: InteractiveLaunch, courseLanguage?: string | null, href?: string): Record<string, unknown> {
   const m = launch.manifest;
   const locale = pickLocale(m, courseLanguage);
-  const height = launch.topic.display === "inline" ? Math.min(900, Math.max(HERO_HEIGHT, launch.topic.height)) : HERO_HEIGHT;
-  return { ...playerProps(launch, courseLanguage), title: pick(m.title, locale, m.defaultLocale), height };
+  const loop = m.showcase?.steps?.length ? m.showcase.steps : m.steps.slice(0, FALLBACK_LOOP).map((s) => s.id);
+  const poster = m.showcase?.poster ?? m.steps.find((s) => s.id === loop[0])?.poster;
+  const { startStep: _start, endStep: _end, ...player } = playerProps(launch, courseLanguage);
+  return {
+    ...player,
+    title: pick(m.title, locale, m.defaultLocale),
+    showcase: { steps: loop, ...(poster ? { poster } : {}) },
+    tryLabel: locale === "pl" ? "Wypróbuj" : "Try it",
+    ...(href ? { href } : {}),
+  };
 }
 
 /** The public showcase of a tenant (no login): null when no public course has an interactive topic, or on any failure. */

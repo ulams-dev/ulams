@@ -359,9 +359,16 @@ export const registry = {
             src: href("Entry file of the interactive package on the content origin"),
             title: text("Title of the frame", { maxLength: 160 }),
             steps: IX_STEPS,
-            height: int("Frame height px", { default: 440, minimum: 240, maximum: 1000 }),
-            startStep: text("First step of the range", { maxLength: 64 }),
-            endStep: text("Last step of the range", { maxLength: 64 }),
+            showcase: obj(
+              {
+                steps: list(text("Step id", { maxLength: 64 }), "Steps the hero loops through, slowly, in order", { minItems: 1, maxItems: 12 }),
+                poster: href("Still shown until the frame runs, and under reduced motion"),
+              },
+              ["steps"],
+              "The self-running loop: no step text and no controls, a still first, and a static frame under reduced motion"
+            ),
+            href: href("Where the small link goes (the lesson)"),
+            tryLabel: text("Label of the small link", { maxLength: 40, default: "Try it" }),
             locale: text("Language of the step texts", { maxLength: 16, default: "en" }),
             requires: list(oneOf(["webgl"], "Browser capability the package needs"), "Capabilities the package needs", { maxItems: 5 }),
             reducedMotionSupported: bool("The package handles reduced motion itself", false),
@@ -369,7 +376,7 @@ export const registry = {
             attribution: text("Attribution line", { maxLength: 1000 }),
             sourceUrl: href("Source code or origin of the package"),
           },
-          ["src", "title", "steps"],
+          ["src", "title", "steps", "showcase"],
           "A live interactive package for the cosmos, atlas and notebook variants; without it the variant draws its own picture. Nothing is tracked."
         ),
         diff: obj(

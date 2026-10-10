@@ -166,11 +166,28 @@ describe("landing showcase", () => {
     expect(props).not.toHaveProperty("courseId");
   });
 
-  it("gives a background package the fixed hero window and an inline one its own height, within limits", () => {
-    expect(showcaseProps(launch({ display: "background", height: 700 })).height).toBe(440);
-    expect(showcaseProps(launch({ display: "inline", height: 720 })).height).toBe(720);
-    expect(showcaseProps(launch({ display: "inline", height: 300 })).height).toBe(440);
-    expect(showcaseProps(launch({ display: "inline", height: 2000 })).height).toBe(900);
+  it("loops the steps and the still the manifest names, and links to the lesson", () => {
+    const props = showcaseProps(
+      launch({}, { showcase: { steps: ["intro", "last"], poster: "https://content.test/p/showcase.webp" } }),
+      "pl",
+      "/learn/7"
+    );
+    expect(props.showcase).toEqual({ steps: ["intro", "last"], poster: "https://content.test/p/showcase.webp" });
+    expect(props.href).toBe("/learn/7");
+    expect(props.tryLabel).toBe("Wypróbuj");
+    expect(showcaseProps(launch(), "en").tryLabel).toBe("Try it");
+    expect(showcaseProps(launch())).not.toHaveProperty("href");
+  });
+
+  it("falls back to the first steps and the poster of the first for a package without a showcase", () => {
+    const props = showcaseProps(launch());
+    expect((props.showcase as { steps: string[] }).steps[0]).toBe("intro");
+    expect((props.showcase as { poster?: string }).poster).toBe("https://content.test/p.webp");
+  });
+
+  it("does not pass the topic's step range or a fixed height: the loop is the package's own", () => {
+    const props = showcaseProps(launch({ start_step: "intro", end_step: "intro", display: "inline", height: 720 }));
+    for (const key of ["startStep", "endStep", "height"]) expect(props).not.toHaveProperty(key);
   });
 
   it("fetches the public endpoint without credentials and treats any failure as none", async () => {

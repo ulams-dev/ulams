@@ -30,7 +30,8 @@ The six demos are the Coffee Atlas, On-Call, Night Sky Explorers and the three f
 Lab (`gravity`, dark space theme), Poland, Measured (`poland`, cartographic) and The Scottish Book (`ulam`,
 squared-paper notebook). Each tenant also answers on `<slug>.localhost` (API) and `<slug>.admin.localhost` (admin);
 the wildcard hosts in the Caddyfile and `*.localhost` need no change for a new slug. The landing hero of the three new
-demos shows a live interactive package through the public `GET /api/interactive/showcase` endpoint, and a drawing
+demos plays a clean, self-running loop of the course's interactive package (no step text or controls, a still first, a
+static frame under reduced motion, a small "Try it" link; ADR 0093) through the public `GET /api/interactive/showcase` endpoint, and a drawing
 (orbits, a map graticule or an Ulam spiral) while the tenant has none.
 
 Production build and server:

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { EventQueue, startMode, stepCounter, stepsInRange, themeTokens, THEME_TOKENS } from "../src/lib/interactive.ts";
+import { EventQueue, nextShowcaseStep, showcaseMode, startMode, stepCounter, stepsInRange, themeTokens, THEME_TOKENS } from "../src/lib/interactive.ts";
 
 const steps = ["a", "b", "c", "d"].map((id) => ({ id }));
 
@@ -102,5 +102,22 @@ describe("EventQueue", () => {
     queue.push({ type: "stepChanged", step: "c" });
     await queue.flush();
     expect(send.mock.calls[1]![0].map((e: { step: string }) => e.step)).toEqual(["a", "b", "c"]);
+  });
+});
+
+describe("landing hero loop", () => {
+  it("is a still under reduced motion and without WebGL when the package needs it", () => {
+    expect(showcaseMode({ reducedMotion: false, requires: [], webgl: false })).toBe("loop");
+    expect(showcaseMode({ reducedMotion: false, requires: ["webgl"], webgl: true })).toBe("loop");
+    expect(showcaseMode({ reducedMotion: true, requires: [], webgl: true })).toBe("still");
+    expect(showcaseMode({ reducedMotion: false, requires: ["webgl"], webgl: false })).toBe("still");
+  });
+
+  it("moves to the next step of the loop and wraps", () => {
+    expect(nextShowcaseStep(["a", "b", "c"], "a")).toBe("b");
+    expect(nextShowcaseStep(["a", "b", "c"], "c")).toBe("a");
+    expect(nextShowcaseStep(["a", "b", "c"], "zzz")).toBe("a");
+    expect(nextShowcaseStep(["a", "b", "c"], undefined)).toBe("a");
+    expect(nextShowcaseStep([], "a")).toBeUndefined();
   });
 });

@@ -3,7 +3,7 @@ import Icon from "./Icon.astro";
 import Img from "./Img.astro";
 import Orbi from "./Orbi.astro";
 import CapabilityOrbit from "./CapabilityOrbit.astro";
-import InteractiveLesson from "./InteractiveLesson.astro";
+import HeroShowcase from "./HeroShowcase.astro";
 import type { StepInfo } from "../lib/interactive.ts";
 
 interface Link {
@@ -40,14 +40,16 @@ interface Props {
     angle?: number;
     status?: "available" | "preview" | "coming";
   }>;
-  /** A live interactive package for the cosmos, atlas and notebook variants (props of InteractiveLesson). */
+  /** A self-running loop of an interactive package for the cosmos, atlas and notebook variants (props of HeroShowcase). */
   showcase?: {
     src: string;
     title: string;
     steps: StepInfo[];
-    height?: number;
-    startStep?: string;
-    endStep?: string;
+    /** The loop (step ids) and the still shown until the frame runs. */
+    showcase: { steps: string[]; poster?: string };
+    /** Where "Try it" goes, and its label. */
+    href?: string;
+    tryLabel?: string;
     locale?: string;
     requires?: string[];
     reducedMotionSupported?: boolean;
@@ -270,7 +272,7 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
       stage && (
         <div class="u-hero__stage u-hero__in" style="--i:2" data-live={showcase ? "" : undefined}>
           {showcase ? (
-            <InteractiveLesson {...showcase} display="inline" height={showcase.height ?? 440} />
+            <HeroShowcase {...showcase} />
           ) : variant === "cosmos" ? (
             <svg class="u-stage u-stage--cosmos" viewBox="0 0 400 400" role="presentation" aria-hidden="true">
               <g fill="none" stroke="currentColor" stroke-width="1">

@@ -112,6 +112,10 @@ describe("the three new landings", () => {
       const hero = resolveBindings(nodes.find((n) => n.component === "Hero")!.props, site) as { showcase: Record<string, unknown> };
       expect(hero.showcase).toMatchObject({ src: SHOWCASE.url, title: "Solar system" });
       expect(hero.showcase).not.toHaveProperty("topicId");
+      // a self-running loop, not the lesson player: a loop, a still and a small link to the lesson
+      expect((hero.showcase.showcase as { steps: string[] }).steps.length).toBeGreaterThan(0);
+      expect(hero.showcase.href).toBe(site.course?.previewHref);
+      expect(hero.showcase).not.toHaveProperty("height");
     }
   );
 

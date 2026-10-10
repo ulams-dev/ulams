@@ -7,6 +7,9 @@ const showcase = {
   src: "https://content.test/interactive/k/v1/index.html",
   title: "Solar system",
   steps: [{ id: "solar-system", title: "The solar system", text: "Eight planets orbit the Sun." }],
+  showcase: { steps: ["solar-system"], poster: "https://content.test/interactive/k/v1/posters/showcase.webp" },
+  href: "/learn/7",
+  tryLabel: "Try it",
   licence: "MIT",
 };
 const lessons = [
@@ -30,19 +33,35 @@ describe("the cosmos, atlas and notebook hero", () => {
     expect(document.querySelectorAll(".u-stage--notebook circle:not(.u-stage__one)")).toHaveLength(99);
   });
 
-  it("shows the live package, sandboxed, instead of the drawing when a showcase is given", async () => {
+  it("plays the package as a clean loop: a still, a sandboxed frame nobody can reach, a text alternative and one link", async () => {
     const doc: UiNode = { component: "Hero", props: { variant: "cosmos", title: "Fall into it", showcase } };
     expect(validateDocument(doc)).toEqual([]);
     const { document } = new JSDOM(await renderDoc(doc)).window;
     expect(document.querySelector("svg.u-stage")).toBeNull();
     const frame = document.querySelector(".u-hero__stage iframe")!;
     expect(frame.getAttribute("sandbox")).not.toContain("allow-same-origin");
-    expect(frame.hasAttribute("src")).toBe(false);
-    expect(document.querySelector(".u-hero__stage details summary")!.textContent).toBe("Text version of this interactive");
+    expect(frame.hasAttribute("src")).toBe(false); // starts after first paint, never at load
+    expect(frame.hasAttribute("inert")).toBe(true);
+    expect(frame.getAttribute("tabindex")).toBe("-1");
+    const stage = document.querySelector(".u-sc__stage")!;
+    expect(stage.getAttribute("aria-hidden")).toBe("true");
+    expect(stage.querySelector("img.u-sc__still")?.getAttribute("src")).toBe(showcase.showcase.poster);
+    expect(stage.querySelector("img")?.getAttribute("width")).toBe("1280"); // explicit size: no layout shift
+    expect(document.querySelector("ulams-showcase")?.getAttribute("steps")).toBe("solar-system");
+    expect(document.querySelector(".u-hero__stage .u-visually-hidden")?.textContent).toContain("The solar system");
+    // none of the lesson player's chrome
+    expect(document.querySelector(".u-hero__stage details, .u-hero__stage [data-prev], .u-hero__stage [data-next], .u-hero__stage [data-counter]")).toBeNull();
+    expect(document.querySelector(".u-sc__try")?.getAttribute("href")).toBe("/learn/7");
+  });
+
+  it("leaves out the link when there is no lesson to go to", async () => {
+    const { href: _href, ...withoutHref } = showcase;
+    const { document } = new JSDOM(await renderDoc({ component: "Hero", props: { variant: "atlas", title: "X", showcase: withoutHref } })).window;
+    expect(document.querySelector(".u-sc__try")).toBeNull();
   });
 
   it("rejects a showcase without steps", () => {
-    const doc: UiNode = { component: "Hero", props: { variant: "atlas", title: "X", showcase: { src: showcase.src, title: "t", steps: [] } } };
+    const doc: UiNode = { component: "Hero", props: { variant: "atlas", title: "X", showcase: { src: showcase.src, title: "t", steps: [], showcase: { steps: ["a"] } } } };
     expect(validateDocument(doc)).not.toEqual([]);
   });
 });
