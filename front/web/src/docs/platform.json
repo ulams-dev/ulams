@@ -21,10 +21,6 @@
             "href": "#how"
           },
           {
-            "label": "Standards",
-            "href": "#standards"
-          },
-          {
             "label": "Self-host",
             "href": "#self-host"
           },
@@ -35,6 +31,10 @@
           {
             "label": "Demos",
             "href": "#demos"
+          },
+          {
+            "label": "Docs",
+            "href": "https://ulams-dev.github.io/ulams/"
           }
         ],
         "signIn": {
@@ -771,6 +771,10 @@
           {
             "label": "Self-host",
             "href": "#self-host"
+          },
+          {
+            "label": "Docs",
+            "href": "https://ulams-dev.github.io/ulams/"
           },
           {
             "label": "GitHub",

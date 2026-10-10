@@ -31,7 +31,7 @@ export const config = {
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean),
   /** Demo tenants shown on the platform landing. */
-  demoTenants: (ULAMS_DEMO_TENANTS ?? "coffee,oncall,nightsky,gravity,poland,ulam")
+  demoTenants: (ULAMS_DEMO_TENANTS ?? "gravity,poland,ulam,coffee,oncall,nightsky")
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean),
