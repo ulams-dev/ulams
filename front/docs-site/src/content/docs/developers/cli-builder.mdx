@@ -106,6 +106,10 @@ ulams builder patches approve <version>                       # an applied cours
 ulams builder patches reject <version>
 ```
 
+`ulams builder citations <session>` is the sources panel as data: per source its sections with the elements that cite them
+(`data.sources[].sections[].citedBy`), how many sections nothing cites (`data.sources[].uncovered`) and, per element, the
+fragments it cites (`data.elements`). Use it to find what the course leaves out.
+
 The proposal cites source fragments like everything else the builder writes; `ulams builder fragments get frg_…` shows the
 passage a citation points to.
 

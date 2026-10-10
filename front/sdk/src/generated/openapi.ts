@@ -2593,6 +2593,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/course-builder/sessions/{session}/citations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Sources panel: sections with the elements that cite them */
+        get: operations["ad90feac8fdca1847862f31bae8bebb1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/course-builder/fragments/{fragment}": {
         parameters: {
             query?: never;
@@ -2849,6 +2866,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/course-builder/sessions/{session}/publish-check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Blocking items and warnings before publishing */
+        get: operations["e5744635437e3a56d9bd9aea453ef2ec"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/new-site": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a new site and move the session there (platform operators; TENANCY_NEW_SITES) */
+        post: operations["ffb4f52bc6989ec984b3ac71aad90de4"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/course-builder/sessions/{session}/publish": {
         parameters: {
             query?: never;
@@ -2858,7 +2909,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Publish the applied course */
+        /** Publish the applied course (409 while blocking items or unacknowledged warnings remain; body acknowledgedWarnings) */
         post: operations["fb8f6decce43224a86c2af1707019831"];
         delete?: never;
         options?: never;
@@ -3906,6 +3957,142 @@ export interface paths {
          * @description Needs h5p_delete. Deletes through the H5P service (content files, user states, results).
          */
         delete: operations["b0a324657785d13259c1774c2e3e6ee2"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/interactive/launches/{topic}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start an Interactive topic
+         * @description Learners play an Interactive topic from the tenant content origin (ADR 0086). The frame never gets a
+         *     token: the lesson page forwards the bridge's events through the front BFF with the learner's session.
+         */
+        post: operations["f8360ecab4b14a849308fd08ea9726cb"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/interactive/showcase": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The interactive shown on a landing page
+         * @description Public, throttled. The first Interactive topic of the first published public course that has one, in the shape of a launch ({url, version, manifest, topic}). Nothing is tracked.
+         */
+        get: operations["1118bc3a1e5de0b3bc444a69a2f4c5fd"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/interactive/topics/{topic}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Progress events from the lesson page
+         * @description A batch of at most 40 bridge events (stepChanged, progress, complete, score, event) for the logged-in learner. Completion follows the topic's completion rule.
+         */
+        post: operations["bd4bcfa788ca76f864bfb81c76fdb712"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/interactive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List interactive packages
+         * @description The interactive package library (ADR 0086): uploaded zip packages, versioned and immutable.
+         */
+        get: operations["4347c5c99bf03763e02139c074b83cf5"];
+        put?: never;
+        /** Upload a package (.zip with ulams-interactive.json) */
+        post: operations["e6738266165a8cebf3d479921deae2a2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/interactive/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Show a package with its current manifest */
+        get: operations["ded03c93d62d013018bc50eed26c9a68"];
+        /** Rename a package */
+        put: operations["56d4fd0a7453862f363bd3d8f802f4f7"];
+        post?: never;
+        /** Delete a package with all versions and files */
+        delete: operations["6c2686f2cc543019eb10d33038bfffc3"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/interactive/{id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List versions */
+        get: operations["3a74aeb1eed8404cf85f34db180ca394"];
+        put?: never;
+        /** Upload a new version (the manifest id must match) */
+        post: operations["65e64610bd7f7ceb3f0b5520b2c305a1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/interactive/{id}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin preview of a version on the content origin (nothing is tracked) */
+        get: operations["6199536635616ce9d3befccb681f8e4f"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -5050,6 +5237,26 @@ export interface paths {
          * @description Resource link: maps the platform user, grants course access and redirects to the front with a one-time code. Deep linking: shows the course picker.
          */
         post: operations["1263d4a5230bc11b6606102640e87bb2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/lti/tool/launch/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Second step of a launch whose login used the platform's storage (Client Side postMessage Storage)
+         * @description Posted by the storage page with the id_token, the state and the value read from the platform's storage. A different value is refused; an empty one (storage unavailable) falls back to the server-side state. Then it behaves like /api/lti/tool/launch.
+         */
+        post: operations["459e0a6fbb45c66f0c38a6dcc1667162"];
         delete?: never;
         options?: never;
         head?: never;
@@ -8850,6 +9057,26 @@ export interface components {
             /** @example H5P.MultiChoice */
             main_library?: string;
         };
+        TopicInteractive: {
+            id?: number;
+            /** @description Interactive package id */
+            value: number;
+            /** @description Pinned package version; set to the current one when omitted */
+            version?: number | null;
+            /** @description Play the package's current version instead of a pinned one */
+            follow_latest?: boolean;
+            start_step?: string | null;
+            end_step?: string | null;
+            /** @enum {string} */
+            completion_rule?: "on_open" | "on_range_end" | "on_complete" | "on_score";
+            /** @description Percentage, for on_score */
+            pass_score?: number | null;
+            /** @enum {string} */
+            display?: "inline" | "background";
+            height?: number;
+            /** @description Markdown shown beside the frame or over the background */
+            text?: string | null;
+        };
         TopicLiaScript: {
             id?: number;
             /** @description LiaScript document id (its current version is played) */
@@ -9487,6 +9714,15 @@ export interface components {
             last_name?: string;
             /** @description email */
             email?: string;
+        };
+        TopicLayout: {
+            id?: number;
+            /** @description Layout document (a JSON string is accepted in multipart requests): a list of {component, props, id?} nodes using only the approved learner layout components (Callout, Steps, ComparisonTable, H5PFrame, LiaScriptLesson, Timeline, FlipCards, CodeBlock, PracticeActivity), validated against the learner layout manifest */
+            document: Record<string, never>[];
+            /** @enum {string} */
+            schema_version?: "1";
+            /** @description Markdown shown by clients that do not render layouts, and when the document cannot be rendered */
+            markdown_fallback: string;
         };
         AdminGradeProjectSolutionRequest: {
             score: number;
@@ -15450,6 +15686,26 @@ export interface operations {
             };
         };
     };
+    ad90feac8fdca1847862f31bae8bebb1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description sources, sections, citing elements */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "5514f96c136b291b703df1c82cb06c39": {
         parameters: {
             query?: never;
@@ -15804,6 +16060,57 @@ export interface operations {
         responses: {
             /** @description apply run */
             202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    e5744635437e3a56d9bd9aea453ef2ec: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description blocking, warnings and facts */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ffb4f52bc6989ec984b3ac71aad90de4: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": Record<string, never>;
+            };
+        };
+        responses: {
+            /** @description queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -18164,6 +18471,376 @@ export interface operations {
             };
         };
     };
+    f8360ecab4b14a849308fd08ea9726cb: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {url, version, manifest, topic}; url is the entry file on the content origin */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not an Interactive topic, or the type is switched off */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no content origin */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "1118bc3a1e5de0b3bc444a69a2f4c5fd": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {url, version, manifest, topic} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no public interactive, or the type is switched off */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no content origin */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    bd4bcfa788ca76f864bfb81c76fdb712: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    events: Record<string, never>[];
+                };
+            };
+        };
+        responses: {
+            /** @description {status, progress}; status 1 means the topic is complete */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not an Interactive topic */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid batch */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "4347c5c99bf03763e02139c074b83cf5": {
+        parameters: {
+            query?: {
+                search?: string;
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description packages */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description interactive_manage required */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    e6738266165a8cebf3d479921deae2a2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                    title?: string;
+                    change_note?: string;
+                    /** @description Confirm the manifest's network origins; without it a manifest that lists some answers 422 with errors.network */
+                    accept_network?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description package with version 1 */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description rejected upload or invalid manifest */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ded03c93d62d013018bc50eed26c9a68: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description package */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "56d4fd0a7453862f363bd3d8f802f4f7": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description package */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "6c2686f2cc543019eb10d33038bfffc3": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description topics use this package */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "3a74aeb1eed8404cf85f34db180ca394": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description versions */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "65e64610bd7f7ceb3f0b5520b2c305a1": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                    change_note?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description package with the new current version */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description rejected upload or invalid manifest */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "6199536635616ce9d3befccb681f8e4f": {
+        parameters: {
+            query?: {
+                version?: number;
+            };
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {url, nonce, version, manifest} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no content origin */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     d1539f040506efdd60023c039a071501: {
         parameters: {
             query?: never;
@@ -20358,13 +21035,23 @@ export interface operations {
     };
     "10a0ad0d978804363cde5d19eae1520c": {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Client Side postMessage Storage: the platform's storage frame. Present: the response is a page that puts the nonce in the platform's storage before it continues. */
+                lti_storage_target?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
+            /** @description storage page that continues to the platform's OIDC auth URL (lti_storage_target given) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description redirect to the platform's OIDC auth URL */
             302: {
                 headers: {
@@ -20405,6 +21092,38 @@ export interface operations {
                 content?: never;
             };
             /** @description invalid launch */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "459e0a6fbb45c66f0c38a6dcc1667162": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description course picker (deep linking) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description redirect to the front landing page */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description the value does not match, or the login expired */
             401: {
                 headers: {
                     [name: string]: unknown;

@@ -217,6 +217,29 @@ export interface Fragment {
   source: { id: string; name: string };
 }
 
+/** One citing element in the sources panel; `target` is the element the workspace selects for it. */
+export interface CitationRef {
+  id: string;
+  target: string;
+  type: "course" | "objective" | "lesson" | "block" | "question";
+  label: string;
+}
+export interface CitationSection {
+  fragmentId: string;
+  label: string;
+  level: number;
+  tokens: number;
+  citedBy: CitationRef[];
+  citedByCount: number;
+}
+/** The reverse of citations for the current version: sections with the elements that cite them. */
+export interface CitationIndex {
+  versionId: string | null;
+  sources: Array<{ id: string; name: string; total: number; uncovered: number; sections: CitationSection[] }>;
+  /** element id → fragment ids it cites (selecting an element highlights these sections) */
+  elements: Record<string, string[]>;
+}
+
 /** A2UI action sent back from a surface. */
 export interface A2uiAction {
   name: string;
@@ -371,6 +394,8 @@ export function createCourseBuilderClient(options: ClientOptions & { prefix?: st
     newSite: (sessionId: string, slug?: string, name?: string) => call<NonNullable<BuilderState["newSite"]>>("POST", `/sessions/${id(sessionId)}/new-site`, { ...(slug ? { slug } : {}), ...(name ? { name } : {}) }),
     /** Blocking items and warnings before publishing (the publish summary). */
     publishCheck: (sessionId: string) => call<PublishCheck>("GET", `/sessions/${id(sessionId)}/publish-check`),
+    /** Sources panel data: per source its sections, who cites each, and the sections nobody cites. */
+    citations: (sessionId: string) => call<CitationIndex>("GET", `/sessions/${id(sessionId)}/citations`),
     usage: (sessionId: string) => call<{ total: BuilderCost; byTask: UsageRow[] }>("GET", `/sessions/${id(sessionId)}/usage`),
     /** AG-UI event stream with resume; resolves when `signal` aborts or access is refused. */
     events: (

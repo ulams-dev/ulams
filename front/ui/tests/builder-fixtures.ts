@@ -72,6 +72,27 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
     ],
     defaultValue: { preset: "coffee" },
   },
+  SourcesPanel: {
+    sources: [
+      {
+        id: "01aaaaaaaaaaaaaaaaaaaaaaaa",
+        name: "coffee-brewing.md",
+        total: 3,
+        uncovered: 1,
+        sections: [
+          { fragmentId: "frg_aaaaaaaaaaa1", label: "§1 Brewing ratios", level: 1, citedByCount: 2, citedBy: [
+            { id: "01bbbbbbbbbbbbbbbbbbbbbbbb", target: "01bbbbbbbbbbbbbbbbbbbbbbbb", type: "block", label: "Lesson 1.1 › block 1" },
+            { id: "01cccccccccccccccccccccccc", target: "01dddddddddddddddddddddddd", type: "objective", label: "Lesson 1.1 › objective 1" },
+          ] },
+          { fragmentId: "frg_aaaaaaaaaaa2", label: "§1.1 Grind size", level: 2, citedByCount: 1, citedBy: [
+            { id: "01eeeeeeeeeeeeeeeeeeeeeeee", target: "01eeeeeeeeeeeeeeeeeeeeeeee", type: "question", label: "Lesson 1.2 › Q1" },
+          ] },
+          { fragmentId: "frg_aaaaaaaaaaa3", label: "§2 Storage", level: 1, citedByCount: 0, citedBy: [] },
+        ],
+      },
+    ],
+    highlighted: ["frg_aaaaaaaaaaa1"],
+  },
   PublishSummary: {
     title: "Brewing basics",
     url: "http://coffee.app.localhost/courses/12",

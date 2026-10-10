@@ -1,5 +1,5 @@
 {
- "summary": "514/560 covered, 46 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "515/562 covered, 47 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -305,6 +305,12 @@
    "key": "PUT /api/admin/course-builder/sessions/{session}/brief",
    "summary": "Edit the Course Brief",
    "command": "builder.brief.set",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/sessions/{session}/citations",
+   "summary": "Sources panel: sections with the elements that cite them",
+   "command": "builder.citations",
    "status": "covered"
   },
   {
@@ -2638,6 +2644,12 @@
   {
    "key": "POST /api/interactive/launches/{topic}",
    "summary": "Start an Interactive topic",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/interactive/showcase",
+   "summary": "The interactive shown on a landing page",
    "command": "",
    "status": "excluded: content-runtime"
   },

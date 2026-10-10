@@ -11,6 +11,10 @@ if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 }
     <nav class="st-ws-col" aria-labelledby="st-tree-title">
       <h2 id="st-tree-title" class="cb-eyebrow">Curriculum tree</h2>
       <div data-tree><p class="cb-muted">Loading the course…</p></div>
+      <section aria-labelledby="st-sources-title" class="st-sources-panel">
+        <h2 id="st-sources-title" class="cb-eyebrow">Sources</h2>
+        <div data-sources-panel><p class="cb-muted">Loading the sources…</p></div>
+      </section>
     </nav>
     <main id="main" class="st-ws-col" tabindex="-1">
       <h1 class="cb-sr">Workspace</h1>

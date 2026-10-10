@@ -169,6 +169,25 @@ describe("interactions round-trip as A2UI actions", () => {
     expect(onRestore).toHaveBeenCalledWith("v2");
   });
 
+  it("sources panel marks uncovered and selected sections and jumps to the citing elements", () => {
+    const onSelect = vi.fn();
+    const onCitation = vi.fn();
+    const main = mount(single("SourcesPanel"), ctx({ onSelect, onCitation }));
+    expect(main.textContent).toContain("2 of 3 sections are cited; 1 are not.");
+    expect(main.querySelector('[data-fragment="frg_aaaaaaaaaaa1"]')!.getAttribute("aria-current")).toBe("true");
+    expect(main.querySelector('[data-fragment="frg_aaaaaaaaaaa3"]')!.textContent).toContain("Not cited yet");
+    const rows = () => [...main.querySelectorAll("[data-fragment]")].map((li) => li.getAttribute("data-fragment"));
+    [...main.querySelectorAll("button")].find((b) => b.textContent === "Show only uncovered sections")!.click();
+    expect(rows()).toEqual(["frg_aaaaaaaaaaa3"]);
+    [...main.querySelectorAll("button")].find((b) => b.textContent === "Show all sections")!.click();
+    expect(rows()).toHaveLength(3);
+    // an objective jumps to its lesson
+    [...main.querySelectorAll("button")].find((b) => b.textContent === "Lesson 1.1 › objective 1")!.click();
+    expect(onSelect).toHaveBeenCalledWith("01dddddddddddddddddddddddd", "Lesson 1.1 › objective 1");
+    (main.querySelector('[data-fragment="frg_aaaaaaaaaaa2"] .cb-section-label') as HTMLButtonElement).click();
+    expect(onCitation).toHaveBeenCalledWith("frg_aaaaaaaaaaa2", "§1.1 Grind size", expect.anything());
+  });
+
   it("version list names a source update and keeps its revision range", () => {
     const main = mount(single("VersionList"));
     const row = [...main.querySelectorAll("li")].find((li) => li.textContent?.includes("v4"))!;

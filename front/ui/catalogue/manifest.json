@@ -2092,6 +2092,150 @@
         "additionalProperties": false
       }
     },
+    "SourcesPanel": {
+      "description": "The sources of the course with their sections: how many elements of the course cite each section, which sections nothing cites yet, and the elements behind each section. Selecting an element in the course tree highlights the sections it rests on.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Source id",
+                  "maxLength": 32
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Source name",
+                  "maxLength": 300
+                },
+                "total": {
+                  "type": "integer",
+                  "description": "Sections in the source",
+                  "minimum": 0
+                },
+                "uncovered": {
+                  "type": "integer",
+                  "description": "Sections no element cites",
+                  "minimum": 0
+                },
+                "sections": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "fragmentId": {
+                        "type": "string",
+                        "description": "Fragment id (frg_…)",
+                        "maxLength": 16
+                      },
+                      "label": {
+                        "type": "string",
+                        "description": "Section label, e.g. §2.3 Brewing ratios",
+                        "maxLength": 200
+                      },
+                      "level": {
+                        "type": "integer",
+                        "description": "Heading level, from 1",
+                        "minimum": 1,
+                        "maximum": 6
+                      },
+                      "citedByCount": {
+                        "type": "integer",
+                        "description": "Number of elements citing the section",
+                        "minimum": 0
+                      },
+                      "citedBy": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "Element id",
+                              "maxLength": 32
+                            },
+                            "target": {
+                              "type": "string",
+                              "description": "Element the workspace selects for it (an objective points to its lesson)",
+                              "maxLength": 32
+                            },
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "course",
+                                "objective",
+                                "lesson",
+                                "block",
+                                "question"
+                              ],
+                              "description": "Element kind"
+                            },
+                            "label": {
+                              "type": "string",
+                              "description": "Where it is, e.g. Lesson 1.2 › block 3",
+                              "maxLength": 200
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "target",
+                            "type",
+                            "label"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Elements citing the section (the first 50)",
+                        "maxItems": 50
+                      }
+                    },
+                    "required": [
+                      "fragmentId",
+                      "label",
+                      "level",
+                      "citedByCount",
+                      "citedBy"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Sections in reading order",
+                  "maxItems": 2000
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "total",
+                "uncovered",
+                "sections"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Sources",
+            "maxItems": 20
+          },
+          "highlighted": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Fragment id",
+              "maxLength": 16
+            },
+            "description": "Sections the selected element cites",
+            "maxItems": 200
+          }
+        },
+        "required": [
+          "sources"
+        ],
+        "additionalProperties": false
+      }
+    },
     "PublishSummary": {
       "description": "Everything the author should know before publishing an applied course: where it will live, its price and theme, the numbers, items that block publishing and warnings that must be acknowledged. The Publish button stays disabled while anything blocks, and until warnings are acknowledged.",
       "modelSelectable": false,

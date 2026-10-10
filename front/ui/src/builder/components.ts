@@ -573,6 +573,53 @@ const SYNC_STATE: Record<string, { label: string; icon: "check" | "plus" | "cloc
   paused: { label: "Paused", icon: "minus" },
 };
 
+const SourcesPanel: Renderer = (p, ctx) => {
+  const highlighted = new Set<string>(p.highlighted ?? []);
+  const sources = (p.sources as Props[]).map((source) => {
+    const headId = uid("src");
+    let onlyUncovered = false;
+    const list = h("ul", { class: "cb-section-list", "aria-labelledby": headId });
+    const toggle = h("button", { type: "button", class: "cb-btn cb-btn-small", "aria-pressed": "false" }, "Show only uncovered sections");
+    const draw = () => {
+      list.replaceChildren(...(source.sections as Props[])
+        .filter((s) => !onlyUncovered || s.citedByCount === 0)
+        .map((s) => {
+          const marked = highlighted.has(String(s.fragmentId));
+          const open = h("button", { type: "button", class: "cb-link cb-section-label", style: `--cb-level:${Math.min(Number(s.level), 4)}` }, String(s.label));
+          open.addEventListener("click", () => ctx.onCitation?.(String(s.fragmentId), String(s.label), open));
+          const status = s.citedByCount === 0 ? "Not cited yet" : `Cited by ${s.citedByCount} element${s.citedByCount === 1 ? "" : "s"}`;
+          return h("li", { class: `cb-section${s.citedByCount === 0 ? " cb-section-uncovered" : ""}${marked ? " cb-section-marked" : ""}`, "data-fragment": String(s.fragmentId), "aria-current": marked ? "true" : null },
+            open,
+            h("span", { class: "cb-tag" }, s.citedByCount === 0 ? icon("minus") : icon("check"), status),
+            marked ? h("span", { class: "cb-tag" }, "Used by the selected element") : null,
+            (s.citedBy as Props[]).length > 0
+              ? h("details", { class: "cb-section-elements" }, h("summary", {}, "Show elements"),
+                  h("ul", {}, (s.citedBy as Props[]).map((e) => {
+                    const jump = h("button", { type: "button", class: "cb-link" }, String(e.label));
+                    jump.addEventListener("click", () => ctx.onSelect?.(String(e.target), String(e.label)));
+                    return h("li", {}, jump);
+                  })))
+              : null);
+        }));
+      if (list.childElementCount === 0) list.append(h("li", { class: "cb-muted" }, "Every section of this source is cited."));
+    };
+    toggle.addEventListener("click", () => {
+      onlyUncovered = !onlyUncovered;
+      toggle.setAttribute("aria-pressed", String(onlyUncovered));
+      toggle.textContent = onlyUncovered ? "Show all sections" : "Show only uncovered sections";
+      draw();
+    });
+    draw();
+    const covered = Number(source.total) - Number(source.uncovered);
+    return h("section", { class: "cb-card cb-source", "aria-label": String(source.name) },
+      h("h3", { id: headId, class: "cb-h3" }, String(source.name)),
+      h("p", { class: "cb-muted cb-small", role: "status" }, `${covered} of ${source.total} sections are cited${source.uncovered > 0 ? `; ${source.uncovered} are not` : ""}.`),
+      source.uncovered > 0 ? toggle : null,
+      list);
+  });
+  return h("div", { class: "cb-sources" }, sources.length ? sources : h("p", { class: "cb-muted" }, "No sources yet."));
+};
+
 const PublishSummary: Renderer = (p, ctx, id) => {
   const blocking: Props[] = p.blocking ?? [];
   const warnings: Props[] = p.warnings ?? [];
@@ -1048,6 +1095,7 @@ export const builderComponents: Record<string, Renderer> = {
   DiffView,
   ApplySummary,
   VersionList,
+  SourcesPanel,
   PublishSummary,
   SourceConnectionCard,
   RevisionTimeline,

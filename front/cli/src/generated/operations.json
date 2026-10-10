@@ -307,6 +307,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/course-builder/sessions/{session}/citations",
+  "summary": "Sources panel: sections with the elements that cite them",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/course-builder/sessions/{session}/events",
   "summary": "AG-UI event stream (SSE)",
   "tag": "Admin Course Builder"

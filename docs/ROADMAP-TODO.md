@@ -435,9 +435,10 @@ approved apply through domain services → element chat edits. Designs:
 
 ### 2.6 Author UX
 - [x] Upload → interview → live progress → tree + preview → element chat (e2e on the fake driver)
-- [ ] Sources panel; retry a single failed step; themed learner frontend (partial: retry of a single
-      step and source passages behind every citation done; the learner front is the existing one with
-      the tenant theme; a full sources panel in the workspace is missing)
+- [x] Sources panel; retry a single failed step; themed learner frontend (retry of a single step and
+      source passages behind every citation; the learner front is the existing one with the tenant
+      theme; the workspace sources panel lists every section with the elements citing it, the
+      uncovered sections and the sections of the selected element, `GET …/sessions/{s}/citations`; L2-10)
 
 ### 2.7 Generative UI
 Architecture

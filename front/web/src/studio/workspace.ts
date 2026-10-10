@@ -2,7 +2,7 @@
  * Workspace (/studio/s/:id/workspace): course tree, live preview of the selected element,
  * element-scoped chat with diff approve/reject, undo/redo and version history.
  */
-import { ApiError, isApplied, type Blueprint, type BlueprintQuestion, type BuilderState, type BlueprintVersion, type StaleElement, type StalenessSummary } from "@ulams/sdk";
+import { ApiError, isApplied, type Blueprint, type CitationIndex, type BlueprintQuestion, type BuilderState, type BlueprintVersion, type StaleElement, type StalenessSummary } from "@ulams/sdk";
 import { renderSurface } from "@ulams/ui/builder/renderer.ts";
 import type { A2uiActionOut } from "@ulams/ui/builder/components.ts";
 import { h } from "@ulams/ui/builder/dom.ts";
@@ -27,6 +27,8 @@ export function mountWorkspace(root: HTMLElement): void {
   const history = root.querySelector<HTMLElement>("[data-history]")!;
   const applyBar = root.querySelector<HTMLElement>("[data-apply]")!;
   const banner = root.querySelector<HTMLElement>("[data-stale-banner]");
+  const sourcesPanel = root.querySelector<HTMLElement>("[data-sources-panel]");
+  let citationIndex: CitationIndex | null = null;
   let stale = new Map<string, StaleElement>();
   let freshness: StalenessSummary | null = null;
   let version: BlueprintVersion | null = null;
@@ -126,9 +128,54 @@ export function mountWorkspace(root: HTMLElement): void {
     }
     renderTree(version.document);
     void loadStaleness();
+    void loadCitations();
     if (selection && !findLabel(version.document, selection.id)) selection = null;
     renderPreview();
     void renderHistory();
+  }
+
+  /** The sources panel: sections with the elements citing them; the selected element's sections are marked. */
+  async function loadCitations(): Promise<void> {
+    if (!sourcesPanel) return;
+    try {
+      citationIndex = await cb.citations(sessionId);
+    } catch {
+      sourcesPanel.replaceChildren(h("p", { class: "cb-muted" }, "The sources could not be loaded."));
+      return;
+    }
+    renderSources();
+  }
+
+  function renderSources(): void {
+    if (!sourcesPanel || !citationIndex) return;
+    const highlighted = selection ? (citationIndex.elements[selection.id] ?? []) : [];
+    sourcesPanel.replaceChildren(
+      renderSurface([{ id: "root", component: "SourcesPanel", sources: citationIndex.sources, highlighted } as never], {
+        surfaceId: "sources",
+        dispatch: () => undefined,
+        onCitation,
+        onSelect: (id, label) => {
+          const target = findSelection(id, label);
+          if (target) select(target);
+        },
+      })
+    );
+  }
+
+  /** What the workspace can select for an element id: a lesson, block or question of the current version. */
+  function findSelection(id: string, label: string): Selection | null {
+    const doc = version?.document;
+    if (!doc) return null;
+    if (doc.course.id === id) return { id, label: "Course", type: "course" };
+    for (const m of doc.modules) {
+      for (const l of m.lessons) {
+        if (l.id === id) return { id, label: label.slice(0, 80), type: "lesson" };
+        if (l.blocks.some((b) => b.id === id)) return { id, label: label.slice(0, 80), type: "block" };
+        if ((l.quiz?.questions ?? []).some((q) => q.id === id)) return { id, label: label.slice(0, 80), type: "question" };
+      }
+    }
+    if ((doc.finalTest?.questions ?? []).some((q) => q.id === id)) return { id, label: label.slice(0, 80), type: "question" };
+    return null;
   }
 
   function findLabel(doc: Blueprint, id: string): boolean {
@@ -194,11 +241,13 @@ export function mountWorkspace(root: HTMLElement): void {
       const clear = h("button", { type: "button", class: "cb-link", "aria-label": "Clear the selection" }, "×");
       clear.addEventListener("click", () => {
         selection = null;
+        renderSources();
         scope.replaceChildren(h("span", { class: "cb-muted" }, "Select an element in the tree to edit it in chat."));
       });
       return clear;
     })());
     renderPreview();
+    renderSources();
     textarea.focus();
   }
 
