@@ -12,6 +12,7 @@
     "./schema": "./src/schema.ts",
     "./markdown": "./src/lib/markdown.ts",
     "./format": "./src/lib/format.ts",
+    "./i18n": "./src/lib/i18n.ts",
     "./components/*": "./src/components/*",
     "./elements/*": "./src/elements/*",
     "./styles/*": "./src/styles/*",

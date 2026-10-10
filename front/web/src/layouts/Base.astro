@@ -17,6 +17,7 @@ import type { ThemeName } from "@ulams/ui/registry";
 import DemoBadge from "../components/DemoBadge.astro";
 import { THEME_COLOR } from "../lib/theme.ts";
 import { accentCss } from "../lib/accent.ts";
+import { uiStrings } from "@ulams/ui/i18n";
 
 interface Props {
   theme: ThemeName;
@@ -31,11 +32,17 @@ interface Props {
   accent?: string | null;
   /** Keep the page out of search engines (the author preview). */
   noindex?: boolean;
+  /** Canonical URL of the page, and its language alternates (hreflang); the platform landing in each language. */
+  canonical?: string;
+  alternates?: Array<{ hreflang: string; href: string }>;
+  /** Open Graph locale (en_US, pl_PL, zh_CN). */
+  ogLocale?: string;
   /** Default target of links (`_top` inside the studio's preview frame). */
   baseTarget?: string;
 }
 
-const { theme, title, description, lang = "en", demo, bodyClass, accent, noindex = false, baseTarget } = Astro.props;
+const { theme, title, description, lang = "en", demo, bodyClass, accent, noindex = false, baseTarget, canonical, alternates = [], ogLocale } = Astro.props;
+const t = uiStrings(lang);
 const tenantCss = accentCss(theme, accent);
 const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, gravity: gravityCss, poland: polandCss, ulam: ulamCss, platform: platformCss }[theme];
 ---
@@ -49,6 +56,8 @@ const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, 
     {baseTarget && <base target={baseTarget} />}
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     {description && <meta name="description" content={description} />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
     <meta name="theme-color" content={THEME_COLOR[theme]} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="48x48" />
@@ -59,6 +68,8 @@ const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, 
         <>
           <meta property="og:type" content="website" />
           <meta property="og:site_name" content="ulams" />
+          {ogLocale && <meta property="og:locale" content={ogLocale} />}
+          {canonical && <meta property="og:url" content={canonical} />}
           <meta property="og:title" content={title} />
           {description && <meta property="og:description" content={description} />}
           <meta property="og:image" content={new URL("/og-image.png", Astro.url).href} />
@@ -134,7 +145,7 @@ const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, 
     <slot name="head" />
   </head>
   <body class={bodyClass}>
-    <a class="u-skip" href="#main">Skip to content</a>
+    <a class="u-skip" href="#main">{t.skip}</a>
     <slot />
     {demo && <DemoBadge adminUrl={demo.adminUrl} slug={demo.slug} />}
     <script>

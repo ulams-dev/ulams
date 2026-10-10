@@ -1,4 +1,5 @@
 ---
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
 import Logo from "../brand/Logo.astro";
 
 interface Props {
@@ -8,6 +9,8 @@ interface Props {
   note?: string;
 }
 const { brand, text, links = [], note } = Astro.props;
+const t = uiStrings(pageLocale(Astro));
+const [builtPre = "", builtPost = ""] = t.footerBuiltOn.split("{link}");
 ---
 
 <footer class="u-footer">
@@ -18,7 +21,7 @@ const { brand, text, links = [], note } = Astro.props;
     </div>
     {
       links.length > 0 && (
-        <nav aria-label="Footer">
+        <nav aria-label={t.navFooter}>
           <ul role="list">
             {links.map((link) => (
               <li>
@@ -33,7 +36,7 @@ const { brand, text, links = [], note } = Astro.props;
   <div class="u-container u-footer__base">
     <p>{note ?? `© ${new Date().getFullYear()} ${brand}`}</p>
     <p class="u-footer__powered">
-      Built on <a href="https://github.com/ulams-dev"><Logo variant="symbol" mono />ulams</a>, the open headless LMS.
+      {builtPre}<a href="https://github.com/ulams-dev"><Logo variant="symbol" mono />ulams</a>{builtPost}
     </p>
   </div>
 </footer>

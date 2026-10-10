@@ -12,6 +12,8 @@ import { comparisonData, comparisonModel } from "./comparison.ts";
 import { applyComparisonStatus, type LandingStatus } from "./landing-status.ts";
 import { workflowsModel } from "./workflows.ts";
 import type { ThemeName } from "@ulams/ui/registry";
+import { DEMO_COPY } from "../i18n/demos.ts";
+import type { Locale } from "../i18n/locales.ts";
 
 export interface DemoCard {
   title: string;
@@ -32,7 +34,8 @@ const STYLE: Record<string, { label: string; fallbackTitle: string; text: string
   ulam: { label: "Mathematics and history", fallbackTitle: "The Scottish Book", text: "Ulam, the Lwów School and the Scottish Book, with five live interactives." },
 };
 
-export async function platformModel(current: URL, status: LandingStatus = config.landingStatus) {
+export async function platformModel(current: URL, status: LandingStatus = config.landingStatus, locale: Locale = "en") {
+  const copy = locale === "en" ? null : DEMO_COPY[locale];
   const firstRule = config.tenantHosts.split(/[,\n]+/)[0]?.split("=>")[0]?.trim() ?? "";
   const demos = await Promise.all(
     config.demoTenants.map(async (slug): Promise<DemoCard | null> => {
@@ -43,30 +46,30 @@ export async function platformModel(current: URL, status: LandingStatus = config
         getSiteModel(tenant).catch(() => null),
         new Promise<null>((resolve) => setTimeout(() => resolve(null), 2500)),
       ]);
-      const style = STYLE[slug];
+      const style = copy?.style[slug] ? { ...STYLE[slug]!, ...copy.style[slug] } : STYLE[slug];
       const course = site?.course;
       const theme = (["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"].includes(slug) ? slug : "platform") as DemoCard["theme"];
       const facts: DemoCard["facts"] = [];
-      if (style) facts.push({ label: "Style", value: style.label });
+      if (style) facts.push({ label: copy?.facts.style ?? "Style", value: style.label });
       if (course) {
-        facts.push({ label: "Lessons", value: String(course.lessonCount) });
-        facts.push({ label: "Topics", value: String(course.topicCount) });
+        facts.push({ label: copy?.facts.lessons ?? "Lessons", value: String(course.lessonCount) });
+        facts.push({ label: copy?.facts.topics ?? "Topics", value: String(course.topicCount) });
         // the interactive demos are free courses: show that instead of a price
-        if (!course.price) facts.push({ label: "Price", value: "Free" });
+        if (!course.price) facts.push({ label: copy?.facts.price ?? "Price", value: copy?.facts.free ?? "Free" });
       }
       return {
         title: site?.tenant.name ?? style?.fallbackTitle ?? slug,
         text: style?.text ?? course?.summary,
         theme,
         facts,
-        primary: { label: "Open as learner", href: course ? `${front}${course.learnHref}` : `${front}/` },
-        secondary: { label: "Open as admin", href: tenant.adminUrl },
+        primary: { label: copy?.open.learner ?? "Open as learner", href: course ? `${front}${course.learnHref}` : `${front}/` },
+        secondary: { label: copy?.open.admin ?? "Open as admin", href: tenant.adminUrl },
         image: course?.image ? { ...course.image, alt: "" } : undefined,
       };
     })
   );
   const list = demos.filter((d): d is DemoCard => d !== null);
-  return { demos: list, demoCount: list.length, comparison: comparisonModel(applyComparisonStatus(comparisonData, status)), workflows: workflowsModel(status) };
+  return { demos: list, demoCount: list.length, comparison: comparisonModel(applyComparisonStatus(comparisonData, status), locale), workflows: workflowsModel(status, locale) };
 }
 
 export const PLATFORM_THEME_COLOR = "#fafaf9";

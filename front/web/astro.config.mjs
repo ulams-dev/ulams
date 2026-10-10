@@ -39,6 +39,9 @@ export default defineConfig({
   // 0.7 and lacks parseCookie), so bundle it as well.
   vite: { ssr: { noExternal: ["marked", "katex", "cookie"] } },
   // Speculative loading: links are prefetched on hover / focus and prerendered in Chromium.
+  // The product landing in three languages: English at / (default, no prefix), Polish at /pl/, Simplified
+  // Chinese at /zh/ (ADR 0096). Tenant sites have no language prefix: the pages answer 404 off the platform host.
+  i18n: { defaultLocale: "en", locales: ["en", "pl", "zh"], routing: { prefixDefaultLocale: false } },
   prefetch: { prefetchAll: true, defaultStrategy: "hover" },
   build: { inlineStylesheets: "always" },
   // Origin checks for form posts and the BFF are done in src/middleware.ts against the Host

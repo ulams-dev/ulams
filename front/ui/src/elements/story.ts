@@ -239,7 +239,7 @@ export class UlamsStory extends HTMLElement {
       const paused = !this.player.userPaused;
       this.player.set({ userPaused: paused });
       pause.setAttribute("aria-pressed", String(paused));
-      pause.textContent = paused ? "Play" : "Pause";
+      pause.textContent = (paused ? pause.dataset.labelPlay : pause.dataset.labelPause) ?? (paused ? "Play" : "Pause");
     });
     if (this.player.ended && reducedMotion()) this.querySelectorAll("[data-replay],[data-pause]").forEach((b) => b.setAttribute("hidden", ""));
   }
@@ -284,7 +284,7 @@ export class UlamsWorkflows extends HTMLElement {
     pause?.addEventListener("click", () => {
       this.paused = !this.paused;
       pause.setAttribute("aria-pressed", String(this.paused));
-      pause.textContent = this.paused ? "Play" : "Pause";
+      pause.textContent = (this.paused ? pause.dataset.labelPlay : pause.dataset.labelPause) ?? (this.paused ? "Play" : "Pause");
       this.stories().forEach((s) => s.player.set({ userPaused: this.paused }));
       if (this.paused) clearTimeout(this.timer);
       else if (this.story(this.index)?.player.ended) this.schedule();

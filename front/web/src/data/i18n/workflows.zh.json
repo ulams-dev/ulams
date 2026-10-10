@@ -1,0 +1,224 @@
+{
+  "description": "运行 ulams 的五种方式：Claude Code、搭配 ulams MCP 服务器的 Claude、ulams 命令行、REST API 与 SDK，以及工作室。",
+  "tabs": [
+    {
+      "key": "claude-code",
+      "label": "Claude Code",
+      "status": "available",
+      "window": "terminal",
+      "title": "claude · ~/academy",
+      "caption": "用日常语言描述你想要的课程。Claude Code 会运行 ulams CLI，把大纲给你过目，只有你批准之后才会发布。",
+      "lines": [
+        {
+          "kind": "prompt",
+          "text": "根据 ./runbook.md 做一门 3 课时的故障响应课程，并发布"
+        },
+        {
+          "kind": "agent",
+          "text": "我先对 runbook.md 运行构建器，在任何内容上线之前把大纲交给你确认。"
+        },
+        {
+          "kind": "tool",
+          "text": "Bash",
+          "args": "ulams builder start --from runbook.md --defaults --json"
+        },
+        {
+          "kind": "spin",
+          "text": "正在阅读 runbook.md 并起草大纲"
+        },
+        {
+          "kind": "out",
+          "text": "{\"status\":\"outline_review\",\"session\":\"01J9Z3K8M2\"}"
+        },
+        {
+          "kind": "agent",
+          "text": "大纲已就绪：1. 发现并宣告，2. 分级与止损，3. 撰写复盘。每个课时都引用了 runbook.md。批准并发布吗？"
+        },
+        {
+          "kind": "prompt",
+          "text": "好的，批准并发布。"
+        },
+        {
+          "kind": "tool",
+          "text": "Bash",
+          "args": "ulams builder outline approve 01J9Z3K8M2 --json"
+        },
+        {
+          "kind": "out",
+          "text": "{\"status\":\"apply_review\",\"session\":\"01J9Z3K8M2\"}"
+        },
+        {
+          "kind": "tool",
+          "text": "Bash",
+          "args": "ulams builder apply 01J9Z3K8M2 --json"
+        },
+        {
+          "kind": "out",
+          "text": "{\"status\":\"applied\",\"courseId\":17}"
+        },
+        {
+          "kind": "tool",
+          "text": "Bash",
+          "args": "ulams courses publish 17 --json"
+        },
+        {
+          "kind": "out",
+          "text": "{\"id\":17,\"status\":\"published\"}"
+        },
+        {
+          "kind": "agent",
+          "text": "完成。Incident response 已作为第 17 号课程上线：3 个课时，每一条结论都标注了 runbook.md 中的出处。"
+        }
+      ]
+    },
+    {
+      "key": "claude-mcp",
+      "label": "Claude + MCP",
+      "status": "available",
+      "window": "chat",
+      "title": "Claude · ulams MCP server",
+      "caption": "向 Claude 或任何兼容 MCP 的智能体询问你的学院情况。它通过 ulams MCP 服务器工作，发送任何内容之前都会先征求你的同意。",
+      "lines": [
+        {
+          "kind": "user",
+          "text": "哪些课程还是草稿？把咖啡那门发布出去。"
+        },
+        {
+          "kind": "tool",
+          "text": "courses_list",
+          "args": "status: draft",
+          "result": "2 门课程"
+        },
+        {
+          "kind": "assistant",
+          "text": "有两份草稿：Learn coffee the slow way 和 Incident response。我将发布 Learn coffee the slow way，可以吗？"
+        },
+        {
+          "kind": "user",
+          "text": "可以，发布吧。"
+        },
+        {
+          "kind": "tool",
+          "text": "courses_publish",
+          "args": "id: 3",
+          "result": "已发布"
+        },
+        {
+          "kind": "assistant",
+          "text": "完成。Learn coffee the slow way 已发布，Incident response 仍是草稿。"
+        }
+      ]
+    },
+    {
+      "key": "cli",
+      "label": "CLI",
+      "status": "available",
+      "window": "terminal",
+      "title": "zsh · ~/academy",
+      "caption": "课程即代码：把课程导出为 YAML，在你的编辑器里修改，先查看变更计划，再应用回去。",
+      "lines": [
+        {
+          "kind": "cmd",
+          "text": "ulams login --url http://coffee.localhost --demo admin"
+        },
+        {
+          "kind": "out",
+          "text": "Signed in as admin@coffee.ulams.app"
+        },
+        {
+          "kind": "cmd",
+          "text": "ulams courses list --json | jq -r '.data[] | \"\\(.id)  \\(.title)\"'"
+        },
+        {
+          "kind": "out",
+          "text": "3  Learn coffee the slow way"
+        },
+        {
+          "kind": "cmd",
+          "text": "ulams get Course \"Learn coffee the slow way\" --output yaml > course.yaml"
+        },
+        {
+          "kind": "note",
+          "text": "# 在 course.yaml 里修改“研磨粗细”那一课"
+        },
+        {
+          "kind": "cmd",
+          "text": "ulams apply --file course.yaml --dry-run"
+        },
+        {
+          "kind": "out",
+          "text": "Course  Learn coffee the slow way  updated (dry run, nothing written)"
+        },
+        {
+          "kind": "cmd",
+          "text": "ulams apply --file course.yaml"
+        },
+        {
+          "kind": "spin",
+          "text": "Applying 1 change"
+        },
+        {
+          "kind": "out",
+          "text": "Course  Learn coffee the slow way  updated"
+        }
+      ]
+    },
+    {
+      "key": "api",
+      "label": "REST 与 SDK",
+      "status": "available",
+      "window": "terminal",
+      "title": "zsh · api",
+      "caption": "工作室能做的一切都通过 HTTP API 完成。直接用 curl 就行，读取数据时也可以用 @ulams/sdk。",
+      "lines": [
+        {
+          "kind": "cmd",
+          "text": "curl -s -X POST https://oncall.example.com/api/admin/topics \\"
+        },
+        {
+          "kind": "cont",
+          "text": "  -H \"Authorization: Bearer $ULAMS_TOKEN\" -H \"Content-Type: application/json\" \\"
+        },
+        {
+          "kind": "cont",
+          "text": "  -d '{\"title\":\"Reading a page\",\"lesson_id\":12,\"topicable_type\":\"EscolaLms\\\\TopicTypes\\\\Models\\\\TopicContent\\\\RichText\",\"value\":\"What the alert means.\"}'"
+        },
+        {
+          "kind": "out",
+          "text": "{\"success\":true,\"data\":{\"id\":88,\"title\":\"Reading a page\",\"lesson_id\":12}}"
+        },
+        {
+          "kind": "cmd",
+          "text": "node -e \"import('@ulams/sdk').then(async ({createClient}) => { const ulams = createClient({baseUrl: 'https://oncall.example.com'}); console.log((await ulams.courses.list()).data.length) })\""
+        },
+        {
+          "kind": "out",
+          "text": "1"
+        }
+      ]
+    },
+    {
+      "key": "studio",
+      "label": "工作室",
+      "status": "available",
+      "window": "studio",
+      "title": "工作室 · 课程构建器",
+      "caption": "经典的使用方式依然保留：以对话驱动的工作室，AI 的每一处改动都是由你批准的差异对比。",
+      "lines": [
+        {
+          "kind": "user",
+          "text": "根据运维手册，在第 2 课之后加一份测验。"
+        },
+        {
+          "kind": "assistant",
+          "text": "我起草了 5 道题，每道题都引用了 runbook.md 的某一节，在你批准之前不会有任何改动。"
+        },
+        {
+          "kind": "card",
+          "text": "修改建议：在“分级与止损”之后新增一份测验，共 5 道题，全部带引用",
+          "args": "批准 | 拒绝"
+        }
+      ]
+    }
+  ]
+}

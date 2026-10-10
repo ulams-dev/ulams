@@ -1,4 +1,5 @@
 ---
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
 /**
  * "Your brand, your academy": the white-label story of the product landing, in four steps played by
  * the shared timeline player (elements/story.ts, no extra JS): bring a brand (tokens are extracted),
@@ -73,6 +74,7 @@ const {
   dashboard,
 } = Astro.props;
 
+const t = uiStrings(pageLocale(Astro));
 const hex = (v: string | undefined, fallback: string) => (v && /^#[0-9a-f]{6}$/i.test(v) ? v : fallback);
 const [cPrimary, cSecondary, cAccent, cSurface, cText] = [
   hex(brand.colors[0]?.value, "#0E7C66"),
@@ -146,7 +148,7 @@ const step = (i: number) => steps[i] ?? { title: "", text: "" };
             <div class="u-win">
               <div class="u-win__bar">
                 <span class="u-win__dots"><i></i><i></i><i></i></span><span>{brand.agentLabel}</span>
-                {comingTag(step(0).status) && <em class="u-wl__tag">Coming</em>}
+                {comingTag(step(0).status) && <em class="u-wl__tag">{t.coming}</em>}
               </div>
               <div class="u-wl__cols u-wl__cols--brand">
                 <div class="u-wl__col">
@@ -160,7 +162,7 @@ const step = (i: number) => steps[i] ?? { title: "", text: "" };
                             <b>{s.label}</b>
                             <small>{s.file}</small>
                           </span>
-                          {comingTag(s.status) && <em class="u-wl__tag">Coming</em>}
+                          {comingTag(s.status) && <em class="u-wl__tag">{t.coming}</em>}
                         </li>
                       ))
                     }
@@ -198,11 +200,11 @@ const step = (i: number) => steps[i] ?? { title: "", text: "" };
                     }
                     <p class="u-wl__logo" data-at={rel(0, 3300)}>
                       <b style={`background:${cPrimary}`}>{brand.logo}</b>
-                      <span>Logo</span>
+                      <span>{t.logo}</span>
                     </p>
                     <p class="u-wl__rad" data-at={rel(0, 3500)}>
                       <i style={`border-top-left-radius:${radius}px`}></i>
-                      <span>Radius</span>
+                      <span>{t.radius}</span>
                       <code>{radius} px</code>
                     </p>
                   </div>
@@ -281,7 +283,7 @@ const step = (i: number) => steps[i] ?? { title: "", text: "" };
               </div>
               <div class="u-wl__cols u-wl__cols--content">
                 <div class="u-wl__col">
-                  <p class="u-wl__cap">Sources</p>
+                  <p class="u-wl__cap">{t.sources}</p>
                   <ul class="u-wl__files">
                     {
                       content.sources.map((s, i) => (
@@ -310,7 +312,7 @@ const step = (i: number) => steps[i] ?? { title: "", text: "" };
                   <p class="u-wl__sync" data-at={rel(2, 3500)}>
                     <Icon name="sync" />
                     {content.syncLabel}
-                    {comingTag(content.syncStatus) && <em class="u-wl__tag">Coming</em>}
+                    {comingTag(content.syncStatus) && <em class="u-wl__tag">{t.coming}</em>}
                   </p>
                 </div>
               </div>
@@ -323,7 +325,7 @@ const step = (i: number) => steps[i] ?? { title: "", text: "" };
             <div class="u-win">
               <div class="u-win__bar">
                 <span class="u-win__dots"><i></i><i></i><i></i></span><span>{step(3).title}</span>
-                {comingTag(step(3).status) && <em class="u-wl__tag">Coming</em>}
+                {comingTag(step(3).status) && <em class="u-wl__tag">{t.coming}</em>}
                 {exampleNote && <em class="u-wl__ex">{exampleNote}</em>}
               </div>
               <div class="u-wl__dash">
@@ -381,8 +383,8 @@ const step = (i: number) => steps[i] ?? { title: "", text: "" };
         </div>
       </div>
       <div class="u-stage__controls">
-        <button type="button" data-pause aria-pressed="false">Pause</button>
-        <button type="button" data-replay>Replay</button>
+        <button type="button" data-pause aria-pressed="false" data-label-pause={t.pause} data-label-play={t.play}>{t.pause}</button>
+        <button type="button" data-replay>{t.replay}</button>
       </div>
     </ulams-story>
 
@@ -392,7 +394,7 @@ const step = (i: number) => steps[i] ?? { title: "", text: "" };
           <li class="u-wl__item">
             <p class="u-wl__n" aria-hidden="true">{i + 1}</p>
             <h3 class="u-h3">{s.title}</h3>
-            {s.status === "coming" && <p class="u-status u-status--coming">Coming</p>}
+            {s.status === "coming" && <p class="u-status u-status--coming">{t.coming}</p>}
             <p>{s.text}</p>
             {s.points && s.points.length > 0 && (
               <ul>

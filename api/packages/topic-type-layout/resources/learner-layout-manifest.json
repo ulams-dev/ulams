@@ -237,6 +237,11 @@
                         "type": "string",
                         "description": "Short neutral note",
                         "maxLength": 120
+                      },
+                      "kind": {
+                        "type": "string",
+                        "description": "Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming",
+                        "maxLength": 16
                       }
                     },
                     "required": [
@@ -335,6 +340,11 @@
                               "type": "string",
                               "description": "Short neutral note",
                               "maxLength": 120
+                            },
+                            "kind": {
+                              "type": "string",
+                              "description": "Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming",
+                              "maxLength": 16
                             }
                           },
                           "required": [
@@ -397,6 +407,11 @@
                                     "type": "string",
                                     "description": "Short neutral note",
                                     "maxLength": 120
+                                  },
+                                  "kind": {
+                                    "type": "string",
+                                    "description": "Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming",
+                                    "maxLength": 16
                                   }
                                 },
                                 "required": [

@@ -1,0 +1,224 @@
+{
+  "description": "Pięć sposobów obsługi ulams: Claude Code, Claude z serwerem MCP ulams, wiersz poleceń ulams, REST API z SDK oraz studio.",
+  "tabs": [
+    {
+      "key": "claude-code",
+      "label": "Claude Code",
+      "status": "available",
+      "window": "terminal",
+      "title": "claude · ~/academy",
+      "caption": "Opisz kurs zwykłym językiem. Claude Code uruchamia CLI ulams, pokazuje Ci konspekt i publikuje dopiero po Twojej zgodzie.",
+      "lines": [
+        {
+          "kind": "prompt",
+          "text": "Zbuduj 3-lekcyjny kurs o reagowaniu na incydenty z ./runbook.md i opublikuj go"
+        },
+        {
+          "kind": "agent",
+          "text": "Uruchomię kreator na runbook.md i przedstawię Ci konspekt, zanim cokolwiek zostanie opublikowane."
+        },
+        {
+          "kind": "tool",
+          "text": "Bash",
+          "args": "ulams builder start --from runbook.md --defaults --json"
+        },
+        {
+          "kind": "spin",
+          "text": "Czytam runbook.md i przygotowuję konspekt"
+        },
+        {
+          "kind": "out",
+          "text": "{\"status\":\"outline_review\",\"session\":\"01J9Z3K8M2\"}"
+        },
+        {
+          "kind": "agent",
+          "text": "Konspekt gotowy: 1. Wykryj i zgłoś, 2. Ocena i łagodzenie skutków, 3. Napisz postmortem. Każda lekcja wskazuje runbook.md jako źródło. Zatwierdzić i opublikować?"
+        },
+        {
+          "kind": "prompt",
+          "text": "Tak, zatwierdź i opublikuj."
+        },
+        {
+          "kind": "tool",
+          "text": "Bash",
+          "args": "ulams builder outline approve 01J9Z3K8M2 --json"
+        },
+        {
+          "kind": "out",
+          "text": "{\"status\":\"apply_review\",\"session\":\"01J9Z3K8M2\"}"
+        },
+        {
+          "kind": "tool",
+          "text": "Bash",
+          "args": "ulams builder apply 01J9Z3K8M2 --json"
+        },
+        {
+          "kind": "out",
+          "text": "{\"status\":\"applied\",\"courseId\":17}"
+        },
+        {
+          "kind": "tool",
+          "text": "Bash",
+          "args": "ulams courses publish 17 --json"
+        },
+        {
+          "kind": "out",
+          "text": "{\"id\":17,\"status\":\"published\"}"
+        },
+        {
+          "kind": "agent",
+          "text": "Gotowe. Incident response jest już dostępny jako kurs 17: 3 lekcje, każde stwierdzenie ze wskazaniem runbook.md."
+        }
+      ]
+    },
+    {
+      "key": "claude-mcp",
+      "label": "Claude + MCP",
+      "status": "available",
+      "window": "chat",
+      "title": "Claude · ulams MCP server",
+      "caption": "Zapytaj Claude albo dowolnego agenta zgodnego z MCP o swoją akademię. Korzysta z serwera MCP ulams i pyta, zanim cokolwiek wyśle.",
+      "lines": [
+        {
+          "kind": "user",
+          "text": "Które kursy są jeszcze szkicami? Opublikuj ten o kawie."
+        },
+        {
+          "kind": "tool",
+          "text": "courses_list",
+          "args": "status: draft",
+          "result": "2 kursy"
+        },
+        {
+          "kind": "assistant",
+          "text": "Dwa szkice: Learn coffee the slow way i Incident response. Opublikuję Learn coffee the slow way. Mam kontynuować?"
+        },
+        {
+          "kind": "user",
+          "text": "Tak, opublikuj."
+        },
+        {
+          "kind": "tool",
+          "text": "courses_publish",
+          "args": "id: 3",
+          "result": "opublikowano"
+        },
+        {
+          "kind": "assistant",
+          "text": "Gotowe. Learn coffee the slow way jest opublikowany. Incident response nadal jest szkicem."
+        }
+      ]
+    },
+    {
+      "key": "cli",
+      "label": "CLI",
+      "status": "available",
+      "window": "terminal",
+      "title": "zsh · ~/academy",
+      "caption": "Kurs jako kod: wyeksportuj kurs do YAML, edytuj go w swoim edytorze, przejrzyj plan i zastosuj zmiany z powrotem.",
+      "lines": [
+        {
+          "kind": "cmd",
+          "text": "ulams login --url http://coffee.localhost --demo admin"
+        },
+        {
+          "kind": "out",
+          "text": "Signed in as admin@coffee.ulams.app"
+        },
+        {
+          "kind": "cmd",
+          "text": "ulams courses list --json | jq -r '.data[] | \"\\(.id)  \\(.title)\"'"
+        },
+        {
+          "kind": "out",
+          "text": "3  Learn coffee the slow way"
+        },
+        {
+          "kind": "cmd",
+          "text": "ulams get Course \"Learn coffee the slow way\" --output yaml > course.yaml"
+        },
+        {
+          "kind": "note",
+          "text": "# edytuj lekcję o stopniu zmielenia w course.yaml"
+        },
+        {
+          "kind": "cmd",
+          "text": "ulams apply --file course.yaml --dry-run"
+        },
+        {
+          "kind": "out",
+          "text": "Course  Learn coffee the slow way  updated (dry run, nothing written)"
+        },
+        {
+          "kind": "cmd",
+          "text": "ulams apply --file course.yaml"
+        },
+        {
+          "kind": "spin",
+          "text": "Applying 1 change"
+        },
+        {
+          "kind": "out",
+          "text": "Course  Learn coffee the slow way  updated"
+        }
+      ]
+    },
+    {
+      "key": "api",
+      "label": "REST i SDK",
+      "status": "available",
+      "window": "terminal",
+      "title": "zsh · api",
+      "caption": "Wszystko, co robi studio, przechodzi przez HTTP API. Zwykły curl wystarczy; do odczytu działa też @ulams/sdk.",
+      "lines": [
+        {
+          "kind": "cmd",
+          "text": "curl -s -X POST https://oncall.example.com/api/admin/topics \\"
+        },
+        {
+          "kind": "cont",
+          "text": "  -H \"Authorization: Bearer $ULAMS_TOKEN\" -H \"Content-Type: application/json\" \\"
+        },
+        {
+          "kind": "cont",
+          "text": "  -d '{\"title\":\"Reading a page\",\"lesson_id\":12,\"topicable_type\":\"EscolaLms\\\\TopicTypes\\\\Models\\\\TopicContent\\\\RichText\",\"value\":\"What the alert means.\"}'"
+        },
+        {
+          "kind": "out",
+          "text": "{\"success\":true,\"data\":{\"id\":88,\"title\":\"Reading a page\",\"lesson_id\":12}}"
+        },
+        {
+          "kind": "cmd",
+          "text": "node -e \"import('@ulams/sdk').then(async ({createClient}) => { const ulams = createClient({baseUrl: 'https://oncall.example.com'}); console.log((await ulams.courses.list()).data.length) })\""
+        },
+        {
+          "kind": "out",
+          "text": "1"
+        }
+      ]
+    },
+    {
+      "key": "studio",
+      "label": "Studio",
+      "status": "available",
+      "window": "studio",
+      "title": "Studio · Kreator kursów",
+      "caption": "Klasyczny sposób pracy nadal jest: studio sterowane czatem, w którym każda zmiana AI to podgląd zmian do Twojej akceptacji.",
+      "lines": [
+        {
+          "kind": "user",
+          "text": "Dodaj po lekcji 2 quiz oparty na runbooku."
+        },
+        {
+          "kind": "assistant",
+          "text": "Przygotowałem 5 pytań. Każde wskazuje sekcję runbook.md, a nic się nie zmieni, dopóki nie zatwierdzisz."
+        },
+        {
+          "kind": "card",
+          "text": "Proponowana zmiana: nowy quiz po lekcji „Ocena i łagodzenie skutków”, 5 pytań, wszystkie ze źródłami",
+          "args": "Zatwierdź | Odrzuć"
+        }
+      ]
+    }
+  ]
+}

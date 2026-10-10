@@ -1,4 +1,5 @@
 ---
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
 interface Props {
   eyebrow?: string;
   title?: string;
@@ -7,6 +8,7 @@ interface Props {
   id?: string;
 }
 const { eyebrow, title, intro, items, id = "standards" } = Astro.props;
+const t = uiStrings(pageLocale(Astro));
 ---
 
 <section class="u-section u-chips" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
@@ -22,7 +24,7 @@ const { eyebrow, title, intro, items, id = "standards" } = Astro.props;
           <li class="u-chip" data-status={chip.status ?? "available"}>
             <span class="u-chip__label">{chip.label}</span>
             {chip.note && <span class="u-chip__note">{chip.note}</span>}
-            {chip.status === "coming" && <span class="u-status u-status--coming">coming</span>}
+            {chip.status === "coming" && <span class="u-status u-status--coming">{t.coming}</span>}
           </li>
         ))
       }

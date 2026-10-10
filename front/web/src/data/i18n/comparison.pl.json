@@ -1,0 +1,168 @@
+{
+  "asOf": "październik 2026",
+  "groups": {
+    "community": {
+      "label": "Platformy open source i dla twórców",
+      "caption": "Porównanie funkcji ulams z Moodle, Canvas LMS, Open edX, TalentLMS, Thinkific i LearnDash"
+    },
+    "enterprise": {
+      "label": "Zestawy enterprise",
+      "caption": "Porównanie funkcji ulams z Articulate 360, Docebo, Cornerstone, SAP SuccessFactors Learning, Absorb LMS i 360Learning"
+    }
+  },
+  "sections": {
+    "developer": "Deweloperzy i headless",
+    "ai": "AI",
+    "standards": "Standardy treści",
+    "business": "Biznes"
+  },
+  "rows": {
+    "headless_api": {
+      "label": "REST API",
+      "help": "Udokumentowane REST API obejmujące całą platformę, a nie tylko raporty czy synchronizację użytkowników"
+    },
+    "headless_authoring": {
+      "label": "Zarządzanie kursami przez API",
+      "help": "Tworzenie, edycja i publikacja kursów, lekcji i treści w całości przez API"
+    },
+    "openapi": {
+      "label": "Opublikowana specyfikacja OpenAPI",
+      "help": "Opis API w formacie czytelnym dla maszyn"
+    },
+    "sdk": {
+      "label": "Typowany SDK (TypeScript)",
+      "help": "Oficjalna biblioteka kliencka dla TypeScriptu lub JavaScriptu"
+    },
+    "cli": {
+      "label": "CLI dla autorów i deweloperów",
+      "help": "Zarządzanie treścią kursów z terminala (deklaratywne apply, eksport, polecenia kreatora)"
+    },
+    "mcp": {
+      "label": "Serwer MCP",
+      "help": "Oficjalny serwer, dzięki któremu agenci AI i asystenci mogą pracować z kursami"
+    },
+    "webhooks": {
+      "label": "Webhooki i zdarzenia",
+      "help": "Zdarzenia wychodzące do Twoich systemów"
+    },
+    "course_as_code": {
+      "label": "Kurs jako kod / synchronizacja z Gitem",
+      "help": "Kursy jako pliki tekstowe przechowywane w Gicie"
+    },
+    "self_hosting": {
+      "label": "Własny hosting",
+      "help": "Uruchomienie na własnych serwerach; informacje o open source w wierszu o licencji"
+    },
+    "generative_ui": {
+      "label": "Generatywny interfejs",
+      "help": "Interfejsy składane przez AI w czasie działania (A2UI)"
+    },
+    "ai_generation": {
+      "label": "Generowanie kursów przez AI",
+      "help": "Kursy tworzone przez AI na podstawie Twoich własnych źródeł"
+    },
+    "ai_citations": {
+      "label": "AI ze źródłami, zatwierdzane zmiany",
+      "help": "Wygenerowane treści wskazują źródła; zmiany to podgląd, który zatwierdza autor"
+    },
+    "source_sync": {
+      "label": "Kursy zsynchronizowane ze źródłami",
+      "help": "Propozycje aktualizacji, gdy zmieniają się źródła"
+    },
+    "adaptive_paths": {
+      "label": "Adaptacyjne ścieżki nauki",
+      "help": "Ścieżki dopasowujące się do każdego kursanta"
+    },
+    "h5p": {
+      "label": "H5P",
+      "help": "Interaktywne treści H5P"
+    },
+    "scorm": {
+      "label": "SCORM",
+      "help": "Pakiety SCORM"
+    },
+    "cmi5_xapi": {
+      "label": "cmi5 / xAPI",
+      "help": "Aktywności cmi5 i śledzenie xAPI"
+    },
+    "lti13": {
+      "label": "LTI 1.3",
+      "help": "LTI 1.3 / LTI Advantage"
+    },
+    "multi_tenant": {
+      "label": "Witryna dla każdego klienta",
+      "help": "Osobne witryny white-label (tenanty) z jednej instalacji"
+    },
+    "commerce": {
+      "label": "Wbudowana sprzedaż",
+      "help": "Sprzedaż kursów i przyjmowanie płatności"
+    },
+    "licence": {
+      "label": "Licencja open source",
+      "help": "Licencja rdzenia"
+    },
+    "pricing": {
+      "label": "Model cenowy"
+    },
+    "data_residency": {
+      "label": "Lokalizacja danych",
+      "help": "Wybór regionu przechowywania danych albo własny hosting"
+    },
+    "sso": {
+      "label": "SSO (SAML / OIDC)",
+      "help": "Jednokrotne logowanie przez firmowego dostawcę tożsamości"
+    },
+    "scim": {
+      "label": "Provisioning SCIM",
+      "help": "Użytkownicy i grupy zakładane z dostawcy tożsamości"
+    },
+    "authoring_tool": {
+      "label": "Wbudowane narzędzie autorskie",
+      "help": "Tworzenie kursów bez osobnego narzędzia autorskiego"
+    },
+    "content_library": {
+      "label": "Biblioteka treści / marketplace",
+      "help": "Gotowe kursy lub treści zewnętrzne do kupienia albo włączenia"
+    }
+  },
+  "systems": {
+    "ulams": "open core",
+    "moodle": "open source",
+    "canvas": "open source",
+    "openedx": "open source",
+    "talentlms": "hostowany LMS (SaaS)",
+    "thinkific": "platforma dla twórców kursów",
+    "learndash": "wtyczka WordPress",
+    "articulate": "pakiet narzędzi autorskich",
+    "docebo": "LMS dla firm",
+    "cornerstone": "pakiet talentów i nauki",
+    "sap": "moduł nauki w systemie HCM",
+    "absorb": "LMS dla firm",
+    "360learning": "współpraca w nauce"
+  },
+  "values": {
+    "Yes": "Tak",
+    "No": "Nie",
+    "Partial": "Częściowo",
+    "Via plugin": "Przez wtyczkę",
+    "Paid add-on": "Płatny dodatek",
+    "Not documented": "Brak danych",
+    "Coming": "Wkrótce",
+    "Proprietary": "Własnościowa",
+    "Quote-based; not published": "Wycena indywidualna; cennik niepublikowany",
+    "AGPL-3.0": "AGPL-3.0",
+    "MIT open core": "Rdzeń open core na licencji MIT",
+    "Free self-hosted": "Bezpłatny własny hosting",
+    "GPL-3.0-or-later": "GPL-3.0-or-later",
+    "Free (GPL); paid hosting": "Bezpłatny (GPL); płatny hosting",
+    "Free to self-host (AGPL); hosted by quote": "Bezpłatny przy własnym hostingu (AGPL); hosting wg wyceny",
+    "Free (AGPL); self-funded hosting": "Bezpłatny (AGPL); hosting na własny koszt",
+    "SaaS by monthly active users; free tier": "SaaS wg aktywnych użytkowników mies.; plan bezpłatny",
+    "SaaS plans; Plus by quote": "Plany SaaS; Plus wg wyceny",
+    "GPL-2.0-or-later, paid licence": "GPL-2.0-or-later, płatna licencja",
+    "Annual licence per site tier": "Licencja roczna zależna od progu liczby witryn",
+    "Per-seat subscription; Reach by learners": "Subskrypcja za stanowisko; Reach wg liczby kursantów",
+    "Quote-based": "Wycena indywidualna",
+    "Team $8/user/month (up to 100); Business/Enterprise custom": "Team 8 USD/os./mies. (do 100); Business/Enterprise: wycena"
+  }
+}

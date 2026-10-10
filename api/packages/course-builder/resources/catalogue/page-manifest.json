@@ -176,6 +176,51 @@
             ],
             "description": "A link or call to action",
             "additionalProperties": false
+          },
+          "homeHref": {
+            "type": "string",
+            "format": "href",
+            "description": "Where the brand links to; the language home on a translated landing",
+            "maxLength": 2048
+          },
+          "languages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "description": "Language code of the page it links to (BCP 47)",
+                  "maxLength": 10
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Name of the language in that language, e.g. PL or 中文",
+                  "maxLength": 20
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "URL of the page in that language",
+                  "maxLength": 2048
+                },
+                "current": {
+                  "type": "boolean",
+                  "description": "True for the language of this page",
+                  "default": false
+                }
+              },
+              "required": [
+                "code",
+                "label",
+                "href"
+              ],
+              "description": "One language of the switcher",
+              "additionalProperties": false
+            },
+            "description": "Language switcher: one entry per language, in display order; the current one is marked",
+            "default": [],
+            "maxItems": 4
           }
         },
         "required": [
@@ -3663,6 +3708,11 @@
                         "type": "string",
                         "description": "Short neutral note",
                         "maxLength": 120
+                      },
+                      "kind": {
+                        "type": "string",
+                        "description": "Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming",
+                        "maxLength": 16
                       }
                     },
                     "required": [
@@ -3761,6 +3811,11 @@
                               "type": "string",
                               "description": "Short neutral note",
                               "maxLength": 120
+                            },
+                            "kind": {
+                              "type": "string",
+                              "description": "Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming",
+                              "maxLength": 16
                             }
                           },
                           "required": [
@@ -3823,6 +3878,11 @@
                                     "type": "string",
                                     "description": "Short neutral note",
                                     "maxLength": 120
+                                  },
+                                  "kind": {
+                                    "type": "string",
+                                    "description": "Value kind of a translated cell: yes, no, partial, plugin, paid, unknown or coming",
+                                    "maxLength": 16
                                   }
                                 },
                                 "required": [
