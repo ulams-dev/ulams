@@ -35,8 +35,9 @@ export default defineConfig({
     },
   },
   // Bundle the catalogue's server-side libraries: the hoisted copies at the repo root are
-  // other (older) versions used by other workspaces.
-  vite: { ssr: { noExternal: ["marked", "katex"] } },
+  // other (older) versions used by other workspaces. "cookie" is Astro 7's own ^2 (the root copy is
+  // 0.7 and lacks parseCookie), so bundle it as well.
+  vite: { ssr: { noExternal: ["marked", "katex", "cookie"] } },
   // Speculative loading: links are prefetched on hover / focus and prerendered in Chromium.
   prefetch: { prefetchAll: true, defaultStrategy: "hover" },
   build: { inlineStylesheets: "always" },
@@ -50,26 +51,26 @@ export default defineConfig({
     // Course images and avatars come from the tenant storage (MinIO behind Caddy).
     remotePatterns: [{ protocol: "http", hostname: "**.localhost" }, { protocol: "https", hostname: "**.ulams.app" }],
   },
+  // Self-hosted fonts (no Google request at runtime). Fallback faces with measured metrics live
+  // in @ulams/ui/styles/fallbacks.css (Astro's generated ones were off for these fonts).
+  fonts: [
+    { provider: google, name: "Playfair Display", cssVariable: "--font-playfair", weights: [400, 500, 600], styles: ["normal", "italic"], subsets: latin, fallbacks: ["Playfair Display fallback", "serif"], optimizedFallbacks: false },
+    { provider: google, name: "Plus Jakarta Sans", cssVariable: "--font-jakarta", weights: [400, 500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Plus Jakarta Sans fallback", "sans-serif"], optimizedFallbacks: false },
+    { provider: google, name: "Inter Tight", cssVariable: "--font-inter-tight", weights: [500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Inter Tight fallback", "sans-serif"], optimizedFallbacks: false },
+    { provider: google, name: "Space Grotesk", cssVariable: "--font-space-grotesk", weights: [500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Space Grotesk fallback", "sans-serif"], optimizedFallbacks: false },
+    { provider: google, name: "Inter", cssVariable: "--font-inter", weights: [400, 500, 600], styles: ["normal"], subsets: latin, fallbacks: ["Inter fallback", "sans-serif"], optimizedFallbacks: false },
+    { provider: google, name: "JetBrains Mono", cssVariable: "--font-jetbrains", weights: [400, 500, 700], styles: ["normal"], subsets: latin, fallbacks: ["JetBrains Mono fallback", "monospace"], optimizedFallbacks: false },
+    // Course Builder studio headings and course content (Editorial Intelligence design)
+    { provider: google, name: "Newsreader", cssVariable: "--font-newsreader", weights: [400, 500], styles: ["normal", "italic"], subsets: latin, fallbacks: ["Georgia", "serif"], optimizedFallbacks: false },
+    { provider: google, name: "Comfortaa", cssVariable: "--font-comfortaa", weights: [500, 700], styles: ["normal"], subsets: latin, fallbacks: ["Comfortaa fallback", "sans-serif"], optimizedFallbacks: false },
+    { provider: google, name: "Quicksand", cssVariable: "--font-quicksand", weights: [400, 500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Quicksand fallback", "sans-serif"], optimizedFallbacks: false },
+    // Poland and Ulam demos
+    { provider: google, name: "Source Serif 4", cssVariable: "--font-source-serif", weights: [400, 600, 700], styles: ["normal", "italic"], subsets: latin, fallbacks: ["Source Serif 4 fallback", "serif"], optimizedFallbacks: false },
+    { provider: google, name: "IBM Plex Sans", cssVariable: "--font-plex-sans", weights: [400, 500, 600], styles: ["normal"], subsets: latin, fallbacks: ["IBM Plex Sans fallback", "sans-serif"], optimizedFallbacks: false },
+    { provider: google, name: "IBM Plex Mono", cssVariable: "--font-plex-mono", weights: [400, 500], styles: ["normal"], subsets: latin, fallbacks: ["IBM Plex Mono fallback", "monospace"], optimizedFallbacks: false },
+    { provider: google, name: "EB Garamond", cssVariable: "--font-eb-garamond", weights: [400, 500, 600], styles: ["normal", "italic"], subsets: latin, fallbacks: ["EB Garamond fallback", "serif"], optimizedFallbacks: false },
+  ],
   experimental: {
     clientPrerender: true,
-    // Self-hosted fonts (no Google request at runtime). Fallback faces with measured metrics live
-    // in @ulams/ui/styles/fallbacks.css (Astro's generated ones were off for these fonts).
-    fonts: [
-      { provider: google, name: "Playfair Display", cssVariable: "--font-playfair", weights: [400, 500, 600], styles: ["normal", "italic"], subsets: latin, fallbacks: ["Playfair Display fallback", "serif"], optimizedFallbacks: false },
-      { provider: google, name: "Plus Jakarta Sans", cssVariable: "--font-jakarta", weights: [400, 500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Plus Jakarta Sans fallback", "sans-serif"], optimizedFallbacks: false },
-      { provider: google, name: "Inter Tight", cssVariable: "--font-inter-tight", weights: [500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Inter Tight fallback", "sans-serif"], optimizedFallbacks: false },
-      { provider: google, name: "Space Grotesk", cssVariable: "--font-space-grotesk", weights: [500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Space Grotesk fallback", "sans-serif"], optimizedFallbacks: false },
-      { provider: google, name: "Inter", cssVariable: "--font-inter", weights: [400, 500, 600], styles: ["normal"], subsets: latin, fallbacks: ["Inter fallback", "sans-serif"], optimizedFallbacks: false },
-      { provider: google, name: "JetBrains Mono", cssVariable: "--font-jetbrains", weights: [400, 500, 700], styles: ["normal"], subsets: latin, fallbacks: ["JetBrains Mono fallback", "monospace"], optimizedFallbacks: false },
-      // Course Builder studio headings and course content (Editorial Intelligence design)
-      { provider: google, name: "Newsreader", cssVariable: "--font-newsreader", weights: [400, 500], styles: ["normal", "italic"], subsets: latin, fallbacks: ["Georgia", "serif"], optimizedFallbacks: false },
-      { provider: google, name: "Comfortaa", cssVariable: "--font-comfortaa", weights: [500, 700], styles: ["normal"], subsets: latin, fallbacks: ["Comfortaa fallback", "sans-serif"], optimizedFallbacks: false },
-      { provider: google, name: "Quicksand", cssVariable: "--font-quicksand", weights: [400, 500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Quicksand fallback", "sans-serif"], optimizedFallbacks: false },
-      // Poland and Ulam demos
-      { provider: google, name: "Source Serif 4", cssVariable: "--font-source-serif", weights: [400, 600, 700], styles: ["normal", "italic"], subsets: latin, fallbacks: ["Source Serif 4 fallback", "serif"], optimizedFallbacks: false },
-      { provider: google, name: "IBM Plex Sans", cssVariable: "--font-plex-sans", weights: [400, 500, 600], styles: ["normal"], subsets: latin, fallbacks: ["IBM Plex Sans fallback", "sans-serif"], optimizedFallbacks: false },
-      { provider: google, name: "IBM Plex Mono", cssVariable: "--font-plex-mono", weights: [400, 500], styles: ["normal"], subsets: latin, fallbacks: ["IBM Plex Mono fallback", "monospace"], optimizedFallbacks: false },
-      { provider: google, name: "EB Garamond", cssVariable: "--font-eb-garamond", weights: [400, 500, 600], styles: ["normal", "italic"], subsets: latin, fallbacks: ["EB Garamond fallback", "serif"], optimizedFallbacks: false },
-    ],
   },
 });
