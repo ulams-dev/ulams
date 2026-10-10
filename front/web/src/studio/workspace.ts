@@ -10,6 +10,7 @@ import { announce, connectionStatus, livingClient, settleApplied, showCitation, 
 import { bannerModel, lessonMarker, markerFor, reviewHref, staleMap, staleNote, type Marker } from "./staleness.ts";
 import { Timeline } from "./timeline.ts";
 import { lessonExtras } from "./formats.ts";
+import { estimateText, KIND_LABEL, valueChoices, type GlobalKind } from "./global-edit.ts";
 
 type Selection = { id: string; label: string; type: "lesson" | "question" | "block" | "module" | "course" };
 
@@ -342,6 +343,53 @@ export function mountWorkspace(root: HTMLElement): void {
     } catch {
       history.replaceChildren(h("p", { class: "cb-muted" }, "History unavailable."));
     }
+  }
+
+  // whole-course edit: estimate first, then confirm
+  const gForm = root.querySelector<HTMLFormElement>("[data-global-form]");
+  if (gForm) {
+    const kind = gForm.querySelector<HTMLSelectElement>("[data-global-kind]")!;
+    const value = gForm.querySelector<HTMLSelectElement>("[data-global-value]")!;
+    const valueLabel = gForm.querySelector<HTMLElement>("[data-global-value-label]")!;
+    const text = gForm.querySelector<HTMLTextAreaElement>("[data-global-text]")!;
+    const textLabel = gForm.querySelector<HTMLElement>("[data-global-text-label]")!;
+    const status = gForm.querySelector<HTMLElement>("[data-global-status]")!;
+    const start = gForm.querySelector<HTMLButtonElement>("[data-global-start]")!;
+    const sync = () => {
+      const k = kind.value as GlobalKind;
+      const choices = valueChoices(k);
+      value.replaceChildren(...choices.map(([v, l]) => h("option", { value: v }, l)));
+      value.hidden = valueLabel.hidden = choices.length === 0;
+      valueLabel.textContent = k === "translate" ? "Language" : k === "change_level" ? "Level" : "Tone";
+      text.hidden = textLabel.hidden = k !== "custom";
+      start.hidden = true;
+      status.textContent = "";
+    };
+    kind.addEventListener("change", sync);
+    sync();
+    const send = async (confirmed: boolean) => {
+      const k = kind.value as GlobalKind;
+      try {
+        const result = await cb.globalEdit(sessionId, { kind: k, value: value.value || undefined, text: text.value.trim() || undefined, confirmed });
+        if (result.state === "started") {
+          status.textContent = `${KIND_LABEL[k]}: started. The result appears in the conversation as one diff to approve.`;
+          start.hidden = true;
+        } else {
+          status.textContent = `${estimateText(result.steps, result.estimateMicroUsd)}. Start it to rewrite the course; nothing changes until you approve the result.`;
+          start.hidden = false;
+        }
+        announce(status.textContent);
+      } catch (error) {
+        status.textContent = error instanceof ApiError ? error.message.replace(/^API \d+: /, "") : "The change could not be started.";
+        start.hidden = true;
+        announce(status.textContent);
+      }
+    };
+    gForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      void send(false);
+    });
+    start.addEventListener("click", () => void send(true));
   }
 
   optionsButton?.addEventListener("click", async () => {

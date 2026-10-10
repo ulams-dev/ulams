@@ -50,6 +50,24 @@ return [
     // objectives, when LiaScript is available). Off: lessons are rich text until the author changes them.
     'auto_formats' => filter_var(env('COURSE_BUILDER_AUTO_FORMATS', false), FILTER_VALIDATE_BOOLEAN),
 
+    // Whole-course edits (translate, change level or tone): the author confirms the estimate first
+    'global_edit' => [
+        // refused when the estimate is above this (USD); the session budget still applies per call
+        'max_usd' => (float) env('COURSE_BUILDER_GLOBAL_EDIT_MAX_USD', 3),
+        'output_factor' => 1.2,
+    ],
+
+    // Generate → critique → fix (ADR 0051). Mechanics, accessibility and grounding are deterministic or
+    // already paid for; pedagogy and UX are light-model calls on the structured lesson.
+    'quality' => [
+        'enabled' => filter_var(env('COURSE_BUILDER_QUALITY', true), FILTER_VALIDATE_BOOLEAN),
+        'llm_critics' => filter_var(env('COURSE_BUILDER_LLM_CRITICS', true), FILTER_VALIDATE_BOOLEAN),
+        // fix iterations per lesson; failures left after them are flagged for the author
+        'refine_max_iterations' => (int) env('COURSE_BUILDER_REFINE_MAX_ITERATIONS', 2),
+        // per session (USD); once reached the remaining model critics are skipped and shown as skipped (default pending #55)
+        'critic_usd' => (float) env('COURSE_BUILDER_CRITIC_USD', 1),
+    ],
+
     // Quiz answers must share words with the cited fragments (deterministic support check)
     'quiz_support_min_overlap' => 2,
 

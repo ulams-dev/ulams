@@ -101,11 +101,17 @@ choose it in the outline before generating.
 
 ## 4. Watch the lessons being written
 
-The progress card shows the stages (lessons, grounding check, interactive elements, quizzes, metadata) and each lesson
+The progress card shows the stages (lessons, grounding check, interactive elements, quizzes, quality review, metadata) and each lesson
 with its citations, questions and cost. The running AI cost is shown at the top.
 
 - A **grounding check** compares every lesson with the passages it cites; claims it cannot find are
   rewritten once, and anything left is **flagged** for you.
+- A **quality review** follows every written lesson. Critics check the pedagogy (the objectives are taught, the
+  difficulty builds up, hints do not give answers away, and four design pillars: objective alignment, agency,
+  scaffolding and feedback), the grounding in your source, the mechanics (one correct answer, distinct options,
+  explanations, the LiaScript and H5P parts build), the layout (nothing redundant or distracting) and the
+  accessibility of the text. A lesson with a problem is rewritten up to twice; what still fails is **flagged**
+  on the lesson and listed in the publish summary. The review never blocks publishing: you decide.
 - If one lesson fails, press **Retry** on that lesson. The rest of the course is kept.
 - You can close the tab; generation continues and the conversation is there when you come back.
 
@@ -168,6 +174,20 @@ Select an element, describe the change and press **Give me 2 options** (or write
 The builder makes two proposals, one model call each, so it costs about twice a normal edit (the button says so). They appear
 side by side as word-level diffs with their citations. **Use Option A** (or B) approves it and rejects the other; **Keep the
 current text** rejects both. Nothing changes until you choose.
+
+### Change the whole course
+
+**Change the whole course** (in the workspace, above **Edit the structure**) translates the course, changes its level
+(beginner, intermediate, advanced) or its tone, or follows a free instruction. Press **Estimate the cost** first: it
+shows how many model calls it makes (one per lesson, plus the course details and the final test) and about what they cost.
+**Start the change** begins it; you can close the tab. When it is done, **one diff** with every change appears in the
+conversation; approve it to update the course, reject it to keep everything as it is. If one lesson fails, retry only that part.
+
+The rewriting only changes text. Lesson, block, question and objective ids, the citations, the question types and which
+answer is correct stay as they were, so a translated course still cites the same passages (the passages stay in the
+language of your source, and the citation chips say so). After a level or tone change every quiz question is checked
+against its cited passage again. Lessons with an H5P activity or an interactive keep that activity as it is. A change that would cost more than
+`COURSE_BUILDER_GLOBAL_EDIT_MAX_USD` (default $3) is refused.
 
 ### Edit the structure
 

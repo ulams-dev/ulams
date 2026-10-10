@@ -64,7 +64,21 @@ Sessions are visible to their author and to admins; only the author can act on a
 | `COURSE_BUILDER_LESSON_CONCURRENCY` | 4 | Lessons generated at once per run |
 | `AI_LIMIT_TENANT_MONTHLY_USD` | 50 | AI spend per tenant per month (all tasks); `0` turns the cap off |
 | `COURSE_BUILDER_EVAL_MONTHLY_USD` | 20 | Spend cap of the eval command |
+| `COURSE_BUILDER_GLOBAL_EDIT_MAX_USD` | 3 | Largest estimate of one whole-course edit (translate, level, tone); the task `global` uses `AI_TASK_GLOBAL_PROFILE` |
 | `COURSE_BUILDER_DOCX_UNCOMPRESSED_MB` | 100 | Largest unpacked size of a DOCX (zip-bomb guard) |
+
+### Quality review
+
+| Variable | Default | |
+|---|---|---|
+| `COURSE_BUILDER_QUALITY` | true | The quality review stage (critics and fixes) after the quizzes |
+| `COURSE_BUILDER_LLM_CRITICS` | true | The model critics (pedagogy and layout); off leaves the deterministic ones |
+| `COURSE_BUILDER_REFINE_MAX_ITERATIONS` | 2 | Fix rounds per lesson before it is flagged |
+| `COURSE_BUILDER_CRITIC_USD` | 1 | AI cost of the model critics and their fixes per course; afterwards they are skipped and shown as skipped |
+
+The tasks `critic_pedagogy` and `critic_ux` use the light profile; `refine` uses the default profile
+(`AI_TASK_CRITIC_PEDAGOGY_PROFILE`, `AI_TASK_CRITIC_UX_PROFILE`, `AI_TASK_REFINE_PROFILE`). Results are in the table
+`course_builder_critiques` and at `GET /api/admin/course-builder/sessions/{id}/critiques`.
 
 ### Lesson formats
 

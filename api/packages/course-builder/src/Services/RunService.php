@@ -32,7 +32,7 @@ use Ulams\CourseBuilder\Ui\Surfaces;
  */
 final class RunService
 {
-    public const LLM_KINDS = ['interview', 'outline', 'generate', 'patch', 'variants'];
+    public const LLM_KINDS = ['interview', 'outline', 'generate', 'patch', 'variants', 'global'];
 
     /**
      * Run handlers contributed by other packages (Living Course). A run whose `input.handler`

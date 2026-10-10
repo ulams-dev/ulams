@@ -16,6 +16,7 @@ Route::group([
 
     Route::post('sessions/{session}/sources', [CourseBuilderController::class, 'upload']);
     Route::get('sessions/{session}/sources/{source}', [CourseBuilderController::class, 'source']);
+    Route::get('sessions/{session}/critiques', [CourseBuilderController::class, 'critiques']);
     Route::get('sessions/{session}/citations', [CourseBuilderController::class, 'citations']);
     Route::get('fragments/{fragment}', [CourseBuilderController::class, 'fragment']);
 
@@ -37,6 +38,7 @@ Route::group([
     Route::post('sessions/{session}/undo', [CourseBuilderController::class, 'undo']);
     Route::post('sessions/{session}/redo', [CourseBuilderController::class, 'redo']);
 
+    Route::post('sessions/{session}/global-edit', [CourseBuilderController::class, 'globalEdit']);
     Route::post('sessions/{session}/outline', [CourseBuilderController::class, 'editOutline']);
     Route::post('sessions/{session}/elements/{element}/variants', [CourseBuilderController::class, 'variants']);
     Route::post('sessions/{session}/apply', [CourseBuilderController::class, 'apply']);

@@ -113,6 +113,7 @@ final class PublishCheck
                 'counts' => $stats,
                 'applyNotes' => (array) $session->stateValue('applyNotes', []),
                 'landingValid' => $landingErrors === [],
+                'quality' => \Ulams\CourseBuilder\Quality\CritiqueWarnings::summary($session),
             ],
         ];
     }

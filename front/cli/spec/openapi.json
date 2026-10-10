@@ -6316,6 +6316,35 @@
     ]
    }
   },
+  "/api/admin/course-builder/sessions/{session}/critiques": {
+   "get": {
+    "operationId": "e857c4d0b5bdd8d5d831b57ada9c2761",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "critiques"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Critique results of the generated course: per lesson and critic, the last verdict and its issues",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
   "/api/admin/course-builder/sessions/{session}/elements/{element}/variants": {
    "post": {
     "operationId": "21e45e3ef74e3187aab29fdd00ceb204",
@@ -6403,6 +6432,61 @@
      }
     ],
     "summary": "AG-UI event stream (SSE)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/global-edit": {
+   "post": {
+    "operationId": "231bc98695beabbf5bed9e8ce4cdc368",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "confirmed": {
+          "type": "boolean"
+         },
+         "kind": {
+          "type": "string"
+         },
+         "value": {
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "estimate, needs confirmation"
+     },
+     "202": {
+      "description": "run started"
+     },
+     "409": {
+      "description": "over the cost limit"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Whole-course edit: translate, change level or tone. Without confirmed=true it returns the estimate only",
     "tags": [
      "Admin Course Builder"
     ]

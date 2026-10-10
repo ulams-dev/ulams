@@ -773,6 +773,22 @@ export const builderCommands: AnyCommand[] = [
 
   defineCommand({
     ...common,
+    id: "builder.critiques",
+    summary: "Show what the quality critics said about each lesson of the generated course",
+    description: "The last verdict (pass, fail, skipped) per lesson and critic (pedagogy, grounding, mechanics, ux, accessibility), the issues behind a failure, how many fix rounds were needed (data.iterations) and a count per critic (data.critics). A failure is a warning in `builder publish-check`, never a blocker.",
+    kind: "read",
+    scopes: READ,
+    endpoints: ["GET /api/admin/course-builder/sessions/{session}/critiques"],
+    positionals: ["session"],
+    input: z.object({ session }),
+    output: z.unknown(),
+    examples: [{ title: "What still needs review", argv: "builder critiques <session> --json" }],
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "GET", "/sessions/{session}/critiques", { params: { session: i.session } }) };
+    },
+  }),
+  defineCommand({
+    ...common,
     id: "builder.outline-edit",
     summary: "Edit the course structure: rename, move, add or remove modules and lessons",
     description:
@@ -818,6 +834,32 @@ export const builderCommands: AnyCommand[] = [
     plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/elements/${i.element}/variants`, { count: i.count, instruction: i.instruction }),
     async run(ctx, i) {
       return { data: await builderCall(ctx, "POST", "/sessions/{session}/elements/{element}/variants", { params: { session: i.session, element: i.element }, body: { count: i.count, instruction: i.instruction } }) };
+    },
+  }),
+
+  defineCommand({
+    ...common,
+    id: "builder.global-edit",
+    summary: "Translate the whole course, or change its level or tone, as one reviewable diff",
+    description:
+      "Without `--confirm` it only prints the estimate (data.steps model calls, data.estimateMicroUsd). With `--confirm` it starts a run: one model call per lesson plus the course details and the final test, ids, citations and correct answers kept. The result is ONE proposed version (`builder versions list`); approve it with `builder patches approve <version>` or reject it. A change above COURSE_BUILDER_GLOBAL_EDIT_MAX_USD is refused (exit 4).",
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: ["POST /api/admin/course-builder/sessions/{session}/global-edit"],
+    positionals: ["session"],
+    input: z.object({
+      session,
+      kind: z.enum(["translate", "change_level", "change_tone", "custom"]),
+      value: z.string().optional().describe("Language code (translate), level (beginner|intermediate|advanced) or tone (friendly|professional|playful|academic)."),
+      text: z.string().optional().describe("The instruction for kind custom."),
+      confirm: z.boolean().default(false).describe("Start the run; without it only the estimate is returned."),
+    }),
+    output: z.unknown(),
+    examples: [{ title: "The estimate", argv: "builder global-edit <session> --kind translate --value pl --json" }, { title: "Start the translation", argv: "builder global-edit <session> --kind translate --value pl --confirm --json" }],
+    plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/global-edit`, { kind: i.kind, ...(i.value ? { value: i.value } : {}), ...(i.text ? { text: i.text } : {}), confirmed: i.confirm }),
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "POST", "/sessions/{session}/global-edit", { params: { session: i.session }, body: { kind: i.kind, ...(i.value ? { value: i.value } : {}), ...(i.text ? { text: i.text } : {}), confirmed: i.confirm } }) };
     },
   }),
 

@@ -2774,6 +2774,59 @@
             },
             "description": "Notes from the last apply",
             "maxItems": 10
+          },
+          "quality": {
+            "type": "object",
+            "properties": {
+              "critics": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "critic": {
+                      "type": "string",
+                      "description": "pedagogy, grounding, mechanics, ux, accessibility or solvability",
+                      "maxLength": 24
+                    },
+                    "pass": {
+                      "type": "integer",
+                      "description": "Lessons that passed",
+                      "minimum": 0
+                    },
+                    "fail": {
+                      "type": "integer",
+                      "description": "Lessons that still have a problem after the fixes",
+                      "minimum": 0
+                    },
+                    "skipped": {
+                      "type": "integer",
+                      "description": "Lessons the critic did not look at",
+                      "minimum": 0
+                    }
+                  },
+                  "required": [
+                    "critic",
+                    "pass",
+                    "fail",
+                    "skipped"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "One row per critic",
+                "maxItems": 8
+              },
+              "iterations": {
+                "type": "integer",
+                "description": "Most fix rounds any lesson needed",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "critics",
+              "iterations"
+            ],
+            "additionalProperties": false,
+            "description": "The result of the quality review (critics and fixes) of the generated lessons"
           }
         },
         "required": [

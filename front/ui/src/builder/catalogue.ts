@@ -640,6 +640,18 @@ export const builderCatalogue = {
         blocking: list(obj({ code: str("Machine code", 40), message: str("What to fix", 500) }, ["code", "message"]), "Items that block publishing", 40),
         warnings: list(obj({ code: str("Machine code", 40), message: str("What to review", 500), elementId: str("Element the warning is about", 32) }, ["code", "message"]), "Items to acknowledge", 80),
         notes: list(str("Note from the last apply", 500), "Notes from the last apply", 10),
+        quality: obj(
+          {
+            critics: list(
+              obj({ critic: str("pedagogy, grounding, mechanics, ux, accessibility or solvability", 24), pass: int("Lessons that passed"), fail: int("Lessons that still have a problem after the fixes"), skipped: int("Lessons the critic did not look at") }, ["critic", "pass", "fail", "skipped"]),
+              "One row per critic",
+              8
+            ),
+            iterations: int("Most fix rounds any lesson needed"),
+          },
+          ["critics", "iterations"],
+          "The result of the quality review (critics and fixes) of the generated lessons"
+        ),
       },
       ["published", "price", "blocking", "warnings"]
     ),

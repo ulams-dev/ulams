@@ -15,7 +15,7 @@ final class MarkdownAccessibility
         $text = (string) preg_replace('/`[^`\n]*`/', '', $text);
         $problems = [];
 
-        $previous = 1; // the lesson title is the page's level-1 heading
+        $previous = 2; // the lesson page has its h1 (the course) and h2 (the lesson); lesson text starts at level 3
         foreach (preg_split('/\R/', $text) ?: [] as $line) {
             if (preg_match('/^(#{1,6})\s+\S/', $line, $m)) {
                 $level = strlen($m[1]);

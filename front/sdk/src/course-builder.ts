@@ -48,6 +48,8 @@ export interface PublishCheck {
     counts: { modules?: number; lessons?: number; minutes?: number; questions?: number };
     applyNotes: string[];
     landingValid: boolean;
+    /** Quality review of the generated lessons: lessons per critic and verdict (L2-18). */
+    quality?: { critics: Record<string, { pass: number; fail: number; skipped: number }>; iterations: number };
   };
 }
 
@@ -258,6 +260,16 @@ export type OutlineEdit =
   | { action: "remove"; id: string }
   | { action: "set_format"; id: string; contentType: LessonFormat };
 
+export type GlobalEditKind = "translate" | "change_level" | "change_tone" | "custom";
+export interface GlobalEditResult {
+  /** `needs_confirmation` carries the estimate; `started` the run; a cost limit answers 409 with `blocked`. */
+  state: "needs_confirmation" | "started" | "blocked";
+  runId: string | null;
+  steps: number;
+  estimateMicroUsd: number;
+  message: string | null;
+}
+
 /** A2UI action sent back from a surface. */
 export interface A2uiAction {
   name: string;
@@ -412,11 +424,17 @@ export function createCourseBuilderClient(options: ClientOptions & { prefix?: st
     newSite: (sessionId: string, slug?: string, name?: string) => call<NonNullable<BuilderState["newSite"]>>("POST", `/sessions/${id(sessionId)}/new-site`, { ...(slug ? { slug } : {}), ...(name ? { name } : {}) }),
     /** Blocking items and warnings before publishing (the publish summary). */
     publishCheck: (sessionId: string) => call<PublishCheck>("GET", `/sessions/${id(sessionId)}/publish-check`),
+    /** Critique results of the generated course: the last verdict per lesson and critic. */
+    critiques: (sessionId: string) =>
+      call<{ versionId: string | null; items: Array<{ elementId: string; label: string; critic: string; verdict: "pass" | "fail" | "skipped"; iterations: number; issues: Array<{ elementId: string; problem: string }> }>; critics: Record<string, { pass: number; fail: number; skipped: number }>; iterations: number }>("GET", `/sessions/${id(sessionId)}/critiques`),
     /** Sources panel data: per source its sections, who cites each, and the sections nobody cites. */
     citations: (sessionId: string) => call<CitationIndex>("GET", `/sessions/${id(sessionId)}/citations`),
     /** Saves a structure edit as an approved author version and re-applies the course. */
     editOutline: (sessionId: string, edit: OutlineEdit) =>
       call<{ currentVersionId: string; runId: string | null; state: BuilderState }>("POST", `/sessions/${id(sessionId)}/outline`, edit),
+    /** Whole-course edit. Without `confirmed` it only returns the estimate (steps, cost); with it the run starts. */
+    globalEdit: (sessionId: string, edit: { kind: GlobalEditKind; value?: string; text?: string; confirmed?: boolean }) =>
+      call<GlobalEditResult>("POST", `/sessions/${id(sessionId)}/global-edit`, edit),
     /** "Give me options": 2 or 3 proposals for one element, shown side by side (one model call each). */
     variants: (sessionId: string, elementId: string, instruction: string, count: 2 | 3 = 2) =>
       call<{ runId: string }>("POST", `/sessions/${id(sessionId)}/elements/${id(elementId)}/variants`, { count, instruction }),

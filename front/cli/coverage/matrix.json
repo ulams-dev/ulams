@@ -1,5 +1,5 @@
 {
- "summary": "517/564 covered, 47 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "519/566 covered, 47 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -314,6 +314,12 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/course-builder/sessions/{session}/critiques",
+   "summary": "Critique results of the generated course: per lesson and critic, the last verdict and its issues",
+   "command": "builder.critiques",
+   "status": "covered"
+  },
+  {
    "key": "POST /api/admin/course-builder/sessions/{session}/elements/{element}/variants",
    "summary": "Give me options: 2 or 3 proposals for one element, compared side by side",
    "command": "builder.variants",
@@ -323,6 +329,12 @@
    "key": "GET /api/admin/course-builder/sessions/{session}/events",
    "summary": "AG-UI event stream (SSE)",
    "command": "builder.events",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/global-edit",
+   "summary": "Whole-course edit: translate, change level or tone. Without confirmed=true it returns the estimate only",
+   "command": "builder.global-edit",
    "status": "covered"
   },
   {

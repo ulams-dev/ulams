@@ -21,6 +21,8 @@ class CassetteReplayTest extends TestCase
     {
         parent::getEnvironmentSetUp($app);
         $app['config']->set('ai.fake.mode', 'cassette');
+        // the recorded run predates the model critics (ADR 0051); the deterministic ones still run
+        $app['config']->set('course_builder.quality.llm_critics', false);
     }
 
     public function testRecordedRunReplaysEndToEnd(): void
@@ -45,7 +47,7 @@ class CassetteReplayTest extends TestCase
         $known = array_fill_keys($session->fragmentIds(), true);
         $this->assertSame([], array_values(array_filter(Checks::blueprint($doc, $known), fn ($e) => !str_starts_with($e, 'warning'))));
         $calls = AiCall::query()->forSubject(Session::SUBJECT_TYPE, $session->id)->get();
-        $this->assertTrue($calls->every(fn ($c) => str_starts_with((string) $c->request_id, 'cassette:')), 'every call came from a cassette');
+        $this->assertTrue($calls->every(fn ($c) => str_starts_with((string) $c->request_id, 'cassette:')), 'every call came from a cassette: ' . $calls->reject(fn ($c) => str_starts_with((string) $c->request_id, 'cassette:'))->pluck('task')->implode(','));
         $this->assertSame('claude-sonnet-5-5', $calls->firstWhere('task', 'outline')->model_served);
         $this->assertGreaterThan(0, $calls->where('task', 'lesson')->sum('cache_read_tokens'));
 

@@ -86,6 +86,16 @@ schema, its `params()` mapping and its answer check there. Blanks and drag words
 must share content words with it. The entity map keeps the lesson's text topic as `topic:<lesson id>` and the activity as
 `interaction_topic:<interaction id>`.
 
+## Quality loop
+
+After the quizzes a `critique:<lesson>` step runs `Quality\CriticLoop`: grounding (recorded from the grounding step), mechanics
+(`MechanicsCritic`: question shapes, explanations, LiaScript and H5P build), accessibility (`AccessibilityCritic`, the Markdown
+checks), and the model critics `critic_pedagogy` (objectives covered, difficulty, no answer leak, four pillars as required
+booleans with reasons) and `critic_ux`. Failures about the blocks go to the `refine` task with the issues; at most
+`quality.refine_max_iterations` rounds, then the lesson is flagged. Rows go to `course_builder_critiques` (critic, iteration,
+verdict `pass|fail|skipped`, issues) against the content version; `Quality\CritiqueWarnings` turns them into publish-check
+warnings (`critique_failed`, `critique_skipped`) and `facts.quality`.
+
 ## AG-UI stream
 
 `GET /api/admin/course-builder/sessions/{id}/events` (`text/event-stream`):

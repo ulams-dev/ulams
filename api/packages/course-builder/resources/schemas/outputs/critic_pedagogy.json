@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pedagogy critique",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["objectives", "difficultyIncreases", "noAnswerLeak", "pillars", "issues"],
+  "properties": {
+    "objectives": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "covered", "reason"],
+        "properties": { "id": { "type": "string" }, "covered": { "type": "boolean" }, "reason": { "type": "string", "maxLength": 300 } }
+      }
+    },
+    "difficultyIncreases": { "$ref": "#/$defs/check" },
+    "noAnswerLeak": { "$ref": "#/$defs/check" },
+    "pillars": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["alignment", "agency", "scaffolding", "feedback"],
+      "properties": {
+        "alignment": { "$ref": "#/$defs/check" },
+        "agency": { "$ref": "#/$defs/check" },
+        "scaffolding": { "$ref": "#/$defs/check" },
+        "feedback": { "$ref": "#/$defs/check" }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["elementId", "problem"],
+        "properties": { "elementId": { "type": "string" }, "problem": { "type": "string", "maxLength": 400 } }
+      }
+    }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ok", "reason"],
+      "properties": { "ok": { "type": "boolean" }, "reason": { "type": "string", "maxLength": 300 } }
+    }
+  }
+}

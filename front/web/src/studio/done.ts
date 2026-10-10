@@ -28,6 +28,7 @@ if (root) {
             blocking: check.blocking,
             warnings: check.warnings,
             notes: f.applyNotes,
+            ...(f.quality && Object.keys(f.quality.critics).length ? { quality: { critics: Object.entries(f.quality.critics).map(([critic, c]) => ({ critic, ...c })), iterations: f.quality.iterations } } : {}),
           },
         ],
         {

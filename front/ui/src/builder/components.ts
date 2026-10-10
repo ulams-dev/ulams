@@ -818,6 +818,22 @@ const SourcesPanel: Renderer = (p, ctx) => {
   return h("div", { class: "cb-sources" }, sources.length ? sources : h("p", { class: "cb-muted" }, "No sources yet."));
 };
 
+const CRITIC_LABEL: Record<string, string> = { pedagogy: "Pedagogy (objectives, difficulty, the four design pillars)", grounding: "Grounding in your source", mechanics: "Mechanics (answers, explanations, formats)", ux: "Layout and distractions", accessibility: "Accessibility of the text", solvability: "Solvability of interactives" };
+
+/** The quality review of the generated lessons as a table: how many lessons each critic passed, flagged or skipped. */
+function qualityPanel(q: Props | undefined): HTMLElement | null {
+  if (!q || !(q.critics as Props[]).length) return null;
+  const rows = (q.critics as Props[]).map((c) =>
+    h("tr", {}, h("th", { scope: "row" }, CRITIC_LABEL[String(c.critic)] ?? String(c.critic)), h("td", {}, String(c.pass)), h("td", {}, String(c.fail)), h("td", {}, String(c.skipped))));
+  return h("details", { class: "cb-quality" },
+    h("summary", {}, "Quality review of the lessons"),
+    h("table", { class: "cb-table" },
+      h("caption", { class: "cb-sr" }, "Results of the quality review, in lessons"),
+      h("thead", {}, h("tr", {}, h("th", { scope: "col" }, "Critic"), h("th", { scope: "col" }, "Passed"), h("th", { scope: "col" }, "Needs review"), h("th", { scope: "col" }, "Skipped"))),
+      h("tbody", {}, rows)),
+    h("p", { class: "cb-muted cb-small" }, Number(q.iterations) > 0 ? `Lessons were rewritten up to ${q.iterations} time${Number(q.iterations) === 1 ? "" : "s"} to fix what the critics found. What is left is listed under Review; it never blocks publishing.` : "No lesson needed a fix."));
+}
+
 const PublishSummary: Renderer = (p, ctx, id) => {
   const blocking: Props[] = p.blocking ?? [];
   const warnings: Props[] = p.warnings ?? [];
@@ -852,6 +868,7 @@ const PublishSummary: Renderer = (p, ctx, id) => {
     h("dl", { class: "cb-publish-facts" }, facts.flatMap(([k, v]) => [h("dt", {}, k), h("dd", {}, v)])),
     blocking.length ? h("div", {}, h("h3", { class: "cb-h3" }, "Fix before publishing"), list(blocking, "blocking")) : null,
     warnings.length ? h("div", {}, h("h3", { class: "cb-h3" }, "Review"), list(warnings, "warning")) : null,
+    qualityPanel(p.quality),
     !blocking.length && !warnings.length && !p.published ? h("p", { class: "cb-muted" }, icon("check"), " Nothing blocks publishing and nothing needs review.") : null,
     ...((p.notes as string[] | undefined) ?? []).map((n) => h("p", { class: "cb-muted cb-small" }, n)),
     acknowledge,

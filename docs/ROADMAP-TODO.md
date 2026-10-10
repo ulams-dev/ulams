@@ -441,8 +441,8 @@ approved apply through domain services → element chat edits. Designs:
 
 ### 2.5 Element-level chat editing
 - [x] Select element → chat → structured patch → diff → apply (course, module, lesson, block, question)
-- [ ] Blueprint versions: undo/redo/restore; global edits via queued pipeline (partial: undo, redo and
-      restore with re-apply done; global edits are M2.3)
+- [x] Blueprint versions: undo/redo/restore; global edits via queued pipeline (undo, redo and restore with
+      re-apply; translate, change level or tone as one proposed diff, with an estimate first; L2-15)
 
 ### 2.6 Author UX
 - [x] Upload → interview → live progress → tree + preview → element chat (e2e on the fake driver)
@@ -469,9 +469,8 @@ Builder components (MVP)
       author version; L2-14)
 - [x] Lesson preview card · variant comparison · quiz question card (variant comparison: 2–3 options side
       by side, choose one; L2-13)
-- [ ] Diff view · generation progress with retry and cost · publish summary with warnings (partial:
-      diff view, progress, the apply summary and the publish summary with blocking items and warnings
-      done; critique results in the summary are M2.4)
+- [x] Diff view · generation progress with retry and cost · publish summary with warnings (the summary
+      lists blocking items, warnings and the quality review per critic; L2-18)
 
 Learner layouts (feature flag)
 - [ ] AI-composed declarative lesson layouts from approved components, stored in blueprint
@@ -487,13 +486,16 @@ Pedagogical guardrails
 - [ ] Mandatory scaffolding: intro → toolbox → graded challenges → tiered hints →
       explanatory feedback → worked solution after attempt (partial: the `PracticeActivity` component
       enforces the slots and hides the solution until an attempt (L2-20); generation is L2-21)
-- [ ] Four pillars check: objective alignment, agency, scaffolding, formative feedback
+- [x] Four pillars check: objective alignment, agency, scaffolding, formative feedback (part of the
+      pedagogy critic: four required booleans with reasons; L2-16)
 
 Generate-then-refine loop
-- [ ] Critics: pedagogy, grounding, mechanics, visual/UX, accessibility; retry budget then
-      flag to author
+- [x] Critics: pedagogy, grounding, mechanics, visual/UX, accessibility; retry budget then
+      flag to author (a `critique` stage per lesson, up to 2 fixes, a USD 1 critic budget per course,
+      results in `course_builder_critiques`; ADR 0051, L2-16)
 - [ ] Playwright agent solvability check incl. adversarial actions
-- [ ] Critique results and iterations shown in publish summary
+- [x] Critique results and iterations shown in publish summary (per critic and as warnings; the solvability
+      status is added with the runner; L2-18)
 
 Simulations (opt-in)
 - [ ] `simulation` component: sandboxed iframe, isolated origin, strict CSP, no network,
