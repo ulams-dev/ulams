@@ -42,12 +42,13 @@ What learners see is described in [Learners](/learners/); this page covers the c
     - courses/[id].astro
     - learn/[courseId]/ lesson player and finish page
     - events/, account/, login.astro, logout.ts, tenants.astro, platform.astro
+    - pl/index.astro, zh/index.astro platform landing in Polish and Chinese
     - bff/[...path].ts backend-for-frontend
     - h5p/[...path].ts same-origin H5P proxy
     - lti/launch.ts LTI landing
     - healthz.ts
   - lib/ config, tenant, session, BFF rules, data cache, view models, page documents
-  - docs/ landing documents per theme (coffee, oncall, nightsky, gravity, poland, ulam, platform)
+  - docs/ landing documents per theme (coffee, oncall, nightsky, gravity, poland, ulam, platform); docs/i18n/ the platform landing in Polish and Chinese
   - layouts/Base.astro
 
 </FileTree>
@@ -86,6 +87,20 @@ labelled Coming until the CLI is released, roadmap item M6). `ULAMS_LANDING_STAT
 The white-label section (`WhiteLabelStory`) uses the same player for a four-step story (brand, subdomain site, one
 course per source, per-course analytics) and a numbered list. Its steps carry a `status` and a `today` caption that
 `ULAMS_LANDING_STATUS=final` removes; in `actual` mode the analytics step and the Living Course sync line read Coming.
+
+### Landing languages
+
+The platform landing is also served in Polish (`/pl/`) and Simplified Chinese (`/zh/`); `/` stays English. The routes are
+Astro i18n routing (`i18n` in `astro.config.mjs`) and exist on a platform host only: a tenant host answers 404 there.
+Each language is its own landing document (`src/docs/i18n/platform.pl.json`, `platform.zh.json`) with translated data files
+(`src/data/i18n/`), and a unit test keeps the three documents parallel: same components, order, ids, links, icons and
+statuses, untouched commands and code, and every product name still in the text. The fixed strings of the catalogue
+components (badges, accessible names, buttons) follow the page language.
+
+Each page sets `<html lang>`, a canonical URL and `hreflang` alternates (with `x-default` for English). The header has a
+language switcher (EN, PL, 中文), separate from the six navigation links; it keeps the section you are reading. Chinese
+uses the system font stack (PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC) instead of a web font.
+`ULAMS_LANDING_STATUS` works the same in all three languages. See ADR 0096.
 
 All variables of every app are in [Environment variables](/reference/environment-variables/). The
 production image is described in [Container images](/developers/container-images/).

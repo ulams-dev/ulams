@@ -87,7 +87,7 @@ browser ── HTML (SSR) ──────────────── Astro
 - `src/lib/data.ts`: API access with the stale-while-revalidate cache (`src/lib/cache.ts`).
 - `src/lib/view-model.ts`: turns API responses into the **data model** documents bind to. It only
   uses API data; no invented numbers.
-- `src/docs/<theme>.json`: the landing page of each tenant as a catalogue document.
+- `src/docs/<theme>.json`: the landing page of each tenant as a catalogue document (`src/docs/i18n/`: the platform landing in Polish and Chinese).
 - `src/lib/page-docs.ts`: documents for the course page and each topic type in the lesson player.
 - `src/pages`: `/` (tenant landing, or the platform landing on a platform host), `/courses/:id`,
   `/learn/:course` (resume), `/learn/:course/:topic`, `/learn/:course/finish`, `/account` (profile,
@@ -224,6 +224,27 @@ against a server started in `actual` mode.
 
 **Before any public launch, run in `actual` mode or confirm that everything the landing shows has shipped.**
 Nodes of `platform.json` may carry `final: { …prop overrides… }` for text that only reads right in one mode.
+
+## Landing languages (English, Polish, Chinese)
+
+The platform landing is also at `/pl/` (Polish) and `/zh/` (Simplified Chinese); `/` stays English (ADR 0096). They are
+Astro i18n routes (`i18n` in `astro.config.mjs`) answered on a platform host only; tenant hosts answer 404 there.
+
+- `src/docs/i18n/platform.pl.json`, `platform.zh.json`: the same document as `platform.json`, with the visible text
+  translated. `tests/unit/landing-i18n.test.ts` keeps them parallel (components, order, ids, links, icons, statuses,
+  code and commands, product names) and fails on a missing or still-English text.
+- `src/data/i18n/workflows.<lang>.json` (same transcript, translated prose, same commands) and
+  `comparison.<lang>.json` (labels, descriptors and value words; competitor notes, sources and dates stay English).
+  `src/i18n/demos.ts` holds the demo-card texts. The fixed strings of the catalogue components (badges, accessible
+  names, buttons) are in `front/ui/src/lib/i18n.ts` and follow `Astro.currentLocale`.
+- Each language has `<html lang>` (`en`, `pl`, `zh-Hans`), a canonical URL and `hreflang` alternates with `x-default`.
+  The header has a language switcher (EN, PL, 中文) that is a control of its own, not one of the six links; it keeps the
+  current `#anchor` (`front/ui/src/elements/lang-switch.ts`, the only script added).
+- Chinese uses the system font stack (PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC); no CJK web font.
+- `ULAMS_LANDING_STATUS` works the same in all three languages (the status is applied to the English data, then
+  translated). Terms are fixed in `src/i18n/GLOSSARY.md`; the copy has no native review yet (owner-action issue).
+- Playwright: `tests/e2e/landing-i18n.spec.ts` (meta, hreflang, switcher, overflow at 360 px, axe, screenshots in
+  `tests/screens/landing-{pl,zh}-{desktop,phone}.png`).
 
 ## Performance budget
 

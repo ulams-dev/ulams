@@ -6,6 +6,8 @@ sidebar:
 learnerRoutes:
   - /
   - /platform
+  - /pl
+  - /zh
   - /tenants
 ---
 
@@ -76,6 +78,10 @@ the same format the planned Course Builder will generate. See the
 <Screenshot name="learner-platform" alt="The ulams platform page with the product hero and the six demo cards" />
 
 `/platform` is the ulams product page, shown on platform hosts (it returns 404 on a tenant host).
+The same page is served in Polish at `/pl/` and in Simplified Chinese at `/zh/` (platform hosts only; `/` stays English).
+The header has a language switcher (EN, PL, 中文) next to the navigation links; it keeps the section you are reading, and
+each language page has its own `<html lang>`, canonical URL and `hreflang` alternates. Chinese uses the system fonts of the
+reader's device.
 It uses its own neutral theme and contains:
 
 - the product hero with an example update-proposal diff, labelled as an illustration;
