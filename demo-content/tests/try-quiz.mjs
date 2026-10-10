@@ -1,4 +1,4 @@
-// A manual check on the running local stack: answers one quiz of the gravity or poland courses correctly through the
+// A manual check on the running local stack: answers one quiz of the gravity, poland or ulam courses correctly through the
 // learner front, as the demo student, using the answer key in the course's own GIFT text, and prints the result.
 //   node tests/try-quiz.mjs <tenant> <course-id> <topic-id> [out.png]
 import { readdirSync, readFileSync } from "node:fs";
@@ -19,7 +19,7 @@ const topic = program.lessons.flatMap((l) => l.topics).find((t) => String(t.id) 
 const language = program.language;
 
 // the answer key: the quiz block with the topic's title
-const dir = language === "pl" ? "poland/pl" : tenant === "gravity" ? "gravity" : "poland/en";
+const dir = language === "pl" ? "poland/pl" : tenant === "gravity" ? "gravity" : tenant === "ulam" ? "ulam" : "poland/en";
 let key = null;
 for (const file of readdirSync(join(content, dir, "modules")))
   for (const b of parseModule(readFileSync(join(content, dir, "modules", file), "utf8")).blocks)

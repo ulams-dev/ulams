@@ -26,7 +26,15 @@ class ContentPackages
     public const TITLES = [
         'gravity' => 'Gravity: a guided solar system',
         'poland' => 'Poland, measured',
+        'ulam-spiral' => 'The Ulam spiral',
+        'ulam-monte-carlo' => 'Monte Carlo: estimate π',
+        'ulam-automaton' => 'Cellular automata: rules that grow',
+        'ulam-scottish-book' => 'The Scottish Book: problem cards',
+        'ulam-lwow-map' => 'A journey on a map: from Lwów to Santa Fe',
     ];
+
+    /** The five packages of the Ulam course (demo-content/ulam/<name without the "ulam-" prefix>). */
+    public const ULAM = ['ulam-spiral', 'ulam-monte-carlo', 'ulam-automaton', 'ulam-scottish-book', 'ulam-lwow-map'];
 
     public static function cacheDirectory(): string
     {
