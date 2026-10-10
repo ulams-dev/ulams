@@ -5,8 +5,9 @@ Appendix to `docs/plans/interactive-demos.md`, section 7.3. The starting sheet (
 names, and a primary source was added where one could be reached. The course outline that uses
 these facts is `docs/plans/interactive-demos-ulam-outline.md`.
 
-**Status: waiting for the owner's review (#151).** M9b writes the lessons from this sheet using the
-resolutions in section 0, unless the owner objects there.
+**Status: used by M9b (`docs/decisions/0095-ulam-course-facts-sources-and-images.md`).** The owner did not object in #151, so
+the lessons were written with the resolutions in section 0. M9b re-read the Scottish Book survey (source 33) and changed or
+added the rows listed in section 11; `demo-content/ulam/facts.json` is the machine-readable form of this sheet.
 
 How to read the tables:
 
@@ -271,3 +272,29 @@ means only a search engine's summary was seen.
 Not reachable in M9a: Britannica (403), the *Bull. AMS* 1958 memorial (403), Springer chapter
 previews (login redirect), the DTRA Operation IVY fact sheet (403), and the full text of Ulam's
 *Adventures of a Mathematician* and Mauldin 2015. Nothing in the sheet depends on them alone.
+
+## 11. Changes made in M9b
+
+Source 33 (arXiv:2603.27867) was read again while the cards were written, and the following rows of the sheet changed or were
+added. `facts.json` carries them (ids in brackets).
+
+- **Problem 184 (3b/184):** the English text is "A subharmonic function has everywhere the partial derivatives ∂²φ/∂x², ∂²φ/∂y².
+  Is it true that Δφ ≥ 0?" The prize in Mauldin's translation is "one kilo of bacon"; the survey's footnote 12 says the Polish
+  word is "słonina" (fatback) and that earlier editions mistranslate it. The course says a kilogram of fatback, older editions
+  say bacon. The outcome is affirmative: a result of A. Eremenko (A problem of Stanisław Saks, *Mat. Stud.* 52 (2019) 173-175,
+  reported in source 33 and not opened) proves it. New source U-63.
+- **Problem 77(a):** its statement could not be sourced (the survey only mentions the prize, Eilenberg's bottle of wine, and
+  Ulam's preface says that R. H. Fox solved it; Fox's paper is titled "On a problem of S. Ulam concerning Cartesian products",
+  *Fund. Math.* 34 (1947) 278-287, new source U-62, which could not be opened). No card summarises it (3b/77a, not used);
+  the prize and the solver are stated in lesson 2.2 (3.13).
+- **Problem 43:** "answered by Banach in 1935" could not be found in the survey and is not stated; the card gives the
+  survey's outcome (Ulam's variant led Steinhaus and Mycielski to the Axiom of Determinacy in 1962).
+- **Problems 1, 38, 59, 152, 153, 19:** plain-language summaries and outcomes are re-worded from the survey's own text (3b/*).
+- **The versions of the book (3.15):** the manuscript copy (193 problems, the last unnumbered), a Polish typescript (155
+  problems) and Ulam's English typescript (193 problems).
+- **The cards** guess only where the sources record a yes or no (19, 59, 153, 184); the others show what became of the
+  problem.
+- **Schrandt-Ulam rule (7.3):** the `automaton` step `ulam-growth` now implements it. OEIS A170896's conditions are read as
+  "exactly one of the edge-neighbours is on, and that one turned on in the last generation; the two far corners are not on;
+  and two such cells that are far corners of each other are both dropped"; the counts match all 67 terms of the entry.
+

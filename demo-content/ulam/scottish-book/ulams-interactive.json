@@ -1,46 +1,134 @@
 {
   "$schema": "https://ulams.dev/schemas/ulams-interactive/v1.json",
   "id": "ulam-scottish-book",
-  "title": { "en": "The Scottish Book: problem cards" },
-  "version": "0.1.0",
+  "title": {
+    "en": "The Scottish Book: problem cards"
+  },
+  "version": "1.0.0",
   "entry": "index.html",
   "licence": "MIT",
-  "attribution": "© 2026 Mateusz Wojczal. Code: MIT. Text: CC BY 4.0. Placeholder content until the fact sheet is cleared.",
-  "source": { "url": "https://github.com/ulams-dev/ulams/tree/main/demo-content/ulam/scottish-book", "ref": "main" },
-  "locales": ["en"],
+  "attribution": "© 2026 Mateusz Wojczal. Code: MIT. Text: CC BY 4.0. Facts: demo-content/ulam/facts.json, with the sources named on each card.",
+  "source": {
+    "url": "https://github.com/ulams-dev/ulams/tree/main/demo-content/ulam/scottish-book",
+    "ref": "main"
+  },
+  "locales": [
+    "en"
+  ],
   "defaultLocale": "en",
   "bridge": 1,
-  "capabilities": { "steps": true, "reducedMotion": true, "score": true, "background": false },
+  "capabilities": {
+    "steps": true,
+    "reducedMotion": true,
+    "score": true,
+    "background": false
+  },
   "requires": [],
   "network": [],
   "steps": [
     {
       "id": "intro",
-      "title": { "en": "Cards from a notebook" },
-      "text": { "en": "Placeholder text: these cards are notebook pages, one per problem, each with a number, who posed it, when, a plain-language summary and a prize. The summaries, posers, dates, prizes and outcomes are filled in when the fact sheet has been cleared. Use the filter to show the problems of one poser." },
+      "title": {
+        "en": "Cards from a notebook"
+      },
+      "text": {
+        "en": "The Scottish Book was a notebook kept at a café in Lwów, in which mathematicians wrote down problems for one another. These cards are nine of its problems, one card each, with who posed it, when (where the sources say), a plain-language summary and any prize offered. Use the filter to show the problems of one poser. Open a problem with Next to guess what became of it; four of the nine have a recorded answer to guess, the others show what became of them straight away."
+      },
       "poster": "posters/intro.webp"
     },
     {
+      "id": "problem-1",
+      "title": {
+        "en": "Problem 1"
+      },
+      "text": {
+        "en": "Problem 1, posed by Stefan Banach on 17 July 1935. When can a metric space be given a new metric that makes it complete and compact, while every sequence that converged before still converges? Can the space of sequences that tend to zero be treated this way? In today's words: when can a space be mapped one-to-one and continuously onto a compact metric space? Prize: none recorded. What became of it: It is the first entry in the book. It was solved for separable Banach spaces and for some larger ones, part of the full answer turns out to depend on the axioms of set theory, and papers on it were still being written in 2023."
+      },
+      "poster": "posters/problem-1.webp"
+    },
+    {
       "id": "problem-19",
-      "title": { "en": "Problem 19" },
-      "text": { "en": "Placeholder text: problem 19. Read the card, then guess its outcome and check your guess. The statement, the poser, the date and the outcome are filled in when the fact sheet has been cleared." },
+      "title": {
+        "en": "Problem 19"
+      },
+      "text": {
+        "en": "Problem 19, posed by Stanisław Ulam. Is a solid of uniform density that floats in water in every position necessarily a sphere? Prize: none recorded. Choose Yes, No or Not yet settled, then check your guess."
+      },
       "poster": "posters/problem-19.webp"
     },
     {
+      "id": "problem-38",
+      "title": {
+        "en": "Problem 38"
+      },
+      "text": {
+        "en": "Problem 38, posed by Stanisław Ulam. Each of N people picks k others at random as friends. What is the chance that everyone is linked to everyone else through chains of friends, and what happens as N grows? Friendship need not be mutual. Prize: none recorded. What became of it: Ron Graham noted that this is a question about connected random graphs, over twenty years before Erdős and Rényi defined them in 1959. A general solution by D. S. Jungreis is in the commentary of the 2015 edition."
+      },
+      "poster": "posters/problem-38.webp"
+    },
+    {
+      "id": "problem-43",
+      "title": {
+        "en": "Problem 43"
+      },
+      "text": {
+        "en": "Problem 43, posed by Stanisław Mazur. Two players take turns choosing nested intervals, each inside the last. Player A wins if the point they close in on belongs to a given set E. For which sets does A have a winning method? Prize: one bottle of wine, from Mazur. What became of it: Ulam's variant of this game, now called the Ulam game, led Steinhaus and Mycielski in 1962 to propose the Axiom of Determinacy."
+      },
+      "poster": "posters/problem-43.webp"
+    },
+    {
+      "id": "problem-59",
+      "title": {
+        "en": "Problem 59"
+      },
+      "text": {
+        "en": "Problem 59, posed by Ruziewicz. Can a square be cut into a finite number of squares that are all of different sizes? Prize: none recorded. Choose Yes, No or Not yet settled, then check your guess."
+      },
+      "poster": "posters/problem-59.webp"
+    },
+    {
+      "id": "problem-152",
+      "title": {
+        "en": "Problem 152"
+      },
+      "text": {
+        "en": "Problem 152, posed by Hugo Steinhaus on 6 November 1936. Slide a disc of radius 1 along a line in a direction with irrational coordinates. It covers between 2 and 5 integer lattice points at any moment. How often does it cover 2, 3 or 4 points, and does that frequency exist? Prize: 100 grammes of caviar for computing the frequency, a small beer for proving it exists, a demitasse for a counterexample. What became of it: Solved. Jan Mycielski's commentary in Mauldin's edition explains the solution with the help of Diophantine approximation."
+      },
+      "poster": "posters/problem-152.webp"
+    },
+    {
       "id": "problem-153",
-      "title": { "en": "Problem 153" },
-      "text": { "en": "Placeholder text: problem 153. Read the card, then guess its outcome and check your guess. The statement, the poser, the date, the prize and the outcome are filled in when the fact sheet has been cleared." },
+      "title": {
+        "en": "Problem 153"
+      },
+      "text": {
+        "en": "Problem 153, posed by Stanisław Mazur on 6 November 1936. A question about whether certain Banach spaces have a basis (a Schauder basis). It turned out to be closely tied to the approximation problem for Banach spaces. Prize: a live goose. Choose Yes, No or Not yet settled, then check your guess."
+      },
       "poster": "posters/problem-153.webp"
     },
     {
+      "id": "problem-184",
+      "title": {
+        "en": "Problem 184"
+      },
+      "text": {
+        "en": "Problem 184, posed by Stanisław Saks in 1940. A subharmonic function (loosely, one that bends upwards on average) has second partial derivatives in both directions at every point. Must the sum of those two second derivatives be zero or positive everywhere? Prize: a kilogram of fatback (older English editions say bacon). Choose Yes, No or Not yet settled, then check your guess."
+      },
+      "poster": "posters/problem-184.webp"
+    },
+    {
       "id": "problem-193",
-      "title": { "en": "Problem 193" },
-      "text": { "en": "Placeholder text: problem 193. Read the card, then guess its outcome and check your guess. The statement, the poser, the date and the outcome are filled in when the fact sheet has been cleared." },
+      "title": {
+        "en": "Problem 193"
+      },
+      "text": {
+        "en": "Problem 193, posed by Hugo Steinhaus on 31 May 1941. Numerical results on the number of matches in a box. Prize: none recorded. What became of it: It is the last entry in the book."
+      },
       "poster": "posters/problem-193.webp"
     }
   ],
   "a11y": {
     "keyboard": "Everything is a native control: a select for the filter, radio buttons for the guess and buttons to check it. After a guess the focus returns to the card's heading and the result is announced.",
-    "notes": "Nothing animates, so reduced motion needs no change. The card text comes from data/problems.json and is shown as text, never as markup."
+    "notes": "Nothing animates, so reduced motion needs no change. The card text comes from data/problems.json and is shown as text, never as markup. Every card names its sources."
   }
 }

@@ -17,10 +17,22 @@ use Ulams\TopicTypeGift\Services\Contracts\GiftQuestionServiceContract;
 trait BuildsInteractiveCourse
 {
     private ?Sources $sourcesCache = null;
-    private ?int $packageId = null;
+    /** @var array<string, int> library id of each package, by name */
+    private array $packageIds = [];
 
     /** Name of the interactive package (a key of ContentPackages::TITLES). */
     abstract protected function packageName(): string;
+
+    /**
+     * Every package the course may use. An Interactive block names its package with `package=`, and without it
+     * the course's {@see packageName()} is used.
+     *
+     * @return array<int, string>
+     */
+    protected function packageNames(): array
+    {
+        return [$this->packageName()];
+    }
 
     /** Folder below Demo/content that holds modules/ (and the sources file when it is not shared). */
     abstract protected function contentDir(): string;
@@ -50,9 +62,27 @@ trait BuildsInteractiveCourse
         return $files;
     }
 
-    private function interactivePackageId(): int
+    private function interactivePackageId(?string $name = null): int
     {
-        return $this->packageId ??= ContentPackages::package($this->packageName(), auth()->id())->getKey();
+        $name ??= $this->packageName();
+
+        return $this->packageIds[$name] ??= ContentPackages::package($name, auth()->id())->getKey();
+    }
+
+    /**
+     * The `{{asset:name.webp}}` images of a text: files of Demo/assets/<key>/images, stored with the course and
+     * replaced by their public URL.
+     */
+    private function withAssets(string $text): string
+    {
+        return (string) preg_replace_callback('/\{\{asset:([\w.-]+)\}\}/', function (array $m): string {
+            $path = AssetFactory::assetsPath($this->key() . '/images/' . $m[1]);
+            if (!is_file($path)) {
+                throw new RuntimeException("Unknown asset {$m[1]} ($path)");
+            }
+
+            return $this->publicUrl($path);
+        }, $text);
     }
 
     /**
@@ -60,8 +90,11 @@ trait BuildsInteractiveCourse
      */
     protected function modulesProgram(): array
     {
-        $this->interactivePackageId(); // fails the run loudly when the zip is missing
-        $stepIds = ContentPackages::stepIds($this->packageName());
+        $stepIds = [];
+        foreach ($this->packageNames() as $name) {
+            $this->interactivePackageId($name); // fails the run loudly when a zip is missing
+            $stepIds[$name] = ContentPackages::stepIds($name);
+        }
         $modules = [];
         foreach ($this->moduleFiles() as $file) {
             $modules[] = ModuleFile::parse((string) file_get_contents($file), basename($file)) + ['file' => basename($file)];
@@ -120,7 +153,7 @@ trait BuildsInteractiveCourse
 
     /**
      * @param array{kind: string, attrs: array<string, string>, body: string} $block
-     * @param array<int, string> $stepIds
+     * @param array<string, array<int, string>> $stepIds step ids of each package, by package name
      * @return array<string, mixed>
      */
     private function topicSpec(array $block, array $stepIds, string $file): array
@@ -142,26 +175,34 @@ trait BuildsInteractiveCourse
                     return $common + ['type' => 'richtext', 'placeholder' => 'all-sources', 'body' => $block['body']];
                 }
 
-                return $common + ['type' => 'richtext', 'make' => fn () => ['fields' => ['value' => $this->sources()->cite($block['body'])], 'files' => []]];
+                return $common + ['type' => 'richtext', 'make' => fn () => ['fields' => ['value' => $this->withAssets($this->sources()->cite($block['body']))], 'files' => []]];
 
             case 'interactive':
+                $package = $a['package'] ?? $this->packageName();
+                if (!isset($stepIds[$package])) {
+                    throw new RuntimeException("$file: interactive \"$title\" names the unknown package $package");
+                }
                 $start = $a['start'] ?? throw new RuntimeException("$file: interactive \"$title\" has no start");
                 $end = $a['end'] ?? $start;
-                $from = array_search($start, $stepIds, true);
-                $to = array_search($end, $stepIds, true);
+                $from = array_search($start, $stepIds[$package], true);
+                $to = array_search($end, $stepIds[$package], true);
                 if ($from === false || $to === false || $from > $to) {
-                    throw new RuntimeException("$file: interactive \"$title\": the steps $start..$end are not a range of the package");
+                    throw new RuntimeException("$file: interactive \"$title\": the steps $start..$end are not a range of the package $package");
+                }
+                $rule = $a['completion'] ?? 'on_range_end';
+                if ($rule === 'on_score' && !isset($a['score'])) {
+                    throw new RuntimeException("$file: interactive \"$title\" completes on a score but has no score=");
                 }
 
                 return $common + ['type' => 'interactive', 'make' => fn () => ['fields' => [
-                    'value' => $this->interactivePackageId(),
+                    'value' => $this->interactivePackageId($package),
                     'start_step' => $start,
                     'end_step' => $end,
-                    'completion_rule' => $a['completion'] ?? 'on_range_end',
+                    'completion_rule' => $rule,
                     'display' => $a['display'] ?? 'background',
                     'height' => (int) ($a['height'] ?? 640),
                     'text' => $this->sources()->cite($block['body'], true),
-                ], 'files' => []]];
+                ] + (isset($a['score']) ? ['pass_score' => (int) $a['score']] : []), 'files' => []]];
 
             case 'layout':
                 $decoded = json_decode($block['body'], true);

@@ -1,44 +1,117 @@
 {
-  "placeholder": true,
-  "note": "Placeholder content: the posers, dates, summaries, prizes and outcomes below are not facts. They are replaced when the fact sheet is cleared (plan section 7.3, M9a and M9b).",
+  "note": "Each card summarises one problem of the Scottish Book in plain words. The statements are paraphrased from the English text in the sources named on the card, never copied; the prizes, dates and outcomes are the ones the sources give (demo-content/ulam/facts.json, ids 3b/*).",
   "options": [
-    { "value": "solved", "label": "Solved" },
-    { "value": "open", "label": "Still open" },
-    { "value": "disproved", "label": "Answered the other way" }
+    { "value": "yes", "label": "Yes" },
+    { "value": "no", "label": "No" },
+    { "value": "open", "label": "Not yet settled" }
   ],
+  "sources": {
+    "U-07": "MacTutor, Stanisław Mazur",
+    "U-12": "MacTutor, The Scottish Book (Ulam's 1957 preface)",
+    "U-16": "Ryabogin, Annals of Mathematics (2022)",
+    "U-33": "Domoradzki, Stawiska and Zarichnyi, 90+ years of the Scottish Book (2026)",
+    "U-38": "Enflo, Acta Mathematica (1973)",
+    "U-63": "Eremenko (2019), as reported by Domoradzki and others"
+  },
   "problems": [
+    {
+      "id": "problem-1",
+      "number": 1,
+      "poser": "Stefan Banach",
+      "date": "17 July 1935",
+      "summary": "When can a metric space be given a new metric that makes it complete and compact, while every sequence that converged before still converges? Can the space of sequences that tend to zero be treated this way? In today's words: when can a space be mapped one-to-one and continuously onto a compact metric space?",
+      "prize": "none recorded",
+      "outcome": "It is the first entry in the book. It was solved for separable Banach spaces and for some larger ones, part of the full answer turns out to depend on the axioms of set theory, and papers on it were still being written in 2023.",
+      "answer": null,
+      "sources": ["U-33"]
+    },
     {
       "id": "problem-19",
       "number": 19,
-      "poser": "Placeholder poser A",
-      "date": "Placeholder date",
-      "summary": "Placeholder: the statement of problem 19 in plain language is added when the fact sheet is cleared.",
-      "prize": "Placeholder: prize, if any",
-      "outcome": "Placeholder: what became of the problem.",
-      "answer": "disproved",
-      "sources": []
+      "poser": "Stanisław Ulam",
+      "date": "",
+      "summary": "Is a solid of uniform density that floats in water in every position necessarily a sphere?",
+      "prize": "none recorded",
+      "outcome": "No. In 2022 Dmitry Ryabogin found a body that is not a sphere (a body of revolution) and floats in every position.",
+      "answer": "no",
+      "sources": ["U-33", "U-16"]
+    },
+    {
+      "id": "problem-38",
+      "number": 38,
+      "poser": "Stanisław Ulam",
+      "date": "",
+      "summary": "Each of N people picks k others at random as friends. What is the chance that everyone is linked to everyone else through chains of friends, and what happens as N grows? Friendship need not be mutual.",
+      "prize": "none recorded",
+      "outcome": "Ron Graham noted that this is a question about connected random graphs, over twenty years before Erdős and Rényi defined them in 1959. A general solution by D. S. Jungreis is in the commentary of the 2015 edition.",
+      "answer": null,
+      "sources": ["U-33"]
+    },
+    {
+      "id": "problem-43",
+      "number": 43,
+      "poser": "Stanisław Mazur",
+      "date": "",
+      "summary": "Two players take turns choosing nested intervals, each inside the last. Player A wins if the point they close in on belongs to a given set E. For which sets does A have a winning method?",
+      "prize": "one bottle of wine, from Mazur",
+      "outcome": "Ulam's variant of this game, now called the Ulam game, led Steinhaus and Mycielski in 1962 to propose the Axiom of Determinacy.",
+      "answer": null,
+      "sources": ["U-33"]
+    },
+    {
+      "id": "problem-59",
+      "number": 59,
+      "poser": "Ruziewicz",
+      "date": "",
+      "summary": "Can a square be cut into a finite number of squares that are all of different sizes?",
+      "prize": "none recorded",
+      "outcome": "Yes. The first published solution is by Roland Sprague, in 1939.",
+      "answer": "yes",
+      "sources": ["U-33"]
+    },
+    {
+      "id": "problem-152",
+      "number": 152,
+      "poser": "Hugo Steinhaus",
+      "date": "6 November 1936",
+      "summary": "Slide a disc of radius 1 along a line in a direction with irrational coordinates. It covers between 2 and 5 integer lattice points at any moment. How often does it cover 2, 3 or 4 points, and does that frequency exist?",
+      "prize": "100 grammes of caviar for computing the frequency, a small beer for proving it exists, a demitasse for a counterexample",
+      "outcome": "Solved. Jan Mycielski's commentary in Mauldin's edition explains the solution with the help of Diophantine approximation.",
+      "answer": null,
+      "sources": ["U-33"]
     },
     {
       "id": "problem-153",
       "number": 153,
-      "poser": "Placeholder poser B",
-      "date": "Placeholder date",
-      "summary": "Placeholder: the statement of problem 153 in plain language is added when the fact sheet is cleared.",
-      "prize": "Placeholder: prize, if any",
-      "outcome": "Placeholder: what became of the problem.",
-      "answer": "solved",
-      "sources": []
+      "poser": "Stanisław Mazur",
+      "date": "6 November 1936",
+      "summary": "A question about whether certain Banach spaces have a basis (a Schauder basis). It turned out to be closely tied to the approximation problem for Banach spaces.",
+      "prize": "a live goose",
+      "outcome": "No. Per Enflo found a counterexample in 1972, published in 1973, and Mazur handed him the goose in Warsaw.",
+      "answer": "no",
+      "sources": ["U-07", "U-38", "U-33"]
+    },
+    {
+      "id": "problem-184",
+      "number": 184,
+      "poser": "Stanisław Saks",
+      "date": "1940",
+      "summary": "A subharmonic function (loosely, one that bends upwards on average) has second partial derivatives in both directions at every point. Must the sum of those two second derivatives be zero or positive everywhere?",
+      "prize": "a kilogram of fatback (older English editions say bacon)",
+      "outcome": "Yes. A 2019 result of Alexandre Eremenko, reported by Domoradzki and others, gives the affirmative answer.",
+      "answer": "yes",
+      "sources": ["U-33", "U-63"]
     },
     {
       "id": "problem-193",
       "number": 193,
-      "poser": "Placeholder poser A",
-      "date": "Placeholder date",
-      "summary": "Placeholder: the statement of problem 193 in plain language is added when the fact sheet is cleared.",
-      "prize": "Placeholder: prize, if any",
-      "outcome": "Placeholder: what became of the problem.",
-      "answer": "open",
-      "sources": []
+      "poser": "Hugo Steinhaus",
+      "date": "31 May 1941",
+      "summary": "Numerical results on the number of matches in a box.",
+      "prize": "none recorded",
+      "outcome": "It is the last entry in the book.",
+      "answer": null,
+      "sources": ["U-12"]
     }
   ]
 }

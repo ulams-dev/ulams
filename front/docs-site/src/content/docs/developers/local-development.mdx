@@ -169,7 +169,7 @@ All targets are in [`api/makefile`](https://github.com/ulams-dev/ulams/blob/main
 | `migrate-fresh-quick` | `migrate:fresh --seed`, Passport keys and personal client |
 | `migrate-fresh` | `migrate-fresh-quick` plus `h5p-seed` |
 | `h5p-seed` | Imports H5P content types and sample content through the H5P service |
-| `demo-packages` | Builds the gravity and poland interactive packages (`demo-content/`) into `api/database/seeds/Demo/assets/cache/interactive/`: the API container sees only `api/`, so the seeders read the zips from there |
+| `demo-packages` | Builds the gravity, poland and five ulam interactive packages (`demo-content/`) into `api/database/seeds/Demo/assets/cache/interactive/`: the API container sees only `api/`, so the seeders read the zips from there |
 | `demo-seed` | Demo courses on the platform tenant (`DemoCoursesSeeder`, all six experiences) |
 | `demo-seed-tenant` | One tenant: `make -C api demo-seed-tenant DOMAIN=coffee.localhost` (the experience defaults to the first label of `DOMAIN`), then works through the video long-job queue once |
 | `demo-seed-tenants` | `demo-seed-tenant` for `coffee`, `oncall`, `nightsky`, `gravity`, `poland` and `ulam` |

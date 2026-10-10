@@ -12,10 +12,12 @@ test("ulam-lwow-map: the map draws the countries, the first stop has the inset, 
   const frame = await suite.open(page, { startStep: "lwow" });
   await waitForMessage(page, "stepChanged", { step: "lwow" });
   expect(await frame.locator("#map path").count()).toBeGreaterThan(150);
-  await expect(frame.locator("#banner")).toContainText("not facts");
+  await expect(frame.locator("#banner")).toHaveCount(0);
   await expect(frame.locator("#caption")).toContainText("no historical borders are drawn");
   await expect(frame.locator("#inset-box")).toBeVisible();
   await expect(frame.locator("#inset circle")).toHaveCount(3);
+  await expect(frame.locator("#inset")).toContainText("Scottish Café building, 27 Shevchenko Ave.");
+  await expect(frame.locator("#inset-box figcaption")).toContainText("not to scale");
   await expect(frame.locator("#leg")).toContainText("where the journey starts");
   await expect(frame.locator("#fx")).toHaveAttribute("aria-label", /Stop 1 of 7: Lwów/);
   expect(await frame.locator("#map path.hi").count()).toBe(1); // Ukraine only

@@ -1,0 +1,907 @@
+{
+  "C1": {
+    "text": "Birth date: 13 April 1909. Four independent sources agree. The CNLS page copies an older version of the MacTutor text almost word for word (same sentences on Kuratowski and the 1933 PhD), so its \"3 April\" looks like a transcription slip",
+    "wording": "\"born on 13 April 1909\". Quiz the year (1909), not the day",
+    "sources": [
+      "U-01",
+      "U-05",
+      "U-29",
+      "U-04"
+    ],
+    "status": "resolution"
+  },
+  "C2": {
+    "text": "Doctoral advisor: Kuratowski, with Stożek as second advisor in [28]. Three sources against one, and the CNLS sentence is the same older MacTutor text as in C1. Banach was a close colleague, not the supervisor",
+    "wording": "\"He wrote his doctoral thesis (1933, Lwów Polytechnic) under Kazimierz Kuratowski.\" A quiz may ask whose 1927 set theory course drew him in (Kuratowski, [1]); it must not offer Stożek as a wrong answer",
+    "sources": [
+      "U-01",
+      "U-28",
+      "U-33",
+      "U-04"
+    ],
+    "status": "resolution"
+  },
+  "C3": {
+    "text": "Who supplied the Scottish Book notebook: Unresolved; teach both. The only primary text we could read (Ulam's 1957 preface) says Banach. The Łucja account is attributed to Ulam's later \"Anecdotal History\" in Mauldin [52], which we could not read in full",
+    "wording": "\"Ulam remembered that Banach bought a large notebook and left it with the head waiter; another account says Banach's wife Łucja supplied it.\" Never quiz who bought it",
+    "sources": [
+      "U-12",
+      "U-57"
+    ],
+    "status": "resolution"
+  },
+  "C4": {
+    "text": "How the book survived the war: Unresolved; teach the accounts as accounts. Two careful sources disagree and neither claims certainty. Mazur's plan is a plan, not evidence of a burial",
+    "wording": "\"Nobody wrote down exactly how the book came through the war. Ulam reported Steinhaus's account that Banach's son brought it to Wrocław; MacTutor says Steinhaus seems to have kept it safe.\" Do not say it was buried. Never quiz this",
+    "sources": [
+      "U-12",
+      "U-10"
+    ],
+    "status": "resolution"
+  },
+  "C5": {
+    "text": "Wisconsin years: 1940 to 1943. The 1940 start is supported by two sources and fits Hyers's 1941 *PNAS* paper written at Wisconsin [25]. The 1941 start in IEEE and Britannica probably counts from the assistant professorship",
+    "wording": "\"He taught at the University of Wisconsin in Madison from 1940 (some reference works give 1941) until 1943.\" Quiz \"Madison, Wisconsin\" as the place, not the year",
+    "sources": [
+      "U-01",
+      "U-04",
+      "U-05",
+      "U-29",
+      "U-61"
+    ],
+    "status": "resolution"
+  },
+  "C6": {
+    "text": "Los Alamos years: Joined early 1944, left the staff in 1965, consultant afterwards. The 1965 date is tied to the Colorado chair in three sources; IEEE's 1967 is likely the end of his staff appointment on paper. The USC interlude was missing from R0",
+    "wording": "\"He came to Los Alamos in early 1944 and, apart from a short spell at the University of Southern California in 1945–46, stayed until 1965, when he took the mathematics chair at the University of Colorado. He remained a consultant to the laboratory.\" Quiz \"Los Alamos\", not the years",
+    "sources": [
+      "U-01",
+      "U-30",
+      "U-05",
+      "U-04",
+      "U-29",
+      "U-18"
+    ],
+    "status": "resolution"
+  },
+  "C7": {
+    "text": "Leaving Poland in 1939: MacTutor's dates, which rest on passenger records; Ulam wrote from memory 18 years later",
+    "wording": "\"In August 1939, a few weeks before the war, Ulam sailed to New York with his 17-year-old brother Adam.\" No ship, port or day in quizzes",
+    "sources": [
+      "U-01",
+      "U-12"
+    ],
+    "status": "resolution"
+  },
+  "C8": {
+    "text": "When he first went to the US: Both true: he left at the end of 1935 and arrived in January 1936",
+    "wording": "\"At the end of 1935 he accepted von Neumann's invitation to Princeton.\"",
+    "sources": [
+      "U-01",
+      "U-12"
+    ],
+    "status": "resolution"
+  },
+  "C9": {
+    "text": "Prizes in the Scottish Book: The ban is lifted for wine, beer and the listed prizes, which now have sources. Brandy stays (2nd)",
+    "wording": "Use only the prizes in table 3b. Do not mention brandy",
+    "sources": [
+      "U-07",
+      "U-33"
+    ],
+    "status": "resolution"
+  },
+  "C10": {
+    "text": "Ulam's number of problems: \"About 40 problems on his own, plus many with co-authors.\" The two counts of joint problems differ",
+    "wording": "Never quiz the counts",
+    "sources": [
+      "U-33"
+    ],
+    "status": "resolution"
+  },
+  "C11": {
+    "text": "Date of Ulam's English translation: 1957: the preface was written in 1957; copies went out in early 1958",
+    "wording": "\"Ulam's English translation (Los Alamos, 1957)\"",
+    "sources": [
+      "U-33",
+      "U-12"
+    ],
+    "status": "resolution"
+  },
+  "C12": {
+    "text": "What problem 153 asks: Both are right: problem 153 is equivalent to the approximation problem, and Enflo's example also answered the basis problem",
+    "wording": "\"Problem 153 is a question that turned out to be the 'approximation problem' for Banach spaces, closely tied to the existence of bases.\" The explorer card summarises it in plain words only",
+    "sources": [
+      "U-07",
+      "U-38"
+    ],
+    "status": "resolution"
+  },
+  "C13": {
+    "text": "The Monte Carlo name and the uncle: The uncle is attested; his name is not.",
+    "wording": "The quote may be used as is. Do not give the uncle a name",
+    "sources": [
+      "U-18",
+      "U-31"
+    ],
+    "status": "resolution"
+  },
+  "C14": {
+    "text": "The FERMIAC name: No conflict worth teaching",
+    "wording": "\"Fermi's analogue 'Monte Carlo trolley', later called the FERMIAC\"",
+    "sources": [
+      "U-18",
+      "U-31"
+    ],
+    "status": "resolution"
+  },
+  "C15": {
+    "text": "Kuratowski and the Scottish Book: Not a Scottish Book author in Lwów (he co-authored problem 96 with Ulam per [33], which may have been entered later)",
+    "wording": "Put Kuratowski on the \"teachers\" card, not the café card",
+    "sources": [
+      "U-34"
+    ],
+    "status": "resolution"
+  },
+  "C16": {
+    "text": "The \"singularity\" passage: Not cleared",
+    "wording": "Do not quote it. The legacy lesson leaves it out",
+    "sources": [
+      "U-47"
+    ],
+    "status": "resolution"
+  },
+  "1.1": {
+    "text": "Born on 13 April 1909 in Lemberg (Polish Lwów), in Austrian Galicia; today Lviv, Ukraine.",
+    "sources": [
+      "U-01",
+      "U-05",
+      "U-29"
+    ],
+    "status": "ok",
+    "conflicts": [
+      "C1"
+    ]
+  },
+  "1.2": {
+    "text": "Parents: Józef Ulam (1879–1941), a lawyer, and Hania Auerbach (1887–1938), known as Anna. Siblings: Stefania (b. 1912) and Adam (b. 8 April 1922).",
+    "sources": [
+      "U-01"
+    ],
+    "status": "ok"
+  },
+  "1.3": {
+    "text": "He entered the Lwów Polytechnic in 1927 to study electrical engineering. In his first year he took Kazimierz Kuratowski's set theory course, and his first two papers (1929) solved problems Kuratowski had posed in lectures.",
+    "sources": [
+      "U-01"
+    ],
+    "status": "ok"
+  },
+  "1.4": {
+    "text": "Doctorate in 1933 at the Lwów Polytechnic, thesis under Kuratowski. Ulam later claimed he wrote the thesis in six hours during a single night (MacTutor reports this as his claim).",
+    "sources": [
+      "U-01",
+      "U-28"
+    ],
+    "status": "ok",
+    "conflicts": [
+      "C2"
+    ]
+  },
+  "1.4a": {
+    "text": "In 1930 he strengthened a 1929 measure theory result of Banach by proving it without the Generalised Continuum Hypothesis.",
+    "sources": [
+      "U-01"
+    ],
+    "status": "ok"
+  },
+  "1.5": {
+    "text": "In 1935 von Neumann invited him to the Institute for Advanced Study in Princeton. He arrived in New York in January 1936, then joined Harvard's Society of Fellows, and spent the summers of 1936–1939 in Lwów.",
+    "sources": [
+      "U-01",
+      "U-12"
+    ],
+    "status": "ok",
+    "conflicts": [
+      "C8"
+    ]
+  },
+  "1.6": {
+    "text": "In August 1939, a few weeks before the war, he sailed to New York with his 17-year-old brother Adam.",
+    "sources": [
+      "U-01"
+    ],
+    "status": "ok",
+    "conflicts": [
+      "C7"
+    ]
+  },
+  "1.6a": {
+    "text": "Harvard lecturer for 1939–40. He met Françoise Aron at a party in Cambridge, Massachusetts, in autumn 1939.",
+    "sources": [
+      "U-01"
+    ],
+    "status": "ok"
+  },
+  "1.7": {
+    "text": "University of Wisconsin, Madison, from 1940 to 1943. He married Françoise Aron in Madison on 19 August 1941 and became a US citizen in 1943.",
+    "sources": [
+      "U-01",
+      "U-04",
+      "U-30"
+    ],
+    "status": "differs",
+    "conflicts": [
+      "C5"
+    ]
+  },
+  "1.8": {
+    "text": "Invited to Los Alamos in 1943 at von Neumann's suggestion; arrived with Françoise on 4 February 1944. Their daughter Claire was born in Santa Fe on 15 July 1944.",
+    "sources": [
+      "U-01",
+      "U-30"
+    ],
+    "status": "ok",
+    "conflicts": [
+      "C6"
+    ]
+  },
+  "1.8a": {
+    "text": "In 1946, newly appointed at the University of Southern California, he fell ill with encephalitis and had emergency brain surgery. He then returned to Los Alamos.",
+    "sources": [
+      "U-01",
+      "U-18",
+      "U-31"
+    ],
+    "status": "ok"
+  },
+  "1.8b": {
+    "text": "He stayed at Los Alamos until 1965 and remained a consultant afterwards.",
+    "sources": [
+      "U-01",
+      "U-04",
+      "U-05"
+    ],
+    "status": "differs",
+    "conflicts": [
+      "C6"
+    ]
+  },
+  "1.9": {
+    "text": "From 1965 he chaired mathematics at the University of Colorado, Boulder. He was also Graduate Research Professor at the University of Florida from 1974 to 1984. At his death he was professor of biomathematics at Colorado.",
+    "sources": [
+      "U-01",
+      "U-05",
+      "U-49"
+    ],
+    "status": "ok"
+  },
+  "1.10": {
+    "text": "Died on 13 May 1984 in Santa Fe, New Mexico.",
+    "sources": [
+      "U-01",
+      "U-04",
+      "U-05"
+    ],
+    "status": "ok"
+  },
+  "1.11": {
+    "text": "His mother died in Vienna in 1938. MacTutor: \"Ulam's father was also killed when the Germans occupied Lwów in 1941.\" His sister Stefania and her baby were also killed, according to the account of a relative quoted by MacTutor.",
+    "sources": [
+      "U-01"
+    ],
+    "status": "ok",
+    "quotes": [
+      "Ulam's father was also killed when the Germans occupied Lwów in 1941."
+    ]
+  },
+  "1.12": {
+    "text": "His papers are held by the American Philosophical Society (Mss.Ms.Coll.54).",
+    "sources": [
+      "U-06"
+    ],
+    "status": "ok"
+  },
+  "1.13": {
+    "text": "Books by Ulam include *A Collection of Mathematical Problems* (1960) and the memoir *Adventures of a Mathematician* (1976).",
+    "sources": [
+      "U-01"
+    ],
+    "status": "ok"
+  },
+  "2.1": {
+    "text": "MacTutor calls it \"a group of about a dozen mathematicians working in functional analysis, real functions and probability theory\".",
+    "sources": [
+      "U-07"
+    ],
+    "status": "ok",
+    "quotes": [
+      "a group of about a dozen mathematicians working in functional analysis, real functions and probability theory"
+    ]
+  },
+  "2.2": {
+    "text": "People who met at the Scottish Café include Banach, Steinhaus, Ulam, Mazur, Kac, Schauder and Kaczmarz (list in MacTutor's Orlicz biography), and Orlicz himself.",
+    "sources": [
+      "U-35"
+    ],
+    "status": "ok"
+  },
+  "2.3": {
+    "text": "Steinhaus met Banach in Kraków's Planty gardens in 1916 after he \"overheard the words 'Lebesgue measure'\".",
+    "sources": [
+      "U-10"
+    ],
+    "status": "ok",
+    "quotes": [
+      "overheard the words 'Lebesgue measure'"
+    ]
+  },
+  "2.4": {
+    "text": "Banach and Steinhaus founded the journal *Studia Mathematica* in 1929.",
+    "sources": [
+      "U-09",
+      "U-10"
+    ],
+    "status": "ok"
+  },
+  "2.5": {
+    "text": "Banach's 1920 dissertation \"defined axiomatically what today is called a Banach space\". *Théorie des opérations linéaires* appeared in 1932, a French version of his 1931 Polish book.",
+    "sources": [
+      "U-09"
+    ],
+    "status": "ok",
+    "quotes": [
+      "defined axiomatically what today is called a Banach space"
+    ]
+  },
+  "2.6": {
+    "text": "Banach was born in Kraków on 30 March 1892 and died in Lwów on 31 August 1945. During the German occupation he worked as a feeder of lice for typhus research.",
+    "sources": [
+      "U-09"
+    ],
+    "status": "ok"
+  },
+  "2.7": {
+    "text": "Schauder was murdered during the German occupation; MacTutor says \"where and when is not known\".",
+    "sources": [
+      "U-11"
+    ],
+    "status": "ok",
+    "quotes": [
+      "where and when is not known"
+    ]
+  },
+  "2.8": {
+    "text": "Steinhaus (1887–1972) survived the occupation in hiding under a false identity; after the war he moved to Wrocław.",
+    "sources": [
+      "U-10"
+    ],
+    "status": "ok"
+  },
+  "2.9": {
+    "text": "Mazur (1905–1981) worked in functional analysis, summability and infinite games.",
+    "sources": [
+      "U-07"
+    ],
+    "status": "ok"
+  },
+  "2.10": {
+    "text": "Kuratowski taught at the Lwów Polytechnic from 1927 and moved to the University of Warsaw in 1934.",
+    "sources": [
+      "U-34"
+    ],
+    "status": "ok"
+  },
+  "2.11": {
+    "text": "Mark Kac took his PhD under Steinhaus in 1937 and left for the US in 1938. He posed problems 126, 161, 177 and 178.",
+    "sources": [
+      "U-33"
+    ],
+    "status": "ok"
+  },
+  "3.1": {
+    "text": "In Ulam's words, the book \"was started in Lwów, in Poland in 1935\". The first entry, problem 1 by Banach, is dated 17 July 1935.",
+    "sources": [
+      "U-12",
+      "U-33"
+    ],
+    "status": "ok",
+    "quotes": [
+      "was started in Lwów, in Poland in 1935"
+    ]
+  },
+  "3.2": {
+    "text": "Ulam remembered that Banach bought a large notebook and left it with the head waiter of the café, who brought it out on request; another account says Banach's wife Łucja supplied it.",
+    "sources": [
+      "U-12",
+      "U-52"
+    ],
+    "status": "differs",
+    "conflicts": [
+      "C3"
+    ]
+  },
+  "3.3": {
+    "text": "The café building stands at 27 Shevchenko Avenue in today's Lviv, near the old university.",
+    "sources": [
+      "U-54",
+      "U-50"
+    ],
+    "status": "ok"
+  },
+  "3.4": {
+    "text": "The book holds 193 problems. The last, problem 193, is signed by Steinhaus and dated 31 May 1941; it concerns the number of matches in a box.",
+    "sources": [
+      "U-12",
+      "U-35",
+      "U-10"
+    ],
+    "status": "ok"
+  },
+  "3.5": {
+    "text": "Ulam contributed about 40 problems alone and many jointly. Mazur contributed 24 alone and 19 jointly. Steinhaus contributed ten.",
+    "sources": [
+      "U-33",
+      "U-07",
+      "U-10"
+    ],
+    "status": "differs",
+    "conflicts": [
+      "C10"
+    ]
+  },
+  "3.6": {
+    "text": "Prizes were offered for some problems: see table 3b.",
+    "sources": [
+      "U-07",
+      "U-33"
+    ],
+    "status": "ok",
+    "conflicts": [
+      "C9"
+    ]
+  },
+  "3.7": {
+    "text": "How it survived the war is uncertain: see C4. In August 1939 Mazur told Ulam that if the city were bombed he would put the manuscripts and the book into a case and bury it.",
+    "sources": [
+      "U-12",
+      "U-10"
+    ],
+    "status": "differs"
+  },
+  "3.8": {
+    "text": "Ulam translated it into English at Los Alamos (1957) and circulated copies to mathematicians who asked for them.",
+    "sources": [
+      "U-12",
+      "U-33"
+    ],
+    "status": "ok",
+    "conflicts": [
+      "C11"
+    ]
+  },
+  "3.9": {
+    "text": "R. Daniel Mauldin (ed.), *The Scottish Book*, Birkhäuser 1981; 2nd edition 2015, with commentary on the problems.",
+    "sources": [
+      "U-15",
+      "U-33"
+    ],
+    "status": "ok"
+  },
+  "3.10": {
+    "text": "Steinhaus started the *New Scottish Book* in Wrocław in 1946.",
+    "sources": [
+      "U-10"
+    ],
+    "status": "ok"
+  },
+  "3.11": {
+    "text": "During the Soviet occupation (1939–41) visiting Soviet mathematicians added problems, among them Bogolyubov, Alexandroff, Sobolev and Lusternik.",
+    "sources": [
+      "U-12",
+      "U-33"
+    ],
+    "status": "ok"
+  },
+  "3.12": {
+    "text": "Since 2014 a restaurant in the building has used the old name and keeps a copy of the book, and a new \"Lviv Scottish Book\" of problems has grown from it.",
+    "sources": [
+      "U-33"
+    ],
+    "status": "ok",
+    "quotes": [
+      "Lviv Scottish Book"
+    ]
+  },
+  "3b/1": {
+    "text": "Problem 1 (Banach, 17 July 1935): (a) When can a metric space be so metrized that it becomes complete and compact, with the originally convergent sequences still convergent? (b) Can the space c0 be so metrized? In modern terms: when does a metric space condense (bijectively and continuously) onto a compact metric space? Mauldin's commentary: solved for separable Banach spaces (Anderson-Kadets theorem); the full answer for larger spaces depends on set theory (Banakh); Osipov continued the work in 2023.",
+    "sources": [
+      "U-33"
+    ],
+    "status": "ok"
+  },
+  "3b/19": {
+    "text": "Problem 19 (Ulam): is a solid of uniform density which will float in water in every position a sphere? No: Ryabogin (2022) found a body of revolution that is not a sphere.",
+    "sources": [
+      "U-33",
+      "U-16"
+    ],
+    "status": "ok"
+  },
+  "3b/38": {
+    "text": "Problem 38 (Ulam): N people each pick k others at random as friends; what is the probability that everyone is linked to everyone through chains of friends (friendship need not be symmetric), and what is the limit as N grows? Ron Graham: it concerns the connectivity of random graphs, so Ulam can be seen as a forerunner of random graphs, over 20 years before Erdos and Renyi (1959). A general solution by D. S. Jungreis is in the 2015 edition's commentary.",
+    "sources": [
+      "U-33"
+    ],
+    "status": "ok"
+  },
+  "3b/43": {
+    "text": "Problem 43 (Mazur): two players alternately choose nested intervals; A wins if the intersection contains a point of a given set E. Prize: one bottle of wine, S. Mazur. Ulam's modification (the Ulam game) inspired Steinhaus and Mycielski in 1962 to propose the Axiom of Determinacy.",
+    "sources": [
+      "U-33"
+    ],
+    "status": "ok"
+  },
+  "3b/59": {
+    "text": "Problem 59 (Ruziewicz): can a square be decomposed into a finite number of squares that are all different? Roland Sprague's solution of 1939 is the first published one.",
+    "sources": [
+      "U-33"
+    ],
+    "status": "ok"
+  },
+  "3b/152": {
+    "text": "Problem 152 (Steinhaus, 6 November 1936): a disc of radius 1 covers at least 2 and at most 5 integer points; translated along multiples of a vector with irrational coordinates, how often does it cover 2, 3 or 4 points, and does that frequency exist? Prizes: 100 grammes of caviar for computing the frequency, a small beer for proving that it exists, a demitasse for a counterexample. Jan Mycielski's commentary explains the solution using diophantine approximation.",
+    "sources": [
+      "U-33"
+    ],
+    "status": "ok"
+  },
+  "3b/153": {
+    "text": "Problem 153 (Mazur, 6 November 1936): about the existence of Schauder bases in separable Banach spaces; equivalent in effect to the approximation problem. Prize: a live goose. Answered in the negative by Per Enflo in 1972 (published 1973); Mazur gave him the goose in Warsaw.",
+    "sources": [
+      "U-07",
+      "U-38",
+      "U-33"
+    ],
+    "status": "ok"
+  },
+  "3b/184": {
+    "text": "Problem 184 (S. Saks, 1940): a subharmonic function has the second partial derivatives everywhere; is its Laplacian always at least 0? Prize: one kilogram of fatback (the older English translations say bacon; U-33 footnote 12). A result of A. Eremenko (2019), reported in U-33, gives the affirmative answer.",
+    "sources": [
+      "U-33",
+      "U-63"
+    ],
+    "status": "ok"
+  },
+  "3b/193": {
+    "text": "Problem 193 (Steinhaus, 31 May 1941): numerical results on the number of matches in a box. The last entry.",
+    "sources": [
+      "U-12"
+    ],
+    "status": "ok"
+  },
+  "4.1": {
+    "text": "Ulam: \"The first thoughts and attempts I made to practice [the Monte Carlo method] were suggested by a question which occurred to me in 1946 as I was convalescing from an illness and playing solitaires.\"",
+    "sources": [
+      "U-17",
+      "U-01"
+    ],
+    "status": "ok",
+    "quotes": [
+      "The first thoughts and attempts I made to practice [the Monte Carlo method] were suggested by a question which occurred to me in 1946 as I was convalescing from an illness and playing solitaires."
+    ]
+  },
+  "4.2": {
+    "text": "The question: what are the chances that a Canfield solitaire laid out with 52 cards will come out successfully? Later in 1946 he described the idea to von Neumann.",
+    "sources": [
+      "U-17"
+    ],
+    "status": "ok"
+  },
+  "4.3": {
+    "text": "In March 1947 von Neumann wrote to Robert Richtmyer outlining a neutron-diffusion calculation for the ENIAC; LANL calls it \"the first formulation of a Monte Carlo computation for an electronic computer\".",
+    "sources": [
+      "U-17",
+      "U-31"
+    ],
+    "status": "ok",
+    "quotes": [
+      "the first formulation of a Monte Carlo computation for an electronic computer"
+    ]
+  },
+  "4.4": {
+    "text": "The first Monte Carlo calculations ran on the ENIAC in April–May 1948.",
+    "sources": [
+      "U-31"
+    ],
+    "status": "ok"
+  },
+  "4.5": {
+    "text": "Nicholas Metropolis suggested the name, \"a suggestion not unrelated to the fact that Stan had an uncle who would borrow money from relatives because he 'just had to go to Monte Carlo.'\"",
+    "sources": [
+      "U-18",
+      "U-31"
+    ],
+    "status": "ok",
+    "quotes": [
+      "a suggestion not unrelated to the fact that Stan had an uncle who would borrow money from relatives because he 'just had to go to Monte Carlo.'"
+    ],
+    "conflicts": [
+      "C13"
+    ]
+  },
+  "4.6": {
+    "text": "Fermi had used statistical sampling in Rome in the early 1930s without publishing it; at Los Alamos he had an analogue \"Monte Carlo trolley\" built, later called the FERMIAC.",
+    "sources": [
+      "U-18",
+      "U-31"
+    ],
+    "status": "ok",
+    "quotes": [
+      "Monte Carlo trolley"
+    ]
+  },
+  "4.7": {
+    "text": "N. Metropolis and S. Ulam, \"The Monte Carlo Method\", *Journal of the American Statistical Association* 44 (247) (1949) 335–341.",
+    "sources": [
+      "U-39"
+    ],
+    "status": "ok",
+    "quotes": [
+      "The Monte Carlo Method"
+    ]
+  },
+  "5.1": {
+    "text": "In early 1951 Ulam proposed that strong compression of the thermonuclear fuel, driven by a fission bomb, was the key; Teller proposed that radiation from the fission stage do the compressing.",
+    "sources": [
+      "U-19",
+      "U-01"
+    ],
+    "status": "ok"
+  },
+  "5.2": {
+    "text": "Their joint report, LAMS-1225, is dated 9 March 1951.",
+    "sources": [
+      "U-19"
+    ],
+    "status": "ok"
+  },
+  "5.3": {
+    "text": "The first test of the design, the \"Mike\" shot of Operation Ivy, took place on 1 November 1952 at Enewetak Atoll. The Defense Nuclear Agency history calls it the \"first thermonuclear\" detonation.",
+    "sources": [
+      "U-32"
+    ],
+    "status": "ok",
+    "quotes": [
+      "Mike",
+      "first thermonuclear"
+    ]
+  },
+  "5.4": {
+    "text": "Who deserved credit was disputed between Teller and Ulam for decades. Attribute any characterisation to Kenneth Ford [19].",
+    "sources": [
+      "U-19"
+    ],
+    "status": "ok"
+  },
+  "6.1": {
+    "text": "Martin Gardner's account: at a scientific meeting in autumn 1963, listening to a \"long and very boring paper\", Ulam numbered a grid in a counterclockwise spiral from 1 at the centre, circled the primes, and saw them \"crowd into straight lines\".",
+    "sources": [
+      "U-41",
+      "U-42"
+    ],
+    "status": "ok",
+    "quotes": [
+      "long and very boring paper",
+      "crowd into straight lines"
+    ]
+  },
+  "6.2": {
+    "text": "M. L. Stein, S. M. Ulam and M. B. Wells, \"A Visual Display of Some Properties of the Distribution of Primes\", *American Mathematical Monthly* 71(5) (May 1964) 516–520.",
+    "sources": [
+      "U-40"
+    ],
+    "status": "ok",
+    "quotes": [
+      "A Visual Display of Some Properties of the Distribution of Primes"
+    ]
+  },
+  "6.2a": {
+    "text": "The computer plots were made on the MANIAC II at Los Alamos.",
+    "sources": [],
+    "status": "second"
+  },
+  "6.3": {
+    "text": "Gardner's \"Mathematical Games\" column \"The remarkable lore of the prime numbers\" (*Scientific American*, March 1964) made the spiral widely known.",
+    "sources": [
+      "U-41",
+      "U-42"
+    ],
+    "status": "ok",
+    "quotes": [
+      "Mathematical Games",
+      "The remarkable lore of the prime numbers"
+    ]
+  },
+  "6.3a": {
+    "text": "The spiral was on that issue's cover.",
+    "sources": [],
+    "status": "second"
+  },
+  "6.4": {
+    "text": "Lines of primes in the spiral correspond to quadratic polynomials, such as Euler's n² + n + 41.",
+    "sources": [
+      "U-41"
+    ],
+    "status": "ok"
+  },
+  "7.1": {
+    "text": "Following a suggestion of Ulam's, von Neumann built his model of self-reproduction as a discrete two-dimensional system; his automaton used 29 states per cell.",
+    "sources": [
+      "U-22"
+    ],
+    "status": "ok"
+  },
+  "7.2": {
+    "text": "Ulam studied how figures grow on a lattice under simple rules: S. M. Ulam, \"On some mathematical problems connected with patterns of growth of figures\", *Proc. Symp. Applied Math.* 14 (AMS, 1962) 215–224.",
+    "sources": [
+      "U-43",
+      "U-44",
+      "U-45"
+    ],
+    "status": "ok",
+    "quotes": [
+      "On some mathematical problems connected with patterns of growth of figures"
+    ]
+  },
+  "7.3": {
+    "text": "The Schrandt–Ulam rule: cells, once ON, stay ON; a cell turns ON when exactly one edge-neighbour turned ON in the previous generation (plus two exclusion conditions). From one cell the counts run 1, 5, 9, 13, 25, 29, 41, …",
+    "sources": [
+      "U-44"
+    ],
+    "status": "ok"
+  },
+  "7.4": {
+    "text": "Conway introduced the Game of Life in 1970.",
+    "sources": [
+      "U-22"
+    ],
+    "status": "ok"
+  },
+  "8.1": {
+    "text": "Los Alamos report LA-1940, \"Studies of Nonlinear Problems\", May 1955.",
+    "sources": [
+      "U-24"
+    ],
+    "status": "ok",
+    "quotes": [
+      "Studies of Nonlinear Problems"
+    ]
+  },
+  "8.2": {
+    "text": "The report says the work was done by Fermi, Pasta, Ulam and Tsingou, and written by Fermi, Pasta and Ulam.",
+    "sources": [
+      "U-24"
+    ],
+    "status": "ok"
+  },
+  "8.3": {
+    "text": "Mary Tsingou (later Menzel, born 1928) programmed the computation on the MANIAC I.",
+    "sources": [
+      "U-24"
+    ],
+    "status": "ok"
+  },
+  "8.4": {
+    "text": "They expected the energy to spread over all modes; instead, after a longer run, \"almost all the energy was back to the lowest frequency mode\" (the FPU recurrence).",
+    "sources": [
+      "U-24"
+    ],
+    "status": "ok",
+    "quotes": [
+      "almost all the energy was back to the lowest frequency mode"
+    ]
+  },
+  "8.5": {
+    "text": "Fermi died on 28 November 1954, before the report was written up; it was never published in a journal.",
+    "sources": [
+      "U-60",
+      "U-24"
+    ],
+    "status": "ok"
+  },
+  "8.6": {
+    "text": "Zabusky and Kruskal (*Physical Review Letters* 15, 1965) linked the recurrence to solitons.",
+    "sources": [
+      "U-46",
+      "U-24"
+    ],
+    "status": "ok"
+  },
+  "8.7": {
+    "text": "In 2008 Thierry Dauxois proposed calling it the Fermi–Pasta–Ulam–Tsingou problem.",
+    "sources": [
+      "U-24"
+    ],
+    "status": "ok"
+  },
+  "9.1": {
+    "text": "Borsuk–Ulam theorem: Borsuk's 1933 paper proved it and notes \"Dieser Satz wurde als Vermutung von St. Ulam aufgestellt\" (the theorem was stated as a conjecture by Ulam). Plain form: any continuous map from the sphere to the plane sends some pair of opposite points to the same point.",
+    "sources": [
+      "U-36"
+    ],
+    "status": "ok",
+    "quotes": [
+      "Dieser Satz wurde als Vermutung von St. Ulam aufgestellt"
+    ]
+  },
+  "9.2": {
+    "text": "Hyers–Ulam stability: D. H. Hyers, \"On the Stability of the Linear Functional Equation\", *PNAS* 27(4) (1941) 222–224, answered a question of Ulam's.",
+    "sources": [
+      "U-25"
+    ],
+    "status": "second",
+    "quotes": [
+      "On the Stability of the Linear Functional Equation"
+    ]
+  },
+  "9.3": {
+    "text": "Nuclear pulse propulsion: Ulam, with C. J. Everett, proposed the \"Orion\" plan; Los Alamos report LAMS-1955 (August 1955).",
+    "sources": [
+      "U-01",
+      "U-48"
+    ],
+    "status": "ok",
+    "quotes": [
+      "Orion"
+    ]
+  },
+  "9.4": {
+    "text": "The \"singularity\" passage in the 1958 von Neumann memorial",
+    "sources": [
+      "U-47"
+    ],
+    "status": "not-used",
+    "quotes": [
+      "singularity"
+    ],
+    "conflicts": [
+      "C16"
+    ]
+  },
+  "9.5": {
+    "text": "Ulam's Problem 38 is seen as a forerunner of random graph theory.",
+    "sources": [
+      "U-33"
+    ],
+    "status": "ok"
+  },
+  "3.13": {
+    "text": "In one instance a prize was offered by someone other than the problem's author: Samuel Eilenberg offered a bottle of wine for part (a) of Ulam's Problem 77. Ulam's 1957 preface says that solutions to Problem 77(a) were published by R. H. Fox (Fund. Math. 34, 278-287; the paper is titled \"On a problem of S. Ulam concerning Cartesian products\"). The statement of 77(a) itself was not cleared, so no card summarises it.",
+    "sources": [
+      "U-33",
+      "U-12",
+      "U-62"
+    ],
+    "status": "ok",
+    "added": "M9b"
+  },
+  "3.15": {
+    "text": "The book exists in several versions: the manuscript copy of the Banach family (193 problems, the last unnumbered), a Polish typescript (155 problems) and Ulam's English typescript (193 problems), which led to the Los Alamos preprints (1957 and 1977) and to Mauldin's volume (1979 and 2015).",
+    "sources": [
+      "U-33"
+    ],
+    "status": "ok",
+    "added": "M9b"
+  },
+  "3b/77a": {
+    "text": "Problem 77(a) (Ulam): not summarised, because its statement could not be sourced in M9b. Prize: one bottle of wine, offered by Eilenberg. Solved by R. H. Fox (see 3.13).",
+    "sources": [
+      "U-12",
+      "U-33",
+      "U-62"
+    ],
+    "status": "not-used",
+    "added": "M9b"
+  }
+}

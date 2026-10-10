@@ -40,17 +40,36 @@ test("the view box is centred on the stop and stays between the poles", () => {
   assert.deepEqual(viewBox([0, 79], 5, 5), [[-5, 74], [5, 80]]);
 });
 
-test("the shipped data is consistent: one step per stop, real coordinates, placeholders flagged, the inset has its three places", () => {
+test("the shipped data is the sourced content: one step per stop, real coordinates and years, the inset has its three places, no placeholder", () => {
   const manifest = read("ulams-interactive.json");
+  const facts = read("../facts.json");
   assert.deepEqual(manifest.steps.map((s) => s.id), route.stops.map((s) => s.id));
   assert.deepEqual(route.stops.map((s) => s.id), ["lwow", "princeton", "harvard", "madison", "los-alamos", "boulder", "santa-fe"]);
-  for (const s of route.stops) { assert.ok(s.lonlat[0] >= -180 && s.lonlat[0] <= 180 && s.lonlat[1] >= -90 && s.lonlat[1] <= 90, s.id); assert.match(s.years, /^Placeholder/); }
-  assert.equal(route.placeholder, true);
-  assert.match(route.note, /not facts/);
+  for (const s of route.stops) assert.ok(s.lonlat[0] >= -180 && s.lonlat[0] <= 180 && s.lonlat[1] >= -90 && s.lonlat[1] <= 90, s.id);
+  assert.deepEqual(route.stops.map((s) => s.years), ["1909–1935", "1936", "1936–1940", "1940–1943", "1944–1965", "from 1965", "died 1984"]);
+  assert.equal(route.placeholder, undefined);
   assert.match(route.caption, /no historical borders are drawn/);
   const places = read("data/places.json");
-  assert.equal(places.placeholder, true);
+  assert.equal(places.placeholder, undefined);
   assert.deepEqual(places.inset.points.map((p) => p.id), ["university", "polytechnic", "cafe"]);
-  for (const p of places.inset.points) { assert.ok(p.x > 0 && p.x < 1 && p.y > 0 && p.y < 1); assert.match(p.address, /^Placeholder/); }
-  for (const s of manifest.steps) assert.match(s.text.en, /^Placeholder text/);
+  for (const p of places.inset.points) { assert.ok(p.x > 0 && p.x < 1 && p.y > 0 && p.y < 1); }
+  assert.equal(places.inset.points.find((p) => p.id === "cafe").address, "27 Shevchenko Avenue");
+  assert.doesNotMatch(JSON.stringify([manifest, route, places]), /placeholder/i);
+  // the inset keeps the true order of the three places: the Polytechnic is west of the university, the café east, the university north
+  const at = Object.fromEntries(places.inset.points.map((p) => [p.id, p]));
+  assert.ok(at.polytechnic.x < at.university.x && at.university.x < at.cafe.x);
+  assert.ok(at.university.y < at.polytechnic.y && at.university.y < at.cafe.y);
+  // every stop's text states the facts of the fact sheet and names its sources
+  const text = Object.fromEntries(manifest.steps.map((s) => [s.id, s.text.en]));
+  for (const t of Object.values(text)) assert.match(t, /Sources?: /);
+  assert.match(text.lwow, /13 April 1909/); assert.match(text.lwow, /1927/); assert.match(text.lwow, /1933.*Kuratowski/); assert.match(text.lwow, /27 Shevchenko Avenue/);
+  assert.match(text.princeton, /von Neumann/); assert.match(text.princeton, /January 1936/);
+  assert.match(text.harvard, /Society of Fellows/); assert.match(text.harvard, /August 1939/);
+  assert.match(text.madison, /1940 \(some reference works give 1941\)/); assert.match(text.madison, /19 August 1941/); assert.match(text.madison, /1943/);
+  assert.match(text["los-alamos"], /4 February 1944/); assert.match(text["los-alamos"], /1965/); assert.match(text["los-alamos"], /1945 and 1946/);
+  assert.match(text.boulder, /1965/); assert.match(text.boulder, /1974 to 1984/);
+  assert.match(text["santa-fe"], /13 May 1984/);
+  // nothing the sheet rejects: no ship, no port, no day of the week, no 3 April
+  assert.doesNotMatch(Object.values(text).join(" "), /Piłsudski|Batory|Danzig|(^|[^0-9])3 April|studied under Banach/);
+  for (const id of ["1.1", "1.3", "1.4", "1.5", "1.6", "1.6a", "1.7", "1.8", "1.8b", "1.9", "1.10", "1.12"]) assert.ok(facts[id] && facts[id].status !== "not-used", id);
 });

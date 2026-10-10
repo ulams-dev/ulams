@@ -1,59 +1,99 @@
 {
   "$schema": "https://ulams.dev/schemas/ulams-interactive/v1.json",
   "id": "ulam-lwow-map",
-  "title": { "en": "A journey on a map: from Lwów to Santa Fe" },
-  "version": "0.1.0",
+  "title": {
+    "en": "A journey on a map: from Lwów to Santa Fe"
+  },
+  "version": "1.0.0",
   "entry": "index.html",
   "licence": "MIT",
-  "attribution": "© 2026 Mateusz Wojczal. Code: MIT. Text: CC BY 4.0. Map: Natural Earth (public domain) through world-atlas (ISC); coordinates from Wikidata (CC0). Placeholder content until the fact sheet is cleared.",
-  "source": { "url": "https://github.com/ulams-dev/ulams/tree/main/demo-content/ulam/lwow-map", "ref": "main" },
-  "locales": ["en"],
+  "attribution": "© 2026 Mateusz Wojczal. Code: MIT. Text: CC BY 4.0. Map: Natural Earth (public domain) through world-atlas (ISC); coordinates from Wikidata (CC0). Facts: demo-content/ulam/facts.json, with the sources named in each step.",
+  "source": {
+    "url": "https://github.com/ulams-dev/ulams/tree/main/demo-content/ulam/lwow-map",
+    "ref": "main"
+  },
+  "locales": [
+    "en"
+  ],
   "defaultLocale": "en",
   "bridge": 1,
-  "capabilities": { "steps": true, "reducedMotion": true, "score": false, "background": false },
+  "capabilities": {
+    "steps": true,
+    "reducedMotion": true,
+    "score": false,
+    "background": false
+  },
   "requires": [],
   "network": [],
   "steps": [
     {
       "id": "lwow",
-      "title": { "en": "Lwów" },
-      "text": { "en": "Placeholder text: the journey starts in Lwów, today Lviv in Ukraine. The map shows present-day country borders; no historical borders are drawn. The inset is a schematic plan of the centre, not to scale. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "title": {
+        "en": "Lwów"
+      },
+      "text": {
+        "en": "The journey starts in Lwów, then in Poland and today Lviv in Ukraine. Stanisław Ulam was born there on 13 April 1909. He entered the Lwów Polytechnic in 1927, took his doctorate there in 1933 under Kazimierz Kuratowski, and came back to the city for the summers of 1936 to 1939. The inset is a schematic plan of the centre: the university, the Polytechnic and the building of the Scottish Café at 27 Shevchenko Avenue. The map shows present-day borders only; no historical borders are drawn. Sources: MacTutor; IEEE Computer Society; Mathematics Genealogy Project."
+      },
       "poster": "posters/lwow.webp"
     },
     {
       "id": "princeton",
-      "title": { "en": "Princeton" },
-      "text": { "en": "Placeholder text: the second stop is Princeton, New Jersey. The line shows the straight-line route over the globe from the previous stop. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "title": {
+        "en": "Princeton"
+      },
+      "text": {
+        "en": "In 1935 John von Neumann invited Ulam to the Institute for Advanced Study in Princeton, New Jersey. Ulam left Poland at the end of that year and arrived in New York in January 1936. The line is the straight-line route over the globe from Lwów, not the route he sailed. Source: MacTutor."
+      },
       "poster": "posters/princeton.webp"
     },
     {
       "id": "harvard",
-      "title": { "en": "Cambridge, Massachusetts" },
-      "text": { "en": "Placeholder text: the third stop is Cambridge, Massachusetts, the home of Harvard. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "title": {
+        "en": "Cambridge, Massachusetts"
+      },
+      "text": {
+        "en": "From Princeton Ulam joined Harvard's Society of Fellows in Cambridge, Massachusetts. In August 1939, a few weeks before the war, he sailed to New York with his 17-year-old brother Adam, and he was a Harvard lecturer for 1939 to 1940. In the autumn of 1939 he met Françoise Aron at a party in Cambridge. Source: MacTutor."
+      },
       "poster": "posters/harvard.webp"
     },
     {
       "id": "madison",
-      "title": { "en": "Madison" },
-      "text": { "en": "Placeholder text: the fourth stop is Madison, Wisconsin. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "title": {
+        "en": "Madison"
+      },
+      "text": {
+        "en": "Ulam taught at the University of Wisconsin in Madison from 1940 (some reference works give 1941) until 1943. He married Françoise Aron there on 19 August 1941 and became a United States citizen in 1943. Sources: MacTutor; LANL Center for Nonlinear Studies; Atomic Heritage Foundation."
+      },
       "poster": "posters/madison.webp"
     },
     {
       "id": "los-alamos",
-      "title": { "en": "Los Alamos" },
-      "text": { "en": "Placeholder text: the fifth stop is Los Alamos, New Mexico. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "title": {
+        "en": "Los Alamos"
+      },
+      "text": {
+        "en": "At von Neumann's suggestion Ulam was invited to Los Alamos in 1943, and he arrived there with Françoise on 4 February 1944. Apart from a short spell at the University of Southern California in 1945 and 1946, he stayed until 1965 and remained a consultant to the laboratory afterwards. Sources: MacTutor; Atomic Heritage Foundation; IEEE Computer Society."
+      },
       "poster": "posters/los-alamos.webp"
     },
     {
       "id": "boulder",
-      "title": { "en": "Boulder" },
-      "text": { "en": "Placeholder text: the sixth stop is Boulder, Colorado. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "title": {
+        "en": "Boulder"
+      },
+      "text": {
+        "en": "In 1965 Ulam took the chair of mathematics at the University of Colorado in Boulder. From 1974 to 1984 he was also Graduate Research Professor at the University of Florida; at his death he was professor of biomathematics at Colorado. Sources: MacTutor; IEEE Computer Society; University of Florida."
+      },
       "poster": "posters/boulder.webp"
     },
     {
       "id": "santa-fe",
-      "title": { "en": "Santa Fe" },
-      "text": { "en": "Placeholder text: the last stop is Santa Fe, New Mexico. The notes about this stop are filled in when the fact sheet has been cleared." },
+      "title": {
+        "en": "Santa Fe"
+      },
+      "text": {
+        "en": "Ulam died on 13 May 1984 in Santa Fe, New Mexico. His papers are held by the American Philosophical Society (Mss.Ms.Coll.54). Sources: MacTutor; LANL Center for Nonlinear Studies; IEEE Computer Society; American Philosophical Society."
+      },
       "poster": "posters/santa-fe.webp"
     }
   ],

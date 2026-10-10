@@ -106,5 +106,6 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0092](0092-vps-cloudflare-hosting-reference.md) | Production reference: one VPS behind Cloudflare, flat tenant hosts, a tunnel and R2 | Proposed |
 | [0093](0093-public-showcase-endpoint-and-landing-hero-interactives.md) | A public showcase endpoint and hero interactives on the demo landings | Proposed |
 | [0094](0094-interactive-demo-courses-from-module-files.md) | Interactive demo courses are written as Markdown module files and seeded through the domain services | Proposed |
+| [0095](0095-ulam-course-facts-sources-and-images.md) | The Ulam course: every statement traced to a fact sheet, sources numbered, four licensed photographs | Proposed |
 
 <!-- END GENERATED: adr-index -->

@@ -1,7 +1,7 @@
 // @ts-check
 import { connect } from "./vendor/interactive-bridge.js";
 import { startShell } from "./vendor/ulam-shell.js";
-import { countOn, describeElementary, elementaryNext, lifeStep, placePreset, singleCell, uwStart, uwStep } from "./logic.js";
+import { countOn, describeElementary, elementaryNext, lifeStep, placePreset, singleCell, suStart, suStep } from "./logic.js";
 
 const $ = (/** @type {string} */ s) => /** @type {any} */ (document.querySelector(s));
 const canvas = /** @type {HTMLCanvasElement} */ ($("#ca"));
@@ -22,14 +22,14 @@ const MODES = {
 const HINTS = {
   elementary: "Each row is the next generation: a cell's new state depends on itself and its two neighbours, and the rule number encodes the answer for all eight cases. Try rules 30, 90 and 110, or any number from 0 to 255.",
   life: "Cells live on with two or three live neighbours and are born with exactly three. Focus the picture, move with the arrow keys and press Space to toggle a cell. The grid wraps around its edges.",
-  uw: "An off cell turns on when exactly one of its four neighbours was on. This growth rule is shown as an illustration of a pattern grown from one cell, not as a reconstruction of any historical experiment.",
+  uw: "The Schrandt-Ulam rule (R. G. Schrandt and S. M. Ulam; OEIS A170896): cells that are on stay on. A cell turns on when exactly one of its four edge-neighbours is on and that neighbour turned on in the last generation, unless the two cells touching it at the far corners are already on, or it is a far corner of another new cell.",
 };
 
 const state = {
   mode: "elementary", rule: 30, gen: 0,
   /** @type {Uint8Array[]} */ rows: [],
   life: new Uint8Array(LIFE_W * LIFE_H), lifeGen: 0, cursor: { x: 0, y: 0 },
-  uw: new Uint8Array(UW_SIZE * UW_SIZE), uwAge: new Uint8Array(UW_SIZE * UW_SIZE), uwGen: 0,
+  uw: suStart(UW_SIZE), uwAge: new Uint8Array(UW_SIZE * UW_SIZE), uwGen: 0,
   playing: false, held: false,
 };
 let cell = 3, px = 0;
@@ -39,7 +39,7 @@ let shell = null;
 
 function resetElementary() { state.rows = [singleCell(WIDTH)]; state.gen = 0; }
 function resetLife() { state.life = placePreset($("#preset").value, LIFE_W, LIFE_H); state.lifeGen = 0; }
-function resetUw() { state.uw = uwStart(UW_SIZE); state.uwAge = new Uint8Array(UW_SIZE * UW_SIZE); state.uwGen = 0; }
+function resetUw() { state.uw = suStart(UW_SIZE); state.uwAge = new Uint8Array(UW_SIZE * UW_SIZE); state.uwGen = 0; }
 function resetCurrent() {
   state.playing = false;
   if (state.mode === "elementary") resetElementary(); else if (state.mode === "life") resetLife(); else resetUw();
@@ -54,9 +54,8 @@ function stepOnce() {
     state.life = lifeStep(state.life, LIFE_W, LIFE_H); state.lifeGen++;
   } else {
     if (state.uwGen >= UW_MAX) return false;
-    const before = state.uw;
-    state.uw = uwStep(before, UW_SIZE); state.uwGen++;
-    for (let i = 0; i < before.length; i++) if (state.uw[i] && !before[i]) state.uwAge[i] = state.uwGen;
+    state.uw = suStep(state.uw, UW_SIZE); state.uwGen++;
+    for (let i = 0; i < state.uw.fresh.length; i++) if (state.uw.fresh[i]) state.uwAge[i] = state.uwGen;
   }
   return true;
 }
@@ -92,7 +91,7 @@ function draw() {
   } else {
     for (let y = 0; y < UW_SIZE; y++) for (let x = 0; x < UW_SIZE; x++) {
       const i = y * UW_SIZE + x;
-      if (!state.uw[i]) continue;
+      if (!state.uw.on[i]) continue;
       ctx.fillStyle = state.uwAge[i] === state.uwGen && state.uwGen > 0 ? "#b23a2e" : "#1d3b8f";
       ctx.fillRect(x * cell, y * cell, cell, cell);
     }
@@ -102,7 +101,7 @@ function draw() {
 function statusText() {
   if (state.mode === "elementary") return `${describeElementary(state.rule, state.gen, state.rows[state.gen])} ${state.gen >= MAX_ELEMENTARY ? "The picture is full: reset to start again." : ""}`.trim();
   if (state.mode === "life") return `Generation ${state.lifeGen}: ${countOn(state.life)} live cells.`;
-  return `Generation ${state.uwGen}: ${countOn(state.uw)} cells on${state.uwGen >= UW_MAX ? " (the largest picture this page draws)" : ""}.`;
+  return `Generation ${state.uwGen}: ${countOn(state.uw.on)} cells on${state.uwGen >= UW_MAX ? " (the largest picture this page draws)" : ""}.`;
 }
 
 function refresh() {
@@ -111,7 +110,7 @@ function refresh() {
   canvas.setAttribute("aria-label",
     state.mode === "elementary" ? `Rule ${state.rule} from one cell, ${state.gen} generations drawn, one row each, ${countOn(state.rows[state.gen])} cells on in the last row.`
     : state.mode === "life" ? `Game of Life grid, generation ${state.lifeGen}, ${countOn(state.life)} live cells. Arrow keys move the cursor, Space toggles a cell.`
-    : `Growth from one cell, generation ${state.uwGen}, ${countOn(state.uw)} cells on.`);
+    : `Growth from one cell, generation ${state.uwGen}, ${countOn(state.uw.on)} cells on.`);
   $("#play").textContent = state.playing ? "Pause" : "Play";
   $("#play").setAttribute("aria-pressed", String(state.playing));
 }

@@ -144,14 +144,16 @@ php artisan ulams:demo:seed --skip-content --domain=coffee.localhost
 `ULAMS_DEMO_EXPERIENCE`, then the tenant slug). `--skip-content` only grants the demo student
 access to the published courses, for example after courses were created by hand.
 
-### The gravity and poland packages
+### The gravity, poland and ulam packages
 
-The `gravity` and `poland` experiences play interactive packages from `demo-content/`, which the API
-container cannot see (it mounts only `api/`). `make -C api demo-packages` builds both on the host
-(Chromium is needed for the gravity posters) and puts `gravity.zip` and `poland.zip` in
+The `gravity`, `poland` and `ulam` experiences play interactive packages from `demo-content/`, which the API
+container cannot see (it mounts only `api/`). `make -C api demo-packages` builds them on the host
+(Chromium is needed for the gravity posters) and puts `gravity.zip`, `poland.zip` and the five `ulam-*.zip`
+(`ulam-spiral`, `ulam-monte-carlo`, `ulam-automaton`, `ulam-scottish-book`, `ulam-lwow-map`) in
 `api/database/seeds/Demo/assets/cache/interactive/`, where the seeder reads them. A missing zip stops the
 seeding with a message that names it, instead of leaving the courses without their lessons. On a server, build
-the two zips once and copy them to that folder. Re-seeding with the same zip reuses the package; a changed
+the zips once and copy them to that folder. The ulam course also reads four photographs from
+`api/database/seeds/Demo/assets/ulam/images/` (committed, so nothing is fetched at seed time). Re-seeding with the same zip reuses the package; a changed
 zip becomes a new version of it.
 
 ## Configuration

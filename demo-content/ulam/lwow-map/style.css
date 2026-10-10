@@ -1,5 +1,3 @@
-.lm-banner { margin: 0 0 12px; padding: 8px 12px; background: #fff3cd; border: 1px solid #c9a227; border-left-width: 4px; color: #4a3b00; }
-.lm-banner[hidden] { display: none; }
 .lm-map-wrap { position: relative; height: clamp(260px, 52vh, 460px); background: #cfdeea; border: 1px solid var(--ix-line); overflow: hidden; }
 #map, #fx { position: absolute; inset: 0; width: 100%; height: 100%; display: block; border: 0; background: none; }
 #map .grat path { fill: none; stroke: rgba(30, 34, 48, 0.1); stroke-width: 1; vector-effect: non-scaling-stroke; }

@@ -7,10 +7,11 @@ basemap). The map shows present-day country borders only and says so. Every stop
 list under the map, and each leg is described in text (the two places and the distance). Complete it with the
 topic's `on_range_end` rule; the package never sends `complete`.
 
-**Placeholder content.** `data/route.json` and `data/places.json` hold real place names and coordinates (Wikidata,
-CC0) but only placeholder years, notes, addresses and inset positions (`"placeholder": true`); the package says so
-on screen and `demo-content/tests/unit/ulam-lwow-map.test.mjs` pins it. They are filled in M9b from the cleared fact
-sheet; no historical border is ever drawn.
+**Content.** `data/route.json` holds the stops and their years, `data/places.json` the schematic inset (the university,
+the Polytechnic and the café building at 27 Shevchenko Avenue, positioned from their Wikidata coordinates, CC0, and
+spread out so the labels fit), and the notes of each stop are the step texts of `ulams-interactive.json`. Every note
+states only facts of the fact sheet (`demo-content/ulam/facts.json`, ids 1.x) and names its sources; where reference works
+differ the note says so ("1940, some reference works give 1941"). No historical border is ever drawn.
 
 - `logic.js`: great-circle distances and lines, the legs and their lengths, the view box around a stop, the leg
   sentence. Unit tests check known distances (a quarter of the equator, a degree of latitude), the leg lengths of

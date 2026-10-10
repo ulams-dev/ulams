@@ -166,6 +166,13 @@ describe("landing showcase", () => {
     expect(props).not.toHaveProperty("courseId");
   });
 
+  it("gives a background package the fixed hero window and an inline one its own height, within limits", () => {
+    expect(showcaseProps(launch({ display: "background", height: 700 })).height).toBe(440);
+    expect(showcaseProps(launch({ display: "inline", height: 720 })).height).toBe(720);
+    expect(showcaseProps(launch({ display: "inline", height: 300 })).height).toBe(440);
+    expect(showcaseProps(launch({ display: "inline", height: 2000 })).height).toBe(900);
+  });
+
   it("fetches the public endpoint without credentials and treats any failure as none", async () => {
     const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ data: launch() }) });
     vi.stubGlobal("fetch", fetchMock);

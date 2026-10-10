@@ -6,6 +6,46 @@ code or listed below.
 | Package | Third-party material |
 |---|---|
 | `spiral` | none (the sieve of Eratosthenes and Euler's polynomial are mathematics, not material) |
-| `lwow-map` | Map: Natural Earth (public domain) through `world-atlas` 2.0.2 (ISC), simplified (`poland/scripts/build-topo.mjs`, copied into `data/`). Place coordinates: Wikidata (CC0) |
+| `lwow-map` | Map: Natural Earth (public domain) through `world-atlas` 2.0.2 (ISC), simplified (`poland/scripts/build-topo.mjs`, copied into `data/`). Place coordinates: Wikidata (CC0): Lviv University (Q80207), Lviv Polytechnic (Q1817355), the Scottish Café building (Q1737363); the stops of the route are the places named in `data/route.json` |
+| `scottish-book` | The nine cards paraphrase the problems in the sources named on each card; no text of the Mauldin edition is reproduced |
+| `automaton` | The Schrandt-Ulam rule is a mathematical rule (OEIS A170896 is the reference for the counts, which the unit test checks) |
 
 The shared files in each package's `vendor/` are MIT: `@ulams/interactive-bridge` and `ulam-shell`.
+
+## The course
+
+The course text (`api/database/seeds/Demo/content/ulam/modules/`) is CC BY 4.0. It rests on `facts.json` and `sources.json`
+in this folder, which record every statement with the sources it was checked against (the fact sheet is
+`docs/plans/interactive-demos-ulam-facts.md`, section 10 for the images).
+
+### Photographs
+
+Four photographs are shown in the course. They were downloaded once by `demo-content/ulam/scripts/fetch-images.mjs`
+from Wikimedia Commons, resized, converted to WebP and stored in `api/database/seeds/Demo/assets/ulam/images/`. Their
+licences were read on each file page on 2026-10-09 and again on 2026-10-10. Each is shown with its credit line, and the
+last lesson of the course repeats the credits and the laboratory's notice.
+
+| File | Commons page | Licence | Credit shown |
+|---|---|---|---|
+| `ulam-badge.webp` (360 px) | File:Ulam-stanislaw_m.jpg | PD-LosAlamos: Los Alamos National Laboratory allows any use if the notice below is reproduced | "Photo: Los Alamos National Laboratory" |
+| `ulam-portrait.webp` (360 px) | File:Stanislaw_Ulam.tif (about 1945) | PD-LosAlamos, as above | "Photo: Los Alamos National Laboratory" |
+| `fermiac.webp` (240 px) | File:Fermiac.jpg | CC BY-SA 1.0 | "Photo: Mark Pellegrini, CC BY-SA 1.0, via Wikimedia Commons" |
+| `scottish-cafe-building.webp` (400 px) | File:Lviv_Shevchenka_Pr_27_RB.jpg | CC BY-SA 4.0 | "Photo: Rbrechko, CC BY-SA 4.0, via Wikimedia Commons" |
+
+The two CC BY-SA photographs are resized (a change, as the licence asks to say) and keep their share-alike licence: the
+CC BY 4.0 of the course text does not apply to them. The Ukrainian building has no freedom-of-panorama exception to rely
+on; it is a listed historic monument and the photograph was kept (#151 asked the owner to confirm).
+
+Notice that Los Alamos National Laboratory requires on every copy of its photographs (Wikimedia Commons, Template:PD-LosAlamos):
+
+> Unless otherwise indicated, this information has been authored by an employee or employees of the Los Alamos National
+> Security, LLC (LANS), operator of the Los Alamos National Laboratory under Contract No. DE-AC52-06NA25396 with the
+> U.S. Department of Energy. The U.S. Government has rights to use, reproduce, and distribute this information. The public
+> may copy and use this information without charge, provided that this Notice and any statement of authorship are
+> reproduced on all copies. Neither the Government nor LANS makes any warranty, express or implied, or assumes any
+> liability or responsibility for the use of this information.
+
+Not used, by the decision recorded in the fact sheet: "Ulam holding the FERMIAC" (unknown photographer, a federal tag that
+does not fit a contractor-run laboratory), both photographs of Scottish Book pages (the handwritten entries may still be in
+copyright) and every photograph that relies on Polish-law public domain.
+

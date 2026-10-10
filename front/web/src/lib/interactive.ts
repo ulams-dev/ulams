@@ -148,14 +148,20 @@ function playerProps(result: InteractiveLaunch, courseLanguage?: string | null):
   };
 }
 
+/** The hero stage height of a package that plays full-bleed (gravity, poland): the stage is a fixed window onto it. */
+const HERO_HEIGHT = 440;
+
 /**
  * Props of the landing hero's live package (the Hero `showcase` prop): the first interactive topic of the first
- * public course, as the public showcase endpoint returns it. Nothing is tracked, so no topic or course id.
+ * public course, as the public showcase endpoint returns it. Nothing is tracked, so no topic or course id. A topic
+ * that plays inline (a small widget with its own step card, such as the Ulam spiral) brings its own height, so the
+ * card and the picture both fit; a background topic gets the fixed hero window.
  */
 export function showcaseProps(launch: InteractiveLaunch, courseLanguage?: string | null): Record<string, unknown> {
   const m = launch.manifest;
   const locale = pickLocale(m, courseLanguage);
-  return { ...playerProps(launch, courseLanguage), title: pick(m.title, locale, m.defaultLocale), height: 440 };
+  const height = launch.topic.display === "inline" ? Math.min(900, Math.max(HERO_HEIGHT, launch.topic.height)) : HERO_HEIGHT;
+  return { ...playerProps(launch, courseLanguage), title: pick(m.title, locale, m.defaultLocale), height };
 }
 
 /** The public showcase of a tenant (no login): null when no public course has an interactive topic, or on any failure. */
