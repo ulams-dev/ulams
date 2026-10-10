@@ -95,9 +95,9 @@ the builder (it is software someone uploaded and answers for).
 
 After the lessons are written you see the extra parts in the lesson preview (**Self-check 1**, the
 activity, each with its citations); you can ask the assistant to change a self-check like any other
-question. To change a lesson's format later, ask in that lesson's chat or choose the format in a new
-outline. Switching a lesson back to rich text removes its LiaScript document or H5P content when you
-apply.
+question. You can switch a written lesson back to rich text in the outline editor; the LiaScript document or
+H5P content is removed when you apply. Another format is written together with the lesson, so
+choose it in the outline before generating.
 
 ## 4. Watch the lessons being written
 
@@ -161,6 +161,22 @@ appears at the same moment.
   those, so you can see what the course leaves out. Under a section, **Show elements** jumps to each
   lesson, paragraph or question that cites it (an objective jumps to its lesson). When you select an element
   in the tree, the sections it rests on are highlighted. Select a section's name to read the passage.
+
+### Give me options
+
+Select an element, describe the change and press **Give me 2 options** (or write "give me options" in the message).
+The builder makes two proposals, one model call each, so it costs about twice a normal edit (the button says so). They appear
+side by side as word-level diffs with their citations. **Use Option A** (or B) approves it and rejects the other; **Keep the
+current text** rejects both. Nothing changes until you choose.
+
+### Edit the structure
+
+**Edit the structure** (above the Sources panel) lists modules and lessons. Drag a lesson or module to a new place, or use the
+buttons: **Move up**, **Move down**, **Move to previous module**, **Move to next module** (every action has a button, so the
+keyboard works without dragging). **Rename** edits the title in place, **Remove** asks before it deletes, and **Add a lesson** needs
+a title, a learning objective and the source section the lesson is based on (a new lesson has no text yet; ask the assistant to write it).
+A lesson keeps its objectives, citations, text and quiz when you move it. Every change is saved at once as a new version (no
+approval needed), re-applied to your academy, and can be undone.
 
 ## 8. Preview as a learner
 

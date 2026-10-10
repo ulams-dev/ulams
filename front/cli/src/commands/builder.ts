@@ -27,6 +27,18 @@ const READ = ["builder:read"];
 const WRITE = ["builder:write"];
 const STABLE = ["interviewing", "outline_review", "apply_review", "applied"];
 
+const outlineBody = (i: { action: string; id?: string; title?: string; index?: number; module?: string; kind?: string; objective?: string; citation?: string; "content-type"?: string }) => ({
+  action: i.action.replace("-", "_"),
+  ...(i.id ? { id: i.id } : {}),
+  ...(i.title ? { title: i.title } : {}),
+  ...(i.index !== undefined ? { index: i.index } : {}),
+  ...(i.module ? { moduleId: i.module } : {}),
+  ...(i.kind ? { kind: i.kind } : {}),
+  ...(i.objective ? { objective: i.objective } : {}),
+  ...(i.citation ? { citations: [i.citation] } : {}),
+  ...(i["content-type"] ? { contentType: i["content-type"] } : {}),
+});
+
 const session = z.string().describe("Builder session id (from `ulams builder sessions list`).");
 
 function planOf(method: string, path: string, body?: unknown): Plan {
@@ -756,6 +768,56 @@ export const builderCommands: AnyCommand[] = [
     plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/new-site`, { ...(i.slug ? { slug: i.slug } : {}), ...(i.name ? { name: i.name } : {}) }),
     async run(ctx, i) {
       return { data: await builderCall(ctx, "POST", "/sessions/{session}/new-site", { params: { session: i.session }, body: { ...(i.slug ? { slug: i.slug } : {}), ...(i.name ? { name: i.name } : {}) } }) };
+    },
+  }),
+
+  defineCommand({
+    ...common,
+    id: "builder.outline-edit",
+    summary: "Edit the course structure: rename, move, add or remove modules and lessons",
+    description:
+      "Saves the change as an approved author version (no approval step) and re-applies the course when it is applied. `--action rename --id <id> --title <t>`; `move --id <id> --index <n> [--module <id>]` (0-based position in the target list); `add --kind lesson|module --title <t> --objective <o> --citation <frg_id> [--module <id>]`; `remove --id <id>`; `set-format --id <lesson> --content-type richtext|liascript|h5p|interactive`. Ids come from `builder versions get <version> --document`.",
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: ["POST /api/admin/course-builder/sessions/{session}/outline"],
+    positionals: ["session"],
+    input: z.object({
+      session,
+      action: z.enum(["rename", "move", "add", "remove", "set-format"]),
+      id: z.string().optional().describe("Module or lesson id."),
+      title: z.string().optional(),
+      index: z.number().int().min(0).optional().describe("Target position (0-based, after the element is taken out)."),
+      module: z.string().optional().describe("Target module id (move a lesson to it, or add a lesson to it)."),
+      kind: z.enum(["lesson", "module"]).optional(),
+      objective: z.string().optional().describe("Learning objective of an added lesson."),
+      citation: z.string().optional().describe("Fragment id an added lesson rests on."),
+      "content-type": z.enum(["richtext", "liascript", "h5p", "interactive"]).optional(),
+    }),
+    output: z.unknown(),
+    examples: [{ title: "Move a lesson up", argv: "builder outline-edit <session> --action move --id <lesson> --index 0 --json" }],
+    plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/outline`, outlineBody(i)),
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "POST", "/sessions/{session}/outline", { params: { session: i.session }, body: outlineBody(i) }) };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "builder.variants",
+    summary: "Ask for 2 or 3 options for one element and compare them",
+    description:
+      "Starts a variant run: one model call per option (the cost is count times a chat edit). The options are proposed versions that share a group; choose one with `builder patches approve <version>` (the other options stay proposed until you reject them) or `builder patches reject <version>`. Read them with `builder versions list <session>`.",
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: ["POST /api/admin/course-builder/sessions/{session}/elements/{element}/variants"],
+    positionals: ["session", "element"],
+    input: z.object({ session, element: z.string().describe("Element id (from `builder elements list`)."), instruction: z.string().describe("What to change, in plain words."), count: z.number().int().min(2).max(3).default(2) }),
+    output: z.unknown(),
+    examples: [{ title: "Two options", argv: 'builder variants <session> <element> --instruction "Harder distractors" --json' }],
+    plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/elements/${i.element}/variants`, { count: i.count, instruction: i.instruction }),
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "POST", "/sessions/{session}/elements/{element}/variants", { params: { session: i.session, element: i.element }, body: { count: i.count, instruction: i.instruction } }) };
     },
   }),
 

@@ -93,6 +93,25 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
     ],
     highlighted: ["frg_aaaaaaaaaaa1"],
   },
+  VariantComparison: {
+    group: "01aaaaaaaaaaaaaaaaaaaaaaaa",
+    elementId: "q1",
+    elementLabel: "Lesson 1.1 › Q1",
+    instruction: "Make the wrong answers harder",
+    status: "proposed",
+    variants: [
+      { versionId: "01v1", label: "Option A", reply: "Closer distractors.", status: "proposed", changes: [{ path: "q1.stem", label: "Lesson 1.1 › Q1 · Question", kind: "changed", before: "How much water?", after: "How much water for 20 g?" }], citations: [cite(1)] },
+      { versionId: "01v2", label: "Option B", status: "proposed", changes: [{ path: "q1.explanation", label: "Lesson 1.1 › Q1 · Explanation", kind: "changed", before: "Because ratio.", after: "Because the ratio is 1:16." }], citations: [] },
+    ],
+  },
+  OutlineEditor: {
+    modules: [
+      { id: "m1", title: "Extraction", lessons: [{ id: "l1", title: "What extraction means", minutes: 10, written: true }, { id: "l2", title: "Strength", minutes: 5, written: false }] },
+      { id: "m2", title: "Brewing", lessons: [{ id: "l3", title: "Ratios", minutes: 10, written: true }] },
+    ],
+    sections: [{ fragmentId: "frg_aaaaaaaaaaa1", label: "§1 Brewing ratios" }],
+    message: "Moved lesson “Strength” up.",
+  },
   PublishSummary: {
     title: "Brewing basics",
     url: "http://coffee.app.localhost/courses/12",

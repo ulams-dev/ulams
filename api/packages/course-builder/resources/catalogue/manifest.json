@@ -1956,6 +1956,279 @@
         "additionalProperties": false
       }
     },
+    "VariantComparison": {
+      "description": "Two or three proposals for one element, side by side, each as a word-level diff against the current text with its citations. Choose one to approve it (the others are rejected) or reject all; nothing changes until the author chooses.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "group": {
+            "type": "string",
+            "description": "Variant group id",
+            "maxLength": 32
+          },
+          "elementId": {
+            "type": "string",
+            "description": "Element the options are for",
+            "maxLength": 32
+          },
+          "elementLabel": {
+            "type": "string",
+            "description": "Element shown to the author, e.g. Lesson 2.1 › Q2",
+            "maxLength": 200
+          },
+          "instruction": {
+            "type": "string",
+            "description": "The author's request",
+            "maxLength": 1000
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "chosen",
+              "rejected"
+            ],
+            "description": "Whether the author has decided"
+          },
+          "variants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "versionId": {
+                  "type": "string",
+                  "description": "Proposed version",
+                  "maxLength": 32
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Option A, Option B, …",
+                  "maxLength": 40
+                },
+                "reply": {
+                  "type": "string",
+                  "description": "What the assistant says about this option",
+                  "maxLength": 1000
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "proposed",
+                    "approved",
+                    "rejected",
+                    "superseded"
+                  ],
+                  "description": "Decision state of this option"
+                },
+                "changes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "path": {
+                        "type": "string",
+                        "description": "Field path",
+                        "maxLength": 200
+                      },
+                      "label": {
+                        "type": "string",
+                        "description": "Readable field name",
+                        "maxLength": 200
+                      },
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "added",
+                          "removed",
+                          "changed"
+                        ],
+                        "description": "Change"
+                      },
+                      "before": {
+                        "type": "string",
+                        "description": "Old text",
+                        "maxLength": 20000
+                      },
+                      "after": {
+                        "type": "string",
+                        "description": "New text",
+                        "maxLength": 20000
+                      }
+                    },
+                    "required": [
+                      "path",
+                      "label",
+                      "kind"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Changes against the current element",
+                  "maxItems": 40
+                },
+                "citations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "fragmentId": {
+                        "type": "string",
+                        "description": "Fragment id (frg_…)",
+                        "maxLength": 16
+                      },
+                      "label": {
+                        "type": "string",
+                        "description": "Section label shown on the chip, e.g. §2.3 Brewing ratios",
+                        "maxLength": 120
+                      }
+                    },
+                    "required": [
+                      "fragmentId",
+                      "label"
+                    ],
+                    "additionalProperties": false,
+                    "description": "A source citation"
+                  },
+                  "description": "Fragments the option cites",
+                  "maxItems": 10
+                }
+              },
+              "required": [
+                "versionId",
+                "label",
+                "status",
+                "changes"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The options",
+            "maxItems": 3
+          }
+        },
+        "required": [
+          "group",
+          "elementId",
+          "elementLabel",
+          "status",
+          "variants"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "OutlineEditor": {
+      "description": "The course structure as an editable tree: move modules and lessons with drag and drop or with buttons (up, down, into the previous or next module), rename, add and remove. Every change is saved as a new version of the course without needing approval; objectives, citations and content move with their lesson.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "modules": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Module id",
+                  "maxLength": 32
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Module title",
+                  "maxLength": 200
+                },
+                "lessons": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Lesson id",
+                        "maxLength": 32
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "Lesson title",
+                        "maxLength": 200
+                      },
+                      "minutes": {
+                        "type": "integer",
+                        "description": "Minutes",
+                        "minimum": 0
+                      },
+                      "written": {
+                        "type": "boolean",
+                        "description": "The lesson has its text"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "title"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Lessons",
+                  "maxItems": 30
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "lessons"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Modules",
+            "maxItems": 20
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fragmentId": {
+                  "type": "string",
+                  "description": "Fragment id (frg_…)",
+                  "maxLength": 16
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Section label",
+                  "maxLength": 200
+                }
+              },
+              "required": [
+                "fragmentId",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Source sections a new lesson can rest on",
+            "maxItems": 400
+          },
+          "focusId": {
+            "type": "string",
+            "description": "Element that keeps the keyboard focus after a change",
+            "maxLength": 32
+          },
+          "message": {
+            "type": "string",
+            "description": "What the last change did, announced to screen readers",
+            "maxLength": 500
+          },
+          "busy": {
+            "type": "boolean",
+            "description": "A change is being saved"
+          }
+        },
+        "required": [
+          "modules"
+        ],
+        "additionalProperties": false
+      }
+    },
     "ApplySummary": {
       "description": "What applying the blueprint will create, update and delete in the LMS, with warnings; approve to apply.",
       "modelSelectable": false,

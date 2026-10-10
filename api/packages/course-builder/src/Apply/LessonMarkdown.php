@@ -16,6 +16,9 @@ final class LessonMarkdown
     {
         $parts = [];
         $cited = [];
+        if (($lesson['blocks'] ?? []) === []) {
+            return "*This lesson has no text yet.*\n";
+        }
         foreach ($lesson['blocks'] as $block) {
             $markdown = self::sanitise(trim((string) $block['markdown']));
             if ($block['kind'] === 'callout') {

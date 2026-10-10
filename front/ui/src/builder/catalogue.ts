@@ -448,6 +448,83 @@ export const builderCatalogue = {
     ),
     fallback: (p) => `Proposed change to ${s(p.elementLabel)}: ${arr(p.changes).length} edits.`,
   },
+  VariantComparison: {
+    description:
+      "Two or three proposals for one element, side by side, each as a word-level diff against the current text with its citations. Choose one to approve it (the others are rejected) or reject all; nothing changes until the author chooses.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        group: str("Variant group id", 32),
+        elementId: str("Element the options are for", 32),
+        elementLabel: str("Element shown to the author, e.g. Lesson 2.1 › Q2", 200),
+        instruction: str("The author's request", 1000),
+        status: oneOf(["proposed", "chosen", "rejected"], "Whether the author has decided"),
+        variants: list(
+          obj(
+            {
+              versionId: str("Proposed version", 32),
+              label: str("Option A, Option B, …", 40),
+              reply: str("What the assistant says about this option", 1000),
+              status: oneOf(["proposed", "approved", "rejected", "superseded"], "Decision state of this option"),
+              changes: list(
+                obj(
+                  {
+                    path: str("Field path", 200),
+                    label: str("Readable field name", 200),
+                    kind: oneOf(["added", "removed", "changed"], "Change"),
+                    before: str("Old text", 20000),
+                    after: str("New text", 20000),
+                  },
+                  ["path", "label", "kind"]
+                ),
+                "Changes against the current element",
+                40
+              ),
+              citations: list(CITATION, "Fragments the option cites", 10),
+            },
+            ["versionId", "label", "status", "changes"]
+          ),
+          "The options",
+          3
+        ),
+      },
+      ["group", "elementId", "elementLabel", "status", "variants"]
+    ),
+    fallback: (p) => `${arr(p.variants).length} options for ${s(p.elementLabel)}.`,
+  },
+  OutlineEditor: {
+    description:
+      "The course structure as an editable tree: move modules and lessons with drag and drop or with buttons (up, down, into the previous or next module), rename, add and remove. Every change is saved as a new version of the course without needing approval; objectives, citations and content move with their lesson.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        modules: list(
+          obj(
+            {
+              id: str("Module id", 32),
+              title: str("Module title", 200),
+              lessons: list(
+                obj({ id: str("Lesson id", 32), title: str("Lesson title", 200), minutes: int("Minutes"), written: bool("The lesson has its text") }, ["id", "title"]),
+                "Lessons",
+                30
+              ),
+            },
+            ["id", "title", "lessons"]
+          ),
+          "Modules",
+          20
+        ),
+        sections: list(obj({ fragmentId: str("Fragment id (frg_…)", 16), label: str("Section label", 200) }, ["fragmentId", "label"]), "Source sections a new lesson can rest on", 400),
+        focusId: str("Element that keeps the keyboard focus after a change", 32),
+        message: str("What the last change did, announced to screen readers", 500),
+        busy: bool("A change is being saved"),
+      },
+      ["modules"]
+    ),
+    fallback: (p) => `Course structure: ${arr(p.modules).map((m) => `${s(m.title)} (${arr(m.lessons).length} lessons)`).join("; ")}.`,
+  },
   ApplySummary: {
     description: "What applying the blueprint will create, update and delete in the LMS, with warnings; approve to apply.",
     modelSelectable: false,

@@ -2,6 +2,7 @@
 
 namespace Ulams\CourseBuilder\Pipeline;
 
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Blueprint\Checks;
@@ -34,6 +35,39 @@ final class PatchService
 
     public function propose(Session $session, Run $run, string $elementId, string $message): Version
     {
+        $made = $this->generate($session, $run, $elementId, $message);
+        $this->events->text($session, $run, (string) $made['reply']);
+        $this->surfaces->patch($session, $run, $made['version'], $elementId, $made['label'], $message, 'proposed', $this->preview((string) $made['ui'], $made['type'], $made['replacement']));
+
+        return $made['version'];
+    }
+
+    /**
+     * "Give me options": `count` proposals for one element, made together and compared side by side.
+     * Each is a normal proposed patch version; they share `variant_group`. One model call each, so the
+     * cost is count × a chat edit.
+     *
+     * @return Version[]
+     */
+    public function variants(Session $session, Run $run, string $elementId, string $message, int $count): array
+    {
+        $count = max(2, min(3, $count));
+        $group = Blueprint::newId();
+        $made = [];
+        for ($i = 1; $i <= $count; $i++) {
+            $made[] = $this->generate($session, $run, $elementId, $message . "\n(Option {$i} of {$count}: take a clearly different approach from the other options.)", $group);
+        }
+        $this->events->text($session, $run, sprintf('Here are %d options for %s. Compare them and choose one; nothing changes until you do.', $count, $made[0]['label']));
+        $this->surfaces->variants($session, $run, $group, $elementId, $made[0]['label'], $message, array_map(fn ($m) => ['version' => $m['version'], 'reply' => (string) $m['reply']], $made), 'proposed');
+
+        return array_column($made, 'version');
+    }
+
+    /**
+     * @return array{version:Version,reply:string,ui:string,type:string,label:string,replacement:array}
+     */
+    private function generate(Session $session, Run $run, string $elementId, string $message, ?string $group = null): array
+    {
         $current = $session->currentVersion;
         if ($current === null || !in_array($current->kind, VersionService::CONTENT_KINDS, true)) {
             throw new InvalidArgumentException('Chat edits are available once the lessons are generated.');
@@ -64,11 +98,43 @@ final class PatchService
         $replacement = self::merge($type, $found['node'], $result->data['replacement']);
         $newDoc = Blueprint::setAt($doc, $found['path'], $replacement);
         $version = $this->versions->create($session, $newDoc, 'patch', 'ai', Version::PROPOSED, $current, $message, $elementId, $result->callIds);
+        if ($group !== null) {
+            $version->forceFill(['variant_group' => $group])->save();
+        }
 
-        $this->events->text($session, $run, (string) $result->data['reply']);
-        $this->surfaces->patch($session, $run, $version, $elementId, $found['label'], $message, 'proposed', $this->preview((string) $result->data['ui'], $type, $replacement));
+        return ['version' => $version, 'reply' => (string) $result->data['reply'], 'ui' => (string) $result->data['ui'], 'type' => $type, 'label' => $found['label'], 'replacement' => $replacement];
+    }
 
-        return $version;
+    /** Approves one option and rejects the others of its group, in one transaction. */
+    public function chooseVariant(Session $session, ?Run $run, Version $version, int $userId): void
+    {
+        $group = (string) $version->variant_group;
+        $siblings = $group === '' ? collect() : Version::query()->where('session_id', $session->id)->where('variant_group', $group)->where('id', '!=', $version->id)->where('status', Version::PROPOSED)->get();
+        DB::transaction(function () use ($siblings, $session, $version, $userId) {
+            foreach ($siblings as $other) {
+                $this->versions->reject($other, $userId);
+            }
+            $this->versions->approve($version, $userId);
+            $this->versions->setCurrent($session, $version);
+        });
+        event(new ElementPatched($session, (string) $version->element_id));
+        if ($group !== '') {
+            $this->surfaces->close($session, "variants-{$group}");
+            $this->surfaces->variants($session, $run, $group, (string) $version->element_id, (string) (Blueprint::find($version->document, (string) $version->element_id)['label'] ?? 'Element'), (string) $version->reason, array_map(fn (Version $v) => ['version' => $v->refresh(), 'reply' => ''], [$version, ...$siblings->all()]), 'chosen');
+        }
+    }
+
+    /** Rejects every open option of a group. */
+    public function rejectVariants(Session $session, ?Run $run, string $group, int $userId): void
+    {
+        $open = Version::query()->where('session_id', $session->id)->where('variant_group', $group)->where('status', Version::PROPOSED)->get();
+        foreach ($open as $v) {
+            $this->versions->reject($v, $userId);
+        }
+        if ($open->isNotEmpty()) {
+            $first = $open->first();
+            $this->surfaces->variants($session, $run, $group, (string) $first->element_id, (string) (Blueprint::find($first->document, (string) $first->element_id)['label'] ?? 'Element'), (string) $first->reason, array_map(fn (Version $v) => ['version' => $v->refresh(), 'reply' => ''], $open->all()), 'rejected');
+        }
     }
 
     /** The fields of an element the model may change (no generated ids of the element itself). */

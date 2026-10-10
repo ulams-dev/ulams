@@ -312,6 +312,12 @@
   "tag": "Admin Course Builder"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/elements/{element}/variants",
+  "summary": "Give me options: 2 or 3 proposals for one element, compared side by side",
+  "tag": "Admin Course Builder"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/course-builder/sessions/{session}/events",
   "summary": "AG-UI event stream (SSE)",
@@ -321,6 +327,12 @@
   "method": "POST",
   "path": "/api/admin/course-builder/sessions/{session}/new-site",
   "summary": "Create a new site and move the session there (platform operators; TENANCY_NEW_SITES)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/outline",
+  "summary": "Edit the course structure: rename, move, add, remove, set the lesson format",
   "tag": "Admin Course Builder"
  },
  {

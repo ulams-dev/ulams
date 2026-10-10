@@ -23,7 +23,7 @@ export interface TimelineOptions {
   onCustom?: (name: string, value: Record<string, unknown>) => void;
 }
 
-const ACTIONABLE = new Set(["interview", "outline", "apply", "patch"]);
+const ACTIONABLE = new Set(["interview", "outline", "apply", "patch", "variants"]);
 
 export class Timeline {
   state = {} as BuilderState;

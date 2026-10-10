@@ -370,3 +370,16 @@ a.cb-fresh:hover { border-color: var(--ulams-studio-iris); }
 .cb-publish-list li { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
 .cb-check { display: flex; gap: 10px; align-items: center; min-height: 44px; margin-top: 12px; }
 .cb-check input { width: 24px; height: 24px; }
+
+/* outline editor and variant comparison */
+.cb-outline-modules, .cb-outline-lessons { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.cb-outline-lessons { padding-inline-start: 16px; margin-top: 6px; }
+.cb-outline-module { border: 1px solid var(--ulams-studio-line); border-radius: 8px; padding: 8px; }
+.cb-outline-lesson { border-radius: 6px; }
+.cb-outline-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.cb-outline-title { flex: 1 1 12rem; }
+.cb-drag-handle { cursor: grab; color: var(--ulams-studio-muted); }
+.cb-add { margin-top: 8px; }
+.cb-add-form { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.cb-variant-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 12px; }
+.cb-variant-approved { border-color: var(--ulams-studio-success); }

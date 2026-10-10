@@ -6316,6 +6316,60 @@
     ]
    }
   },
+  "/api/admin/course-builder/sessions/{session}/elements/{element}/variants": {
+   "post": {
+    "operationId": "21e45e3ef74e3187aab29fdd00ceb204",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "element",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "count": {
+          "type": "integer"
+         },
+         "instruction": {
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "202": {
+      "description": "run id"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Give me options: 2 or 3 proposals for one element, compared side by side",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
   "/api/admin/course-builder/sessions/{session}/events": {
    "get": {
     "description": "AG-UI events over SSE (ADR 0011). On connect: a STATE_SNAPSHOT (not stored, no id), then every\nstored event after `Last-Event-ID` (or `?after=`), then new events as they are appended. The\nconnection closes after `course_builder.sse.max_seconds` (25 s) so PHP-FPM workers are not held;\nthe client reconnects with the last id. Between polls the loop watches the session's \"last event\"\nkey in the cache and only queries the table when it moved (polling fallback every 500 ms).",
@@ -6390,6 +6444,55 @@
      }
     ],
     "summary": "Create a new site and move the session there (platform operators; TENANCY_NEW_SITES)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/sessions/{session}/outline": {
+   "post": {
+    "operationId": "31903ec4c0f6fb9b3d9d8730730626d4",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "action": {
+          "type": "string"
+         },
+         "id": {
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "new author version, re-apply run"
+     },
+     "422": {
+      "description": "the edit is not valid"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Edit the course structure: rename, move, add, remove, set the lesson format",
     "tags": [
      "Admin Course Builder"
     ]
