@@ -57,7 +57,7 @@ const PaymentForm: React.FC<Props> = ({
         <Col lg={6}>
           <div className="input-wrapper--custom">
             <Input
-              label={t<string>("Cart.FullName")}
+              label={t("Cart.FullName")}
               type="text"
               onChange={(e) =>
                 setBillingDetails({
@@ -73,7 +73,7 @@ const PaymentForm: React.FC<Props> = ({
           <div className="input-wrapper">
             <CardNumberElement options={options} id="cardNumber" />
             <label className={styles.label} htmlFor="cardNumber">
-              {t<string>("Card number")}
+              {t("Card number")}
             </label>
           </div>
         </Col>
@@ -83,14 +83,16 @@ const PaymentForm: React.FC<Props> = ({
           <div className="input-wrapper">
             <CardExpiryElement options={options} id="cardExpiry" />
             <label className={styles.label} htmlFor="cardExpiry">
-              {t<string>("Expiration date")}
+              {t("Expiration date")}
             </label>
           </div>
         </Col>
         <Col lg={6}>
           <div className="input-wrapper">
             <CardCvcElement options={options} id="cardCVC" />
-            <label className={styles.label} htmlFor="cardCVC">CVC</label>
+            <label className={styles.label} htmlFor="cardCVC">
+              CVC
+            </label>
           </div>
         </Col>
       </Row>

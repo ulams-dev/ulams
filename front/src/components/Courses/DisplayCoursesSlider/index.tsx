@@ -42,7 +42,7 @@ const DisplayCourses: React.FC<Props> = ({
             mode="outline"
             onClick={() => history.push(routeRoutes.courses)}
           >
-            {t<string>("Homepage.AwardedCoursesBtnText")}
+            {t("Homepage.AwardedCoursesBtnText")}
           </Button>
         )}
       </div>

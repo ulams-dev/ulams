@@ -91,7 +91,7 @@ export const CourseAgendaLesson: React.FC<CourseAgendaLessonProps> = ({
       className={`${styles.item} lesson__item ${open ? "open" : "closed"} ${
         isAncestor && !isRootAncestor && open ? "full-border" : ""
       } ${!isSubLesson ? "bottom-border" : ""} ${isMobile ? "mobile" : ""}`}
-      aria-label={`${t<string>("Course.Lesson")} ${index + 1}`}
+      aria-label={`${t("Course.Lesson")} ${index + 1}`}
     >
       <Header
         lesson={lesson}

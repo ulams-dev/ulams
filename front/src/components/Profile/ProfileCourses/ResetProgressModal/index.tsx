@@ -43,14 +43,14 @@ export const ResetProgressModal: FC<Props> = ({
       onClose={onClose}
     >
       <>
-        <Title level={4}>{t<string>("ResetProgressModal.Continue")}</Title>
-        <Text> {t<string>("ResetProgressModal.RestartCourse")}</Text>
+        <Title level={4}>{t("ResetProgressModal.Continue")}</Title>
+        <Text> {t("ResetProgressModal.RestartCourse")}</Text>
         <Row $gap={16}>
           <Button mode="primary" onClick={handleResetProgress}>
-            {t<string>("ResetProgressModal.WantContinue")}
+            {t("ResetProgressModal.WantContinue")}
           </Button>
           <Button mode="primary" onClick={onClose}>
-            {t<string>("ResetProgressModal.Cancel")}
+            {t("ResetProgressModal.Cancel")}
           </Button>
         </Row>
       </>

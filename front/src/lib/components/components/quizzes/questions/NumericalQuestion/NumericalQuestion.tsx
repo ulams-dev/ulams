@@ -34,7 +34,7 @@ const NumericalQuestion: React.FC<Props> = ({
       showScore={hasQuizEnded}
     >
       <Input
-        placeholder={t<string>("Quiz.TypeNumber")}
+        placeholder={t("Quiz.TypeNumber")}
         type="number"
         name={`${id}`}
         id={getUniqueId(`Numerical-${id}`)}

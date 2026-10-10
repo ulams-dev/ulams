@@ -244,7 +244,7 @@ export const Navigation: React.FC<NavigationProps> = (props) => {
                 onClick={() => setMobileMenuOpen(true)}
                 onKeyUp={() => setMobileMenuOpen(true)}
                 role="button"
-                aria-label={t<string>("Navigation.ShowHideMenu")}
+                aria-label={t("Navigation.ShowHideMenu")}
                 tabIndex={0}
               >
                 <span className="menu-bar"></span>

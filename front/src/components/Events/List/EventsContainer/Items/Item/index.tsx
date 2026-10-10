@@ -48,9 +48,7 @@ const EventsContainerItem = ({ event, actions }: Props) => {
       }
       categories={
         <CategoriesBreadCrumbs
-          categories={
-            event.categories as Ulams.Categories.Models.Category[]
-          }
+          categories={event.categories as Ulams.Categories.Models.Category[]}
           onCategoryClick={(id) => {
             history.push(`/events/?categories[]=${id}`);
           }}
@@ -79,7 +77,7 @@ const EventsContainerItem = ({ event, actions }: Props) => {
           {event.users_count && event.users_count > 0 ? (
             <IconText
               icon={<UserIcon />}
-              text={`${event.users_count} ${t<string>("Students")}`}
+              text={`${event.users_count} ${t("Students")}`}
             />
           ) : (
             ""

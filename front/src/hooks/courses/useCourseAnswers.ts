@@ -53,7 +53,7 @@ export const useCourseAnswers = ({ questionId, courseId }: Props) => {
             }
           })
           .catch((error) => {
-            toast(t<string>("UnexpectedError"), error);
+            toast(t("UnexpectedError"), error);
             console.log(error);
           })
           .finally(() => setLoading(false));

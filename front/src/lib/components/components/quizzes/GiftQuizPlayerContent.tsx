@@ -222,7 +222,7 @@ export const GiftQuizPlayerContent: React.FC<Props> = ({
           <Stack $gap={8}>
             <Row $justifyContent="space-between">
               <Title className="quiz__title">
-                {t<string>("Quiz.Questions")}
+                {t("Quiz.Questions")}
               </Title>
               <Row $gap={24} $alignItems="center">
                 {attempt?.is_ended ? (
@@ -238,7 +238,7 @@ export const GiftQuizPlayerContent: React.FC<Props> = ({
                         resetForm();
                       }}
                     >
-                      {t<string>("Quiz.Retry")}
+                      {t("Quiz.Retry")}
                     </Button>
                   </>
                 ) : (
@@ -250,7 +250,7 @@ export const GiftQuizPlayerContent: React.FC<Props> = ({
                       />
                     )}
                     <Button type="submit" mode="primary">
-                      {t<string>("Quiz.Submit")}
+                      {t("Quiz.Submit")}
                     </Button>
                   </>
                 )}
@@ -262,9 +262,9 @@ export const GiftQuizPlayerContent: React.FC<Props> = ({
                 $alignItems="center"
                 $justifyContent="space-between"
               >
-                {t<string>("Quiz.YouHaveMade")}
+                {t("Quiz.YouHaveMade")}
                 {` ${attempts.count} `}
-                {t<string>("Quiz.Attempts")}
+                {t("Quiz.Attempts")}
                 <Button className={styles.closeButton} onClick={closeTooltip} />
               </Row>
             )}

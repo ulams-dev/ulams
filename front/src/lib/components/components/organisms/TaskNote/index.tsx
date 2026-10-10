@@ -30,8 +30,8 @@ export const AddTaskNote: React.FC<{
       {loading && <Spin />}
       <TextArea
         name="note"
-        label={t<string>("Tasks.Note")}
-        placeholder={t<string>("Tasks.AddNote")}
+        label={t("Tasks.Note")}
+        placeholder={t("Tasks.AddNote")}
         value={value}
         onChange={(e) => setValue(e.target.value)}
       />
@@ -41,7 +41,7 @@ export const AddTaskNote: React.FC<{
         mode="secondary"
         onClick={() => onAddNote()}
       >
-        {t<string>("Tasks.AddNote")}
+        {t("Tasks.AddNote")}
       </Button>
     </div>
   );
@@ -85,7 +85,7 @@ export const EditTaskNote: React.FC<{
           <TextArea
             textAreaRef={textAreaRef}
             name="note"
-            placeholder={t<string>("Tasks.EditNote")}
+            placeholder={t("Tasks.EditNote")}
             value={value}
             onChange={(e) => setValue(e.target.value)}
           />
@@ -97,14 +97,14 @@ export const EditTaskNote: React.FC<{
                   type="button"
                   onClick={() => setValue(note.note)}
                 >
-                  {t<string>("Tasks.Undo")}
+                  {t("Tasks.Undo")}
                 </Button>
                 <Button
                   mode="secondary"
                   type="button"
                   onClick={() => onEditNote()}
                 >
-                  {t<string>("Tasks.Save")}
+                  {t("Tasks.Save")}
                 </Button>
               </>
             )}
@@ -113,7 +113,7 @@ export const EditTaskNote: React.FC<{
               type="button"
               onClick={() => onDeleteNote()}
             >
-              {t<string>("Tasks.Delete")}
+              {t("Tasks.Delete")}
             </Button>
           </Row>
         </div>

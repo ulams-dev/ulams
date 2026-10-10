@@ -38,7 +38,7 @@
     "marked": "18.1.0"
   },
   "peerDependencies": {
-    "astro": "^5.18.0"
+    "astro": "^5.18.0 || ^7.3.8"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

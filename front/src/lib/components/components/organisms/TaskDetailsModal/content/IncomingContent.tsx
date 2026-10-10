@@ -75,7 +75,7 @@ export const IncomingContent: React.FC<Props> = ({
           <div className={styles.notesContainer}>
             <Row $alignItems="center" $gap={4}>
               <Icon name="note" />
-              <Title level={5}>{t<string>("Tasks.Notes")}</Title>
+              <Title level={5}>{t("Tasks.Notes")}</Title>
             </Row>
             <Stack $gap={8}>
               {task.value?.notes && task.value.notes.length > 0 ? (
@@ -85,7 +85,7 @@ export const IncomingContent: React.FC<Props> = ({
                   </div>
                 ))
               ) : (
-                <Text>{t<string>("Tasks.NoNotes")}</Text>
+                <Text>{t("Tasks.NoNotes")}</Text>
               )}
             </Stack>
           </div>
@@ -98,8 +98,8 @@ export const IncomingContent: React.FC<Props> = ({
           <Input
             type="date"
             disabled
-            label={t<string>("Tasks.DueDate")}
-            placeholder={t<string>("Tasks.DueDate")}
+            label={t("Tasks.DueDate")}
+            placeholder={t("Tasks.DueDate")}
             name="due_date"
             id="due_date"
             value={format(new Date(taskForAction.due_date), "yyyy-MM-dd")}

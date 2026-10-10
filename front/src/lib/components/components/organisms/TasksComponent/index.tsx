@@ -156,12 +156,12 @@ export const TasksComponent: FC<TasksComponentProps> = ({
       taskShowAction.showDone ? sortedTasks : toDoTasks;
 
     switch (type) {
-      case t<string>("Tasks.TodayTasks"):
+      case t("Tasks.TodayTasks"):
         const today = getTaskArray().filter((task) =>
           isToday(new Date(task.due_date))
         );
         return checkCreateBy(today, create);
-      case t<string>("Tasks.UpcomingTasks"):
+      case t("Tasks.UpcomingTasks"):
         const upcoming = getTaskArray().filter(
           (task) =>
             isAfter(new Date(task.due_date), new Date()) &&
@@ -169,7 +169,7 @@ export const TasksComponent: FC<TasksComponentProps> = ({
         );
         return checkCreateBy(upcoming, create);
 
-      case t<string>("Tasks.OverdueTasks"):
+      case t("Tasks.OverdueTasks"):
         const overdue = getTaskArray().filter(
           (task) =>
             isBefore(new Date(task.due_date), new Date()) &&
@@ -184,11 +184,11 @@ export const TasksComponent: FC<TasksComponentProps> = ({
     {
       id: 0,
       icon: <Icon name="list" />,
-      text: t<string>("Tasks.AllTasks"),
+      text: t("Tasks.AllTasks"),
       numberOfItems: tasksList
         ? filterTasks(
             tasksList as TasksType[],
-            t<string>("Tasks.AllTasks"),
+            t("Tasks.AllTasks"),
             createBy.type
           ).length
         : 0,
@@ -196,11 +196,11 @@ export const TasksComponent: FC<TasksComponentProps> = ({
     {
       id: 1,
       icon: <Icon name="listCheck" />,
-      text: t<string>("Tasks.TodayTasks"),
+      text: t("Tasks.TodayTasks"),
       numberOfItems: tasksList
         ? filterTasks(
             tasksList as TasksType[],
-            t<string>("Tasks.TodayTasks"),
+            t("Tasks.TodayTasks"),
             createBy.type
           ).length
         : 0,
@@ -208,11 +208,11 @@ export const TasksComponent: FC<TasksComponentProps> = ({
     {
       id: 2,
       icon: <Icon name="listAdd" />,
-      text: t<string>("Tasks.UpcomingTasks"),
+      text: t("Tasks.UpcomingTasks"),
       numberOfItems: tasksList
         ? filterTasks(
             tasksList as TasksType[],
-            t<string>("Tasks.UpcomingTasks"),
+            t("Tasks.UpcomingTasks"),
             createBy.type
           ).length
         : 0,
@@ -220,11 +220,11 @@ export const TasksComponent: FC<TasksComponentProps> = ({
     {
       id: 3,
       icon: <Icon name="listSubstract" />,
-      text: t<string>("Tasks.OverdueTasks"),
+      text: t("Tasks.OverdueTasks"),
       numberOfItems: tasksList
         ? filterTasks(
             tasksList as TasksType[],
-            t<string>("Tasks.OverdueTasks"),
+            t("Tasks.OverdueTasks"),
             createBy.type
           ).length
         : 0,
@@ -284,9 +284,9 @@ export const TasksComponent: FC<TasksComponentProps> = ({
     <>
       <div className={styles.container}>
         <div className={styles.header}>
-          <Title level={4}>{t<string>("Tasks.TasksHeader")}</Title>
+          <Title level={4}>{t("Tasks.TasksHeader")}</Title>
           <Button onClick={addTaskButton.onClick} mode="secondary">
-            {t<string>("Tasks.AddTask")}
+            {t("Tasks.AddTask")}
           </Button>
         </div>
         <div className={styles.body}>
@@ -303,7 +303,7 @@ export const TasksComponent: FC<TasksComponentProps> = ({
               <DropdownMenu
                 child={
                   <Text size="12" noMargin>
-                    {`${t<string>("Tasks.CreateBy")}: ${t<string>(
+                    {`${t("Tasks.CreateBy")}: ${t(
                       `Tasks.${createBy.type}`
                     )}`}
                   </Text>
@@ -313,7 +313,7 @@ export const TasksComponent: FC<TasksComponentProps> = ({
               <DropdownMenu
                 child={
                   <Text size="12" noMargin>
-                    {`${t<string>("Tasks.Sort")}: ${t<string>(
+                    {`${t("Tasks.Sort")}: ${t(
                       `Tasks.${sortOptions.type}`
                     )}`}
                   </Text>
@@ -360,7 +360,7 @@ export const TasksComponent: FC<TasksComponentProps> = ({
                   </Row>
                   <div className={styles.taskDateWrapper}>
                     <div className={styles.taskDate} data-date={checkedDate}>
-                      <Text>{t<string>(`Tasks.${checkedDate}`)}</Text>
+                      <Text>{t(`Tasks.${checkedDate}`)}</Text>
                     </div>
 
                     <DropdownMenu
@@ -375,7 +375,7 @@ export const TasksComponent: FC<TasksComponentProps> = ({
               );
             })}
             {tasksToShowInList().length === 0 && (
-              <Text>{t<string>("Tasks.NoTasks")}</Text>
+              <Text>{t("Tasks.NoTasks")}</Text>
             )}
           </div>
         </div>
@@ -388,10 +388,10 @@ export const TasksComponent: FC<TasksComponentProps> = ({
               tasksPagination.setCurrentPage(tasksPagination.currentPage - 1)
             }
           >
-            {t<string>("Bookmarks.Prev")}
+            {t("Bookmarks.Prev")}
           </Button>
 
-          <Title>{`${t<string>("Bookmarks.Page")} ${
+          <Title>{`${t("Bookmarks.Page")} ${
             tasksPagination.currentPage
           } / ${tasksPagination.lastPage || 1}`}</Title>
           <Button
@@ -402,7 +402,7 @@ export const TasksComponent: FC<TasksComponentProps> = ({
               tasksPagination.setCurrentPage(tasksPagination.currentPage + 1)
             }
           >
-            {t<string>("Bookmarks.Next")}
+            {t("Bookmarks.Next")}
           </Button>
         </div>
       </div>

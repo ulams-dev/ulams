@@ -197,7 +197,7 @@ export const MyProfileForm: React.FC<Props> = ({
                 <Text type="danger">{errors.error}</Text>
               )}
               <Input
-                label={t<string>("First name")}
+                label={t("First name")}
                 type="text"
                 name="first_name"
                 onChange={handleChange}
@@ -208,7 +208,7 @@ export const MyProfileForm: React.FC<Props> = ({
               />
 
               <Input
-                label={t<string>("Last name")}
+                label={t("Last name")}
                 type="text"
                 name="last_name"
                 onChange={handleChange}
@@ -219,7 +219,7 @@ export const MyProfileForm: React.FC<Props> = ({
               />
 
               <Input
-                label={t<string>("Email")}
+                label={t("Email")}
                 className="form-control grey"
                 type="email"
                 name="email"
@@ -231,7 +231,7 @@ export const MyProfileForm: React.FC<Props> = ({
               />
 
               <Input
-                label={t<string>("Phone")}
+                label={t("Phone")}
                 type="text"
                 name="phone"
                 onChange={handleChange}
@@ -314,7 +314,7 @@ export const MyProfileForm: React.FC<Props> = ({
                 loading={isSubmitting || isFetching}
                 block
               >
-                {t<string>("MyProfileForm.Update")}
+                {t("MyProfileForm.Update")}
               </Button>
             </form>
           )}

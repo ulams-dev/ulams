@@ -49,7 +49,7 @@ const RatingsDesktop: React.FC<RatingsViewProps> = (props) => {
           </Title>
           <Rating ratingValue={avgRate} />
           <Text className="average-rate-label">
-            {t<string>("Ratings.averageRateLabel")}
+            {t("Ratings.averageRateLabel")}
           </Text>
         </div>
         <div className="rate-with-interval-container">
@@ -80,7 +80,7 @@ const RatingsMobile: React.FC<RatingsViewProps> = (props) => {
         <div>
           <Rating ratingValue={avgRate} />
           <Text className="average-rate-label">
-            {t<string>("Ratings.averageRateLabel")}
+            {t("Ratings.averageRateLabel")}
           </Text>
         </div>
       </div>

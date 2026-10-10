@@ -35,7 +35,7 @@ export const CourseProgramLesson: React.FC<Props> = ({
       <header>
         <div className="lesson__details">
           <Text noMargin size="12">
-            {t<string>(isSubLesson ? "Course.SubLesson" : "Course.Lesson")}{" "}
+            {t(isSubLesson ? "Course.SubLesson" : "Course.Lesson")}{" "}
             {index + 1}
           </Text>
           <Text noMargin size="12">

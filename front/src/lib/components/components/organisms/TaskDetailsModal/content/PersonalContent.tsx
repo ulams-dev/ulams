@@ -157,13 +157,13 @@ export const PersonalContent: React.FC<Props> = ({
               />
               <div className={styles.sectionHeader}>
                 <Input
-                  label={t<string>("Tasks.Title")}
+                  label={t("Tasks.Title")}
                   error={
                     touched.title && errors.title ? (
                       <p>{errors.title}</p>
                     ) : undefined
                   }
-                  placeholder={t<string>("Tasks.Title")}
+                  placeholder={t("Tasks.Title")}
                   id="title"
                   name="title"
                   value={values.title}
@@ -174,14 +174,14 @@ export const PersonalContent: React.FC<Props> = ({
                 <TextArea
                   name="description"
                   id="description"
-                  label={t<string>("Tasks.Description")}
-                  placeholder={t<string>("Tasks.Description")}
+                  label={t("Tasks.Description")}
+                  placeholder={t("Tasks.Description")}
                   value={values.description}
                   onChange={handleChange}
                 />
                 <RelatedTreeSelect
-                  label={t<string>("Tasks.RelatesTo")}
-                  notFoundContent={t<string>("Tasks.NoContent")}
+                  label={t("Tasks.RelatesTo")}
+                  notFoundContent={t("Tasks.NoContent")}
                   error={
                     touched.related && errors.related
                       ? errors.related
@@ -195,7 +195,7 @@ export const PersonalContent: React.FC<Props> = ({
                 <div className={styles.notesContainer}>
                   <Row $alignItems="center" $gap={4}>
                     <Icon name="note" />
-                    <Title level={5}>{t<string>("Tasks.Notes")}</Title>
+                    <Title level={5}>{t("Tasks.Notes")}</Title>
                   </Row>
                   <div>
                     {task.value?.notes && task.value.notes.length > 0 ? (
@@ -209,7 +209,7 @@ export const PersonalContent: React.FC<Props> = ({
                         </div>
                       ))
                     ) : (
-                      <Text>{t<string>("Tasks.NoNotes")}</Text>
+                      <Text>{t("Tasks.NoNotes")}</Text>
                     )}
                   </div>
                 </div>
@@ -223,10 +223,10 @@ export const PersonalContent: React.FC<Props> = ({
               className={styles.buttonsContainer}
               $justifyContent="flex-end" $gap={12}>
               <Button mode="secondary" type="button" onClick={closeModal}>
-                {t<string>("Tasks.Cancel")}
+                {t("Tasks.Cancel")}
               </Button>
               <Button mode="secondary" type="submit">
-                {t<string>("Tasks.Save")}
+                {t("Tasks.Save")}
               </Button>
             </Row>
           </div>
@@ -238,8 +238,8 @@ export const PersonalContent: React.FC<Props> = ({
                   <p>{errors.due_date}</p>
                 ) : undefined
               }
-              label={t<string>("Tasks.DueDate")}
-              placeholder={t<string>("Tasks.DueDate")}
+              label={t("Tasks.DueDate")}
+              placeholder={t("Tasks.DueDate")}
               name="due_date"
               id="due_date"
               onChange={handleChange}

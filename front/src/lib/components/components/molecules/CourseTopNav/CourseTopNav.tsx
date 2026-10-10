@@ -77,9 +77,9 @@ export const CourseTopNav: React.FC<CourseTopNavProps> = (props) => {
           className="icon-btn next-btn"
           onClick={() => onNext && onNext()}
           disabled={!hasNext || allButtonsDisabled}
-          aria-label={t<string>("Actions.ShowNext")}
+          aria-label={t("Actions.ShowNext")}
         >
-          {t<string>("CourseTopNav.next")}
+          {t("CourseTopNav.next")}
           <Icon name="chevronRight" />
         </Button>
       );
@@ -166,10 +166,10 @@ export const CourseTopNav: React.FC<CourseTopNavProps> = (props) => {
             mode="gray"
             onClick={() => onPrev && onPrev()}
             disabled={!hasPrev || allButtonsDisabled}
-            aria-label={t<string>("Actions.ShowPrevious")}
+            aria-label={t("Actions.ShowPrevious")}
           >
             <Icon name="chevronLeft" />
-            {t<string>("CourseTopNav.prev")}
+            {t("CourseTopNav.prev")}
           </Button>
 
           {!mobile && (

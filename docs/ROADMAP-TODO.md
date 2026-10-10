@@ -210,6 +210,15 @@ open Phase 0, 1 and 2 item as work packages L0-01â€¦L2-24; owner questions #41â€
 - [ ] (new) ESLint 10 in `admin` (umi lint, fabric config) and `front` (vite, `@typescript-eslint` 7, legacy `.eslintrc`);
       the other five packages are on eslint 10 already. The Dependabot major ignore for `eslint` and `@eslint/js`
       comes off when both move to flat config
+- [ ] (new) Prettier 3 in `admin` (2.8.8) and `front` (2.4.1): deferred, Dependabot major ignore for `prettier`. Front
+      has no prettier config or CI check (only the lint-staged step, which already skips `src/lib` and the other
+      front/* workspaces), so the upgrade would reformat all of `front/src` (about 600 files; trailing-comma default
+      changes) for no behavioural gain; admin's CI step resolves `prettier/bin-prettier.js`, which prettier 3 does not
+      ship. Do it as one dedicated formatting commit (with `.git-blame-ignore-revs`) together with the old front's retirement
+- [ ] (new) Stripe in the old `front` cart: `@stripe/react-stripe-js` 7 needs `@stripe/stripe-js` 10 (front has 1.54), a
+      6-major jump through Elements and PaymentElement code that no CI test exercises. Deferred, Dependabot major ignore for
+      both packages. Revisit with the Sylius checkout (the LMS cart is not the long-term payment path) or when the cart
+      gets an end-to-end test against Stripe test mode
 - [ ] (new) Replace MinIO with SeaweedFS (or RustFS) and give each tenant its own S3 identity (ADR 0041, plan L0-03)
 - [x] (new) `ulams:upgrade`: one idempotent per-tenant upgrade command (plan L0-19) (ADR 0081; the cmi5 and frame steps run once their commands land)
 - [x] (new) Fix `Cmi5Policy::delete` checking the read permission (new `cmi5_delete` permission, admins only; plan L0-09)

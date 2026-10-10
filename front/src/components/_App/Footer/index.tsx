@@ -102,27 +102,27 @@ const Footer = () => {
           ) : (
             <>
               <Link className={styles.singleLink} to={routeRoutes.home}>
-                <Text size="16">{t<string>("Footer.HomePage")}</Text>
+                <Text size="16">{t("Footer.HomePage")}</Text>
               </Link>
               <Link className={styles.singleLink} to={routeRoutes.courses}>
-                <Text size="16">{t<string>("Footer.Courses")}</Text>
+                <Text size="16">{t("Footer.Courses")}</Text>
               </Link>
               {user.value ? (
                 <Link className={styles.singleLink} to={routeRoutes.myProfile}>
-                  <Text size="16">{t<string>("Footer.UserProfile")}</Text>
+                  <Text size="16">{t("Footer.UserProfile")}</Text>
                 </Link>
               ) : (
                 <>
                   <Link className={styles.singleLink} to={routeRoutes.login}>
-                    <Text size="16">{t<string>("Header.Login")}</Text>
+                    <Text size="16">{t("Header.Login")}</Text>
                   </Link>
                   <Link className={styles.singleLink} to={routeRoutes.register}>
-                    <Text size="16">{t<string>("Header.Register")}</Text>
+                    <Text size="16">{t("Header.Register")}</Text>
                   </Link>
                 </>
               )}
               <Link className={styles.singleLink} to={routeRoutes.cart}>
-                <Text size="16">{t<string>("Footer.Cart")}</Text>
+                <Text size="16">{t("Footer.Cart")}</Text>
               </Link>
             </>
           )}
@@ -156,12 +156,16 @@ const Footer = () => {
 
         <div className={styles.euBanner}>
           <a href={EU_BANNER_LINK} target="_blank" rel="noopener noreferrer">
-            <img className={styles.euBannerImg} src={EuBanner} alt="tutor_avatar" />
+            <img
+              className={styles.euBannerImg}
+              src={EuBanner}
+              alt="tutor_avatar"
+            />
           </a>
         </div>
 
         <div className={styles.copyrights}>
-          <Text size="14">{t<string>("Footer.PoweredBy")}</Text>
+          <Text size="14">{t("Footer.PoweredBy")}</Text>
           <LmsLink href="https://www.ulams.app">
             <UlamsLogo className={styles.logoLight} />
             <UlamsLogo className={styles.logoDark} reversed />

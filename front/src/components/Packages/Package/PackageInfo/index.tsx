@@ -33,7 +33,7 @@ export const PackageInfo = () => {
               <div className="single-label">
                 <LabelListItem
                   mobile={isMobile}
-                  title={t<string>("CoursePage.Guarantee")}
+                  title={t("CoursePage.Guarantee")}
                   icon={<Medal />}
                 >
                   {t("CoursePage.Satisfaction")}
