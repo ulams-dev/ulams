@@ -126,6 +126,9 @@ return [
     */
 
     'failed' => [
+        // The failed_jobs table has a NOT NULL unique uuid column. Without this driver Laravel falls back
+        // to the legacy provider, which never writes the uuid, so every failure insert is rejected.
+        'driver' => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
         'database' => env('DB_CONNECTION', 'mysql'),
         'table' => 'failed_jobs',
     ],

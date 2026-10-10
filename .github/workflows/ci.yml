@@ -391,6 +391,90 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+  # Production, the MyDevil staging and the local demo stack install vendor without dev packages. Faker
+  # providers, model factories and testbench are missing there, so a runtime dependency on them passes
+  # PHPUnit and breaks in production. This job installs with --no-dev, boots the app and drives a Course
+  # Builder apply on the fake AI driver (api/scripts/nodev-smoke.php).
+  php-no-dev:
+    name: API boot and Course Builder apply (composer install --no-dev)
+    needs: changes
+    if: needs.changes.outputs.php == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: api
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_DB: default
+          POSTGRES_USER: default
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U default -d default"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      valkey:
+        image: valkey/valkey:8-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+      DB_DATABASE: default
+      DB_USERNAME: default
+      DB_PASSWORD: secret
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+      AI_DRIVER: fake
+      QUEUE_CONNECTION: sync
+      CACHE_DRIVER: array
+      SESSION_DRIVER: array
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Runtime code has no factories or dev-only packages
+        run: php scripts/check-runtime-deps.php
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: apcu, bcmath, exif, gd, intl, pcntl, pdo_pgsql, redis, zip
+          ini-values: memory_limit=2G
+          coverage: none
+          tools: composer:v2
+
+      - name: Copy CI environment
+        run: cp docker/envs/.env.ci.postgres .env
+
+      # Needs the database: package:discover boots the providers.
+      - name: Install Composer dependencies without dev packages
+        run: composer install --no-dev --no-interaction --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Dev packages are absent
+        run: test ! -d vendor/davidbadura && test ! -d vendor/phpunit
+
+      - name: Prepare database and Passport
+        run: |
+          php artisan migrate --force
+          php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"
+          php artisan db:seed --force --class="Ulams\CourseBuilder\Database\Seeders\CourseBuilderPermissionSeeder"
+          php artisan passport:keys --force
+          php artisan passport:client --personal --no-interaction
+
+      - name: php artisan about
+        run: php artisan about
+
+      - name: Course Builder apply on the fake driver, failed job recording
+        run: php scripts/nodev-smoke.php
+
   # The static images (admin, legacy front) run as non-root on nginx-unprivileged (ADR 0056):
   # build them, start them with settings in the environment and check what they serve.
   images:
@@ -460,7 +544,7 @@ jobs:
 
   ci-ok:
     name: CI OK
-    needs: [changes, js, demo-content, php, images, deploy]
+    needs: [changes, js, demo-content, php, php-no-dev, images, deploy]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -468,6 +552,6 @@ jobs:
       - name: Fail if any job failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: |
-          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} demo-content=${{ needs.demo-content.result }} php=${{ needs.php.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }}"
+          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} demo-content=${{ needs.demo-content.result }} php=${{ needs.php.result }} php-no-dev=${{ needs.php-no-dev.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }}"
           exit 1
       - run: echo "All required jobs passed or were skipped by the path filters."

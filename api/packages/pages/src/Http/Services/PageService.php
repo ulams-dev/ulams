@@ -49,12 +49,12 @@ class PageService implements PageServiceContract
     public function insert(string $slug, string $title, string $content, int $userId, bool $active): Page
     {
         /** @var Page $page */
-        $page = Page::factory()->newModel([
+        $page = new Page([
             'slug' => $slug,
             'title' => $title,
             'author_id' => $userId,
             'content' => $content,
-            'active' => $active
+            'active' => $active,
         ]);
         $this->repository->insert($page);
         if (!$page->exists()) {
