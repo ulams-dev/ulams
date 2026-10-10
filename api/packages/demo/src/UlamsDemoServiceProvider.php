@@ -76,7 +76,9 @@ class UlamsDemoServiceProvider extends ServiceProvider
         }
 
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
-            $parameters = ['--force' => true];
+            // a flag goes in as a bare entry: Schedule::command() renders `'--force' => true` as `--force=1`,
+            // which Symfony rejects for an option without a value (the reset then never ran)
+            $parameters = ['--force'];
             $domain = method_exists($this->app, 'domain') ? $this->app->domain() : null;
             if (is_string($domain) && $domain !== '') {
                 $parameters['--domain'] = $domain;
