@@ -19,7 +19,7 @@ RUN echo $APP_VERSION >> front/dist/version.html
 
 
 # Non-root static server (uid 101, port 8080). The tag is pinned by digest; bump both together.
-FROM nginxinc/nginx-unprivileged:1.29-alpine@sha256:0c79d56aee561a1d81c63f00eee5fb5fe29279560cdc55e91425133104c7fbe6 AS httpd
+FROM nginxinc/nginx-unprivileged:1.31-alpine@sha256:b9241c6e7b8e9a862f129d8d4199ab64b10390949a78bdd5603379b32c844083 AS httpd
 # Settings are read at start from the environment (names starting with VITE_APP_) and written to
 # /runtime-config.json, which index.html loads before the app boots (ADR 0056). Examples:
 #   VITE_APP_API_URL, VITE_APP_TENANT_API_HOST_PATTERN, VITE_APP_SENTRYDSN, VITE_APP_FIREBASE_*
