@@ -55,14 +55,30 @@ final class TopicWriter
         return $data;
     }
 
-    /** Deletes the document or content of a topic that is about to be deleted. Never throws: a leftover is harmless. */
-    public function release(int $topicId): void
+    /**
+     * What a topic points to outside the topics tables (a LiaScript document, an H5P content), to be
+     * deleted with `purge()` after the topic itself is gone (the topic row references it).
+     *
+     * @return array{liascript?:int,h5p?:int}
+     */
+    public function external(int $topicId): array
+    {
+        if ($document = $this->liascript($topicId)) {
+            return ['liascript' => (int) $document->getKey()];
+        }
+        $contentId = $this->h5pContentId($topicId);
+
+        return $contentId !== null ? ['h5p' => $contentId] : [];
+    }
+
+    /** Deletes what `external()` returned. Never throws: a leftover is harmless. */
+    public function purge(array $external): void
     {
         try {
-            if ($document = $this->liascript($topicId)) {
+            if (isset($external['liascript']) && ($document = LiaScriptDocument::query()->find($external['liascript']))) {
                 app(LiaScriptServiceContract::class)->delete($document);
-            } elseif (($contentId = $this->h5pContentId($topicId)) !== null) {
-                app(H5PServiceClientContract::class)->delete($contentId);
+            } elseif (isset($external['h5p'])) {
+                app(H5PServiceClientContract::class)->delete($external['h5p']);
             }
         } catch (Throwable $e) {
             report($e);

@@ -130,6 +130,26 @@ describe("interactions round-trip as A2UI actions", () => {
     expect(c.actions[0]).toMatchObject({ name: "approve_outline", context: { versionId: "01v", edits: [{ objectiveId: "o1", text: "Explain extraction in one sentence" }] } });
   });
 
+  it("the outline sends the lesson formats the author chose", () => {
+    const c = ctx();
+    const main = mount(single("OutlineDiff"), c);
+    const select = main.querySelector("select") as HTMLSelectElement;
+    expect(select.value).toBe("richtext");
+    select.value = "liascript";
+    select.dispatchEvent(new Event("change"));
+    expect(main.textContent).toContain("1 lesson format changed");
+    [...main.querySelectorAll("button")].find((b) => b.textContent?.includes("Approve outline"))!.click();
+    expect(c.actions[0]!.context.formats).toEqual([{ lessonId: "l1", contentType: "liascript" }]);
+  });
+
+  it("the lesson preview shows the format and lets the author select a self-check", () => {
+    const onSelect = vi.fn();
+    const main = mount(single("LessonPreviewCard"), ctx({ onSelect }));
+    expect(main.textContent).toContain("LiaScript · 1 self-check");
+    ([...main.querySelectorAll(".cb-extra button")].find((b) => b.textContent === "Edit in chat") as HTMLButtonElement).click();
+    expect(onSelect).toHaveBeenCalledWith("q9", "Self-check 1");
+  });
+
   it("request changes sends the comment", () => {
     const c = ctx();
     const main = mount(single("OutlineDiff"), c);

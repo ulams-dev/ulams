@@ -92,7 +92,7 @@ class LessonFormatsTest extends TestCase
         // only the LiaScript lesson got a follow-up step
         $this->assertSame(1, Step::query()->where('key', 'like', 'selfcheck:%')->where('status', 'done')->count());
         $this->assertSame(0, Step::query()->where('key', 'like', 'interaction:%')->count());
-        $this->assertSame('author', $session->currentVersion->origin, 'the choice is an author version on top of the outline');
+        $this->assertTrue(Version::query()->where('session_id', $session->id)->where('kind', 'outline')->where('origin', 'author')->where('reason', 'Lesson formats chosen by the author')->exists(), 'the choice is an author version on top of the outline');
     }
 
     public function testAnApplyCreatesALiaScriptTopicThatKeepsItsVersionsAndSwitchesBack(): void

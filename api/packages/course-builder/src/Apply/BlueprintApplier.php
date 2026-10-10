@@ -294,15 +294,14 @@ final class BlueprintApplier
                     }
                     continue;
                 }
-                if (in_array($type, ['topic', 'interaction_topic'], true)) {
-                    $this->writer->release($entry->entity_id);
-                }
+                $external = in_array($type, ['topic', 'interaction_topic'], true) ? $this->writer->external($entry->entity_id) : [];
                 match ($type) {
                     'gift_question' => $this->questions->delete($entry->entity_id),
                     'quiz_topic', 'interaction_topic', 'topic' => $this->topics->delete($entry->entity_id),
                     'lesson' => $this->lessons->delete($entry->entity_id),
                     'page' => $this->pages->deleteById($entry->entity_id),
                 };
+                $this->writer->purge($external);
                 $entry->delete();
                 unset($ids[$key]);
             }
@@ -363,8 +362,9 @@ final class BlueprintApplier
     {
         if ($existing !== null && ($current = $this->writer->classOf($existing)) !== null && $current !== $class) {
             // the lesson changed format (rich text ⇄ LiaScript): a topic cannot change its content class
-            $this->writer->release($existing);
+            $external = $this->writer->external($existing);
             $this->topics->delete($existing);
+            $this->writer->purge($external);
             $existing = null;
         }
         $fields = $this->writer->prepare($class, $item['data'], $existing, $authorId);
