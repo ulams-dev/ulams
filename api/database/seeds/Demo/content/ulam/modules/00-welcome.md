@@ -28,8 +28,8 @@ Every step of an interactive has a text version, so you can follow along without
 The course text is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/), © 2026 Mateusz Wojczal and the ulams contributors. The four photographs are under their own licences, listed in the last lesson.
 :::
 
-::: interactive title="Meet the spiral" package=ulam-spiral start=primes end=primes display=inline height=560 duration="5 min"
-Write the whole numbers on a square spiral and mark the primes. They crowd into diagonal lines. This is the Ulam spiral, and module 6 tells how it came about and lets you build one.
+::: interactive title="Meet the spiral" package=ulam-spiral start=grid end=primes display=inline height=760 duration="5 min"
+Write the whole numbers on a square spiral, then press Next step to mark the primes: they crowd into diagonal lines. This is the Ulam spiral, and module 6 tells how it came about and lets you build one.
 
 **Try this.** Look for the long diagonals. Do the primes seem to like some lines more than others?
 :::
