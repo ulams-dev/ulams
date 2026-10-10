@@ -258,6 +258,16 @@ export type OutlineEdit =
   | { action: "remove"; id: string }
   | { action: "set_format"; id: string; contentType: LessonFormat };
 
+export type GlobalEditKind = "translate" | "change_level" | "change_tone" | "custom";
+export interface GlobalEditResult {
+  /** `needs_confirmation` carries the estimate; `started` the run; a cost limit answers 409 with `blocked`. */
+  state: "needs_confirmation" | "started" | "blocked";
+  runId: string | null;
+  steps: number;
+  estimateMicroUsd: number;
+  message: string | null;
+}
+
 /** A2UI action sent back from a surface. */
 export interface A2uiAction {
   name: string;
@@ -417,6 +427,9 @@ export function createCourseBuilderClient(options: ClientOptions & { prefix?: st
     /** Saves a structure edit as an approved author version and re-applies the course. */
     editOutline: (sessionId: string, edit: OutlineEdit) =>
       call<{ currentVersionId: string; runId: string | null; state: BuilderState }>("POST", `/sessions/${id(sessionId)}/outline`, edit),
+    /** Whole-course edit. Without `confirmed` it only returns the estimate (steps, cost); with it the run starts. */
+    globalEdit: (sessionId: string, edit: { kind: GlobalEditKind; value?: string; text?: string; confirmed?: boolean }) =>
+      call<GlobalEditResult>("POST", `/sessions/${id(sessionId)}/global-edit`, edit),
     /** "Give me options": 2 or 3 proposals for one element, shown side by side (one model call each). */
     variants: (sessionId: string, elementId: string, instruction: string, count: 2 | 3 = 2) =>
       call<{ runId: string }>("POST", `/sessions/${id(sessionId)}/elements/${id(elementId)}/variants`, { count, instruction }),

@@ -266,15 +266,17 @@ final class PatchService
     {
         $this->versions->approve($version, $userId);
         $this->versions->setCurrent($session, $version);
-        event(new ElementPatched($session, (string) $version->element_id));
+        if ($version->element_id !== null) {
+            event(new ElementPatched($session, (string) $version->element_id));
+        }
         $found = Blueprint::find($version->document, (string) $version->element_id);
-        $this->surfaces->patch($session, $run, $version, (string) $version->element_id, $found['label'] ?? 'Element', (string) $version->reason, 'approved');
+        $this->surfaces->patch($session, $run, $version, (string) $version->element_id, $found['label'] ?? ($version->element_id === null ? 'Whole course' : 'Element'), (string) $version->reason, 'approved');
     }
 
     public function reject(Session $session, ?Run $run, Version $version, int $userId): void
     {
         $this->versions->reject($version, $userId);
         $found = Blueprint::find($version->document, (string) $version->element_id);
-        $this->surfaces->patch($session, $run, $version, (string) $version->element_id, $found['label'] ?? 'Element', (string) $version->reason, 'rejected');
+        $this->surfaces->patch($session, $run, $version, (string) $version->element_id, $found['label'] ?? ($version->element_id === null ? 'Whole course' : 'Element'), (string) $version->reason, 'rejected');
     }
 }

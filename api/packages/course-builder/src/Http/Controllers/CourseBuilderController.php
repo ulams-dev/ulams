@@ -24,6 +24,7 @@ use Ulams\CourseBuilder\Models\Step;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Pipeline\BriefService;
 use Ulams\CourseBuilder\Pipeline\GenerationService;
+use Ulams\CourseBuilder\Pipeline\GlobalEditService;
 use Ulams\CourseBuilder\Pipeline\OutlineEditor;
 use Ulams\CourseBuilder\Pipeline\OutlineService;
 use Ulams\CourseBuilder\Pipeline\PatchService;
@@ -67,6 +68,10 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="element", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="count", type="integer"), @OA\Property(property="instruction", type="string"))),
  *     @OA\Response(response=202, description="run id"))
+ * @OA\Post(path="/api/admin/course-builder/sessions/{session}/global-edit", summary="Whole-course edit: translate, change level or tone. Without confirmed=true it returns the estimate only", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="kind", type="string"), @OA\Property(property="value", type="string"), @OA\Property(property="confirmed", type="boolean"))),
+ *     @OA\Response(response=200, description="estimate, needs confirmation"), @OA\Response(response=202, description="run started"), @OA\Response(response=409, description="over the cost limit"))
  * @OA\Get(path="/api/admin/course-builder/fragments/{fragment}", summary="One source fragment (citation popover)", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="fragment", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="fragment"))
  * @OA\Get(path="/api/admin/course-builder/sessions/{session}/brief", summary="Course Brief", tags={"Admin Course Builder"}, security={{"passport": {}}},
@@ -117,6 +122,7 @@ class CourseBuilderController extends Controller
         private readonly Surfaces $surfaces,
         private readonly CitationIndex $citations,
         private readonly OutlineEditor $outlineEditor,
+        private readonly GlobalEditService $globalEdits,
     ) {
     }
 
@@ -481,6 +487,30 @@ class CourseBuilderController extends Controller
         $this->versions->setCurrent($s, $new);
 
         return $this->afterMove($request, $s, $new, $summary);
+    }
+
+    public function globalEdit(Request $request, string $session): JsonResponse
+    {
+        $s = $this->sessionFor($request, $session, 'update');
+        $data = $request->validate([
+            'kind' => ['required', 'string', 'in:' . implode(',', GlobalEditService::KINDS)],
+            'value' => ['nullable', 'string', 'max:20'],
+            'text' => ['nullable', 'string', 'max:1000'],
+            'confirmed' => ['nullable', 'boolean'],
+        ]);
+        try {
+            $result = $this->globalEdits->begin($s, $data, $request->boolean('confirmed'), (int) $request->user()->getKey());
+        } catch (InvalidArgumentException $e) {
+            return self::fail($e->getMessage(), 422);
+        } catch (BuilderException $e) {
+            return self::fail($e->getMessage(), $e->status);
+        }
+        $body = ['state' => $result['state'], 'runId' => $result['run']?->id, 'steps' => $result['steps'], 'estimateMicroUsd' => $result['estimateMicroUsd'], 'message' => $result['message']];
+        if ($result['state'] === 'blocked') {
+            return response()->json(['success' => false, 'message' => $result['message'], 'data' => $body], 409);
+        }
+
+        return self::ok($body, $result['state'] === 'started' ? 202 : 200);
     }
 
     public function variants(Request $request, string $session, string $element): JsonResponse

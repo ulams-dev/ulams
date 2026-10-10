@@ -1,5 +1,5 @@
 {
- "summary": "517/564 covered, 47 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "518/565 covered, 47 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -323,6 +323,12 @@
    "key": "GET /api/admin/course-builder/sessions/{session}/events",
    "summary": "AG-UI event stream (SSE)",
    "command": "builder.events",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/global-edit",
+   "summary": "Whole-course edit: translate, change level or tone. Without confirmed=true it returns the estimate only",
+   "command": "builder.global-edit",
    "status": "covered"
   },
   {

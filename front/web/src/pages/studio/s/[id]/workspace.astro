@@ -11,6 +11,26 @@ if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 }
     <nav class="st-ws-col" aria-labelledby="st-tree-title">
       <h2 id="st-tree-title" class="cb-eyebrow">Curriculum tree</h2>
       <div data-tree><p class="cb-muted">Loading the course…</p></div>
+      <details class="st-outline-edit" data-global-details>
+        <summary class="cb-eyebrow">Change the whole course</summary>
+        <form class="cb-add-form" data-global-form>
+          <label for="st-g-kind" class="cb-label">What to change</label>
+          <select id="st-g-kind" class="cb-input" data-global-kind>
+            <option value="translate">Translate the course</option>
+            <option value="change_level">Change the level</option>
+            <option value="change_tone">Change the tone</option>
+            <option value="custom">Something else</option>
+          </select>
+          <label for="st-g-value" class="cb-label" data-global-value-label>Language</label>
+          <select id="st-g-value" class="cb-input" data-global-value></select>
+          <label for="st-g-text" class="cb-label" data-global-text-label hidden>Describe the change</label>
+          <textarea id="st-g-text" class="cb-textarea" rows="3" maxlength="1000" data-global-text hidden></textarea>
+          <button type="submit" class="cb-btn cb-btn-small">Estimate the cost</button>
+          <p class="cb-muted cb-small" role="status" data-global-status></p>
+          <button type="button" class="cb-btn cb-btn-primary cb-btn-small" data-global-start hidden>Start the change</button>
+          <p class="cb-muted cb-small">You review the whole result as one diff before anything changes. Fragments of your sources stay in their own language.</p>
+        </form>
+      </details>
       <details class="st-outline-edit" data-outline-details>
         <summary class="cb-eyebrow">Edit the structure</summary>
         <div data-outline-editor><p class="cb-muted">Loading the course…</p></div>

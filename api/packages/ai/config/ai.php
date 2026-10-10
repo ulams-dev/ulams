@@ -44,6 +44,8 @@ return [
         'quiz' => ['profile' => env('AI_TASK_QUIZ_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
         'metadata' => ['profile' => env('AI_TASK_METADATA_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 4000],
         // lesson formats (ADR 0050): inline questions of a LiaScript lesson, an H5P activity, an interactive from the library
+        // whole-course edits: translate, change level or tone, one call per lesson
+        'global' => ['profile' => env('AI_TASK_GLOBAL_PROFILE', 'default'), 'effort' => 'low', 'max_tokens' => 32000],
         'selfcheck' => ['profile' => env('AI_TASK_SELFCHECK_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 8000],
         'interaction_h5p' => ['profile' => env('AI_TASK_INTERACTION_H5P_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 8000],
         'interaction_interactive' => ['profile' => env('AI_TASK_INTERACTION_INTERACTIVE_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 4000],

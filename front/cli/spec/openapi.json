@@ -6408,6 +6408,61 @@
     ]
    }
   },
+  "/api/admin/course-builder/sessions/{session}/global-edit": {
+   "post": {
+    "operationId": "231bc98695beabbf5bed9e8ce4cdc368",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "confirmed": {
+          "type": "boolean"
+         },
+         "kind": {
+          "type": "string"
+         },
+         "value": {
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "estimate, needs confirmation"
+     },
+     "202": {
+      "description": "run started"
+     },
+     "409": {
+      "description": "over the cost limit"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Whole-course edit: translate, change level or tone. Without confirmed=true it returns the estimate only",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
   "/api/admin/course-builder/sessions/{session}/new-site": {
    "post": {
     "operationId": "ffb4f52bc6989ec984b3ac71aad90de4",

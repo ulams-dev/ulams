@@ -37,6 +37,7 @@ Route::group([
     Route::post('sessions/{session}/undo', [CourseBuilderController::class, 'undo']);
     Route::post('sessions/{session}/redo', [CourseBuilderController::class, 'redo']);
 
+    Route::post('sessions/{session}/global-edit', [CourseBuilderController::class, 'globalEdit']);
     Route::post('sessions/{session}/outline', [CourseBuilderController::class, 'editOutline']);
     Route::post('sessions/{session}/elements/{element}/variants', [CourseBuilderController::class, 'variants']);
     Route::post('sessions/{session}/apply', [CourseBuilderController::class, 'apply']);

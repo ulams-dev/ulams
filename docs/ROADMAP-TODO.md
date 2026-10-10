@@ -441,8 +441,8 @@ approved apply through domain services → element chat edits. Designs:
 
 ### 2.5 Element-level chat editing
 - [x] Select element → chat → structured patch → diff → apply (course, module, lesson, block, question)
-- [ ] Blueprint versions: undo/redo/restore; global edits via queued pipeline (partial: undo, redo and
-      restore with re-apply done; global edits are M2.3)
+- [x] Blueprint versions: undo/redo/restore; global edits via queued pipeline (undo, redo and restore with
+      re-apply; translate, change level or tone as one proposed diff, with an estimate first; L2-15)
 
 ### 2.6 Author UX
 - [x] Upload → interview → live progress → tree + preview → element chat (e2e on the fake driver)

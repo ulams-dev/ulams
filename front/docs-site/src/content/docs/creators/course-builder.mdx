@@ -169,6 +169,20 @@ The builder makes two proposals, one model call each, so it costs about twice a 
 side by side as word-level diffs with their citations. **Use Option A** (or B) approves it and rejects the other; **Keep the
 current text** rejects both. Nothing changes until you choose.
 
+### Change the whole course
+
+**Change the whole course** (in the workspace, above **Edit the structure**) translates the course, changes its level
+(beginner, intermediate, advanced) or its tone, or follows a free instruction. Press **Estimate the cost** first: it
+shows how many model calls it makes (one per lesson, plus the course details and the final test) and about what they cost.
+**Start the change** begins it; you can close the tab. When it is done, **one diff** with every change appears in the
+conversation; approve it to update the course, reject it to keep everything as it is. If one lesson fails, retry only that part.
+
+The rewriting only changes text. Lesson, block, question and objective ids, the citations, the question types and which
+answer is correct stay as they were, so a translated course still cites the same passages (the passages stay in the
+language of your source, and the citation chips say so). After a level or tone change every quiz question is checked
+against its cited passage again. Lessons with an H5P activity or an interactive keep that activity as it is. A change that would cost more than
+`COURSE_BUILDER_GLOBAL_EDIT_MAX_USD` (default $3) is refused.
+
 ### Edit the structure
 
 **Edit the structure** (above the Sources panel) lists modules and lessons. Drag a lesson or module to a new place, or use the
