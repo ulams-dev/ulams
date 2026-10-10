@@ -156,6 +156,15 @@ demo-mode-on:
 demo-reset:
 	- docker compose exec api bash -c "XDEBUG_MODE=off php artisan ulams:demo:reset --force --domain=$(DOMAIN)"
 
+# reset all six demo tenants now, one after the other (gravity, poland and ulam need `make demo-packages` once)
+demo-reset-all:
+	- $(MAKE) demo-reset DOMAIN=coffee.localhost
+	- $(MAKE) demo-reset DOMAIN=oncall.localhost
+	- $(MAKE) demo-reset DOMAIN=nightsky.localhost
+	- $(MAKE) demo-reset DOMAIN=gravity.localhost
+	- $(MAKE) demo-reset DOMAIN=poland.localhost
+	- $(MAKE) demo-reset DOMAIN=ulam.localhost
+
 # Demo profile of the api container (php-profile.sh, docker-compose.demo.yml): production PHP
 # settings, cached config/routes/events, vendor/ in a named volume. dev-up returns to the
 # development profile (edits on the bind mount apply at once).

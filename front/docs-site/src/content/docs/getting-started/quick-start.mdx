@@ -126,7 +126,9 @@ Run the tenant commands inside the API container, on the platform (without `--do
    make -C api demo-packages demo-seed demo-seed-tenants
    ```
 
-4. Optional: turn on demo mode (password-less login and an hourly reset) for the six tenants.
+4. Optional: turn on demo mode (password-less login and an hourly reset) for the six tenants. The platform
+   landing then shows a card per demo with "Open as learner" and "Open as admin", each signing you in with one
+   click.
 
    ```bash
    make -C api demo-mode-on
@@ -163,6 +165,7 @@ container writes when it starts, so start the stack first.
 | `demo-create-tenants` | `ulams:tenant:create` for the six demo tenants, with their names, themes and accents |
 | `demo-mode-on` | Writes `DEMO_MODE=true` for the six demo tenants (`ulams:tenant:create <slug> --demo=on`) |
 | `demo-reset DOMAIN=coffee.localhost` | Wipes and reseeds one demo tenant now (the scheduler does it hourly) |
+| `demo-reset-all` | `demo-reset` for all six demo tenants, one after the other |
 | `swagger-generate` | Regenerates the OpenAPI spec (`php artisan l5-swagger:generate`) |
 | `backup-postgres` | Dumps the platform database to `api/docker/postgres-backups/backup-<timestamp>.sql` and `backup-latest.sql` |
 | `import-postgres BACKUP_FILE=backup-latest.sql` | Restores a dump from that folder |

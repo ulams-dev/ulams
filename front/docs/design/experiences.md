@@ -307,8 +307,10 @@ Same style, mobile 390px. (1) Mission quiz with one big question per screen and 
 - **Tenant:** slug `gravity`, preset `gravity`, accent `#3DD6F5`, certificate in Space Grotesk and JetBrains Mono.
 - **Look:** near-black navy `#05070F`, a calm starfield, thin cyan orbit rules, gold `#FFB547` as the second colour.
   Space Grotesk headings, Inter body, JetBrains Mono for numbers.
-- **Course content (M8):** modules and the interactive topics come with M8c. Until then the course has one module
-  with a welcome lesson.
+- **Course content (M8, done):** a welcome lesson, nine modules that follow the walkthrough of the simulation (each
+  with Interactive topics pinned to a step range, a short explanation, a Layout element and a quiz), a 15-question
+  final test with the certificate and a "Sources and licence" lesson. Every number cites NASA, JPL or another named
+  reference; the text is CC BY 4.0.
 - **Landing:** header; `cosmos` hero (the live simulation from the showcase endpoint, a drawn orbit scene without
   it); three tiles (explore, read, check yourself); `orbits` syllabus; badges (free, certificate, modules, hours);
   data sources as citation chips; FAQ; call-to-action band; footer with the simulation's licence.
@@ -321,6 +323,9 @@ Same style, mobile 390px. (1) Mission quiz with one big question per screen and 
 - **Tenant:** slug `poland`, preset `poland`, accent `#C8102E`, certificate in Playfair Display and Noto Sans.
 - **Look:** warm paper `#F4EFE6`, graticule hairlines, legend-style badges, teal `#5E8C8A` as the second colour.
   Source Serif 4 headings, IBM Plex Sans body, tabular numerals.
+- **Course content (M8, done):** a welcome lesson, nine chapters (energy, prosperity, security, made in Poland, daily
+  life, mobility, health, people, the unfinished work), a 12-question final test with the certificate and a "Sources and
+  licence" lesson, in English and in Polish as two courses. Every figure names its publisher and period; the text is CC BY 4.0.
 - **Landing:** header with the English and Polish course links; `atlas` hero (the live map from the showcase
   endpoint, a drawn contour scene without it); three tiles (map, charts, quizzes); `atlas` syllabus with chapter
   numbers; badges (free, EN/PL, certificate); sources as footnote chips; FAQ; call-to-action band; footer with
@@ -331,8 +336,13 @@ Same style, mobile 390px. (1) Mission quiz with one big question per screen and 
 
 - **Concept:** "Stanisław Ulam and the Lwów School of Mathematics": five small interactives (the Ulam spiral, a
   Monte Carlo estimate of pi, a cellular automaton, a page of the Scottish Book, a map of Lwów) around a sourced
-  history. The product's name honours Ulam; the demo suggests no endorsement, has no account in his name and shows
-  only verbatim, sourced quotes (none are cleared yet, so the landing has no quotes section).
+  history. The product's name honours Ulam; the demo suggests no endorsement, has no account in his name, and the
+  course quotes only short, exact, sourced passages (the landing has no testimonials section).
+- **Course content (M9b, done):** a welcome lesson that ends with the spiral (the landing hero plays it), eight modules
+  holding sixteen numbered lessons (Lwów; the Lwów School and the Scottish Café; America and the war; Monte Carlo; the
+  Teller-Ulam design; the prime spiral and cellular automata; Fermi-Pasta-Ulam-Tsingou; legacy and the name), a
+  14-question final test with the certificate and a "Sources and licence" lesson that credits four photographs. Every
+  quiz question is traced to the fact sheet (`demo-content/ulam/facts.json`, ADR 0095).
 - **Tenant:** slug `ulam`, preset `ulam`, accent `#1D3B8F`, certificate in Playfair Display and JetBrains Mono.
 - **Look:** cream paper `#F7F3E8` with a 5 mm squared-paper grid, ruled margin, paper-corner frames, marginal red
   `#B23A2E` as the second colour. EB Garamond headings, IBM Plex Sans body, IBM Plex Mono for formulas.

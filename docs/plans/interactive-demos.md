@@ -1254,7 +1254,7 @@ M5–M7. M10 needs M8 and M9.
     Schrandt-Ulam rule; images are WebP files in `api/database/seeds/Demo/assets/ulam/images/` (see `demo-content/ulam/CREDITS.md`);
     the zips are `ulam-<name>.zip` in the seeder's cache.
 
-### M10: Six demos (1 PR)
+### M10: Six demos (1 PR) (done)
 
 `feat(web): six demo academies on the platform landing; docs and make targets`.
 
