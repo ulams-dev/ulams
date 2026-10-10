@@ -23,7 +23,7 @@ than 16 KB, with an unknown type, a wrong nonce or an invalid payload is dropped
 
 | Type | Payload |
 |---|---|
-| `init` | `locale`, `theme` (CSS custom properties, `--name: value`), `reducedMotion`, `display` (`inline`, `background`, `fullscreen`), `chrome` (`full`, `minimal`, `none`), optional `startStep`, `range {from,to}`, `readOnly` |
+| `init` | `locale`, `theme` (CSS custom properties, `--name: value`), `reducedMotion`, `display` (`inline`, `background`, `fullscreen`), `chrome` (`full`, `minimal`, `none`), optional `startStep`, `range {from,to}`, `readOnly`, `showcase` |
 | `goToStep` | `step` |
 | `setTheme`, `setLocale`, `pause`, `resume` | `theme` / `locale` / none |
 
@@ -39,6 +39,10 @@ than 16 KB, with an unknown type, a wrong nonce or an invalid payload is dropped
 | `score` | `raw`, `max`, optional `passed` |
 | `event` | an xAPI-like `verb` IRI, an `object` id inside the package, an optional `result` |
 | `error` | `code` (for example `webgl-unavailable`), optional `message` |
+
+`init.showcase` is for the landing hero (see [As the hero of a landing page](/creators/interactive/#as-the-hero-of-a-landing-page)):
+the package shows only its picture, with no text, no controls and nothing focusable, moves slowly on its own, and
+follows `goToStep` from the page. A package that does not know the field is unaffected.
 
 The schemas are in `front/interactive-bridge/schema/v1/*.json` (and copied to
 `api/packages/interactive/resources/schemas/ulams-ix/v1/`, where the events endpoint validates against
