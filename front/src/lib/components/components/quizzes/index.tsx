@@ -122,7 +122,7 @@ const GiftQuizPlayer: React.FC<Props> = ({ topic, className, onTopicEnd }) => {
       {!data.value && !data.loading && (
         <div className={styles.startButtonWrapper}>
           <Button mode="secondary" type="button" onClick={startQuiz}>
-            {t<string>("Quiz.Start")}
+            {t("Quiz.Start")}
           </Button>
         </div>
       )}

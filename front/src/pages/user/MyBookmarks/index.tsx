@@ -20,7 +20,7 @@ const Bookmarks = () => {
           lessonId: number,
           topicId: number
         ) => push(`/course/${courseId}/${lessonId}/${topicId}`, null)}
-        onDelete={() => toast(t<string>("Notifications.Deleted"), "success")}
+        onDelete={() => toast(t("Notifications.Deleted"), "success")}
       />
     </ProfileLayout>
   );

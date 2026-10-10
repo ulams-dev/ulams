@@ -14,8 +14,7 @@ export const useQuestionnaires = ({
   entityId,
   entityModel,
 }: UseQuestionnairesProps) => {
-  const { fetchQuestionnaires, fetchQuestionnaire } =
-    useContext(UlamsContext);
+  const { fetchQuestionnaires, fetchQuestionnaire } = useContext(UlamsContext);
   const [questionnaires, setQuestionnaires] = useState<API.Questionnaire[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +29,7 @@ export const useQuestionnaires = ({
         );
         return response?.success ? response.data.questions : null;
       } catch (error) {
-        toast(t<string>("UnexpectedError"), "error");
+        toast(t("UnexpectedError"), "error");
         console.error(error);
         return null;
       }
@@ -89,7 +88,7 @@ export const useQuestionnaires = ({
         }
       } catch (error) {
         setError("Failed to fetch questionnaires");
-        toast(t<string>("UnexpectedError"), "error");
+        toast(t("UnexpectedError"), "error");
         console.error(error);
       } finally {
         setLoading(false);

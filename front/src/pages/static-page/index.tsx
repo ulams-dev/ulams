@@ -66,14 +66,12 @@ const StaticPage = () => {
 
   return (
     <Layout metaTitle={page.value?.title}>
-      <section
-        className={`${styles.page} ${isMobile ? styles.mobile : ""}`}
-      >
+      <section className={`${styles.page} ${isMobile ? styles.mobile : ""}`}>
         <Container>
           {!isMobile && (
             <Breadcrumbs
               items={[
-                <Link to={routeRoutes.home}>{t<string>("Home")}</Link>,
+                <Link to={routeRoutes.home}>{t("Home")}</Link>,
                 <Text size="12">{page.value?.title}</Text>,
               ]}
             />

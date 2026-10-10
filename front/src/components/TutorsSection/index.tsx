@@ -13,7 +13,7 @@ type CustomUser = User & {
 
 interface TutorsSectionProps {
   users: CustomUser[];
-  title: React.ReactElement | React.ReactElement[];
+  title: React.ReactNode;
 }
 
 const TutorsSection = ({ users, title }: TutorsSectionProps) => {

@@ -127,7 +127,7 @@ export const Search: React.FC<SearchProps> = (props) => {
           onClick={() => {
             onSubmit && onSubmit(value);
           }}
-          aria-label={t<string>("Search.Search")}
+          aria-label={t("Search.Search")}
         >
           {loading ? <Spin color={"currentColor"} /> : icon || <IconSearch />}
         </button>
@@ -136,7 +136,7 @@ export const Search: React.FC<SearchProps> = (props) => {
         {filterChildren(childrenList).length ? (
           filterChildren(childrenList)
         ) : (
-          <Text size={"12"}>{t<string>("Search.NoResults")}</Text>
+          <Text size={"12"}>{t("Search.NoResults")}</Text>
         )}
       </div>
     </div>

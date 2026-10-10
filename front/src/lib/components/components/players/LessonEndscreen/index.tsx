@@ -63,18 +63,18 @@ const VideoEndscreen: React.FC<Props> = ({
         {topic}
       </Title>
       <Title level={4} as={"h2"} className="video-endscreen__subtitle">
-        {t<string>("VideoPlayer.Next")}... {timer}{" "}
-        {t<string>("VideoPlayer.Seconds")}
+        {t("VideoPlayer.Next")}... {timer}{" "}
+        {t("VideoPlayer.Seconds")}
       </Title>
       <Button mode="secondary" className="video-endscreen__play" onClick={play}>
-        {t<string>("VideoPlayer.PlayNow")}
+        {t("VideoPlayer.PlayNow")}
       </Button>
       <Button
         mode="outline"
         className="video-endscreen__cancel"
         onClick={cancel}
       >
-        {t<string>("VideoPlayer.Cancel")}
+        {t("VideoPlayer.Cancel")}
       </Button>
     </div>
   );

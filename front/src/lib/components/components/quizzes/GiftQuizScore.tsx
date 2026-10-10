@@ -26,7 +26,7 @@ const GiftQuizScore: React.FC<Props> = ({ result, max }) => {
     >
       <Row $gap={6} $alignItems="center">
         <Text family="secondary" size="xs" weight="bold">
-          {t<string>("Quiz.YourScore")}
+          {t("Quiz.YourScore")}
         </Text>
       </Row>
       <Row $gap={8} $alignItems="center">

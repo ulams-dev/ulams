@@ -100,7 +100,7 @@ const Consultation = () => {
                     {" "}
                     <br />
                     <Title as="h3" level={4} className="title">
-                      {t<string>("ConsultationPage.Teacher")}
+                      {t("ConsultationPage.Teacher")}
                     </Title>
                     {consultation.value &&
                       // @ts-ignore TODO: add to sdk

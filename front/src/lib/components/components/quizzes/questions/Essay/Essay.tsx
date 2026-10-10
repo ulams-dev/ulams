@@ -33,7 +33,7 @@ const Essay: React.FC<Props> = ({
       showScore={hasQuizEnded}
     >
       <TextArea
-        placeholder={t<string>("Quiz.TypeAnswer")}
+        placeholder={t("Quiz.TypeAnswer")}
         name={`${id}`}
         disabled={hasQuizEnded}
         id={getUniqueId(`Essay-${id}`)}

@@ -45,7 +45,7 @@ const getQuestionnaire = async ({
       return response.data.questions;
     }
   } catch (error) {
-    toast(t<string>("UnexpectedError"), "error");
+    toast(t("UnexpectedError"), "error");
     console.log(error);
   }
 };
@@ -101,7 +101,7 @@ export const getQuestionnaires = async ({
       );
     }
   } catch (error) {
-    toast(t<string>("UnexpectedError"), "error");
+    toast(t("UnexpectedError"), "error");
     console.log(error);
   } finally {
     onFinish();

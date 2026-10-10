@@ -89,13 +89,13 @@ const ProfileAside: React.FC<Props> = ({ tabs, isProfile = true }) => {
                     logout().then(() => history.push(routeRoutes.home))
                   }
                 >
-                  <Text>{t<string>("MyProfilePage.Logout")}</Text>
+                  <Text>{t("MyProfilePage.Logout")}</Text>
                 </button>
                 <button
                   className={styles.deleteAccount}
                   onClick={() => triggerDeleteAccount()}
                 >
-                  <Text>{t<string>("MyProfilePage.DeleteAccount")}</Text>
+                  <Text>{t("MyProfilePage.DeleteAccount")}</Text>
                 </button>
               </div>
             </UserSidebar>

@@ -57,7 +57,7 @@ const ModalAddTask: FC<Props> = ({
   return (
     <div className={styles.wrapper}>
       <header className={styles.header}>
-        <Title>{t<string>("Tasks.AddNewTask")}</Title>
+        <Title>{t("Tasks.AddNewTask")}</Title>
       </header>
       <Formik
         initialValues={initialValues}
@@ -110,8 +110,8 @@ const ModalAddTask: FC<Props> = ({
                   <p>{errors.title}</p>
                 ) : undefined
               }
-              label={t<string>("Tasks.Title")}
-              placeholder={t<string>("Tasks.Title")}
+              label={t("Tasks.Title")}
+              placeholder={t("Tasks.Title")}
               type="text"
               name="title"
               onChange={handleChange}
@@ -125,8 +125,8 @@ const ModalAddTask: FC<Props> = ({
                   <p>{errors.description}</p>
                 ) : undefined
               }
-              label={t<string>("Tasks.Description")}
-              placeholder={t<string>("Tasks.Description")}
+              label={t("Tasks.Description")}
+              placeholder={t("Tasks.Description")}
               type="text"
               name="description"
               onChange={handleChange}
@@ -135,18 +135,18 @@ const ModalAddTask: FC<Props> = ({
             />
             <RelatedTreeSelect
               id="related-tree-select"
-              label={t<string>("Tasks.RelatesTo")}
-              notFoundContent={t<string>("Tasks.NoContent")}
+              label={t("Tasks.RelatesTo")}
+              notFoundContent={t("Tasks.NoContent")}
               value={values.related}
               onChange={(v) => setFieldValue("related", v)}
               onBlur={handleBlur}
             />
             <div className={styles.buttons}>
               <Button type="button" mode="secondary" onClick={onCancel}>
-                {t<string>("Tasks.Cancel")}
+                {t("Tasks.Cancel")}
               </Button>
               <Button type="submit" mode="secondary" disabled={isSubmitting}>
-                {t<string>("Tasks.Submit")}
+                {t("Tasks.Submit")}
               </Button>
             </div>
           </form>

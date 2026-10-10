@@ -46,13 +46,13 @@ export const BookmarkNotes: FC<BookmarkNotesComponentProps> = ({
     {
       id: 0,
       icon: <Icon name="editAll" />,
-      text: t<string>("Bookmarks.All"),
+      text: t("Bookmarks.All"),
       numberOfItems: bookmarkNotes.list?.data.length || 0,
     },
     {
       id: 1,
       icon: <Icon name="editAlt" />,
-      text: t<string>("Bookmarks.Notes"),
+      text: t("Bookmarks.Notes"),
       numberOfItems: bookmarkNotes.list?.data.length
         ? Number(notes?.length)
         : 0,
@@ -60,7 +60,7 @@ export const BookmarkNotes: FC<BookmarkNotesComponentProps> = ({
     {
       id: 2,
       icon: <Icon name="edit" />,
-      text: t<string>("Bookmarks.Bookmarks"),
+      text: t("Bookmarks.Bookmarks"),
       numberOfItems: bookmarkNotes.list?.data.length
         ? Number(bookmarks?.length)
         : 0,
@@ -92,7 +92,7 @@ export const BookmarkNotes: FC<BookmarkNotesComponentProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <Title level={4}>{t<string>("Bookmarks.Title")}</Title>
+        <Title level={4}>{t("Bookmarks.Title")}</Title>
       </div>
       <div className={styles.body}>
         <div className={styles.menu}>
@@ -126,14 +126,14 @@ export const BookmarkNotes: FC<BookmarkNotesComponentProps> = ({
                     {value && <Text className={styles.noteText}>{value}</Text>}
                   </Stack>
                   <Button mode="outline" onClick={() => handleBookmark(id)}>
-                    {t<string>("Bookmarks.Delete")}
+                    {t("Bookmarks.Delete")}
                   </Button>
                 </li>
               );
             })}
           </ul>
           {bookmarkNotes.list?.data.length === 0 && (
-            <Text weight="light">{t<string>("Bookmarks.NoBookmarks")}</Text>
+            <Text weight="light">{t("Bookmarks.NoBookmarks")}</Text>
           )}
         </div>
       </div>
@@ -144,10 +144,10 @@ export const BookmarkNotes: FC<BookmarkNotesComponentProps> = ({
           disabled={previousDisabled}
           onClick={() => setCurrentPage(currentPage - 1)}
         >
-          {t<string>("Bookmarks.Prev")}
+          {t("Bookmarks.Prev")}
         </Button>
 
-        <Title>{`${t<string>("Bookmarks.Page")} ${currentPage} / ${
+        <Title>{`${t("Bookmarks.Page")} ${currentPage} / ${
           lastPage || 1
         }`}</Title>
         <Button
@@ -156,7 +156,7 @@ export const BookmarkNotes: FC<BookmarkNotesComponentProps> = ({
           disabled={nextDisabled}
           onClick={() => setCurrentPage(currentPage + 1)}
         >
-          {t<string>("Bookmarks.Next")}
+          {t("Bookmarks.Next")}
         </Button>
       </div>
     </div>

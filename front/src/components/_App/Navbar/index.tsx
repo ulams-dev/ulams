@@ -179,7 +179,7 @@ const Navbar = () => {
             block
             onClick={() => history.push(routeRoutes.login)}
           >
-            {t<string>("Header.Login")}
+            {t("Header.Login")}
           </Button>
           <span>{t("Login.NoAccount")}</span>
           <Button
@@ -187,7 +187,7 @@ const Navbar = () => {
             block
             onClick={() => history.push(routeRoutes.register)}
           >
-            {t<string>("Login.Signup")}
+            {t("Login.Signup")}
           </Button>
         </div>
       ),
@@ -618,14 +618,14 @@ const Navbar = () => {
                 mode="secondary"
                 onClick={() => history.push(routeRoutes.login)}
               >
-                {t<string>("Header.Login")}
+                {t("Header.Login")}
               </Button>
 
               <Button
                 mode="secondary outline"
                 onClick={() => history.push(routeRoutes.register)}
               >
-                {t<string>("Header.Register")}
+                {t("Header.Register")}
               </Button>
             </div>
           )}

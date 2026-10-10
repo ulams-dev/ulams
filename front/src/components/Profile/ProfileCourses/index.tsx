@@ -147,17 +147,15 @@ const ProfileCourses = ({
           <div
             className={`${styles.emptyInfo} ${isMobile ? styles.mobile : ""}`}
           >
-            <Title level={3}>
-              {t<string>("MyProfilePage.EmptyCoursesTitle")}
-            </Title>
+            <Title level={3}>{t("MyProfilePage.EmptyCoursesTitle")}</Title>
             <Text className={styles.smallText}>
-              {t<string>("MyProfilePage.EmptyCoursesText")}
+              {t("MyProfilePage.EmptyCoursesText")}
             </Text>
             <Button
               onClick={() => history.push(routeRoutes.courses)}
               mode="secondary"
             >
-              {t<string>("MyProfilePage.EmptyCoursesBtnText")}
+              {t("MyProfilePage.EmptyCoursesBtnText")}
             </Button>
           </div>
         )}

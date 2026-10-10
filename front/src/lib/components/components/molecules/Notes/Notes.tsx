@@ -49,13 +49,13 @@ export const Notes: React.FC<NotesProps> = (props) => {
             {!mobile && (
               <IconTitle
                 level={4}
-                title={t<string>("Notes.title")}
+                title={t("Notes.title")}
                 icon={<NoteIcon />}
                 as={"h4"}
               />
             )}
             <Button mode="outline" onClick={onAddNoteClick}>
-              {t<string>("Notes.addNew")}
+              {t("Notes.addNew")}
             </Button>
             <Text className="title">{noteGroup.title}</Text>
             {noteGroup.notes.map((note, index) => {

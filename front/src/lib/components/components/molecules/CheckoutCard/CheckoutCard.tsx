@@ -108,7 +108,7 @@ export const CheckoutCard: React.FC<CheckoutCardProps> = (props) => {
             className={"checkout-card-remove"}
             onClick={handleDelete}
             onKeyDown={(e) => e.key === "Enter" && handleDelete()}
-            aria-label={t<string>("Actions.Remove")}
+            aria-label={t("Actions.Remove")}
           >
             <IconBin />
           </Button>

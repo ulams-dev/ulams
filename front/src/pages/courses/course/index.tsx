@@ -173,7 +173,7 @@ const CoursePage = () => {
                     )}
                   <section className="">
                     <Title as="h3" level={4} className="title">
-                      {t<string>("CoursePage.Teacher")}
+                      {t("CoursePage.Teacher")}
                     </Title>
                     <Row>
                       {course.value &&

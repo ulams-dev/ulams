@@ -92,7 +92,7 @@ const Index = () => {
         <div className="promoted-courses-wrapper">
           <Container className={styles.wrapper}>
             <DisplayCourses
-              titleText={t<string>("Homepage.AwardedCoursesTitle")}
+              titleText={t("Homepage.AwardedCoursesTitle")}
               params={{
                 per_page: 8,
               }}

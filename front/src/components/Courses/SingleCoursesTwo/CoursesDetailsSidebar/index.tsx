@@ -156,7 +156,7 @@ const CoursesDetailsSidebar: React.FC<Props> = ({
           //       color: theme.primaryColor,
           //     }}
           //   >
-          //     {t<string>("CoursePage.Login")}
+          //     {t("CoursePage.Login")}
           //   </Link>
           //   {t("CoursePage.ToSeeProgress")}
           // </Text>
@@ -176,15 +176,14 @@ const CoursesDetailsSidebar: React.FC<Props> = ({
             title={t("CoursePage.MyProgress")}
           >
             <strong style={{ fontSize: 14 }}>
-              {t<string>("CoursePage.Finished")} {progressMap || 0}{" "}
-              {t<string>("CoursePage.Of")}{" "}
+              {t("CoursePage.Finished")} {progressMap || 0} {t("CoursePage.Of")}{" "}
               {currentCourse && currentCourse?.length > 0
                 ? currentCourse.length
                 : 0}{" "}
-              {t<string>("CoursePage.Lessons")}
+              {t("CoursePage.Lessons")}
             </strong>
             <p style={{ marginTop: 9, marginBottom: 0 }}>
-              {t<string>("CoursePage.FinishToGetCertificate")}
+              {t("CoursePage.FinishToGetCertificate")}
             </p>
           </CourseProgress>
         )}

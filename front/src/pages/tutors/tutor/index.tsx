@@ -29,8 +29,7 @@ import routeRoutes from "@/components/Routes/routes";
 const TutorPage = () => {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
-  const { tutor, fetchTutor, courses, fetchCourses } =
-    useContext(UlamsContext);
+  const { tutor, fetchTutor, courses, fetchCourses } = useContext(UlamsContext);
   const history = useHistory();
 
   useEffect(() => {
@@ -45,8 +44,8 @@ const TutorPage = () => {
         <Container>
           <Breadcrumbs
             items={[
-              <Link to={routeRoutes.home}>{t<string>("Home")}</Link>,
-              <Link to={routeRoutes.tutors}>{t<string>("Tutors")}</Link>,
+              <Link to={routeRoutes.home}>{t("Home")}</Link>,
+              <Link to={routeRoutes.tutors}>{t("Tutors")}</Link>,
               <Text size="12">{`${tutor.value?.first_name || ""} ${
                 tutor.value?.last_name || ""
               }`}</Text>,
@@ -92,7 +91,7 @@ const TutorPage = () => {
               {t("TutorPage.Courses")}
             </Title>
             {courses.list && courses.list.data?.length === 0 ? (
-              <Text>{t<string>("TutorCoursesEmpty")}</Text>
+              <Text>{t("TutorCoursesEmpty")}</Text>
             ) : courses.list && courses.list.data?.length > 4 ? (
               <CoursesSlider courses={courses.list?.data || []} />
             ) : (
@@ -125,7 +124,9 @@ const TutorPage = () => {
                             item.subtitle ? (
                               <Text size="12">
                                 <Link
-                                  style={{ color: "var(--ulams-color-primary)" }}
+                                  style={{
+                                    color: "var(--ulams-color-primary)",
+                                  }}
                                   to={`/courses/${item.id}`}
                                 >
                                   <strong>{item.subtitle}</strong>
@@ -167,9 +168,7 @@ const TutorPage = () => {
                               {item.users_count && item.users_count > 0 ? (
                                 <IconText
                                   icon={<UserIcon />}
-                                  text={`${item.users_count} ${t<string>(
-                                    "Students"
-                                  )}`}
+                                  text={`${item.users_count} ${t("Students")}`}
                                 />
                               ) : (
                                 ""
@@ -177,9 +176,7 @@ const TutorPage = () => {
                               {item.lessons_count && item.lessons_count > 0 ? (
                                 <IconText
                                   icon={<LessonsIcon />}
-                                  text={`${item.lessons_count} ${t<string>(
-                                    "Lessons"
-                                  )}`}
+                                  text={`${item.lessons_count} ${t("Lessons")}`}
                                 />
                               ) : (
                                 ""

@@ -123,7 +123,7 @@ const ProfileTutorConsultations = ({
           ))
         ) : consultationsData.length === 0 ? (
           <Text style={{ paddingLeft: isMobile ? 20 : 40 }}>
-            {t<string>("MyProfilePage.OrdersEmpty")}
+            {t("MyProfilePage.OrdersEmpty")}
           </Text>
         ) : (
           <>

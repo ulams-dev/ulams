@@ -36,7 +36,7 @@ export const CourseProgramTopic: React.FC<Props> = ({
           onClick={() => onTopicClick(topic)}
           block={mobile}
         >
-          {t<string>("Course.topicPreview")}
+          {t("Course.topicPreview")}
         </Button>
       )}
     </li>

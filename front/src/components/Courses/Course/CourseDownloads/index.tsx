@@ -18,7 +18,7 @@ const CourseDownloads: React.FC<Props> = ({ resources, subtitle }) => {
     <div className={styles.root}>
       <Downloads
         subtitle={subtitle}
-        title={t<string>("CourseProgram.TopicAttachment")}
+        title={t("CourseProgram.TopicAttachment")}
         downloads={mappedResources}
       />
     </div>

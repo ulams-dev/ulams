@@ -136,7 +136,7 @@ export const CourseCardActions: FC<Props> = ({
               }));
             }}
           >
-            <IconRate /> {t<string>("MyProfilePage.RateCourse")}{" "}
+            <IconRate /> {t("MyProfilePage.RateCourse")}{" "}
             {state.loading && <ContentLoader width="10px" height="10px" />}
           </ActionButton>
           <div className={styles.resetCourseWrapper}>
@@ -145,7 +145,7 @@ export const CourseCardActions: FC<Props> = ({
                 mode="secondary"
                 onClick={() => setShowResetProgressModal(true)}
               >
-                {t<string>("MyProfilePage.ResetCourseProgress")}
+                {t("MyProfilePage.ResetCourseProgress")}
               </Button>
             )}
           </div>
@@ -153,7 +153,7 @@ export const CourseCardActions: FC<Props> = ({
       )}
       {!!isDeadlineMissed && timeDifference !== null && timeDifference[0] < 0 && (
         <Text size="12">
-          {t<string>("MyProfilePage.AccessCourseExpired")}{" "}
+          {t("MyProfilePage.AccessCourseExpired")}{" "}
           {relativeTimeFormatter.format(timeDifference[0], timeDifference[1])}
         </Text>
       )}
@@ -185,7 +185,7 @@ export const CourseCardActions: FC<Props> = ({
             width={468}
           >
             <Title style={{ textAlign: "center" }}>
-              {t<string>("CourseProgram.CourseRated")}
+              {t("CourseProgram.CourseRated")}
             </Title>
           </Modal>
         ))}
