@@ -52,10 +52,10 @@ test("workflow tabs: roving tabindex, aria wiring, arrow keys, transcripts", asy
   await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
   // the transcript is plain text in the DOM, whatever the animation shows
   const transcript = page.locator("#agents-panel-claude-code ul.u-visually-hidden");
-  await expect(transcript).toContainText("ulams builder start --source runbook.md --tenant oncall --json");
+  await expect(transcript).toContainText("ulams builder start --from runbook.md --defaults --json");
   await expect(transcript).toContainText("ulams courses publish");
-  await expect(page.locator("#agents-panel-claude-mcp ul.u-visually-hidden")).toContainText("ulams.analytics.at_risk");
-  await expect(page.locator("#agents-panel-cli ul.u-visually-hidden")).toContainText("ulams courses push course/ --dry-run");
+  await expect(page.locator("#agents-panel-claude-mcp ul.u-visually-hidden")).toContainText("courses_publish");
+  await expect(page.locator("#agents-panel-cli ul.u-visually-hidden")).toContainText("ulams apply --file course.yaml --dry-run");
   await expect(page.locator("#agents-panel-api ul.u-visually-hidden")).toContainText("/api/admin/topics");
 });
 
