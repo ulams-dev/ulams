@@ -29,7 +29,7 @@ export const CourseRatingsQuestionnaires = memo(() => {
           )}
         </>
       ) : (
-        <Text>{t<string>("CoursePage.CourseRatingsEmpty")}</Text>
+        <Text>{t("CoursePage.CourseRatingsEmpty")}</Text>
       )}
     </>
   );

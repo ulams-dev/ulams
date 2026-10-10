@@ -32,7 +32,7 @@ const ModalNote: FC<NoteModalProps> = ({
   return (
     <div className={styles.wrapper}>
       <header className={styles.header}>
-        <Title>{t<string>("Bookmarks.Notes")}</Title>
+        <Title>{t("Bookmarks.Notes")}</Title>
       </header>
       <Formik
         initialValues={initialValues}
@@ -82,10 +82,10 @@ const ModalNote: FC<NoteModalProps> = ({
             />
             <div className={styles.buttons}>
               <Button type="button" mode="secondary" onClick={onClose}>
-                {t<string>("Bookmarks.Cancel")}
+                {t("Bookmarks.Cancel")}
               </Button>
               <Button type="submit" mode="secondary" disabled={isSubmitting}>
-                {t<string>(`Bookmarks.${currentNote ? "Update" : "Add"}`)}
+                {t(`Bookmarks.${currentNote ? "Update" : "Add"}`)}
               </Button>
             </div>
           </form>

@@ -29,13 +29,13 @@ const PromotedCoursesSection: React.FC = () => {
       <Container className={styles.container}>
         <div className={styles.headerWrapper}>
           <Title level={1} as="h2">
-            {t<string>("Homepage.AwardedCoursesTitle")}
+            {t("Homepage.AwardedCoursesTitle")}
           </Title>
           <Button
             mode="outline"
             onClick={() => history.push(routeRoutes.courses)}
           >
-            {t<string>("Homepage.AwardedCoursesBtnText")}
+            {t("Homepage.AwardedCoursesBtnText")}
           </Button>
         </div>
 
@@ -105,7 +105,7 @@ const PromotedCoursesSection: React.FC = () => {
           block
           mode="outline"
         >
-          {t<string>("Homepage.AwardedCoursesBtnText")}
+          {t("Homepage.AwardedCoursesBtnText")}
         </Button>
       </Container>
     </section>

@@ -95,7 +95,7 @@ export const ResetPasswordForm: React.FC<Props> = ({
     <div
       className={`ulams-component ${styles.root} ${mobile ? styles.mobile : ""} ${className}`}
     >
-      <Title level={3}>{t<string>("ResetForm.ResetPassword")}</Title>{" "}
+      <Title level={3}>{t("ResetForm.ResetPassword")}</Title>{" "}
       <Formik
         initialValues={initialValues}
         validate={(values) => {
@@ -128,7 +128,7 @@ export const ResetPasswordForm: React.FC<Props> = ({
               <Input
                 type="email"
                 name="email"
-                label={t<string>("Email")}
+                label={t("Email")}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.email}
@@ -138,7 +138,7 @@ export const ResetPasswordForm: React.FC<Props> = ({
               <Input
                 type="password"
                 name="password"
-                label={t<string>("Password")}
+                label={t("Password")}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.password}
@@ -147,7 +147,7 @@ export const ResetPasswordForm: React.FC<Props> = ({
             )}
 
             <Button mode="primary" type="submit" loading={isSubmitting} block>
-              {t<string>("ResetForm.Reset")}
+              {t("ResetForm.Reset")}
             </Button>
           </form>
         )}
@@ -156,12 +156,12 @@ export const ResetPasswordForm: React.FC<Props> = ({
         <>
           <Text size="14">
             <Link underline onClick={() => backToLogin && backToLogin()}>
-              {t<string>("ResetForm.BackToLogin")}
+              {t("ResetForm.BackToLogin")}
             </Link>
           </Text>
-          <Text size="13">{t<string>("Login.NoAccount")} </Text>
+          <Text size="13">{t("Login.NoAccount")} </Text>
           <Link onClick={() => onRegisterLink && onRegisterLink()}>
-            {t<string>("Login.Signup")}
+            {t("Login.Signup")}
           </Link>
         </>
       )}

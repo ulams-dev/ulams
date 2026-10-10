@@ -37,7 +37,7 @@ const EventTutor = () => {
               }}
               title={
                 <Title as="h3" level={4} className="title">
-                  {t<string>("CoursePage.Teacher")}
+                  {t("CoursePage.Teacher")}
                 </Title>
               }
               fullName={`${author.first_name} ${author.last_name}`}

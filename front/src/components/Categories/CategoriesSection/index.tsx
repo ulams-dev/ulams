@@ -27,7 +27,7 @@ const CategoriesSection: React.FC<Props> = ({ categories, entity }) => {
     <section className={styles.section}>
       <Container>
         <Title level={1} as="h2">
-          <strong>{t<string>("Homepage.CategoriesTitle")}</strong>
+          <strong>{t("Homepage.CategoriesTitle")}</strong>
         </Title>
         {isMobile ? (
           <div className={styles.slider}>

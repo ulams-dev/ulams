@@ -58,11 +58,9 @@ const Login = () => {
               onRegisterLink={() => history.push(routeRoutes.register)}
               return_url={`${APP_URL}${redirectPrefix()}${routeRoutes.reset}`}
               onFirstStepSuccess={() =>
-                toast(t<string>("LoginPage.ForgotSuccess"), "success")
+                toast(t("LoginPage.ForgotSuccess"), "success")
               }
-              onFirstStepError={() =>
-                toast(t<string>("UnexpectedError"), "error")
-              }
+              onFirstStepError={() => toast(t("UnexpectedError"), "error")}
             />
           )}
         </Container>

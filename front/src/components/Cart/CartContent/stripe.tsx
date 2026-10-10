@@ -115,7 +115,7 @@ const StripeContent = ({ stripeKey }: { stripeKey: string }) => {
                 />
 
                 <div className="module-wrapper">
-                  <Title level={4}>{t<string>("Cart.YourCart")}</Title>
+                  <Title level={4}>{t("Cart.YourCart")}</Title>
                   <div className="products-container">
                     {cart.value?.items.map((item: CartItem) => (
                       <CheckoutCard
@@ -147,12 +147,10 @@ const StripeContent = ({ stripeKey }: { stripeKey: string }) => {
                   </div>
                 </div>
                 <div className="module-wrapper">
-                  <Title level={4}>
-                    {t<string>("Cart.ChoosePaymentMethod")}
-                  </Title>
+                  <Title level={4}>{t("Cart.ChoosePaymentMethod")}</Title>
                   <div className="payments-form">
                     <div className="collapse-wrapper">
-                      <Collapse active title={t<string>("Cart.CreditCard")}>
+                      <Collapse active title={t("Cart.CreditCard")}>
                         <PaymentForm
                           setBillingDetails={setBillingDetails}
                           billingDetails={billingDetails}
@@ -177,7 +175,7 @@ const StripeContent = ({ stripeKey }: { stripeKey: string }) => {
                   </div>
                 </div>
                 <section className="slider-section">
-                  <Title level={4}>{t<string>("Cart.Interest")}</Title>
+                  <Title level={4}>{t("Cart.Interest")}</Title>
                   {courses && courses.list && (
                     <CoursesSlider courses={courses.list.data} />
                   )}
@@ -185,7 +183,7 @@ const StripeContent = ({ stripeKey }: { stripeKey: string }) => {
               </Col>
               <Col lg={3}>
                 <Title style={{ marginBottom: 20 }} level={4} as="h3">
-                  {t<string>("Cart.Summary")}
+                  {t("Cart.Summary")}
                 </Title>
                 <div className="summary-box-wrapper">
                   <CartCard
@@ -219,17 +217,17 @@ const StripeContent = ({ stripeKey }: { stripeKey: string }) => {
           ) : (
             <>
               <div className="empty-cart">
-                <Title level={3}>{t<string>("Cart.EmptyCartTitle")}</Title>
-                <Text>{t<string>("Cart.EmptyCartText")}</Text>
+                <Title level={3}>{t("Cart.EmptyCartTitle")}</Title>
+                <Text>{t("Cart.EmptyCartText")}</Text>
                 <Button
                   mode="secondary"
                   onClick={() => push(routeRoutes.courses)}
                 >
-                  {t<string>("Cart.EmptyCartBtnText")}
+                  {t("Cart.EmptyCartBtnText")}
                 </Button>
               </div>
               <section className="slider-section">
-                <Title level={4}>{t<string>("Cart.Interest")}</Title>
+                <Title level={4}>{t("Cart.Interest")}</Title>
                 {courses && courses.list && (
                   <CoursesSlider courses={courses.list.data} />
                 )}

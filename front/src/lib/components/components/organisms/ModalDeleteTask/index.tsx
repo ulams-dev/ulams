@@ -19,19 +19,19 @@ export const ModalDeleteTask: FC<Props> = ({ handleClose, handleDelete }) => {
 
   return (
     <Stack $gap={8}>
-      <Title>{t<string>("Tasks.DeleteTask")}</Title>
-      <Text>{t<string>("Tasks.DeleteTaskDescription")}</Text>
+      <Title>{t("Tasks.DeleteTask")}</Title>
+      <Text>{t("Tasks.DeleteTaskDescription")}</Text>
       <Row
         style={{ width: "100%", marginTop: "24px" }}
         $justifyContent="flex-end"
         $gap={12}
       >
         <Button type="button" mode="secondary" onClick={handleClose}>
-          {t<string>("Tasks.Cancel")}
+          {t("Tasks.Cancel")}
         </Button>
 
         <Button mode="secondary" disabled={disabled} onClick={handleWaitDelete}>
-          {t<string>("Tasks.Delete")}
+          {t("Tasks.Delete")}
         </Button>
       </Row>
     </Stack>

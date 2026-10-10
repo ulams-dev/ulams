@@ -163,14 +163,14 @@ export const CartCard: React.FC<CartCardProps> = (props) => {
                 <>
                   <Text className="discount-granted-info">
                     <MarkdownRenderer components={{ p: React.Fragment }}>
-                      {t<string>("CartCard.discountGranted")}
+                      {t("CartCard.discountGranted")}
                     </MarkdownRenderer>
                     <span
                       className={"discount-remove"}
                       onClick={removeDiscountClick}
                       onKeyUp={removeDiscountClick}
                       role="button"
-                      aria-label={t<string>("CartCard.remove")}
+                      aria-label={t("CartCard.remove")}
                       tabIndex={0}
                       aria-labelledby="labeldiv"
                     >
@@ -188,7 +188,7 @@ export const CartCard: React.FC<CartCardProps> = (props) => {
         <>
           <div className="discount-toggle">
             <Text size={"12"} noMargin id={uniqueId}>
-              {t<string>("CartCard.addDiscountButton")}
+              {t("CartCard.addDiscountButton")}
             </Text>
             <Button
               onClick={() => setIsDiscountOpen(!isDiscountOpen)}
@@ -221,7 +221,7 @@ export const CartCard: React.FC<CartCardProps> = (props) => {
                   loading={loading}
                   onClick={() => discount.onDiscountClick(discountInput)}
                 >
-                  {t<string>("CartCard.realizeButton")}
+                  {t("CartCard.realizeButton")}
                 </Button>
               )}
             </div>
@@ -239,7 +239,7 @@ export const CartCard: React.FC<CartCardProps> = (props) => {
         loading={loading}
         onClick={() => onBuyClick(id)}
       >
-        {t<string>("CartCard.buyButton")}
+        {t("CartCard.buyButton")}
       </Button>
     </div>
   );

@@ -5,7 +5,7 @@ import MarkdownRenderer from "@ulams/components/components/molecules/MarkdownRen
 
 interface DescriptionSectionProps {
   description?: string | null;
-  title?: React.ReactElement | React.ReactElement[];
+  title?: React.ReactNode;
 }
 
 const DescriptionSection = ({

@@ -33,7 +33,7 @@ const ResetPassword: React.FC = () => {
               <ResetPasswordForm
                 onSecondStepSuccess={() => {
                   push(routeRoutes.login);
-                  toast(t<string>("LoginPage.ForgotSuccessStep2"), "success");
+                  toast(t("LoginPage.ForgotSuccessStep2"), "success");
                 }}
                 secondStep
                 mobile={isMobile}

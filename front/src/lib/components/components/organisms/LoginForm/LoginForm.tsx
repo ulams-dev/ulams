@@ -132,7 +132,7 @@ export const LoginForm: React.FC<Props> = ({
             <Input
               type="password"
               name="password"
-              label={t<string>("Password")}
+              label={t("Password")}
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.password}
@@ -140,7 +140,7 @@ export const LoginForm: React.FC<Props> = ({
             />
             <Checkbox
               name="remember_me"
-              label={t<string>("Login.RememberMe")}
+              label={t("Login.RememberMe")}
               value={String(values.remember_me)}
               checked={values.remember_me}
               onChange={handleChange}
@@ -151,7 +151,7 @@ export const LoginForm: React.FC<Props> = ({
               loading={isSubmitting || user.loading}
               block
             >
-              {t<string>("Login.Signin")}
+              {t("Login.Signin")}
             </Button>
           </form>
         )}
@@ -161,17 +161,17 @@ export const LoginForm: React.FC<Props> = ({
           underline
           onClick={() => onResetPasswordLink && onResetPasswordLink()}
         >
-          {t<string>("Login.NotRemember")}
+          {t("Login.NotRemember")}
         </Link>
       </Text>
       {!submitText && (
         <>
-          <Text size="14">{t<string>("Login.NoAccount")} </Text>
+          <Text size="14">{t("Login.NoAccount")} </Text>
           <Button
             mode={"outline"}
             onClick={() => onRegisterLink && onRegisterLink()}
           >
-            {submitText ? submitText : t<string>("Login.Signup")}
+            {submitText ? submitText : t("Login.Signup")}
           </Button>
         </>
       )}

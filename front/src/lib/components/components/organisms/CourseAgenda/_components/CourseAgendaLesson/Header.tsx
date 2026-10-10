@@ -47,7 +47,7 @@ export const Header: React.FC<Props> = ({
             }`}
           >
             <Text noMargin size="11" bold>
-              {t<string>("Course.Lesson")} {index + 1}
+              {t("Course.Lesson")} {index + 1}
             </Text>
           </div>
         )}
@@ -67,7 +67,7 @@ export const Header: React.FC<Props> = ({
           type="button"
           onClick={onToggleClick}
           mode="icon"
-          aria-label={t<string>(open ? "Actions.Hide" : "Action.Show")}
+          aria-label={t(open ? "Actions.Hide" : "Action.Show")}
         >
           <Icon name="chevron" />
         </Button>

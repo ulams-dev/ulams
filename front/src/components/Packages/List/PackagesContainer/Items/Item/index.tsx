@@ -48,9 +48,7 @@ const PackagesContainerItem = ({ product, actions }: Props) => {
       }
       categories={
         <CategoriesBreadCrumbs
-          categories={
-            product.categories as Ulams.Categories.Models.Category[]
-          }
+          categories={product.categories as Ulams.Categories.Models.Category[]}
           onCategoryClick={(id) => {
             history.push(`/packages/?categories[]=${id}`);
           }}
@@ -79,7 +77,7 @@ const PackagesContainerItem = ({ product, actions }: Props) => {
           {product.users_count && product.users_count > 0 ? (
             <IconText
               icon={<UserIcon />}
-              text={`${product.users_count} ${t<string>("Students")}`}
+              text={`${product.users_count} ${t("Students")}`}
             />
           ) : (
             ""

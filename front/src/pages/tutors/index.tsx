@@ -34,7 +34,7 @@ const TutorsPage = () => {
         <Container>
           <Breadcrumbs
             items={[
-              <Link to={routeRoutes.home}>{t<string>("Home")}</Link>,
+              <Link to={routeRoutes.home}>{t("Home")}</Link>,
               <Text size="12">{t("Tutors")}</Text>,
             ]}
           />

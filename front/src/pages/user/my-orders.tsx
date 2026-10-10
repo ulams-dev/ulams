@@ -16,8 +16,7 @@ import { toast } from "@/utils/toast";
 import styles from "./user.module.css";
 
 const Orders = () => {
-  const { orders, fetchOrders, fetchOrderInvoice } =
-    useContext(UlamsContext);
+  const { orders, fetchOrders, fetchOrderInvoice } = useContext(UlamsContext);
 
   const { t } = useTranslation();
   const [loadingId, setLoadingId] = useState(-1);
@@ -66,7 +65,7 @@ const Orders = () => {
         }
       } catch (error) {
         setLoadingId(-1);
-        toast(t<string>("UnexpectedError"), "error");
+        toast(t("UnexpectedError"), "error");
         console.log(error);
       }
     },
@@ -77,7 +76,7 @@ const Orders = () => {
     <ProfileLayout title={t("MyProfilePage.OrdersHistory")}>
       <section className={styles.ordersList}>
         {!orders.loading && orders.list?.data.length === 0 && (
-          <Text>{t<string>("MyProfilePage.OrdersEmpty")}</Text>
+          <Text>{t("MyProfilePage.OrdersEmpty")}</Text>
         )}
         {!orders.loading &&
           !orders.error &&
@@ -111,7 +110,7 @@ const Orders = () => {
                       onClick={() => handleDownloadInvoice(item.id)}
                       loading={loadingId === item.id}
                     >
-                      {t<string>("MyProfilePage.Invoice")}
+                      {t("MyProfilePage.Invoice")}
                     </Button>
                   ),
                 };

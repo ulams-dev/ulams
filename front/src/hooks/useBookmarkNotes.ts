@@ -42,11 +42,11 @@ Props) => {
           value: null,
         }).then(() => {
           fetchBookmarkNotes();
-          toast(t<string>("Notifications.CreateBookmark"), "success");
+          toast(t("Notifications.CreateBookmark"), "success");
         })
       : deleteBookmarkNote(topicBookmark[0].id).then(() => {
           fetchBookmarkNotes();
-          toast(t<string>("Notifications.DeleteBookmark"), "success");
+          toast(t("Notifications.DeleteBookmark"), "success");
         });
   };
 

@@ -57,14 +57,14 @@ export const PdfPlayer: React.FunctionComponent<PdfPlayerProps> = ({
   }, [allPages, currentPage]);
 
   if (!url) {
-    return <p>{t<string>("PdfPlayer.notFound")}</p>;
+    return <p>{t("PdfPlayer.notFound")}</p>;
   }
 
   return (
     <div className={`${styles.root} ulams-component ${className}`}>
       {isMounted && url && (
         <Document
-          loading={t<string>("Loading")}
+          loading={t("Loading")}
           onLoadSuccess={({ numPages }) => setAllPages(numPages)}
           file={url}
           {...documentConfig}
@@ -80,7 +80,7 @@ export const PdfPlayer: React.FunctionComponent<PdfPlayerProps> = ({
       {allPages && allPages > 1 && (
         <div className={`${styles.paginationArea} pagination-area`}>
           <Text>
-            <strong>{currentPage}</strong> {t<string>("PdfPlayer.of")}{" "}
+            <strong>{currentPage}</strong> {t("PdfPlayer.of")}{" "}
             <strong>{allPages}</strong>
           </Text>
           <div>
@@ -90,7 +90,7 @@ export const PdfPlayer: React.FunctionComponent<PdfPlayerProps> = ({
               className="nav-btn-modal"
               onClick={handlePrevPageClick}
             >
-              {t<string>("Prev")}
+              {t("Prev")}
             </Button>
             <Button
               style={{ marginLeft: "10px" }}
@@ -99,7 +99,7 @@ export const PdfPlayer: React.FunctionComponent<PdfPlayerProps> = ({
               className="nav-btn-modal"
               onClick={handleNextPageClick}
             >
-              {t<string>("Next")}
+              {t("Next")}
             </Button>
           </div>
         </div>

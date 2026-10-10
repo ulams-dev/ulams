@@ -67,23 +67,23 @@ const Przelewy24Content = () => {
     <Layout metaTitle={t("Cart.Cart")}>
       {location.search.includes("?status=success") ? (
         <section
-        className={`${styles.cartPage}${isMobile ? ` ${styles.mobile}` : ""}`}
-      >
+          className={`${styles.cartPage}${isMobile ? ` ${styles.mobile}` : ""}`}
+        >
           <div className="module-wrapper">
             <CartSuccess />
           </div>
         </section>
       ) : (
         <section
-        className={`${styles.cartPage}${isMobile ? ` ${styles.mobile}` : ""}`}
-      >
+          className={`${styles.cartPage}${isMobile ? ` ${styles.mobile}` : ""}`}
+        >
           <Container>
             {!(cart.value?.items.length === 0) ? (
               <Row>
                 <Col lg={9}>
                   <div className="module-wrapper">
                     <Title style={{ marginBottom: 20 }} level={2} as="h3">
-                      {t<string>("Cart.YourCart")}
+                      {t("Cart.YourCart")}
                     </Title>
                     <div className="products-container">
                       {cart.value?.items.map((item: CartItem) => (
@@ -147,7 +147,7 @@ const Przelewy24Content = () => {
                   </div>
                   <section className="slider-section">
                     <DisplayCourses
-                      titleText={t<string>("Cart.Interest")}
+                      titleText={t("Cart.Interest")}
                       slidesPerView={3}
                       params={{
                         per_page: 8,
@@ -157,7 +157,7 @@ const Przelewy24Content = () => {
                 </Col>
                 <Col lg={3}>
                   <Title style={{ marginBottom: 20 }} level={2} as="h3">
-                    {t<string>("Cart.Summary")}
+                    {t("Cart.Summary")}
                   </Title>
                   <div className="summary-box-wrapper">
                     <CartCard
@@ -195,17 +195,17 @@ const Przelewy24Content = () => {
             ) : (
               <>
                 <div className="empty-cart">
-                  <Title level={3}>{t<string>("Cart.EmptyCartTitle")}</Title>
-                  <Text>{t<string>("Cart.EmptyCartText")}</Text>
+                  <Title level={3}>{t("Cart.EmptyCartTitle")}</Title>
+                  <Text>{t("Cart.EmptyCartText")}</Text>
                   <Button
                     mode="secondary"
                     onClick={() => push(routeRoutes.courses)}
                   >
-                    {t<string>("Cart.EmptyCartBtnText")}
+                    {t("Cart.EmptyCartBtnText")}
                   </Button>
                 </div>
                 <section className="slider-section">
-                  <Title level={2}>{t<string>("Cart.Interest")}</Title>
+                  <Title level={2}>{t("Cart.Interest")}</Title>
                   {courses && courses.list && (
                     <CoursesSlider courses={courses.list.data} />
                   )}

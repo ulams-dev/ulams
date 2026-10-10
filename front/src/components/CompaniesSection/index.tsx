@@ -5,7 +5,7 @@ import { Text } from "@ulams/components/components/atoms/Typography/Text";
 import styles from "./CompaniesSection.module.css";
 
 interface CompaniesSectionProps {
-  title: React.ReactElement | React.ReactElement[];
+  title: React.ReactNode;
 }
 
 const CompaniesSection = ({ title }: CompaniesSectionProps) => {

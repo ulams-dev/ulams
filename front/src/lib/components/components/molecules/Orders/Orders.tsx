@@ -28,26 +28,26 @@ export const Orders: React.FC<OrdersProps> = (props) => {
 
   return (
     <div className={`ulams-component ${styles.root} ${className}`}>
-      {data.length === 0 && <Text>{t<string>("Orders.NoRecords")}</Text>}
+      {data.length === 0 && <Text>{t("Orders.NoRecords")}</Text>}
       {data.length > 0 && (
         <React.Fragment>
           {!mobile && (
             <div className="labels-row">
               <div className="single-label">
-                <Text size={"14"}>{t<string>("Orders.Title")}</Text>
+                <Text size={"14"}>{t("Orders.Title")}</Text>
               </div>{" "}
               <div className="single-label">
-                <Text size={"14"}>{t<string>("Orders.Status")}</Text>
+                <Text size={"14"}>{t("Orders.Status")}</Text>
               </div>
               <div className="single-label">
-                <Text size={"14"}>{t<string>("Orders.Date")}</Text>
+                <Text size={"14"}>{t("Orders.Date")}</Text>
               </div>
               <div className="single-label">
-                <Text size={"14"}>{t<string>("Orders.Price")}</Text>
+                <Text size={"14"}>{t("Orders.Price")}</Text>
               </div>
               {hasActions && (
                 <div className="single-label">
-                  <Text size={"14"}>{t<string>("Orders.Actions")}</Text>
+                  <Text size={"14"}>{t("Orders.Actions")}</Text>
                 </div>
               )}
             </div>

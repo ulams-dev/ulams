@@ -26,7 +26,7 @@ export const TaskDetailsModal: React.FC<Props> = ({
   const isPersonal = task.created_by?.id === task.user?.id;
   return (
     <aside className={styles.wrapper}>
-      <Title level={4}>{t<string>("Tasks.DetailTask")}</Title>
+      <Title level={4}>{t("Tasks.DetailTask")}</Title>
       {isPersonal ? (
         <PersonalContent
           taskForAction={task}
