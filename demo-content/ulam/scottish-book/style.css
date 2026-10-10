@@ -1,5 +1,3 @@
-.sb-banner { margin: 0 0 12px; padding: 8px 12px; background: #fff3cd; border: 1px solid #c9a227; border-left-width: 4px; color: #4a3b00; }
-.sb-banner[hidden] { display: none; }
 .sb-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); gap: 16px; align-items: start; }
 .sb-cards.single { grid-template-columns: minmax(0, 36rem); }
 /* a page from a notebook: ruled lines, a red margin line, a paper-corner fold */
@@ -15,6 +13,7 @@
 .sb-number { font: 600 1.5rem/28px var(--ix-serif); color: var(--ix-margin); margin: 0; }
 .sb-meta { font: 500 0.8rem/28px var(--ix-mono); color: var(--ix-ink-2); margin: 0; }
 .sb-summary { margin: 0 0 6px; font-family: var(--ix-serif); }
+.sb-outcome { margin: 4px 0 0; font-family: var(--ix-serif); }
 .sb-guess { border: 0; padding: 0; margin: 4px 0 0; }
 .sb-guess legend { padding: 0; font-weight: 600; }
 .sb-guess label { display: block; font-weight: 400; }

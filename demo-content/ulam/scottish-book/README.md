@@ -1,14 +1,16 @@
 # scottish-book: problem cards
 
-Notebook pages, one per problem: a number, who posed it, when, a plain-language summary, a prize. Steps: `intro`
-(every card, with a filter by poser) and one step per problem (`problem-19`, `problem-153`, `problem-193`), where
-the learner guesses the problem's outcome and checks the guess. Every check sends `score(raw, max, passed)` over
-all cards; use the topic's `on_score` completion with a pass percentage of 60. The package never sends `complete`.
+Notebook pages, one per problem: a number, who posed it, when (where the sources give a date), a plain-language summary,
+the prize, and the sources. Steps: `intro` (every card, with a filter by poser) and one step per problem (`problem-1`,
+`-19`, `-38`, `-43`, `-59`, `-152`, `-153`, `-184`, `-193`). On four of them (19, 59, 153, 184) the learner guesses the
+outcome (Yes, No, Not yet settled) and checks the guess; the other cards show what became of the problem, because the
+sources do not record it as a yes or no. Every check sends `score(raw, max, passed)` over the guessable cards; use the
+topic's `on_score` completion with a pass percentage of 60. The package never sends `complete`.
 
-**Placeholder content.** `data/problems.json` holds only placeholder text (`"placeholder": true`): the posers,
-dates, summaries, prizes and outcomes are not facts, the package says so on screen, and
-`demo-content/tests/unit/ulam-scottish-book.test.mjs` pins it. The real cards are filled in M9b, from the cleared
-fact sheet (`docs/plans/interactive-demos-ulam-facts.md`, section 3, M9a): each card then needs its source ids.
+**Content.** `data/problems.json` holds the cards; the statements are paraphrased, never copied from Mauldin's edition.
+Each card lists source ids that resolve in `data/problems.json`'s `sources` table and in `demo-content/ulam/sources.json`;
+the unit test `ulam-scottish-book.test.mjs` pins the dates, prizes and outcomes against the fact sheet. Problem 77(a) is
+left out because its statement could not be sourced.
 
 - `logic.js`: the filter, grading a guess, the score and the pass rule (the boundary 60% passes), the feedback
   sentence. Unit tests cover them and check the data file (unique ids, every answer is an option, one step per

@@ -1,12 +1,12 @@
 // @ts-check
 import { connect } from "./vendor/interactive-bridge.js";
 import { startShell } from "./vendor/ulam-shell.js";
-import { feedback, filterByPoser, isCorrect, posersOf, scoreGuesses } from "./logic.js";
+import { feedback, filterByPoser, isCorrect, isGuessable, metaLine, posersOf, scoreGuesses, sourceLine } from "./logic.js";
 
 const $ = (/** @type {string} */ s) => /** @type {any} */ (document.querySelector(s));
 
-/** @type {{ placeholder?: boolean, note?: string, options: {value: string, label: string}[], problems: import("./logic.js").Card[] }} */
-let data = { options: [], problems: [] };
+/** @type {{ options: {value: string, label: string}[], sources: Record<string, string>, problems: import("./logic.js").Card[] }} */
+let data = { options: [], sources: {}, problems: [] };
 /** @type {Record<string, string>} what the learner chose, per card id (only after "Check") */
 const guesses = {};
 /** @type {any} */
@@ -20,14 +20,17 @@ const el = (/** @type {string} */ tag, /** @type {string} */ cls, /** @type {str
   return e;
 };
 
-function cardElement(/** @type {import("./logic.js").Card} */ card, /** @type {boolean} */ guessable) {
+function cardElement(/** @type {import("./logic.js").Card} */ card, /** @type {boolean} */ single) {
   const root = el("article", "sb-card");
   root.setAttribute("aria-labelledby", `n-${card.id}`);
   const h = el("h3", "sb-number", `Problem ${card.number}`); h.id = `n-${card.id}`; root.append(h);
-  root.append(el("p", "sb-meta", `${card.poser} · ${card.date}`));
+  root.append(el("p", "sb-meta", metaLine(card)));
   root.append(el("p", "sb-summary", card.summary));
   root.append(el("p", "sb-meta", `Prize: ${card.prize}`));
-  if (!guessable) return root;
+  const guessable = isGuessable(card);
+  if (!guessable) root.append(el("p", "sb-outcome", `What became of it: ${card.outcome}`));
+  if (single) root.append(el("p", "sb-meta", sourceLine(card, data.sources)));
+  if (!single || !guessable) return root;
   const done = card.id in guesses;
   const set = el("fieldset", "sb-guess");
   set.append(el("legend", "", "Guess the outcome"));
@@ -61,8 +64,6 @@ function cardElement(/** @type {import("./logic.js").Card} */ card, /** @type {b
 }
 
 function render() {
-  const banner = $("#banner");
-  banner.hidden = !data.placeholder; banner.textContent = data.note || "";
   const wrap = $("#cards");
   wrap.replaceChildren();
   const single = step !== "intro";
@@ -72,7 +73,9 @@ function render() {
   for (const c of cards) wrap.append(cardElement(c, single));
   const s = scoreGuesses(data.problems, guesses);
   const answered = Object.keys(guesses).length;
-  $("#score").textContent = answered ? `${s.raw} of ${answered} guesses right so far (${data.problems.length} problems in all).` : `${data.problems.length} problems. Open each problem to guess its outcome.`;
+  $("#score").textContent = answered
+    ? `${s.raw} of ${answered} guesses right so far (${s.max} problems to guess, ${data.problems.length} problems in all).`
+    : `${data.problems.length} problems, ${s.max} of them to guess. Open a problem to guess its outcome.`;
 }
 
 const loading = fetch("data/problems.json").then((r) => { if (!r.ok) throw new Error(`data ${r.status}`); return r.json(); }).then((d) => {

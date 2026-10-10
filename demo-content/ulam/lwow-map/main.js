@@ -7,7 +7,7 @@ const Atlas = /** @type {any} */ (window).Atlas;
 const $ = (/** @type {string} */ s) => /** @type {any} */ (document.querySelector(s));
 const NS = "http://www.w3.org/2000/svg";
 
-/** @type {{ placeholder?: boolean, note?: string, caption: string, stops: import("./logic.js").Stop[] }} */
+/** @type {{ caption: string, stops: import("./logic.js").Stop[] }} */
 let route = { caption: "", stops: [] };
 /** @type {any} */ let places = null;
 /** @type {any} */ let topo = null;
@@ -64,11 +64,12 @@ function drawInset(/** @type {boolean} */ show) {
   el("rect", { x: "1", y: "1", width: "298", height: "188", fill: "#fffdf7", stroke: "#4a4f60", "stroke-dasharray": "4 3" });
   for (const p of places.inset.points) {
     const x = 24 + p.x * 252, y = 22 + p.y * 146;
+    const right = p.x > 0.6; // the labels of the points on the right end at the point, so they stay inside the plan
     el("circle", { cx: String(x), cy: String(y), r: "6", fill: "#1d3b8f", stroke: "#fffdf7", "stroke-width": "2" });
-    el("text", { x: String(x + 10), y: String(y + 4), "font-size": "11", fill: "#1e2230", "font-family": "system-ui, sans-serif" }, p.label.replace(" (placeholder)", ""));
+    el("text", { x: String(right ? x - 10 : x + 10), y: String(y + 4 + (p.dy ?? 0)), "font-size": "11", fill: "#1e2230", "text-anchor": right ? "end" : "start", "font-family": "system-ui, sans-serif" }, p.label);
   }
   el("text", { x: "280", y: "20", "font-size": "11", fill: "#4a4f60", "text-anchor": "end", "font-family": "system-ui, sans-serif" }, "N ↑");
-  svg.setAttribute("aria-label", `${places.inset.title}: ${places.inset.points.map((p) => p.label.replace(" (placeholder)", "")).join("; ")}. Positions are placeholders.`);
+  svg.setAttribute("aria-label", `${places.inset.title}: ${places.inset.points.map((p) => p.label).join("; ")}. Not to scale.`);
   box.querySelector("figcaption").textContent = places.inset.caption;
 }
 
@@ -103,8 +104,6 @@ function render(/** @type {{id: string}} */ step, /** @type {any} */ sh) {
     addEventListener("resize", () => { if (atlas.measure()) { atlas.reframe(); schedule(); } });
   }
   current = Math.max(0, route.stops.findIndex((s) => s.id === step.id));
-  const banner = $("#banner");
-  banner.hidden = !route.placeholder; banner.textContent = route.note || "";
   $("#caption").textContent = route.caption;
   $("#leg").textContent = legText(route.stops, current);
   paintStops(sh);
