@@ -31,13 +31,15 @@ function merge(base: Record<string, unknown>, patch: Record<string, unknown>): R
   return out;
 }
 
-/** Removes roadmap statuses everywhere below `value` (deep). */
+/** Removes roadmap statuses everywhere below `value` (deep), and `today` captions that explain them. */
 function dropRoadmapStatus(value: unknown): unknown {
   if (Array.isArray(value)) return value.map(dropRoadmapStatus);
   if (!isObject(value)) return value;
   const out: Record<string, unknown> = {};
   for (const [key, v] of Object.entries(value)) {
     if (key === "status" && typeof v === "string" && ROADMAP.has(v)) continue;
+    if (key === "today" && typeof v === "string") continue;
+    if (key === "syncStatus" && typeof v === "string" && ROADMAP.has(v)) continue;
     out[key] = dropRoadmapStatus(v);
   }
   return out;

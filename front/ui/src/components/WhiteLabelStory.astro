@@ -1,0 +1,1188 @@
+---
+/**
+ * "Your brand, your academy": the white-label story of the product landing, in four steps played by
+ * the shared timeline player (elements/story.ts, no extra JS): bring a brand (tokens are extracted),
+ * get a themed site on its own subdomain, bring content (one course per source), see per-course
+ * learner analytics. Under the stage a short numbered list says the same in words, with the honest
+ * status of each step. The stage is decorative (aria-hidden); `description` and the list carry the story.
+ *
+ * Scenes sit in one grid cell (the stage takes the height of the tallest, so nothing shifts), the rail
+ * shows the current step. With `prefers-reduced-motion` or without JS the four scenes stack, each in
+ * its final state. All names, colours and numbers in the stage are an example, never a customer.
+ */
+import Icon from "./Icon.astro";
+import StoryStyles from "./StoryStyles.astro";
+
+type Status = "available" | "coming";
+interface Link {
+  label: string;
+  href: string;
+}
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  valueLine?: string;
+  description: string;
+  exampleNote?: string;
+  primaryCta?: Link;
+  secondaryCta?: Link;
+  steps: Array<{ title: string; text: string; points?: string[]; status?: Status; today?: string }>;
+  brand: {
+    sources: Array<{ kind: "figma" | "stitch" | "pdf" | "logo"; label: string; file: string; status?: Status }>;
+    agentLabel: string;
+    sourcesLabel: string;
+    alternative: { label: string; text: string };
+    commands: string[];
+    tokensLabel: string;
+    colors: Array<{ name: string; value: string }>;
+    fonts: Array<{ role: string; name: string }>;
+    logo: string;
+    radius: number;
+  };
+  site: { host: string; pages: string[]; headline: string; action: string };
+  content: {
+    sources: Array<{ kind: "doc" | "pdf" | "git" | "url"; label: string; course: string; status?: Status }>;
+    builderLabel: string;
+    citedLabel: string;
+    syncLabel: string;
+    syncStatus?: Status;
+  };
+  dashboard: {
+    kpis: Array<{ label: string; value: number }>;
+    quiz: { label: string; bars: Array<{ label: string; value: number }> };
+    atRisk: { label: string; learners: Array<{ name: string; reason: string }> };
+    confusing: { label: string; sections: Array<{ title: string; level: number }> };
+  };
+}
+const {
+  id = "white-label",
+  eyebrow,
+  title,
+  intro,
+  valueLine,
+  description,
+  exampleNote,
+  primaryCta,
+  secondaryCta,
+  steps,
+  brand,
+  site,
+  content,
+  dashboard,
+} = Astro.props;
+
+const hex = (v: string | undefined, fallback: string) => (v && /^#[0-9a-f]{6}$/i.test(v) ? v : fallback);
+const [cPrimary, cSecondary, cAccent, cSurface, cText] = [
+  hex(brand.colors[0]?.value, "#0E7C66"),
+  hex(brand.colors[1]?.value, "#1B2A41"),
+  hex(brand.colors[2]?.value, "#F5B841"),
+  hex(brand.colors[3]?.value, "#F6F4EF"),
+  hex(brand.colors[4]?.value, "#16202B"),
+];
+const radius = Math.max(0, Math.min(32, Math.round(brand.radius)));
+const siteVars = `--wl-p:${cPrimary};--wl-s:${cSecondary};--wl-a:${cAccent};--wl-bg:${cSurface};--wl-t:${cText};--wl-r:${radius}px`;
+const courses = content.sources.map((s) => s.course);
+const pct = (n: number) => Math.max(4, Math.min(100, Math.round(n))) / 100;
+const comingTag = (s?: Status) => s === "coming";
+
+// schedule (ms): the four steps start at S, scenes and rail follow it
+const S = [0, 4600, 9200, 13800];
+const total = 17900;
+const rel = (step: number, ms: number) => S[step]! + ms;
+const kindIcon = { figma: "layers", stitch: "sparkle", pdf: "pdf", logo: "star", doc: "reading", git: "code", url: "embed" } as const;
+const step = (i: number) => steps[i] ?? { title: "", text: "" };
+---
+
+<section class="u-section u-wl" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <StoryStyles />
+  <noscript>
+    <style is:inline>
+      .u-wl__scenes {
+        display: grid !important;
+        gap: 22px;
+      }
+      .u-wl__scene {
+        grid-area: auto !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+      .u-wl__rail {
+        display: none !important;
+      }
+      .u-wl__sh {
+        display: block !important;
+      }
+      .u-wl__bar i {
+        transform: scaleX(var(--w)) !important;
+      }
+    </style>
+  </noscript>
+  <div class="u-container">
+    <div class="u-section-head u-section-head--center" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+      {intro && <p class="u-lead">{intro}</p>}
+    </div>
+
+    <ulams-story class="u-stage u-wl__stage" data-total={total} data-hold="3800" loop>
+      <p class="u-visually-hidden">{description}</p>
+      <div aria-hidden="true">
+        <ol class="u-wl__rail">
+          {
+            steps.map((s, i) => (
+              <li data-at={S[i]} data-at2={S[i + 1]}>
+                <b>{i + 1}</b>
+                <span>{s.title}</span>
+              </li>
+            ))
+          }
+        </ol>
+        <div class="u-wl__scenes">
+          <!-- 1 · bring your brand -->
+          <div class="u-wl__scene" data-at={S[0]} data-at2={S[1]}>
+            <p class="u-wl__sh">{`1 · ${step(0).title}`}</p>
+            <div class="u-win">
+              <div class="u-win__bar">
+                <span class="u-win__dots"><i></i><i></i><i></i></span><span>{brand.agentLabel}</span>
+                {comingTag(step(0).status) && <em class="u-wl__tag">Coming</em>}
+              </div>
+              <div class="u-wl__cols u-wl__cols--brand">
+                <div class="u-wl__col">
+                  <p class="u-wl__cap">{brand.sourcesLabel}</p>
+                  <ul class="u-wl__files">
+                    {
+                      brand.sources.map((s, i) => (
+                        <li data-at={rel(0, 300 + i * 300)}>
+                          <Icon name={kindIcon[s.kind]} />
+                          <span>
+                            <b>{s.label}</b>
+                            <small>{s.file}</small>
+                          </span>
+                          {comingTag(s.status) && <em class="u-wl__tag">Coming</em>}
+                        </li>
+                      ))
+                    }
+                  </ul>
+                  <p class="u-wl__alt" data-at={rel(0, 3500)}>
+                    <Icon name="code" />
+                    <span>
+                      <b>{brand.alternative.label}</b>
+                      <small>{brand.alternative.text}</small>
+                    </span>
+                  </p>
+                </div>
+                <div class="u-wl__col">
+                  <p class="u-wl__cap" data-at={rel(0, 1500)}><Icon name="terminal" />{brand.tokensLabel}</p>
+                  <ul class="u-wl__sw">
+                    {
+                      brand.colors.map((c, i) => (
+                        <li data-at={rel(0, 1900 + i * 180)}>
+                          <i style={`background:${hex(c.value, "#888888")}`}></i>
+                          <span>{c.name}</span>
+                          <code>{c.value}</code>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                  <div class="u-wl__meta">
+                    {
+                      brand.fonts.map((f, i) => (
+                        <p class={`u-wl__font u-wl__font--${i}`} data-at={rel(0, 2900 + i * 200)}>
+                          <b>Aa</b>
+                          <span>{f.role}</span>
+                          <code>{f.name}</code>
+                        </p>
+                      ))
+                    }
+                    <p class="u-wl__logo" data-at={rel(0, 3300)}>
+                      <b style={`background:${cPrimary}`}>{brand.logo}</b>
+                      <span>Logo</span>
+                    </p>
+                    <p class="u-wl__rad" data-at={rel(0, 3500)}>
+                      <i style={`border-top-left-radius:${radius}px`}></i>
+                      <span>Radius</span>
+                      <code>{radius} px</code>
+                    </p>
+                  </div>
+                  <div class="u-wl__cmds">
+                    {
+                      brand.commands.map((c, i) => (
+                        <code data-at={rel(0, 3700 + i * 450)} data-type="420">{c}</code>
+                      ))
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2 · get your academy -->
+          <div class="u-wl__scene" data-at={S[1]} data-at2={S[2]}>
+            <p class="u-wl__sh">{`2 · ${step(1).title}`}</p>
+            <div class="u-win">
+              <div class="u-win__bar">
+                <span class="u-win__dots"><i></i><i></i><i></i></span>
+                <span class="u-wl__url"><Icon name="lock" /><span data-at={rel(1, 200)} data-type="1000">{site.host}</span></span>
+              </div>
+              <div class="u-wl__pages" style={siteVars}>
+                {
+                  [0, 1, 2].map((p) => (
+                    <div class="u-wl__page" data-at={rel(1, 1400 + p * 650)}>
+                      <p class="u-wl__pcap">{site.pages[p]}</p>
+                      <div class={`u-site u-site--${["landing", "catalogue", "admin"][p]}`}>
+                        <div class="u-site__top">
+                          <b>{brand.logo}</b>
+                          <i></i>
+                          <i></i>
+                        </div>
+                        {p === 0 && (
+                          <div class="u-site__hero">
+                            <strong>{site.headline}</strong>
+                            <i></i>
+                            <span>{site.action}</span>
+                          </div>
+                        )}
+                        {p === 1 && (
+                          <div class="u-site__grid">
+                            {courses.slice(0, 4).map((c) => (
+                              <div>
+                                <i></i>
+                                <span>{c}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {p === 2 && (
+                          <div class="u-site__rows">
+                            {courses.slice(0, 4).map((c) => (
+                              <div>
+                                <span>{c}</span>
+                                <i></i>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 · bring your content -->
+          <div class="u-wl__scene" data-at={S[2]} data-at2={S[3]}>
+            <p class="u-wl__sh">{`3 · ${step(2).title}`}</p>
+            <div class="u-win">
+              <div class="u-win__bar">
+                <span class="u-win__dots"><i></i><i></i><i></i></span><span>{step(2).title}</span>
+              </div>
+              <div class="u-wl__cols u-wl__cols--content">
+                <div class="u-wl__col">
+                  <p class="u-wl__cap">Sources</p>
+                  <ul class="u-wl__files">
+                    {
+                      content.sources.map((s, i) => (
+                        <li data-at={rel(2, 250 + i * 330)}>
+                          <Icon name={kindIcon[s.kind]} />
+                          <span>
+                            <b>{s.label}</b>
+                          </span>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                </div>
+                <div class="u-wl__col">
+                  <p class="u-wl__cap" data-at={rel(2, 1500)}><Icon name="sparkle" />{content.builderLabel}</p>
+                  <ul class="u-wl__courses">
+                    {
+                      content.sources.map((s, i) => (
+                        <li data-at={rel(2, 1700 + i * 380)}>
+                          <b>{s.course}</b>
+                          <span class="u-chip2">{content.citedLabel}</span>
+                        </li>
+                      ))
+                    }
+                  </ul>
+                  <p class="u-wl__sync" data-at={rel(2, 3500)}>
+                    <Icon name="sync" />
+                    {content.syncLabel}
+                    {comingTag(content.syncStatus) && <em class="u-wl__tag">Coming</em>}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 · see everything -->
+          <div class="u-wl__scene" data-at={S[3]} data-at2={undefined}>
+            <p class="u-wl__sh">{`4 · ${step(3).title}`}</p>
+            <div class="u-win">
+              <div class="u-win__bar">
+                <span class="u-win__dots"><i></i><i></i><i></i></span><span>{step(3).title}</span>
+                {comingTag(step(3).status) && <em class="u-wl__tag">Coming</em>}
+                {exampleNote && <em class="u-wl__ex">{exampleNote}</em>}
+              </div>
+              <div class="u-wl__dash">
+                <div class="u-wl__tabs">
+                  {courses.map((c, i) => <span class={i === 0 ? "is-on" : ""}>{c}</span>)}
+                </div>
+                <div class="u-wl__kpis">
+                  {
+                    dashboard.kpis.slice(0, 3).map((k, i) => (
+                      <div data-at={rel(3, 200 + i * 260)}>
+                        <span>{k.label}</span>
+                        <p class="u-wl__bar" style={`--w:${pct(k.value)}`}><i></i></p>
+                      </div>
+                    ))
+                  }
+                </div>
+                <div class="u-wl__panels">
+                  <div class="u-wl__panel">
+                    <p class="u-wl__cap" data-at={rel(3, 1100)}>{dashboard.quiz.label}</p>
+                    {
+                      dashboard.quiz.bars.slice(0, 4).map((b, i) => (
+                        <div class="u-wl__row" data-at={rel(3, 1250 + i * 200)}>
+                          <span>{b.label}</span>
+                          <p class="u-wl__bar" style={`--w:${pct(b.value)}`}><i></i></p>
+                        </div>
+                      ))
+                    }
+                  </div>
+                  <div class="u-wl__panel">
+                    <p class="u-wl__cap" data-at={rel(3, 2100)}>{dashboard.atRisk.label}</p>
+                    {
+                      dashboard.atRisk.learners.slice(0, 3).map((l, i) => (
+                        <div class="u-wl__risk" data-at={rel(3, 2250 + i * 330)}>
+                          <b>{l.name}</b>
+                          <span>{l.reason}</span>
+                        </div>
+                      ))
+                    }
+                  </div>
+                  <div class="u-wl__panel">
+                    <p class="u-wl__cap" data-at={rel(3, 3100)}>{dashboard.confusing.label}</p>
+                    {
+                      dashboard.confusing.sections.slice(0, 3).map((c, i) => (
+                        <div class="u-wl__row" data-at={rel(3, 3250 + i * 280)}>
+                          <span>{c.title}</span>
+                          <p class="u-wl__bar u-wl__bar--heat" style={`--w:${pct(c.level * 20)}`}><i></i></p>
+                        </div>
+                      ))
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="u-stage__controls">
+        <button type="button" data-pause aria-pressed="false">Pause</button>
+        <button type="button" data-replay>Replay</button>
+      </div>
+    </ulams-story>
+
+    <ol class="u-wl__list">
+      {
+        steps.map((s, i) => (
+          <li class="u-wl__item">
+            <p class="u-wl__n" aria-hidden="true">{i + 1}</p>
+            <h3 class="u-h3">{s.title}</h3>
+            {s.status === "coming" && <p class="u-status u-status--coming">Coming</p>}
+            <p>{s.text}</p>
+            {s.points && s.points.length > 0 && (
+              <ul>
+                {s.points.map((p) => (
+                  <li>
+                    <Icon name="check" />
+                    {p}
+                  </li>
+                ))}
+              </ul>
+            )}
+            {s.today && <p class="u-wl__today">{s.today}</p>}
+          </li>
+        ))
+      }
+    </ol>
+    {valueLine && <p class="u-wl__value">{valueLine}</p>}
+    {
+      (primaryCta || secondaryCta) && (
+        <div class="u-actions u-wl__cta">
+          {primaryCta && (
+            <a class="u-btn" href={primaryCta.href}>
+              {primaryCta.label}
+              <Icon name="arrow" />
+            </a>
+          )}
+          {secondaryCta && (
+            <a class="u-btn u-btn--ghost" href={secondaryCta.href}>
+              {secondaryCta.label}
+            </a>
+          )}
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style is:global>
+  .u-wl__stage {
+    font-family: var(--ulams-font-family-body, system-ui, sans-serif);
+    font-size: 0.875rem;
+  }
+  .u-wl__stage .u-win {
+    font-family: inherit;
+  }
+  .u-wl__stage .u-win__bar {
+    font-family: var(--ulams-font-mono);
+    min-height: 38px;
+  }
+  .u-wl__tag,
+  .u-wl__ex {
+    margin-left: auto;
+    padding: 0 8px;
+    border-radius: 999px;
+    font-style: normal;
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--st-dim);
+    border: 1px dashed currentColor;
+    white-space: nowrap;
+  }
+  .u-wl__ex {
+    border-style: solid;
+    text-transform: none;
+  }
+  .u-wl__tag + .u-wl__ex {
+    margin-left: 8px;
+  }
+  /* rail */
+  .u-wl__rail {
+    list-style: none;
+    margin: 0 0 14px;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .u-wl__rail li[data-at] {
+    opacity: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--st-line);
+    color: var(--st-dim);
+    transition:
+      color 0.4s,
+      border-color 0.4s,
+      background-color 0.4s;
+  }
+  .u-wl__rail b {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .u-wl__rail span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+  .u-wl__rail li.on:not(.on2) {
+    color: var(--st-text);
+    border-color: color-mix(in srgb, var(--ulams-brand-orange) 70%, transparent);
+    background: color-mix(in srgb, #fff 7%, transparent);
+  }
+  .u-wl__rail li.on:not(.on2) b {
+    background: var(--ulams-brand-orange);
+    border-color: var(--ulams-brand-orange);
+    color: var(--ulams-brand-indigo);
+  }
+  .u-wl__rail li.on2 {
+    color: var(--st-ok);
+  }
+  /* scenes: one grid cell, the tallest sets the height */
+  .u-wl__scenes {
+    display: grid;
+  }
+  .u-wl__scene {
+    grid-area: 1 / 1;
+    min-width: 0;
+  }
+  ulams-story .u-wl__scene[data-at] {
+    visibility: hidden;
+    transition:
+      opacity 0.45s var(--ulams-ease),
+      visibility 0s 0.45s;
+  }
+  ulams-story .u-wl__scene[data-at].on {
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  ulams-story .u-wl__scene[data-at].on.on2 {
+    opacity: 0;
+    visibility: hidden;
+  }
+  .u-wl__sh {
+    display: none;
+    margin: 0 0 8px;
+    font-weight: 700;
+    color: var(--st-text);
+  }
+  .u-wl__cols {
+    display: grid;
+    min-height: 330px;
+  }
+  .u-wl__cols--brand,
+  .u-wl__cols--content {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+  .u-wl__col {
+    padding: 14px 16px;
+    min-width: 0;
+    display: grid;
+    align-content: start;
+    gap: 8px;
+  }
+  .u-wl__col + .u-wl__col {
+    border-left: 1px solid var(--st-line);
+  }
+  .u-wl__cap {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--st-dim);
+  }
+  .u-wl__alt {
+    margin: 4px 0 0;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid color-mix(in srgb, var(--ulams-brand-sky) 50%, transparent);
+    background: color-mix(in srgb, var(--ulams-brand-sky) 8%, transparent);
+    transform: translateY(8px);
+  }
+  .u-wl__alt.on {
+    transform: none;
+  }
+  .u-wl__alt svg {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    color: var(--ulams-brand-sky);
+  }
+  .u-wl__alt span {
+    display: grid;
+    min-width: 0;
+  }
+  .u-wl__alt b {
+    color: var(--st-text);
+    font-weight: 600;
+  }
+  .u-wl__alt small {
+    color: var(--st-dim);
+    font-size: 0.75rem;
+  }
+  .u-wl__cmds {
+    display: grid;
+    gap: 4px;
+    margin-top: 4px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: color-mix(in srgb, #000 28%, transparent);
+    font-family: var(--ulams-font-mono);
+    font-size: 0.75rem;
+  }
+  .u-wl__cmds code {
+    color: var(--st-text);
+    overflow-wrap: anywhere;
+    min-height: 1.6em;
+  }
+  .u-wl__cmds code::before {
+    content: "$ ";
+    color: var(--ulams-brand-orange);
+  }
+  .u-wl__cap svg {
+    width: 14px;
+    height: 14px;
+    color: var(--ulams-brand-orange);
+  }
+  .u-wl__files,
+  .u-wl__sw,
+  .u-wl__courses {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .u-wl__files li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px dashed color-mix(in srgb, var(--ulams-brand-orange) 65%, transparent);
+    background: color-mix(in srgb, var(--ulams-brand-orange) 7%, transparent);
+    transform: translateY(-14px);
+    min-width: 0;
+  }
+  .u-wl__files li.on,
+  .u-wl__sw li.on,
+  .u-wl__courses li.on {
+    transform: none;
+  }
+  .u-wl__files svg {
+    flex: none;
+    width: 18px;
+    height: 18px;
+    color: var(--ulams-brand-orange);
+  }
+  .u-wl__files span {
+    display: grid;
+    min-width: 0;
+  }
+  .u-wl__files b {
+    font-weight: 600;
+    color: var(--st-text);
+    overflow-wrap: anywhere;
+  }
+  .u-wl__files small {
+    color: var(--st-dim);
+    font-size: 0.75rem;
+    overflow-wrap: anywhere;
+  }
+  .u-wl__sw li {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    transform: translateX(-10px);
+  }
+  .u-wl__sw i {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1px solid var(--st-line);
+  }
+  .u-wl__sw span,
+  .u-wl__meta span {
+    color: var(--st-text);
+  }
+  .u-wl__sw code,
+  .u-wl__meta code {
+    font-family: var(--ulams-font-mono);
+    font-size: 0.75rem;
+    color: var(--st-dim);
+  }
+  .u-wl__meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .u-wl__meta p {
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: color-mix(in srgb, #fff 6%, transparent);
+    transform: translateY(8px);
+    min-width: 0;
+  }
+  .u-wl__meta p.on {
+    transform: none;
+  }
+  .u-wl__meta p > code {
+    grid-column: 2;
+    overflow-wrap: anywhere;
+  }
+  .u-wl__font b {
+    grid-row: span 2;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--st-text);
+  }
+  .u-wl__font--0 b {
+    font-family: Georgia, "Times New Roman", serif;
+  }
+  .u-wl__font--1 b {
+    font-family: system-ui, sans-serif;
+  }
+  .u-wl__logo b {
+    grid-row: span 2;
+    padding: 4px 9px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.8125rem;
+    line-height: 1.3;
+  }
+  .u-wl__rad i {
+    grid-row: span 2;
+    width: 26px;
+    height: 26px;
+    border-top: 3px solid var(--ulams-brand-sky);
+    border-left: 3px solid var(--ulams-brand-sky);
+  }
+  /* site */
+  .u-wl__url {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    max-width: 320px;
+    padding: 2px 12px;
+    border-radius: 999px;
+    background: color-mix(in srgb, #fff 8%, transparent);
+    color: var(--st-text);
+    min-height: 24px;
+  }
+  .u-wl__url svg {
+    width: 12px;
+    height: 12px;
+    flex: none;
+    color: var(--st-ok);
+  }
+  .u-wl__pages {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    padding: 16px;
+    min-height: 330px;
+    align-content: start;
+  }
+  .u-wl__page {
+    min-width: 0;
+    transform: translateY(14px);
+  }
+  .u-wl__page.on {
+    transform: none;
+  }
+  .u-wl__pcap {
+    margin: 0 0 6px;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--st-dim);
+  }
+  .u-site {
+    height: 250px;
+    overflow: hidden;
+    border-radius: var(--wl-r);
+    background: var(--wl-bg);
+    color: var(--wl-t);
+    border: 1px solid color-mix(in srgb, #fff 24%, transparent);
+    font-size: 0.75rem;
+    display: grid;
+    grid-template-rows: auto 1fr;
+  }
+  .u-site__top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: var(--wl-s);
+  }
+  .u-site__top b {
+    padding: 1px 7px;
+    border-radius: calc(var(--wl-r) / 2);
+    background: var(--wl-a);
+    color: var(--wl-s);
+    font-size: 0.75rem;
+  }
+  .u-site__top i {
+    width: 26px;
+    height: 5px;
+    border-radius: 3px;
+    background: color-mix(in srgb, #fff 55%, transparent);
+  }
+  .u-site__top i:first-of-type {
+    margin-left: auto;
+  }
+  .u-site__hero {
+    display: grid;
+    align-content: center;
+    justify-items: start;
+    gap: 10px;
+    padding: 14px;
+  }
+  .u-site__hero strong {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.125rem;
+    line-height: 1.2;
+    color: var(--wl-s);
+  }
+  .u-site__hero i {
+    width: 80%;
+    height: 6px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--wl-t) 22%, transparent);
+  }
+  .u-site__hero span {
+    padding: 6px 12px;
+    border-radius: var(--wl-r);
+    background: var(--wl-p);
+    color: #fff;
+    font-weight: 600;
+  }
+  .u-site__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 12px;
+    align-content: start;
+  }
+  .u-site__grid div {
+    display: grid;
+    gap: 6px;
+    padding: 6px;
+    border-radius: var(--wl-r);
+    background: #fff;
+    border: 1px solid color-mix(in srgb, var(--wl-t) 14%, transparent);
+  }
+  .u-site__grid i {
+    height: 34px;
+    border-radius: calc(var(--wl-r) / 2);
+    background: var(--wl-p);
+  }
+  .u-site__grid div:nth-child(even) i {
+    background: var(--wl-s);
+  }
+  .u-site__grid span {
+    font-weight: 600;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+  .u-site__rows {
+    display: grid;
+    gap: 6px;
+    padding: 12px;
+    align-content: start;
+  }
+  .u-site__rows div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: calc(var(--wl-r) / 2);
+    background: #fff;
+    border: 1px solid color-mix(in srgb, var(--wl-t) 14%, transparent);
+  }
+  .u-site__rows i {
+    flex: none;
+    width: 30px;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--wl-p);
+  }
+  /* content */
+  .u-wl__courses li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px 10px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--st-line);
+    border-left: 3px solid var(--ulams-brand-orange);
+    background: color-mix(in srgb, #fff 6%, transparent);
+    color: var(--st-text);
+    transform: translateX(14px);
+  }
+  .u-wl__courses b {
+    font-weight: 600;
+  }
+  .u-wl__sync {
+    margin: 4px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    color: var(--st-text);
+  }
+  .u-wl__sync svg {
+    width: 16px;
+    height: 16px;
+    color: var(--ulams-brand-sky);
+  }
+  .u-wl__sync .u-wl__tag {
+    margin-left: 0;
+  }
+  /* dashboard */
+  .u-wl__dash {
+    display: grid;
+    gap: 14px;
+    padding: 14px 16px;
+    min-height: 330px;
+    align-content: start;
+  }
+  .u-wl__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .u-wl__tabs span {
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--st-line);
+    color: var(--st-dim);
+    font-size: 0.75rem;
+  }
+  .u-wl__tabs .is-on {
+    color: var(--st-text);
+    border-color: var(--ulams-brand-sky);
+    background: color-mix(in srgb, var(--ulams-brand-sky) 14%, transparent);
+  }
+  .u-wl__kpis,
+  .u-wl__panels {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .u-wl__kpis > div,
+  .u-wl__panel {
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: color-mix(in srgb, #fff 6%, transparent);
+    display: grid;
+    gap: 8px;
+    align-content: start;
+    min-width: 0;
+  }
+  .u-wl__kpis span {
+    color: var(--st-text);
+    font-weight: 600;
+  }
+  .u-wl__row {
+    display: grid;
+    gap: 4px;
+    color: var(--st-dim);
+  }
+  .u-wl__bar {
+    margin: 0;
+    height: 8px;
+    border-radius: 4px;
+    background: color-mix(in srgb, #fff 12%, transparent);
+    overflow: hidden;
+  }
+  .u-wl__bar i {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    background: var(--ulams-brand-sky);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.9s var(--ulams-ease) 0.15s;
+  }
+  [data-at].on .u-wl__bar i,
+  .u-wl__bar.on i {
+    transform: scaleX(var(--w));
+  }
+  .u-wl__bar--heat i {
+    background: var(--ulams-brand-orange);
+  }
+  .u-wl__risk {
+    display: grid;
+    gap: 2px;
+    padding-left: 10px;
+    border-left: 3px solid var(--st-bad);
+    color: var(--st-dim);
+    transform: translateX(-10px);
+  }
+  .u-wl__risk.on {
+    transform: none;
+  }
+  .u-wl__risk b {
+    color: var(--st-text);
+    font-weight: 600;
+  }
+  /* the list under the stage */
+  .u-wl__list {
+    list-style: none;
+    margin: 28px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .u-wl__item {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    padding: 18px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-wl__item > p,
+  .u-wl__item > h3 {
+    margin: 0;
+  }
+  .u-wl__n {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--ulams-brand-indigo);
+    color: #fff;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+  .u-wl__item ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-wl__item li {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+  .u-wl__item li svg {
+    flex: none;
+    width: 14px;
+    height: 14px;
+    align-self: center;
+    color: var(--ulams-color-positive);
+  }
+  .u-wl__today {
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+    padding-top: 8px;
+    border-top: 1px dashed var(--ulams-color-border);
+  }
+  .u-wl__value {
+    margin: 24px auto 0;
+    max-width: 62ch;
+    text-align: center;
+    font-size: 1.125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-wl__cta {
+    justify-content: center;
+    margin-top: 22px;
+  }
+  @media (max-width: 1000px) {
+    .u-wl__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .u-wl__kpis,
+    .u-wl__panels {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 720px) {
+    .u-wl__rail span {
+      display: none;
+    }
+    .u-wl__rail li[data-at] {
+      justify-content: center;
+    }
+    .u-wl__cols--brand,
+    .u-wl__cols--content,
+    .u-wl__pages {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .u-wl__col + .u-wl__col {
+      border-left: 0;
+      border-top: 1px solid var(--st-line);
+    }
+    .u-wl__cols,
+    .u-wl__pages,
+    .u-wl__dash {
+      min-height: 0;
+    }
+    .u-site {
+      height: 150px;
+    }
+    .u-site__grid i {
+      height: 18px;
+    }
+    .u-wl__meta {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 560px) {
+    .u-wl__list {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  /* reduced motion: the four scenes stack, each in its final state (the player also sets data-static) */
+  ulams-story[data-static] .u-wl__rail {
+    display: none;
+  }
+  ulams-story[data-static] .u-wl__sh {
+    display: block;
+  }
+  ulams-story[data-static] .u-wl__scenes {
+    gap: 22px;
+  }
+  ulams-story[data-static] .u-wl__scene[data-at],
+  ulams-story[data-static] .u-wl__scene[data-at].on.on2 {
+    grid-area: auto;
+    opacity: 1;
+    visibility: visible;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .u-wl__rail {
+      display: none;
+    }
+    .u-wl__sh {
+      display: block;
+    }
+    .u-wl__scenes {
+      gap: 22px;
+    }
+    ulams-story .u-wl__scene[data-at],
+    ulams-story .u-wl__scene[data-at].on.on2 {
+      grid-area: auto;
+      opacity: 1;
+      visibility: visible;
+    }
+    .u-wl ulams-story [data-at] {
+      opacity: 1;
+      transform: none;
+    }
+    .u-wl__bar i {
+      transform: scaleX(var(--w));
+      transition: none;
+    }
+  }
+</style>

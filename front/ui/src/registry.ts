@@ -858,6 +858,146 @@ export const registry = {
     ),
     fallback: (p) => join(p.title, p.intro, p.description),
   },
+  WhiteLabelStory: {
+    description:
+      "The white-label story of the product landing in four animated steps (an agent with the ulams CLI and a design tool's MCP reads a brand and applies its tokens, or builds a custom front on the headless API; get a themed site on its own subdomain, bring content and get one course per source, see per-course learner analytics), with a short numbered list under the stage. Every name, colour and bar in the stage is an example. Mark steps and sources that are not shipped with status 'coming'.",
+    category: "section",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        id: text("Anchor id for in-page links", { default: "white-label", maxLength: 40 }),
+        eyebrow: EYEBROW,
+        title: TITLE,
+        intro: INTRO,
+        valueLine: text("One line of value copy under the list", { maxLength: 200 }),
+        description: text("Text alternative of the whole animation for screen readers", { maxLength: 1400 }),
+        exampleNote: text("Small label on the dashboard, e.g. 'Example data'", { maxLength: 40 }),
+        primaryCta: LINK,
+        secondaryCta: LINK,
+        steps: list(
+          obj(
+            {
+              title: text("Step title", { maxLength: 40 }),
+              text: text("One or two sentences", { maxLength: 240 }),
+              points: list(text("Short point", { maxLength: 80 }), "Up to four short points", { maxItems: 4 }),
+              status: oneOf(["available", "coming"], "Shipped today or on the roadmap; shown as Coming only in actual mode", "available"),
+              today: text("What exists today; shown only in actual mode", { maxLength: 200 }),
+            },
+            ["title", "text"]
+          ),
+          "The four steps, in order",
+          { minItems: 4, maxItems: 4 }
+        ),
+        brand: obj(
+          {
+            sources: list(
+              obj(
+                {
+                  kind: oneOf(["figma", "stitch", "pdf", "logo"], "Kind of brand source"),
+                  label: text("What it is, e.g. 'Figma file'", { maxLength: 40 }),
+                  file: text("Example file name", { maxLength: 40 }),
+                  status: oneOf(["available", "coming"], "Shipped today or on the roadmap", "available"),
+                },
+                ["kind", "label", "file"]
+              ),
+              "Sources dropped in (1 to 4)",
+              { minItems: 1, maxItems: 4 }
+            ),
+            agentLabel: text("Window title of the agent session, e.g. 'Claude Code · ulams CLI · Figma MCP'", { maxLength: 60 }),
+            sourcesLabel: text("Caption over the sources", { maxLength: 40 }),
+            alternative: obj({ label: text("The alternative, e.g. 'Your own front'", { maxLength: 40 }), text: text("One line", { maxLength: 100 }) }, ["label", "text"]),
+            commands: list(text("A real ulams CLI command the agent runs, without the prompt", { maxLength: 80 }), "One to three commands", { minItems: 1, maxItems: 3 }),
+            tokensLabel: text("Caption over the extracted tokens", { maxLength: 40 }),
+            colors: list(
+              obj({ name: text("Role, e.g. Primary", { maxLength: 24 }), value: text("Hex colour, #RRGGBB", { minLength: 7, maxLength: 7 }) }, ["name", "value"]),
+              "Five colours in the order primary, secondary, accent, surface, text",
+              { minItems: 5, maxItems: 5 }
+            ),
+            fonts: list(obj({ role: text("Role, e.g. Headings", { maxLength: 24 }), name: text("Font name", { maxLength: 40 }) }, ["role", "name"]), "Two fonts: headings, body", {
+              minItems: 2,
+              maxItems: 2,
+            }),
+            logo: text("Placeholder wordmark of the example brand", { maxLength: 16 }),
+            radius: int("Corner radius in px", { maximum: 32 }),
+          },
+          ["sources", "agentLabel", "sourcesLabel", "alternative", "commands", "tokensLabel", "colors", "fonts", "logo", "radius"]
+        ),
+        site: obj(
+          {
+            host: text("Example subdomain, e.g. acme.ulams.app", { maxLength: 60 }),
+            pages: list(text("Page name", { maxLength: 24 }), "Landing, catalogue, admin", { minItems: 3, maxItems: 3 }),
+            headline: text("Headline on the example landing", { maxLength: 60 }),
+            action: text("Button on the example landing", { maxLength: 24 }),
+          },
+          ["host", "pages", "headline", "action"]
+        ),
+        content: obj(
+          {
+            sources: list(
+              obj(
+                {
+                  kind: oneOf(["doc", "pdf", "git", "url"], "Kind of content source"),
+                  label: text("Source, e.g. 'handbook.pdf'", { maxLength: 40 }),
+                  course: text("The course built from it", { maxLength: 40 }),
+                  status: oneOf(["available", "coming"], "Shipped today or on the roadmap", "available"),
+                },
+                ["kind", "label", "course"]
+              ),
+              "Sources, each becomes its own course (1 to 4)",
+              { minItems: 1, maxItems: 4 }
+            ),
+            builderLabel: text("Caption over the courses", { maxLength: 40 }),
+            citedLabel: text("Chip on every course, e.g. 'cited'", { maxLength: 24 }),
+            syncLabel: text("Line about keeping courses in sync", { maxLength: 80 }),
+            syncStatus: oneOf(["available", "coming"], "Shipped today or on the roadmap", "available"),
+          },
+          ["sources", "builderLabel", "citedLabel", "syncLabel"]
+        ),
+        dashboard: obj(
+          {
+            kpis: list(obj({ label: text("Measure, e.g. Progress", { maxLength: 30 }), value: int("Bar fill, 0 to 100 (illustrative)", { maximum: 100 }) }, ["label", "value"]), "Up to three measures", {
+              minItems: 1,
+              maxItems: 3,
+            }),
+            quiz: obj(
+              {
+                label: text("Panel title", { maxLength: 40 }),
+                bars: list(obj({ label: text("Quiz or module", { maxLength: 30 }), value: int("Bar fill, 0 to 100", { maximum: 100 }) }, ["label", "value"]), "Up to four bars", {
+                  minItems: 1,
+                  maxItems: 4,
+                }),
+              },
+              ["label", "bars"]
+            ),
+            atRisk: obj(
+              {
+                label: text("Panel title", { maxLength: 40 }),
+                learners: list(obj({ name: text("Anonymous label, e.g. 'Learner A'", { maxLength: 24 }), reason: text("Why, in a few words", { maxLength: 60 }) }, ["name", "reason"]), "Up to three learners", {
+                  minItems: 1,
+                  maxItems: 3,
+                }),
+              },
+              ["label", "learners"]
+            ),
+            confusing: obj(
+              {
+                label: text("Panel title", { maxLength: 40 }),
+                sections: list(obj({ title: text("Section", { maxLength: 40 }), level: int("How confusing, 1 to 5", { minimum: 1, maximum: 5 }) }, ["title", "level"]), "Up to three sections", {
+                  minItems: 1,
+                  maxItems: 3,
+                }),
+              },
+              ["label", "sections"]
+            ),
+          },
+          ["kpis", "quiz", "atRisk", "confusing"]
+        ),
+      },
+      ["description", "steps", "brand", "site", "content", "dashboard"]
+    ),
+    fallback: (p) => join(p.title, p.intro, p.description),
+  },
   ComparisonTable: {
     description:
       "Feature comparison of products in columns, features in rows. Every competitor cell must come from a sourced data file (value, note, source URL, checked date); list the sources and the 'as of' date under the table. Neutral values only.",

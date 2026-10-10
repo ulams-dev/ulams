@@ -2930,6 +2930,624 @@
         "additionalProperties": false
       }
     },
+    "WhiteLabelStory": {
+      "description": "The white-label story of the product landing in four animated steps (an agent with the ulams CLI and a design tool's MCP reads a brand and applies its tokens, or builds a custom front on the headless API; get a themed site on its own subdomain, bring content and get one course per source, see per-course learner analytics), with a short numbered list under the stage. Every name, colour and bar in the stage is an example. Mark steps and sources that are not shipped with status 'coming'.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links",
+            "maxLength": 40,
+            "default": "white-label"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "valueLine": {
+            "type": "string",
+            "description": "One line of value copy under the list",
+            "maxLength": 200
+          },
+          "description": {
+            "type": "string",
+            "description": "Text alternative of the whole animation for screen readers",
+            "maxLength": 1400
+          },
+          "exampleNote": {
+            "type": "string",
+            "description": "Small label on the dashboard, e.g. 'Example data'",
+            "maxLength": 40
+          },
+          "primaryCta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "secondaryCta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Step title",
+                  "maxLength": 40
+                },
+                "text": {
+                  "type": "string",
+                  "description": "One or two sentences",
+                  "maxLength": 240
+                },
+                "points": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "Short point",
+                    "maxLength": 80
+                  },
+                  "description": "Up to four short points",
+                  "default": [],
+                  "maxItems": 4
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "available",
+                    "coming"
+                  ],
+                  "description": "Shipped today or on the roadmap; shown as Coming only in actual mode",
+                  "default": "available"
+                },
+                "today": {
+                  "type": "string",
+                  "description": "What exists today; shown only in actual mode",
+                  "maxLength": 200
+                }
+              },
+              "required": [
+                "title",
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The four steps, in order",
+            "default": [],
+            "maxItems": 4,
+            "minItems": 4
+          },
+          "brand": {
+            "type": "object",
+            "properties": {
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "figma",
+                        "stitch",
+                        "pdf",
+                        "logo"
+                      ],
+                      "description": "Kind of brand source"
+                    },
+                    "label": {
+                      "type": "string",
+                      "description": "What it is, e.g. 'Figma file'",
+                      "maxLength": 40
+                    },
+                    "file": {
+                      "type": "string",
+                      "description": "Example file name",
+                      "maxLength": 40
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "available",
+                        "coming"
+                      ],
+                      "description": "Shipped today or on the roadmap",
+                      "default": "available"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "label",
+                    "file"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Sources dropped in (1 to 4)",
+                "default": [],
+                "maxItems": 4,
+                "minItems": 1
+              },
+              "agentLabel": {
+                "type": "string",
+                "description": "Window title of the agent session, e.g. 'Claude Code · ulams CLI · Figma MCP'",
+                "maxLength": 60
+              },
+              "sourcesLabel": {
+                "type": "string",
+                "description": "Caption over the sources",
+                "maxLength": 40
+              },
+              "alternative": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "description": "The alternative, e.g. 'Your own front'",
+                    "maxLength": 40
+                  },
+                  "text": {
+                    "type": "string",
+                    "description": "One line",
+                    "maxLength": 100
+                  }
+                },
+                "required": [
+                  "label",
+                  "text"
+                ],
+                "additionalProperties": false
+              },
+              "commands": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "A real ulams CLI command the agent runs, without the prompt",
+                  "maxLength": 80
+                },
+                "description": "One to three commands",
+                "default": [],
+                "maxItems": 3,
+                "minItems": 1
+              },
+              "tokensLabel": {
+                "type": "string",
+                "description": "Caption over the extracted tokens",
+                "maxLength": 40
+              },
+              "colors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Role, e.g. Primary",
+                      "maxLength": 24
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Hex colour, #RRGGBB",
+                      "maxLength": 7,
+                      "minLength": 7
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Five colours in the order primary, secondary, accent, surface, text",
+                "default": [],
+                "maxItems": 5,
+                "minItems": 5
+              },
+              "fonts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "role": {
+                      "type": "string",
+                      "description": "Role, e.g. Headings",
+                      "maxLength": 24
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Font name",
+                      "maxLength": 40
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "name"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Two fonts: headings, body",
+                "default": [],
+                "maxItems": 2,
+                "minItems": 2
+              },
+              "logo": {
+                "type": "string",
+                "description": "Placeholder wordmark of the example brand",
+                "maxLength": 16
+              },
+              "radius": {
+                "type": "integer",
+                "description": "Corner radius in px",
+                "minimum": 0,
+                "maximum": 32
+              }
+            },
+            "required": [
+              "sources",
+              "agentLabel",
+              "sourcesLabel",
+              "alternative",
+              "commands",
+              "tokensLabel",
+              "colors",
+              "fonts",
+              "logo",
+              "radius"
+            ],
+            "additionalProperties": false
+          },
+          "site": {
+            "type": "object",
+            "properties": {
+              "host": {
+                "type": "string",
+                "description": "Example subdomain, e.g. acme.ulams.app",
+                "maxLength": 60
+              },
+              "pages": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "description": "Page name",
+                  "maxLength": 24
+                },
+                "description": "Landing, catalogue, admin",
+                "default": [],
+                "maxItems": 3,
+                "minItems": 3
+              },
+              "headline": {
+                "type": "string",
+                "description": "Headline on the example landing",
+                "maxLength": 60
+              },
+              "action": {
+                "type": "string",
+                "description": "Button on the example landing",
+                "maxLength": 24
+              }
+            },
+            "required": [
+              "host",
+              "pages",
+              "headline",
+              "action"
+            ],
+            "additionalProperties": false
+          },
+          "content": {
+            "type": "object",
+            "properties": {
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "doc",
+                        "pdf",
+                        "git",
+                        "url"
+                      ],
+                      "description": "Kind of content source"
+                    },
+                    "label": {
+                      "type": "string",
+                      "description": "Source, e.g. 'handbook.pdf'",
+                      "maxLength": 40
+                    },
+                    "course": {
+                      "type": "string",
+                      "description": "The course built from it",
+                      "maxLength": 40
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "available",
+                        "coming"
+                      ],
+                      "description": "Shipped today or on the roadmap",
+                      "default": "available"
+                    }
+                  },
+                  "required": [
+                    "kind",
+                    "label",
+                    "course"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Sources, each becomes its own course (1 to 4)",
+                "default": [],
+                "maxItems": 4,
+                "minItems": 1
+              },
+              "builderLabel": {
+                "type": "string",
+                "description": "Caption over the courses",
+                "maxLength": 40
+              },
+              "citedLabel": {
+                "type": "string",
+                "description": "Chip on every course, e.g. 'cited'",
+                "maxLength": 24
+              },
+              "syncLabel": {
+                "type": "string",
+                "description": "Line about keeping courses in sync",
+                "maxLength": 80
+              },
+              "syncStatus": {
+                "type": "string",
+                "enum": [
+                  "available",
+                  "coming"
+                ],
+                "description": "Shipped today or on the roadmap",
+                "default": "available"
+              }
+            },
+            "required": [
+              "sources",
+              "builderLabel",
+              "citedLabel",
+              "syncLabel"
+            ],
+            "additionalProperties": false
+          },
+          "dashboard": {
+            "type": "object",
+            "properties": {
+              "kpis": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Measure, e.g. Progress",
+                      "maxLength": 30
+                    },
+                    "value": {
+                      "type": "integer",
+                      "description": "Bar fill, 0 to 100 (illustrative)",
+                      "minimum": 0,
+                      "maximum": 100
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "value"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Up to three measures",
+                "default": [],
+                "maxItems": 3,
+                "minItems": 1
+              },
+              "quiz": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "description": "Panel title",
+                    "maxLength": 40
+                  },
+                  "bars": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": "string",
+                          "description": "Quiz or module",
+                          "maxLength": 30
+                        },
+                        "value": {
+                          "type": "integer",
+                          "description": "Bar fill, 0 to 100",
+                          "minimum": 0,
+                          "maximum": 100
+                        }
+                      },
+                      "required": [
+                        "label",
+                        "value"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Up to four bars",
+                    "default": [],
+                    "maxItems": 4,
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "label",
+                  "bars"
+                ],
+                "additionalProperties": false
+              },
+              "atRisk": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "description": "Panel title",
+                    "maxLength": 40
+                  },
+                  "learners": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Anonymous label, e.g. 'Learner A'",
+                          "maxLength": 24
+                        },
+                        "reason": {
+                          "type": "string",
+                          "description": "Why, in a few words",
+                          "maxLength": 60
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "reason"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Up to three learners",
+                    "default": [],
+                    "maxItems": 3,
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "label",
+                  "learners"
+                ],
+                "additionalProperties": false
+              },
+              "confusing": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "description": "Panel title",
+                    "maxLength": 40
+                  },
+                  "sections": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "description": "Section",
+                          "maxLength": 40
+                        },
+                        "level": {
+                          "type": "integer",
+                          "description": "How confusing, 1 to 5",
+                          "minimum": 1,
+                          "maximum": 5
+                        }
+                      },
+                      "required": [
+                        "title",
+                        "level"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "description": "Up to three sections",
+                    "default": [],
+                    "maxItems": 3,
+                    "minItems": 1
+                  }
+                },
+                "required": [
+                  "label",
+                  "sections"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "kpis",
+              "quiz",
+              "atRisk",
+              "confusing"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "description",
+          "steps",
+          "brand",
+          "site",
+          "content",
+          "dashboard"
+        ],
+        "additionalProperties": false
+      }
+    },
     "ComparisonTable": {
       "description": "Feature comparison of products in columns, features in rows. Every competitor cell must come from a sourced data file (value, note, source URL, checked date); list the sources and the 'as of' date under the table. Neutral values only.",
       "children": false,

@@ -549,6 +549,9 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Nudges via `notifications`, rate-limited
 - [ ] Recovery rate measurement
 - [ ] Author analytics; high-struggle elements → update proposals
+- [ ] (new) Per-course analytics dashboard for authors and admins: progress, completion, quiz performance, at-risk
+      learners and the sections that confuse people, per course (Phase 4, M4.6 author analytics; shown as "Coming" in the
+      white-label section of the platform landing)
 - [ ] Privacy: per-tenant toggle, retention, explanations, minimal data to LLM
 - [ ] Rule unit tests, synthetic learner journeys, tenant isolation
 - [ ] (new) Streaming tutor answers (LLM client streaming over the SSE event log)
@@ -575,6 +578,9 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Themeable from builder presets; per-tenant theme (partial: `--ulams-*` theme files per demo
       preset in `front/ui/src/styles/themes`, chosen from `theme.theme`; accent from `theme.accent`
       applied server-side with AA contrast; builder presets not connected yet)
+- [ ] (new) Brand import: built-in brand importer (no agent needed) that generates a tenant theme preset from a Figma
+      file, a Stitch DESIGN.md or a brand guide (tokens, fonts, logo), proposed as a diff the admin approves (today an
+      agent with the ulams CLI and the design tool's MCP does it: `ulams theme set`, `ulams settings set`)
 - [ ] PWA offline mode with tested sync/conflict rules
 - [ ] Single frontend for LMS **and** Sylius commerce (catalogue, checkout, account)
 - [ ] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge) (partial:
