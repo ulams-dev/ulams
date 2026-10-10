@@ -24,6 +24,7 @@ use Ulams\CourseBuilder\Models\Step;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Pipeline\BriefService;
 use Ulams\CourseBuilder\Pipeline\GenerationService;
+use Ulams\CourseBuilder\Pipeline\OutlineEditor;
 use Ulams\CourseBuilder\Pipeline\OutlineService;
 use Ulams\CourseBuilder\Pipeline\PatchService;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
@@ -58,6 +59,14 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="source", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="source"))
  * @OA\Get(path="/api/admin/course-builder/sessions/{session}/citations", summary="Sources panel: sections with the elements that cite them", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="sources, sections, citing elements"))
+ * @OA\Post(path="/api/admin/course-builder/sessions/{session}/outline", summary="Edit the course structure: rename, move, add, remove, set the lesson format", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="action", type="string"), @OA\Property(property="id", type="string"))),
+ *     @OA\Response(response=200, description="new author version, re-apply run"), @OA\Response(response=422, description="the edit is not valid"))
+ * @OA\Post(path="/api/admin/course-builder/sessions/{session}/elements/{element}/variants", summary="Give me options: 2 or 3 proposals for one element, compared side by side", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="element", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="count", type="integer"), @OA\Property(property="instruction", type="string"))),
+ *     @OA\Response(response=202, description="run id"))
  * @OA\Get(path="/api/admin/course-builder/fragments/{fragment}", summary="One source fragment (citation popover)", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="fragment", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="fragment"))
  * @OA\Get(path="/api/admin/course-builder/sessions/{session}/brief", summary="Course Brief", tags={"Admin Course Builder"}, security={{"passport": {}}},
@@ -107,6 +116,7 @@ class CourseBuilderController extends Controller
         private readonly EventLog $events,
         private readonly Surfaces $surfaces,
         private readonly CitationIndex $citations,
+        private readonly OutlineEditor $outlineEditor,
     ) {
     }
 
@@ -440,6 +450,54 @@ class CourseBuilderController extends Controller
         }
 
         return self::ok(['currentVersionId' => $v->id, 'runId' => $run?->id, 'state' => SessionState::snapshot($s->refresh())]);
+    }
+
+    public function editOutline(Request $request, string $session): JsonResponse
+    {
+        $s = $this->sessionFor($request, $session, 'update');
+        $current = $s->currentVersion;
+        if ($current === null || !in_array($current->kind, VersionService::CONTENT_KINDS, true) || $current->status === Version::PROPOSED) {
+            return self::fail('The outline can be edited once the lessons are generated and the version is approved.', 409);
+        }
+        $data = $request->validate([
+            'action' => ['required', 'string', 'in:' . implode(',', OutlineEditor::ACTIONS)],
+            'id' => ['nullable', 'string', 'max:40'],
+            'title' => ['nullable', 'string', 'max:255'],
+            'moduleId' => ['nullable', 'string', 'max:40'],
+            'index' => ['nullable', 'integer', 'min:0', 'max:500'],
+            'kind' => ['nullable', 'in:lesson,module'],
+            'objective' => ['nullable', 'string', 'max:600'],
+            'citations' => ['nullable', 'array', 'max:20'],
+            'citations.*' => ['string', 'max:16'],
+            'minutes' => ['nullable', 'integer', 'min:1', 'max:600'],
+            'contentType' => ['nullable', 'string', 'max:20'],
+        ]);
+        try {
+            [$doc, $summary] = $this->outlineEditor->apply($current->document, $data, array_fill_keys($s->fragmentIds(), true));
+        } catch (InvalidArgumentException $e) {
+            return self::fail($e->getMessage(), 422);
+        }
+        $new = $this->versions->create($s, $doc, 'author', 'author', Version::APPROVED, $current, $summary, null, [], (int) $request->user()->getKey());
+        $this->versions->setCurrent($s, $new);
+
+        return $this->afterMove($request, $s, $new, $summary);
+    }
+
+    public function variants(Request $request, string $session, string $element): JsonResponse
+    {
+        $s = $this->sessionFor($request, $session, 'update');
+        $data = $request->validate(['count' => ['required', 'integer', 'in:2,3'], 'instruction' => ['required', 'string', 'min:2', 'max:2000']]);
+        $current = $s->currentVersion;
+        if ($current === null || !in_array($current->kind, VersionService::CONTENT_KINDS, true) || \Ulams\CourseBuilder\Blueprint\Blueprint::find($current->document, $element) === null) {
+            return self::fail('Select a lesson, block or question of the generated course.', 409);
+        }
+        try {
+            $run = $this->runs->start($s, 'variants', ['elementId' => $element, 'message' => $data['instruction'], 'count' => (int) $data['count']], (int) $request->user()->getKey());
+        } catch (BuilderException $e) {
+            return self::fail($e->getMessage(), $e->status);
+        }
+
+        return self::ok(['runId' => $run->id], 202);
     }
 
     public function apply(Request $request, string $session): JsonResponse

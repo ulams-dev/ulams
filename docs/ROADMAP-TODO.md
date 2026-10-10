@@ -464,10 +464,11 @@ Architecture
 - [x] Progressive streaming with skeletons; interactions sent back as structured events
 
 Builder components (MVP)
-- [ ] Interview controls · theme picker with live preview · drag-and-drop outline editor (partial:
-      interview controls and theme picker done; drag-and-drop editor M2.3)
-- [ ] Lesson preview card · variant comparison · quiz question card (partial: lesson preview and quiz
-      question cards done; variant comparison M2.3)
+- [x] Interview controls · theme picker with live preview · drag-and-drop outline editor (the editor
+      moves, renames, adds and removes modules and lessons with drag and drop and with buttons, each change an
+      author version; L2-14)
+- [x] Lesson preview card · variant comparison · quiz question card (variant comparison: 2–3 options side
+      by side, choose one; L2-13)
 - [ ] Diff view · generation progress with retry and cost · publish summary with warnings (partial:
       diff view, progress, the apply summary and the publish summary with blocking items and warnings
       done; critique results in the summary are M2.4)

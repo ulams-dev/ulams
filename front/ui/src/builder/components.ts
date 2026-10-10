@@ -551,6 +551,173 @@ const DiffView: Renderer = (p, ctx, id) => {
     citations(p.citations, ctx), actions);
 };
 
+const VariantComparison: Renderer = (p, ctx, id) => {
+  const decided = p.status !== "proposed";
+  const cards = (p.variants as Props[]).map((v) => {
+    const rows = h("ul", { class: "cb-changes" }, (v.changes as Props[]).map((c) =>
+      h("li", { class: `cb-change cb-change-${c.kind}` },
+        h("p", { class: "cb-change-label" }, changeBadge(c.kind), String(c.label)),
+        c.kind === "changed"
+          ? h("p", { class: "cb-change-text" }, wordDiff(String(c.before ?? ""), String(c.after ?? "")))
+          : h("p", { class: "cb-change-text" }, c.kind === "added" ? h("ins", {}, sr("added: "), String(c.after ?? "")) : h("del", {}, sr("removed: "), String(c.before ?? ""))))));
+    const headId = uid("variant");
+    const card = h("article", { class: `cb-card cb-variant cb-variant-${v.status}`, "aria-labelledby": headId, "data-variant": v.versionId },
+      h("h4", { id: headId, class: "cb-h3" }, String(v.label)),
+      v.reply ? h("p", { class: "cb-muted" }, String(v.reply)) : null,
+      v.changes.length ? rows : h("p", { class: "cb-muted" }, "No changes."),
+      citations(v.citations, ctx));
+    if (!decided) {
+      const choose = h("button", { type: "button", class: "cb-btn cb-btn-primary" }, icon("check"), `Use ${v.label}`, sr(` for ${p.elementLabel}`));
+      choose.addEventListener("click", () => act(ctx, id, "choose_variant", { versionId: v.versionId }));
+      card.append(h("div", { class: "cb-actions" }, choose));
+    } else {
+      card.append(h("p", { class: `cb-decision cb-decision-${v.status}` }, icon(v.status === "approved" ? "check" : "minus"), v.status === "approved" ? "Chosen" : "Not chosen"));
+    }
+    return card;
+  });
+  const footer = h("div", { class: "cb-actions" });
+  if (!decided) {
+    const none = h("button", { type: "button", class: "cb-btn" }, "Keep the current text");
+    none.addEventListener("click", () => act(ctx, id, "reject_variants", { group: p.group }));
+    footer.append(none, h("p", { class: "cb-muted cb-small" }, "Choosing one rejects the others. Nothing changes before you choose."));
+  }
+  return h("section", { class: "cb-card cb-variants", "aria-label": `Options for ${p.elementLabel}` },
+    h("header", {}, h("h3", { class: "cb-h3" }, `Options for ${p.elementLabel}`), p.instruction ? h("p", { class: "cb-muted" }, `You asked: “${p.instruction}”`) : null),
+    h("div", { class: "cb-variant-grid" }, cards), footer);
+};
+
+const OutlineEditor: Renderer = (p, ctx, id) => {
+  const modules = p.modules as Props[];
+  const sections = (p.sections as Props[] | undefined) ?? [];
+  const edit = (context: Record<string, unknown>) => act(ctx, id, "outline_edit", context);
+  const status = h("p", { class: "cb-muted cb-small", role: "status", "aria-live": "polite" }, p.message ? String(p.message) : "");
+  const btn = (label: string, aria: string, onClick: () => void, disabled = false): HTMLButtonElement => {
+    const b = h("button", { type: "button", class: "cb-btn cb-btn-small", "aria-label": aria, disabled: disabled || p.busy ? "" : null }, label) as HTMLButtonElement;
+    b.addEventListener("click", onClick);
+    return b;
+  };
+  let dragged: { kind: "module" | "lesson"; id: string } | null = null;
+
+  const renameRow = (kind: string, item: Props, host: HTMLElement): HTMLButtonElement =>
+    btn("Rename", `Rename ${kind} ${item.title}`, () => {
+      const input = h("input", { type: "text", class: "cb-input", value: String(item.title), maxlength: 200, "aria-label": `New title for ${item.title}` }) as HTMLInputElement;
+      const save = h("button", { type: "button", class: "cb-btn cb-btn-small" }, "Save");
+      const cancel = h("button", { type: "button", class: "cb-btn cb-btn-small" }, "Cancel");
+      const form = h("span", { class: "cb-inline-edit" }, input, save, cancel);
+      save.addEventListener("click", () => edit({ action: "rename", id: item.id, title: input.value.trim(), focus: item.id }));
+      cancel.addEventListener("click", () => form.replaceWith(host));
+      host.replaceWith(form);
+      input.focus();
+    });
+
+  const removeRow = (kind: string, item: Props): HTMLButtonElement => {
+    const b = btn("Remove", `Remove ${kind} ${item.title}`, () => {
+      const confirm = h("span", { class: "cb-inline-edit", role: "group", "aria-label": `Confirm removing ${item.title}` },
+        h("span", {}, `Remove ${kind === "module" ? "this module and its lessons" : "this lesson"}?`));
+      const yes = h("button", { type: "button", class: "cb-btn cb-btn-small cb-btn-danger" }, "Remove");
+      const no = h("button", { type: "button", class: "cb-btn cb-btn-small" }, "Keep");
+      yes.addEventListener("click", () => edit({ action: "remove", id: item.id }));
+      no.addEventListener("click", () => {
+        confirm.replaceWith(b);
+        b.focus();
+      });
+      confirm.append(yes, no);
+      b.replaceWith(confirm);
+      yes.focus();
+    });
+    return b;
+  };
+
+  const addForm = (kind: "lesson" | "module", moduleId?: string): HTMLElement => {
+    const fid = uid("add");
+    const title = h("input", { id: `${fid}-t`, type: "text", class: "cb-input", maxlength: 200 }) as HTMLInputElement;
+    const objective = h("input", { id: `${fid}-o`, type: "text", class: "cb-input", maxlength: 400 }) as HTMLInputElement;
+    const section = h("select", { id: `${fid}-s`, class: "cb-input" }, sections.map((s) => h("option", { value: String(s.fragmentId) }, String(s.label)))) as HTMLSelectElement;
+    const submit = h("button", { type: "submit", class: "cb-btn cb-btn-small" }, kind === "module" ? "Add module" : "Add lesson") as HTMLButtonElement;
+    const form = h("form", { class: "cb-add-form", "aria-label": kind === "module" ? "Add a module" : "Add a lesson" },
+      h("label", { for: `${fid}-t`, class: "cb-label" }, kind === "module" ? "Title of the first lesson" : "Lesson title"), title,
+      h("label", { for: `${fid}-o`, class: "cb-label" }, "Learning objective"), objective,
+      h("label", { for: `${fid}-s`, class: "cb-label" }, "Based on the source section"), section, submit);
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      edit({ action: "add", kind, moduleId, title: title.value.trim(), objective: objective.value.trim(), citations: section.value ? [section.value] : [] });
+    });
+    if (sections.length === 0) submit.disabled = true;
+
+    return h("details", { class: "cb-add" }, h("summary", {}, kind === "module" ? "Add a module" : "Add a lesson"), form);
+  };
+
+  const lessonItem = (module: Props, mi: number, lesson: Props, li: number): HTMLElement => {
+    const lessons = module.lessons as Props[];
+    const prev = modules[mi - 1];
+    const next = modules[mi + 1];
+    const row = h("div", { class: "cb-outline-row" });
+    const title = h("span", { class: "cb-outline-title", tabindex: "-1", "data-focus": lesson.id }, `${mi + 1}.${li + 1} ${lesson.title}`);
+    const rename = renameRow("lesson", lesson, title);
+    row.append(h("span", { class: "cb-drag-handle", "aria-hidden": "true", title: "Drag to move" }, "⠿"), title,
+      ...(lesson.written === false ? [h("span", { class: "cb-tag" }, "No text yet")] : []),
+      btn("Move up", `Move lesson ${lesson.title} up`, () => edit({ action: "move", id: lesson.id, index: li - 1, focus: lesson.id }), li === 0),
+      btn("Move down", `Move lesson ${lesson.title} down`, () => edit({ action: "move", id: lesson.id, index: li + 1, focus: lesson.id }), li === lessons.length - 1),
+      btn("Move to previous module", `Move lesson ${lesson.title} to the end of ${prev?.title ?? "the previous module"}`, () => edit({ action: "move", id: lesson.id, moduleId: prev!.id, index: (prev!.lessons as Props[]).length, focus: lesson.id }), !prev || lessons.length === 1),
+      btn("Move to next module", `Move lesson ${lesson.title} to the start of ${next?.title ?? "the next module"}`, () => edit({ action: "move", id: lesson.id, moduleId: next!.id, index: 0, focus: lesson.id }), !next || lessons.length === 1),
+      rename, removeRow("lesson", lesson));
+    const item = h("li", { class: "cb-outline-lesson", draggable: "true", "data-lesson": lesson.id }, row);
+    item.addEventListener("dragstart", (e) => {
+      dragged = { kind: "lesson", id: String(lesson.id) };
+      (e as DragEvent).dataTransfer?.setData("text/plain", String(lesson.id));
+      e.stopPropagation();
+    });
+    item.addEventListener("dragover", (e) => {
+      if (dragged) e.preventDefault();
+    });
+    item.addEventListener("drop", (e) => {
+      if (!dragged || dragged.kind !== "lesson" || dragged.id === lesson.id) return;
+      e.preventDefault();
+      e.stopPropagation();
+      edit({ action: "move", id: dragged.id, moduleId: module.id, index: li, focus: dragged.id });
+      dragged = null;
+    });
+    return item;
+  };
+
+  const tree = h("ol", { class: "cb-outline-modules", "aria-label": "Course structure" }, modules.map((module, mi) => {
+    const lessons = module.lessons as Props[];
+    const title = h("h4", { class: "cb-serif cb-outline-title", tabindex: "-1", "data-focus": module.id }, `Module ${mi + 1} · ${module.title}`);
+    const head = h("div", { class: "cb-outline-row" },
+      h("span", { class: "cb-drag-handle", "aria-hidden": "true", title: "Drag to move" }, "⠿"), title,
+      btn("Move up", `Move module ${module.title} up`, () => edit({ action: "move", id: module.id, index: mi - 1, focus: module.id }), mi === 0),
+      btn("Move down", `Move module ${module.title} down`, () => edit({ action: "move", id: module.id, index: mi + 1, focus: module.id }), mi === modules.length - 1),
+      renameRow("module", module, title), removeRow("module", module));
+    const item = h("li", { class: "cb-outline-module", draggable: "true", "data-module": module.id }, head,
+      h("ol", { class: "cb-outline-lessons", "aria-label": `Lessons of ${module.title}` }, lessons.map((lesson, li) => lessonItem(module, mi, lesson, li))),
+      addForm("lesson", String(module.id)));
+    item.addEventListener("dragstart", (e) => {
+      if (dragged) return;
+      dragged = { kind: "module", id: String(module.id) };
+      (e as DragEvent).dataTransfer?.setData("text/plain", String(module.id));
+    });
+    item.addEventListener("dragend", () => (dragged = null));
+    item.addEventListener("dragover", (e) => {
+      if (dragged) e.preventDefault();
+    });
+    item.addEventListener("drop", (e) => {
+      if (!dragged || dragged.id === module.id) return;
+      e.preventDefault();
+      if (dragged.kind === "module") edit({ action: "move", id: dragged.id, index: mi, focus: dragged.id });
+      else edit({ action: "move", id: dragged.id, moduleId: module.id, index: lessons.length, focus: dragged.id });
+      dragged = null;
+    });
+    return item;
+  }));
+
+  const root = h("section", { class: "cb-card cb-outline-editor", "aria-label": "Edit the course structure", "aria-busy": p.busy ? "true" : null },
+    h("p", { class: "cb-muted cb-small" }, "Drag a lesson or module, or use the buttons. Every change is saved as a new version; you can undo it."),
+    status, tree, addForm("module"));
+  if (p.focusId) queueMicrotask(() => root.querySelector<HTMLElement>(`[data-focus="${p.focusId}"]`)?.focus());
+
+  return root;
+};
+
 const ApplySummary: Renderer = (p, ctx, id) => {
   const kinds: Array<[string, string]> = [["courses", "Courses"], ["lessons", "Lessons"], ["topics", "Topics"], ["questions", "Quiz questions"], ["pages", "Pages"]];
   const table = h("table", { class: "cb-table" },
@@ -1124,6 +1291,8 @@ export const builderComponents: Record<string, Renderer> = {
   LessonPreviewCard,
   QuizQuestionCard,
   DiffView,
+  VariantComparison,
+  OutlineEditor,
   ApplySummary,
   VersionList,
   SourcesPanel,

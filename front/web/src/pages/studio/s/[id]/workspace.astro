@@ -11,6 +11,10 @@ if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 }
     <nav class="st-ws-col" aria-labelledby="st-tree-title">
       <h2 id="st-tree-title" class="cb-eyebrow">Curriculum tree</h2>
       <div data-tree><p class="cb-muted">Loading the course…</p></div>
+      <details class="st-outline-edit" data-outline-details>
+        <summary class="cb-eyebrow">Edit the structure</summary>
+        <div data-outline-editor><p class="cb-muted">Loading the course…</p></div>
+      </details>
       <section aria-labelledby="st-sources-title" class="st-sources-panel">
         <h2 id="st-sources-title" class="cb-eyebrow">Sources</h2>
         <div data-sources-panel><p class="cb-muted">Loading the sources…</p></div>
@@ -39,6 +43,8 @@ if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 }
         <label class="cb-sr" for="st-ws-message">Change request</label>
         <textarea id="st-ws-message" rows="3" maxlength="4000" placeholder="e.g. Make the distractors less obvious"></textarea>
         <button class="cb-btn cb-btn-primary" type="submit">Propose a change</button>
+        <button class="cb-btn" type="button" data-options aria-describedby="st-options-hint">Give me 2 options</button>
+        <p id="st-options-hint" class="cb-muted cb-small">Two options make two model calls, about twice the cost of one edit. You compare them side by side and choose.</p>
         <p class="cb-muted cb-small st-hint">Every change is shown as a diff; nothing changes until you approve it.</p>
       </form>
     </aside>

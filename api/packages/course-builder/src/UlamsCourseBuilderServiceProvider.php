@@ -32,6 +32,7 @@ use Ulams\CourseBuilder\Pipeline\BriefService;
 use Ulams\CourseBuilder\Pipeline\GenerationService;
 use Ulams\CourseBuilder\Pipeline\InterviewService;
 use Ulams\CourseBuilder\Pipeline\Llm;
+use Ulams\CourseBuilder\Pipeline\OutlineEditor;
 use Ulams\CourseBuilder\Pipeline\OutlineService;
 use Ulams\CourseBuilder\Pipeline\PatchService;
 use Ulams\CourseBuilder\Pipeline\PriceService;
@@ -74,6 +75,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         SourceIngestor::class => SourceIngestor::class,
         InterviewService::class => InterviewService::class,
         OutlineService::class => OutlineService::class,
+        OutlineEditor::class => OutlineEditor::class,
         GenerationService::class => GenerationService::class,
         PatchService::class => PatchService::class,
         BlueprintApplier::class => BlueprintApplier::class,

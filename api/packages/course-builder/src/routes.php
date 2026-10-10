@@ -37,6 +37,8 @@ Route::group([
     Route::post('sessions/{session}/undo', [CourseBuilderController::class, 'undo']);
     Route::post('sessions/{session}/redo', [CourseBuilderController::class, 'redo']);
 
+    Route::post('sessions/{session}/outline', [CourseBuilderController::class, 'editOutline']);
+    Route::post('sessions/{session}/elements/{element}/variants', [CourseBuilderController::class, 'variants']);
     Route::post('sessions/{session}/apply', [CourseBuilderController::class, 'apply']);
     Route::post('sessions/{session}/new-site', [CourseBuilderController::class, 'newSite']);
     Route::get('sessions/{session}/publish-check', [CourseBuilderController::class, 'publishCheck']);

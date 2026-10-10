@@ -250,6 +250,14 @@ export interface CitationIndex {
   elements: Record<string, string[]>;
 }
 
+/** A direct edit of the course structure (L2-14). */
+export type OutlineEdit =
+  | { action: "rename"; id: string; title: string }
+  | { action: "move"; id: string; index: number; moduleId?: string }
+  | { action: "add"; kind: "lesson" | "module"; moduleId?: string; title: string; objective: string; citations: string[]; minutes?: number }
+  | { action: "remove"; id: string }
+  | { action: "set_format"; id: string; contentType: LessonFormat };
+
 /** A2UI action sent back from a surface. */
 export interface A2uiAction {
   name: string;
@@ -406,6 +414,12 @@ export function createCourseBuilderClient(options: ClientOptions & { prefix?: st
     publishCheck: (sessionId: string) => call<PublishCheck>("GET", `/sessions/${id(sessionId)}/publish-check`),
     /** Sources panel data: per source its sections, who cites each, and the sections nobody cites. */
     citations: (sessionId: string) => call<CitationIndex>("GET", `/sessions/${id(sessionId)}/citations`),
+    /** Saves a structure edit as an approved author version and re-applies the course. */
+    editOutline: (sessionId: string, edit: OutlineEdit) =>
+      call<{ currentVersionId: string; runId: string | null; state: BuilderState }>("POST", `/sessions/${id(sessionId)}/outline`, edit),
+    /** "Give me options": 2 or 3 proposals for one element, shown side by side (one model call each). */
+    variants: (sessionId: string, elementId: string, instruction: string, count: 2 | 3 = 2) =>
+      call<{ runId: string }>("POST", `/sessions/${id(sessionId)}/elements/${id(elementId)}/variants`, { count, instruction }),
     usage: (sessionId: string) => call<{ total: BuilderCost; byTask: UsageRow[] }>("GET", `/sessions/${id(sessionId)}/usage`),
     /** AG-UI event stream with resume; resolves when `signal` aborts or access is refused. */
     events: (

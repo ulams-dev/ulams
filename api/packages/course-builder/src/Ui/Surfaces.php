@@ -202,19 +202,7 @@ final class Surfaces
         $doc = $version->document;
         $parent = $version->parent?->document ?? [];
         $fragments = self::labels($doc);
-        $changes = BlueprintDiff::forElement(BlueprintDiff::compare($parent, $doc), $elementId);
-        $rows = [];
-        foreach ($changes as $c) {
-            foreach ($c['fields'] as $f) {
-                $rows[] = array_filter([
-                    'path' => $c['id'] . '.' . $f['field'],
-                    'label' => $c['label'] . ' · ' . $f['label'],
-                    'kind' => $c['kind'] === 'changed' ? 'changed' : $c['kind'],
-                    'before' => is_scalar($f['before']) ? mb_substr(self::scalar($f['before']), 0, 20000) : null,
-                    'after' => is_scalar($f['after']) ? mb_substr(self::scalar($f['after']), 0, 20000) : null,
-                ], fn ($v) => $v !== null);
-            }
-        }
+        $rows = self::changeRows($doc, $parent, $elementId);
         $element = Blueprint::find($doc, $elementId);
         $cited = $element ? array_values(array_unique(array_filter(Blueprint::citations($element['node'])))) : [];
         $components = [
@@ -229,6 +217,58 @@ final class Surfaces
         $this->emit($session, $run, "patch-{$version->id}", 'patch', $components, ['versionId' => $version->id, 'elementId' => $elementId]);
         if ($status !== 'proposed') {
             $this->close($session, "patch-{$version->id}");
+        }
+    }
+
+    /** @return array<int,array<string,string>> DiffView rows for one element between two documents */
+    private static function changeRows(array $doc, array $parent, string $elementId): array
+    {
+        $rows = [];
+        foreach (BlueprintDiff::forElement(BlueprintDiff::compare($parent, $doc), $elementId) as $c) {
+            foreach ($c['fields'] as $f) {
+                $rows[] = array_filter([
+                    'path' => $c['id'] . '.' . $f['field'],
+                    'label' => $c['label'] . ' · ' . $f['label'],
+                    'kind' => $c['kind'] === 'changed' ? 'changed' : $c['kind'],
+                    'before' => is_scalar($f['before']) ? mb_substr(self::scalar($f['before']), 0, 20000) : null,
+                    'after' => is_scalar($f['after']) ? mb_substr(self::scalar($f['after']), 0, 20000) : null,
+                ], fn ($v) => $v !== null);
+            }
+        }
+
+        return $rows;
+    }
+
+    /**
+     * "Give me options": the proposals of one variant group side by side.
+     *
+     * @param array<int,array{version:Version,reply:string}> $made
+     */
+    public function variants(Session $session, ?Run $run, string $group, string $elementId, string $label, string $instruction, array $made, string $status): void
+    {
+        $fragments = [];
+        foreach ($made as $m) {
+            $fragments += self::labels($m['version']->document);
+        }
+        $variants = [];
+        foreach ($made as $i => $m) {
+            /** @var Version $v */
+            $v = $m['version'];
+            $element = Blueprint::find($v->document, $elementId);
+            $cited = $element ? array_values(array_unique(Blueprint::citations($element['node']))) : [];
+            $variants[] = array_filter([
+                'versionId' => $v->id,
+                'label' => 'Option ' . chr(65 + $i),
+                'reply' => $m['reply'] !== '' ? mb_substr($m['reply'], 0, 1000) : null,
+                'status' => $v->status,
+                'changes' => array_slice(self::changeRows($v->document, $v->parent?->document ?? [], $elementId), 0, 40),
+                'citations' => array_map(fn ($id) => ['fragmentId' => $id, 'label' => $fragments[$id] ?? $id], array_slice($cited, 0, 10)),
+            ], fn ($x) => $x !== null);
+        }
+        $this->emit($session, $run, "variants-{$group}", 'variants', [['id' => 'root', 'component' => 'VariantComparison', 'group' => $group, 'elementId' => $elementId,
+            'elementLabel' => mb_substr($label, 0, 200), 'instruction' => mb_substr($instruction, 0, 1000), 'status' => $status, 'variants' => $variants]], ['group' => $group, 'elementId' => $elementId]);
+        if ($status !== 'proposed') {
+            $this->close($session, "variants-{$group}");
         }
     }
 

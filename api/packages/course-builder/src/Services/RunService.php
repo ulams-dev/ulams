@@ -32,7 +32,7 @@ use Ulams\CourseBuilder\Ui\Surfaces;
  */
 final class RunService
 {
-    public const LLM_KINDS = ['interview', 'outline', 'generate', 'patch'];
+    public const LLM_KINDS = ['interview', 'outline', 'generate', 'patch', 'variants'];
 
     /**
      * Run handlers contributed by other packages (Living Course). A run whose `input.handler`
@@ -141,6 +141,7 @@ final class RunService
                     isset($run->input['previousVersionId']) ? Version::query()->find($run->input['previousVersionId']) : null,
                 ),
                 'patch' => $this->patches->propose($session, $run, (string) $run->input['elementId'], (string) $run->input['message']),
+                'variants' => $this->patches->variants($session, $run, (string) $run->input['elementId'], (string) $run->input['message'], (int) ($run->input['count'] ?? 2)),
                 'apply' => $this->apply($session, $run),
                 default => throw new InvalidArgumentException("Unknown run kind {$run->kind}"),
             };
@@ -285,6 +286,9 @@ final class RunService
         $elementId = $input['forwardedProps']['selection']['elementId'] ?? null;
         $this->events->userText($session, null, $text);
 
+        if (is_string($elementId) && $elementId !== '' && preg_match('/\b(options|variants|alternatives|alternatively|a few versions)\b/i', $text)) {
+            return ['run' => $this->start($session, 'variants', ['elementId' => $elementId, 'message' => $text, 'count' => 2], $userId), 'accepted' => true];
+        }
         if (is_string($elementId) && $elementId !== '') {
             return ['run' => $this->start($session, 'patch', ['elementId' => $elementId, 'message' => $text], $userId), 'accepted' => true];
         }
@@ -327,6 +331,7 @@ final class RunService
             'approve_outline', 'reject_outline' => 'outline',
             'approve_apply' => 'apply',
             'approve_patch', 'reject_patch' => 'patch',
+            'choose_variant', 'reject_variants' => 'variants',
             'retry_step' => 'progress',
             'retry' => null,
             default => throw new BuilderException("Unknown action {$name}.", 422),
@@ -394,6 +399,20 @@ final class RunService
                 $this->patches->approve($session, null, $version, $userId);
 
                 return ['run' => $this->reapply($session, $userId) ?? $this->refreshApply($session), 'accepted' => true];
+
+            case 'choose_variant':
+                $version = $this->version($session, (string) ($context['versionId'] ?? ''));
+                if ($version->variant_group === null || $version->status !== Version::PROPOSED || "variants-{$version->variant_group}" !== $surfaceId) {
+                    return $this->reply($session, 'That option is no longer available.', false);
+                }
+                $this->patches->chooseVariant($session, null, $version, $userId);
+
+                return ['run' => $this->reapply($session, $userId) ?? $this->refreshApply($session), 'accepted' => true];
+
+            case 'reject_variants':
+                $this->patches->rejectVariants($session, null, (string) ($context['group'] ?? ''), $userId);
+
+                return ['run' => null, 'accepted' => true];
 
             case 'reject_patch':
                 $this->patches->reject($session, null, $this->version($session, (string) $context['versionId']), $userId);

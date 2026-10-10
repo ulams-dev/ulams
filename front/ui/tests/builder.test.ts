@@ -150,6 +150,65 @@ describe("interactions round-trip as A2UI actions", () => {
     expect(onSelect).toHaveBeenCalledWith("q9", "Self-check 1");
   });
 
+  it("variant comparison shows the options and chooses one", () => {
+    const c = ctx();
+    const main = mount(single("VariantComparison"), c);
+    expect(main.querySelectorAll("[data-variant]")).toHaveLength(2);
+    expect(main.textContent).toContain("Option A");
+    [...main.querySelectorAll("button")].find((b) => b.textContent?.startsWith("Use Option B"))!.click();
+    expect(c.actions[0]).toMatchObject({ name: "choose_variant", context: { versionId: "01v2" } });
+    [...main.querySelectorAll("button")].find((b) => b.textContent === "Keep the current text")!.click();
+    expect(c.actions[1]).toMatchObject({ name: "reject_variants", context: { group: "01aaaaaaaaaaaaaaaaaaaaaaaa" } });
+    const decided = mount(single("VariantComparison", { ...builderFixtures.VariantComparison!, status: "chosen" }), ctx());
+    expect(decided.querySelector("button.cb-btn-primary")).toBeNull();
+  });
+
+  describe("outline editor", () => {
+    const click = (main: HTMLElement, label: string) => (main.querySelector(`button[aria-label="${label}"]`) as HTMLButtonElement).click();
+
+    it("moves with buttons, across modules, and announces the last change", () => {
+      const c = ctx();
+      const main = mount(single("OutlineEditor"), c);
+      expect(main.querySelector('[role="status"]')!.textContent).toContain("Moved lesson");
+      click(main, "Move lesson Strength up");
+      expect(c.actions[0]).toMatchObject({ name: "outline_edit", context: { action: "move", id: "l2", index: 0 } });
+      click(main, "Move lesson Strength to the start of Brewing");
+      expect(c.actions[1]).toMatchObject({ context: { action: "move", id: "l2", moduleId: "m2", index: 0 } });
+      click(main, "Move module Extraction down");
+      expect(c.actions[2]).toMatchObject({ context: { action: "move", id: "m1", index: 1 } });
+      expect((main.querySelector('button[aria-label="Move lesson What extraction means up"]') as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    it("renames, asks before removing and adds a lesson with its source section", () => {
+      const c = ctx();
+      const main = mount(single("OutlineEditor"), c);
+      click(main, "Rename lesson Strength");
+      (main.querySelector('input[aria-label="New title for Strength"]') as HTMLInputElement).value = "Coffee strength";
+      [...main.querySelectorAll("button")].find((b) => b.textContent === "Save")!.click();
+      expect(c.actions[0]).toMatchObject({ context: { action: "rename", id: "l2", title: "Coffee strength" } });
+      click(main, "Remove lesson Ratios");
+      expect(c.actions).toHaveLength(1);
+      expect(main.textContent).toContain("Remove this lesson?");
+      ([...main.querySelectorAll('[role="group"] button')].find((b) => b.textContent === "Remove") as HTMLButtonElement).click();
+      expect(c.actions[1]).toMatchObject({ context: { action: "remove", id: "l3" } });
+      const form = main.querySelector('form[aria-label="Add a lesson"]') as HTMLFormElement;
+      (form.querySelector("input[id$='-t']") as HTMLInputElement).value = "New lesson";
+      (form.querySelector("input[id$='-o']") as HTMLInputElement).value = "Name the parts";
+      form.dispatchEvent(new Event("submit", { cancelable: true }));
+      expect(c.actions[2]).toMatchObject({ context: { action: "add", kind: "lesson", moduleId: "m1", title: "New lesson", objective: "Name the parts", citations: ["frg_aaaaaaaaaaa1"] } });
+    });
+
+    it("drops a lesson on another lesson to move it there", () => {
+      const c = ctx();
+      const main = mount(single("OutlineEditor"), c);
+      const source = main.querySelector('[data-lesson="l3"]') as HTMLElement;
+      const target = main.querySelector('[data-lesson="l1"]') as HTMLElement;
+      source.dispatchEvent(new Event("dragstart", { bubbles: true }));
+      target.dispatchEvent(new Event("drop", { bubbles: true, cancelable: true }));
+      expect(c.actions[0]).toMatchObject({ context: { action: "move", id: "l3", moduleId: "m1", index: 0 } });
+    });
+  });
+
   it("request changes sends the comment", () => {
     const c = ctx();
     const main = mount(single("OutlineDiff"), c);

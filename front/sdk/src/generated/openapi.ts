@@ -2610,6 +2610,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/course-builder/sessions/{session}/outline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Edit the course structure: rename, move, add, remove, set the lesson format */
+        post: operations["31903ec4c0f6fb9b3d9d8730730626d4"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-builder/sessions/{session}/elements/{element}/variants": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Give me options: 2 or 3 proposals for one element, compared side by side */
+        post: operations["21e45e3ef74e3187aab29fdd00ceb204"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/course-builder/fragments/{fragment}": {
         parameters: {
             query?: never;
@@ -15699,6 +15733,68 @@ export interface operations {
         responses: {
             /** @description sources, sections, citing elements */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "31903ec4c0f6fb9b3d9d8730730626d4": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    action?: string;
+                    id?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description new author version, re-apply run */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description the edit is not valid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "21e45e3ef74e3187aab29fdd00ceb204": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+                element: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    count?: number;
+                    instruction?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description run id */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
