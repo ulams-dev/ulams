@@ -601,12 +601,16 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       Polska w liczbach, map in the background, EN and PL) and `ulam` (The Scottish Book: Stanisław Ulam and the Lwów
       School, five MIT interactives), each with a preset, landing, certificate, demo users and the hourly reset
       (ADR 0089; `docs/plans/interactive-demos.md` M3–M9) (partial: M9a Ulam research done as docs,
-      `docs/plans/interactive-demos-ulam-facts.md` and `docs/plans/interactive-demos-ulam-outline.md`; owner review
-      in #151; `demo-content/ulam/{facts,sources}.json` and `CREDITS.md` are written in M9b from the sheet;
+      `docs/plans/interactive-demos-ulam-facts.md` and `docs/plans/interactive-demos-ulam-outline.md`; the owner
+      raised no objection in #151; M9b done (ADR 0095): the Ulam course (welcome, eight modules, sixteen lessons, 38 module
+      quiz questions and a 14-question final test, five interactives, four licensed photographs), seeded by the demo seeders,
+      `demo-content/ulam/{facts,sources}.json` and `CREDITS.md` written from the sheet, the problem cards and the journey
+      map filled with sourced content;
       M7 done: the three tenants, presets, landings, certificates, demo users, hourly reset and placeholder free
       courses (ADR 0093: public showcase endpoint behind the landing heroes); M8 done (ADR 0094): the gravity course (nine
       modules, 56 questions, final test) and the two poland courses (EN and PL, nine chapters each), fact-checked
-      (`demo-content/*/FACTCHECK.md`), heroes playing the real scene and map; the Ulam course content arrives in M9)
+      (`demo-content/*/FACTCHECK.md`), heroes playing the real scene and map; the landing hero of the Ulam course plays
+      the spiral)
 - [ ] (new) Six demos on the platform landing with one-click learner and admin login; `make demo-seed-tenants`
       seeds all six; README and docs site updated (M10)
 - [ ] (new) `demo-content/`: content packages (ADR 0088, amended 2026-10-09) with a boundary lint (partial:
@@ -618,7 +622,10 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
         sources only, shared map engine, posters, Playwright and axe (M4); figures not yet re-checked at their
         publishers are listed in `demo-content/poland/README.md` (M8b)
   - [x] (new) five Ulam interactives, MIT: `spiral`, `monte-carlo`, `automaton`, `scottish-book` and `lwow-map` (M5; the last
-        two hold placeholder text until the fact sheet is cleared, M9a and M9b)
+        two now carry the sourced content of the fact sheet, M9b: nine problem cards, the journey notes and the inset;
+        `automaton` implements the Schrandt-Ulam rule)
+  - [x] (new) the Ulam course: "Stanisław Ulam and the Lwów School of Mathematics", eight modules, a final test, a
+        certificate and a sources lesson; every quiz question traced to the fact sheet (ADR 0095, M9b)
 
 ---
 

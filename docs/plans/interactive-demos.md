@@ -772,7 +772,7 @@ state drawn) and sends `ready`, `stepChanged` and `complete` (and `score` for th
 |---|---|---|---|
 | `spiral` | `grid`, `primes`, `diagonals`, `explore` | Draws the integers 1…N on a square spiral on a `<canvas>`. Primes are highlighted (sieve of Eratosthenes). Controls: N (100…40 000; slider plus number input), start value, highlight `n²+n+41` diagonals, and a click or Enter on a cell to read its number and whether it is prime. A text summary gives the count of primes and the share on the highlighted diagonals | `complete` after `explore` is visited |
 | `monte-carlo` | `idea`, `throw`, `converge`, `error` | Throws random points into a unit square and estimates π from the share inside the quarter circle. Buttons: +1, +100, +10 000, reset. A live estimate, absolute error and a log-log convergence chart. A seeded PRNG (mulberry32) makes runs reproducible, and the seed is shown | `complete` when at least 10 000 points have been thrown |
-| `automaton` | `rule30`, `rule90`, `rule110`, `life`, `ulam-growth` | Elementary 1D automata (rule number input, 0…255) and Conway's Life with presets, plus a "growth from a single cell" pattern in the style Ulam studied (cited only once fact 7.2 is cleared; otherwise the step is labelled as an illustration, not a historical reconstruction). Step, play and pause, with keyboard controls | `complete` after three steps are visited |
+| `automaton` | `rule30`, `rule90`, `rule110`, `life`, `ulam-growth` | Elementary 1D automata (rule number input, 0…255) and Conway's Life with presets, plus a "growth from a single cell" pattern in the style Ulam studied (M9b: the step implements the Schrandt-Ulam rule of OEIS A170896, fact 7.3, and is cited to it). Step, play and pause, with keyboard controls | `complete` after three steps are visited |
 | `scottish-book` | one step per cleared problem (at least 3: 19, 153, 193) plus `intro` | Cards styled as notebook pages: number, poser, date, a plain-language summary, the prize and the outcome, each with source ids. Filter by poser. A "guess the outcome" choice per card sends `score` | `on_score` (pass 60 %) |
 | `lwow-map` | `lwow`, `princeton`, `harvard`, `madison`, `los-alamos`, `boulder`, `santa-fe` | A journey map: the poland map engine (`setView`, projection, TopoJSON decoding, extracted into `demo-content/shared/atlas.js`, MIT pending #148) with Natural Earth countries, a route line and city points (coordinates from Wikidata, CC0). The `lwow` step adds a schematic inset of central Lwów (no basemap; points for the university, the Polytechnic and the Scottish Café building with their present-day addresses, from cleared fact 3.3). No historical borders are drawn, and the caption says so | `on_range_end` |
 
@@ -1191,8 +1191,8 @@ M5–M7. M10 needs M8 and M9.
 - Each PR holds the package, its manifest, posters, unit tests of the pure logic (sieve and spiral
   coordinates; π estimate and seeded PRNG; rule application and Life step; score; route data), a
   Playwright keyboard-only run, and axe on the package page.
-- `scottish-book` and `lwow-map` contain only placeholder text until M9a clears the facts. Their data
-  files are filled in M9b.
+- `scottish-book` and `lwow-map` contained only placeholder text until M9a cleared the facts. Their data
+  files were filled in M9b (done).
 
 ### M6: Layout topic type, rendering only (1 PR)
 
@@ -1246,9 +1246,13 @@ M5–M7. M10 needs M8 and M9.
   - The research step of section 7.3. Output: `demo-content/ulam/{facts.json,sources.json,CREDITS.md,images/}`.
   - The PR description lists every ⚠ item and how it was resolved.
   - The owner reviews (#151).
-- **M9b** `feat(demo): The Scottish Book course`
+- **M9b** `feat(demo): The Scottish Book course` (done; ADR 0095)
   - `UlamExperience`, plus the data for `scottish-book` and `lwow-map`.
   - Tests: as in M8, plus "every fact id used is in `facts.json`" and "every image has a credit line".
+  - Done differently from the plan: the eight modules are eight LMS lessons holding the sixteen numbered lessons as text topics;
+    the cards carry nine problems (77(a) dropped, its statement is not sourced; 184 added); `automaton` got the
+    Schrandt-Ulam rule; images are WebP files in `api/database/seeds/Demo/assets/ulam/images/` (see `demo-content/ulam/CREDITS.md`);
+    the zips are `ulam-<name>.zip` in the seeder's cache.
 
 ### M10: Six demos (1 PR)
 
@@ -1360,6 +1364,7 @@ documents. No GPL or AGPL code is linked into the API or bundled into the admin 
 | 0087 | The `ulams-ix` bridge protocol and the `@ulams/interactive-bridge` library (MIT) | M1 |
 | 0088 | Content packages under `demo-content/`, played only as sandboxed content; gravity relicensed MIT by its owner (amended 2026-10-09) | M3, M4, M5 |
 | 0089 | Six demo academies: three free interactive courses, one theme preset each, sourced content, EN/PL as two courses | M7–M9 |
+| 0095 | The Ulam course: every statement traced to a fact sheet, sources numbered, four licensed photographs | M9b |
 
 ADR 0052 (Layout topic type, Proposed) is implemented in part by M6 and gets no new record.
 

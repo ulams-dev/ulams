@@ -9,7 +9,7 @@ through the [`ulams-ix` bridge](../front/interactive-bridge).
 |---|---|---|
 | [`gravity/`](gravity) | A guided 3D solar system (Three.js, 44 steps, EN and PL) | MIT, see its `NOTICE` |
 | [`poland/`](poland) | A map of Poland and Europe with charts of public statistics (40 steps, EN and PL) | MIT code, CC BY 4.0 text |
-| [`ulam/`](ulam) | Small interactives for the Stanisław Ulam course: the spiral, and more to come | MIT code, CC BY 4.0 text |
+| [`ulam/`](ulam) | The five interactives of the Stanisław Ulam course (spiral, Monte Carlo, cellular automata, Scottish Book cards, journey map) and the course's fact and source lists | MIT code, CC BY 4.0 text; four photographs under their own licences (`ulam/CREDITS.md`) |
 
 **The rule.** Nothing outside `demo-content/` may import, require, include or depend on anything in it.
 `yarn workspace @ulams/demo-content lint` fails when that happens. PHP seeders may read the files as data.
