@@ -42,6 +42,15 @@ none of this applies. A test (`QueueRetryAfterConfigTest`) keeps the configurati
 
 ## Workers
 
+`ULAMS_WORKERS_MODE` chooses how the workers and the scheduler run:
+
+| Mode | Where | What runs |
+|---|---|---|
+| `per-tenant` | default of the script, so production | One long-lived process per tenant and queue kind, plus one scheduler loop per domain (below). Lowest latency, but each idle process holds a booted Laravel, about 140 MB: 29 processes with 7 domains |
+| `lean` | the default of `api/docker-compose.yml`, so local development and the demo profile; opt-in elsewhere | No long-lived PHP process per tenant. See [Lean mode](#lean-mode) |
+
+### Per-tenant mode
+
 `queue.sh` (supervisor program `laravel-multidomain-queue`, switched off with `DISABLE_QUEUE=true`)
 runs `workers.sh queue`. It keeps one long-lived `queue:work` process per kind and per tenant, reads
 the list of tenants again every `WORKERS_CHECK_INTERVAL` seconds (default 10), so a new tenant gets
@@ -68,6 +77,11 @@ that `LARAVEL_*` variables are written to:
 | `COURSE_BUILDER_QUEUE` | `builder` | Queue of the builder worker |
 | `LONG_JOB_QUEUE_CONNECTION` | `<driver>-long-job` | Connection of the long-job worker. The same name `config/queue.php` reads; the old name `LONG_JOB_CONNECTION` is still accepted as a fallback |
 | `LONG_JOB_QUEUE` | `queue-long-job` | Queue of the long-job worker |
+| `ULAMS_WORKERS_MODE` | `per-tenant` (`lean` in `api/docker-compose.yml`) | `lean` or `per-tenant`, see above. Any other value stops `workers.sh` |
+| `ENABLE_HORIZON` | `false` | In lean mode, start Horizon anyway |
+| `WORKERS_LEAN_INTERVAL` | `10` | Lean mode: seconds between passes over the domains for the default queues |
+| `WORKERS_LEAN_HEAVY_INTERVAL` | `20` | Lean mode: the same for the builder and long-job queues |
+| `WORKERS_LEAN_MAX_TIME` | `30` | Lean mode: seconds a pass keeps taking new jobs of one domain and queue |
 | `WORKERS_CHECK_INTERVAL` | `10` | Seconds between reads of the tenant list |
 | `WORKERS_MAX_TIME` | `3600` | Seconds a worker or scheduler loop lives before it is restarted |
 
@@ -85,6 +99,35 @@ The `LARAVEL_`-prefixed settings, `BUILDER_QUEUE_RETRY_AFTER` among them, go to 
 3. Jobs queued before the connections existed sit on the `default` queue and finish there.
 
 </Steps>
+
+### Lean mode
+
+With `ULAMS_WORKERS_MODE=lean` the same work runs from two supervisor programs that each hold one
+small shell loop, and PHP runs only while there is a pass to do:
+
+- `workers.sh queue` loops over the platform (unless `MULTI_DOMAINS` is set) and every tenant and runs
+  `php artisan ulams:tenant:work-once --queue=default,broadcast,video --timeout=60` for each, which is
+  `queue:work --stop-when-empty` for that domain. It waits `WORKERS_LEAN_INTERVAL` seconds (default
+  10) between passes.
+- The same program starts **one** helper process for the builder and the long-job queues. It takes
+  one domain at a time and runs `work-once` on `<driver>-builder` (queue `builder`, `--timeout=1800`)
+  and then on `<driver>-long-job` (queue `queue-long-job`, `--timeout=18000`), the timeouts and
+  connections of the per-tenant table above, so the `retry_after` rule of ADR 0083 holds. It waits
+  `WORKERS_LEAN_HEAVY_INTERVAL` seconds (default 20) between passes. A domain is worked for at most
+  `WORKERS_LEAN_MAX_TIME` seconds (default 30) before the next one, but a job that has started runs to
+  its end: a long Course Builder step on one tenant delays the builder queue of the others.
+- `workers.sh scheduler` is one loop: at the start of each minute it runs
+  `ulams:tenant:schedule-loop --once --lock` for the platform and every domain, so the hourly demo
+  reset, the daily pruning and the Living Course polling run as before. `--lock` claims the minute with
+  the lock described below, so a second container does not repeat a tick.
+- Horizon is not started (`ENABLE_HORIZON=true` starts it again; its workers then run next to the
+  loop, which is harmless because jobs are popped atomically). Horizon only served the platform
+  queues and its dashboard at `/horizon`.
+
+Trade-offs: a job waits for the next pass, up to about the interval plus the length of a pass over
+the domains (a few seconds per domain), and every pass boots Laravel once per domain, which costs
+some CPU even when the queues are empty. Use `per-tenant` where latency matters, or lower the
+intervals. Code edits apply at the next pass without a restart.
 
 ## The scheduler and its minute lock
 
@@ -107,6 +150,11 @@ the loop first claims the minute with an atomic lock in the cache store:
 - `TENANCY_SCHEDULER_LOCK=false` (default `true`) turns the lock off, for a deliberate second
   scheduler. `php artisan ulams:tenant:schedule-loop --once --domain=<host>` is a manual tick and
   never takes the lock.
+
+The scheduler of the lean mode (one `--once --lock` tick per domain and minute) takes the same lock.
+A tick that lasts long delays the ticks of the domains after it, and one that slips into the next
+minute misses that minute's tasks, so keep scheduled work short or queued (the demo reset runs in the
+background).
 
 The hourly [demo reset](/admin/demo-mode/) and the daily pruning jobs run from this scheduler, so
 a tenant whose scheduler is stopped stops resetting and pruning.

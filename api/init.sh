@@ -28,7 +28,10 @@ else
     cp docker/conf/supervisor/services/php-fpm.conf /etc/supervisor/conf.d/php-fpm.conf
 fi
 
-if [ "$DISABLE_HORIZON" == 'true' ]
+# Horizon only serves the platform queues and its dashboard. In lean workers mode (local dev and
+# the demo profile) workers.sh serves them without a long-lived process: Horizon stays off unless
+# ENABLE_HORIZON=true.
+if [ "$DISABLE_HORIZON" == 'true' ] || { [ "${ULAMS_WORKERS_MODE:-per-tenant}" == 'lean' ] && [ "$ENABLE_HORIZON" != 'true' ]; }
 then
     rm -f /etc/supervisor/custom.d/horizon.conf
     echo horizon.conf disabled

@@ -96,7 +96,8 @@ H5P and SCORM imports and PDF rendering are synchronous HTTP calls, not queued j
 `tests/Integrations/QueueRetryAfterConfigTest.php` fails when a job's connection has a `retry_after`
 below its timeout, when a job with a long timeout is not routed, or when the worker timeouts differ.
 
-Workers:
+Workers (`ULAMS_WORKERS_MODE=per-tenant`; local development and the demo profile run `lean`, see
+[Queues and the scheduler](/operators/queues-and-scheduler/#lean-mode)):
 
 - **Platform**: Horizon (`api/config/horizon.php`). `supervisor-1` on `default` with 3 processes in
   `local` and `stage` and 10 in `production`; `supervisor-builder` on `builder` (timeout 1800, 3

@@ -69,6 +69,8 @@ Each
 | `MULTI_DOMAINS`                         | Comma separated list of multidomains                             |                     |
 | `DISABLE_PHP_FPM`                       | Disable PHP FPM Supervisor process                               | false               |
 | `DISABLE_HORIZON`                       | Disable Laravel Horizon Supervisor process                       | false               |
+| `ENABLE_HORIZON`                        | Start Horizon in lean workers mode (off there by default)        | false               |
+| `ULAMS_WORKERS_MODE`                    | `lean` (one loop per kind, `ulams:tenant:work-once`) or `per-tenant` (long-lived process per tenant and queue); compose sets `lean` | per-tenant |
 | `DISABLE_SCHEDULER`                     | Disable Laravel Scheduler Supervisor process                     | false               |
 | `JWT_PUBLIC_KEY_BASE64`                 | Base64 encoded `storage/oauth-public.key`                        |                     |
 | `JWT_PRIVATE_KEY_BASE64`                | Base64 encoded `storage/oauth-private.key`                       |                     |
@@ -154,6 +156,9 @@ Read on the platform by `ulams:tenant:*`, see [multidomain.md](multidomain.md).
 | `ANTHROPIC_API_KEY`, `AI_DRIVER`, `AI_MODEL_*`, `ANTHROPIC_BASE_URL` | Platform AI settings inherited by every tenant env file on create and `sync-env`; override per tenant with `ulams:tenant:set-env` (ADR 0063) | unset |
 | `WORKERS_CHECK_INTERVAL`     | Seconds between `workers.sh` checks of the domain list and of exited processes               | `10`                                         |
 | `WORKERS_MAX_TIME`           | Seconds a per-domain worker or scheduler loop runs before it is restarted (fresh code/config) | `3600`                                       |
+| `WORKERS_LEAN_INTERVAL`      | Lean mode: seconds between passes over the domains (default queues) | 10 |
+| `WORKERS_LEAN_HEAVY_INTERVAL` | Lean mode: the same for the builder and long-job queues | 20 |
+| `WORKERS_LEAN_MAX_TIME`      | Lean mode: seconds a pass keeps taking jobs of one domain and queue | 30 |
 
 Set per tenant in `.env.<host>` (do not set them on the platform): `TENANT_SLUG`,
 `REDIS_PREFIX`, `CACHE_PREFIX`, `HORIZON_PREFIX`, `CONTENT_ORIGIN`, `INITIAL_USER_EMAIL`,
