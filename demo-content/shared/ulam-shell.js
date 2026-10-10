@@ -6,7 +6,7 @@
  * @typedef {{ id: string, title: string, text: string, poster?: string }} Step
  * @typedef {{
  *   steps: Step[], step: Step, index: number, range: { lo: number, hi: number }, chrome: "full" | "minimal" | "none",
- *   reduced: boolean, poster: boolean, embedded: boolean, lang: string, visited: Set<string>, bridge: any,
+ *   reduced: boolean, poster: boolean, showcase: boolean, embedded: boolean, lang: string, visited: Set<string>, bridge: any,
  *   goTo: (id: string) => boolean, announce: (message: string) => void, complete: () => void,
  * }} Shell
  */
@@ -32,13 +32,15 @@ export async function startShell(options) {
   const q = (s) => /** @type {HTMLElement} */ (document.querySelector(s));
   const params = new URLSearchParams(location.search);
   const poster = params.has("ulams-poster");
+  // The landing hero (init.showcase, or ?ulams-showcase for the hero's still): no card, no controls, nothing focusable.
+  let showcase = params.has("ulams-showcase");
   const embedded = window.parent !== window;
   const mq = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
 
   /** @type {Shell} */
   const shell = /** @type {any} */ ({
     steps: [], step: null, index: -1, range: { lo: 0, hi: 1e9 }, chrome: poster ? "none" : "full",
-    reduced: !!(mq && mq.matches) || params.has("instant"), poster, embedded, lang: "en", visited: new Set(), bridge: null,
+    reduced: !!(mq && mq.matches) || params.has("instant"), poster, showcase, embedded, lang: "en", visited: new Set(), bridge: null,
   });
   let completed = false;
   /** @type {any} */
@@ -101,6 +103,7 @@ export async function startShell(options) {
     const init = await initReceived;
     shell.chrome = init.chrome;
     if (init.reducedMotion) shell.reduced = true;
+    if (init.showcase) showcase = shell.showcase = true;
     shell.lang = String(init.locale || "en").slice(0, 2);
     if (init.range) {
       const lo = init.range.from ? shell.steps.findIndex((s) => s.id === init.range.from) : -1;
@@ -112,7 +115,8 @@ export async function startShell(options) {
   root.classList.add(`ix-${shell.chrome}`);
   if (shell.reduced) root.classList.add("reduced");
   if (poster) root.classList.add("ix-poster");
-  card.hidden = shell.chrome === "none";
+  if (showcase) { root.classList.add("ix-showcase"); document.body.setAttribute("inert", ""); }
+  card.hidden = shell.chrome === "none" || showcase;
   const wanted = poster ? decodeURIComponent(location.hash.replace(/^#/, "")) : (initMsg && (initMsg.startStep || (initMsg.range && initMsg.range.from))) || "";
   if (!shell.goTo(wanted)) shell.goTo(shell.steps[Math.max(0, shell.range.lo)].id);
   root.dataset.ixReady = "1";

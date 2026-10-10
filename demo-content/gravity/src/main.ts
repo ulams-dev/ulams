@@ -11,6 +11,8 @@ const params = new URLSearchParams(location.search);
 // ?ulams-poster renders a step without any chrome, for the poster images (scripts/ulams-package.mjs).
 const poster = params.has('ulams-poster');
 if (poster) document.body.classList.add('ulams-embed', 'ulams-chrome-none', 'ulams-poster');
+// ?ulams-showcase (with ?ulams-poster) renders the hero's still: the scene alone, as the hero shows it.
+if (params.has('ulams-showcase')) document.body.classList.add('ulams-showcase');
 
 let world: World | null = null;
 let tour: Tour | null = null;

@@ -2,7 +2,7 @@
 //   node scripts/posters.mjs <package-dir>
 // The page sets data-ix-ready on <html> once the step is drawn. Rendered in reduced-motion so the final state shows.
 import { mkdirSync, readFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { chromium } from "@playwright/test";
 import sharp from "sharp";
 import { serveFolder } from "./lib/static-server.mjs";
@@ -22,6 +22,18 @@ for (const step of manifest.steps) {
   const out = join(dir, step.poster ?? `posters/${step.id}.webp`);
   await sharp(png).webp({ quality: 62, effort: 5 }).toFile(out);
   console.log(`poster ${step.id} -> ${out.slice(dir.length + 1)}`);
+  await page.close();
+}
+// the still of the landing hero: the first showcase step, picture only (?ulams-showcase hides the card and the controls)
+if (manifest.showcase?.poster) {
+  const page = await context.newPage();
+  await page.goto(`${server.url}/index.html?ulams-poster&ulams-showcase#${manifest.showcase.steps[0]}`);
+  await page.waitForSelector("html[data-ix-ready]", { timeout: 30_000 });
+  await page.waitForTimeout(400);
+  const out = join(dir, manifest.showcase.poster);
+  mkdirSync(dirname(out), { recursive: true });
+  await sharp(await page.screenshot({ type: "png" })).webp({ quality: 62, effort: 5 }).toFile(out);
+  console.log(`showcase poster -> ${manifest.showcase.poster}`);
   await page.close();
 }
 await browser.close();

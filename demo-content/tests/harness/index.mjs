@@ -39,7 +39,7 @@ export async function startHarness(packageDir, { prefix = "/interactive/k/v1/" }
   return {
     appOrigin,
     contentOrigin: content.url,
-    /** URL of the host page; params become the `init` message (chrome, display, locale, reducedMotion, startStep, from, to). */
+    /** URL of the host page; params become the `init` message (chrome, display, locale, reducedMotion, showcase=1, startStep, from, to). */
     hostUrl(params = {}, entry = "index.html") {
       const q = new URLSearchParams({ src: `${content.url}${prefix}${entry}`, ...params });
       return `${appOrigin}/host?${q}`;

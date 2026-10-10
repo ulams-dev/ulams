@@ -59,3 +59,54 @@ test("ulam-spiral: a big spiral (40,000 numbers) draws and stays keyboard-usable
   await expect(frame.locator("#cell")).toContainText("2 is prime");
   expect(await messages(page, "error")).toEqual([]);
 });
+
+test("ulam-spiral: showcase mode is the picture only, winds out slowly, loops its steps and has nothing to focus", async ({ page }) => {
+  await page.goto(suite.harness.hostUrl({ chrome: "none", showcase: "1", startStep: "diagonals" }));
+  await waitForMessage(page, "ready");
+  const frame = inFrame(page);
+  await waitForMessage(page, "stepChanged", { step: "diagonals" });
+  for (const hidden of ["#ix-card", "#controls", ".sp-side", "#summary"]) await expect(frame.locator(hidden), hidden).toBeHidden();
+  expect(await frame.locator("html").getAttribute("class")).toContain("ix-showcase");
+  expect(await frame.locator("body").getAttribute("inert")).not.toBeNull();
+  // a slow reveal: the number of drawn (non-paper) pixels grows between two looks
+  const inked = () => frame.locator("#sp").evaluate((c) => {
+    const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+    let n = 0;
+    for (let i = 0; i < d.length; i += 4) if (d[i] < 120 && d[i + 2] > 100) n++; // the blue of a prime
+    return n;
+  });
+  await page.waitForTimeout(600);
+  const early = await inked();
+  await page.waitForTimeout(2500);
+  const later = await inked();
+  expect(later).toBeGreaterThan(early);
+  // the host cycles the loop with goToStep; the package follows and restarts the reveal
+  await page.evaluate(() => window.__host.goToStep("primes"));
+  await waitForMessage(page, "stepChanged", { step: "primes" });
+  // nothing to tab to: the page is inert, and the canvas takes no focus
+  await frame.locator("#sp").focus({ timeout: 500 }).catch(() => {});
+  expect(await frame.evaluate(() => document.activeElement === document.body || document.activeElement === document.documentElement)).toBe(true);
+});
+
+test("ulam-spiral: showcase under reduced motion is a complete still frame", async ({ page }) => {
+  await page.goto(suite.harness.hostUrl({ chrome: "none", showcase: "1", reducedMotion: "1", startStep: "diagonals" }));
+  await waitForMessage(page, "ready");
+  const frame = inFrame(page);
+  await waitForMessage(page, "stepChanged", { step: "diagonals" });
+  const inked = () => frame.locator("#sp").evaluate((c) => {
+    const d = c.getContext("2d").getImageData(0, 0, c.width, c.height).data;
+    let n = 0;
+    for (let i = 0; i < d.length; i += 4) if (d[i] < 120 && d[i + 2] > 100) n++;
+    return n;
+  });
+  const first = await inked();
+  await page.waitForTimeout(1200);
+  expect(first).toBeGreaterThan(1000); // the whole spiral at once
+  expect(await inked()).toBe(first); // and it does not move
+});
+
+test("ulam-spiral: the manifest declares a showcase with a still in the package", () => {
+  const m = suite.manifest;
+  expect(m.showcase.steps).toEqual(["diagonals", "primes"]);
+  expect(m.showcase.poster).toBe("posters/showcase.webp");
+});

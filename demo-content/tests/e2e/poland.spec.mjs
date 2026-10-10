@@ -220,3 +220,19 @@ test("axe: no WCAG 2.2 AA violation on the figures panel (several steps, both la
   await page.waitForTimeout(1500);
   expect(await axeProblems(page), "stand-alone").toEqual([]);
 });
+
+test("showcase mode is the map alone: no figures panel, no text, nothing to focus, and the loop's steps open", async ({ page }) => {
+  expect(manifest.showcase.steps).toEqual(["solar", "roads", "parcels", "gas"]);
+  expect(statSync(join(dir, manifest.showcase.poster)).size).toBeGreaterThan(3_000);
+  await page.goto(harness.hostUrl({ chrome: "none", showcase: "1", startStep: "solar" }));
+  await waitForMessage(page, "ready");
+  await waitForMessage(page, "stepChanged", { step: "solar" });
+  const frame = inFrame(page);
+  expect(await frame.locator("html").getAttribute("class")).toContain("ix-showcase");
+  for (const hidden of ["#story", "#paneltoggle", "#tip", "#top", "#bottom"]) await expect(frame.locator(hidden), hidden).toBeHidden();
+  expect(await frame.locator("body").getAttribute("inert")).not.toBeNull();
+  for (const id of manifest.showcase.steps.slice(1)) {
+    await page.evaluate((s) => window.__host.goToStep(s), id);
+    await waitForMessage(page, "stepChanged", { step: id });
+  }
+});

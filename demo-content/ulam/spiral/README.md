@@ -11,7 +11,11 @@ prime) and `explore` (up to 40,000 numbers, any starting number). It completes w
 - `main.js`: the page. The picture is a focusable canvas: the arrow keys move from number to number, Home goes
   back to the first number, and each number is read out with whether it is prime (and its smallest factor when
   it is not). Settings are native controls; the summary under the picture is text.
-- Nothing moves, so reduced motion needs no change. No storage, no network.
+- Nothing moves in the lesson, so reduced motion needs no change. No storage, no network.
+- Showcase (the landing hero, ADR 0093): with `init.showcase` the shell hides the card and the controls, the page
+  becomes inert, and the spiral winds out from the centre over a few seconds, number by number, then waits for the
+  page's next `goToStep` (`diagonals`, `primes`). Under reduced motion it is one still frame. `posters/showcase.webp`
+  is rendered with `?ulams-poster&ulams-showcase#diagonals`.
 
 ```bash
 node demo-content/scripts/pack.mjs demo-content/ulam/spiral        # release/spiral-ulams.zip

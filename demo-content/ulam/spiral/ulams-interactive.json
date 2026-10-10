@@ -39,6 +39,7 @@
       "poster": "posters/explore.webp"
     }
   ],
+  "showcase": { "steps": ["diagonals", "primes"], "poster": "posters/showcase.webp" },
   "a11y": {
     "keyboard": "The picture is a focusable region: the arrow keys move from number to number, Home returns to the first number, and each number is read out with whether it is prime. All settings are native form controls.",
     "notes": "Nothing moves, so reduced motion needs no change. The summary under the picture gives the count of primes and the share on the highlighted diagonal as text."
