@@ -477,6 +477,58 @@ export const builderCatalogue = {
     ),
     fallback: (p) => `${arr(p.versions).length} versions.`,
   },
+  SourcesPanel: {
+    description:
+      "The sources of the course with their sections: how many elements of the course cite each section, which sections nothing cites yet, and the elements behind each section. Selecting an element in the course tree highlights the sections it rests on.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        sources: list(
+          obj(
+            {
+              id: str("Source id", 32),
+              name: str("Source name", 300),
+              total: int("Sections in the source"),
+              uncovered: int("Sections no element cites"),
+              sections: list(
+                obj(
+                  {
+                    fragmentId: str("Fragment id (frg_…)", 16),
+                    label: str("Section label, e.g. §2.3 Brewing ratios", 200),
+                    level: int("Heading level, from 1", { minimum: 1, maximum: 6 }),
+                    citedByCount: int("Number of elements citing the section"),
+                    citedBy: list(
+                      obj(
+                        {
+                          id: str("Element id", 32),
+                          target: str("Element the workspace selects for it (an objective points to its lesson)", 32),
+                          type: oneOf(["course", "objective", "lesson", "block", "question"], "Element kind"),
+                          label: str("Where it is, e.g. Lesson 1.2 › block 3", 200),
+                        },
+                        ["id", "target", "type", "label"]
+                      ),
+                      "Elements citing the section (the first 50)",
+                      50
+                    ),
+                  },
+                  ["fragmentId", "label", "level", "citedByCount", "citedBy"]
+                ),
+                "Sections in reading order",
+                2000
+              ),
+            },
+            ["id", "name", "total", "uncovered", "sections"]
+          ),
+          "Sources",
+          20
+        ),
+        highlighted: list(str("Fragment id", 16), "Sections the selected element cites", 200),
+      },
+      ["sources"]
+    ),
+    fallback: (p) => `${arr(p.sources).length} source(s) with their sections.`,
+  },
   PublishSummary: {
     description:
       "Everything the author should know before publishing an applied course: where it will live, its price and theme, the numbers, items that block publishing and warnings that must be acknowledged. The Publish button stays disabled while anything blocks, and until warnings are acknowledged.",

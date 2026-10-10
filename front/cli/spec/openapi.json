@@ -6287,6 +6287,35 @@
     ]
    }
   },
+  "/api/admin/course-builder/sessions/{session}/citations": {
+   "get": {
+    "operationId": "ad90feac8fdca1847862f31bae8bebb1",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "sources, sections, citing elements"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Sources panel: sections with the elements that cite them",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
   "/api/admin/course-builder/sessions/{session}/events": {
    "get": {
     "description": "AG-UI events over SSE (ADR 0011). On connect: a STATE_SNAPSHOT (not stored, no id), then every\nstored event after `Last-Event-ID` (or `?after=`), then new events as they are appended. The\nconnection closes after `course_builder.sse.max_seconds` (25 s) so PHP-FPM workers are not held;\nthe client reconnects with the last id. Between polls the loop watches the session's \"last event\"\nkey in the cache and only queries the table when it moved (polling fallback every 500 ms).",

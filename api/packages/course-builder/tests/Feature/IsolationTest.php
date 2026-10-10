@@ -30,6 +30,7 @@ class IsolationTest extends TestCase
             ['DELETE', "{$p}/sessions/{$s->id}"],
             ['POST', "{$p}/sessions/{$s->id}/sources"],
             ['GET', "{$p}/sessions/{$s->id}/sources/{$source->id}"],
+            ['GET', "{$p}/sessions/{$s->id}/citations"],
             ['GET', "{$p}/fragments/{$fragment->id}"],
             ['GET', "{$p}/sessions/{$s->id}/brief"],
             ['PUT', "{$p}/sessions/{$s->id}/brief"],

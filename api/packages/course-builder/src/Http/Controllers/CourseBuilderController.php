@@ -29,6 +29,7 @@ use Ulams\CourseBuilder\Pipeline\PatchService;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
 use Ulams\CourseBuilder\Publish\PublishCheck;
 use Ulams\CourseBuilder\Site\NewSite;
+use Ulams\CourseBuilder\Sources\CitationIndex;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\RunStatus;
 use Ulams\CourseBuilder\Services\SessionState;
@@ -55,6 +56,8 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  *     @OA\Response(response=202, description="source and ingest run"), @OA\Response(response=422, description="rejected upload"))
  * @OA\Get(path="/api/admin/course-builder/sessions/{session}/sources/{source}", summary="A source with its section tree", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="source", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="source"))
+ * @OA\Get(path="/api/admin/course-builder/sessions/{session}/citations", summary="Sources panel: sections with the elements that cite them", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="sources, sections, citing elements"))
  * @OA\Get(path="/api/admin/course-builder/fragments/{fragment}", summary="One source fragment (citation popover)", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="fragment", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="fragment"))
  * @OA\Get(path="/api/admin/course-builder/sessions/{session}/brief", summary="Course Brief", tags={"Admin Course Builder"}, security={{"passport": {}}},
@@ -103,6 +106,7 @@ class CourseBuilderController extends Controller
         private readonly BlueprintApplier $applier,
         private readonly EventLog $events,
         private readonly Surfaces $surfaces,
+        private readonly CitationIndex $citations,
     ) {
     }
 
@@ -179,6 +183,11 @@ class CourseBuilderController extends Controller
         ])->all();
 
         return self::ok(collect(SessionState::sources($s))->firstWhere('id', $src->id) + ['metadata' => $src->metadata, 'fragments' => $sections]);
+    }
+
+    public function citations(Request $request, string $session): JsonResponse
+    {
+        return self::ok($this->citations->build($this->sessionFor($request, $session)));
     }
 
     public function fragment(Request $request, string $fragment): JsonResponse
