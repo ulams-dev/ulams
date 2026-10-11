@@ -617,7 +617,9 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       SWR cache of public API data (partial: implemented and tested, uncommitted; Caddy already points
       `*.app.localhost` to :4321 in this checkout; API fixes remain listed in the plan; Batch 3 platform landing redesign
       shipped locally: cited course-draft hero, shorter navigation, demos ahead of comparison, and matching
-      EN/PL/ZH layout; web/UI suites and desktop/phone axe pass)
+      EN/PL/ZH layout; web/UI suites and desktop/phone axe pass; 2026-10-11 visual refinement adds a
+      midnight/lilac/citrus direction from the owner's Dribbble references, with rebuilt docs and locale
+      screenshots; production build passes and desktop/phone renders have no horizontal overflow)
 - [ ] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
       account area; webinars/events/consultations pages (partial: implemented and tested, uncommitted;
       see `docs/plans/phase-5-reference-frontend.md`, batch 2)

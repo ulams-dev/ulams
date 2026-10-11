@@ -213,9 +213,10 @@ to the English, Polish and Simplified Chinese versions.
   detailed comparison and implementation information. Preserve accurate feature status labels and
   the current demo, documentation, self-host and comparison destinations.
 - Keep EN/PL/ZH copy and page structure aligned; preserve each locale's canonical and alternate URLs.
-- Follow the references as visual direction, not as assets to copy: editorial typography, generous
-  whitespace, restrained neutral surfaces and a product-led visual, while retaining the ULAMS
-  indigo/orange identity and existing accessibility requirements.
+- Follow the updated visual direction requested by the product owner: expressive creative-tech,
+  midnight navy and near-black hero surfaces, violet/lilac light, a citrus CTA, bold sans typography
+  and warm off-white content sections. Use the references for palette, contrast and visual rhythm,
+  not as assets to copy. Keep the layout readable and accessible across locales.
 
 ### UX principles to apply
 
@@ -270,6 +271,12 @@ targeted edits to existing components; add a new component only if the existing 
 present the product proof accessibly. Verify typecheck/build, the locale parity and page document
 tests, Playwright smoke and axe scans at desktop and phone widths, and inspect the rendered page
 visually. Do not restructure unrelated dirty or untracked work as part of this batch.
+
+### Visual refinement (2026-10-11)
+
+After review, the owner asked for a more obvious visual change. The earlier neutral editorial pass
+has been replaced with a high-contrast midnight palette, lilac product lighting and citrus actions,
+with warm light sections for reading and demos. Inspiration: [AI Agent Website Design](https://dribbble.com/shots/27793484-AI-Agent-Website-Design), [Creative Tech](https://dribbble.com/shots/27791478-UI-UX-Design-Web-Design-for-Creative-Tech), [Kodilion](https://dribbble.com/shots/27790991-Kodilion-Website-Bits) and [SkinRelief](https://dribbble.com/shots/27705762-SkinRelief-Men-s-Personal-Care-Wellness-Landing-Page). No reference artwork is copied. The production build passes; desktop and phone renders were inspected, and both locale pages have zero horizontal overflow.
 
 ### Open question
 
