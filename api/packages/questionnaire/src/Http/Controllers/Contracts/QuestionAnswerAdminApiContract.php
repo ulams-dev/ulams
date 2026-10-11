@@ -145,6 +145,11 @@ interface QuestionAnswerAdminApiContract
      *     @OA\Response(
      *         response=200,
      *         description="Question answers visibility changed successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", ref="#/components/schemas/QuestionAnswer")
+     *         ),
      *         @OA\Schema(
      *            type="object",
      *            description="map of questions",

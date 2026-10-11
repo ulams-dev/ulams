@@ -771,7 +771,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds
 - [ ] (new) API browser in the docs site (Scalar over `api/scripts/openapi.php`, built in docs CI without a database); OpenAPI for
       `images` fixed and response bodies added for video states, files and course import (partial: implemented in the
-      feature-catalogue PR, pending merge; the questionnaire and question endpoints still lack response bodies)
+      feature-catalogue PR, pending merge; questionnaire and question endpoints now have response bodies too)
 - [ ] (new) Feature index on the platform landing (`FeatureIndex`, 14 collapsed groups, 101 features including MCP, teacher and sales analytics, 54 H5P content types, EN/PL/ZH,
       `ItemList` JSON-LD) with a drift test against `api/packages` (partial: implemented in the feature-catalogue PR, pending merge)
 - [ ] `npx create-ulams` / `docker compose up` with seed data
