@@ -7241,7 +7241,42 @@
     },
     "responses": {
      "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "description": "The imported course (id, title, status and the other simple-resource fields)",
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Course imported successfully"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "error": {
+           "type": "string"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The package could not be imported"
      },
      "401": {
       "description": "endpoint requires authentication"
@@ -8755,7 +8790,27 @@
     ],
     "responses": {
      "200": {
-      "description": "successful operation"
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "example": true,
+           "type": "boolean"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The file was deleted"
      },
      "400": {
       "description": "file doesn't exists"
@@ -8993,7 +9048,27 @@
     },
     "responses": {
      "200": {
-      "description": "successful operation"
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "example": true,
+           "type": "boolean"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The file was moved"
      },
      "302": {
       "description": "invalid request"
@@ -9054,16 +9129,36 @@
     },
     "responses": {
      "200": {
-      "description": "successful operation"
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "example": "/uploads/photo.jpg",
+            "type": "string"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Paths of the stored files"
      },
      "401": {
       "description": "endpoint requires authentication"
      },
      "403": {
       "description": "user doesn't have required access rights"
-     },
-     "409": {
-      "description": "one of the uploaded files already exists"
      },
      "422": {
       "description": "server-side error"
@@ -14005,6 +14100,25 @@
     },
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/Question"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Question created successfully"
      },
      "401": {
@@ -14173,6 +14287,25 @@
     },
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/QuestionAnswer"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Question answers visibility changed successfully"
      },
      "401": {
@@ -14212,6 +14345,26 @@
     ],
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "example": true,
+           "type": "boolean"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Question deleted successfully"
      },
      "400": {
@@ -14307,6 +14460,25 @@
     },
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/Question"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Question updated successfully"
      },
      "400": {
@@ -14440,6 +14612,25 @@
     },
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/Questionnaire"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Questionnaire created successfully"
      },
      "401": {
@@ -14567,6 +14758,26 @@
     },
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "example": true,
+           "type": "boolean"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Questionnaire model assign successfully"
      },
      "400": {
@@ -14700,6 +14911,26 @@
     ],
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "example": true,
+           "type": "boolean"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Questionnaire model unassign successfully"
      },
      "400": {
@@ -14742,6 +14973,26 @@
     ],
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "example": true,
+           "type": "boolean"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Questionnaire deleted successfully"
      },
      "400": {
@@ -14837,6 +15088,25 @@
     },
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/Questionnaire"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Questionnaire updated successfully"
      },
      "400": {
@@ -20309,7 +20579,58 @@
     ],
     "responses": {
      "200": {
-      "description": "List of available"
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "properties": {
+             "id": {
+              "example": 1,
+              "type": "integer"
+             },
+             "json": {
+              "description": "The topic json, with the ffmpeg state under `ffmpeg`",
+              "nullable": true,
+              "type": "object"
+             },
+             "state": {
+              "enum": [
+               "coding",
+               "finished",
+               "error"
+              ],
+              "nullable": true,
+              "type": "string"
+             },
+             "topic_id": {
+              "example": 12,
+              "nullable": true,
+              "type": "integer"
+             },
+             "topic_title": {
+              "nullable": true,
+              "type": "string"
+             }
+            },
+            "type": "object"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Processed videos with the state of their conversion to HLS"
      },
      "401": {
       "description": "Endpoint requires authentication"
@@ -25181,6 +25502,232 @@
     "summary": "Check health of the application",
     "tags": [
      "Api"
+    ]
+   }
+  },
+  "/api/images/img": {
+   "get": {
+    "description": "Public endpoint, throttled by `images.render`. The cached file name is `sha1(path . json_encode(params))` plus the extension, so the same request always returns the same URL. The first request creates the copy, optimises it and stores it on the configured disk; later requests only redirect. A failed resize does not return an error status: the redirect points to an SVG that contains the error message.",
+    "operationId": "c1018d19acdbc8f5d4393c3e15a2673d",
+    "parameters": [
+     {
+      "description": "Path of the source image on the storage disk",
+      "in": "query",
+      "name": "path",
+      "required": true,
+      "schema": {
+       "example": "avatars/1/avatar.jpg",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Predefined size from `config('images.public.size_definitions')`; wins over `w` and `h`",
+      "in": "query",
+      "name": "size",
+      "required": false,
+      "schema": {
+       "example": "thumbnail",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Target width in pixels; the aspect ratio is kept and the image is never enlarged",
+      "in": "query",
+      "name": "w",
+      "required": false,
+      "schema": {
+       "example": 100,
+       "type": "integer"
+      }
+     },
+     {
+      "description": "Target height in pixels; the aspect ratio is kept and the image is never enlarged",
+      "in": "query",
+      "name": "h",
+      "required": false,
+      "schema": {
+       "example": 100,
+       "type": "integer"
+      }
+     },
+     {
+      "description": "Output format; the source extension is kept when it is omitted or unsupported",
+      "in": "query",
+      "name": "format",
+      "required": false,
+      "schema": {
+       "enum": [
+        "jpg",
+        "png",
+        "gif",
+        "webp"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "302": {
+      "description": "Redirect to the cached, resized file",
+      "headers": {
+       "Location": {
+        "description": "URL of the cached file",
+        "schema": {
+         "type": "string"
+        }
+       }
+      }
+     },
+     "429": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "message": {
+           "example": "Too Many Attempts.",
+           "type": "string"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Too many requests (`images.render` throttle)"
+     }
+    },
+    "summary": "Resize an image on the fly and redirect to the cached copy",
+    "tags": [
+     "Images"
+    ]
+   },
+   "post": {
+    "description": "Public endpoint, throttled by `images.render`. Returns one entry per requested image, in the same order, with the URL of the cached copy.",
+    "operationId": "36e67e71a3fe444b36689e207b3db13a",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "paths": {
+          "items": {
+           "properties": {
+            "params": {
+             "nullable": true,
+             "properties": {
+              "h": {
+               "example": 100,
+               "maximum": 4096,
+               "minimum": 1,
+               "nullable": true,
+               "type": "integer"
+              },
+              "size": {
+               "description": "Predefined size",
+               "example": "thumbnail",
+               "nullable": true,
+               "type": "string"
+              },
+              "w": {
+               "example": 100,
+               "maximum": 4096,
+               "minimum": 1,
+               "nullable": true,
+               "type": "integer"
+              }
+             },
+             "type": "object"
+            },
+            "path": {
+             "description": "Path of the source image on the storage disk",
+             "example": "avatars/1/avatar.jpg",
+             "type": "string"
+            }
+           },
+           "required": [
+            "path"
+           ],
+           "type": "object"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "type": "array"
+         }
+        },
+        "required": [
+         "paths"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "properties": {
+           "hash": {
+            "example": "68840270724ee4ff0b481f4fbd2299e13dfe2447",
+            "type": "string"
+           },
+           "path": {
+            "example": "imgcache/68840270724ee4ff0b481f4fbd2299e13dfe2447.jpg",
+            "type": "string"
+           },
+           "url": {
+            "example": "http://localhost/storage/imgcache/68840270724ee4ff0b481f4fbd2299e13dfe2447.jpg",
+            "type": "string"
+           }
+          },
+          "type": "object"
+         },
+         "type": "array"
+        }
+       }
+      },
+      "description": "Resized images"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "errors": {
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Validation error (more than 20 paths, a dimension outside 1-4096)"
+     },
+     "429": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "message": {
+           "example": "Too Many Attempts.",
+           "type": "string"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Too many requests (`images.render` throttle)"
+     }
+    },
+    "summary": "Resize many images at once",
+    "tags": [
+     "Images"
     ]
    }
   },
@@ -30852,16 +31399,24 @@
    "name": "Events"
   },
   {
-   "description": "Admin Adapt",
-   "name": "Admin Adapt"
+   "description": "Auth",
+   "name": "Auth"
   },
   {
-   "description": "Assign Without Account",
-   "name": "Assign Without Account"
+   "description": "Profile",
+   "name": "Profile"
   },
   {
    "description": "Admin Tokens",
    "name": "Admin Tokens"
+  },
+  {
+   "description": "Admin Users",
+   "name": "Admin Users"
+  },
+  {
+   "description": "Admin User Settings",
+   "name": "Admin User Settings"
   },
   {
    "description": "Admin User Groups",
@@ -30872,48 +31427,20 @@
    "name": "Admin User Interests"
   },
   {
-   "description": "Admin User Settings",
-   "name": "Admin User Settings"
-  },
-  {
-   "description": "Admin Users",
-   "name": "Admin Users"
-  },
-  {
-   "description": "Auth",
-   "name": "Auth"
-  },
-  {
-   "description": "Profile",
-   "name": "Profile"
-  },
-  {
-   "description": "Admin Bookmarks",
-   "name": "Admin Bookmarks"
-  },
-  {
-   "description": "Bookmarks",
-   "name": "Bookmarks"
-  },
-  {
-   "description": "Admin Bulk Notifications",
-   "name": "Admin Bulk Notifications"
-  },
-  {
-   "description": "Notification Device Tokens",
-   "name": "Notification Device Tokens"
+   "description": "Products",
+   "name": "Products"
   },
   {
    "description": "Admin Orders",
    "name": "Admin Orders"
   },
   {
-   "description": "Admin Products",
-   "name": "Admin Products"
-  },
-  {
    "description": "Admin Product",
    "name": "Admin Product"
+  },
+  {
+   "description": "Admin Products",
+   "name": "Admin Products"
   },
   {
    "description": "Cart",
@@ -30924,84 +31451,32 @@
    "name": "Orders"
   },
   {
-   "description": "Products",
-   "name": "Products"
-  },
-  {
    "description": "Categories",
    "name": "Categories"
-  },
-  {
-   "description": "cmi5",
-   "name": "cmi5"
-  },
-  {
-   "description": "Admin Consultation Access",
-   "name": "Admin Consultation Access"
-  },
-  {
-   "description": "Consultation Access",
-   "name": "Consultation Access"
-  },
-  {
-   "description": "Consultations",
-   "name": "Consultations"
-  },
-  {
-   "description": "Admin Consultations",
-   "name": "Admin Consultations"
-  },
-  {
-   "description": "Core Admin",
-   "name": "Core Admin"
-  },
-  {
-   "description": "Core",
-   "name": "Core"
-  },
-  {
-   "description": "Api",
-   "name": "Api"
-  },
-  {
-   "description": "Admin Course Access",
-   "name": "Admin Course Access"
-  },
-  {
-   "description": "Admin Courses",
-   "name": "Admin Courses"
   },
   {
    "description": "Courses",
    "name": "Courses"
   },
   {
-   "description": "Course Access",
-   "name": "Course Access"
+   "description": "Admin Courses",
+   "name": "Admin Courses"
   },
   {
-   "description": "Admin Course Builder",
-   "name": "Admin Course Builder"
+   "description": "Api",
+   "name": "Api"
+  },
+  {
+   "description": "Core",
+   "name": "Core"
+  },
+  {
+   "description": "Core Admin",
+   "name": "Core Admin"
   },
   {
    "description": "Admin CSV",
    "name": "Admin CSV"
-  },
-  {
-   "description": "Demo",
-   "name": "Demo"
-  },
-  {
-   "description": "Admin Dictionaries",
-   "name": "Admin Dictionaries"
-  },
-  {
-   "description": "Dictionaries",
-   "name": "Dictionaries"
-  },
-  {
-   "description": "Admin Dictionary Words",
-   "name": "Admin Dictionary Words"
   },
   {
    "description": "Files",
@@ -31012,16 +31487,20 @@
    "name": "Admin H5P"
   },
   {
-   "description": "Interactive",
-   "name": "Interactive"
+   "description": "Images",
+   "name": "Images"
   },
   {
-   "description": "Admin Interactive",
-   "name": "Admin Interactive"
+   "description": "cmi5",
+   "name": "cmi5"
   },
   {
-   "description": "Invoices",
-   "name": "Invoices"
+   "description": "LTI",
+   "name": "LTI"
+  },
+  {
+   "description": "Admin LTI",
+   "name": "Admin LTI"
   },
   {
    "description": "Admin LiaScript",
@@ -31032,24 +31511,24 @@
    "name": "LiaScript"
   },
   {
-   "description": "Admin Living Course",
-   "name": "Admin Living Course"
+   "description": "Admin Interactive",
+   "name": "Admin Interactive"
   },
   {
-   "description": "Living Course learner",
-   "name": "Living Course learner"
+   "description": "Interactive",
+   "name": "Interactive"
   },
   {
-   "description": "Living Course webhooks",
-   "name": "Living Course webhooks"
+   "description": "Admin Adapt",
+   "name": "Admin Adapt"
   },
   {
-   "description": "Admin LTI",
-   "name": "Admin LTI"
+   "description": "Notifications Admin",
+   "name": "Notifications Admin"
   },
   {
-   "description": "LTI",
-   "name": "LTI"
+   "description": "Notifications",
+   "name": "Notifications"
   },
   {
    "description": "Mattermost",
@@ -31064,96 +31543,52 @@
    "name": "Admin Model Fields"
   },
   {
-   "description": "Notifications Admin",
-   "name": "Notifications Admin"
-  },
-  {
-   "description": "Notifications",
-   "name": "Notifications"
-  },
-  {
    "description": "Pages",
    "name": "Pages"
-  },
-  {
-   "description": "Admin Payments",
-   "name": "Admin Payments"
   },
   {
    "description": "Payments",
    "name": "Payments"
   },
   {
+   "description": "Admin Payments",
+   "name": "Admin Payments"
+  },
+  {
    "description": "Admin Permissions",
    "name": "Admin Permissions"
-  },
-  {
-   "description": "Question",
-   "name": "Question"
-  },
-  {
-   "description": "QuestionAnswersForQuestionaire",
-   "name": "QuestionAnswersForQuestionaire"
-  },
-  {
-   "description": "Questionnaire",
-   "name": "Questionnaire"
-  },
-  {
-   "description": "QuestionnaireModelType",
-   "name": "QuestionnaireModelType"
-  },
-  {
-   "description": "QuestionnaireReportForModel",
-   "name": "QuestionnaireReportForModel"
-  },
-  {
-   "description": "QuestionnaireStars",
-   "name": "QuestionnaireStars"
-  },
-  {
-   "description": "Admin Reports",
-   "name": "Admin Reports"
-  },
-  {
-   "description": "SCORM",
-   "name": "SCORM"
-  },
-  {
-   "description": "Admin Settings",
-   "name": "Admin Settings"
-  },
-  {
-   "description": "Settings",
-   "name": "Settings"
-  },
-  {
-   "description": "Admin Stationary Events",
-   "name": "Admin Stationary Events"
-  },
-  {
-   "description": "Stationary Events",
-   "name": "Stationary Events"
   },
   {
    "description": "Tags",
    "name": "Tags"
   },
   {
-   "description": "Admin Tasks",
-   "name": "Admin Tasks"
+   "description": "SCORM",
+   "name": "SCORM"
   },
   {
-   "description": "Admin Tasks Notes",
-   "name": "Admin Tasks Notes"
+   "description": "Settings",
+   "name": "Settings"
   },
   {
-   "description": "Tasks",
-   "name": "Tasks"
+   "description": "Admin Settings",
+   "name": "Admin Settings"
   },
   {
-   "description": "Tasks Notes",
-   "name": "Tasks Notes"
+   "description": "Stationary Events",
+   "name": "Stationary Events"
+  },
+  {
+   "description": "Admin Stationary Events",
+   "name": "Admin Stationary Events"
+  },
+  {
+   "description": "Admin Reports",
+   "name": "Admin Reports"
+  },
+  {
+   "description": "Templates",
+   "name": "Templates"
   },
   {
    "description": "Template PDFs",
@@ -31164,12 +31599,144 @@
    "name": "Admin Template PDFs"
   },
   {
-   "description": "Templates",
-   "name": "Templates"
+   "description": "Assign Without Account",
+   "name": "Assign Without Account"
+  },
+  {
+   "description": "Translations",
+   "name": "Translations"
+  },
+  {
+   "description": "Admin Translations",
+   "name": "Admin Translations"
+  },
+  {
+   "description": "Demo",
+   "name": "Demo"
+  },
+  {
+   "description": "Questionnaire",
+   "name": "Questionnaire"
+  },
+  {
+   "description": "QuestionnaireStars",
+   "name": "QuestionnaireStars"
+  },
+  {
+   "description": "Question",
+   "name": "Question"
+  },
+  {
+   "description": "QuestionAnswersForQuestionaire",
+   "name": "QuestionAnswersForQuestionaire"
+  },
+  {
+   "description": "QuestionnaireModelType",
+   "name": "QuestionnaireModelType"
+  },
+  {
+   "description": "QuestionnaireReportForModel",
+   "name": "QuestionnaireReportForModel"
+  },
+  {
+   "description": "Consultations",
+   "name": "Consultations"
+  },
+  {
+   "description": "Admin Consultations",
+   "name": "Admin Consultations"
+  },
+  {
+   "description": "Consultation Access",
+   "name": "Consultation Access"
+  },
+  {
+   "description": "Admin Consultation Access",
+   "name": "Admin Consultation Access"
+  },
+  {
+   "description": "Webinars",
+   "name": "Webinars"
+  },
+  {
+   "description": "Admin Webinars",
+   "name": "Admin Webinars"
   },
   {
    "description": "Platform",
    "name": "Platform"
+  },
+  {
+   "description": "Vouchers",
+   "name": "Vouchers"
+  },
+  {
+   "description": "Admin Vouchers",
+   "name": "Admin Vouchers"
+  },
+  {
+   "description": "Invoices",
+   "name": "Invoices"
+  },
+  {
+   "description": "Video",
+   "name": "Video"
+  },
+  {
+   "description": "Course Access",
+   "name": "Course Access"
+  },
+  {
+   "description": "Admin Course Access",
+   "name": "Admin Course Access"
+  },
+  {
+   "description": "Admin Course Builder",
+   "name": "Admin Course Builder"
+  },
+  {
+   "description": "Admin Living Course",
+   "name": "Admin Living Course"
+  },
+  {
+   "description": "Living Course learner",
+   "name": "Living Course learner"
+  },
+  {
+   "description": "Living Course webhooks",
+   "name": "Living Course webhooks"
+  },
+  {
+   "description": "Tasks",
+   "name": "Tasks"
+  },
+  {
+   "description": "Admin Tasks",
+   "name": "Admin Tasks"
+  },
+  {
+   "description": "Tasks Notes",
+   "name": "Tasks Notes"
+  },
+  {
+   "description": "Admin Tasks Notes",
+   "name": "Admin Tasks Notes"
+  },
+  {
+   "description": "Bookmarks",
+   "name": "Bookmarks"
+  },
+  {
+   "description": "Admin Bookmarks",
+   "name": "Admin Bookmarks"
+  },
+  {
+   "description": "Project Solution",
+   "name": "Project Solution"
+  },
+  {
+   "description": "Admin Project Solution",
+   "name": "Admin Project Solution"
   },
   {
    "description": "Admin Gift Quiz Attempt",
@@ -31188,40 +31755,24 @@
    "name": "Gift Quiz"
   },
   {
-   "description": "Admin Project Solution",
-   "name": "Admin Project Solution"
+   "description": "Notification Device Tokens",
+   "name": "Notification Device Tokens"
   },
   {
-   "description": "Project Solution",
-   "name": "Project Solution"
+   "description": "Admin Bulk Notifications",
+   "name": "Admin Bulk Notifications"
   },
   {
-   "description": "Admin Translations",
-   "name": "Admin Translations"
+   "description": "Admin Dictionaries",
+   "name": "Admin Dictionaries"
   },
   {
-   "description": "Translations",
-   "name": "Translations"
+   "description": "Admin Dictionary Words",
+   "name": "Admin Dictionary Words"
   },
   {
-   "description": "Video",
-   "name": "Video"
-  },
-  {
-   "description": "Admin Vouchers",
-   "name": "Admin Vouchers"
-  },
-  {
-   "description": "Vouchers",
-   "name": "Vouchers"
-  },
-  {
-   "description": "Webinars",
-   "name": "Webinars"
-  },
-  {
-   "description": "Admin Webinars",
-   "name": "Admin Webinars"
+   "description": "Dictionaries",
+   "name": "Dictionaries"
   }
  ]
 }

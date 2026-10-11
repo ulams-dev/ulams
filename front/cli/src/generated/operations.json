@@ -2652,6 +2652,18 @@
   "tag": "Api"
  },
  {
+  "method": "GET",
+  "path": "/api/images/img",
+  "summary": "Resize an image on the fly and redirect to the cached copy",
+  "tag": "Images"
+ },
+ {
+  "method": "POST",
+  "path": "/api/images/img",
+  "summary": "Resize many images at once",
+  "tag": "Images"
+ },
+ {
   "method": "POST",
   "path": "/api/interactive/launches/{topic}",
   "summary": "Start an Interactive topic",
