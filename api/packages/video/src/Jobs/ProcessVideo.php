@@ -63,7 +63,13 @@ class ProcessVideo implements ShouldQueue
 
         ProcessVideoStarted::dispatch($this->user, $topic);
 
-        $this->process($video, $input, $hlsPath);
+        try {
+            $this->process($video, $input, $hlsPath);
+        } finally {
+            // laravel-ffmpeg only removes its temporary folders at the end of a web request; a queue worker
+            // never ends one, so each run leaked its HLS segments (several MB) into the system temp directory.
+            FFMpeg::cleanupTemporaryFiles();
+        }
         $this->makeFilesVisible($dir);
 
         $this->updateVideoState(['ffmpeg' => [
@@ -78,6 +84,8 @@ class ProcessVideo implements ShouldQueue
 
     public function failed(Exception $exception)
     {
+        FFMpeg::cleanupTemporaryFiles();
+
         $this->updateVideoState(['ffmpeg' => [
             'state' => VideoProcessState::ERROR,
             'message' => $exception->getMessage()

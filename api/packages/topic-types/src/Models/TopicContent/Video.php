@@ -85,6 +85,8 @@ class Video extends AbstractTopicFileContent
             $this->length = $media->getDurationInMiliseconds();
         } catch (Exception $exception) {
             Log::error($exception->getMessage());
+        } finally {
+            FFMpeg::cleanupTemporaryFiles();
         }
     }
 

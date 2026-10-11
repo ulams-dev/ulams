@@ -65,6 +65,8 @@ class Audio extends AbstractTopicFileContent
         } catch (Exception $exception) {
             $this->length = 0;
             Log::error($exception->getMessage());
+        } finally {
+            FFMpeg::cleanupTemporaryFiles();
         }
     }
 
