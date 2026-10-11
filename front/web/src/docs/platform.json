@@ -697,6 +697,520 @@
           }
         },
         {
+          "component": "FeatureIndex",
+          "props": {
+            "id": "features",
+            "eyebrow": "everything it does",
+            "title": "Every feature, from video to H5P",
+            "intro": "The full list, grouped and collapsed. Every line links to the package that implements it.",
+            "docsBase": "https://ulams-dev.github.io/ulams",
+            "groups": [
+              {
+                "id": "content",
+                "title": "Lessons and content types",
+                "summary": "Mix the content types below freely inside one course.",
+                "items": [
+                  {
+                    "title": "Seven built-in topic types",
+                    "text": "Video, audio, image, PDF, rich text (Markdown), oEmbed and H5P topics in one course.",
+                    "packages": [
+                      "topic-types",
+                      "courses"
+                    ]
+                  },
+                  {
+                    "title": "LiaScript courses",
+                    "text": "Write a course as LiaScript Markdown. Every change, upload or restore adds an immutable version, so nothing is overwritten.",
+                    "packages": [
+                      "liascript"
+                    ]
+                  },
+                  {
+                    "title": "Interactive web apps",
+                    "text": "Upload a zip with an index.html and a manifest. It plays in a sandbox on the tenant content origin, with a content security policy per version and versions you can pin or follow.",
+                    "packages": [
+                      "interactive"
+                    ]
+                  },
+                  {
+                    "title": "Layout lessons",
+                    "text": "A lesson body assembled from approved learning components such as timelines, flip cards, steps and callouts.",
+                    "packages": [
+                      "topic-type-layout"
+                    ]
+                  },
+                  {
+                    "title": "Student projects",
+                    "text": "Learners upload their solutions as files.",
+                    "packages": [
+                      "topic-type-project"
+                    ]
+                  },
+                  {
+                    "title": "Courses, categories and tags",
+                    "text": "Organise the catalogue with categories and tags.",
+                    "packages": [
+                      "courses",
+                      "categories",
+                      "tags"
+                    ]
+                  },
+                  {
+                    "title": "Dictionaries and pages",
+                    "text": "Manage dictionaries with their expressions and publish static pages.",
+                    "packages": [
+                      "dictionaries",
+                      "pages"
+                    ]
+                  },
+                  {
+                    "title": "Bookmarks and notes",
+                    "text": "Learners keep bookmarks and notes in one data model.",
+                    "packages": [
+                      "bookmarks_notes"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "media",
+                "title": "Media pipeline",
+                "summary": "Upload once; the platform converts, resizes and guards the files.",
+                "items": [
+                  {
+                    "title": "Video to adaptive HLS with ffmpeg",
+                    "text": "A queued ffmpeg job converts every uploaded video into an HLS stream with several bitrates (250, 500 and 1000 kbps by default, resolution configurable). Processing can be switched off and the storage disk chosen.",
+                    "packages": [
+                      "video"
+                    ]
+                  },
+                  {
+                    "title": "On-demand image resizing",
+                    "text": "Request any width and height, or a named size such as thumbnail, and get a cached, optimised copy: one call that redirects, or a JSON batch for many images. Size limits and rate limits protect the server.",
+                    "packages": [
+                      "images"
+                    ]
+                  },
+                  {
+                    "title": "Safe uploads",
+                    "text": "One guard for every upload: size, extension, MIME type sniffed from the content, virus scan, and zip-slip, symlink and zip-bomb checks for archives.",
+                    "packages": [
+                      "uploads"
+                    ]
+                  },
+                  {
+                    "title": "Media library",
+                    "text": "Admins list, find, upload, move and delete files in the media library.",
+                    "packages": [
+                      "files"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "assessment",
+                "title": "Quizzes and assessment",
+                "summary": "Knowledge tests, feedback forms and tasks.",
+                "items": [
+                  {
+                    "title": "GIFT quizzes",
+                    "text": "Eight question types: multiple choice, multiple choice with several right answers, true/false, short answers, matching, numerical, essay and description.",
+                    "packages": [
+                      "topic-type-gift"
+                    ]
+                  },
+                  {
+                    "title": "Attempts, timers and shuffling",
+                    "text": "Limit attempts and the time per attempt, randomise the order of questions and answers per attempt (stable on refresh), and let teachers grade essays by hand.",
+                    "packages": [
+                      "topic-type-gift"
+                    ]
+                  },
+                  {
+                    "title": "Questionnaires",
+                    "text": "Create questionnaires to collect learners’ answers.",
+                    "packages": [
+                      "questionnaire"
+                    ]
+                  },
+                  {
+                    "title": "Tasks",
+                    "text": "Users create their own tasks or assign tasks to other users.",
+                    "packages": [
+                      "tasks"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "h5p",
+                "title": "H5P interactive content",
+                "summary": "H5P runs in its own isolated service, so its GPL code never mixes with the MIT core. These are the content types published on h5p.org.",
+                "items": [
+                  {
+                    "title": "Isolated H5P service",
+                    "text": "Create, edit and play H5P content inside lessons, served by Lumi’s h5p-nodejs-library in a separate service.",
+                    "packages": [
+                      "h5p"
+                    ]
+                  },
+                  {
+                    "title": "Install from the H5P Hub",
+                    "text": "Platform administrators install, restrict and remove content types. Libraries are shared by all academies while content and results stay per tenant.",
+                    "packages": [
+                      "h5p"
+                    ]
+                  }
+                ],
+                "tags": [
+                  "Accordion",
+                  "Advent Calendar",
+                  "Agamotto",
+                  "AR Scavenger",
+                  "Arithmetic Quiz",
+                  "Audio Recorder",
+                  "Chart",
+                  "Collage",
+                  "Cornell Notes",
+                  "Crossword",
+                  "Dialog Cards",
+                  "Dictation",
+                  "Documentation Tool",
+                  "Drag and Drop",
+                  "Drag the Words",
+                  "Essay",
+                  "Fill in the Blanks",
+                  "Find Multiple Hotspots",
+                  "Find the Hotspot",
+                  "Find the words",
+                  "Flashcards",
+                  "Game Map",
+                  "Guess the Answer",
+                  "Iframe Embedder",
+                  "Image Hotspots",
+                  "Image Juxtaposition",
+                  "Image pairing",
+                  "Image Sequencing",
+                  "Image Slider",
+                  "Impressive Presentation",
+                  "Information Wall",
+                  "Interactive Book",
+                  "KewAr Code",
+                  "Mark the Words",
+                  "Memory Game",
+                  "Multimedia Choice",
+                  "Multiple Choice",
+                  "Page",
+                  "Personality Quiz",
+                  "Questionnaire",
+                  "Quiz (Question Set)",
+                  "Single Choice Set",
+                  "Sort the Paragraphs",
+                  "Speak the Words",
+                  "Speak the Words Set",
+                  "Structure Strip",
+                  "Summary",
+                  "Timeline",
+                  "True/False Question",
+                  "Virtual Tour (360)",
+                  "Complex fill the blanks",
+                  "Interactive Video",
+                  "Course Presentation",
+                  "Branching Scenario"
+                ]
+              },
+              {
+                "id": "standards",
+                "title": "Standards and interoperability",
+                "summary": "Bring existing packages, track learning anywhere, move courses between systems.",
+                "items": [
+                  {
+                    "title": "SCORM 1.2 and 2004",
+                    "text": "Upload SCORM packages, play them in lessons and track each learner’s progress per SCO.",
+                    "packages": [
+                      "scorm",
+                      "laravel-scorm"
+                    ]
+                  },
+                  {
+                    "title": "cmi5 and xAPI",
+                    "text": "Launch cmi5 assignable units; a first-party xAPI learning record store receives the statements.",
+                    "packages": [
+                      "cmi5",
+                      "lrs"
+                    ]
+                  },
+                  {
+                    "title": "LTI 1.3, both directions",
+                    "text": "Launch external tools inside lessons with grade passback, or let Moodle, Canvas and other LMSs launch ulams courses.",
+                    "packages": [
+                      "lti"
+                    ],
+                    "status": "coming"
+                  },
+                  {
+                    "title": "Course import and export",
+                    "text": "Move courses between installations as .ulam packages with a content.json and all assets.",
+                    "packages": [
+                      "courses-import-export"
+                    ]
+                  },
+                  {
+                    "title": "CSV users",
+                    "text": "Export and import users as CSV.",
+                    "packages": [
+                      "csv-users"
+                    ]
+                  },
+                  {
+                    "title": "Adapt Learning",
+                    "text": "Adapt course sources as versioned JSON, built into SCORM by an isolated GPL-3.0 worker. Off by default.",
+                    "packages": [
+                      "adapt"
+                    ],
+                    "status": "preview"
+                  }
+                ]
+              },
+              {
+                "id": "ai",
+                "title": "AI and Living Course",
+                "summary": "AI proposes, the author approves: every change is a reviewable diff and every generated element cites its source.",
+                "items": [
+                  {
+                    "title": "AI Course Builder",
+                    "text": "Turn Markdown, PDF or DOCX into a cited course: a short interview, an outline with learning objectives you approve, generated lessons and quizzes, applied through the LMS domain services.",
+                    "packages": [
+                      "course-builder"
+                    ]
+                  },
+                  {
+                    "title": "Living Course",
+                    "text": "Watches the sources of a course, finds the lessons and quiz questions that cite changed passages and proposes cited updates for you to review as one diff. Learner progress is preserved by explicit rules.",
+                    "packages": [
+                      "living-course"
+                    ],
+                    "status": "coming"
+                  },
+                  {
+                    "title": "Provider-agnostic LLM layer",
+                    "text": "One access layer to large language models for every package, with an Anthropic driver and fake and disabled drivers for tests.",
+                    "packages": [
+                      "ai"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "live",
+                "title": "Live learning",
+                "summary": "Webinars, meetings, in-person events and one-to-one sessions.",
+                "items": [
+                  {
+                    "title": "Webinars with YouTube livestreams",
+                    "text": "Schedule webinars with reminders one hour and one day before, and stream them live to YouTube.",
+                    "packages": [
+                      "webinar",
+                      "youtube"
+                    ]
+                  },
+                  {
+                    "title": "Jitsi meetings",
+                    "text": "Generate the parameters of the Jitsi player for video meetings.",
+                    "packages": [
+                      "jitsi"
+                    ]
+                  },
+                  {
+                    "title": "Pencil Spaces",
+                    "text": "Integration with Pencil Spaces.",
+                    "packages": [
+                      "pencil-spaces"
+                    ]
+                  },
+                  {
+                    "title": "Stationary events",
+                    "text": "Manage in-person events.",
+                    "packages": [
+                      "stationary-events"
+                    ]
+                  },
+                  {
+                    "title": "Consultations",
+                    "text": "One-to-one conversations, with enquiries for free consultation access that users with the right permission can accept.",
+                    "packages": [
+                      "consultations",
+                      "consultation-access"
+                    ]
+                  },
+                  {
+                    "title": "Mattermost",
+                    "text": "Integration with Mattermost.",
+                    "packages": [
+                      "mattermost"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "commerce",
+                "title": "Commerce and access",
+                "summary": "The LMS owns entitlements; access is granted only from verified orders.",
+                "items": [
+                  {
+                    "title": "Shopping cart",
+                    "text": "A cart with buyable products.",
+                    "packages": [
+                      "cart",
+                      "shopping-cart"
+                    ]
+                  },
+                  {
+                    "title": "Stripe and Przelewy24",
+                    "text": "Take payments through Stripe or Przelewy24; gateway keys can be changed in the settings.",
+                    "packages": [
+                      "payments",
+                      "przelewy24-php"
+                    ]
+                  },
+                  {
+                    "title": "Vouchers",
+                    "text": "Coupons that discount a cart before the order is placed.",
+                    "packages": [
+                      "vouchers"
+                    ]
+                  },
+                  {
+                    "title": "Invoices",
+                    "text": "Generate a PDF invoice from an order.",
+                    "packages": [
+                      "invoices"
+                    ]
+                  },
+                  {
+                    "title": "Course access",
+                    "text": "Grant access to a course to individual users and groups, or assign users who do not have an account yet.",
+                    "packages": [
+                      "course-access",
+                      "assign-without-account"
+                    ]
+                  },
+                  {
+                    "title": "Headless Sylius shop",
+                    "text": "A separate Sylius 2.x service behind one frontend: catalogue, cart and checkout there, entitlements in the LMS.",
+                    "packages": [
+                      "commerce"
+                    ],
+                    "status": "coming"
+                  }
+                ]
+              },
+              {
+                "id": "platform",
+                "title": "Platform and administration",
+                "summary": "One deployment, many academies, every setting in the admin panel.",
+                "items": [
+                  {
+                    "title": "A site per customer",
+                    "text": "Each tenant gets its own host, database, storage bucket, keys and Redis prefix, so a token from one tenant is rejected by every other.",
+                    "packages": [
+                      "tenancy"
+                    ]
+                  },
+                  {
+                    "title": "Public demos",
+                    "text": "Visitors log in as a student, tutor or admin without a password; the demo resets every hour.",
+                    "packages": [
+                      "demo"
+                    ]
+                  },
+                  {
+                    "title": "Users, groups and permissions",
+                    "text": "User, group and profile management with roles and permissions behind a REST API.",
+                    "packages": [
+                      "auth",
+                      "permissions"
+                    ]
+                  },
+                  {
+                    "title": "Settings and custom fields",
+                    "text": "Change configuration from the admin panel and add unlimited extra primitive fields to any model.",
+                    "packages": [
+                      "settings",
+                      "model-fields"
+                    ]
+                  },
+                  {
+                    "title": "Translations",
+                    "text": "Manage translations.",
+                    "packages": [
+                      "translations"
+                    ]
+                  },
+                  {
+                    "title": "Email, SMS and PDF templates",
+                    "text": "Editable templates for email, SMS (through Twilio) and PDF, bound to events.",
+                    "packages": [
+                      "templates",
+                      "templates-email",
+                      "templates-sms",
+                      "templates-pdf"
+                    ]
+                  },
+                  {
+                    "title": "Notifications",
+                    "text": "Log and broadcast notifications from every package, register device tokens for bulk notifications and sync with MailerLite.",
+                    "packages": [
+                      "notifications",
+                      "bulk-notifications",
+                      "mailerlite"
+                    ]
+                  },
+                  {
+                    "title": "Reports",
+                    "text": "Statistics and reports.",
+                    "packages": [
+                      "reports"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "developers",
+                "title": "For developers",
+                "summary": "Headless by design: everything the apps do goes through the same API.",
+                "items": [
+                  {
+                    "title": "OpenAPI reference",
+                    "text": "Every endpoint is documented in OpenAPI, with a searchable API browser and Swagger UI on every API host.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/api-reference/"
+                  },
+                  {
+                    "title": "TypeScript SDK",
+                    "text": "Typed requests for servers and browsers, with pagination, error handling and idempotent writes.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/sdk/"
+                  },
+                  {
+                    "title": "Scoped API tokens",
+                    "text": "Tokens limited to the scopes you choose, with an audit log, Idempotency-Key and X-Request-Id.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/scoped-tokens/"
+                  },
+                  {
+                    "title": "Command line",
+                    "text": "The ulams CLI calls any API endpoint from scripts and agents, with JSON output and exit codes.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/cli/"
+                  },
+                  {
+                    "title": "Inbound webhooks",
+                    "text": "Webhooks for Living Course Git pushes, Stripe and Jitsi recordings. There are no outgoing webhooks yet.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/webhooks/"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
           "component": "ComparisonTable",
           "props": {
             "id": "compare",

@@ -697,6 +697,520 @@
           }
         },
         {
+          "component": "FeatureIndex",
+          "props": {
+            "id": "features",
+            "eyebrow": "全部功能",
+            "title": "全部功能，从视频到 H5P",
+            "intro": "完整功能清单，按组折叠。每一项都链接到实现它的软件包。",
+            "docsBase": "https://ulams-dev.github.io/ulams",
+            "groups": [
+              {
+                "id": "content",
+                "title": "课程与内容类型",
+                "summary": "以下内容类型可在同一门课程中自由组合。",
+                "items": [
+                  {
+                    "title": "七种内置主题类型",
+                    "text": "视频、音频、图片、PDF、富文本（Markdown）、oEmbed 和 H5P 主题可放在同一门课程中。",
+                    "packages": [
+                      "topic-types",
+                      "courses"
+                    ]
+                  },
+                  {
+                    "title": "LiaScript 课程",
+                    "text": "用 LiaScript Markdown 编写课程。每次修改、上传或恢复都会生成不可变版本，不会覆盖任何内容。",
+                    "packages": [
+                      "liascript"
+                    ]
+                  },
+                  {
+                    "title": "交互式网页应用",
+                    "text": "上传包含 index.html 和清单的 zip。它在租户内容源的沙箱中运行，每个版本都有独立的内容安全策略，版本可以固定或跟随最新。",
+                    "packages": [
+                      "interactive"
+                    ]
+                  },
+                  {
+                    "title": "版式课程",
+                    "text": "课程正文由经过批准的学习组件拼装而成，例如时间线、翻转卡片、步骤和提示框。",
+                    "packages": [
+                      "topic-type-layout"
+                    ]
+                  },
+                  {
+                    "title": "学员项目",
+                    "text": "学员以文件形式上传自己的作业。",
+                    "packages": [
+                      "topic-type-project"
+                    ]
+                  },
+                  {
+                    "title": "课程、分类与标签",
+                    "text": "用分类和标签整理课程目录。",
+                    "packages": [
+                      "courses",
+                      "categories",
+                      "tags"
+                    ]
+                  },
+                  {
+                    "title": "词典与页面",
+                    "text": "管理词典及其词条，并发布静态页面。",
+                    "packages": [
+                      "dictionaries",
+                      "pages"
+                    ]
+                  },
+                  {
+                    "title": "书签与笔记",
+                    "text": "学员的书签和笔记统一存放在同一数据模型中。",
+                    "packages": [
+                      "bookmarks_notes"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "media",
+                "title": "媒体处理",
+                "summary": "只需上传一次，平台负责转换、缩放并保护文件。",
+                "items": [
+                  {
+                    "title": "使用 ffmpeg 转为自适应 HLS 视频",
+                    "text": "排队的 ffmpeg 任务会把每个上传的视频转成多码率 HLS 流（默认 250、500 和 1000 kbps，分辨率可配置）。可以关闭处理，也可以选择存储磁盘。",
+                    "packages": [
+                      "video"
+                    ]
+                  },
+                  {
+                    "title": "按需缩放图片",
+                    "text": "请求任意宽高或命名尺寸（如缩略图），即可得到缓存并优化后的副本：一次带重定向的调用，或一次 JSON 批量请求处理多张图片。尺寸限制和速率限制保护服务器。",
+                    "packages": [
+                      "images"
+                    ]
+                  },
+                  {
+                    "title": "安全上传",
+                    "text": "所有上传共用一道防线：大小、扩展名、根据内容识别的 MIME 类型、病毒扫描，以及针对压缩包的 zip-slip、符号链接和 zip 炸弹检查。",
+                    "packages": [
+                      "uploads"
+                    ]
+                  },
+                  {
+                    "title": "媒体库",
+                    "text": "管理员可以在媒体库中列出、查找、上传、移动和删除文件。",
+                    "packages": [
+                      "files"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "assessment",
+                "title": "测验与评估",
+                "summary": "知识测验、反馈问卷和任务。",
+                "items": [
+                  {
+                    "title": "GIFT 测验",
+                    "text": "八种题型：单选、多选、判断、简答、配对、数值、论述和说明。",
+                    "packages": [
+                      "topic-type-gift"
+                    ]
+                  },
+                  {
+                    "title": "作答次数、计时与乱序",
+                    "text": "限制作答次数和每次的时长，每次作答随机打乱题目和选项顺序（刷新后保持不变），论述题由教师手动评分。",
+                    "packages": [
+                      "topic-type-gift"
+                    ]
+                  },
+                  {
+                    "title": "问卷",
+                    "text": "创建问卷，收集学员的回答。",
+                    "packages": [
+                      "questionnaire"
+                    ]
+                  },
+                  {
+                    "title": "任务",
+                    "text": "用户可以创建自己的任务，也可以把任务分配给其他用户。",
+                    "packages": [
+                      "tasks"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "h5p",
+                "title": "H5P 交互内容",
+                "summary": "H5P 运行在独立隔离的服务中，其 GPL 代码不会与 MIT 许可的核心混合。以下是 h5p.org 上发布的内容类型。",
+                "items": [
+                  {
+                    "title": "隔离的 H5P 服务",
+                    "text": "在课程中创建、编辑和播放 H5P 内容，由独立服务中的 Lumi h5p-nodejs-library 提供支持。",
+                    "packages": [
+                      "h5p"
+                    ]
+                  },
+                  {
+                    "title": "从 H5P Hub 安装",
+                    "text": "平台管理员可以安装、限制和删除内容类型。库由所有学院共享，而内容和成绩按租户独立保存。",
+                    "packages": [
+                      "h5p"
+                    ]
+                  }
+                ],
+                "tags": [
+                  "Accordion",
+                  "Advent Calendar",
+                  "Agamotto",
+                  "AR Scavenger",
+                  "Arithmetic Quiz",
+                  "Audio Recorder",
+                  "Chart",
+                  "Collage",
+                  "Cornell Notes",
+                  "Crossword",
+                  "Dialog Cards",
+                  "Dictation",
+                  "Documentation Tool",
+                  "Drag and Drop",
+                  "Drag the Words",
+                  "Essay",
+                  "Fill in the Blanks",
+                  "Find Multiple Hotspots",
+                  "Find the Hotspot",
+                  "Find the words",
+                  "Flashcards",
+                  "Game Map",
+                  "Guess the Answer",
+                  "Iframe Embedder",
+                  "Image Hotspots",
+                  "Image Juxtaposition",
+                  "Image pairing",
+                  "Image Sequencing",
+                  "Image Slider",
+                  "Impressive Presentation",
+                  "Information Wall",
+                  "Interactive Book",
+                  "KewAr Code",
+                  "Mark the Words",
+                  "Memory Game",
+                  "Multimedia Choice",
+                  "Multiple Choice",
+                  "Page",
+                  "Personality Quiz",
+                  "Questionnaire",
+                  "Quiz (Question Set)",
+                  "Single Choice Set",
+                  "Sort the Paragraphs",
+                  "Speak the Words",
+                  "Speak the Words Set",
+                  "Structure Strip",
+                  "Summary",
+                  "Timeline",
+                  "True/False Question",
+                  "Virtual Tour (360)",
+                  "Complex fill the blanks",
+                  "Interactive Video",
+                  "Course Presentation",
+                  "Branching Scenario"
+                ]
+              },
+              {
+                "id": "standards",
+                "title": "标准与互操作性",
+                "summary": "导入现有课程包，随处跟踪学习，在系统之间迁移课程。",
+                "items": [
+                  {
+                    "title": "SCORM 1.2 与 2004",
+                    "text": "上传 SCORM 包，在课程中播放，并按 SCO 跟踪每位学员的进度。",
+                    "packages": [
+                      "scorm",
+                      "laravel-scorm"
+                    ]
+                  },
+                  {
+                    "title": "cmi5 与 xAPI",
+                    "text": "启动 cmi5 可分配单元；内置的 xAPI 学习记录库接收学习语句。",
+                    "packages": [
+                      "cmi5",
+                      "lrs"
+                    ]
+                  },
+                  {
+                    "title": "双向 LTI 1.3",
+                    "text": "在课程中启动外部工具并回传成绩，也可以让 Moodle、Canvas 等其他 LMS 启动 ulams 课程。",
+                    "packages": [
+                      "lti"
+                    ],
+                    "status": "coming"
+                  },
+                  {
+                    "title": "课程导入与导出",
+                    "text": "把课程打包成 .ulam 文件（含 content.json 和全部资源），在不同安装之间迁移。",
+                    "packages": [
+                      "courses-import-export"
+                    ]
+                  },
+                  {
+                    "title": "CSV 用户",
+                    "text": "以 CSV 格式导出和导入用户。",
+                    "packages": [
+                      "csv-users"
+                    ]
+                  },
+                  {
+                    "title": "Adapt Learning",
+                    "text": "Adapt 课程源以带版本的 JSON 保存，由隔离的 GPL-3.0 工作进程构建为 SCORM。默认关闭。",
+                    "packages": [
+                      "adapt"
+                    ],
+                    "status": "preview"
+                  }
+                ]
+              },
+              {
+                "id": "ai",
+                "title": "AI 与 Living Course",
+                "summary": "AI 提出建议，作者审批：每项改动都是可审阅的差异，每个生成的元素都会引用其来源。",
+                "items": [
+                  {
+                    "title": "AI 课程生成器",
+                    "text": "把 Markdown、PDF 或 DOCX 变成带引用的课程：简短访谈、由你批准的含学习目标的大纲、生成的课时和测验，并通过 LMS 的领域服务写入。",
+                    "packages": [
+                      "course-builder"
+                    ]
+                  },
+                  {
+                    "title": "Living Course",
+                    "text": "监控课程来源，找出引用了变更段落的课时和测验题，并提出带引用的更新，供你作为一份差异统一审阅。学员进度按明确的规则保留。",
+                    "packages": [
+                      "living-course"
+                    ],
+                    "status": "coming"
+                  },
+                  {
+                    "title": "与服务商无关的 LLM 层",
+                    "text": "为所有软件包提供统一的大语言模型访问层，含 Anthropic 驱动，以及用于测试的 fake 和 disabled 驱动。",
+                    "packages": [
+                      "ai"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "live",
+                "title": "直播学习",
+                "summary": "网络研讨会、会议、线下活动和一对一辅导。",
+                "items": [
+                  {
+                    "title": "YouTube 直播研讨会",
+                    "text": "安排网络研讨会，提前一小时和一天发送提醒，并通过 YouTube 直播。",
+                    "packages": [
+                      "webinar",
+                      "youtube"
+                    ]
+                  },
+                  {
+                    "title": "Jitsi 会议",
+                    "text": "为视频会议生成 Jitsi 播放器参数。",
+                    "packages": [
+                      "jitsi"
+                    ]
+                  },
+                  {
+                    "title": "Pencil Spaces",
+                    "text": "与 Pencil Spaces 集成。",
+                    "packages": [
+                      "pencil-spaces"
+                    ]
+                  },
+                  {
+                    "title": "线下活动",
+                    "text": "管理线下活动。",
+                    "packages": [
+                      "stationary-events"
+                    ]
+                  },
+                  {
+                    "title": "咨询",
+                    "text": "一对一交流，并支持免费咨询申请，拥有相应权限的用户可以批准。",
+                    "packages": [
+                      "consultations",
+                      "consultation-access"
+                    ]
+                  },
+                  {
+                    "title": "Mattermost",
+                    "text": "与 Mattermost 集成。",
+                    "packages": [
+                      "mattermost"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "commerce",
+                "title": "商务与访问权限",
+                "summary": "LMS 掌管访问权限；只有经过验证的订单才会授予访问。",
+                "items": [
+                  {
+                    "title": "购物车",
+                    "text": "包含可购买商品的购物车。",
+                    "packages": [
+                      "cart",
+                      "shopping-cart"
+                    ]
+                  },
+                  {
+                    "title": "Stripe 与 Przelewy24",
+                    "text": "通过 Stripe 或 Przelewy24 收款；支付网关密钥可在设置中修改。",
+                    "packages": [
+                      "payments",
+                      "przelewy24-php"
+                    ]
+                  },
+                  {
+                    "title": "优惠券",
+                    "text": "在下单前为购物车抵扣金额的优惠券。",
+                    "packages": [
+                      "vouchers"
+                    ]
+                  },
+                  {
+                    "title": "发票",
+                    "text": "根据订单生成 PDF 发票。",
+                    "packages": [
+                      "invoices"
+                    ]
+                  },
+                  {
+                    "title": "课程访问权限",
+                    "text": "向个人用户和用户组授予课程访问权限，也可以分配尚无账号的用户。",
+                    "packages": [
+                      "course-access",
+                      "assign-without-account"
+                    ]
+                  },
+                  {
+                    "title": "无头 Sylius 商城",
+                    "text": "一个前端背后的独立 Sylius 2.x 服务：目录、购物车和结账在其中，访问权限由 LMS 管理。",
+                    "packages": [
+                      "commerce"
+                    ],
+                    "status": "coming"
+                  }
+                ]
+              },
+              {
+                "id": "platform",
+                "title": "平台与管理",
+                "summary": "一次部署，多个学院，所有设置都在管理后台。",
+                "items": [
+                  {
+                    "title": "每位客户一个站点",
+                    "text": "每个租户都有独立的域名、数据库、存储桶、密钥和 Redis 前缀，因此一个租户的令牌会被其他所有租户拒绝。",
+                    "packages": [
+                      "tenancy"
+                    ]
+                  },
+                  {
+                    "title": "公开演示",
+                    "text": "访客无需密码即可以学员、导师或管理员身份登录；演示每小时重置一次。",
+                    "packages": [
+                      "demo"
+                    ]
+                  },
+                  {
+                    "title": "用户、用户组与权限",
+                    "text": "用户、用户组和个人资料管理，角色与权限通过 REST API 提供。",
+                    "packages": [
+                      "auth",
+                      "permissions"
+                    ]
+                  },
+                  {
+                    "title": "设置与自定义字段",
+                    "text": "在管理后台修改配置，并为任何模型添加任意数量的额外基础字段。",
+                    "packages": [
+                      "settings",
+                      "model-fields"
+                    ]
+                  },
+                  {
+                    "title": "翻译",
+                    "text": "管理翻译。",
+                    "packages": [
+                      "translations"
+                    ]
+                  },
+                  {
+                    "title": "邮件、短信与 PDF 模板",
+                    "text": "可编辑的邮件、短信（通过 Twilio）和 PDF 模板，与事件绑定。",
+                    "packages": [
+                      "templates",
+                      "templates-email",
+                      "templates-sms",
+                      "templates-pdf"
+                    ]
+                  },
+                  {
+                    "title": "通知",
+                    "text": "记录并广播所有软件包的通知，注册设备令牌以发送批量通知，并与 MailerLite 同步。",
+                    "packages": [
+                      "notifications",
+                      "bulk-notifications",
+                      "mailerlite"
+                    ]
+                  },
+                  {
+                    "title": "报表",
+                    "text": "统计数据和报表。",
+                    "packages": [
+                      "reports"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "developers",
+                "title": "面向开发者",
+                "summary": "天生无头：所有应用的操作都通过同一套 API。",
+                "items": [
+                  {
+                    "title": "OpenAPI 参考",
+                    "text": "每个端点都有 OpenAPI 文档，提供可搜索的 API 浏览器，每个 API 主机上还有 Swagger UI。",
+                    "href": "https://ulams-dev.github.io/ulams/developers/api-reference/"
+                  },
+                  {
+                    "title": "TypeScript SDK",
+                    "text": "为服务器和浏览器提供带类型的请求，支持分页、错误处理和幂等写入。",
+                    "href": "https://ulams-dev.github.io/ulams/developers/sdk/"
+                  },
+                  {
+                    "title": "限定范围的 API 令牌",
+                    "text": "令牌仅限于你选择的范围，并带有审计日志、Idempotency-Key 和 X-Request-Id。",
+                    "href": "https://ulams-dev.github.io/ulams/developers/scoped-tokens/"
+                  },
+                  {
+                    "title": "命令行",
+                    "text": "ulams CLI 可在脚本和智能体中调用任意 API 端点，输出 JSON 并返回退出码。",
+                    "href": "https://ulams-dev.github.io/ulams/developers/cli/"
+                  },
+                  {
+                    "title": "入站 Webhook",
+                    "text": "支持 Living Course 的 Git 推送、Stripe 和 Jitsi 录制的 Webhook。目前还没有出站 Webhook。",
+                    "href": "https://ulams-dev.github.io/ulams/developers/webhooks/"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
           "component": "ComparisonTable",
           "props": {
             "id": "compare",

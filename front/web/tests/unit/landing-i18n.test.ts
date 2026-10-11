@@ -16,7 +16,7 @@ const en = landingDocs.platform!;
 /** Keys whose value is structure, not prose: ids, anchors, icons, statuses, bindings, numbers. They must be identical. */
 const STRUCTURAL = new Set(["component", "theme", "id", "variant", "icon", "href", "kind", "mark", "status", "syncStatus", "$data", "window", "key"]);
 /** Keys that hold code, file names, hosts, colours or example data: never translated. */
-const VERBATIM = new Set(["code", "commands", "host", "value", "logo", "file", "citation", "questionCite", "brand"]);
+const VERBATIM = new Set(["code", "commands", "host", "value", "logo", "file", "citation", "questionCite", "brand", "packages", "tags", "docsBase"]);
 /** Product and standard names that an English string mentions: the translation must still contain them. */
 const NAMES = ["ulams", "Claude Code", "Claude", "Anthropic", "MCP", "H5P", "SCORM", "cmi5", "xAPI", "LTI 1.3", "OpenAPI", "Docker Compose", "Sylius", "Figma", "Stitch", "GitHub", "MIT", "TypeScript", "REST API", "@ulams/sdk"];
 
