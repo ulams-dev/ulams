@@ -572,7 +572,7 @@
               {
                 "icon": "puzzle",
                 "title": "标准优先",
-                "text": "H5P、SCORM、cmi5 和 xAPI 现已可用，同一门课程可以交付到任何地方。下一步是 LTI 1.3。"
+                "text": "H5P、SCORM、cmi5 和 xAPI 现已可用，同一门课程可以交付到任何地方。LTI 1.3 同样支持。"
               },
               {
                 "icon": "cart",
@@ -682,8 +682,7 @@
                 "note": "内置 LRS"
               },
               {
-                "label": "LTI 1.3",
-                "status": "coming"
+                "label": "LTI 1.3"
               },
               {
                 "label": "OpenAPI",
@@ -982,8 +981,7 @@
                     "text": "在课程中启动外部工具并回传成绩，也可以让 Moodle、Canvas 等其他 LMS 启动 ulams 课程。",
                     "packages": [
                       "lti"
-                    ],
-                    "status": "coming"
+                    ]
                   },
                   {
                     "title": "课程导入与导出",
