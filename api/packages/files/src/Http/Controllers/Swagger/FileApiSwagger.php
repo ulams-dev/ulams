@@ -241,7 +241,12 @@ interface FileApiSwagger
      *     ),
      *     @OA\Response(
      *          response=200,
-     *          description="successful operation",
+     *          description="Paths of the stored files",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="success", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string"),
+     *              @OA\Property(property="data", type="array", @OA\Items(type="string", example="/uploads/photo.jpg"))
+     *          ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -250,10 +255,6 @@ interface FileApiSwagger
      *     @OA\Response(
      *          response=403,
      *          description="user doesn't have required access rights",
-     *      ),
-     *     @OA\Response(
-     *          response=409,
-     *          description="one of the uploaded files already exists",
      *      ),
      *     @OA\Response(
      *          response=422,
@@ -288,7 +289,12 @@ interface FileApiSwagger
      *     ),
      *     @OA\Response(
      *          response=200,
-     *          description="successful operation",
+     *          description="The file was moved",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="success", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string"),
+     *              @OA\Property(property="data", type="boolean", example=true)
+     *          ),
      *      ),
      *     @OA\Response(
      *          response=302,
@@ -335,7 +341,12 @@ interface FileApiSwagger
      *     ),
      *     @OA\Response(
      *          response=200,
-     *          description="successful operation",
+     *          description="The file was deleted",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="success", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string"),
+     *              @OA\Property(property="data", type="boolean", example=true)
+     *          ),
      *      ),
      *     @OA\Response(
      *          response=400,
