@@ -18,20 +18,8 @@
             "href": "#product"
           },
           {
-            "label": "Living Course",
-            "href": "#how"
-          },
-          {
-            "label": "Self-host",
-            "href": "#self-host"
-          },
-          {
             "label": "Compare",
             "href": "#compare"
-          },
-          {
-            "label": "Demos",
-            "href": "#demos"
           },
           {
             "label": "Docs",
@@ -55,240 +43,85 @@
           "component": "Hero",
           "props": {
             "variant": "product",
-            "eyebrow": "open source · AI-native · headless",
-            "title": "Courses that stay true to their sources.",
-            "titleAccent": "true to their sources.",
-            "subtitle": "The open LMS where AI drafts, the author decides, and every generated element cites its source.",
+            "eyebrow": "AI-native LMS · open source",
+            "title": "Courses built from your docs. Every claim cited.",
+            "titleAccent": "Every claim cited.",
+            "subtitle": "AI drafts lessons from your material. You review every change before publishing.",
             "primaryCta": {
-              "label": "Try the live demos",
+              "label": "Explore live demos",
               "href": "#demos"
             },
             "secondaryCta": {
-              "label": "Self-host it (MIT)",
+              "label": "Self-host (MIT)",
               "href": "#self-host"
             },
-            "body": "Courses built to keep up with your docs and repos, delivered as a white-label site per customer, on your own servers if you like.",
-            "capabilities": [
+            "diff": {
+              "ariaLabel": "Example course draft grounded in a source document, ready for author review",
+              "badge": "Reviewable draft",
+              "title": "Incident response",
+              "sourceLabel": "Grounded in:",
+              "source": "incident-runbook.pdf",
+              "note": "Example draft. The author reviews every change before publishing.",
+              "lines": [
+                {
+                  "op": "ctx",
+                  "text": "Audience · platform engineers"
+                },
+                {
+                  "op": "add",
+                  "text": "Module 1 · Recognise a production incident"
+                },
+                {
+                  "op": "add",
+                  "text": "Lesson 1 · Establish the incident timeline"
+                }
+              ],
+              "citationsLabel": "Sources",
+              "citations": [
+                "incident-runbook.pdf §2"
+              ],
+              "action": "Review draft",
+              "lessonTitle": "Author approval before publishing"
+            }
+          }
+        },
+        {
+          "component": "Showcase",
+          "props": {
+            "eyebrow": "live demos",
+            "title": "Six academies, one platform",
+            "intro": "Each demo is a separate tenant with its own theme, course and data, running on the same ulams install. Open it as a learner or step into its admin.",
+            "items": {
+              "$data": "/demos"
+            },
+            "note": "Demos reset every hour. No sign-up: you are logged in automatically."
+          }
+        },
+        {
+          "component": "FeatureList",
+          "props": {
+            "id": "product",
+            "variant": "grid",
+            "eyebrow": "Product principles",
+            "title": "Courses people can trust.",
+            "intro": "Know what shaped each lesson, where each customer learns and how your content fits the systems you already use.",
+            "items": [
               {
-                "icon": "sync",
-                "label": "Living Course",
-                "caption": "Your course updates itself when sources change",
-                "href": "#living",
-                "ring": 1,
-                "status": "coming",
-                "angle": 173
-              },
-              {
-                "icon": "sparkle",
-                "label": "AI course builder",
-                "caption": "Turn a document into a cited course in minutes",
-                "href": "#builder",
-                "ring": 1,
-                "angle": 63
-              },
-              {
-                "icon": "eye",
-                "label": "Preview & discuss",
-                "caption": "Preview and discuss every element before it goes live",
-                "href": "#product",
-                "ring": 1,
-                "angle": 138
-              },
-              {
-                "icon": "chart",
-                "label": "Learner insights & AI tutor",
-                "caption": "See who is stuck, and give every learner an AI tutor",
-                "href": "#product",
-                "ring": 2,
-                "angle": 323
-              },
-              {
-                "icon": "terminal",
-                "label": "CLI · MCP · REST API",
-                "caption": "Run your academy from a terminal, an agent or the API",
-                "href": "#agents",
-                "ring": 2,
-                "status": "coming",
-                "angle": 196
-              },
-              {
-                "icon": "code",
-                "label": "Claude & Claude Code",
-                "caption": "Build and manage courses from Claude and Claude Code",
-                "href": "#agents",
-                "ring": 2,
-                "status": "coming",
-                "angle": 224
+                "icon": "quote",
+                "title": "Cited by design",
+                "text": "Every AI-generated element cites the source fragment it is based on. AI proposes; the author reviews and approves."
               },
               {
                 "icon": "layers",
-                "label": "Site per customer",
-                "caption": "A branded academy site for every customer",
-                "href": "#demos",
-                "ring": 3,
-                "angle": 245
+                "title": "A site per customer",
+                "text": "Each tenant gets its own subdomain, theme and isolated database for customer and partner learning."
               },
               {
                 "icon": "puzzle",
-                "label": "H5P · SCORM · LTI 1.3",
-                "caption": "H5P, SCORM, cmi5 and LTI 1.3: deliver anywhere",
-                "href": "#standards",
-                "ring": 3,
-                "angle": 131
-              },
-              {
-                "icon": "cart",
-                "label": "Commerce",
-                "caption": "Sell courses and subscriptions with built-in commerce",
-                "href": "#compare",
-                "ring": 3,
-                "status": "coming",
-                "angle": 15
-              },
-              {
-                "icon": "server",
-                "label": "Self-hosted, open source",
-                "caption": "MIT-licensed and self-hosted: your servers, your data",
-                "href": "#self-host",
-                "ring": 3,
-                "angle": 299
+                "title": "Standards first",
+                "text": "H5P, SCORM, cmi5 and xAPI work today. See the standards below for integration details."
               }
             ]
-          }
-        },
-        {
-          "component": "LivingCourseStory",
-          "props": {
-            "id": "living",
-            "eyebrow": "living course",
-            "title": "Your course updates itself when your sources change",
-            "intro": "Edit a doc or merge to a repo. ulams finds every lesson and question that cites it and proposes the update. You approve, and learners keep their progress.",
-            "status": "coming",
-            "valueLine": "Courses stop going stale, and nothing changes without your approval.",
-            "description": "An animated example in three steps. First, a line in docs/slo.md changes from 99.9 % to 99.95 % and a new line about the 30-day budget is added. Second, ulams finds the lesson paragraph and the quiz question that cite docs/slo.md section 2. Third, a proposal with a red and green diff appears, the author clicks Approve, the lesson text updates and a badge confirms that learner progress was kept.",
-            "beats": [
-              {
-                "title": "Your source changes",
-                "text": "A line in docs/slo.md is edited."
-              },
-              {
-                "title": "ulams finds every lesson that cites it",
-                "text": "The lesson paragraph and a quiz question light up."
-              },
-              {
-                "title": "You approve, learners keep their progress",
-                "text": "The proposal is a diff; one click updates the lesson."
-              }
-            ],
-            "source": {
-              "file": "docs/slo.md",
-              "heading": "Error budgets",
-              "context": "Error budget = (1 − SLO) × window",
-              "lead": "Default SLO for checkout:",
-              "before": "99.9 %",
-              "after": "99.95 %",
-              "added": "Budget over 30 days: 21.6 minutes"
-            },
-            "lesson": {
-              "title": "Lesson 2 · SLOs and error budgets",
-              "lead": "Default SLO for checkout:",
-              "citation": "docs/slo.md §2",
-              "question": "What is the default SLO for checkout?",
-              "questionCite": "docs/slo.md §2"
-            },
-            "proposal": {
-              "title": "Proposed update · 1 lesson, 1 question",
-              "approve": "Approve",
-              "done": "Updated · learner progress kept"
-            }
-          }
-        },
-        {
-          "component": "BuilderStory",
-          "props": {
-            "id": "builder",
-            "eyebrow": "course builder",
-            "title": "Build a course from a document in minutes",
-            "intro": "Drop in a runbook, answer three questions, and review a cited outline and drafts before anything goes live.",
-            "valueLine": "From a PDF to a published, cited course, with you approving every step.",
-            "description": "An animated example of the studio course builder. A file named incident-runbook.pdf is dropped in, three interview answers appear (engineers, 45 minutes, a quiz per lesson), an outline of three modules and five lessons grows with a source chip on each lesson, one lesson streams in with citations, a quiz question cites its source, an example cost counter reaches 18 cents, and Apply publishes the course.",
-            "file": {
-              "name": "incident-runbook.pdf",
-              "label": "PDF"
-            },
-            "interview": [
-              {
-                "question": "Audience",
-                "answer": "Engineers"
-              },
-              {
-                "question": "Length",
-                "answer": "45 min"
-              },
-              {
-                "question": "Practice",
-                "answer": "Quiz per lesson"
-              }
-            ],
-            "outline": [
-              {
-                "title": "Detect and declare",
-                "lessons": [
-                  {
-                    "title": "What counts as an incident",
-                    "source": "runbook p.2"
-                  },
-                  {
-                    "title": "Severity levels",
-                    "source": "runbook p.3"
-                  }
-                ]
-              },
-              {
-                "title": "Triage and mitigate",
-                "lessons": [
-                  {
-                    "title": "The first ten minutes",
-                    "source": "runbook p.5"
-                  },
-                  {
-                    "title": "Roll back or roll forward",
-                    "source": "runbook p.6"
-                  }
-                ]
-              },
-              {
-                "title": "Learn from it",
-                "lessons": [
-                  {
-                    "title": "Blameless postmortems",
-                    "source": "runbook p.9"
-                  }
-                ]
-              }
-            ],
-            "lesson": {
-              "title": "Severity levels",
-              "text": "Sev 1 means customers cannot check out. Page the on-call lead and open an incident channel straight away.",
-              "citations": [
-                "runbook p.3 · Severity",
-                "runbook p.4 · Paging"
-              ]
-            },
-            "quiz": {
-              "question": "Who declares a Sev 1?",
-              "source": "runbook p.3"
-            },
-            "cost": {
-              "label": "Cost so far",
-              "amount": 0.18,
-              "note": "Example run, not a quote"
-            },
-            "apply": {
-              "label": "Apply",
-              "publishedTitle": "Incident response",
-              "publishedMeta": "· 5 lessons · 1 quiz · published"
-            }
           }
         },
         {
@@ -309,355 +142,6 @@
             "tabs": {
               "$data": "/workflows/tabs"
             }
-          }
-        },
-        {
-          "component": "WhiteLabelStory",
-          "props": {
-            "id": "white-label",
-            "eyebrow": "white label",
-            "title": "Your brand, your academy, one course per source",
-            "intro": "Bring your style and your content. ulams gives you a branded academy on its own subdomain, a separate cited course for every source, and the learner analytics for each of them.",
-            "valueLine": "Your look, your subdomain, your content, and clear numbers per course.",
-            "description": "An animated example in four steps. One: an agent such as Claude Code, with the ulams CLI and the Figma or Stitch MCP attached, reads a design (a Figma file, a Stitch DESIGN.md, a brand guide PDF or a logo and colours), extracts colours, fonts, logo and corner radius, and runs ulams theme set and ulams settings set; a custom front built on the headless API is shown as the alternative. Two: a themed academy appears on its own subdomain, acme.ulams.app, with a landing page, a course catalogue and an admin, all in the extracted brand. Three: documents, PDFs, a Git repository and a web page each become their own cited course, built by the course builder and kept in sync by Living Course. Four: a per-course dashboard shows learner progress, quiz performance, learners at risk and the sections that confuse people. All names and values are an example.",
-            "exampleNote": "Example brand and data",
-            "primaryCta": {
-              "label": "Try a live demo",
-              "href": "#demos"
-            },
-            "secondaryCta": {
-              "label": "Self-host it",
-              "href": "#self-host"
-            },
-            "steps": [
-              {
-                "title": "Bring your brand",
-                "text": "Attach the ulams CLI or MCP and your design tool's MCP to your agent. It reads your design and applies it to the theme, or builds your own front on the headless API.",
-                "points": [
-                  "Figma, Stitch (DESIGN.md), a brand guide PDF, or a logo and colours",
-                  "Colours, fonts, logo and radius become theme settings",
-                  "Or your own front on the API and @ulams/sdk"
-                ],
-                "today": "Works today through your agent. A built-in brand importer (no agent needed) is on the roadmap."
-              },
-              {
-                "title": "Get your academy",
-                "text": "A themed site appears on its own subdomain, in your brand, with a landing page, a course catalogue and an admin.",
-                "points": [
-                  "One subdomain per customer, for example acme.ulams.app",
-                  "Landing, catalogue and admin share the brand"
-                ]
-              },
-              {
-                "title": "Bring your content",
-                "text": "Add documents, PDFs, a Git repo or web pages. Each source becomes its own course, built with citations.",
-                "points": [
-                  "One course per source",
-                  "Every generated element cites its source",
-                  "Kept in sync by Living Course"
-                ],
-                "today": "Upload, Git and web page sources work today. Keeping courses in sync automatically is on the roadmap."
-              },
-              {
-                "title": "See everything",
-                "text": "Every course has its own learner analytics for the author and the admin.",
-                "points": [
-                  "Progress and completion",
-                  "Quiz performance",
-                  "At-risk learners",
-                  "Sections that confuse people"
-                ],
-                "status": "coming",
-                "today": "On the roadmap: per-course analytics and at-risk learners are planned, not built yet."
-              }
-            ],
-            "brand": {
-              "agentLabel": "Claude Code · ulams CLI · Figma MCP",
-              "sourcesLabel": "Your design",
-              "sources": [
-                {
-                  "kind": "figma",
-                  "label": "Figma file",
-                  "file": "acme-brand.fig"
-                },
-                {
-                  "kind": "stitch",
-                  "label": "Stitch design",
-                  "file": "DESIGN.md"
-                },
-                {
-                  "kind": "pdf",
-                  "label": "Brand guide",
-                  "file": "acme-guide.pdf"
-                },
-                {
-                  "kind": "logo",
-                  "label": "Logo and colours",
-                  "file": "logo.svg"
-                }
-              ],
-              "alternative": {
-                "label": "Or your own front",
-                "text": "A custom template on the headless API and @ulams/sdk"
-              },
-              "tokensLabel": "Tokens the agent extracts",
-              "colors": [
-                {
-                  "name": "Primary",
-                  "value": "#0E7C66"
-                },
-                {
-                  "name": "Secondary",
-                  "value": "#1B2A41"
-                },
-                {
-                  "name": "Accent",
-                  "value": "#F5B841"
-                },
-                {
-                  "name": "Surface",
-                  "value": "#F6F4EF"
-                },
-                {
-                  "name": "Text",
-                  "value": "#16202B"
-                }
-              ],
-              "fonts": [
-                {
-                  "role": "Headings",
-                  "name": "Fraunces"
-                },
-                {
-                  "role": "Body",
-                  "name": "Inter"
-                }
-              ],
-              "logo": "acme",
-              "radius": 12,
-              "commands": [
-                "ulams theme set --accent '#0E7C66' --json",
-                "ulams settings set global companyName \"Acme Academy\" --json"
-              ]
-            },
-            "site": {
-              "host": "acme.ulams.app",
-              "pages": [
-                "Landing",
-                "Catalogue",
-                "Admin"
-              ],
-              "headline": "Learn the Acme way",
-              "action": "Browse courses"
-            },
-            "content": {
-              "builderLabel": "Course builder",
-              "citedLabel": "cited",
-              "syncLabel": "Living Course keeps each one in sync",
-              "syncStatus": "coming",
-              "sources": [
-                {
-                  "kind": "doc",
-                  "label": "handbook.docx",
-                  "course": "Onboarding"
-                },
-                {
-                  "kind": "pdf",
-                  "label": "safety.pdf",
-                  "course": "Safety basics"
-                },
-                {
-                  "kind": "git",
-                  "label": "github.com/acme/docs",
-                  "course": "Product docs"
-                },
-                {
-                  "kind": "url",
-                  "label": "acme.com/help",
-                  "course": "Help centre"
-                }
-              ]
-            },
-            "dashboard": {
-              "kpis": [
-                {
-                  "label": "Progress",
-                  "value": 64
-                },
-                {
-                  "label": "Completion",
-                  "value": 41
-                },
-                {
-                  "label": "Quiz average",
-                  "value": 72
-                }
-              ],
-              "quiz": {
-                "label": "Quiz performance",
-                "bars": [
-                  {
-                    "label": "Module 1",
-                    "value": 85
-                  },
-                  {
-                    "label": "Module 2",
-                    "value": 70
-                  },
-                  {
-                    "label": "Module 3",
-                    "value": 48
-                  }
-                ]
-              },
-              "atRisk": {
-                "label": "At-risk learners",
-                "learners": [
-                  {
-                    "name": "Learner A",
-                    "reason": "Stalled in module 2"
-                  },
-                  {
-                    "name": "Learner B",
-                    "reason": "Failed quiz twice"
-                  }
-                ]
-              },
-              "confusing": {
-                "label": "Confusing sections",
-                "sections": [
-                  {
-                    "title": "Lesson 2.3",
-                    "level": 5
-                  },
-                  {
-                    "title": "Lesson 3.1",
-                    "level": 3
-                  }
-                ]
-              }
-            }
-          }
-        },
-        {
-          "component": "FeatureList",
-          "props": {
-            "id": "product",
-            "variant": "grid",
-            "eyebrow": "why ulams",
-            "title": "An LMS that earns trust",
-            "intro": "Built for developer and customer education: content that changes with every release, sold and delivered to many audiences.",
-            "items": [
-              {
-                "icon": "sync",
-                "title": "Living Course",
-                "text": "Courses stay in sync with the docs and repos they come from, and adapt to each learner.",
-                "status": "coming"
-              },
-              {
-                "icon": "quote",
-                "title": "Cited by design",
-                "text": "Every AI-generated element cites the source fragment it is based on. AI proposes, the author approves the diff."
-              },
-              {
-                "icon": "layers",
-                "title": "A site per customer",
-                "text": "Each tenant gets its own subdomain, theme and isolated database: white-label academies for customers and partners."
-              },
-              {
-                "icon": "server",
-                "title": "Self-hosted, open core",
-                "text": "MIT-licensed core you can run on your own servers. Your content and learner data stay yours; no lock-in."
-              },
-              {
-                "icon": "puzzle",
-                "title": "Standards first",
-                "text": "H5P, SCORM, cmi5 and xAPI work today; the same course can be delivered anywhere. LTI 1.3 is next."
-              },
-              {
-                "icon": "cart",
-                "title": "Commerce built in",
-                "text": "Catalogue, checkout and subscriptions through a headless Sylius shop; access granted only from verified orders.",
-                "status": "coming"
-              }
-            ]
-          },
-          "final": {
-            "items": [
-              {
-                "icon": "sync",
-                "title": "Living Course",
-                "text": "Courses stay in sync with the docs and repos they come from, and adapt to each learner.",
-                "status": "coming"
-              },
-              {
-                "icon": "quote",
-                "title": "Cited by design",
-                "text": "Every AI-generated element cites the source fragment it is based on. AI proposes, the author approves the diff."
-              },
-              {
-                "icon": "layers",
-                "title": "A site per customer",
-                "text": "Each tenant gets its own subdomain, theme and isolated database: white-label academies for customers and partners."
-              },
-              {
-                "icon": "server",
-                "title": "Self-hosted, open core",
-                "text": "MIT-licensed core you can run on your own servers. Your content and learner data stay yours; no lock-in."
-              },
-              {
-                "icon": "puzzle",
-                "title": "Standards first",
-                "text": "H5P, SCORM, cmi5 and xAPI work today; the same course can be delivered anywhere. LTI 1.3 works too."
-              },
-              {
-                "icon": "cart",
-                "title": "Commerce built in",
-                "text": "Catalogue, checkout and subscriptions through a headless Sylius shop; access granted only from verified orders.",
-                "status": "coming"
-              }
-            ]
-          }
-        },
-        {
-          "component": "Steps",
-          "props": {
-            "eyebrow": "living course",
-            "title": "How a course keeps up with its sources",
-            "intro": "The killer feature on our roadmap: when your docs change, the course proposes its own update, and you stay in control.",
-            "status": "coming",
-            "items": [
-              {
-                "icon": "code",
-                "title": "Connect sources",
-                "text": "Point ulams at docs, repos and release notes. They become the only ground truth for the course."
-              },
-              {
-                "icon": "quote",
-                "title": "Generate with citations",
-                "text": "Lessons, quizzes and interactives are drafted from approved objectives, each element linked to its source fragment."
-              },
-              {
-                "icon": "sync",
-                "title": "Review diffs when sources change",
-                "text": "A change upstream becomes an update proposal: a reviewable diff you approve, edit or reject."
-              }
-            ]
-          },
-          "final": {
-            "intro": "The killer feature: when your docs change, the course proposes its own update, and you stay in control."
-          }
-        },
-        {
-          "component": "Showcase",
-          "props": {
-            "eyebrow": "live demos",
-            "title": "Six academies, one platform",
-            "intro": "Each demo is a separate tenant with its own theme, course and data, running on the same ulams install. Open it as a learner or step into its admin.",
-            "items": {
-              "$data": "/demos"
-            },
-            "note": "Demos reset every hour. No sign-up: you are logged in automatically."
           }
         },
         {
@@ -758,12 +242,12 @@
             "href": "#product"
           },
           {
-            "label": "Living Course",
-            "href": "#how"
-          },
-          {
             "label": "Demos",
             "href": "#demos"
+          },
+          {
+            "label": "Agent workflows",
+            "href": "#agents"
           },
           {
             "label": "Standards",

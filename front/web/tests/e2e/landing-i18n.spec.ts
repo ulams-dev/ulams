@@ -13,8 +13,8 @@ const base = `http://app.localhost:${port}`;
 const landingMode = parseLandingStatus(process.env.ULAMS_LANDING_STATUS);
 
 const CASES = [
-  { lang: "pl", html: "pl", path: "/pl/", h1: "wierne swoim źródłom", title: /^ulams — otwarty LMS/, label: "PL", skip: "Przejdź do treści", coming: "Wkrótce", demos: "Dema" },
-  { lang: "zh", html: "zh-Hans", path: "/zh/", h1: "忠于来源", title: /^ulams — 开放的 AI 原生 LMS/, label: "中文", skip: "跳到正文", coming: "即将推出", demos: "演示" },
+  { lang: "pl", html: "pl", path: "/pl/", h1: "Kursy z dokumentacji", title: /^ulams — otwarty LMS/, label: "PL", skip: "Przejdź do treści", coming: "Wkrótce", demos: "Dema" },
+  { lang: "zh", html: "zh-Hans", path: "/zh/", h1: "从文档构建课程", title: /^ulams — 开放的 AI 原生 LMS/, label: "中文", skip: "跳到正文", coming: "即将推出", demos: "演示" },
 ] as const;
 
 async function open(page: Page, path: string) {
@@ -41,9 +41,9 @@ for (const c of CASES) {
       ]);
     });
 
-    test("header: six links at most, a separate language switcher with the current language marked", async ({ page }) => {
+    test("header: three links and a separate language switcher with the current language marked", async ({ page }) => {
       await open(page, c.path);
-      await expect(page.locator("header nav.u-nav li")).toHaveCount(6);
+      await expect(page.locator("header nav.u-nav li")).toHaveCount(3);
       const switcher = page.locator("header nav.u-lang");
       await expect(switcher).toBeVisible();
       await expect(switcher.locator("a")).toHaveCount(3);

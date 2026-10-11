@@ -58,12 +58,17 @@ interface Props {
     sourceUrl?: string;
   };
   diff?: {
+    ariaLabel?: string;
+    badge?: string;
     title?: string;
+    sourceLabel?: string;
     source?: string;
     note?: string;
     lines: Array<{ op?: "add" | "del" | "ctx"; text: string }>;
+    citationsLabel?: string;
     citations?: string[];
     action?: string;
+    lessonTitle?: string;
   };
 }
 
@@ -222,16 +227,16 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
 
     {
       variant === "product" && diff && !capabilities.length && (
-        <figure class="u-hero__product u-hero__in" style="--i:2" aria-label="Example: an update proposal waiting for the author">
+        <figure class="u-hero__product u-hero__in" style="--i:2" aria-label={diff.ariaLabel ?? "Example: a course draft waiting for review"}>
           <div class="u-prod__glow" aria-hidden="true" />
           <div class="u-prod__card">
             <div class="u-prod__head">
-              <span class="u-prod__badge">Update proposal</span>
+              <span class="u-prod__badge">{diff.badge ?? "Reviewable draft"}</span>
               {diff.title && <span class="u-prod__title">{diff.title}</span>}
             </div>
             {diff.source && (
               <p class="u-prod__source">
-                <Icon name="sync" /> source changed: <code>{diff.source}</code>
+                <Icon name="quote" /> {diff.sourceLabel ?? "Grounded in:"} <code>{diff.source}</code>
               </p>
             )}
             <ol class="u-prod__diff">
@@ -244,7 +249,7 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
               ))}
             </ol>
             <div class="u-prod__foot">
-              <ul class="u-prod__cites" aria-label="Citations">
+              <ul class="u-prod__cites" aria-label={diff.citationsLabel ?? "Sources"}>
                 {(diff.citations ?? []).map((c) => (
                   <li>
                     <Icon name="quote" /> {c}
@@ -260,7 +265,7 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
           </div>
           <div class="u-prod__peek" aria-hidden="true">
             <span class="u-prod__peek-dot" />
-            <span>Lesson 2 · SLOs and error budgets</span>
+            <span>{diff.lessonTitle ?? "Review before publishing"}</span>
             <span class="u-prod__peek-bar"><i /></span>
           </div>
           {diff.note && <figcaption class="u-prod__note">{diff.note}</figcaption>}

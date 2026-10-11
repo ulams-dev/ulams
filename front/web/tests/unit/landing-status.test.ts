@@ -39,8 +39,9 @@ describe("platform landing in final mode", () => {
     expect(json(doc)).toContain('"final"');
   });
   it("applies the text overrides", () => {
-    expect(json(final)).toContain("The killer feature: when your docs change");
-    expect(json(final)).toContain("LTI 1.3 works too");
+    expect(json(final)).toContain("Courses people can trust.");
+    expect(json(final)).toContain("Reviewable draft");
+    expect(json(final)).not.toMatch(/on the roadmap|coming/i);
   });
   it("is valid against the catalogue in both modes", () => {
     for (const mode of ["final", "actual"] as const) {

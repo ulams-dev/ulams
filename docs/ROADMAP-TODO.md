@@ -614,8 +614,10 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Metrics: time to first course, time to first enrolment, admin task times
 - [ ] (new) Reference frontend for the demos: UI catalogue `@ulams/ui` (JSON-schema registry, renderer
       with fallbacks, landing pages as A2UI-shaped documents), BFF with httpOnly session, demo auto-login,
-      SWR cache of public API data (partial: implemented and tested, uncommitted; needs the Caddy switch
-      of `*.app.localhost` to :4321 and the API fixes listed in the plan)
+      SWR cache of public API data (partial: implemented and tested, uncommitted; Caddy already points
+      `*.app.localhost` to :4321 in this checkout; API fixes remain listed in the plan; Batch 3 platform landing redesign
+      shipped locally: cited course-draft hero, shorter navigation, demos ahead of comparison, and matching
+      EN/PL/ZH layout; web/UI suites and desktop/phone axe pass)
 - [ ] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
       account area; webinars/events/consultations pages (partial: implemented and tested, uncommitted;
       see `docs/plans/phase-5-reference-frontend.md`, batch 2)

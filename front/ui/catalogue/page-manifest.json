@@ -775,10 +775,25 @@
           "diff": {
             "type": "object",
             "properties": {
+              "ariaLabel": {
+                "type": "string",
+                "description": "Accessible description of the product example",
+                "maxLength": 160
+              },
+              "badge": {
+                "type": "string",
+                "description": "Short status label on the example card",
+                "maxLength": 40
+              },
               "title": {
                 "type": "string",
                 "description": "Card title, e.g. the lesson being updated",
                 "maxLength": 80
+              },
+              "sourceLabel": {
+                "type": "string",
+                "description": "Label before the source name",
+                "maxLength": 30
               },
               "source": {
                 "type": "string",
@@ -820,6 +835,11 @@
                 "default": [],
                 "maxItems": 8
               },
+              "citationsLabel": {
+                "type": "string",
+                "description": "Accessible label for the citation list",
+                "maxLength": 40
+              },
               "citations": {
                 "type": "array",
                 "items": {
@@ -835,12 +855,17 @@
                 "type": "string",
                 "description": "Label of the approve button",
                 "maxLength": 30
+              },
+              "lessonTitle": {
+                "type": "string",
+                "description": "Short text in the preview strip below the example",
+                "maxLength": 80
               }
             },
             "required": [
               "lines"
             ],
-            "description": "Update-proposal card for the product variant",
+            "description": "Static product example for the product variant, such as an author reviewing a cited course draft",
             "additionalProperties": false
           },
           "id": {

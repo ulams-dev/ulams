@@ -81,6 +81,9 @@ const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, 
       )
     }
     {
+      theme === "platform" && <Font cssVariable="--font-playfair" preload={[{ weight: "500" }]} />
+    }
+    {
       theme === "coffee" && (
         <>
           <Font cssVariable="--font-playfair" preload={[{ weight: "400", style: "normal" }]} />

@@ -393,7 +393,10 @@ export const registry = {
         ),
         diff: obj(
           {
+            ariaLabel: text("Accessible description of the product example", { maxLength: 160 }),
+            badge: text("Short status label on the example card", { maxLength: 40 }),
             title: text("Card title, e.g. the lesson being updated", { maxLength: 80 }),
+            sourceLabel: text("Label before the source name", { maxLength: 30 }),
             source: text("Source the change comes from, e.g. docs/slo.md", { maxLength: 80 }),
             note: text("Small note under the card", { maxLength: 160 }),
             lines: list(
@@ -401,11 +404,13 @@ export const registry = {
               "Diff lines",
               { maxItems: 8 }
             ),
+            citationsLabel: text("Accessible label for the citation list", { maxLength: 40 }),
             citations: list(text("Citation chip, e.g. docs/slo.md §2", { maxLength: 40 }), "Citations", { maxItems: 4 }),
             action: text("Label of the approve button", { maxLength: 30 }),
+            lessonTitle: text("Short text in the preview strip below the example", { maxLength: 80 }),
           },
           ["lines"],
-          "Update-proposal card for the product variant"
+          "Static product example for the product variant, such as an author reviewing a cited course draft"
         ),
       },
       ["title"]

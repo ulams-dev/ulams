@@ -190,3 +190,88 @@ Tests: SDK 21, UI 37, web 36 unit tests; Playwright 96 (smoke + axe, desktop and
   directory access list) to anonymous visitors. The front shows only names.
 - The demo data was reseeded during the work (student names changed, progress reset); nothing in
   the front depends on it, but long e2e runs can hit the quiz attempt limit (3 per hour).
+
+## Batch 3 (2026-10-11): platform landing redesign
+
+Status: approved 2026-10-11; implemented and verified.
+
+### Goal
+
+Make the platform landing at `app.localhost` explain ULAMS quickly and guide visitors to one clear
+next step. Reduce cognitive overload by shortening the first-screen message, lowering the number of
+competing calls to action and giving secondary product details a calmer hierarchy. Apply the redesign
+to the English, Polish and Simplified Chinese versions.
+
+### Scope
+
+- Redesign the platform landing document and its layout using the existing `@ulams/ui` catalogue and
+  platform theme. Keep the tenant academy pages, account, events and learner flows out of scope.
+- Rework the hero around one concise product promise, a short supporting sentence, one primary CTA
+  to try the demos and one quieter secondary route to self-hosting. Replace the current orbit of ten
+  capabilities with a clear, static product visual that shows a real ULAMS workflow.
+- Reorder and trim the sections so visitors encounter the product proof and live demos before the
+  detailed comparison and implementation information. Preserve accurate feature status labels and
+  the current demo, documentation, self-host and comparison destinations.
+- Keep EN/PL/ZH copy and page structure aligned; preserve each locale's canonical and alternate URLs.
+- Follow the references as visual direction, not as assets to copy: editorial typography, generous
+  whitespace, restrained neutral surfaces and a product-led visual, while retaining the ULAMS
+  indigo/orange identity and existing accessibility requirements.
+
+### UX principles to apply
+
+- **Hick–Hyman law:** reduce simultaneous choices in the hero and top navigation; keep the rest of
+  the useful routes available below the fold.
+- **Von Restorff effect:** give the demo action one clear visual emphasis and keep secondary actions
+  visually quiet.
+- **Gestalt proximity and similarity:** group each concise benefit with its supporting product
+  evidence and keep unrelated product claims in separate sections.
+- Use familiar navigation and CTA patterns, readable line lengths, keyboard support, visible focus,
+  reduced-motion support, and touch targets suitable for phone use.
+
+These are design checks, not numerical laws: the result should be validated with page scans and a
+short review at desktop and phone widths.
+
+### Product visual and motion
+
+Use a real interface or workflow assembled from existing UI components and demo data; do not invent
+customer logos, adoption metrics, or shipped capabilities. Prefer a quiet still or a user-controlled
+sequence over multiple auto-playing animated stories. The owner suggested a generated video explainer
+as an alternative, but video generation is not available in the current toolset. Do not make this
+batch depend on a generated video or add a video asset; leave a future video slot possible without
+blocking the static product visual.
+
+### Out of scope
+
+- Building a shared design system or extracting a broad set of reusable page components; that is a
+  later step after the page direction is approved.
+- Redesigning tenant sites or other routes, changing product features, adding sales claims, adding
+  motion libraries, or generating new video/image assets.
+- Reworking account, checkout, events booking or the old React frontend.
+
+### Acceptance criteria
+
+- The landing has one dominant message and one visually dominant primary action above the fold at
+  desktop and 360 px phone widths.
+- The product visual explains one concrete workflow without requiring motion; any optional motion
+  respects `prefers-reduced-motion` and does not autoplay sound.
+- EN, PL and ZH have matching section order, working in-page links, accurate availability labels,
+  and language-correct navigation and CTAs.
+- Existing live demos, self-hosting, documentation and comparison content remain reachable.
+- No horizontal overflow; keyboard navigation, focus states, contrast and page landmarks remain
+  accessible. The platform landing passes the existing axe page scan at desktop and phone widths.
+- Update the Phase 5 TODO notes and the docs site in the implementation batch after the redesign is
+  approved and verified.
+
+### Implementation and verification
+
+Explore the existing `Hero`, platform page document, catalogue schemas and localized page parity
+tests before editing. Prefer configuration changes in the three platform page documents and small
+targeted edits to existing components; add a new component only if the existing catalogue cannot
+present the product proof accessibly. Verify typecheck/build, the locale parity and page document
+tests, Playwright smoke and axe scans at desktop and phone widths, and inspect the rendered page
+visually. Do not restructure unrelated dirty or untracked work as part of this batch.
+
+### Open question
+
+- If an explainer video is desired later, should the owner provide a clip or enable a video-generation
+  tool? The current implementation plan proceeds with a static product visual either way.

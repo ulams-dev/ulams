@@ -37,12 +37,67 @@
 
 [data-theme="platform"] body {
   background-image:
-    radial-gradient(900px 520px at 85% -10%, rgb(255 122 46 / 0.1), transparent 70%),
-    radial-gradient(700px 420px at -5% 10%, rgb(15 43 70 / 0.1), transparent 70%),
-    linear-gradient(rgb(14 14 16 / 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(14 14 16 / 0.025) 1px, transparent 1px);
-  background-size: auto, auto, 48px 48px, 48px 48px;
-  background-repeat: no-repeat, no-repeat, repeat, repeat;
+    radial-gradient(900px 460px at 80% -12%, rgb(255 122 46 / 0.075), transparent 68%),
+    radial-gradient(700px 380px at 0% 5%, rgb(15 43 70 / 0.055), transparent 72%);
+  background-repeat: no-repeat;
+}
+
+[data-theme="platform"] .u-hero {
+  padding-block: clamp(56px, 8vw, 112px) clamp(48px, 7vw, 88px);
+}
+
+[data-theme="platform"] .u-hero--product .u-hero__grid {
+  gap: clamp(32px, 6vw, 84px);
+}
+
+[data-theme="platform"] .u-hero--product .u-hero__copy {
+  gap: clamp(16px, 2vw, 22px);
+}
+
+[data-theme="platform"] .u-hero--product .u-hero__title {
+  max-width: 14ch;
+  font-size: clamp(2.7rem, 1.25rem + 4.5vw, 4.8rem);
+  font-family: var(--font-playfair, Georgia, "Times New Roman", serif);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+[data-theme="platform"] .u-hero--product .u-hero__subtitle {
+  max-width: 38ch;
+  line-height: 1.55;
+}
+
+:root[data-theme="platform"] .u-hero--product .u-hero__in,
+:root[data-theme="platform"] .u-hero--product .u-hero__title {
+  animation: none;
+}
+
+[data-theme="platform"] .u-hero__product {
+  max-width: 560px;
+  gap: 12px;
+}
+
+[data-theme="platform"] .u-prod__glow {
+  display: none;
+}
+
+[data-theme="platform"] .u-prod__card,
+[data-theme="platform"] .u-hero__product:hover .u-prod__card {
+  border-radius: 18px;
+  background: var(--ulams-color-card-bg);
+  box-shadow: 0 24px 64px -44px rgb(15 43 70 / 0.42), 0 0 0 1px rgb(15 43 70 / 0.045);
+  backdrop-filter: none;
+  transform: none;
+  transition: none;
+}
+
+:root[data-theme="platform"] .u-hero--product .u-prod__diff li {
+  animation: none;
+}
+
+:root[data-theme="platform"]:lang(zh) .u-hero--product .u-hero__title {
+  max-width: 10em;
 }
 
 [data-theme="platform"] h1,

@@ -6,24 +6,11 @@ import { applyLandingStatus } from "../../src/lib/landing-status.ts";
 import { comparisonModel } from "../../src/lib/comparison.ts";
 import { workflowsModel } from "../../src/lib/workflows.ts";
 
-interface Capability {
-  icon: string;
-  label: string;
-  caption: string;
-  href: string;
-  ring: number;
-  angle?: number;
-  status?: string;
-}
-
 const platform = landingDocs.platform!;
 const hero = (doc: UiNode): UiNode =>
   doc
     .children!.find((c) => c.component === "Main")!
     .children!.find((c) => c.component === "Hero")!;
-const caps = (doc: UiNode) =>
-  (hero(doc).props!.capabilities as Capability[]) ?? [];
-
 /** Anchor ids on the landing: explicit ids plus the defaults of Chips and Showcase. */
 function anchors(doc: UiNode): Set<string> {
   const ids = new Set<string>();
@@ -38,7 +25,7 @@ function anchors(doc: UiNode): Set<string> {
   return ids;
 }
 
-describe("hero capability orbit data", () => {
+describe("platform product hero", () => {
   it("is valid against the catalogue", () => {
     const data = {
       demos: [],
@@ -50,73 +37,41 @@ describe("hero capability orbit data", () => {
     ).toEqual([]);
   });
 
-  it("lists the ten capabilities with short labels and one-line captions", () => {
-    const list = caps(platform);
-    expect(list).toHaveLength(10);
-    for (const c of list) {
-      expect(c.label.length).toBeLessThanOrEqual(32);
-      expect(
-        c.label.split(/\s+/).filter((w) => /\w/.test(w)).length,
-      ).toBeLessThanOrEqual(5);
-      expect(c.caption.length).toBeGreaterThan(20);
-      expect(c.caption.length).toBeLessThanOrEqual(90);
-      expect([1, 2, 3]).toContain(c.ring);
-    }
-    expect(new Set(list.map((c) => c.label)).size).toBe(10);
-    for (const needle of [
-      "Living Course",
-      "AI course builder",
-      "Preview",
-      "insights",
-      "CLI",
-      "Claude",
-      "Site per customer",
-      "H5P",
-      "Commerce",
-      "Self-hosted",
-    ]) {
-      expect(
-        list.some((c) => c.label.includes(needle)),
-        needle,
-      ).toBe(true);
-    }
+  it("uses one reviewable product example instead of a capability orbit", () => {
+    expect(hero(platform).props).not.toHaveProperty("capabilities");
+    expect(hero(platform).props!.diff).toMatchObject({
+      badge: "Reviewable draft",
+      source: "incident-runbook.pdf",
+      citations: ["incident-runbook.pdf §2"],
+      action: "Review draft",
+    });
+    expect(hero(platform).props!.primaryCta).toMatchObject({ href: "#demos" });
+    expect(hero(platform).props!.secondaryCta).toMatchObject({ href: "#self-host" });
   });
 
-  it("links every card to a section that exists on the page", () => {
+  it("orders product proof and demos before the detailed comparison", () => {
+    const sections = platform.children!.find((n) => n.component === "Main")!.children!.map((n) => n.component);
+    expect(sections).toEqual(["Hero", "Showcase", "FeatureList", "WorkflowShowcase", "Chips", "ComparisonTable", "CtaBand"]);
+    expect(sections.indexOf("Showcase")).toBeLessThan(sections.indexOf("ComparisonTable"));
+  });
+
+  it("keeps every header and footer anchor on the page", () => {
     const ids = anchors(platform);
-    for (const c of caps(platform)) {
-      expect(c.href.startsWith("#"), c.label).toBe(true);
-      expect(ids.has(c.href.slice(1)), `${c.label} -> ${c.href}`).toBe(true);
+    for (const chrome of [
+      platform.children!.find((n) => n.component === "SiteHeader")!,
+      platform.children!.find((n) => n.component === "SiteFooter")!,
+    ]) {
+      for (const link of chrome.props!.links as Array<{ href: string }>) {
+        if (link.href.startsWith("#")) expect(ids.has(link.href.slice(1)), link.href).toBe(true);
+      }
     }
   });
 
-  it("start angles leave no two cards of one orbit closer than 25 degrees", () => {
-    for (const ring of [1, 2, 3]) {
-      const a = caps(platform)
-        .filter((c) => c.ring === ring)
-        .map((c) => c.angle ?? 0)
-        .sort((x, y) => x - y);
-      for (let i = 1; i < a.length; i++)
-        expect((a[i] ?? 0) - (a[i - 1] ?? 0)).toBeGreaterThan(25);
+  it("still validates in final and actual display modes", () => {
+    const data = { demos: [], comparison: comparisonModel(), workflows: workflowsModel("actual") };
+    for (const mode of ["actual", "final"] as const) {
+      expect(validateDocument(applyLandingStatus(platform, mode), data).filter((p) => p.component === "Hero")).toEqual([]);
     }
-  });
-
-  it("final mode shows everything as available, actual mode keeps the Coming markers", () => {
-    expect(caps(platform).some((c) => c.status === "coming")).toBe(true);
-    expect(
-      caps(applyLandingStatus(platform, "final")).some((c) => c.status),
-    ).toBe(false);
-    const actual = caps(applyLandingStatus(platform, "actual"));
-    expect(
-      actual.filter((c) => c.status === "coming").map((c) => c.label),
-    ).toEqual(
-      expect.arrayContaining([
-        "Living Course",
-        "Commerce",
-        "CLI · MCP · REST API",
-        "Claude & Claude Code",
-      ]),
-    );
   });
 });
 

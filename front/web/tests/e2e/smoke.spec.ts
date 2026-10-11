@@ -94,7 +94,7 @@ test("platform landing sells the product and links every demo", async ({ page })
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto(`http://app.localhost:${port}/`);
-  await expect(page.locator("h1")).toContainText("true to their sources");
+  await expect(page.locator("h1")).toContainText("Every claim cited");
   const cards = page.locator("#demos li");
   await expect(cards).toHaveCount(6);
   for (const slug of ["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"]) {
