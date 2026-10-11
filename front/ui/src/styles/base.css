@@ -326,7 +326,8 @@ select {
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
-.u-status--coming {
+.u-status--coming,
+.u-status--preview {
   border: 1px dashed currentColor;
   color: var(--ulams-color-muted);
 }
