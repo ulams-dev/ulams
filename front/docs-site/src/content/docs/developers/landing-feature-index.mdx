@@ -1,0 +1,46 @@
+---
+title: The landing feature index
+description: How the collapsed "everything it does" list on the platform landing is built, how to add a feature to it, and the test that keeps it in step with the packages.
+sidebar:
+  order: 90
+modules:
+  - core
+---
+
+The platform landing ends its product story with a list of every capability, in groups that are
+collapsed by default. The text is in the HTML (a native `<details>` per group, no JavaScript), so search
+engines index it, and a `schema.org` `ItemList` describes the same groups and features.
+
+## Where it lives
+
+The list is a `FeatureIndex` node in the landing documents, not a separate data file:
+
+| Language | File |
+|---|---|
+| English (the source) | `front/web/src/docs/platform.json` |
+| Polish, Chinese | `front/web/src/docs/i18n/platform.pl.json`, `platform.zh.json` |
+
+The component is `front/ui/src/components/FeatureIndex.astro`; its props are in
+`front/ui/src/registry.ts`. A group has an `id`, a `title`, a `summary` and either `items`
+(`title`, `text`, `packages`, `href`, `status`) or `tags` (a plain name list, used for the H5P content types).
+
+## Adding a feature
+
+1. Add the item to the right group in the English document. Write what the code does today, from the
+   package, not from a README alone. Use `status: "coming"` or `"preview"` for anything that is on the roadmap or
+   off by default; the landing's display mode (`ULAMS_LANDING_STATUS`) hides those badges in `final` mode only.
+2. List the packages that implement it in `packages`. Each name links to `/reference/packages/<name>/`.
+3. Add the same item, in the same position, to the Polish and Chinese documents. Package names, tags, ids and
+   links stay identical; the unit tests refuse an untranslated sentence or a lost product name.
+4. Run `yarn workspace @ulams/web test`.
+
+## What the tests enforce
+
+`front/web/tests/unit/feature-index.test.ts` fails when:
+
+- a package under `api/packages/` is neither named by a feature nor listed in `EXCLUDED` with a reason
+  (today `core` and `example-plugin`), so a new package cannot ship without a line on the landing or a decision;
+- a feature names a package that does not exist or has no docs page;
+- the Polish or Chinese document has different groups, item counts or tag counts than the English one.
+
+The component itself is covered by `front/ui/tests/feature-index.test.ts` (collapsed by default, links, JSON-LD, axe).
