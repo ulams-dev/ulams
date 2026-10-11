@@ -187,3 +187,10 @@ project was created with `wrangler pages project create ulams-landing --force` (
 otherwise delegates Pages commands to Workers); later commands do not need `--force`. The domain
 `staging.ulams.app` is attached to the project and the zone record is a proxied CNAME to
 `ulams-landing.pages.dev`. The MyDevil `staging` Passenger site is unused now and can be removed.
+
+## Admin deep links
+
+The admin is a history-routed SPA in `~/ulams/admin` (shared by every `<slug>-staging-admin` host).
+Without `deploy/mydevil/admin.htaccess` as `~/ulams/admin/.htaccess`, every route except `/` (for
+example `/login` or a reload) is MyDevil's 404 page. Copy it again whenever the admin build is
+replaced wholesale.

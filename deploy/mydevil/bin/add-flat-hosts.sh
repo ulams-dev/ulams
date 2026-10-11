@@ -33,6 +33,7 @@ say "-- admin $ADMIN"
 exists "$ADMIN" || devil www add "$ADMIN" php
 rm -rf "$HOME/domains/$ADMIN/public_html"
 ln -s "$ULAMS_HOME/admin" "$HOME/domains/$ADMIN/public_html"
+[ -f "$ULAMS_HOME/admin/.htaccess" ] || cp "$DIR/../admin.htaccess" "$ULAMS_HOME/admin/.htaccess" 2>/dev/null || true
 devil www options "$ADMIN" sslonly on || true
 cert "$ADMIN"
 
