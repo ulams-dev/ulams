@@ -36,10 +36,8 @@ foreach ($doc['constants'] ?? [] as $name => $value) {
     }
 }
 
-$finder = Symfony\Component\Finder\Finder::create()->files()->followLinks()->name('*.php')->in($paths);
-foreach ($exclude as $dir) {
-    $finder->exclude($dir);
-}
+// the same finder l5-swagger builds, so the order of tags and operations matches `l5-swagger:generate`
+$finder = new OpenApi\SourceFinder($paths, $exclude, '*.php');
 $generator = new Generator();
 if (!empty($doc['scanOptions']['open_api_spec_version'])) {
     $generator->setVersion($doc['scanOptions']['open_api_spec_version']);
