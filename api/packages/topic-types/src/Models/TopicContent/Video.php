@@ -4,6 +4,7 @@ namespace Ulams\TopicTypes\Models\TopicContent;
 
 use Ulams\TopicTypes\Database\Factories\TopicContent\VideoFactory;
 use Exception;
+use Ulams\Core\Support\FfmpegTemporaryFiles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -85,6 +86,8 @@ class Video extends AbstractTopicFileContent
             $this->length = $media->getDurationInMiliseconds();
         } catch (Exception $exception) {
             Log::error($exception->getMessage());
+        } finally {
+            FfmpegTemporaryFiles::clean();
         }
     }
 
