@@ -68,6 +68,16 @@ interface CourseExportImportAPISwagger
      *     @OA\Response(
      *          response=201,
      *          description="Course imported successfully",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="success", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string"),
+     *              @OA\Property(property="data", type="object", description="The imported course (id, title, status and the other simple-resource fields)")
+     *          ),
+     *      ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="The package could not be imported",
+     *          @OA\JsonContent(@OA\Property(property="error", type="string")),
      *      ),
      *     @OA\Response(
      *          response=401,

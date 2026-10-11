@@ -11,6 +11,9 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-11) Feature catalogue (`docs/plans/feature-catalogue.md`): Scalar as the docs API browser, a new `FeatureIndex`
+      catalogue component for the landing, H5P content types taken from h5p.org, landings translated (PL, ZH) and docs
+      English only, `ItemList` JSON-LD on, OpenAPI responses completed for the featured packages
 - [x] (2026-10-09) Phase 3 plan (`docs/plans/phase-3.md`) approved with all 17 decisions of its section 18 as recommended (issue #27 closed)
 
 - [x] (2026-10-09) Phase 1 decisions 1–52, Phase 2 decisions 1–28 and the Phase 3 plan with its 17 decisions
@@ -766,6 +769,11 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [x] (new) S3 platform tenant API with queued provisioning, off by default, `ulams tenants …` (ADR 0078, 0085; #79 default "off by default"; ADR acceptance pending)
 - [x] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
 - [ ] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds
+- [ ] (new) API browser in the docs site (Scalar over `api/scripts/openapi.php`, built in docs CI without a database); OpenAPI for
+      `images` fixed and response bodies added for video states, files and course import (partial: implemented in the
+      feature-catalogue PR, pending merge; questionnaire and question endpoints now have response bodies too)
+- [ ] (new) Feature index on the platform landing (`FeatureIndex`, 14 collapsed groups, 101 features including MCP, teacher and sales analytics, 54 H5P content types, EN/PL/ZH,
+      `ItemList` JSON-LD) with a drift test against `api/packages` (partial: implemented in the feature-catalogue PR, pending merge)
 - [ ] `npx create-ulams` / `docker compose up` with seed data
 - [ ] Docs site with runnable examples; free cloud sandbox tenant (partial: Starlight site in `front/docs-site` on branch `docs/starlight-site`; runnable examples and the sandbox tenant pending)
 

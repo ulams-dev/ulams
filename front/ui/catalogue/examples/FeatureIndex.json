@@ -1,0 +1,27 @@
+{
+  "props": {
+    "id": "features",
+    "eyebrow": "everything",
+    "title": "Everything it does",
+    "intro": "Every line links to the package that implements it.",
+    "groups": [
+      {
+        "id": "media",
+        "title": "Media pipeline",
+        "summary": "Upload once, deliver everywhere.",
+        "items": [
+          {
+            "title": "Video to HLS",
+            "text": "A queued ffmpeg job turns an upload into an adaptive stream.",
+            "packages": ["video"],
+            "status": "available"
+          }
+        ]
+      },
+      { "id": "h5p", "title": "H5P content types", "tags": ["Accordion", "Crossword"] }
+    ]
+  },
+  "invalid": {
+    "groups": [{ "title": "No id" }]
+  }
+}

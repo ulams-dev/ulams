@@ -1,0 +1,249 @@
+---
+import Icon from "./Icon.astro";
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
+
+interface Item {
+  title: string;
+  text?: string;
+  packages?: string[];
+  href?: string;
+  status?: "available" | "coming" | "preview";
+}
+interface Group {
+  id: string;
+  title: string;
+  summary?: string;
+  items?: Item[];
+  tags?: string[];
+}
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  docsBase?: string;
+  jsonLd?: boolean;
+  groups: Group[];
+}
+const { id = "features", eyebrow, title, intro, docsBase = "https://ulams-dev.github.io/ulams", jsonLd = true, groups } = Astro.props;
+const t = uiStrings(pageLocale(Astro));
+const base = docsBase.replace(/\/$/, "");
+const badge = (status?: string) => (status === "coming" ? t.coming : status === "preview" ? t.preview : null);
+const count = (g: Group) => (g.items?.length ?? 0) + (g.tags?.length ?? 0);
+
+// schema.org ItemList: one ListItem per group, its features as a nested ItemList (names and descriptions only).
+const ld = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: title,
+  itemListElement: groups.map((g, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    item: {
+      "@type": "ItemList",
+      name: g.title,
+      ...(g.summary ? { description: g.summary } : {}),
+      itemListElement: [
+        ...(g.items ?? []).map((item, j) => ({
+          "@type": "ListItem",
+          position: j + 1,
+          name: item.title,
+          ...(item.text ? { description: item.text } : {}),
+        })),
+        ...(g.tags ?? []).map((name, j) => ({ "@type": "ListItem", position: (g.items?.length ?? 0) + j + 1, name })),
+      ],
+    },
+  })),
+};
+// "<" cannot end the script element early inside JSON.
+const ldJson = JSON.stringify(ld).replace(/</g, "\\u003c");
+---
+
+<section class="u-section u-fx" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <div class="u-container u-fx__wrap">
+    <div class="u-section-head u-section-head--center" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+      {intro && <p class="u-lead">{intro}</p>}
+    </div>
+    <div class="u-fx__list">
+      {
+        groups.map((g) => (
+          <details class="u-fx__group" id={`${id}-${g.id}`} data-reveal>
+            <summary>
+              <h3 class="u-fx__title">{g.title}</h3>
+              <span class="u-fx__count" aria-hidden="true">{count(g)}</span>
+              <Icon name="chevron" class="u-fx__chev" />
+            </summary>
+            <div class="u-fx__body">
+              {g.summary && <p class="u-fx__summary">{g.summary}</p>}
+              {g.items && g.items.length > 0 && (
+                <ul class="u-fx__items" role="list" aria-label={t.featuresOf.replace("{title}", g.title)}>
+                  {g.items.map((item) => (
+                    <li class="u-fx__item" data-status={item.status ?? "available"}>
+                      <h4 class="u-fx__name">
+                        {item.href ? <a href={item.href}>{item.title}</a> : item.title}
+                        {badge(item.status) && <span class={`u-status u-status--${item.status}`}>{badge(item.status)}</span>}
+                      </h4>
+                      {item.text && <p class="u-fx__text">{item.text}</p>}
+                      {item.packages && item.packages.length > 0 && (
+                        <p class="u-fx__pkgs">
+                          {item.packages.map((name) => (
+                            <a class="u-fx__pkg" href={`${base}/reference/packages/${name}/`} title={`${t.packageDocs}: ${name}`}>
+                              {name}
+                            </a>
+                          ))}
+                        </p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {g.tags && g.tags.length > 0 && (
+                <ul class="u-fx__tags" role="list">
+                  {g.tags.map((name) => (
+                    <li>{name}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </details>
+        ))
+      }
+    </div>
+    {jsonLd && <script type="application/ld+json" set:html={ldJson} />}
+  </div>
+</section>
+
+<style>
+  .u-fx__wrap {
+    max-width: 960px;
+  }
+  .u-fx__list {
+    display: grid;
+    gap: 10px;
+  }
+  .u-fx__group {
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-card-bg);
+    transition: border-color 0.3s;
+  }
+  .u-fx__group:hover,
+  .u-fx__group[open] {
+    border-color: color-mix(in srgb, var(--ulams-color-primary) 55%, var(--ulams-color-border));
+  }
+  .u-fx__group summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 14px 20px;
+    cursor: pointer;
+    list-style: none;
+  }
+  .u-fx__group summary::-webkit-details-marker {
+    display: none;
+  }
+  .u-fx__group summary:focus-visible {
+    outline: 2px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+    border-radius: var(--ulams-radius-card);
+  }
+  .u-fx__title {
+    flex: 1;
+    margin: 0;
+    font-size: 1.0625rem;
+    font-weight: 600;
+  }
+  .u-fx__count {
+    min-width: 28px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    text-align: center;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ulams-color-muted);
+    border: 1px solid var(--ulams-color-border);
+  }
+  .u-fx__group :global(.u-fx__chev) {
+    transform: rotate(90deg);
+    transition: transform 0.35s var(--ulams-ease);
+    color: var(--ulams-color-primary);
+  }
+  .u-fx__group[open] :global(.u-fx__chev) {
+    transform: rotate(-90deg);
+  }
+  .u-fx__body {
+    padding: 0 20px 20px;
+  }
+  .u-fx__summary {
+    margin: 0 0 16px;
+    color: var(--ulams-color-muted);
+  }
+  .u-fx__items {
+    display: grid;
+    gap: 14px 24px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .u-fx__name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 4px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+  .u-fx__name a {
+    color: inherit;
+    text-decoration-color: var(--ulams-color-primary);
+  }
+  .u-fx__text {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-fx__pkgs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 8px 0 0;
+  }
+  .u-fx__pkg {
+    padding: 1px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--ulams-color-border);
+    font-family: var(--ulams-font-mono, ui-monospace, monospace);
+    font-size: 0.75rem;
+    color: var(--ulams-color-muted);
+    text-decoration: none;
+  }
+  .u-fx__pkg:hover,
+  .u-fx__pkg:focus-visible {
+    color: var(--ulams-color-primary);
+    border-color: var(--ulams-color-primary);
+  }
+  .u-fx__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .u-fx__tags li {
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--ulams-color-border);
+    font-size: 0.8125rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .u-fx__group :global(.u-fx__chev) {
+      transition: none;
+    }
+  }
+</style>

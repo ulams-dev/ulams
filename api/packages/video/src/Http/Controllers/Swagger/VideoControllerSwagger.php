@@ -26,7 +26,22 @@ interface VideoControllerSwagger
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of available",
+     *         description="Processed videos with the state of their conversion to HLS",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="success", type="boolean", example=true),
+     *              @OA\Property(property="message", type="string"),
+     *              @OA\Property(
+     *                  property="data",
+     *                  type="array",
+     *                  @OA\Items(
+     *                      @OA\Property(property="id", type="integer", example=1),
+     *                      @OA\Property(property="topic_id", type="integer", nullable=true, example=12),
+     *                      @OA\Property(property="topic_title", type="string", nullable=true),
+     *                      @OA\Property(property="json", type="object", nullable=true, description="The topic json, with the ffmpeg state under `ffmpeg`"),
+     *                      @OA\Property(property="state", type="string", nullable=true, enum={"coding", "finished", "error"}),
+     *                  )
+     *              ),
+     *          ),
      *      ),
      *     @OA\Response(
      *          response=401,

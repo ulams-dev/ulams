@@ -651,6 +651,52 @@ export const registry = {
     ),
     fallback: (p) => join(p.title, ...titles(p.items, "q")),
   },
+  FeatureIndex: {
+    description:
+      "Everything the product does, grouped and collapsed by default: one native disclosure per group with short feature lines, status badges and links to the package docs (no JavaScript, content stays in the HTML for search engines). Emits ItemList JSON-LD. Use it for a long, honest capability list, not for the three-to-six headline benefits (FeatureList).",
+    category: "section",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        id: text("Anchor id", { default: "features", maxLength: 40 }),
+        eyebrow: EYEBROW,
+        title: TITLE,
+        intro: INTRO,
+        docsBase: href("Docs site root; a package name links to <docsBase>/reference/packages/<name>/"),
+        jsonLd: bool("Emit schema.org ItemList JSON-LD of the groups and features", true),
+        groups: list(
+          obj(
+            {
+              id: text("Group anchor id", { maxLength: 40 }),
+              title: text("Group title", { maxLength: 80 }),
+              summary: text("One sentence under the title when the group is open", { maxLength: 300 }),
+              items: list(
+                obj(
+                  {
+                    title: text("Feature", { maxLength: 80 }),
+                    text: text("What it does, in one or two sentences", { maxLength: 320 }),
+                    packages: list(text("Package name under api/packages", { maxLength: 60 }), "Packages that implement it", { maxItems: 6 }),
+                    href: href("Docs page for the feature"),
+                    status: oneOf(["available", "coming", "preview"], "Shipped today, on the roadmap or off by default (say so honestly)", "available"),
+                  },
+                  ["title"]
+                ),
+                "Features",
+                { maxItems: 14 }
+              ),
+              tags: list(text("Name", { maxLength: 60 }), "Short names shown as a tag cloud (for example the content types of a standard)", { maxItems: 80 }),
+            },
+            ["id", "title"]
+          ),
+          "Groups",
+          { minItems: 1, maxItems: 16 }
+        ),
+      },
+      ["groups"]
+    ),
+    fallback: (p) => join(p.title, p.intro, titles(p.groups)),
+  },
   CtaBand: {
     description: "Closing call to action: a banner or a newsletter-style band.",
     category: "section",

@@ -1997,6 +1997,146 @@
         "additionalProperties": false
       }
     },
+    "FeatureIndex": {
+      "description": "Everything the product does, grouped and collapsed by default: one native disclosure per group with short feature lines, status badges and links to the package docs (no JavaScript, content stays in the HTML for search engines). Emits ItemList JSON-LD. Use it for a long, honest capability list, not for the three-to-six headline benefits (FeatureList).",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "features"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "docsBase": {
+            "type": "string",
+            "format": "href",
+            "description": "Docs site root; a package name links to <docsBase>/reference/packages/<name>/",
+            "maxLength": 2048
+          },
+          "jsonLd": {
+            "type": "boolean",
+            "description": "Emit schema.org ItemList JSON-LD of the groups and features",
+            "default": true
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Group anchor id",
+                  "maxLength": 40
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Group title",
+                  "maxLength": 80
+                },
+                "summary": {
+                  "type": "string",
+                  "description": "One sentence under the title when the group is open",
+                  "maxLength": 300
+                },
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string",
+                        "description": "Feature",
+                        "maxLength": 80
+                      },
+                      "text": {
+                        "type": "string",
+                        "description": "What it does, in one or two sentences",
+                        "maxLength": 320
+                      },
+                      "packages": {
+                        "type": "array",
+                        "items": {
+                          "type": "string",
+                          "description": "Package name under api/packages",
+                          "maxLength": 60
+                        },
+                        "description": "Packages that implement it",
+                        "default": [],
+                        "maxItems": 6
+                      },
+                      "href": {
+                        "type": "string",
+                        "format": "href",
+                        "description": "Docs page for the feature",
+                        "maxLength": 2048
+                      },
+                      "status": {
+                        "type": "string",
+                        "enum": [
+                          "available",
+                          "coming",
+                          "preview"
+                        ],
+                        "description": "Shipped today, on the roadmap or off by default (say so honestly)",
+                        "default": "available"
+                      }
+                    },
+                    "required": [
+                      "title"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "description": "Features",
+                  "default": [],
+                  "maxItems": 14
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "Name",
+                    "maxLength": 60
+                  },
+                  "description": "Short names shown as a tag cloud (for example the content types of a standard)",
+                  "default": [],
+                  "maxItems": 80
+                }
+              },
+              "required": [
+                "id",
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Groups",
+            "default": [],
+            "maxItems": 16,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "groups"
+        ],
+        "additionalProperties": false
+      }
+    },
     "CtaBand": {
       "description": "Closing call to action: a banner or a newsletter-style band.",
       "children": false,

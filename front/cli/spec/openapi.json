@@ -7241,7 +7241,42 @@
     },
     "responses": {
      "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "description": "The imported course (id, title, status and the other simple-resource fields)",
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Course imported successfully"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "error": {
+           "type": "string"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The package could not be imported"
      },
      "401": {
       "description": "endpoint requires authentication"
@@ -8755,7 +8790,27 @@
     ],
     "responses": {
      "200": {
-      "description": "successful operation"
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "example": true,
+           "type": "boolean"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The file was deleted"
      },
      "400": {
       "description": "file doesn't exists"
@@ -8993,7 +9048,27 @@
     },
     "responses": {
      "200": {
-      "description": "successful operation"
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "example": true,
+           "type": "boolean"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The file was moved"
      },
      "302": {
       "description": "invalid request"
@@ -9054,16 +9129,36 @@
     },
     "responses": {
      "200": {
-      "description": "successful operation"
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "example": "/uploads/photo.jpg",
+            "type": "string"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Paths of the stored files"
      },
      "401": {
       "description": "endpoint requires authentication"
      },
      "403": {
       "description": "user doesn't have required access rights"
-     },
-     "409": {
-      "description": "one of the uploaded files already exists"
      },
      "422": {
       "description": "server-side error"
@@ -14005,6 +14100,25 @@
     },
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/Question"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Question created successfully"
      },
      "401": {
@@ -14173,6 +14287,25 @@
     },
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/QuestionAnswer"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Question answers visibility changed successfully"
      },
      "401": {
@@ -14212,6 +14345,26 @@
     ],
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "example": true,
+           "type": "boolean"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Question deleted successfully"
      },
      "400": {
@@ -14307,6 +14460,25 @@
     },
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/Question"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Question updated successfully"
      },
      "400": {
@@ -14440,6 +14612,25 @@
     },
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/Questionnaire"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Questionnaire created successfully"
      },
      "401": {
@@ -14567,6 +14758,26 @@
     },
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "example": true,
+           "type": "boolean"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Questionnaire model assign successfully"
      },
      "400": {
@@ -14700,6 +14911,26 @@
     ],
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "example": true,
+           "type": "boolean"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Questionnaire model unassign successfully"
      },
      "400": {
@@ -14742,6 +14973,26 @@
     ],
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "example": true,
+           "type": "boolean"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Questionnaire deleted successfully"
      },
      "400": {
@@ -14837,6 +15088,25 @@
     },
     "responses": {
      "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/Questionnaire"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
       "description": "Questionnaire updated successfully"
      },
      "400": {
@@ -20309,7 +20579,58 @@
     ],
     "responses": {
      "200": {
-      "description": "List of available"
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "properties": {
+             "id": {
+              "example": 1,
+              "type": "integer"
+             },
+             "json": {
+              "description": "The topic json, with the ffmpeg state under `ffmpeg`",
+              "nullable": true,
+              "type": "object"
+             },
+             "state": {
+              "enum": [
+               "coding",
+               "finished",
+               "error"
+              ],
+              "nullable": true,
+              "type": "string"
+             },
+             "topic_id": {
+              "example": 12,
+              "nullable": true,
+              "type": "integer"
+             },
+             "topic_title": {
+              "nullable": true,
+              "type": "string"
+             }
+            },
+            "type": "object"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "example": true,
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Processed videos with the state of their conversion to HLS"
      },
      "401": {
       "description": "Endpoint requires authentication"
@@ -25181,6 +25502,232 @@
     "summary": "Check health of the application",
     "tags": [
      "Api"
+    ]
+   }
+  },
+  "/api/images/img": {
+   "get": {
+    "description": "Public endpoint, throttled by `images.render`. The cached file name is `sha1(path . json_encode(params))` plus the extension, so the same request always returns the same URL. The first request creates the copy, optimises it and stores it on the configured disk; later requests only redirect. A failed resize does not return an error status: the redirect points to an SVG that contains the error message.",
+    "operationId": "c1018d19acdbc8f5d4393c3e15a2673d",
+    "parameters": [
+     {
+      "description": "Path of the source image on the storage disk",
+      "in": "query",
+      "name": "path",
+      "required": true,
+      "schema": {
+       "example": "avatars/1/avatar.jpg",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Predefined size from `config('images.public.size_definitions')`; wins over `w` and `h`",
+      "in": "query",
+      "name": "size",
+      "required": false,
+      "schema": {
+       "example": "thumbnail",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Target width in pixels; the aspect ratio is kept and the image is never enlarged",
+      "in": "query",
+      "name": "w",
+      "required": false,
+      "schema": {
+       "example": 100,
+       "type": "integer"
+      }
+     },
+     {
+      "description": "Target height in pixels; the aspect ratio is kept and the image is never enlarged",
+      "in": "query",
+      "name": "h",
+      "required": false,
+      "schema": {
+       "example": 100,
+       "type": "integer"
+      }
+     },
+     {
+      "description": "Output format; the source extension is kept when it is omitted or unsupported",
+      "in": "query",
+      "name": "format",
+      "required": false,
+      "schema": {
+       "enum": [
+        "jpg",
+        "png",
+        "gif",
+        "webp"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "302": {
+      "description": "Redirect to the cached, resized file",
+      "headers": {
+       "Location": {
+        "description": "URL of the cached file",
+        "schema": {
+         "type": "string"
+        }
+       }
+      }
+     },
+     "429": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "message": {
+           "example": "Too Many Attempts.",
+           "type": "string"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Too many requests (`images.render` throttle)"
+     }
+    },
+    "summary": "Resize an image on the fly and redirect to the cached copy",
+    "tags": [
+     "Images"
+    ]
+   },
+   "post": {
+    "description": "Public endpoint, throttled by `images.render`. Returns one entry per requested image, in the same order, with the URL of the cached copy.",
+    "operationId": "36e67e71a3fe444b36689e207b3db13a",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "paths": {
+          "items": {
+           "properties": {
+            "params": {
+             "nullable": true,
+             "properties": {
+              "h": {
+               "example": 100,
+               "maximum": 4096,
+               "minimum": 1,
+               "nullable": true,
+               "type": "integer"
+              },
+              "size": {
+               "description": "Predefined size",
+               "example": "thumbnail",
+               "nullable": true,
+               "type": "string"
+              },
+              "w": {
+               "example": 100,
+               "maximum": 4096,
+               "minimum": 1,
+               "nullable": true,
+               "type": "integer"
+              }
+             },
+             "type": "object"
+            },
+            "path": {
+             "description": "Path of the source image on the storage disk",
+             "example": "avatars/1/avatar.jpg",
+             "type": "string"
+            }
+           },
+           "required": [
+            "path"
+           ],
+           "type": "object"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "type": "array"
+         }
+        },
+        "required": [
+         "paths"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "items": {
+          "properties": {
+           "hash": {
+            "example": "68840270724ee4ff0b481f4fbd2299e13dfe2447",
+            "type": "string"
+           },
+           "path": {
+            "example": "imgcache/68840270724ee4ff0b481f4fbd2299e13dfe2447.jpg",
+            "type": "string"
+           },
+           "url": {
+            "example": "http://localhost/storage/imgcache/68840270724ee4ff0b481f4fbd2299e13dfe2447.jpg",
+            "type": "string"
+           }
+          },
+          "type": "object"
+         },
+         "type": "array"
+        }
+       }
+      },
+      "description": "Resized images"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "errors": {
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Validation error (more than 20 paths, a dimension outside 1-4096)"
+     },
+     "429": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "message": {
+           "example": "Too Many Attempts.",
+           "type": "string"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Too many requests (`images.render` throttle)"
+     }
+    },
+    "summary": "Resize many images at once",
+    "tags": [
+     "Images"
     ]
    }
   },
@@ -31010,6 +31557,10 @@
   {
    "description": "Admin H5P",
    "name": "Admin H5P"
+  },
+  {
+   "description": "Images",
+   "name": "Images"
   },
   {
    "description": "Interactive",
