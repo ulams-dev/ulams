@@ -572,7 +572,7 @@
               {
                 "icon": "puzzle",
                 "title": "Standards first",
-                "text": "H5P, SCORM, cmi5, xAPI and LTI 1.3 work today; the same course can be delivered anywhere."
+                "text": "H5P, SCORM, cmi5 and xAPI work today; the same course can be delivered anywhere. LTI 1.3 works too."
               },
               {
                 "icon": "cart",
@@ -608,7 +608,7 @@
               {
                 "icon": "puzzle",
                 "title": "Standards first",
-                "text": "H5P, SCORM, cmi5, xAPI and LTI 1.3 work today; the same course can be delivered anywhere."
+                "text": "H5P, SCORM, cmi5 and xAPI work today; the same course can be delivered anywhere. LTI 1.3 works too."
               },
               {
                 "icon": "cart",
