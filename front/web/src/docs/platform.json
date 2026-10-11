@@ -701,8 +701,8 @@
           "props": {
             "id": "features",
             "eyebrow": "everything it does",
-            "title": "Every feature, from video to H5P",
-            "intro": "The full list, grouped and collapsed. Every line links to the package that implements it.",
+            "title": "Every feature, from video to analytics",
+            "intro": "The full list, grouped and collapsed. Every line links to the package or the guide behind it.",
             "docsBase": "https://ulams-dev.github.io/ulams",
             "groups": [
               {
@@ -773,6 +773,35 @@
                 ]
               },
               {
+                "id": "learner",
+                "title": "Learner experience",
+                "summary": "A server-rendered learner app with a course player that works on small screens.",
+                "items": [
+                  {
+                    "title": "Course player",
+                    "text": "A program tree with the status of every topic (done, current, open or locked), a progress bar and a finish page, with a player for each topic type.",
+                    "href": "https://ulams-dev.github.io/ulams/learners/course-player/"
+                  },
+                  {
+                    "title": "Notes and bookmarks",
+                    "text": "Learners save notes and bookmarks while they learn.",
+                    "packages": [
+                      "bookmarks_notes"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/learners/notes-and-bookmarks/"
+                  },
+                  {
+                    "title": "Accessible by default",
+                    "text": "WCAG 2.2 AA is the quality bar for learner-facing pages, scanned with axe in the tests."
+                  },
+                  {
+                    "title": "Sign in through a browser",
+                    "text": "Learners and tutors sign in on the web app, and the same session approves CLI and agent tokens.",
+                    "href": "https://ulams-dev.github.io/ulams/learners/cli-sign-in/"
+                  }
+                ]
+              },
+              {
                 "id": "media",
                 "title": "Media pipeline",
                 "summary": "Upload once; the platform converts, resizes and guards the files.",
@@ -838,6 +867,14 @@
                     "text": "Users create their own tasks or assign tasks to other users.",
                     "packages": [
                       "tasks"
+                    ]
+                  },
+                  {
+                    "title": "Certificates",
+                    "text": "A PDF certificate is issued when a learner finishes a course, from a template designed in the admin panel (the default is A4 landscape with a QR code). The template is stored with each certificate.",
+                    "packages": [
+                      "templates-pdf",
+                      "courses"
                     ]
                   }
                 ]
@@ -1002,6 +1039,172 @@
                 ]
               },
               {
+                "id": "teacher-analytics",
+                "title": "Analytics for teachers and authors",
+                "summary": "What you can measure today.",
+                "items": [
+                  {
+                    "title": "Course statistics",
+                    "text": "Average time and time per topic, people who bought, started and finished, finished topics and an attendance list, exportable to a spreadsheet.",
+                    "packages": [
+                      "reports"
+                    ]
+                  },
+                  {
+                    "title": "Topic and quiz statistics",
+                    "text": "Average time per topic and a summary of the quiz results for each GIFT quiz.",
+                    "packages": [
+                      "reports",
+                      "topic-type-gift"
+                    ]
+                  },
+                  {
+                    "title": "Quiz reports and manual grading",
+                    "text": "Every attempt filtered by date, course and student, with each answer visible. Grade essays or correct any automatic score and the total updates.",
+                    "packages": [
+                      "topic-type-gift"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/creators/quizzes/"
+                  },
+                  {
+                    "title": "Dashboard charts",
+                    "text": "Money spent per course, course popularity, time spent per course and tutor popularity, plus best-rated courses and variants that show tutors only their own courses.",
+                    "packages": [
+                      "reports"
+                    ]
+                  },
+                  {
+                    "title": "Activity over a period",
+                    "text": "New users, active users, and courses started and finished between any two dates.",
+                    "packages": [
+                      "reports"
+                    ]
+                  },
+                  {
+                    "title": "Metric history",
+                    "text": "Metrics can be snapshotted on a schedule, so the API returns a value for a past date. Off in the default configuration.",
+                    "packages": [
+                      "reports"
+                    ]
+                  },
+                  {
+                    "title": "Questionnaires",
+                    "text": "Surveys with rating, text and review questions, optional maximum scores, public or hidden answers and results per questionnaire.",
+                    "packages": [
+                      "questionnaire"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/questionnaires/"
+                  },
+                  {
+                    "title": "xAPI statements",
+                    "text": "cmi5 results land in the built-in learning record store, with a statement list in the admin panel.",
+                    "packages": [
+                      "lrs",
+                      "cmi5"
+                    ]
+                  },
+                  {
+                    "title": "SCORM tracking",
+                    "text": "Progress per learner and per SCO, stored for each SCORM package.",
+                    "packages": [
+                      "scorm",
+                      "laravel-scorm"
+                    ]
+                  },
+                  {
+                    "title": "Notification log",
+                    "text": "Who was notified of what and when, filtered by user, event and date.",
+                    "packages": [
+                      "notifications"
+                    ]
+                  },
+                  {
+                    "title": "Update audit trail",
+                    "text": "Every Living Course decision lands in a tamper-evident audit trail, and learner progress follows explicit rules.",
+                    "packages": [
+                      "living-course"
+                    ],
+                    "status": "coming"
+                  },
+                  {
+                    "title": "Per-course author analytics",
+                    "text": "A dashboard per course with progress, completion, quiz performance and the sections that confuse people.",
+                    "status": "coming"
+                  },
+                  {
+                    "title": "At-risk learners",
+                    "text": "Rule-based risk scoring with human-readable reasons and per-tenant thresholds, and rate-limited nudges.",
+                    "status": "coming"
+                  },
+                  {
+                    "title": "AI tutor",
+                    "text": "Answers only from the course sources with citations, and says when a question is out of scope.",
+                    "status": "coming"
+                  }
+                ]
+              },
+              {
+                "id": "sales-analytics",
+                "title": "Analytics for sales",
+                "summary": "Revenue, customers and orders, from the same data the shop runs on.",
+                "items": [
+                  {
+                    "title": "Revenue per course",
+                    "text": "The sum of paid order items for each course, as a dashboard chart and an API metric.",
+                    "packages": [
+                      "reports",
+                      "cart"
+                    ]
+                  },
+                  {
+                    "title": "Top-selling and best-rated courses",
+                    "text": "Rank courses by sales and by rating.",
+                    "packages": [
+                      "reports"
+                    ]
+                  },
+                  {
+                    "title": "New and returning customers",
+                    "text": "Cart statistics show new customers, returning customers and spend per customer.",
+                    "packages": [
+                      "reports",
+                      "cart"
+                    ]
+                  },
+                  {
+                    "title": "From purchase to completion",
+                    "text": "For each course, how many people bought it, started it and finished it.",
+                    "packages": [
+                      "reports"
+                    ]
+                  },
+                  {
+                    "title": "Orders",
+                    "text": "Subtotal, tax, total, items, buyer and status for every order, filtered by date range, user, product and status.",
+                    "packages": [
+                      "cart",
+                      "shopping-cart"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/sales/"
+                  },
+                  {
+                    "title": "Payments",
+                    "text": "Amount, currency, status and the paid-for object of every payment: new, redirect, paid, failed, cancelled or refunded.",
+                    "packages": [
+                      "payments"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/sales/"
+                  },
+                  {
+                    "title": "Spreadsheet exports",
+                    "text": "Course and topic statistics export to a spreadsheet for your own analysis.",
+                    "packages": [
+                      "reports"
+                    ]
+                  }
+                ]
+              },
+              {
                 "id": "live",
                 "title": "Live learning",
                 "summary": "Webinars, meetings, in-person events and one-to-one sessions.",
@@ -1064,6 +1267,45 @@
                       "cart",
                       "shopping-cart"
                     ]
+                  },
+                  {
+                    "title": "Products and subscriptions",
+                    "text": "Sell single products, bundles and subscriptions (with a period, auto-renew and an optional trial), with a price, old price, tax rate, extra fees and per-user and total purchase limits.",
+                    "packages": [
+                      "cart",
+                      "shopping-cart"
+                    ]
+                  },
+                  {
+                    "title": "Voucher rules",
+                    "text": "Fixed or percentage discounts on the whole cart or on chosen products, with an active window, total and per-user limits, minimum and maximum cart value, and product, category or user restrictions.",
+                    "packages": [
+                      "vouchers"
+                    ]
+                  },
+                  {
+                    "title": "Verified payment callbacks",
+                    "text": "Stripe callbacks are accepted only with a valid signature or after the PaymentIntent is fetched from Stripe, 3-D Secure included. Free orders use a gateway that refuses any non-zero amount.",
+                    "packages": [
+                      "payments"
+                    ]
+                  },
+                  {
+                    "title": "Mobile in-app purchases",
+                    "text": "A RevenueCat gateway accepts purchases only when a server-side receipt verifier is configured.",
+                    "packages": [
+                      "payments"
+                    ],
+                    "status": "preview"
+                  },
+                  {
+                    "title": "Publishing and access",
+                    "text": "Draft, published, scheduled and archived courses; public courses and free preview topics; access for users and groups, access requests and invitations by e-mail.",
+                    "packages": [
+                      "courses",
+                      "course-access"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/creators/access-and-publishing/"
                   },
                   {
                     "title": "Stripe and Przelewy24",
@@ -1172,6 +1414,78 @@
                     "packages": [
                       "reports"
                     ]
+                  },
+                  {
+                    "title": "User import and invitations",
+                    "text": "Import and export users as CSV or Excel, and invite people who do not have an account yet.",
+                    "packages": [
+                      "csv-users",
+                      "auth"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/users/"
+                  },
+                  {
+                    "title": "White-label themes",
+                    "text": "Each academy has its own theme preset and accent colour, with accessible contrast checked on the server.",
+                    "packages": [
+                      "tenancy",
+                      "settings"
+                    ]
+                  },
+                  {
+                    "title": "In-app notifications and push",
+                    "text": "Every package event can be stored as an in-app notification, and administrators send push messages to mobile devices.",
+                    "packages": [
+                      "notifications",
+                      "bulk-notifications"
+                    ]
+                  }
+                ]
+              },
+              {
+                "id": "operations",
+                "title": "Security and operations",
+                "summary": "Run it yourself, on a shared host or a cluster, with isolation between academies.",
+                "items": [
+                  {
+                    "title": "Sandboxed content",
+                    "text": "H5P runs in its own service and interactive apps in an opaque sandbox on a separate content origin, with a content security policy per version.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/content-origin/"
+                  },
+                  {
+                    "title": "Security headers and CSP reports",
+                    "text": "A Content Security Policy for the learner front, the admin and the API, with violation reports; start in report-only mode, then enforce.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/security-headers/"
+                  },
+                  {
+                    "title": "Rate limits",
+                    "text": "Throttles on device login, tokens, the platform API, per-token limits, webhooks and public endpoints, tunable by environment variables.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/rate-limits/"
+                  },
+                  {
+                    "title": "Self-hosting options",
+                    "text": "Docker Compose, a shared MyDevil account, or a VPS behind Cloudflare, each with a written guide.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/self-hosting/"
+                  },
+                  {
+                    "title": "High availability",
+                    "text": "A reference topology that separates the stateless components from the ones that hold state, zero-downtime deploys and migrations, and Kubernetes notes.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/high-availability/"
+                  },
+                  {
+                    "title": "Backups and restores",
+                    "text": "Back up a whole installation and restore either all of it or a single tenant.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/backups/"
+                  },
+                  {
+                    "title": "Monitoring",
+                    "text": "Health checks for every container, HTTP endpoints to probe, worker and scheduler checks, logs and error tracking.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/monitoring/"
+                  },
+                  {
+                    "title": "Licences kept apart",
+                    "text": "An MIT core, with GPL components such as H5P and Adapt isolated in their own services, and a page listing the licences of every image.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/licensing/"
                   }
                 ]
               },
@@ -1180,6 +1494,44 @@
                 "title": "For developers",
                 "summary": "Headless by design: everything the apps do goes through the same API.",
                 "items": [
+                  {
+                    "title": "Extensible by packages",
+                    "text": "Every feature is a composer package with its own routes, permissions, settings and events. A worked example shows the pattern end to end.",
+                    "packages": [
+                      "example-plugin"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/extending/new-package/"
+                  },
+                  {
+                    "title": "MCP server for AI agents",
+                    "text": "ulams mcp serves every CLI command as MCP tools over stdio or Streamable HTTP, for Claude Code, Claude Desktop and other MCP clients: 23 tools by default, up to 535 with all toolsets. Built from the repository today; the npm package is planned.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/agents/"
+                  },
+                  {
+                    "title": "Safe by default for agents",
+                    "text": "Read-only mode, a switch that hides destructive tools, dry-run plans with a diff for every write, and single-use confirmation tokens for deletes. The API still enforces the user’s permissions and the token’s scopes.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/agents/"
+                  },
+                  {
+                    "title": "Agent audit log",
+                    "text": "Scoped tokens record what an agent did, with the client and the agent name sent on every request.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/scoped-tokens/"
+                  },
+                  {
+                    "title": "Build courses from the command line",
+                    "text": "The Course Builder and Living Course are commands and MCP tools: start a run, answer the interview, approve the outline, apply, and poll long runs with a wait handle.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/cli-builder/"
+                  },
+                  {
+                    "title": "Machine-readable CLI",
+                    "text": "Every command returns a JSON envelope with exit codes, describes itself with ulams schema, and logs in through the browser with a device code. Shell completion included.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/cli/"
+                  },
+                  {
+                    "title": "Pages as data",
+                    "text": "Landing and course pages are JSON documents of catalogue components, rendered on the server and generated by the Course Builder, so a model never writes page code.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/generative-ui/"
+                  },
                   {
                     "title": "OpenAPI reference",
                     "text": "Every endpoint is documented in OpenAPI, with a searchable API browser and Swagger UI on every API host.",

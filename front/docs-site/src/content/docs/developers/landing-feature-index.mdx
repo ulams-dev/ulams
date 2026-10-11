@@ -39,8 +39,8 @@ The component is `front/ui/src/components/FeatureIndex.astro`; its props are in
 `front/web/tests/unit/feature-index.test.ts` fails when:
 
 - a package under `api/packages/` is neither named by a feature nor listed in `EXCLUDED` with a reason
-  (today `core` and `example-plugin`), so a new package cannot ship without a line on the landing or a decision;
-- a feature names a package that does not exist or has no docs page;
+  (today only `core`), so a new package cannot ship without a line on the landing or a decision;
+- a feature names a package that does not exist;
 - the Polish or Chinese document has different groups, item counts or tag counts than the English one.
 
 The component itself is covered by `front/ui/tests/feature-index.test.ts` (collapsed by default, links, JSON-LD, axe).

@@ -772,7 +772,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) API browser in the docs site (Scalar over `api/scripts/openapi.php`, built in docs CI without a database); OpenAPI for
       `images` fixed and response bodies added for video states, files and course import (partial: implemented in the
       feature-catalogue PR, pending merge; the questionnaire and question endpoints still lack response bodies)
-- [ ] (new) Feature index on the platform landing (`FeatureIndex`, 10 collapsed groups, 52 features, 54 H5P content types, EN/PL/ZH,
+- [ ] (new) Feature index on the platform landing (`FeatureIndex`, 14 collapsed groups, 101 features including MCP, teacher and sales analytics, 54 H5P content types, EN/PL/ZH,
       `ItemList` JSON-LD) with a drift test against `api/packages` (partial: implemented in the feature-catalogue PR, pending merge)
 - [ ] `npx create-ulams` / `docker compose up` with seed data
 - [ ] Docs site with runnable examples; free cloud sandbox tenant (partial: Starlight site in `front/docs-site` on branch `docs/starlight-site`; runnable examples and the sandbox tenant pending)

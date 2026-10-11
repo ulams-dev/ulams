@@ -690,7 +690,7 @@ export const registry = {
             ["id", "title"]
           ),
           "Groups",
-          { minItems: 1, maxItems: 12 }
+          { minItems: 1, maxItems: 16 }
         ),
       },
       ["groups"]
