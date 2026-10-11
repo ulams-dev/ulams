@@ -166,3 +166,24 @@ rm -rf ~/ulams
 # Cloudflare (zone ulams.app): delete the DNS records and Worker domains above, the Workers and routes, the two rulesets,
 # the R2 buckets of all six tenants (empty them first), the DNS records and Worker domains `<slug>-staging*` of the five added tenants and the token `ulams-staging-r2-server`, revoke the Origin CA certificate, set SSL mode back to `full`.
 ```
+
+## Platform landing on Cloudflare Pages
+
+`https://staging.ulams.app` (plus `/pl/` and `/zh/`) is a static copy of the Astro landing, served
+by the Cloudflare Pages project `ulams-landing`, not by the MyDevil Passenger site. The tenant
+landings (`<slug>-staging.ulams.app`) stay on MyDevil because they read live tenant-API data.
+
+Rebuild and publish after a landing change (needs the staging env of the front in the shell; the
+Cloudflare token stays in the root `.env` and is never printed):
+
+```sh
+corepack yarn workspace @ulams/web build
+node deploy/mydevil/cloudflare/landing-static.mjs /tmp/landing-static staging.ulams.app
+cd "$(mktemp -d)" && npx wrangler@4 pages deploy /tmp/landing-static --project-name ulams-landing --branch main
+```
+
+Run wrangler from an empty directory: from the repo root it stops with a "workspace" error. The
+project was created with `wrangler pages project create ulams-landing --force` (wrangler 4.149
+otherwise delegates Pages commands to Workers); later commands do not need `--force`. The domain
+`staging.ulams.app` is attached to the project and the zone record is a proxied CNAME to
+`ulams-landing.pages.dev`. The MyDevil `staging` Passenger site is unused now and can be removed.
