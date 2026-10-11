@@ -10,6 +10,7 @@ use Ulams\Video\Events\ProcessVideoStarted;
 use Ulams\Video\Events\ProcessVideoState;
 use Ulams\Video\Models\Video;
 use Exception;
+use Ulams\Core\Support\FfmpegTemporaryFiles;
 use FFMpeg\Format\Video\X264;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -68,7 +69,7 @@ class ProcessVideo implements ShouldQueue
         } finally {
             // laravel-ffmpeg only removes its temporary folders at the end of a web request; a queue worker
             // never ends one, so each run leaked its HLS segments (several MB) into the system temp directory.
-            FFMpeg::cleanupTemporaryFiles();
+            FfmpegTemporaryFiles::clean();
         }
         $this->makeFilesVisible($dir);
 
@@ -84,7 +85,7 @@ class ProcessVideo implements ShouldQueue
 
     public function failed(Exception $exception)
     {
-        FFMpeg::cleanupTemporaryFiles();
+        FfmpegTemporaryFiles::clean();
 
         $this->updateVideoState(['ffmpeg' => [
             'state' => VideoProcessState::ERROR,
