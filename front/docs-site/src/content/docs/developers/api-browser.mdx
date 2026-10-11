@@ -1,0 +1,21 @@
+---
+title: API browser
+description: Browse and try every ulams REST endpoint, grouped by area, with request and response examples, search and a server picker.
+template: splash
+sidebar:
+  order: 11
+modules:
+  - core
+---
+
+import ApiBrowser from "../../../components/ApiBrowser.astro";
+
+Every endpoint of the API in one searchable page. Pick a server at the top (the demo tenant is
+open for experiments and resets hourly), press **Authorize** and paste a token from
+`POST /api/auth/login` or a [scoped token](/developers/scoped-tokens/) to call the endpoints that
+need one. Press <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>K</kbd> to search.
+
+How the document is built, and the other ways to read it, are in the
+[API reference](/developers/api-reference/).
+
+<ApiBrowser />
