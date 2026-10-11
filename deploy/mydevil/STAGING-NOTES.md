@@ -1,4 +1,51 @@
-# ulams staging on MyDevil s51: what was installed (2026-10-09, updated 2026-10-10: current main and the six demos)
+# ulams on MyDevil s51: what was installed (2026-10-09, updated 2026-10-11: production host names)
+
+## Production host names (2026-10-11): the word "staging" is gone from every URL
+
+The install keeps running on the same MyDevil account, databases, buckets and Workers; only the names changed. Everything below
+the next heading describes the install as it was built and still uses the old names (they now redirect, see the end of this section).
+
+| Old | New |
+|---|---|
+| `staging.ulams.app` | `ulams.app` (the landing, Cloudflare Pages project `ulams-landing`; `www` redirects to it) |
+| `staging-api` / `-admin` / `-h5p` / `-pdf` | `api.ulams.app`, `admin.ulams.app`, `h5p.ulams.app`, `pdf.ulams.app` |
+| `staging-content`, `staging-storage` | `content.ulams.app`, `storage.ulams.app` (Workers `ulams-content`, `ulams-storage`) |
+| `<slug>-staging` / `-api` / `-admin` / `-content` | `<slug>.ulams.app`, `<slug>-api`, `<slug>-admin`, `<slug>-content` |
+
+Storage URLs are `https://storage.ulams.app/<slug>/<key>` (`ulams` for the platform): R2 buckets cannot be renamed, so they keep the names
+`ulams-staging-<slug>` and the Worker maps the short name to the bucket (the long form still works). `TENANCY_BUCKET_PUBLIC_URL`
+(`https://storage.ulams.app/{slug}`) makes every tenant's `AWS_URL` use it.
+
+How it was done, in order; each step leaves the old names working:
+
+1. `python3 cloudflare/production-hosts.py dns`: proxied A records of the MyDevil hosts and `www`.
+2. `sh bin/add-production-hosts.sh`: the new MyDevil sites (PHP vhosts on the shared app, the admin symlink, Node sites for the fronts, H5P and
+   PDF with the staging `app.js` rewritten), each with the Origin CA certificate. (`add-vhost.sh` and `add-flat-hosts.sh` matched host names as
+   substrings, so `api.ulams.app` looked like it already existed because of `staging-api.ulams.app`; they match the whole name now.)
+3. `wrangler deploy -c *.wrangler.toml` for `ulams-content`, `ulams-storage`, `ulams-h5p-proxy`, then `production-hosts.py workers`.
+4. `sh bin/switch-to-production-names.sh`: the platform `.env`, the `api_host`/`front_host`/`admin_host` columns of `tenants`, `ulams:tenant:sync-env`
+   (new `.env.<host>` files, registrations, keys, H5P config), and a restart of the H5P and PDF sites.
+5. Per tenant: `ulams:tenant:seed-demo --front-url=https://<slug>.ulams.app`, then `ulams:demo:reset --recapture --force`. The demo baseline stores
+   `global.frontURL` and the reset restores it, and the reseed rewrites the course text that embedded storage URLs. A scan of every text column of the
+   six tenant databases for "staging" found nothing afterwards.
+6. Admin rebuilt with `REACT_APP_API_URL=https://api.ulams.app` and `REACT_APP_TENANT_API_HOST_PATTERN={slug}-admin.ulams.app=>https://{slug}-api.ulams.app`,
+   rsynced to `~/ulams/admin` (keeping `.htaccess`).
+7. `node cloudflare/landing-static.mjs <dir> ulams.app` (production mode: crawlable, `robots.txt` with the sitemap, `sitemap.xml`, no noindex header),
+   `wrangler pages deploy`, `production-hosts.py pages` (apex domain and CNAME).
+8. `production-hosts.py rules`: `X-Robots-Tag: noindex` on every host except `ulams.app` and `www` (the demo academies, APIs and admins are not indexed
+   yet; relax the expression to index a demo), and `X-Ulams-Content-Origin` stripped on `api.ulams.app` and every `*-api.ulams.app` (a client that sends it gets 404).
+9. `production-hosts.py redirects`: `staging.*` and `www` 301 to the new page hosts; every old API, admin, content, storage, H5P and PDF host 308s to its new name
+   with path and query.
+10. The old env files and registrations (`.env.<slug>-staging-api.ulams.app`, `config/domain.php`, `h5p-config`) were removed so cron does not run every job
+    twice; `TENANCY_PLATFORM_HOSTS` is `api.ulams.app`. A backup of them is in `~/ulams/backups/`.
+
+Left in place on purpose: the old MyDevil sites (idle, nothing reaches them), the old DNS records and Worker domains (the redirects need the records), the
+old Workers `ulams-staging-*`, and the R2 bucket names. Remove them when the redirects are no longer needed.
+
+New tenant: add `<slug>.ulams.app`, `<slug>-api`, `<slug>-admin` with `ULAMS_HOST_LABEL= sh bin/add-flat-hosts.sh <slug>`, DNS and the `<slug>-content` Worker domain
+with `production-hosts.py` (add the slug to `ULAMS_SLUGS`), a bucket and its binding and alias in `storage.worker.js` / `storage.wrangler.toml`, then
+`ulams:tenant:create <slug> ...` as before.
+
 
 A STAGING install on the product owner's MyDevil account (issue #159), done from the runbook in
 `README.md`. The same text is kept on the server as `~/ulams/DEPLOY-NOTES.md`. No secrets are written

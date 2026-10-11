@@ -1,5 +1,8 @@
-// ulams staging storage: public read of the staging R2 buckets under /<bucket>/<key> (R2 has no bucket policies).
+// ulams storage: public read of the R2 buckets under /<name>/<key> (R2 has no bucket policies). <name> is the short name
+// (`ulams` for the platform, the tenant slug for a tenant) or the bucket name (`ulams-staging-<slug>`), which older stored URLs use.
+// A bucket cannot be renamed, so the short names are what the tenants' AWS_URL points at (TENANCY_BUCKET_PUBLIC_URL).
 const BUCKETS = { 'ulams-staging': 'B_ULAMS_STAGING', 'ulams-staging-coffee': 'B_ULAMS_STAGING_COFFEE', 'ulams-staging-gravity': 'B_ULAMS_STAGING_GRAVITY', 'ulams-staging-poland': 'B_ULAMS_STAGING_POLAND', 'ulams-staging-ulam': 'B_ULAMS_STAGING_ULAM', 'ulams-staging-oncall': 'B_ULAMS_STAGING_ONCALL', 'ulams-staging-nightsky': 'B_ULAMS_STAGING_NIGHTSKY' };
+const ALIASES = { ulams: 'ulams-staging', coffee: 'ulams-staging-coffee', gravity: 'ulams-staging-gravity', poland: 'ulams-staging-poland', ulam: 'ulams-staging-ulam', oncall: 'ulams-staging-oncall', nightsky: 'ulams-staging-nightsky' };
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors() });
@@ -7,7 +10,8 @@ export default {
     const url = new URL(request.url);
     if (url.pathname === '/robots.txt') return new Response('User-agent: *\nDisallow: /\n', { headers: { 'content-type': 'text/plain', 'x-robots-tag': 'noindex' } });
     const parts = url.pathname.replace(/^\/+/, '').split('/');
-    const bucket = env[BUCKETS[parts.shift()]];
+    const name = parts.shift();
+    const bucket = env[BUCKETS[ALIASES[name] || name]];
     const key = decodeURIComponent(parts.join('/'));
     if (!bucket || !key) return new Response('not found', { status: 404, headers: cors() });
     const obj = request.method === 'HEAD' ? await bucket.head(key) : await bucket.get(key, { range: request.headers, onlyIf: request.headers });

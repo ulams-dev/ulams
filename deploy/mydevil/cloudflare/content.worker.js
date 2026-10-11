@@ -1,15 +1,17 @@
-// ulams staging content origin (api/docs/content-origin.md): GET/HEAD of package files only, proxied to the
-// tenant API's /api/content/... with X-Ulams-Content-Origin, cookies dropped, CSP and CORP headers added.
+// ulams content origin (api/docs/content-origin.md): GET/HEAD of package files only, proxied to the tenant API's
+// /api/content/... with X-Ulams-Content-Origin, cookies dropped, CSP and CORP headers added.
+// content.ulams.app serves the platform, <slug>-content.ulams.app the tenant <slug>.
 const ALLOWED = /^\/(scorm|cmi5|adapt|liascript|interactive)\//;
 export default {
   async fetch(request) {
     const url = new URL(request.url);
-    const m = url.hostname.match(/^(?:(.+)-)?staging-content\.ulams\.app$/);
+    const m = url.hostname.match(/^(?:(.+)-)?content\.ulams\.app$/);
     if (!m) return new Response('not found', { status: 404 });
     if (url.pathname === '/robots.txt') return new Response('User-agent: *\nDisallow: /\n', { headers: { 'content-type': 'text/plain' } });
     if (!['GET', 'HEAD'].includes(request.method) || !ALLOWED.test(url.pathname)) return new Response('not found', { status: 404 });
-    const p = m[1] ? m[1] + '-' : '';
-    const api = `${p}staging-api.ulams.app`, front = `${p}staging.ulams.app`, admin = `${p}staging-admin.ulams.app`;
+    const slug = m[1] || '';
+    const p = slug ? slug + '-' : '';
+    const api = `${p}api.ulams.app`, front = slug ? `${slug}.ulams.app` : 'ulams.app', admin = `${p}admin.ulams.app`;
     const headers = new Headers(request.headers);
     headers.delete('cookie'); headers.delete('authorization');
     headers.set('X-Ulams-Content-Origin', '1');

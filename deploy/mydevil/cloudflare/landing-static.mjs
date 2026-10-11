@@ -2,7 +2,7 @@
 // Renders the platform landing (/, /pl/, /zh/) of the Astro SSR front into a static folder for
 // Cloudflare Pages. Run `corepack yarn workspace @ulams/web build` first, then:
 //
-//   node deploy/mydevil/cloudflare/landing-static.mjs <out-dir> [platform-host]
+//   node deploy/mydevil/cloudflare/landing-static.mjs <out-dir> [platform-host]   (host: ulams.app for production)
 //
 // The build env of the staging front is read from the environment (ULAMS_PLATFORM_HOSTS,
 // ULAMS_TENANT_HOSTS, ULAMS_DEMO_TENANTS, ULAMS_CONTENT_ORIGIN, ULAMS_STORAGE_ORIGINS,
@@ -14,7 +14,7 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const out = resolve(process.argv[2] ?? '')
-const host = process.argv[3] ?? 'staging.ulams.app'
+const host = process.argv[3] ?? 'ulams.app'
 if (!process.argv[2]) throw new Error('usage: landing-static.mjs <out-dir> [platform-host]')
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../../..')
 const dist = join(root, 'front/web/dist')
@@ -58,9 +58,21 @@ try {
     mkdirSync(join(out, path), { recursive: true })
     writeFileSync(join(out, path, 'index.html'), html)
   }
-  writeFileSync(join(out, 'robots.txt'), 'User-agent: *\nDisallow: /\n')
+  // staging.* is never indexed; any other host is a production landing: crawlable, with a sitemap and no noindex header
+  const production = !host.startsWith('staging.')
+  const security = ['  X-Content-Type-Options: nosniff', '  Referrer-Policy: strict-origin-when-cross-origin']
+  if (production) {
+    const origin = `https://${host}`
+    const alternates = [['en', '/'], ['pl', '/pl/'], ['zh', '/zh/']]
+    const links = alternates.map(([lang, path]) => `    <xhtml:link rel="alternate" hreflang="${lang}" href="${origin}${path}"/>`).join('\n')
+    writeFileSync(join(out, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`)
+    writeFileSync(join(out, 'sitemap.xml'), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${alternates.map(([, path]) => `  <url>\n    <loc>${origin}${path}</loc>\n${links}\n  </url>`).join('\n')}\n</urlset>\n`)
+  } else {
+    writeFileSync(join(out, 'robots.txt'), 'User-agent: *\nDisallow: /\n')
+    security.unshift('  X-Robots-Tag: noindex, nofollow')
+  }
   writeFileSync(join(out, '_headers'), [
-    '/*', '  X-Robots-Tag: noindex, nofollow', '  X-Content-Type-Options: nosniff', '  Referrer-Policy: strict-origin-when-cross-origin',
+    '/*', ...security,
     '/_astro/*', '  Cache-Control: public, max-age=31536000, immutable',
     '/landing/*', '  Cache-Control: public, max-age=86400', '',
   ].join('\n'))
