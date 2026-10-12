@@ -48,3 +48,18 @@ test("the complete feature descriptions are rendered without JavaScript", async 
   expect(JSON.parse(structured!).itemListElement).toHaveLength(14);
   await context.close();
 });
+
+test("the header highlights the current page in every language", async ({ page }) => {
+  for (const prefix of ["", "/pl", "/zh"]) {
+    for (const route of ["/", "/comparison/"]) {
+      const path = `${prefix}${route}`;
+      await page.goto(`http://app.localhost:${port}${path}`);
+      const desktop = page.locator('.u-nav a[aria-current="page"]');
+      const mobile = page.locator('.u-menu__panel a[aria-current="page"]');
+      await expect(desktop).toHaveCount(1);
+      await expect(mobile).toHaveCount(1);
+      await expect(desktop).toHaveAttribute("href", path);
+      await expect(mobile).toHaveAttribute("href", path);
+    }
+  }
+});

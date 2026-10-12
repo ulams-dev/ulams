@@ -397,3 +397,12 @@ share stakeholder ids, category ids, feature counts and documentation references
 The stakeholder categories are learners, authors/L&D, HR/managers/policy owners, sales/customer
 teams, platform administrators, and IT/integrators/AI agents. Existing feature status labels
 distinguish planned and preview capabilities. Overview remains a separate product narrative.
+
+The shared header sets `aria-current="page"` on the matching Overview or Comparison link,
+including mobile navigation and locale routes. The English root uses Astro's internal
+`/platform` rewrite, which is normalised to the public `/` for matching.
+
+For the existing Cloudflare Pages landing, `deploy/mydevil/cloudflare/landing-static.mjs`
+exports all six Overview/Comparison URLs, client assets, robots.txt and the sitemap from
+the production SSR build. Build with `ULAMS_IMAGE_SERVICE=noop` and production host settings.
+Pass a new output directory; the exporter refuses to replace existing files.

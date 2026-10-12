@@ -21,6 +21,19 @@ interface Props {
 }
 const { brand, tagline, mark = "wordmark", links = [], cta, signIn, homeHref = "/", languages = [] } = Astro.props;
 const t = uiStrings(pageLocale(Astro));
+const normalizedPath = (path: string) => {
+  const clean = path.replace(/\/+$/, "") || "/";
+  return clean === "/platform" ? "/" : clean;
+};
+const isCurrent = (href: string): boolean => {
+  if (href.startsWith("#")) return false;
+  try {
+    const target = new URL(href, Astro.url);
+    return !target.hash && target.origin === Astro.url.origin && normalizedPath(target.pathname) === normalizedPath(Astro.url.pathname);
+  } catch {
+    return false;
+  }
+};
 ---
 
 <header class={`u-header u-header--${mark}`}>
@@ -47,7 +60,7 @@ const t = uiStrings(pageLocale(Astro));
           <ul>
             {links.map((link) => (
               <li>
-                <a href={link.href}>{link.label}</a>
+                <a href={link.href} aria-current={isCurrent(link.href) ? "page" : undefined}>{link.label}</a>
               </li>
             ))}
           </ul>
@@ -89,7 +102,7 @@ const t = uiStrings(pageLocale(Astro));
               <ul>
                 {links.map((link) => (
                   <li>
-                    <a href={link.href}>{link.label}</a>
+                    <a href={link.href} aria-current={isCurrent(link.href) ? "page" : undefined}>{link.label}</a>
                   </li>
                 ))}
                 {signIn && (
@@ -207,6 +220,9 @@ const t = uiStrings(pageLocale(Astro));
     transform: scaleX(1);
     transform-origin: left;
   }
+  .u-nav a[aria-current="page"] { color:var(--ulams-color-primary); font-weight:700; }
+  .u-nav a[aria-current="page"]::after { transform:scaleX(1); height:2px; background:var(--ulams-color-accent); }
+  .u-menu__panel a[aria-current="page"] { color:var(--ulams-color-primary); font-weight:700; background:color-mix(in srgb,var(--ulams-color-primary) 7%,var(--ulams-color-bg)); border-left:2px solid var(--ulams-color-accent); }
   .u-header__actions {
     display: flex;
     align-items: center;
