@@ -391,7 +391,7 @@ migration. Keep customer deployments and author previews untracked (ADR 0101 Pro
 
 ### Analytics verification and publication
 
-- Source: `6822ee8f6`; landing release `736423c7` on the existing Cloudflare Pages project.
+- Source: `6822ee8f6`; landing release `0cf54c98` (the initial browser check used `736423c7`) on the existing Cloudflare Pages project.
 - The six production demo fronts use the updated SSR build; previous dist retained remotely
   as `dist-before-umami-20261012`, with old hashed client assets preserved for cached pages.
 - Real browser verification on https://ulams.app accepted the initial pageview and a click
@@ -399,6 +399,10 @@ migration. Keep customer deployments and author previews untracked (ADR 0101 Pro
 - Excluded the persistent verification browser on the landing, www, documentation and all six
   demo origins using `umami.disabled=1`; reloading the landing sent no further collector requests.
 - Web typecheck, lint and production build passed. Documentation build passed (563 pages) and
-  its HTML includes the tracker. GitHub Pages only permits main deployments; the live docs
-  await merging the source changes. No protected environment policy was changed.
+  its HTML includes the tracker. GitHub Pages only permits main deployments. The isolated documentation release was merged
+  through PR #247 as `0c94c55b1`; the main publishing workflow handles the public release.
+  No protected environment policy was changed.
 - Umami dashboard totals were not inspected: no dashboard authentication was supplied.
+
+- Documentation source check passed with zero errors/warnings after excluding the local, untracked
+  third-party `public/vendor` assets from the temporary check configuration.
