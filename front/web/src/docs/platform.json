@@ -64,7 +64,12 @@
               "sourceExcerpt": "After declaring an incident, record when it was detected, the first symptoms and actions taken.",
               "proposalLabel": "AI course draft",
               "approvalLabel": "Waiting for the author to review",
-              "note": "Illustrative example. AI proposes the lesson; the author reviews it before publishing.",
+              "note": "Illustrative example. ulams prepares a cited draft; an author reviews it before publishing.",
+              "beats": [
+                { "title": "Start with your documentation", "text": "Use the runbook your team already maintains." },
+                { "title": "ulams drafts the course", "text": "A lesson outline is prepared with a citation back to the source." },
+                { "title": "An author reviews it", "text": "Nothing reaches learners until a person approves the draft." }
+              ],
               "lines": [
                 {
                   "op": "add",

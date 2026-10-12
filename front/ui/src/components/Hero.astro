@@ -4,6 +4,8 @@ import Img from "./Img.astro";
 import Orbi from "./Orbi.astro";
 import CapabilityOrbit from "./CapabilityOrbit.astro";
 import HeroShowcase from "./HeroShowcase.astro";
+import StoryStyles from "./StoryStyles.astro";
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
 import type { StepInfo } from "../lib/interactive.ts";
 
 interface Link {
@@ -67,6 +69,8 @@ interface Props {
     proposalLabel?: string;
     approvalLabel?: string;
     note?: string;
+    change?: { before: string; after: string };
+    beats?: Array<{ title: string; text: string }>;
     lines: Array<{ op?: "add" | "del" | "ctx"; text: string }>;
     citations?: string[];
   };
@@ -90,6 +94,7 @@ const {
   diff,
   showcase,
 } = Astro.props;
+const strings = uiStrings(pageLocale(Astro));
 
 // Decorative stage of the cosmos, atlas and notebook variants (shown when there is no live showcase).
 const stage = variant === "cosmos" || variant === "atlas" || variant === "notebook";
@@ -228,32 +233,48 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
     {
       variant === "product" && diff && !capabilities.length && (
         <figure class="u-hero__product u-hero__in" style="--i:2" aria-label={diff.ariaLabel ?? "Example: a course draft waiting for review"}>
+          <StoryStyles />
           <div class="u-prod__glow" aria-hidden="true" />
-          <div class="u-prod__card">
-            <div class="u-prod__head">
-              <span class="u-prod__badge">{diff.badge ?? "Reviewable draft"}</span>
-              {diff.title && <span class="u-prod__title">{diff.title}</span>}
+          <ulams-story class="u-prod-story" data-total="6200" data-hold="1800" loop aria-label={diff.ariaLabel}>
+            <div class="u-prod__card">
+              <div class="u-prod__head">
+                <span class="u-prod__badge">{diff.badge ?? "Reviewable draft"}</span>
+                {diff.title && <span class="u-prod__title">{diff.title}</span>}
+              </div>
+              <div class="u-prod__flow">
+                <section class="u-prod__step u-prod__step--source" aria-label={diff.sourceLabel ?? "Source excerpt"}>
+                  <div class="u-prod__step-head"><span class="u-prod__step-number">1</span><h3>{diff.beats?.[0]?.title ?? diff.sourceLabel ?? "Source"}</h3></div>
+                  <p class="u-prod__step-copy">{diff.beats?.[0]?.text}</p>
+                  <blockquote>{diff.sourceExcerpt}</blockquote>
+                  {diff.change && <div class="u-prod__change" data-at="750">
+                    <span class="u-prod__change-line u-prod__change-line--old"><i>−</i>{diff.change.before}</span>
+                    <span class="u-prod__change-line u-prod__change-line--new"><i>+</i><span data-at="900" data-type="500">{diff.change.after}</span></span>
+                  </div>}
+                  <p class="u-prod__source"><code>{diff.source}{(diff.citations ?? []).length > 0 ? ` · ${(diff.citations ?? []).join(", ")}` : ""}</code></p>
+                </section>
+                <span class="u-prod__flow-arrow" aria-hidden="true"><Icon name="arrow" /></span>
+                <section class="u-prod__step u-prod__step--proposal" aria-label={diff.proposalLabel ?? "AI proposal"}>
+                  <div class="u-prod__step-head"><span class="u-prod__step-number">2</span><h3>{diff.beats?.[1]?.title ?? diff.proposalLabel ?? "Course draft"}</h3></div>
+                  <p class="u-prod__step-copy">{diff.beats?.[1]?.text}</p>
+                  <div class="u-prod__outline" data-at="1600">
+                    <p class="u-prod__outline-label">{diff.proposalLabel ?? "Course draft"}</p>
+                    <ul>{diff.lines.filter((line) => line.op !== "ctx").map((line) => <li data-op={line.op ?? "add"}>{line.text}</li>)}</ul>
+                    {(diff.citations ?? []).length > 0 && <p class="u-prod__citation"><Icon name="quote" /> {diff.citations?.join(", ")}</p>}
+                  </div>
+                </section>
+              </div>
+              <div class="u-prod__approval" data-at="3600">
+                <span class="u-prod__step-number">3</span>
+                <span class="u-prod__approval-copy"><b>{diff.beats?.[2]?.title ?? strings.interview}</b><span>{diff.beats?.[2]?.text}</span></span>
+                <span class="u-prod__approval-state"><span class="u-prod__approval-dot" />{diff.approvalLabel ?? "Waiting for author review"}</span>
+              </div>
             </div>
-            <div class="u-prod__flow">
-              <section class="u-prod__step u-prod__step--source" aria-label={diff.sourceLabel ?? "Source excerpt"}>
-                <h3>{diff.sourceLabel ?? "Source excerpt"}</h3>
-                <blockquote>{diff.sourceExcerpt}</blockquote>
-                <p class="u-prod__source"><code>{diff.source}{(diff.citations ?? []).length > 0 ? ` · ${(diff.citations ?? []).join(", ")}` : ""}</code></p>
-              </section>
-              <span class="u-prod__flow-arrow" aria-hidden="true"><Icon name="arrow" /></span>
-              <section class="u-prod__step u-prod__step--proposal" aria-label={diff.proposalLabel ?? "AI proposal"}>
-                <h3>{diff.proposalLabel ?? "Course draft"}</h3>
-                <ul class="u-prod__outline">
-                  {diff.lines.filter((line) => line.op !== "ctx").map((line) => <li>{line.text}</li>)}
-                </ul>
-              </section>
+            <div class="u-prod__controls">
+              <button type="button" data-pause aria-pressed="false" data-label-pause={strings.pause} data-label-play={strings.play}>{strings.pause}</button>
+              <button type="button" data-replay>{strings.replay}</button>
             </div>
-            <div class="u-prod__approval">
-              <span class="u-prod__approval-mark" aria-hidden="true"><Icon name="check" /></span>
-              <span>{diff.approvalLabel ?? "Waiting for author review"}</span>
-            </div>
-          </div>
-          {diff.note && <figcaption class="u-prod__note">{diff.note}</figcaption>}
+            {diff.note && <p class="u-prod__note">{diff.note}</p>}
+          </ulams-story>
         </figure>
       )
     }
@@ -915,6 +936,194 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
     font-size: 0.75rem;
     color: var(--ulams-color-muted);
     text-align: right;
+  }
+  .u-prod-story {
+    display: block;
+    color: var(--ulams-color-text);
+  }
+  .u-prod__card {
+    transform: none;
+    backdrop-filter: none;
+    background: var(--ulams-color-card-bg);
+  }
+  .u-prod__head {
+    flex-wrap: wrap;
+  }
+  .u-prod__flow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr);
+    align-items: stretch;
+    gap: 12px;
+    padding: 16px;
+  }
+  .u-prod__step {
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 12px;
+    background: var(--ulams-color-bg);
+  }
+  .u-prod__step-head {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .u-prod__step-head h3,
+  .u-prod__outline-label {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+  .u-prod__step-number {
+    display: grid;
+    width: 26px;
+    height: 26px;
+    flex: 0 0 26px;
+    place-items: center;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--ulams-color-primary) 12%, transparent);
+    color: var(--ulams-color-primary-on-light);
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .u-prod__step-copy {
+    min-height: 3.2em;
+    margin: 9px 0 12px;
+    color: var(--ulams-color-muted);
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+  .u-prod__step blockquote {
+    margin: 0;
+    padding: 12px;
+    border-left: 3px solid var(--ulams-color-primary);
+    border-radius: 0 8px 8px 0;
+    background: color-mix(in srgb, var(--ulams-color-primary) 6%, var(--ulams-color-bg));
+    font-size: 0.82rem;
+    line-height: 1.55;
+  }
+  .u-prod__source {
+    padding: 12px 0 0;
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  .u-prod__flow-arrow {
+    display: grid;
+    place-items: center;
+    color: var(--ulams-color-primary);
+  }
+  .u-prod__flow-arrow .u-icon {
+    width: 22px;
+    animation: u-prod-arrow 1.8s ease-in-out infinite;
+  }
+  @keyframes u-prod-arrow {
+    50% { transform: translateX(4px); }
+  }
+  .u-prod__outline {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 9px;
+    background: var(--ulams-color-card-bg);
+  }
+  .u-prod__outline ul {
+    display: grid;
+    gap: 7px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .u-prod__outline li {
+    padding: 7px 9px;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--ulams-color-positive) 9%, var(--ulams-color-bg));
+    color: var(--ulams-color-text);
+    font-size: 0.8rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+  .u-prod__citation {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 10px 0 0;
+    color: var(--ulams-color-muted);
+    font-family: var(--ulams-font-mono);
+    font-size: 0.72rem;
+    overflow-wrap: anywhere;
+  }
+  .u-prod__citation .u-icon { width: 15px; flex: 0 0 15px; }
+  .u-prod__approval {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 16px 16px;
+    padding: 12px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 10px;
+    background: var(--ulams-color-bg);
+  }
+  .u-prod__approval-copy {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+    font-size: 0.8rem;
+  }
+  .u-prod__approval-copy > span { color: var(--ulams-color-muted); }
+  .u-prod__approval-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-left: auto;
+    padding: 7px 9px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--ulams-color-primary) 8%, transparent);
+    color: var(--ulams-color-primary-on-light);
+    font-size: 0.75rem;
+    font-weight: 650;
+  }
+  .u-prod__approval-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ulams-color-primary);
+  }
+  .u-prod__controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .u-prod__controls button {
+    padding: 6px 11px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ulams-color-text);
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .u-prod__controls button:hover { background: var(--ulams-color-card-bg); }
+  .u-prod__controls button:focus-visible {
+    outline: 3px solid var(--ulams-brand-blue);
+    outline-offset: 2px;
+  }
+  .u-prod-story .u-prod__note {
+    margin: 8px 0 0;
+    text-align: right;
+    line-height: 1.5;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .u-prod__flow-arrow .u-icon { animation: none; }
+  }
+  @media (max-width: 620px) {
+    .u-prod__flow { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    .u-prod__flow-arrow { min-height: 20px; transform: rotate(90deg); }
+    .u-prod__approval { align-items: flex-start; flex-wrap: wrap; }
+    .u-prod__approval-state { margin-left: 36px; }
+    .u-prod__step-copy { min-height: 0; }
   }
 
   .u-hero__orbit {

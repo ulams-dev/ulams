@@ -625,7 +625,8 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
       account area; webinars/events/consultations pages (partial: implemented and tested, uncommitted;
       see `docs/plans/phase-5-reference-frontend.md`, batch 2; restored the animated, three-step Living Course
-      source-change story on Overview in EN/PL/ZH)
+      source-change story on Overview in EN/PL/ZH; the hero now explains documentation → cited course draft →
+      author review with pause/replay controls)
 - [x] (new) Split platform product Overview and Comparison pages in EN/PL/ZH, with audited SEO metadata,
       JSON-LD, robots and sitemap routes (implemented and verified locally; plan batch 4; ADR 0097 Proposed)
 - [x] (new) Three new free demo academies, `gravity` (Gravity Lab, 3D simulation), `poland` (Poland, Measured /

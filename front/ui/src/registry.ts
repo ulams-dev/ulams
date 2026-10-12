@@ -402,6 +402,11 @@ export const registry = {
             proposalLabel: text("Label above the generated course outline", { maxLength: 40 }),
             approvalLabel: text("Status explaining the author must review the proposal", { maxLength: 80 }),
             note: text("Small note under the card", { maxLength: 160 }),
+            beats: list(
+              obj({ title: text("Story step title", { maxLength: 60 }), text: text("What happens and why this step matters", { maxLength: 140 }) }, ["title", "text"]),
+              "Three short steps explaining source, draft and author review",
+              { minItems: 3, maxItems: 3 }
+            ),
             lines: list(
               obj({ op: oneOf(["add", "del", "ctx"], "Diff line kind", "ctx"), text: text("Line", { maxLength: 160 }) }, ["text"]),
               "Diff lines",
@@ -410,7 +415,7 @@ export const registry = {
             citations: list(text("Citation chip, e.g. docs/slo.md §2", { maxLength: 40 }), "Citations", { maxItems: 4 }),
           },
           ["lines"],
-          "Static product example for the product variant, such as an author reviewing a cited course draft"
+          "Animated three-step example for the product variant: source, cited draft and author review"
         ),
       },
       ["title"]

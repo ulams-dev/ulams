@@ -64,7 +64,12 @@
               "sourceExcerpt": "Po ogłoszeniu incydentu zapisz czas wykrycia, pierwsze objawy i podjęte działania.",
               "proposalLabel": "Szkic kursu AI",
               "approvalLabel": "Czeka na sprawdzenie przez autora",
-              "note": "Przykład poglądowy. AI proponuje lekcję, a autor sprawdza ją przed publikacją.",
+              "note": "Przykład poglądowy. ulams przygotowuje szkic ze źródłem, a autor sprawdza go przed publikacją.",
+              "beats": [
+                { "title": "Zacznij od dokumentacji zespołu", "text": "Wykorzystaj runbook, który zespół już prowadzi." },
+                { "title": "ulams przygotowuje kurs", "text": "Powstaje konspekt lekcji ze wskazaniem źródła." },
+                { "title": "Autor sprawdza szkic", "text": "Treść nie trafia do kursantów bez ludzkiej akceptacji." }
+              ],
               "lines": [
                 {
                   "op": "add",
