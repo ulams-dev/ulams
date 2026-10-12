@@ -387,3 +387,18 @@ with actual CTA events and a verified visit/click followed by browser exclusion.
 web shell and Starlight head, exact production domain allowlist, scoped CSP script/collector
 origins, native event attributes and the documented per-origin opt-out. No dependency or
 migration. Keep customer deployments and author previews untracked (ADR 0101 Proposed).
+
+
+### Analytics verification and publication
+
+- Source: `6822ee8f6`; landing release `736423c7` on the existing Cloudflare Pages project.
+- The six production demo fronts use the updated SSR build; previous dist retained remotely
+  as `dist-before-umami-20261012`, with old hashed client assets preserved for cached pages.
+- Real browser verification on https://ulams.app accepted the initial pageview and a click
+  opening https://gravity.ulams.app/learn/1 with HTTP 200 from gateway.umami.is/api/send.
+- Excluded the persistent verification browser on the landing, www, documentation and all six
+  demo origins using `umami.disabled=1`; reloading the landing sent no further collector requests.
+- Web typecheck, lint and production build passed. Documentation build passed (563 pages) and
+  its HTML includes the tracker. GitHub Pages only permits main deployments; the live docs
+  await merging the source changes. No protected environment policy was changed.
+- Umami dashboard totals were not inspected: no dashboard authentication was supplied.
