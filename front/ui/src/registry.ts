@@ -306,9 +306,9 @@ export const registry = {
   },
   Hero: {
     description:
-      "First screen of a landing page. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration; cosmos, atlas and notebook = copy on the left and a live interactive package (or a drawing of orbits, a map graticule or an Ulam spiral) on the right.",
+      "First screen of a landing page. A product variant may show an animated, pausable six-step policy-to-certification lifecycle. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration; cosmos, atlas and notebook = copy on the left and a live interactive package (or a drawing of orbits, a map graticule or an Ulam spiral) on the right.",
     category: "section",
-    interactive: false,
+    interactive: true,
     children: false,
     props: obj(
       {
@@ -393,28 +393,24 @@ export const registry = {
         ),
         diff: obj(
           {
-            ariaLabel: text("Accessible description of the product example", { maxLength: 160 }),
+            ariaLabel: text("Accessible description of the product example", { maxLength: 280 }),
             badge: text("Short status label on the example card", { maxLength: 40 }),
-            title: text("Card title, e.g. the lesson being updated", { maxLength: 80 }),
-            sourceLabel: text("Label before the source name", { maxLength: 30 }),
-            source: text("Source the change comes from, e.g. docs/slo.md", { maxLength: 80 }),
-            sourceExcerpt: text("Short illustrative sentence from the source document", { maxLength: 200 }),
-            proposalLabel: text("Label above the generated course outline", { maxLength: 40 }),
-            approvalLabel: text("Status explaining the author must review the proposal", { maxLength: 80 }),
-            note: text("Small note under the card", { maxLength: 160 }),
-            beats: list(
-              obj({ title: text("Story step title", { maxLength: 60 }), text: text("What happens and why this step matters", { maxLength: 140 }) }, ["title", "text"]),
-              "Three short steps explaining source, draft and author review",
-              { minItems: 3, maxItems: 3 }
+            title: text("Title of the illustrative journey, e.g. 'Privacy policy v1 → v2'", { maxLength: 80 }),
+            note: text("Small note under the card", { maxLength: 240 }),
+            journey: list(
+              obj(
+                {
+                  title: text("Story step title", { maxLength: 60 }),
+                  text: text("What happens and why this step matters", { maxLength: 180 }),
+                  status: oneOf(["available", "coming"], "Whether this capability is available or on the roadmap"),
+                },
+                ["title", "text", "status"]
+              ),
+              "Steps in the product story",
+              { minItems: 6, maxItems: 6 }
             ),
-            lines: list(
-              obj({ op: oneOf(["add", "del", "ctx"], "Diff line kind", "ctx"), text: text("Line", { maxLength: 160 }) }, ["text"]),
-              "Diff lines",
-              { maxItems: 8 }
-            ),
-            citations: list(text("Citation chip, e.g. docs/slo.md §2", { maxLength: 40 }), "Citations", { maxItems: 4 }),
           },
-          ["lines"],
+          ["journey"],
           "Animated three-step example for the product variant: source, cited draft and author review"
         ),
       },

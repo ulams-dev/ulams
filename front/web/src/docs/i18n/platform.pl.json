@@ -56,32 +56,17 @@
               "href": "#self-host"
             },
             "diff": {
-              "ariaLabel": "Przykładowy szkic kursu oparty na dokumencie źródłowym i gotowy do sprawdzenia przez autora",
-              "badge": "Przykład · szkic kursu",
-              "title": "Reagowanie na incydenty",
-              "sourceLabel": "Fragment źródła",
-              "source": "przykładowy-runbook.pdf",
-              "sourceExcerpt": "Po ogłoszeniu incydentu zapisz czas wykrycia, pierwsze objawy i podjęte działania.",
-              "proposalLabel": "Szkic kursu AI",
-              "approvalLabel": "Czeka na sprawdzenie przez autora",
-              "note": "Przykład poglądowy. ulams przygotowuje szkic ze źródłem, a autor sprawdza go przed publikacją.",
-              "beats": [
-                { "title": "Zacznij od dokumentacji zespołu", "text": "Wykorzystaj runbook, który zespół już prowadzi." },
-                { "title": "ulams przygotowuje kurs", "text": "Powstaje konspekt lekcji ze wskazaniem źródła." },
-                { "title": "Autor sprawdza szkic", "text": "Treść nie trafia do kursantów bez ludzkiej akceptacji." }
-              ],
-              "lines": [
-                {
-                  "op": "add",
-                  "text": "Moduł · Rozpoznawanie incydentu produkcyjnego"
-                },
-                {
-                  "op": "add",
-                  "text": "Lekcja · Ustalanie osi czasu incydentu"
-                }
-              ],
-              "citations": [
-                "§ 2 · Przebieg incydentu"
+              "ariaLabel": "Przykładowy cykl polityki prywatności: dokument źródłowy, ścieżki dla działów, egzamin i certyfikat, raport ukończeń, aktualizacja zatwierdzana przez autora i planowana recertyfikacja",
+              "badge": "Przykład · cykl polityki",
+              "title": "Polityka prywatności · v1 → v2",
+              "note": "W planach: ścieżki dla działów, raporty zgodności i recertyfikacja. Autor zatwierdza aktualizacje źródeł przed publikacją.",
+              "journey": [
+                { "title": "Polityka v1 staje się źródłem", "text": "Dodaj politykę prywatności organizacji i połącz ją z treścią kursu.", "status": "available" },
+                { "title": "Szkolenia dopasowane do działów", "text": "W witrynie z własną marką Management, HR, Sales i inne zespoły dostają kursy dopasowane do swojej pracy.", "status": "coming" },
+                { "title": "Kursant zdaje i otrzymuje certyfikat", "text": "Interaktywne lekcje prowadzą do egzaminu. Po zdaniu powstaje certyfikat PDF.", "status": "available" },
+                { "title": "Opiekun polityki śledzi ukończenia", "text": "Sprawdza, kto ukończył wymagane szkolenie, a kto musi je jeszcze odbyć.", "status": "coming" },
+                { "title": "Rok później: zmiana polityki v2", "text": "W kursie połączonym ze źródłem ulams znajduje lekcje i pytania objęte zmianą, a potem przygotowuje aktualizacje ze źródłami do zatwierdzenia.", "status": "available" },
+                { "title": "Zespół odnawia wiedzę", "text": "Przygotuj aktualizacje dla kursów wszystkich działów. Po akceptacji powiadom osoby, unieważnij stare certyfikaty i przypisz aktualizację lub kurs z egzaminem oraz nowym PDF.", "status": "coming" }
               ]
             }
           }
