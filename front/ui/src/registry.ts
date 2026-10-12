@@ -731,7 +731,7 @@ export const registry = {
   },
   WorkflowShowcase: {
     description:
-      "Tabs of realistic windows (a terminal, an agent session, a chat with tool calls, an API call, the studio) whose commands and answers are typed line by line, to show that the product can be run from agents and the command line as well as the UI. Each tab may carry a status badge; unbuilt interfaces must be labelled.",
+      "Tabs of realistic windows (a terminal, an agent session, a chat with tool calls, an API call, the studio) whose commands and answers can type line by line or stay on a settled example, to show that the product can be run from agents and the command line as well as the UI. Each tab may carry a status badge; unbuilt interfaces must be labelled.",
     category: "section",
     interactive: true,
     children: false,
@@ -744,6 +744,7 @@ export const registry = {
         description: text("Text alternative of the whole animation for screen readers", { maxLength: 600 }),
         footnote: text("Small print under the tabs, e.g. that some commands are the planned interface", { maxLength: 300 }),
         legal: text("Trademark line, e.g. that product names belong to their owners and are not endorsements", { maxLength: 300 }),
+        staticPreview: bool("Show a settled transcript without automatically typing it", false),
         tabs: list(
           obj(
             {

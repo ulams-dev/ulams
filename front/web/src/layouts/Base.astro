@@ -140,8 +140,8 @@ const serializedJsonLd = jsonLd ? JSON.stringify(Array.isArray(jsonLd) ? jsonLd 
     {
       theme === "platform" && (
         <>
-          <Font cssVariable="--font-inter-tight" preload={[{ weight: "600" }]} />
-          <Font cssVariable="--font-inter" preload={[{ weight: "400" }]} />
+          <Font cssVariable="--font-baskerville" preload={[{ weight: "400", style: "normal" }, { weight: "400", style: "italic" }]} />
+          <Font cssVariable="--font-jakarta" preload={[{ weight: "400" }, { weight: "600" }]} />
           <Font cssVariable="--font-jetbrains" />
         </>
       )

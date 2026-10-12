@@ -221,7 +221,7 @@ export class UlamsStory extends HTMLElement {
 
   connectedCallback(): void {
     this.player = new StoryPlayer(this, {
-      reduced: reducedMotion(),
+      reduced: reducedMotion() || this.hasAttribute("data-static"),
       loop: this.hasAttribute("loop"),
       onEnd: () => this.dispatchEvent(new CustomEvent("story-end", { bubbles: true })),
     });

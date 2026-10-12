@@ -86,41 +86,6 @@
           }
         },
         {
-          "component": "Steps",
-          "props": {
-            "eyebrow": "Tworzenie kursu pod kontrolą autora",
-            "title": "Od materiałów źródłowych do kursu sprawdzonego przez autora",
-            "intro": "Autor zachowuje kontrolę na każdym etapie.",
-            "items": [
-              {
-                "icon": "book",
-                "title": "Dodaj materiały źródłowe",
-                "text": "Wskaż dokumenty i źródła, na których ma opierać się kurs."
-              },
-              {
-                "icon": "chat",
-                "title": "Opisz kurs",
-                "text": "Określ odbiorców i cel nauki dla szkicu."
-              },
-              {
-                "icon": "layers",
-                "title": "Sprawdź strukturę",
-                "text": "Obejrzyj i edytuj proponowany plan przed przygotowaniem lekcji."
-              },
-              {
-                "icon": "quote",
-                "title": "Sprawdź cytowania",
-                "text": "Prześledź treść lekcji do wskazanych fragmentów źródeł."
-              },
-              {
-                "icon": "check",
-                "title": "Zatwierdź zmiany",
-                "text": "Edytuj, odrzuć lub zatwierdź szkic przed publikacją."
-              }
-            ]
-          }
-        },
-        {
           "component": "Showcase",
           "props": {
             "eyebrow": "demo na żywo",
@@ -176,7 +141,8 @@
             },
             "tabs": {
               "$data": "/workflows/tabs"
-            }
+            },
+            "staticPreview": true
           }
         },
         {
@@ -211,32 +177,6 @@
               {
                 "label": "Webhooks",
                 "status": "coming"
-              }
-            ]
-          }
-        },
-        {
-          "component": "Faq",
-          "props": {
-            "id": "faq",
-            "eyebrow": "Pytania",
-            "title": "Częste pytania",
-            "items": [
-              {
-                "q": "Czy AI samodzielnie publikuje kurs?",
-                "a": "Nie. AI proponuje szkic. Autor sprawdza zmiany i wskazane źródła, a przed publikacją sam decyduje, co zatwierdzić."
-              },
-              {
-                "q": "Czy mogę hostować ulams samodzielnie?",
-                "a": "Tak. Repozytorium zawiera konfigurację deweloperską Docker Compose, a rdzeń ulams jest na licencji MIT. Sprawdź pliki licencji repozytorium pod kątem usług i pakietów zewnętrznych."
-              },
-              {
-                "q": "Czy zespół może korzystać z ulams przez agenta?",
-                "a": "Dostępne są REST API i TypeScript SDK. Przepływy agentów na tej stronie mają aktualny status; planowane interfejsy są odpowiednio oznaczone."
-              },
-              {
-                "q": "Gdzie mogę obejrzeć produkt?",
-                "a": "Na stronie przeglądu otwórz jedno z działających demo akademii. Dema korzystają z osobnych tenantów i pozwalają wejść jako kursant lub administrator."
               }
             ]
           }

@@ -30,6 +30,10 @@ were not supported by the repository. Search and sharing metadata varied by loca
 - **Use native semantics and contained table scrolling.** Pages keep one descriptive `h1`, landmarks,
   native links and a comparison table with a caption and scoped headers. On narrow screens, a
   keyboard-focusable region contains the table's horizontal overflow.
+- **Use the exported Stitch editorial direction.** Apply the “Baskerville Editorial & Living Knowledge”
+  visual system to both pages: a warm paper palette, serif display headings, sans-serif interface copy,
+  deep indigo product panels and restrained terracotta actions. Keep the Overview's agent/API example
+  static so visitors can scan its complete transcript without waiting for an animation.
 
 ## Consequences
 

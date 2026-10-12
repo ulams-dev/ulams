@@ -86,41 +86,6 @@
           }
         },
         {
-          "component": "Steps",
-          "props": {
-            "eyebrow": "Reviewable course creation",
-            "title": "From source material to an author-reviewed course",
-            "intro": "The author stays in control at each stage.",
-            "items": [
-              {
-                "icon": "book",
-                "title": "Add source material",
-                "text": "Bring in the documents and references the course should use."
-              },
-              {
-                "icon": "chat",
-                "title": "Set the course brief",
-                "text": "Describe the audience and learning goal for the draft."
-              },
-              {
-                "icon": "layers",
-                "title": "Review the structure",
-                "text": "Inspect and edit the proposed outline before building lessons."
-              },
-              {
-                "icon": "quote",
-                "title": "Check citations",
-                "text": "Trace generated lesson content to its cited source fragments."
-              },
-              {
-                "icon": "check",
-                "title": "Approve changes",
-                "text": "Edit, reject or approve the draft before publishing."
-              }
-            ]
-          }
-        },
-        {
           "component": "Showcase",
           "props": {
             "eyebrow": "live demos",
@@ -176,7 +141,8 @@
             },
             "tabs": {
               "$data": "/workflows/tabs"
-            }
+            },
+            "staticPreview": true
           }
         },
         {
@@ -211,32 +177,6 @@
               {
                 "label": "Webhooks",
                 "status": "coming"
-              }
-            ]
-          }
-        },
-        {
-          "component": "Faq",
-          "props": {
-            "id": "faq",
-            "eyebrow": "Questions",
-            "title": "Frequently asked questions",
-            "items": [
-              {
-                "q": "Does AI publish a course by itself?",
-                "a": "No. AI proposes a draft. An author reviews the changes, checks the cited sources, and decides what to approve before publication."
-              },
-              {
-                "q": "Can I host ulams myself?",
-                "a": "Yes. The repository includes a Docker Compose development setup, and the ulams core is licensed under MIT. Review the repository license files for third-party services and packages."
-              },
-              {
-                "q": "Can a team work with ulams through an agent?",
-                "a": "The REST API and TypeScript SDK are available. Agent workflows shown on this page carry their current status; planned interfaces are identified as planned."
-              },
-              {
-                "q": "Where can I inspect the product?",
-                "a": "Open one of the live academy demos from the Overview page. The demos use separate tenants and can be opened as a learner or administrator."
               }
             ]
           }

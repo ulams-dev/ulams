@@ -86,41 +86,6 @@
           }
         },
         {
-          "component": "Steps",
-          "props": {
-            "eyebrow": "作者审核的课程创建",
-            "title": "从源材料到作者审核的课程",
-            "intro": "作者在每个阶段都保留控制权。",
-            "items": [
-              {
-                "icon": "book",
-                "title": "添加源材料",
-                "text": "提供课程应使用的文档和参考资料。"
-              },
-              {
-                "icon": "chat",
-                "title": "说明课程目标",
-                "text": "描述草稿面向的受众和学习目标。"
-              },
-              {
-                "icon": "layers",
-                "title": "审核课程结构",
-                "text": "在生成课程内容前检查并编辑建议的大纲。"
-              },
-              {
-                "icon": "quote",
-                "title": "检查引用",
-                "text": "追溯课程内容所依据的来源片段。"
-              },
-              {
-                "icon": "check",
-                "title": "批准更改",
-                "text": "发布前编辑、拒绝或批准草稿。"
-              }
-            ]
-          }
-        },
-        {
           "component": "Showcase",
           "props": {
             "eyebrow": "在线演示",
@@ -176,7 +141,8 @@
             },
             "tabs": {
               "$data": "/workflows/tabs"
-            }
+            },
+            "staticPreview": true
           }
         },
         {
@@ -211,32 +177,6 @@
               {
                 "label": "Webhooks",
                 "status": "coming"
-              }
-            ]
-          }
-        },
-        {
-          "component": "Faq",
-          "props": {
-            "id": "faq",
-            "eyebrow": "常见问题",
-            "title": "常见问题解答",
-            "items": [
-              {
-                "q": "AI 会自动发布课程吗？",
-                "a": "不会。AI 只提出草稿。作者会审核更改和引用来源，并在发布前决定批准哪些内容。"
-              },
-              {
-                "q": "我可以自行托管 ulams 吗？",
-                "a": "可以。代码库提供 Docker Compose 开发配置，ulams 核心采用 MIT 许可。请查看代码库中的许可文件，了解第三方服务和软件包。"
-              },
-              {
-                "q": "团队可以通过智能体使用 ulams 吗？",
-                "a": "REST API 和 TypeScript SDK 已可用。页面中的智能体工作流会显示当前状态；计划中的接口会明确标注其状态。"
-              },
-              {
-                "q": "在哪里可以查看产品？",
-                "a": "在产品概览页打开一个在线学院演示。演示使用独立租户，可作为学习者或管理员进入。"
               }
             ]
           }
