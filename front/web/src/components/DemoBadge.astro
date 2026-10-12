@@ -21,7 +21,7 @@ const others = DEMO_TENANTS.filter((t) => t.slug !== slug)
   </summary>
   <div class="u-demo__panel">
     <p>You are logged in as a demo student. Everything you do is wiped every hour.</p>
-    <a href={adminUrl} target="_blank" rel="noopener">Open the admin panel ↗</a>
+    <a href={adminUrl} data-umami-event="demo_admin_open" target="_blank" rel="noopener">Open the admin panel ↗</a>
     {
       others.length > 0 && (
         <>
@@ -29,7 +29,7 @@ const others = DEMO_TENANTS.filter((t) => t.slug !== slug)
           <ul role="list">
             {others.map((t) => (
               <li>
-                <a href={`${Astro.url.protocol}//${t.host}/`}>{t.name}</a>
+                <a href={`${Astro.url.protocol}//${t.host}/`} data-umami-event="demo_open">{t.name}</a>
               </li>
             ))}
           </ul>

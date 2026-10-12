@@ -11,6 +11,11 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (new) Umami integration on the owned landing, documentation and six demos: automatic pageviews,
+      demo_open versus demos_scroll, exact CSP origins and per-browser exclusion
+      (ADR 0101 Proposed; requested by owner 2026-10-12). Documentation publication follows
+      the main-only GitHub Pages workflow.
+
 - [x] (2026-10-12) Owner requested the complete previous feature catalogue on Comparison,
       organised by stakeholder with full descriptions and documentation links (ADR 0100 Proposed).
 - [x] (new) Current Overview/Comparison page is highlighted in desktop and mobile menus in EN/PL/ZH.

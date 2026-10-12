@@ -1,4 +1,5 @@
 ---
+import { ctaEvent } from "../lib/analytics.ts";
 import Icon from "./Icon.astro";
 import Img from "./Img.astro";
 import Orbi from "./Orbi.astro";
@@ -138,14 +139,14 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
         (primaryCta || secondaryCta) && (
           <div class="u-actions u-hero__in" style="--i:3">
             {primaryCta && (
-              <a class="u-btn" href={primaryCta.href}>
+              <a class="u-btn" href={primaryCta.href} data-umami-event={ctaEvent(primaryCta.href)}>
                 {variant === "console" && <span aria-hidden="true">$</span>}
                 {primaryCta.label}
                 <Icon name="arrow" />
               </a>
             )}
             {secondaryCta && (
-              <a class={variant === "editorial" ? "u-btn u-btn--link" : "u-btn u-btn--ghost"} href={secondaryCta.href}>
+              <a class={variant === "editorial" ? "u-btn u-btn--link" : "u-btn u-btn--ghost"} href={secondaryCta.href} data-umami-event={ctaEvent(secondaryCta.href)}>
                 {secondaryCta.label}
               </a>
             )}

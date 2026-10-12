@@ -378,3 +378,12 @@ Approved by the product owner in chat on 2026-10-12.
   metadata. No runtime dependency or migration was added.
 - Verified: web typecheck, 487 unit tests, web lint, production web build, docs coverage/build, and
   40 landing E2E cases across desktop and phone, including axe, metadata, JSON-LD and sitemap checks.
+
+
+## Public analytics (2026-10-12)
+
+Owner requested installation of the supplied Umami Cloud script on the landing, docs and demos,
+with actual CTA events and a verified visit/click followed by browser exclusion. Use the shared
+web shell and Starlight head, exact production domain allowlist, scoped CSP script/collector
+origins, native event attributes and the documented per-origin opt-out. No dependency or
+migration. Keep customer deployments and author previews untracked (ADR 0101 Proposed).

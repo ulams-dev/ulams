@@ -1,4 +1,5 @@
 ---
+import { ctaEvent } from "../lib/analytics.ts";
 import { uiStrings, pageLocale } from "../lib/i18n.ts";
 import Icon from "./Icon.astro";
 
@@ -42,13 +43,13 @@ const t = uiStrings(pageLocale(Astro));
         )
       }
       <div class="u-actions">
-        <a class="u-btn" href={cta.href}>
+        <a class="u-btn" href={cta.href} data-umami-event={ctaEvent(cta.href)}>
           {cta.label}
           <Icon name="arrow" />
         </a>
         {
           secondary && (
-            <a class="u-btn u-btn--ghost" href={secondary.href}>
+            <a class="u-btn u-btn--ghost" href={secondary.href} data-umami-event={ctaEvent(secondary.href)}>
               {secondary.label}
             </a>
           )

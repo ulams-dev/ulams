@@ -14,6 +14,7 @@ import polandCss from "@ulams/ui/styles/themes/poland.css?inline";
 import ulamCss from "@ulams/ui/styles/themes/ulam.css?inline";
 import platformCss from "@ulams/ui/styles/themes/platform.css?inline";
 import type { ThemeName } from "@ulams/ui/registry";
+import { UMAMI_WEBSITE_ID, UMAMI_SCRIPT_ORIGIN, UMAMI_HOSTS, umamiEnabled } from "@ulams/ui/analytics";
 import DemoBadge from "../components/DemoBadge.astro";
 import { THEME_COLOR } from "../lib/theme.ts";
 import { accentCss } from "../lib/accent.ts";
@@ -45,6 +46,7 @@ interface Props {
 
 const { theme, title, description, lang = "en", demo, bodyClass, accent, noindex = false, baseTarget, canonical, alternates = [], ogLocale, jsonLd } = Astro.props;
 const t = uiStrings(lang);
+const analyticsHost = Astro.request.headers.get("x-forwarded-host") ?? Astro.request.headers.get("host") ?? Astro.url.host;
 const tenantCss = accentCss(theme, accent);
 const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, gravity: gravityCss, poland: polandCss, ulam: ulamCss, platform: platformCss }[theme];
 const shareImage = new URL("/og-image.png", Astro.url).href;
@@ -155,6 +157,7 @@ const serializedJsonLd = jsonLd ? JSON.stringify(Array.isArray(jsonLd) ? jsonLd 
       )
     }
     <style is:inline set:html={fallbackCss + baseCss + themeCss + tenantCss}></style>
+    {umamiEnabled(analyticsHost) && !noindex && <script is:inline defer src={`${UMAMI_SCRIPT_ORIGIN}/script.js`} data-website-id={UMAMI_WEBSITE_ID} data-domains={UMAMI_HOSTS.join(",")} data-exclude-search="true" data-exclude-hash="true" data-do-not-track="true"></script>}
     <slot name="head" />
   </head>
   <body class={bodyClass}>

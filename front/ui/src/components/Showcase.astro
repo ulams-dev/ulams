@@ -1,4 +1,5 @@
 ---
+import { ctaEvent } from "../lib/analytics.ts";
 import Icon from "./Icon.astro";
 import Img from "./Img.astro";
 
@@ -51,12 +52,12 @@ const { eyebrow, title, intro, note, items, id = "demos" } = Astro.props;
                 </dl>
               )}
               <div class="u-demo-card__actions">
-                <a class="u-btn u-btn--sm" href={item.primary.href} aria-label={`${item.primary.label}: ${item.title}`}>
+                <a class="u-btn u-btn--sm" href={item.primary.href} data-umami-event={ctaEvent(item.primary.href)} aria-label={`${item.primary.label}: ${item.title}`}>
                   {item.primary.label}
                   <Icon name="arrow" />
                 </a>
                 {item.secondary && (
-                  <a class="u-btn u-btn--sm u-btn--ghost" href={item.secondary.href} aria-label={`${item.secondary.label}: ${item.title}`}>
+                  <a class="u-btn u-btn--sm u-btn--ghost" href={item.secondary.href} data-umami-event={ctaEvent(item.secondary.href)} aria-label={`${item.secondary.label}: ${item.title}`}>
                     {item.secondary.label}
                   </a>
                 )}
