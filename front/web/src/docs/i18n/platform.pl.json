@@ -343,7 +343,7 @@
             "variant": "terminal",
             "eyebrow": "self-hosting",
             "title": "Twoje serwery. Twoje dane.",
-            "text": "Rdzeń na licencji MIT działa w Docker Compose obok usługi H5P. Uruchom go na swoim VPS z Cloudflare przed aplikacją lub wdrażaj kontenery w Kubernetes albo Render.com. Konfiguracje YAML i instrukcje krok po kroku dla VPS/Cloudflare są w repozytorium. Helm chart już wkrótce. Płatne funkcje chmurowe i enterprise rozwijają otwarty rdzeń.",
+            "text": "Platforma z otwartym kodem działa w Docker Compose obok usługi H5P. Uruchom go na swoim VPS z Cloudflare przed aplikacją lub wdrażaj kontenery w Kubernetes albo Render.com. Konfiguracje YAML i instrukcje krok po kroku dla VPS/Cloudflare są w repozytorium. Helm chart już wkrótce.",
             "code": [
               "$ git clone https://github.com/ulams-dev/ulams",
               "$ cd ulams && yarn install",
@@ -368,7 +368,7 @@
       "component": "SiteFooter",
       "props": {
         "brand": "ulams",
-        "text": "Otwarty LMS z AI w rdzeniu. Open core na licencji MIT.",
+        "text": "Otwartoźródłowy LMS z AI. Licencja MIT.",
         "links": [
           {
             "label": "Przegląd",
@@ -407,7 +407,7 @@
             "href": "https://github.com/ulams-dev"
           }
         ],
-        "note": "Open core na licencji MIT"
+        "note": "Otwarty kod · MIT"
       }
     }
   ]

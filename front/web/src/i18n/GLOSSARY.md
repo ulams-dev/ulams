@@ -18,7 +18,7 @@ GitHub, REST API, SDK, CLI.
 | diff | podgląd zmian (diff) | 差异对比 | Keep "diff" in parentheses at first use |
 | source | źródło | 来源 | A document, repository or page a course is built from |
 | self-host | self-hosting / postaw u siebie | 自托管 / 自行部署 | Nav label: Self-hosting / 自托管 |
-| open core | open core | 开源核心 | |
+| open source | otwarty kod / otwartoźródłowy | 开源 | No paid core/enterprise split |
 | headless | headless | 无头 | PL keeps the English term |
 | roadmap / Coming | w planach / Wkrótce | 路线图 / 即将推出 | Badge text: Wkrótce / 即将推出 |
 | demo | demo (pl. dema) | 演示 | |

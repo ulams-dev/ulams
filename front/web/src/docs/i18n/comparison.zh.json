@@ -142,7 +142,7 @@
       "component": "SiteFooter",
       "props": {
         "brand": "ulams",
-        "text": "开放的 AI 原生 LMS。MIT 许可的开源核心。",
+        "text": "开源的 AI 原生 LMS。MIT 许可。",
         "links": [
           {
             "label": "产品概览",
@@ -181,7 +181,7 @@
             "href": "https://github.com/ulams-dev"
           }
         ],
-        "note": "MIT 许可的开源核心"
+        "note": "开源 · MIT"
       }
     }
   ]

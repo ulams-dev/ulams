@@ -343,7 +343,7 @@
             "variant": "terminal",
             "eyebrow": "self-host",
             "title": "Your servers. Your data.",
-            "text": "The MIT-licensed core runs with Docker Compose alongside the H5P service. Deploy on your VPS with Cloudflare in front, or run the container stack on Kubernetes or Render.com. VPS/Cloudflare YAML configurations and step-by-step tutorials are included. Helm chart coming soon. Paid cloud and enterprise features build on the open core.",
+            "text": "The open-source platform runs with Docker Compose alongside the H5P service. Deploy on your VPS with Cloudflare in front, or run the container stack on Kubernetes or Render.com. VPS/Cloudflare YAML configurations and step-by-step tutorials are included. Helm chart coming soon.",
             "code": [
               "$ git clone https://github.com/ulams-dev/ulams",
               "$ cd ulams && yarn install",
@@ -368,7 +368,7 @@
       "component": "SiteFooter",
       "props": {
         "brand": "ulams",
-        "text": "The open, AI-native LMS. Open core under MIT.",
+        "text": "The open-source, AI-native LMS. MIT licensed.",
         "links": [
           {
             "label": "Overview",
@@ -407,7 +407,7 @@
             "href": "https://github.com/ulams-dev"
           }
         ],
-        "note": "Open core under MIT"
+        "note": "Open source · MIT"
       }
     }
   ]

@@ -142,7 +142,7 @@
       "component": "SiteFooter",
       "props": {
         "brand": "ulams",
-        "text": "The open, AI-native LMS. Open core under MIT.",
+        "text": "The open-source, AI-native LMS. MIT licensed.",
         "links": [
           {
             "label": "Overview",
@@ -181,7 +181,7 @@
             "href": "https://github.com/ulams-dev"
           }
         ],
-        "note": "Open core under MIT"
+        "note": "Open source · MIT"
       }
     }
   ]

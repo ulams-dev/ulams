@@ -41,9 +41,9 @@ Therefore:
    scoped permissions and a separate audit trail for agent actions.
 8. **Easy to self-host.** One command to run, minimal dependencies, works without AI and without
    internet access, painless upgrades.
-9. **Open core.** Free self-hosted core; paid cloud (AI included), enterprise features (SSO/SCIM,
-   audit, compliance, certificates) and support. Keep the core genuinely useful; check the
-   licences of all `escolalms/*` packages before deciding what can be paid (report in Phase 0).
+9. **Open source.** Free self-hosted software, with no planned paid cloud or paid enterprise tier.
+   Product capabilities belong to the open-source roadmap. Audit the licences of all
+   `escolalms/*` packages and dependencies (report in Phase 0).
 
 ---
 
@@ -67,7 +67,7 @@ Therefore:
 - How content updates preserve learner progress today (Wellms advertises this; find the mechanism).
 - Test setup, CI, code style, queue (Horizon), storage, existing LLM/AI code if any.
 - Licence audit: licence of every `escolalms/*` package and key third-party dependency, and what
-  it allows for an open-core model (closed paid modules, SaaS use, redistribution).
+  it allows for open-source distribution, self-hosting and redistribution.
 - Runtime dependencies inventory (DB, Redis, queues, workers, external services) as input for
   Phase 8 self-hosting simplification.
 - Commerce audit (input for 6.4): what `payments`, `cart`, `vouchers` and invoicing do today,

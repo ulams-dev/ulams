@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { UiNode } from "@ulams/ui/render-core";
 import { validateDocument } from "@ulams/ui/render-core";
-import { landingDocs } from "../../src/lib/docs.ts";
+import { landingDocs, localizedDocs, comparisonDocFor } from "../../src/lib/docs.ts";
 import { applyComparisonStatus, applyLandingStatus, applyWorkflowStatus, parseLandingStatus } from "../../src/lib/landing-status.ts";
 import { comparisonData, comparisonModel } from "../../src/lib/comparison.ts";
 import { workflowsData, workflowsModel } from "../../src/lib/workflows.ts";
@@ -40,9 +40,10 @@ describe("platform landing in final mode", () => {
     expect(json(doc)).toBe(sourceBefore);
   });
   it("applies the text overrides", () => {
-    expect(json(final)).toContain("Courses people can trust.");
+    expect(json(final)).toContain("Illustrative policy lifecycle. Authors approve source updates before publication.");
     expect(json(final)).toContain("Example · policy lifecycle");
-    expect(json(final)).not.toMatch(/on the roadmap|coming/i);
+    expect(json(final)).not.toMatch(/on the roadmap/i);
+    expect(json(final)).toContain("Helm chart coming soon.");
   });
   it("is valid against the catalogue in both modes", () => {
     for (const mode of ["final", "actual"] as const) {
@@ -97,5 +98,18 @@ describe("workflow tabs", () => {
       expect(tab.status).toBeUndefined();
       expect(tab.note).toBeUndefined();
     }
+  });
+});
+
+
+describe("open-source product positioning", () => {
+  it("removes open-core and paid-tier promises from all public landing languages", () => {
+    const docs = [doc, localizedDocs.platform!.pl, localizedDocs.platform!.zh, ...(["en", "pl", "zh"] as const).map(comparisonDocFor)];
+    const publicCopy = JSON.stringify(docs);
+    expect(publicCopy).not.toMatch(/open[ -]core|paid cloud|paid enterprise|Płatne funkcje|开源核心|付费云服务/i);
+    const ours = comparisonData.systems.find((system) => system.ours)!;
+    expect(ours.note).toBe("open source");
+    expect(ours.cells.licence?.value).toBe("MIT");
+    expect(ours.cells.pricing?.note).toBeUndefined();
   });
 });

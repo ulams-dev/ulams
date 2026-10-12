@@ -11,6 +11,9 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-12) Owner rejected the open-core model and paid cloud/enterprise tiers. Public
+      Overview, Comparison and licensing copy now describe open-source software (ADR 0099 Proposed).
+
 - [x] (2026-10-12) Owner requested one animated policy example, the selected Stitch Ulam portrait,
       no availability badges within that story, and explicit policy lifecycle delivery items in
       Phase 6 (ADR 0098 Proposed).
@@ -45,6 +48,7 @@ small commits → tests → summary.
       LMS owns entitlements, Sylius owns catalogue/cart/checkout/taxes/invoices; `CommerceProvider`
       interface; Wellms `payments`/`cart`/`vouchers` retired after migration
 - [x] Business model: open core (free self-hosted core; paid cloud, enterprise, support)
+      (superseded by the owner on 2026-10-12: open source without planned paid cloud or enterprise tiers; ADR 0099)
 - [x] Niche: developer education / customer education for dev tools
 - [x] (new) One monorepo `admin/` + `api/` + `front/` (+ `docs/`), all `escolalms/*` packages vendored
       as source, Turborepo + Yarn workspaces (ADR 0001, 0005)
@@ -92,7 +96,7 @@ small commits → tests → summary.
 
 UX over feature count · human approves every AI change (diff) · grounded and cited ·
 standards over lock-in · cost-aware (log tokens/cost from day one) · developer-first ·
-agent-ready · easy self-hosting · open core.
+agent-ready · easy self-hosting · open source.
 
 Market context: buyers rank UX 70%, price 63%, integrations 59%, AI 30%; most-wanted AI feature
 is personalisation (65%); trust is the new competitive axis; compliance and extended enterprise

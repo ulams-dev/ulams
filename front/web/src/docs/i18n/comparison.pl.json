@@ -142,7 +142,7 @@
       "component": "SiteFooter",
       "props": {
         "brand": "ulams",
-        "text": "Otwarty LMS z AI w rdzeniu. Open core na licencji MIT.",
+        "text": "Otwartoźródłowy LMS z AI. Licencja MIT.",
         "links": [
           {
             "label": "Przegląd",
@@ -181,7 +181,7 @@
             "href": "https://github.com/ulams-dev"
           }
         ],
-        "note": "Open core na licencji MIT"
+        "note": "Otwarty kod · MIT"
       }
     }
   ]
