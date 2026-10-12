@@ -77,7 +77,7 @@ const alternatives = [
   <ulams-policy-story data-animation-paused>
     <div class="ps-topline"><span>{badge}</span><span class="ps-version">v1 <Icon name="arrow" /> v2</span></div>
     <div class="ps-scenes">
-      {journey.map((step, i) => <section class="ps-panel" role="tabpanel" id={`policy-panel-${i}`} aria-labelledby={`policy-tab-${i}`} hidden={i !== 0} tabindex="0" data-duration={i === 0 ? 8000 : i === 1 ? 15000 : 6000}>
+      {journey.map((step, i) => <section class="ps-panel" role="tabpanel" id={`policy-panel-${i}`} aria-labelledby={`policy-tab-${i}`} hidden={i !== 0} tabindex="0" data-duration={i === 0 ? 10500 : i === 1 ? 15000 : 6000}>
         <div class="ps-narration">
           <span class="ps-chapter">0{i + 1} / 0{journey.length}</span>
           <h2>{step.title}</h2><p>{step.text}</p>
@@ -936,7 +936,7 @@ const alternatives = [
   .ps-upload-file small { font-size:.57rem; color:var(--ulams-color-muted); }
   .ps-upload-track { display:block; height:3px; margin-top:4px; border-radius:2px; background:var(--ulams-color-border); overflow:hidden; }
   .ps-upload-track>i { display:block; width:100%; height:100%; background:var(--ulams-color-positive); transform-origin:left; animation:ps-upload 1.2s .3s linear both; }
-  .ps-upload-done { animation:ps-enter .3s 1.5s both; color:var(--ulams-color-positive); }
+  .ps-upload-done { animation:ps-reveal .3s 1.5s both; color:var(--ulams-color-positive); }
   .ps-upload-done :global(svg) { width:16px; }
   .ps-ingest-pipeline { display:grid; gap:7px; padding:12px 0 0 22px; border-left:1px dashed var(--ulams-color-border); margin-left:20px; }
   .ps-ingest-node { display:flex; align-items:center; gap:10px; padding:9px 12px; border:1px solid var(--ulams-color-border); border-radius:8px; background:var(--ulams-color-card-bg); }
@@ -945,15 +945,27 @@ const alternatives = [
   .ps-ingest-icon { display:grid; place-items:center; width:28px; height:28px; background:var(--ulams-color-bg); border-radius:7px; color:var(--ulams-color-primary); }
   .ps-ingest-icon :global(svg) { width:16px; }
   .ps-ingest-node>:global(svg) { width:14px; color:var(--ulams-color-positive); }
-  .ps-ingest-node--extract { animation:ps-enter .5s 1.5s both; }
-  .ps-ingest-node--context { animation:ps-enter .5s 2.8s both; }
-  .ps-ingest-node--llm { animation:ps-enter .5s 4s both; }
-  .ps-extracted-lines { display:flex; gap:4px; }
-  .ps-extracted-lines i { width:26%; height:3px; background:var(--ulams-color-border); }
+  .ps-ingest-node--extract { animation:ps-reveal .45s 1.7s both; }
+  .ps-ingest-node--context { animation:ps-reveal .45s 3.2s both; }
+  .ps-ingest-node--llm { animation:ps-reveal .45s 5.3s both; }
+  .ps-extracted-lines { display:grid; gap:4px; width:110px; max-width:100%; }
+  .ps-extracted-lines i { width:100%; height:3px; background:var(--ulams-color-border); transform-origin:left; animation:ps-upload .4s 2.1s both; }
+  .ps-extracted-lines i:nth-child(2) { width:85%; animation-delay:2.4s; }
+  .ps-extracted-lines i:nth-child(3) { width:65%; animation-delay:2.7s; }
+  .ps-ingest-node--extract>:global(svg) { animation:ps-stamp .3s 3s both; }
+  .ps-ingest-node--context>:global(svg) { animation:ps-stamp .3s 5s both; }
+  .ps-ingest-node--llm>:global(svg) { animation:ps-stamp .3s 6.8s both; }
+  .ps-ingest-node--llm .ps-small { animation:ps-reveal .4s 6.8s both; }
+  .ps-source-fragments i { animation:ps-reveal .35s 3.7s both; }
+  .ps-source-fragments i:nth-child(2) { animation-delay:4.1s; }
+  .ps-source-fragments i:nth-child(3) { animation-delay:4.5s; }
+  .ps-source-fragments>:global(svg) { animation:ps-reveal .3s 4.9s both; }
+  .ps-ingest-node--llm .ps-ingest-icon :global(svg) { animation:ps-reading 1s 5.3s 2; }
+  @keyframes ps-reading { to { transform:rotate(360deg); } }
   .ps-source-fragments { display:flex; gap:5px; align-items:center; font:.54rem var(--ulams-font-mono); }
   .ps-source-fragments i { padding:3px 6px; border:1px solid var(--ulams-color-border); border-radius:4px; font-style:normal; }
   .ps-source-fragments :global(svg) { width:13px; color:var(--ulams-color-accent); }
-  .ps-ingest-quote { display:flex; align-items:flex-start; gap:7px; padding:10px 0 0 43px; color:var(--ulams-color-muted); font-size:.6rem; animation:ps-enter .5s 4.7s both; }
+  .ps-ingest-quote { display:flex; align-items:flex-start; gap:7px; padding:10px 0 0 43px; color:var(--ulams-color-muted); font-size:.6rem; animation:ps-reveal .5s 7.1s both; }
   .ps-ingest-quote :global(svg) { width:14px; flex:0 0 14px; color:var(--ulams-color-accent); }
   .ps-ingest-quote>span { display:grid; gap:3px; }
   .ps-brief-scene { width:100%; max-width:500px; background:var(--ulams-color-card-bg); border:1px solid var(--ulams-color-border); border-radius:10px; overflow:hidden; }

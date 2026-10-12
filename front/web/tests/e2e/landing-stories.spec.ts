@@ -63,7 +63,7 @@ test("policy playback advances, pauses and replays without losing chapter select
   const story = page.locator("ulams-policy-story");
   await story.scrollIntoViewIfNeeded();
   await page.waitForFunction(() => customElements.get("ulams-policy-story"));
-  await page.clock.fastForward(8500);
+  await page.clock.fastForward(11000);
   await expect(story.locator('[role="tab"]').nth(1)).toHaveAttribute("aria-selected", "true");
   await story.locator("[data-play]").click();
   await page.clock.fastForward(12000);
@@ -106,4 +106,14 @@ test.describe("reduced motion", () => {
       await expect(page.locator("#agents .u-wf__panel[data-active] .u-rest")).toHaveText(await page.locator("#agents .u-wf__panel[data-active] .u-rest").evaluateAll((els) => els.map(() => "")));
     }
   });
+});
+
+test("interface buttons have equal widths and heights", async ({ page }) => {
+  await open(page);
+  const sizes = await page.locator('#agents [role="tab"]').evaluateAll((els) => els.map((el) => {
+    const box = el.getBoundingClientRect();
+    return { width: box.width, height: box.height };
+  }));
+  expect(Math.max(...sizes.map((s) => s.width)) - Math.min(...sizes.map((s) => s.width))).toBeLessThan(1);
+  expect(Math.max(...sizes.map((s) => s.height)) - Math.min(...sizes.map((s) => s.height))).toBeLessThan(1);
 });

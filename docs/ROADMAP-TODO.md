@@ -631,7 +631,8 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       lifecycle from source v1 through course, exam and certificate to source updates and recertification; one
       visual story at the top replaces the duplicate Living Course section, with document, academy, oversight,
       source-diff and renewal scenes; updates retain author approval; CEO PDF intake and a four-question
-      course brief are animated as a sequential chat, with illustrated department roles. The repeated
+      course brief are animated as a sequential chat, with illustrated department roles; PDF intake
+      reveals extraction, citations and LLM reading in order, and interface tabs share equal dimensions. The repeated
       principles grid is replaced by a sourced Scottish Book brand story and the selected Stitch Ulam portrait.
       The example workflow has no availability badges; planned delivery is tracked under Phase 6)
 - [x] (new) Split platform product Overview and Comparison pages in EN/PL/ZH, with audited SEO metadata,

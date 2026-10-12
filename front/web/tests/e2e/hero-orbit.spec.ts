@@ -105,3 +105,31 @@ test("the former principles section tells the sourced Ulam story", async ({ page
   const results = await new AxeBuilder({ page }).include("#product").withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
   expect(results.violations).toEqual([]);
 });
+
+test("PDF intake reveals extraction, individual citations and LLM reading in order", async ({ page }) => {
+  await page.goto(url);
+  const story = page.locator("ulams-policy-story");
+  await story.scrollIntoViewIfNeeded();
+  await story.locator('[role="tab"]').first().click();
+  await story.locator("[data-play]").click();
+  const at = async (time: number) => {
+    await story.locator(".ps-intake-scene").evaluate((el, t) => {
+      for (const animation of el.getAnimations({ subtree: true })) animation.currentTime = t;
+    }, time);
+  };
+  const opacity = (selector: string) => story.locator(selector).evaluate((el) => Number(getComputedStyle(el).opacity));
+  await at(0);
+  expect(await opacity(".ps-ingest-node--extract")).toBe(0);
+  expect(await opacity(".ps-ingest-node--context")).toBe(0);
+  expect(await opacity(".ps-ingest-node--llm")).toBe(0);
+  await at(2600);
+  expect(await opacity(".ps-ingest-node--extract")).toBe(1);
+  expect(await opacity(".ps-ingest-node--context")).toBe(0);
+  await at(4200);
+  expect(await opacity(".ps-source-fragments i:first-child")).toBe(1);
+  expect(await opacity(".ps-source-fragments i:last-of-type")).toBe(0);
+  expect(await opacity(".ps-ingest-node--llm")).toBe(0);
+  await at(7800);
+  expect(await opacity(".ps-ingest-node--llm")).toBe(1);
+  expect(await opacity(".ps-ingest-quote")).toBe(1);
+});
