@@ -153,3 +153,16 @@ test("standards include the sourced headless-format paper", async ({ page }) => 
   const results = await new AxeBuilder({ page }).include(".u-chips__research").withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
   expect(results.violations).toEqual([]);
 });
+
+test("story steps explain practical actions in concise bullets", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(url);
+  const story = page.locator("ulams-policy-story");
+  await expect(story.locator(".ps-panel:visible .ps-explanation")).toContainText("PDF, Markdown, DOCX or plain text");
+  await expect(story.locator(".ps-panel:visible .ps-explanation")).toContainText("images and a style guide");
+  for (let i = 0; i < 7; i++) {
+    await story.locator('[role="tab"]').nth(i).click();
+    await expect(story.locator(".ps-panel:visible .ps-explanation li")).toHaveCount(3);
+  }
+  await expect(page.locator("#agents .u-lead")).toContainText("Codex, OpenCode, Gemini CLI");
+});

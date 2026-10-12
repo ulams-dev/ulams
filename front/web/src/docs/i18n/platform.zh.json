@@ -63,38 +63,73 @@
               "journey": [
                 {
                   "title": "CEO 上传政策与风格指南",
-                  "text": "政策提供带引用的源材料。风格指南为学习站点提供组织的视觉标识。",
-                  "status": "available"
+                  "text": "从团队现有的文件开始。",
+                  "status": "available",
+                  "bullets": [
+                    "上传 PDF、Markdown、DOCX 或纯文本。",
+                    "添加图片和风格指南，用于课程设计。",
+                    "将政策保留为课程内容的来源。"
+                  ]
                 },
                 {
                   "title": "AI 询问组织的培训需求",
                   "text": "CEO 确定受众、时长、职级和经验水平。这些回答构成课程需求简报。",
-                  "status": "available"
+                  "status": "available",
+                  "bullets": [
+                    "选择部门和角色。",
+                    "设定课程时长、职级和经验水平。",
+                    "在起草课程前审核需求简报。"
+                  ]
                 },
                 {
                   "title": "同一政策，不同品牌学院",
                   "text": "管理层、HR 和销售各自拥有不同的课程设计和域名，依据同一政策和组织的风格指南。",
-                  "status": "coming"
+                  "status": "coming",
+                  "bullets": [
+                    "为各部门调整内容。",
+                    "为每个学院设置独立的设计和域名。",
+                    "隔离各租户的数据。"
+                  ]
                 },
                 {
                   "title": "学习者完成课程并获证",
                   "text": "互动课程以考试结束。通过后生成 PDF 证书。",
-                  "status": "available"
+                  "status": "available",
+                  "bullets": [
+                    "学习课程并完成互动练习。",
+                    "参加最终考试。",
+                    "下载 PDF 证书。"
+                  ]
                 },
                 {
                   "title": "政策负责人跟踪完成情况",
                   "text": "查看谁已完成必修培训，以及谁还需要参加。",
-                  "status": "coming"
+                  "status": "coming",
+                  "bullets": [
+                    "查看已完成和待完成培训的人员。",
+                    "按部门和课程版本查看进度。",
+                    "查看考试结果与证书。"
+                  ]
                 },
                 {
                   "title": "一年后：政策 v2 发生变化",
                   "text": "在关联资料的课程中，ulams 找到受影响的课程内容和测验题，并生成带来源依据的修改方案供负责人审核批准。",
-                  "status": "available"
+                  "status": "available",
+                  "bullets": [
+                    "上传修订后的政策。",
+                    "找出受更改影响的课程和问题。",
+                    "在发布前审核并批准更新。"
+                  ]
                 },
                 {
                   "title": "团队重新学习变更内容",
                   "text": "为所有受影响的部门课程准备更新。批准后通知学习者、使旧证书失效、安排更新内容或新课程与考试，再签发新的 PDF 证书。",
-                  "status": "coming"
+                  "status": "coming",
+                  "bullets": [
+                    "通知学员并停用旧证书。",
+                    "小幅变更：参加新的考试。",
+                    "重大变更：完成更新后的课程。"
+                  ]
                 }
               ],
               "visual": {
@@ -233,7 +268,7 @@
             "id": "agents",
             "eyebrow": "随处运行",
             "title": "在 Claude、Claude Code 或终端里管理你的学院",
-            "intro": "你可以使用 Claude Code、Claude 或任何兼容 MCP 的智能体，也可以用命令行或 API。工作室只是运行 ulams 的方式之一，而不是唯一的方式。",
+            "intro": "通过 Claude Code、Claude、Codex、OpenCode、Gemini CLI 或其他兼容 MCP 的智能体使用 ULAMS。基于文档创建课程、审核更新，并通过 AI 智能体、ULAMS CLI 或 REST API 管理学院。Studio 为团队提供可视化工作空间。",
             "valueLine": "一个平台，覆盖团队已经在用的每一种界面。",
             "legal": "Claude 和 Claude Code 是 Anthropic 的产品。ulams 是独立产品，与 Anthropic 没有关联，也未获其背书。",
             "description": {

@@ -1108,6 +1108,18 @@
                       "description": "What happens and why this step matters",
                       "maxLength": 180
                     },
+                    "bullets": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "Concise action or outcome",
+                        "maxLength": 140
+                      },
+                      "description": "Practical explanation of this step",
+                      "default": [],
+                      "maxItems": 4,
+                      "minItems": 2
+                    },
                     "status": {
                       "type": "string",
                       "enum": [

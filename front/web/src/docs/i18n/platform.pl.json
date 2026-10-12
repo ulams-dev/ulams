@@ -63,38 +63,73 @@
               "journey": [
                 {
                   "title": "CEO dodaje politykę i style guide",
-                  "text": "Polityka dostarcza cytowanych źródeł. Style guide określa identyfikację wizualną organizacji dla witryn szkoleniowych.",
-                  "status": "available"
+                  "text": "Zacznij od plików, których Twój zespół już używa.",
+                  "status": "available",
+                  "bullets": [
+                    "Dodaj PDF, Markdown, DOCX lub zwykły tekst.",
+                    "Dodaj obrazy i style guide do projektu kursu.",
+                    "Zachowaj politykę jako źródło treści lekcji."
+                  ]
                 },
                 {
                   "title": "AI pyta o organizację",
                   "text": "CEO określa odbiorców, czas, stanowiska i poziom doświadczenia. Odpowiedzi stają się briefem kursu.",
-                  "status": "available"
+                  "status": "available",
+                  "bullets": [
+                    "Wybierz działy i role.",
+                    "Ustal czas kursu, poziom stanowiska i doświadczenie.",
+                    "Sprawdź brief przed przygotowaniem kursu."
+                  ]
                 },
                 {
                   "title": "Jedna polityka, różne akademie",
                   "text": "Management, HR i Sales otrzymują własny wygląd kursu i domenę, na podstawie tej samej polityki oraz style guide organizacji.",
-                  "status": "coming"
+                  "status": "coming",
+                  "bullets": [
+                    "Dopasuj treść do każdego działu.",
+                    "Nadaj akademiom własny wygląd i domenę.",
+                    "Przechowuj dane tenantów osobno."
+                  ]
                 },
                 {
                   "title": "Kursant zdaje i otrzymuje certyfikat",
                   "text": "Interaktywne lekcje prowadzą do egzaminu. Po zdaniu powstaje certyfikat PDF.",
-                  "status": "available"
+                  "status": "available",
+                  "bullets": [
+                    "Przejdź lekcje i ćwiczenia interaktywne.",
+                    "Zdaj egzamin końcowy.",
+                    "Pobierz certyfikat PDF."
+                  ]
                 },
                 {
                   "title": "Opiekun polityki śledzi ukończenia",
                   "text": "Sprawdza, kto ukończył wymagane szkolenie, a kto musi je jeszcze odbyć.",
-                  "status": "coming"
+                  "status": "coming",
+                  "bullets": [
+                    "Sprawdź, kto ukończył szkolenie, a kto jeszcze nie.",
+                    "Śledź postępy według działu i wersji kursu.",
+                    "Przeglądaj wyniki egzaminów i certyfikaty."
+                  ]
                 },
                 {
                   "title": "Rok później: zmiana polityki v2",
                   "text": "W kursie połączonym ze źródłem ulams znajduje lekcje i pytania objęte zmianą, a potem przygotowuje aktualizacje ze źródłami do zatwierdzenia.",
-                  "status": "available"
+                  "status": "available",
+                  "bullets": [
+                    "Dodaj nową wersję polityki.",
+                    "Znajdź lekcje i pytania, których dotyczy zmiana.",
+                    "Sprawdź i zatwierdź aktualizację przed publikacją."
+                  ]
                 },
                 {
                   "title": "Zespół odnawia wiedzę",
                   "text": "Przygotuj aktualizacje dla kursów wszystkich działów. Po akceptacji powiadom osoby, unieważnij stare certyfikaty i przypisz aktualizację lub kurs z egzaminem oraz nowym PDF.",
-                  "status": "coming"
+                  "status": "coming",
+                  "bullets": [
+                    "Powiadom uczestników i unieważnij stare certyfikaty.",
+                    "Mała zmiana: nowy egzamin.",
+                    "Duża zmiana: ukończenie zaktualizowanego kursu."
+                  ]
                 }
               ],
               "visual": {
@@ -233,7 +268,7 @@
             "id": "agents",
             "eyebrow": "obsługa z dowolnego miejsca",
             "title": "Zarządzaj akademią z Claude, Claude Code lub terminala",
-            "intro": "Użyj Claude Code, Claude lub dowolnego agenta zgodnego z MCP, wiersza poleceń albo API. Studio to jeden ze sposobów obsługi ulams, nie jedyny.",
+            "intro": "Korzystaj z ULAMS przez Claude Code, Claude, Codex, OpenCode, Gemini CLI lub innego agenta zgodnego z MCP. Twórz kursy z dokumentów, sprawdzaj aktualizacje i zarządzaj akademią przez agentów AI, ULAMS CLI albo REST API. Studio zapewnia zespołowi wizualne środowisko pracy.",
             "valueLine": "Jedna platforma, każdy interfejs, w którym Twój zespół już pracuje.",
             "legal": "Claude i Claude Code są produktami firmy Anthropic. ulams jest niezależny i nie jest powiązany z Anthropic ani przez nią rekomendowany.",
             "description": {

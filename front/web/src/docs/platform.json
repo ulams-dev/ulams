@@ -63,38 +63,73 @@
               "journey": [
                 {
                   "title": "The CEO uploads policy and style guide",
-                  "text": "The policy provides cited source material. The style guide supplies the organisation’s visual identity for the learning sites.",
-                  "status": "available"
+                  "text": "Start with the files your team already uses.",
+                  "status": "available",
+                  "bullets": [
+                    "Upload PDF, Markdown, DOCX or plain text.",
+                    "Add images and a style guide for the course design.",
+                    "Keep the policy as the source for lessons."
+                  ]
                 },
                 {
                   "title": "AI asks about the organisation",
                   "text": "The CEO defines the audience, duration, seniority and experience level. These answers become the course brief.",
-                  "status": "available"
+                  "status": "available",
+                  "bullets": [
+                    "Choose departments and roles.",
+                    "Set course length, seniority and experience level.",
+                    "Review the brief before the course is drafted."
+                  ]
                 },
                 {
                   "title": "One policy, distinct branded academies",
                   "text": "Management, HR and Sales each get their own course design and domain, shaped by the same policy and the organisation’s style guide.",
-                  "status": "coming"
+                  "status": "coming",
+                  "bullets": [
+                    "Adapt the content to each department.",
+                    "Give each academy its own design and domain.",
+                    "Keep tenant data separate."
+                  ]
                 },
                 {
                   "title": "Learners finish and certify",
                   "text": "Interactive lessons lead to an exam. Passing it generates a PDF certificate.",
-                  "status": "available"
+                  "status": "available",
+                  "bullets": [
+                    "Work through lessons and interactive exercises.",
+                    "Take the final exam.",
+                    "Download the PDF certificate."
+                  ]
                 },
                 {
                   "title": "The policy owner tracks completion",
                   "text": "See who has completed the required training and who still needs to take it.",
-                  "status": "coming"
+                  "status": "coming",
+                  "bullets": [
+                    "See who finished and who still needs training.",
+                    "Check progress by department and course version.",
+                    "Review exam results and certificates."
+                  ]
                 },
                 {
                   "title": "One year later: policy v2 changes",
                   "text": "In a source-linked course, ulams finds affected lessons and questions and prepares cited edits for the owner to review and approve.",
-                  "status": "available"
+                  "status": "available",
+                  "bullets": [
+                    "Upload the revised policy.",
+                    "Find the lessons and questions affected by the change.",
+                    "Review and approve the update before publishing."
+                  ]
                 },
                 {
                   "title": "People renew their knowledge",
                   "text": "Prepare updates for every affected team course. After approval, notify learners, expire old certificates, assign an update or new course and exam, then issue new PDFs.",
-                  "status": "coming"
+                  "status": "coming",
+                  "bullets": [
+                    "Notify learners and retire old certificates.",
+                    "Small change: take a new exam.",
+                    "Major change: complete the updated course."
+                  ]
                 }
               ],
               "visual": {
@@ -233,7 +268,7 @@
             "id": "agents",
             "eyebrow": "run it from anywhere",
             "title": "Manage your academy from Claude, Claude Code or your terminal",
-            "intro": "Use Claude Code, Claude or any MCP-compatible agent, the command line or the API. The studio is one way to run ulams, not the only one.",
+            "intro": "Use Claude Code, Claude, Codex, OpenCode, Gemini CLI or another MCP-compatible agent with ULAMS. Create courses from documents, review updates and manage your academy through AI agents, the ULAMS CLI or the REST API. The studio provides a visual workspace for your team.",
             "valueLine": "One platform, every interface your team already works in.",
             "legal": "Claude and Claude Code are products of Anthropic. ulams is independent and not affiliated with or endorsed by Anthropic.",
             "description": {

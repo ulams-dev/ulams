@@ -633,7 +633,8 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       source-diff and renewal scenes; updates retain author approval; CEO PDF intake and a four-question
       course brief are animated as a sequential chat, with illustrated department roles; PDF intake
       reveals extraction, citations and LLM reading in order, and interface tabs share equal dimensions,
-      icons and hover states without redundant Available badges. Self-hosting copy identifies
+      icons and hover states without redundant Available badges. Each story step has concise action
+      bullets, with a lighter open layout; agent copy includes Codex, OpenCode and Gemini CLI. Self-hosting copy identifies
       VPS/Cloudflare configs and guides, container targets and the forthcoming Helm chart. The CEO also supplies a brand style guide; departmental academies have distinct designs and
       example tenant domains. The repeated
       principles grid is replaced by a sourced Scottish Book brand story and the selected Stitch Ulam portrait.

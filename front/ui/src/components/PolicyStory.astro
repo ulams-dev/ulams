@@ -10,6 +10,7 @@ export interface PolicyStoryProps {
   journey: Array<{
     title: string;
     text: string;
+    bullets?: string[];
     status?: "available" | "coming";
   }>;
   visual: {
@@ -83,6 +84,7 @@ const alternatives = [
         <div class="ps-narration">
           <span class="ps-chapter">0{i + 1} / 0{journey.length}</span>
           <h2>{step.title}</h2><p>{step.text}</p>
+          {step.bullets && <ul class="ps-explanation" role="list">{step.bullets.map((bullet) => <li>{bullet}</li>)}</ul>}
           <p class="u-visually-hidden">{alternatives[i]}</p>
         </div>
         <div class={`ps-scene ps-scene--${i}`} aria-hidden="true">
@@ -249,11 +251,9 @@ const alternatives = [
   ulams-policy-story {
     display: block;
     overflow: hidden;
-    background: var(--ulams-color-card-bg);
-    border: 1px solid var(--ulams-color-border);
-    border-radius: 20px;
-    box-shadow: 0 25px 60px -35px color-mix(in srgb, var(--ulams-color-primary)
-          35%, transparent);
+    background: transparent;
+    border-block: 1px solid var(--ulams-color-border);
+    border-radius: 0;
   }
   .ps-topline {
     display: flex;
@@ -323,15 +323,13 @@ const alternatives = [
     min-width: 0;
     min-height: 320px;
     padding: 18px;
-    background: radial-gradient(
-        ellipse at 45% 15%,
-        color-mix(in srgb, var(--ulams-color-primary) 9%, transparent),
-        transparent 70%
-      ),
-      var(--ulams-color-surface, var(--ulams-color-bg));
-    border-radius: 14px;
+    background: transparent;
+    border-radius: 0;
     place-items: center;
   }
+  .ps-explanation { display:grid; gap:9px; margin:17px 0 0; padding-left:18px; color:var(--ulams-color-text); font-size:.8rem; line-height:1.6; }
+  .ps-explanation li { padding-left:3px; }
+  .ps-explanation li::marker { color:var(--ulams-color-accent); }
   .ps-scene h4 {
     margin: 10px 0;
     color: var(--ulams-color-text);
@@ -1099,7 +1097,7 @@ const alternatives = [
       grid-template-columns: minmax(0, 1fr);
       gap: 20px;
       align-content: start;
-      min-height: 740px;
+      min-height: 800px;
       padding: 20px;
     }
     .ps-upload-actor, .ps-upload-file>div, .ps-brief-bar, .ps-ingest-node b, .ps-brief-question, .ps-brief-answer { font-size:.65rem; }

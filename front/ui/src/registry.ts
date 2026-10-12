@@ -425,6 +425,7 @@ export const registry = {
                 {
                   title: text("Story step title", { maxLength: 60 }),
                   text: text("What happens and why this step matters", { maxLength: 180 }),
+                  bullets: list(text("Concise action or outcome", { maxLength: 140 }), "Practical explanation of this step", { minItems: 2, maxItems: 4 }),
                   status: oneOf(["available", "coming"], "Whether this capability is available or on the roadmap", "available"),
                 },
                 ["title", "text"]

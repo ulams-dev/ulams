@@ -18,7 +18,7 @@ const STRUCTURAL = new Set(["component", "theme", "id", "variant", "icon", "kind
 /** Keys that hold code, file names, hosts, colours or example data: never translated. */
 const VERBATIM = new Set(["code", "commands", "host", "value", "logo", "file", "citation", "questionCite", "brand"]);
 /** Product and standard names that an English string mentions: the translation must still contain them. */
-const NAMES = ["ulams", "Claude Code", "Claude", "Anthropic", "MCP", "H5P", "SCORM", "cmi5", "xAPI", "LTI 1.3", "OpenAPI", "Docker Compose", "Sylius", "Figma", "Stitch", "GitHub", "MIT", "TypeScript", "REST API", "@ulams/sdk"];
+const NAMES = ["ulams", "Codex", "OpenCode", "Gemini CLI", "Claude Code", "Claude", "Anthropic", "MCP", "H5P", "SCORM", "cmi5", "xAPI", "LTI 1.3", "OpenAPI", "Docker Compose", "Sylius", "Figma", "Stitch", "GitHub", "MIT", "TypeScript", "REST API", "@ulams/sdk"];
 
 interface Problem {
   path: string;
