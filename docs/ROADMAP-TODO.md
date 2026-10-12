@@ -11,6 +11,9 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-12) Owner requested the complete previous feature catalogue on Comparison,
+      organised by stakeholder with full descriptions and documentation links (ADR 0100 Proposed).
+
 - [x] (2026-10-12) Owner rejected the open-core model and paid cloud/enterprise tiers. Public
       Overview, Comparison and licensing copy now describe open-source software (ADR 0099 Proposed).
 
@@ -645,6 +648,9 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       The example workflow has no availability badges; planned delivery is tracked under Phase 6)
 - [x] (new) Link the owner’s ULAM scientific paper under the standards, as requested in the
       follow-up: verified PDF and source repository, authorship and PDF version date, EN/PL/ZH.
+- [x] (new) Restore the complete Comparison feature catalogue by stakeholder: 101 descriptions,
+      14 categories and 54 H5P types, six audiences, package/guide links, native disclosures and
+      ItemList JSON-LD in EN/PL/ZH (ADR 0100 Proposed).
 - [x] (new) Split platform product Overview and Comparison pages in EN/PL/ZH, with audited SEO metadata,
       JSON-LD, robots and sitemap routes (implemented and verified locally; plan batch 4; ADR 0097 Proposed)
 - [x] (new) Three new free demo academies, `gravity` (Gravity Lab, 3D simulation), `poland` (Poland, Measured /

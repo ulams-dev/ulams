@@ -190,7 +190,7 @@ describe("public comparison page documents", () => {
       expect(String(doc.props?.title)).toContain("ulams");
       expect(doc.props?.lang).toBe(LOCALE_META[locale].lang);
       const main = doc.children!.find((node) => node.component === "Main")!;
-      expect(main.children!.map((node) => node.component)).toEqual(["Hero", "FeatureList", "Steps", "ComparisonTable"]);
+      expect(main.children!.map((node) => node.component)).toEqual(["Hero", "FeatureIndex", "Steps", "ComparisonTable"]);
       expect((main.children![3]!.props as Record<string, unknown>).caption).toBeTruthy();
       const withLang = withLanguages(doc, languageLinks(locale, "comparison"), LOCALE_META[locale].path);
       const data = { comparison: comparisonModel(applyComparisonStatus(comparisonData, "actual")), demos: [], workflows: workflowsModel("actual", locale) };

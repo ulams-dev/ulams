@@ -58,32 +58,914 @@
           }
         },
         {
-          "component": "FeatureList",
+          "component": "FeatureIndex",
           "props": {
-            "variant": "grid",
-            "eyebrow": "Dla osób zaangażowanych",
-            "title": "Jedna platforma, różne sposoby pracy",
-            "intro": "Ten sam przepływ kursu ze źródłami wspiera osoby tworzące, utrzymujące i realizujące szkolenia techniczne.",
-            "items": [
+            "id": "features",
+            "eyebrow": "Według odbiorców",
+            "title": "Funkcje według roli w organizacji",
+            "intro": "Przeglądaj pełny katalog funkcji według odbiorców. Rozwiń kategorię, aby przeczytać opisy, sprawdzić status funkcji i otworzyć dokumentację.",
+            "docsBase": "https://ulams-dev.github.io/ulams",
+            "groups": [
               {
-                "icon": "code",
-                "title": "Inżynierowie i autorzy dokumentacji",
-                "text": "Zamieniaj dokumentację produktu w uporządkowane materiały szkoleniowe i sprawdzaj ich źródła."
+                "id": "content",
+                "title": "Lekcje i typy treści",
+                "summary": "Typy treści poniżej można dowolnie łączyć w jednym kursie.",
+                "items": [
+                  {
+                    "title": "Siedem wbudowanych typów tematów",
+                    "text": "Wideo, audio, obraz, PDF, tekst sformatowany (Markdown), oEmbed i H5P w jednym kursie.",
+                    "packages": [
+                      "topic-types",
+                      "courses"
+                    ]
+                  },
+                  {
+                    "title": "Kursy w LiaScript",
+                    "text": "Napisz kurs w Markdownie LiaScript. Każda zmiana, wgranie lub przywrócenie tworzy niezmienną wersję, więc nic nie jest nadpisywane.",
+                    "packages": [
+                      "liascript"
+                    ]
+                  },
+                  {
+                    "title": "Interaktywne aplikacje webowe",
+                    "text": "Wgraj zip z plikiem index.html i manifestem. Działa w piaskownicy na domenie treści tenanta, z polityką bezpieczeństwa treści dla każdej wersji i wersjami, które możesz przypiąć lub śledzić.",
+                    "packages": [
+                      "interactive"
+                    ]
+                  },
+                  {
+                    "title": "Lekcje z układem",
+                    "text": "Treść lekcji złożona z zatwierdzonych komponentów dydaktycznych, takich jak osie czasu, karty do odwracania, kroki i wyróżnienia.",
+                    "packages": [
+                      "topic-type-layout"
+                    ]
+                  },
+                  {
+                    "title": "Projekty uczniów",
+                    "text": "Uczący się wgrywają swoje rozwiązania jako pliki.",
+                    "packages": [
+                      "topic-type-project"
+                    ]
+                  },
+                  {
+                    "title": "Kursy, kategorie i tagi",
+                    "text": "Uporządkuj katalog za pomocą kategorii i tagów.",
+                    "packages": [
+                      "courses",
+                      "categories",
+                      "tags"
+                    ]
+                  },
+                  {
+                    "title": "Słowniki i strony",
+                    "text": "Zarządzaj słownikami i ich wyrażeniami oraz publikuj strony statyczne.",
+                    "packages": [
+                      "dictionaries",
+                      "pages"
+                    ]
+                  },
+                  {
+                    "title": "Zakładki i notatki",
+                    "text": "Uczący się przechowują zakładki i notatki w jednym modelu danych.",
+                    "packages": [
+                      "bookmarks_notes"
+                    ]
+                  }
+                ],
+                "audience": "author"
               },
               {
-                "icon": "sparkle",
-                "title": "Projektanci szkoleń i L&D",
-                "text": "Przygotuj opis kursu, sprawdź jego strukturę i zatwierdź treści przed udostępnieniem."
+                "id": "learner",
+                "title": "Doświadczenie uczącego się",
+                "summary": "Renderowana po stronie serwera aplikacja uczącego się z odtwarzaczem kursu działającym na małych ekranach.",
+                "items": [
+                  {
+                    "title": "Odtwarzacz kursu",
+                    "text": "Drzewo programu ze statusem każdego tematu (ukończony, bieżący, otwarty lub zablokowany), pasek postępu i strona ukończenia, z odtwarzaczem dla każdego typu tematu.",
+                    "href": "https://ulams-dev.github.io/ulams/learners/course-player/"
+                  },
+                  {
+                    "title": "Notatki i zakładki",
+                    "text": "Uczący się zapisują notatki i zakładki w trakcie nauki.",
+                    "packages": [
+                      "bookmarks_notes"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/learners/notes-and-bookmarks/"
+                  },
+                  {
+                    "title": "Dostępność domyślnie",
+                    "text": "WCAG 2.2 AA to standard jakości stron dla uczących się, skanowany axe w testach."
+                  },
+                  {
+                    "title": "Logowanie przez przeglądarkę",
+                    "text": "Uczący się i tutorzy logują się w aplikacji webowej, a ta sama sesja zatwierdza tokeny CLI i agentów.",
+                    "href": "https://ulams-dev.github.io/ulams/learners/cli-sign-in/"
+                  }
+                ],
+                "audience": "learner"
               },
               {
-                "icon": "layers",
-                "title": "IT i infrastruktura",
-                "text": "Uruchamiaj LMS z tenantami, integruj przez REST API i hostuj rdzeń na licencji MIT."
+                "id": "media",
+                "title": "Przetwarzanie mediów",
+                "summary": "Wgraj raz; platforma konwertuje, skaluje i zabezpiecza pliki.",
+                "items": [
+                  {
+                    "title": "Wideo do adaptacyjnego HLS przez ffmpeg",
+                    "text": "Zadanie ffmpeg w kolejce konwertuje każde wgrane wideo do strumienia HLS o kilku przepływnościach (domyślnie 250, 500 i 1000 kb/s, rozdzielczość do ustawienia). Przetwarzanie można wyłączyć, a dysk magazynu wybrać.",
+                    "packages": [
+                      "video"
+                    ]
+                  },
+                  {
+                    "title": "Skalowanie obrazów na żądanie",
+                    "text": "Poproś o dowolną szerokość i wysokość albo nazwany rozmiar, np. miniaturę, i otrzymaj zbuforowaną, zoptymalizowaną kopię: jedno wywołanie z przekierowaniem lub zbiorcze żądanie JSON dla wielu obrazów. Limity rozmiaru i liczby żądań chronią serwer.",
+                    "packages": [
+                      "images"
+                    ]
+                  },
+                  {
+                    "title": "Bezpieczne wgrywanie plików",
+                    "text": "Jedna ochrona dla każdego wgrania: rozmiar, rozszerzenie, typ MIME wykrywany z zawartości, skan antywirusowy oraz kontrole zip-slip, dowiązań symbolicznych i zip-bomb dla archiwów.",
+                    "packages": [
+                      "uploads"
+                    ]
+                  },
+                  {
+                    "title": "Biblioteka mediów",
+                    "text": "Administratorzy wyświetlają, wyszukują, wgrywają, przenoszą i usuwają pliki w bibliotece mediów.",
+                    "packages": [
+                      "files"
+                    ]
+                  }
+                ],
+                "audience": "author"
               },
               {
-                "icon": "book",
-                "title": "Kursanci techniczni",
-                "text": "Korzystaj z działających demonstracji i kursów dostępnych w witrynach akademii."
+                "id": "assessment",
+                "title": "Quizy i ocenianie",
+                "summary": "Testy wiedzy, formularze opinii i zadania.",
+                "items": [
+                  {
+                    "title": "Quizy GIFT",
+                    "text": "Osiem typów pytań: jednokrotnego wyboru, wielokrotnego wyboru, prawda/fałsz, krótkie odpowiedzi, dopasowywanie, liczbowe, esej i opis.",
+                    "packages": [
+                      "topic-type-gift"
+                    ]
+                  },
+                  {
+                    "title": "Próby, limity czasu i losowanie",
+                    "text": "Ogranicz liczbę prób i czas jednej próby, losuj kolejność pytań i odpowiedzi w każdej próbie (stałą po odświeżeniu) i pozwól nauczycielom oceniać eseje ręcznie.",
+                    "packages": [
+                      "topic-type-gift"
+                    ]
+                  },
+                  {
+                    "title": "Ankiety",
+                    "text": "Twórz ankiety, aby zbierać odpowiedzi uczących się.",
+                    "packages": [
+                      "questionnaire"
+                    ]
+                  },
+                  {
+                    "title": "Zadania",
+                    "text": "Użytkownicy tworzą własne zadania lub przypisują zadania innym użytkownikom.",
+                    "packages": [
+                      "tasks"
+                    ]
+                  },
+                  {
+                    "title": "Certyfikaty",
+                    "text": "Certyfikat PDF jest wystawiany po ukończeniu kursu, na podstawie szablonu zaprojektowanego w panelu administratora (domyślny to A4 poziomo z kodem QR). Szablon jest zapisywany razem z każdym certyfikatem.",
+                    "packages": [
+                      "templates-pdf",
+                      "courses"
+                    ]
+                  }
+                ],
+                "audience": "author"
+              },
+              {
+                "id": "h5p",
+                "title": "Interaktywne treści H5P",
+                "summary": "H5P działa we własnej, odizolowanej usłudze, więc jego kod GPL nigdy nie miesza się z rdzeniem na licencji MIT. Oto typy treści opublikowane na h5p.org.",
+                "items": [
+                  {
+                    "title": "Odizolowana usługa H5P",
+                    "text": "Twórz, edytuj i odtwarzaj treści H5P w lekcjach; obsługuje je biblioteka Lumi h5p-nodejs-library w osobnej usłudze.",
+                    "packages": [
+                      "h5p"
+                    ]
+                  },
+                  {
+                    "title": "Instalacja z H5P Hub",
+                    "text": "Administratorzy platformy instalują, ograniczają i usuwają typy treści. Biblioteki są wspólne dla wszystkich akademii, a treści i wyniki pozostają osobno dla każdego tenanta.",
+                    "packages": [
+                      "h5p"
+                    ]
+                  }
+                ],
+                "tags": [
+                  "Accordion",
+                  "Advent Calendar",
+                  "Agamotto",
+                  "AR Scavenger",
+                  "Arithmetic Quiz",
+                  "Audio Recorder",
+                  "Chart",
+                  "Collage",
+                  "Cornell Notes",
+                  "Crossword",
+                  "Dialog Cards",
+                  "Dictation",
+                  "Documentation Tool",
+                  "Drag and Drop",
+                  "Drag the Words",
+                  "Essay",
+                  "Fill in the Blanks",
+                  "Find Multiple Hotspots",
+                  "Find the Hotspot",
+                  "Find the words",
+                  "Flashcards",
+                  "Game Map",
+                  "Guess the Answer",
+                  "Iframe Embedder",
+                  "Image Hotspots",
+                  "Image Juxtaposition",
+                  "Image pairing",
+                  "Image Sequencing",
+                  "Image Slider",
+                  "Impressive Presentation",
+                  "Information Wall",
+                  "Interactive Book",
+                  "KewAr Code",
+                  "Mark the Words",
+                  "Memory Game",
+                  "Multimedia Choice",
+                  "Multiple Choice",
+                  "Page",
+                  "Personality Quiz",
+                  "Questionnaire",
+                  "Quiz (Question Set)",
+                  "Single Choice Set",
+                  "Sort the Paragraphs",
+                  "Speak the Words",
+                  "Speak the Words Set",
+                  "Structure Strip",
+                  "Summary",
+                  "Timeline",
+                  "True/False Question",
+                  "Virtual Tour (360)",
+                  "Complex fill the blanks",
+                  "Interactive Video",
+                  "Course Presentation",
+                  "Branching Scenario"
+                ],
+                "audience": "author"
+              },
+              {
+                "id": "standards",
+                "title": "Standardy i interoperacyjność",
+                "summary": "Przenieś istniejące pakiety, śledź naukę wszędzie, przenoś kursy między systemami.",
+                "items": [
+                  {
+                    "title": "SCORM 1.2 i 2004",
+                    "text": "Wgrywaj pakiety SCORM, odtwarzaj je w lekcjach i śledź postępy każdego uczącego się dla każdego SCO.",
+                    "packages": [
+                      "scorm",
+                      "laravel-scorm"
+                    ]
+                  },
+                  {
+                    "title": "cmi5 i xAPI",
+                    "text": "Uruchamiaj jednostki przypisywalne cmi5; własne repozytorium rekordów xAPI przyjmuje zdarzenia.",
+                    "packages": [
+                      "cmi5",
+                      "lrs"
+                    ]
+                  },
+                  {
+                    "title": "LTI 1.3 w obie strony",
+                    "text": "Uruchamiaj zewnętrzne narzędzia w lekcjach z przekazywaniem ocen albo pozwól, by Moodle, Canvas i inne LMS-y uruchamiały kursy ulams.",
+                    "packages": [
+                      "lti"
+                    ],
+                    "status": "coming"
+                  },
+                  {
+                    "title": "Import i eksport kursów",
+                    "text": "Przenoś kursy między instalacjami jako pakiety .ulam z plikiem content.json i wszystkimi zasobami.",
+                    "packages": [
+                      "courses-import-export"
+                    ]
+                  },
+                  {
+                    "title": "Użytkownicy z CSV",
+                    "text": "Eksportuj i importuj użytkowników w formacie CSV.",
+                    "packages": [
+                      "csv-users"
+                    ]
+                  },
+                  {
+                    "title": "Adapt Learning",
+                    "text": "Źródła kursów Adapt jako wersjonowany JSON, budowane do SCORM przez odizolowanego workera GPL-3.0. Domyślnie wyłączone.",
+                    "packages": [
+                      "adapt"
+                    ],
+                    "status": "preview"
+                  }
+                ],
+                "audience": "engineering"
+              },
+              {
+                "id": "ai",
+                "title": "AI i Living Course",
+                "summary": "AI proponuje, autor zatwierdza: każda zmiana jest diffem do przeglądu, a każdy wygenerowany element cytuje swoje źródło.",
+                "items": [
+                  {
+                    "title": "Kreator kursów AI",
+                    "text": "Zamień Markdown, PDF lub DOCX w kurs z cytowaniami: krótki wywiad, zatwierdzany przez Ciebie konspekt z celami nauczania, wygenerowane lekcje i quizy, wdrożone przez serwisy domenowe LMS.",
+                    "packages": [
+                      "course-builder"
+                    ]
+                  },
+                  {
+                    "title": "Living Course",
+                    "text": "Obserwuje źródła kursu, znajduje lekcje i pytania quizowe, które cytują zmienione fragmenty, i proponuje aktualizacje z cytowaniami do przejrzenia jako jeden diff. Postępy uczących się zachowują jawne reguły.",
+                    "packages": [
+                      "living-course"
+                    ],
+                    "status": "coming"
+                  },
+                  {
+                    "title": "Warstwa LLM niezależna od dostawcy",
+                    "text": "Jedna warstwa dostępu do dużych modeli językowych dla wszystkich pakietów, ze sterownikiem Anthropic oraz sterownikami fake i disabled do testów.",
+                    "packages": [
+                      "ai"
+                    ]
+                  }
+                ],
+                "audience": "author"
+              },
+              {
+                "id": "teacher-analytics",
+                "title": "Analityka dla nauczycieli i autorów",
+                "summary": "Co można mierzyć już dziś.",
+                "items": [
+                  {
+                    "title": "Statystyki kursu",
+                    "text": "Średni czas i czas na temat, osoby, które kupiły, zaczęły i ukończyły, ukończone tematy oraz lista obecności, z eksportem do arkusza.",
+                    "packages": [
+                      "reports"
+                    ]
+                  },
+                  {
+                    "title": "Statystyki tematów i quizów",
+                    "text": "Średni czas na temat i podsumowanie wyników każdego quizu GIFT.",
+                    "packages": [
+                      "reports",
+                      "topic-type-gift"
+                    ]
+                  },
+                  {
+                    "title": "Raporty quizów i ręczne ocenianie",
+                    "text": "Każda próba filtrowana według daty, kursu i uczącego się, z widocznymi odpowiedziami. Oceń eseje lub popraw dowolny automatyczny wynik, a suma się zaktualizuje.",
+                    "packages": [
+                      "topic-type-gift"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/creators/quizzes/"
+                  },
+                  {
+                    "title": "Wykresy na pulpicie",
+                    "text": "Wydatki na kurs, popularność kursów, czas spędzony na kursie i popularność tutorów, a także najlepiej oceniane kursy i warianty pokazujące tutorom tylko ich własne kursy.",
+                    "packages": [
+                      "reports"
+                    ]
+                  },
+                  {
+                    "title": "Aktywność w okresie",
+                    "text": "Nowi użytkownicy, aktywni użytkownicy oraz rozpoczęte i ukończone kursy między dowolnymi dwiema datami.",
+                    "packages": [
+                      "reports"
+                    ]
+                  },
+                  {
+                    "title": "Historia metryk",
+                    "text": "Metryki można zapisywać według harmonogramu, dzięki czemu API zwraca wartość dla przeszłej daty. W domyślnej konfiguracji wyłączone.",
+                    "packages": [
+                      "reports"
+                    ]
+                  },
+                  {
+                    "title": "Ankiety",
+                    "text": "Ankiety z pytaniami ocennymi, tekstowymi i recenzjami, opcjonalną maksymalną punktacją, publicznymi lub ukrytymi odpowiedziami oraz wynikami dla każdej ankiety.",
+                    "packages": [
+                      "questionnaire"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/questionnaires/"
+                  },
+                  {
+                    "title": "Wyniki xAPI",
+                    "text": "Wyniki cmi5 trafiają do wbudowanego repozytorium rekordów nauki, z listą zdarzeń w panelu administratora.",
+                    "packages": [
+                      "lrs",
+                      "cmi5"
+                    ]
+                  },
+                  {
+                    "title": "Śledzenie SCORM",
+                    "text": "Postępy każdego uczącego się dla każdego SCO, zapisywane dla każdego pakietu SCORM.",
+                    "packages": [
+                      "scorm",
+                      "laravel-scorm"
+                    ]
+                  },
+                  {
+                    "title": "Dziennik powiadomień",
+                    "text": "Kto został powiadomiony o czym i kiedy, z filtrami użytkownika, zdarzenia i daty.",
+                    "packages": [
+                      "notifications"
+                    ]
+                  },
+                  {
+                    "title": "Ścieżka audytu aktualizacji",
+                    "text": "Każda decyzja Living Course trafia do ścieżki audytu odpornej na modyfikacje, a postępy uczących się podlegają jawnym regułom.",
+                    "packages": [
+                      "living-course"
+                    ],
+                    "status": "coming"
+                  },
+                  {
+                    "title": "Analityka kursu dla autorów",
+                    "text": "Pulpit dla każdego kursu z postępami, ukończeniem, wynikami quizów i fragmentami, które mylą uczących się.",
+                    "status": "coming"
+                  },
+                  {
+                    "title": "Uczący się zagrożeni porażką",
+                    "text": "Punktacja ryzyka oparta na regułach, z czytelnymi uzasadnieniami i progami dla każdego tenanta, oraz ograniczane częstotliwościowo przypomnienia.",
+                    "status": "coming"
+                  },
+                  {
+                    "title": "Tutor AI",
+                    "text": "Odpowiada wyłącznie na podstawie źródeł kursu, z cytowaniami, i mówi, gdy pytanie wykracza poza zakres.",
+                    "status": "coming"
+                  }
+                ],
+                "audience": "owner"
+              },
+              {
+                "id": "sales-analytics",
+                "title": "Analityka sprzedaży",
+                "summary": "Przychody, klienci i zamówienia, z tych samych danych, na których działa sklep.",
+                "items": [
+                  {
+                    "title": "Przychód na kurs",
+                    "text": "Suma opłaconych pozycji zamówień dla każdego kursu, jako wykres na pulpicie i metryka API.",
+                    "packages": [
+                      "reports",
+                      "cart"
+                    ]
+                  },
+                  {
+                    "title": "Najlepiej sprzedające się i najlepiej oceniane kursy",
+                    "text": "Szereguj kursy według sprzedaży i ocen.",
+                    "packages": [
+                      "reports"
+                    ]
+                  },
+                  {
+                    "title": "Nowi i powracający klienci",
+                    "text": "Statystyki koszyka pokazują nowych klientów, klientów powracających i wydatki na klienta.",
+                    "packages": [
+                      "reports",
+                      "cart"
+                    ]
+                  },
+                  {
+                    "title": "Od zakupu do ukończenia",
+                    "text": "Dla każdego kursu: ile osób go kupiło, zaczęło i ukończyło.",
+                    "packages": [
+                      "reports"
+                    ]
+                  },
+                  {
+                    "title": "Zamówienia",
+                    "text": "Suma częściowa, podatek, suma, pozycje, kupujący i status każdego zamówienia, z filtrami zakresu dat, użytkownika, produktu i statusu.",
+                    "packages": [
+                      "cart",
+                      "shopping-cart"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/sales/"
+                  },
+                  {
+                    "title": "Płatności",
+                    "text": "Kwota, waluta, status i opłacany obiekt każdej płatności: nowa, przekierowanie, opłacona, nieudana, anulowana lub zwrócona.",
+                    "packages": [
+                      "payments"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/sales/"
+                  },
+                  {
+                    "title": "Eksport do arkusza",
+                    "text": "Statystyki kursów i tematów można wyeksportować do arkusza do własnej analizy.",
+                    "packages": [
+                      "reports"
+                    ]
+                  }
+                ],
+                "audience": "sales"
+              },
+              {
+                "id": "live",
+                "title": "Nauka na żywo",
+                "summary": "Webinary, spotkania, wydarzenia stacjonarne i sesje jeden na jeden.",
+                "items": [
+                  {
+                    "title": "Webinary z transmisją na YouTube",
+                    "text": "Planuj webinary z przypomnieniami godzinę i dzień wcześniej i transmituj je na żywo w YouTube.",
+                    "packages": [
+                      "webinar",
+                      "youtube"
+                    ]
+                  },
+                  {
+                    "title": "Spotkania Jitsi",
+                    "text": "Generuj parametry odtwarzacza Jitsi dla spotkań wideo.",
+                    "packages": [
+                      "jitsi"
+                    ]
+                  },
+                  {
+                    "title": "Pencil Spaces",
+                    "text": "Integracja z Pencil Spaces.",
+                    "packages": [
+                      "pencil-spaces"
+                    ]
+                  },
+                  {
+                    "title": "Wydarzenia stacjonarne",
+                    "text": "Zarządzaj wydarzeniami stacjonarnymi.",
+                    "packages": [
+                      "stationary-events"
+                    ]
+                  },
+                  {
+                    "title": "Konsultacje",
+                    "text": "Rozmowy jeden na jeden, z zapytaniami o bezpłatny dostęp do konsultacji, które mogą zaakceptować użytkownicy z odpowiednim uprawnieniem.",
+                    "packages": [
+                      "consultations",
+                      "consultation-access"
+                    ]
+                  },
+                  {
+                    "title": "Mattermost",
+                    "text": "Integracja z Mattermost.",
+                    "packages": [
+                      "mattermost"
+                    ]
+                  }
+                ],
+                "audience": "author"
+              },
+              {
+                "id": "commerce",
+                "title": "Sprzedaż i dostęp",
+                "summary": "LMS jest właścicielem uprawnień; dostęp jest przyznawany wyłącznie na podstawie zweryfikowanych zamówień.",
+                "items": [
+                  {
+                    "title": "Koszyk",
+                    "text": "Koszyk z produktami do kupienia.",
+                    "packages": [
+                      "cart",
+                      "shopping-cart"
+                    ]
+                  },
+                  {
+                    "title": "Produkty i subskrypcje",
+                    "text": "Sprzedawaj pojedyncze produkty, pakiety i subskrypcje (z okresem, automatycznym odnawianiem i opcjonalnym okresem próbnym), z ceną, ceną poprzednią, stawką podatku, dodatkowymi opłatami oraz limitami zakupów na użytkownika i łącznymi.",
+                    "packages": [
+                      "cart",
+                      "shopping-cart"
+                    ]
+                  },
+                  {
+                    "title": "Zasady kuponów",
+                    "text": "Rabaty kwotowe lub procentowe na cały koszyk albo wybrane produkty, z oknem aktywności, limitami łącznymi i na użytkownika, minimalną i maksymalną wartością koszyka oraz ograniczeniami do produktów, kategorii lub użytkowników.",
+                    "packages": [
+                      "vouchers"
+                    ]
+                  },
+                  {
+                    "title": "Weryfikowane powiadomienia płatności",
+                    "text": "Powiadomienia Stripe są przyjmowane tylko z poprawnym podpisem lub po pobraniu PaymentIntent ze Stripe, z obsługą 3-D Secure. Darmowe zamówienia używają bramki, która odrzuca każdą niezerową kwotę.",
+                    "packages": [
+                      "payments"
+                    ]
+                  },
+                  {
+                    "title": "Zakupy w aplikacjach mobilnych",
+                    "text": "Bramka RevenueCat przyjmuje zakupy tylko wtedy, gdy skonfigurowano weryfikator paragonów po stronie serwera.",
+                    "packages": [
+                      "payments"
+                    ],
+                    "status": "preview"
+                  },
+                  {
+                    "title": "Publikacja i dostęp",
+                    "text": "Kursy w wersji roboczej, opublikowane, zaplanowane i zarchiwizowane; kursy publiczne i darmowe tematy podglądowe; dostęp dla użytkowników i grup, prośby o dostęp i zaproszenia e-mailem.",
+                    "packages": [
+                      "courses",
+                      "course-access"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/creators/access-and-publishing/"
+                  },
+                  {
+                    "title": "Stripe i Przelewy24",
+                    "text": "Przyjmuj płatności przez Stripe lub Przelewy24; klucze bramek można zmienić w ustawieniach.",
+                    "packages": [
+                      "payments",
+                      "przelewy24-php"
+                    ]
+                  },
+                  {
+                    "title": "Kupony",
+                    "text": "Kupony obniżające cenę koszyka przed złożeniem zamówienia.",
+                    "packages": [
+                      "vouchers"
+                    ]
+                  },
+                  {
+                    "title": "Faktury",
+                    "text": "Generuj fakturę PDF na podstawie zamówienia.",
+                    "packages": [
+                      "invoices"
+                    ]
+                  },
+                  {
+                    "title": "Dostęp do kursów",
+                    "text": "Przyznawaj dostęp do kursu poszczególnym użytkownikom i grupom albo przypisuj osoby, które nie mają jeszcze konta.",
+                    "packages": [
+                      "course-access",
+                      "assign-without-account"
+                    ]
+                  },
+                  {
+                    "title": "Sklep Sylius w trybie headless",
+                    "text": "Osobna usługa Sylius 2.x za jednym frontendem: katalog, koszyk i zamówienia tam, uprawnienia w LMS.",
+                    "packages": [
+                      "commerce"
+                    ],
+                    "status": "coming"
+                  }
+                ],
+                "audience": "sales"
+              },
+              {
+                "id": "platform",
+                "title": "Platforma i administracja",
+                "summary": "Jedno wdrożenie, wiele akademii, wszystkie ustawienia w panelu administratora.",
+                "items": [
+                  {
+                    "title": "Strona dla każdego klienta",
+                    "text": "Każdy tenant ma własny host, bazę danych, bucket, klucze i prefiks Redis, więc token jednego tenanta jest odrzucany przez wszystkie pozostałe.",
+                    "packages": [
+                      "tenancy"
+                    ]
+                  },
+                  {
+                    "title": "Publiczne dema",
+                    "text": "Odwiedzający logują się jako uczeń, tutor lub administrator bez hasła; demo resetuje się co godzinę.",
+                    "packages": [
+                      "demo"
+                    ]
+                  },
+                  {
+                    "title": "Użytkownicy, grupy i uprawnienia",
+                    "text": "Zarządzanie użytkownikami, grupami i profilami z rolami i uprawnieniami za REST API.",
+                    "packages": [
+                      "auth",
+                      "permissions"
+                    ]
+                  },
+                  {
+                    "title": "Ustawienia i pola własne",
+                    "text": "Zmieniaj konfigurację w panelu administratora i dodawaj dowolną liczbę dodatkowych pól prostych do każdego modelu.",
+                    "packages": [
+                      "settings",
+                      "model-fields"
+                    ]
+                  },
+                  {
+                    "title": "Tłumaczenia",
+                    "text": "Zarządzaj tłumaczeniami.",
+                    "packages": [
+                      "translations"
+                    ]
+                  },
+                  {
+                    "title": "Szablony e-mail, SMS i PDF",
+                    "text": "Edytowalne szablony e-maili, SMS-ów (przez Twilio) i plików PDF, powiązane ze zdarzeniami.",
+                    "packages": [
+                      "templates",
+                      "templates-email",
+                      "templates-sms",
+                      "templates-pdf"
+                    ]
+                  },
+                  {
+                    "title": "Powiadomienia",
+                    "text": "Rejestruj i rozsyłaj powiadomienia ze wszystkich pakietów, rejestruj tokeny urządzeń do powiadomień zbiorczych i synchronizuj z MailerLite.",
+                    "packages": [
+                      "notifications",
+                      "bulk-notifications",
+                      "mailerlite"
+                    ]
+                  },
+                  {
+                    "title": "Raporty",
+                    "text": "Statystyki i raporty.",
+                    "packages": [
+                      "reports"
+                    ]
+                  },
+                  {
+                    "title": "Import użytkowników i zaproszenia",
+                    "text": "Importuj i eksportuj użytkowników jako CSV lub Excel oraz zapraszaj osoby, które nie mają jeszcze konta.",
+                    "packages": [
+                      "csv-users",
+                      "auth"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/users/"
+                  },
+                  {
+                    "title": "Motywy white-label",
+                    "text": "Każda akademia ma własny motyw i kolor akcentu, z dostępnym kontrastem sprawdzanym po stronie serwera.",
+                    "packages": [
+                      "tenancy",
+                      "settings"
+                    ]
+                  },
+                  {
+                    "title": "Powiadomienia w aplikacji i push",
+                    "text": "Każde zdarzenie pakietu może być zapisane jako powiadomienie w aplikacji, a administratorzy wysyłają wiadomości push na urządzenia mobilne.",
+                    "packages": [
+                      "notifications",
+                      "bulk-notifications"
+                    ]
+                  }
+                ],
+                "audience": "admin"
+              },
+              {
+                "id": "operations",
+                "title": "Bezpieczeństwo i eksploatacja",
+                "summary": "Uruchom to samodzielnie, na hostingu współdzielonym lub w klastrze, z izolacją między akademiami.",
+                "items": [
+                  {
+                    "title": "Treści w piaskownicy",
+                    "text": "H5P działa we własnej usłudze, a aplikacje interaktywne w nieprzezroczystej piaskownicy na osobnej domenie treści, z polityką bezpieczeństwa treści dla każdej wersji.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/content-origin/"
+                  },
+                  {
+                    "title": "Nagłówki bezpieczeństwa i raporty CSP",
+                    "text": "Polityka Content Security Policy dla aplikacji uczącego się, panelu administratora i API, z raportami naruszeń; zacznij w trybie samego raportowania, potem egzekwuj.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/security-headers/"
+                  },
+                  {
+                    "title": "Limity żądań",
+                    "text": "Ograniczenia dla logowania urządzeń, tokenów, API platformy, limity na token, webhooków i publicznych endpointów, konfigurowalne zmiennymi środowiskowymi.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/rate-limits/"
+                  },
+                  {
+                    "title": "Opcje samodzielnego hostingu",
+                    "text": "Docker Compose, współdzielone konto MyDevil lub VPS za Cloudflare, każde z opisanym przewodnikiem.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/self-hosting/"
+                  },
+                  {
+                    "title": "Wysoka dostępność",
+                    "text": "Topologia referencyjna oddzielająca komponenty bezstanowe od tych, które przechowują stan, wdrożenia i migracje bez przestoju oraz uwagi o Kubernetes.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/high-availability/"
+                  },
+                  {
+                    "title": "Kopie zapasowe i odtwarzanie",
+                    "text": "Twórz kopie całej instalacji i odtwarzaj ją w całości albo tylko jednego tenanta.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/backups/"
+                  },
+                  {
+                    "title": "Monitoring",
+                    "text": "Kontrole stanu każdego kontenera, endpointy HTTP do sprawdzania, kontrole workerów i harmonogramu, logi i śledzenie błędów.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/monitoring/"
+                  },
+                  {
+                    "title": "Licencje rozdzielone",
+                    "text": "Komponenty GPL, takie jak H5P i Adapt, działają w osobnych usługach. Dokumentacja wdrożenia podaje licencję każdego obrazu.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/licensing/"
+                  }
+                ],
+                "audience": "engineering"
+              },
+              {
+                "id": "developers",
+                "title": "Dla programistów",
+                "summary": "Headless z założenia: wszystko, co robią aplikacje, przechodzi przez to samo API.",
+                "items": [
+                  {
+                    "title": "Rozszerzalność przez pakiety",
+                    "text": "Każda funkcja to pakiet composera z własnymi trasami, uprawnieniami, ustawieniami i zdarzeniami. Działający przykład pokazuje cały wzorzec.",
+                    "packages": [
+                      "example-plugin"
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/extending/new-package/"
+                  },
+                  {
+                    "title": "Serwer MCP dla agentów AI",
+                    "text": "ulams mcp udostępnia każde polecenie CLI jako narzędzia MCP przez stdio lub Streamable HTTP, dla Claude Code, Claude Desktop i innych klientów MCP: domyślnie 23 narzędzia, do 535 ze wszystkimi zestawami. Dziś budowany z repozytorium; pakiet npm jest planowany.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/agents/"
+                  },
+                  {
+                    "title": "Bezpieczne dla agentów",
+                    "text": "Tryb tylko do odczytu, przełącznik ukrywający narzędzia destrukcyjne, plany dry-run z diffem dla każdego zapisu i jednorazowe tokeny potwierdzenia dla usuwania. API nadal egzekwuje uprawnienia użytkownika i zakresy tokena.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/agents/"
+                  },
+                  {
+                    "title": "Dziennik audytu agentów",
+                    "text": "Tokeny z zakresami rejestrują, co zrobił agent, razem z klientem i nazwą agenta wysyłanymi w każdym żądaniu.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/scoped-tokens/"
+                  },
+                  {
+                    "title": "Budowanie kursów z wiersza poleceń",
+                    "text": "Kreator kursów i Living Course to polecenia i narzędzia MCP: uruchom przebieg, odpowiedz w wywiadzie, zatwierdź konspekt, wdróż i sprawdzaj długie przebiegi przez uchwyt oczekiwania.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/cli-builder/"
+                  },
+                  {
+                    "title": "CLI czytelne dla maszyn",
+                    "text": "Każde polecenie zwraca kopertę JSON z kodami wyjścia, opisuje się przez ulams schema i loguje przez przeglądarkę z kodem urządzenia. Uzupełnianie w powłoce w zestawie.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/cli/"
+                  },
+                  {
+                    "title": "Strony jako dane",
+                    "text": "Strony główne i kursów to dokumenty JSON z komponentów katalogu, renderowane po stronie serwera i generowane przez Kreator kursów, więc model nigdy nie pisze kodu strony.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/generative-ui/"
+                  },
+                  {
+                    "title": "Dokumentacja OpenAPI",
+                    "text": "Każdy endpoint jest opisany w OpenAPI, z przeszukiwalną przeglądarką API i Swagger UI na każdym hoście API.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/api-reference/"
+                  },
+                  {
+                    "title": "SDK TypeScript",
+                    "text": "Typowane żądania dla serwerów i przeglądarek, z paginacją, obsługą błędów i idempotentnymi zapisami.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/sdk/"
+                  },
+                  {
+                    "title": "Tokeny API z zakresami",
+                    "text": "Tokeny ograniczone do wybranych zakresów, z dziennikiem audytu oraz nagłówkami Idempotency-Key i X-Request-Id.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/scoped-tokens/"
+                  },
+                  {
+                    "title": "Wiersz poleceń",
+                    "text": "CLI ulams wywołuje dowolny endpoint API ze skryptów i agentów, z wynikiem JSON i kodami wyjścia.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/cli/"
+                  },
+                  {
+                    "title": "Webhooki przychodzące",
+                    "text": "Webhooki dla pushy Git w Living Course, Stripe i nagrań Jitsi. Webhooków wychodzących jeszcze nie ma.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/webhooks/"
+                  }
+                ],
+                "audience": "engineering"
+              }
+            ],
+            "navLabel": "Wybierz swoją rolę",
+            "audiences": [
+              {
+                "id": "learner",
+                "title": "Uczestnicy szkoleń",
+                "summary": "Kursy, dostępny interfejs nauki, notatki i postępy w jednym miejscu."
+              },
+              {
+                "id": "author",
+                "title": "Autorzy kursów i zespoły L&D",
+                "summary": "Tworzenie lekcji, multimedia, treści interaktywne, egzaminy i zajęcia na żywo."
+              },
+              {
+                "id": "owner",
+                "title": "HR, menedżerowie i właściciele polityk",
+                "summary": "Aktywność uczestników, wyniki, raporty i funkcje związane z obowiązkowymi szkoleniami."
+              },
+              {
+                "id": "sales",
+                "title": "Sprzedaż i obsługa klientów",
+                "summary": "Sprzedaż kursów, dostęp klientów oraz zamówienia, płatności i przychody."
+              },
+              {
+                "id": "admin",
+                "title": "Administratorzy platformy",
+                "summary": "Tenanci, użytkownicy, uprawnienia, wygląd akademii, ustawienia i komunikacja."
+              },
+              {
+                "id": "engineering",
+                "title": "IT, integratorzy i agenci AI",
+                "summary": "Standardy, API, automatyzacja, bezpieczeństwo treści i utrzymanie wdrożenia."
               }
             ]
           }
@@ -119,7 +1001,7 @@
             "id": "compare",
             "eyebrow": "porównanie",
             "title": "Jak wypada ulams",
-            "intro": "ulams powstał przede wszystkim dla deweloperów i agentów AI: kursami zarządza się przez REST API i SDK dla TypeScriptu, a CLI i serwer MCP projektowane z myślą o agentach są w drodze. Porównanie z platformami open source i dla twórców oraz z zestawami enterprise; pozycje z naszej mapy drogowej oznaczono jako „Wkrótce”.",
+            "intro": "Porównaj ULAMS z platformami open source, platformami dla twórców i systemami dla organizacji. Macierz zawiera źródła i oznacza planowane funkcje jako „Wkrótce”.",
             "caption": "Porównanie funkcji ulams z platformami open source i dla twórców oraz z zestawami enterprise",
             "asOf": {
               "$data": "/comparison/asOf"

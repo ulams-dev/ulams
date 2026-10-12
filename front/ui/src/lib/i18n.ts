@@ -7,6 +7,8 @@
 export type UiLocale = "en" | "pl" | "zh";
 
 export interface UiStrings {
+  featuresOf: string;
+  packageDocs: string;
   skip: string;
   navMain: string;
   navMobile: string;
@@ -56,6 +58,8 @@ export interface UiStrings {
 }
 
 const en: UiStrings = {
+  featuresOf: "Features for {title}",
+  packageDocs: "Package documentation",
   skip: "Skip to content",
   navMain: "Main",
   navMobile: "Mobile",
@@ -115,6 +119,8 @@ const en: UiStrings = {
 };
 
 const pl: UiStrings = {
+  featuresOf: "Funkcje: {title}",
+  packageDocs: "Dokumentacja pakietu",
   skip: "Przejdź do treści",
   navMain: "Główna",
   navMobile: "Mobilna",
@@ -174,6 +180,8 @@ const pl: UiStrings = {
 };
 
 const zh: UiStrings = {
+  featuresOf: "{title} 的功能",
+  packageDocs: "软件包文档",
   skip: "跳到正文",
   navMain: "主导航",
   navMobile: "移动端导航",

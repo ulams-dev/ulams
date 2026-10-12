@@ -111,5 +111,6 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0097](0097-public-product-landing-overview-comparison.md) | Split the public product landing into Overview and Comparison | Proposed |
 | [0098](0098-policy-lifecycle-landing-story.md) | Present the policy lifecycle as one animated example workflow | Proposed |
 | [0099](0099-open-source-product-without-paid-tiers.md) | Describe ULAMS as open source without paid product tiers | Proposed |
+| [0100](0100-comparison-feature-catalogue-by-stakeholder.md) | Restore the Comparison feature catalogue by stakeholder | Proposed |
 
 <!-- END GENERATED: adr-index -->
