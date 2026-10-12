@@ -1,0 +1,188 @@
+{
+  "component": "Page",
+  "props": {
+    "theme": "platform",
+    "title": "ulams — Porównaj platformy edukacyjne",
+    "description": "Porównanie funkcji ulams z platformami open source, dla twórców i dla przedsiębiorstw, z odnośnikami do źródeł.",
+    "lang": "pl"
+  },
+  "children": [
+    {
+      "component": "SiteHeader",
+      "props": {
+        "brand": "ulams",
+        "mark": "logo",
+        "links": [
+          {
+            "label": "Przegląd",
+            "href": "/pl/"
+          },
+          {
+            "label": "Porównanie",
+            "href": "/pl/comparison/"
+          },
+          {
+            "label": "Dokumentacja",
+            "href": "https://ulams-dev.github.io/ulams/"
+          }
+        ],
+        "signIn": {
+          "label": "GitHub",
+          "href": "https://github.com/ulams-dev"
+        },
+        "cta": {
+          "label": "Zobacz dema",
+          "href": "/pl/#demos"
+        }
+      }
+    },
+    {
+      "component": "Main",
+      "children": [
+        {
+          "component": "Hero",
+          "props": {
+            "variant": "product",
+            "eyebrow": "Porównanie produktów",
+            "title": "Porównaj platformy edukacyjne",
+            "subtitle": "Porównaj platformy edukacyjne według funkcji tworzenia, udostępniania i integracji kursów.",
+            "body": "Sprawdź tabelę funkcji i odnośniki do źródeł. Dostępność funkcji jest datowana, a plany oznaczone.",
+            "primaryCta": {
+              "label": "Przegląd",
+              "href": "/pl/"
+            },
+            "secondaryCta": {
+              "label": "Zobacz dema",
+              "href": "/pl/#demos"
+            }
+          }
+        },
+        {
+          "component": "FeatureList",
+          "props": {
+            "variant": "grid",
+            "eyebrow": "Dla osób zaangażowanych",
+            "title": "Jedna platforma, różne sposoby pracy",
+            "intro": "Ten sam przepływ kursu ze źródłami wspiera osoby tworzące, utrzymujące i realizujące szkolenia techniczne.",
+            "items": [
+              {
+                "icon": "code",
+                "title": "Inżynierowie i autorzy dokumentacji",
+                "text": "Zamieniaj dokumentację produktu w uporządkowane materiały szkoleniowe i sprawdzaj ich źródła."
+              },
+              {
+                "icon": "sparkle",
+                "title": "Projektanci szkoleń i L&D",
+                "text": "Przygotuj opis kursu, sprawdź jego strukturę i zatwierdź treści przed udostępnieniem."
+              },
+              {
+                "icon": "layers",
+                "title": "IT i infrastruktura",
+                "text": "Uruchamiaj LMS z tenantami, integruj przez REST API i hostuj rdzeń na licencji MIT."
+              },
+              {
+                "icon": "book",
+                "title": "Kursanci techniczni",
+                "text": "Korzystaj z działających demonstracji i kursów dostępnych w witrynach akademii."
+              }
+            ]
+          }
+        },
+        {
+          "component": "Steps",
+          "props": {
+            "eyebrow": "Architektura",
+            "title": "Prosta droga od źródła do kursanta",
+            "intro": "ULAMS łączy headless LMS API z witrynami dla tenantów oraz narzędziami dla autorów i deweloperów.",
+            "items": [
+              {
+                "icon": "book",
+                "title": "Materiały źródłowe",
+                "text": "Autor dostarcza dokumenty i kontekst kursu."
+              },
+              {
+                "icon": "code",
+                "title": "API i narzędzia kursu",
+                "text": "API platformy i TypeScript SDK udostępniają operacje LMS aplikacjom i narzędziom deweloperskim."
+              },
+              {
+                "icon": "book",
+                "title": "Witryna kursanta tenanta",
+                "text": "Akademia każdego klienta działa w osobnej witrynie i środowisku kursu."
+              }
+            ]
+          }
+        },
+        {
+          "component": "ComparisonTable",
+          "props": {
+            "id": "compare",
+            "eyebrow": "porównanie",
+            "title": "Jak wypada ulams",
+            "intro": "ulams powstał przede wszystkim dla deweloperów i agentów AI: kursami zarządza się przez REST API i SDK dla TypeScriptu, a CLI i serwer MCP projektowane z myślą o agentach są w drodze. Porównanie z platformami open source i dla twórców oraz z zestawami enterprise; pozycje z naszej mapy drogowej oznaczono jako „Wkrótce”.",
+            "caption": "Porównanie funkcji ulams z platformami open source i dla twórców oraz z zestawami enterprise",
+            "asOf": {
+              "$data": "/comparison/asOf"
+            },
+            "groups": {
+              "$data": "/comparison/groups"
+            },
+            "sources": {
+              "$data": "/comparison/sources"
+            },
+            "note": "Nazwy produktów są znakami towarowymi ich właścicieli i służą wyłącznie do identyfikacji produktów. Poprawki są mile widziane."
+          },
+          "final": {
+            "intro": "To, co kupujący zwykle biorą pod uwagę, produkt po produkcie, w dwóch grupach: platformy open source i dla twórców oraz zestawy enterprise."
+          }
+        }
+      ]
+    },
+    {
+      "component": "SiteFooter",
+      "props": {
+        "brand": "ulams",
+        "text": "Otwarty LMS z AI w rdzeniu. Open core na licencji MIT.",
+        "links": [
+          {
+            "label": "Przegląd",
+            "href": "/pl/"
+          },
+          {
+            "label": "Porównanie",
+            "href": "/pl/comparison/"
+          },
+          {
+            "label": "Produkt",
+            "href": "#product"
+          },
+          {
+            "label": "Dema",
+            "href": "#demos"
+          },
+          {
+            "label": "Przepływy agentów",
+            "href": "#agents"
+          },
+          {
+            "label": "Standardy",
+            "href": "#standards"
+          },
+          {
+            "label": "Self-hosting",
+            "href": "#self-host"
+          },
+          {
+            "label": "Dokumentacja",
+            "href": "https://ulams-dev.github.io/ulams/"
+          },
+          {
+            "label": "GitHub",
+            "href": "https://github.com/ulams-dev"
+          }
+        ],
+        "note": "Open core na licencji MIT"
+      }
+    }
+  ]
+}

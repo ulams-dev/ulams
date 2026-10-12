@@ -211,19 +211,14 @@ it is a static arrangement with every label visible; in a container narrower tha
 tile grid. A capability's `status` shows a small "Coming" tag in `actual` mode only. Cards carry a start
 `angle` chosen so none overlap in the static arrangement.
 
-`ULAMS_LANDING_STATUS` (`src/lib/landing-status.ts`) decides what the platform landing displays:
+Public Overview and Comparison pages always show actual product and roadmap status from source data.
+`src/lib/landing-status.ts` retains helpers used by unit tests and draft previews; its legacy `final`
+mode is not exposed as a public page setting.
 
-- `final` (default while the product is in review): every roadmap item is shown as delivered. No
-  Coming/Preview badges or roadmap captions, no footnote about planned interfaces, and ulams's own
-  comparison cells that say Coming or Partial read Yes.
-- `actual`: the honest status. The data files always keep the true status, and competitor cells never change.
-
-The Playwright smoke test "platform landing sells the product" asserts the mode it runs in: start it with the same
-`ULAMS_LANDING_STATUS` as the server (unset means `final`), e.g. `ULAMS_LANDING_STATUS=actual yarn playwright test`
-against a server started in `actual` mode.
-
-**Before any public launch, run in `actual` mode or confirm that everything the landing shows has shipped.**
-Nodes of `platform.json` may carry `final: { …prop overrides… }` for text that only reads right in one mode.
+The Overview and Comparison routes are localized independently (`/`, `/pl/`, `/zh/` and their
+`/comparison/` counterparts). Their canonical and hreflang metadata, Open Graph/X cards and JSON-LD
+come from the server-rendered page models. `robots.txt` and `sitemap.xml` only serve the platform host;
+the sitemap includes the six canonical product URLs. See the [reference frontend docs](../docs-site/src/content/docs/developers/reference-frontend.mdx#public-product-pages).
 
 ## Landing languages (English, Polish, Chinese)
 
@@ -241,8 +236,7 @@ Astro i18n routes (`i18n` in `astro.config.mjs`) answered on a platform host onl
   The header has a language switcher (EN, PL, 中文) that is a control of its own, not one of the six links; it keeps the
   current `#anchor` (`front/ui/src/elements/lang-switch.ts`, the only script added).
 - Chinese uses the system font stack (PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC); no CJK web font.
-- `ULAMS_LANDING_STATUS` works the same in all three languages (the status is applied to the English data, then
-  translated). Terms are fixed in `src/i18n/GLOSSARY.md`; the copy has no native review yet (owner-action issue).
+- Product and roadmap status is shown from source data in every language. Terms are fixed in `src/i18n/GLOSSARY.md`; the copy has no native review yet (owner-action issue).
 - Playwright: `tests/e2e/landing-i18n.spec.ts` (meta, hreflang, switcher, overflow at 360 px, axe, screenshots in
   `tests/screens/landing-{pl,zh}-{desktop,phone}.png`).
 

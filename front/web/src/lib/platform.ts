@@ -34,7 +34,7 @@ const STYLE: Record<string, { label: string; fallbackTitle: string; text: string
   ulam: { label: "Mathematics and history", fallbackTitle: "The Scottish Book", text: "Ulam, the Lwów School and the Scottish Book, with five live interactives." },
 };
 
-export async function platformModel(current: URL, status: LandingStatus = config.landingStatus, locale: Locale = "en") {
+export async function platformModel(current: URL, status: LandingStatus = "actual", locale: Locale = "en") {
   const copy = locale === "en" ? null : DEMO_COPY[locale];
   const firstRule = config.tenantHosts.split(/[,\n]+/)[0]?.split("=>")[0]?.trim() ?? "";
   const demos = await Promise.all(

@@ -14,7 +14,7 @@
   --ulams-color-border: #dedce8;
   --ulams-color-accent-bg: #3427c7;
   --ulams-color-input-bg: #ffffff;
-  --ulams-color-positive: #15803d;
+  --ulams-color-positive: #166534;
   --ulams-color-warn: #a16207;
   --ulams-color-error: #b91c1c;
   --ulams-color-info: #1d4ed8;
@@ -335,18 +335,27 @@
   background: rgb(255 255 255 / 0.06);
 }
 
-[data-theme="platform"] .u-chip {
+[data-theme="platform"] .u-chips .u-chip {
   border-color: rgb(255 255 255 / 0.16);
-  background: rgb(255 255 255 / 0.07);
+  background: #1b1c38;
   color: #f5f4ff;
 }
 
-[data-theme="platform"] .u-chip__note {
+[data-theme="platform"] .u-chips .u-chip__note {
   color: #aaaac2;
+}
+
+[data-theme="platform"] .u-chips .u-status--coming {
+  color: #d2d0e7;
+  border-color: currentColor;
 }
 
 [data-theme="platform"] .u-compare .u-section-head .u-eyebrow {
   color: #3427c7;
+}
+
+[data-theme="platform"] .u-compare .u-compare__colnote {
+  color: #5d5e73;
 }
 
 [data-theme="platform"] .u-cta--terminal .u-cta__box {

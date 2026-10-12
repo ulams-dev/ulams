@@ -269,8 +269,7 @@ the earlier ones. See [First admin and first tenant](/operators/first-tenant/) f
 - **Demo mode off.** `create-tenant.sh` creates tenants with `--demo=off`. Demo mode (password-less login, hourly reset
   of the tenant, see [Demo mode](/admin/demo-mode/)) must never be on in production. The compose file sets no demo tenants on the
   landing (`ULAMS_DEMO_TENANTS` empty). Check a tenant with `docker compose exec api php artisan ulams:tenant:list`.
-- **Landing status.** `ULAMS_LANDING_STATUS=actual` is the default in this compose file: the landing keeps the honest
-  Coming and Partial labels. `final` renders everything as delivered; do not use it for a public launch (issue #92).
+- **Landing status.** Public Overview and Comparison pages always show the actual status in source data.
 - **CSP.** Both Content Security Policies start in **report-only** mode (`CSP_ENFORCE=false`,
   `ULAMS_CSP_HEADER=Content-Security-Policy-Report-Only`). After about a week of real traffic without unexpected rows in
   `GET /api/admin/csp-reports` (see [Security headers](/operators/security-headers/)), set `CSP_ENFORCE=true` and

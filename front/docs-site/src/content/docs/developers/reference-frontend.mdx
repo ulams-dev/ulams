@@ -12,6 +12,11 @@ learnerRoutes:
   - /h5p/[...path]
   - /healthz
   - /lti/launch
+  - /comparison
+  - /pl/comparison
+  - /zh/comparison
+  - /robots.txt
+  - /sitemap.xml
 ---
 
 import { Aside, FileTree } from "@astrojs/starlight/components";
@@ -39,6 +44,8 @@ What learners see is described in [Learners](/learners/); this page covers the c
   - middleware.ts tenant, CSRF check, session, security headers
   - pages/
     - index.astro landing (tenant document) or platform landing
+    - comparison.astro and pl/comparison.astro, zh/comparison.astro
+    - sitemap.xml.ts and robots.txt.ts (platform-host only)
     - courses/[id].astro
     - learn/[courseId]/ lesson player and finish page
     - events/, account/, login.astro, logout.ts, tenants.astro, platform.astro
@@ -53,6 +60,24 @@ What learners see is described in [Learners](/learners/); this page covers the c
 
 </FileTree>
 
+### Public product pages
+
+On a platform host, `/`, `/pl/` and `/zh/` render the localized product Overview. The separate
+Comparison page is available at `/comparison/`, `/pl/comparison/` and `/zh/comparison/`. Both page
+families use server rendered catalogue documents and the existing sourced comparison data. Public
+product claims keep their actual roadmap status, including when a local preview setting hides those
+labels elsewhere.
+
+`Base.astro` renders a page title, description, canonical URL, localized `hreflang` links including
+`x-default`, Open Graph and X card tags, and escaped JSON-LD. Overview describes ulams as a software
+application; Comparison is a collection page with breadcrumbs. JSON-LD omits ratings, offers and
+counts. `/robots.txt` points to `/sitemap.xml`; the sitemap lists just the six canonical product URLs
+and their alternate languages. Both endpoints return 404 on tenant hosts.
+
+The comparison matrix uses native tables with captions and scoped row and column headers. On narrow
+screens, each table scrolls inside a keyboard-focusable region so the document itself does not scroll
+horizontally. Overview links to Comparison from the shared header and footer.
+
 ### Configuration
 
 All settings are runtime environment variables read when the server starts (`astro:env/server`,
@@ -65,28 +90,17 @@ never inlined into the build). Defaults are in `src/lib/config.ts` and `front/we
 | `ULAMS_PLATFORM_HOSTS` | `app.localhost,localhost,127.0.0.1` | Hosts that serve the platform landing instead of a tenant |
 | `ULAMS_DEFAULT_TENANT` | `coffee` | Tenant for hosts without a rule (for example a LAN IP); empty shows the tenant picker |
 | `ULAMS_DEMO_TENANTS` | `gravity,poland,ulam,coffee,oncall,nightsky` | Demo tenants listed on the platform landing |
-| `ULAMS_LANDING_STATUS` | `final` | What the platform landing shows for roadmap items: `final` (also used for any other value) renders everything as delivered, `actual` keeps the honest Coming and Partial labels. Run `actual` (or confirm everything shipped) before a public launch; see [Environment](/operators/environment/#the-platform-landing-switch) |
 | `ULAMS_CACHE_TTL` | `45` | Seconds public API data stays fresh in the server cache (minimum 5) |
 | `ULAMS_WARM_TENANTS` | `gravity,poland,ulam,coffee,oncall,nightsky` | Tenants whose public data is fetched at server start |
 | `DEMO_STUDENT_EMAIL`, `DEMO_STUDENT_PASSWORD` | `student1@{slug}.ulams.app`, empty | Fallback login when a tenant has no demo mode; never sent to the browser |
 
-### The platform landing's stories
+### The platform landing content
 
-Besides the demo cards and the comparison table, the platform landing has three animated stories built
-from catalogue components: `LivingCourseStory` (a changed source updates the lesson that cites it),
-`BuilderStory` (a document becomes a cited course in the studio) and `WorkflowShowcase` (tabs for
-Claude Code, Claude with the MCP server, the CLI, REST and the studio). They are played by a small
-timeline player (`front/ui/src/elements/story.ts`): elements carry `data-at`, `data-until`, `data-type`
-and `data-count` in milliseconds, the player toggles classes and text, and CSS does the moving
-(transforms and opacity). Stories play only while visible, pause on hover or focus (tabs), have a Pause
-control, show their final frame with `prefers-reduced-motion` or without JavaScript, and give screen
-readers a text description or a plain transcript. The commands of the workflow tabs live in
-`front/web/src/data/workflows.json` together with their true status (the Claude Code, MCP and CLI tabs are
-labelled Coming until the CLI is released, roadmap item M6). `ULAMS_LANDING_STATUS` only changes how that status is displayed.
-
-The white-label section (`WhiteLabelStory`) uses the same player for a four-step story (brand, subdomain site, one
-course per source, per-course analytics) and a numbered list. Its steps carry a `status` and a `today` caption that
-`ULAMS_LANDING_STATUS=final` removes; in `actual` mode the analytics step and the Living Course sync line read Coming.
+Overview introduces the product, shows six live academy demos, explains the author-reviewed
+source-to-course workflow, lists product principles and standards, shows current agent/API workflows,
+answers product questions and links to self-hosting. Comparison contains stakeholder and architecture
+summaries followed by the sourced feature matrix. These public pages render roadmap labels directly
+from source data; no display switch can promote planned work to shipped status.
 
 ### Landing languages
 
@@ -100,7 +114,8 @@ components (badges, accessible names, buttons) follow the page language.
 Each page sets `<html lang>`, a canonical URL and `hreflang` alternates (with `x-default` for English). The header has a
 language switcher (EN, PL, 中文), separate from the six navigation links; it keeps the section you are reading. Chinese
 uses the system font stack (PingFang SC, Hiragino Sans GB, Microsoft YaHei, Noto Sans SC) instead of a web font.
-`ULAMS_LANDING_STATUS` works the same in all three languages. See ADR 0096.
+Overview and Comparison have separate localized routes; the language switcher keeps the visitor on the
+same page in the selected language. See ADR 0096.
 
 All variables of every app are in [Environment variables](/reference/environment-variables/). The
 production image is described in [Container images](/developers/container-images/).

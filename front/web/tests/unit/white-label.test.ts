@@ -16,9 +16,10 @@ describe("concise platform feature list", () => {
     expect(sections.some((section) => section.component === "WhiteLabelStory")).toBe(false);
   });
 
-  it("keeps the demos and developer workflow ahead of the comparison details", () => {
+  it("keeps demos and developer workflow on Overview, with comparison linked separately", () => {
     const order = sections.map((section) => section.component);
     expect(order.indexOf("Showcase")).toBeLessThan(order.indexOf("WorkflowShowcase"));
-    expect(order.indexOf("WorkflowShowcase")).toBeLessThan(order.indexOf("ComparisonTable"));
+    expect(order).not.toContain("ComparisonTable");
+    expect((doc.children!.find((node) => node.component === "SiteHeader")!.props!.links as Array<{ href: string }>)[1]!.href).toBe("/comparison/");
   });
 });

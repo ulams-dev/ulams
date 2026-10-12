@@ -36,7 +36,7 @@ describe("platform landing in final mode", () => {
   });
   it("does not change the source document", () => {
     expect(json(doc)).toContain('"status":"coming"');
-    expect(json(doc)).toContain('"final"');
+    expect(json(doc)).not.toContain('"final"');
   });
   it("applies the text overrides", () => {
     expect(json(final)).toContain("Courses people can trust.");

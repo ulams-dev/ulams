@@ -14,12 +14,12 @@
         "mark": "logo",
         "links": [
           {
-            "label": "Produkt",
-            "href": "#product"
+            "label": "Przegląd",
+            "href": "/pl/"
           },
           {
             "label": "Porównanie",
-            "href": "#compare"
+            "href": "/pl/comparison/"
           },
           {
             "label": "Dokumentacja",
@@ -31,8 +31,8 @@
           "href": "https://github.com/ulams-dev"
         },
         "cta": {
-          "label": "Wypróbuj dema",
-          "href": "#demos"
+          "label": "Zobacz dema",
+          "href": "/pl/#demos"
         }
       }
     },
@@ -83,6 +83,41 @@
               "action": "Sprawdź szkic",
               "lessonTitle": "Autor zatwierdza przed publikacją"
             }
+          }
+        },
+        {
+          "component": "Steps",
+          "props": {
+            "eyebrow": "Tworzenie kursu pod kontrolą autora",
+            "title": "Od materiałów źródłowych do kursu sprawdzonego przez autora",
+            "intro": "Autor zachowuje kontrolę na każdym etapie.",
+            "items": [
+              {
+                "icon": "book",
+                "title": "Dodaj materiały źródłowe",
+                "text": "Wskaż dokumenty i źródła, na których ma opierać się kurs."
+              },
+              {
+                "icon": "chat",
+                "title": "Opisz kurs",
+                "text": "Określ odbiorców i cel nauki dla szkicu."
+              },
+              {
+                "icon": "layers",
+                "title": "Sprawdź strukturę",
+                "text": "Obejrzyj i edytuj proponowany plan przed przygotowaniem lekcji."
+              },
+              {
+                "icon": "quote",
+                "title": "Sprawdź cytowania",
+                "text": "Prześledź treść lekcji do wskazanych fragmentów źródeł."
+              },
+              {
+                "icon": "check",
+                "title": "Zatwierdź zmiany",
+                "text": "Edytuj, odrzuć lub zatwierdź szkic przed publikacją."
+              }
+            ]
           }
         },
         {
@@ -181,26 +216,29 @@
           }
         },
         {
-          "component": "ComparisonTable",
+          "component": "Faq",
           "props": {
-            "id": "compare",
-            "eyebrow": "porównanie",
-            "title": "Jak wypada ulams",
-            "intro": "ulams powstał przede wszystkim dla deweloperów i agentów AI: kursami zarządza się przez REST API i SDK dla TypeScriptu, a CLI i serwer MCP projektowane z myślą o agentach są w drodze. Porównanie z platformami open source i dla twórców oraz z zestawami enterprise; pozycje z naszej mapy drogowej oznaczono jako „Wkrótce”.",
-            "caption": "Porównanie funkcji ulams z platformami open source i dla twórców oraz z zestawami enterprise",
-            "asOf": {
-              "$data": "/comparison/asOf"
-            },
-            "groups": {
-              "$data": "/comparison/groups"
-            },
-            "sources": {
-              "$data": "/comparison/sources"
-            },
-            "note": "Nazwy produktów są znakami towarowymi ich właścicieli i służą wyłącznie do identyfikacji produktów. Poprawki są mile widziane."
-          },
-          "final": {
-            "intro": "To, co kupujący zwykle biorą pod uwagę, produkt po produkcie, w dwóch grupach: platformy open source i dla twórców oraz zestawy enterprise."
+            "id": "faq",
+            "eyebrow": "Pytania",
+            "title": "Częste pytania",
+            "items": [
+              {
+                "q": "Czy AI samodzielnie publikuje kurs?",
+                "a": "Nie. AI proponuje szkic. Autor sprawdza zmiany i wskazane źródła, a przed publikacją sam decyduje, co zatwierdzić."
+              },
+              {
+                "q": "Czy mogę hostować ulams samodzielnie?",
+                "a": "Tak. Repozytorium zawiera konfigurację deweloperską Docker Compose, a rdzeń ulams jest na licencji MIT. Sprawdź pliki licencji repozytorium pod kątem usług i pakietów zewnętrznych."
+              },
+              {
+                "q": "Czy zespół może korzystać z ulams przez agenta?",
+                "a": "Dostępne są REST API i TypeScript SDK. Przepływy agentów na tej stronie mają aktualny status; planowane interfejsy są odpowiednio oznaczone."
+              },
+              {
+                "q": "Gdzie mogę obejrzeć produkt?",
+                "a": "Na stronie przeglądu otwórz jedno z działających demo akademii. Dema korzystają z osobnych tenantów i pozwalają wejść jako kursant lub administrator."
+              }
+            ]
           }
         },
         {
@@ -237,6 +275,14 @@
         "brand": "ulams",
         "text": "Otwarty LMS z AI w rdzeniu. Open core na licencji MIT.",
         "links": [
+          {
+            "label": "Przegląd",
+            "href": "/pl/"
+          },
+          {
+            "label": "Porównanie",
+            "href": "/pl/comparison/"
+          },
           {
             "label": "Produkt",
             "href": "#product"

@@ -11,6 +11,7 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-12) Batch 4 of `docs/plans/phase-5-reference-frontend.md` approved: separate Overview and Comparison pages, truthful public feature status, localized SEO and a six-URL platform sitemap (ADR 0097 Proposed)
 - [x] (2026-10-09) Phase 3 plan (`docs/plans/phase-3.md`) approved with all 17 decisions of its section 18 as recommended (issue #27 closed)
 
 - [x] (2026-10-09) Phase 1 decisions 1–52, Phase 2 decisions 1–28 and the Phase 3 plan with its 17 decisions
@@ -623,6 +624,8 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
       account area; webinars/events/consultations pages (partial: implemented and tested, uncommitted;
       see `docs/plans/phase-5-reference-frontend.md`, batch 2)
+- [x] (new) Split platform product Overview and Comparison pages in EN/PL/ZH, with audited SEO metadata,
+      JSON-LD, robots and sitemap routes (implemented and verified locally; plan batch 4; ADR 0097 Proposed)
 - [x] (new) Three new free demo academies, `gravity` (Gravity Lab, 3D simulation), `poland` (Poland, Measured /
       Polska w liczbach, map in the background, EN and PL) and `ulam` (The Scottish Book: Stanisław Ulam and the Lwów
       School, five MIT interactives), each with a preset, landing, certificate, demo users and the hourly reset

@@ -1,0 +1,188 @@
+{
+  "component": "Page",
+  "props": {
+    "theme": "platform",
+    "title": "ulams — Compare learning platforms",
+    "description": "A source-linked feature comparison of ulams with open-source, creator and enterprise learning platforms.",
+    "lang": "en"
+  },
+  "children": [
+    {
+      "component": "SiteHeader",
+      "props": {
+        "brand": "ulams",
+        "mark": "logo",
+        "links": [
+          {
+            "label": "Overview",
+            "href": "/"
+          },
+          {
+            "label": "Compare",
+            "href": "/comparison/"
+          },
+          {
+            "label": "Docs",
+            "href": "https://ulams-dev.github.io/ulams/"
+          }
+        ],
+        "signIn": {
+          "label": "GitHub",
+          "href": "https://github.com/ulams-dev"
+        },
+        "cta": {
+          "label": "Explore demos",
+          "href": "/#demos"
+        }
+      }
+    },
+    {
+      "component": "Main",
+      "children": [
+        {
+          "component": "Hero",
+          "props": {
+            "variant": "product",
+            "eyebrow": "Product comparison",
+            "title": "Compare learning platforms",
+            "subtitle": "Compare learning platforms by the capabilities that shape course creation, delivery and integration.",
+            "body": "Review the feature matrix and its source links. Product availability is dated and roadmap status is labeled.",
+            "primaryCta": {
+              "label": "Overview",
+              "href": "/"
+            },
+            "secondaryCta": {
+              "label": "Explore demos",
+              "href": "/#demos"
+            }
+          }
+        },
+        {
+          "component": "FeatureList",
+          "props": {
+            "variant": "grid",
+            "eyebrow": "For the people involved",
+            "title": "One platform, different ways to work",
+            "intro": "The same source-linked course workflow serves the people who create, operate and take technical training.",
+            "items": [
+              {
+                "icon": "code",
+                "title": "Software engineers and technical writers",
+                "text": "Turn product documentation into structured learning content, then inspect its source links."
+              },
+              {
+                "icon": "sparkle",
+                "title": "Instructional designers and L&D",
+                "text": "Shape the course brief and outline, review drafts, and approve content before it reaches learners."
+              },
+              {
+                "icon": "layers",
+                "title": "IT and infrastructure teams",
+                "text": "Run a tenant-aware LMS, integrate through the REST API, and self-host the MIT-licensed core."
+              },
+              {
+                "icon": "book",
+                "title": "Technical learners",
+                "text": "Explore working demos and courses delivered through the platform’s learner sites."
+              }
+            ]
+          }
+        },
+        {
+          "component": "Steps",
+          "props": {
+            "eyebrow": "Architecture",
+            "title": "A clear path from source to learner",
+            "intro": "ULAMS combines a headless LMS API with tenant-aware learner sites and tools for authors and developers.",
+            "items": [
+              {
+                "icon": "book",
+                "title": "Source material",
+                "text": "Authors provide the documents and context for a course."
+              },
+              {
+                "icon": "code",
+                "title": "API and course tools",
+                "text": "The platform API and TypeScript SDK expose LMS operations to apps and developer workflows."
+              },
+              {
+                "icon": "book",
+                "title": "Tenant learner site",
+                "text": "Each customer academy is delivered through its own tenant site and course experience."
+              }
+            ]
+          }
+        },
+        {
+          "component": "ComparisonTable",
+          "props": {
+            "id": "compare",
+            "eyebrow": "compare",
+            "title": "How ulams compares",
+            "intro": "ulams is built for developers and AI agents first: courses are managed through the REST API and the TypeScript SDK, with an agent-first CLI and MCP server coming. Compared with open-source and creator platforms, and with enterprise suites; our roadmap items are marked Coming.",
+            "caption": "Feature comparison of ulams with open-source and creator platforms, and with enterprise learning suites",
+            "asOf": {
+              "$data": "/comparison/asOf"
+            },
+            "groups": {
+              "$data": "/comparison/groups"
+            },
+            "sources": {
+              "$data": "/comparison/sources"
+            },
+            "note": "Product names are trademarks of their owners and are used only to identify the products. Corrections are welcome."
+          },
+          "final": {
+            "intro": "What buyers usually weigh, product by product, in two groups: open-source and creator platforms, and enterprise suites."
+          }
+        }
+      ]
+    },
+    {
+      "component": "SiteFooter",
+      "props": {
+        "brand": "ulams",
+        "text": "The open, AI-native LMS. Open core under MIT.",
+        "links": [
+          {
+            "label": "Overview",
+            "href": "/"
+          },
+          {
+            "label": "Compare",
+            "href": "/comparison/"
+          },
+          {
+            "label": "Product",
+            "href": "#product"
+          },
+          {
+            "label": "Demos",
+            "href": "#demos"
+          },
+          {
+            "label": "Agent workflows",
+            "href": "#agents"
+          },
+          {
+            "label": "Standards",
+            "href": "#standards"
+          },
+          {
+            "label": "Self-host",
+            "href": "#self-host"
+          },
+          {
+            "label": "Docs",
+            "href": "https://ulams-dev.github.io/ulams/"
+          },
+          {
+            "label": "GitHub",
+            "href": "https://github.com/ulams-dev"
+          }
+        ],
+        "note": "Open core under MIT"
+      }
+    }
+  ]
+}

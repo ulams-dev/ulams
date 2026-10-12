@@ -49,10 +49,11 @@ describe("platform product hero", () => {
     expect(hero(platform).props!.secondaryCta).toMatchObject({ href: "#self-host" });
   });
 
-  it("orders product proof and demos before the detailed comparison", () => {
+  it("keeps the detailed comparison on its own route", () => {
     const sections = platform.children!.find((n) => n.component === "Main")!.children!.map((n) => n.component);
-    expect(sections).toEqual(["Hero", "Showcase", "FeatureList", "WorkflowShowcase", "Chips", "ComparisonTable", "CtaBand"]);
-    expect(sections.indexOf("Showcase")).toBeLessThan(sections.indexOf("ComparisonTable"));
+    expect(sections).toEqual(["Hero", "Steps", "Showcase", "FeatureList", "WorkflowShowcase", "Chips", "Faq", "CtaBand"]);
+    const header = platform.children!.find((n) => n.component === "SiteHeader")!;
+    expect((header.props!.links as Array<{ href: string }>)[1]!.href).toBe("/comparison/");
   });
 
   it("keeps every header and footer anchor on the page", () => {

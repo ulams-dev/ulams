@@ -282,3 +282,99 @@ with warm light sections for reading and demos. Inspiration: [AI Agent Website D
 
 - If an explainer video is desired later, should the owner provide a clip or enable a video-generation
   tool? The current implementation plan proceeds with a static product visual either way.
+
+## Batch 4 (approved 2026-10-12): split the public platform landing
+
+### Goal
+
+Translate the reviewed Stitch campaign and comparison screens into the Astro reference frontend as
+two distinct, indexable public pages: **Overview** and **Comparison**. Make their content, HTML
+semantics, accessibility relationships and search metadata straightforward to inspect.
+
+### Source screens and content rules
+
+- Stitch project: `9106478890112698177`.
+- Overview design: `ULAMS — Campaign Landing (EN, Reviewed)`.
+- Comparison design: `ULAMS — Features, Stakeholders & LMS Comparison`.
+- Use the screens for layout, hierarchy, and visual direction. The screens also contain unsupported
+  figures, compatibility claims, product status, roadmap capabilities and competitor assertions.
+  Verify every product statement against the current code, tracker and docs; omit or accurately label
+  unsupported claims. Do not carry over invented metrics, certification or security guarantees.
+- Keep the current ULAMS brand assets and the existing EN/PL/ZH language switch.
+
+### Scope and routes
+
+- Keep the English Overview at `/`; retain `/pl/` and `/zh/` for its localized versions.
+- Add the Comparison page at `/comparison/`, with corresponding `/pl/comparison/` and
+  `/zh/comparison/` routes. Keep cross-page navigation and in-page section links distinct.
+- Recompose the reviewed campaign content as the Overview: product promise and review workflow,
+  demo access, Course Builder status, architecture/governance, CLI/MCP, lineage, status transparency,
+  FAQ and next steps. Keep the Overview concise enough to lead with the product and demos.
+- Move the comparison matrix, stakeholder views and architecture details from the comparison screen
+  onto the Comparison page. Reuse the current comparison data where it is accurate; do not repeat
+  unverified claims from the Stitch screen.
+- Localize page titles, descriptions, navigation, headings and core page content for all three
+  existing locales. Keep section order and the product-status distinctions aligned between locales.
+- Use existing Astro SSR routes, `@ulams/ui`, theme tokens, and the current public-origin and
+  locale helpers. Add no runtime dependency, database change or external font/image request.
+
+### SEO, semantics and accessibility
+
+- Extend the shared page shell with page-specific title, description, canonical URL, `hreflang`
+  alternates including `x-default`, Open Graph and X/Twitter card metadata, and a consistent,
+  real share image. Do not add deprecated `meta keywords` or fabricated ratings/offers.
+- Add valid JSON-LD for the organization/site and the relevant page type (SoftwareApplication on
+  Overview; WebPage/CollectionPage and BreadcrumbList as appropriate). Use only verified facts;
+  omit ratings, price offers, review counts, version numbers and video metadata without a real asset.
+- Add `robots.txt` and `sitemap.xml` routes for the platform host. List the six canonical
+  locale/page URLs with their language alternates; do not include tenant pages or preview routes.
+- Use one descriptive `h1` per page, ordered headings, `header`/`nav`/`main`/`section`/`footer`
+  landmarks, native links and buttons, and descriptive accessible names. Add ARIA only where native
+  HTML does not supply the required relationship or name.
+- Give the comparison table a caption, scoped column and row headers, and a keyboard-usable mobile
+  presentation. Keep language switch, focus visibility, contrast, reduced-motion behavior and
+  narrow viewport reflow accessible.
+
+### Acceptance criteria
+
+- Overview and Comparison are separate server-rendered routes in EN, PL and ZH, linked from the
+  shared header and footer.
+- Each page has a unique localized title and description, canonical URL, complete alternate links,
+  social metadata, applicable JSON-LD, and appears in the platform sitemap.
+- `robots.txt` identifies the sitemap; previews and tenant-only routes are not listed as platform
+  URLs.
+- Rendered HTML uses semantic landmarks, a single page `h1`, valid heading order, useful link
+  names, and a properly labeled comparison table; ARIA is not used in place of native semantics.
+- Existing demos and documentation remain reachable. Every product-status and comparison statement
+  is grounded in repository documentation or labeled beta/roadmap accurately.
+- Layout remains readable at desktop and phone widths without horizontal overflow.
+
+### Implementation notes, risks and verification
+
+- First inspect the existing catalogue schemas and rendering output for the reviewed Stitch sections,
+  localized document parity checks, `Base.astro`, current `platformPage` data, and docs-site
+  navigation. Reuse existing components; add narrowly scoped page components only where necessary.
+- No migration or new dependency is expected. Keep tenant routing unchanged and gate sitemap/SEO
+  routes with the existing platform-host middleware flag.
+- The public origin currently comes from forwarded request headers. Reuse that established helper
+  for canonical and sitemap URLs and confirm its output under the local and production proxy shapes.
+- Add/update documentation-site guidance for the two page routes, metadata, structured data and
+  sitemap behavior; update the Phase 5 tracker only after implementation and verification.
+- Verification: typecheck and production build; inspect rendered HTML metadata and JSON-LD for all
+  six localized routes; parse sitemap/robots output; keyboard and narrow-screen review; run the
+  existing page accessibility scan where available. No new SEO dependency is planned.
+
+### Approval
+
+Approved by the product owner in chat on 2026-10-12.
+
+### Completion (2026-10-12)
+
+- Implemented Overview and Comparison routes in EN/PL/ZH, linked from shared navigation, with
+  localized titles, descriptions, canonical/hreflang, Open Graph/X cards and JSON-LD.
+- Moved the existing cited comparison matrix to its own page. Added localized workflow, stakeholder,
+  architecture and FAQ content; public pages always show actual product status (ADR 0097 Proposed).
+- Added platform-only `robots.txt` and six-URL `sitemap.xml`; documented routes, status policy and
+  metadata. No runtime dependency or migration was added.
+- Verified: web typecheck, 487 unit tests, web lint, production web build, docs coverage/build, and
+  40 landing E2E cases across desktop and phone, including axe, metadata, JSON-LD and sitemap checks.

@@ -13,6 +13,12 @@ export const landingDocs: Partial<Record<ThemeName, UiNode>> = Object.fromEntrie
   Object.entries(modules).map(([path, mod]) => [path.replace(/^.*\/(\w+)\.json$/, "$1"), mod.default])
 );
 
+const comparisonModules = import.meta.glob<{ default: UiNode }>("../docs/comparison*.json", { eager: true });
+const comparisonLocalized = import.meta.glob<{ default: UiNode }>("../docs/i18n/comparison.*.json", { eager: true });
+const comparisonDoc = comparisonModules["../docs/comparison.json"]?.default;
+const comparisonTranslations = Object.fromEntries(Object.entries(comparisonLocalized).map(([path, mod]) => [path.endsWith(".pl.json") ? "pl" : "zh", mod.default])) as Partial<Record<Exclude<Locale, "en">, UiNode>>;
+export const comparisonDocFor = (locale: Locale): UiNode | undefined => locale === "en" ? comparisonDoc : comparisonTranslations[locale] ?? comparisonDoc;
+
 /**
  * Translated landing documents (src/docs/i18n/<theme>.<locale>.json): the same tree as the English one
  * (a unit test keeps them parallel), with the visible text translated.

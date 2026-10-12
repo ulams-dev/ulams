@@ -153,9 +153,8 @@ this page renders them from there, so the page and the files cannot drift apart.
 
 ## Settings to review before going public
 
-- `ULAMS_LANDING_STATUS` on the `web` service: the default `final` shows every roadmap item of the
-  platform landing as delivered; set `actual` for the honest status
-  ([Environment](/operators/environment/#the-platform-landing-switch)). The example does not set it.
+- The public product pages always show the status recorded in source data
+  ([Environment](/operators/environment/#public-product-page-status)).
 - `CSP_ENFORCE` in `.env` (the example passes it to `web`, default `false`) and `ULAMS_CSP_HEADER` for the
   admin: report-only first, then enforced
   ([Security headers](/operators/security-headers/#report-only-first-then-enforce)).

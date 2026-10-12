@@ -14,12 +14,12 @@
         "mark": "logo",
         "links": [
           {
-            "label": "产品",
-            "href": "#product"
+            "label": "产品概览",
+            "href": "/zh/"
           },
           {
             "label": "对比",
-            "href": "#compare"
+            "href": "/zh/comparison/"
           },
           {
             "label": "文档",
@@ -31,8 +31,8 @@
           "href": "https://github.com/ulams-dev"
         },
         "cta": {
-          "label": "体验演示",
-          "href": "#demos"
+          "label": "查看演示",
+          "href": "/zh/#demos"
         }
       }
     },
@@ -83,6 +83,41 @@
               "action": "审核草稿",
               "lessonTitle": "作者审核后再发布"
             }
+          }
+        },
+        {
+          "component": "Steps",
+          "props": {
+            "eyebrow": "作者审核的课程创建",
+            "title": "从源材料到作者审核的课程",
+            "intro": "作者在每个阶段都保留控制权。",
+            "items": [
+              {
+                "icon": "book",
+                "title": "添加源材料",
+                "text": "提供课程应使用的文档和参考资料。"
+              },
+              {
+                "icon": "chat",
+                "title": "说明课程目标",
+                "text": "描述草稿面向的受众和学习目标。"
+              },
+              {
+                "icon": "layers",
+                "title": "审核课程结构",
+                "text": "在生成课程内容前检查并编辑建议的大纲。"
+              },
+              {
+                "icon": "quote",
+                "title": "检查引用",
+                "text": "追溯课程内容所依据的来源片段。"
+              },
+              {
+                "icon": "check",
+                "title": "批准更改",
+                "text": "发布前编辑、拒绝或批准草稿。"
+              }
+            ]
           }
         },
         {
@@ -181,26 +216,29 @@
           }
         },
         {
-          "component": "ComparisonTable",
+          "component": "Faq",
           "props": {
-            "id": "compare",
-            "eyebrow": "对比",
-            "title": "ulams 与同类产品对比",
-            "intro": "ulams 首先为开发者和 AI 智能体而生：课程通过 REST API 和 TypeScript SDK 管理，面向智能体的 CLI 和 MCP 服务器即将推出。对比对象包括开源平台、创作者平台和企业级套件；路线图上的功能标注为“即将推出”。",
-            "caption": "ulams 与开源平台、创作者平台及企业学习套件的功能对比",
-            "asOf": {
-              "$data": "/comparison/asOf"
-            },
-            "groups": {
-              "$data": "/comparison/groups"
-            },
-            "sources": {
-              "$data": "/comparison/sources"
-            },
-            "note": "产品名称为其各自所有者的商标，在此仅用于指代相应产品。欢迎指正。"
-          },
-          "final": {
-            "intro": "采购方通常关注的各项指标，逐个产品对比，分为两组：开源与创作者平台、企业级套件。"
+            "id": "faq",
+            "eyebrow": "常见问题",
+            "title": "常见问题解答",
+            "items": [
+              {
+                "q": "AI 会自动发布课程吗？",
+                "a": "不会。AI 只提出草稿。作者会审核更改和引用来源，并在发布前决定批准哪些内容。"
+              },
+              {
+                "q": "我可以自行托管 ulams 吗？",
+                "a": "可以。代码库提供 Docker Compose 开发配置，ulams 核心采用 MIT 许可。请查看代码库中的许可文件，了解第三方服务和软件包。"
+              },
+              {
+                "q": "团队可以通过智能体使用 ulams 吗？",
+                "a": "REST API 和 TypeScript SDK 已可用。页面中的智能体工作流会显示当前状态；计划中的接口会明确标注其状态。"
+              },
+              {
+                "q": "在哪里可以查看产品？",
+                "a": "在产品概览页打开一个在线学院演示。演示使用独立租户，可作为学习者或管理员进入。"
+              }
+            ]
           }
         },
         {
@@ -237,6 +275,14 @@
         "brand": "ulams",
         "text": "开放的 AI 原生 LMS。MIT 许可的开源核心。",
         "links": [
+          {
+            "label": "产品概览",
+            "href": "/zh/"
+          },
+          {
+            "label": "对比",
+            "href": "/zh/comparison/"
+          },
           {
             "label": "产品",
             "href": "#product"

@@ -108,5 +108,6 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0094](0094-interactive-demo-courses-from-module-files.md) | Interactive demo courses are written as Markdown module files and seeded through the domain services | Proposed |
 | [0095](0095-ulam-course-facts-sources-and-images.md) | The Ulam course: every statement traced to a fact sheet, sources numbered, four licensed photographs | Proposed |
 | [0096](0096-landing-languages-polish-and-chinese.md) | The product landing in Polish and Simplified Chinese: Astro i18n routing, one document per language | Proposed |
+| [0097](0097-public-product-landing-overview-comparison.md) | Split the public product landing into Overview and Comparison | Proposed |
 
 <!-- END GENERATED: adr-index -->
