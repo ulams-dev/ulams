@@ -14,7 +14,9 @@ small commits → tests → summary.
 - [x] (2026-10-12) Owner requested the complete previous feature catalogue on Comparison,
       organised by stakeholder with full descriptions and documentation links (ADR 0100 Proposed).
 - [x] (new) Current Overview/Comparison page is highlighted in desktop and mobile menus in EN/PL/ZH.
-      The owner authorised publishing this landing version to the existing Cloudflare Pages project.
+      Published to https://ulams.app on 2026-10-12 using the existing Cloudflare Pages project
+      `ulams-landing`, deployment `74a0c404`, source `f7b304379`; all six routes, active menus,
+      the six-URL sitemap, robots.txt and the dedicated 404 were verified publicly.
 
 - [x] (2026-10-12) Owner rejected the open-core model and paid cloud/enterprise tiers. Public
       Overview, Comparison and licensing copy now describe open-source software (ADR 0099 Proposed).
