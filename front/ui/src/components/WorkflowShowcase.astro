@@ -10,6 +10,7 @@ import { uiStrings, pageLocale } from "../lib/i18n.ts";
  * Each tab may carry a status badge (the landing shows roadmap items honestly unless told otherwise).
  */
 import StoryStyles from "./StoryStyles.astro";
+import Icon from "./Icon.astro";
 
 type Kind = "prompt" | "cmd" | "cont" | "agent" | "out" | "spin" | "tool" | "add" | "del" | "ctx" | "note" | "user" | "assistant" | "card";
 interface Line {
@@ -90,7 +91,10 @@ const panels = tabs.map((tab, i) => ({ ...tab, ...schedule(tab.lines), i, tabId:
             ))
           }
         </div>
-        <button type="button" class="u-wf__pause" data-pause aria-pressed="false" data-label-pause={t.pause} data-label-play={t.play}>{t.pause}</button>
+        <button type="button" class="u-wf__pause" data-pause aria-label={t.pause} title={t.pause} aria-pressed="false" data-label-pause={t.pause} data-label-play={t.play}>
+          <Icon name="pause" class="u-wf__pause-icon u-wf__pause-icon--pause" />
+          <Icon name="play" class="u-wf__pause-icon u-wf__pause-icon--play" />
+        </button>
       </div>
       <div class="u-stage u-wf__stage">
         <div class="u-wf__panels">

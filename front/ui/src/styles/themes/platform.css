@@ -308,13 +308,59 @@
 [data-theme="platform"] .u-wf ulams-workflows { grid-column: 2; grid-row: 1 / span 4; min-width: 0; }
 [data-theme="platform"] .u-wf .u-wf__value,
 [data-theme="platform"] .u-wf .u-wf__foot { grid-column: 1; margin: 0; text-align: left; }
+[data-theme="platform"] .u-wf__tabbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 42px;
+  align-items: start;
+  gap: 10px;
+  padding: 12px;
+}
+[data-theme="platform"] .u-wf__tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+[data-theme="platform"] .u-wf__tab {
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  text-align: left;
+}
+[data-theme="platform"] .u-wf__tab span:first-child { min-width: 0; }
+[data-theme="platform"] .u-wf__tab[aria-selected="true"] { color: #fff; }
+[data-theme="platform"] .u-wf__pause {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  padding: 0;
+  border-color: #e2e0da;
+  border-radius: 8px;
+  background: #f8f6f0;
+  color: #0f2b46;
+}
+[data-theme="platform"] .u-wf__pause:hover { background: #f0ede5; }
+[data-theme="platform"] .u-wf__pause-icon { width: 17px; height: 17px; }
+[data-theme="platform"] .u-wf__pause-icon--play,
+[data-theme="platform"] .u-wf__pause[aria-pressed="true"] .u-wf__pause-icon--pause { display: none; }
+[data-theme="platform"] .u-wf__pause[aria-pressed="true"] .u-wf__pause-icon--play { display: block; }
 [data-theme="platform"] .u-wf__tabbar,
 [data-theme="platform"] .u-wf__stage { border-color: #d9d7d0; border-radius: 10px; }
 [data-theme="platform"] .u-wf__tabbar { background: #fff; }
 [data-theme="platform"] .u-wf__tab { color: #52657a; }
-[data-theme="platform"] .u-wf__tab[aria-selected="true"] { color: #0f2b46; border-color: #a9431d; }
+[data-theme="platform"] .u-wf__tab[aria-selected="true"] { color: #fff; border-color: #a9431d; }
 [data-theme="platform"] .u-wf__stage { background: #0b1928; box-shadow: 0 12px 32px -18px rgb(15 43 70 / 0.42); }
-[data-theme="platform"] .u-wf__pause { color: #0f2b46; }
+
+@media (max-width: 1000px) {
+  [data-theme="platform"] .u-wf__tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 520px) {
+  [data-theme="platform"] .u-wf__tabs { grid-template-columns: minmax(0, 1fr); }
+}
 
 [data-theme="platform"] .u-chips { background: #fff; color: #233647; border-bottom: 1px solid #e2e0da; }
 [data-theme="platform"] .u-chips .u-section-head .u-eyebrow { color: #a9431d; }

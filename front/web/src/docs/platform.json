@@ -137,8 +137,7 @@
             },
             "tabs": {
               "$data": "/workflows/tabs"
-            },
-            "staticPreview": true
+            }
           }
         },
         {
