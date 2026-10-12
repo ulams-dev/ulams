@@ -314,7 +314,7 @@ The embed protocol (`ulams-h5p:ready`, `loaded`, `resize`, `xapi`, `saved`, `err
 ### Platform policy story
 
 The Overview hero uses `PolicyStory.astro`: PDF upload, cited source context, a four-question
-course brief, departmental variants, training and PDF certificate, owner oversight, an approved
+course brief presented as an animated chat, departmental variants, training and PDF certificate, owner oversight, an approved
 source update and renewal. Each chapter reveals its actions progressively. Play/pause controls
 the scene animations and chapter playback; keyboard navigation and reduced motion keep a static
 view. EN/PL/ZH copy lives in the platform page documents and is checked against the Hero schema.
@@ -324,7 +324,9 @@ policy-triggered certificate invalidation, notifications and reassignment are **
 in Phase 6 of the roadmap. Existing PDF extraction supplies cited fragments to the LLM; the
 animation does not imply a vector retrieval service. Source updates retain owner approval.
 
-The Ulam demo card uses the owner-selected Stitch illustration. Asset provenance is recorded in
+The `HeritageStory` section replaces the repetitive principles grid with the owner-selected Ulam
+illustration, a sourced Scottish Book account, the product connection and a GitHub contribution link.
+Historical context is separate from product inspiration. Asset provenance is recorded in
 `front/web/public/landing/ulam/CREDITS.md`.
 
 The catalogue is one registry, `front/ui/src/registry.ts`. Each entry has a description written for

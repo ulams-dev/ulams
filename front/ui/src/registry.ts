@@ -463,6 +463,14 @@ export const registry = {
     ),
     fallback: (p) => join(p.title, ...titles(p.lessons)),
   },
+  HeritageStory: {
+    description: "An editorial brand-origin story with an attributed portrait, sourced historical context, a separate product connection and a call to action. Never invent quotations or historical facts.",
+    category: "section",
+    interactive: false,
+    children: false,
+    props: obj({ eyebrow: EYEBROW, title: TITLE, image: IMAGE, caption: text("Illustration caption", { maxLength: 160 }), paragraphs: list(text("Sourced historical paragraph", { maxLength: 600 }), "Historical context", { minItems: 1, maxItems: 3 }), connection: text("How this history inspires the product", { maxLength: 600 }), source: LINK, cta: LINK }, ["title", "image", "paragraphs", "connection", "source", "cta"]),
+    fallback: (p) => join(p.title, ...(Array.isArray(p.paragraphs) ? p.paragraphs as string[] : []), p.connection),
+  },
   Letter: {
     description: "Personal letter from the tutors with portraits, paragraphs and a pull quote (editorial).",
     category: "section",

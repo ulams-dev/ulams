@@ -77,7 +77,7 @@ const alternatives = [
   <ulams-policy-story data-animation-paused>
     <div class="ps-topline"><span>{badge}</span><span class="ps-version">v1 <Icon name="arrow" /> v2</span></div>
     <div class="ps-scenes">
-      {journey.map((step, i) => <section class="ps-panel" role="tabpanel" id={`policy-panel-${i}`} aria-labelledby={`policy-tab-${i}`} hidden={i !== 0} tabindex="0" data-duration={i === 0 ? 8000 : i === 1 ? 12000 : 6000}>
+      {journey.map((step, i) => <section class="ps-panel" role="tabpanel" id={`policy-panel-${i}`} aria-labelledby={`policy-tab-${i}`} hidden={i !== 0} tabindex="0" data-duration={i === 0 ? 8000 : i === 1 ? 15000 : 6000}>
         <div class="ps-narration">
           <span class="ps-chapter">0{i + 1} / 0{journey.length}</span>
           <h2>{step.title}</h2><p>{step.text}</p>
@@ -98,7 +98,10 @@ const alternatives = [
           </div>}
           {i === 1 && <div class="ps-brief-scene">
             <div class="ps-brief-bar"><Icon name="sparkle" /><b>{v.intake.briefTitle}</b><span class="ps-brief-source"><Icon name="quote" /> PDF · v1</span></div>
-            <div class="ps-brief-chat">{v.intake.questions.map((pair, n) => <div class="ps-brief-pair" style={`--pair:${n}`}><p class="ps-brief-question"><Icon name="chat" /><span>{pair.question}</span></p><p class="ps-brief-answer"><span class="ps-answer-person"><RolePortrait role="ceo" /><b>{v.intake.uploader}</b></span>{pair.answer}</p></div>)}</div>
+            <div class="ps-brief-chat"><div class="ps-brief-chat-log">{v.intake.questions.map((pair, n) => <div class="ps-brief-pair" style={`--pair:${n}`}>
+              <div class="ps-chat-message ps-chat-message--question"><div class="ps-chat-message-inner"><p class="ps-brief-question"><span class="ps-chat-agent"><Icon name="sparkle" /></span><span class="ps-chat-bubble"><small>ULAMS</small>{pair.question}</span></p></div></div>
+              <div class="ps-chat-message ps-chat-message--answer"><div class="ps-chat-message-inner"><div class="ps-chat-reply"><span class="ps-chat-typing"><i /><i /><i /></span><p class="ps-brief-answer"><span class="ps-answer-person"><RolePortrait role="ceo" /></span><span class="ps-chat-bubble"><small>{v.intake.uploader}</small>{pair.answer}</span></p></div></div></div>
+            </div>)}</div></div>
             <div class="ps-brief-ready"><Icon name="check" /><b>{v.intake.ready}</b><span>{v.audiences.join(' · ')}</span></div>
           </div>}
           {i === 2 && <div class="ps-paths-scene"><div class="ps-source-node"><Icon name="pdf" /><b>{v.policy}</b><span>v1</span></div><div class="ps-branches"><span /><span /><span /></div><div class="ps-role-paths">{v.audiences.map((role, n) => <div class="ps-role"><span class="ps-role-person"><RolePortrait role={roles[n] ?? "hr"} /></span><h4>{role}</h4><p>{v.roleTopics[n]}</p><span class="ps-cite"><Icon name="quote" /> {v.section}</span></div>)}</div></div>}
@@ -116,7 +119,7 @@ const alternatives = [
   </ulams-policy-story>
   {note && <figcaption>{note}</figcaption>}
 </figure>
-<noscript><style is:inline>.ps-panel[hidden]{display:block!important}.ps-bottom{display:none!important}.ps-panel+.ps-panel{border-top:1px solid var(--ulams-color-border)}ulams-policy-story *{animation:none!important}</style></noscript>
+<noscript><style is:inline>.ps-panel[hidden]{display:block!important}.ps-bottom{display:none!important}.ps-panel+.ps-panel{border-top:1px solid var(--ulams-color-border)}ulams-policy-story *{animation:none!important}.ps-chat-message{grid-template-rows:1fr!important}.ps-chat-typing{display:none!important}</style></noscript>
 <script>
   class PolicyStory extends HTMLElement {
     private index = 0;
@@ -168,6 +171,11 @@ const alternatives = [
         this.paused = this.motion.matches;
         this.updatePlayback();
       });
+      this.addEventListener("animationend", (event) => {
+        if ((event as AnimationEvent).animationName !== "ps-chat-expand") return;
+        const chat = (event.target as Element).closest<HTMLElement>(".ps-brief-chat");
+        if (chat) chat.scrollTop = chat.scrollHeight;
+      });
       this.observer = new IntersectionObserver(
         ([entry]) => {
           this.visible = Boolean(entry?.isIntersecting);
@@ -201,7 +209,11 @@ const alternatives = [
       // Restart the selected scene's visual sequence, including when replaying scene zero.
       void this.offsetWidth;
       const panel = this.panels[i];
-      if (panel) panel.hidden = false;
+      if (panel) {
+        panel.hidden = false;
+        const chat = panel.querySelector<HTMLElement>(".ps-brief-chat");
+        if (chat) chat.scrollTop = 0;
+      }
     }
     private updatePlayback() {
       clearTimeout(this.timer);
@@ -271,7 +283,7 @@ const alternatives = [
     grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.5fr);
     gap: 30px;
     align-items: center;
-    min-height: 480px;
+    min-height: 520px;
     padding: 30px;
     animation: ps-enter 0.45s ease both;
   }
@@ -949,15 +961,36 @@ const alternatives = [
   .ps-brief-bar>:global(svg) { width:17px; color:var(--ulams-color-accent); }
   .ps-brief-source { display:flex; align-items:center; gap:4px; margin-left:auto; color:var(--ulams-color-muted); font:.53rem var(--ulams-font-mono); }
   .ps-brief-source :global(svg) { width:12px; }
-  .ps-brief-chat { display:grid; gap:9px; padding:12px; }
-  .ps-brief-question { display:flex; align-items:center; gap:6px; margin:0; font-size:.65rem; line-height:1.4; animation:ps-enter .4s calc(.25s + var(--pair) * 2s) both; }
-  .ps-brief-question :global(svg) { width:13px; flex:0 0 13px; color:var(--ulams-color-primary); }
-  .ps-brief-answer { display:flex; align-items:center; gap:7px; margin:5px 0 0 18px; padding:6px 8px; border-radius:7px; background:color-mix(in srgb,var(--ulams-color-primary) 5%,var(--ulams-color-bg)); font-size:.64rem; line-height:1.45; animation:ps-enter .5s calc(1s + var(--pair) * 2s) both; }
-  .ps-answer-person { display:flex; align-items:center; gap:4px; font-size:.48rem; color:var(--ulams-color-muted); }
-  .ps-answer-person :global(svg) { width:20px; flex:0 0 20px; }
-  .ps-brief-ready { display:flex; align-items:center; flex-wrap:wrap; gap:6px; padding:10px 12px; border-top:1px solid var(--ulams-color-border); font-size:.6rem; color:var(--ulams-color-positive); animation:ps-enter .5s 8.1s both; }
+  .ps-brief-chat { height:320px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; padding:12px; }
+  .ps-brief-chat-log { display:flex; flex-direction:column; min-height:100%; justify-content:flex-start; }
+  .ps-brief-pair { display:contents; }
+  .ps-chat-message { display:grid; grid-template-rows:0fr; animation:ps-chat-expand .45s ease both; }
+  .ps-chat-message--question { animation-delay:calc(.35s + var(--pair) * 3s); }
+  .ps-chat-message--answer { animation-delay:calc(1s + var(--pair) * 3s); }
+  .ps-chat-message-inner { min-height:0; overflow:hidden; }
+  .ps-brief-question, .ps-brief-answer { display:flex; align-items:flex-end; gap:7px; margin:0; padding:4px 0; font-size:.75rem; line-height:1.45; }
+  .ps-brief-question { animation:ps-reveal .4s calc(.35s + var(--pair) * 3s) both; }
+  .ps-chat-agent { display:grid; flex:0 0 24px; width:24px; height:24px; place-items:center; border-radius:50%; background:var(--ulams-color-bg); color:var(--ulams-color-accent); }
+  .ps-chat-agent :global(svg) { width:14px; }
+  .ps-chat-bubble { max-width:86%; padding:8px 10px; border:1px solid var(--ulams-color-border); border-radius:12px 12px 12px 3px; background:var(--ulams-color-bg); }
+  .ps-chat-bubble small { display:block; margin-bottom:2px; font-size:.54rem; font-weight:700; color:var(--ulams-color-muted); }
+  .ps-chat-reply { position:relative; }
+  .ps-brief-answer { justify-content:flex-end; animation:ps-reveal .4s calc(1.9s + var(--pair) * 3s) both; }
+  .ps-brief-answer .ps-chat-bubble { border-radius:12px 12px 3px 12px; background:color-mix(in srgb,var(--ulams-color-primary) 8%,var(--ulams-color-card-bg)); }
+  .ps-answer-person { order:2; flex:0 0 24px; }
+  .ps-answer-person :global(svg) { width:24px; }
+  .ps-chat-typing { position:absolute; right:31px; bottom:4px; display:flex; gap:4px; align-items:center; padding:11px 13px; border:1px solid var(--ulams-color-border); border-radius:12px 12px 3px 12px; background:var(--ulams-color-bg); animation:ps-typing-window .85s calc(1s + var(--pair) * 3s) linear both; }
+  .ps-chat-typing i { width:4px; height:4px; border-radius:50%; background:var(--ulams-color-muted); animation:ps-typing-dot .75s ease-in-out infinite; }
+  .ps-chat-typing i:nth-child(2) { animation-delay:.12s; }
+  .ps-chat-typing i:nth-child(3) { animation-delay:.24s; }
+  .ps-brief-ready { display:flex; align-items:center; flex-wrap:wrap; gap:6px; padding:10px 12px; border-top:1px solid var(--ulams-color-border); font-size:.6rem; color:var(--ulams-color-positive); animation:ps-reveal .5s 12s both; }
   .ps-brief-ready>:global(svg) { width:14px; }
   .ps-brief-ready>span { margin-left:auto; font-size:.52rem; color:var(--ulams-color-muted); }
+  @keyframes ps-chat-expand { from { grid-template-rows:0fr; } to { grid-template-rows:1fr; } }
+  @keyframes ps-typing-window { 0%,100% { opacity:0; } 5%,90% { opacity:1; } }
+  @keyframes ps-typing-dot { 0%,70%,100% { transform:none; } 35% { transform:translateY(-3px); } }
+  ulams-policy-story[data-settled] .ps-chat-message { grid-template-rows:1fr; }
+  ulams-policy-story[data-settled] .ps-chat-typing { display:none; }
   .ps-role-person { display:block; width:54px; margin:0 auto; }
   .ps-role { text-align:center; }
   .ps-role .ps-cite { justify-content:center; }
@@ -1105,6 +1138,8 @@ const alternatives = [
     }
   }
   @media (prefers-reduced-motion: reduce) {
+    .ps-chat-message { grid-template-rows:1fr; }
+    .ps-chat-typing { display:none; }
     .policy-story * {
       animation: none !important;
     }

@@ -42,11 +42,12 @@ function parallel(a: unknown, b: unknown, path: string, key: string, out: Proble
   if (typeof a === "string") {
     if (typeof b !== "string" || b.trim() === "") return void out.push({ path, message: "missing text" });
     const bare = key.replace(/\[\]$/, "");
-    if (STRUCTURAL.has(bare) || VERBATIM.has(bare)) {
+    const externalLink = bare === "href" && /^https?:\/\//.test(a);
+    if (STRUCTURAL.has(bare) || VERBATIM.has(bare) || externalLink) {
       if (a !== b) out.push({ path, message: `must stay "${a}", is "${b}"` });
     }
     // an untranslated sentence (still English) is a missing translation
-    if (!STRUCTURAL.has(bare) && !VERBATIM.has(bare) && a.length > 40 && a === b) out.push({ path, message: "still English" });
+    if (!STRUCTURAL.has(bare) && !VERBATIM.has(bare) && !externalLink && a.length > 40 && a === b) out.push({ path, message: "still English" });
     for (const name of NAMES) if (a.includes(name) && !b.includes(name)) out.push({ path, message: `lost the name "${name}"` });
     return;
   }

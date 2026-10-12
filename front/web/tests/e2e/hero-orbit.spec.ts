@@ -76,6 +76,10 @@ test("CEO intake, briefing and department scenes animate in stages with shared p
   await expect(story.locator(".ps-brief-pair")).toHaveCount(4);
   await expect(story.locator(".ps-brief-chat")).toContainText("seniority");
   await expect(story.locator(".ps-brief-chat")).toContainText("experience");
+  await page.waitForTimeout(800);
+  expect(await story.locator(".ps-chat-message--question").first().evaluate((el) => el.getBoundingClientRect().height)).toBeGreaterThan(0);
+  expect(await story.locator(".ps-chat-message--question").last().evaluate((el) => el.getBoundingClientRect().height)).toBe(0);
+  await expect(story.locator(".ps-chat-typing")).toHaveCount(4);
   await story.locator('[role="tab"]').nth(2).click();
   await expect(story.locator(".ps-role-person svg")).toHaveCount(3);
   const roles = story.locator(".ps-role");
@@ -86,5 +90,18 @@ test("CEO intake, briefing and department scenes animate in stages with shared p
   expect(await roles.first().evaluate((el) => getComputedStyle(el).animationPlayState)).toBe("paused");
   await story.locator("[data-play]").click();
   expect(await roles.first().evaluate((el) => getComputedStyle(el).animationPlayState)).toBe("running");
-  await expect(page.locator('[data-swatch="ulam"] img')).toHaveAttribute("src", /stanislaw-ulam-stitch/);
+  await expect(page.locator("#product img")).toHaveAttribute("src", /stanislaw-ulam-stitch/);
+});
+
+
+test("the former principles section tells the sourced Ulam story", async ({ page }) => {
+  await page.goto(url);
+  const heritage = page.locator("#product");
+  await heritage.scrollIntoViewIfNeeded();
+  await expect(heritage.locator("h2")).toContainText("Knowledge grows");
+  await expect(heritage.locator("img")).toHaveAttribute("alt", "Stanisław Ulam");
+  await expect(heritage.locator(".u-heritage__source")).toHaveAttribute("href", "https://mathshistory.st-andrews.ac.uk/HistTopics/Scottish_Book/");
+  await expect(heritage.locator(".u-heritage__connection")).toContainText("Open source");
+  const results = await new AxeBuilder({ page }).include("#product").withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  expect(results.violations).toEqual([]);
 });

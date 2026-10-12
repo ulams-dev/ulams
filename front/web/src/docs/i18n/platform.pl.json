@@ -199,30 +199,31 @@
           }
         },
         {
-          "component": "FeatureList",
+          "component": "HeritageStory",
           "props": {
             "id": "product",
-            "variant": "grid",
-            "eyebrow": "Zasady produktu",
-            "title": "Kursy, którym można zaufać.",
-            "intro": "Wiesz, z czego powstała lekcja, gdzie uczą się klienci i jak treści pasują do systemów, których już używasz.",
-            "items": [
-              {
-                "icon": "quote",
-                "title": "Źródła w każdym elemencie",
-                "text": "Każdy element wygenerowany przez AI wskazuje fragment źródła. AI proponuje, a autor sprawdza i zatwierdza zmiany."
-              },
-              {
-                "icon": "layers",
-                "title": "Osobna witryna dla klienta",
-                "text": "Każdy tenant ma własną subdomenę, motyw i odizolowaną bazę do szkoleń klientów i partnerów."
-              },
-              {
-                "icon": "puzzle",
-                "title": "Standardy bez zamknięcia",
-                "text": "H5P, SCORM, cmi5 i xAPI działają już dziś. Szczegóły integracji znajdziesz w sekcji standardów."
-              }
-            ]
+            "eyebrow": "Historia stojąca za nazwą",
+            "title": "Wiedza rośnie, gdy tworzymy ją razem.",
+            "caption": "Stanisław Ulam · portret ilustracyjny",
+            "paragraphs": [
+              "W lwowskich kawiarniach Stanisław Ulam i inni matematycy dyskutowali o problemach i zapisywali je we wspólnym zeszycie: Księdze Szkockiej. Pytania, rozwiązania i nowe pomysły rozwijały się dzięki współpracy.",
+              "Ulam później przetłumaczył ten zbiór, aby udostępnić go szerszemu gronu, i zaprosił czytelników do zgłaszania poprawek oraz dalszych wyników."
+            ],
+            "connection": "Ten duch inspiruje ULAMS: zamieniaj dokumenty organizacji we wspólną naukę, pracuj z ludźmi i agentami i rozwijaj wiedzę razem. Otwarty kod, bezpłatne korzystanie i miejsce na Twój wkład.",
+            "source": {
+              "label": "Księga Szkocka · przedmowa Ulama, Uniwersytet St Andrews",
+              "href": "https://mathshistory.st-andrews.ac.uk/HistTopics/Scottish_Book/"
+            },
+            "cta": {
+              "label": "Twórz z nami na GitHubie",
+              "href": "https://github.com/ulams-dev/ulams"
+            },
+            "image": {
+              "src": "/landing/ulam/stanislaw-ulam-stitch.png",
+              "alt": "Stanisław Ulam",
+              "width": 1024,
+              "height": 1024
+            }
           }
         },
         {

@@ -199,30 +199,31 @@
           }
         },
         {
-          "component": "FeatureList",
+          "component": "HeritageStory",
           "props": {
             "id": "product",
-            "variant": "grid",
-            "eyebrow": "产品原则",
-            "title": "值得信赖的课程。",
-            "intro": "清楚了解每节课的依据、客户的学习场所，以及内容如何融入现有系统。",
-            "items": [
-              {
-                "icon": "quote",
-                "title": "内容出处清晰",
-                "text": "每项 AI 生成的内容都引用对应的来源片段。AI 提出建议，由作者审核并批准。"
-              },
-              {
-                "icon": "layers",
-                "title": "每位客户独立站点",
-                "text": "每个租户都有独立子域名、主题和数据库，为客户与合作伙伴提供学习服务。"
-              },
-              {
-                "icon": "puzzle",
-                "title": "优先采用开放标准",
-                "text": "H5P、SCORM、cmi5 和 xAPI 现已可用。集成详情见下方标准支持。"
-              }
-            ]
+            "eyebrow": "名字背后的理念",
+            "title": "共同创造，让知识不断生长。",
+            "caption": "斯坦尼斯瓦夫·乌拉姆 · 肖像插画",
+            "paragraphs": [
+              "在利沃夫的咖啡馆里，斯坦尼斯瓦夫·乌拉姆与数学家们讨论问题，并将它们记在一本共享笔记中：苏格兰之书。问题、解答和新想法在协作中不断发展。",
+              "乌拉姆后来翻译了这部合集，让更多人可以阅读，并邀请读者提供更正和后续研究成果。"
+            ],
+            "connection": "这种精神启发了 ULAMS：把组织文档转化为共同学习，与人和智能体协作，一起持续完善知识。开源、免费使用，也欢迎你的贡献。",
+            "source": {
+              "label": "苏格兰之书 · 乌拉姆序言，圣安德鲁斯大学",
+              "href": "https://mathshistory.st-andrews.ac.uk/HistTopics/Scottish_Book/"
+            },
+            "cta": {
+              "label": "在 GitHub 上一起构建",
+              "href": "https://github.com/ulams-dev/ulams"
+            },
+            "image": {
+              "src": "/landing/ulam/stanislaw-ulam-stitch.png",
+              "alt": "Stanisław Ulam",
+              "width": 1024,
+              "height": 1024
+            }
           }
         },
         {

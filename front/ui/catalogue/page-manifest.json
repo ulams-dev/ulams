@@ -1360,6 +1360,139 @@
         "additionalProperties": false
       }
     },
+    "HeritageStory": {
+      "description": "An editorial brand-origin story with an attributed portrait, sourced historical context, a separate product connection and a call to action. Never invent quotations or historical facts.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "image": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "format": "href",
+                "description": "Image URL (local /images/… or the tenant storage)",
+                "maxLength": 2048
+              },
+              "alt": {
+                "type": "string",
+                "description": "Text alternative; empty string only for decorative images",
+                "maxLength": 300
+              },
+              "width": {
+                "type": "integer",
+                "description": "Intrinsic width in px",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "description": "Intrinsic height in px",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "src",
+              "alt",
+              "width",
+              "height"
+            ],
+            "description": "An image with explicit size (prevents layout shift)",
+            "additionalProperties": false
+          },
+          "caption": {
+            "type": "string",
+            "description": "Illustration caption",
+            "maxLength": 160
+          },
+          "paragraphs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Sourced historical paragraph",
+              "maxLength": 600
+            },
+            "description": "Historical context",
+            "default": [],
+            "maxItems": 3,
+            "minItems": 1
+          },
+          "connection": {
+            "type": "string",
+            "description": "How this history inspires the product",
+            "maxLength": 600
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "cta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "image",
+          "paragraphs",
+          "connection",
+          "source",
+          "cta"
+        ],
+        "additionalProperties": false
+      }
+    },
     "Letter": {
       "description": "Personal letter from the tutors with portraits, paragraphs and a pull quote (editorial).",
       "children": false,

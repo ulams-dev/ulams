@@ -14,13 +14,16 @@ the narrative; the owner requested their removal and explicit roadmap tracking.
 ## Decision
 
 - Use seven chapters in the Overview hero, with progressive animations within each chapter.
+  The course brief is a sequential chat with typing indicators and alternating ULAMS/CEO messages.
 - Show the existing extraction and cited-fragment context flow. Do not imply that a vector
   retrieval service exists. The LLM reads the source before asking the course-brief questions.
 - Label the whole story as an illustrative workflow, without availability badges. Track
   departmental variants, owner reporting and policy-triggered recertification as Coming in
   the roadmap and TODO. Keep source-change approval by the owner explicit.
 - Use role illustrations for example people and the owner's exact Stitch pencil portrait
-  in the Ulam academy card. Preserve the original asset and record its provenance.
+  in an editorial brand story replacing the repeated principles grid. Source the Scottish Book
+  account from Ulam's preface, distinguish historical context from the product's inspiration,
+  and invite open-source contribution. Preserve the original asset and record its provenance.
 - Keep keyboard selection, shared play/pause, replay, reduced motion, a static text equivalent
   and a stable scene size. Keyboard navigation pauses; pointer selection plays the selected scene.
 
