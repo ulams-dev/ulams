@@ -1,13 +1,15 @@
 ---
 import { uiStrings, pageLocale } from "../lib/i18n.ts";
+import Icon from "./Icon.astro";
 interface Props {
   eyebrow?: string;
   title?: string;
   intro?: string;
   items: Array<{ label: string; note?: string; status?: "available" | "coming" }>;
   id?: string;
+  research?: { eyebrow: string; title: string; text: string; author: string; date: string; dateLabel: string; links: Array<{ label: string; href: string }> };
 }
-const { eyebrow, title, intro, items, id = "standards" } = Astro.props;
+const { eyebrow, title, intro, items, research, id = "standards" } = Astro.props;
 const t = uiStrings(pageLocale(Astro));
 ---
 
@@ -29,10 +31,40 @@ const t = uiStrings(pageLocale(Astro));
         ))
       }
     </ul>
+    {research && <aside class="u-chips__research" aria-labelledby={`${id}-research-title`} data-reveal>
+      <div class="u-chips__paper" aria-hidden="true"><Icon name="pdf" /><span>ULAM</span><span>2022</span></div>
+      <div class="u-chips__research-copy">
+        <p class="u-eyebrow">{research.eyebrow}</p>
+        <h3 id={`${id}-research-title`}>{research.title}</h3>
+        <p class="u-chips__research-meta">{research.author}<span aria-hidden="true"> · </span><time datetime={research.date}>{research.dateLabel}</time></p>
+        <p class="u-chips__research-text">{research.text}</p>
+        <ul class="u-chips__research-links" role="list">{research.links.map((link) => <li><a href={link.href}>{link.label}<Icon name="external" /></a></li>)}</ul>
+      </div>
+    </aside>}
   </div>
 </section>
 
 <style>
+  .u-chips__research { display:grid; grid-template-columns:130px minmax(0,1fr); gap:32px; align-items:center; max-width:920px; margin:38px auto 0; padding:28px; border:1px solid var(--ulams-color-border); border-radius:12px; background:var(--ulams-color-bg); }
+  .u-chips__paper { display:grid; justify-items:center; align-content:center; gap:12px; min-height:150px; padding:20px; border:1px solid var(--ulams-color-border); border-radius:3px; background:var(--ulams-color-card-bg); box-shadow:4px 5px 0 color-mix(in srgb,var(--ulams-color-primary) 5%,transparent); color:var(--ulams-color-primary); font:600 .7rem var(--ulams-font-mono); transform:rotate(-3deg); transition:transform .25s var(--ulams-ease); }
+  .u-chips__research:hover .u-chips__paper { transform:rotate(0); }
+  .u-chips__paper :global(svg) { width:32px; height:32px; }
+  .u-chips__paper>span:last-child { color:var(--ulams-color-muted); font-size:.6rem; }
+  .u-chips__research-copy .u-eyebrow { margin:0 0 9px; font-size:.65rem; }
+  .u-chips__research h3 { margin:0; font:400 1.7rem/1.2 var(--ulams-font-family); color:var(--ulams-color-text); }
+  .u-chips__research-meta { margin:9px 0 14px; color:var(--ulams-color-muted); font:.65rem/1.5 var(--ulams-font-mono); }
+  .u-chips__research-text { margin:0; max-width:70ch; color:var(--ulams-color-muted); font-size:.9rem; line-height:1.7; }
+  .u-chips__research-links { display:flex; flex-wrap:wrap; gap:12px 24px; margin:17px 0 0; padding:0; list-style:none; }
+  .u-chips__research-links a { display:inline-flex; align-items:center; gap:7px; min-height:28px; color:var(--ulams-color-primary); font-size:.8rem; text-decoration:underline; text-underline-offset:4px; }
+  .u-chips__research-links :global(svg) { width:13px; }
+  .u-chips__research-links a:hover { text-decoration-thickness:2px; }
+  .u-chips__research-links a:focus-visible { outline:3px solid var(--ulams-brand-blue); outline-offset:4px; border-radius:2px; }
+  @media(max-width:600px) {
+    .u-chips__research { grid-template-columns:minmax(0,1fr); gap:24px; padding:22px; }
+    .u-chips__paper { min-height:110px; width:110px; padding:15px; }
+    .u-chips__research h3 { font-size:1.45rem; }
+  }
+  @media(prefers-reduced-motion:reduce) { .u-chips__paper { transition:none; transform:none; } }
   .u-chips__list {
     list-style: none;
     margin: 0;

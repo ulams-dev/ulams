@@ -280,7 +280,25 @@
                 "label": "Webhooks",
                 "status": "coming"
               }
-            ]
+            ],
+            "research": {
+              "eyebrow": "有据可查的基础",
+              "title": "ULAM Headless Course Format",
+              "text": "Mateusz Wojczal 的 ULAM Headless Course Format 探讨将学习内容与展示层分离，并通过 API 提供课程。这项早期工作为 ULAMS 在不同学习界面中复用内容的方向提供了基础。",
+              "author": "Mateusz Wojczal",
+              "date": "2022-01-31",
+              "dateLabel": "PDF 版本 · 2022年1月31日",
+              "links": [
+                {
+                  "label": "阅读论文 (PDF)",
+                  "href": "https://escolalms.github.io/headless-format/paper.pdf"
+                },
+                {
+                  "label": "源代码仓库",
+                  "href": "https://github.com/EscolaLMS/headless-format"
+                }
+              ]
+            }
           }
         },
         {

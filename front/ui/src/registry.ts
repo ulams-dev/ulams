@@ -1192,6 +1192,7 @@ export const registry = {
         eyebrow: EYEBROW,
         title: TITLE,
         intro: INTRO,
+        research: obj({ eyebrow: EYEBROW, title: TITLE, text: text("Sourced summary of the foundational paper", { maxLength: 600 }), author: text("Documented author", { maxLength: 100 }), date: text("PDF version date in ISO format", { maxLength: 10 }), dateLabel: text("Localized version-date label", { maxLength: 100 }), links: list(LINK, "Verified paper and source links", { minItems: 1, maxItems: 3 }) }, ["eyebrow", "title", "text", "author", "date", "dateLabel", "links"], "Optional scholarly context, separate from the standards and integration badges"),
         items: list(
           obj(
             {

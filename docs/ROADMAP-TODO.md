@@ -638,8 +638,8 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       example tenant domains. The repeated
       principles grid is replaced by a sourced Scottish Book brand story and the selected Stitch Ulam portrait.
       The example workflow has no availability badges; planned delivery is tracked under Phase 6)
-- [ ] (new) Link the owner’s ULAM scientific paper beside the agent/API interface selector
-      (awaiting the paper title, URL or local file path).
+- [x] (new) Link the owner’s ULAM scientific paper under the standards, as requested in the
+      follow-up: verified PDF and source repository, authorship and PDF version date, EN/PL/ZH.
 - [x] (new) Split platform product Overview and Comparison pages in EN/PL/ZH, with audited SEO metadata,
       JSON-LD, robots and sitemap routes (implemented and verified locally; plan batch 4; ADR 0097 Proposed)
 - [x] (new) Three new free demo academies, `gravity` (Gravity Lab, 3D simulation), `poland` (Poland, Measured /

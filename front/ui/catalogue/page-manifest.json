@@ -4432,6 +4432,81 @@
             "description": "One or two sentences under the title",
             "maxLength": 600
           },
+          "research": {
+            "type": "object",
+            "properties": {
+              "eyebrow": {
+                "type": "string",
+                "description": "Small label above the title",
+                "maxLength": 80
+              },
+              "title": {
+                "type": "string",
+                "description": "Section title",
+                "maxLength": 160
+              },
+              "text": {
+                "type": "string",
+                "description": "Sourced summary of the foundational paper",
+                "maxLength": 600
+              },
+              "author": {
+                "type": "string",
+                "description": "Documented author",
+                "maxLength": 100
+              },
+              "date": {
+                "type": "string",
+                "description": "PDF version date in ISO format",
+                "maxLength": 10
+              },
+              "dateLabel": {
+                "type": "string",
+                "description": "Localized version-date label",
+                "maxLength": 100
+              },
+              "links": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Visible text",
+                      "maxLength": 80
+                    },
+                    "href": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Target URL",
+                      "maxLength": 2048
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "href"
+                  ],
+                  "description": "A link or call to action",
+                  "additionalProperties": false
+                },
+                "description": "Verified paper and source links",
+                "default": [],
+                "maxItems": 3,
+                "minItems": 1
+              }
+            },
+            "required": [
+              "eyebrow",
+              "title",
+              "text",
+              "author",
+              "date",
+              "dateLabel",
+              "links"
+            ],
+            "description": "Optional scholarly context, separate from the standards and integration badges",
+            "additionalProperties": false
+          },
           "items": {
             "type": "array",
             "items": {

@@ -280,7 +280,25 @@
                 "label": "Webhooks",
                 "status": "coming"
               }
-            ]
+            ],
+            "research": {
+              "eyebrow": "Udokumentowane podstawy",
+              "title": "ULAM Headless Course Format",
+              "text": "ULAM Headless Course Format Mateusza Wojczala opisuje oddzielenie treści szkoleniowych od prezentacji i dostarczanie ich przez API. Ta wcześniejsza praca inspiruje podejście ULAMS do treści wielokrotnego użytku w różnych interfejsach nauki.",
+              "author": "Mateusz Wojczal",
+              "date": "2022-01-31",
+              "dateLabel": "Wersja PDF · 31 stycznia 2022",
+              "links": [
+                {
+                  "label": "Przeczytaj publikację (PDF)",
+                  "href": "https://escolalms.github.io/headless-format/paper.pdf"
+                },
+                {
+                  "label": "Repozytorium źródłowe",
+                  "href": "https://github.com/EscolaLMS/headless-format"
+                }
+              ]
+            }
           }
         },
         {

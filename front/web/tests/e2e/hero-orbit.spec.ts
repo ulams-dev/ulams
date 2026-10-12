@@ -138,3 +138,18 @@ test("PDF intake reveals extraction, individual citations and LLM reading in ord
   expect(await opacity(".ps-ingest-node--llm")).toBe(1);
   expect(await opacity(".ps-ingest-quote")).toBe(1);
 });
+
+test("standards include the sourced headless-format paper", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(url);
+  const note = page.locator("#standards .u-chips__research");
+  await note.scrollIntoViewIfNeeded();
+  await expect(note.locator("h3")).toHaveText("ULAM Headless Course Format");
+  await expect(note).toContainText("Mateusz Wojczal");
+  await expect(note.locator("time")).toHaveAttribute("datetime", "2022-01-31");
+  await expect(note.locator("a")).toHaveCount(2);
+  await expect(note.locator("a").first()).toHaveAttribute("href", "https://escolalms.github.io/headless-format/paper.pdf");
+  await expect(note.locator("a").last()).toHaveAttribute("href", "https://github.com/EscolaLMS/headless-format");
+  const results = await new AxeBuilder({ page }).include(".u-chips__research").withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  expect(results.violations).toEqual([]);
+});
