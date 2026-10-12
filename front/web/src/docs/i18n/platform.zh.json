@@ -343,7 +343,7 @@
             "variant": "terminal",
             "eyebrow": "自托管",
             "title": "你的服务器，你的数据。",
-            "text": "开源平台通过 Docker Compose 与 H5P 服务一起运行。你可以部署到自己的 VPS 并由 Cloudflare 提供入口，或将容器栈部署到 Kubernetes 或 Render.com。仓库包含 VPS/Cloudflare 的 YAML 配置和分步教程。Helm chart 即将推出。",
+            "text": "在能运行容器的环境中部署 ULAMS：自己的 VPS、AWS、Google Cloud、Azure 或 Render.com。Cloudflare 可处理 DNS、TLS 和应用入口。",
             "code": [
               "$ git clone https://github.com/ulams-dev/ulams",
               "$ cd ulams && yarn install",
@@ -359,7 +359,25 @@
             "secondary": {
               "label": "体验演示",
               "href": "#demos"
-            }
+            },
+            "bullets": [
+              {
+                "title": "自己的 VPS",
+                "text": "分步配置 Cloudflare、文件存储和备份。",
+                "href": "https://ulams-dev.github.io/ulams/operators/vps-cloudflare/"
+              },
+              {
+                "title": "Docker Compose",
+                "text": "使用仓库中的 YAML 配置安装平台。",
+                "href": "https://ulams-dev.github.io/ulams/operators/self-hosting/"
+              },
+              {
+                "title": "Kubernetes YAML",
+                "text": "集群架构与要求；YAML 教程正在编写。",
+                "href": "https://ulams-dev.github.io/ulams/operators/high-availability/#kubernetes"
+              }
+            ],
+            "note": "Helm chart 即将推出。"
           }
         }
       ]

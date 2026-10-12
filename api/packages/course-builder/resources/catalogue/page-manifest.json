@@ -2467,6 +2467,43 @@
             "description": "One or two sentences under the title",
             "maxLength": 600
           },
+          "bullets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Bullet heading",
+                  "maxLength": 80
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Short explanation",
+                  "maxLength": 200
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Guide or supporting resource",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "title",
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Concise call-to-action details",
+            "default": [],
+            "maxItems": 6
+          },
+          "note": {
+            "type": "string",
+            "description": "Short closing note",
+            "maxLength": 200
+          },
           "code": {
             "type": "array",
             "items": {

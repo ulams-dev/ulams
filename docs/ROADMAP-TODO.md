@@ -842,6 +842,8 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       a real account: needs SSH and `bin/check-host.sh`)
 - [ ] One app image + PostgreSQL + optional Redis (DB fallback)
 - [ ] Commerce as optional profile: + one Sylius image, shared PostgreSQL server (separate DB)
+- [ ] (new) Step-by-step Kubernetes YAML tutorial with tenant-aware manifests and validated examples
+      (the landing links to existing architecture requirements until this guide is ready).
 - [ ] `docker compose up` and Helm chart with sane defaults
 - [ ] Setup wizard (admin, domain, mail, storage, AI provider or none, commerce link)
 - [x] (new) Production reference: one VPS behind Cloudflare (tunnel, flat tenant hosts, R2, cache rules, backups to R2,

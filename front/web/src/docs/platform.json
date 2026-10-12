@@ -343,7 +343,7 @@
             "variant": "terminal",
             "eyebrow": "self-host",
             "title": "Your servers. Your data.",
-            "text": "The open-source platform runs with Docker Compose alongside the H5P service. Deploy on your VPS with Cloudflare in front, or run the container stack on Kubernetes or Render.com. VPS/Cloudflare YAML configurations and step-by-step tutorials are included. Helm chart coming soon.",
+            "text": "Run ULAMS wherever you can run containers: your VPS, AWS, Google Cloud, Azure or Render.com. Cloudflare can handle DNS, TLS and access to your application.",
             "code": [
               "$ git clone https://github.com/ulams-dev/ulams",
               "$ cd ulams && yarn install",
@@ -359,7 +359,25 @@
             "secondary": {
               "label": "Try the demos",
               "href": "#demos"
-            }
+            },
+            "bullets": [
+              {
+                "title": "Your own VPS",
+                "text": "Step-by-step setup with Cloudflare, storage and backups.",
+                "href": "https://ulams-dev.github.io/ulams/operators/vps-cloudflare/"
+              },
+              {
+                "title": "Docker Compose",
+                "text": "Install the platform from the included YAML configuration.",
+                "href": "https://ulams-dev.github.io/ulams/operators/self-hosting/"
+              },
+              {
+                "title": "Kubernetes YAML",
+                "text": "Cluster architecture and requirements; the YAML tutorial is being prepared.",
+                "href": "https://ulams-dev.github.io/ulams/operators/high-availability/#kubernetes"
+              }
+            ],
+            "note": "Helm chart coming soon."
           }
         }
       ]

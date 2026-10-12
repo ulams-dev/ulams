@@ -166,3 +166,17 @@ test("story steps explain practical actions in concise bullets", async ({ page }
   }
   await expect(page.locator("#agents .u-lead")).toContainText("Codex, OpenCode, Gemini CLI");
 });
+
+test("self-hosting lists three deployment guides and cloud examples", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(url);
+  const section = page.locator("#self-host");
+  await section.scrollIntoViewIfNeeded();
+  await expect(section.locator(".u-cta__bullets li")).toHaveCount(3);
+  await expect(section.locator(".u-lead")).toContainText("AWS, Google Cloud, Azure or Render.com");
+  await expect(section.locator(".u-cta__bullets a")).toHaveCount(3);
+  await expect(section.locator(".u-cta__bullets li").last()).toContainText("tutorial is being prepared");
+  await expect(section.locator(".u-cta__note")).toHaveText("Helm chart coming soon.");
+  const results = await new AxeBuilder({ page }).include("#self-host").withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  expect(results.violations).toEqual([]);
+});

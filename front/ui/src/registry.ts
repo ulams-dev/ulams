@@ -700,6 +700,8 @@ export const registry = {
         eyebrow: EYEBROW,
         title: TITLE,
         text: INTRO,
+        bullets: list(obj({ title: text("Bullet heading", { maxLength: 80 }), text: text("Short explanation", { maxLength: 200 }), href: href("Guide or supporting resource") }, ["title", "text"]), "Concise call-to-action details", { maxItems: 6 }),
+        note: text("Short closing note", { maxLength: 200 }),
         code: list(text("Command or output line", { maxLength: 120 }), "Terminal lines (terminal variant); lines starting with $ are commands", { maxItems: 10 }),
         cta: LINK,
         secondary: LINK,
