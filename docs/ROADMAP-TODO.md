@@ -330,7 +330,8 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [x] Policies, OpenAPI annotations, fixtures and tests (LiaScript, Adapt A+B, LTI round-trip) (permissions
       `lti_manage`, `liascript_manage`, `adapt_manage`, OpenAPI for every new endpoint, fixtures and tests
       against in-test fakes; `.github/workflows/nightly-conformance.yml` (opt-in) with the Adapt worker build,
-      Moodle 5.0 in both LTI directions (passed locally) and an operator-driven saLTIre job; ADR 0019)
+      Moodle 5.0 in both LTI directions (passed locally) and an operator-driven saLTIre job; API setup waits
+      for the PostgreSQL endpoint before Composer's Laravel discovery hook; ADR 0019)
 - [x] (new) `TopicFinished` fired before the learner's progress was saved, so listeners running at once
       (sync queue) sent the previous LTI score; now dispatched after saving (found by the Moodle run, ADR 0018)
 - [ ] (new) Turn on the nightly conformance runs (`NIGHTLY_CONFORMANCE=true`) and run the saLTIre job once
