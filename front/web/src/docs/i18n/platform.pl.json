@@ -59,11 +59,16 @@
               "ariaLabel": "Przykładowy cykl polityki prywatności: dokument źródłowy, ścieżki dla działów, egzamin i certyfikat, raport ukończeń, aktualizacja zatwierdzana przez autora i planowana recertyfikacja",
               "badge": "Przykład · cykl polityki",
               "title": "Polityka prywatności · v1 → v2",
-              "note": "W planach: ścieżki dla działów, raporty zgodności i recertyfikacja. Autor zatwierdza aktualizacje źródeł przed publikacją.",
+              "note": "Przykładowy cykl polityki. Autor zatwierdza aktualizacje źródeł przed publikacją.",
               "journey": [
                 {
-                  "title": "Polityka v1 staje się źródłem",
-                  "text": "Dodaj politykę prywatności organizacji i połącz ją z treścią kursu.",
+                  "title": "CEO dodaje PDF z polityką",
+                  "text": "ULAMS odczytuje tekst i dzieli go na fragmenty ze źródłami. LLM czyta ten kontekst, zanim przygotuje szkolenie.",
+                  "status": "available"
+                },
+                {
+                  "title": "AI pyta o organizację",
+                  "text": "CEO określa odbiorców, czas, stanowiska i poziom doświadczenia. Odpowiedzi stają się briefem kursu.",
                   "status": "available"
                 },
                 {
@@ -95,6 +100,7 @@
               "visual": {
                 "chapters": [
                   "Źródło",
+                  "Brief",
                   "Zespoły",
                   "Nauka",
                   "Nadzór",
@@ -141,7 +147,36 @@
                   "Osoba z Managementu",
                   "Osoba z HR",
                   "Osoba z Sales"
-                ]
+                ],
+                "intake": {
+                  "uploader": "CEO",
+                  "upload": "Dodaj PDF z polityką",
+                  "uploaded": "PDF dodany",
+                  "extract": "Odczyt tekstu PDF",
+                  "context": "Kontekst ze źródłami",
+                  "llm": "LLM czyta politykę",
+                  "sourceReady": "Źródło gotowe · cytowania zachowane",
+                  "briefTitle": "ULAMS · brief kursu",
+                  "ready": "Brief kursu gotowy",
+                  "questions": [
+                    {
+                      "question": "Ile działów potrzebuje szkolenia?",
+                      "answer": "3: Management, HR i Sales."
+                    },
+                    {
+                      "question": "Ile czasu ma zająć kurs?",
+                      "answer": "30 minut, podzielonych na krótkie lekcje."
+                    },
+                    {
+                      "question": "Jakie poziomy stanowisk uwzględnić?",
+                      "answer": "Liderzy zespołów i specjaliści."
+                    },
+                    {
+                      "question": "Jaki jest poziom doświadczenia?",
+                      "answer": "Nowe osoby i doświadczeni pracownicy."
+                    }
+                  ]
+                }
               }
             }
           },

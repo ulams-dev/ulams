@@ -805,10 +805,101 @@
                       "description": "Short navigation label",
                       "maxLength": 24
                     },
-                    "description": "Six story chapters",
+                    "description": "Seven story chapters",
                     "default": [],
-                    "maxItems": 6,
-                    "minItems": 6
+                    "maxItems": 7,
+                    "minItems": 7
+                  },
+                  "intake": {
+                    "type": "object",
+                    "properties": {
+                      "uploader": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: uploader",
+                        "maxLength": 120
+                      },
+                      "upload": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: upload",
+                        "maxLength": 120
+                      },
+                      "uploaded": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: uploaded",
+                        "maxLength": 120
+                      },
+                      "extract": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: extract",
+                        "maxLength": 120
+                      },
+                      "context": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: context",
+                        "maxLength": 120
+                      },
+                      "llm": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: llm",
+                        "maxLength": 120
+                      },
+                      "sourceReady": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: sourceReady",
+                        "maxLength": 120
+                      },
+                      "briefTitle": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: briefTitle",
+                        "maxLength": 120
+                      },
+                      "ready": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: ready",
+                        "maxLength": 120
+                      },
+                      "questions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "question": {
+                              "type": "string",
+                              "description": "Course brief question",
+                              "maxLength": 140
+                            },
+                            "answer": {
+                              "type": "string",
+                              "description": "Illustrative CEO answer",
+                              "maxLength": 140
+                            }
+                          },
+                          "required": [
+                            "question",
+                            "answer"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Four audience and duration questions",
+                        "default": [],
+                        "maxItems": 4,
+                        "minItems": 4
+                      }
+                    },
+                    "required": [
+                      "uploader",
+                      "upload",
+                      "uploaded",
+                      "extract",
+                      "context",
+                      "llm",
+                      "sourceReady",
+                      "briefTitle",
+                      "ready",
+                      "questions"
+                    ],
+                    "description": "PDF extraction, cited source context and the course briefing interview",
+                    "additionalProperties": false
                   },
                   "audiences": {
                     "type": "array",
@@ -966,6 +1057,7 @@
                 },
                 "required": [
                   "chapters",
+                  "intake",
                   "audiences",
                   "roleTopics",
                   "learners",
@@ -1028,8 +1120,8 @@
                 },
                 "description": "Steps in the product story",
                 "default": [],
-                "maxItems": 6,
-                "minItems": 6
+                "maxItems": 7,
+                "minItems": 7
               }
             },
             "required": [

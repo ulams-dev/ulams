@@ -429,6 +429,18 @@ separately.
 - Compliance reports and audit export (who completed what, when, which course version, which
   certificate), aligned with the Phase 3 audit trail.
 
+### 6.1.1 Policy lifecycle (Coming)
+- A policy PDF is extracted into cited source fragments. The course briefing captures departments,
+  expected duration, seniority and prior experience; these inputs shape departmental course variants.
+- Learners complete interactive lessons and an exam in the organisation's branded tenant application,
+  then receive a PDF certificate linked to the policy and course version.
+- The policy owner sees who completed training and who is still pending, grouped by department.
+- When the policy changes, prepare updates to every affected course variant for owner approval.
+  After approval, invalidate certificates superseded by the policy change and notify learners and
+  owners with the relevant source changes. A minor change assigns a new exam; a major change assigns
+  a replacement course. Successful completion issues a new PDF certificate.
+- Keep certificate history, notifications and reassignments auditable and isolated to the tenant.
+
 ### 6.2 Automated enrolment and role-based paths
 - Rule engine: "user with attribute X (department, role, location, tenant) → learning path Y,
   due in N days". Rules evaluated on user create/update and on schedule.

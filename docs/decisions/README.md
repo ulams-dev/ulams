@@ -109,5 +109,6 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0095](0095-ulam-course-facts-sources-and-images.md) | The Ulam course: every statement traced to a fact sheet, sources numbered, four licensed photographs | Proposed |
 | [0096](0096-landing-languages-polish-and-chinese.md) | The product landing in Polish and Simplified Chinese: Astro i18n routing, one document per language | Proposed |
 | [0097](0097-public-product-landing-overview-comparison.md) | Split the public product landing into Overview and Comparison | Proposed |
+| [0098](0098-policy-lifecycle-landing-story.md) | Present the policy lifecycle as one animated example workflow | Proposed |
 
 <!-- END GENERATED: adr-index -->

@@ -59,11 +59,16 @@
               "ariaLabel": "Illustrative privacy policy lifecycle: source document, department learning paths, exam and certificate, completion reporting, author-approved source update, and planned recertification",
               "badge": "Example · policy lifecycle",
               "title": "Privacy policy · v1 → v2",
-              "note": "On the roadmap: role-based learning paths, compliance reports and certificate recertification. Authors approve source updates before publication.",
+              "note": "Illustrative policy lifecycle. Authors approve source updates before publication.",
               "journey": [
                 {
-                  "title": "Policy v1 becomes the source",
-                  "text": "Upload the organisation's privacy policy and connect it to course content.",
+                  "title": "The CEO uploads the policy PDF",
+                  "text": "ULAMS extracts its text into cited source fragments. The LLM reads this source context before drafting any training.",
+                  "status": "available"
+                },
+                {
+                  "title": "AI asks about the organisation",
+                  "text": "The CEO defines the audience, duration, seniority and experience level. These answers become the course brief.",
                   "status": "available"
                 },
                 {
@@ -95,6 +100,7 @@
               "visual": {
                 "chapters": [
                   "Source",
+                  "Brief",
                   "Teams",
                   "Learning",
                   "Oversight",
@@ -141,7 +147,36 @@
                   "Management learner",
                   "HR learner",
                   "Sales learner"
-                ]
+                ],
+                "intake": {
+                  "uploader": "CEO",
+                  "upload": "Upload policy PDF",
+                  "uploaded": "PDF uploaded",
+                  "extract": "Extract PDF text",
+                  "context": "Cited source context",
+                  "llm": "LLM reads the policy",
+                  "sourceReady": "Source ready · citations retained",
+                  "briefTitle": "ULAMS · course briefing",
+                  "ready": "Course brief ready",
+                  "questions": [
+                    {
+                      "question": "How many departments need this training?",
+                      "answer": "3: Management, HR and Sales."
+                    },
+                    {
+                      "question": "How long should the course take?",
+                      "answer": "30 minutes, split into short lessons."
+                    },
+                    {
+                      "question": "What seniority levels should it cover?",
+                      "answer": "Team leaders and individual contributors."
+                    },
+                    {
+                      "question": "What is their experience level?",
+                      "answer": "New starters and experienced employees."
+                    }
+                  ]
+                }
               }
             }
           },

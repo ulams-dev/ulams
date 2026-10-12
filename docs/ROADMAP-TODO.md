@@ -11,6 +11,9 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-12) Owner requested one animated policy example, the selected Stitch Ulam portrait,
+      no availability badges within that story, and explicit policy lifecycle delivery items in
+      Phase 6 (ADR 0098 Proposed).
 - [x] (2026-10-12) Batch 4 of `docs/plans/phase-5-reference-frontend.md` approved: separate Overview and Comparison pages, truthful public feature status, localized SEO and a six-URL platform sitemap (ADR 0097 Proposed)
 - [x] (2026-10-09) Phase 3 plan (`docs/plans/phase-3.md`) approved with all 17 decisions of its section 18 as recommended (issue #27 closed)
 
@@ -627,7 +630,9 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       see `docs/plans/phase-5-reference-frontend.md`, batch 2; Overview in EN/PL/ZH shows an animated privacy-policy
       lifecycle from source v1 through course, exam and certificate to source updates and recertification; one
       visual story at the top replaces the duplicate Living Course section, with document, academy, oversight,
-      source-diff and renewal scenes; roadmap items are labeled and updates retain author approval)
+      source-diff and renewal scenes; updates retain author approval; CEO PDF intake and a four-question
+      course brief are animated, with illustrated department roles and the owner-selected Stitch Ulam portrait.
+      The example workflow has no availability badges; planned delivery is tracked under Phase 6)
 - [x] (new) Split platform product Overview and Comparison pages in EN/PL/ZH, with audited SEO metadata,
       JSON-LD, robots and sitemap routes (implemented and verified locally; plan batch 4; ADR 0097 Proposed)
 - [x] (new) Three new free demo academies, `gravity` (Gravity Lab, 3D simulation), `poland` (Poland, Measured /
@@ -700,6 +705,13 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
         in `templates-pdf/resources/pdfme`, not yet assigned by the demo seeding)
   - [ ] Until then: set `REPORTBRO_URL` to the local server so no data leaves the installation
         (obsolete once the pdfme change is merged: ReportBro and `REPORTBRO_URL` are gone)
+- [ ] (new) Policy lifecycle delivery: link the uploaded policy version and cited fragments to all departmental
+      course variants; use departments, duration, seniority and experience from the course brief (Coming).
+- [ ] (new) Policy owner dashboard: show assigned people by department, completed and pending training,
+      course version and issued PDF certificate; support the branded tenant learning application (Coming).
+- [ ] (new) On an approved policy change, update affected course variants, invalidate superseded certificates,
+      notify learners and policy owners with a source diff, assign a new exam for a minor change or a new
+      course for a major change, and issue a replacement PDF certificate after completion (Coming).
 - [ ] Verification URL/QR, expiry, recertification, reminders
 - [ ] Mandatory training with due dates and manager escalation
 - [ ] Compliance reports and audit export (linked to Phase 3 audit trail)

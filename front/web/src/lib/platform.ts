@@ -64,7 +64,9 @@ export async function platformModel(current: URL, status: LandingStatus = "actua
         facts,
         primary: { label: copy?.open.learner ?? "Open as learner", href: course ? `${front}${course.learnHref}` : `${front}/` },
         secondary: { label: copy?.open.admin ?? "Open as admin", href: tenant.adminUrl },
-        image: course?.image ? { ...course.image, alt: "" } : undefined,
+        image: slug === "ulam"
+          ? { src: "/landing/ulam/stanislaw-ulam-stitch.png", alt: "Stanisław Ulam", width: 1024, height: 1024 }
+          : course?.image ? { ...course.image, alt: "" } : undefined,
       };
     })
   );

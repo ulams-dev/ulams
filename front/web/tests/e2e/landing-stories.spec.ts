@@ -9,12 +9,13 @@ async function open(page: Page) {
   await expect(page.locator("#agents")).toHaveCount(1);
 }
 
-test("the policy lifecycle appears once at the top and keeps planned stages labeled", async ({ page }) => {
+test("the policy lifecycle appears once at the top and uses a neutral example caption", async ({ page }) => {
   await open(page);
   await expect(page.locator(".u-hero ulams-policy-story")).toHaveCount(1);
   await expect(page.locator(".u-lc, #builder")).toHaveCount(0);
-  await page.locator(".ps-navigation button").nth(5).click();
-  await expect(page.locator(".ps-panel:visible .u-status")).toContainText("On the roadmap");
+  await page.locator(".ps-navigation button").last().click();
+  await expect(page.locator(".policy-story .u-status")).toHaveCount(0);
+  await expect(page.locator(".policy-story figcaption")).toContainText("Illustrative policy lifecycle");
 });
 
 test("workflow tabs: roving tabindex, aria wiring, arrow keys, transcripts", async ({ page }) => {
@@ -62,7 +63,7 @@ test("policy playback advances, pauses and replays without losing chapter select
   const story = page.locator("ulams-policy-story");
   await story.scrollIntoViewIfNeeded();
   await page.waitForFunction(() => customElements.get("ulams-policy-story"));
-  await page.clock.fastForward(6500);
+  await page.clock.fastForward(8500);
   await expect(story.locator('[role="tab"]').nth(1)).toHaveAttribute("aria-selected", "true");
   await story.locator("[data-play]").click();
   await page.clock.fastForward(12000);

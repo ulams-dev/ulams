@@ -399,7 +399,15 @@ export const registry = {
             note: text("Small note under the card", { maxLength: 240 }),
             visual: obj(
               {
-                chapters: list(text("Short navigation label", { maxLength: 24 }), "Six story chapters", { minItems: 6, maxItems: 6 }),
+                chapters: list(text("Short navigation label", { maxLength: 24 }), "Seven story chapters", { minItems: 7, maxItems: 7 }),
+                intake: obj(
+                  {
+                    ...Object.fromEntries(["uploader", "upload", "uploaded", "extract", "context", "llm", "sourceReady", "briefTitle", "ready"].map((key) => [key, text(`Localized policy intake copy: ${key}`, { maxLength: 120 })])),
+                    questions: list(obj({ question: text("Course brief question", { maxLength: 140 }), answer: text("Illustrative CEO answer", { maxLength: 140 }) }, ["question", "answer"]), "Four audience and duration questions", { minItems: 4, maxItems: 4 }),
+                  },
+                  ["uploader", "upload", "uploaded", "extract", "context", "llm", "sourceReady", "briefTitle", "ready", "questions"],
+                  "PDF extraction, cited source context and the course briefing interview"
+                ),
                 audiences: list(text("Department", { maxLength: 30 }), "Three example departments", { minItems: 3, maxItems: 3 }),
                 roleTopics: list(text("Role-specific learning focus", { maxLength: 80 }), "One learning focus per department", { minItems: 3, maxItems: 3 }),
                 learners: list(text("Illustrative learner label", { maxLength: 40 }), "Three anonymous learner rows in the owner view", { minItems: 3, maxItems: 3 }),
@@ -409,7 +417,7 @@ export const registry = {
                   "owner", "progress", "later", "proposal", "approval", "renewal", "expired", "minor", "major", "notification", "renewed",
                 ].map((key) => [key, text(`Localized illustration copy: ${key}`, { maxLength: 120 })])),
               },
-              ["chapters", "audiences", "roleTopics", "learners", "formats", "policy", "section", "before", "after", "academy", "lesson", "exam", "certificate", "completed", "pending", "owner", "progress", "later", "proposal", "approval", "renewal", "expired", "minor", "major", "notification", "renewed"],
+              ["chapters", "intake", "audiences", "roleTopics", "learners", "formats", "policy", "section", "before", "after", "academy", "lesson", "exam", "certificate", "completed", "pending", "owner", "progress", "later", "proposal", "approval", "renewal", "expired", "minor", "major", "notification", "renewed"],
               "Localized copy for the policy document, role-specific courses, learning site, certificates, completion view and reviewed source update"
             ),
             journey: list(
@@ -422,7 +430,7 @@ export const registry = {
                 ["title", "text"]
               ),
               "Steps in the product story",
-              { minItems: 6, maxItems: 6 }
+              { minItems: 7, maxItems: 7 }
             ),
           },
           ["journey", "visual"],

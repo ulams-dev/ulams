@@ -42,10 +42,10 @@ describe("platform product hero", () => {
     expect(hero(platform).props!.diff).toMatchObject({
       title: "Privacy policy · v1 → v2",
       journey: [
-        { status: "available" }, { status: "coming" }, { status: "available" },
+        { status: "available" }, { status: "available" }, { status: "coming" }, { status: "available" },
         { status: "coming" }, { status: "available" }, { status: "coming" },
       ],
-      visual: { chapters: ["Source", "Teams", "Learning", "Oversight", "Change", "Renewal"] },
+      visual: { chapters: ["Source", "Brief", "Teams", "Learning", "Oversight", "Change", "Renewal"] },
     });
     expect(hero(platform).props!.primaryCta).toMatchObject({ href: "#demos" });
     expect(hero(platform).props!.secondaryCta).toMatchObject({ href: "#self-host" });
