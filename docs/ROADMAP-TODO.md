@@ -11,6 +11,11 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (new) Owner requested Umami Cloud analytics on the public landing, docs and six demos,
+      with demo_open and demos_scroll events and browser exclusions (ADR 0101 Proposed).
+      Landing and demos deployed from phase-5/platform-landing-redesign; this documentation
+      release installs the same owned-domain tracker in Starlight.
+
 - [x] (2026-10-11) Feature catalogue (`docs/plans/feature-catalogue.md`): Scalar as the docs API browser, a new `FeatureIndex`
       catalogue component for the landing, H5P content types taken from h5p.org, landings translated (PL, ZH) and docs
       English only, `ItemList` JSON-LD on, OpenAPI responses completed for the featured packages

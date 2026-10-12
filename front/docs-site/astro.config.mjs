@@ -3,6 +3,7 @@ import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 import mermaid from "astro-mermaid";
 import starlightLinksValidator from "starlight-links-validator";
+import { UMAMI_WEBSITE_ID, UMAMI_SCRIPT_ORIGIN, UMAMI_HOSTS } from "../ui/src/lib/analytics.ts";
 import baseLinks from "./src/plugins/base-links.mjs";
 
 /**
@@ -38,6 +39,15 @@ export default defineConfig({
       logo: { light: "./src/assets/logo-light.svg", dark: "./src/assets/logo-dark.svg", replacesTitle: true, alt: "ulams" },
       favicon: "/favicon.svg",
       head: [
+        ...(process.env.NODE_ENV === "production" ? [{ tag: /** @type {const} */ ("script"), attrs: {
+          defer: true,
+          src: `${UMAMI_SCRIPT_ORIGIN}/script.js`,
+          "data-website-id": UMAMI_WEBSITE_ID,
+          "data-domains": UMAMI_HOSTS.join(","),
+          "data-exclude-search": "true",
+          "data-exclude-hash": "true",
+          "data-do-not-track": "true",
+        } }] : []),
         { tag: "link", attrs: { rel: "icon", href: `${assetBase}favicon.ico`, sizes: "48x48" } },
         { tag: "link", attrs: { rel: "apple-touch-icon", href: `${assetBase}apple-touch-icon.png` } },
         { tag: "meta", attrs: { name: "theme-color", content: "#0F2B46" } },
