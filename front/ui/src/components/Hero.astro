@@ -63,12 +63,12 @@ interface Props {
     title?: string;
     sourceLabel?: string;
     source?: string;
+    sourceExcerpt?: string;
+    proposalLabel?: string;
+    approvalLabel?: string;
     note?: string;
     lines: Array<{ op?: "add" | "del" | "ctx"; text: string }>;
-    citationsLabel?: string;
     citations?: string[];
-    action?: string;
-    lessonTitle?: string;
   };
 }
 
@@ -234,39 +234,24 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
               <span class="u-prod__badge">{diff.badge ?? "Reviewable draft"}</span>
               {diff.title && <span class="u-prod__title">{diff.title}</span>}
             </div>
-            {diff.source && (
-              <p class="u-prod__source">
-                <Icon name="quote" /> {diff.sourceLabel ?? "Grounded in:"} <code>{diff.source}</code>
-              </p>
-            )}
-            <ol class="u-prod__diff">
-              {diff.lines.map((line, i) => (
-                <li data-op={line.op ?? "ctx"} style={`--i:${i}`}>
-                  <span aria-hidden="true">{line.op === "add" ? "+" : line.op === "del" ? "−" : " "}</span>
-                  <span class="u-visually-hidden">{line.op === "add" ? "added:" : line.op === "del" ? "removed:" : ""}</span>
-                  {line.text}
-                </li>
-              ))}
-            </ol>
-            <div class="u-prod__foot">
-              <ul class="u-prod__cites" aria-label={diff.citationsLabel ?? "Sources"}>
-                {(diff.citations ?? []).map((c) => (
-                  <li>
-                    <Icon name="quote" /> {c}
-                  </li>
-                ))}
-              </ul>
-              {diff.action && (
-                <span class="u-prod__approve" aria-hidden="true">
-                  <Icon name="check" /> {diff.action}
-                </span>
-              )}
+            <div class="u-prod__flow">
+              <section class="u-prod__step u-prod__step--source" aria-label={diff.sourceLabel ?? "Source excerpt"}>
+                <h3>{diff.sourceLabel ?? "Source excerpt"}</h3>
+                <blockquote>{diff.sourceExcerpt}</blockquote>
+                <p class="u-prod__source"><code>{diff.source}{(diff.citations ?? []).length > 0 ? ` · ${(diff.citations ?? []).join(", ")}` : ""}</code></p>
+              </section>
+              <span class="u-prod__flow-arrow" aria-hidden="true"><Icon name="arrow" /></span>
+              <section class="u-prod__step u-prod__step--proposal" aria-label={diff.proposalLabel ?? "AI proposal"}>
+                <h3>{diff.proposalLabel ?? "Course draft"}</h3>
+                <ul class="u-prod__outline">
+                  {diff.lines.filter((line) => line.op !== "ctx").map((line) => <li>{line.text}</li>)}
+                </ul>
+              </section>
             </div>
-          </div>
-          <div class="u-prod__peek" aria-hidden="true">
-            <span class="u-prod__peek-dot" />
-            <span>{diff.lessonTitle ?? "Review before publishing"}</span>
-            <span class="u-prod__peek-bar"><i /></span>
+            <div class="u-prod__approval">
+              <span class="u-prod__approval-mark" aria-hidden="true"><Icon name="check" /></span>
+              <span>{diff.approvalLabel ?? "Waiting for author review"}</span>
+            </div>
           </div>
           {diff.note && <figcaption class="u-prod__note">{diff.note}</figcaption>}
         </figure>

@@ -57,31 +57,27 @@
             },
             "diff": {
               "ariaLabel": "课程草稿示例，基于来源文档生成，等待作者审核",
-              "badge": "待审核草稿",
+              "badge": "示例 · 课程草稿",
               "title": "事件响应",
-              "sourceLabel": "内容来源：",
-              "source": "incident-runbook.pdf",
-              "note": "草稿示例。发布前，作者会审核每项改动。",
+              "sourceLabel": "来源摘录",
+              "source": "sample-runbook.pdf",
+              "sourceExcerpt": "宣布发生事件后，记录发现时间、最初症状和已采取的措施。",
+              "proposalLabel": "AI 课程草稿",
+              "approvalLabel": "等待作者审核",
+              "note": "界面示例。AI 提出课程内容，作者审核后再发布。",
               "lines": [
                 {
-                  "op": "ctx",
-                  "text": "适用对象 · 平台工程师"
+                  "op": "add",
+                  "text": "模块 · 识别生产环境事件"
                 },
                 {
                   "op": "add",
-                  "text": "模块 1 · 识别生产环境事件"
-                },
-                {
-                  "op": "add",
-                  "text": "课程 1 · 梳理事件时间线"
+                  "text": "课程 · 梳理事件时间线"
                 }
               ],
-              "citationsLabel": "来源",
               "citations": [
-                "incident-runbook.pdf §2"
-              ],
-              "action": "审核草稿",
-              "lessonTitle": "作者审核后再发布"
+                "§2 · 事件处理流程"
+              ]
             }
           }
         },

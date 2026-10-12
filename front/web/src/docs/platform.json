@@ -57,31 +57,27 @@
             },
             "diff": {
               "ariaLabel": "Example course draft grounded in a source document, ready for author review",
-              "badge": "Reviewable draft",
+              "badge": "Example · course draft",
               "title": "Incident response",
-              "sourceLabel": "Grounded in:",
-              "source": "incident-runbook.pdf",
-              "note": "Example draft. The author reviews every change before publishing.",
+              "sourceLabel": "Source excerpt",
+              "source": "sample-runbook.pdf",
+              "sourceExcerpt": "After declaring an incident, record when it was detected, the first symptoms and actions taken.",
+              "proposalLabel": "AI course draft",
+              "approvalLabel": "Waiting for the author to review",
+              "note": "Illustrative example. AI proposes the lesson; the author reviews it before publishing.",
               "lines": [
                 {
-                  "op": "ctx",
-                  "text": "Audience · platform engineers"
+                  "op": "add",
+                  "text": "Module · Recognise a production incident"
                 },
                 {
                   "op": "add",
-                  "text": "Module 1 · Recognise a production incident"
-                },
-                {
-                  "op": "add",
-                  "text": "Lesson 1 · Establish the incident timeline"
+                  "text": "Lesson · Build an incident timeline"
                 }
               ],
-              "citationsLabel": "Sources",
               "citations": [
-                "incident-runbook.pdf §2"
-              ],
-              "action": "Review draft",
-              "lessonTitle": "Author approval before publishing"
+                "§2 · Incident procedure"
+              ]
             }
           }
         },

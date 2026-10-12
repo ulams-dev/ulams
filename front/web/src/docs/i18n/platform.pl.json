@@ -57,31 +57,27 @@
             },
             "diff": {
               "ariaLabel": "Przykładowy szkic kursu oparty na dokumencie źródłowym i gotowy do sprawdzenia przez autora",
-              "badge": "Szkic do sprawdzenia",
+              "badge": "Przykład · szkic kursu",
               "title": "Reagowanie na incydenty",
-              "sourceLabel": "Na podstawie:",
-              "source": "incident-runbook.pdf",
-              "note": "Przykładowy szkic. Autor sprawdza każdą zmianę przed publikacją.",
+              "sourceLabel": "Fragment źródła",
+              "source": "przykładowy-runbook.pdf",
+              "sourceExcerpt": "Po ogłoszeniu incydentu zapisz czas wykrycia, pierwsze objawy i podjęte działania.",
+              "proposalLabel": "Szkic kursu AI",
+              "approvalLabel": "Czeka na sprawdzenie przez autora",
+              "note": "Przykład poglądowy. AI proponuje lekcję, a autor sprawdza ją przed publikacją.",
               "lines": [
                 {
-                  "op": "ctx",
-                  "text": "Odbiorcy · inżynierowie platform"
+                  "op": "add",
+                  "text": "Moduł · Rozpoznawanie incydentu produkcyjnego"
                 },
                 {
                   "op": "add",
-                  "text": "Moduł 1 · Rozpoznawanie incydentu produkcyjnego"
-                },
-                {
-                  "op": "add",
-                  "text": "Lekcja 1 · Ustalanie osi czasu incydentu"
+                  "text": "Lekcja · Ustalanie osi czasu incydentu"
                 }
               ],
-              "citationsLabel": "Źródła",
               "citations": [
-                "incident-runbook.pdf §2"
-              ],
-              "action": "Sprawdź szkic",
-              "lessonTitle": "Autor zatwierdza przed publikacją"
+                "§ 2 · Przebieg incydentu"
+              ]
             }
           }
         },
