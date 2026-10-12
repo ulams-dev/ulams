@@ -61,13 +61,93 @@
               "title": "Polityka prywatności · v1 → v2",
               "note": "W planach: ścieżki dla działów, raporty zgodności i recertyfikacja. Autor zatwierdza aktualizacje źródeł przed publikacją.",
               "journey": [
-                { "title": "Polityka v1 staje się źródłem", "text": "Dodaj politykę prywatności organizacji i połącz ją z treścią kursu.", "status": "available" },
-                { "title": "Szkolenia dopasowane do działów", "text": "W witrynie z własną marką Management, HR, Sales i inne zespoły dostają kursy dopasowane do swojej pracy.", "status": "coming" },
-                { "title": "Kursant zdaje i otrzymuje certyfikat", "text": "Interaktywne lekcje prowadzą do egzaminu. Po zdaniu powstaje certyfikat PDF.", "status": "available" },
-                { "title": "Opiekun polityki śledzi ukończenia", "text": "Sprawdza, kto ukończył wymagane szkolenie, a kto musi je jeszcze odbyć.", "status": "coming" },
-                { "title": "Rok później: zmiana polityki v2", "text": "W kursie połączonym ze źródłem ulams znajduje lekcje i pytania objęte zmianą, a potem przygotowuje aktualizacje ze źródłami do zatwierdzenia.", "status": "available" },
-                { "title": "Zespół odnawia wiedzę", "text": "Przygotuj aktualizacje dla kursów wszystkich działów. Po akceptacji powiadom osoby, unieważnij stare certyfikaty i przypisz aktualizację lub kurs z egzaminem oraz nowym PDF.", "status": "coming" }
-              ]
+                {
+                  "title": "Polityka v1 staje się źródłem",
+                  "text": "Dodaj politykę prywatności organizacji i połącz ją z treścią kursu.",
+                  "status": "available"
+                },
+                {
+                  "title": "Szkolenia dopasowane do działów",
+                  "text": "W witrynie z własną marką Management, HR, Sales i inne zespoły dostają kursy dopasowane do swojej pracy.",
+                  "status": "coming"
+                },
+                {
+                  "title": "Kursant zdaje i otrzymuje certyfikat",
+                  "text": "Interaktywne lekcje prowadzą do egzaminu. Po zdaniu powstaje certyfikat PDF.",
+                  "status": "available"
+                },
+                {
+                  "title": "Opiekun polityki śledzi ukończenia",
+                  "text": "Sprawdza, kto ukończył wymagane szkolenie, a kto musi je jeszcze odbyć.",
+                  "status": "coming"
+                },
+                {
+                  "title": "Rok później: zmiana polityki v2",
+                  "text": "W kursie połączonym ze źródłem ulams znajduje lekcje i pytania objęte zmianą, a potem przygotowuje aktualizacje ze źródłami do zatwierdzenia.",
+                  "status": "available"
+                },
+                {
+                  "title": "Zespół odnawia wiedzę",
+                  "text": "Przygotuj aktualizacje dla kursów wszystkich działów. Po akceptacji powiadom osoby, unieważnij stare certyfikaty i przypisz aktualizację lub kurs z egzaminem oraz nowym PDF.",
+                  "status": "coming"
+                }
+              ],
+              "visual": {
+                "chapters": [
+                  "Źródło",
+                  "Zespoły",
+                  "Nauka",
+                  "Nadzór",
+                  "Zmiana",
+                  "Odnowienie"
+                ],
+                "policy": "Polityka prywatności",
+                "section": "§ 4 · Dane klientów",
+                "before": "Usuń eksporty danych klientów po 30 dniach.",
+                "after": "Usuń eksporty danych klientów po 14 dniach.",
+                "audiences": [
+                  "Management",
+                  "HR",
+                  "Sales"
+                ],
+                "roleTopics": [
+                  "Decyzje i odpowiedzialność",
+                  "Dane pracowników i dostęp",
+                  "Dane klientów i zgody"
+                ],
+                "academy": "Akademia Twojej organizacji",
+                "lesson": "Praca z danymi klientów",
+                "formats": [
+                  "Lekcja interaktywna",
+                  "Sprawdzenie wiedzy",
+                  "Egzamin końcowy"
+                ],
+                "exam": "Egzamin końcowy",
+                "certificate": "Certyfikat ukończenia",
+                "completed": "Ukończono",
+                "pending": "Nie ukończono",
+                "owner": "Opiekun polityki",
+                "progress": "Ukończenie szkolenia",
+                "later": "Rok później",
+                "proposal": "Propozycja aktualizacji",
+                "approval": "Opiekun sprawdza przed publikacją",
+                "renewal": "Wiedza odnowiona",
+                "expired": "Już nieważny",
+                "minor": "Mała zmiana → aktualizacja i egzamin",
+                "major": "Duża zmiana → kurs i egzamin",
+                "notification": "Zmiana w § 4: okres przechowywania wynosi teraz 14 dni.",
+                "renewed": "Nowy certyfikat",
+                "learners": [
+                  "Osoba z Managementu",
+                  "Osoba z HR",
+                  "Osoba z Sales"
+                ]
+              }
+            }
+          },
+          "final": {
+            "diff": {
+              "note": "Przykładowy cykl polityki. Autor zatwierdza aktualizacje źródeł przed publikacją."
             }
           }
         },
@@ -108,43 +188,6 @@
                 "text": "H5P, SCORM, cmi5 i xAPI działają już dziś. Szczegóły integracji znajdziesz w sekcji standardów."
               }
             ]
-          }
-        },
-        {
-          "component": "LivingCourseStory",
-          "props": {
-            "id": "living-course",
-            "eyebrow": "Living Course",
-            "title": "Gdy zmieniają się źródła, kursy nadążają.",
-            "intro": "Zmień dokument lub scal aktualizację repozytorium. ulams odnajdzie lekcje i pytania, które się na nim opierają, i przygotuje propozycję do sprawdzenia.",
-            "valueLine": "Aktualna wiedza w szkoleniach, bez zmuszania kursantów do rozpoczynania od nowa.",
-            "description": "Przykład: zmienia się SLO w docs/slo.md. ulams znajduje lekcję i pytanie quizowe powiązane ze źródłem, proponuje aktualizację i czeka na zatwierdzenie autora. Postęp kursantów zostaje zachowany.",
-            "beats": [
-              { "title": "Zmienia się źródło", "text": "Zespół aktualizuje wartość w dokumentacji operacyjnej." },
-              { "title": "ulams znajduje zależne treści", "text": "Powiązane lekcje i pytania trafiają do sprawdzenia." },
-              { "title": "Ty zatwierdzasz zmianę", "text": "Kurs pozostaje aktualny, a kursanci zachowują postęp." }
-            ],
-            "source": {
-              "file": "docs/slo.md",
-              "heading": "Budżet błędów",
-              "context": "Budżet błędów = (1 - SLO) × okno",
-              "lead": "Domyślne SLO dla płatności:",
-              "before": "99,9%",
-              "after": "99,95%",
-              "added": "Budżet za 30 dni: 21,6 minuty"
-            },
-            "lesson": {
-              "title": "Lekcja 2 · SLO i budżety błędów",
-              "lead": "Domyślne SLO dla płatności:",
-              "citation": "docs/slo.md §2",
-              "question": "Jakie jest domyślne SLO dla płatności?",
-              "questionCite": "docs/slo.md §2"
-            },
-            "proposal": {
-              "title": "Proponowana zmiana · 1 lekcja, 1 pytanie",
-              "approve": "Zatwierdź",
-              "done": "Zaktualizowano · postęp kursantów zachowany"
-            }
           }
         },
         {

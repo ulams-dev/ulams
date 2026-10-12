@@ -1,71 +1,66 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
-/** Platform landing hierarchy, product proof, responsive layout and WCAG 2.2 AA. */
 const port = process.env.WEB_BASE_PORT ?? "4321";
 const url = `http://app.localhost:${port}/`;
 
-async function open(page: Page) {
+test("one policy story in the hero includes a reviewed source change and planned renewal", async ({ page }) => {
   await page.goto(url);
-}
-
-async function revealAll(page: Page) {
-  await page.evaluate(async () => {
-    for (let y = 0; y < document.body.scrollHeight; y += 600) {
-      window.scrollTo({ top: y, behavior: "instant" });
-      await new Promise((resolve) => setTimeout(resolve, 40));
-    }
-    window.scrollTo({ top: 0, behavior: "instant" });
-  });
-  await page.waitForTimeout(1000);
-}
-
-test("the hero explains the product with one calm, cited example", async ({ page }) => {
-  await open(page);
-  await expect(page.locator("h1")).toContainText("Every claim cited");
-  await expect(page.locator(".u-hero .u-actions .u-btn")).toHaveCount(2);
+  await expect(page.locator(".u-hero .policy-story")).toHaveCount(1);
+  await expect(page.locator(".u-lc")).toHaveCount(0);
   await expect(page.locator(".u-hero .u-actions .u-btn").first()).toHaveAttribute("href", "#demos");
-  await expect(page.locator(".u-hero .u-actions .u-btn").nth(1)).toHaveAttribute("href", "#self-host");
-  await expect(page.locator(".u-hero__product")).toHaveAttribute("aria-label", /course draft/);
-  await expect(page.locator(".u-prod__badge")).toHaveText("Reviewable draft");
-  await expect(page.locator(".u-prod__source")).toContainText("incident-runbook.pdf");
-  await expect(page.locator(".u-prod__cites")).toContainText("incident-runbook.pdf §2");
-  await expect(page.locator(".u-prod__note")).toContainText("reviews every change before publishing");
-  await expect(page.locator("ulams-orbit")).toHaveCount(0);
+  const story = page.locator("ulams-policy-story");
+  await story.scrollIntoViewIfNeeded();
+  await story.locator('[role="tab"]').nth(4).click();
+  const change = story.locator('[role="tabpanel"]:visible');
+  await expect(change).toContainText("One year later");
+  await expect(change).toContainText("30 days");
+  await expect(change).toContainText("14 days");
+  await expect(change).toContainText("Owner reviews before publishing");
+  await story.locator('[role="tab"]').nth(5).click();
+  await expect(story.locator('[role="tabpanel"]:visible .u-status')).toContainText("On the roadmap");
+  await expect(story.locator('[role="tabpanel"]:visible')).toContainText("No longer valid");
+  await expect(story.locator('[role="tabpanel"]:visible')).toContainText("New certificate");
 });
 
-test("product proof and demos appear before detailed product information", async ({ page }) => {
-  await open(page);
-  const hero = await page.locator(".u-hero").evaluate((e) => e.getBoundingClientRect().top);
-  const demos = await page.locator("#demos").evaluate((e) => e.getBoundingClientRect().top);
-  const features = await page.locator("#product").evaluate((e) => e.getBoundingClientRect().top);
-  const comparison = await page.locator("#compare").evaluate((e) => e.getBoundingClientRect().top);
-  expect(hero).toBeLessThan(demos);
-  expect(demos).toBeLessThan(features);
-  expect(features).toBeLessThan(comparison);
-  for (const href of ["#product", "#compare", "https://ulams-dev.github.io/ulams/"]) {
-    await expect(page.locator(".u-nav a[href='" + href + "']")).toHaveCount(1);
+test("chapter navigation supports keyboard selection and pauses playback", async ({ page }) => {
+  await page.goto(url);
+  const story = page.locator("ulams-policy-story");
+  const tabs = story.locator('[role="tab"]');
+  await tabs.first().focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(tabs.nth(1)).toBeFocused();
+  await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
+  await expect(story.locator("[data-play]")).toHaveAttribute("aria-pressed", "true");
+  await page.keyboard.press("End");
+  await expect(tabs.last()).toHaveAttribute("aria-selected", "true");
+  await page.keyboard.press("Home");
+  await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
+});
+
+test("reduced motion keeps the opening scene still and scenes fit the viewport", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(url);
+  const story = page.locator("ulams-policy-story");
+  await story.scrollIntoViewIfNeeded();
+  await expect(story.locator("[data-play]")).toHaveAttribute("aria-pressed", "true");
+  await expect(story.locator(".ps-play-icon")).toBeVisible();
+  await expect(story.locator(".ps-pause-icon")).toBeHidden();
+  for (let i = 0; i < 6; i++) {
+    await story.locator('[role="tab"]').nth(i).click();
+    const dimensions = await page.evaluate(() => ({ viewport: document.documentElement.clientWidth, page: document.documentElement.scrollWidth }));
+    expect(dimensions.page).toBeLessThanOrEqual(dimensions.viewport);
   }
 });
 
-test("the hero product card is static and the page fits the viewport", async ({ page }, info) => {
-  await open(page);
-  const motion = await page.locator(".u-prod__card").evaluate((el) => getComputedStyle(el).animationName);
-  expect(motion).toBe("none");
-  const dimensions = await page.evaluate(() => ({
-    viewport: document.documentElement.clientWidth,
-    page: document.documentElement.scrollWidth,
-  }));
-  expect(dimensions.page, `horizontal overflow at ${info.project.name}`).toBeLessThanOrEqual(dimensions.viewport);
-  await page.locator(".u-hero").screenshot({ path: info.outputPath(`platform-hero-${info.project.name}.png`) });
-});
-
-test("the platform landing has no WCAG 2.2 AA violations", async ({ page }) => {
-  await open(page);
-  await revealAll(page);
-  const results = await new AxeBuilder({ page })
-    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
-    .analyze();
-  const summary = results.violations.map((v) => `${v.id}: ${v.nodes.slice(0, 3).map((n) => `${n.target.join(" ")}\n${n.failureSummary}`).join(" | ")}`);
-  expect(summary, summary.join("\n")).toEqual([]);
+test("each narrative scene passes WCAG 2.2 AA checks", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(url);
+  const story = page.locator("ulams-policy-story");
+  await story.scrollIntoViewIfNeeded();
+  for (let i = 0; i < 6; i++) {
+    await story.locator('[role="tab"]').nth(i).click();
+    const results = await new AxeBuilder({ page }).include(".policy-story").withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+    expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`)).toEqual([]);
+  }
 });

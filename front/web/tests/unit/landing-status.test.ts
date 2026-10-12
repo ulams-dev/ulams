@@ -27,6 +27,7 @@ describe("platform landing in actual mode", () => {
 });
 
 describe("platform landing in final mode", () => {
+  const sourceBefore = json(doc);
   const final = applyLandingStatus(doc, "final");
   it("has no Coming or Preview status and no roadmap wording", () => {
     const text = json(final);
@@ -36,11 +37,11 @@ describe("platform landing in final mode", () => {
   });
   it("does not change the source document", () => {
     expect(json(doc)).toContain('"status":"coming"');
-    expect(json(doc)).not.toContain('"final"');
+    expect(json(doc)).toBe(sourceBefore);
   });
   it("applies the text overrides", () => {
     expect(json(final)).toContain("Courses people can trust.");
-    expect(json(final)).toContain("Reviewable draft");
+    expect(json(final)).toContain("Example · policy lifecycle");
     expect(json(final)).not.toMatch(/on the roadmap|coming/i);
   });
   it("is valid against the catalogue in both modes", () => {

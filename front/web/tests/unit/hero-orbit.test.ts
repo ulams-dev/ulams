@@ -37,13 +37,15 @@ describe("platform product hero", () => {
     ).toEqual([]);
   });
 
-  it("uses one reviewable product example instead of a capability orbit", () => {
+  it("puts one policy lifecycle in the hero and marks unbuilt compliance features honestly", () => {
     expect(hero(platform).props).not.toHaveProperty("capabilities");
     expect(hero(platform).props!.diff).toMatchObject({
-      badge: "Reviewable draft",
-      source: "incident-runbook.pdf",
-      citations: ["incident-runbook.pdf §2"],
-      action: "Review draft",
+      title: "Privacy policy · v1 → v2",
+      journey: [
+        { status: "available" }, { status: "coming" }, { status: "available" },
+        { status: "coming" }, { status: "available" }, { status: "coming" },
+      ],
+      visual: { chapters: ["Source", "Teams", "Learning", "Oversight", "Change", "Renewal"] },
     });
     expect(hero(platform).props!.primaryCta).toMatchObject({ href: "#demos" });
     expect(hero(platform).props!.secondaryCta).toMatchObject({ href: "#self-host" });
@@ -51,7 +53,9 @@ describe("platform product hero", () => {
 
   it("keeps the detailed comparison on its own route", () => {
     const sections = platform.children!.find((n) => n.component === "Main")!.children!.map((n) => n.component);
-    expect(sections).toEqual(["Hero", "Steps", "Showcase", "FeatureList", "WorkflowShowcase", "Chips", "Faq", "CtaBand"]);
+    expect(sections.filter((name) => name === "Hero")).toHaveLength(1);
+    expect(sections).not.toContain("LivingCourseStory");
+    expect(sections).not.toContain("ComparisonTable");
     const header = platform.children!.find((n) => n.component === "SiteHeader")!;
     expect((header.props!.links as Array<{ href: string }>)[1]!.href).toBe("/comparison/");
   });

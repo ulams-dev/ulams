@@ -1,0 +1,985 @@
+---
+import Icon from "./Icon.astro";
+import { pageLocale, uiStrings } from "../lib/i18n.ts";
+export interface PolicyStoryProps {
+  ariaLabel?: string;
+  badge?: string;
+  title?: string;
+  note?: string;
+  journey: Array<{
+    title: string;
+    text: string;
+    status?: "available" | "coming";
+  }>;
+  visual: {
+    chapters: string[];
+    policy: string;
+    section: string;
+    before: string;
+    after: string;
+    audiences: string[];
+    roleTopics: string[];
+    learners: string[];
+    academy: string;
+    lesson: string;
+    formats: string[];
+    exam: string;
+    certificate: string;
+    completed: string;
+    pending: string;
+    owner: string;
+    progress: string;
+    later: string;
+    proposal: string;
+    approval: string;
+    renewal: string;
+    expired: string;
+    minor: string;
+    major: string;
+    notification: string;
+    renewed: string;
+  };
+}
+const {
+  ariaLabel,
+  badge,
+  journey,
+  visual: v,
+  note,
+} = Astro.props as PolicyStoryProps;
+const t = uiStrings(pageLocale(Astro));
+const icons = ["pdf", "layers", "book", "chart", "sync", "medal"];
+const alternatives = [
+  `${v.policy} v1. ${v.section}: ${v.before}`,
+  v.audiences.map((role, i) => `${role}: ${v.roleTopics[i]}`).join(". "),
+  `${v.academy}. ${v.formats.join(" → ")} → ${v.certificate} PDF v1.`,
+  v.learners.map((learner, i) => `${learner}: ${i < 2 ? v.completed : v.pending}`).join(". "),
+  `${v.later}. ${v.section}: ${v.before} → ${v.after}. ${v.lesson}, ${v.exam}. ${v.approval}.`,
+  `${v.notification} ${v.expired}. ${v.minor}. ${v.major}. ${v.renewed} PDF v2.`,
+];
+---
+<figure class="policy-story" id="living-course" aria-label={ariaLabel}>
+  <ulams-policy-story>
+    <div class="ps-topline"><span>{badge}</span><span class="ps-version">v1 <Icon name="arrow" /> v2</span></div>
+    <div class="ps-scenes">
+      {journey.map((step, i) => <section class="ps-panel" role="tabpanel" id={`policy-panel-${i}`} aria-labelledby={`policy-tab-${i}`} hidden={i !== 0} tabindex="0">
+        <div class="ps-narration">
+          <span class="ps-chapter">0{i + 1} / 06 <span class={`u-status ${step.status === 'coming' ? 'u-status--coming' : 'u-status--available'}`}>{step.status === 'coming' ? t.roadmap : t.available}</span></span>
+          <h2>{step.title}</h2><p>{step.text}</p>
+          <p class="u-visually-hidden">{alternatives[i]}</p>
+        </div>
+        <div class={`ps-scene ps-scene--${i}`} aria-hidden="true">
+          {i === 0 && <div class="ps-source-scene">
+            <div class="ps-document"><span class="ps-file"><Icon name="pdf" /> privacy-policy.pdf <b>v1</b></span><h4>{v.policy}</h4><span class="ps-doc-rule" /><p class="ps-section">{v.section}</p><p class="ps-quote">{v.before}</p><div class="ps-paper-lines"><i /><i /><i /></div><span class="ps-doc-footer">PDF · v1</span></div>
+            <div class="ps-source-link"><Icon name="quote" /><span>{v.section}<br /><b>ULAMS</b></span><Icon name="arrow" /></div>
+          </div>}
+          {i === 1 && <div class="ps-paths-scene"><div class="ps-source-node"><Icon name="pdf" /><b>{v.policy}</b><span>v1</span></div><div class="ps-branches"><span /><span /><span /></div><div class="ps-role-paths">{v.audiences.map((role, n) => <div class="ps-role"><Icon name={['compass', 'users', 'chat'][n] ?? 'users'} /><h4>{role}</h4><p>{v.roleTopics[n]}</p><span class="ps-cite"><Icon name="quote" /> {v.section}</span></div>)}</div></div>}
+          {i === 2 && <div class="ps-learn-scene"><div class="ps-academy"><div class="ps-browser"><span class="ps-dots">● ● ●</span><span>{v.academy}</span><Icon name="lock" /></div><div class="ps-academy-body"><span class="ps-small">{v.audiences[2]} · v1</span><h4>{v.lesson}</h4><div class="ps-lesson-tiles">{v.formats.map((format, n) => <span><Icon name={['interactive', 'quiz', 'medal'][n] ?? 'book'} />{format}<Icon name="check" /></span>)}</div></div></div><div class="ps-certificate"><Icon name="medal" /><span>PDF</span><h4>{v.certificate}</h4><span class="ps-certificate-line" /><b>{v.policy}</b><small>v1</small><span class="ps-certified"><Icon name="check" />{v.completed}</span></div></div>}
+          {i === 3 && <div class="ps-owner-scene"><div class="ps-owner-title"><span class="ps-owner-avatar"><Icon name="users" /></span><div><small>{v.owner}</small><h4>{v.progress}</h4></div><span class="ps-source-tag">v1</span></div><div class="ps-roster">{v.learners.map((learner, n) => <div><span><Icon name={['compass', 'users', 'chat'][n] ?? 'users'} />{learner}</span><span class={n < 2 ? 'ps-complete' : 'ps-pending'}><Icon name={n < 2 ? 'check' : 'clock'} />{n < 2 ? v.completed : v.pending}</span><span class="ps-roster-pdf">{n < 2 ? 'PDF · v1' : '—'}</span></div>)}</div><span class="ps-roster-source"><Icon name="quote" /> {v.policy} · v1</span></div>}
+          {i === 4 && <div class="ps-update-scene"><div class="ps-update-doc"><span class="ps-small"><Icon name="clock" />{v.later}</span><h4>{v.policy} <b>v2</b></h4><span class="ps-section">{v.section}</span><p class="ps-removed">− {v.before}</p><p class="ps-added">+ {v.after}</p></div><Icon name="arrow" class="ps-update-arrow" /><div class="ps-proposal"><span class="ps-small">ULAMS · {v.proposal}</span><div class="ps-impacted"><Icon name="book" /><span>{v.lesson}</span><Icon name="quote" /></div><div class="ps-impacted"><Icon name="quiz" /><span>{v.exam}</span><Icon name="quote" /></div><div class="ps-approval"><Icon name="shield" />{v.approval}</div></div></div>}
+          {i === 5 && <div class="ps-renew-scene"><div class="ps-renew-left"><div class="ps-notification"><Icon name="mail" /><div><b>{v.policy} · v2</b><p>{v.notification}</p></div></div><span class="ps-expired"><Icon name="medal" /> PDF · v1 <b>{v.expired}</b></span><div class="ps-renew-paths"><span><Icon name="quiz" />{v.minor}</span><span><Icon name="book" />{v.major}</span></div></div><Icon name="arrow" class="ps-update-arrow" /><div class="ps-certificate ps-certificate--renewed"><Icon name="medal" /><span>PDF</span><h4>{v.renewed}</h4><span class="ps-certificate-line" /><b>{v.policy}</b><small>v2</small><span class="ps-certified"><Icon name="check" />{v.renewal}</span></div></div>}
+        </div>
+      </section>)}
+    </div>
+    <div class="ps-bottom">
+      <div class="ps-navigation" role="tablist" aria-label={ariaLabel}>{v.chapters.map((label, i) => <button type="button" role="tab" id={`policy-tab-${i}`} aria-controls={`policy-panel-${i}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-step={i}><Icon name={icons[i] ?? "book"} /><span>{label}</span><i /></button>)}</div>
+      <div class="ps-controls"><button type="button" data-play aria-label={t.pause} title={t.pause} data-pause-label={t.pause} data-play-label={t.play} aria-pressed="false"><Icon name="pause" class="ps-pause-icon" /><Icon name="play" class="ps-play-icon" /></button><button type="button" data-replay aria-label={t.replay} title={t.replay}><Icon name="sync" /></button></div>
+    </div>
+  </ulams-policy-story>
+  {note && <figcaption>{note}</figcaption>}
+</figure>
+<noscript><style is:inline>.ps-panel[hidden]{display:block!important}.ps-bottom{display:none!important}.ps-panel+.ps-panel{border-top:1px solid var(--ulams-color-border)}</style></noscript>
+<script>
+  class PolicyStory extends HTMLElement {
+    private index = 0;
+    private motion = matchMedia("(prefers-reduced-motion: reduce)");
+    private paused = this.motion.matches;
+    private visible = false;
+    private timer?: ReturnType<typeof setInterval>;
+    private observer?: IntersectionObserver;
+    private tabs: HTMLButtonElement[] = [];
+    private panels: HTMLElement[] = [];
+    connectedCallback() {
+      this.tabs = Array.from(
+        this.querySelectorAll<HTMLButtonElement>("[data-step]")
+      );
+      this.panels = Array.from(this.querySelectorAll<HTMLElement>(".ps-panel"));
+      this.tabs.forEach((tab, i) => {
+        tab.addEventListener("click", () => {
+          this.paused = true;
+          this.select(i);
+          this.updatePlayback();
+        });
+        tab.addEventListener("keydown", (e) => {
+          const next =
+            e.key === "ArrowRight"
+              ? (i + 1) % this.tabs.length
+              : e.key === "ArrowLeft"
+              ? (i + this.tabs.length - 1) % this.tabs.length
+              : e.key === "Home"
+              ? 0
+              : e.key === "End"
+              ? this.tabs.length - 1
+              : -1;
+          if (next >= 0) {
+            e.preventDefault();
+            this.tabs[next]?.click();
+            this.tabs[next]?.focus();
+          }
+        });
+      });
+      this.querySelector("[data-play]")?.addEventListener("click", () => {
+        this.paused = !this.paused;
+        this.updatePlayback();
+      });
+      this.querySelector("[data-replay]")?.addEventListener("click", () => {
+        this.select(0);
+        this.paused = this.motion.matches;
+        this.updatePlayback();
+      });
+      this.observer = new IntersectionObserver(
+        ([entry]) => {
+          this.visible = Boolean(entry?.isIntersecting);
+          this.updatePlayback();
+        },
+        { threshold: 0.2 }
+      );
+      this.observer.observe(this);
+      document.addEventListener("visibilitychange", this.onVisibility);
+      this.motion.addEventListener("change", this.onMotion);
+      this.updatePlayback();
+    }
+    disconnectedCallback() {
+      clearInterval(this.timer);
+      this.observer?.disconnect();
+      document.removeEventListener("visibilitychange", this.onVisibility);
+      this.motion.removeEventListener("change", this.onMotion);
+    }
+    private onMotion = () => {
+      if (this.motion.matches) this.paused = true;
+      this.updatePlayback();
+    };
+    private onVisibility = () => this.updatePlayback();
+    private select(i: number) {
+      this.index = i;
+      this.tabs.forEach((tab, n) => {
+        tab.setAttribute("aria-selected", String(n === i));
+        tab.tabIndex = n === i ? 0 : -1;
+      });
+      this.panels.forEach((panel, n) => {
+        panel.hidden = n !== i;
+      });
+    }
+    private updatePlayback() {
+      clearInterval(this.timer);
+      const button = this.querySelector<HTMLButtonElement>("[data-play]");
+      button?.setAttribute("aria-pressed", String(this.paused));
+      const label =
+        (this.paused ? button?.dataset.playLabel : button?.dataset.pauseLabel) ??
+        "";
+      button?.setAttribute("aria-label", label);
+      button?.setAttribute("title", label);
+      if (!this.paused && this.visible && !document.hidden)
+        this.timer = setInterval(() => {
+          if (this.tabs.some((tab) => tab === document.activeElement)) return;
+          this.select((this.index + 1) % this.tabs.length);
+        }, 6000);
+    }
+  }
+  if (!customElements.get("ulams-policy-story"))
+    customElements.define("ulams-policy-story", PolicyStory);
+</script>
+<style>
+  .policy-story {
+    width: 100%;
+    margin: 0;
+    color: var(--ulams-color-text);
+    font-family: var(--ulams-font-family-body);
+    text-align: left;
+  }
+  ulams-policy-story {
+    display: block;
+    overflow: hidden;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 20px;
+    box-shadow: 0 25px 60px -35px color-mix(in srgb, var(--ulams-color-primary)
+          35%, transparent);
+  }
+  .ps-topline {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    color: var(--ulams-color-muted);
+    font: 600 0.67rem var(--ulams-font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .ps-version {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    color: var(--ulams-color-primary);
+  }
+  .ps-version :global(svg) {
+    width: 14px;
+  }
+  .ps-scenes {
+    display: grid;
+  }
+  .ps-panel {
+    display: grid;
+    grid-area: 1/1;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.5fr);
+    gap: 30px;
+    align-items: center;
+    min-height: 370px;
+    padding: 30px;
+    animation: ps-enter 0.45s ease both;
+  }
+  .ps-panel[hidden] {
+    display: none;
+  }
+  .ps-narration {
+    min-width: 0;
+  }
+  .ps-chapter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    color: var(--ulams-color-muted);
+    font: 500 0.68rem var(--ulams-font-mono);
+  }
+  .ps-narration h2 {
+    margin: 18px 0 12px;
+    color: var(--ulams-color-text);
+    font-weight: 700;
+    font-size: 1.55rem;
+    font-family: var(--ulams-font-family-body);
+    line-height: 1.2;
+    letter-spacing: -0.045em;
+  }
+  .ps-narration > p {
+    margin: 0;
+    color: var(--ulams-color-muted);
+    font-size: 0.86rem;
+    line-height: 1.65;
+  }
+  .ps-scene {
+    display: grid;
+    min-width: 0;
+    min-height: 290px;
+    padding: 18px;
+    background: radial-gradient(
+        ellipse at 45% 15%,
+        color-mix(in srgb, var(--ulams-color-primary) 9%, transparent),
+        transparent 70%
+      ),
+      var(--ulams-color-surface, var(--ulams-color-bg));
+    border-radius: 14px;
+    place-items: center;
+  }
+  .ps-scene h4 {
+    margin: 10px 0;
+    color: var(--ulams-color-text);
+    font: 700 1rem/1.3 var(--ulams-font-family-body);
+    letter-spacing: -0.025em;
+  }
+  .ps-small,
+  .ps-section {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    color: var(--ulams-color-muted);
+    font: 500 0.64rem/1.5 var(--ulams-font-mono);
+  }
+  .ps-small :global(svg) {
+    width: 14px;
+  }
+  .ps-document {
+    width: 260px;
+    max-width: 100%;
+    padding: 24px;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 3px 3px 16px 3px;
+    box-shadow: 8px 8px 0
+        color-mix(in srgb, var(--ulams-color-primary) 5%, transparent),
+      0 12px 35px -25px var(--ulams-color-primary);
+    transform: rotate(-3deg);
+  }
+  .ps-source-scene {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .ps-file {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    color: var(--ulams-color-muted);
+    font: 500 0.55rem var(--ulams-font-mono);
+  }
+  .ps-file :global(svg) {
+    width: 16px;
+  }
+  .ps-file b {
+    margin-left: auto;
+  }
+  .ps-document h4 {
+    margin-top: 22px;
+    font-size: 1.25rem;
+  }
+  .ps-doc-rule {
+    display: block;
+    height: 2px;
+    margin: 12px 0;
+    background: var(--ulams-color-primary);
+  }
+  .ps-quote {
+    font-size: 0.77rem;
+    line-height: 1.5;
+  }
+  .ps-paper-lines {
+    display: grid;
+    gap: 6px;
+    margin: 20px 0;
+  }
+  .ps-paper-lines i {
+    height: 4px;
+    background: var(--ulams-color-border);
+  }
+  .ps-paper-lines i:last-child {
+    width: 65%;
+  }
+  .ps-doc-footer {
+    color: var(--ulams-color-muted);
+    font: 500 0.55rem var(--ulams-font-mono);
+  }
+  .ps-source-link {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    color: var(--ulams-color-muted);
+    font-size: 0.67rem;
+    text-align: center;
+  }
+  .ps-source-link :global(svg) {
+    width: 25px;
+    color: var(--ulams-color-primary);
+  }
+  .ps-paths-scene {
+    width: 100%;
+  }
+  .ps-source-node {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+  }
+  .ps-source-node :global(svg) {
+    width: 20px;
+  }
+  .ps-source-node > span {
+    padding: 3px 7px;
+    font: 500 0.6rem var(--ulams-font-mono);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 4px;
+  }
+  .ps-branches {
+    display: flex;
+    justify-content: center;
+    width: 68%;
+    height: 30px;
+    margin: 12px auto 0;
+    border-top: 1px solid var(--ulams-color-primary);
+  }
+  .ps-branches span {
+    width: 50%;
+    border-left: 1px solid var(--ulams-color-primary);
+  }
+  .ps-branches span:last-child {
+    width: 0;
+  }
+  .ps-role-paths {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+  }
+  .ps-role {
+    min-width: 0;
+    padding: 12px;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 9px;
+  }
+  .ps-role > :global(svg) {
+    width: 20px;
+    color: var(--ulams-color-primary);
+  }
+  .ps-role h4 {
+    font-size: 0.76rem;
+  }
+  .ps-role p {
+    color: var(--ulams-color-muted);
+    font-size: 0.65rem;
+    line-height: 1.5;
+  }
+  .ps-cite {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    color: var(--ulams-color-muted);
+    font: 500 0.51rem var(--ulams-font-mono);
+  }
+  .ps-cite :global(svg) {
+    width: 11px;
+  }
+  .ps-learn-scene {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+  }
+  .ps-academy {
+    overflow: hidden;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 9px;
+  }
+  .ps-browser {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px;
+    color: var(--ulams-color-muted);
+    font-size: 0.5rem;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .ps-browser :global(svg) {
+    width: 11px;
+  }
+  .ps-dots {
+    font-size: 0.4rem;
+    letter-spacing: 2px;
+  }
+  .ps-academy-body {
+    padding: 15px;
+  }
+  .ps-academy h4 {
+    font-size: 0.9rem;
+  }
+  .ps-lesson-tiles {
+    display: grid;
+    gap: 7px;
+    margin-top: 15px;
+  }
+  .ps-lesson-tiles > span {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 8px;
+    font-size: 0.6rem;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 5px;
+  }
+  .ps-lesson-tiles :global(svg) {
+    flex: 0 0 14px;
+    width: 14px;
+  }
+  .ps-lesson-tiles :global(svg:last-child) {
+    margin-left: auto;
+    color: var(--ulams-color-positive);
+  }
+  .ps-certificate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 12px;
+    text-align: center;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid
+      color-mix(
+        in srgb,
+        var(--ulams-color-primary) 30%,
+        var(--ulams-color-border)
+      );
+    border-radius: 2px;
+    outline: 3px solid var(--ulams-color-card-bg);
+    box-shadow: 0 10px 30px -20px var(--ulams-color-primary);
+    transform: rotate(3deg);
+  }
+  .ps-certificate > :global(svg) {
+    width: 30px;
+    color: var(--ulams-color-accent);
+  }
+  .ps-certificate > span:not(.ps-certified) {
+    margin: 5px;
+    font: 500 0.5rem var(--ulams-font-mono);
+    letter-spacing: 0.12em;
+  }
+  .ps-certificate h4 {
+    font-size: 0.9rem;
+    font-family: var(--ulams-font-family);
+  }
+  .ps-certificate > b {
+    font-size: 0.6rem;
+  }
+  .ps-certificate > small {
+    margin: 7px;
+    font: 500 0.55rem var(--ulams-font-mono);
+  }
+  .ps-certificate-line {
+    width: 60%;
+    height: 1px;
+    background: var(--ulams-color-border);
+  }
+  .ps-certified {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-top: 8px;
+    color: var(--ulams-color-positive);
+    font-size: 0.55rem;
+  }
+  .ps-certified :global(svg) {
+    width: 12px;
+  }
+  .ps-owner-scene {
+    width: 100%;
+    padding: 18px;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 10px;
+  }
+  .ps-owner-title {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+  }
+  .ps-owner-avatar {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    color: var(--ulams-color-on-primary);
+    background: var(--ulams-color-primary);
+    border-radius: 9px;
+    place-items: center;
+  }
+  .ps-owner-avatar :global(svg) {
+    width: 18px;
+  }
+  .ps-owner-title small {
+    color: var(--ulams-color-muted);
+    font-size: 0.56rem;
+  }
+  .ps-owner-title h4 {
+    margin: 3px 0;
+    font-size: 0.9rem;
+  }
+  .ps-source-tag {
+    margin-left: auto;
+    font: 500 0.6rem var(--ulams-font-mono);
+  }
+  .ps-roster {
+    margin-top: 18px;
+  }
+  .ps-roster > div {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr 0.55fr;
+    gap: 8px;
+    align-items: center;
+    padding: 13px 0;
+    font-size: 0.64rem;
+    border-top: 1px solid var(--ulams-color-border);
+  }
+  .ps-roster > div > span {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  .ps-roster :global(svg) {
+    flex: 0 0 13px;
+    width: 13px;
+  }
+  .ps-complete {
+    color: var(--ulams-color-positive);
+  }
+  .ps-pending {
+    color: var(--ulams-color-warn);
+  }
+  .ps-roster-pdf {
+    color: var(--ulams-color-muted);
+    font: 500 0.52rem var(--ulams-font-mono);
+  }
+  .ps-roster-source {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    color: var(--ulams-color-muted);
+    font-size: 0.57rem;
+  }
+  .ps-roster-source :global(svg) {
+    width: 12px;
+  }
+  .ps-update-scene {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+  }
+  .ps-update-doc,
+  .ps-proposal {
+    padding: 13px;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 9px;
+  }
+  .ps-update-doc h4 {
+    font-size: 0.84rem;
+  }
+  .ps-update-doc h4 b {
+    display: inline-block;
+    padding: 3px 5px;
+    color: var(--ulams-color-on-primary);
+    font: 0.55rem var(--ulams-font-mono);
+    background: var(--ulams-color-primary);
+    border-radius: 4px;
+  }
+  .ps-removed,
+  .ps-added {
+    padding: 8px;
+    font-size: 0.64rem;
+    line-height: 1.5;
+    border-radius: 5px;
+  }
+  .ps-removed {
+    color: var(--ulams-color-error);
+    text-decoration: line-through;
+    background: color-mix(in srgb, var(--ulams-color-error) 8%, transparent);
+  }
+  .ps-added {
+    color: var(--ulams-color-positive);
+    background: color-mix(in srgb, var(--ulams-color-positive) 9%, transparent);
+  }
+  .ps-update-arrow {
+    width: 20px;
+    color: var(--ulams-color-primary);
+  }
+  .ps-impacted {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+    padding: 11px 0;
+    font-size: 0.66rem;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .ps-impacted :global(svg) {
+    flex: 0 0 15px;
+    width: 15px;
+  }
+  .ps-impacted :global(svg:last-child) {
+    margin-left: auto;
+    color: var(--ulams-color-accent);
+  }
+  .ps-approval {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    margin-top: 12px;
+    font-size: 0.6rem;
+    line-height: 1.5;
+  }
+  .ps-approval :global(svg) {
+    flex: 0 0 17px;
+    width: 17px;
+    color: var(--ulams-color-positive);
+  }
+  .ps-renew-scene {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) 18px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+  }
+  .ps-notification {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    font-size: 0.64rem;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 9px;
+  }
+  .ps-notification > :global(svg) {
+    flex: 0 0 17px;
+    width: 17px;
+    color: var(--ulams-color-accent);
+  }
+  .ps-notification p {
+    margin: 5px 0 0;
+    color: var(--ulams-color-muted);
+    font-size: 0.6rem;
+    line-height: 1.5;
+  }
+  .ps-expired {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    padding: 10px 0;
+    color: var(--ulams-color-muted);
+    font: 500 0.55rem var(--ulams-font-mono);
+  }
+  .ps-expired :global(svg) {
+    width: 15px;
+  }
+  .ps-expired b {
+    padding: 3px 5px;
+    color: var(--ulams-color-error);
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    transform: rotate(-3deg);
+  }
+  .ps-renew-paths {
+    display: grid;
+    gap: 7px;
+  }
+  .ps-renew-paths > span {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 9px;
+    font-size: 0.6rem;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 6px;
+  }
+  .ps-renew-paths :global(svg) {
+    flex: 0 0 14px;
+    width: 14px;
+  }
+  .ps-certificate--renewed {
+    border-color: var(--ulams-color-positive);
+  }
+  .ps-bottom {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 0 24px 20px;
+  }
+  .ps-navigation {
+    display: grid;
+    flex: 1;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 7px;
+  }
+  .ps-navigation button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    align-items: center;
+    padding: 10px 2px 12px;
+    color: var(--ulams-color-muted);
+    font: 600 0.6rem/1.3 var(--ulams-font-family-body);
+    text-align: center;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+  .ps-navigation :global(svg) {
+    width: 16px;
+  }
+  .ps-navigation button > i {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: var(--ulams-color-border);
+  }
+  .ps-navigation button[aria-selected="true"] {
+    color: var(--ulams-color-primary);
+  }
+  .ps-navigation button[aria-selected="true"] > i {
+    background: var(--ulams-color-accent);
+  }
+  .ps-controls {
+    display: flex;
+    gap: 5px;
+  }
+  .ps-controls button {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    color: var(--ulams-color-primary);
+    background: var(--ulams-color-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 50%;
+    cursor: pointer;
+    place-items: center;
+  }
+  .ps-controls :global(svg) {
+    width: 14px;
+  }
+  .ps-controls :global(.ps-play-icon),
+  .ps-controls [aria-pressed="true"] :global(.ps-pause-icon) {
+    display: none;
+  }
+  .ps-controls [aria-pressed="true"] :global(.ps-play-icon) {
+    display: block;
+  }
+  .ps-navigation button:focus-visible,
+  .ps-controls button:focus-visible,
+  .ps-panel:focus-visible {
+    outline: 3px solid var(--ulams-brand-blue);
+    outline-offset: 3px;
+  }
+  .policy-story > figcaption {
+    max-width: 85ch;
+    margin: 12px auto 0;
+    color: var(--ulams-color-muted);
+    font-size: 0.7rem;
+    line-height: 1.6;
+    text-align: center;
+  }
+  .ps-role {
+    animation: ps-enter 0.5s 0.15s ease both;
+  }
+  .ps-role:nth-child(2) {
+    animation-delay: 0.3s;
+  }
+  .ps-role:nth-child(3) {
+    animation-delay: 0.45s;
+  }
+  .ps-certificate {
+    animation: ps-paper-enter 0.65s 0.5s ease both;
+  }
+  .ps-proposal {
+    animation: ps-enter 0.5s 0.55s ease both;
+  }
+  .ps-added {
+    animation: ps-enter 0.5s 0.2s ease both;
+  }
+  .ps-notification {
+    animation: ps-enter 0.5s 0.1s ease both;
+  }
+  .ps-renew-paths {
+    animation: ps-enter 0.5s 0.35s ease both;
+  }
+  @keyframes ps-paper-enter {
+    from {
+      transform: translateY(10px) rotate(3deg) scale(0.96);
+      opacity: 0;
+    }
+    to {
+      transform: rotate(3deg);
+      opacity: 1;
+    }
+  }
+  @keyframes ps-enter {
+    from {
+      transform: translateY(8px);
+      opacity: 0.3;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+  @media (max-width: 760px) {
+    .ps-panel {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+      align-content: start;
+      min-height: 570px;
+      padding: 20px;
+    }
+    .ps-narration h2 {
+      margin-top: 12px;
+      font-size: 1.35rem;
+    }
+    .ps-narration > p {
+      font-size: 0.8rem;
+    }
+    .ps-scene {
+      min-height: 300px;
+      padding: 14px;
+    }
+    .ps-bottom {
+      flex-wrap: wrap;
+      padding: 0 15px 16px;
+    }
+    .ps-navigation {
+      flex-basis: 100%;
+    }
+    .ps-controls {
+      margin-left: auto;
+    }
+    .ps-navigation button {
+      font-size: 0.53rem;
+    }
+    .ps-topline {
+      padding: 12px 16px;
+      font-size: 0.56rem;
+    }
+    .ps-role {
+      padding: 9px;
+    }
+    .ps-role p {
+      font-size: 0.58rem;
+    }
+    .ps-source-scene {
+      gap: 12px;
+    }
+    .ps-source-link {
+      font-size: 0.56rem;
+    }
+    .ps-document {
+      width: 220px;
+      padding: 20px;
+    }
+    .ps-learn-scene {
+      gap: 8px;
+    }
+    .ps-certificate {
+      padding: 15px 8px;
+    }
+    .ps-update-scene {
+      grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr);
+      gap: 7px;
+    }
+    .ps-update-doc,
+    .ps-proposal {
+      padding: 10px;
+    }
+    .ps-renew-scene {
+      gap: 8px;
+    }
+    .ps-cite {
+      font-size: 0.45rem;
+    }
+    .ps-roster-pdf {
+      display: none;
+    }
+    .ps-roster > div {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .policy-story * {
+      animation: none !important;
+    }
+  }
+</style>

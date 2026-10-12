@@ -397,21 +397,36 @@ export const registry = {
             badge: text("Short status label on the example card", { maxLength: 40 }),
             title: text("Title of the illustrative journey, e.g. 'Privacy policy v1 → v2'", { maxLength: 80 }),
             note: text("Small note under the card", { maxLength: 240 }),
+            visual: obj(
+              {
+                chapters: list(text("Short navigation label", { maxLength: 24 }), "Six story chapters", { minItems: 6, maxItems: 6 }),
+                audiences: list(text("Department", { maxLength: 30 }), "Three example departments", { minItems: 3, maxItems: 3 }),
+                roleTopics: list(text("Role-specific learning focus", { maxLength: 80 }), "One learning focus per department", { minItems: 3, maxItems: 3 }),
+                learners: list(text("Illustrative learner label", { maxLength: 40 }), "Three anonymous learner rows in the owner view", { minItems: 3, maxItems: 3 }),
+                formats: list(text("Learning activity", { maxLength: 40 }), "Three activities ending with an exam", { minItems: 3, maxItems: 3 }),
+                ...Object.fromEntries([
+                  "policy", "section", "before", "after", "academy", "lesson", "exam", "certificate", "completed", "pending",
+                  "owner", "progress", "later", "proposal", "approval", "renewal", "expired", "minor", "major", "notification", "renewed",
+                ].map((key) => [key, text(`Localized illustration copy: ${key}`, { maxLength: 120 })])),
+              },
+              ["chapters", "audiences", "roleTopics", "learners", "formats", "policy", "section", "before", "after", "academy", "lesson", "exam", "certificate", "completed", "pending", "owner", "progress", "later", "proposal", "approval", "renewal", "expired", "minor", "major", "notification", "renewed"],
+              "Localized copy for the policy document, role-specific courses, learning site, certificates, completion view and reviewed source update"
+            ),
             journey: list(
               obj(
                 {
                   title: text("Story step title", { maxLength: 60 }),
                   text: text("What happens and why this step matters", { maxLength: 180 }),
-                  status: oneOf(["available", "coming"], "Whether this capability is available or on the roadmap"),
+                  status: oneOf(["available", "coming"], "Whether this capability is available or on the roadmap", "available"),
                 },
-                ["title", "text", "status"]
+                ["title", "text"]
               ),
               "Steps in the product story",
               { minItems: 6, maxItems: 6 }
             ),
           },
-          ["journey"],
-          "Animated three-step example for the product variant: source, cited draft and author review"
+          ["journey", "visual"],
+          "A single visual story at the top of the product page: policy v1, learning, oversight, reviewed policy v2 changes and planned recertification"
         ),
       },
       ["title"]

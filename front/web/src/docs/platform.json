@@ -61,13 +61,93 @@
               "title": "Privacy policy · v1 → v2",
               "note": "On the roadmap: role-based learning paths, compliance reports and certificate recertification. Authors approve source updates before publication.",
               "journey": [
-                { "title": "Policy v1 becomes the source", "text": "Upload the organisation's privacy policy and connect it to course content.", "status": "available" },
-                { "title": "Training fits each team", "text": "In a branded academy, Management, HR, Sales and other teams get courses shaped for their responsibilities.", "status": "coming" },
-                { "title": "Learners finish and certify", "text": "Interactive lessons lead to an exam. Passing it generates a PDF certificate.", "status": "available" },
-                { "title": "The policy owner tracks completion", "text": "See who has completed the required training and who still needs to take it.", "status": "coming" },
-                { "title": "One year later: policy v2 changes", "text": "In a source-linked course, ulams finds affected lessons and questions and prepares cited edits for the owner to review and approve.", "status": "available" },
-                { "title": "People renew their knowledge", "text": "Prepare updates for every affected team course. After approval, notify learners, expire old certificates, assign an update or new course and exam, then issue new PDFs.", "status": "coming" }
-              ]
+                {
+                  "title": "Policy v1 becomes the source",
+                  "text": "Upload the organisation's privacy policy and connect it to course content.",
+                  "status": "available"
+                },
+                {
+                  "title": "Training fits each team",
+                  "text": "In a branded academy, Management, HR, Sales and other teams get courses shaped for their responsibilities.",
+                  "status": "coming"
+                },
+                {
+                  "title": "Learners finish and certify",
+                  "text": "Interactive lessons lead to an exam. Passing it generates a PDF certificate.",
+                  "status": "available"
+                },
+                {
+                  "title": "The policy owner tracks completion",
+                  "text": "See who has completed the required training and who still needs to take it.",
+                  "status": "coming"
+                },
+                {
+                  "title": "One year later: policy v2 changes",
+                  "text": "In a source-linked course, ulams finds affected lessons and questions and prepares cited edits for the owner to review and approve.",
+                  "status": "available"
+                },
+                {
+                  "title": "People renew their knowledge",
+                  "text": "Prepare updates for every affected team course. After approval, notify learners, expire old certificates, assign an update or new course and exam, then issue new PDFs.",
+                  "status": "coming"
+                }
+              ],
+              "visual": {
+                "chapters": [
+                  "Source",
+                  "Teams",
+                  "Learning",
+                  "Oversight",
+                  "Change",
+                  "Renewal"
+                ],
+                "policy": "Privacy policy",
+                "section": "§ 4 · Customer data",
+                "before": "Delete customer exports after 30 days.",
+                "after": "Delete customer exports after 14 days.",
+                "audiences": [
+                  "Management",
+                  "HR",
+                  "Sales"
+                ],
+                "roleTopics": [
+                  "Decisions and accountability",
+                  "Employee data and access",
+                  "Customer data and consent"
+                ],
+                "academy": "Your organisation’s academy",
+                "lesson": "Handling customer data",
+                "formats": [
+                  "Interactive lesson",
+                  "Knowledge check",
+                  "Final exam"
+                ],
+                "exam": "Final exam",
+                "certificate": "Certificate of completion",
+                "completed": "Completed",
+                "pending": "Not completed",
+                "owner": "Policy owner",
+                "progress": "Training completion",
+                "later": "One year later",
+                "proposal": "Proposed update",
+                "approval": "Owner reviews before publishing",
+                "renewal": "Knowledge renewed",
+                "expired": "No longer valid",
+                "minor": "Small change → update & exam",
+                "major": "Major change → course & exam",
+                "notification": "§ 4 changed: data retention is now 14 days.",
+                "renewed": "New certificate",
+                "learners": [
+                  "Management learner",
+                  "HR learner",
+                  "Sales learner"
+                ]
+              }
+            }
+          },
+          "final": {
+            "diff": {
+              "note": "Illustrative policy lifecycle. Authors approve source updates before publication."
             }
           }
         },
@@ -108,43 +188,6 @@
                 "text": "H5P, SCORM, cmi5 and xAPI work today. See the standards below for integration details."
               }
             ]
-          }
-        },
-        {
-          "component": "LivingCourseStory",
-          "props": {
-            "id": "living-course",
-            "eyebrow": "Living Course",
-            "title": "When your sources change, your courses keep up.",
-            "intro": "Edit a doc or merge a change to a repo. ulams finds the lessons and questions that cite it, then prepares an update for your review.",
-            "valueLine": "Keep training accurate as the work changes, without asking learners to start over.",
-            "description": "Example: an SLO changes in docs/slo.md. ulams finds a lesson and quiz question that cite the source, proposes the updated text, and waits for an author to approve. Learner progress is kept.",
-            "beats": [
-              { "title": "Your source changes", "text": "A team updates a value in its operational documentation." },
-              { "title": "ulams finds what depends on it", "text": "Lessons and quiz questions linked to that source are surfaced for review." },
-              { "title": "You approve the update", "text": "The course stays current and learners keep their progress." }
-            ],
-            "source": {
-              "file": "docs/slo.md",
-              "heading": "Error budgets",
-              "context": "Error budget = (1 - SLO) × window",
-              "lead": "Default SLO for checkout:",
-              "before": "99.9%",
-              "after": "99.95%",
-              "added": "Budget over 30 days: 21.6 minutes"
-            },
-            "lesson": {
-              "title": "Lesson 2 · SLOs and error budgets",
-              "lead": "Default SLO for checkout:",
-              "citation": "docs/slo.md §2",
-              "question": "What is the default SLO for checkout?",
-              "questionCite": "docs/slo.md §2"
-            },
-            "proposal": {
-              "title": "Proposed update · 1 lesson, 1 question",
-              "approve": "Approve",
-              "done": "Updated · learner progress kept"
-            }
           }
         },
         {
