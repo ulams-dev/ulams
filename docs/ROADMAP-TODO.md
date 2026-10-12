@@ -13,8 +13,8 @@ small commits → tests → summary.
 
 - [x] (new) Umami integration on the owned landing, documentation and six demos: automatic pageviews,
       demo_open versus demos_scroll, exact CSP origins and per-browser exclusion
-      (ADR 0101 Proposed; requested by owner 2026-10-12). Documentation publication follows
-      the main-only GitHub Pages workflow.
+      (ADR 0101 Proposed; requested by owner 2026-10-12). Documentation published through PR #247 and GitHub Pages run 38295754529.
+      Live landing pageview and demo_open click accepted (HTTP 200); verification browser excluded.
 
 - [x] (2026-10-12) Owner requested the complete previous feature catalogue on Comparison,
       organised by stakeholder with full descriptions and documentation links (ADR 0100 Proposed).

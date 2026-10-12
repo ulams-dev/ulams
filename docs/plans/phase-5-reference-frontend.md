@@ -406,3 +406,10 @@ migration. Keep customer deployments and author previews untracked (ADR 0101 Pro
 
 - Documentation source check passed with zero errors/warnings after excluding the local, untracked
   third-party `public/vendor` assets from the temporary check configuration.
+
+
+### Public documentation release complete
+
+PR #247 merged as `0c94c55b1`. GitHub Pages run `38295754529` passed all documentation checks
+and published the site. The analytics guide is at
+https://ulams-dev.github.io/ulams/operators/public-analytics/ .
