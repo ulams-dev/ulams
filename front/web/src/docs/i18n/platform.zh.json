@@ -62,8 +62,8 @@
               "note": "政策生命周期示例。来源更新须经作者批准后发布。",
               "journey": [
                 {
-                  "title": "CEO 上传政策 PDF",
-                  "text": "ULAMS 提取文档文字并拆分为带引用的资料片段。LLM 在生成培训内容前读取这些来源信息。",
+                  "title": "CEO 上传政策与风格指南",
+                  "text": "政策提供带引用的源材料。风格指南为学习站点提供组织的视觉标识。",
                   "status": "available"
                 },
                 {
@@ -72,8 +72,8 @@
                   "status": "available"
                 },
                 {
-                  "title": "为不同团队安排培训",
-                  "text": "在品牌化学习站点中，为管理层、人力资源、销售和其他部门提供适合其职责的课程。",
+                  "title": "同一政策，不同品牌学院",
+                  "text": "管理层、HR 和销售各自拥有不同的课程设计和域名，依据同一政策和组织的风格指南。",
                   "status": "coming"
                 },
                 {
@@ -175,7 +175,8 @@
                       "question": "学员的经验水平如何？",
                       "answer": "新员工和经验丰富的员工。"
                     }
-                  ]
+                  ],
+                  "styleguide": "品牌风格指南"
                 }
               }
             }
@@ -289,7 +290,7 @@
             "variant": "terminal",
             "eyebrow": "自托管",
             "title": "你的服务器，你的数据。",
-            "text": "核心采用 MIT 许可，用 Docker Compose 即可运行：API、管理后台、这个前端和 H5P 服务。付费的云服务与企业功能只是在此之上的增值，绝不取代核心。",
+            "text": "MIT 许可的核心通过 Docker Compose 与 H5P 服务一起运行。你可以部署到自己的 VPS 并由 Cloudflare 提供入口，或将容器栈部署到 Kubernetes 或 Render.com。仓库包含 VPS/Cloudflare 的 YAML 配置和分步教程。Helm chart 即将推出。付费云服务和企业功能在开源核心之上扩展。",
             "code": [
               "$ git clone https://github.com/ulams-dev/ulams",
               "$ cd ulams && yarn install",

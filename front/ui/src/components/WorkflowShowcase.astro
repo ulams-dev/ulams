@@ -45,6 +45,7 @@ interface Props {
 const { id = "agents", eyebrow, title, intro, valueLine, description, footnote, legal, staticPreview = false, tabs } = Astro.props;
 
 const t = uiStrings(pageLocale(Astro));
+const TAB_ICON: Record<string, string> = { "claude-code": "code", "claude-mcp": "sparkle", cli: "terminal", api: "puzzle", studio: "layers" };
 const STATUS = { available: t.available, preview: t.preview, coming: t.coming } as const;
 const GLYPH: Partial<Record<Kind, string>> = { prompt: ">", cmd: "$", agent: "●", add: "+", del: "−", ctx: " ", out: " ", note: " ", cont: " " };
 const SR: Record<Kind, string> = t.sr;
@@ -85,8 +86,9 @@ const panels = tabs.map((tab, i) => ({ ...tab, ...schedule(tab.lines), i, tabId:
           {
             panels.map((p) => (
               <button type="button" role="tab" id={p.tabId} aria-selected={p.i === 0 ? "true" : "false"} aria-controls={p.panelId} tabindex={p.i === 0 ? 0 : -1} class="u-wf__tab">
-                <span>{p.label}</span>
-                {p.status && <span class={`u-status ${p.status === "available" ? "u-status--available" : "u-status--coming"}`}>{STATUS[p.status]}</span>}
+                <Icon name={TAB_ICON[p.key] ?? "code"} class="u-wf__tab-icon" />
+                <span class="u-wf__tab-label">{p.label}</span>
+                {p.status && p.status !== "available" && <span class="u-status u-status--coming">{STATUS[p.status]}</span>}
               </button>
             ))
           }

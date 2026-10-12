@@ -402,10 +402,10 @@ export const registry = {
                 chapters: list(text("Short navigation label", { maxLength: 24 }), "Seven story chapters", { minItems: 7, maxItems: 7 }),
                 intake: obj(
                   {
-                    ...Object.fromEntries(["uploader", "upload", "uploaded", "extract", "context", "llm", "sourceReady", "briefTitle", "ready"].map((key) => [key, text(`Localized policy intake copy: ${key}`, { maxLength: 120 })])),
+                    ...Object.fromEntries(["uploader", "upload", "uploaded", "styleguide", "extract", "context", "llm", "sourceReady", "briefTitle", "ready"].map((key) => [key, text(`Localized policy intake copy: ${key}`, { maxLength: 120 })])),
                     questions: list(obj({ question: text("Course brief question", { maxLength: 140 }), answer: text("Illustrative CEO answer", { maxLength: 140 }) }, ["question", "answer"]), "Four audience and duration questions", { minItems: 4, maxItems: 4 }),
                   },
-                  ["uploader", "upload", "uploaded", "extract", "context", "llm", "sourceReady", "briefTitle", "ready", "questions"],
+                  ["uploader", "upload", "uploaded", "styleguide", "extract", "context", "llm", "sourceReady", "briefTitle", "ready", "questions"],
                   "PDF extraction, cited source context and the course briefing interview"
                 ),
                 audiences: list(text("Department", { maxLength: 30 }), "Three example departments", { minItems: 3, maxItems: 3 }),

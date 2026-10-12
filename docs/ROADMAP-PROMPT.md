@@ -432,6 +432,8 @@ separately.
 ### 6.1.1 Policy lifecycle (Coming)
 - A policy PDF is extracted into cited source fragments. The course briefing captures departments,
   expected duration, seniority and prior experience; these inputs shape departmental course variants.
+  A separately uploaded brand style guide shapes each academy, with distinct department designs
+  and tenant domains.
 - Learners complete interactive lessons and an exam in the organisation's branded tenant application,
   then receive a PDF certificate linked to the policy and course version.
 - The policy owner sees who completed training and who is still pending, grouped by department.

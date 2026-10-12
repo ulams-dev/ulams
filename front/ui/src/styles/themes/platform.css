@@ -232,20 +232,30 @@
 [data-theme="platform"] .u-wf__tab {
   width: 100%;
   min-width: 0;
-  display: grid;
-  grid-template-rows: 1fr auto;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-items: center;
-  min-height: 84px;
+  justify-content: center;
+  gap: 7px;
+  min-height: 72px;
   height: 100%;
   padding: 10px 6px;
+  border: 1px solid transparent;
+  background: transparent;
   border-radius: 8px;
   font-size: 0.75rem;
   line-height: 1.35;
   text-align: center;
 }
 [data-theme="platform"] .u-wf__tab .u-status { font-size: 0.55rem; padding: 4px 6px; }
-[data-theme="platform"] .u-wf__tab span:first-child { min-width: 0; }
+[data-theme="platform"] .u-wf__tab-label { min-width: 0; }
+[data-theme="platform"] .u-wf__tab-icon { width: 17px; height: 17px; flex-shrink: 0; transition: transform .2s var(--ulams-ease); }
+[data-theme="platform"] .u-wf__tab { transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s, transform .2s; }
+[data-theme="platform"] .u-wf__tab:hover { background: color-mix(in srgb, var(--ulams-color-primary) 5%, var(--ulams-color-card-bg)); border-color: var(--ulams-color-border); transform: translateY(-2px); }
+[data-theme="platform"] .u-wf__tab:hover .u-wf__tab-icon { transform: translateY(-1px); }
+[data-theme="platform"] .u-wf__tab[aria-selected="true"] { background: var(--ulams-color-primary); box-shadow: 0 5px 12px -6px color-mix(in srgb, var(--ulams-color-primary) 45%, transparent); }
+[data-theme="platform"] .u-wf__tab:active { transform: translateY(0); }
+[data-theme="platform"] .u-wf__tab:focus-visible { outline: 3px solid var(--ulams-brand-blue); outline-offset: 3px; }
 [data-theme="platform"] .u-wf__tab[aria-selected="true"] { color: #fff; }
 [data-theme="platform"] .u-wf__pause {
   display: grid;
@@ -273,8 +283,8 @@
 
 @media (max-width: 1000px) {
   [data-theme="platform"] .u-wf__tabs { grid-template-columns: minmax(0, 1fr); }
-  [data-theme="platform"] .u-wf__tab { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto; min-height: 48px; padding: 8px 12px; justify-items: start; text-align: left; }
-  [data-theme="platform"] .u-wf__tab .u-status { justify-self: end; }
+  [data-theme="platform"] .u-wf__tab { flex-direction: row; min-height: 48px; padding: 8px 12px; justify-content: flex-start; text-align: left; }
+  [data-theme="platform"] .u-wf__tab .u-status { margin-left: auto; }
 }
 @media (max-width: 520px) {
   [data-theme="platform"] .u-wf__tabs { grid-template-columns: minmax(0, 1fr); }

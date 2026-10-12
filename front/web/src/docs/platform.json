@@ -62,8 +62,8 @@
               "note": "Illustrative policy lifecycle. Authors approve source updates before publication.",
               "journey": [
                 {
-                  "title": "The CEO uploads the policy PDF",
-                  "text": "ULAMS extracts its text into cited source fragments. The LLM reads this source context before drafting any training.",
+                  "title": "The CEO uploads policy and style guide",
+                  "text": "The policy provides cited source material. The style guide supplies the organisation’s visual identity for the learning sites.",
                   "status": "available"
                 },
                 {
@@ -72,8 +72,8 @@
                   "status": "available"
                 },
                 {
-                  "title": "Training fits each team",
-                  "text": "In a branded academy, Management, HR, Sales and other teams get courses shaped for their responsibilities.",
+                  "title": "One policy, distinct branded academies",
+                  "text": "Management, HR and Sales each get their own course design and domain, shaped by the same policy and the organisation’s style guide.",
                   "status": "coming"
                 },
                 {
@@ -175,7 +175,8 @@
                       "question": "What is their experience level?",
                       "answer": "New starters and experienced employees."
                     }
-                  ]
+                  ],
+                  "styleguide": "Brand style guide"
                 }
               }
             }
@@ -289,7 +290,7 @@
             "variant": "terminal",
             "eyebrow": "self-host",
             "title": "Your servers. Your data.",
-            "text": "The core is MIT-licensed and runs with Docker Compose: the API, the admin, this frontend and the H5P service. Paid cloud and enterprise features come on top, never instead.",
+            "text": "The MIT-licensed core runs with Docker Compose alongside the H5P service. Deploy on your VPS with Cloudflare in front, or run the container stack on Kubernetes or Render.com. VPS/Cloudflare YAML configurations and step-by-step tutorials are included. Helm chart coming soon. Paid cloud and enterprise features build on the open core.",
             "code": [
               "$ git clone https://github.com/ulams-dev/ulams",
               "$ cd ulams && yarn install",

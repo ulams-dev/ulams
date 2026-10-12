@@ -80,6 +80,11 @@ test("no layout shift while the stories play", async ({ page }) => {
     }).observe({ type: "layout-shift", buffered: true });
   });
   await open(page);
+  // Measure playback after the initial page fonts settle, separately from navigation loading.
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+    (window as unknown as { __cls: number }).__cls = 0;
+  });
   for (const id of ["living-course", "agents"]) {
     await page.locator(`#${id}`).scrollIntoViewIfNeeded();
     await page.waitForTimeout(2500);
@@ -116,4 +121,18 @@ test("interface buttons have equal widths and heights", async ({ page }) => {
   }));
   expect(Math.max(...sizes.map((s) => s.width)) - Math.min(...sizes.map((s) => s.width))).toBeLessThan(1);
   expect(Math.max(...sizes.map((s) => s.height)) - Math.min(...sizes.map((s) => s.height))).toBeLessThan(1);
+});
+
+test("interface selector has icons, no redundant availability badges and a visible active state", async ({ page }) => {
+  await open(page);
+  const selector = page.locator("#agents .u-wf__tabs");
+  await expect(selector.locator(".u-status--available")).toHaveCount(0);
+  await expect(selector.locator(".u-wf__tab-icon")).toHaveCount(5);
+  const tabs = selector.locator('[role="tab"]');
+  const inactive = await tabs.nth(2).evaluate((el) => getComputedStyle(el).backgroundColor);
+  await tabs.nth(2).click();
+  await expect(tabs.nth(2)).toHaveAttribute("aria-selected", "true");
+  await page.waitForTimeout(250);
+  const active = await tabs.nth(2).evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(active).not.toBe(inactive);
 });

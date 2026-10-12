@@ -91,11 +91,13 @@ describe("translated landing documents keep the English structure", () => {
         : ["/zh/", "/zh/comparison/", "https://ulams-dev.github.io/ulams/"]);
       expect(header.props).not.toHaveProperty("languages");
     });
-    it(`${lang}: the final display mode leaves no roadmap wording`, () => {
+    it(`${lang}: final display lifts status flags but keeps the Helm delivery notice`, () => {
       const text = JSON.stringify(applyLandingStatus(doc, "final"));
       expect(text).not.toMatch(/"status":"(coming|preview)"/);
       expect(text).not.toContain('"final"');
-      expect(text).not.toMatch(lang === "pl" ? /Wkrótce|w planach|mapie drogowej/i : /即将推出|路线图/);
+      const helmNotice = lang === "pl" ? "Helm chart już wkrótce." : "Helm chart 即将推出。";
+      expect(text).toContain(helmNotice);
+      expect(text.replace(helmNotice, "")).not.toMatch(lang === "pl" ? /Wkrótce|w planach|mapie drogowej/i : /即将推出|路线图/);
     });
     it(`${lang}: the actual display mode keeps the roadmap labels`, () => {
       expect(JSON.stringify(applyLandingStatus(doc, "actual"))).toContain('"status":"coming"');

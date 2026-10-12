@@ -828,6 +828,11 @@
                         "description": "Localized policy intake copy: uploaded",
                         "maxLength": 120
                       },
+                      "styleguide": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: styleguide",
+                        "maxLength": 120
+                      },
                       "extract": {
                         "type": "string",
                         "description": "Localized policy intake copy: extract",
@@ -890,6 +895,7 @@
                       "uploader",
                       "upload",
                       "uploaded",
+                      "styleguide",
                       "extract",
                       "context",
                       "llm",

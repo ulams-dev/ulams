@@ -15,6 +15,8 @@ the narrative; the owner requested their removal and explicit roadmap tracking.
 
 - Use seven chapters in the Overview hero, with progressive animations within each chapter.
   The course brief is a sequential chat with typing indicators and alternating ULAMS/CEO messages.
+  The CEO supplies a separate brand style guide; department academy examples have distinct visual
+  designs and reserved `.example.test` tenant domains.
 - Show the existing extraction and cited-fragment context flow. Do not imply that a vector
   retrieval service exists. The LLM reads the source before asking the course-brief questions.
 - Label the whole story as an illustrative workflow, without availability badges. Track

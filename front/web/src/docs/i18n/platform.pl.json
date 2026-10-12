@@ -62,8 +62,8 @@
               "note": "Przykładowy cykl polityki. Autor zatwierdza aktualizacje źródeł przed publikacją.",
               "journey": [
                 {
-                  "title": "CEO dodaje PDF z polityką",
-                  "text": "ULAMS odczytuje tekst i dzieli go na fragmenty ze źródłami. LLM czyta ten kontekst, zanim przygotuje szkolenie.",
+                  "title": "CEO dodaje politykę i style guide",
+                  "text": "Polityka dostarcza cytowanych źródeł. Style guide określa identyfikację wizualną organizacji dla witryn szkoleniowych.",
                   "status": "available"
                 },
                 {
@@ -72,8 +72,8 @@
                   "status": "available"
                 },
                 {
-                  "title": "Szkolenia dopasowane do działów",
-                  "text": "W witrynie z własną marką Management, HR, Sales i inne zespoły dostają kursy dopasowane do swojej pracy.",
+                  "title": "Jedna polityka, różne akademie",
+                  "text": "Management, HR i Sales otrzymują własny wygląd kursu i domenę, na podstawie tej samej polityki oraz style guide organizacji.",
                   "status": "coming"
                 },
                 {
@@ -175,7 +175,8 @@
                       "question": "Jaki jest poziom doświadczenia?",
                       "answer": "Nowe osoby i doświadczeni pracownicy."
                     }
-                  ]
+                  ],
+                  "styleguide": "Przewodnik po stylu marki"
                 }
               }
             }
@@ -289,7 +290,7 @@
             "variant": "terminal",
             "eyebrow": "self-hosting",
             "title": "Twoje serwery. Twoje dane.",
-            "text": "Rdzeń jest na licencji MIT i działa w Docker Compose: API, panel admina, ten frontend i usługa H5P. Płatne funkcje chmurowe i enterprise są dodatkiem, nigdy zamiennikiem.",
+            "text": "Rdzeń na licencji MIT działa w Docker Compose obok usługi H5P. Uruchom go na swoim VPS z Cloudflare przed aplikacją lub wdrażaj kontenery w Kubernetes albo Render.com. Konfiguracje YAML i instrukcje krok po kroku dla VPS/Cloudflare są w repozytorium. Helm chart już wkrótce. Płatne funkcje chmurowe i enterprise rozwijają otwarty rdzeń.",
             "code": [
               "$ git clone https://github.com/ulams-dev/ulams",
               "$ cd ulams && yarn install",

@@ -71,6 +71,7 @@ test("CEO intake, briefing and department scenes animate in stages with shared p
   const story = page.locator("ulams-policy-story");
   await story.scrollIntoViewIfNeeded();
   await expect(story.locator(".ps-upload-actor")).toContainText("CEO");
+  await expect(story.locator(".ps-upload-file--styleguide")).toContainText("styleguide.pdf");
   await expect(story.locator(".ps-ingest-pipeline")).toContainText("Cited source context");
   await story.locator('[role="tab"]').nth(1).click();
   await expect(story.locator(".ps-brief-pair")).toHaveCount(4);
@@ -83,6 +84,9 @@ test("CEO intake, briefing and department scenes animate in stages with shared p
   await story.locator('[role="tab"]').nth(2).click();
   await expect(story.locator(".ps-role-person svg")).toHaveCount(3);
   const roles = story.locator(".ps-role");
+  await expect(story.locator(".ps-department-domain")).toHaveText(["management.example.test", "hr.example.test", "sales.example.test"]);
+  const themes = await roles.evaluateAll((els) => els.map((el) => getComputedStyle(el).backgroundColor));
+  expect(new Set(themes).size).toBe(3);
   const delays = await roles.evaluateAll((els) => els.map((el) => getComputedStyle(el).animationDelay));
   expect(new Set(delays).size).toBe(3);
   await story.locator("[data-play]").click();
@@ -95,6 +99,7 @@ test("CEO intake, briefing and department scenes animate in stages with shared p
 
 
 test("the former principles section tells the sourced Ulam story", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto(url);
   const heritage = page.locator("#product");
   await heritage.scrollIntoViewIfNeeded();

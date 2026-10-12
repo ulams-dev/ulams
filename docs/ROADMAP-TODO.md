@@ -632,9 +632,14 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       visual story at the top replaces the duplicate Living Course section, with document, academy, oversight,
       source-diff and renewal scenes; updates retain author approval; CEO PDF intake and a four-question
       course brief are animated as a sequential chat, with illustrated department roles; PDF intake
-      reveals extraction, citations and LLM reading in order, and interface tabs share equal dimensions. The repeated
+      reveals extraction, citations and LLM reading in order, and interface tabs share equal dimensions,
+      icons and hover states without redundant Available badges. Self-hosting copy identifies
+      VPS/Cloudflare configs and guides, container targets and the forthcoming Helm chart. The CEO also supplies a brand style guide; departmental academies have distinct designs and
+      example tenant domains. The repeated
       principles grid is replaced by a sourced Scottish Book brand story and the selected Stitch Ulam portrait.
       The example workflow has no availability badges; planned delivery is tracked under Phase 6)
+- [ ] (new) Link the owner’s ULAM scientific paper beside the agent/API interface selector
+      (awaiting the paper title, URL or local file path).
 - [x] (new) Split platform product Overview and Comparison pages in EN/PL/ZH, with audited SEO metadata,
       JSON-LD, robots and sitemap routes (implemented and verified locally; plan batch 4; ADR 0097 Proposed)
 - [x] (new) Three new free demo academies, `gravity` (Gravity Lab, 3D simulation), `poland` (Poland, Measured /
@@ -708,7 +713,8 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
   - [ ] Until then: set `REPORTBRO_URL` to the local server so no data leaves the installation
         (obsolete once the pdfme change is merged: ReportBro and `REPORTBRO_URL` are gone)
 - [ ] (new) Policy lifecycle delivery: link the uploaded policy version and cited fragments to all departmental
-      course variants; use departments, duration, seniority and experience from the course brief (Coming).
+      course variants; use departments, duration, seniority and experience from the course brief;
+      apply an uploaded style guide and provision distinct branded department domains (Coming).
 - [ ] (new) Policy owner dashboard: show assigned people by department, completed and pending training,
       course version and issued PDF certificate; support the branded tenant learning application (Coming).
 - [ ] (new) On an approved policy change, update affected course variants, invalidate superseded certificates,
