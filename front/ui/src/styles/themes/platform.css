@@ -260,7 +260,7 @@
 /* Warm alternating bands and simple, hairline bordered cards. */
 [data-theme="platform"] .u-showcase { background: #f8f6f0; border-bottom: 1px solid #e2e0da; }
 [data-theme="platform"] .u-showcase .u-section-head { max-width: 820px; }
-[data-theme="platform"] .u-showcase__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+[data-theme="platform"] .u-showcase .u-showcase__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
 [data-theme="platform"] .u-showcase .u-h2 { max-width: 22ch; font-size: clamp(2.1rem, 3.6vw, 3.1rem); line-height: 1.18; }
 [data-theme="platform"] .u-demo-card { border: 1px solid #e2e0da; border-radius: 10px; background: #fff; box-shadow: 0 4px 18px -8px rgb(15 43 70 / 0.1); }
 [data-theme="platform"] .u-demo-card:hover,
@@ -272,6 +272,10 @@
 [data-theme="platform"] .u-demo-card__text { color: #52657a; font-size: 0.88rem; line-height: 1.6; }
 [data-theme="platform"] .u-demo-card .u-btn { min-height: 38px; padding: 8px 12px; font-size: 0.8rem; }
 [data-theme="platform"] .u-demo-card .u-btn--ghost { --_bg: transparent; --_bd: #e2e0da; --_fg: #233647; }
+
+@media (max-width: 880px) {
+  [data-theme="platform"] .u-showcase .u-showcase__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 [data-theme="platform"] .u-steps { background: #fff; border-bottom: 1px solid #e2e0da; }
 [data-theme="platform"] .u-steps__list::before { background: #d7c6bc; opacity: 0.8; }
@@ -349,7 +353,6 @@
   [data-theme="platform"] .u-prod__step { padding: 14px; }
   [data-theme="platform"] .u-prod__flow-arrow { transform: rotate(90deg); }
   [data-theme="platform"] .u-prod__approval { padding: 0 12px 14px; }
-  [data-theme="platform"] .u-showcase__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   [data-theme="platform"] .u-wf .u-container { grid-template-columns: minmax(0, 1fr); }
   [data-theme="platform"] .u-wf .u-section-head,
   [data-theme="platform"] .u-wf ulams-workflows,
@@ -361,7 +364,7 @@
 }
 
 @media (max-width: 520px) {
-  [data-theme="platform"] .u-showcase__grid { grid-template-columns: minmax(0, 1fr); }
+  [data-theme="platform"] .u-showcase .u-showcase__grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 :root[data-theme="platform"]:lang(zh) {
