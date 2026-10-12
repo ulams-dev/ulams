@@ -121,6 +121,43 @@
           }
         },
         {
+          "component": "LivingCourseStory",
+          "props": {
+            "id": "living-course",
+            "eyebrow": "Living Course",
+            "title": "Gdy zmieniają się źródła, kursy nadążają.",
+            "intro": "Zmień dokument lub scal aktualizację repozytorium. ulams odnajdzie lekcje i pytania, które się na nim opierają, i przygotuje propozycję do sprawdzenia.",
+            "valueLine": "Aktualna wiedza w szkoleniach, bez zmuszania kursantów do rozpoczynania od nowa.",
+            "description": "Przykład: zmienia się SLO w docs/slo.md. ulams znajduje lekcję i pytanie quizowe powiązane ze źródłem, proponuje aktualizację i czeka na zatwierdzenie autora. Postęp kursantów zostaje zachowany.",
+            "beats": [
+              { "title": "Zmienia się źródło", "text": "Zespół aktualizuje wartość w dokumentacji operacyjnej." },
+              { "title": "ulams znajduje zależne treści", "text": "Powiązane lekcje i pytania trafiają do sprawdzenia." },
+              { "title": "Ty zatwierdzasz zmianę", "text": "Kurs pozostaje aktualny, a kursanci zachowują postęp." }
+            ],
+            "source": {
+              "file": "docs/slo.md",
+              "heading": "Budżet błędów",
+              "context": "Budżet błędów = (1 - SLO) × okno",
+              "lead": "Domyślne SLO dla płatności:",
+              "before": "99,9%",
+              "after": "99,95%",
+              "added": "Budżet za 30 dni: 21,6 minuty"
+            },
+            "lesson": {
+              "title": "Lekcja 2 · SLO i budżety błędów",
+              "lead": "Domyślne SLO dla płatności:",
+              "citation": "docs/slo.md §2",
+              "question": "Jakie jest domyślne SLO dla płatności?",
+              "questionCite": "docs/slo.md §2"
+            },
+            "proposal": {
+              "title": "Proponowana zmiana · 1 lekcja, 1 pytanie",
+              "approve": "Zatwierdź",
+              "done": "Zaktualizowano · postęp kursantów zachowany"
+            }
+          }
+        },
+        {
           "component": "WorkflowShowcase",
           "props": {
             "id": "agents",

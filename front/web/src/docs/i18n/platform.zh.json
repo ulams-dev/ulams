@@ -121,6 +121,43 @@
           }
         },
         {
+          "component": "LivingCourseStory",
+          "props": {
+            "id": "living-course",
+            "eyebrow": "Living Course",
+            "title": "资料更新，课程也随之更新。",
+            "intro": "编辑文档或合并仓库变更。ulams 会找到引用该资料的课程和问题，并准备更新方案供你审核。",
+            "valueLine": "让培训内容跟上工作变化，同时保留学习者的进度。",
+            "description": "示例：docs/slo.md 中的 SLO 发生变化。ulams 找到引用该资料的课程和测验问题，提出更新方案，并等待作者批准。学习者进度会保留。",
+            "beats": [
+              { "title": "资料发生变化", "text": "团队更新了运维文档中的一项数值。" },
+              { "title": "ulams 找到相关内容", "text": "引用该资料的课程和测验问题会显示出来供审核。" },
+              { "title": "由你批准更新", "text": "课程保持最新，学习者保留已有进度。" }
+            ],
+            "source": {
+              "file": "docs/slo.md",
+              "heading": "错误预算",
+              "context": "错误预算 = (1 - SLO) × 时间窗口",
+              "lead": "结账的默认 SLO：",
+              "before": "99.9%",
+              "after": "99.95%",
+              "added": "30 天错误预算：21.6 分钟"
+            },
+            "lesson": {
+              "title": "第 2 课 · SLO 与错误预算",
+              "lead": "结账的默认 SLO：",
+              "citation": "docs/slo.md §2",
+              "question": "结账的默认 SLO 是多少？",
+              "questionCite": "docs/slo.md §2"
+            },
+            "proposal": {
+              "title": "更新建议 · 1 节课，1 道题",
+              "approve": "批准",
+              "done": "已更新 · 学习者进度已保留"
+            }
+          }
+        },
+        {
           "component": "WorkflowShowcase",
           "props": {
             "id": "agents",

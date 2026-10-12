@@ -121,6 +121,43 @@
           }
         },
         {
+          "component": "LivingCourseStory",
+          "props": {
+            "id": "living-course",
+            "eyebrow": "Living Course",
+            "title": "When your sources change, your courses keep up.",
+            "intro": "Edit a doc or merge a change to a repo. ulams finds the lessons and questions that cite it, then prepares an update for your review.",
+            "valueLine": "Keep training accurate as the work changes, without asking learners to start over.",
+            "description": "Example: an SLO changes in docs/slo.md. ulams finds a lesson and quiz question that cite the source, proposes the updated text, and waits for an author to approve. Learner progress is kept.",
+            "beats": [
+              { "title": "Your source changes", "text": "A team updates a value in its operational documentation." },
+              { "title": "ulams finds what depends on it", "text": "Lessons and quiz questions linked to that source are surfaced for review." },
+              { "title": "You approve the update", "text": "The course stays current and learners keep their progress." }
+            ],
+            "source": {
+              "file": "docs/slo.md",
+              "heading": "Error budgets",
+              "context": "Error budget = (1 - SLO) × window",
+              "lead": "Default SLO for checkout:",
+              "before": "99.9%",
+              "after": "99.95%",
+              "added": "Budget over 30 days: 21.6 minutes"
+            },
+            "lesson": {
+              "title": "Lesson 2 · SLOs and error budgets",
+              "lead": "Default SLO for checkout:",
+              "citation": "docs/slo.md §2",
+              "question": "What is the default SLO for checkout?",
+              "questionCite": "docs/slo.md §2"
+            },
+            "proposal": {
+              "title": "Proposed update · 1 lesson, 1 question",
+              "approve": "Approve",
+              "done": "Updated · learner progress kept"
+            }
+          }
+        },
+        {
           "component": "WorkflowShowcase",
           "props": {
             "id": "agents",
