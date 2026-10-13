@@ -1017,6 +1017,48 @@
           "final": {
             "intro": "采购方通常关注的各项指标，逐个产品对比，分为两组：开源与创作者平台、企业级套件。"
           }
+        },
+        {
+          "component": "Faq",
+          "props": {
+            "id": "faq",
+            "eyebrow": "FAQ",
+            "title": "开始前的常见问题",
+            "items": [
+              {
+                "q": "ULAMS 是什么？",
+                "a": "ULAMS 是面向组织、大学和技术团队的开源 LMS。其无头 API 支持自有品牌学习网站、课程创作和系统集成。"
+              },
+              {
+                "q": "ULAMS 自托管免费吗？",
+                "a": "是的。ULAMS 采用 MIT 许可证。你提供托管；如果启用付费 AI 调用，费用由所选提供商收取。H5P 作为独立服务运行，采用自己的 GPL 许可证。"
+              },
+              {
+                "q": "可以在本地试用整个系统吗？",
+                "a": "可以。安装 CLI，并在 Docker Compose 可用时运行 ulams stack up。开发试用使用确定性 AI 响应，无需付费模型调用。需要 Node.js 22.12 或更新版本。"
+              },
+              {
+                "q": "可以部署在哪里？",
+                "a": "可以在自有服务器使用 Docker Compose，或在现有集群使用原生 Kubernetes 清单。AWS、Google Cloud 或 Azure 上的 VPS 或虚拟机均可运行。生产部署需要 DNS、HTTPS 和持久存储。"
+              },
+              {
+                "q": "智能体可以操作 ULAMS 吗？",
+                "a": "CLI 和 MCP 接口支持兼容智能体。可以使用 Claude Code、Codex、OpenCode 或 Gemini CLI，也可以通过 REST API 直接集成。"
+              },
+              {
+                "q": "AI 会自动发布课程吗？",
+                "a": "不会。AI 准备附有来源引用的草稿。作者审查大纲和内容，再批准发布。生产环境最初禁用 AI，直到配置提供商。"
+              },
+              {
+                "q": "每个学院可以使用自己的品牌和域名吗？",
+                "a": "可以。每个租户都有独立学习网站、主题和隔离数据库。CLI 创建首个学院；其他租户通过平台的租户管理流程创建。"
+              },
+              {
+                "q": "如何停止系统而保留课程？",
+                "a": "运行 ulams stack down。在同一安装目录再次运行 stack up 时，数据和凭据仍可使用。只有 stack down --purge --yes 会明确删除持久数据。"
+              }
+            ]
+          }
         }
       ]
     },
@@ -1061,6 +1103,10 @@
           {
             "label": "GitHub",
             "href": "https://github.com/ulams-dev"
+          },
+          {
+            "label": "FAQ",
+            "href": "#faq"
           }
         ],
         "note": "开源 · MIT"

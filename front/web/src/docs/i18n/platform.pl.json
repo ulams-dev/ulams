@@ -379,6 +379,48 @@
             ],
             "note": "Helm chart już wkrótce."
           }
+        },
+        {
+          "component": "Faq",
+          "props": {
+            "id": "faq",
+            "eyebrow": "FAQ",
+            "title": "Pytania przed rozpoczęciem",
+            "items": [
+              {
+                "q": "Czym jest ULAMS?",
+                "a": "ULAMS to LMS z otwartym kodem dla organizacji, uczelni i zespołów technicznych. API pozwala tworzyć witryny edukacyjne z własną marką, przygotowywać kursy i łączyć platformę z innymi systemami."
+              },
+              {
+                "q": "Czy własny hosting ULAMS jest darmowy?",
+                "a": "Tak. ULAMS jest na licencji MIT. Zapewniasz hosting; płatne wywołania AI, jeśli je włączysz, rozlicza wybrany dostawca. H5P działa jako osobna usługa na własnej licencji GPL."
+              },
+              {
+                "q": "Czy mogę przetestować cały stos lokalnie?",
+                "a": "Tak. Zainstaluj CLI i uruchom ulams stack up, mając Docker Compose. Tryb deweloperski używa deterministycznych odpowiedzi AI, bez płatnych wywołań modeli. Wymagany jest Node.js 22.12 lub nowszy."
+              },
+              {
+                "q": "Gdzie mogę wdrożyć platformę?",
+                "a": "Użyj Docker Compose na własnym serwerze albo manifestów Kubernetes w istniejącym klastrze. Stos może działać na VPS lub maszynie wirtualnej w AWS, Google Cloud i Azure. Produkcja wymaga DNS, HTTPS i trwałego przechowywania danych."
+              },
+              {
+                "q": "Czy agenci mogą obsługiwać ULAMS?",
+                "a": "CLI i interfejs MCP umożliwiają współpracę z agentami. Możesz używać Claude Code, Codex, OpenCode lub Gemini CLI albo integrować się bezpośrednio przez REST API."
+              },
+              {
+                "q": "Czy AI samo publikuje kurs?",
+                "a": "Nie. AI przygotowuje szkic z cytowanymi źródłami. Autor sprawdza konspekt i treść, a potem zatwierdza publikację. Produkcja startuje z wyłączonym AI do czasu skonfigurowania dostawcy."
+              },
+              {
+                "q": "Czy każda akademia może mieć własną markę i domenę?",
+                "a": "Tak. Każdy tenant ma własną witrynę, motyw i izolowaną bazę danych. CLI tworzy pierwszą akademię; kolejne powstają w procesie zarządzania tenantami."
+              },
+              {
+                "q": "Jak zatrzymać stos bez utraty kursów?",
+                "a": "Uruchom ulams stack down. Dane i klucze pozostają dostępne po ponownym stack up w tym samym katalogu instalacji. Dopiero stack down --purge --yes świadomie usuwa trwałe dane."
+              }
+            ]
+          }
         }
       ]
     },
@@ -423,6 +465,10 @@
           {
             "label": "GitHub",
             "href": "https://github.com/ulams-dev"
+          },
+          {
+            "label": "FAQ",
+            "href": "#faq"
           }
         ],
         "note": "Otwarty kod · MIT"

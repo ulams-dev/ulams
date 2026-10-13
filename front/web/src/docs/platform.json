@@ -379,6 +379,48 @@
             ],
             "note": "Helm chart coming soon."
           }
+        },
+        {
+          "component": "Faq",
+          "props": {
+            "id": "faq",
+            "eyebrow": "FAQ",
+            "title": "Questions before you start",
+            "items": [
+              {
+                "q": "What is ULAMS?",
+                "a": "ULAMS is an open-source LMS for organisations, universities and technical teams. Its headless API supports branded learning sites, course authoring and integrations."
+              },
+              {
+                "q": "Is ULAMS free to self-host?",
+                "a": "Yes. ULAMS is MIT licensed. You provide hosting; paid AI provider calls, if enabled, are billed by your chosen provider. H5P runs as a separate service with its own GPL licence."
+              },
+              {
+                "q": "Can I try the whole stack locally?",
+                "a": "Yes. Install the CLI and run ulams stack up with Docker Compose available. The development trial uses deterministic AI responses without paid model calls. Node.js 22.12 or newer is required."
+              },
+              {
+                "q": "Where can I deploy it?",
+                "a": "Use Docker Compose on your own server or native Kubernetes manifests on an existing cluster. A VPS or virtual machine on AWS, Google Cloud or Azure can host the stack. Production needs DNS, HTTPS and persistent storage."
+              },
+              {
+                "q": "Can agents operate ULAMS?",
+                "a": "The CLI and MCP interface let compatible agents work with the platform. You can use Claude Code, Codex, OpenCode or Gemini CLI, or integrate directly through the REST API."
+              },
+              {
+                "q": "Does AI publish a course automatically?",
+                "a": "No. AI prepares a draft with source citations. The author reviews the outline and content, then approves publication. Production starts with AI disabled until you configure a provider."
+              },
+              {
+                "q": "Can each academy use its own brand and domain?",
+                "a": "Yes. Each tenant has its own learning site, theme and isolated database. The initial academy is created by the stack launcher; additional tenants use the platform tenant workflow."
+              },
+              {
+                "q": "How do I stop it without losing courses?",
+                "a": "Run ulams stack down. Data and credentials remain available when you run stack up again in the same installation directory. Only stack down --purge --yes deliberately removes persistent data."
+              }
+            ]
+          }
         }
       ]
     },
@@ -423,6 +465,10 @@
           {
             "label": "GitHub",
             "href": "https://github.com/ulams-dev"
+          },
+          {
+            "label": "FAQ",
+            "href": "#faq"
           }
         ],
         "note": "Open source · MIT"

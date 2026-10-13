@@ -8,6 +8,14 @@ interface Props {
   items: Array<{ q: string; a: string }>;
 }
 const { id = "faq", eyebrow, title, items } = Astro.props;
+const structuredData = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: items.map(({ q, a }) => ({
+    "@type": "Question", name: q,
+    acceptedAnswer: { "@type": "Answer", text: a },
+  })),
+}).replace(/</g, "\\u003c");
 ---
 
 <section class="u-section u-faq" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
@@ -33,6 +41,7 @@ const { id = "faq", eyebrow, title, items } = Astro.props;
     </div>
   </div>
 </section>
+<script type="application/ld+json" set:html={structuredData} />
 
 <style>
   .u-faq__wrap {
@@ -63,6 +72,16 @@ const { id = "faq", eyebrow, title, items } = Astro.props;
     cursor: pointer;
     list-style: none;
     font-weight: 600;
+  }
+  .u-faq__item summary:focus-visible {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 3px;
+    border-radius: var(--ulams-radius-card);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .u-faq__item, .u-faq__item::details-content, .u-faq__item :global(.u-faq__chev) {
+      transition: none;
+    }
   }
   .u-faq__item summary::-webkit-details-marker {
     display: none;
