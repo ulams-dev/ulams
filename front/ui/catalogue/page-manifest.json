@@ -284,7 +284,7 @@
       }
     },
     "Hero": {
-      "description": "First screen of a landing page. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration; cosmos, atlas and notebook = copy on the left and a live interactive package (or a drawing of orbits, a map graticule or an Ulam spiral) on the right.",
+      "description": "First screen of a landing page. A product variant may show an animated, pausable six-step policy-to-certification lifecycle. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration; cosmos, atlas and notebook = copy on the left and a live interactive package (or a drawing of orbits, a map graticule or an Ulam spiral) on the right.",
       "children": false,
       "props": {
         "type": "object",
@@ -775,72 +775,378 @@
           "diff": {
             "type": "object",
             "properties": {
+              "ariaLabel": {
+                "type": "string",
+                "description": "Accessible description of the product example",
+                "maxLength": 280
+              },
+              "badge": {
+                "type": "string",
+                "description": "Short status label on the example card",
+                "maxLength": 40
+              },
               "title": {
                 "type": "string",
-                "description": "Card title, e.g. the lesson being updated",
-                "maxLength": 80
-              },
-              "source": {
-                "type": "string",
-                "description": "Source the change comes from, e.g. docs/slo.md",
+                "description": "Title of the illustrative journey, e.g. 'Privacy policy v1 → v2'",
                 "maxLength": 80
               },
               "note": {
                 "type": "string",
                 "description": "Small note under the card",
-                "maxLength": 160
+                "maxLength": 240
               },
-              "lines": {
+              "visual": {
+                "type": "object",
+                "properties": {
+                  "chapters": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "Short navigation label",
+                      "maxLength": 24
+                    },
+                    "description": "Seven story chapters",
+                    "default": [],
+                    "maxItems": 7,
+                    "minItems": 7
+                  },
+                  "intake": {
+                    "type": "object",
+                    "properties": {
+                      "uploader": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: uploader",
+                        "maxLength": 120
+                      },
+                      "upload": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: upload",
+                        "maxLength": 120
+                      },
+                      "uploaded": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: uploaded",
+                        "maxLength": 120
+                      },
+                      "styleguide": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: styleguide",
+                        "maxLength": 120
+                      },
+                      "extract": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: extract",
+                        "maxLength": 120
+                      },
+                      "context": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: context",
+                        "maxLength": 120
+                      },
+                      "llm": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: llm",
+                        "maxLength": 120
+                      },
+                      "sourceReady": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: sourceReady",
+                        "maxLength": 120
+                      },
+                      "briefTitle": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: briefTitle",
+                        "maxLength": 120
+                      },
+                      "ready": {
+                        "type": "string",
+                        "description": "Localized policy intake copy: ready",
+                        "maxLength": 120
+                      },
+                      "questions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "question": {
+                              "type": "string",
+                              "description": "Course brief question",
+                              "maxLength": 140
+                            },
+                            "answer": {
+                              "type": "string",
+                              "description": "Illustrative CEO answer",
+                              "maxLength": 140
+                            }
+                          },
+                          "required": [
+                            "question",
+                            "answer"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "description": "Four audience and duration questions",
+                        "default": [],
+                        "maxItems": 4,
+                        "minItems": 4
+                      }
+                    },
+                    "required": [
+                      "uploader",
+                      "upload",
+                      "uploaded",
+                      "styleguide",
+                      "extract",
+                      "context",
+                      "llm",
+                      "sourceReady",
+                      "briefTitle",
+                      "ready",
+                      "questions"
+                    ],
+                    "description": "PDF extraction, cited source context and the course briefing interview",
+                    "additionalProperties": false
+                  },
+                  "audiences": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "Department",
+                      "maxLength": 30
+                    },
+                    "description": "Three example departments",
+                    "default": [],
+                    "maxItems": 3,
+                    "minItems": 3
+                  },
+                  "roleTopics": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "Role-specific learning focus",
+                      "maxLength": 80
+                    },
+                    "description": "One learning focus per department",
+                    "default": [],
+                    "maxItems": 3,
+                    "minItems": 3
+                  },
+                  "learners": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "Illustrative learner label",
+                      "maxLength": 40
+                    },
+                    "description": "Three anonymous learner rows in the owner view",
+                    "default": [],
+                    "maxItems": 3,
+                    "minItems": 3
+                  },
+                  "formats": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "description": "Learning activity",
+                      "maxLength": 40
+                    },
+                    "description": "Three activities ending with an exam",
+                    "default": [],
+                    "maxItems": 3,
+                    "minItems": 3
+                  },
+                  "policy": {
+                    "type": "string",
+                    "description": "Localized illustration copy: policy",
+                    "maxLength": 120
+                  },
+                  "section": {
+                    "type": "string",
+                    "description": "Localized illustration copy: section",
+                    "maxLength": 120
+                  },
+                  "before": {
+                    "type": "string",
+                    "description": "Localized illustration copy: before",
+                    "maxLength": 120
+                  },
+                  "after": {
+                    "type": "string",
+                    "description": "Localized illustration copy: after",
+                    "maxLength": 120
+                  },
+                  "academy": {
+                    "type": "string",
+                    "description": "Localized illustration copy: academy",
+                    "maxLength": 120
+                  },
+                  "lesson": {
+                    "type": "string",
+                    "description": "Localized illustration copy: lesson",
+                    "maxLength": 120
+                  },
+                  "exam": {
+                    "type": "string",
+                    "description": "Localized illustration copy: exam",
+                    "maxLength": 120
+                  },
+                  "certificate": {
+                    "type": "string",
+                    "description": "Localized illustration copy: certificate",
+                    "maxLength": 120
+                  },
+                  "completed": {
+                    "type": "string",
+                    "description": "Localized illustration copy: completed",
+                    "maxLength": 120
+                  },
+                  "pending": {
+                    "type": "string",
+                    "description": "Localized illustration copy: pending",
+                    "maxLength": 120
+                  },
+                  "owner": {
+                    "type": "string",
+                    "description": "Localized illustration copy: owner",
+                    "maxLength": 120
+                  },
+                  "progress": {
+                    "type": "string",
+                    "description": "Localized illustration copy: progress",
+                    "maxLength": 120
+                  },
+                  "later": {
+                    "type": "string",
+                    "description": "Localized illustration copy: later",
+                    "maxLength": 120
+                  },
+                  "proposal": {
+                    "type": "string",
+                    "description": "Localized illustration copy: proposal",
+                    "maxLength": 120
+                  },
+                  "approval": {
+                    "type": "string",
+                    "description": "Localized illustration copy: approval",
+                    "maxLength": 120
+                  },
+                  "renewal": {
+                    "type": "string",
+                    "description": "Localized illustration copy: renewal",
+                    "maxLength": 120
+                  },
+                  "expired": {
+                    "type": "string",
+                    "description": "Localized illustration copy: expired",
+                    "maxLength": 120
+                  },
+                  "minor": {
+                    "type": "string",
+                    "description": "Localized illustration copy: minor",
+                    "maxLength": 120
+                  },
+                  "major": {
+                    "type": "string",
+                    "description": "Localized illustration copy: major",
+                    "maxLength": 120
+                  },
+                  "notification": {
+                    "type": "string",
+                    "description": "Localized illustration copy: notification",
+                    "maxLength": 120
+                  },
+                  "renewed": {
+                    "type": "string",
+                    "description": "Localized illustration copy: renewed",
+                    "maxLength": 120
+                  }
+                },
+                "required": [
+                  "chapters",
+                  "intake",
+                  "audiences",
+                  "roleTopics",
+                  "learners",
+                  "formats",
+                  "policy",
+                  "section",
+                  "before",
+                  "after",
+                  "academy",
+                  "lesson",
+                  "exam",
+                  "certificate",
+                  "completed",
+                  "pending",
+                  "owner",
+                  "progress",
+                  "later",
+                  "proposal",
+                  "approval",
+                  "renewal",
+                  "expired",
+                  "minor",
+                  "major",
+                  "notification",
+                  "renewed"
+                ],
+                "description": "Localized copy for the policy document, role-specific courses, learning site, certificates, completion view and reviewed source update",
+                "additionalProperties": false
+              },
+              "journey": {
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "op": {
+                    "title": {
                       "type": "string",
-                      "enum": [
-                        "add",
-                        "del",
-                        "ctx"
-                      ],
-                      "description": "Diff line kind",
-                      "default": "ctx"
+                      "description": "Story step title",
+                      "maxLength": 60
                     },
                     "text": {
                       "type": "string",
-                      "description": "Line",
-                      "maxLength": 160
+                      "description": "What happens and why this step matters",
+                      "maxLength": 180
+                    },
+                    "bullets": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "Concise action or outcome",
+                        "maxLength": 140
+                      },
+                      "description": "Practical explanation of this step",
+                      "default": [],
+                      "maxItems": 4,
+                      "minItems": 2
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "available",
+                        "coming"
+                      ],
+                      "description": "Whether this capability is available or on the roadmap",
+                      "default": "available"
                     }
                   },
                   "required": [
+                    "title",
                     "text"
                   ],
                   "additionalProperties": false
                 },
-                "description": "Diff lines",
+                "description": "Steps in the product story",
                 "default": [],
-                "maxItems": 8
-              },
-              "citations": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "description": "Citation chip, e.g. docs/slo.md §2",
-                  "maxLength": 40
-                },
-                "description": "Citations",
-                "default": [],
-                "maxItems": 4
-              },
-              "action": {
-                "type": "string",
-                "description": "Label of the approve button",
-                "maxLength": 30
+                "maxItems": 7,
+                "minItems": 7
               }
             },
             "required": [
-              "lines"
+              "journey",
+              "visual"
             ],
-            "description": "Update-proposal card for the product variant",
+            "description": "A single visual story at the top of the product page: policy v1, learning, oversight, reviewed policy v2 changes and planned recertification",
             "additionalProperties": false
           },
           "id": {
@@ -1068,6 +1374,139 @@
         },
         "required": [
           "lessons"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "HeritageStory": {
+      "description": "An editorial brand-origin story with an attributed portrait, sourced historical context, a separate product connection and a call to action. Never invent quotations or historical facts.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "image": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "format": "href",
+                "description": "Image URL (local /images/… or the tenant storage)",
+                "maxLength": 2048
+              },
+              "alt": {
+                "type": "string",
+                "description": "Text alternative; empty string only for decorative images",
+                "maxLength": 300
+              },
+              "width": {
+                "type": "integer",
+                "description": "Intrinsic width in px",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "description": "Intrinsic height in px",
+                "minimum": 1
+              }
+            },
+            "required": [
+              "src",
+              "alt",
+              "width",
+              "height"
+            ],
+            "description": "An image with explicit size (prevents layout shift)",
+            "additionalProperties": false
+          },
+          "caption": {
+            "type": "string",
+            "description": "Illustration caption",
+            "maxLength": 160
+          },
+          "paragraphs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Sourced historical paragraph",
+              "maxLength": 600
+            },
+            "description": "Historical context",
+            "default": [],
+            "maxItems": 3,
+            "minItems": 1
+          },
+          "connection": {
+            "type": "string",
+            "description": "How this history inspires the product",
+            "maxLength": 600
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "cta": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "A link or call to action",
+            "additionalProperties": false
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "image",
+          "paragraphs",
+          "connection",
+          "source",
+          "cta"
         ],
         "additionalProperties": false
       }
@@ -1941,6 +2380,101 @@
         "additionalProperties": false
       }
     },
+    "ContactForm": {
+      "description": "An accessible contact form that sends messages to the private ULAMS contact inbox through the platform API.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "contact"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 120
+          },
+          "intro": {
+            "type": "string",
+            "description": "Short introduction",
+            "maxLength": 400
+          },
+          "endpoint": {
+            "type": "string",
+            "description": "Platform API base URL",
+            "maxLength": 254
+          },
+          "nameLabel": {
+            "type": "string",
+            "description": "Name field label",
+            "maxLength": 80
+          },
+          "emailLabel": {
+            "type": "string",
+            "description": "Reply-to field label",
+            "maxLength": 80
+          },
+          "subjectLabel": {
+            "type": "string",
+            "description": "Subject field label",
+            "maxLength": 80
+          },
+          "messageLabel": {
+            "type": "string",
+            "description": "Message field label",
+            "maxLength": 80
+          },
+          "submitLabel": {
+            "type": "string",
+            "description": "Submit button label",
+            "maxLength": 80
+          },
+          "sendingLabel": {
+            "type": "string",
+            "description": "Submitting state label",
+            "maxLength": 80
+          },
+          "successMessage": {
+            "type": "string",
+            "description": "Successful submission message",
+            "maxLength": 200
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Submission failure message",
+            "maxLength": 200
+          },
+          "note": {
+            "type": "string",
+            "description": "Submission behavior note",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "title",
+          "intro",
+          "endpoint",
+          "nameLabel",
+          "emailLabel",
+          "subjectLabel",
+          "messageLabel",
+          "submitLabel",
+          "sendingLabel",
+          "successMessage",
+          "errorMessage",
+          "note"
+        ],
+        "additionalProperties": false
+      }
+    },
     "Faq": {
       "description": "Questions and answers as an accessible disclosure list (no JavaScript).",
       "children": false,
@@ -2035,6 +2569,43 @@
             "description": "Emit schema.org ItemList JSON-LD of the groups and features",
             "default": true
           },
+          "navLabel": {
+            "type": "string",
+            "description": "Accessible stakeholder-navigation label",
+            "maxLength": 80
+          },
+          "audiences": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "Stakeholder id",
+                  "maxLength": 40
+                },
+                "title": {
+                  "type": "string",
+                  "description": "Stakeholder title",
+                  "maxLength": 100
+                },
+                "summary": {
+                  "type": "string",
+                  "description": "How these capabilities help this stakeholder",
+                  "maxLength": 300
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "summary"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Stakeholders; categories link to them with audience",
+            "default": [],
+            "maxItems": 8
+          },
           "groups": {
             "type": "array",
             "items": {
@@ -2043,6 +2614,11 @@
                 "id": {
                   "type": "string",
                   "description": "Group anchor id",
+                  "maxLength": 40
+                },
+                "audience": {
+                  "type": "string",
+                  "description": "Stakeholder id for this category",
                   "maxLength": 40
                 },
                 "title": {
@@ -2167,6 +2743,43 @@
             "type": "string",
             "description": "One or two sentences under the title",
             "maxLength": 600
+          },
+          "bullets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Bullet heading",
+                  "maxLength": 80
+                },
+                "text": {
+                  "type": "string",
+                  "description": "Short explanation",
+                  "maxLength": 200
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Guide or supporting resource",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "title",
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Concise call-to-action details",
+            "default": [],
+            "maxItems": 6
+          },
+          "note": {
+            "type": "string",
+            "description": "Short closing note",
+            "maxLength": 200
           },
           "code": {
             "type": "array",
@@ -2526,7 +3139,7 @@
       }
     },
     "WorkflowShowcase": {
-      "description": "Tabs of realistic windows (a terminal, an agent session, a chat with tool calls, an API call, the studio) whose commands and answers are typed line by line, to show that the product can be run from agents and the command line as well as the UI. Each tab may carry a status badge; unbuilt interfaces must be labelled.",
+      "description": "Tabs of realistic windows (a terminal, an agent session, a chat with tool calls, an API call, the studio) whose commands and answers can type line by line or stay on a settled example, to show that the product can be run from agents and the command line as well as the UI. Each tab may carry a status badge; unbuilt interfaces must be labelled.",
       "children": false,
       "props": {
         "type": "object",
@@ -2565,6 +3178,11 @@
             "type": "string",
             "description": "Trademark line, e.g. that product names belong to their owners and are not endorsements",
             "maxLength": 300
+          },
+          "staticPreview": {
+            "type": "boolean",
+            "description": "Show a settled transcript without automatically typing it",
+            "default": false
           },
           "tabs": {
             "type": "array",
@@ -4139,6 +4757,81 @@
             "type": "string",
             "description": "One or two sentences under the title",
             "maxLength": 600
+          },
+          "research": {
+            "type": "object",
+            "properties": {
+              "eyebrow": {
+                "type": "string",
+                "description": "Small label above the title",
+                "maxLength": 80
+              },
+              "title": {
+                "type": "string",
+                "description": "Section title",
+                "maxLength": 160
+              },
+              "text": {
+                "type": "string",
+                "description": "Sourced summary of the foundational paper",
+                "maxLength": 600
+              },
+              "author": {
+                "type": "string",
+                "description": "Documented author",
+                "maxLength": 100
+              },
+              "date": {
+                "type": "string",
+                "description": "PDF version date in ISO format",
+                "maxLength": 10
+              },
+              "dateLabel": {
+                "type": "string",
+                "description": "Localized version-date label",
+                "maxLength": 100
+              },
+              "links": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Visible text",
+                      "maxLength": 80
+                    },
+                    "href": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Target URL",
+                      "maxLength": 2048
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "href"
+                  ],
+                  "description": "A link or call to action",
+                  "additionalProperties": false
+                },
+                "description": "Verified paper and source links",
+                "default": [],
+                "maxItems": 3,
+                "minItems": 1
+              }
+            },
+            "required": [
+              "eyebrow",
+              "title",
+              "text",
+              "author",
+              "date",
+              "dateLabel",
+              "links"
+            ],
+            "description": "Optional scholarly context, separate from the standards and integration badges",
+            "additionalProperties": false
           },
           "items": {
             "type": "array",

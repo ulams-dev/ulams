@@ -23,7 +23,7 @@ that has no closer licence file. This page is an engineering summary, not legal 
 | `front/interactive-bridge` | MIT | The `ulams-ix` bridge (ADR 0087); packages under any licence may include it |
 | `demo-content/*` | MIT for code, CC BY 4.0 for course text and data; exceptions are named in each package's `NOTICE` | Content packages for the demo academies, played only as sandboxed content (ADR 0088); nothing outside the folder imports them (lint) |
 
-## Rules for an open-core codebase
+## Rules for the codebase
 
 1. **No GPL or AGPL code is linked into the API or bundled into admin or front.** Copyleft
    components run as separate programs and are reached only over HTTP, CLI or an iframe with

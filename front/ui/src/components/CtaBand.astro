@@ -1,4 +1,5 @@
 ---
+import { ctaEvent } from "../lib/analytics.ts";
 import { uiStrings, pageLocale } from "../lib/i18n.ts";
 import Icon from "./Icon.astro";
 
@@ -7,12 +8,14 @@ interface Props {
   eyebrow?: string;
   title: string;
   text?: string;
+  bullets?: Array<{ title: string; text: string; href?: string }>;
+  note?: string;
   code?: string[];
   cta: { label: string; href: string };
   secondary?: { label: string; href: string };
   id?: string;
 }
-const { variant = "banner", eyebrow, title, text, code = [], cta, secondary, id = "join" } = Astro.props;
+const { variant = "banner", eyebrow, title, text, bullets = [], note, code = [], cta, secondary, id = "join" } = Astro.props;
 const t = uiStrings(pageLocale(Astro));
 ---
 
@@ -23,6 +26,11 @@ const t = uiStrings(pageLocale(Astro));
         {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
         <h2 class="u-h2" id={`${id}-title`}>{title}</h2>
         {text && <p class="u-lead">{text}</p>}
+        {bullets.length > 0 && <ul class="u-cta__bullets" role="list">{bullets.map((bullet) => <li>
+          {bullet.href ? <a href={bullet.href}>{bullet.title}<Icon name="external" /></a> : <strong>{bullet.title}</strong>}
+          <p>{bullet.text}</p>
+        </li>)}</ul>}
+        {note && <p class="u-cta__note">{note}</p>}
       </div>
       {
         variant === "terminal" && code.length > 0 && (
@@ -35,13 +43,13 @@ const t = uiStrings(pageLocale(Astro));
         )
       }
       <div class="u-actions">
-        <a class="u-btn" href={cta.href}>
+        <a class="u-btn" href={cta.href} data-umami-event={ctaEvent(cta.href)}>
           {cta.label}
           <Icon name="arrow" />
         </a>
         {
           secondary && (
-            <a class="u-btn u-btn--ghost" href={secondary.href}>
+            <a class="u-btn u-btn--ghost" href={secondary.href} data-umami-event={ctaEvent(secondary.href)}>
               {secondary.label}
             </a>
           )
@@ -52,6 +60,16 @@ const t = uiStrings(pageLocale(Astro));
 </section>
 
 <style>
+  .u-cta__bullets { display:grid; gap:16px; margin:8px 0; padding-left:20px; color:var(--ulams-color-text); }
+  .u-cta__bullets li { padding-left:4px; }
+  .u-cta__bullets li::marker { color:var(--ulams-color-accent); }
+  .u-cta__bullets a { display:inline-flex; align-items:center; gap:7px; color:inherit; font-size:.92rem; font-weight:600; text-decoration:underline; text-underline-offset:4px; }
+  .u-cta__bullets a :global(svg) { width:13px; height:13px; }
+  .u-cta__bullets a:hover { text-decoration-thickness:2px; }
+  .u-cta__bullets a:focus-visible { outline:3px solid var(--ulams-brand-blue); outline-offset:4px; }
+  .u-cta__bullets p { margin:5px 0 0; font-size:.82rem; line-height:1.6; }
+  .u-cta__note { margin:0; font-size:.75rem; line-height:1.6; }
+  .u-cta--terminal .u-cta__bullets, .u-cta--terminal .u-cta__note { color:var(--ulams-color-card-bg); }
   .u-cta__box {
     position: relative;
     display: grid;
@@ -117,7 +135,8 @@ const t = uiStrings(pageLocale(Astro));
     font-size: 0.8125rem;
     line-height: 1.6;
     overflow-x: auto;
-    white-space: pre;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
   .u-cta__bar {
     display: flex;

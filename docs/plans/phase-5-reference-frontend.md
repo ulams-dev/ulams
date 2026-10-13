@@ -190,3 +190,226 @@ Tests: SDK 21, UI 37, web 36 unit tests; Playwright 96 (smoke + axe, desktop and
   directory access list) to anonymous visitors. The front shows only names.
 - The demo data was reseeded during the work (student names changed, progress reset); nothing in
   the front depends on it, but long e2e runs can hit the quiz attempt limit (3 per hour).
+
+## Batch 3 (2026-10-11): platform landing redesign
+
+Status: approved 2026-10-11; implemented and verified.
+
+### Goal
+
+Make the platform landing at `app.localhost` explain ULAMS quickly and guide visitors to one clear
+next step. Reduce cognitive overload by shortening the first-screen message, lowering the number of
+competing calls to action and giving secondary product details a calmer hierarchy. Apply the redesign
+to the English, Polish and Simplified Chinese versions.
+
+### Scope
+
+- Redesign the platform landing document and its layout using the existing `@ulams/ui` catalogue and
+  platform theme. Keep the tenant academy pages, account, events and learner flows out of scope.
+- Rework the hero around one concise product promise, a short supporting sentence, one primary CTA
+  to try the demos and one quieter secondary route to self-hosting. Replace the current orbit of ten
+  capabilities with a clear, static product visual that shows a real ULAMS workflow.
+- Reorder and trim the sections so visitors encounter the product proof and live demos before the
+  detailed comparison and implementation information. Preserve accurate feature status labels and
+  the current demo, documentation, self-host and comparison destinations.
+- Keep EN/PL/ZH copy and page structure aligned; preserve each locale's canonical and alternate URLs.
+- Follow the updated visual direction requested by the product owner: expressive creative-tech,
+  midnight navy and near-black hero surfaces, violet/lilac light, a citrus CTA, bold sans typography
+  and warm off-white content sections. Use the references for palette, contrast and visual rhythm,
+  not as assets to copy. Keep the layout readable and accessible across locales.
+
+### UX principles to apply
+
+- **Hick–Hyman law:** reduce simultaneous choices in the hero and top navigation; keep the rest of
+  the useful routes available below the fold.
+- **Von Restorff effect:** give the demo action one clear visual emphasis and keep secondary actions
+  visually quiet.
+- **Gestalt proximity and similarity:** group each concise benefit with its supporting product
+  evidence and keep unrelated product claims in separate sections.
+- Use familiar navigation and CTA patterns, readable line lengths, keyboard support, visible focus,
+  reduced-motion support, and touch targets suitable for phone use.
+
+These are design checks, not numerical laws: the result should be validated with page scans and a
+short review at desktop and phone widths.
+
+### Product visual and motion
+
+Use a real interface or workflow assembled from existing UI components and demo data; do not invent
+customer logos, adoption metrics, or shipped capabilities. Prefer a quiet still or a user-controlled
+sequence over multiple auto-playing animated stories. The owner suggested a generated video explainer
+as an alternative, but video generation is not available in the current toolset. Do not make this
+batch depend on a generated video or add a video asset; leave a future video slot possible without
+blocking the static product visual.
+
+### Out of scope
+
+- Building a shared design system or extracting a broad set of reusable page components; that is a
+  later step after the page direction is approved.
+- Redesigning tenant sites or other routes, changing product features, adding sales claims, adding
+  motion libraries, or generating new video/image assets.
+- Reworking account, checkout, events booking or the old React frontend.
+
+### Acceptance criteria
+
+- The landing has one dominant message and one visually dominant primary action above the fold at
+  desktop and 360 px phone widths.
+- The product visual explains one concrete workflow without requiring motion; any optional motion
+  respects `prefers-reduced-motion` and does not autoplay sound.
+- EN, PL and ZH have matching section order, working in-page links, accurate availability labels,
+  and language-correct navigation and CTAs.
+- Existing live demos, self-hosting, documentation and comparison content remain reachable.
+- No horizontal overflow; keyboard navigation, focus states, contrast and page landmarks remain
+  accessible. The platform landing passes the existing axe page scan at desktop and phone widths.
+- Update the Phase 5 TODO notes and the docs site in the implementation batch after the redesign is
+  approved and verified.
+
+### Implementation and verification
+
+Explore the existing `Hero`, platform page document, catalogue schemas and localized page parity
+tests before editing. Prefer configuration changes in the three platform page documents and small
+targeted edits to existing components; add a new component only if the existing catalogue cannot
+present the product proof accessibly. Verify typecheck/build, the locale parity and page document
+tests, Playwright smoke and axe scans at desktop and phone widths, and inspect the rendered page
+visually. Do not restructure unrelated dirty or untracked work as part of this batch.
+
+### Visual refinement (2026-10-11)
+
+After review, the owner asked for a more obvious visual change. The earlier neutral editorial pass
+has been replaced with a high-contrast midnight palette, lilac product lighting and citrus actions,
+with warm light sections for reading and demos. Inspiration: [AI Agent Website Design](https://dribbble.com/shots/27793484-AI-Agent-Website-Design), [Creative Tech](https://dribbble.com/shots/27791478-UI-UX-Design-Web-Design-for-Creative-Tech), [Kodilion](https://dribbble.com/shots/27790991-Kodilion-Website-Bits) and [SkinRelief](https://dribbble.com/shots/27705762-SkinRelief-Men-s-Personal-Care-Wellness-Landing-Page). No reference artwork is copied. The production build passes; desktop and phone renders were inspected, and both locale pages have zero horizontal overflow.
+
+### Open question
+
+- If an explainer video is desired later, should the owner provide a clip or enable a video-generation
+  tool? The current implementation plan proceeds with a static product visual either way.
+
+## Batch 4 (approved 2026-10-12): split the public platform landing
+
+### Goal
+
+Translate the reviewed Stitch campaign and comparison screens into the Astro reference frontend as
+two distinct, indexable public pages: **Overview** and **Comparison**. Make their content, HTML
+semantics, accessibility relationships and search metadata straightforward to inspect.
+
+### Source screens and content rules
+
+- Stitch project: `9106478890112698177`.
+- Overview design: `ULAMS — Campaign Landing (EN, Reviewed)`.
+- Comparison design: `ULAMS — Features, Stakeholders & LMS Comparison`.
+- Use the screens for layout, hierarchy, and visual direction. The screens also contain unsupported
+  figures, compatibility claims, product status, roadmap capabilities and competitor assertions.
+  Verify every product statement against the current code, tracker and docs; omit or accurately label
+  unsupported claims. Do not carry over invented metrics, certification or security guarantees.
+- Keep the current ULAMS brand assets and the existing EN/PL/ZH language switch.
+
+### Scope and routes
+
+- Keep the English Overview at `/`; retain `/pl/` and `/zh/` for its localized versions.
+- Add the Comparison page at `/comparison/`, with corresponding `/pl/comparison/` and
+  `/zh/comparison/` routes. Keep cross-page navigation and in-page section links distinct.
+- Recompose the reviewed campaign content as the Overview: product promise and review workflow,
+  demo access, Course Builder status, architecture/governance, CLI/MCP, lineage, status transparency,
+  FAQ and next steps. Keep the Overview concise enough to lead with the product and demos.
+- Move the comparison matrix, stakeholder views and architecture details from the comparison screen
+  onto the Comparison page. Reuse the current comparison data where it is accurate; do not repeat
+  unverified claims from the Stitch screen.
+- Localize page titles, descriptions, navigation, headings and core page content for all three
+  existing locales. Keep section order and the product-status distinctions aligned between locales.
+- Use existing Astro SSR routes, `@ulams/ui`, theme tokens, and the current public-origin and
+  locale helpers. Add no runtime dependency, database change or external font/image request.
+
+### SEO, semantics and accessibility
+
+- Extend the shared page shell with page-specific title, description, canonical URL, `hreflang`
+  alternates including `x-default`, Open Graph and X/Twitter card metadata, and a consistent,
+  real share image. Do not add deprecated `meta keywords` or fabricated ratings/offers.
+- Add valid JSON-LD for the organization/site and the relevant page type (SoftwareApplication on
+  Overview; WebPage/CollectionPage and BreadcrumbList as appropriate). Use only verified facts;
+  omit ratings, price offers, review counts, version numbers and video metadata without a real asset.
+- Add `robots.txt` and `sitemap.xml` routes for the platform host. List the six canonical
+  locale/page URLs with their language alternates; do not include tenant pages or preview routes.
+- Use one descriptive `h1` per page, ordered headings, `header`/`nav`/`main`/`section`/`footer`
+  landmarks, native links and buttons, and descriptive accessible names. Add ARIA only where native
+  HTML does not supply the required relationship or name.
+- Give the comparison table a caption, scoped column and row headers, and a keyboard-usable mobile
+  presentation. Keep language switch, focus visibility, contrast, reduced-motion behavior and
+  narrow viewport reflow accessible.
+
+### Acceptance criteria
+
+- Overview and Comparison are separate server-rendered routes in EN, PL and ZH, linked from the
+  shared header and footer.
+- Each page has a unique localized title and description, canonical URL, complete alternate links,
+  social metadata, applicable JSON-LD, and appears in the platform sitemap.
+- `robots.txt` identifies the sitemap; previews and tenant-only routes are not listed as platform
+  URLs.
+- Rendered HTML uses semantic landmarks, a single page `h1`, valid heading order, useful link
+  names, and a properly labeled comparison table; ARIA is not used in place of native semantics.
+- Existing demos and documentation remain reachable. Every product-status and comparison statement
+  is grounded in repository documentation or labeled beta/roadmap accurately.
+- Layout remains readable at desktop and phone widths without horizontal overflow.
+
+### Implementation notes, risks and verification
+
+- First inspect the existing catalogue schemas and rendering output for the reviewed Stitch sections,
+  localized document parity checks, `Base.astro`, current `platformPage` data, and docs-site
+  navigation. Reuse existing components; add narrowly scoped page components only where necessary.
+- No migration or new dependency is expected. Keep tenant routing unchanged and gate sitemap/SEO
+  routes with the existing platform-host middleware flag.
+- The public origin currently comes from forwarded request headers. Reuse that established helper
+  for canonical and sitemap URLs and confirm its output under the local and production proxy shapes.
+- Add/update documentation-site guidance for the two page routes, metadata, structured data and
+  sitemap behavior; update the Phase 5 tracker only after implementation and verification.
+- Verification: typecheck and production build; inspect rendered HTML metadata and JSON-LD for all
+  six localized routes; parse sitemap/robots output; keyboard and narrow-screen review; run the
+  existing page accessibility scan where available. No new SEO dependency is planned.
+
+### Approval
+
+Approved by the product owner in chat on 2026-10-12.
+
+### Completion (2026-10-12)
+
+- Implemented Overview and Comparison routes in EN/PL/ZH, linked from shared navigation, with
+  localized titles, descriptions, canonical/hreflang, Open Graph/X cards and JSON-LD.
+- Moved the existing cited comparison matrix to its own page. Added localized workflow, stakeholder,
+  architecture and FAQ content; public pages always show actual product status (ADR 0097 Proposed).
+- Added platform-only `robots.txt` and six-URL `sitemap.xml`; documented routes, status policy and
+  metadata. No runtime dependency or migration was added.
+- Verified: web typecheck, 487 unit tests, web lint, production web build, docs coverage/build, and
+  40 landing E2E cases across desktop and phone, including axe, metadata, JSON-LD and sitemap checks.
+
+
+## Public analytics (2026-10-12)
+
+Owner requested installation of the supplied Umami Cloud script on the landing, docs and demos,
+with actual CTA events and a verified visit/click followed by browser exclusion. Use the shared
+web shell and Starlight head, exact production domain allowlist, scoped CSP script/collector
+origins, native event attributes and the documented per-origin opt-out. No dependency or
+migration. Keep customer deployments and author previews untracked (ADR 0101 Proposed).
+
+
+### Analytics verification and publication
+
+- Source: `6822ee8f6`; landing release `0cf54c98` (the initial browser check used `736423c7`) on the existing Cloudflare Pages project.
+- The six production demo fronts use the updated SSR build; previous dist retained remotely
+  as `dist-before-umami-20261012`, with old hashed client assets preserved for cached pages.
+- Real browser verification on https://ulams.app accepted the initial pageview and a click
+  opening https://gravity.ulams.app/learn/1 with HTTP 200 from gateway.umami.is/api/send.
+- Excluded the persistent verification browser on the landing, www, documentation and all six
+  demo origins using `umami.disabled=1`; reloading the landing sent no further collector requests.
+- Web typecheck, lint and production build passed. Documentation build passed (563 pages) and
+  its HTML includes the tracker. GitHub Pages only permits main deployments. The isolated documentation release was merged
+  through PR #247 as `0c94c55b1`; the main publishing workflow handles the public release.
+  No protected environment policy was changed.
+- Umami dashboard totals were not inspected: no dashboard authentication was supplied.
+
+- Documentation source check passed with zero errors/warnings after excluding the local, untracked
+  third-party `public/vendor` assets from the temporary check configuration.
+
+
+### Public documentation release complete
+
+PR #247 merged as `0c94c55b1`. GitHub Pages run `38295754529` passed all documentation checks
+and published the site. The analytics guide is at
+https://ulams-dev.github.io/ulams/operators/public-analytics/ .

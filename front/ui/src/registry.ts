@@ -306,9 +306,9 @@ export const registry = {
   },
   Hero: {
     description:
-      "First screen of a landing page. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration; cosmos, atlas and notebook = copy on the left and a live interactive package (or a drawing of orbits, a map graticule or an Ulam spiral) on the right.",
+      "First screen of a landing page. A product variant may show an animated, pausable six-step policy-to-certification lifecycle. editorial = magazine cover with a photo; console = dark split with a log panel; adventure = playful with an illustration; cosmos, atlas and notebook = copy on the left and a live interactive package (or a drawing of orbits, a map graticule or an Ulam spiral) on the right.",
     category: "section",
-    interactive: false,
+    interactive: true,
     children: false,
     props: obj(
       {
@@ -393,19 +393,49 @@ export const registry = {
         ),
         diff: obj(
           {
-            title: text("Card title, e.g. the lesson being updated", { maxLength: 80 }),
-            source: text("Source the change comes from, e.g. docs/slo.md", { maxLength: 80 }),
-            note: text("Small note under the card", { maxLength: 160 }),
-            lines: list(
-              obj({ op: oneOf(["add", "del", "ctx"], "Diff line kind", "ctx"), text: text("Line", { maxLength: 160 }) }, ["text"]),
-              "Diff lines",
-              { maxItems: 8 }
+            ariaLabel: text("Accessible description of the product example", { maxLength: 280 }),
+            badge: text("Short status label on the example card", { maxLength: 40 }),
+            title: text("Title of the illustrative journey, e.g. 'Privacy policy v1 → v2'", { maxLength: 80 }),
+            note: text("Small note under the card", { maxLength: 240 }),
+            visual: obj(
+              {
+                chapters: list(text("Short navigation label", { maxLength: 24 }), "Seven story chapters", { minItems: 7, maxItems: 7 }),
+                intake: obj(
+                  {
+                    ...Object.fromEntries(["uploader", "upload", "uploaded", "styleguide", "extract", "context", "llm", "sourceReady", "briefTitle", "ready"].map((key) => [key, text(`Localized policy intake copy: ${key}`, { maxLength: 120 })])),
+                    questions: list(obj({ question: text("Course brief question", { maxLength: 140 }), answer: text("Illustrative CEO answer", { maxLength: 140 }) }, ["question", "answer"]), "Four audience and duration questions", { minItems: 4, maxItems: 4 }),
+                  },
+                  ["uploader", "upload", "uploaded", "styleguide", "extract", "context", "llm", "sourceReady", "briefTitle", "ready", "questions"],
+                  "PDF extraction, cited source context and the course briefing interview"
+                ),
+                audiences: list(text("Department", { maxLength: 30 }), "Three example departments", { minItems: 3, maxItems: 3 }),
+                roleTopics: list(text("Role-specific learning focus", { maxLength: 80 }), "One learning focus per department", { minItems: 3, maxItems: 3 }),
+                learners: list(text("Illustrative learner label", { maxLength: 40 }), "Three anonymous learner rows in the owner view", { minItems: 3, maxItems: 3 }),
+                formats: list(text("Learning activity", { maxLength: 40 }), "Three activities ending with an exam", { minItems: 3, maxItems: 3 }),
+                ...Object.fromEntries([
+                  "policy", "section", "before", "after", "academy", "lesson", "exam", "certificate", "completed", "pending",
+                  "owner", "progress", "later", "proposal", "approval", "renewal", "expired", "minor", "major", "notification", "renewed",
+                ].map((key) => [key, text(`Localized illustration copy: ${key}`, { maxLength: 120 })])),
+              },
+              ["chapters", "intake", "audiences", "roleTopics", "learners", "formats", "policy", "section", "before", "after", "academy", "lesson", "exam", "certificate", "completed", "pending", "owner", "progress", "later", "proposal", "approval", "renewal", "expired", "minor", "major", "notification", "renewed"],
+              "Localized copy for the policy document, role-specific courses, learning site, certificates, completion view and reviewed source update"
             ),
-            citations: list(text("Citation chip, e.g. docs/slo.md §2", { maxLength: 40 }), "Citations", { maxItems: 4 }),
-            action: text("Label of the approve button", { maxLength: 30 }),
+            journey: list(
+              obj(
+                {
+                  title: text("Story step title", { maxLength: 60 }),
+                  text: text("What happens and why this step matters", { maxLength: 180 }),
+                  bullets: list(text("Concise action or outcome", { maxLength: 140 }), "Practical explanation of this step", { minItems: 2, maxItems: 4 }),
+                  status: oneOf(["available", "coming"], "Whether this capability is available or on the roadmap", "available"),
+                },
+                ["title", "text"]
+              ),
+              "Steps in the product story",
+              { minItems: 7, maxItems: 7 }
+            ),
           },
-          ["lines"],
-          "Update-proposal card for the product variant"
+          ["journey", "visual"],
+          "A single visual story at the top of the product page: policy v1, learning, oversight, reviewed policy v2 changes and planned recertification"
         ),
       },
       ["title"]
@@ -433,6 +463,14 @@ export const registry = {
       ["lessons"]
     ),
     fallback: (p) => join(p.title, ...titles(p.lessons)),
+  },
+  HeritageStory: {
+    description: "An editorial brand-origin story with an attributed portrait, sourced historical context, a separate product connection and a call to action. Never invent quotations or historical facts.",
+    category: "section",
+    interactive: false,
+    children: false,
+    props: obj({ eyebrow: EYEBROW, title: TITLE, image: IMAGE, caption: text("Illustration caption", { maxLength: 160 }), paragraphs: list(text("Sourced historical paragraph", { maxLength: 600 }), "Historical context", { minItems: 1, maxItems: 3 }), connection: text("How this history inspires the product", { maxLength: 600 }), source: LINK, cta: LINK }, ["title", "image", "paragraphs", "connection", "source", "cta"]),
+    fallback: (p) => join(p.title, ...(Array.isArray(p.paragraphs) ? p.paragraphs as string[] : []), p.connection),
   },
   Letter: {
     description: "Personal letter from the tutors with portraits, paragraphs and a pull quote (editorial).",
@@ -632,6 +670,29 @@ export const registry = {
     ),
     fallback: (p) => join(p.title, ...titles(p.items, "name")),
   },
+  ContactForm: {
+    description: "An accessible contact form that sends messages to the private ULAMS contact inbox through the platform API.",
+    category: "section",
+    interactive: true,
+    children: false,
+    props: obj({
+      id: text("Anchor id", { default: "contact", maxLength: 40 }),
+      eyebrow: EYEBROW,
+      title: text("Section title", { maxLength: 120 }),
+      intro: text("Short introduction", { maxLength: 400 }),
+      endpoint: text("Platform API base URL", { maxLength: 254 }),
+      nameLabel: text("Name field label", { maxLength: 80 }),
+      emailLabel: text("Reply-to field label", { maxLength: 80 }),
+      subjectLabel: text("Subject field label", { maxLength: 80 }),
+      messageLabel: text("Message field label", { maxLength: 80 }),
+      submitLabel: text("Submit button label", { maxLength: 80 }),
+      sendingLabel: text("Submitting state label", { maxLength: 80 }),
+      successMessage: text("Successful submission message", { maxLength: 200 }),
+      errorMessage: text("Submission failure message", { maxLength: 200 }),
+      note: text("Submission behavior note", { maxLength: 200 }),
+    }, ["title", "intro", "endpoint", "nameLabel", "emailLabel", "subjectLabel", "messageLabel", "submitLabel", "sendingLabel", "successMessage", "errorMessage", "note"]),
+    fallback: p => join(p.title, p.intro),
+  },
   Faq: {
     description: "Questions and answers as an accessible disclosure list (no JavaScript).",
     category: "section",
@@ -665,10 +726,13 @@ export const registry = {
         intro: INTRO,
         docsBase: href("Docs site root; a package name links to <docsBase>/reference/packages/<name>/"),
         jsonLd: bool("Emit schema.org ItemList JSON-LD of the groups and features", true),
+        navLabel: text("Accessible stakeholder-navigation label", { maxLength: 80 }),
+        audiences: list(obj({ id: text("Stakeholder id", { maxLength: 40 }), title: text("Stakeholder title", { maxLength: 100 }), summary: text("How these capabilities help this stakeholder", { maxLength: 300 }) }, ["id", "title", "summary"]), "Stakeholders; categories link to them with audience", { maxItems: 8 }),
         groups: list(
           obj(
             {
               id: text("Group anchor id", { maxLength: 40 }),
+              audience: text("Stakeholder id for this category", { maxLength: 40 }),
               title: text("Group title", { maxLength: 80 }),
               summary: text("One sentence under the title when the group is open", { maxLength: 300 }),
               items: list(
@@ -708,6 +772,8 @@ export const registry = {
         eyebrow: EYEBROW,
         title: TITLE,
         text: INTRO,
+        bullets: list(obj({ title: text("Bullet heading", { maxLength: 80 }), text: text("Short explanation", { maxLength: 200 }), href: href("Guide or supporting resource") }, ["title", "text"]), "Concise call-to-action details", { maxItems: 6 }),
+        note: text("Short closing note", { maxLength: 200 }),
         code: list(text("Command or output line", { maxLength: 120 }), "Terminal lines (terminal variant); lines starting with $ are commands", { maxItems: 10 }),
         cta: LINK,
         secondary: LINK,
@@ -772,7 +838,7 @@ export const registry = {
   },
   WorkflowShowcase: {
     description:
-      "Tabs of realistic windows (a terminal, an agent session, a chat with tool calls, an API call, the studio) whose commands and answers are typed line by line, to show that the product can be run from agents and the command line as well as the UI. Each tab may carry a status badge; unbuilt interfaces must be labelled.",
+      "Tabs of realistic windows (a terminal, an agent session, a chat with tool calls, an API call, the studio) whose commands and answers can type line by line or stay on a settled example, to show that the product can be run from agents and the command line as well as the UI. Each tab may carry a status badge; unbuilt interfaces must be labelled.",
     category: "section",
     interactive: true,
     children: false,
@@ -785,6 +851,7 @@ export const registry = {
         description: text("Text alternative of the whole animation for screen readers", { maxLength: 600 }),
         footnote: text("Small print under the tabs, e.g. that some commands are the planned interface", { maxLength: 300 }),
         legal: text("Trademark line, e.g. that product names belong to their owners and are not endorsements", { maxLength: 300 }),
+        staticPreview: bool("Show a settled transcript without automatically typing it", false),
         tabs: list(
           obj(
             {
@@ -1200,6 +1267,7 @@ export const registry = {
         eyebrow: EYEBROW,
         title: TITLE,
         intro: INTRO,
+        research: obj({ eyebrow: EYEBROW, title: TITLE, text: text("Sourced summary of the foundational paper", { maxLength: 600 }), author: text("Documented author", { maxLength: 100 }), date: text("PDF version date in ISO format", { maxLength: 10 }), dateLabel: text("Localized version-date label", { maxLength: 100 }), links: list(LINK, "Verified paper and source links", { minItems: 1, maxItems: 3 }) }, ["eyebrow", "title", "text", "author", "date", "dateLabel", "links"], "Optional scholarly context, separate from the standards and integration badges"),
         items: list(
           obj(
             {

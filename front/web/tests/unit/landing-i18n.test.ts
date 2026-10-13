@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { UiNode } from "@ulams/ui/render-core";
 import { validateDocument } from "@ulams/ui/render-core";
 import { uiStrings } from "@ulams/ui/i18n";
-import { landingDocFor, landingDocs, localizedDocs, withLanguages } from "../../src/lib/docs.ts";
+import { comparisonDocFor, landingDocFor, landingDocs, localizedDocs, withLanguages } from "../../src/lib/docs.ts";
 import { applyComparisonStatus, applyLandingStatus } from "../../src/lib/landing-status.ts";
 import { comparisonData, comparisonModel, comparisonTranslations, valueKind } from "../../src/lib/comparison.ts";
 import { workflowsData, workflowsModel, workflowsTranslations } from "../../src/lib/workflows.ts";
@@ -14,11 +14,11 @@ const LANGS = ["pl", "zh"] as const;
 const en = landingDocs.platform!;
 
 /** Keys whose value is structure, not prose: ids, anchors, icons, statuses, bindings, numbers. They must be identical. */
-const STRUCTURAL = new Set(["component", "theme", "id", "variant", "icon", "href", "kind", "mark", "status", "syncStatus", "$data", "window", "key"]);
+const STRUCTURAL = new Set(["component", "theme", "id", "variant", "icon", "kind", "mark", "status", "syncStatus", "$data", "window", "key"]);
 /** Keys that hold code, file names, hosts, colours or example data: never translated. */
 const VERBATIM = new Set(["code", "commands", "host", "value", "logo", "file", "citation", "questionCite", "brand", "packages", "tags", "docsBase"]);
 /** Product and standard names that an English string mentions: the translation must still contain them. */
-const NAMES = ["ulams", "Claude Code", "Claude", "Anthropic", "MCP", "H5P", "SCORM", "cmi5", "xAPI", "LTI 1.3", "OpenAPI", "Docker Compose", "Sylius", "Figma", "Stitch", "GitHub", "MIT", "TypeScript", "REST API", "@ulams/sdk"];
+const NAMES = ["ulams", "Codex", "OpenCode", "Gemini CLI", "Claude Code", "Claude", "Anthropic", "MCP", "H5P", "SCORM", "cmi5", "xAPI", "LTI 1.3", "OpenAPI", "Docker Compose", "Sylius", "Figma", "Stitch", "GitHub", "MIT", "TypeScript", "REST API", "@ulams/sdk"];
 
 interface Problem {
   path: string;
@@ -42,11 +42,12 @@ function parallel(a: unknown, b: unknown, path: string, key: string, out: Proble
   if (typeof a === "string") {
     if (typeof b !== "string" || b.trim() === "") return void out.push({ path, message: "missing text" });
     const bare = key.replace(/\[\]$/, "");
-    if (STRUCTURAL.has(bare) || VERBATIM.has(bare)) {
+    const externalLink = bare === "href" && /^https?:\/\//.test(a);
+    if (STRUCTURAL.has(bare) || VERBATIM.has(bare) || externalLink) {
       if (a !== b) out.push({ path, message: `must stay "${a}", is "${b}"` });
     }
     // an untranslated sentence (still English) is a missing translation
-    if (!STRUCTURAL.has(bare) && !VERBATIM.has(bare) && a.length > 40 && a === b) out.push({ path, message: "still English" });
+    if (!STRUCTURAL.has(bare) && !VERBATIM.has(bare) && !externalLink && a.length > 40 && a === b) out.push({ path, message: "still English" });
     for (const name of NAMES) if (a.includes(name) && !b.includes(name)) out.push({ path, message: `lost the name "${name}"` });
     return;
   }
@@ -84,16 +85,19 @@ describe("translated landing documents keep the English structure", () => {
     it(`${lang}: keeps six header links at most, the same anchors, and the switcher is not one of them`, () => {
       const header = doc.children!.find((c) => c.component === "SiteHeader")!;
       const links = header.props!.links as Array<{ href: string }>;
-      const enHeader = en.children!.find((c) => c.component === "SiteHeader")!;
       expect(links.length).toBeLessThanOrEqual(6);
-      expect(links.map((l) => l.href)).toEqual((enHeader.props!.links as Array<{ href: string }>).map((l) => l.href));
+      expect(links.map((l) => l.href)).toEqual(lang === "pl"
+        ? ["/pl/", "/pl/comparison/", "https://ulams-dev.github.io/ulams/"]
+        : ["/zh/", "/zh/comparison/", "https://ulams-dev.github.io/ulams/"]);
       expect(header.props).not.toHaveProperty("languages");
     });
-    it(`${lang}: the final display mode leaves no roadmap wording`, () => {
+    it(`${lang}: final display lifts status flags but keeps the Helm delivery notice`, () => {
       const text = JSON.stringify(applyLandingStatus(doc, "final"));
       expect(text).not.toMatch(/"status":"(coming|preview)"/);
       expect(text).not.toContain('"final"');
-      expect(text).not.toMatch(lang === "pl" ? /Wkrótce|w planach|mapie drogowej/i : /即将推出|路线图/);
+      const helmNotice = lang === "pl" ? "Helm chart już wkrótce." : "Helm chart 即将推出。";
+      expect(text).toContain(helmNotice);
+      expect(text.replace(helmNotice, "")).not.toMatch(lang === "pl" ? /Wkrótce|w planach|mapie drogowej/i : /即将推出|路线图/);
     });
     it(`${lang}: the actual display mode keeps the roadmap labels`, () => {
       expect(JSON.stringify(applyLandingStatus(doc, "actual"))).toContain('"status":"coming"');
@@ -179,6 +183,24 @@ describe("translated comparison", () => {
   });
 });
 
+describe("public comparison page documents", () => {
+  for (const locale of LOCALES) {
+    it(`${locale}: has localized metadata, one heading, and the sourced comparison table`, () => {
+      const doc = comparisonDocFor(locale)!;
+      expect(String(doc.props?.title)).toContain("ulams");
+      expect(doc.props?.lang).toBe(LOCALE_META[locale].lang);
+      const main = doc.children!.find((node) => node.component === "Main")!;
+      expect(main.children!.map((node) => node.component)).toEqual(["Hero", "FeatureIndex", "Steps", "ComparisonTable", "Faq"]);
+      expect((main.children![3]!.props as Record<string, unknown>).caption).toBeTruthy();
+      const withLang = withLanguages(doc, languageLinks(locale, "comparison"), LOCALE_META[locale].path);
+      const data = { comparison: comparisonModel(applyComparisonStatus(comparisonData, "actual")), demos: [], workflows: workflowsModel("actual", locale) };
+      expect(validateDocument(withLang, data)).toEqual([]);
+      const header = withLang.children!.find((node) => node.component === "SiteHeader")!;
+      expect((header.props!.languages as Array<{ href: string }>).map((entry) => entry.href)).toEqual(LOCALES.map((l) => l === "en" ? "/comparison/" : `/${l}/comparison/`));
+    });
+  }
+});
+
 describe("language switcher", () => {
   it("lists the three languages with the current one marked", () => {
     const links = languageLinks("pl");
@@ -195,7 +217,7 @@ describe("language switcher", () => {
     const header = doc.children!.find((c) => c.component === "SiteHeader")!;
     expect(header.props!.homeHref).toBe("/zh/");
     expect((header.props!.languages as unknown[]).length).toBe(3);
-    expect((header.props!.links as unknown[]).length).toBe(6);
+    expect((header.props!.links as unknown[]).length).toBe(3);
     expect(JSON.stringify(validateDocument(doc, { demos: [] }).filter((p) => p.component === "SiteHeader"))).toBe("[]");
   });
 });

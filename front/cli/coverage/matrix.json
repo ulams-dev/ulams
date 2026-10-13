@@ -1,5 +1,5 @@
 {
- "summary": "517/566 covered, 49 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "518/567 covered, 49 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -2495,6 +2495,12 @@
    "key": "GET /api/consultations/{id}",
    "summary": "Display the specified Consultation",
    "command": "public.consultations-get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/contact",
+   "summary": "Send a message to the ULAMS team",
+   "command": "public.contact-create",
    "status": "covered"
   },
   {

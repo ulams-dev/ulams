@@ -1,0 +1,51 @@
+---
+import Img from "./Img.astro";
+import Icon from "./Icon.astro";
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title: string;
+  paragraphs: string[];
+  image: { src: string; alt: string; width: number; height: number };
+  caption?: string;
+  connection: string;
+  source: { label: string; href: string };
+  cta: { label: string; href: string };
+}
+const { id = "product", eyebrow, title, paragraphs, image, caption, connection, source, cta } = Astro.props;
+---
+
+<section class="u-section u-heritage" id={id} aria-labelledby={`${id}-title`}>
+  <div class="u-container u-heritage__layout">
+    <figure class="u-heritage__portrait" data-reveal>
+      <Img {...image} fit="contain" sizes="(min-width: 960px) 480px, 90vw" />
+      {caption && <figcaption>{caption}</figcaption>}
+    </figure>
+    <div class="u-heritage__story" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      <h2 class="u-h2" id={`${id}-title`}>{title}</h2>
+      <div class="u-heritage__history">{paragraphs.map((paragraph) => <p>{paragraph}</p>)}</div>
+      <a class="u-heritage__source" href={source.href}>{source.label}<Icon name="external" /></a>
+      <p class="u-heritage__connection">{connection}</p>
+      <a class="u-btn u-btn--ghost" href={cta.href}>{cta.label}<Icon name="arrow" /></a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .u-heritage__layout { display:grid; grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr); gap:clamp(32px,6vw,88px); align-items:center; }
+  .u-heritage__portrait { margin:0; background:var(--ulams-color-bg); border:1px solid var(--ulams-color-border); border-radius:4px 4px 24px 4px; overflow:hidden; }
+  .u-heritage__portrait :global(img) { display:block; width:100%; height:auto; aspect-ratio:1; }
+  .u-heritage__portrait figcaption { padding:14px 20px; border-top:1px solid var(--ulams-color-border); color:var(--ulams-color-muted); font:.65rem/1.5 var(--ulams-font-mono); }
+  .u-heritage__story .u-h2 { margin:14px 0 22px; max-width:12ch; }
+  .u-heritage__history { display:grid; gap:14px; color:var(--ulams-color-muted); font-size:1rem; line-height:1.75; }
+  .u-heritage__history p { margin:0; }
+  .u-heritage__source { display:inline-flex; align-items:center; gap:6px; margin-top:14px; color:var(--ulams-color-muted); font-size:.7rem; text-decoration:underline; text-underline-offset:4px; }
+  .u-heritage__source :global(svg) { width:12px; }
+  .u-heritage__connection { margin:26px 0 20px; padding-left:20px; border-left:2px solid var(--ulams-color-accent); font-size:1rem; line-height:1.7; }
+  @media(max-width:760px) {
+    .u-heritage__layout { grid-template-columns:minmax(0,1fr); gap:28px; }
+    .u-heritage__portrait { max-width:420px; width:100%; margin-inline:auto; }
+    .u-heritage__story .u-h2 { max-width:none; }
+  }
+</style>

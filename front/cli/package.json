@@ -1,6 +1,6 @@
 {
   "name": "ulams",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Command line and MCP server for ulams instances: one command registry for humans and agents.",
   "license": "MIT",
   "type": "module",
@@ -11,7 +11,8 @@
     "ulams": "dist/ulams.mjs"
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsup",

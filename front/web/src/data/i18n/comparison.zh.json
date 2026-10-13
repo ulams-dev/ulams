@@ -126,7 +126,7 @@
     }
   },
   "systems": {
-    "ulams": "开源核心",
+    "ulams": "开源",
     "moodle": "开源",
     "canvas": "开源",
     "openedx": "开源",
@@ -151,7 +151,6 @@
     "Proprietary": "专有",
     "Quote-based; not published": "按报价；未公开",
     "AGPL-3.0": "AGPL-3.0",
-    "MIT open core": "MIT 许可的开源核心",
     "Free self-hosted": "免费自托管",
     "GPL-3.0-or-later": "GPL-3.0-or-later",
     "Free (GPL); paid hosting": "免费（GPL）；托管服务收费",
@@ -163,6 +162,7 @@
     "Annual licence per site tier": "按站点档位的年度许可",
     "Per-seat subscription; Reach by learners": "按席位订阅；Reach 版按学员数计费",
     "Quote-based": "按报价",
-    "Team $8/user/month (up to 100); Business/Enterprise custom": "Team 版每用户每月 8 美元（最多 100 人）；Business/Enterprise 版定制"
+    "Team $8/user/month (up to 100); Business/Enterprise custom": "Team 版每用户每月 8 美元（最多 100 人）；Business/Enterprise 版定制",
+    "MIT": "MIT"
   }
 }

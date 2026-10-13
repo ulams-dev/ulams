@@ -29,7 +29,6 @@ export default defineConfig({
       CSP_ENFORCE: envField.string({ context: "server", access: "secret", optional: true }),
       ULAMS_CONTENT_ORIGIN: envField.string({ context: "server", access: "secret", optional: true }),
       ULAMS_STORAGE_ORIGINS: envField.string({ context: "server", access: "secret", optional: true }),
-      ULAMS_LANDING_STATUS: envField.string({ context: "server", access: "secret", optional: true }),
       DEMO_STUDENT_EMAIL: envField.string({ context: "server", access: "secret", optional: true }),
       DEMO_STUDENT_PASSWORD: envField.string({ context: "server", access: "secret", optional: true }),
     },
@@ -57,6 +56,7 @@ export default defineConfig({
   // Self-hosted fonts (no Google request at runtime). Fallback faces with measured metrics live
   // in @ulams/ui/styles/fallbacks.css (Astro's generated ones were off for these fonts).
   fonts: [
+    { provider: google, name: "Libre Baskerville", cssVariable: "--font-baskerville", weights: [400, 700], styles: ["normal", "italic"], subsets: latin, fallbacks: ["Libre Baskerville fallback", "serif"], optimizedFallbacks: false },
     { provider: google, name: "Playfair Display", cssVariable: "--font-playfair", weights: [400, 500, 600], styles: ["normal", "italic"], subsets: latin, fallbacks: ["Playfair Display fallback", "serif"], optimizedFallbacks: false },
     { provider: google, name: "Plus Jakarta Sans", cssVariable: "--font-jakarta", weights: [400, 500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Plus Jakarta Sans fallback", "sans-serif"], optimizedFallbacks: false },
     { provider: google, name: "Inter Tight", cssVariable: "--font-inter-tight", weights: [500, 600, 700], styles: ["normal"], subsets: latin, fallbacks: ["Inter Tight fallback", "sans-serif"], optimizedFallbacks: false },

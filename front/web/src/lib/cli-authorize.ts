@@ -1,3 +1,4 @@
+import { tenantFetch } from "./api-transport.ts";
 import type { Tenant } from "@ulams/sdk";
 
 /**
@@ -115,7 +116,7 @@ const reasonFor = (status: number): Failure =>
 
 export async function lookupRequest(tenant: Tenant, token: string, userCode: string): Promise<LookupResult> {
   try {
-    const response = await fetch(`${tenant.apiUrl}/api/auth/device/requests/${encodeURIComponent(userCode)}`, json(token));
+    const response = await tenantFetch(tenant)(`${tenant.apiUrl}/api/auth/device/requests/${encodeURIComponent(userCode)}`, json(token));
     if (!response.ok) return { ok: false, reason: reasonFor(response.status) };
     const body = (await response.json()) as { data: DeviceRequest };
     return { ok: true, request: body.data };
@@ -135,7 +136,7 @@ export async function answerRequest(
   days: number
 ): Promise<AnswerResult> {
   try {
-    const response = await fetch(
+    const response = await tenantFetch(tenant)(
       `${tenant.apiUrl}/api/auth/device/requests/${encodeURIComponent(userCode)}/${decision}`,
       json(token, { method: "POST", body: JSON.stringify(decision === "approve" ? { scopes, expires_in_days: days } : {}) })
     );

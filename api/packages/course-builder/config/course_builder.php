@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'learner_path' => env('COURSE_BUILDER_LEARNER_PATH', '/courses/{id}'),
     // Private disk for uploaded sources (never served). Default: a local private root.
     'disk' => env('COURSE_BUILDER_DISK', 'course_builder_private'),
     'private_root' => env('COURSE_BUILDER_PRIVATE_ROOT', storage_path('app/private')),

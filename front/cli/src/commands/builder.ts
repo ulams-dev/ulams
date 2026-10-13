@@ -197,7 +197,7 @@ async function answerInterview(ctx: Ctx, sessionId: string, answers: Record<stri
 
 async function startFlow(
   ctx: Ctx,
-  i: { session?: string; title?: string; from?: string[]; fromUrl?: string[]; answers?: Record<string, unknown>; defaults?: boolean; approveOutline?: boolean; apply?: boolean; publish?: boolean; overwrite?: boolean }
+  i: { session?: string; title?: string; from?: string[]; fromUrl?: string[]; answers?: Record<string, unknown>; defaults?: boolean; approveOutline?: boolean; apply?: boolean; publish?: boolean; acknowledgeWarnings?: boolean; overwrite?: boolean }
 ): Promise<Result> {
   const steps: Array<Record<string, unknown>> = [];
   const files = i.from ?? [];
@@ -261,7 +261,7 @@ async function startFlow(
     }
     if (status === "applied") {
       if (i.publish && !published) {
-        const res = await builderCall<{ courseId: number; published: boolean }>(ctx, "POST", "/sessions/{session}/publish", { params: { session: sessionId } });
+        const res = await builderCall<{ courseId: number; published: boolean }>(ctx, "POST", "/sessions/{session}/publish", { params: { session: sessionId }, body: { acknowledgedWarnings: Boolean(i.acknowledgeWarnings) } });
         steps.push({ step: "publish", ...res });
         published = true;
         state = await getSession(ctx, sessionId);
@@ -310,6 +310,7 @@ export const builderCommands: AnyCommand[] = [
       approveOutline: z.boolean().optional().describe("Approve the proposed outline and generate the lessons."),
       apply: z.boolean().optional().describe("Apply the generated course to the academy (as an unpublished draft)."),
       publish: z.boolean().optional().describe("Publish the applied course."),
+      acknowledgeWarnings: z.boolean().optional().describe("Explicitly acknowledge reviewed publication warnings; blocking errors still prevent publishing."),
       overwrite: z.boolean().optional().describe("With --apply on an already applied course: overwrite admin edits."),
     }),
     output: z.unknown(),
@@ -712,12 +713,12 @@ export const builderCommands: AnyCommand[] = [
     scopes: WRITE,
     endpoints: ["POST /api/admin/course-builder/sessions/{session}/publish"],
     positionals: ["session"],
-    input: z.object({ session }),
+    input: z.object({ session, acknowledgeWarnings: z.boolean().optional().describe("Acknowledge the warnings returned by publish-check after reviewing them.") }),
     output: z.unknown(),
     examples: [{ title: "Publish", argv: "builder publish <session> --json" }],
-    plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/publish`),
+    plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/publish`, { acknowledgedWarnings: Boolean(i.acknowledgeWarnings) }),
     async run(ctx, i) {
-      return { data: await builderCall(ctx, "POST", "/sessions/{session}/publish", { params: { session: i.session } }) };
+      return { data: await builderCall(ctx, "POST", "/sessions/{session}/publish", { params: { session: i.session }, body: { acknowledgedWarnings: Boolean(i.acknowledgeWarnings) } }) };
     },
   }),
   defineCommand({

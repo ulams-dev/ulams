@@ -10,6 +10,7 @@ import { uiStrings, pageLocale } from "../lib/i18n.ts";
  * Each tab may carry a status badge (the landing shows roadmap items honestly unless told otherwise).
  */
 import StoryStyles from "./StoryStyles.astro";
+import Icon from "./Icon.astro";
 
 type Kind = "prompt" | "cmd" | "cont" | "agent" | "out" | "spin" | "tool" | "add" | "del" | "ctx" | "note" | "user" | "assistant" | "card";
 interface Line {
@@ -37,11 +38,14 @@ interface Props {
   description?: string;
   footnote?: string;
   legal?: string;
+  /** Render a settled example instead of auto-typing it. Useful on product marketing pages. */
+  staticPreview?: boolean;
   tabs: Tab[];
 }
-const { id = "agents", eyebrow, title, intro, valueLine, description, footnote, legal, tabs } = Astro.props;
+const { id = "agents", eyebrow, title, intro, valueLine, description, footnote, legal, staticPreview = false, tabs } = Astro.props;
 
 const t = uiStrings(pageLocale(Astro));
+const TAB_ICON: Record<string, string> = { "claude-code": "code", "claude-mcp": "sparkle", cli: "terminal", api: "puzzle", studio: "layers" };
 const STATUS = { available: t.available, preview: t.preview, coming: t.coming } as const;
 const GLYPH: Partial<Record<Kind, string>> = { prompt: ">", cmd: "$", agent: "●", add: "+", del: "−", ctx: " ", out: " ", note: " ", cont: " " };
 const SR: Record<Kind, string> = t.sr;
@@ -82,20 +86,24 @@ const panels = tabs.map((tab, i) => ({ ...tab, ...schedule(tab.lines), i, tabId:
           {
             panels.map((p) => (
               <button type="button" role="tab" id={p.tabId} aria-selected={p.i === 0 ? "true" : "false"} aria-controls={p.panelId} tabindex={p.i === 0 ? 0 : -1} class="u-wf__tab">
-                <span>{p.label}</span>
-                {p.status && <span class={`u-status ${p.status === "available" ? "u-status--available" : "u-status--coming"}`}>{STATUS[p.status]}</span>}
+                <Icon name={TAB_ICON[p.key] ?? "code"} class="u-wf__tab-icon" />
+                <span class="u-wf__tab-label">{p.label}</span>
+                {p.status && p.status !== "available" && <span class="u-status u-status--coming">{STATUS[p.status]}</span>}
               </button>
             ))
           }
         </div>
-        <button type="button" class="u-wf__pause" data-pause aria-pressed="false" data-label-pause={t.pause} data-label-play={t.play}>{t.pause}</button>
+        <button type="button" class="u-wf__pause" data-pause aria-label={t.pause} title={t.pause} aria-pressed="false" data-label-pause={t.pause} data-label-play={t.play}>
+          <Icon name="pause" class="u-wf__pause-icon u-wf__pause-icon--pause" />
+          <Icon name="play" class="u-wf__pause-icon u-wf__pause-icon--play" />
+        </button>
       </div>
       <div class="u-stage u-wf__stage">
         <div class="u-wf__panels">
           {
             panels.map((p) => (
               <div class="u-wf__panel" role="tabpanel" id={p.panelId} aria-labelledby={p.tabId} tabindex="0" data-active={p.i === 0 ? "" : undefined}>
-                <ulams-story data-total={p.total} data-hold="0" data-host-gated>
+                <ulams-story data-total={p.total} data-hold="0" data-host-gated data-static={staticPreview ? "" : undefined}>
                   <div class={`u-win u-wf__win u-wf__win--${p.window}`} aria-hidden="true">
                     <div class="u-win__bar">
                       <span class="u-win__dots"><i></i><i></i><i></i></span>

@@ -52,6 +52,7 @@ return [
     ['api/oauth2-callback', 'public'],
     ['api/lti/jwks', 'public'],
     ['api/csp-report', 'public'],
+    ['api/contact', 'none'],
     ['api/jitsi/*', 'public'],
     ['api/payments-gateways/*', 'public'],
     ['api/demo/*', 'public'],

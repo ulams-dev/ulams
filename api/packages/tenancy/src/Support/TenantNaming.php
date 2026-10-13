@@ -16,6 +16,19 @@ class TenantNaming
 
     public const RESERVED_SLUGS = ['api', 'app', 'admin', 'www', 'storage', 'minio', 'ws', 'metrics', 'platform', 'default', 'test', 'postgres', 'docs', 'files', 'content', 'status', 'mail', 'cdn', 'assets'];
 
+    public static function origin(string $host): string
+    {
+        $scheme = (string) config('ulams_tenancy.scheme', 'http');
+        $port = config('ulams_tenancy.port');
+        if ($port !== null && (filter_var($port, FILTER_VALIDATE_INT) === false || (int) $port < 1 || (int) $port > 65535)) {
+            throw new InvalidArgumentException('TENANCY_PORT must be between 1 and 65535.');
+        }
+        $default = $scheme === 'https' ? 443 : 80;
+        $suffix = $port !== null && (int) $port !== $default ? ':' . (int) $port : '';
+
+        return $scheme . '://' . $host . $suffix;
+    }
+
     public static function assertValidSlug(string $slug): void
     {
         if (!preg_match(self::SLUG_PATTERN, $slug)) {
@@ -122,7 +135,7 @@ class TenantNaming
             // the tenant's own token for API <-> H5P service calls (the service reads it from this
             // env file); derived from the tenant APP_KEY, so it needs no extra secret storage
             'H5P_INTERNAL_TOKEN' => hash_hmac('sha256', 'ulams-h5p-internal-token', (string) $tenant->app_key),
-            'CONTENT_ORIGIN' => config('ulams_tenancy.scheme', 'http') . '://' . self::pattern('content_host', $tenant->slug),
+            'CONTENT_ORIGIN' => self::origin(self::pattern('content_host', $tenant->slug)),
             'DB_DATABASE' => $tenant->db_name,
             'DB_USERNAME' => $tenant->db_user,
             'DB_PASSWORD' => $tenant->db_password,

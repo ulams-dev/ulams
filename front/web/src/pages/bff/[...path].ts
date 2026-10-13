@@ -1,3 +1,4 @@
+import { tenantFetch } from "../../lib/api-transport.ts";
 import type { APIRoute } from "astro";
 import { matchBffRule } from "../../lib/bff.ts";
 import { invalidateProgress } from "../../lib/data.ts";
@@ -17,7 +18,7 @@ export const ALL: APIRoute = async ({ params, request, locals, cookies, url }) =
 
   const body = request.method === "GET" ? undefined : await request.text();
   const forward = (token: string) =>
-    fetch(`${tenant.apiUrl}${path}${url.search}`, {
+    tenantFetch(tenant)(`${tenant.apiUrl}${path}${url.search}`, {
       method: request.method,
       headers: {
         Accept: "application/json",

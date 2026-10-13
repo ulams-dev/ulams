@@ -182,7 +182,7 @@
     {
       "key": "ulams",
       "name": "ulams",
-      "note": "open core",
+      "note": "open source",
       "ours": true,
       "cells": {
         "self_hosting": {
@@ -192,10 +192,10 @@
           "checkedAt": "2026-10-09"
         },
         "licence": {
-          "value": "MIT open core",
+          "value": "MIT",
           "note": "API application Apache-2.0; H5P runs as a separate GPL-3.0 service",
           "source": "https://github.com/ulams-dev/ulams/blob/main/LICENSING.md",
-          "checkedAt": "2026-10-09"
+          "checkedAt": "2026-10-12"
         },
         "multi_tenant": {
           "value": "Yes",
@@ -271,9 +271,8 @@
         },
         "pricing": {
           "value": "Free self-hosted",
-          "note": "Open core; paid cloud and enterprise features coming",
           "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
-          "checkedAt": "2026-10-09"
+          "checkedAt": "2026-10-12"
         },
         "data_residency": {
           "value": "Yes",

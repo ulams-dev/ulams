@@ -11,11 +11,25 @@ small commits → tests → summary.
 
 ## Decisions made
 
-- [x] (new) Owner requested Umami Cloud analytics on the public landing, docs and six demos,
-      with demo_open and demos_scroll events and browser exclusions (ADR 0101 Proposed).
-      Landing and demos deployed from phase-5/platform-landing-redesign; this documentation
-      release installs the same owned-domain tracker in Starlight.
+- [x] (new) Umami integration on the owned landing, documentation and six demos: automatic pageviews,
+      demo_open versus demos_scroll, exact CSP origins and per-browser exclusion
+      (ADR 0101 Proposed; requested by owner 2026-10-12). Documentation published through PR #247 and GitHub Pages run 38295754529.
+      Live landing pageview and demo_open click accepted (HTTP 200); verification browser excluded.
 
+- [x] (2026-10-12) Owner requested the complete previous feature catalogue on Comparison,
+      organised by stakeholder with full descriptions and documentation links (ADR 0100 Proposed).
+- [x] (new) Current Overview/Comparison page is highlighted in desktop and mobile menus in EN/PL/ZH.
+      Published to https://ulams.app on 2026-10-12 using the existing Cloudflare Pages project
+      `ulams-landing`, deployment `74a0c404`, source `f7b304379`; all six routes, active menus,
+      the six-URL sitemap, robots.txt and the dedicated 404 were verified publicly.
+
+- [x] (2026-10-12) Owner rejected the open-core model and paid cloud/enterprise tiers. Public
+      Overview, Comparison and licensing copy now describe open-source software (ADR 0099 Proposed).
+
+- [x] (2026-10-12) Owner requested one animated policy example, the selected Stitch Ulam portrait,
+      no availability badges within that story, and explicit policy lifecycle delivery items in
+      Phase 6 (ADR 0098 Proposed).
+- [x] (2026-10-12) Batch 4 of `docs/plans/phase-5-reference-frontend.md` approved: separate Overview and Comparison pages, truthful public feature status, localized SEO and a six-URL platform sitemap (ADR 0097 Proposed)
 - [x] (2026-10-11) Feature catalogue (`docs/plans/feature-catalogue.md`): Scalar as the docs API browser, a new `FeatureIndex`
       catalogue component for the landing, H5P content types taken from h5p.org, landings translated (PL, ZH) and docs
       English only, `ItemList` JSON-LD on, OpenAPI responses completed for the featured packages
@@ -49,6 +63,7 @@ small commits → tests → summary.
       LMS owns entitlements, Sylius owns catalogue/cart/checkout/taxes/invoices; `CommerceProvider`
       interface; Wellms `payments`/`cart`/`vouchers` retired after migration
 - [x] Business model: open core (free self-hosted core; paid cloud, enterprise, support)
+      (superseded by the owner on 2026-10-12: open source without planned paid cloud or enterprise tiers; ADR 0099)
 - [x] Niche: developer education / customer education for dev tools
 - [x] (new) One monorepo `admin/` + `api/` + `front/` (+ `docs/`), all `escolalms/*` packages vendored
       as source, Turborepo + Yarn workspaces (ADR 0001, 0005)
@@ -96,7 +111,7 @@ small commits → tests → summary.
 
 UX over feature count · human approves every AI change (diff) · grounded and cited ·
 standards over lock-in · cost-aware (log tokens/cost from day one) · developer-first ·
-agent-ready · easy self-hosting · open core.
+agent-ready · easy self-hosting · open source.
 
 Market context: buyers rank UX 70%, price 63%, integrations 59%, AI 30%; most-wanted AI feature
 is personalisation (65%); trust is the new competitive axis; compliance and extended enterprise
@@ -335,7 +350,8 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [x] Policies, OpenAPI annotations, fixtures and tests (LiaScript, Adapt A+B, LTI round-trip) (permissions
       `lti_manage`, `liascript_manage`, `adapt_manage`, OpenAPI for every new endpoint, fixtures and tests
       against in-test fakes; `.github/workflows/nightly-conformance.yml` (opt-in) with the Adapt worker build,
-      Moodle 5.0 in both LTI directions (passed locally) and an operator-driven saLTIre job; ADR 0019)
+      Moodle 5.0 in both LTI directions (passed locally) and an operator-driven saLTIre job; API setup waits
+      for the PostgreSQL endpoint before Composer's Laravel discovery hook; ADR 0019)
 - [x] (new) `TopicFinished` fired before the learner's progress was saved, so listeners running at once
       (sync queue) sent the previous LTI score; now dispatched after saving (found by the Moodle run, ADR 0018)
 - [ ] (new) Turn on the nightly conformance runs (`NIGHTLY_CONFORMANCE=true`) and run the saLTIre job once
@@ -619,11 +635,33 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Metrics: time to first course, time to first enrolment, admin task times
 - [ ] (new) Reference frontend for the demos: UI catalogue `@ulams/ui` (JSON-schema registry, renderer
       with fallbacks, landing pages as A2UI-shaped documents), BFF with httpOnly session, demo auto-login,
-      SWR cache of public API data (partial: implemented and tested, uncommitted; needs the Caddy switch
-      of `*.app.localhost` to :4321 and the API fixes listed in the plan)
+      SWR cache of public API data (partial: implemented and tested, uncommitted; Caddy already points
+      `*.app.localhost` to :4321 in this checkout; API fixes remain listed in the plan; Batch 3 platform landing redesign
+      shipped locally: cited course-draft hero, shorter navigation, demos ahead of comparison, and matching
+      EN/PL/ZH layout; web/UI suites and desktop/phone axe pass; 2026-10-11 visual refinement adds a
+      midnight/lilac/citrus direction from the owner's Dribbble references, with rebuilt docs and locale
+      screenshots; production build passes and desktop/phone renders have no horizontal overflow)
 - [ ] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
       account area; webinars/events/consultations pages (partial: implemented and tested, uncommitted;
-      see `docs/plans/phase-5-reference-frontend.md`, batch 2)
+      see `docs/plans/phase-5-reference-frontend.md`, batch 2; Overview in EN/PL/ZH shows an animated privacy-policy
+      lifecycle from source v1 through course, exam and certificate to source updates and recertification; one
+      visual story at the top replaces the duplicate Living Course section, with document, academy, oversight,
+      source-diff and renewal scenes; updates retain author approval; CEO PDF intake and a four-question
+      course brief are animated as a sequential chat, with illustrated department roles; PDF intake
+      reveals extraction, citations and LLM reading in order, and interface tabs share equal dimensions,
+      icons and hover states without redundant Available badges. Each story step has concise action
+      bullets, with a lighter open layout; agent copy includes Codex, OpenCode and Gemini CLI. Self-hosting copy identifies
+      VPS/Cloudflare configs and guides, container targets and the forthcoming Helm chart. The CEO also supplies a brand style guide; departmental academies have distinct designs and
+      example tenant domains. The repeated
+      principles grid is replaced by a sourced Scottish Book brand story and the selected Stitch Ulam portrait.
+      The example workflow has no availability badges; planned delivery is tracked under Phase 6)
+- [x] (new) Link the owner’s ULAM scientific paper under the standards, as requested in the
+      follow-up: verified PDF and source repository, authorship and PDF version date, EN/PL/ZH.
+- [x] (new) Restore the complete Comparison feature catalogue by stakeholder: 101 descriptions,
+      14 categories and 54 H5P types, six audiences, package/guide links, native disclosures and
+      ItemList JSON-LD in EN/PL/ZH (ADR 0100 Proposed).
+- [x] (new) Split platform product Overview and Comparison pages in EN/PL/ZH, with audited SEO metadata,
+      JSON-LD, robots and sitemap routes (implemented and verified locally; plan batch 4; ADR 0097 Proposed)
 - [x] (new) Three new free demo academies, `gravity` (Gravity Lab, 3D simulation), `poland` (Poland, Measured /
       Polska w liczbach, map in the background, EN and PL) and `ulam` (The Scottish Book: Stanisław Ulam and the Lwów
       School, five MIT interactives), each with a preset, landing, certificate, demo users and the hourly reset
@@ -694,6 +732,14 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
         in `templates-pdf/resources/pdfme`, not yet assigned by the demo seeding)
   - [ ] Until then: set `REPORTBRO_URL` to the local server so no data leaves the installation
         (obsolete once the pdfme change is merged: ReportBro and `REPORTBRO_URL` are gone)
+- [ ] (new) Policy lifecycle delivery: link the uploaded policy version and cited fragments to all departmental
+      course variants; use departments, duration, seniority and experience from the course brief;
+      apply an uploaded style guide and provision distinct branded department domains (Coming).
+- [ ] (new) Policy owner dashboard: show assigned people by department, completed and pending training,
+      course version and issued PDF certificate; support the branded tenant learning application (Coming).
+- [ ] (new) On an approved policy change, update affected course variants, invalidate superseded certificates,
+      notify learners and policy owners with a source diff, assign a new exam for a minor change or a new
+      course for a major change, and issue a replacement PDF certificate after completion (Coming).
 - [ ] Verification URL/QR, expiry, recertification, reminders
 - [ ] Mandatory training with due dates and manager escalation
 - [ ] Compliance reports and audit export (linked to Phase 3 audit trail)
@@ -806,6 +852,10 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 
 ## Phase 8: Self-hosting
 
+- [ ] (new) CLI one-command Docker/Kubernetes development and production launch, private persisted keys,
+      matching image releases, academy provisioning and lifecycle E2E (ADR 0102 Proposed;
+      implementation and Docker dev/prod + Kubernetes dev verified; Kubernetes production and public release pending).
+
 - [ ] (new) R&D: Cloudflare deployment (TypeScript + Hono gateway Worker, Laravel as Cloudflare
       Container, R2, Hyperdrive, Queues, Durable Objects) with a one-command `wrangler deploy` for a
       dev environment; strangler migration of the API to Hono only if the spike succeeds
@@ -816,6 +866,8 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       a real account: needs SSH and `bin/check-host.sh`)
 - [ ] One app image + PostgreSQL + optional Redis (DB fallback)
 - [ ] Commerce as optional profile: + one Sylius image, shared PostgreSQL server (separate DB)
+- [ ] (new) Step-by-step Kubernetes YAML tutorial with tenant-aware manifests and validated examples
+      (the landing links to existing architecture requirements until this guide is ready).
 - [ ] `docker compose up` and Helm chart with sane defaults
 - [ ] Setup wizard (admin, domain, mail, storage, AI provider or none, commerce link)
 - [x] (new) Production reference: one VPS behind Cloudflare (tunnel, flat tenant hosts, R2, cache rules, backups to R2,

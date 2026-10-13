@@ -100,7 +100,7 @@ final class PublishCheck
             'facts' => [
                 'courseId' => $session->course_id,
                 'title' => $doc['course']['title'] ?? $session->title,
-                'url' => $session->course_id !== null && $front !== '' ? "{$front}/courses/{$session->course_id}" : null,
+                'url' => $session->course_id !== null && $front !== '' ? "{$front}" . \Ulams\CourseBuilder\Services\SessionState::learnerPath((int) $session->course_id) : null,
                 'published' => (bool) $session->stateValue('published', false),
                 'price' => [
                     'mode' => $pricing['mode'] ?? 'free',

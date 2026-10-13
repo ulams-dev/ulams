@@ -160,6 +160,10 @@ jobs:
             file: front/Dockerfile
             licenses: MIT
             description: ulams learner front (static build on nginx-unprivileged, port 8080; VITE_APP_* written to runtime-config.json at start)
+          - name: mjml
+            file: deploy/stack/mjml/Dockerfile
+            licenses: MIT
+            description: ulams native MJML email renderer (private HTTP service, /v1/render)
           - name: web
             file: front/web/Dockerfile
             licenses: MIT

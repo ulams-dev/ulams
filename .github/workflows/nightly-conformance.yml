@@ -90,11 +90,6 @@ jobs:
         working-directory: api/adapt-builder
         run: node --test "test/*.test.mjs"
 
-      - name: Build and start the worker (adapt_framework, needs network at build time only)
-        run: |
-          docker compose -f .github/conformance/compose.yml --profile adapt up -d --build --wait adapt-builder
-          curl -fsS http://127.0.0.1:18090/health
-
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
@@ -107,6 +102,16 @@ jobs:
         working-directory: api
         run: |
           cp docker/envs/.env.ci.postgres .env
+          for i in $(seq 1 30); do
+            if php -r '$pdo = new PDO("pgsql:host=" . getenv("DB_HOST") . ";port=" . getenv("DB_PORT") . ";dbname=" . getenv("DB_DATABASE"), getenv("DB_USERNAME"), getenv("DB_PASSWORD"));' 2>/dev/null; then
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "PostgreSQL at ${DB_HOST}:${DB_PORT} did not accept a connection after 30 attempts." >&2
+              exit 1
+            fi
+            sleep 2
+          done
           composer install --no-interaction --no-progress --prefer-dist
           php artisan migrate:fresh --force
           php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"
@@ -115,6 +120,11 @@ jobs:
           mkdir -p vendor/orchestra/testbench-core/laravel/storage
           cp storage/oauth-private.key storage/oauth-public.key vendor/orchestra/testbench-core/laravel/storage/
           php artisan migrate --force --path=packages/courses/tests/Database/Migrations
+
+      - name: Build and start the worker (adapt_framework, needs network at build time only)
+        run: |
+          docker compose -f .github/conformance/compose.yml --profile adapt up -d --build --wait adapt-builder
+          curl -fsS http://127.0.0.1:18090/health
 
       - name: Source -> real build -> SCORM import (Path A)
         working-directory: api
@@ -168,10 +178,9 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           token: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Start Moodle 5.0 (first start installs it, a few minutes)
+      - name: Configure local test hostnames
         run: |
           echo "127.0.0.1 moodle.test ulams.test front.test" | sudo tee -a /etc/hosts
-          docker compose -f .github/conformance/compose.yml --profile lti up -d
 
       - uses: actions/setup-node@v6
         with:
@@ -194,6 +203,16 @@ jobs:
         working-directory: api
         run: |
           cp docker/envs/.env.ci.postgres .env
+          for i in $(seq 1 30); do
+            if php -r '$pdo = new PDO("pgsql:host=" . getenv("DB_HOST") . ";port=" . getenv("DB_PORT") . ";dbname=" . getenv("DB_DATABASE"), getenv("DB_USERNAME"), getenv("DB_PASSWORD"));' 2>/dev/null; then
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "PostgreSQL at ${DB_HOST}:${DB_PORT} did not accept a connection after 30 attempts." >&2
+              exit 1
+            fi
+            sleep 2
+          done
           composer install --no-interaction --no-progress --prefer-dist
           php artisan migrate:fresh --force
           php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"
@@ -203,6 +222,9 @@ jobs:
           PHP_CLI_SERVER_WORKERS=6 nohup php -S 0.0.0.0:18000 -t public \
             vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php > /tmp/ulams.log 2>&1 &
           for i in $(seq 1 30); do curl -fsS -o /dev/null http://ulams.test:18000/api/lti/jwks && break; sleep 1; done
+
+      - name: Start Moodle 5.0 (first start installs it, a few minutes)
+        run: docker compose -f .github/conformance/compose.yml --profile lti up -d
 
       - name: Wait for Moodle
         run: |
@@ -302,6 +324,16 @@ jobs:
         working-directory: api
         run: |
           cp docker/envs/.env.ci.postgres .env
+          for i in $(seq 1 30); do
+            if php -r '$pdo = new PDO("pgsql:host=" . getenv("DB_HOST") . ";port=" . getenv("DB_PORT") . ";dbname=" . getenv("DB_DATABASE"), getenv("DB_USERNAME"), getenv("DB_PASSWORD"));' 2>/dev/null; then
+              break
+            fi
+            if [ "$i" -eq 30 ]; then
+              echo "PostgreSQL at ${DB_HOST}:${DB_PORT} did not accept a connection after 30 attempts." >&2
+              exit 1
+            fi
+            sleep 2
+          done
           composer install --no-interaction --no-progress --prefer-dist
           php artisan migrate:fresh --force
           php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"

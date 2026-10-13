@@ -291,7 +291,6 @@ services:
       ULAMS_WARM_TENANTS: ""
       ULAMS_DEFAULT_TENANT: ""
       # `final` shows every roadmap item as delivered; set `actual` before the public launch (#92)
-      ULAMS_LANDING_STATUS: ${ULAMS_LANDING_STATUS:-actual}
       # CSP of the pages: report-only until the reports are clean, then CSP_ENFORCE=true (#121)
       CSP_ENFORCE: ${CSP_ENFORCE:-false}
       ULAMS_COOKIE_SECURE: ${ULAMS_COOKIE_SECURE:-true}

@@ -2496,6 +2496,12 @@
   "tag": "Consultations"
  },
  {
+  "method": "POST",
+  "path": "/api/contact",
+  "summary": "Send a message to the ULAMS team",
+  "tag": "Contact"
+ },
+ {
   "method": "GET",
   "path": "/api/core/packages",
   "summary": "List installed ulams packages",

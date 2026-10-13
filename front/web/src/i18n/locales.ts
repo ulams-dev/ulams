@@ -23,11 +23,18 @@ export const LOCALE_META: Record<Locale, LocaleMeta> = {
   zh: { lang: "zh-Hans", label: "中文", name: "简体中文", path: "/zh/" },
 };
 
+/** Canonical paths for the two public product pages, translated in each supported locale. */
+export function publicPagePath(locale: Locale, page: "overview" | "comparison" = "overview"): string {
+  const prefix = locale === "en" ? "" : `/${locale}`;
+  if (page === "comparison") return `${prefix}/comparison/`;
+  return locale === "en" ? "/" : `${prefix}/`;
+}
+
 export const isLocale = (value: unknown): value is Locale => typeof value === "string" && (LOCALES as readonly string[]).includes(value);
 
 /** The switcher of the site header: one entry per language, the current one marked. */
-export function languageLinks(current: Locale): Array<{ code: string; label: string; href: string; current: boolean }> {
-  return LOCALES.map((locale) => ({ code: LOCALE_META[locale].lang, label: LOCALE_META[locale].label, href: LOCALE_META[locale].path, current: locale === current }));
+export function languageLinks(current: Locale, page: "overview" | "comparison" = "overview"): Array<{ code: string; label: string; href: string; current: boolean }> {
+  return LOCALES.map((locale) => ({ code: LOCALE_META[locale].lang, label: LOCALE_META[locale].label, href: publicPagePath(locale, page), current: locale === current }));
 }
 
 /** `<link rel="alternate" hreflang>` entries of the landing, plus x-default (English). */
@@ -38,7 +45,13 @@ export function alternateLinks(origin: string): Array<{ hreflang: string; href: 
   ];
 }
 
+export function pageAlternateLinks(origin: string, page: "overview" | "comparison") {
+  return [...LOCALES.map((locale) => ({ hreflang: LOCALE_META[locale].lang, href: new URL(publicPagePath(locale, page), origin).href })),
+    { hreflang: "x-default", href: new URL(publicPagePath(DEFAULT_LOCALE, page), origin).href }];
+}
+
 export const canonicalUrl = (origin: string, locale: Locale): string => new URL(LOCALE_META[locale].path, origin).href;
+export const pageCanonicalUrl = (origin: string, locale: Locale, page: "overview" | "comparison"): string => new URL(publicPagePath(locale, page), origin).href;
 
 /** The origin the visitor used (behind the proxy: the forwarded host and scheme). */
 export function publicOrigin(headers: Headers, url: URL): string {

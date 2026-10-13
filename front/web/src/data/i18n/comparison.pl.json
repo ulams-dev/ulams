@@ -126,7 +126,7 @@
     }
   },
   "systems": {
-    "ulams": "open core",
+    "ulams": "open source",
     "moodle": "open source",
     "canvas": "open source",
     "openedx": "open source",
@@ -151,7 +151,6 @@
     "Proprietary": "Własnościowa",
     "Quote-based; not published": "Wycena indywidualna; cennik niepublikowany",
     "AGPL-3.0": "AGPL-3.0",
-    "MIT open core": "Rdzeń open core na licencji MIT",
     "Free self-hosted": "Bezpłatny własny hosting",
     "GPL-3.0-or-later": "GPL-3.0-or-later",
     "Free (GPL); paid hosting": "Bezpłatny (GPL); płatny hosting",
@@ -163,6 +162,7 @@
     "Annual licence per site tier": "Licencja roczna zależna od progu liczby witryn",
     "Per-seat subscription; Reach by learners": "Subskrypcja za stanowisko; Reach wg liczby kursantów",
     "Quote-based": "Wycena indywidualna",
-    "Team $8/user/month (up to 100); Business/Enterprise custom": "Team 8 USD/os./mies. (do 100); Business/Enterprise: wycena"
+    "Team $8/user/month (up to 100); Business/Enterprise custom": "Team 8 USD/os./mies. (do 100); Business/Enterprise: wycena",
+    "MIT": "MIT"
   }
 }

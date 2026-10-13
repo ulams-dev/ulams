@@ -7,6 +7,8 @@
 export type UiLocale = "en" | "pl" | "zh";
 
 export interface UiStrings {
+  featuresOf: string;
+  packageDocs: string;
   skip: string;
   navMain: string;
   navMobile: string;
@@ -17,9 +19,7 @@ export interface UiStrings {
   language: string;
   coming: string;
   /** Label of a package link in the feature index. */
-  packageDocs: string;
   /** Accessible name of a feature group list; `{title}` is replaced. */
-  featuresOf: string;
   roadmap: string;
   available: string;
   preview: string;
@@ -60,6 +60,8 @@ export interface UiStrings {
 }
 
 const en: UiStrings = {
+  featuresOf: "Features for {title}",
+  packageDocs: "Package documentation",
   skip: "Skip to content",
   navMain: "Main",
   navMobile: "Mobile",
@@ -68,8 +70,6 @@ const en: UiStrings = {
   home: "{brand}, home",
   language: "Language",
   coming: "Coming",
-  packageDocs: "Package docs",
-  featuresOf: "Features: {title}",
   roadmap: "On the roadmap",
   available: "Available",
   preview: "Preview",
@@ -121,6 +121,8 @@ const en: UiStrings = {
 };
 
 const pl: UiStrings = {
+  featuresOf: "Funkcje: {title}",
+  packageDocs: "Dokumentacja pakietu",
   skip: "Przejdź do treści",
   navMain: "Główna",
   navMobile: "Mobilna",
@@ -129,8 +131,6 @@ const pl: UiStrings = {
   home: "{brand}, strona główna",
   language: "Język",
   coming: "Wkrótce",
-  packageDocs: "Dokumentacja pakietu",
-  featuresOf: "Funkcje: {title}",
   roadmap: "W planach",
   available: "Dostępne",
   preview: "Wersja zapoznawcza",
@@ -182,6 +182,8 @@ const pl: UiStrings = {
 };
 
 const zh: UiStrings = {
+  featuresOf: "{title} 的功能",
+  packageDocs: "软件包文档",
   skip: "跳到正文",
   navMain: "主导航",
   navMobile: "移动端导航",
@@ -190,8 +192,6 @@ const zh: UiStrings = {
   home: "{brand}，返回首页",
   language: "语言",
   coming: "即将推出",
-  packageDocs: "软件包文档",
-  featuresOf: "功能：{title}",
   roadmap: "已列入路线图",
   available: "已可用",
   preview: "预览版",

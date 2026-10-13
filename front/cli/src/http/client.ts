@@ -1,3 +1,4 @@
+import { loopbackFetch } from "./loopback.ts";
 import { ApiError, createClient, type HttpMethod } from "@ulams/sdk";
 import { CliError, fromApiError } from "../errors.ts";
 import { redact, redactString } from "../config/redact.ts";
@@ -74,7 +75,7 @@ export class HttpClient {
   }
 
   get fetchImpl(): typeof fetch | undefined {
-    return this.opts.fetch;
+    return this.opts.fetch ?? loopbackFetch;
   }
 
   get userAgent(): string {
@@ -139,7 +140,7 @@ export class HttpClient {
 
     for (let attempt = 0; ; attempt++) {
       const seen: { retryAfter?: number; status?: number } = {};
-      const baseFetch = this.opts.fetch ?? ((input: RequestInfo | URL, init?: RequestInit) => fetch(input, init));
+      const baseFetch = this.opts.fetch ?? loopbackFetch;
       const wrapped: typeof fetch = async (input, init) => {
         const response = await baseFetch(input, init);
         seen.status = response.status;

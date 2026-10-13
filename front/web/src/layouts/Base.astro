@@ -14,6 +14,7 @@ import polandCss from "@ulams/ui/styles/themes/poland.css?inline";
 import ulamCss from "@ulams/ui/styles/themes/ulam.css?inline";
 import platformCss from "@ulams/ui/styles/themes/platform.css?inline";
 import type { ThemeName } from "@ulams/ui/registry";
+import { UMAMI_WEBSITE_ID, UMAMI_SCRIPT_ORIGIN, UMAMI_HOSTS, umamiEnabled } from "@ulams/ui/analytics";
 import DemoBadge from "../components/DemoBadge.astro";
 import { THEME_COLOR } from "../lib/theme.ts";
 import { accentCss } from "../lib/accent.ts";
@@ -37,14 +38,19 @@ interface Props {
   alternates?: Array<{ hreflang: string; href: string }>;
   /** Open Graph locale (en_US, pl_PL, zh_CN). */
   ogLocale?: string;
+  /** Page-specific, verified Schema.org objects rendered as JSON-LD. */
+  jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
   /** Default target of links (`_top` inside the studio's preview frame). */
   baseTarget?: string;
 }
 
-const { theme, title, description, lang = "en", demo, bodyClass, accent, noindex = false, baseTarget, canonical, alternates = [], ogLocale } = Astro.props;
+const { theme, title, description, lang = "en", demo, bodyClass, accent, noindex = false, baseTarget, canonical, alternates = [], ogLocale, jsonLd } = Astro.props;
 const t = uiStrings(lang);
+const analyticsHost = Astro.request.headers.get("x-forwarded-host") ?? Astro.request.headers.get("host") ?? Astro.url.host;
 const tenantCss = accentCss(theme, accent);
 const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, gravity: gravityCss, poland: polandCss, ulam: ulamCss, platform: platformCss }[theme];
+const shareImage = new URL("/og-image.png", Astro.url).href;
+const serializedJsonLd = jsonLd ? JSON.stringify(Array.isArray(jsonLd) ? jsonLd : [jsonLd]).replace(/</g, "\\u003c") : null;
 ---
 
 <!doctype html>
@@ -55,6 +61,7 @@ const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, 
     <title>{title}</title>
     {baseTarget && <base target={baseTarget} />}
     {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {!noindex && theme === "platform" && <meta name="robots" content="index, follow, max-image-preview:large" />}
     {description && <meta name="description" content={description} />}
     {canonical && <link rel="canonical" href={canonical} />}
     {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
@@ -72,13 +79,21 @@ const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, 
           {canonical && <meta property="og:url" content={canonical} />}
           <meta property="og:title" content={title} />
           {description && <meta property="og:description" content={description} />}
-          <meta property="og:image" content={new URL("/og-image.png", Astro.url).href} />
+          <meta property="og:image" content={shareImage} />
+          <meta property="og:image:type" content="image/png" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
           <meta property="og:image:alt" content="ulams, living courses from real sources" />
           <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content={title} />
+          {description && <meta name="twitter:description" content={description} />}
+          <meta name="twitter:image" content={shareImage} />
+          {serializedJsonLd && <script type="application/ld+json" set:html={serializedJsonLd}></script>}
         </>
       )
+    }
+    {
+      theme === "platform" && <Font cssVariable="--font-playfair" preload={[{ weight: "500" }]} />
     }
     {
       theme === "coffee" && (
@@ -127,8 +142,8 @@ const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, 
     {
       theme === "platform" && (
         <>
-          <Font cssVariable="--font-inter-tight" preload={[{ weight: "600" }]} />
-          <Font cssVariable="--font-inter" preload={[{ weight: "400" }]} />
+          <Font cssVariable="--font-baskerville" preload={[{ weight: "400", style: "normal" }, { weight: "400", style: "italic" }]} />
+          <Font cssVariable="--font-jakarta" preload={[{ weight: "400" }, { weight: "600" }]} />
           <Font cssVariable="--font-jetbrains" />
         </>
       )
@@ -142,6 +157,7 @@ const themeCss = { coffee: coffeeCss, oncall: oncallCss, nightsky: nightskyCss, 
       )
     }
     <style is:inline set:html={fallbackCss + baseCss + themeCss + tenantCss}></style>
+    {umamiEnabled(analyticsHost) && !noindex && <script is:inline defer src={`${UMAMI_SCRIPT_ORIGIN}/script.js`} data-website-id={UMAMI_WEBSITE_ID} data-domains={UMAMI_HOSTS.join(",")} data-exclude-search="true" data-exclude-hash="true" data-do-not-track="true"></script>}
     <slot name="head" />
   </head>
   <body class={bodyClass}>

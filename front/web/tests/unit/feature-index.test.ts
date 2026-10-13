@@ -1,53 +1,42 @@
-// @vitest-environment node
 import { readdirSync, statSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import type { UiNode } from "@ulams/ui/render-core";
-import { landingDocs, localizedDocs } from "../../src/lib/docs.ts";
+import { validateDocument, type UiNode } from "@ulams/ui/render-core";
+import { comparisonDocFor } from "../../src/lib/docs.ts";
+import { comparisonModel } from "../../src/lib/comparison.ts";
 
-const packagesDir = fileURLToPath(new URL("../../../../api/packages/", import.meta.url));
-const packages = readdirSync(packagesDir).filter((d) => statSync(`${packagesDir}${d}`).isDirectory());
+interface Group { id: string; audience: string; items: Array<{ title: string; text: string; packages?: string[] }>; tags?: string[]; }
+interface Index { audiences: Array<{ id: string }>; groups: Group[]; }
+const index = (doc: UiNode): Index => doc.children!.find((n) => n.component === "Main")!.children!.find((n) => n.component === "FeatureIndex")!.props as unknown as Index;
+const en = index(comparisonDocFor("en")!);
 
-/** Packages that are not a product feature, with the reason. Anything else must appear in the feature index. */
-const EXCLUDED: Record<string, string> = {
-  core: "base classes every other package needs",
-};
-
-interface Group {
-  id: string;
-  title: string;
-  items?: Array<{ title: string; text?: string; packages?: string[] }>;
-  tags?: string[];
-}
-const indexOf = (doc: UiNode): UiNode => {
-  const find = (n: UiNode): UiNode | undefined => (n.component === "FeatureIndex" ? n : n.children?.map(find).find(Boolean));
-  return find(doc)!;
-};
-const groupsOf = (doc: UiNode) => (indexOf(doc).props as { groups: Group[] }).groups;
-const en = landingDocs.platform!;
-
-describe("the landing feature index", () => {
-  it("lists every package under api/packages, or excludes it with a reason", () => {
-    const referenced = new Set(groupsOf(en).flatMap((g) => (g.items ?? []).flatMap((i) => i.packages ?? [])));
-    expect(packages.filter((p) => !referenced.has(p) && !(p in EXCLUDED))).toEqual([]);
-    expect(Object.keys(EXCLUDED).filter((p) => referenced.has(p) || !packages.includes(p))).toEqual([]);
+describe("comparison stakeholder feature catalogue", () => {
+  it("restores all 101 descriptions and 54 H5P content types", () => {
+    const items = en.groups.flatMap((g) => g.items);
+    expect(items).toHaveLength(101);
+    expect(items.every((item) => item.text.length > 0)).toBe(true);
+    expect(en.groups.find((g) => g.id === "h5p")!.tags).toHaveLength(54);
   });
-
-  it("names only packages that exist", () => {
-    const names = groupsOf(en).flatMap((g) => (g.items ?? []).flatMap((i) => i.packages ?? []));
-    expect(names.filter((n) => !packages.includes(n))).toEqual([]);
+  it("assigns every category to one of six stakeholders", () => {
+    expect(en.audiences.map((a) => a.id)).toEqual(["learner", "author", "owner", "sales", "admin", "engineering"]);
+    expect(new Set(en.groups.map((g) => g.id)).size).toBe(14);
+    expect(en.groups.every((g) => en.audiences.some((a) => a.id === g.audience))).toBe(true);
   });
-
-  it("keeps ids and lengths identical in Polish and Chinese", () => {
+  it("covers every product package and links only to existing packages", () => {
+    const dir = fileURLToPath(new URL("../../../../api/packages/", import.meta.url));
+    const packages = readdirSync(dir).filter((name) => statSync(`${dir}${name}`).isDirectory());
+    const refs = new Set(en.groups.flatMap((g) => g.items.flatMap((item) => item.packages ?? [])));
+    expect(packages.filter((name) => name !== "core" && !refs.has(name))).toEqual([]);
+    expect([...refs].filter((name) => !packages.includes(name))).toEqual([]);
+  });
+  it("keeps categories, stakeholders and feature counts parallel in all languages", () => {
     for (const lang of ["pl", "zh"] as const) {
-      const other = groupsOf(localizedDocs.platform![lang]!);
-      expect(other.map((g) => [g.id, g.items?.length, g.tags?.length]), lang).toEqual(groupsOf(en).map((g) => [g.id, g.items?.length, g.tags?.length]));
+      const other = index(comparisonDocFor(lang)!);
+      expect(other.groups.map((g) => [g.id, g.audience, g.items.length, g.tags?.length])).toEqual(en.groups.map((g) => [g.id, g.audience, g.items.length, g.tags?.length]));
+      expect(other.audiences.map((a) => a.id)).toEqual(en.audiences.map((a) => a.id));
     }
   });
-
-  it("lists the H5P content types published on h5p.org", () => {
-    const tags = groupsOf(en).find((g) => g.id === "h5p")?.tags ?? [];
-    expect(tags).toHaveLength(54);
-    for (const name of ["Accordion", "Interactive Video", "Course Presentation", "Branching Scenario", "Crossword"]) expect(tags).toContain(name);
+  it("validates the complete page catalogue for all languages", () => {
+    for (const lang of ["en", "pl", "zh"] as const) expect(validateDocument(comparisonDocFor(lang)!, { comparison: comparisonModel(undefined, lang) })).toEqual([]);
   });
 });

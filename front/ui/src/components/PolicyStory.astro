@@ -1,0 +1,1182 @@
+---
+import Icon from "./Icon.astro";
+import RolePortrait from "./RolePortrait.astro";
+import { pageLocale, uiStrings } from "../lib/i18n.ts";
+export interface PolicyStoryProps {
+  ariaLabel?: string;
+  badge?: string;
+  title?: string;
+  note?: string;
+  journey: Array<{
+    title: string;
+    text: string;
+    bullets?: string[];
+    status?: "available" | "coming";
+  }>;
+  visual: {
+    chapters: string[];
+    intake: {
+      uploader: string;
+      upload: string;
+      uploaded: string;
+      styleguide: string;
+      extract: string;
+      context: string;
+      llm: string;
+      sourceReady: string;
+      briefTitle: string;
+      ready: string;
+      questions: Array<{ question: string; answer: string }>;
+    };
+    policy: string;
+    section: string;
+    before: string;
+    after: string;
+    audiences: string[];
+    roleTopics: string[];
+    learners: string[];
+    academy: string;
+    lesson: string;
+    formats: string[];
+    exam: string;
+    certificate: string;
+    completed: string;
+    pending: string;
+    owner: string;
+    progress: string;
+    later: string;
+    proposal: string;
+    approval: string;
+    renewal: string;
+    expired: string;
+    minor: string;
+    major: string;
+    notification: string;
+    renewed: string;
+  };
+}
+const {
+  ariaLabel,
+  badge,
+  journey,
+  visual: v,
+  note,
+} = Astro.props as PolicyStoryProps;
+const t = uiStrings(pageLocale(Astro));
+const icons = ["pdf", "chat", "layers", "book", "chart", "sync", "medal"];
+const domains = ["management.example.test", "hr.example.test", "sales.example.test"];
+const roles = ["management", "hr", "sales"] as const;
+const alternatives = [
+  `${v.intake.uploader}: ${v.intake.upload}, ${v.intake.styleguide}. ${v.intake.extract} → ${v.intake.context} → ${v.intake.llm}. ${v.section}: ${v.before}`,
+  v.intake.questions.map(({ question, answer }) => `${question} ${answer}`).join(" "),
+  v.audiences.map((role, i) => `${role}: ${v.roleTopics[i]}. ${domains[i]}`).join(". "),
+  `${v.academy}. ${v.formats.join(" → ")} → ${v.certificate} PDF v1.`,
+  v.learners.map((learner, i) => `${learner}: ${i < 2 ? v.completed : v.pending}`).join(". "),
+  `${v.later}. ${v.section}: ${v.before} → ${v.after}. ${v.lesson}, ${v.exam}. ${v.approval}.`,
+  `${v.notification} ${v.expired}. ${v.minor}. ${v.major}. ${v.renewed} PDF v2.`,
+];
+---
+<figure class="policy-story" id="living-course" aria-label={ariaLabel}>
+  <ulams-policy-story data-animation-paused>
+    <div class="ps-topline"><span>{badge}</span><span class="ps-version">v1 <Icon name="arrow" /> v2</span></div>
+    <div class="ps-scenes">
+      {journey.map((step, i) => <section class="ps-panel" role="tabpanel" id={`policy-panel-${i}`} aria-labelledby={`policy-tab-${i}`} hidden={i !== 0} tabindex="0" data-duration={i === 0 ? 10500 : i === 1 ? 15000 : 6000}>
+        <div class="ps-narration">
+          <span class="ps-chapter">0{i + 1} / 0{journey.length}</span>
+          <h2>{step.title}</h2><p>{step.text}</p>
+          {step.bullets && <ul class="ps-explanation" role="list">{step.bullets.map((bullet) => <li>{bullet}</li>)}</ul>}
+          <p class="u-visually-hidden">{alternatives[i]}</p>
+        </div>
+        <div class={`ps-scene ps-scene--${i}`} aria-hidden="true">
+          {i === 0 && <div class="ps-intake-scene">
+            <div class="ps-upload-panel">
+              <span class="ps-upload-actor"><span class="ps-upload-face"><RolePortrait role="ceo" /></span><b>{v.intake.uploader}</b><span>{v.intake.upload}</span></span>
+              <div class="ps-upload-files"><div class="ps-upload-file"><Icon name="pdf" /><div><b>privacy-policy.pdf</b><small>{v.policy} · v1</small><span class="ps-upload-track"><i /></span></div><span class="ps-upload-done"><Icon name="check" /></span></div><div class="ps-upload-file ps-upload-file--styleguide"><Icon name="layers" /><div><b>styleguide.pdf</b><small>{v.intake.styleguide}</small><span class="ps-brand-swatches"><i /><i /><i /></span></div><span class="ps-style-done"><Icon name="check" /></span></div></div>
+            </div>
+            <div class="ps-ingest-pipeline">
+              <div class="ps-ingest-node ps-ingest-node--extract"><span class="ps-ingest-icon"><Icon name="reading" /></span><div><b>{v.intake.extract}</b><span class="ps-extracted-lines"><i /><i /><i /></span></div><Icon name="check" /></div>
+              <div class="ps-ingest-node ps-ingest-node--context"><span class="ps-ingest-icon"><Icon name="layers" /></span><div><b>{v.intake.context}</b><span class="ps-source-fragments"><i>§ 1</i><i>§ 2</i><i>§ 4</i><Icon name="quote" /></span></div><Icon name="check" /></div>
+              <div class="ps-ingest-node ps-ingest-node--llm"><span class="ps-ingest-icon"><Icon name="sparkle" /></span><div><b>{v.intake.llm}</b><span class="ps-small">{v.intake.sourceReady}</span></div><Icon name="check" /></div>
+            </div>
+            <div class="ps-ingest-quote"><Icon name="quote" /><span><b>{v.section}</b>{v.before}</span></div>
+          </div>}
+          {i === 1 && <div class="ps-brief-scene">
+            <div class="ps-brief-bar"><Icon name="sparkle" /><b>{v.intake.briefTitle}</b><span class="ps-brief-source"><Icon name="quote" /> PDF · v1</span></div>
+            <div class="ps-brief-chat"><div class="ps-brief-chat-log">{v.intake.questions.map((pair, n) => <div class="ps-brief-pair" style={`--pair:${n}`}>
+              <div class="ps-chat-message ps-chat-message--question"><div class="ps-chat-message-inner"><p class="ps-brief-question"><span class="ps-chat-agent"><Icon name="sparkle" /></span><span class="ps-chat-bubble"><small>ULAMS</small>{pair.question}</span></p></div></div>
+              <div class="ps-chat-message ps-chat-message--answer"><div class="ps-chat-message-inner"><div class="ps-chat-reply"><span class="ps-chat-typing"><i /><i /><i /></span><p class="ps-brief-answer"><span class="ps-answer-person"><RolePortrait role="ceo" /></span><span class="ps-chat-bubble"><small>{v.intake.uploader}</small>{pair.answer}</span></p></div></div></div>
+            </div>)}</div></div>
+            <div class="ps-brief-ready"><Icon name="check" /><b>{v.intake.ready}</b><span>{v.audiences.join(' · ')}</span></div>
+          </div>}
+          {i === 2 && <div class="ps-paths-scene"><div class="ps-source-node"><Icon name="pdf" /><b>{v.policy}</b><span>v1</span></div><div class="ps-branches"><span /><span /><span /></div><div class="ps-role-paths">{v.audiences.map((role, n) => <div class="ps-role" data-department={roles[n]}><div class="ps-department-domain"><Icon name="lock" /><span>{domains[n]}</span></div><span class="ps-role-person"><RolePortrait role={roles[n] ?? "hr"} /></span><h4>{role}</h4><p>{v.roleTopics[n]}</p><span class="ps-cite"><Icon name="quote" /> {v.section}</span></div>)}</div></div>}
+          {i === 3 && <div class="ps-learn-scene"><div class="ps-academy"><div class="ps-browser"><span class="ps-dots">● ● ●</span><span>{v.academy}</span><Icon name="lock" /></div><div class="ps-academy-body"><span class="ps-small ps-learner-identity"><span class="ps-learner-person"><RolePortrait role="sales" /></span>{v.audiences[2]} · v1</span><h4>{v.lesson}</h4><div class="ps-lesson-tiles">{v.formats.map((format, n) => <span><Icon name={['interactive', 'quiz', 'medal'][n] ?? 'book'} />{format}<Icon name="check" /></span>)}</div></div></div><div class="ps-certificate"><Icon name="medal" /><span>PDF</span><h4>{v.certificate}</h4><span class="ps-certificate-line" /><b>{v.policy}</b><small>v1</small><span class="ps-certified"><Icon name="check" />{v.completed}</span></div></div>}
+          {i === 4 && <div class="ps-owner-scene"><div class="ps-owner-title"><span class="ps-owner-avatar"><RolePortrait role="hr" /></span><div><small>{v.owner}</small><h4>{v.progress}</h4></div><span class="ps-source-tag">v1</span></div><div class="ps-roster">{v.learners.map((learner, n) => <div><span><span class="ps-roster-person"><RolePortrait role={roles[n] ?? "hr"} /></span>{learner}</span><span class={n < 2 ? 'ps-complete' : 'ps-pending'}><Icon name={n < 2 ? 'check' : 'clock'} />{n < 2 ? v.completed : v.pending}</span><span class="ps-roster-pdf">{n < 2 ? 'PDF · v1' : '—'}</span></div>)}</div><span class="ps-roster-source"><Icon name="quote" /> {v.policy} · v1</span></div>}
+          {i === 5 && <div class="ps-update-scene"><div class="ps-update-doc"><span class="ps-small"><Icon name="clock" />{v.later}</span><h4>{v.policy} <b>v2</b></h4><span class="ps-section">{v.section}</span><p class="ps-removed">− {v.before}</p><p class="ps-added">+ {v.after}</p></div><Icon name="arrow" class="ps-update-arrow" /><div class="ps-proposal"><span class="ps-small">ULAMS · {v.proposal}</span><div class="ps-impacted"><Icon name="book" /><span>{v.lesson}</span><Icon name="quote" /></div><div class="ps-impacted"><Icon name="quiz" /><span>{v.exam}</span><Icon name="quote" /></div><div class="ps-approval"><Icon name="shield" />{v.approval}</div></div></div>}
+          {i === 6 && <div class="ps-renew-scene"><div class="ps-renew-left"><div class="ps-notification"><Icon name="mail" /><div><b>{v.policy} · v2</b><p>{v.notification}</p></div></div><span class="ps-expired"><Icon name="medal" /> PDF · v1 <b>{v.expired}</b></span><div class="ps-renew-paths"><span><Icon name="quiz" />{v.minor}</span><span><Icon name="book" />{v.major}</span></div></div><Icon name="arrow" class="ps-update-arrow" /><div class="ps-certificate ps-certificate--renewed"><Icon name="medal" /><span>PDF</span><h4>{v.renewed}</h4><span class="ps-certificate-line" /><b>{v.policy}</b><small>v2</small><span class="ps-certified"><Icon name="check" />{v.renewal}</span></div></div>}
+        </div>
+      </section>)}
+    </div>
+    <div class="ps-bottom">
+      <div class="ps-navigation" role="tablist" aria-label={ariaLabel}>{v.chapters.map((label, i) => <button type="button" role="tab" id={`policy-tab-${i}`} aria-controls={`policy-panel-${i}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-step={i}><Icon name={icons[i] ?? "book"} /><span>{label}</span><i /></button>)}</div>
+      <div class="ps-controls"><button type="button" data-play aria-label={t.pause} title={t.pause} data-pause-label={t.pause} data-play-label={t.play} aria-pressed="false"><Icon name="pause" class="ps-pause-icon" /><Icon name="play" class="ps-play-icon" /></button><button type="button" data-replay aria-label={t.replay} title={t.replay}><Icon name="sync" /></button></div>
+    </div>
+  </ulams-policy-story>
+  {note && <figcaption>{note}</figcaption>}
+</figure>
+<noscript><style is:inline>.ps-panel[hidden]{display:block!important}.ps-bottom{display:none!important}.ps-panel+.ps-panel{border-top:1px solid var(--ulams-color-border)}ulams-policy-story *{animation:none!important}.ps-chat-message{grid-template-rows:1fr!important}.ps-chat-typing{display:none!important}</style></noscript>
+<script>
+  class PolicyStory extends HTMLElement {
+    private index = 0;
+    private motion = matchMedia("(prefers-reduced-motion: reduce)");
+    private paused = this.motion.matches;
+    private visible = false;
+    private timer?: ReturnType<typeof setTimeout>;
+    private observer?: IntersectionObserver;
+    private tabs: HTMLButtonElement[] = [];
+    private panels: HTMLElement[] = [];
+    connectedCallback() {
+      this.tabs = Array.from(
+        this.querySelectorAll<HTMLButtonElement>("[data-step]")
+      );
+      this.panels = Array.from(this.querySelectorAll<HTMLElement>(".ps-panel"));
+      this.tabs.forEach((tab, i) => {
+        tab.addEventListener("click", (event) => {
+          this.paused = this.motion.matches || event.detail === 0;
+          this.toggleAttribute("data-settled", this.paused);
+          this.select(i);
+          this.updatePlayback();
+        });
+        tab.addEventListener("keydown", (e) => {
+          const next =
+            e.key === "ArrowRight"
+              ? (i + 1) % this.tabs.length
+              : e.key === "ArrowLeft"
+              ? (i + this.tabs.length - 1) % this.tabs.length
+              : e.key === "Home"
+              ? 0
+              : e.key === "End"
+              ? this.tabs.length - 1
+              : -1;
+          if (next >= 0) {
+            e.preventDefault();
+            this.tabs[next]?.click();
+            this.tabs[next]?.focus();
+          }
+        });
+      });
+      this.querySelector("[data-play]")?.addEventListener("click", () => {
+        this.paused = !this.paused;
+        if (!this.paused) this.removeAttribute("data-settled");
+        this.updatePlayback();
+      });
+      this.querySelector("[data-replay]")?.addEventListener("click", () => {
+        this.toggleAttribute("data-settled", this.motion.matches);
+        this.select(0);
+        this.paused = this.motion.matches;
+        this.updatePlayback();
+      });
+      this.addEventListener("animationend", (event) => {
+        if ((event as AnimationEvent).animationName !== "ps-chat-expand") return;
+        const chat = (event.target as Element).closest<HTMLElement>(".ps-brief-chat");
+        if (chat) chat.scrollTop = chat.scrollHeight;
+      });
+      this.observer = new IntersectionObserver(
+        ([entry]) => {
+          this.visible = Boolean(entry?.isIntersecting);
+          this.updatePlayback();
+        },
+        { threshold: 0.2 }
+      );
+      this.observer.observe(this);
+      document.addEventListener("visibilitychange", this.onVisibility);
+      this.motion.addEventListener("change", this.onMotion);
+      this.updatePlayback();
+    }
+    disconnectedCallback() {
+      clearTimeout(this.timer);
+      this.observer?.disconnect();
+      document.removeEventListener("visibilitychange", this.onVisibility);
+      this.motion.removeEventListener("change", this.onMotion);
+    }
+    private onMotion = () => {
+      if (this.motion.matches) this.paused = true;
+      this.updatePlayback();
+    };
+    private onVisibility = () => this.updatePlayback();
+    private select(i: number) {
+      this.index = i;
+      this.tabs.forEach((tab, n) => {
+        tab.setAttribute("aria-selected", String(n === i));
+        tab.tabIndex = n === i ? 0 : -1;
+      });
+      this.panels.forEach((panel) => { panel.hidden = true; });
+      // Restart the selected scene's visual sequence, including when replaying scene zero.
+      void this.offsetWidth;
+      const panel = this.panels[i];
+      if (panel) {
+        panel.hidden = false;
+        const chat = panel.querySelector<HTMLElement>(".ps-brief-chat");
+        if (chat) chat.scrollTop = 0;
+      }
+    }
+    private updatePlayback() {
+      clearTimeout(this.timer);
+      this.toggleAttribute("data-paused", this.paused);
+      this.toggleAttribute("data-animation-paused", this.paused || !this.visible || document.hidden);
+      const button = this.querySelector<HTMLButtonElement>("[data-play]");
+      button?.setAttribute("aria-pressed", String(this.paused));
+      const label =
+        (this.paused ? button?.dataset.playLabel : button?.dataset.pauseLabel) ??
+        "";
+      button?.setAttribute("aria-label", label);
+      button?.setAttribute("title", label);
+      if (!this.paused && this.visible && !document.hidden)
+        this.timer = setTimeout(() => {
+          if (!this.tabs.some((tab) => tab === document.activeElement)) this.select((this.index + 1) % this.tabs.length);
+          this.updatePlayback();
+        }, Number(this.panels[this.index]?.dataset.duration ?? 6000));
+    }
+  }
+  if (!customElements.get("ulams-policy-story"))
+    customElements.define("ulams-policy-story", PolicyStory);
+</script>
+<style>
+  .policy-story {
+    width: 100%;
+    margin: 0;
+    color: var(--ulams-color-text);
+    font-family: var(--ulams-font-family-body);
+    text-align: left;
+  }
+  ulams-policy-story {
+    display: block;
+    overflow: hidden;
+    background: transparent;
+    border-block: 1px solid var(--ulams-color-border);
+    border-radius: 0;
+  }
+  .ps-topline {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px;
+    color: var(--ulams-color-muted);
+    font: 600 0.67rem var(--ulams-font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .ps-version {
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+    color: var(--ulams-color-primary);
+  }
+  .ps-version :global(svg) {
+    width: 14px;
+  }
+  .ps-scenes {
+    display: grid;
+  }
+  .ps-panel {
+    display: grid;
+    grid-area: 1/1;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.5fr);
+    gap: 30px;
+    align-items: center;
+    min-height: 520px;
+    padding: 30px;
+    animation: ps-enter 0.45s ease both;
+  }
+  .ps-panel[hidden] {
+    display: none;
+  }
+  .ps-narration {
+    min-width: 0;
+  }
+  .ps-chapter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    color: var(--ulams-color-muted);
+    font: 500 0.68rem var(--ulams-font-mono);
+  }
+  .ps-narration h2 {
+    margin: 18px 0 12px;
+    color: var(--ulams-color-text);
+    font-weight: 700;
+    font-size: 1.55rem;
+    font-family: var(--ulams-font-family-body);
+    line-height: 1.2;
+    letter-spacing: -0.045em;
+  }
+  .ps-narration > p {
+    margin: 0;
+    color: var(--ulams-color-muted);
+    font-size: 0.86rem;
+    line-height: 1.65;
+  }
+  .ps-scene {
+    display: grid;
+    min-width: 0;
+    min-height: 320px;
+    padding: 18px;
+    background: transparent;
+    border-radius: 0;
+    place-items: center;
+  }
+  .ps-explanation { display:grid; gap:9px; margin:17px 0 0; padding-left:18px; color:var(--ulams-color-text); font-size:.8rem; line-height:1.6; }
+  .ps-explanation li { padding-left:3px; }
+  .ps-explanation li::marker { color:var(--ulams-color-accent); }
+  .ps-scene h4 {
+    margin: 10px 0;
+    color: var(--ulams-color-text);
+    font: 700 1rem/1.3 var(--ulams-font-family-body);
+    letter-spacing: -0.025em;
+  }
+  .ps-small,
+  .ps-section {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    color: var(--ulams-color-muted);
+    font: 500 0.64rem/1.5 var(--ulams-font-mono);
+  }
+  .ps-small :global(svg) {
+    width: 14px;
+  }
+  .ps-document {
+    width: 260px;
+    max-width: 100%;
+    padding: 24px;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 3px 3px 16px 3px;
+    box-shadow: 8px 8px 0
+        color-mix(in srgb, var(--ulams-color-primary) 5%, transparent),
+      0 12px 35px -25px var(--ulams-color-primary);
+    transform: rotate(-3deg);
+  }
+  .ps-source-scene {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .ps-file {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    color: var(--ulams-color-muted);
+    font: 500 0.55rem var(--ulams-font-mono);
+  }
+  .ps-file :global(svg) {
+    width: 16px;
+  }
+  .ps-file b {
+    margin-left: auto;
+  }
+  .ps-document h4 {
+    margin-top: 22px;
+    font-size: 1.25rem;
+  }
+  .ps-doc-rule {
+    display: block;
+    height: 2px;
+    margin: 12px 0;
+    background: var(--ulams-color-primary);
+  }
+  .ps-quote {
+    font-size: 0.77rem;
+    line-height: 1.5;
+  }
+  .ps-paper-lines {
+    display: grid;
+    gap: 6px;
+    margin: 20px 0;
+  }
+  .ps-paper-lines i {
+    height: 4px;
+    background: var(--ulams-color-border);
+  }
+  .ps-paper-lines i:last-child {
+    width: 65%;
+  }
+  .ps-doc-footer {
+    color: var(--ulams-color-muted);
+    font: 500 0.55rem var(--ulams-font-mono);
+  }
+  .ps-source-link {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    color: var(--ulams-color-muted);
+    font-size: 0.67rem;
+    text-align: center;
+  }
+  .ps-source-link :global(svg) {
+    width: 25px;
+    color: var(--ulams-color-primary);
+  }
+  .ps-paths-scene {
+    width: 100%;
+  }
+  .ps-source-node {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+  }
+  .ps-source-node :global(svg) {
+    width: 20px;
+  }
+  .ps-source-node > span {
+    padding: 3px 7px;
+    font: 500 0.6rem var(--ulams-font-mono);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 4px;
+  }
+  .ps-branches {
+    display: flex;
+    justify-content: center;
+    width: 68%;
+    height: 30px;
+    margin: 12px auto 0;
+    border-top: 1px solid var(--ulams-color-primary);
+  }
+  .ps-branches span {
+    width: 50%;
+    border-left: 1px solid var(--ulams-color-primary);
+  }
+  .ps-branches span:last-child {
+    width: 0;
+  }
+  .ps-role-paths {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+  }
+  .ps-role {
+    min-width: 0;
+    padding: 12px;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 9px;
+  }
+  .ps-role > :global(svg) {
+    width: 20px;
+    color: var(--ulams-color-primary);
+  }
+  .ps-role h4 {
+    font-size: 0.76rem;
+  }
+  .ps-role p {
+    color: var(--ulams-color-muted);
+    font-size: 0.65rem;
+    line-height: 1.5;
+  }
+  .ps-cite {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    color: var(--ulams-color-muted);
+    font: 500 0.51rem var(--ulams-font-mono);
+  }
+  .ps-cite :global(svg) {
+    width: 11px;
+  }
+  .ps-learn-scene {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+  }
+  .ps-academy {
+    overflow: hidden;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 9px;
+  }
+  .ps-browser {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 9px;
+    color: var(--ulams-color-muted);
+    font-size: 0.5rem;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .ps-browser :global(svg) {
+    width: 11px;
+  }
+  .ps-dots {
+    font-size: 0.4rem;
+    letter-spacing: 2px;
+  }
+  .ps-academy-body {
+    padding: 15px;
+  }
+  .ps-academy h4 {
+    font-size: 0.9rem;
+  }
+  .ps-lesson-tiles {
+    display: grid;
+    gap: 7px;
+    margin-top: 15px;
+  }
+  .ps-lesson-tiles > span {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 8px;
+    font-size: 0.6rem;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 5px;
+  }
+  .ps-lesson-tiles :global(svg) {
+    flex: 0 0 14px;
+    width: 14px;
+  }
+  .ps-lesson-tiles :global(svg:last-child) {
+    margin-left: auto;
+    color: var(--ulams-color-positive);
+  }
+  .ps-certificate {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 12px;
+    text-align: center;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid
+      color-mix(
+        in srgb,
+        var(--ulams-color-primary) 30%,
+        var(--ulams-color-border)
+      );
+    border-radius: 2px;
+    outline: 3px solid var(--ulams-color-card-bg);
+    box-shadow: 0 10px 30px -20px var(--ulams-color-primary);
+    transform: rotate(3deg);
+  }
+  .ps-certificate > :global(svg) {
+    width: 30px;
+    color: var(--ulams-color-accent);
+  }
+  .ps-certificate > span:not(.ps-certified) {
+    margin: 5px;
+    font: 500 0.5rem var(--ulams-font-mono);
+    letter-spacing: 0.12em;
+  }
+  .ps-certificate h4 {
+    font-size: 0.9rem;
+    font-family: var(--ulams-font-family);
+  }
+  .ps-certificate > b {
+    font-size: 0.6rem;
+  }
+  .ps-certificate > small {
+    margin: 7px;
+    font: 500 0.55rem var(--ulams-font-mono);
+  }
+  .ps-certificate-line {
+    width: 60%;
+    height: 1px;
+    background: var(--ulams-color-border);
+  }
+  .ps-certified {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-top: 8px;
+    color: var(--ulams-color-positive);
+    font-size: 0.55rem;
+  }
+  .ps-certified :global(svg) {
+    width: 12px;
+  }
+  .ps-owner-scene {
+    width: 100%;
+    padding: 18px;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 10px;
+  }
+  .ps-owner-title {
+    display: flex;
+    gap: 9px;
+    align-items: center;
+  }
+  .ps-owner-avatar {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    color: var(--ulams-color-on-primary);
+    background: var(--ulams-color-primary);
+    border-radius: 9px;
+    place-items: center;
+  }
+  .ps-owner-avatar :global(svg) {
+    width: 18px;
+  }
+  .ps-owner-title small {
+    color: var(--ulams-color-muted);
+    font-size: 0.56rem;
+  }
+  .ps-owner-title h4 {
+    margin: 3px 0;
+    font-size: 0.9rem;
+  }
+  .ps-source-tag {
+    margin-left: auto;
+    font: 500 0.6rem var(--ulams-font-mono);
+  }
+  .ps-roster {
+    margin-top: 18px;
+  }
+  .ps-roster > div {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr 0.55fr;
+    gap: 8px;
+    align-items: center;
+    padding: 13px 0;
+    font-size: 0.64rem;
+    border-top: 1px solid var(--ulams-color-border);
+  }
+  .ps-roster > div > span {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+  .ps-roster :global(svg) {
+    flex: 0 0 13px;
+    width: 13px;
+  }
+  .ps-complete {
+    color: var(--ulams-color-positive);
+  }
+  .ps-pending {
+    color: var(--ulams-color-warn);
+  }
+  .ps-roster-pdf {
+    color: var(--ulams-color-muted);
+    font: 500 0.52rem var(--ulams-font-mono);
+  }
+  .ps-roster-source {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    color: var(--ulams-color-muted);
+    font-size: 0.57rem;
+  }
+  .ps-roster-source :global(svg) {
+    width: 12px;
+  }
+  .ps-update-scene {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+  }
+  .ps-update-doc,
+  .ps-proposal {
+    padding: 13px;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 9px;
+  }
+  .ps-update-doc h4 {
+    font-size: 0.84rem;
+  }
+  .ps-update-doc h4 b {
+    display: inline-block;
+    padding: 3px 5px;
+    color: var(--ulams-color-on-primary);
+    font: 0.55rem var(--ulams-font-mono);
+    background: var(--ulams-color-primary);
+    border-radius: 4px;
+  }
+  .ps-removed,
+  .ps-added {
+    padding: 8px;
+    font-size: 0.64rem;
+    line-height: 1.5;
+    border-radius: 5px;
+  }
+  .ps-removed {
+    color: var(--ulams-color-error);
+    text-decoration: line-through;
+    background: color-mix(in srgb, var(--ulams-color-error) 8%, transparent);
+  }
+  .ps-added {
+    color: var(--ulams-color-positive);
+    background: color-mix(in srgb, var(--ulams-color-positive) 9%, transparent);
+  }
+  .ps-update-arrow {
+    width: 20px;
+    color: var(--ulams-color-primary);
+  }
+  .ps-impacted {
+    display: flex;
+    gap: 7px;
+    align-items: center;
+    padding: 11px 0;
+    font-size: 0.66rem;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .ps-impacted :global(svg) {
+    flex: 0 0 15px;
+    width: 15px;
+  }
+  .ps-impacted :global(svg:last-child) {
+    margin-left: auto;
+    color: var(--ulams-color-accent);
+  }
+  .ps-approval {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    margin-top: 12px;
+    font-size: 0.6rem;
+    line-height: 1.5;
+  }
+  .ps-approval :global(svg) {
+    flex: 0 0 17px;
+    width: 17px;
+    color: var(--ulams-color-positive);
+  }
+  .ps-renew-scene {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) 18px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+    width: 100%;
+  }
+  .ps-notification {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    font-size: 0.64rem;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 9px;
+  }
+  .ps-notification > :global(svg) {
+    flex: 0 0 17px;
+    width: 17px;
+    color: var(--ulams-color-accent);
+  }
+  .ps-notification p {
+    margin: 5px 0 0;
+    color: var(--ulams-color-muted);
+    font-size: 0.6rem;
+    line-height: 1.5;
+  }
+  .ps-expired {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    padding: 10px 0;
+    color: var(--ulams-color-muted);
+    font: 500 0.55rem var(--ulams-font-mono);
+  }
+  .ps-expired :global(svg) {
+    width: 15px;
+  }
+  .ps-expired b {
+    padding: 3px 5px;
+    color: var(--ulams-color-error);
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    transform: rotate(-3deg);
+  }
+  .ps-renew-paths {
+    display: grid;
+    gap: 7px;
+  }
+  .ps-renew-paths > span {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    padding: 9px;
+    font-size: 0.6rem;
+    background: var(--ulams-color-card-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 6px;
+  }
+  .ps-renew-paths :global(svg) {
+    flex: 0 0 14px;
+    width: 14px;
+  }
+  .ps-certificate--renewed {
+    border-color: var(--ulams-color-positive);
+  }
+  .ps-bottom {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 0 24px 20px;
+  }
+  .ps-navigation {
+    display: grid;
+    flex: 1;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 7px;
+  }
+  .ps-navigation button {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    align-items: center;
+    padding: 10px 2px 12px;
+    color: var(--ulams-color-muted);
+    font: 600 0.6rem/1.3 var(--ulams-font-family-body);
+    text-align: center;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+  .ps-navigation :global(svg) {
+    width: 16px;
+  }
+  .ps-navigation button > i {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    background: var(--ulams-color-border);
+  }
+  .ps-navigation button[aria-selected="true"] {
+    color: var(--ulams-color-primary);
+  }
+  .ps-navigation button[aria-selected="true"] > i {
+    background: var(--ulams-color-accent);
+  }
+  .ps-controls {
+    display: flex;
+    gap: 5px;
+  }
+  .ps-controls button {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    color: var(--ulams-color-primary);
+    background: var(--ulams-color-bg);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 50%;
+    cursor: pointer;
+    place-items: center;
+  }
+  .ps-controls :global(svg) {
+    width: 14px;
+  }
+  .ps-controls :global(.ps-play-icon),
+  .ps-controls [aria-pressed="true"] :global(.ps-pause-icon) {
+    display: none;
+  }
+  .ps-controls [aria-pressed="true"] :global(.ps-play-icon) {
+    display: block;
+  }
+  .ps-navigation button:focus-visible,
+  .ps-controls button:focus-visible,
+  .ps-panel:focus-visible {
+    outline: 3px solid var(--ulams-brand-blue);
+    outline-offset: 3px;
+  }
+  .policy-story > figcaption {
+    max-width: 85ch;
+    margin: 12px auto 0;
+    color: var(--ulams-color-muted);
+    font-size: 0.7rem;
+    line-height: 1.6;
+    text-align: center;
+  }
+  .ps-role {
+    animation: ps-enter 0.5s 0.15s ease both;
+  }
+  .ps-role:nth-child(2) {
+    animation-delay: 0.3s;
+  }
+  .ps-role:nth-child(3) {
+    animation-delay: 0.45s;
+  }
+  .ps-certificate {
+    animation: ps-paper-enter 0.65s 0.5s ease both;
+  }
+  .ps-proposal {
+    animation: ps-enter 0.5s 0.55s ease both;
+  }
+  .ps-added {
+    animation: ps-enter 0.5s 0.2s ease both;
+  }
+  .ps-notification {
+    animation: ps-enter 0.5s 0.1s ease both;
+  }
+  .ps-renew-paths {
+    animation: ps-enter 0.5s 0.35s ease both;
+  }
+  .ps-intake-scene { width:100%; max-width:480px; }
+  .ps-upload-panel { padding:12px; border:1px solid var(--ulams-color-border); border-radius:10px; background:var(--ulams-color-card-bg); }
+  .ps-upload-actor { display:flex; align-items:center; gap:8px; font-size:.65rem; }
+  .ps-upload-actor>span:last-child { margin-left:auto; color:var(--ulams-color-muted); }
+  .ps-upload-face { width:33px; flex:0 0 33px; }
+  .ps-upload-files { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .ps-upload-file--styleguide { animation:ps-reveal .4s .7s both; }
+  .ps-style-done { color:var(--ulams-color-positive); animation:ps-stamp .3s 1.9s both; }
+  .ps-style-done :global(svg) { width:16px; }
+  .ps-brand-swatches { display:flex; gap:4px; padding-top:4px; }
+  .ps-brand-swatches i { display:block; width:18px; height:5px; border-radius:2px; background:var(--ulams-color-primary); }
+  .ps-brand-swatches i:nth-child(2) { background:var(--ulams-color-accent); }
+  .ps-brand-swatches i:nth-child(3) { background:var(--ulams-color-positive); }
+  .ps-department-domain { display:flex; align-items:center; justify-content:center; gap:4px; padding-bottom:9px; margin-bottom:12px; border-bottom:1px solid var(--ulams-color-border); font:.5rem/1.4 var(--ulams-font-mono); color:var(--ulams-color-muted); }
+  .ps-department-domain span { overflow-wrap:anywhere; }
+  .ps-department-domain :global(svg) { width:10px; flex:0 0 10px; }
+  .ps-role[data-department="management"] { border-radius:3px; border-top:3px solid var(--ulams-color-primary); background:color-mix(in srgb,var(--ulams-color-primary) 7%,var(--ulams-color-card-bg)); }
+  .ps-role[data-department="hr"] { border-radius:16px 16px 4px 4px; border-top:3px solid var(--ulams-color-accent); background:color-mix(in srgb,var(--ulams-color-accent) 7%,var(--ulams-color-card-bg)); }
+  .ps-role[data-department="hr"] h4 { font-family:var(--ulams-font-family); font-size:1.1rem; }
+  .ps-role[data-department="sales"] { border-radius:6px; border-top:3px solid var(--ulams-color-positive); background:color-mix(in srgb,var(--ulams-color-positive) 7%,var(--ulams-color-card-bg)); }
+  .ps-upload-file { display:flex; align-items:center; gap:9px; padding:10px 8px; background:var(--ulams-color-bg); border:1px solid var(--ulams-color-border); border-radius:7px; }
+  .ps-upload-file>:global(svg) { width:25px; flex:0 0 25px; color:var(--ulams-color-primary); }
+  .ps-upload-file>div { flex:1; min-width:0; display:grid; gap:3px; font-size:.65rem; }
+  .ps-upload-file small { font-size:.57rem; color:var(--ulams-color-muted); }
+  .ps-upload-track { display:block; height:3px; margin-top:4px; border-radius:2px; background:var(--ulams-color-border); overflow:hidden; }
+  .ps-upload-track>i { display:block; width:100%; height:100%; background:var(--ulams-color-positive); transform-origin:left; animation:ps-upload 1.2s .3s linear both; }
+  .ps-upload-done { animation:ps-reveal .3s 1.5s both; color:var(--ulams-color-positive); }
+  .ps-upload-done :global(svg) { width:16px; }
+  .ps-ingest-pipeline { display:grid; gap:7px; padding:12px 0 0 22px; border-left:1px dashed var(--ulams-color-border); margin-left:20px; }
+  .ps-ingest-node { display:flex; align-items:center; gap:10px; padding:9px 12px; border:1px solid var(--ulams-color-border); border-radius:8px; background:var(--ulams-color-card-bg); }
+  .ps-ingest-node>div { flex:1; min-width:0; display:grid; gap:5px; }
+  .ps-ingest-node b { font-size:.68rem; }
+  .ps-ingest-icon { display:grid; place-items:center; width:28px; height:28px; background:var(--ulams-color-bg); border-radius:7px; color:var(--ulams-color-primary); }
+  .ps-ingest-icon :global(svg) { width:16px; }
+  .ps-ingest-node>:global(svg) { width:14px; color:var(--ulams-color-positive); }
+  .ps-ingest-node--extract { animation:ps-reveal .45s 1.7s both; }
+  .ps-ingest-node--context { animation:ps-reveal .45s 3.2s both; }
+  .ps-ingest-node--llm { animation:ps-reveal .45s 5.3s both; }
+  .ps-extracted-lines { display:grid; gap:4px; width:110px; max-width:100%; }
+  .ps-extracted-lines i { width:100%; height:3px; background:var(--ulams-color-border); transform-origin:left; animation:ps-upload .4s 2.1s both; }
+  .ps-extracted-lines i:nth-child(2) { width:85%; animation-delay:2.4s; }
+  .ps-extracted-lines i:nth-child(3) { width:65%; animation-delay:2.7s; }
+  .ps-ingest-node--extract>:global(svg) { animation:ps-stamp .3s 3s both; }
+  .ps-ingest-node--context>:global(svg) { animation:ps-stamp .3s 5s both; }
+  .ps-ingest-node--llm>:global(svg) { animation:ps-stamp .3s 6.8s both; }
+  .ps-ingest-node--llm .ps-small { animation:ps-reveal .4s 6.8s both; }
+  .ps-source-fragments i { animation:ps-reveal .35s 3.7s both; }
+  .ps-source-fragments i:nth-child(2) { animation-delay:4.1s; }
+  .ps-source-fragments i:nth-child(3) { animation-delay:4.5s; }
+  .ps-source-fragments>:global(svg) { animation:ps-reveal .3s 4.9s both; }
+  .ps-ingest-node--llm .ps-ingest-icon :global(svg) { animation:ps-reading 1s 5.3s 2; }
+  @keyframes ps-reading { to { transform:rotate(360deg); } }
+  .ps-source-fragments { display:flex; gap:5px; align-items:center; font:.54rem var(--ulams-font-mono); }
+  .ps-source-fragments i { padding:3px 6px; border:1px solid var(--ulams-color-border); border-radius:4px; font-style:normal; }
+  .ps-source-fragments :global(svg) { width:13px; color:var(--ulams-color-accent); }
+  .ps-ingest-quote { display:flex; align-items:flex-start; gap:7px; padding:10px 0 0 43px; color:var(--ulams-color-muted); font-size:.6rem; animation:ps-reveal .5s 7.1s both; }
+  .ps-ingest-quote :global(svg) { width:14px; flex:0 0 14px; color:var(--ulams-color-accent); }
+  .ps-ingest-quote>span { display:grid; gap:3px; }
+  .ps-brief-scene { width:100%; max-width:500px; background:var(--ulams-color-card-bg); border:1px solid var(--ulams-color-border); border-radius:10px; overflow:hidden; }
+  .ps-brief-bar { display:flex; align-items:center; gap:7px; padding:12px; border-bottom:1px solid var(--ulams-color-border); font-size:.64rem; }
+  .ps-brief-bar>:global(svg) { width:17px; color:var(--ulams-color-accent); }
+  .ps-brief-source { display:flex; align-items:center; gap:4px; margin-left:auto; color:var(--ulams-color-muted); font:.53rem var(--ulams-font-mono); }
+  .ps-brief-source :global(svg) { width:12px; }
+  .ps-brief-chat { height:320px; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:thin; padding:12px; }
+  .ps-brief-chat-log { display:flex; flex-direction:column; min-height:100%; justify-content:flex-start; }
+  .ps-brief-pair { display:contents; }
+  .ps-chat-message { display:grid; grid-template-rows:0fr; animation:ps-chat-expand .45s ease both; }
+  .ps-chat-message--question { animation-delay:calc(.35s + var(--pair) * 3s); }
+  .ps-chat-message--answer { animation-delay:calc(1s + var(--pair) * 3s); }
+  .ps-chat-message-inner { min-height:0; overflow:hidden; }
+  .ps-brief-question, .ps-brief-answer { display:flex; align-items:flex-end; gap:7px; margin:0; padding:4px 0; font-size:.75rem; line-height:1.45; }
+  .ps-brief-question { animation:ps-reveal .4s calc(.35s + var(--pair) * 3s) both; }
+  .ps-chat-agent { display:grid; flex:0 0 24px; width:24px; height:24px; place-items:center; border-radius:50%; background:var(--ulams-color-bg); color:var(--ulams-color-accent); }
+  .ps-chat-agent :global(svg) { width:14px; }
+  .ps-chat-bubble { max-width:86%; padding:8px 10px; border:1px solid var(--ulams-color-border); border-radius:12px 12px 12px 3px; background:var(--ulams-color-bg); }
+  .ps-chat-bubble small { display:block; margin-bottom:2px; font-size:.54rem; font-weight:700; color:var(--ulams-color-muted); }
+  .ps-chat-reply { position:relative; }
+  .ps-brief-answer { justify-content:flex-end; animation:ps-reveal .4s calc(1.9s + var(--pair) * 3s) both; }
+  .ps-brief-answer .ps-chat-bubble { border-radius:12px 12px 3px 12px; background:color-mix(in srgb,var(--ulams-color-primary) 8%,var(--ulams-color-card-bg)); }
+  .ps-answer-person { order:2; flex:0 0 24px; }
+  .ps-answer-person :global(svg) { width:24px; }
+  .ps-chat-typing { position:absolute; right:31px; bottom:4px; display:flex; gap:4px; align-items:center; padding:11px 13px; border:1px solid var(--ulams-color-border); border-radius:12px 12px 3px 12px; background:var(--ulams-color-bg); animation:ps-typing-window .85s calc(1s + var(--pair) * 3s) linear both; }
+  .ps-chat-typing i { width:4px; height:4px; border-radius:50%; background:var(--ulams-color-muted); animation:ps-typing-dot .75s ease-in-out infinite; }
+  .ps-chat-typing i:nth-child(2) { animation-delay:.12s; }
+  .ps-chat-typing i:nth-child(3) { animation-delay:.24s; }
+  .ps-brief-ready { display:flex; align-items:center; flex-wrap:wrap; gap:6px; padding:10px 12px; border-top:1px solid var(--ulams-color-border); font-size:.6rem; color:var(--ulams-color-positive); animation:ps-reveal .5s 12s both; }
+  .ps-brief-ready>:global(svg) { width:14px; }
+  .ps-brief-ready>span { margin-left:auto; font-size:.52rem; color:var(--ulams-color-muted); }
+  @keyframes ps-chat-expand { from { grid-template-rows:0fr; } to { grid-template-rows:1fr; } }
+  @keyframes ps-typing-window { 0%,100% { opacity:0; } 5%,90% { opacity:1; } }
+  @keyframes ps-typing-dot { 0%,70%,100% { transform:none; } 35% { transform:translateY(-3px); } }
+  ulams-policy-story[data-settled] .ps-chat-message { grid-template-rows:1fr; }
+  ulams-policy-story[data-settled] .ps-chat-typing { display:none; }
+  .ps-role-person { display:block; width:54px; margin:0 auto; }
+  .ps-role { text-align:center; }
+  .ps-role .ps-cite { justify-content:center; }
+  .ps-roster-person { display:block; width:28px; flex:0 0 28px; }
+  .ps-roster .ps-roster-person :global(svg) { width:28px; }
+  .ps-owner-avatar { width:32px; height:auto; background:transparent; }
+  .ps-owner-avatar :global(svg) { width:32px; }
+  .ps-learner-person { display:block; width:24px; }
+  .ps-learner-identity .ps-learner-person :global(svg) { width:24px; }
+  /* Reveal the consequence of each action in sequence, rather than the whole scene at once. */
+  .ps-scene--2 .ps-source-node { animation:ps-reveal .5s .2s both; }
+  .ps-scene--2 .ps-branches { transform-origin:top; animation:ps-draw .7s .7s both; }
+  .ps-scene--2 .ps-role { animation:ps-reveal .6s 1.3s both; }
+  .ps-scene--2 .ps-role:nth-child(2) { animation-delay:2s; }
+  .ps-scene--2 .ps-role:nth-child(3) { animation-delay:2.7s; }
+  .ps-scene--3 .ps-lesson-tiles>span { animation:ps-reveal .5s .4s both; }
+  .ps-scene--3 .ps-lesson-tiles>span:nth-child(2) { animation-delay:1.4s; }
+  .ps-scene--3 .ps-lesson-tiles>span:nth-child(3) { animation-delay:2.4s; }
+  .ps-scene--3 .ps-lesson-tiles>span>:global(svg:last-child) { animation:ps-stamp .4s 1.1s both; }
+  .ps-scene--3 .ps-lesson-tiles>span:nth-child(2)>:global(svg:last-child) { animation-delay:2.1s; }
+  .ps-scene--3 .ps-lesson-tiles>span:nth-child(3)>:global(svg:last-child) { animation-delay:3.1s; }
+  .ps-scene--3 .ps-certificate { animation:ps-paper-enter .65s 3.7s both; }
+  .ps-scene--4 .ps-roster>div { animation:ps-reveal .5s .3s both; }
+  .ps-scene--4 .ps-roster>div:nth-child(2) { animation-delay:1.3s; }
+  .ps-scene--4 .ps-roster>div:nth-child(3) { animation-delay:2.3s; }
+  .ps-scene--4 .ps-complete { animation:ps-stamp .5s 3.2s both; }
+  .ps-scene--5 .ps-removed { animation:ps-reveal .5s .6s both; }
+  .ps-scene--5 .ps-added { animation:ps-reveal .5s 1.4s both; }
+  .ps-scene--5 .ps-update-arrow { animation:ps-reveal .5s 2s both; }
+  .ps-scene--5 .ps-proposal { animation:ps-reveal .5s 2.5s both; }
+  .ps-scene--5 .ps-impacted:nth-of-type(2) { animation:ps-reveal .5s 3.2s both; }
+  .ps-scene--5 .ps-approval { animation:ps-reveal .5s 4s both; }
+  .ps-scene--6 .ps-notification { animation:ps-reveal .5s .3s both; }
+  .ps-scene--6 .ps-expired { animation:ps-reveal .5s 1.1s both; }
+  .ps-scene--6 .ps-renew-paths { animation:ps-reveal .5s 2s both; }
+  .ps-scene--6 .ps-update-arrow { animation:ps-reveal .5s 3s both; }
+  .ps-scene--6 .ps-certificate { animation:ps-paper-enter .65s 3.7s both; }
+  .ps-intake-scene, .ps-brief-scene { max-width:540px; }
+  .ps-upload-actor, .ps-upload-file>div, .ps-brief-bar { font-size:.75rem; }
+  .ps-ingest-node b, .ps-brief-question, .ps-brief-answer { font-size:.75rem; }
+  @keyframes ps-reveal { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  @keyframes ps-draw { from { opacity:0; transform:scaleY(0); } to { opacity:1; transform:scaleY(1); } }
+  @keyframes ps-stamp { from { opacity:0; transform:scale(.7); } to { opacity:1; transform:scale(1); } }
+  ulams-policy-story[data-settled] * { animation:none!important; }
+  ulams-policy-story[data-animation-paused]:not([data-settled]) * { animation-play-state:paused!important; }
+  @keyframes ps-upload { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+  @keyframes ps-paper-enter {
+    from {
+      transform: translateY(10px) rotate(3deg) scale(0.96);
+      opacity: 0;
+    }
+    to {
+      transform: rotate(3deg);
+      opacity: 1;
+    }
+  }
+  @keyframes ps-enter {
+    from {
+      transform: translateY(8px);
+      opacity: 0.3;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
+  }
+  @media (max-width: 760px) {
+    .ps-upload-files { grid-template-columns:minmax(0,1fr); }
+    .ps-role-paths { grid-template-columns:minmax(0,1fr); }
+    .ps-role { display:grid; grid-template-columns:38px minmax(0,1fr); column-gap:10px; text-align:left; }
+    .ps-department-domain { grid-column:1/-1; justify-content:flex-start; margin:0 0 6px; padding-bottom:5px; font-size:.56rem; }
+    .ps-role-person { grid-column:1; grid-row:2 / span 3; width:38px; align-self:center; }
+    .ps-role h4, .ps-role[data-department="hr"] h4 { grid-column:2; margin:0; font-size:.8rem; }
+    .ps-role p { grid-column:2; margin:4px 0; }
+    .ps-role .ps-cite { grid-column:2; justify-content:flex-start; }
+    .ps-panel {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 20px;
+      align-content: start;
+      min-height: 800px;
+      padding: 20px;
+    }
+    .ps-upload-actor, .ps-upload-file>div, .ps-brief-bar, .ps-ingest-node b, .ps-brief-question, .ps-brief-answer { font-size:.65rem; }
+    .ps-narration h2 {
+      margin-top: 12px;
+      font-size: 1.35rem;
+    }
+    .ps-narration > p {
+      font-size: 0.8rem;
+    }
+    .ps-scene {
+      min-height: 350px;
+      padding: 14px;
+    }
+    .ps-bottom {
+      flex-wrap: wrap;
+      padding: 0 15px 16px;
+    }
+    .ps-navigation {
+      flex-basis: 100%;
+    }
+    .ps-controls {
+      margin-left: auto;
+    }
+    .ps-navigation button {
+      font-size: 0.53rem;
+    }
+    .ps-topline {
+      padding: 12px 16px;
+      font-size: 0.56rem;
+    }
+    .ps-role {
+      padding: 9px;
+    }
+    .ps-role p {
+      font-size: 0.58rem;
+    }
+    .ps-source-scene {
+      gap: 12px;
+    }
+    .ps-source-link {
+      font-size: 0.56rem;
+    }
+    .ps-document {
+      width: 220px;
+      padding: 20px;
+    }
+    .ps-learn-scene {
+      gap: 8px;
+    }
+    .ps-certificate {
+      padding: 15px 8px;
+    }
+    .ps-update-scene {
+      grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr);
+      gap: 7px;
+    }
+    .ps-update-doc,
+    .ps-proposal {
+      padding: 10px;
+    }
+    .ps-renew-scene {
+      gap: 8px;
+    }
+    .ps-cite {
+      font-size: 0.45rem;
+    }
+    .ps-roster-pdf {
+      display: none;
+    }
+    .ps-roster > div {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ps-chat-message { grid-template-rows:1fr; }
+    .ps-chat-typing { display:none; }
+    .policy-story * {
+      animation: none !important;
+    }
+  }
+</style>

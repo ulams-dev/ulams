@@ -98,16 +98,16 @@ class Tenant extends Model
 
     public function apiUrl(): string
     {
-        return config('ulams_tenancy.scheme', 'http') . '://' . $this->api_host;
+        return \Ulams\Tenancy\Support\TenantNaming::origin($this->api_host);
     }
 
     public function frontUrl(): string
     {
-        return config('ulams_tenancy.scheme', 'http') . '://' . $this->front_host;
+        return \Ulams\Tenancy\Support\TenantNaming::origin($this->front_host);
     }
 
     public function adminUrl(): string
     {
-        return config('ulams_tenancy.scheme', 'http') . '://' . $this->admin_host;
+        return \Ulams\Tenancy\Support\TenantNaming::origin($this->admin_host);
     }
 }

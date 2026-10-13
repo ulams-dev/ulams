@@ -64,7 +64,6 @@ The H5P service re-reads the env files every `TENANT_RELOAD_CHECK_MS` (2 s).
 | Process control | `api` | `DISABLE_PHP_FPM`, `DISABLE_HORIZON`, `DISABLE_QUEUE`, `DISABLE_SCHEDULER`, `DISABLE_DB_MIGRATE`, `DISABLE_DB_SEED`, `DISABLE_TENANT_SYNC` |
 | Content Security Policy | `web`, `api`, proxy | `CSP_ENFORCE`, `ULAMS_CONTENT_ORIGIN`, `ULAMS_STORAGE_ORIGINS` (`web`); `CSP_REPORT_RETENTION_DAYS` (`api`); `ULAMS_CSP_HEADER` (admin policy in the proxy). See [Security headers](/operators/security-headers/) |
 | Front routing | `web`, `admin` | `ULAMS_TENANT_HOSTS`, `ULAMS_PLATFORM_HOSTS`, `REACT_APP_TENANT_API_HOST_PATTERN` |
-| Platform landing | `web` | `ULAMS_LANDING_STATUS` (`final` or `actual`, see [below](#the-platform-landing-switch)) |
 | Queues and workers | `api` (container) | `BUILDER_QUEUE_RETRY_AFTER` (`api`, default 2400); `QUEUE_CONNECTION`, `WORKERS_CHECK_INTERVAL`, `WORKERS_MAX_TIME`, `COURSE_BUILDER_QUEUE(_CONNECTION)`, `LONG_JOB_QUEUE_CONNECTION` and `LONG_JOB_QUEUE` (worker script and `config/queue.php`; the old `LONG_JOB_CONNECTION` is still accepted). See [Queues and the scheduler](/operators/queues-and-scheduler/) |
 | Scheduler | `api` | `TENANCY_SCHEDULER_LOCK` (default `true`: one replica runs each minute, ADR 0068). See [Queues and the scheduler](/operators/queues-and-scheduler/#the-scheduler-and-its-minute-lock) |
 | Demo mode | tenant env file | `DEMO_MODE` (default `false`), `DEMO_ADMIN_EMAIL`, `DEMO_STUDENT_EMAIL`, `DEMO_TUTOR_EMAIL`, `DEMO_ADMIN_URL`, `DEMO_RESET_SCHEDULE` (`true`), `DEMO_RESET_CRON` (`0 * * * *`), `DEMO_RESET_WIPE_FILES` (`false`), `DEMO_RESET_STUDENTS` (`5`), `ULAMS_DEMO_EXPERIENCE`. Set `DEMO_MODE` with `ulams:tenant:create <slug> --demo=on`, never on the platform. See [Demo mode](/admin/demo-mode/) |
@@ -104,24 +103,10 @@ lowest first:
 The tenant's own values (database, bucket, keys, URLs, Redis prefix, `DEMO_MODE`, `CONTENT_ORIGIN`)
 come from the `tenants` table and replace the platform's.
 
-## The platform landing switch
+## Public product page status
 
-`ULAMS_LANDING_STATUS` is read by the `web` container when it starts. It only changes what the
-platform landing (the product page on the platform host, not a tenant's site) shows for roadmap
-items:
-
-| Value | Effect |
-|---|---|
-| `final` (default; any other or empty value counts as `final`) | Every roadmap item reads as delivered: no Coming or Preview badges, no roadmap captions, and ulams's own Coming and Partial cells in the comparison table read Yes |
-| `actual` | The honest status kept in the data files; competitor cells never change |
-
-<Aside type="caution">
-  The default is `final`, and the [production example](/operators/self-hosting/) does not set the
-  variable. Before a public launch set `ULAMS_LANDING_STATUS=actual` on the `web` service, or confirm
-  that everything the landing shows has shipped. Set it in the `environment:` of the `web` container
-  in Compose, or in `front/web/.env` for a local run. See
-  [Reference frontend](/developers/reference-frontend/#configuration).
-</Aside>
+The Overview and Comparison pages always display the actual product and roadmap status from the
+source data. There is no environment switch that can present planned work as shipped.
 
 ## Repository documents
 

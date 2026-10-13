@@ -9,6 +9,6 @@ const page = await platformPage("en", Astro.request, Astro.url);
 if (!page) return Astro.rewrite("/404");
 ---
 
-<Base theme="platform" title={page.meta.title} description={page.meta.description} lang={page.meta.lang} canonical={page.canonical} alternates={page.alternates} ogLocale={page.ogLocale}>
+<Base theme="platform" title={page.meta.title} description={page.meta.description} lang={page.meta.lang} canonical={page.canonical} alternates={page.alternates} ogLocale={page.ogLocale} jsonLd={page.jsonLd}>
   <Render doc={page.doc} data={page.data} />
 </Base>

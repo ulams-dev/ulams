@@ -1,0 +1,8 @@
+{
+  "name": "@ulams/mjml-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "dependencies": { "mjml": "4.17.1" }
+}

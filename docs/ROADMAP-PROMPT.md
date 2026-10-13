@@ -41,9 +41,9 @@ Therefore:
    scoped permissions and a separate audit trail for agent actions.
 8. **Easy to self-host.** One command to run, minimal dependencies, works without AI and without
    internet access, painless upgrades.
-9. **Open core.** Free self-hosted core; paid cloud (AI included), enterprise features (SSO/SCIM,
-   audit, compliance, certificates) and support. Keep the core genuinely useful; check the
-   licences of all `escolalms/*` packages before deciding what can be paid (report in Phase 0).
+9. **Open source.** Free self-hosted software, with no planned paid cloud or paid enterprise tier.
+   Product capabilities belong to the open-source roadmap. Audit the licences of all
+   `escolalms/*` packages and dependencies (report in Phase 0).
 
 ---
 
@@ -67,7 +67,7 @@ Therefore:
 - How content updates preserve learner progress today (Wellms advertises this; find the mechanism).
 - Test setup, CI, code style, queue (Horizon), storage, existing LLM/AI code if any.
 - Licence audit: licence of every `escolalms/*` package and key third-party dependency, and what
-  it allows for an open-core model (closed paid modules, SaaS use, redistribution).
+  it allows for open-source distribution, self-hosting and redistribution.
 - Runtime dependencies inventory (DB, Redis, queues, workers, external services) as input for
   Phase 8 self-hosting simplification.
 - Commerce audit (input for 6.4): what `payments`, `cart`, `vouchers` and invoicing do today,
@@ -428,6 +428,20 @@ separately.
 - Mandatory training: due dates, overdue escalation to managers.
 - Compliance reports and audit export (who completed what, when, which course version, which
   certificate), aligned with the Phase 3 audit trail.
+
+### 6.1.1 Policy lifecycle (Coming)
+- A policy PDF is extracted into cited source fragments. The course briefing captures departments,
+  expected duration, seniority and prior experience; these inputs shape departmental course variants.
+  A separately uploaded brand style guide shapes each academy, with distinct department designs
+  and tenant domains.
+- Learners complete interactive lessons and an exam in the organisation's branded tenant application,
+  then receive a PDF certificate linked to the policy and course version.
+- The policy owner sees who completed training and who is still pending, grouped by department.
+- When the policy changes, prepare updates to every affected course variant for owner approval.
+  After approval, invalidate certificates superseded by the policy change and notify learners and
+  owners with the relevant source changes. A minor change assigns a new exam; a major change assigns
+  a replacement course. Successful completion issues a new PDF certificate.
+- Keep certificate history, notifications and reassignments auditable and isolated to the tenant.
 
 ### 6.2 Automated enrolment and role-based paths
 - Rule engine: "user with attribute X (department, role, location, tenant) → learning path Y,

@@ -1,4 +1,5 @@
 import { defineMiddleware } from "astro:middleware";
+import { umamiEnabled } from "@ulams/ui/analytics";
 import { config } from "./lib/config.ts";
 import { isPlatformHost, tenantForHost } from "./lib/tenant.ts";
 import { getFrameOrigins, warm } from "./lib/data.ts";
@@ -81,6 +82,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     const headers = cspHeaders(
       {
         tenant: locals.tenant,
+        analytics: umamiEnabled(host),
         toolOrigins: await csp,
         contentOrigin: locals.tenant ? contentOriginFor(config.contentOrigin, locals.tenant.slug) : null,
         storageOrigins: config.storageOrigins,
