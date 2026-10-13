@@ -24115,6 +24115,68 @@
     ]
    }
   },
+  "/api/contact": {
+   "post": {
+    "operationId": "submitPublicContactMessage",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "email": {
+          "format": "email",
+          "maxLength": 254,
+          "type": "string"
+         },
+         "message": {
+          "maxLength": 6000,
+          "type": "string"
+         },
+         "name": {
+          "maxLength": 120,
+          "type": "string"
+         },
+         "subject": {
+          "maxLength": 160,
+          "type": "string"
+         },
+         "website": {
+          "description": "Spam honeypot; leave empty",
+          "type": "string"
+         }
+        },
+        "required": [
+         "name",
+         "email",
+         "subject",
+         "message"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "description": "Message delivered to the private contact inbox"
+     },
+     "422": {
+      "description": "Input validation failed"
+     },
+     "429": {
+      "description": "Rate limit exceeded"
+     },
+     "503": {
+      "description": "Message delivery is temporarily unavailable"
+     }
+    },
+    "summary": "Send a message to the ULAMS team",
+    "tags": [
+     "Contact"
+    ]
+   }
+  },
   "/api/core/packages": {
    "get": {
     "description": "List of installed ulams packages with versions",
@@ -31394,6 +31456,10 @@
   }
  },
  "tags": [
+  {
+   "description": "Contact",
+   "name": "Contact"
+  },
   {
    "description": "Events",
    "name": "Events"
