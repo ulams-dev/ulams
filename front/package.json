@@ -77,7 +77,7 @@
     "remark-math": "^5.1.1",
     "rollup-plugin-visualizer": "^5.14.0",
     "sass": "^1.105.1",
-    "scorm-again": "^2.6.0",
+    "scorm-again": "^3.4.5",
     "screenfull": "6.0.2",
     "swiper": "^11.0.6",
     "umi-request": "^1.4.0",

@@ -31848,10 +31848,10 @@ scoped-regex@^2.0.0:
   resolved "https://registry.yarnpkg.com/scoped-regex/-/scoped-regex-2.1.0.tgz#7b9be845d81fd9d21d1ec97c61a0b7cf86d2015f"
   integrity sha512-g3WxHrqSWCZHGHlSrF51VXFdjImhwvH8ZO/pryFH56Qi0cDsZfylQa/t0jCzVQFNbNvM00HfHjkDPEuarKDSWQ==
 
-scorm-again@^2.6.0:
-  version "2.6.4"
-  resolved "https://registry.npmjs.org/scorm-again/-/scorm-again-2.6.4.tgz"
-  integrity sha512-U1VYZvtIiNdHWKI/2nyaoNLVg7ddWNxAQ8/kWs3s+02TedoMhQmoU4NgP/WUdEYfHOBtVDam1aXkdiMZIxQMNw==
+scorm-again@^3.4.5:
+  version "3.4.5"
+  resolved "https://registry.yarnpkg.com/scorm-again/-/scorm-again-3.4.5.tgz#eb5bfd45d0dd69d9f9a2723fafe9329f9134a485"
+  integrity sha512-SZp44AvlDBlKsc7mGUMyFYDYQ+AWpukZc1M/Nveknv/Ch9gHhh8YwRCvBEqCTitfZrRRp4n8I98vAaneFMbmdg==
 
 screenfull@6.0.2:
   version "6.0.2"
