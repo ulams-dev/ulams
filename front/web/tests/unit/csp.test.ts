@@ -17,7 +17,7 @@ describe("front CSP (ADR 0044)", () => {
   it("keeps scripts, connections, objects and base to the page and the tenant API", () => {
     const policy = buildCsp(input);
     expect(directive(policy, "default-src")).toEqual(["'self'"]);
-    expect(directive(policy, "connect-src")).toEqual(["'self'", "http://coffee.localhost"]);
+    expect(directive(policy, "connect-src")).toEqual(["'self'", "http://coffee.localhost", "https://api.ulams.app"]);
     expect(directive(policy, "script-src")).toEqual(["'self'", "'unsafe-inline'", "'unsafe-eval'"]);
     expect(directive(policy, "object-src")).toEqual(["'none'"]);
     expect(directive(policy, "base-uri")).toEqual(["'self'"]);
@@ -58,7 +58,7 @@ describe("front CSP (ADR 0044)", () => {
   it("has no tool or content sources and no reporting on the platform host or without a content origin", () => {
     const platform = buildCsp({ tenant: null, toolOrigins: [], contentOrigin: null, storageOrigins: [] });
     expect(platform).not.toContain("report-uri");
-    expect(directive(platform, "connect-src")).toEqual(["'self'"]);
+    expect(directive(platform, "connect-src")).toEqual(["'self'", "https://api.ulams.app"]);
     expect(directive(platform, "frame-src")).not.toContain("null");
     expect(cspHeaders({ tenant: null, toolOrigins: [], contentOrigin: null, storageOrigins: [] }, true)["Reporting-Endpoints"]).toBeUndefined();
   });

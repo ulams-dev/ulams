@@ -24,6 +24,7 @@ export interface CspInput {
 export const EMBED_PROVIDERS = ["https://www.youtube-nocookie.com", "https://player.vimeo.com"] as const;
 
 const unique = (values: Array<string | null | undefined>): string[] => [...new Set(values.filter((v): v is string => Boolean(v)))];
+const PUBLIC_CONTACT_API_ORIGIN = "https://api.ulams.app";
 
 /** `http://coffee.localhost/api` to `http://coffee.localhost`; null for anything that is not an http(s) URL. */
 export function originOf(url: string | null | undefined): string | null {
@@ -64,7 +65,7 @@ export function buildCsp({ tenant, toolOrigins, contentOrigin, storageOrigins, a
     // Authors embed remote images and videos in rich text; scripts, frames and connections stay listed.
     `img-src ${[...files, "https:"].join(" ")}`,
     `media-src ${[...media, "https:"].join(" ")}`,
-    `connect-src ${sources(["'self'", api, analytics ? UMAMI_COLLECT_ORIGIN : null]).join(" ")}`,
+    `connect-src ${sources(["'self'", api, PUBLIC_CONTACT_API_ORIGIN, analytics ? UMAMI_COLLECT_ORIGIN : null]).join(" ")}`,
     `frame-src ${frame.join(" ")}`,
     "frame-ancestors 'self'",
     "form-action 'self'",
