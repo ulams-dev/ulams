@@ -128,12 +128,10 @@ const alternatives = [
   class PolicyStory extends HTMLElement {
     private index = 0;
     private motion = matchMedia("(prefers-reduced-motion: reduce)");
-    private stacked = matchMedia("(max-width: 760px)");
     private paused = this.motion.matches;
     private visible = false;
     private timer?: ReturnType<typeof setTimeout>;
     private observer?: IntersectionObserver;
-    private sceneObserver?: IntersectionObserver;
     private tabs: HTMLButtonElement[] = [];
     private panels: HTMLElement[] = [];
     connectedCallback() {
@@ -173,8 +171,7 @@ const alternatives = [
       });
       this.querySelector("[data-replay]")?.addEventListener("click", () => {
         this.toggleAttribute("data-settled", this.motion.matches);
-        if (this.stacked.matches) this.restartStack();
-        else this.select(0);
+        this.select(0);
         this.paused = this.motion.matches;
         this.updatePlayback();
       });
@@ -191,50 +188,16 @@ const alternatives = [
         { threshold: 0.2 }
       );
       this.observer.observe(this);
-      this.sceneObserver = new IntersectionObserver(
-        (entries) => entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.setAttribute("data-inview", "");
-        }),
-        { threshold: 0.25 }
-      );
-      this.panels.forEach((panel) => this.sceneObserver?.observe(panel));
       document.addEventListener("visibilitychange", this.onVisibility);
       this.motion.addEventListener("change", this.onMotion);
-      this.stacked.addEventListener("change", this.onLayout);
-      this.onLayout();
       this.armDwell();
+      this.updatePlayback();
     }
     disconnectedCallback() {
       clearTimeout(this.timer);
       this.observer?.disconnect();
-      this.sceneObserver?.disconnect();
       document.removeEventListener("visibilitychange", this.onVisibility);
       this.motion.removeEventListener("change", this.onMotion);
-      this.stacked.removeEventListener("change", this.onLayout);
-    }
-    /** Phones show every chapter in a column; wider screens switch chapters in place. */
-    private onLayout = () => {
-      if (this.stacked.matches) {
-        const scenes = this.panels[0]?.parentElement;
-        if (scenes) scenes.style.height = "";
-        this.panels.forEach((panel) => { panel.hidden = false; });
-      } else {
-        this.select(this.index);
-      }
-      this.updatePlayback();
-    };
-    /** Replay on phones: every chapter plays again as it scrolls back into view. */
-    private restartStack() {
-      this.panels.forEach((panel) => {
-        panel.removeAttribute("data-inview");
-        panel.hidden = true;
-        this.sceneObserver?.unobserve(panel);
-      });
-      void this.offsetWidth;
-      this.panels.forEach((panel) => {
-        panel.hidden = false;
-        this.sceneObserver?.observe(panel);
-      });
     }
     private onMotion = () => {
       if (this.motion.matches) this.paused = true;
@@ -291,8 +254,7 @@ const alternatives = [
     private updatePlayback() {
       clearTimeout(this.timer);
       this.toggleAttribute("data-paused", this.paused);
-      const stacked = this.stacked.matches;
-      this.toggleAttribute("data-animation-paused", this.paused || (!stacked && !this.visible) || document.hidden);
+      this.toggleAttribute("data-animation-paused", this.paused || !this.visible || document.hidden);
       const button = this.querySelector<HTMLButtonElement>("[data-play]");
       button?.setAttribute("aria-pressed", String(this.paused));
       const label =
@@ -300,7 +262,7 @@ const alternatives = [
         "";
       button?.setAttribute("aria-label", label);
       button?.setAttribute("title", label);
-      if (!stacked && !this.paused && this.visible && !document.hidden)
+      if (!this.paused && this.visible && !document.hidden)
         this.timer = setTimeout(() => {
           if (!this.tabs.some((tab) => tab === document.activeElement)) this.select((this.index + 1) % this.tabs.length);
           this.updatePlayback();
@@ -1266,43 +1228,92 @@ const alternatives = [
     .ps-brief-chat {
       height: 260px;
     }
-    /* phones read the chapters one under another instead of switching them in place */
+    /* one chapter at a time, with its picker pinned under the site header in three rows */
     ulams-policy-story {
+      --ps-sticky-top: 68px;
+      --ps-topline-h: 40px;
       display: flex;
       flex-direction: column;
+      overflow: visible;
     }
     .ps-scenes { order: 2; }
-    .ps-panel { grid-area: auto; }
-    .ps-panel[hidden] { display: grid; }
-    .ps-panel + .ps-panel { border-top: 1px solid var(--ulams-color-border); }
-    .ps-panel:not([data-inview]) :global(*) { animation-play-state: paused !important; }
-    .ps-navigation { display: none; }
-    .ps-bottom {
-      --ps-mark: 36px;
-      order: 1;
-      display: flex;
-      justify-content: flex-end;
-      margin: 0;
-      padding: 2px 8px;
-      background: transparent;
-      border: 0;
-      border-bottom: 1px solid var(--ulams-color-border);
-      border-radius: 0;
+    .ps-topline {
+      order: 0;
+      position: sticky;
+      top: var(--ps-sticky-top);
+      z-index: 31;
+      height: var(--ps-topline-h);
+      box-sizing: border-box;
+      background: var(--ulams-color-bg);
     }
-    .ps-navigation :global(svg) {
-      width: 13px;
-      height: 13px;
+    .ps-bottom {
+      --ps-mark: 28px;
+      order: 1;
+      position: sticky;
+      top: calc(var(--ps-sticky-top) + var(--ps-topline-h));
+      z-index: 30;
+      display: block;
+      margin: 0;
+      padding: 8px;
+      background: color-mix(in srgb, var(--ulams-color-bg) 94%, transparent);
+      border-width: 1px 0;
+      border-radius: 0;
+      backdrop-filter: saturate(1.4) blur(14px);
+      -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    }
+    .ps-navigation {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .ps-navigation::before { content: none; }
+    .ps-navigation button {
+      display: grid;
+      grid-template-columns: var(--ps-mark) minmax(0, 1fr);
+      grid-template-rows: auto 3px;
+      column-gap: 6px;
+      align-items: center;
+      min-height: 44px;
+      padding: 6px 8px;
+      border: 1px solid var(--ulams-color-border);
+      border-radius: 10px;
+      background: var(--ulams-color-card-bg);
+      font-size: 0.75rem;
+      line-height: 1.15;
+      text-align: left;
+    }
+    .ps-step-mark {
+      grid-area: 1 / 1;
+      box-shadow: none;
+    }
+    .ps-navigation button > span:last-of-type {
+      grid-area: 1 / 2;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .ps-dwell {
-      width: 22px;
+      grid-area: 2 / 1 / auto / -1;
+      width: 100%;
     }
+    .ps-navigation button[aria-selected="true"] {
+      color: #fff;
+      background: var(--ulams-color-primary);
+      border-color: var(--ulams-color-primary);
+    }
+    .ps-navigation button[aria-selected="true"] .ps-step-mark {
+      color: #fff;
+      background: transparent;
+      border-color: transparent;
+    }
+    .ps-navigation button:nth-child(7) { grid-column: 1 / 3; }
     .ps-controls {
-      justify-self: end;
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      height: 44px;
       padding-left: 0;
       border-left: 0;
-    }
-    .ps-navigation button {
-      font-size: 0.58rem;
     }
     .ps-topline {
       padding: 12px 16px;

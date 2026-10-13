@@ -336,6 +336,8 @@
 [data-theme="platform"] .u-footer__name { font-family: var(--ulams-font-family-body); font-weight: 700; }
 
 @media (max-width: 760px) {
+  /* clip would trap the policy chapter header, which sticks under the site header */
+  [data-theme="platform"] .u-hero--product { overflow: visible; }
   [data-theme="platform"] .u-hero--product .u-hero__title { max-width: 18ch; font-size: clamp(2.4rem, 10.5vw, 3.5rem); }
   [data-theme="platform"] .u-hero--product .u-hero__copy { gap: 16px; }
   [data-theme="platform"] .u-hero--product .u-actions { width: 100%; flex-direction: column; }
