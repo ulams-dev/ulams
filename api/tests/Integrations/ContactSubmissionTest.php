@@ -18,7 +18,7 @@ class ContactSubmissionTest extends TestCase
     {
         Mail::fake();
 
-        $response = $this->postJson('/api/contact', [
+        $response = $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.8'])->postJson('/api/contact', [
             'name' => 'Alex Example',
             'email' => 'alex@example.com',
             'subject' => 'Self-hosting question',
@@ -39,7 +39,7 @@ class ContactSubmissionTest extends TestCase
     {
         Mail::fake();
 
-        $this->postJson('/api/contact', [
+        $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.9'])->postJson('/api/contact', [
             'name' => 'Alex',
             'email' => 'not-an-email',
             'subject' => '',
@@ -53,7 +53,7 @@ class ContactSubmissionTest extends TestCase
     {
         Mail::fake();
 
-        $this->postJson('/api/contact', [
+        $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.10'])->postJson('/api/contact', [
             'name' => 'Bot',
             'email' => 'bot@example.com',
             'subject' => 'Spam',
