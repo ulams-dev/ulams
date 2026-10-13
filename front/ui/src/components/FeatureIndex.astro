@@ -1,6 +1,6 @@
 ---
 import Icon from "./Icon.astro";
-import { uiStrings, pageLocale } from "../lib/i18n.ts";
+import { uiStrings, pageLocale, fill } from "../lib/i18n.ts";
 
 interface Item {
   title: string;
@@ -36,6 +36,9 @@ const segments = audiences.length ? audiences.map((audience) => ({ ...audience, 
 const GroupHeading = audiences.length ? "h4" : "h3";
 const FeatureHeading = audiences.length ? "h5" : "h4";
 const count = (g: Group) => g.items?.length ?? g.tags?.length ?? 0;
+const ROLE_ICON: Record<string, string> = { learner: "reading", author: "layers", owner: "chart", sales: "cart", admin: "shield", engineering: "code" };
+const roleIcon = (id: string) => ROLE_ICON[id] ?? "users";
+const featureTotal = (segment: { groups: Group[] }) => segment.groups.reduce((total, group) => total + (group.items?.length ?? 0), 0);
 
 // schema.org ItemList: one ListItem per group, its features as a nested ItemList (names and descriptions only).
 const ld = {
@@ -72,11 +75,18 @@ const ldJson = JSON.stringify(ld).replace(/</g, "\\u003c");
       {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
       {intro && <p class="u-lead">{intro}</p>}
     </div>
-    {audiences.length > 0 && <nav class="u-fx__audience-nav" aria-label={navLabel}>{segments.map((segment) => <a href={`#${id}-role-${segment.id}`}><span>{segment.title}</span><span class="u-fx__count" aria-hidden="true">{segment.groups.reduce((total, group) => total + (group.items?.length ?? 0), 0)}</span></a>)}</nav>}
+    {audiences.length > 0 && <nav class="u-fx__audience-nav" aria-label={navLabel}>{segments.map((segment) => (
+      <a href={`#${id}-role-${segment.id}`} data-role={segment.id}>
+        <span class="u-fx__role-icon"><Icon name={roleIcon(segment.id)} /></span>
+        <span class="u-fx__role-title">{segment.title}</span>
+        <span class="u-fx__role-summary">{segment.summary}</span>
+        <span class="u-fx__role-foot"><span class="u-fx__role-count">{fill(t.featureCount, { n: featureTotal(segment) })}</span><Icon name="arrow" class="u-fx__role-arrow" /></span>
+      </a>
+    ))}</nav>}
     <div class="u-fx__list">
       {
-        segments.map((segment) => (<section class="u-fx__audience" id={`${id}-role-${segment.id}`} aria-labelledby={segment.title ? `${id}-role-${segment.id}-title` : undefined}>
-          {segment.title && <header class="u-fx__audience-heading"><h3 id={`${id}-role-${segment.id}-title`}>{segment.title}</h3><p>{segment.summary}</p></header>}
+        segments.map((segment) => (<section class="u-fx__audience" id={`${id}-role-${segment.id}`} data-role={segment.id} aria-labelledby={segment.title ? `${id}-role-${segment.id}-title` : undefined}>
+          {segment.title && <header class="u-fx__audience-heading"><span class="u-fx__role-icon"><Icon name={roleIcon(segment.id)} /></span><div><h3 id={`${id}-role-${segment.id}-title`}>{segment.title}</h3><p>{segment.summary}</p></div><span class="u-fx__role-count">{fill(t.featureCount, { n: featureTotal(segment) })}</span></header>}
           <div class="u-fx__categories">{segment.groups.map((g) => (
           <details class="u-fx__group" id={`${id}-${g.id}`} data-reveal>
             <summary>
@@ -134,15 +144,50 @@ const ldJson = JSON.stringify(ld).replace(/</g, "\\u003c");
   }
   .u-fx__categories { display:grid; gap:10px; }
   .u-fx { font-family:var(--ulams-font-family-body); }
-  .u-fx__audience-nav { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px 24px; margin-bottom:42px; }
-  .u-fx__audience-nav a { display:flex; gap:12px; align-items:center; justify-content:space-between; min-height:62px; padding:10px 0; border-bottom:1px solid var(--ulams-color-border); color:var(--ulams-color-text); font-size:.88rem; text-decoration:none; }
-  .u-fx__audience-nav a:hover { border-color:var(--ulams-color-accent); color:var(--ulams-color-primary); }
+  .u-fx [data-role="learner"] { --role:#1f5a94; }
+  .u-fx [data-role="author"] { --role:#a84521; }
+  .u-fx [data-role="owner"] { --role:#176b46; }
+  .u-fx [data-role="sales"] { --role:#8a4b08; }
+  .u-fx [data-role="admin"] { --role:#0f2b46; }
+  .u-fx [data-role="engineering"] { --role:#5b3f99; }
+  .u-fx__audience-nav { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-bottom:56px; }
+  .u-fx__audience-nav a {
+    --role-tint: color-mix(in srgb, var(--role, var(--ulams-color-primary)) 9%, var(--ulams-color-card-bg));
+    position:relative; display:grid; grid-template-rows:auto auto 1fr auto; gap:8px; min-height:184px; padding:20px 20px 16px; overflow:hidden;
+    color:var(--ulams-color-text); text-decoration:none;
+    background:linear-gradient(160deg, var(--role-tint), var(--ulams-color-card-bg) 62%);
+    border:1px solid var(--ulams-color-border); border-radius:var(--ulams-radius-card);
+    transition:transform .3s var(--ulams-ease), border-color .3s, box-shadow .3s;
+  }
+  .u-fx__audience-nav a::before { content:""; position:absolute; inset:0 0 auto; height:3px; background:var(--role, var(--ulams-color-primary)); }
+  .u-fx__audience-nav a:hover { transform:translateY(-3px); border-color:color-mix(in srgb, var(--role, var(--ulams-color-primary)) 45%, var(--ulams-color-border)); box-shadow:var(--ulams-shadow-hover); }
   .u-fx__audience-nav a:focus-visible { outline:3px solid var(--ulams-brand-blue); outline-offset:3px; }
+  .u-fx__role-icon { display:grid; width:40px; height:40px; place-items:center; color:#fff; background:var(--role, var(--ulams-color-primary)); border-radius:12px; }
+  .u-fx__role-icon :global(svg) { width:20px; height:20px; }
+  .u-fx__role-title { margin-top:6px; font:400 1.15rem/1.25 var(--ulams-font-family); color:var(--ulams-color-header); }
+  .u-fx__role-summary { color:var(--ulams-color-muted); font-size:.84rem; line-height:1.5; }
+  .u-fx__role-foot { display:flex; align-items:center; justify-content:space-between; gap:8px; padding-top:12px; border-top:1px solid color-mix(in srgb, var(--role, var(--ulams-color-primary)) 18%, var(--ulams-color-border)); }
+  .u-fx__role-count { display:inline-flex; align-items:center; padding:3px 10px; color:var(--role, var(--ulams-color-primary)); font-size:.78rem; font-weight:700; background:color-mix(in srgb, var(--role, var(--ulams-color-primary)) 10%, var(--ulams-color-card-bg)); border-radius:999px; white-space:nowrap; }
+  .u-fx__audience-nav :global(.u-fx__role-arrow) { width:18px; color:var(--role, var(--ulams-color-primary)); transform:rotate(90deg); transition:transform .3s var(--ulams-ease); }
+  .u-fx__audience-nav a:hover :global(.u-fx__role-arrow) { transform:translateY(3px) rotate(90deg); }
   .u-fx__audience, .u-fx__group { scroll-margin-top:100px; }
-  .u-fx__audience-heading { margin-bottom:16px; }
-  .u-fx__audience-heading h3 { margin:0 0 8px; font:400 1.8rem/1.2 var(--ulams-font-family); }
+  .u-fx__audience-heading { display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:16px; align-items:center; margin-bottom:18px; padding-bottom:16px; border-bottom:2px solid color-mix(in srgb, var(--role, var(--ulams-color-primary)) 30%, var(--ulams-color-border)); }
+  .u-fx__audience-heading .u-fx__role-icon { width:48px; height:48px; border-radius:14px; }
+  .u-fx__audience-heading .u-fx__role-icon :global(svg) { width:24px; height:24px; }
+  .u-fx__audience-heading h3 { margin:0 0 4px; font:400 1.8rem/1.2 var(--ulams-font-family); }
   .u-fx__audience-heading p { margin:0; max-width:75ch; color:var(--ulams-color-muted); font-size:.9rem; line-height:1.6; }
-  @media(max-width:760px) { .u-fx__audience-nav { grid-template-columns:minmax(0,1fr); } }
+  .u-fx__audience .u-fx__group { border-left:3px solid color-mix(in srgb, var(--role, var(--ulams-color-primary)) 55%, var(--ulams-color-border)); }
+  @media(max-width:960px) { .u-fx__audience-nav { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media(max-width:600px) {
+    .u-fx__audience-nav { grid-template-columns:minmax(0,1fr); gap:10px; }
+    .u-fx__audience-nav a { min-height:0; }
+    .u-fx__audience-heading { grid-template-columns:auto minmax(0,1fr); }
+    .u-fx__audience-heading > .u-fx__role-count { grid-column:2; justify-self:start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .u-fx__audience-nav a, .u-fx__audience-nav :global(.u-fx__role-arrow) { transition:none; }
+    .u-fx__audience-nav a:hover { transform:none; }
+  }
   .u-fx__group {
     border: 1px solid var(--ulams-color-border);
     border-radius: 8px;

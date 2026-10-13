@@ -8,6 +8,7 @@ export type UiLocale = "en" | "pl" | "zh";
 
 export interface UiStrings {
   featuresOf: string;
+  featureCount: string;
   packageDocs: string;
   skip: string;
   navMain: string;
@@ -56,6 +57,8 @@ export interface UiStrings {
   terminal: string;
   /** Contains `{link}` where the ulams link goes. */
   footerBuiltOn: string;
+  /** Placeholder until the browser fills in the contact address. */
+  mailLabel: string;
   studioWindow: string;
   adminSection: string;
   adminNew: string;
@@ -66,6 +69,7 @@ export interface UiStrings {
 
 const en: UiStrings = {
   featuresOf: "Features for {title}",
+  featureCount: "{n} features",
   packageDocs: "Package documentation",
   skip: "Skip to content",
   navMain: "Main",
@@ -128,10 +132,12 @@ const en: UiStrings = {
   adminStatus: "Status",
   adminLearners: "Learners",
   footerBuiltOn: "Built on {link}, the open headless LMS.",
+  mailLabel: "Email",
 };
 
 const pl: UiStrings = {
   featuresOf: "Funkcje: {title}",
+  featureCount: "Funkcje: {n}",
   packageDocs: "Dokumentacja pakietu",
   skip: "Przejdź do treści",
   navMain: "Główna",
@@ -194,10 +200,12 @@ const pl: UiStrings = {
   adminStatus: "Status",
   adminLearners: "Kursanci",
   footerBuiltOn: "Zbudowane na {link}, otwartym headless LMS.",
+  mailLabel: "E-mail",
 };
 
 const zh: UiStrings = {
   featuresOf: "{title} 的功能",
+  featureCount: "{n} 项功能",
   packageDocs: "软件包文档",
   skip: "跳到正文",
   navMain: "主导航",
@@ -260,6 +268,7 @@ const zh: UiStrings = {
   adminStatus: "状态",
   adminLearners: "学员",
   footerBuiltOn: "基于 {link} 构建，一个开放的无头 LMS。",
+  mailLabel: "邮箱",
 };
 
 const TABLE: Record<UiLocale, UiStrings> = { en, pl, zh };
