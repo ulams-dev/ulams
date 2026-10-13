@@ -1,0 +1,111 @@
+---
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title: string;
+  intro: string;
+  endpoint: string;
+  nameLabel: string;
+  emailLabel: string;
+  subjectLabel: string;
+  messageLabel: string;
+  submitLabel: string;
+  sendingLabel: string;
+  successMessage: string;
+  errorMessage: string;
+  note: string;
+}
+
+const {
+  id = "contact", eyebrow, title, intro, endpoint, nameLabel, emailLabel,
+  subjectLabel, messageLabel, submitLabel, sendingLabel, successMessage,
+  errorMessage, note,
+} = Astro.props;
+const apiEndpoint = /^https:\/\//.test(endpoint) ? endpoint.replace(/\/+$/, "") : "https://api.ulams.app";
+---
+
+<section class="u-section u-contact" id={id} aria-labelledby={`${id}-title`}>
+  <div class="u-container u-contact__wrap">
+    <header class="u-section-head" data-reveal>
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      <h2 class="u-h2" id={`${id}-title`}>{title}</h2>
+      <p class="u-lead">{intro}</p>
+    </header>
+    <form
+      class="u-contact__form"
+      action={`${apiEndpoint}/api/contact`}
+      method="post"
+      data-contact-endpoint={`${apiEndpoint}/api/contact`}
+      data-sending-label={sendingLabel}
+      data-success-message={successMessage}
+      data-error-message={errorMessage}
+    >
+      <div class="u-contact__grid">
+        <label>{nameLabel}<input name="name" autocomplete="name" required maxlength="120" /></label>
+        <label>{emailLabel}<input name="email" type="email" autocomplete="email" required maxlength="254" /></label>
+      </div>
+      <label>{subjectLabel}<input name="subject" required maxlength="160" /></label>
+      <label>{messageLabel}<textarea name="message" rows="6" required maxlength="6000"></textarea></label>
+      <div class="u-contact__trap" aria-hidden="true">
+        <label>Leave this field empty<input name="website" tabindex="-1" autocomplete="off" /></label>
+      </div>
+      <div class="u-contact__actions">
+        <button class="u-btn u-btn--primary" type="submit">{submitLabel}</button>
+        <p>{note}</p>
+      </div>
+      <p class="u-contact__status" role="status" aria-live="polite"></p>
+      <noscript><p>{errorMessage}</p></noscript>
+    </form>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>(".u-contact__form[data-contact-endpoint]").forEach((form) => {
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+      const status = form.querySelector<HTMLElement>(".u-contact__status");
+      if (!submit || !status || submit.disabled) return;
+      const originalLabel = submit.textContent ?? "";
+      const fields = new FormData(form);
+      const payload = Object.fromEntries(fields.entries());
+      submit.disabled = true;
+      submit.textContent = form.dataset.sendingLabel ?? originalLabel;
+      status.textContent = "";
+
+      try {
+        const response = await fetch(form.dataset.contactEndpoint!, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(payload),
+          signal: AbortSignal.timeout(15_000),
+        });
+        if (!response.ok) throw new Error(`Contact request failed (${response.status})`);
+        form.reset();
+        status.textContent = form.dataset.successMessage ?? "Message sent.";
+      } catch {
+        status.textContent = form.dataset.errorMessage ?? "Could not send your message. Please try again.";
+      } finally {
+        submit.disabled = false;
+        submit.textContent = originalLabel;
+      }
+    });
+  });
+</script>
+
+<style>
+  .u-contact__wrap { max-width: 900px; }
+  .u-contact__form { display: grid; gap: 20px; padding: clamp(22px, 4vw, 44px); border: 1px solid var(--ulams-color-border); border-radius: var(--ulams-radius-card); background: var(--ulams-color-card-bg); box-shadow: var(--ulams-shadow-card, 0 18px 48px rgb(15 43 70 / 8%)); }
+  .u-contact__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .u-contact__form label { display: grid; gap: 8px; color: var(--ulams-color-header); font-size: .9rem; font-weight: 600; }
+  .u-contact__form input, .u-contact__form textarea { width: 100%; min-width: 0; padding: 12px 14px; border: 1px solid var(--ulams-color-border); border-radius: 10px; background: var(--ulams-color-surface); color: var(--ulams-color-text); font: inherit; font-weight: 400; }
+  .u-contact__form input:focus-visible, .u-contact__form textarea:focus-visible { outline: 3px solid var(--ulams-color-primary); outline-offset: 3px; }
+  .u-contact__form textarea { resize: vertical; }
+  .u-contact__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 22px; }
+  .u-contact__actions p { margin: 0; color: var(--ulams-color-muted); font-size: .875rem; }
+  .u-contact__status { min-height: 1.4em; margin: 0; color: var(--ulams-color-muted); font-size: .875rem; }
+  .u-contact__form button:disabled { opacity: .7; cursor: wait; }
+  .u-contact__trap { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  @media (max-width: 640px) { .u-contact__grid { grid-template-columns: minmax(0, 1fr); } }
+  @media (prefers-reduced-motion: reduce) { .u-contact__form * { scroll-behavior: auto; } }
+</style>

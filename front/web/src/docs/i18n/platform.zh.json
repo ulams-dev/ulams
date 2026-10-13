@@ -381,6 +381,25 @@
           }
         },
         {
+          "component": "ContactForm",
+          "props": {
+            "id": "contact",
+            "eyebrow": "联系",
+            "title": "联系 ULAMS 团队",
+            "intro": "对自托管、集成或参与项目有疑问？欢迎给我们留言。",
+            "nameLabel": "姓名",
+            "emailLabel": "电子邮件",
+            "subjectLabel": "主题",
+            "messageLabel": "留言",
+            "submitLabel": "发送消息",
+            "sendingLabel": "正在发送…",
+            "successMessage": "感谢联系。消息已发送给 ULAMS 团队。",
+            "errorMessage": "消息暂时无法发送，请稍后重试。",
+            "note": "消息会发送到 ULAMS 私密联系邮箱。请勿填写密码或敏感个人信息。",
+            "endpoint": "https://api.ulams.app"
+          }
+        },
+        {
           "component": "Faq",
           "props": {
             "id": "faq",
@@ -439,10 +458,6 @@
             "href": "/zh/comparison/"
           },
           {
-            "label": "产品",
-            "href": "#product"
-          },
-          {
             "label": "演示",
             "href": "#demos"
           },
@@ -469,6 +484,10 @@
           {
             "label": "FAQ",
             "href": "#faq"
+          },
+          {
+            "label": "联系",
+            "href": "#contact"
           }
         ],
         "note": "开源 · MIT"

@@ -2380,6 +2380,101 @@
         "additionalProperties": false
       }
     },
+    "ContactForm": {
+      "description": "An accessible contact form that sends messages to the private ULAMS contact inbox through the platform API.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "contact"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 120
+          },
+          "intro": {
+            "type": "string",
+            "description": "Short introduction",
+            "maxLength": 400
+          },
+          "endpoint": {
+            "type": "string",
+            "description": "Platform API base URL",
+            "maxLength": 254
+          },
+          "nameLabel": {
+            "type": "string",
+            "description": "Name field label",
+            "maxLength": 80
+          },
+          "emailLabel": {
+            "type": "string",
+            "description": "Reply-to field label",
+            "maxLength": 80
+          },
+          "subjectLabel": {
+            "type": "string",
+            "description": "Subject field label",
+            "maxLength": 80
+          },
+          "messageLabel": {
+            "type": "string",
+            "description": "Message field label",
+            "maxLength": 80
+          },
+          "submitLabel": {
+            "type": "string",
+            "description": "Submit button label",
+            "maxLength": 80
+          },
+          "sendingLabel": {
+            "type": "string",
+            "description": "Submitting state label",
+            "maxLength": 80
+          },
+          "successMessage": {
+            "type": "string",
+            "description": "Successful submission message",
+            "maxLength": 200
+          },
+          "errorMessage": {
+            "type": "string",
+            "description": "Submission failure message",
+            "maxLength": 200
+          },
+          "note": {
+            "type": "string",
+            "description": "Submission behavior note",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "title",
+          "intro",
+          "endpoint",
+          "nameLabel",
+          "emailLabel",
+          "subjectLabel",
+          "messageLabel",
+          "submitLabel",
+          "sendingLabel",
+          "successMessage",
+          "errorMessage",
+          "note"
+        ],
+        "additionalProperties": false
+      }
+    },
     "Faq": {
       "description": "Questions and answers as an accessible disclosure list (no JavaScript).",
       "children": false,

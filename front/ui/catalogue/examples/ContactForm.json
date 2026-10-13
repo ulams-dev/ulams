@@ -1,0 +1,19 @@
+{
+  "props": {
+    "title": "Contact the ULAMS team",
+    "intro": "Tell us what your team needs to teach.",
+    "endpoint": "https://api.ulams.app",
+    "nameLabel": "Your name",
+    "emailLabel": "Email address",
+    "subjectLabel": "Subject",
+    "messageLabel": "Message",
+    "submitLabel": "Send message",
+    "sendingLabel": "Sending…",
+    "successMessage": "Your message has been sent.",
+    "errorMessage": "Could not send your message. Please try again.",
+    "note": "Your message goes to the ULAMS contact inbox."
+  },
+  "invalid": {
+    "endpoint": "javascript:alert(1)"
+  }
+}

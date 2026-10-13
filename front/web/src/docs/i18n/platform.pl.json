@@ -381,6 +381,25 @@
           }
         },
         {
+          "component": "ContactForm",
+          "props": {
+            "id": "contact",
+            "eyebrow": "KONTAKT",
+            "title": "Napisz do zespołu ULAMS",
+            "intro": "Masz pytanie o hosting, integracje lub współpracę przy projekcie? Napisz do nas.",
+            "nameLabel": "Imię i nazwisko",
+            "emailLabel": "Twój e-mail",
+            "subjectLabel": "Temat",
+            "messageLabel": "Wiadomość",
+            "submitLabel": "Wyślij wiadomość",
+            "sendingLabel": "Wysyłanie…",
+            "successMessage": "Dziękujemy. Wiadomość trafiła do zespołu ULAMS.",
+            "errorMessage": "Nie udało się wysłać wiadomości. Spróbuj ponownie za chwilę.",
+            "note": "Wiadomość trafia do prywatnej skrzynki kontaktowej ULAMS. Nie wpisuj haseł ani wrażliwych danych osobowych.",
+            "endpoint": "https://api.ulams.app"
+          }
+        },
+        {
           "component": "Faq",
           "props": {
             "id": "faq",
@@ -439,10 +458,6 @@
             "href": "/pl/comparison/"
           },
           {
-            "label": "Produkt",
-            "href": "#product"
-          },
-          {
             "label": "Dema",
             "href": "#demos"
           },
@@ -469,6 +484,10 @@
           {
             "label": "FAQ",
             "href": "#faq"
+          },
+          {
+            "label": "Kontakt",
+            "href": "#contact"
           }
         ],
         "note": "Otwarty kod · MIT"

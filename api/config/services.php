@@ -2,6 +2,10 @@
 
 return [
 
+    'contact' => [
+        'recipient' => env('CONTACT_RECIPIENT', 'contact@qunabu.com'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services

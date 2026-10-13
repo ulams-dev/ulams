@@ -72,6 +72,8 @@ describe.skipIf(!enabled)(`real ${target} ${mode} stack`,()=>{
         const published=await invoke(["builder","publish",String(draft.sessionId),"--acknowledge-warnings"],env);
         expect(published.published).toBe(true);
       }else{
+        const source=join(directory,"production-source.md");await writeFile(source,"# Policy\nReview access quarterly.\n");
+        await expect(invoke(["builder","start","--from",source,"--defaults"],env)).rejects.toThrow("FEATURE_DISABLED");
         const course=await invoke(["courses","create","--title","Production persistence check"],env);
         courseId=course.id;expect(courseId).toBeTruthy();
       }
