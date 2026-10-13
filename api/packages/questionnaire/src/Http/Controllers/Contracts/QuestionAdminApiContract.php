@@ -101,6 +101,11 @@ interface QuestionAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Question created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Question")
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -147,6 +152,11 @@ interface QuestionAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Question updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Question")
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -192,6 +202,11 @@ interface QuestionAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Question deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="boolean", example=true)
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,

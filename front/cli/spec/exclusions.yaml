@@ -8,6 +8,7 @@ browser-only:
   - "GET /api/consultations/approve-term/*"
   - "GET /api/consultations/reject-term/*"
   - "GET /api/profile/delete/*"
+  - "* /api/images/img"
   - "GET /api/courses/{id}/scorm"
   - "* /api/lti/tool/*"
   - "* /api/lti/platform/*"

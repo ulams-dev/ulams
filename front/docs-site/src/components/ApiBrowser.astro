@@ -1,0 +1,73 @@
+---
+/**
+ * Scalar API reference over the generated OpenAPI document. Both files are built by
+ * `yarn api-browser` (scripts/vendor-scalar.mjs, scripts/openapi.mjs) and served from this site.
+ */
+const base = import.meta.env.BASE_URL.replace(/\/?$/, "/");
+const servers = [
+  { url: "https://gravity-staging-api.ulams.app", description: "Demo tenant (throwaway data, resets hourly)" },
+  { url: "http://coffee.localhost", description: "Local tenant (make up)" },
+  { url: "http://api.localhost", description: "Local platform" },
+];
+---
+
+<div id="api-browser" class="api-browser" data-openapi-url={`${base}openapi.json`} data-bundle-url={`${base}vendor/scalar/standalone.js`} data-servers={JSON.stringify(servers)}>
+  <p class="api-browser__note" id="api-browser-note" role="status">Loading the API reference…</p>
+</div>
+
+<noscript>
+  <p>The API browser needs JavaScript. The same reference is in <a href="../api-reference/">API reference</a> and in Swagger UI at <code>/api/documentation</code> on every API host.</p>
+</noscript>
+
+<script>
+  const root = document.getElementById("api-browser")!;
+  const note = document.getElementById("api-browser-note")!;
+  const fail = (message: string) => {
+    note.textContent = message;
+  };
+  (async () => {
+    const spec = root.dataset.openapiUrl!;
+    const head = await fetch(spec, { method: "HEAD" }).catch(() => null);
+    if (!head?.ok) return fail("The OpenAPI document was not built for this copy of the docs. Run `yarn workspace @ulams/docs api-browser` (needs PHP or the local API container).");
+    await new Promise<void>((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = root.dataset.bundleUrl!;
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error("the Scalar bundle is missing (run `yarn workspace @ulams/docs api-browser`)"));
+      document.head.appendChild(s);
+    });
+    note.remove();
+    const scalar = (window as unknown as { Scalar: { createApiReference: (el: string, config: unknown) => void } }).Scalar;
+    scalar.createApiReference("#api-browser", {
+      url: spec,
+      servers: JSON.parse(root.dataset.servers!),
+      hideClientButton: false,
+      withDefaultFonts: false,
+      telemetry: false,
+      agent: { disabled: true },
+      mcp: { disabled: true },
+      showDeveloperTools: "never",
+      hideDarkModeToggle: true,
+      layout: "modern",
+      defaultOpenAllTags: false,
+      searchHotKey: "k",
+      metaData: { title: "ulams API reference" },
+      authentication: { preferredSecurityScheme: "passport" },
+    });
+  })().catch((e: Error) => fail(`The API browser could not start: ${e.message}`));
+</script>
+
+<style is:global>
+  /* Break out of Starlight's reading column: the reference needs the whole width. */
+  .api-browser {
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+    min-height: 70vh;
+    border-block: 1px solid var(--sl-color-gray-5);
+  }
+  .api-browser__note {
+    padding: 2rem;
+    text-align: center;
+    color: var(--sl-color-gray-2);
+  }
+</style>

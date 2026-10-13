@@ -1,0 +1,5 @@
+# Single-page app: any path that is not a file goes to index.html (history routing).
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ /index.html [L]

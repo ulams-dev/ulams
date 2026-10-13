@@ -109,6 +109,11 @@ interface QuestionnaireAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Questionnaire created successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Questionnaire")
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -159,6 +164,11 @@ interface QuestionnaireAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Questionnaire updated successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", ref="#/components/schemas/Questionnaire")
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -204,6 +214,11 @@ interface QuestionnaireAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Questionnaire deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="boolean", example=true)
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -495,6 +510,11 @@ interface QuestionnaireAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Questionnaire model assign successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="boolean", example=true)
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -563,6 +583,11 @@ interface QuestionnaireAdminApiContract
      *     @OA\Response(
      *          response=200,
      *          description="Questionnaire model unassign successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="data", type="boolean", example=true)
+     *         ),
      *      ),
      *     @OA\Response(
      *          response=401,

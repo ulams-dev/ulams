@@ -8,12 +8,13 @@
   "scripts": {
     "sync": "node --experimental-strip-types --no-warnings scripts/sync-content.mjs",
     "coverage": "node --experimental-strip-types --no-warnings scripts/coverage.mjs",
-    "dev": "yarn sync && astro dev --port 4322",
-    "build": "yarn sync && yarn coverage && astro build",
+    "dev": "yarn sync && yarn api-browser && astro dev --port 4322",
+    "build": "yarn sync && yarn coverage && yarn api-browser && astro build",
     "preview": "astro preview --port 4322",
     "typecheck": "yarn sync && astro check",
     "lint": "yarn sync && yarn coverage",
-    "screenshots": "node scripts/screenshots.mjs"
+    "screenshots": "node scripts/screenshots.mjs",
+    "api-browser": "node scripts/vendor-scalar.mjs && node --experimental-strip-types --no-warnings scripts/openapi.mjs"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "7.3.2",

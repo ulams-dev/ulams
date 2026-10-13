@@ -1,0 +1,35 @@
+# wrangler deploy -c storage.wrangler.toml
+# The buckets keep their names (R2 cannot rename a bucket); the worker maps short names and bucket names to them.
+# A new tenant needs a binding here and an alias in storage.worker.js.
+name = "ulams-storage"
+main = "storage.worker.js"
+compatibility_date = "2024-11-01"
+workers_dev = false
+
+[[r2_buckets]]
+binding = "B_ULAMS_STAGING"
+bucket_name = "ulams-staging"
+
+[[r2_buckets]]
+binding = "B_ULAMS_STAGING_COFFEE"
+bucket_name = "ulams-staging-coffee"
+
+[[r2_buckets]]
+binding = "B_ULAMS_STAGING_GRAVITY"
+bucket_name = "ulams-staging-gravity"
+
+[[r2_buckets]]
+binding = "B_ULAMS_STAGING_POLAND"
+bucket_name = "ulams-staging-poland"
+
+[[r2_buckets]]
+binding = "B_ULAMS_STAGING_ULAM"
+bucket_name = "ulams-staging-ulam"
+
+[[r2_buckets]]
+binding = "B_ULAMS_STAGING_ONCALL"
+bucket_name = "ulams-staging-oncall"
+
+[[r2_buckets]]
+binding = "B_ULAMS_STAGING_NIGHTSKY"
+bucket_name = "ulams-staging-nightsky"
