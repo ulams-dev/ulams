@@ -113,5 +113,6 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0099](0099-open-source-product-without-paid-tiers.md) | Describe ULAMS as open source without paid product tiers | Proposed |
 | [0100](0100-comparison-feature-catalogue-by-stakeholder.md) | Restore the Comparison feature catalogue by stakeholder | Proposed |
 | [0101](0101-umami-public-site-analytics.md) | Umami analytics on owned public sites | Proposed |
+| [0102](0102-one-command-docker-kubernetes-stack.md) | One-command Docker and Kubernetes stack launcher | Proposed |
 
 <!-- END GENERATED: adr-index -->

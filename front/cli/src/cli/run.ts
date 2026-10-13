@@ -14,7 +14,7 @@ import type { AnyCommand, Ctx, FsPort, GlobalFlags } from "../registry/types.ts"
 import { commandHelp, nounHelp, rootHelp, suggest } from "./help.ts";
 import { parseInvocation, resolveCommand } from "./parse.ts";
 
-export const VERSION = "0.1.0";
+export const VERSION = "0.2.0";
 
 export interface Deps {
   argv: string[];
