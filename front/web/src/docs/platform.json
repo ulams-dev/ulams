@@ -362,7 +362,7 @@
             },
             "bullets": [
               {
-                "title": "Local Phase 2 trial",
+                "title": "Try it locally",
                 "text": "Start an academy with a deterministic AI provider. No paid model calls.",
                 "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               },

@@ -362,7 +362,7 @@
             },
             "bullets": [
               {
-                "title": "本地第二阶段试用",
+                "title": "本地试用",
                 "text": "使用确定性 AI 提供者创建学院，无需付费模型调用。",
                 "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               },

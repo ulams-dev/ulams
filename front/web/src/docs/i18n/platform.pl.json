@@ -362,7 +362,7 @@
             },
             "bullets": [
               {
-                "title": "Lokalny test etapu 2",
+                "title": "Wypróbuj lokalnie",
                 "text": "Uruchom akademię z deterministycznym AI, bez płatnych wywołań modeli.",
                 "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               },
