@@ -1,3 +1,4 @@
+import { tenantFetch } from "../../../lib/api-transport.ts";
 import type { APIRoute } from "astro";
 import { clearAuthorCookie, isLivingCourseCall, isStudioCall, LIVING_COURSE_PREFIX } from "../../../lib/studio.ts";
 
@@ -32,7 +33,7 @@ export const ALL: APIRoute = async ({ params, request, locals, cookies, url }) =
   let upstream: Response;
   try {
     const target = living ? `/api/admin/living-course${path.slice(LIVING_COURSE_PREFIX.length)}` : `/api/admin/course-builder${path}`;
-    upstream = await fetch(`${tenant.apiUrl}${target}${url.search}`, {
+    upstream = await tenantFetch(tenant)(`${tenant.apiUrl}${target}${url.search}`, {
       method: request.method,
       headers,
       body,

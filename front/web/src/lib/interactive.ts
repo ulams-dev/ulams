@@ -1,3 +1,4 @@
+import { tenantFetch } from "./api-transport.ts";
 /**
  * Interactive topics (ADR 0086) for the lesson player: the launch calls (server side, with the learner's
  * token) and the catalogue node for the topic. The frame never gets the token; progress is reported by the
@@ -44,7 +45,7 @@ const FAILED = "This interactive cannot be opened right now.";
 /** Starts an Interactive topic: the entry file on the tenant content origin plus the manifest's steps. */
 export async function interactiveLaunch(tenant: Tenant, token: string, topicId: number): Promise<InteractiveResult> {
   try {
-    const response = await fetch(`${tenant.apiUrl}/api/interactive/launches/${topicId}`, {
+    const response = await tenantFetch(tenant)(`${tenant.apiUrl}/api/interactive/launches/${topicId}`, {
       method: "POST",
       headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
       signal: AbortSignal.timeout(8000),
@@ -68,7 +69,7 @@ export async function interactivePreview(
 ): Promise<InteractiveResult> {
   try {
     const query = topic.version && !topic.follow_latest ? `?version=${topic.version}` : "";
-    const response = await fetch(`${tenant.apiUrl}/api/admin/interactive/${topic.value}/preview${query}`, {
+    const response = await tenantFetch(tenant)(`${tenant.apiUrl}/api/admin/interactive/${topic.value}/preview${query}`, {
       headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
       signal: AbortSignal.timeout(8000),
     });
@@ -177,7 +178,7 @@ export function showcaseProps(launch: InteractiveLaunch, courseLanguage?: string
 /** The public showcase of a tenant (no login): null when no public course has an interactive topic, or on any failure. */
 export async function fetchShowcase(tenant: Tenant): Promise<InteractiveLaunch | null> {
   try {
-    const response = await fetch(`${tenant.apiUrl}/api/interactive/showcase`, { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(3000) });
+    const response = await tenantFetch(tenant)(`${tenant.apiUrl}/api/interactive/showcase`, { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(3000) });
     if (!response.ok) return null;
     const body = (await response.json().catch(() => null)) as { data?: InteractiveLaunch } | null;
     return typeof body?.data?.url === "string" && Array.isArray(body.data.manifest?.steps) ? body.data : null;

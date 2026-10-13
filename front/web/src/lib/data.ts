@@ -1,3 +1,4 @@
+import { tenantFetch } from "./api-transport.ts";
 import { ApiError, createClient, createLivingLearnerClient, type Course, type Tenant, type TopicProgress } from "@ulams/sdk";
 import type { UiNode } from "@ulams/ui/render-core";
 import { cache } from "./cache.ts";
@@ -9,7 +10,7 @@ import { siteModel, type RawSiteData, type SiteModel } from "./view-model.ts";
 
 /** Server-side API client for a tenant (straight to the tenant API, not through the browser). */
 export const apiFor = (tenant: Tenant, token?: string | null) =>
-  createClient({ baseUrl: tenant.apiUrl, token: token ?? null, timeoutMs: 10_000, timezone: "UTC" });
+  createClient({ baseUrl: tenant.apiUrl, fetch: tenantFetch(tenant), token: token ?? null, timeoutMs: 10_000, timezone: "UTC" });
 
 const key = (tenant: Tenant, name: string) => `${tenant.apiUrl}|${name}`;
 
@@ -32,7 +33,7 @@ export function getSettings(tenant: Tenant) {
 export function getCoursePage(tenant: Tenant, courseId: number): Promise<UiNode | null> {
   return publicData(tenant, `course-page:${courseId}`, async () => {
     try {
-      const response = await fetch(`${tenant.apiUrl}/api/pages/course-${courseId}`, { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(4_000) });
+      const response = await tenantFetch(tenant)(`${tenant.apiUrl}/api/pages/course-${courseId}`, { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(4_000) });
       if (!response.ok) return null;
       const content = ((await response.json()) as { data?: { content?: unknown; active?: unknown } }).data;
       if (!content || content.active === false || typeof content.content !== "string") return null;
@@ -118,7 +119,7 @@ export async function getProgram(tenant: Tenant, token: string, courseId: number
  * slow answer or an error all mean "no notices".
  */
 export async function getLearnerNotices(tenant: Tenant, token: string, courseId: number): Promise<LearnerNotices> {
-  const client = createLivingLearnerClient({ baseUrl: tenant.apiUrl, token, timeoutMs: 3_000 });
+  const client = createLivingLearnerClient({ baseUrl: tenant.apiUrl, fetch: tenantFetch(tenant), token, timeoutMs: 3_000 });
   const [notices, freshness] = await Promise.all([client.notices(courseId).catch(() => []), client.freshness(courseId).catch(() => [])]);
   return { notices, freshness };
 }
@@ -150,7 +151,7 @@ export function invalidateProgress(tenant: Tenant): void {
  */
 export async function getFrameOrigins(tenant: Tenant): Promise<string[]> {
   try {
-    return await publicData(tenant, "lti:frame-origins", () => fetchFrameOrigins(tenant.apiUrl), 5 * 60_000);
+    return await publicData(tenant, "lti:frame-origins", () => fetchFrameOrigins(tenant.apiUrl, tenantFetch(tenant)), 5 * 60_000);
   } catch {
     return [];
   }
@@ -164,7 +165,7 @@ export async function getFrameOrigins(tenant: Tenant): Promise<string[]> {
  */
 export async function scormLaunch(tenant: Tenant, token: string, uuid: string): Promise<string | null> {
   try {
-    const response = await fetch(`${tenant.apiUrl}/api/scorm/launch/${encodeURIComponent(uuid)}`, {
+    const response = await tenantFetch(tenant)(`${tenant.apiUrl}/api/scorm/launch/${encodeURIComponent(uuid)}`, {
       method: "POST",
       headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
       signal: AbortSignal.timeout(4000),
@@ -186,7 +187,7 @@ export async function scormLaunch(tenant: Tenant, token: string, uuid: string): 
 export async function cmi5Launch(tenant: Tenant, token: string, auId: number, courseId: number, topicId: number): Promise<string | null> {
   try {
     const query = new URLSearchParams({ format: "json", course_id: String(courseId), topic_id: String(topicId) });
-    const response = await fetch(`${tenant.apiUrl}/api/cmi5/player/${auId}?${query}`, {
+    const response = await tenantFetch(tenant)(`${tenant.apiUrl}/api/cmi5/player/${auId}?${query}`, {
       headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
       signal: AbortSignal.timeout(6000),
     });
@@ -209,7 +210,7 @@ export async function ltiLaunch(
   topicId: number
 ): Promise<{ url: string; presentation: string; tool: string } | { error: string }> {
   try {
-    const response = await fetch(`${tenant.apiUrl}/api/lti/launches/${topicId}`, {
+    const response = await tenantFetch(tenant)(`${tenant.apiUrl}/api/lti/launches/${topicId}`, {
       method: "POST",
       headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
       signal: AbortSignal.timeout(8000),
@@ -234,7 +235,7 @@ export async function liascriptLaunch(
   topicId: number
 ): Promise<{ url: string; sections?: number } | { error: string }> {
   try {
-    const response = await fetch(`${tenant.apiUrl}/api/liascript/launches/${topicId}`, {
+    const response = await tenantFetch(tenant)(`${tenant.apiUrl}/api/liascript/launches/${topicId}`, {
       method: "POST",
       headers: { Accept: "application/json", Authorization: `Bearer ${token}` },
       signal: AbortSignal.timeout(8000),
@@ -257,7 +258,7 @@ export async function scormAvailable(tenant: Tenant, uuid: string): Promise<bool
     tenant,
     `scorm:${uuid}`,
     async () => {
-      const show = await fetch(`${tenant.apiUrl}/api/scorm/show/${encodeURIComponent(uuid)}`, {
+      const show = await tenantFetch(tenant)(`${tenant.apiUrl}/api/scorm/show/${encodeURIComponent(uuid)}`, {
         headers: { Accept: "application/json" },
         signal: AbortSignal.timeout(4000),
       });
@@ -265,7 +266,7 @@ export async function scormAvailable(tenant: Tenant, uuid: string): Promise<bool
       const body = (await show.json()) as { data?: { entry_url_absolute?: string } };
       const entry = body.data?.entry_url_absolute;
       if (!entry) return false;
-      const head = await fetch(entry, { method: "HEAD", signal: AbortSignal.timeout(4000) });
+      const head = await tenantFetch(tenant)(entry, { method: "HEAD", signal: AbortSignal.timeout(4000) });
       return head.ok;
     },
     5 * 60_000

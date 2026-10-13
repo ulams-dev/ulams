@@ -1,3 +1,4 @@
+import { tenantFetch } from "./api-transport.ts";
 import type { AstroCookies } from "astro";
 import { ApiError, createCourseBuilderClient, createLivingCourseClient, type Tenant } from "@ulams/sdk";
 import { apiFor } from "./data.ts";
@@ -47,12 +48,12 @@ export async function loginAuthor(tenant: Tenant, cookies: AstroCookies, email: 
 
 /** Server-side builder client for SSR pages. */
 export function builderFor(tenant: Tenant, token: string) {
-  return createCourseBuilderClient({ baseUrl: tenant.apiUrl, token, timeoutMs: 20_000 });
+  return createCourseBuilderClient({ baseUrl: tenant.apiUrl, fetch: tenantFetch(tenant), token, timeoutMs: 20_000 });
 }
 
 /** Server-side Living Course client for SSR pages. */
 export function livingCourseFor(tenant: Tenant, token: string) {
-  return createLivingCourseClient({ baseUrl: tenant.apiUrl, token, timeoutMs: 20_000 });
+  return createLivingCourseClient({ baseUrl: tenant.apiUrl, fetch: tenantFetch(tenant), token, timeoutMs: 20_000 });
 }
 
 export { STUDIO_RULES, LIVING_COURSE_RULES, LIVING_COURSE_PREFIX, isStudioCall, isLivingCourseCall } from "./studio-rules.ts";

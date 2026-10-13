@@ -28,6 +28,8 @@ return [
      * Naming of tenant resources. `{slug}` is replaced with the tenant slug.
      */
     'scheme' => env('TENANCY_SCHEME', 'http'),
+    // Optional non-standard gateway port; host names stay free of ports for domain isolation.
+    'port' => env('TENANCY_PORT') ?: null,
     'api_host' => env('TENANCY_API_HOST', '{slug}.localhost'),
     'front_host' => env('TENANCY_FRONT_HOST', '{slug}.app.localhost'),
     'admin_host' => env('TENANCY_ADMIN_HOST', '{slug}.admin.localhost'),

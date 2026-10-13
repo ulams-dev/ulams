@@ -6,13 +6,12 @@ type Node = { component: string; props?: Record<string, unknown> };
 const doc = landingDocs.platform!;
 const main = doc.children!.find((node) => node.component === "Main")!;
 const sections = main.children as Node[];
-const featureList = sections.find((node) => node.component === "FeatureList")!;
+const heritage = sections.find((node) => node.component === "HeritageStory")!;
 
 describe("concise platform feature list", () => {
-  it("summarises customer academies without a separate animated brand story", () => {
-    const items = featureList.props!.items as Array<{ title: string; text: string }>;
-    expect(items).toHaveLength(3);
-    expect(items.find((item) => item.title === "A site per customer")?.text).toContain("own subdomain");
+  it("uses the selected Ulam portrait and heritage instead of repeating product principles", () => {
+    expect(heritage).toBeDefined();
+    expect(JSON.stringify(heritage.props)).toContain("stanislaw-ulam-stitch.png");
     expect(sections.some((section) => section.component === "WhiteLabelStory")).toBe(false);
   });
 
