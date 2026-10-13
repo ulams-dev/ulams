@@ -4,8 +4,8 @@ import { uiStrings, pageLocale } from "../lib/i18n.ts";
  * "Run your academy from anywhere": tabs of realistic windows (Claude Code, Claude chat with the
  * ulams MCP server, a plain shell, REST/SDK, the studio) whose commands, tool calls and answers are
  * typed line by line by the timeline player (elements/story.ts). The schedule is computed here, on the
- * server; the DOM holds the whole text from the start (no layout shift), every panel shares one grid
- * cell (the tallest wins) and screen readers get a plain transcript. Tabs: roving tabindex,
+ * server; the DOM holds the whole text from the start (no layout shift while typing), only the active
+ * panel takes space (the stage height animates between tabs) and screen readers get a plain transcript. Tabs: roving tabindex,
  * aria-selected, aria-controls; they auto-advance slowly and stop on hover, focus, a manual choice or Pause.
  * Each tab may carry a status badge (the landing shows roadmap items honestly unless told otherwise).
  */
@@ -283,15 +283,19 @@ const panels = tabs.map((tab, i) => ({ ...tab, ...schedule(tab.lines), i, tabId:
     color: var(--ulams-color-text);
   }
   .u-wf__panels {
-    display: grid;
+    position: relative;
+  }
+  .u-wf__panels[data-resizing] {
+    overflow: hidden;
+    transition: height 0.35s var(--ulams-ease);
   }
   .u-wf__panel {
-    grid-area: 1 / 1;
-    visibility: hidden;
     min-width: 0;
   }
-  .u-wf__panel[data-active] {
-    visibility: visible;
+  .u-wf__panel:not([data-active]) {
+    position: absolute;
+    inset: 0 0 auto;
+    visibility: hidden;
   }
   .u-wf__panel:focus-visible {
     outline: 3px solid var(--ulams-brand-sky);

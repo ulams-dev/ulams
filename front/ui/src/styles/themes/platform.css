@@ -283,12 +283,29 @@
 [data-theme="platform"] .u-wf__stage { background: #0b1928; box-shadow: 0 12px 32px -18px rgb(15 43 70 / 0.42); }
 
 @media (max-width: 1000px) {
-  [data-theme="platform"] .u-wf__tabs { grid-template-columns: minmax(0, 1fr); }
-  [data-theme="platform"] .u-wf__tab { flex-direction: row; min-height: 48px; padding: 8px 12px; justify-content: flex-start; text-align: left; }
-  [data-theme="platform"] .u-wf__tab .u-status { margin-left: auto; }
-}
-@media (max-width: 520px) {
-  [data-theme="platform"] .u-wf__tabs { grid-template-columns: minmax(0, 1fr); }
+  [data-theme="platform"] .u-wf__tabbar { align-items: center; padding: 8px; }
+  [data-theme="platform"] .u-wf__tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    mask-image: linear-gradient(to right, #000 calc(100% - 24px), transparent);
+  }
+  [data-theme="platform"] .u-wf__tabs::-webkit-scrollbar { display: none; }
+  [data-theme="platform"] .u-wf__tab {
+    flex: none;
+    width: auto;
+    height: auto;
+    flex-direction: row;
+    gap: 6px;
+    min-height: 44px;
+    padding: 8px 12px;
+    white-space: nowrap;
+    scroll-snap-align: start;
+  }
+  [data-theme="platform"] .u-wf__tab:hover { transform: none; }
 }
 
 [data-theme="platform"] .u-chips { background: #fff; color: #233647; border-bottom: 1px solid #e2e0da; }

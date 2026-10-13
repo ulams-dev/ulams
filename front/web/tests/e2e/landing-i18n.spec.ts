@@ -109,7 +109,7 @@ for (const c of CASES) {
       const wide = await page.evaluate(() => {
         const limit = document.documentElement.clientWidth + 1;
         return [...document.querySelectorAll("main *")]
-          .filter((el) => !el.closest(".u-compare__scroll, .u-stage, .u-wf__panels, pre, .u-orb__rings") && el.getBoundingClientRect().right > limit && getComputedStyle(el).position !== "fixed")
+          .filter((el) => !el.closest(".u-compare__scroll, .u-stage, .u-wf__panels, .u-wf__tabs, pre, .u-orb__rings") && el.getBoundingClientRect().right > limit && getComputedStyle(el).position !== "fixed")
           .slice(0, 5)
           .map((el) => `${el.tagName.toLowerCase()}.${el.className}`);
       });

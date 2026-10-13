@@ -9,11 +9,11 @@ async function open(page: Page) {
   await expect(page.locator("#agents")).toHaveCount(1);
 }
 
-test("the policy lifecycle appears once at the top and uses a neutral example caption", async ({ page }) => {
+test("the policy lifecycle appears once at the top and uses a neutral example caption", async ({ page }, info) => {
   await open(page);
   await expect(page.locator(".u-hero ulams-policy-story")).toHaveCount(1);
   await expect(page.locator(".u-lc, #builder")).toHaveCount(0);
-  await page.locator(".ps-navigation button").last().click();
+  if (info.project.name !== "phone") await page.locator(".ps-navigation button").last().click();
   await expect(page.locator(".policy-story .u-status")).toHaveCount(0);
   await expect(page.locator(".policy-story figcaption")).toContainText("Illustrative policy lifecycle");
 });
@@ -57,7 +57,8 @@ test("tabs auto-advance slowly and Pause stops them", async ({ page }) => {
   await expect(page.locator('#agents [role="tab"]').first()).toHaveAttribute("aria-selected", "true");
 });
 
-test("policy playback advances, pauses and replays without losing chapter selection", async ({ page }) => {
+test("policy playback advances, pauses and replays without losing chapter selection", async ({ page }, info) => {
+  test.skip(info.project.name === "phone", "phones stack the chapters instead of switching them");
   await page.clock.install();
   await open(page);
   const story = page.locator("ulams-policy-story");
@@ -96,13 +97,13 @@ test("no layout shift while the stories play", async ({ page }) => {
 test.describe("reduced motion", () => {
   test.use({ contextOptions: { reducedMotion: "reduce" } });
 
-  test("the policy stays still, while agent examples show their complete transcript", async ({ page }) => {
+  test("the policy stays still, while agent examples show their complete transcript", async ({ page }, info) => {
     await open(page);
     const story = page.locator("ulams-policy-story");
     await expect(story.locator("[data-play]")).toHaveAttribute("aria-pressed", "true");
     await expect(story.locator('[role="tab"]').first()).toHaveAttribute("aria-selected", "true");
-    await story.locator('[role="tab"]').last().click();
-    await expect(story.locator(".ps-panel:visible")).toContainText("New certificate");
+    if (info.project.name !== "phone") await story.locator('[role="tab"]').last().click();
+    await expect(story.locator(".ps-panel:visible").last()).toContainText("New certificate");
     await page.locator("#agents").scrollIntoViewIfNeeded();
     await expect(page.locator("#agents ulams-story").first()).toHaveAttribute("data-static", "");
     await expect(page.locator("#agents [data-pause]")).toBeHidden();
@@ -113,7 +114,8 @@ test.describe("reduced motion", () => {
   });
 });
 
-test("interface buttons have equal widths and heights", async ({ page }) => {
+test("interface buttons have equal widths and heights", async ({ page }, info) => {
+  test.skip(info.project.name === "phone", "narrow screens scroll a row of label-sized chips");
   await open(page);
   const sizes = await page.locator('#agents [role="tab"]').evaluateAll((els) => els.map((el) => {
     const box = el.getBoundingClientRect();
@@ -135,4 +137,34 @@ test("interface selector has icons, no redundant availability badges and a visib
   await page.waitForTimeout(250);
   const active = await tabs.nth(2).evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(active).not.toBe(inactive);
+});
+
+test("the interface stage fits the active panel, so no tab leaves empty space", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await open(page);
+  const tabs = page.locator('#agents [role="tab"]');
+  const heights = new Set<number>();
+  for (let i = 0; i < (await tabs.count()); i++) {
+    await tabs.nth(i).click();
+    const { box, panel } = await page.evaluate(() => ({
+      box: document.querySelector("#agents .u-wf__panels")!.getBoundingClientRect().height,
+      panel: document.querySelector("#agents .u-wf__panel[data-active]")!.getBoundingClientRect().height,
+    }));
+    expect(Math.abs(box - panel)).toBeLessThan(1);
+    heights.add(Math.round(panel));
+  }
+  expect(heights.size).toBeGreaterThan(1);
+});
+
+test("phones read the policy chapters one under another", async ({ page }, info) => {
+  test.skip(info.project.name !== "phone", "wider screens switch chapters in place");
+  await open(page);
+  const story = page.locator("ulams-policy-story");
+  await expect(story.locator(".ps-navigation")).toBeHidden();
+  await expect(story.locator("[data-play]")).toBeVisible();
+  await expect(story.locator(".ps-panel:visible")).toHaveCount(7);
+  const tops = await story.locator(".ps-panel").evaluateAll((els) => els.map((el) => el.getBoundingClientRect().top));
+  for (let i = 1; i < tops.length; i++) expect(tops[i]!).toBeGreaterThan(tops[i - 1]!);
+  await story.locator(".ps-panel").last().scrollIntoViewIfNeeded();
+  await expect(story.locator(".ps-panel").last()).toHaveAttribute("data-inview", "");
 });
