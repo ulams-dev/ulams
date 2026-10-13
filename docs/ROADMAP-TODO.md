@@ -855,6 +855,10 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 
 ## Phase 8: Self-hosting
 
+- [ ] (new) CLI one-command Docker/Kubernetes development and production launch, private persisted keys,
+      matching image releases, academy provisioning and lifecycle E2E (ADR 0102 Proposed;
+      implementation and Docker dev/prod + Kubernetes dev verified; Kubernetes production and public release pending).
+
 - [ ] (new) R&D: Cloudflare deployment (TypeScript + Hono gateway Worker, Laravel as Cloudflare
       Container, R2, Hyperdrive, Queues, Durable Objects) with a one-command `wrangler deploy` for a
       dev environment; strangler migration of the API to Hono only if the spike succeeds

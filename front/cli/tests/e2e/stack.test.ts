@@ -31,7 +31,7 @@ function external(program:string,args:string[],env:NodeJS.ProcessEnv):Promise<st
   });
 }
 async function page(url:string,env:NodeJS.ProcessEnv) {
-  const script=`async function get(url,depth=0){if(depth>5)throw new Error('Redirect loop');const u=new URL(url);const lib=await import(u.protocol==='https:'?'node:https':'node:http');return new Promise((resolve,reject)=>{const r=lib.get(u,{agent:false,lookup:(_h,_o,cb)=>cb(null,'127.0.0.1',4)},s=>{let b='';s.on('data',c=>b+=c);s.on('end',()=>{if(s.statusCode>=300&&s.statusCode<400&&s.headers.location)get(new URL(s.headers.location,u).href,depth+1).then(resolve,reject);else if(s.statusCode!==200)reject(new Error('HTTP '+s.statusCode));else resolve(b);});});r.on('error',reject);});}console.log(await get(process.argv[1]));`;
+  const script=`async function get(url,depth=0){if(depth>5)throw new Error('Redirect loop');const u=new URL(url);const lib=await import(u.protocol==='https:'?'node:https':'node:http');return new Promise((resolve,reject)=>{const r=lib.get(u,{agent:false,lookup:(_h,o,cb)=>o.all?cb(null,[{address:'127.0.0.1',family:4}]):cb(null,'127.0.0.1',4)},s=>{let b='';s.on('data',c=>b+=c);s.on('end',()=>{if(s.statusCode>=300&&s.statusCode<400&&s.headers.location)get(new URL(s.headers.location,u).href,depth+1).then(resolve,reject);else if(s.statusCode!==200)reject(new Error('HTTP '+s.statusCode));else resolve(b);});});r.on('error',reject);});}console.log(await get(process.argv[1]));`;
   return external(process.execPath,["--input-type=module","-e",script,url],env);
 }
 
