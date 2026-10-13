@@ -2476,7 +2476,7 @@
       }
     },
     "Faq": {
-      "description": "Questions and answers as an accessible disclosure list (no JavaScript).",
+      "description": "Questions and answers as an accessible disclosure list, or as open question-and-answer cards (no JavaScript).",
       "children": false,
       "props": {
         "type": "object",
@@ -2523,6 +2523,38 @@
             "default": [],
             "maxItems": 12,
             "minItems": 1
+          },
+          "jsonLd": {
+            "type": "boolean",
+            "description": "Emit schema.org FAQPage JSON-LD; turn off when the page emits one FAQPage for several sections",
+            "default": true
+          },
+          "collapsible": {
+            "type": "boolean",
+            "description": "Render each question as a disclosure; turn off to show every answer, e.g. on a dedicated FAQ page",
+            "default": true
+          },
+          "more": {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "description": "Visible text",
+                "maxLength": 80
+              },
+              "href": {
+                "type": "string",
+                "format": "href",
+                "description": "Target URL",
+                "maxLength": 2048
+              }
+            },
+            "required": [
+              "label",
+              "href"
+            ],
+            "description": "Link under the list to the full FAQ page",
+            "additionalProperties": false
           }
         },
         "required": [
@@ -3213,7 +3245,8 @@
                   "enum": [
                     "terminal",
                     "chat",
-                    "studio"
+                    "studio",
+                    "admin"
                   ],
                   "description": "Look of the window frame",
                   "default": "terminal"
@@ -4928,6 +4961,11 @@
             "type": "string",
             "description": "Small print",
             "maxLength": 200
+          },
+          "mail": {
+            "type": "boolean",
+            "description": "Show the contact address, assembled in the browser so it is not in the HTML",
+            "default": false
           }
         },
         "required": [
