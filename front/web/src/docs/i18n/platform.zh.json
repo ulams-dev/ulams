@@ -267,9 +267,9 @@
           "props": {
             "id": "agents",
             "eyebrow": "随处运行",
-            "title": "在 Claude、Claude Code 或终端里管理你的学院",
-            "intro": "通过 Claude Code、Claude、Codex、OpenCode、Gemini CLI 或其他兼容 MCP 的智能体使用 ULAMS。基于文档创建课程、审核更新，并通过 AI 智能体、ULAMS CLI 或 REST API 管理学院。Studio 为团队提供可视化工作空间。",
-            "valueLine": "一个平台，覆盖团队已经在用的每一种界面。",
+            "title": "在管理后台、Claude、Claude Code 或终端里管理你的学院",
+            "intro": "ULAMS 也是一套标准 LMS。管理后台用来管理课程、人员和报名，以及查看报告。你也可以通过 Claude Code、Claude、Codex、OpenCode、Gemini CLI 或其他兼容 MCP 的智能体、ULAMS CLI 或 REST API 来使用。Studio 为团队提供可视化工作空间。",
+            "valueLine": "一个平台：团队熟悉的管理后台，以及他们已经在用的每一种界面。",
             "legal": "Claude 和 Claude Code 是 Anthropic 的产品。ulams 是独立产品，与 Anthropic 没有关联，也未获其背书。",
             "description": {
               "$data": "/workflows/description"

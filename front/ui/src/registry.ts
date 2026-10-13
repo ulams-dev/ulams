@@ -858,7 +858,7 @@ export const registry = {
               key: text("Stable key (letters, digits, dashes)", { maxLength: 24 }),
               label: text("Tab label", { maxLength: 24 }),
               status: oneOf(["available", "preview", "coming"], "Status badge; omit when everything shown exists"),
-              window: oneOf(["terminal", "chat", "studio"], "Look of the window frame", "terminal"),
+              window: oneOf(["terminal", "chat", "studio", "admin"], "Look of the window frame", "terminal"),
               title: text("Window title", { maxLength: 60 }),
               caption: text("One line under the window", { maxLength: 200 }),
               note: text("Honest note under the caption, e.g. what the example depends on", { maxLength: 200 }),

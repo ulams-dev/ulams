@@ -57,6 +57,11 @@ export interface UiStrings {
   /** Contains `{link}` where the ulams link goes. */
   footerBuiltOn: string;
   studioWindow: string;
+  adminSection: string;
+  adminNew: string;
+  adminCourse: string;
+  adminStatus: string;
+  adminLearners: string;
 }
 
 const en: UiStrings = {
@@ -117,6 +122,11 @@ const en: UiStrings = {
   checked: " (checked {date})",
   terminal: "Terminal",
   studioWindow: "Studio · Course builder",
+  adminSection: "Section",
+  adminNew: "New course",
+  adminCourse: "Course",
+  adminStatus: "Status",
+  adminLearners: "Learners",
   footerBuiltOn: "Built on {link}, the open headless LMS.",
 };
 
@@ -178,6 +188,11 @@ const pl: UiStrings = {
   checked: " (sprawdzono {date})",
   terminal: "Terminal",
   studioWindow: "Studio · Kreator kursów",
+  adminSection: "Sekcja",
+  adminNew: "Nowy kurs",
+  adminCourse: "Kurs",
+  adminStatus: "Status",
+  adminLearners: "Kursanci",
   footerBuiltOn: "Zbudowane na {link}, otwartym headless LMS.",
 };
 
@@ -239,6 +254,11 @@ const zh: UiStrings = {
   checked: "（核查于 {date}）",
   terminal: "终端",
   studioWindow: "工作室 · 课程构建器",
+  adminSection: "栏目",
+  adminNew: "新建课程",
+  adminCourse: "课程",
+  adminStatus: "状态",
+  adminLearners: "学员",
   footerBuiltOn: "基于 {link} 构建，一个开放的无头 LMS。",
 };
 

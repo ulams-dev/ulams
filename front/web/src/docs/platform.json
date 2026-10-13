@@ -267,9 +267,9 @@
           "props": {
             "id": "agents",
             "eyebrow": "run it from anywhere",
-            "title": "Manage your academy from Claude, Claude Code or your terminal",
-            "intro": "Use Claude Code, Claude, Codex, OpenCode, Gemini CLI or another MCP-compatible agent with ULAMS. Create courses from documents, review updates and manage your academy through AI agents, the ULAMS CLI or the REST API. The studio provides a visual workspace for your team.",
-            "valueLine": "One platform, every interface your team already works in.",
+            "title": "Manage your academy from the admin panel, Claude, Claude Code or your terminal",
+            "intro": "ULAMS is a standard LMS. The admin panel is there for courses, people, enrolments and reports. You can also use Claude Code, Claude, Codex, OpenCode, Gemini CLI or another MCP-compatible agent, the ULAMS CLI or the REST API. The studio is a visual workspace for your team.",
+            "valueLine": "One platform: the admin your team expects, and every interface they already work in.",
             "legal": "Claude and Claude Code are products of Anthropic. ulams is independent and not affiliated with or endorsed by Anthropic.",
             "description": {
               "$data": "/workflows/description"
