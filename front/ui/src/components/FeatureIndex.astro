@@ -1,5 +1,7 @@
 ---
 import Icon from "./Icon.astro";
+import NewTabMark from "./NewTabMark.astro";
+import { linkTarget } from "../lib/links.ts";
 import { uiStrings, pageLocale, fill } from "../lib/i18n.ts";
 
 interface Item {
@@ -101,15 +103,16 @@ const ldJson = JSON.stringify(ld).replace(/</g, "\\u003c");
                   {g.items.map((item) => (
                     <li class="u-fx__item" data-status={item.status ?? "available"}>
                       <FeatureHeading class="u-fx__name">
-                        {item.href ? <a href={item.href}>{item.title}</a> : item.title}
+                        {item.href ? <a href={item.href} {...linkTarget(item.href)}>{item.title}<NewTabMark href={item.href} /></a> : item.title}
                         {badge(item.status) && <span class={`u-status u-status--${item.status}`}>{badge(item.status)}</span>}
                       </FeatureHeading>
                       {item.text && <p class="u-fx__text">{item.text}</p>}
                       {item.packages && item.packages.length > 0 && (
                         <p class="u-fx__pkgs">
                           {item.packages.map((name) => (
-                            <a class="u-fx__pkg" href={`${base}/reference/packages/${name}/`} title={`${t.packageDocs}: ${name}`}>
+                            <a class="u-fx__pkg" href={`${base}/reference/packages/${name}/`} {...linkTarget(base)} title={`${t.packageDocs}: ${name}`}>
                               {name}
+                              <NewTabMark href={base} />
                             </a>
                           ))}
                         </p>

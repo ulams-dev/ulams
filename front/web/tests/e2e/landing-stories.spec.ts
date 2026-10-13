@@ -156,6 +156,18 @@ test("the interface stage fits the active panel, so no tab leaves empty space", 
   expect(heights.size).toBeGreaterThan(1);
 });
 
+test("documentation and GitHub links open in a new tab and say so", async ({ page }) => {
+  await open(page);
+  const links = page.locator('a[href^="https://ulams-dev.github.io"], a[href^="https://github.com"]');
+  expect(await links.count()).toBeGreaterThan(3);
+  for (const link of await links.all()) {
+    await expect(link).toHaveAttribute("target", "_blank");
+    await expect(link).toHaveAttribute("rel", /noopener/);
+    await expect(link.locator(".u-newtab")).toHaveCount(1);
+  }
+  await expect(page.locator('a[href^="/"][target="_blank"]')).toHaveCount(0);
+});
+
 test("phones read the policy chapters one under another", async ({ page }, info) => {
   test.skip(info.project.name !== "phone", "wider screens switch chapters in place");
   await open(page);

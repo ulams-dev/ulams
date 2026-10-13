@@ -3,6 +3,8 @@ import { ctaEvent } from "../lib/analytics.ts";
 import { uiStrings, pageLocale } from "../lib/i18n.ts";
 import Logo from "../brand/Logo.astro";
 import ObfuscatedMail from "./ObfuscatedMail.astro";
+import NewTabMark from "./NewTabMark.astro";
+import { linkTarget } from "../lib/links.ts";
 
 interface Props {
   brand: string;
@@ -29,7 +31,7 @@ const [builtPre = "", builtPost = ""] = t.footerBuiltOn.split("{link}");
           <ul role="list">
             {links.map((link) => (
               <li>
-                <a href={link.href} data-umami-event={ctaEvent(link.href)}>{link.label}</a>
+                <a href={link.href} {...linkTarget(link.href)} data-umami-event={ctaEvent(link.href)}>{link.label}<NewTabMark href={link.href} /></a>
               </li>
             ))}
           </ul>
@@ -40,7 +42,7 @@ const [builtPre = "", builtPost = ""] = t.footerBuiltOn.split("{link}");
   <div class="u-container u-footer__base">
     <p>{note ?? `© ${new Date().getFullYear()} ${brand}`}</p>
     <p class="u-footer__powered">
-      {builtPre}<a href="https://github.com/ulams-dev"><Logo variant="symbol" mono />ulams</a>{builtPost}
+      {builtPre}<a href="https://github.com/ulams-dev" {...linkTarget("https://github.com/ulams-dev")}><Logo variant="symbol" mono />ulams<NewTabMark href="https://github.com/ulams-dev" /></a>{builtPost}
     </p>
   </div>
 </footer>

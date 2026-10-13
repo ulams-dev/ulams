@@ -59,6 +59,7 @@ export interface UiStrings {
   footerBuiltOn: string;
   /** Placeholder until the browser fills in the contact address. */
   mailLabel: string;
+  newTab: string;
   studioWindow: string;
   adminSection: string;
   adminNew: string;
@@ -133,6 +134,7 @@ const en: UiStrings = {
   adminLearners: "Learners",
   footerBuiltOn: "Built on {link}, the open headless LMS.",
   mailLabel: "Email",
+  newTab: "(opens in a new tab)",
 };
 
 const pl: UiStrings = {
@@ -201,6 +203,7 @@ const pl: UiStrings = {
   adminLearners: "Kursanci",
   footerBuiltOn: "Zbudowane na {link}, otwartym headless LMS.",
   mailLabel: "E-mail",
+  newTab: "(otwiera się w nowej karcie)",
 };
 
 const zh: UiStrings = {
@@ -269,6 +272,7 @@ const zh: UiStrings = {
   adminLearners: "学员",
   footerBuiltOn: "基于 {link} 构建，一个开放的无头 LMS。",
   mailLabel: "邮箱",
+  newTab: "（在新标签页中打开）",
 };
 
 const TABLE: Record<UiLocale, UiStrings> = { en, pl, zh };
