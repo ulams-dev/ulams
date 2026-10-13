@@ -115,7 +115,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] Report on `headless-h5p`, `scorm`, `cmi5`, `lrs`, `tracker`, `reports`, `payments`,
       `cart`, `vouchers`, `translations`, `settings`, `templates`, `notifications` (see docs/reports/phase-0-audit.md)
 - [x] Can `recommender` be safely disabled or removed? What depends on it? (removed from API, admin and front; nothing else depended on it; ADR 0006; webcam-capture leftover tracked in 0.1c)
-- [ ] Multitenancy via `gecche/laravel-multidomain`: current setup, dynamic subdomains possible? (partial: dynamic subdomains work via the tenancy package (`ulams:tenant:create`); fixed shared Redis keys, unknown-host fallback and boot-time worker lists; remaining: tenant video queue, per-tenant storage credentials, production DNS/TLS)
+- [ ] Multitenancy via `gecche/laravel-multidomain`: current setup, dynamic subdomains possible? (partial: dynamic subdomains work via the tenancy package (`ulams:tenant:create`); fixed shared Redis keys, unknown-host fallback and boot-time worker lists; tenant video queue fixed in `93a9f250`; remaining: per-tenant storage credentials, production DNS/TLS; #44)
 - [x] Inventory of learner activity data (tracker, xAPI/cmi5, SCORM CMI, H5P, quizzes, progress,
       logins): storage, granularity, retention, gaps (see docs/reports/phase-0-audit.md)
 - [x] How content updates preserve learner progress today (see docs/reports/phase-0-audit.md)
@@ -130,8 +130,8 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] (new) Vendor the 50 PHP packages into `api/packages`; no `escolalms/*` in `composer.json`
 - [x] (new) Vendor the JS libraries into `front/src/lib` and `admin/src/lib`; Yarn workspaces + Turborepo
 - [x] (new) Rename to ulams, with data migration for existing databases
-- [ ] (new) H5P as the isolated Lumi service `api/h5p` (partial: service, Laravel index package, Caddy
-      routing and admin/front iframe embedding done; multi-tenant resolver in progress)
+- [x] (new) H5P as the isolated Lumi service `api/h5p` (done: service, Laravel index package, Caddy
+      routing, admin/front iframe embedding and multi-tenant resolver shipped; ADR 0003, 0015; #44)
 - [x] (new) Remove the PHP H5P server completely and replace it with the Node.js service: no
       `h5p/h5p-core`, `h5p/h5p-editor` or `headless-h5p` left in `composer.json`/`composer.lock` or the
       code; Laravel keeps only the read-only `api/packages/h5p` index and HTTP client (ADR 0003)
@@ -140,7 +140,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
       library and the admin markdown editor; blocked by lint; verified with the visual regression harness)
 - [x] (new) Demo content seeder for the three experience courses (`front/docs/design/experiences.md`)
 - [x] (new) Root README, AGENTS.md and per-package READMEs for the monorepo
-- [ ] (new) Documentation site (Astro Starlight, `front/docs-site`): guides per audience, reference pages generated from the code, every ADR and the roadmap rendered from `docs/`, coverage check over packages, admin routes, learner routes and topic types, GitHub Pages deploy (partial: on branch `docs/starlight-site`, not merged; Pages source and private vulnerability reporting to be enabled)
+- [x] (new) Documentation site (Astro Starlight, `front/docs-site`): guides per audience, reference pages generated from the code, every ADR and the roadmap rendered from `docs/`, coverage check over packages, admin routes, learner routes and topic types, GitHub Pages deploy (done: site on `main`, #13 and #14 closed, published to GitHub Pages; #44)
 - [ ] (new) Remaining legacy references (partial: `escolalms/php` replaced by a base built in-repo, ReportBro removed and replaced by pdfme): replace the `escolalms/php` and `escolalms/reportbro-server`
       images, decide on upstream provenance links, reword ADR prose, retarget Docker Hub publishing
       workflows, replace the `ulams.app` placeholder domain, recreate SQL views in pre-rename databases
@@ -152,7 +152,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] (new) Remove the non-existent `packages/tracker/src` path from Swagger (done); consider Git LFS for
       large test fixtures; revisit exact pins (`faker-markdown-generator`, `tzsk/sms`) (no LFS: CI rejects new files over 2 MB
       and the 24 MB and 6.8 MB SCORM mocks are generated minimal packages; `faker-markdown-generator` moved to
-      `require-dev`; `tzsk/sms` stays `^10.0`; owner confirmation of no LFS pending #48)
+      `require-dev`; `tzsk/sms` stays `^10.0`; owner confirmed no LFS, #48 closed)
 - [x] (new) Lean workers for local development and the demo profile (`ULAMS_WORKERS_MODE=lean`: one loop over the
       domains with `ulams:tenant:work-once`, one builder/long-job process, one scheduler loop, no Horizon,
       php-fpm `ondemand`; ADR 0083 amendment; `per-tenant` stays the production default)
@@ -187,10 +187,9 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
       `GroupTree` depth limit and cycle safety, `_ignition` absent from demo and production images
       (ADR 0071); `POST api/cmi5/fetch` no longer echoes a token: it exchanges a one-time launch token for an
       LRS-only session token (ADR 0046))
-- [ ] (new) Stripe: handle the 3-D Secure redirect in the front and document the webhook setup
+- [x] (new) Stripe: handle the 3-D Secure redirect in the front and document the webhook setup
       (`PAYMENTS_STRIPE_WEBHOOK_SECRET`, `/api/payments-gateways/webhook/stripe`); RevenueCat receipt verifier
-      (partial: 3-D Secure redirect in the legacy front and webhook docs done; the RevenueCat verifier is
-      obsolete by default, pending owner decision #46)
+      (done: 3-D Secure redirect in the legacy front and webhook docs shipped, #47; RevenueCat verifier dropped as obsolete, #46)
 - [x] (new) Jitsi: confirm the JaaS webhook signature format against the JaaS docs; configure
       `JITSI_RECORDING_HOSTS`
 - [x] (new) Drop the unused `analyze_enabled` columns (consultations, webinars) and clean up stored meeting
@@ -204,13 +203,12 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [ ] (new) mjml: the `mjml` compose service is not on the `ulams` network and `MJML_API_URL` is not set
       (templates fall back silently); wire it or drop the service
 - [ ] (new) Publish images to GHCR (`ghcr.io/ulams-dev/*`, decided 2026-10-08); publish the base image as `ulams/php:8.3` with source offers for its GPL programs (see
-      `api/docker/php/NOTICE`)
+      `api/docker/php/NOTICE`) (GHCR publishing done in `publish.yml`; base image is PHP 8.4; source offer tracked in L0-15; #44)
 
-- [ ] (new) Delete `front/src/style/` (two unused styled-components helpers; excluded from tsconfig,
-      eslint and the guard until removed)
+- [x] (new) Delete `front/src/style/` (deleted in `974776f0` with its exclusions; #44)
 - [x] (new) Cart on tenants crashes without a Stripe publishable key (`stripe.tsx` calls
       `stripeKey.includes` on null); show a configuration message instead
-- [ ] (new) Yarn install on Node 23 needs `--ignore-engines` (vitest engines); CI pins Node 22
+- [ ] (new) Yarn install on Node 23 needs `--ignore-engines` (obsolete: Node 23 is EOL; Node 22 and 24 supported; #44)
 - [ ] (new) Dependency holds (Dependabot ignore rules in `.github/dependabot.yml`): `sharp` 0.35 fails to load
       in the docs-site build on the CI runner (MissingSharp; Astro depends on `sharp ^0.34`); `@ant-design/pro-components`
       2.8.5 to 2.8.10 break admin typecheck (`@ant-design/pro-form` 2.31.5+ declaration files import `src/...`).
@@ -350,8 +348,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [x] (new) Production: set `H5P_SERVICE_CONFIG_DIR`, run `ulams:h5p:export-config` and start the H5P service
       with `compose.h5p.prod.yml`
 - [x] (new) H5P xAPI progress endpoint rejects statement objects (`ProgressService::h5p()` typed `string`) (plan L1-06; the statement is stored as JSON, its verb as the event)
-- [ ] (new) `yarn install` on Node 24 fails in admin's postinstall (`max setup`: umi's esmi feature loads
-      `http-deceiver`, which needs the removed `http_parser` binding); CI and `.nvmrc` use Node 22
+- [x] (new) `yarn install` on Node 24 fails in admin's postinstall (fixed in PR #34 via ADR 0070 http_parser shim; #44)
 
 ### 1.5 Interactive packages (new)
 Plan: `docs/plans/interactive-demos.md` (M1–M2); ADRs 0086, 0087.
@@ -509,8 +506,8 @@ Simulations (opt-in)
 - [ ] Must pass solvability loop; author approval required; off by default in self-hosted
 
 Adaptive interface (feature flag)
-- [ ] Per-learner density, chunking, navigation, visible hints from Learner Insights
-- [ ] Remediation components: Feynman reflection, elaborative questions, worked examples
+- [ ] Per-learner density, chunking, navigation, visible hints from Learner Insights (moved to `docs/plans/phase-4.md` M4.8; #59)
+- [ ] Remediation components: Feynman reflection, elaborative questions, worked examples (moved to `docs/plans/phase-4.md` M4.5; #59)
 - [ ] Surveys with SUS, UEQ, NASA-TLX + behavioural metrics
 
 Impact measurement
@@ -519,7 +516,7 @@ Impact measurement
 
 Quality
 - [x] Component playground with model-facing descriptions (in the docs site instead of Storybook, ADR 0054,
-      default pending #57; `/catalogue/`, L2-19)
+      merged in PR #83; `/catalogue/`, L2-19; #57 closed)
 - [x] Schema, fallback, interaction round-trip and accessibility tests per component (builder
       catalogue: vitest + axe in jsdom; axe on every studio screen in the e2e)
 - [ ] Evals: right component choice, no raw markup outside `simulation`, simulation pass rate
@@ -770,7 +767,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Scoped API keys with rate limits and usage stats
 - [x] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
       log, `Idempotency-Key`, `X-Request-Id`, `GET /api/meta`; admin "API tokens" page (ADR 0074)
-- [x] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075; pending #74)
+- [x] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075, merged in PRs #101, #127, #129; #74 closed)
 - [x] (new) S3 platform tenant API with queued provisioning, off by default, `ulams tenants …` (ADR 0078, 0085; #79 default "off by default"; ADR acceptance pending)
 - [x] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
 - [ ] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds
@@ -797,7 +794,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) First version on Cloudflare Workers (TypeScript, Agents SDK, OAuth) against the current REST
       API: hand-written course/topic/quiz tools + tools generated from the OpenAPI spec
       (note: the CLI plan proposes the local `ulams mcp` first and this as the later hosted variant from the
-      same registry; pending #75)
+      same registry; #75 closed)
 - [x] (new) M3 `ulams mcp` (stdio + Streamable HTTP) generated from the CLI registry: toolsets, annotations,
       confirmation for destructive tools, resources, MCP client tests, agent eval (ADR 0076)
 
