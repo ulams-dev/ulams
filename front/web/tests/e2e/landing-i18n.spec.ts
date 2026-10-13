@@ -35,7 +35,7 @@ for (const c of CASES) {
       await expect(page.locator('meta[property="og:image:type"]')).toHaveAttribute("content", "image/png");
       await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute("content", await page.title());
       await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute("content", /.+/);
-      const jsonLd = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
+      const jsonLd = JSON.parse((await page.locator('head script[type="application/ld+json"]').textContent())!);
       expect(jsonLd).toEqual(expect.arrayContaining([expect.objectContaining({ "@type": "Organization" }), expect.objectContaining({ "@type": "WebSite" }), expect.objectContaining({ "@type": "SoftwareApplication" })]));
       const alternates = await page.locator('link[rel="alternate"][hreflang]').evaluateAll((els) => els.map((e) => [e.getAttribute("hreflang"), e.getAttribute("href")]));
       expect(alternates).toEqual([
@@ -148,7 +148,7 @@ for (const c of [
     const alternates = await page.locator('link[rel="alternate"][hreflang]').evaluateAll((els) => els.map((e) => [e.getAttribute("hreflang"), e.getAttribute("href")]));
     expect(alternates).toEqual([["en", `${base}/comparison/`], ["pl", `${base}/pl/comparison/`], ["zh-Hans", `${base}/zh/comparison/`], ["x-default", `${base}/comparison/`]]);
     await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute("content", c.expected);
-    const jsonLd = await page.locator('script[type="application/ld+json"]').textContent();
+    const jsonLd = await page.locator('head script[type="application/ld+json"]').textContent();
     expect(JSON.parse(jsonLd!)).toEqual(expect.arrayContaining([expect.objectContaining({ "@type": "Organization" }), expect.objectContaining({ "@type": "WebSite" }), expect.objectContaining({ "@type": "CollectionPage" }), expect.objectContaining({ "@type": "BreadcrumbList" })]));
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow).toBeLessThanOrEqual(1);
@@ -158,13 +158,40 @@ for (const c of [
   });
 }
 
-test("platform robots and sitemap list only the six localized public page URLs", async ({ request }) => {
+test("the contact address is assembled in the browser and is absent from the HTML", async ({ page, request }) => {
+  const html = await (await request.get(`${base}/pl/`)).text();
+  expect(html).not.toContain("hi@ulams.app");
+  expect(html).not.toContain("mailto:");
+  await page.goto(`${base}/pl/`);
+  const links = page.locator("a.u-mail");
+  await expect(links).toHaveCount(2);
+  await expect(links.first()).toHaveAttribute("href", "mailto:hi@ulams.app");
+  await expect(links.first()).toHaveText("hi@ulams.app");
+});
+
+test("platform robots and sitemap list only the nine localized public page URLs", async ({ request }) => {
   const robots = await (await request.get(`${base}/robots.txt`)).text();
   expect(robots).toContain(`Sitemap: ${base}/sitemap.xml`);
   const xml = await (await request.get(`${base}/sitemap.xml`)).text();
   const urls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
-  expect(urls).toEqual([`${base}/`, `${base}/pl/`, `${base}/zh/`, `${base}/comparison/`, `${base}/pl/comparison/`, `${base}/zh/comparison/`]);
-  expect(xml.match(/hreflang="x-default"/g)).toHaveLength(6);
+  expect(urls).toEqual([`${base}/`, `${base}/pl/`, `${base}/zh/`, `${base}/comparison/`, `${base}/pl/comparison/`, `${base}/zh/comparison/`, `${base}/faq/`, `${base}/pl/faq/`, `${base}/zh/faq/`]);
+  expect(xml.match(/hreflang="x-default"/g)).toHaveLength(9);
+});
+
+test("the FAQ page lists every question once, in every language, with one FAQPage", async ({ page }) => {
+  for (const path of ["/faq/", "/pl/faq/", "/zh/faq/"]) {
+    await page.goto(`${base}${path}`);
+    await expect(page.locator("h1")).toHaveCount(1);
+    await expect(page.locator(".u-faq__item")).toHaveCount(32);
+    await expect(page.locator(".u-faq details")).toHaveCount(0);
+    await expect(page.locator(".u-faq h3")).toHaveCount(32);
+    const ld = await page.locator('script[type="application/ld+json"]').allTextContents();
+    expect(ld.filter((json) => json.includes('"FAQPage"'))).toHaveLength(1);
+    await expect(page.locator('footer a[aria-current="page"], footer a').filter({ hasText: "FAQ" })).toHaveAttribute("href", path);
+  }
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+  expect(axe.violations.map((v) => v.id)).toEqual([]);
 });
 
 test("zh uses the system CJK font stack and no synthetic italics; English keeps its fonts", async ({ page }) => {

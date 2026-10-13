@@ -1,13 +1,17 @@
 ---
 import Icon from "./Icon.astro";
+import { codeSpans, formatFaqAnswer } from "../lib/faq-format";
 
 interface Props {
   id?: string;
   eyebrow?: string;
   title?: string;
   items: Array<{ q: string; a: string }>;
+  jsonLd?: boolean;
+  collapsible?: boolean;
+  more?: { label: string; href: string };
 }
-const { id = "faq", eyebrow, title, items } = Astro.props;
+const { id = "faq", eyebrow, title, items, jsonLd = true, collapsible = true, more } = Astro.props;
 const structuredData = JSON.stringify({
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -26,7 +30,7 @@ const structuredData = JSON.stringify({
     </div>
     <div class="u-faq__list">
       {
-        items.map((item, i) => (
+        collapsible ? items.map((item, i) => (
           <details class="u-faq__item" data-reveal style={`--reveal-i:${i % 4}`} name={`${id}-group`}>
             <summary>
               <span>{item.q}</span>
@@ -36,12 +40,31 @@ const structuredData = JSON.stringify({
               <p>{item.a}</p>
             </div>
           </details>
+        )) : items.map((item, i) => (
+          <article class="u-faq__item u-faq__item--static" data-reveal style={`--reveal-i:${i % 4}`}>
+            <h3 class="u-faq__q">{item.q}</h3>
+            {(() => {
+              const answer = formatFaqAnswer(item.a);
+              const rich = (text: string) => codeSpans(text).map((span) => (span.code ? <code>{span.text}</code> : span.text));
+              return (
+                <div class="u-faq__answer">
+                  {answer.lead && <p class="u-faq__lead">{rich(answer.lead)}</p>}
+                  {answer.points.length > 0 && (
+                    <ul class="u-faq__points">
+                      {answer.points.map((point) => <li>{point.label && <strong>{point.label}: </strong>}{rich(point.text)}</li>)}
+                    </ul>
+                  )}
+                </div>
+              );
+            })()}
+          </article>
         ))
       }
     </div>
+    {more && <p class="u-faq__more" data-reveal><a href={more.href}>{more.label}<Icon name="arrow" /></a></p>}
   </div>
 </section>
-<script type="application/ld+json" set:html={structuredData} />
+{jsonLd && <script type="application/ld+json" set:html={structuredData} />}
 
 <style>
   .u-faq__wrap {
@@ -107,5 +130,89 @@ const structuredData = JSON.stringify({
   .u-faq__answer {
     padding: 0 20px 20px;
     color: var(--ulams-color-muted);
+  }
+  .u-faq__more {
+    margin: 24px 0 0;
+    text-align: center;
+  }
+  .u-faq__more a {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    color: var(--ulams-color-primary);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .u-faq__more a:hover {
+    text-decoration: underline;
+  }
+  .u-faq__more a:focus-visible {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  .u-faq__more :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+  .u-faq__item--static:hover {
+    border-color: var(--ulams-color-border);
+  }
+  .u-faq__item--static {
+    padding: 22px 26px 24px;
+  }
+  .u-faq__q {
+    margin: 0 0 10px;
+    font-size: 1.0625rem;
+    font-weight: 650;
+    line-height: 1.4;
+    color: var(--ulams-color-text);
+  }
+  .u-faq__item--static .u-faq__answer {
+    padding: 0;
+    max-width: 68ch;
+    font-size: 0.9375rem;
+    line-height: 1.65;
+  }
+  .u-faq__lead {
+    margin: 0;
+  }
+  .u-faq__points {
+    display: grid;
+    gap: 6px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .u-faq__lead + .u-faq__points {
+    margin-top: 12px;
+  }
+  .u-faq__points li {
+    position: relative;
+    padding-left: 20px;
+  }
+  .u-faq__points li::before {
+    content: "";
+    position: absolute;
+    top: 0.68em;
+    left: 4px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ulams-color-primary);
+  }
+  .u-faq__points strong {
+    color: var(--ulams-color-text);
+    font-weight: 650;
+  }
+  .u-faq__answer code {
+    padding: 1px 6px;
+    font-family: var(--ulams-font-mono);
+    font-size: 0.85em;
+    color: var(--ulams-color-text);
+    background: color-mix(in srgb, var(--ulams-color-primary) 8%, var(--ulams-color-surface));
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 6px;
+    white-space: nowrap;
   }
 </style>

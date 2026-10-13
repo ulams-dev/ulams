@@ -21,9 +21,9 @@ test("the policy lifecycle appears once at the top and uses a neutral example ca
 test("workflow tabs: roving tabindex, aria wiring, arrow keys, transcripts", async ({ page }) => {
   await open(page);
   const tabs = page.locator('#agents [role="tab"]');
-  await expect(tabs).toHaveCount(5);
+  await expect(tabs).toHaveCount(6);
   await expect(page.locator("#agents ulams-workflows")).toBeVisible();
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     const controls = await tabs.nth(i).getAttribute("aria-controls");
     await expect(page.locator(`#${controls}[role="tabpanel"]`)).toHaveCount(1);
   }
@@ -35,7 +35,7 @@ test("workflow tabs: roving tabindex, aria wiring, arrow keys, transcripts", asy
   await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
   await expect(tabs.nth(1)).toBeFocused();
   await page.keyboard.press("End");
-  await expect(tabs.nth(4)).toHaveAttribute("aria-selected", "true");
+  await expect(tabs.nth(5)).toHaveAttribute("aria-selected", "true");
   await page.keyboard.press("Home");
   await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
   // the transcript is plain text in the DOM, whatever the animation shows
@@ -127,7 +127,7 @@ test("interface selector has icons, no redundant availability badges and a visib
   await open(page);
   const selector = page.locator("#agents .u-wf__tabs");
   await expect(selector.locator(".u-status--available")).toHaveCount(0);
-  await expect(selector.locator(".u-wf__tab-icon")).toHaveCount(5);
+  await expect(selector.locator(".u-wf__tab-icon")).toHaveCount(6);
   const tabs = selector.locator('[role="tab"]');
   const inactive = await tabs.nth(2).evaluate((el) => getComputedStyle(el).backgroundColor);
   await tabs.nth(2).click();

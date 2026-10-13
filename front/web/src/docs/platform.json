@@ -403,6 +403,10 @@
           "component": "Faq",
           "props": {
             "id": "faq",
+            "more": {
+              "label": "More questions on the FAQ page",
+              "href": "/faq/"
+            },
             "eyebrow": "FAQ",
             "title": "Questions before you start",
             "items": [
@@ -483,14 +487,15 @@
           },
           {
             "label": "FAQ",
-            "href": "#faq"
+            "href": "/faq/"
           },
           {
             "label": "Contact",
             "href": "#contact"
           }
         ],
-        "note": "Open source · MIT"
+        "note": "Open source · MIT",
+        "mail": true
       }
     }
   ]

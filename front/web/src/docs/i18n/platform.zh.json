@@ -403,6 +403,10 @@
           "component": "Faq",
           "props": {
             "id": "faq",
+            "more": {
+              "label": "更多问题请查看 FAQ 页面",
+              "href": "/zh/faq/"
+            },
             "eyebrow": "FAQ",
             "title": "开始前的常见问题",
             "items": [
@@ -483,14 +487,15 @@
           },
           {
             "label": "FAQ",
-            "href": "#faq"
+            "href": "/zh/faq/"
           },
           {
             "label": "联系",
             "href": "#contact"
           }
         ],
-        "note": "开源 · MIT"
+        "note": "开源 · MIT",
+        "mail": true
       }
     }
   ]

@@ -694,7 +694,7 @@ export const registry = {
     fallback: p => join(p.title, p.intro),
   },
   Faq: {
-    description: "Questions and answers as an accessible disclosure list (no JavaScript).",
+    description: "Questions and answers as an accessible disclosure list, or as open question-and-answer cards (no JavaScript).",
     category: "section",
     interactive: false,
     children: false,
@@ -707,6 +707,9 @@ export const registry = {
           minItems: 1,
           maxItems: 12,
         }),
+        jsonLd: bool("Emit schema.org FAQPage JSON-LD; turn off when the page emits one FAQPage for several sections", true),
+        collapsible: bool("Render each question as a disclosure; turn off to show every answer, e.g. on a dedicated FAQ page", true),
+        more: { ...LINK, description: "Link under the list to the full FAQ page" },
       },
       ["items"]
     ),
@@ -1296,6 +1299,7 @@ export const registry = {
         text: text("Sentence under the brand", { maxLength: 300 }),
         links: list(LINK, "Links", { maxItems: 10 }),
         note: text("Small print", { maxLength: 200 }),
+        mail: bool("Show the contact address, assembled in the browser so it is not in the HTML", false),
       },
       ["brand"]
     ),

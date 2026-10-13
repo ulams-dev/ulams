@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Export the six product pages and their SEO routes from the production Astro build.
+// Export the product pages (overview, comparison, FAQ in three languages) and their SEO routes from the production Astro build.
 // Build with ULAMS_IMAGE_SERVICE=noop, then pass a new output directory and the public host.
 import { spawn } from "node:child_process";
 import { request } from "node:http";
@@ -14,7 +14,8 @@ const host = process.argv[3] ?? "ulams.app";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const dist = join(root, "front/web/dist");
 const port = Number(process.env.ULAMS_STATIC_RENDER_PORT ?? 4399);
-const pages = ["/", "/pl/", "/zh/", "/comparison/", "/pl/comparison/", "/zh/comparison/"];
+const overviews = ["/", "/pl/", "/zh/"];
+const pages = [...overviews, "/comparison/", "/pl/comparison/", "/zh/comparison/", "/faq/", "/pl/faq/", "/zh/faq/"];
 const get = (path) => new Promise((done, reject) => {
   const req = request({ host: "127.0.0.1", port, path, headers: { host, "x-forwarded-host": host, "x-forwarded-proto": "https" } }, (res) => {
     let body = "";
@@ -36,7 +37,7 @@ try {
   cpSync(join(dist, "client"), out, { recursive: true });
   for (const path of pages) {
     let response = await get(path);
-    if (!path.includes("comparison")) {
+    if (overviews.includes(path)) {
       for (let attempt = 0; attempt < 20 && response.status === 200 && !response.body.includes("/learn/"); attempt++) {
         await new Promise((done) => setTimeout(done, 1500));
         response = await get(path);

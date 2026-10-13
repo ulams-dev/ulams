@@ -3,7 +3,7 @@ import { LOCALES, publicPagePath } from "../i18n/locales.ts";
 import { publicOrigin } from "../i18n/locales.ts";
 
 const xml = (value: string) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll('"', "&quot;");
-const PAGES = ["overview", "comparison"] as const;
+const PAGES = ["overview", "comparison", "faq"] as const;
 
 export const GET: APIRoute = ({ request, url, locals }) => {
   if (!locals.platform) return new Response("Not found", { status: 404 });
