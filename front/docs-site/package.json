@@ -33,10 +33,10 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
-    "@playwright/test": "1.63.0",
+    "@playwright/test": "1.64.0",
     "axe-core": "^4.14.0",
     "jsdom": "^20.0.0",
-    "starlight-links-validator": "0.26.0",
+    "starlight-links-validator": "0.27.0",
     "typescript": "5.9.3",
     "yaml": "2.9.1"
   }

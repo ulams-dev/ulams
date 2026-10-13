@@ -24,8 +24,8 @@
         "build:embed": "node scripts/build-embed.mjs"
     },
     "dependencies": {
-        "@aws-sdk/client-s3": "3.1147.0",
-        "@aws-sdk/lib-storage": "3.1147.0",
+        "@aws-sdk/client-s3": "3.1149.0",
+        "@aws-sdk/lib-storage": "3.1149.0",
         "@lumieducation/h5p-express": "10.0.5",
         "@lumieducation/h5p-redis-lock": "10.0.4",
         "@lumieducation/h5p-server": "10.0.4",
