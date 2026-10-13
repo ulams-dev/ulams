@@ -167,14 +167,16 @@ test("documentation and GitHub links open in a new tab and say so", async ({ pag
   await expect(page.locator('a[href^="/"][target="_blank"]')).toHaveCount(0);
 });
 
-test("phones pin the chapter list in three rows under the site header", async ({ page }, info) => {
+test("phones pin the chapter list in two rows under the site header", async ({ page }, info) => {
   test.skip(info.project.name !== "phone", "wider screens keep the chapter stepper");
   await open(page);
   const story = page.locator("ulams-policy-story");
   const nav = story.locator(".ps-navigation");
   await expect(story.locator(".ps-panel:visible")).toHaveCount(1);
   const rows = await nav.locator("button").evaluateAll((els) => new Set(els.map((el) => Math.round(el.getBoundingClientRect().top))).size);
-  expect(rows).toBe(3);
+  expect(rows).toBe(2);
+  const clipped = await nav.locator("button > span:last-of-type").evaluateAll((els) => els.filter((el) => el.scrollWidth > el.clientWidth + 1).map((el) => el.textContent));
+  expect(clipped).toEqual([]);
   await story.locator(".ps-panel:visible").scrollIntoViewIfNeeded();
   const stuck = await nav.evaluate((el) => getComputedStyle(el.parentElement!).position);
   expect(stuck).toBe("sticky");
