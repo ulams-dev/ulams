@@ -159,7 +159,10 @@ export async function stackDown(ctx:Ctx,directoryInput?:string,purge=false) {
     } else {
       await ownedKubernetes(ctx,directory,c,false);
       if(purge)await runProcess("kubectl",[...kubectlArgs(c),"delete","namespace",c.name,"--wait=true"],opts);
-      else await runProcess("kubectl",[...kubectlArgs(c),"scale",...STS.map(name=>`statefulset/${name}`),"--replicas=0"],opts);
+      else {
+        await runProcess("kubectl",[...kubectlArgs(c),"scale",...STS.map(name=>`statefulset/${name}`),"--replicas=0"],opts);
+        await runProcess("kubectl",[...kubectlArgs(c),"wait","--for=delete","pods","-l",`io.ulams.stack=${c.id}`,"--timeout=900s"],opts);
+      }
     }
     return {directory,target:c.target,stopped:true,dataRetained:!purge,credentialsRetained:true};
   });

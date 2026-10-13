@@ -19,9 +19,7 @@ export interface UiStrings {
   language: string;
   coming: string;
   /** Label of a package link in the feature index. */
-  packageDocs: string;
   /** Accessible name of a feature group list; `{title}` is replaced. */
-  featuresOf: string;
   roadmap: string;
   available: string;
   preview: string;
@@ -72,8 +70,6 @@ const en: UiStrings = {
   home: "{brand}, home",
   language: "Language",
   coming: "Coming",
-  packageDocs: "Package docs",
-  featuresOf: "Features: {title}",
   roadmap: "On the roadmap",
   available: "Available",
   preview: "Preview",
@@ -135,8 +131,6 @@ const pl: UiStrings = {
   home: "{brand}, strona główna",
   language: "Język",
   coming: "Wkrótce",
-  packageDocs: "Dokumentacja pakietu",
-  featuresOf: "Funkcje: {title}",
   roadmap: "W planach",
   available: "Dostępne",
   preview: "Wersja zapoznawcza",
@@ -198,8 +192,6 @@ const zh: UiStrings = {
   home: "{brand}，返回首页",
   language: "语言",
   coming: "即将推出",
-  packageDocs: "软件包文档",
-  featuresOf: "功能：{title}",
   roadmap: "已列入路线图",
   available: "已可用",
   preview: "预览版",

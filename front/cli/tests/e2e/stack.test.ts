@@ -23,6 +23,18 @@ function invoke(args:string[],env:NodeJS.ProcessEnv,stdin?:string):Promise<Recor
   });
 }
 
+function external(program:string,args:string[],env:NodeJS.ProcessEnv):Promise<string> {
+  return new Promise((done,reject)=>{
+    const child=spawn(program,args,{env,stdio:["ignore","pipe","pipe"]});let out="",err="";
+    child.stdout.on("data",c=>out+=String(c));child.stderr.on("data",c=>err+=String(c));
+    child.on("error",reject);child.on("close",code=>code===0?done(out):reject(new Error(`Service verification failed: ${err} ${out}`)));
+  });
+}
+async function page(url:string,env:NodeJS.ProcessEnv) {
+  const script=`async function get(url,depth=0){if(depth>5)throw new Error('Redirect loop');const u=new URL(url);const lib=await import(u.protocol==='https:'?'node:https':'node:http');return new Promise((resolve,reject)=>{const r=lib.get(u,{agent:false,lookup:(_h,_o,cb)=>cb(null,'127.0.0.1',4)},s=>{let b='';s.on('data',c=>b+=c);s.on('end',()=>{if(s.statusCode>=300&&s.statusCode<400&&s.headers.location)get(new URL(s.headers.location,u).href,depth+1).then(resolve,reject);else if(s.statusCode!==200)reject(new Error('HTTP '+s.statusCode));else resolve(b);});});r.on('error',reject);});}console.log(await get(process.argv[1]));`;
+  return external(process.execPath,["--input-type=module","-e",script,url],env);
+}
+
 describe.skipIf(!enabled)(`real ${target} ${mode} stack`,()=>{
   it("launches a usable academy, authors content and retains data/keys across down/up",async()=>{
     const directory=await mkdtemp(join(tmpdir(),"ulams-stack-live-"));
@@ -42,6 +54,12 @@ describe.skipIf(!enabled)(`real ${target} ${mode} stack`,()=>{
       if(up.caFile)env.NODE_EXTRA_CA_CERTS=String(up.caFile);
       const urls=up.urls as Record<string,string>;
       await invoke(["login","--url",urls.academyApi!,"--email","admin@academy.ulams.localhost","--password-stdin"],env,secrets.TENANT_INITIAL_PASSWORD+"\n");
+      expect(await page(urls.academy!,env)).toContain("<html");
+      expect(await page(urls.academyAdmin!,env)).toContain("<html");
+      expect(await page(urls.studio!,env)).toMatch(/sign in|log in/i);
+      const probes=await readFile(resolve(import.meta.dirname,"../fixtures/stack-services.mjs"),"utf8");
+      const probeArgs=target==="docker"?["exec",`${name}-pdf-1`,"node","--input-type=module","-e",probes]:["--namespace",name,"exec","statefulset/application","-c","pdf","--","node","--input-type=module","-e",probes];
+      expect(JSON.parse(await external(target==="docker"?"docker":"kubectl",probeArgs,env))).toMatchObject({mjmlRendered:true,h5pHealthy:true,pdfUnauthorizedRejected:true});
       let courseId:unknown;
       if(mode==="development"){
         const source=join(directory,"policy.md");await writeFile(source,"# Privacy policy\n\nHR retains employee records for twelve months. Sales obtains consent before contacting a prospect. Management reviews access quarterly.\n",{mode:0o600});
