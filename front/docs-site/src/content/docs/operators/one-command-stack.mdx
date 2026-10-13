@@ -1,0 +1,123 @@
+---
+title: One-command Docker and Kubernetes
+description: Launch a complete ULAMS academy locally or on a server with the CLI, Docker Compose or Kubernetes. Includes Phase 2 trial mode, TLS, credentials and persistent storage.
+sidebar:
+  order: 1
+modules:
+  - api
+  - api-h5p
+  - api-pdf
+  - web
+  - admin
+  - tenancy
+---
+
+## Requirements
+
+- Node.js 22.12 or newer and npm, with access to GitHub Container Registry.
+- Docker with Compose v2, or `kubectl` connected to an existing Kubernetes cluster.
+- Allow approximately 6 GB available memory, 2 CPUs and 45 GB persistent storage for the starter stack. Leave additional capacity for the operating system and workloads.
+- Kubernetes needs a default StorageClass (or `--storage-class NAME`). Production defaults to a LoadBalancer Service; the cluster must provide one.
+
+The CLI installs published images; cloning the repository, PHP and a local database are unnecessary. Docker hosts on a VPS, AWS, Google Cloud or Azure work the same way. Managed platforms need their own container deployment configuration.
+
+## Install the CLI
+
+Download the versioned package from the [CLI release](https://github.com/ulams-dev/ulams/releases/tag/cli-v0.2.0):
+
+```bash
+npm install -g https://github.com/ulams-dev/ulams/releases/download/cli-v0.2.0/ulams-0.2.0.tgz
+```
+
+Alternatively, replace `ulams` in a command below with:
+
+```bash
+npx --yes --package=https://github.com/ulams-dev/ulams/releases/download/cli-v0.2.0/ulams-0.2.0.tgz ulams
+```
+
+## Local development: Phase 2 trial
+
+```bash
+ulams stack up
+```
+
+This launches API, reference learner frontend, admin, H5P, PDF, MJML, PostgreSQL, Valkey, S3-compatible storage and Caddy. It provisions the `academy` tenant and waits for health checks. The local gateway listens only on loopback.
+
+- Academy: `http://academy.ulams.localhost:8480`
+- Studio: `http://academy.ulams.localhost:8480/studio/`
+- Admin: `http://academy-admin.ulams.localhost:8480`
+- API: `http://academy-api.ulams.localhost:8480`
+
+Development uses the deterministic fake AI provider for the Phase 2 course creation workflow. It makes no paid model calls. Upload a source, answer the brief, review the outline, apply it and approve publication. It does not build the application from source or enable hot reload; use the repository development commands for that.
+
+Credentials are in `./ulams-stack/credentials.json`, permission `600`. Sign in to the academy with `admin@academy.ulams.localhost` and `TENANT_INITIAL_PASSWORD`. The platform administrator uses `admin@ulams.localhost` and the separate `PLATFORM_ADMIN_PASSWORD`. No password is printed in terminal output.
+
+Browsers resolve `*.localhost` locally; the CLI does too. For clients that do not, map the hostnames to loopback. Use `--http-port` if port 8480 is occupied.
+
+## Docker production on a server
+
+Create DNS records pointing to the server for `learn.example.org`, `api.learn.example.org`, `admin.learn.example.org`, `storage.learn.example.org`, `academy.learn.example.org`, `academy-api.learn.example.org` and `academy-admin.learn.example.org`. A wildcard `*.learn.example.org` can cover the subdomains. Keep ports 80 and 443 reachable for ACME; use DNS-only records initially if Cloudflare manages DNS.
+
+```bash
+ulams stack up --mode production --domain learn.example.org
+```
+
+Production enables HTTPS, uses unique persisted secrets and disables the fake AI provider and demo auto-login. The initial tenant slug can be changed with `--tenant training`. Use your own domain, not the example above.
+
+AI is disabled until an operator configures a real provider. Email is logged until SMTP is configured. This starter makes those defaults explicit; it does not send real email or select a paid model automatically. Follow [AI provider configuration](/developers/llm-layer/) and [email configuration](/operators/email/) before onboarding users.
+
+## Kubernetes
+
+For a local cluster, the CLI creates the namespace, private Secret, four PVCs, StatefulSets, Services and an ingress NetworkPolicy. It starts a loopback port forward automatically:
+
+```bash
+ulams stack up --target kubernetes --context my-local-cluster
+```
+
+For a production cluster with a load balancer and DNS:
+
+```bash
+ulams stack up --target kubernetes --mode production \
+  --domain learn.example.org --context production
+```
+
+The CLI waits for an assigned LoadBalancer address. Point the DNS records listed above to that address. Your kubeconfig's selected context is never changed; the install records its context for future commands.
+
+- `--gateway ClusterIP`: local access through automatic loopback port forwarding. Re-run `stack up` if forwarding stops.
+- `--gateway NodePort --node-port 30480`: direct node access. Development uses port 30480; production uses HTTPS 30480 and HTTP 30479. Resolve the configured domain and subdomains to the node's reachable address. ACME requires external 80/443 forwarded to these ports, or use internal TLS on a private network.
+- `--storage-class NAME`: choose an existing class explicitly.
+
+The application containers share one pod and persistent volume; the database, cache and object store have their own StatefulSets and PVCs. This is a complete starter deployment, **not a highly available cluster**. Do not increase replicas without changing storage and application topology. See [high availability](/operators/high-availability/) for that design. A Helm chart is Coming.
+
+## Inspect YAML, configure and operate
+
+```bash
+ulams stack render --target kubernetes --directory ./review-stack
+ulams stack status --directory ./ulams-stack --json
+ulams stack down --directory ./ulams-stack
+ulams stack up --directory ./ulams-stack
+```
+
+`render` writes inspectable `compose.yaml`, `Caddyfile`, `kubernetes.yaml`, a separate private `kubernetes-secret.yaml`, database bootstrap and private credentials. It does not start containers or contact a cluster. Files are generated from the installed CLI version. `stack up` regenerates them; do not treat hand edits to generated files as durable overrides. For advanced SMTP, external storage or AI settings, maintain your own deployment configuration derived from `render`, then operate it with Compose or kubectl directly.
+
+Stopping retains volumes, PVCs, credentials, encryption keys and Passport keys. Starting the same install resumes it. Back up the entire install directory **and** database/object volumes together. Never remove `credentials.json` from a populated installation: the CLI refuses to replace lost keys.
+
+To deliberately delete this installation's data:
+
+```bash
+ulams stack down --directory ./ulams-stack --purge --yes
+```
+
+The CLI checks installation ownership before operating on an existing Compose project or namespace. Choose a different `--name` and directory for independent installations. A cancelled or failed launch leaves data in place; repeat `stack up` to resume and inspect logs if a service failed.
+
+## Private TLS and image upgrades
+
+For an isolated staging network:
+
+```bash
+ulams stack up --mode production --domain training.internal --tls internal
+```
+
+Trust the exported `ulams-stack/ca.crt` in your browser or client. For Node-based CLI requests set `NODE_EXTRA_CA_CERTS` to that file; never disable TLS verification globally.
+
+The first launch resolves a complete matching SHA release across all six application images and pins it in `stack.json`. Subsequent starts retain that release. To deliberately upgrade, back up first and supply `--image-tag sha-COMMIT`; the CLI checks the public release before starting. Custom registries require an explicit `--image-registry` and `--image-tag`. Infrastructure versions are pinned in the CLI.

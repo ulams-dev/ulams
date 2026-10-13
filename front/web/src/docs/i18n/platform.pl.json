@@ -343,38 +343,38 @@
             "variant": "terminal",
             "eyebrow": "self-hosting",
             "title": "Twoje serwery. Twoje dane.",
-            "text": "Uruchom ULAMS tam, gdzie działają kontenery: własny VPS, AWS, Google Cloud, Azure lub Render.com. Cloudflare może obsługiwać DNS, TLS i dostęp do aplikacji.",
+            "text": "Uruchom cały stos jednym poleceniem na laptopie, serwerze Docker lub w Kubernetes. Własny VPS, AWS, Google Cloud albo Azure. Twoje wdrożenie, Twoje dane.",
             "code": [
-              "$ git clone https://github.com/ulams-dev/ulams",
-              "$ cd ulams && yarn install",
-              "$ yarn dev:api",
-              "✓ api, admin, h5p and storage are up",
-              "$ yarn dev:web",
-              "✓ http://coffee.app.localhost:4321"
+              "$ npm install -g https://github.com/ulams-dev/ulams/releases/download/cli-v0.2.0/ulams-0.2.0.tgz",
+              "$ ulams stack up",
+              "✓ academy, Studio, API, admin, H5P and storage",
+              "$ ulams stack up --mode production \\",
+              "  --domain learn.example.org",
+              "$ ulams stack up --target kubernetes"
             ],
             "cta": {
               "label": "Zobacz na GitHubie",
               "href": "https://github.com/ulams-dev"
             },
             "secondary": {
-              "label": "Wypróbuj dema",
-              "href": "#demos"
+              "label": "Instrukcja instalacji",
+              "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
             },
             "bullets": [
               {
-                "title": "Własny VPS",
-                "text": "Instrukcja krok po kroku: Cloudflare, pliki i kopie zapasowe.",
-                "href": "https://ulams-dev.github.io/ulams/operators/vps-cloudflare/"
+                "title": "Lokalny test etapu 2",
+                "text": "Uruchom akademię z deterministycznym AI, bez płatnych wywołań modeli.",
+                "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               },
               {
-                "title": "Docker Compose",
-                "text": "Instalacja platformy z dołączoną konfiguracją YAML.",
-                "href": "https://ulams-dev.github.io/ulams/operators/self-hosting/"
+                "title": "Docker na serwerze",
+                "text": "Uruchom HTTPS, prywatne dane dostępowe i trwałe wolumeny.",
+                "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               },
               {
                 "title": "Kubernetes YAML",
-                "text": "Architektura i wymagania klastra; tutorial YAML w przygotowaniu.",
-                "href": "https://ulams-dev.github.io/ulams/operators/high-availability/#kubernetes"
+                "text": "CLI generuje manifesty, tworzy akademię i czeka na gotowość usług.",
+                "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               }
             ],
             "note": "Helm chart już wkrótce."

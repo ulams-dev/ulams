@@ -343,38 +343,38 @@
             "variant": "terminal",
             "eyebrow": "自托管",
             "title": "你的服务器，你的数据。",
-            "text": "在能运行容器的环境中部署 ULAMS：自己的 VPS、AWS、Google Cloud、Azure 或 Render.com。Cloudflare 可处理 DNS、TLS 和应用入口。",
+            "text": "一条命令即可在本机、Docker 服务器或 Kubernetes 集群启动完整平台。支持自有 VPS、AWS、Google Cloud 和 Azure。自主部署，自主管理数据。",
             "code": [
-              "$ git clone https://github.com/ulams-dev/ulams",
-              "$ cd ulams && yarn install",
-              "$ yarn dev:api",
-              "✓ api, admin, h5p and storage are up",
-              "$ yarn dev:web",
-              "✓ http://coffee.app.localhost:4321"
+              "$ npm install -g https://github.com/ulams-dev/ulams/releases/download/cli-v0.2.0/ulams-0.2.0.tgz",
+              "$ ulams stack up",
+              "✓ academy, Studio, API, admin, H5P and storage",
+              "$ ulams stack up --mode production \\",
+              "  --domain learn.example.org",
+              "$ ulams stack up --target kubernetes"
             ],
             "cta": {
               "label": "在 GitHub 上查看",
               "href": "https://github.com/ulams-dev"
             },
             "secondary": {
-              "label": "体验演示",
-              "href": "#demos"
+              "label": "安装指南",
+              "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
             },
             "bullets": [
               {
-                "title": "自己的 VPS",
-                "text": "分步配置 Cloudflare、文件存储和备份。",
-                "href": "https://ulams-dev.github.io/ulams/operators/vps-cloudflare/"
+                "title": "本地第二阶段试用",
+                "text": "使用确定性 AI 提供者创建学院，无需付费模型调用。",
+                "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               },
               {
-                "title": "Docker Compose",
-                "text": "使用仓库中的 YAML 配置安装平台。",
-                "href": "https://ulams-dev.github.io/ulams/operators/self-hosting/"
+                "title": "Docker 生产部署",
+                "text": "配置 HTTPS、私密凭据和持久化存储。",
+                "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               },
               {
                 "title": "Kubernetes YAML",
-                "text": "集群架构与要求；YAML 教程正在编写。",
-                "href": "https://ulams-dev.github.io/ulams/operators/high-availability/#kubernetes"
+                "text": "CLI 生成并应用原生清单，创建学院并等待服务就绪。",
+                "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               }
             ],
             "note": "Helm chart 即将推出。"
