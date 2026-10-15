@@ -778,6 +778,7 @@ export const registry = {
         bullets: list(obj({ title: text("Bullet heading", { maxLength: 80 }), text: text("Short explanation", { maxLength: 200 }), href: href("Guide or supporting resource") }, ["title", "text"]), "Concise call-to-action details", { maxItems: 6 }),
         note: text("Short closing note", { maxLength: 200 }),
         code: list(text("Command or output line", { maxLength: 120 }), "Terminal lines (terminal variant); lines starting with $ are commands", { maxItems: 10 }),
+        id: text("Anchor id for in-page links (letters, digits, dashes)", { default: "join", maxLength: 40 }),
         cta: LINK,
         secondary: LINK,
       },
@@ -1517,6 +1518,29 @@ export const registry = {
     children: false,
     props: obj({ image: IMAGE, caption: text("Caption", { maxLength: 300 }) }, ["image"]),
     fallback: (p) => String(p.caption ?? (p.image as { alt?: string } | undefined)?.alt ?? ""),
+  },
+  FrameSlider: {
+    description: "A walk-through of captioned frames: previous and next controls, then the explanation, then the image at full width. One frame at a time with JavaScript; every frame stays in the HTML without it.",
+    category: "section",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        id: text("Anchor id", { default: "frames", maxLength: 40 }),
+        title: TITLE,
+        intro: INTRO,
+        previous: text("Previous-frame control", { maxLength: 40, default: "Previous" }),
+        next: text("Next-frame control", { maxLength: 40, default: "Next" }),
+        frames: list(
+          obj({ image: IMAGE, caption: text("Explanation under the image", { maxLength: 400 }) }, ["image", "caption"]),
+          "Frames in order",
+          { minItems: 1, maxItems: 24 }
+        ),
+      },
+      ["frames"]
+    ),
+    fallback: (p) =>
+      join(p.title, p.intro, ...(Array.isArray(p.frames) ? p.frames.map((frame) => String((frame as { caption?: string }).caption ?? "")) : [])),
   },
   VideoPlayer: {
     description: "Video with poster, chapters and transcript. HLS streams load a player only when played.",

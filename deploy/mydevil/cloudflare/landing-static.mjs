@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Export the product pages (overview, comparison, FAQ in three languages) and their SEO routes from the production Astro build.
+// Export the product pages (overview, comparison, FAQ, course generation and its case studies, in three languages) and their SEO routes from the production Astro build.
 // Build with ULAMS_IMAGE_SERVICE=noop, then pass a new output directory and the public host.
 import { spawn } from "node:child_process";
 import { request } from "node:http";
@@ -15,7 +15,14 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const dist = join(root, "front/web/dist");
 const port = Number(process.env.ULAMS_STATIC_RENDER_PORT ?? 4399);
 const overviews = ["/", "/pl/", "/zh/"];
-const pages = [...overviews, "/comparison/", "/pl/comparison/", "/zh/comparison/", "/faq/", "/pl/faq/", "/zh/faq/"];
+const pages = [
+  ...overviews,
+  "/comparison/", "/pl/comparison/", "/zh/comparison/",
+  "/faq/", "/pl/faq/", "/zh/faq/",
+  "/course-generation/", "/pl/course-generation/", "/zh/course-generation/",
+  "/course-generation/microdosing-study/", "/pl/course-generation/microdosing-study/", "/zh/course-generation/microdosing-study/",
+  "/course-generation/stablecoin-report/", "/pl/course-generation/stablecoin-report/", "/zh/course-generation/stablecoin-report/",
+];
 const get = (path) => new Promise((done, reject) => {
   const req = request({ host: "127.0.0.1", port, path, headers: { host, "x-forwarded-host": host, "x-forwarded-proto": "https" } }, (res) => {
     let body = "";

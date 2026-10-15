@@ -22,6 +22,10 @@
             "href": "/comparison/"
           },
           {
+            "label": "Build",
+            "href": "/course-generation/"
+          },
+          {
             "label": "Docs",
             "href": "https://ulams-dev.github.io/ulams/"
           }

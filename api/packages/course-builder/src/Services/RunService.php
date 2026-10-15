@@ -3,6 +3,7 @@
 namespace Ulams\CourseBuilder\Services;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use RuntimeException;
 use Throwable;
@@ -160,8 +161,9 @@ final class RunService
             return true;
         } catch (LlmException $e) {
             $this->fail($run, $e->getMessage(), null, $e->reason);
-        } catch (InvalidArgumentException|BuilderException|RuntimeException $e) {
-            $this->fail($run, $e->getMessage(), $e);
+        } catch (InvalidArgumentException|BuilderException|RuntimeException|ValidationException $e) {
+            $message = $e instanceof ValidationException ? ($e->validator->errors()->first() ?: $e->getMessage()) : $e->getMessage();
+            $this->fail($run, $message, $e);
         }
 
         return false;
@@ -174,6 +176,13 @@ final class RunService
         }
         $run->forceFill(['status' => 'failed', 'error' => mb_substr($message, 0, 2000), 'finished_at' => now()])->save();
         $session = $run->session;
+        if ($run->kind === 'apply' && $session->status === Session::APPLYING) {
+            $session->forceFill(['status' => Session::APPLY_REVIEW])->save();
+            $version = $session->currentVersion;
+            if ($version !== null) {
+                $this->surfaces->apply($session, $run, $version, $this->applier->plan($session, $version->document));
+            }
+        }
         if (in_array($run->kind, ['interview', 'outline'], true) && $session->status !== Session::OUTLINE_REVIEW) {
             $session->putState('retry', ['kind' => $run->kind, 'input' => $run->input]);
             $session->save();

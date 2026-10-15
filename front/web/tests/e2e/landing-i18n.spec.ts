@@ -46,9 +46,9 @@ for (const c of CASES) {
       ]);
     });
 
-    test("header: three links and a separate language switcher with the current language marked", async ({ page }) => {
+    test("header: four links and a separate language switcher with the current language marked", async ({ page }) => {
       await open(page, c.path);
-      await expect(page.locator("header nav.u-nav li")).toHaveCount(3);
+      await expect(page.locator("header nav.u-nav li")).toHaveCount(4);
       const switcher = page.locator("header nav.u-lang");
       await expect(switcher).toBeVisible();
       await expect(switcher.locator("a")).toHaveCount(3);
@@ -169,13 +169,20 @@ test("the contact address is assembled in the browser and is absent from the HTM
   await expect(links.first()).toHaveText("hi@ulams.app");
 });
 
-test("platform robots and sitemap list only the nine localized public page URLs", async ({ request }) => {
+test("platform robots and sitemap list only the localized public page URLs", async ({ request }) => {
   const robots = await (await request.get(`${base}/robots.txt`)).text();
   expect(robots).toContain(`Sitemap: ${base}/sitemap.xml`);
   const xml = await (await request.get(`${base}/sitemap.xml`)).text();
   const urls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
-  expect(urls).toEqual([`${base}/`, `${base}/pl/`, `${base}/zh/`, `${base}/comparison/`, `${base}/pl/comparison/`, `${base}/zh/comparison/`, `${base}/faq/`, `${base}/pl/faq/`, `${base}/zh/faq/`]);
-  expect(xml.match(/hreflang="x-default"/g)).toHaveLength(9);
+  expect(urls).toEqual([
+    `${base}/`, `${base}/pl/`, `${base}/zh/`,
+    `${base}/comparison/`, `${base}/pl/comparison/`, `${base}/zh/comparison/`,
+    `${base}/faq/`, `${base}/pl/faq/`, `${base}/zh/faq/`,
+    `${base}/course-generation/`, `${base}/pl/course-generation/`, `${base}/zh/course-generation/`,
+    `${base}/course-generation/microdosing-study/`, `${base}/pl/course-generation/microdosing-study/`, `${base}/zh/course-generation/microdosing-study/`,
+    `${base}/course-generation/stablecoin-report/`, `${base}/pl/course-generation/stablecoin-report/`, `${base}/zh/course-generation/stablecoin-report/`,
+  ]);
+  expect(xml.match(/hreflang="x-default"/g)).toHaveLength(18);
 });
 
 test("the FAQ page lists every question once, in every language, with one FAQPage", async ({ page }) => {
@@ -207,6 +214,7 @@ test("a tenant host has no language pages", async ({ request }) => {
   expect((await request.get(`http://coffee.app.localhost:${port}/pl/`)).status()).toBe(404);
   expect((await request.get(`http://coffee.app.localhost:${port}/zh/`)).status()).toBe(404);
   expect((await request.get(`http://coffee.app.localhost:${port}/comparison/`)).status()).toBe(404);
+  expect((await request.get(`http://coffee.app.localhost:${port}/course-generation/`)).status()).toBe(404);
   expect((await request.get(`http://coffee.app.localhost:${port}/robots.txt`)).status()).toBe(404);
   expect((await request.get(`http://coffee.app.localhost:${port}/sitemap.xml`)).status()).toBe(404);
 });

@@ -88,13 +88,17 @@
   gap: clamp(32px, 5vw, 56px);
 }
 [data-theme="platform"] .u-hero--product .u-hero__copy {
-  width: min(100%, 920px);
+  width: 100%;
+  max-width: 920px;
+  min-width: 0;
   justify-items: center;
   gap: 20px;
   text-align: center;
+  padding-inline: 0;
+  box-sizing: border-box;
 }
 [data-theme="platform"] .u-hero--product .u-hero__title {
-  max-width: 18ch;
+  max-width: min(22ch, 100%);
   margin: 0;
   color: #10283b;
   font-family: var(--font-baskerville), "Libre Baskerville", Georgia, serif;
@@ -103,7 +107,39 @@
   letter-spacing: -0.055em;
   line-height: 1.12;
   animation: none;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-wrap: balance;
 }
+[data-theme="platform"] .u-hero--product .u-hero__body {
+  max-width: 58ch;
+  margin-inline: auto;
+  padding-inline: 4px;
+}
+[data-theme="platform"] .u-hero--product .u-hero__facts {
+  width: min(100%, 920px);
+}
+[data-theme="platform"] main > .u-stack {
+  width: 100%;
+  max-width: calc(var(--ulams-container) + 2 * var(--ulams-gutter));
+  margin-inline: auto;
+  padding: clamp(28px, 4vw, 48px) var(--ulams-gutter);
+  box-sizing: border-box;
+}
+[data-theme="platform"] main > .u-callout,
+[data-theme="platform"] main > .u-prose,
+[data-theme="platform"] main > .u-video,
+[data-theme="platform"] main > .u-figure {
+  width: 100%;
+  max-width: calc(var(--ulams-container) + 2 * var(--ulams-gutter));
+  margin-inline: auto;
+  padding-inline: var(--ulams-gutter);
+  box-sizing: border-box;
+}
+[data-theme="platform"] main > .u-callout { margin-block: 28px; }
+[data-theme="platform"] main > .u-prose { padding-block: 8px; }
+[data-theme="platform"] main > .u-video,
+[data-theme="platform"] main > .u-figure { margin-block: 12px 28px; }
 [data-theme="platform"] .u-hero--product .u-hero__accent {
   display: inline;
   color: #b44a1f;
@@ -339,7 +375,7 @@
 @media (max-width: 760px) {
   /* clip would trap the policy chapter header, which sticks under the site header */
   [data-theme="platform"] .u-hero--product { overflow: visible; }
-  [data-theme="platform"] .u-hero--product .u-hero__title { max-width: 18ch; font-size: clamp(2.4rem, 10.5vw, 3.5rem); }
+  [data-theme="platform"] .u-hero--product .u-hero__title { max-width: 100%; font-size: clamp(2.05rem, 8.4vw, 3rem); }
   [data-theme="platform"] .u-hero--product .u-hero__copy { gap: 16px; }
   [data-theme="platform"] .u-hero--product .u-actions { width: 100%; flex-direction: column; }
   [data-theme="platform"] .u-hero--product .u-actions .u-btn { width: 100%; }

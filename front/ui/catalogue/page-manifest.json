@@ -2824,6 +2824,12 @@
             "default": [],
             "maxItems": 10
           },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40,
+            "default": "join"
+          },
           "cta": {
             "type": "object",
             "properties": {
@@ -2867,11 +2873,6 @@
             ],
             "description": "A link or call to action",
             "additionalProperties": false
-          },
-          "id": {
-            "type": "string",
-            "description": "Anchor id for in-page links (letters, digits, dashes)",
-            "maxLength": 40
           }
         },
         "required": [
@@ -5735,6 +5736,103 @@
         },
         "required": [
           "image"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "FrameSlider": {
+      "description": "A walk-through of captioned frames: previous and next controls, then the explanation, then the image at full width. One frame at a time with JavaScript; every frame stays in the HTML without it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "frames"
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "previous": {
+            "type": "string",
+            "description": "Previous-frame control",
+            "maxLength": 40,
+            "default": "Previous"
+          },
+          "next": {
+            "type": "string",
+            "description": "Next-frame control",
+            "maxLength": 40,
+            "default": "Next"
+          },
+          "frames": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "image": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Image URL (local /images/… or the tenant storage)",
+                      "maxLength": 2048
+                    },
+                    "alt": {
+                      "type": "string",
+                      "description": "Text alternative; empty string only for decorative images",
+                      "maxLength": 300
+                    },
+                    "width": {
+                      "type": "integer",
+                      "description": "Intrinsic width in px",
+                      "minimum": 1
+                    },
+                    "height": {
+                      "type": "integer",
+                      "description": "Intrinsic height in px",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [
+                    "src",
+                    "alt",
+                    "width",
+                    "height"
+                  ],
+                  "description": "An image with explicit size (prevents layout shift)",
+                  "additionalProperties": false
+                },
+                "caption": {
+                  "type": "string",
+                  "description": "Explanation under the image",
+                  "maxLength": 400
+                }
+              },
+              "required": [
+                "image",
+                "caption"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Frames in order",
+            "default": [],
+            "maxItems": 24,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "frames"
         ],
         "additionalProperties": false
       }

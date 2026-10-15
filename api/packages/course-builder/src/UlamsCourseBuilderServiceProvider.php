@@ -19,6 +19,7 @@ use Ulams\CourseBuilder\ContentTypes\LiaScriptType;
 use Ulams\CourseBuilder\ContentTypes\RichTextType;
 use Ulams\CourseBuilder\Contracts\FragmentArchive;
 use Ulams\CourseBuilder\Contracts\RemovalPolicy;
+use Ulams\CourseBuilder\CourseDesign\CourseDesignPolicy;
 use Ulams\CourseBuilder\Ingestion\NoFragmentArchive;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
 use Ulams\CourseBuilder\Console\EvalCommand;
@@ -87,6 +88,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         H5pType::class => H5pType::class,
         H5pLibraries::class => H5pLibraries::class,
         InteractiveType::class => InteractiveType::class,
+        CourseDesignPolicy::class => CourseDesignPolicy::class,
         CourseCommerce::class => CourseCommerce::class,
         PriceService::class => PriceService::class,
         PublishCheck::class => PublishCheck::class,

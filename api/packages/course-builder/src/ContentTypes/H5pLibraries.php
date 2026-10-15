@@ -16,7 +16,7 @@ final class H5pLibraries
 {
     public const SUPPORTED = ['H5P.Blanks', 'H5P.DragText', 'H5P.Dialogcards'];
 
-    /** @var array{at:int,libraries:array<string,string>}|null */
+    /** @var array{at:int,present:array<string,string>,libraries:array<string,string>}|null */
     private ?array $memo = null;
 
     public function __construct(private readonly H5PServiceClientContract $client)
@@ -30,20 +30,42 @@ final class H5pLibraries
      */
     public function installed(): array
     {
+        $this->remember();
+
+        return $this->memo['libraries'];
+    }
+
+    /**
+     * Every library the H5P service reports, machine name → uber name.
+     * Presence is not permission to generate the library.
+     *
+     * @return array<string,string>
+     */
+    public function present(): array
+    {
+        $this->remember();
+
+        return $this->memo['present'];
+    }
+
+    private function remember(): void
+    {
         if ($this->memo !== null && $this->memo['at'] > time() - 60) {
-            return $this->memo['libraries'];
+            return;
         }
-        $libraries = [];
+        $present = [];
         if (config('course_builder.content_types.h5p', true) !== false) {
             try {
-                $libraries = array_intersect_key($this->client->libraries(), array_flip($this->allowed()));
+                $present = $this->client->libraries();
             } catch (Throwable) {
-                $libraries = [];
+                $present = [];
             }
         }
-        $this->memo = ['at' => time(), 'libraries' => $libraries];
-
-        return $libraries;
+        $this->memo = [
+            'at' => time(),
+            'present' => $present,
+            'libraries' => array_intersect_key($present, array_flip($this->allowed())),
+        ];
     }
 
     /** @return string[] */

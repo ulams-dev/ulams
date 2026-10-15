@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/course-design-policy/v1.json",
+  "title": "ULAMS course-design policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "sources", "shells", "trackingEvents", "capabilities"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "const": 1 },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "href", "checked"],
+        "properties": {
+          "title": { "type": "string", "minLength": 2 },
+          "href": { "type": "string", "format": "uri" },
+          "checked": { "type": "string", "format": "date" }
+        }
+      }
+    },
+    "shells": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "useWhen", "completion"],
+        "properties": {
+          "id": { "type": "string", "enum": ["course", "scroll", "slides"] },
+          "label": { "type": "string", "minLength": 2 },
+          "useWhen": { "type": "string", "minLength": 10 },
+          "completion": { "type": "string", "minLength": 10 }
+        }
+      }
+    },
+    "trackingEvents": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["viewed", "progressed", "attempted", "answered", "scored", "completed", "passed", "failed", "resumed"]
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/capability" }
+    }
+  },
+  "$defs": {
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "family", "label", "purpose", "objectiveVerbs", "authoring", "runtime", "tracking", "fallback", "accessibility", "citations"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9.-]+$" },
+        "family": {
+          "type": "string",
+          "enum": ["explain", "show", "recall", "arrange", "decide", "practise", "explore", "reflect", "integrate"]
+        },
+        "label": { "type": "string", "minLength": 2 },
+        "purpose": { "type": "string", "minLength": 5 },
+        "objectiveVerbs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 2 }
+        },
+        "authoring": {
+          "type": "string",
+          "enum": ["api-generated", "agent-composed", "catalogue-reference", "author-import", "manual", "sandboxed", "unavailable"]
+        },
+        "runtime": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "key"],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": ["native", "content-type", "layout-component", "h5p-library", "topic-type", "feature"]
+            },
+            "key": { "type": "string", "minLength": 1 }
+          }
+        },
+        "tracking": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "enum": ["viewed", "progressed", "attempted", "answered", "scored", "completed", "passed", "failed", "resumed"] }
+        },
+        "fallback": { "type": "string", "minLength": 3 },
+        "accessibility": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 3 }
+        },
+        "citations": { "type": "string", "enum": ["required", "required-for-claims", "source-package", "not-applicable"] },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

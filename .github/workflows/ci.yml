@@ -68,6 +68,8 @@ jobs:
       # The table in docs/decisions/README.md is generated from the ADR files (scripts/adr-index.mjs).
       - name: ADR index is up to date
         run: node scripts/adr-index.mjs --check
+      - name: Course-design policy and Agent Skill are in sync
+        run: node scripts/course-design-policy.mjs --check
       - name: Every API package has a README.md
         run: |
           missing=0

@@ -1,7 +1,8 @@
 # Course Builder: developer notes
 
-Records: ADR 0009 (LLM layer), 0010 (Course Blueprint), 0011 (AG-UI over SSE), 0022–0029.
-Plan: `docs/plans/phase-2.md`.
+Records: ADR 0009 (LLM layer), 0010 (Course Blueprint), 0011 (AG-UI over SSE), 0022–0029 and
+0103 (shared course-design policy). Plans: `docs/plans/phase-2.md` and
+`docs/plans/phase-2-course-design-skill.md`.
 
 ```
 front/web /studio (Astro SSR + vanilla islands)          api (Laravel, tenant host)
@@ -36,6 +37,7 @@ front/web /studio (Astro SSR + vanilla islands)          api (Laravel, tenant ho
 | Ingestion: MD, PDF, DOCX → fragments with ids from the heading position | `src/Ingestion` |
 | Course Brief and Blueprint schemas, LLM output schemas | `resources/schemas` |
 | Prompts (README explains versioning) | `resources/prompts` |
+| Course-design policy, schema and runtime filtering | `resources/course-design`, `src/CourseDesign` |
 | Blueprint helpers, element-aware diff, deterministic checks | `src/Blueprint` |
 | Interview, outline, generation (stages and steps), element patches | `src/Pipeline` |
 | Versions, runs and UI actions, state snapshot | `src/Services` |
@@ -89,6 +91,32 @@ model-facing description, fallback). `yarn workspace @ulams/ui builder-manifest`
 `front/ui/catalogue/manifest.json` and the API copy
 `api/packages/course-builder/resources/catalogue/manifest.json`; `yarn workspace @ulams/ui test`
 fails when they drift.
+
+## Shared course-design policy and Agent Skill
+
+`resources/course-design/policy.json` inventories the three learner shells, native formats, all
+official H5P content types, GIFT question types, normalized tracking signals, fallbacks and
+accessibility constraints. `CourseDesignPolicy` validates it and marks runtime availability from
+the content-type registry and H5P service. `apiGeneratable()` is deliberately narrower than the
+inventory: an installed H5P library is not model-writable without an owned schema and deterministic
+mapper.
+
+The interview stores the shell, activity mix, prior experience and overall style on `brief.design`
+(`course` | `scroll` | `slides`, and the closed enums in `course-brief/v2`). Outline and lesson
+prompts read those fields. Choosing `scroll` or `slides` does not yet change the learner player;
+the sidebar course shell is what the player renders today.
+
+Local agents use `.cursor/skills/ulams-course-designer/SKILL.md`, read the same policy and operate
+through `ulams builder`/MCP, preserving the builder's review boundaries. The compact inventory is
+generated:
+
+```bash
+yarn course-design:build
+yarn course-design:check
+```
+
+CI runs the check. Add or change a capability in the policy, regenerate the skill reference and add
+runtime/conformance tests before changing its authoring mode to `api-generated`.
 
 ## Eval command
 

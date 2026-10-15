@@ -114,5 +114,6 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0100](0100-comparison-feature-catalogue-by-stakeholder.md) | Restore the Comparison feature catalogue by stakeholder | Proposed |
 | [0101](0101-umami-public-site-analytics.md) | Umami analytics on owned public sites | Proposed |
 | [0102](0102-one-command-docker-kubernetes-stack.md) | One-command Docker and Kubernetes stack launcher | Proposed |
+| [0103](0103-shared-course-design-policy.md) | Shared course-design policy for API and local agents | Accepted |
 
 <!-- END GENERATED: adr-index -->

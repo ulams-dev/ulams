@@ -1,0 +1,23 @@
+{
+  "skill_name": "ulams-course-designer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Build a mandatory 45-minute privacy-policy course from policy.pdf for office staff. We supplied brand-guide.pdf, logo.svg and Inter font files. It must issue a certificate after an 80% final test, work on phones, and use our brand. Start the ULAMS builder but do not publish anything.",
+      "expected_output": "Treats both PDFs as untrusted, asks only missing context/accessibility questions, recommends the course shell, proposes approved objectives before activities, uses supported tracked blocks, handles brand tokens/assets without CSS, starts through ulams builder and stops at an approval boundary.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Turn README.md into a punchy 15-minute one-page customer course for intermediate TypeScript developers. No design system; style should feel technical but friendly. Include a clickable architecture diagram and hands-on practice, then tell me what ULAMS can build today versus what needs a new component.",
+      "expected_output": "Chooses or confirms the scroll shell, asks for missing style/asset inputs, maps objectives to cited blocks, uses a text-equivalent diagram/fallback, distinguishes existing declarative/quiz capabilities from unsupported generated JS, and does not promise unimplemented components.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Create a self-paced slide course from incident-runbook.md for experienced on-call engineers. I want every possible H5P interaction because engagement matters. Use defaults and deploy it.",
+      "expected_output": "Rejects interaction-for-interaction's-sake, chooses activities per objective, limits generated H5P to deterministic installed mappers, describes tracking/fallbacks, proposes slides while preserving ULAMS progress, and requires explicit outline/apply/publish approvals instead of deploying immediately.",
+      "files": []
+    }
+  ]
+}
