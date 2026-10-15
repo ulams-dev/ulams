@@ -8,10 +8,10 @@ import type { Locale } from "../i18n/locales.ts";
 export const CASE_IDS = ["microdosing-study", "stablecoin-report"] as const;
 export type CaseId = (typeof CASE_IDS)[number];
 
-/** Learner URLs of the two recorded courses, published on Gravity Lab. */
+/** Learner URLs of the two recorded courses, each on its own demo academy. */
 export const COURSE_LINKS: Record<CaseId, string> = {
-  "microdosing-study": "https://gravity.ulams.app/learn/2",
-  "stablecoin-report": "https://gravity.ulams.app/learn/3",
+  "microdosing-study": "https://microdosing.ulams.app/learn/1/1",
+  "stablecoin-report": "https://stablecoins.ulams.app/learn/1/1",
 };
 
 /** Public PDFs the two courses cite. */

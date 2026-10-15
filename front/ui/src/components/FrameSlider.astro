@@ -121,7 +121,7 @@ const total = frames.length;
   }
   .u-frames__slide {
     display: grid;
-    gap: 12px;
+    gap: 18px;
     width: 100%;
     margin: 0;
   }
@@ -149,9 +149,15 @@ const total = frames.length;
   .u-frames__caption {
     width: 100%;
     margin: 0;
-    font-size: 1.05rem;
-    line-height: 1.65;
-    color: var(--ulams-color-text);
+    padding: 16px 22px;
+    border-left: 4px solid var(--ulams-color-accent);
+    border-radius: 0 10px 10px 0;
+    background: var(--ulams-color-card-bg);
+    color: #10283b;
+    font-size: clamp(1.25rem, 0.55rem + 1.15vw, 1.6rem);
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
     text-wrap: pretty;
   }
   @media (max-width: 640px) {
