@@ -694,7 +694,7 @@ export const registry = {
     fallback: p => join(p.title, p.intro),
   },
   Faq: {
-    description: "Questions and answers as an accessible disclosure list (no JavaScript).",
+    description: "Questions and answers as an accessible disclosure list, or as open question-and-answer cards (no JavaScript).",
     category: "section",
     interactive: false,
     children: false,
@@ -707,6 +707,9 @@ export const registry = {
           minItems: 1,
           maxItems: 12,
         }),
+        jsonLd: bool("Emit schema.org FAQPage JSON-LD; turn off when the page emits one FAQPage for several sections", true),
+        collapsible: bool("Render each question as a disclosure; turn off to show every answer, e.g. on a dedicated FAQ page", true),
+        more: { ...LINK, description: "Link under the list to the full FAQ page" },
       },
       ["items"]
     ),
@@ -775,6 +778,7 @@ export const registry = {
         bullets: list(obj({ title: text("Bullet heading", { maxLength: 80 }), text: text("Short explanation", { maxLength: 200 }), href: href("Guide or supporting resource") }, ["title", "text"]), "Concise call-to-action details", { maxItems: 6 }),
         note: text("Short closing note", { maxLength: 200 }),
         code: list(text("Command or output line", { maxLength: 120 }), "Terminal lines (terminal variant); lines starting with $ are commands", { maxItems: 10 }),
+        id: text("Anchor id for in-page links (letters, digits, dashes)", { default: "join", maxLength: 40 }),
         cta: LINK,
         secondary: LINK,
       },
@@ -858,7 +862,7 @@ export const registry = {
               key: text("Stable key (letters, digits, dashes)", { maxLength: 24 }),
               label: text("Tab label", { maxLength: 24 }),
               status: oneOf(["available", "preview", "coming"], "Status badge; omit when everything shown exists"),
-              window: oneOf(["terminal", "chat", "studio"], "Look of the window frame", "terminal"),
+              window: oneOf(["terminal", "chat", "studio", "admin"], "Look of the window frame", "terminal"),
               title: text("Window title", { maxLength: 60 }),
               caption: text("One line under the window", { maxLength: 200 }),
               note: text("Honest note under the caption, e.g. what the example depends on", { maxLength: 200 }),
@@ -1296,6 +1300,7 @@ export const registry = {
         text: text("Sentence under the brand", { maxLength: 300 }),
         links: list(LINK, "Links", { maxItems: 10 }),
         note: text("Small print", { maxLength: 200 }),
+        mail: bool("Show the contact address, assembled in the browser so it is not in the HTML", false),
       },
       ["brand"]
     ),
@@ -1513,6 +1518,29 @@ export const registry = {
     children: false,
     props: obj({ image: IMAGE, caption: text("Caption", { maxLength: 300 }) }, ["image"]),
     fallback: (p) => String(p.caption ?? (p.image as { alt?: string } | undefined)?.alt ?? ""),
+  },
+  FrameSlider: {
+    description: "A walk-through of captioned frames: previous and next controls, then the explanation, then the image at full width. One frame at a time with JavaScript; every frame stays in the HTML without it.",
+    category: "section",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        id: text("Anchor id", { default: "frames", maxLength: 40 }),
+        title: TITLE,
+        intro: INTRO,
+        previous: text("Previous-frame control", { maxLength: 40, default: "Previous" }),
+        next: text("Next-frame control", { maxLength: 40, default: "Next" }),
+        frames: list(
+          obj({ image: IMAGE, caption: text("Explanation under the image", { maxLength: 400 }) }, ["image", "caption"]),
+          "Frames in order",
+          { minItems: 1, maxItems: 24 }
+        ),
+      },
+      ["frames"]
+    ),
+    fallback: (p) =>
+      join(p.title, p.intro, ...(Array.isArray(p.frames) ? p.frames.map((frame) => String((frame as { caption?: string }).caption ?? "")) : [])),
   },
   VideoPlayer: {
     description: "Video with poster, chapters and transcript. HLS streams load a player only when played.",

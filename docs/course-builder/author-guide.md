@@ -21,9 +21,12 @@ what the assistant does, even if it looks like an instruction.
 
 ## 2. Answer the interview
 
-The assistant asks six short questions, one card at a time: who the course is for, the level,
+The assistant asks one card at a time. The first six cover who the course is for, the level,
 total length and lesson length, tone, assessments (a quiz after each lesson, a final test) and
-the language. Each card says **why** it asks.
+the language. The next cards are fixed: how learners move through the course (an outline, one
+scrolling page, or slides), the activity mix, what learners already know, the overall style,
+and whether the course is free or paid. A site admin also picks the theme. Each card says
+**why** it asks.
 
 - Pick an answer and press **Continue**, or press **Decide for me** to accept the suggested default.
 - **Decide the rest for me** fills every open question at once.

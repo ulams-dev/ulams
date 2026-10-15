@@ -15,6 +15,9 @@ learnerRoutes:
   - /comparison
   - /pl/comparison
   - /zh/comparison
+  - /faq
+  - /pl/faq
+  - /zh/faq
   - /robots.txt
   - /sitemap.xml
 ---
@@ -45,6 +48,7 @@ What learners see is described in [Learners](/learners/); this page covers the c
   - pages/
     - index.astro landing (tenant document) or platform landing
     - comparison.astro and pl/comparison.astro, zh/comparison.astro
+    - faq.astro and pl/faq.astro, zh/faq.astro
     - sitemap.xml.ts and robots.txt.ts (platform-host only)
     - courses/[id].astro
     - learn/[courseId]/ lesson player and finish page
@@ -63,15 +67,18 @@ What learners see is described in [Learners](/learners/); this page covers the c
 ### Public product pages
 
 On a platform host, `/`, `/pl/` and `/zh/` render the localized product Overview. The separate
-Comparison page is available at `/comparison/`, `/pl/comparison/` and `/zh/comparison/`. Both page
-families use server rendered catalogue documents and the existing sourced comparison data. Public
+Comparison page is available at `/comparison/`, `/pl/comparison/` and `/zh/comparison/`, and the
+FAQ page, linked from the footer, at `/faq/`, `/pl/faq/` and `/zh/faq/`. Its questions live in
+`src/data/faq.json` and `src/data/i18n/faq.<locale>.json`, grouped into topics that must keep the same
+ids in every language. All page families use server rendered catalogue documents and the existing sourced comparison data. Public
 product claims keep their actual roadmap status, including when a local preview setting hides those
 labels elsewhere.
 
 `Base.astro` renders a page title, description, canonical URL, localized `hreflang` links including
 `x-default`, Open Graph and X card tags, and escaped JSON-LD. Overview describes ulams as a software
-application; Comparison is a collection page with breadcrumbs. JSON-LD omits ratings, offers and
-counts. `/robots.txt` points to `/sitemap.xml`; the sitemap lists just the six canonical product URLs
+application; Comparison is a collection page with breadcrumbs; FAQ emits one `FAQPage` with every
+question, so its topic lists render with `jsonLd: false`. JSON-LD omits ratings, offers and
+counts. `/robots.txt` points to `/sitemap.xml`; the sitemap lists just the nine canonical product URLs
 and their alternate languages. Both endpoints return 404 on tenant hosts.
 
 The comparison matrix uses native tables with captions and scoped row and column headers. On narrow

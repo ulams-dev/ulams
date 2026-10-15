@@ -35,7 +35,7 @@ for (const c of CASES) {
       await expect(page.locator('meta[property="og:image:type"]')).toHaveAttribute("content", "image/png");
       await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute("content", await page.title());
       await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute("content", /.+/);
-      const jsonLd = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
+      const jsonLd = JSON.parse((await page.locator('head script[type="application/ld+json"]').textContent())!);
       expect(jsonLd).toEqual(expect.arrayContaining([expect.objectContaining({ "@type": "Organization" }), expect.objectContaining({ "@type": "WebSite" }), expect.objectContaining({ "@type": "SoftwareApplication" })]));
       const alternates = await page.locator('link[rel="alternate"][hreflang]').evaluateAll((els) => els.map((e) => [e.getAttribute("hreflang"), e.getAttribute("href")]));
       expect(alternates).toEqual([
@@ -46,9 +46,9 @@ for (const c of CASES) {
       ]);
     });
 
-    test("header: three links and a separate language switcher with the current language marked", async ({ page }) => {
+    test("header: four links and a separate language switcher with the current language marked", async ({ page }) => {
       await open(page, c.path);
-      await expect(page.locator("header nav.u-nav li")).toHaveCount(3);
+      await expect(page.locator("header nav.u-nav li")).toHaveCount(4);
       const switcher = page.locator("header nav.u-lang");
       await expect(switcher).toBeVisible();
       await expect(switcher.locator("a")).toHaveCount(3);
@@ -109,7 +109,7 @@ for (const c of CASES) {
       const wide = await page.evaluate(() => {
         const limit = document.documentElement.clientWidth + 1;
         return [...document.querySelectorAll("main *")]
-          .filter((el) => !el.closest(".u-compare__scroll, .u-stage, .u-wf__panels, pre, .u-orb__rings") && el.getBoundingClientRect().right > limit && getComputedStyle(el).position !== "fixed")
+          .filter((el) => !el.closest(".u-compare__scroll, .u-stage, .u-wf__panels, .u-wf__tabs, pre, .u-orb__rings") && el.getBoundingClientRect().right > limit && getComputedStyle(el).position !== "fixed")
           .slice(0, 5)
           .map((el) => `${el.tagName.toLowerCase()}.${el.className}`);
       });
@@ -148,7 +148,7 @@ for (const c of [
     const alternates = await page.locator('link[rel="alternate"][hreflang]').evaluateAll((els) => els.map((e) => [e.getAttribute("hreflang"), e.getAttribute("href")]));
     expect(alternates).toEqual([["en", `${base}/comparison/`], ["pl", `${base}/pl/comparison/`], ["zh-Hans", `${base}/zh/comparison/`], ["x-default", `${base}/comparison/`]]);
     await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute("content", c.expected);
-    const jsonLd = await page.locator('script[type="application/ld+json"]').textContent();
+    const jsonLd = await page.locator('head script[type="application/ld+json"]').textContent();
     expect(JSON.parse(jsonLd!)).toEqual(expect.arrayContaining([expect.objectContaining({ "@type": "Organization" }), expect.objectContaining({ "@type": "WebSite" }), expect.objectContaining({ "@type": "CollectionPage" }), expect.objectContaining({ "@type": "BreadcrumbList" })]));
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
     expect(overflow).toBeLessThanOrEqual(1);
@@ -158,13 +158,47 @@ for (const c of [
   });
 }
 
-test("platform robots and sitemap list only the six localized public page URLs", async ({ request }) => {
+test("the contact address is assembled in the browser and is absent from the HTML", async ({ page, request }) => {
+  const html = await (await request.get(`${base}/pl/`)).text();
+  expect(html).not.toContain("hi@ulams.app");
+  expect(html).not.toContain("mailto:");
+  await page.goto(`${base}/pl/`);
+  const links = page.locator("a.u-mail");
+  await expect(links).toHaveCount(2);
+  await expect(links.first()).toHaveAttribute("href", "mailto:hi@ulams.app");
+  await expect(links.first()).toHaveText("hi@ulams.app");
+});
+
+test("platform robots and sitemap list only the localized public page URLs", async ({ request }) => {
   const robots = await (await request.get(`${base}/robots.txt`)).text();
   expect(robots).toContain(`Sitemap: ${base}/sitemap.xml`);
   const xml = await (await request.get(`${base}/sitemap.xml`)).text();
   const urls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => match[1]);
-  expect(urls).toEqual([`${base}/`, `${base}/pl/`, `${base}/zh/`, `${base}/comparison/`, `${base}/pl/comparison/`, `${base}/zh/comparison/`]);
-  expect(xml.match(/hreflang="x-default"/g)).toHaveLength(6);
+  expect(urls).toEqual([
+    `${base}/`, `${base}/pl/`, `${base}/zh/`,
+    `${base}/comparison/`, `${base}/pl/comparison/`, `${base}/zh/comparison/`,
+    `${base}/faq/`, `${base}/pl/faq/`, `${base}/zh/faq/`,
+    `${base}/course-generation/`, `${base}/pl/course-generation/`, `${base}/zh/course-generation/`,
+    `${base}/course-generation/microdosing-study/`, `${base}/pl/course-generation/microdosing-study/`, `${base}/zh/course-generation/microdosing-study/`,
+    `${base}/course-generation/stablecoin-report/`, `${base}/pl/course-generation/stablecoin-report/`, `${base}/zh/course-generation/stablecoin-report/`,
+  ]);
+  expect(xml.match(/hreflang="x-default"/g)).toHaveLength(18);
+});
+
+test("the FAQ page lists every question once, in every language, with one FAQPage", async ({ page }) => {
+  for (const path of ["/faq/", "/pl/faq/", "/zh/faq/"]) {
+    await page.goto(`${base}${path}`);
+    await expect(page.locator("h1")).toHaveCount(1);
+    await expect(page.locator(".u-faq__item")).toHaveCount(32);
+    await expect(page.locator(".u-faq details")).toHaveCount(0);
+    await expect(page.locator(".u-faq h3")).toHaveCount(32);
+    const ld = await page.locator('script[type="application/ld+json"]').allTextContents();
+    expect(ld.filter((json) => json.includes('"FAQPage"'))).toHaveLength(1);
+    await expect(page.locator('footer a[aria-current="page"], footer a').filter({ hasText: "FAQ" })).toHaveAttribute("href", path);
+  }
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+  expect(axe.violations.map((v) => v.id)).toEqual([]);
 });
 
 test("zh uses the system CJK font stack and no synthetic italics; English keeps its fonts", async ({ page }) => {
@@ -180,6 +214,7 @@ test("a tenant host has no language pages", async ({ request }) => {
   expect((await request.get(`http://coffee.app.localhost:${port}/pl/`)).status()).toBe(404);
   expect((await request.get(`http://coffee.app.localhost:${port}/zh/`)).status()).toBe(404);
   expect((await request.get(`http://coffee.app.localhost:${port}/comparison/`)).status()).toBe(404);
+  expect((await request.get(`http://coffee.app.localhost:${port}/course-generation/`)).status()).toBe(404);
   expect((await request.get(`http://coffee.app.localhost:${port}/robots.txt`)).status()).toBe(404);
   expect((await request.get(`http://coffee.app.localhost:${port}/sitemap.xml`)).status()).toBe(404);
 });

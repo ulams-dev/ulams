@@ -16,7 +16,15 @@ final class BriefService
     public const KEYS = ['audience', 'level', 'duration', 'tone', 'assessments', 'language'];
 
     /** Questions code adds after the model's: fixed options, no model call. */
-    public const EXTRA_KEYS = ['pricing', 'theme'];
+    public const EXTRA_KEYS = ['shell', 'activity', 'experience', 'style', 'pricing', 'theme'];
+
+    public const SHELLS = ['course', 'scroll', 'slides'];
+
+    public const ACTIVITIES = ['balanced', 'practice', 'visual', 'scenario', 'minimal'];
+
+    public const EXPERIENCES = ['new', 'some', 'practising'];
+
+    public const STYLES = ['editorial', 'technical', 'playful', 'minimal'];
 
     public const THEMES = ['coffee', 'oncall', 'nightsky', 'gravity', 'poland', 'ulam'];
 
@@ -98,6 +106,13 @@ final class BriefService
                 $brief['language'] = strtolower(substr((string) (is_array($value) ? ($value[0] ?? '') : $value), 0, 2));
                 $fields = ['language'];
                 break;
+            case 'shell':
+            case 'activity':
+            case 'experience':
+            case 'style':
+                $brief['design'] = self::design($brief['design'] ?? [], $key, $value);
+                $fields = [$key];
+                break;
             case 'pricing':
                 $brief['pricing'] = self::pricing($value);
                 $fields = ['pricing'];
@@ -153,6 +168,30 @@ final class BriefService
         }
 
         return $pricing;
+    }
+
+    /**
+     * One design answer merged into the brief. The value is a chip, a one-item list, or `{value}`.
+     *
+     * @param array<string,string> $design
+     * @return array<string,string>
+     */
+    public static function design(array $design, string $key, mixed $value): array
+    {
+        $allowed = match ($key) {
+            'shell' => self::SHELLS,
+            'activity' => self::ACTIVITIES,
+            'experience' => self::EXPERIENCES,
+            'style' => self::STYLES,
+            default => [],
+        };
+        $picked = is_array($value) ? (string) ($value['value'] ?? $value[0] ?? '') : (string) $value;
+        if (!in_array($picked, $allowed, true)) {
+            throw new InvalidArgumentException($key . ' is one of: ' . implode(', ', $allowed) . '.');
+        }
+        $design[$key] = $picked;
+
+        return $design;
     }
 
     /** @return array{preset:string,accent?:string} from a preset name or an object */
@@ -226,6 +265,10 @@ final class BriefService
             ['key' => 'tone', 'label' => 'Tone', 'value' => ucfirst((string) ($brief['tone'] ?? ''))],
             ['key' => 'assessments', 'label' => 'Assessments', 'value' => $assess ? implode(', ', $assess) : 'None'],
             ['key' => 'language', 'label' => 'Language', 'value' => strtoupper((string) ($brief['language'] ?? ''))],
+            ...(isset($brief['design']['shell']) ? [['key' => 'shell', 'label' => 'Experience', 'value' => ucfirst($brief['design']['shell'])]] : []),
+            ...(isset($brief['design']['activity']) ? [['key' => 'activity', 'label' => 'Activities', 'value' => ucfirst($brief['design']['activity'])]] : []),
+            ...(isset($brief['design']['experience']) ? [['key' => 'experience', 'label' => 'Prior experience', 'value' => ucfirst($brief['design']['experience'])]] : []),
+            ...(isset($brief['design']['style']) ? [['key' => 'style', 'label' => 'Style', 'value' => ucfirst($brief['design']['style'])]] : []),
             ['key' => 'pricing', 'label' => 'Price', 'value' => self::priceLabel($brief['pricing'] ?? ['mode' => 'free'])],
             ...(isset($brief['site']) ? [['key' => 'site', 'label' => 'Site', 'value' => ($brief['site']['mode'] ?? 'current') === 'new' ? 'New site: ' . ($brief['site']['slug'] ?? '') : 'This site']] : []),
             ...(isset($brief['theme']) ? [['key' => 'theme', 'label' => 'Theme', 'value' => ucfirst($brief['theme']['preset']) . (isset($brief['theme']['accent']) ? ' · ' . $brief['theme']['accent'] : '')]] : []),

@@ -80,7 +80,7 @@ final class BlueprintApplier
             'description' => $course['description'] ?? null,
             'language' => substr((string) ($course['language'] ?? 'en'), 0, 2),
             'level' => $brief['level'] ?? null,
-            'target_group' => isset($course['audience']) ? mb_substr($course['audience'], 0, 255) : null,
+            'target_group' => isset($course['audience']) ? mb_substr($course['audience'], 0, 100) : null,
             'duration' => Blueprint::stats($doc)['minutes'] . ' min',
         ], fn ($v) => $v !== null), null, 0);
 

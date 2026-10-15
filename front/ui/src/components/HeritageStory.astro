@@ -1,6 +1,8 @@
 ---
 import Img from "./Img.astro";
 import Icon from "./Icon.astro";
+import NewTabMark from "./NewTabMark.astro";
+import { linkTarget } from "../lib/links.ts";
 interface Props {
   id?: string;
   eyebrow?: string;
@@ -25,9 +27,9 @@ const { id = "product", eyebrow, title, paragraphs, image, caption, connection, 
       {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
       <h2 class="u-h2" id={`${id}-title`}>{title}</h2>
       <div class="u-heritage__history">{paragraphs.map((paragraph) => <p>{paragraph}</p>)}</div>
-      <a class="u-heritage__source" href={source.href}>{source.label}<Icon name="external" /></a>
+      <a class="u-heritage__source" href={source.href} {...linkTarget(source.href)}>{source.label}<NewTabMark href={source.href} /></a>
       <p class="u-heritage__connection">{connection}</p>
-      <a class="u-btn u-btn--ghost" href={cta.href}>{cta.label}<Icon name="arrow" /></a>
+      <a class="u-btn u-btn--ghost" href={cta.href} {...linkTarget(cta.href)}>{cta.label}<NewTabMark href={cta.href} /><Icon name="arrow" /></a>
     </div>
   </div>
 </section>

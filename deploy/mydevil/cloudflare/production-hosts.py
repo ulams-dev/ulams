@@ -16,7 +16,7 @@ import json, os, ssl, sys, urllib.error, urllib.request
 
 ZONE_NAME = "ulams.app"
 ORIGIN_IP = os.environ.get("ULAMS_ORIGIN_IP", "77.79.248.122")
-SLUGS = os.environ.get("ULAMS_SLUGS", "coffee oncall nightsky gravity poland ulam").split()
+SLUGS = os.environ.get("ULAMS_SLUGS", "coffee oncall nightsky gravity poland ulam microdosing stablecoins").split()
 PAGES_PROJECT = "ulams-landing"
 TOKEN = os.environ["CLOUDFLARE_API_TOKEN"]
 ACCOUNT = os.environ["CLOUDFLARE_ACCOUNT_ID"]

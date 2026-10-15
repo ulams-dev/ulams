@@ -1,0 +1,181 @@
+{
+  "title": "ulams — Frequently asked questions",
+  "description": "Answers about ULAMS: headless LMS, course generation from sources, AI and data, self-hosting, integrations, academies and sales.",
+  "eyebrow": "FAQ",
+  "heading": "Frequently asked questions",
+  "intro": "What ULAMS is, how courses are built from your sources, what self-hosting takes, and how it connects to the rest of your stack.",
+  "contact": "Ask us a question",
+  "docs": "Read the docs",
+  "sections": [
+    {
+      "id": "about",
+      "title": "About ULAMS",
+      "items": [
+        {
+          "q": "What is ULAMS and who is it for?",
+          "a": "ULAMS is an open-source LMS for creating and delivering courses. It helps teams turn product documentation, manuals and internal material into training for customers, developers and employees."
+        },
+        {
+          "q": "What does “headless LMS” mean? Do I have to build my own frontend?",
+          "a": "Headless means the content and features of the platform are available through an API, independently of the user interface. You can use the interface that ships with ULAMS or build your own learning experience inside your application."
+        },
+        {
+          "q": "Can I try ULAMS before installing it?",
+          "a": "Yes. The site has demos you can open as a learner and as an administrator, with no account. The demo environments are reset regularly, so they are not a place to keep your own material."
+        },
+        {
+          "q": "Do I need to know how to code to use ULAMS?",
+          "a": "Authors create and manage courses in the admin panel and the Studio. Installing and running your own environment needs technical knowledge. You need to code only if you want to build your own frontend, extend the platform or prepare a custom integration."
+        },
+        {
+          "q": "How is ULAMS different from other LMSs?",
+          "a": "ULAMS combines a backend available through an API, self-hosting, and optional course creation from your sources under the author’s control. You can use the ready-made interface or design your own. This helps most when learning is part of your product and you need control over integrations, data and how courses are presented."
+        },
+        {
+          "q": "Is ULAMS a good choice for every organisation?",
+          "a": "It works best where integrations, your own infrastructure or a custom learning experience matter. Self-hosting means you are responsible for configuration, updates and maintenance. If you need a fully managed service, first decide who will take care of those tasks."
+        }
+      ]
+    },
+    {
+      "id": "courses",
+      "title": "Courses, sources and AI",
+      "items": [
+        {
+          "q": "What material can I build a course from?",
+          "a": "The Course Builder accepts Markdown, PDF and DOCX documents. Material with a clear structure and real text works best; a scanned PDF without a text layer needs text recognition first. The default limit is 20 MB per file and 300 pages per PDF."
+        },
+        {
+          "q": "What do the source references in a generated course mean?",
+          "a": "References let you check the fragment of the document a lesson or question is based on. ULAMS checks generated lessons against the cited fragments and flags content that needs attention. This makes review easier, but it does not replace the author’s judgement."
+        },
+        {
+          "q": "Can AI publish a course without my approval?",
+          "a": "In the Course Builder the author approves the course structure and every proposed change. A course is first created unpublished, and publishing is a separate step. You can check the preview and edit the content before learners see it."
+        },
+        {
+          "q": "What happens when my documentation changes?",
+          "a": "Living Course compares source versions and points to the parts of the course that may need an update. You can upload a new version of the document or connect a Git repository or a website. Changes to the course need the author’s decision: a new source version never overwrites published content on its own."
+        },
+        {
+          "q": "Are my documents sent to an external AI provider?",
+          "a": "When you use AI generation, the fragments of your material needed for the task are sent to the configured model service. The current Course Builder uses Claude through the Anthropic API. Self-hosting the platform does not mean the AI model runs locally. You can turn AI features off and keep using the rest of the LMS."
+        },
+        {
+          "q": "Can I use ULAMS without AI?",
+          "a": "Yes. AI is optional. You can create courses by hand, add material, manage learners and access, and track progress. Turning AI off does not disable any other LMS feature and does not require a model provider key."
+        }
+      ]
+    },
+    {
+      "id": "content",
+      "title": "Features and content",
+      "items": [
+        {
+          "q": "Which modules and features does ULAMS support?",
+          "a": "Courses and content: courses, lessons, text, video, audio, images, PDF and embedded material. Interactive content: H5P, SCORM, cmi5, LiaScript, quizzes and project assignments. Users and access: accounts, groups, roles, permissions and course access. Assessment and reporting: results, progress, reports and PDF certificates. Organising learning: webinars, consultations, in-person events, notifications, notes and bookmarks. Sales: payments, cart and coupons. Creating and maintaining content: the Course Builder and Living Course. Integrations and many academies: REST API, developer tools and tenants. What is available in a given interface depends on the version, configuration and connected services."
+        },
+        {
+          "q": "Can I reuse my existing SCORM courses and interactive content?",
+          "a": "Yes. ULAMS accepts SCORM 1.2 and SCORM 2004 packages and supports H5P content and cmi5 packages. You can combine them with other material in a course. Before going live, test your own packages, playback and progress tracking in the target environment."
+        },
+        {
+          "q": "Can I move material and users from my current LMS?",
+          "a": "ULAMS imports SCORM packages and imports and exports courses in the .ulam format. There is also a module for importing and exporting users as CSV. Moving other data, such as progress history or purchases, needs a compatibility check and a prepared migration. Importing material does not recreate the full history of the previous platform."
+        },
+        {
+          "q": "Is the learner interface accessible?",
+          "a": "Learner-facing pages are built to WCAG 2.2 AA: keyboard navigation, visible focus, text alternatives and reduced motion. Automated accessibility checks run in the test suite. If you build your own frontend, accessibility of that interface is up to you."
+        }
+      ]
+    },
+    {
+      "id": "hosting",
+      "title": "Installation and hosting",
+      "items": [
+        {
+          "q": "Can I run ULAMS on my own infrastructure?",
+          "a": "Yes. ULAMS runs on your own server in containers. The documentation describes configuring the application, domains, mail, file storage and backups. A production deployment needs configuration and testing in the environment you choose."
+        },
+        {
+          "q": "What do I need to install ULAMS?",
+          "a": "A standard deployment needs a server with 64-bit Linux, Docker Engine and Docker Compose v2. You also need a domain with DNS and HTTPS, storage for course files and an SMTP service for sending email. The installation guide covers each of them. An AI provider key is needed only if you want content generation."
+        },
+        {
+          "q": "How powerful does the server need to be?",
+          "a": "The documentation suggests about 2 vCPU, 4 GB RAM and 40 GB SSD for tests with a few users, and 4 vCPU, 8 GB RAM and 80 GB SSD for a small production deployment. These are estimates, not a performance guarantee. Needs depend on concurrent users, package imports and video processing; plan storage for course material separately."
+        },
+        {
+          "q": "Can I try the whole stack locally?",
+          "a": "Yes. Install the CLI and run ulams stack up with Docker Compose available. The development trial uses deterministic AI responses without paid model calls. Node.js 22.12 or newer is required."
+        },
+        {
+          "q": "Where can I deploy it?",
+          "a": "Use Docker Compose on your own server or native Kubernetes manifests on an existing cluster. A VPS or virtual machine on AWS, Google Cloud or Azure can host the stack. Production needs DNS, HTTPS and persistent storage."
+        },
+        {
+          "q": "How do I stop it without losing courses?",
+          "a": "Run ulams stack down. Data and credentials remain available when you run stack up again in the same installation directory. Only stack down --purge --yes deliberately removes persistent data."
+        },
+        {
+          "q": "How much does ULAMS cost?",
+          "a": "The platform code is open source under the MIT licence. When you self-host, you pay for infrastructure, maintenance and any external services you use. AI generation is billed by the model provider; ULAMS shows generation costs and lets you set budget limits. Some components have their own licences, described in the documentation; H5P runs as a separate service under the GPL."
+        },
+        {
+          "q": "How do I upgrade to a new version?",
+          "a": "Back up the database and files first, then follow the upgrade steps for your deployment in the documentation. The upgrade runs database migrations for the platform and every academy. Check the release notes for changes that need configuration before you upgrade production."
+        }
+      ]
+    },
+    {
+      "id": "integrations",
+      "title": "Integrations and extensions",
+      "items": [
+        {
+          "q": "Can I connect ULAMS to my own application or a Python backend?",
+          "a": "Yes. Integration goes through the REST API, so your application can be written in Python or any language that speaks HTTP. ULAMS also provides OpenAPI documentation, an SDK, a CLI and an MCP interface. Fit the scope of the integration, including sign-in and course access, to the architecture of your application."
+        },
+        {
+          "q": "Can agents operate ULAMS?",
+          "a": "The CLI and MCP interface let compatible agents work with the platform. You can use Claude Code, Codex, OpenCode or Gemini CLI, or integrate directly through the REST API."
+        },
+        {
+          "q": "Can I extend ULAMS with my own features?",
+          "a": "Yes. The platform is modular and the source code is open. You can build your own API modules, content types, interface components and integrations. The documentation includes guides and a sample extension module."
+        }
+      ]
+    },
+    {
+      "id": "academies",
+      "title": "Academies, branding and sales",
+      "items": [
+        {
+          "q": "Can I run several academies on one installation?",
+          "a": "Yes. ULAMS supports many academies, called tenants. Each can have its own addresses, database, file storage, accounts and theme, so you can run separate environments for customers, brands or departments. Creating and maintaining them is done by the platform operator."
+        },
+        {
+          "q": "Can I match an academy to my brand?",
+          "a": "Yes. An academy can have its own name, theme, accent colour and domain. For deeper changes you can extend the frontend that ships with ULAMS or build your own interface on the ULAMS API."
+        },
+        {
+          "q": "Can I sell access to courses?",
+          "a": "The platform includes modules for prices, payments, cart and coupons. Selling needs a supported payment gateway to be configured and the whole flow tested, from purchase to granting access. Which sales scenarios are available depends on the version and interface you use."
+        }
+      ]
+    },
+    {
+      "id": "help",
+      "title": "Help and contributing",
+      "items": [
+        {
+          "q": "Where can I get help?",
+          "a": "Start with the documentation. For questions about self-hosting, integrations or a project, use the contact form on the main page. Bugs and feature requests go to the issue tracker on GitHub."
+        },
+        {
+          "q": "How can I contribute?",
+          "a": "ULAMS is developed in the open on GitHub. You can report issues, suggest changes to the documentation and send pull requests. The contributing section of the documentation explains how the code is organised and how changes are reviewed."
+        }
+      ]
+    }
+  ]
+}

@@ -22,6 +22,10 @@
             "href": "/comparison/"
           },
           {
+            "label": "Build",
+            "href": "/course-generation/"
+          },
+          {
             "label": "Docs",
             "href": "https://ulams-dev.github.io/ulams/"
           }
@@ -1022,6 +1026,10 @@
           "component": "Faq",
           "props": {
             "id": "faq",
+            "more": {
+              "label": "More questions on the FAQ page",
+              "href": "/faq/"
+            },
             "eyebrow": "FAQ",
             "title": "Questions before you start",
             "items": [
@@ -1078,19 +1086,19 @@
           },
           {
             "label": "Demos",
-            "href": "#demos"
+            "href": "/#demos"
           },
           {
             "label": "Agent workflows",
-            "href": "#agents"
+            "href": "/#agents"
           },
           {
             "label": "Standards",
-            "href": "#standards"
+            "href": "/#standards"
           },
           {
             "label": "Self-host",
-            "href": "#self-host"
+            "href": "/#self-host"
           },
           {
             "label": "Docs",
@@ -1102,14 +1110,15 @@
           },
           {
             "label": "FAQ",
-            "href": "#faq"
+            "href": "/faq/"
           },
           {
             "label": "Contact",
             "href": "/#contact"
           }
         ],
-        "note": "Open source · MIT"
+        "note": "Open source · MIT",
+        "mail": true
       }
     }
   ]

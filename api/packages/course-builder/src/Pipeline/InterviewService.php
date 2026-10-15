@@ -65,7 +65,31 @@ final class InterviewService
      */
     private function fixedQuestions(Session $session): array
     {
-        $questions = [[
+        $questions = [
+            $this->chip('shell', 'How should learners move through the course?', 'A long course needs an outline. A short story can be one scrolling page. A visual sequence works as slides.', [
+                ['value' => 'course', 'label' => 'Course with a left outline'],
+                ['value' => 'scroll', 'label' => 'One scrolling page'],
+                ['value' => 'slides', 'label' => 'Slides'],
+            ], 'course'),
+            $this->chip('activity', 'What kind of activity should dominate?', 'Retrieval and practice make the course stick. Pick the mix that fits this material.', [
+                ['value' => 'balanced', 'label' => 'Explain, then practise'],
+                ['value' => 'practice', 'label' => 'Practice-heavy'],
+                ['value' => 'visual', 'label' => 'Visual and diagram-led'],
+                ['value' => 'scenario', 'label' => 'Decisions and scenarios'],
+                ['value' => 'minimal', 'label' => 'Mostly reading'],
+            ], 'balanced'),
+            $this->chip('experience', 'What do learners already know?', 'This sets how much foundation the first lessons include.', [
+                ['value' => 'new', 'label' => 'New to the topic'],
+                ['value' => 'some', 'label' => 'Some background'],
+                ['value' => 'practising', 'label' => 'They already do this at work'],
+            ], 'new'),
+            $this->chip('style', 'What overall style should it have?', 'Used when you do not upload a design system. Colours still come from the theme.', [
+                ['value' => 'editorial', 'label' => 'Editorial'],
+                ['value' => 'technical', 'label' => 'Technical'],
+                ['value' => 'playful', 'label' => 'Playful'],
+                ['value' => 'minimal', 'label' => 'Minimal'],
+            ], 'editorial'),
+            [
             'key' => 'pricing',
             'label' => 'Will the course be free or paid?',
             'why' => 'Free courses open as soon as you publish. For a paid course you confirm the price in the publish summary before anyone can buy it.',
@@ -73,7 +97,8 @@ final class InterviewService
             'options' => [['value' => 'free', 'label' => 'Free'], ['value' => 'paid', 'label' => 'Paid']],
             'default' => ['mode' => 'free'],
             'answered' => false,
-        ]];
+            ],
+        ];
         if ($this->theme->authorMayChange($session->author, (array) $session->brief)) {
             $questions[] = [
                 'key' => 'theme',
@@ -87,6 +112,20 @@ final class InterviewService
         }
 
         return $questions;
+    }
+
+    /** @param array<int,array{value:string,label:string}> $options */
+    private function chip(string $key, string $label, string $why, array $options, string $default): array
+    {
+        return [
+            'key' => $key,
+            'label' => $label,
+            'why' => $why,
+            'component' => 'ChoiceChips',
+            'options' => $options,
+            'default' => $default,
+            'answered' => false,
+        ];
     }
 
     /** @return string[] */
@@ -268,6 +307,7 @@ final class InterviewService
                 !empty($brief['assessments']['finalTest']) ? 'final' : null,
             ])),
             'pricing', 'theme' => $brief[$key] ?? null,
+            'shell', 'activity', 'experience', 'style' => $brief['design'][$key] ?? null,
             default => $brief[$key] ?? null,
         };
     }

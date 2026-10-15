@@ -1,4 +1,7 @@
 ---
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
+import ObfuscatedMail from "./ObfuscatedMail.astro";
+
 interface Props {
   id?: string;
   eyebrow?: string;
@@ -22,6 +25,7 @@ const {
   errorMessage, note,
 } = Astro.props;
 const apiEndpoint = /^https:\/\//.test(endpoint) ? endpoint.replace(/\/+$/, "") : "https://api.ulams.app";
+const t = uiStrings(pageLocale(Astro));
 ---
 
 <section class="u-section u-contact" id={id} aria-labelledby={`${id}-title`}>
@@ -30,6 +34,7 @@ const apiEndpoint = /^https:\/\//.test(endpoint) ? endpoint.replace(/\/+$/, "") 
       {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
       <h2 class="u-h2" id={`${id}-title`}>{title}</h2>
       <p class="u-lead">{intro}</p>
+      <p class="u-contact__mail"><ObfuscatedMail label={t.mailLabel} /></p>
     </header>
     <form
       class="u-contact__form"
@@ -95,6 +100,9 @@ const apiEndpoint = /^https:\/\//.test(endpoint) ? endpoint.replace(/\/+$/, "") 
 
 <style>
   .u-contact__wrap { max-width: 900px; }
+  .u-contact__mail { margin: 16px 0 0; }
+  .u-contact__mail :global(a) { color: var(--ulams-color-primary); font-weight: 600; text-decoration: none; }
+  .u-contact__mail :global(a:hover) { text-decoration: underline; text-underline-offset: 4px; }
   .u-contact__form { display: grid; gap: 20px; padding: clamp(22px, 4vw, 44px); border: 1px solid var(--ulams-color-border); border-radius: var(--ulams-radius-card); background: var(--ulams-color-card-bg); box-shadow: var(--ulams-shadow-card, 0 18px 48px rgb(15 43 70 / 8%)); }
   .u-contact__grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
   .u-contact__form label { display: grid; gap: 8px; color: var(--ulams-color-header); font-size: .9rem; font-weight: 600; }

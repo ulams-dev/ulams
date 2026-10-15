@@ -1,6 +1,47 @@
 {
-  "description": "Pięć sposobów obsługi ulams: Claude Code, Claude z serwerem MCP ulams, wiersz poleceń ulams, REST API z SDK oraz studio.",
+  "description": "Sześć sposobów obsługi ulams: panel admina, Claude Code, Claude z serwerem MCP ulams, wiersz poleceń ulams, REST API z SDK oraz studio.",
   "tabs": [
+    {
+      "key": "admin",
+      "label": "Panel admina",
+      "status": "available",
+      "window": "admin",
+      "title": "Panel admina",
+      "caption": "Panel admina to zwykła droga: kursy, osoby, zapisy i raporty.",
+      "lines": [
+        {
+          "kind": "note",
+          "text": "Kursy"
+        },
+        {
+          "kind": "note",
+          "text": "Osoby"
+        },
+        {
+          "kind": "note",
+          "text": "Zapisy"
+        },
+        {
+          "kind": "note",
+          "text": "Raporty"
+        },
+        {
+          "kind": "card",
+          "text": "On-Call",
+          "args": "Opublikowany | 86"
+        },
+        {
+          "kind": "card",
+          "text": "Gravity Lab",
+          "args": "Opublikowany | 42"
+        },
+        {
+          "kind": "card",
+          "text": "Atlas kawy",
+          "args": "Szkic | 0"
+        }
+      ]
+    },
     {
       "key": "claude-code",
       "label": "Claude Code",
@@ -203,7 +244,7 @@
       "status": "available",
       "window": "studio",
       "title": "Studio · Kreator kursów",
-      "caption": "Klasyczny sposób pracy nadal jest: studio sterowane czatem, w którym każda zmiana AI to podgląd zmian do Twojej akceptacji.",
+      "caption": "Studio to wizualny kreator kursów: każda zmiana AI to podgląd zmian do Twojej akceptacji.",
       "lines": [
         {
           "kind": "user",

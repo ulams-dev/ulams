@@ -1,0 +1,22 @@
+---
+/**
+ * A mailto link whose address is not present in the HTML. The browser joins the character codes
+ * on click and on load, so a scraper that only reads the markup does not see an address.
+ */
+interface Props {
+  label: string;
+}
+const { label } = Astro.props;
+---
+
+<a class="u-mail" href="#contact" data-mail="104,105,64,117,108,97,109,115,46,97,112,112">{label}</a>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>("a[data-mail]").forEach((link) => {
+    const codes = (link.dataset.mail ?? "").split(",").map(Number);
+    const address = String.fromCharCode(...codes);
+    link.href = `mailto:${address}`;
+    link.textContent = address;
+    link.removeAttribute("data-mail");
+  });
+</script>

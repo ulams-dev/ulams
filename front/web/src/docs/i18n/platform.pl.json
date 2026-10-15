@@ -22,6 +22,10 @@
             "href": "/pl/comparison/"
           },
           {
+            "label": "Budowa",
+            "href": "/pl/course-generation/"
+          },
+          {
             "label": "Dokumentacja",
             "href": "https://ulams-dev.github.io/ulams/"
           }
@@ -267,9 +271,9 @@
           "props": {
             "id": "agents",
             "eyebrow": "obsługa z dowolnego miejsca",
-            "title": "Zarządzaj akademią z Claude, Claude Code lub terminala",
-            "intro": "Korzystaj z ULAMS przez Claude Code, Claude, Codex, OpenCode, Gemini CLI lub innego agenta zgodnego z MCP. Twórz kursy z dokumentów, sprawdzaj aktualizacje i zarządzaj akademią przez agentów AI, ULAMS CLI albo REST API. Studio zapewnia zespołowi wizualne środowisko pracy.",
-            "valueLine": "Jedna platforma, każdy interfejs, w którym Twój zespół już pracuje.",
+            "title": "Zarządzaj akademią w panelu admina, z Claude, Claude Code lub terminala",
+            "intro": "ULAMS to standardowy LMS. Panel admina służy do kursów, osób, zapisów i raportów. Możesz też korzystać z Claude Code, Claude, Codex, OpenCode, Gemini CLI lub innego agenta zgodnego z MCP, z ULAMS CLI albo REST API. Studio zapewnia zespołowi wizualne środowisko pracy.",
+            "valueLine": "Jedna platforma: panel admina, którego zespół oczekuje, i każdy interfejs, w którym już pracuje.",
             "legal": "Claude i Claude Code są produktami firmy Anthropic. ulams jest niezależny i nie jest powiązany z Anthropic ani przez nią rekomendowany.",
             "description": {
               "$data": "/workflows/description"
@@ -305,7 +309,7 @@
               },
               {
                 "label": "LTI 1.3",
-                "status": "coming"
+                "note": "Platforma + narzędzie"
               },
               {
                 "label": "OpenAPI",
@@ -362,7 +366,7 @@
             },
             "bullets": [
               {
-                "title": "Lokalny test etapu 2",
+                "title": "Wypróbuj lokalnie",
                 "text": "Uruchom akademię z deterministycznym AI, bez płatnych wywołań modeli.",
                 "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               },
@@ -403,6 +407,10 @@
           "component": "Faq",
           "props": {
             "id": "faq",
+            "more": {
+              "label": "Więcej pytań na stronie FAQ",
+              "href": "/pl/faq/"
+            },
             "eyebrow": "FAQ",
             "title": "Pytania przed rozpoczęciem",
             "items": [
@@ -483,14 +491,15 @@
           },
           {
             "label": "FAQ",
-            "href": "#faq"
+            "href": "/pl/faq/"
           },
           {
             "label": "Kontakt",
             "href": "#contact"
           }
         ],
-        "note": "Otwarty kod · MIT"
+        "note": "Otwarty kod · MIT",
+        "mail": true
       }
     }
   ]

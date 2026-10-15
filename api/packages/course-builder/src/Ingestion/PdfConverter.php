@@ -29,10 +29,10 @@ final class PdfConverter
         $markdown = '';
         $marks = [];
         $chars = 0;
-        $title = trim((string) ($pdf->getDetails()['Title'] ?? '')) ?: null;
+        $title = trim((string) TextEncoding::utf8((string) ($pdf->getDetails()['Title'] ?? ''))) ?: null;
         foreach ($pages as $index => $page) {
             $marks[] = [strlen($markdown), $index + 1];
-            $text = str_replace(["\r\n", "\r", "\f"], "\n", (string) $page->getText());
+            $text = str_replace(["\r\n", "\r", "\f"], "\n", (string) TextEncoding::utf8((string) $page->getText()));
             $chars += strlen(preg_replace('/\s+/', '', $text) ?? '');
             $paragraph = [];
             foreach (explode("\n", $text) as $line) {

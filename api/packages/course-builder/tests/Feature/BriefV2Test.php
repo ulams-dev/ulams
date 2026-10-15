@@ -39,7 +39,7 @@ class BriefV2Test extends TestCase
     {
         $session = $this->uploaded($this->author());
         $keys = array_column($session->stateValue('interview.questions'), 'key');
-        $this->assertSame(['audience', 'level', 'duration', 'tone', 'assessments', 'language', 'pricing'], $keys);
+        $this->assertSame(['audience', 'level', 'duration', 'tone', 'assessments', 'language', 'shell', 'activity', 'experience', 'style', 'pricing'], $keys);
 
         $admin = $this->siteAdmin();
         $session = $this->uploaded($admin);
@@ -71,6 +71,12 @@ class BriefV2Test extends TestCase
         $this->assertSame(['mode' => 'free'], $session->brief['pricing']);
         $this->assertArrayHasKey($session->brief['theme']['preset'], array_flip(BriefService::THEMES));
         $this->assertSame('default', $session->brief['decidedBy']['pricing']);
+        $this->assertSame([
+            'shell' => 'course',
+            'activity' => 'balanced',
+            'experience' => 'new',
+            'style' => 'editorial',
+        ], $session->brief['design']);
     }
 
     public function testPutBriefReplacesPriceAndDoesNotMarkStagesStale(): void

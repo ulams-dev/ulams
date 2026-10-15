@@ -1,0 +1,13 @@
+---
+import { isExternal } from "../lib/links.ts";
+import { uiStrings, pageLocale } from "../lib/i18n.ts";
+import Icon from "./Icon.astro";
+
+interface Props {
+  href?: string;
+}
+const { href } = Astro.props;
+const t = uiStrings(pageLocale(Astro));
+---
+
+{isExternal(href) && <><Icon name="external" class="u-newtab" /><span class="u-visually-hidden">{t.newTab}</span></>}
