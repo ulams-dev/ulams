@@ -1,0 +1,51 @@
+---
+title: "Wellms → ULAMS: where this came from"
+description: "How a Wellms headless LMS fork became ULAMS: courses from existing documentation, a source behind every sentence, and AI that only proposes."
+date: 2026-10-14
+sidebar:
+  order: 30
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import BlogVideo from "../../../components/BlogVideo.astro";
+import BlogImage from "../../../components/BlogImage.astro";
+
+<Tabs syncKey="blog-lang">
+<TabItem label="English">
+
+For years at ESCOLA S.A. I built Wellms, an open source headless LMS on Laravel. Courses, lessons, progress, SCORM, H5P, the whole modern e-learning machine.
+
+When I left, I knew I wasn't done playing with this topic. So I did what builders do best: I forked Wellms and started adding things, and I rebuilt the architecture as a monorepo.
+
+That's how ULAMS ([ulams.app](https://ulams.app/)) is happening:
+
+- a course built from documentation your team already has
+- every generated sentence points at a source passage
+- when the docs change, the course gets an update proposal
+- AI only proposes, the author decides
+
+I'm doing it after hours because I genuinely enjoy it. And because I want to explore generative UI (AG-UI, A2UI) on a live product: an interface the model proposes and the author approves. Over the next posts I'll show one example end to end: runbook → course → update. Real product, no slides.
+
+</TabItem>
+<TabItem label="Polski">
+
+Przez lata w ESCOLA S.A. budowałem Wellms, open source headless LMS na Laravelu. Kursy, lekcje, postępy, SCORM, H5P, cała współczesna maszyna e-learningowa.
+
+Kiedy odchodziłem, wiedziałem, że nie skończyłem się bawić tym tematem. Więc zrobiłem to, co builder robi najlepiej: sforkowałem Wellms i zacząłem dokładać rzeczy, oraz przebudowałem architekturę na monorepo.
+
+Tak powstaje ULAMS ([ulams.app](https://ulams.app/)):
+
+- kurs z dokumentacji, którą zespół już ma
+- każde wygenerowane zdanie wskazuje fragment źródła
+- kiedy dokumentacja się zmienia, kurs dostaje propozycję aktualizacji
+- a AI tylko proponuje, decyzja zostaje przy autorze
+
+Robię to po godzinach, bo sprawia mi to ogromną frajdę. I dlatego, że chcę na żywym produkcie eksplorować generative UI (AG-UI, A2UI): interfejs, który model proponuje, a autor zatwierdza. Przez najbliższe posty pokażę jeden przykład od początku do końca: runbook → kurs → aktualizacja. Prawdziwy produkt, bez slajdów.
+
+</TabItem>
+</Tabs>
+
+## In pictures
+
+<BlogImage slug="wellms-to-ulams" name="2022-2026" alt="The 2022 course-format paper above today's course preview in the Studio." caption="The 2022 course-format paper above today's course preview in the Studio." />
+

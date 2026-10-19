@@ -1,0 +1,51 @@
+---
+/**
+ * A clip from public/blog/<slug>/ (clip.mp4 and poster.jpg, or the `file` and `poster` you name).
+ *
+ *   <BlogVideo slug="living-course" caption="What the clip shows." />
+ */
+interface Props {
+  slug: string;
+  caption?: string;
+  file?: string;
+  poster?: string;
+  /** Vertical clips (4:5) are shown narrower than wide ones (16:9). */
+  wide?: boolean;
+}
+
+const { slug, caption, file = "clip.mp4", poster = "poster.jpg", wide = false } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+const src = `${base}/blog/${slug}/${file}`;
+const posterSrc = `${base}/blog/${slug}/${poster}`;
+---
+
+<figure class:list={["blog-video", { wide }]}>
+  <video controls playsinline preload="metadata" poster={posterSrc}>
+    <source src={src} type="video/mp4" />
+    Your browser cannot play this video. <a href={src}>Download it</a>.
+  </video>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  .blog-video {
+    margin: 1.5rem 0;
+  }
+  .blog-video video {
+    display: block;
+    width: 100%;
+    max-width: 26rem;
+    height: auto;
+    border-radius: 0.5rem;
+    border: 1px solid var(--sl-color-gray-5);
+    background: #000;
+  }
+  .blog-video.wide video {
+    max-width: 100%;
+  }
+  .blog-video figcaption {
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-gray-3);
+    margin-top: 0.5rem;
+  }
+</style>
