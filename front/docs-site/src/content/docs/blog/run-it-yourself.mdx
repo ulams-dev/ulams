@@ -1,0 +1,70 @@
+---
+title: "Run it yourself: ulams stack up"
+description: "A CLI launcher starts the API, admin panel, Studio and learner interface with one command, and writes the passwords to a file."
+date: 2026-10-15
+sidebar:
+  order: 23
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+import BlogVideo from "../../../components/BlogVideo.astro";
+import BlogImage from "../../../components/BlogImage.astro";
+
+<BlogVideo slug="run-it-yourself" caption="In the clip: the requirements from the docs, ulams 0.2.0, the plan printed by ulams stack up --dry-run (port 8480), and the On-Call academy at the end. The full image download is not shown and the credentials file is not displayed." />
+
+<Tabs syncKey="blog-lang">
+<TabItem label="English">
+
+For me, open source starts the moment I can run it myself. No demo call 😄
+
+ULAMS has a CLI launcher. Install it, have Docker, and:
+
+```bash
+ulams stack up
+```
+
+- API, admin panel, Studio and learner interface come up
+- your first academy is created
+- passwords go to a file, not to the screen
+
+What's real: the local trial uses simulated AI responses, so you pay for no model calls. Real generation needs a provider configured. Production also needs domains, HTTPS and services — there's a separate guide for that.
+
+Guide:
+[/operators/one-command-stack/](/operators/one-command-stack/)
+
+If you run it — let me know how it went. Every reported issue is a gift to me 🎁
+
+</TabItem>
+<TabItem label="Polski">
+
+Dla mnie open source zaczyna się w momencie, w którym mogę go odpalić u siebie. Bez demo calla 😄
+
+ULAMS ma launcher CLI. Instalujesz go, masz Dockera i:
+
+```bash
+ulams stack up
+```
+
+- wstaje API, panel, Studio i interfejs uczestnika
+- tworzy się pierwsza akademia
+- hasła trafiają do pliku, nie na ekran
+
+What's real: lokalny trial używa symulowanych odpowiedzi AI, więc nie płacisz za żadne wywołania modelu. Prawdziwe generowanie wymaga podpięcia dostawcy. Produkcja to dodatkowo domeny, HTTPS i usługi — ale od tego jest osobna instrukcja.
+
+Instrukcja:
+[/operators/one-command-stack/](/operators/one-command-stack/)
+
+Jeśli odpalisz — daj znać, jak poszło. Każdy zgłoszony problem to dla mnie prezent 🎁
+
+</TabItem>
+</Tabs>
+
+## In pictures
+
+<BlogImage slug="run-it-yourself" name="cli" alt="The plan printed by ulams stack up --dry-run: ports, mode, where credentials go." caption="The plan printed by ulams stack up --dry-run: ports, mode, where credentials go." />
+
+<BlogImage slug="run-it-yourself" name="docs" alt="The guide: one-command Docker and Kubernetes." caption="The guide: one-command Docker and Kubernetes." />
+
+<BlogImage slug="run-it-yourself" name="academy" alt="The first academy, On-Call, once the stack is up." caption="The first academy, On-Call, once the stack is up." />
+
+This post is part of a ten-day series that follows one example, from runbook to course to update. The posts are in the sidebar.

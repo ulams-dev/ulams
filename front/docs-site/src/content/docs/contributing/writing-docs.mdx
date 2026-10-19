@@ -165,6 +165,19 @@ The "Edit page" link on a generated page already points to its source file. Rela
 sources are rewritten: links to another ADR or the roadmap become site links, everything else
 becomes a GitHub link, so write ordinary relative links in the source files.
 
+## Blog posts
+
+The **Blog** section (`src/content/docs/blog`) holds posts, newest first in the sidebar. A post is a normal page
+with a `date` in the frontmatter and `sidebar.order` set so that newer posts get a lower number. The list on
+`/blog/` is built from the `date` field by `BlogList.astro`.
+
+- Put the English and Polish text in a `<Tabs syncKey="blog-lang">`, as the existing posts do.
+- Screenshots go in `src/assets/blog/<post-slug>/*.webp` and are shown with
+  `<BlogImage slug="..." name="..." alt="..." caption="..." />`.
+- Clips go in `public/blog/<post-slug>/clip.mp4` with a `poster.jpg`, and are shown with
+  `<BlogVideo slug="..." caption="..." />`. Keep clips small (a few MB): they are committed to the repository.
+- Say what is real and what is a demo, as in the posts: no claims that are not in the code.
+
 ## Screenshots
 
 Screens are `.webp` files in `src/assets/screens`, captured with:

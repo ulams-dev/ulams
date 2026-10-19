@@ -74,6 +74,7 @@ export default defineConfig({
         : [],
       sidebar: [
         { label: "Getting started", items: [{ autogenerate: { directory: "getting-started" } }] },
+        { label: "Blog", items: [{ autogenerate: { directory: "blog" } }] },
         { label: "Content creators", items: [{ autogenerate: { directory: "creators" } }] },
         { label: "Learners", items: [{ autogenerate: { directory: "learners" } }] },
         { label: "Administrators", items: [{ autogenerate: { directory: "admin" } }] },
