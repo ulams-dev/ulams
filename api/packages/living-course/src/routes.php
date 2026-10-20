@@ -5,6 +5,7 @@ use Ulams\LivingCourse\Http\Controllers\AuditController;
 use Ulams\LivingCourse\Http\Controllers\ConnectController;
 use Ulams\LivingCourse\Http\Controllers\ConnectionsController;
 use Ulams\LivingCourse\Http\Controllers\NoticesController;
+use Ulams\LivingCourse\Http\Controllers\OAuthController;
 use Ulams\LivingCourse\Http\Controllers\ProposalsController;
 use Ulams\LivingCourse\Http\Controllers\SourcesController;
 use Ulams\LivingCourse\Http\Controllers\WebhookController;
@@ -37,6 +38,7 @@ Route::group([
     Route::post('proposals/{proposal}/reanalyse', [ProposalsController::class, 'reanalyse']);
     Route::put('proposals/{proposal}/learner-note', [ProposalsController::class, 'learnerNote']);
     Route::get('connectors', [ConnectController::class, 'connectors']);
+    Route::post('oauth/{provider}/start', [OAuthController::class, 'start']);
     Route::post('sessions/{session}/sources/connect', [ConnectController::class, 'connect']);
     Route::post('connections/{connection}/check', [ConnectController::class, 'check']);
     Route::post('connections/{connection}/webhook-secret', [ConnectController::class, 'rotateSecret']);
@@ -57,6 +59,9 @@ Route::group([
     Route::post('notices/{notice}/dismiss', [NoticesController::class, 'dismiss'])->whereNumber('notice');
     Route::get('courses/{course}/freshness', [NoticesController::class, 'freshness'])->whereNumber('course');
 });
+
+// The vendor sends the browser back here after "Connect your account"; the encrypted state is the credential.
+Route::get('api/living-course/oauth/{provider}/callback', [OAuthController::class, 'callback'])->middleware('throttle:60,1');
 
 // Webhooks of source hosts: no login, the signature with the connection's secret is the credential.
 Route::post('api/living-course/webhooks/{webhookId}', [WebhookController::class, 'receive'])->middleware('throttle:living-course-webhook');

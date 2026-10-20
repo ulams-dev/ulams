@@ -13,7 +13,7 @@ Records: ADR 0030 (revisions and proposals), 0031 (change detection), 0032 (conn
 - Writing a connector plugin: [`docs/living-course/connector-plugins.md`](../../../docs/living-course/connector-plugins.md)
 
 ```
-Connector (upload | git | git-cli | url | plugin) ─▶ Revision (numbered per source, fragments with file_path)
+Connector (upload | git | git-cli | url | google-drive | notion | plugin) ─▶ Revision (numbered per source, fragments with file_path)
    ─▶ FragmentDiff (deterministic: unchanged | changed | moved | added | removed; no model)
    ─▶ ImpactAnalyzer (citations ─▶ elements) ─▶ StalenessService (element_status)
    ─▶ AnalysisService (one grounded call per group, run kind `sync`, cost caps) ─▶ UpdateProposal + items

@@ -8,8 +8,10 @@ use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Source;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\LivingCourse\Connectors\ConnectorException;
+use Ulams\LivingCourse\Connectors\OAuthConnector;
 use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
 use Ulams\LivingCourse\Models\Connection;
+use Ulams\LivingCourse\Oauth\OAuthService;
 
 /**
  * Connects a source through a connector (plan 11.2): validates the settings with a dry run,
@@ -25,6 +27,7 @@ final class SourceConnections
         private readonly SourceSync $sync,
         private readonly AuditLog $audit,
         private readonly RunService $runs,
+        private readonly OAuthService $oauth,
     ) {
     }
 
@@ -40,6 +43,7 @@ final class SourceConnections
             throw new ConnectorException('This kind of source is not available on this installation.');
         }
         $connector = $this->connectors->get($key);
+        [$secrets, $grant] = $this->oauth->redeem($secrets, $connector, $userId);
         $secrets = array_intersect_key($secrets, array_flip($connector->secretFields()));
         $connector->validate($config, $secrets);
 
@@ -78,10 +82,17 @@ final class SourceConnections
         });
 
         try {
-            $this->sync->firstRevision($connection, $source, $connector->fetch($connection, null), $userId);
+            $first = $this->sync->firstRevision($connection, $source, $connector->fetch($connection, null), $userId);
+            if ($connector instanceof OAuthConnector && is_string($first->metadata['title'] ?? null) && trim($first->metadata['title']) !== '') {
+                // a Drive file or a Notion page is named by its own title, which only the first read knows
+                $source->forceFill(['original_name' => mb_substr(trim($first->metadata['title']), 0, 255)])->save();
+            }
         } catch (ConnectorException|\RuntimeException $e) {
             $source->forceFill(['status' => 'failed', 'error' => mb_substr($e->getMessage(), 0, 500)])->save();
             throw $e instanceof ConnectorException ? $e : new ConnectorException($e->getMessage(), 0, $e);
+        }
+        if ($grant !== null) {
+            $this->oauth->forget($grant);
         }
         $session->refresh();
         if ($session->title === null) {

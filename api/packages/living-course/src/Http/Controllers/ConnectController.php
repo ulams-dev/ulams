@@ -6,9 +6,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Ulams\LivingCourse\Connectors\ConnectorException;
+use Ulams\LivingCourse\Connectors\OAuthConnector;
 use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
 use Ulams\LivingCourse\Http\Controllers\Concerns\ResolvesLivingCourse;
 use Ulams\LivingCourse\Jobs\CheckSourceJob;
+use Ulams\LivingCourse\Oauth\OAuthService;
 use Ulams\LivingCourse\Services\SourceConnections;
 use Ulams\LivingCourse\Support\Presenter;
 
@@ -29,7 +31,7 @@ class ConnectController extends Controller
 {
     use ResolvesLivingCourse;
 
-    public function __construct(private readonly SourceConnectorRegistry $connectors, private readonly SourceConnections $connections)
+    public function __construct(private readonly SourceConnectorRegistry $connectors, private readonly SourceConnections $connections, private readonly OAuthService $oauth)
     {
     }
 
@@ -37,7 +39,7 @@ class ConnectController extends Controller
     {
         return self::ok(array_values(array_map(fn ($c) => [
             'key' => $c->key(), 'label' => $c->label(), 'configSchema' => $c->configSchema(), 'secretFields' => $c->secretFields(), 'webhooks' => $c->supportsWebhooks(),
-        ], $this->connectors->enabled())));
+        ] + ($c instanceof OAuthConnector ? ['oauth' => ['provider' => $c->oauthProvider(), 'configured' => $this->oauth->provider($c->oauthProvider())->configured()]] : []), $this->connectors->enabled())));
     }
 
     public function connect(Request $request, string $session): JsonResponse

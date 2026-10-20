@@ -10,6 +10,7 @@ use Ulams\LivingCourse\Connectors\ConnectorException;
 use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
 use Ulams\LivingCourse\Http\Controllers\Concerns\ResolvesLivingCourse;
 use Ulams\LivingCourse\Models\Connection;
+use Ulams\LivingCourse\Oauth\OAuthService;
 use Ulams\LivingCourse\Services\AuditLog;
 use Ulams\LivingCourse\Support\Presenter;
 
@@ -28,7 +29,7 @@ class ConnectionsController extends Controller
 {
     use ResolvesLivingCourse;
 
-    public function __construct(private readonly AuditLog $audit, private readonly SourceConnectorRegistry $connectors)
+    public function __construct(private readonly AuditLog $audit, private readonly SourceConnectorRegistry $connectors, private readonly OAuthService $oauth)
     {
     }
 
@@ -55,17 +56,22 @@ class ConnectionsController extends Controller
             }
             $connector = $this->connectors->get($c->connector);
             $config = $data['config'] ?? (array) $c->config;
-            $secrets = array_merge((array) $c->secrets, array_intersect_key((array) ($data['secrets'] ?? []), array_flip($connector->secretFields())));
             try {
+                [$given, $grant] = $this->oauth->redeem((array) ($data['secrets'] ?? []), $connector, (int) $request->user()->getKey());
+                $given = array_intersect_key($given, array_flip($connector->secretFields()));
+                $secrets = array_merge((array) $c->secrets, $given);
                 $connector->validate($config, $secrets);
             } catch (ConnectorException $e) {
                 return self::fail($e->getMessage(), 422);
+            }
+            if ($grant !== null) {
+                $this->oauth->forget($grant);
             }
             $c->config = $config;
             $c->secrets = $secrets;
             // names only: a secret value is never written to the audit trail
             $changes['config'] = isset($data['config']) ? array_keys($data['config']) : null;
-            $changes['secrets'] = array_keys(array_intersect_key((array) ($data['secrets'] ?? []), array_flip($connector->secretFields())));
+            $changes['secrets'] = array_keys($given);
             $changes = array_filter($changes, fn ($v) => $v !== null && $v !== []);
         }
         if (isset($data['schedule'])) {
