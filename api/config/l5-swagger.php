@@ -78,6 +78,7 @@ return [
                     base_path('packages/course-access/src'),
                     base_path('packages/course-builder/src'),
                     base_path('packages/living-course/src'),
+                    base_path('packages/learner-insights/src'),
                     base_path('packages/tasks/src'),
                     base_path('packages/bookmarks_notes/src'),
                     base_path('packages/topic-type-layout/src'),

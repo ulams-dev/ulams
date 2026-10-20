@@ -136,8 +136,13 @@
     <testsuite name="living-course">
       <directory suffix="Test.php">./packages/living-course/tests</directory>
     </testsuite>
+<<<<<<< HEAD
     <testsuite name="webhooks">
       <directory suffix="Test.php">./packages/webhooks/tests</directory>
+=======
+    <testsuite name="learner-insights">
+      <directory suffix="Test.php">./packages/learner-insights/tests</directory>
+>>>>>>> 45a324e78 (feat(learner-insights): signal stream, transparent risk rules, statuses, privacy controls and nudges)
     </testsuite>
     <testsuite name="adapt">
       <directory suffix="Test.php">./packages/adapt/tests</directory>
@@ -240,7 +245,11 @@
       <directory suffix=".php">./packages/commerce/</directory>
 <directory suffix=".php">./packages/course-builder/</directory>
       <directory suffix=".php">./packages/living-course/</directory>
+<<<<<<< HEAD
       <directory suffix=".php">./packages/webhooks/</directory>
+=======
+      <directory suffix=".php">./packages/learner-insights/</directory>
+>>>>>>> 45a324e78 (feat(learner-insights): signal stream, transparent risk rules, statuses, privacy controls and nudges)
       <directory suffix=".php">./packages/vouchers/</directory>
       <directory suffix=".php">./packages/consultations/</directory>
       <directory suffix=".php">./packages/consultation-access/</directory>
