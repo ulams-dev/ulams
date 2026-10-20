@@ -4614,6 +4614,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/living-course/oauth/{provider}/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * The vendor sign-in address for Connect your account (provider google or notion); the session must be one the caller may change
+         * @description "Connect your Google or Notion account" for the Drive and Notion connectors. The start needs the same right
+         *     as connecting a source; the callback is the vendor's redirect and is authorised by the encrypted,
+         *     expiring state of the start. The tokens never reach the browser: it only gets a one-time grant id that
+         *     the connect request redeems.
+         */
+        post: operations["bd86624c8018d1140c42b43d19961c34"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/living-course/oauth/{provider}/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The vendor's redirect after the sign-in: redirects to the studio with a one-time grant, or answers with it */
+        get: operations["3b68837e9e8fc5734bb6d7892485c759"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/living-course/sessions/{session}/proposals": {
         parameters: {
             query?: never;
@@ -20429,6 +20469,83 @@ export interface operations {
             };
             /** @description unknown course */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    bd86624c8018d1140c42b43d19961c34: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: "google" | "notion";
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    sessionId?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description url to send the browser to */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description sign-in not set up on this installation */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "3b68837e9e8fc5734bb6d7892485c759": {
+        parameters: {
+            query?: {
+                code?: string;
+                state?: string;
+            };
+            header?: never;
+            path: {
+                provider: "google" | "notion";
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description grant (when no return address is configured) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description redirect to the studio */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description sign-in refused or expired */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };
