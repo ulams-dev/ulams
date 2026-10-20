@@ -136,8 +136,13 @@
     <testsuite name="living-course">
       <directory suffix="Test.php">./packages/living-course/tests</directory>
     </testsuite>
+<<<<<<< HEAD
     <testsuite name="webhooks">
       <directory suffix="Test.php">./packages/webhooks/tests</directory>
+=======
+    <testsuite name="compliance">
+      <directory suffix="Test.php">./packages/compliance/tests</directory>
+>>>>>>> f934946e1 (feat(compliance): required training, certificate validity per course, recertification and escalation)
     </testsuite>
     <testsuite name="adapt">
       <directory suffix="Test.php">./packages/adapt/tests</directory>
@@ -236,6 +241,7 @@
       <directory suffix=".php">./packages/liascript/</directory>
       <directory suffix=".php">./packages/interactive/</directory>
       <directory suffix=".php">./packages/adapt/</directory>
+      <directory suffix=".php">./packages/compliance/</directory>
       <directory suffix=".php">./packages/ai/</directory>
       <directory suffix=".php">./packages/commerce/</directory>
 <directory suffix=".php">./packages/course-builder/</directory>

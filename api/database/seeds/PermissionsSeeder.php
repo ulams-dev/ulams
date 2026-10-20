@@ -23,6 +23,7 @@ use Ulams\H5P\Database\Seeders\H5PPermissionSeeder;
 use Ulams\Lrs\Database\Seeders\LrsPermissionSeeder;
 use Ulams\ModelFields\Database\Seeders\PermissionTableSeeder as ModelFieldsPermissionTableSeeder;
 use Ulams\Adapt\Database\Seeders\AdaptPermissionSeeder;
+use Ulams\Compliance\Database\Seeders\CompliancePermissionSeeder;
 use Ulams\Interactive\Database\Seeders\InteractivePermissionSeeder;
 use Ulams\LiaScript\Database\Seeders\LiaScriptPermissionSeeder;
 use Ulams\CourseBuilder\Database\Seeders\CourseBuilderPermissionSeeder;
@@ -107,7 +108,11 @@ class PermissionsSeeder extends Seeder
         $this->call(CourseBuilderPermissionSeeder::class);
         $this->call(LivingCoursePermissionSeeder::class);
         $this->call(AdaptPermissionSeeder::class);
+<<<<<<< HEAD
         $this->call(WebhookPermissionSeeder::class);
+=======
+        $this->call(CompliancePermissionSeeder::class);
+>>>>>>> f934946e1 (feat(compliance): required training, certificate validity per course, recertification and escalation)
 
         // if there are no users, we need to create first admin 
 
