@@ -552,9 +552,10 @@ M3.1 revisions and fragment diff (re-upload) → M3.2 impact and staleness → M
 M3.4 progress rules → M3.5 audit and notifications → M3.6 Git, webhooks, polling → M3.7 URL connector →
 M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
 
-- [ ] Source connectors: re-upload → Git (path + branch) → Drive / Notion as plugins (partial: upload, Git
-      (GitHub, GitLab, Gitea/Forgejo) and URL connectors done, plugin contract and example connector in
-      `docs/living-course/connector-plugins.md`; Drive and Notion not built, see the `(new)` item)
+- [x] Source connectors: re-upload → Git (path + branch) → Drive / Notion as plugins (upload, Git
+      (GitHub, GitLab, Gitea/Forgejo, generic `git` CLI), URL, Google Drive and Notion connectors; plugin contract
+      and example connector in `docs/living-course/connector-plugins.md`; Drive and Notion are built into the
+      `living-course` package and verified only against scripted servers, the live run is #285)
 - [x] Change detection (webhook, poll, manual) with fragment-level diff
 - [x] Impact analysis via citations, incl. quiz answers that may now be wrong
 - [x] Update proposals: patches with reasons, reviewed as one diff (accept all / per element / reject)
@@ -567,10 +568,10 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
 - [x] (new) URL connector (web pages on one host, CSS selector, HTML → Markdown)
 - [x] (new) Shared SSRF-safe HTTP client in `core` (extracted from `lti`; IPv6, CGNAT, redirects re-checked)
 - [x] (new) GIFT: snapshot the max score per attempt and archive questions instead of deleting them
-- [ ] (new) Suggest a new lesson for newly added, uncovered source sections (partial: uncovered sections are
-      listed in the proposal as `uncovered` items; no generated lesson proposal yet)
-- [ ] (new) Generic Git (`git` CLI) connector for hosts without a supported API
-- [ ] (new) Google Drive and Notion connector plugins (designed in `docs/plans/phase-3.md` 6.6)
+- [x] (new) Suggest a new lesson for newly added, uncovered source sections (a cited, grounded lesson proposal the
+      author reviews as a diff; no quiz is generated with it yet)
+- [x] (new) Generic Git (`git` CLI) connector for hosts without a supported API (sandboxed, https only, off by default)
+- [x] (new) Google Drive and Notion connector plugins (designed in `docs/plans/phase-3.md` 6.6) (OAuth through a one-time grant, polling change detection; off by default, scripted-server tests only, live Drive/Notion runs tracked in #285 and #266)
 
 ---
 
@@ -813,8 +814,8 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 
 ### 7.3 API, SDK, webhooks
 - [ ] Complete published OpenAPI; TS SDK first, PHP second
-- [ ] Stripe-style webhooks (signed, retries, replay, delivery log, test sends, versioned events)
-- [ ] Scoped API keys with rate limits and usage stats
+- [x] Stripe-style webhooks (signed, retries, replay, delivery log, test sends, versioned events) (`api/packages/webhooks`, #261; no admin screen yet, API, CLI and docs only)
+- [ ] Scoped API keys with rate limits and usage stats (partial: token usage stats done in #261; per-token rate limits not verified)
 - [x] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
       log, `Idempotency-Key`, `X-Request-Id`, `GET /api/meta`; admin "API tokens" page (ADR 0074)
 - [x] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075, merged in PRs #101, #127, #129; #74 closed)
@@ -849,7 +850,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       confirmation for destructive tools, resources, MCP client tests, agent eval (ADR 0076)
 
 ### 7.6 Machine-readable content
-- [ ] `llms.txt`, Markdown version of every page, public schemas, `AGENTS.md`
+- [x] `llms.txt`, Markdown version of every page, public schemas, `AGENTS.md` (docs site build output, #261; per-academy `/llms.txt` and Markdown course pages in the web app, #274; "Copy page" and "Open in Claude/ChatGPT" buttons, #272)
 - [ ] Knowledge export (cited chunks for company RAG), auto re-export on change
 
 ---
