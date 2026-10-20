@@ -17,6 +17,7 @@ final class UpdateResponder
     public static function register(FakeResponders $responders): void
     {
         $responders->register('update', fn (DriverRequest $r) => self::respond($r));
+        $responders->register('new_lesson', fn (DriverRequest $r) => self::newLesson($r));
     }
 
     /** @return array<string,mixed> */
@@ -98,6 +99,43 @@ final class UpdateResponder
         }
 
         return ['items' => $items, 'reply' => sprintf('Reviewed %d element%s against the changed source.', count($items), count($items) === 1 ? '' : 's')];
+    }
+
+    /**
+     * A lesson from the passages in `task_input.fragmentIds`: the title is the section, the blocks are
+     * the passages' own first sentences, every citation is a passage of the request.
+     *
+     * @return array<string,mixed>
+     */
+    public static function newLesson(DriverRequest $r): array
+    {
+        $fragments = SyntheticResponders::fragments($r);
+        $input = self::input($r);
+        $ids = array_values(array_filter((array) ($input['fragmentIds'] ?? []), fn ($id) => isset($fragments[$id])));
+        $modules = (array) ($input['modules'] ?? []);
+        $first = $fragments[$ids[0]] ?? ['section' => 'New material', 'text' => 'New material from the source.'];
+        $title = trim((string) preg_replace('/^[\d.§\s]+/u', '', (string) $first['section'])) ?: 'New material';
+        $blocks = [];
+        foreach (array_slice($ids, 0, 4) as $id) {
+            $sentences = self::sentences($fragments[$id]['text']);
+            $blocks[] = [
+                'kind' => 'paragraph',
+                'markdown' => mb_substr(implode(' ', array_slice($sentences, 0, 4)) ?: (string) $fragments[$id]['text'], 0, 1500),
+                'citations' => [$id],
+                'objectiveIndexes' => [0],
+            ];
+        }
+
+        return [
+            'moduleId' => $modules[count($modules) - 1]['id'] ?? null,
+            'moduleTitle' => $modules === [] ? $title : null,
+            'title' => mb_substr($title, 0, 200),
+            'summary' => 'What the source now says about ' . mb_strtolower($title) . '.',
+            'minutes' => 5,
+            'objectives' => [['text' => 'Explain ' . mb_strtolower($title) . ' as the source describes it.', 'citations' => [$ids[0] ?? '']]],
+            'blocks' => $blocks,
+            'reply' => 'Suggested a lesson for the new section.',
+        ];
     }
 
     /** @return array<string,mixed> */

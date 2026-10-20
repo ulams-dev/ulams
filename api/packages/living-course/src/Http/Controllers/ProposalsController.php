@@ -52,6 +52,9 @@ use Ulams\LivingCourse\Support\Presenter;
  * @OA\Post(path="/api/admin/living-course/proposals/{proposal}/items/{item}/regenerate", summary="Ask for another version of one element ({comment}); one call, at most three per item", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="item", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Response(response=200, description="the item"), @OA\Response(response=403, description="not allowed"), @OA\Response(response=404, description="unknown"), @OA\Response(response=409, description="not decidable now"))
+ * @OA\Post(path="/api/admin/living-course/proposals/{proposal}/items/{item}/suggest-lesson", summary="Suggest a new lesson for a new source section no lesson covers (one AI call; the item becomes `new_lesson` for review as a diff)", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="item", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\Response(response=200, description="the item with the suggested lesson"), @OA\Response(response=403, description="not allowed"), @OA\Response(response=404, description="unknown"), @OA\Response(response=409, description="not an uncovered section, or settled"), @OA\Response(response=422, description="budget"), @OA\Response(response=503, description="AI disabled"))
  * @OA\Post(path="/api/admin/living-course/proposals/{proposal}/accept-all", summary="Accept every undecided update, no-change and removal item", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Response(response=200, description="the proposal"), @OA\Response(response=403, description="not allowed"), @OA\Response(response=409, description="already settled"))
@@ -113,6 +116,23 @@ class ProposalsController extends Controller
         }
         try {
             $i = $this->decisions->regenerate($p, $i, (string) $request->input('comment', ''), (int) $request->user()->getKey());
+        } catch (ProposalException $e) {
+            return self::fail($e->getMessage(), $e->status, $e->extra);
+        } catch (LlmException $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage(), 'code' => $e->reason], $e->reason === LlmException::BUDGET ? 422 : 502);
+        }
+
+        return self::ok(['item' => Presenter::item($i), 'proposal' => Presenter::proposalSummary($p->refresh())]);
+    }
+
+    public function suggestLesson(Request $request, string $proposal, string $item): JsonResponse
+    {
+        [, $p, $i] = $this->itemFor($request, $proposal, $item);
+        if (!$this->llm->enabled()) {
+            return response()->json(['success' => false, 'message' => 'AI is disabled on this installation. Add the lesson by hand in the workspace.', 'code' => 'ai_disabled'], 503);
+        }
+        try {
+            $i = $this->decisions->suggestLesson($p, $i, (int) $request->user()->getKey());
         } catch (ProposalException $e) {
             return self::fail($e->getMessage(), $e->status, $e->extra);
         } catch (LlmException $e) {

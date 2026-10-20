@@ -326,6 +326,20 @@ final class AnalysisService
                 $blocks[] = ['elementId' => $item['elementId'], 'markdown' => $item['block']['markdown'], 'citations' => $item['block']['citations']];
             }
         }
+
+        return $this->groundBlocks($proposal, $blocks, $built['known']);
+    }
+
+    /**
+     * The grounding check of blocks the model wrote, against the passages they cite.
+     *
+     * @param array<int,array{elementId:string,markdown:string,citations:string[]}> $blocks
+     * @param array<string,string> $known fragment id => text
+     * @return array{unsupported:array<int,array{elementId:string,claim:string,reason:string}>,cost:int,callIds:string[]}
+     */
+    public function groundBlocks(Proposal $proposal, array $blocks, array $known): array
+    {
+        $built = ['known' => $known];
         if ($blocks === []) {
             return ['unsupported' => [], 'cost' => 0, 'callIds' => []];
         }

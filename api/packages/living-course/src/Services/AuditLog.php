@@ -20,8 +20,8 @@ final class AuditLog
         'connection.created', 'connection.updated', 'connection.disconnected', 'connection.secret_rotated',
         'webhook.rejected',
         'revision.detected', 'revision.no_impact', 'revision.failed', 'revision.promoted',
-        'proposal.created', 'proposal.analysed', 'proposal.superseded', 'proposal.rejected', 'proposal.applied',
-        'item.accepted', 'item.rejected', 'item.regenerated', 'item.reset',
+        'proposal.created', 'proposal.analysed', 'proposal.superseded', 'proposal.rejected', 'proposal.applied', 'proposal.reopened',
+        'item.accepted', 'item.rejected', 'item.regenerated', 'item.reset', 'item.lesson_suggested',
         'progress.rules_applied', 'notice.created',
     ];
 
