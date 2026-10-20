@@ -11,6 +11,7 @@ use Ulams\Courses\Events\CourseStarted;
 use Ulams\Courses\Events\TopicFinished;
 use Ulams\Courses\Events\TopicProgressUpdated;
 use Ulams\Courses\Models\CourseProgress;
+use Ulams\Courses\Models\H5PUserProgress;
 use Ulams\Courses\Models\Topic;
 use Ulams\LearnerInsights\Services\Eligibility;
 use Ulams\LearnerInsights\Services\SignalRecorder;
@@ -107,6 +108,17 @@ class RecordSignals
         foreach ($topics as $topicId) {
             $this->push(new SignalData($e->userId, SignalType::SCORM_STATUS, 'scorm', "scorm_sco:{$e->userId}:{$e->scoId}:$topicId", CarbonImmutable::now(), null, (int) $topicId, null, null, ['lesson_status' => 'completed']));
         }
+    }
+
+    /** An H5P result of the learner (xAPI statement saved by the player): the scaled score and the verb, never the statement. */
+    public function h5pProgress(H5PUserProgress $progress): void
+    {
+        $scaled = data_get((array) $progress->data, 'result.score.scaled');
+        $value = is_numeric($scaled) ? round(max(0.0, min(1.0, (float) $scaled)), 4) : null;
+        $this->push(new SignalData(
+            (int) $progress->user_id, SignalType::H5P_RESULT, 'h5p', 'h5p_progress:' . $progress->getKey() . ':' . ($progress->updated_at?->getTimestamp() ?? 0),
+            CarbonImmutable::now(), null, (int) $progress->topic_id, null, $value, ['verb' => (string) $progress->event],
+        ));
     }
 
     public function login(Login $e): void
