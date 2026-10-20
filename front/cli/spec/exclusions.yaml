@@ -33,3 +33,7 @@ internal:
   - "GET /api/lti/jwks"
 deprecated:
   - "GET /api/tags/uniqueTags"
+not-for-cli:
+  - "GET /api/example-plugin/hello"
+  - "POST /api/admin/example-plugin/greetings"
+  - "POST /api/pencil-spaces/login"
