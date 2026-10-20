@@ -1782,9 +1782,21 @@
   "tag": "Admin Tokens"
  },
  {
+  "method": "PATCH",
+  "path": "/api/admin/tokens/{id}",
+  "summary": "Change the per-minute rate limit of any scoped token",
+  "tag": "Admin Tokens"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/tokens/{id}/audit",
   "summary": "Audit log of one token",
+  "tag": "Admin Tokens"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/tokens/{id}/usage",
+  "summary": "Request counts of one token per day, and its rate limit window",
   "tag": "Admin Tokens"
  },
  {
@@ -2125,6 +2137,72 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/webhooks/deliveries",
+  "summary": "Delivery log (newest first)",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/webhooks/deliveries/{delivery}",
+  "summary": "One delivery with its payload and every attempt",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/webhooks/deliveries/{delivery}/replay",
+  "summary": "Send a delivery again as a new delivery with the same event id",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/webhooks/endpoints",
+  "summary": "List webhook endpoints",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/webhooks/endpoints",
+  "summary": "Create a webhook endpoint (the signing secret is returned once)",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/webhooks/endpoints/{endpoint}",
+  "summary": "Delete a webhook endpoint and its delivery log",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/webhooks/endpoints/{endpoint}",
+  "summary": "One webhook endpoint",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/webhooks/endpoints/{endpoint}",
+  "summary": "Change a webhook endpoint (URL, events, enabled)",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/webhooks/endpoints/{endpoint}/rotate-secret",
+  "summary": "Replace the signing secret (returned once; the old one stops working at once)",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/webhooks/endpoints/{endpoint}/test",
+  "summary": "Send a sample event once and return the result",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/webhooks/events",
+  "summary": "Webhook event types (available and planned)",
+  "tag": "Admin Webhooks"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/webinars",
   "summary": "",
   "tag": "Admin Webinars"
@@ -2289,6 +2367,18 @@
   "method": "DELETE",
   "path": "/api/auth/tokens/{id}",
   "summary": "Revoke one of my scoped tokens",
+  "tag": "Auth"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/auth/tokens/{id}",
+  "summary": "Change the per-minute rate limit of one of my tokens",
+  "tag": "Auth"
+ },
+ {
+  "method": "GET",
+  "path": "/api/auth/tokens/{id}/usage",
+  "summary": "Request counts of one of my tokens per day, and its rate limit window",
   "tag": "Auth"
  },
  {

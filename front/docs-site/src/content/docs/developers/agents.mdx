@@ -12,6 +12,9 @@ the CLI and the [reference](/reference/cli/) come from one registry, so they can
 ([ADR 0076](/decisions/0076-local-mcp-server-from-cli-registry/)). The server speaks the 2026-07-28 spec (stateless,
 no sessions) through the official TypeScript SDK v2.
 
+For documentation an agent can read without a browser (`llms.txt`, Markdown pages, JSON Schemas), see
+[Machine-readable docs and schemas](/developers/machine-readable/).
+
 ## Run it
 
 ```bash
@@ -49,7 +52,7 @@ everything. `--read-only` exposes read commands only; `--no-destructive` hides d
 | `--read-only` | 14 |
 | `--toolsets core,courses,users` | 43 |
 | `--toolsets core,builder,living` | 88 |
-| `--toolsets all` | 535 (258 with `--read-only`, 476 with `--no-destructive`) |
+| `--toolsets all` | 550 (265 with `--read-only`, 490 with `--no-destructive`) |
 
 These counts are for CLI 0.1.0 and grow with the API. Clients that cap the number of tools work best with the default set.
 

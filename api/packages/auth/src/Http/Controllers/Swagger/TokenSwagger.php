@@ -7,6 +7,8 @@ use Ulams\Auth\Http\Requests\Tokens\CreateTokenRequest;
 use Ulams\Auth\Http\Requests\Tokens\CurrentTokenRequest;
 use Ulams\Auth\Http\Requests\Tokens\ListTokensRequest;
 use Ulams\Auth\Http\Requests\Tokens\RevokeTokenRequest;
+use Ulams\Auth\Http\Requests\Tokens\TokenUsageRequest;
+use Ulams\Auth\Http\Requests\Tokens\UpdateTokenRequest;
 
 interface TokenSwagger
 {
@@ -48,6 +50,30 @@ interface TokenSwagger
      *     @OA\Response(response=404, description="Unknown token"))
      */
     public function destroy(RevokeTokenRequest $request): JsonResponse;
+
+    /**
+     * @OA\Patch(path="/api/auth/tokens/{id}", summary="Change the per-minute rate limit of one of my tokens", tags={"Auth"}, security={{"passport": {}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\RequestBody(required=true, @OA\JsonContent(required={"rate_limit_per_minute"},
+     *         @OA\Property(property="rate_limit_per_minute", type="integer", nullable=true, minimum=1, maximum=6000, description="null removes the limit"))),
+     *     @OA\Response(response=200, description="Updated token", @OA\JsonContent(
+     *         @OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
+     *         @OA\Property(property="data", ref="#/components/schemas/ApiToken"))),
+     *     @OA\Response(response=401, description="Unauthenticated"), @OA\Response(response=403, description="Somebody else's token"),
+     *     @OA\Response(response=404, description="Unknown token"), @OA\Response(response=422, description="Invalid limit"))
+     */
+    public function update(UpdateTokenRequest $request): JsonResponse;
+
+    /**
+     * @OA\Get(path="/api/auth/tokens/{id}/usage", summary="Request counts of one of my tokens per day, and its rate limit window", tags={"Auth"}, security={{"passport": {}}},
+     *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Parameter(name="days", in="query", @OA\Schema(type="integer", minimum=1, maximum=90, default=30)),
+     *     @OA\Response(response=200, description="Usage", @OA\JsonContent(
+     *         @OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
+     *         @OA\Property(property="data", ref="#/components/schemas/ApiTokenUsage"))),
+     *     @OA\Response(response=401, description="Unauthenticated"), @OA\Response(response=403, description="Somebody else's token"), @OA\Response(response=404, description="Unknown token"))
+     */
+    public function usage(TokenUsageRequest $request): JsonResponse;
 
     /**
      * @OA\Get(path="/api/auth/tokens/current", summary="The token this request is authenticated with", tags={"Auth"}, security={{"passport": {}}},

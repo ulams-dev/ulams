@@ -1,5 +1,5 @@
 {
- "summary": "521/570 covered, 49 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "536/585 covered, 49 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1778,6 +1778,12 @@
    "status": "covered"
   },
   {
+   "key": "PATCH /api/admin/tokens/{id}",
+   "summary": "Change the per-minute rate limit of any scoped token",
+   "command": "tokens.set-limit-any",
+   "status": "covered"
+  },
+  {
    "key": "DELETE /api/admin/tokens/{id}",
    "summary": "Revoke any scoped token",
    "command": "tokens.revoke-any",
@@ -1787,6 +1793,12 @@
    "key": "GET /api/admin/tokens/{id}/audit",
    "summary": "Audit log of one token",
    "command": "tokens.audit",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/tokens/{id}/usage",
+   "summary": "Request counts of one token per day, and its rate limit window",
+   "command": "tokens.usage-any",
    "status": "covered"
   },
   {
@@ -2126,6 +2138,72 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/webhooks/deliveries",
+   "summary": "Delivery log (newest first)",
+   "command": "webhooks.deliveries-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/webhooks/deliveries/{delivery}",
+   "summary": "One delivery with its payload and every attempt",
+   "command": "webhooks.deliveries-get",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/webhooks/deliveries/{delivery}/replay",
+   "summary": "Send a delivery again as a new delivery with the same event id",
+   "command": "webhooks.deliveries-replay",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/webhooks/endpoints",
+   "summary": "List webhook endpoints",
+   "command": "webhooks.endpoints-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/webhooks/endpoints",
+   "summary": "Create a webhook endpoint (the signing secret is returned once)",
+   "command": "webhooks.endpoints-create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/webhooks/endpoints/{endpoint}",
+   "summary": "One webhook endpoint",
+   "command": "webhooks.endpoints-get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/webhooks/endpoints/{endpoint}",
+   "summary": "Change a webhook endpoint (URL, events, enabled)",
+   "command": "webhooks.endpoints-update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/webhooks/endpoints/{endpoint}",
+   "summary": "Delete a webhook endpoint and its delivery log",
+   "command": "webhooks.endpoints-delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/webhooks/endpoints/{endpoint}/rotate-secret",
+   "summary": "Replace the signing secret (returned once; the old one stops working at once)",
+   "command": "webhooks.endpoints-rotate-secret",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/webhooks/endpoints/{endpoint}/test",
+   "summary": "Send a sample event once and return the result",
+   "command": "webhooks.endpoints-test",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/webhooks/events",
+   "summary": "Webhook event types (available and planned)",
+   "command": "webhooks.events",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/webinars",
    "summary": "",
    "command": "webinars.list",
@@ -2294,9 +2372,21 @@
    "status": "covered"
   },
   {
+   "key": "PATCH /api/auth/tokens/{id}",
+   "summary": "Change the per-minute rate limit of one of my tokens",
+   "command": "tokens.set-limit",
+   "status": "covered"
+  },
+  {
    "key": "DELETE /api/auth/tokens/{id}",
    "summary": "Revoke one of my scoped tokens",
    "command": "logout",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/auth/tokens/{id}/usage",
+   "summary": "Request counts of one of my tokens per day, and its rate limit window",
+   "command": "tokens.usage",
    "status": "covered"
   },
   {

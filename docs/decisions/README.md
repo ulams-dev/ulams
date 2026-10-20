@@ -114,5 +114,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0100](0100-comparison-feature-catalogue-by-stakeholder.md) | Restore the Comparison feature catalogue by stakeholder | Proposed |
 | [0101](0101-umami-public-site-analytics.md) | Umami analytics on owned public sites | Proposed |
 | [0102](0102-one-command-docker-kubernetes-stack.md) | One-command Docker and Kubernetes stack launcher | Proposed |
+| [0103](0103-outgoing-webhooks-package.md) | Outgoing webhooks as a package with Stripe-style signatures and the shared SSRF-safe client | Proposed |
+| [0104](0104-machine-readable-docs-and-public-schemas.md) | Machine-readable documentation: llms.txt, Markdown pages and public JSON Schemas | Proposed |
 
 <!-- END GENERATED: adr-index -->

@@ -23,6 +23,16 @@ namespace Ulams\Auth\Http\Controllers\Swagger;
  * @OA\Schema(schema="ApiTokenCreated", allOf={@OA\Schema(ref="#/components/schemas/ApiToken")},
  *     @OA\Property(property="token", type="string", description="The secret, prefixed ulams_pat_. Shown once.", example="ulams_pat_eyJ0eXAi..."))
  *
+ * @OA\Schema(schema="ApiTokenUsage",
+ *     @OA\Property(property="token_id", type="string"),
+ *     @OA\Property(property="days", type="integer"), @OA\Property(property="from", type="string", format="date"), @OA\Property(property="to", type="string", format="date"),
+ *     @OA\Property(property="rate_limit_per_minute", type="integer", nullable=true),
+ *     @OA\Property(property="window", type="object", nullable=true, description="The current one-minute window; null when the token has no limit",
+ *         @OA\Property(property="limit", type="integer"), @OA\Property(property="used", type="integer"), @OA\Property(property="remaining", type="integer"), @OA\Property(property="resets_in_seconds", type="integer")),
+ *     @OA\Property(property="last_used_at", type="string", format="date-time", nullable=true),
+ *     @OA\Property(property="totals", type="object", @OA\Property(property="requests", type="integer"), @OA\Property(property="errors", type="integer", description="4xx and 5xx answers except 429"), @OA\Property(property="rate_limited", type="integer")),
+ *     @OA\Property(property="daily", type="array", @OA\Items(type="object", @OA\Property(property="date", type="string", format="date"), @OA\Property(property="requests", type="integer"), @OA\Property(property="errors", type="integer"), @OA\Property(property="rate_limited", type="integer"))))
+ *
  * @OA\Schema(schema="ApiTokenList", @OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
  *     @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/ApiToken")),
  *     @OA\Property(property="meta", type="object"))

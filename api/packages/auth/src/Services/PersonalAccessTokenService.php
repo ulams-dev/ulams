@@ -111,6 +111,13 @@ class PersonalAccessTokenService implements PersonalAccessTokenServiceContract
         Token::query()->whereKey($meta->token_id)->update(['revoked' => true]);
     }
 
+    public function setRateLimit(ApiTokenMeta $meta, ?int $perMinute): ApiTokenMeta
+    {
+        $meta->forceFill(['rate_limit_per_minute' => $perMinute])->save();
+
+        return $meta->refresh()->load('token');
+    }
+
     private function query(bool $includeRevoked)
     {
         $query = ApiTokenMeta::query()->with('token')->orderByDesc('id');

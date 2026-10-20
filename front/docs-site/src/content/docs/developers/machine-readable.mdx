@@ -1,0 +1,58 @@
+---
+title: Machine-readable docs and schemas
+description: What the docs site publishes for AI agents and tools - llms.txt, a Markdown version of every page, the OpenAPI document and the public JSON Schemas for the course blueprint, webhook events and the UI catalogue.
+sidebar:
+  order: 82
+---
+
+Besides the HTML pages, every build of this site writes files meant for agents, search crawlers and
+code generators. They are produced by `front/docs-site/scripts/agent-files.mjs` after `astro build`, so
+they always match the pages next to them.
+
+## llms.txt
+
+[`/llms.txt`](/llms.txt) follows the [llms.txt](https://llmstxt.org) convention: a short description of ulams,
+then one list per audience (getting started, content creators, learners, administrators, developers,
+extending, operators, contributing), each entry a link to the **Markdown** page with its description. The
+generated reference, the architecture decision records and the component catalogue are listed under
+"Optional", because they are large. [`/llms-full.txt`](/llms-full.txt) holds all the guides (not the
+optional sections) as one Markdown document, for a context window rather than a crawler.
+
+An agent that works inside the repository should start with `AGENTS.md` at its root instead.
+
+## Markdown for every page
+
+Every page is available as Markdown at its own address plus `index.md`:
+
+```text
+https://ulams-dev.github.io/ulams/developers/outgoing-webhooks/            HTML
+https://ulams-dev.github.io/ulams/developers/outgoing-webhooks/index.md    Markdown
+```
+
+The Markdown starts with the title, the description as a quote and the canonical address. The Starlight
+components of the source are flattened: an aside becomes a quote with its title in bold, tabs become bold
+labels, screenshots and live code listings become an italic line (open the HTML page for the image or
+the listing). Internal links point at the `index.md` of the target and are absolute, so a page can be
+read on its own.
+
+## OpenAPI
+
+[`/openapi.json`](/openapi.json) is the OpenAPI document the [API browser](/developers/api-browser/) renders. The same
+document produces the [TypeScript SDK](/developers/sdk/) and the [CLI](/developers/cli/) commands. See
+[OpenAPI and the SDK](/developers/openapi-and-sdk/).
+
+## JSON Schemas
+
+[`/schemas/index.json`](/schemas/index.json) lists the schemas with their ids and addresses. A published
+schema never changes in place: a change that breaks readers gets a new file.
+
+| Schema | Address under `/schemas/` | What it validates |
+|---|---|---|
+| Course blueprint v1 and v2 | `course-blueprint/v1.json`, `course-blueprint/v2.json` | One version of a course built by the [Course Builder](/developers/course-builder-api/): modules, lessons, elements with stable ids, citations |
+| Webhook event | `webhooks/2026-10-20/event.json` | The body of every [outgoing webhook](/developers/outgoing-webhooks/) for endpoints pinned to that `api_version` |
+| UI catalogue | `ui-catalogue/builder-v1.json`, `page-v1.json`, `learner-layout-v1.json` | The components a model may use in generated pages and layouts, with the JSON Schema of each component's props ([generative UI](/developers/generative-ui/)) |
+
+The sources are the files in the repository (`api/packages/course-builder/resources/schemas/`,
+`api/packages/webhooks/resources/schemas/`, `front/ui/catalogue/`); tests validate real payloads against
+them, so a schema that drifts from the code fails CI. Run `yarn workspace @ulams/docs agent-files:check` to
+check the conversion and the sources without a built site.

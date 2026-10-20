@@ -1,6 +1,6 @@
 # Plan: the agent-first `ulams` CLI and MCP server
 
-Status: **draft, waiting for the product owner's approval**. Nothing in this plan is implemented.
+Status: approved by blanket instruction 2026-10-20, defaults used. M1 to M3 and S1 to S4 are implemented (see `docs/ROADMAP-TODO.md` 7.1 and 7.3); the 7.9 webhook commands are generated from the OpenAPI spec (see 7.9); the rest is tracked in the TODO.
 
 The product owner, 2026-10-09: *"I want this [CLI] to be used by agents, so almost everything can be
 handled through it, like Cloudflare wrangler."* The owner also decided the order on 2026-10-09: build the
@@ -823,10 +823,13 @@ No command asks a question in non-interactive mode. Commands that in the UI invo
 choose a template) take it as a flag; when absent and the choice is ambiguous, they exit 2 with
 `INPUT_INVALID` and `details.choices` listing the options, so an agent can re-run with one.
 
-### 7.9 Webhooks (placeholder)
+### 7.9 Webhooks
 
-When 7.3 webhooks exist: `ulams webhooks endpoints list|create|delete|test`, `webhooks deliveries list|replay`,
-and `ulams webhooks listen --forward-to http://localhost:3000/hook` (like `stripe listen`). Not designed here.
+Delivered with the `webhooks` package (7.3, `docs/ROADMAP-TODO.md`): the commands are generated from the OpenAPI
+spec and named in `spec/overrides.yaml`: `ulams webhooks events`, `endpoints-list|endpoints-get|endpoints-create|
+endpoints-update|endpoints-delete|endpoints-rotate-secret|endpoints-test`, `deliveries-list|deliveries-get|
+deliveries-replay`; scope area `webhooks`. Not built: `ulams webhooks listen --forward-to http://localhost:3000/hook`
+(like `stripe listen`), which needs a streaming endpoint and a tunnel design of its own.
 
 ---
 

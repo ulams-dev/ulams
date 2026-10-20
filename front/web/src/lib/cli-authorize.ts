@@ -60,11 +60,12 @@ const AREA_LABELS: Record<string, string> = {
   "living-course": "Living Course",
   learner: "Your own learning: profile, progress, notes",
   tokens: "API tokens (create and revoke tokens)",
+  webhooks: "Webhook endpoints and their delivery log",
   platform: "Platform tenants",
 };
 
 /** Areas where "change" is sensitive enough to be flagged on the approval page. */
-const SENSITIVE_WRITE = new Set(["users", "settings", "commerce", "tokens", "platform", "enrolments"]);
+const SENSITIVE_WRITE = new Set(["users", "settings", "commerce", "tokens", "webhooks", "platform", "enrolments"]);
 
 export interface ScopeView {
   scope: string;

@@ -880,13 +880,14 @@
                     "title": "Extensible by packages",
                     "text": "Every feature is a composer package with its own routes, permissions, settings and events. A worked example shows the pattern end to end.",
                     "packages": [
-                      "example-plugin"
+                      "example-plugin",
+                      "webhooks"
                     ],
                     "href": "https://ulams-dev.github.io/ulams/extending/new-package/"
                   },
                   {
                     "title": "MCP server for AI agents",
-                    "text": "ulams mcp serves every CLI command as MCP tools over stdio or Streamable HTTP, for Claude Code, Claude Desktop and other MCP clients: 23 tools by default, up to 535 with all toolsets. Built from the repository today; the npm package is planned.",
+                    "text": "ulams mcp serves every CLI command as MCP tools over stdio or Streamable HTTP, for Claude Code, Claude Desktop and other MCP clients: 23 tools by default, up to 550 with all toolsets. Built from the repository today; the npm package is planned.",
                     "href": "https://ulams-dev.github.io/ulams/developers/agents/"
                   },
                   {
@@ -936,7 +937,7 @@
                   },
                   {
                     "title": "Inbound webhooks",
-                    "text": "Webhooks for Living Course Git pushes, Stripe and Jitsi recordings. There are no outgoing webhooks yet.",
+                    "text": "Webhooks for Living Course Git pushes, Stripe and Jitsi recordings. Outgoing signed webhooks with retries, replay and a delivery log are documented on their own page.",
                     "href": "https://ulams-dev.github.io/ulams/developers/webhooks/"
                   }
                 ],
