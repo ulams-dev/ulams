@@ -1,5 +1,5 @@
 {
- "summary": "521/570 covered, 49 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "521/573 covered, 52 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -612,6 +612,12 @@
    "summary": "Manually triggered event for users",
    "command": "events.trigger-manually",
    "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/example-plugin/greetings",
+   "summary": "Send the tenant's greeting to a user (dispatches GreetingSent)",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "DELETE /api/admin/file/delete",
@@ -2666,6 +2672,12 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/example-plugin/hello",
+   "summary": "The tenant's greeting",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
    "key": "GET /api/health-check",
    "summary": "Check health of the application",
    "command": "",
@@ -2970,6 +2982,12 @@
    "summary": "Display the specified generated PDF",
    "command": "my.pdfs-get",
    "status": "covered"
+  },
+  {
+   "key": "POST /api/pencil-spaces/login",
+   "summary": "Generate a direct login link",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/platform/operations",
