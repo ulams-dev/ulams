@@ -29,6 +29,16 @@ see, so they are recorded here.
   test.
 - **The living-course tests run in their own CI shard** (`living`): the suite takes several minutes and
   would otherwise dominate the `learning` shard.
+- **A suggested lesson is a proposal item, not a new run**: an uncovered section turns into a
+  `new_lesson` item (one `new_lesson` call, cited only to that section, grounding-checked) that the
+  author accepts or rejects like any other change; the blueprint applier adds it. A proposal that was
+  settled as `no_impact` because only a section was added is reopened when a lesson is suggested.
+- **Generic Git (`git-cli`) reads any https Git server with the `git` binary**, which the plan (decision
+  6) had postponed. It is opt-in (`LIVING_COURSE_CONNECTORS`) because the image must ship git: the
+  address passes the SSRF checks and is pinned for git, redirects and protocols other than https are
+  off, the clone is shallow, single-branch, no checkout, with no hooks, submodules or LFS, runs with an
+  empty environment in a temporary directory with a size and time cap, only regular files are read by
+  blob id, the token travels in an environment header and git's own messages are never shown.
 
 ## Consequences
 

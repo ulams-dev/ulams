@@ -378,12 +378,15 @@ revision becomes a reviewable update (sections 8 to 10). Nothing in the course c
 
 On **New course**, next to the upload area, you find **Connect a repository** and **Add web pages**.
 
-**Connect a repository** (GitHub, GitLab, Gitea and Forgejo):
+**Connect a repository** (GitHub, GitLab, Gitea and Forgejo, and any other Git server your admin has turned on):
 
 - **Where does it live?** and, for Gitea, Forgejo and a self-hosted GitLab, the **server address**
   (for example `https://git.example.com`).
 - **Repository** as `owner/name`. You can paste the address of the repository; we keep the
-  `owner/name` part.
+  `owner/name` part. For **Another server (read with git)**, write the full address starting with
+  `https://`, for example `https://git.example.com/team/docs.git`; it must be reachable from the
+  internet and must not contain a user name or password (use the token). That server cannot tell us
+  about pushes by itself, so the course follows it on the schedule you choose.
 - **Branch**: leave it empty for the default branch.
 - **Folders and files to read**: one pattern per line, for example `docs/**/*.md`. Empty means every
   Markdown file.
