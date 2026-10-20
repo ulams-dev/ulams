@@ -9,15 +9,38 @@ import { h, uid } from "@ulams/ui/builder/dom.ts";
 import { announce, livingClient, message, studioClient } from "./common.ts";
 import { copyField, secretReveal, webhookHints } from "./connection.ts";
 import {
-  HOSTS, MAX_URLS, SCHEDULES, gitFormProblem, gitPayload, urlFormProblem, urlPayload,
-  type GitForm, type UrlForm,
+  ACCOUNT_SOURCES, HOSTS, MAX_URLS, SCHEDULES, accountFormProblem, accountPayload, gitFormProblem, gitPayload, urlFormProblem, urlPayload,
+  type AccountForm, type GitForm, type UrlForm,
 } from "./connect-model.ts";
 
 export const CHECKING_REPOSITORY = "Checking the repository and reading its files. This can take up to a minute.";
+export const CHECKING_ACCOUNT = "Checking the file and reading its text. This can take up to a minute.";
 export const CHECKING_PAGES = "Checking the pages and reading their text. This can take up to a minute.";
 
 export interface ConnectDeps {
   navigate?: (url: string) => void;
+}
+
+/** The form values wait here while the browser is at Google or Notion; no token is ever kept. */
+const PENDING = "ulams.studio.oauth-pending";
+
+function remember(value: { sessionId: string; values: AccountForm } | null): void {
+  try {
+    if (value) window.sessionStorage.setItem(PENDING, JSON.stringify(value));
+    else window.sessionStorage.removeItem(PENDING);
+  } catch {
+    // storage can be blocked; the sign-in then asks for the details again
+  }
+}
+
+function recall(): { sessionId: string; values: AccountForm } | null {
+  try {
+    const raw = window.sessionStorage.getItem(PENDING);
+    const value = raw ? (JSON.parse(raw) as { sessionId?: unknown; values?: Partial<AccountForm> }) : null;
+    return value && typeof value.sessionId === "string" && value.values && typeof value.values.source === "string" ? (value as { sessionId: string; values: AccountForm }) : null;
+  } catch {
+    return null;
+  }
 }
 
 function field(label: string, control: HTMLElement, hint?: string): HTMLElement {
@@ -93,27 +116,55 @@ export function mountConnect(root: HTMLElement, deps: ConnectDeps = {}): void {
     field("Check for changes", urlSchedule, "Pages are checked on this schedule; there is no webhook for web pages."),
     h("div", { class: "cb-actions" }, urlSubmit), urlStatus, urlError);
 
+  /* ------------------------------------------------------------ Google Drive and Notion */
+  const accountSource = control("select", "account_source");
+  accountSource.append(...ACCOUNT_SOURCES.map((o) => h("option", { value: o.value }, o.label)));
+  const accountAddress = control("input", "account_address", { type: "text", autocomplete: "off", spellcheck: "false", required: true }, true);
+  const accountChildren = control("input", "account_children", { type: "checkbox" });
+  const accountSchedule = scheduleSelect();
+  const accountStatus = h("p", { class: "cb-muted", role: "status", "data-status": "" });
+  const accountError = h("p", { class: "cb-error", role: "alert", "data-error": "" });
+  const accountSubmit = h("button", { type: "submit", class: "cb-btn cb-btn-primary" }, "Sign in and connect") as HTMLButtonElement;
+  const childrenField = field("Also read the pages under it", accountChildren, "Up to three levels and 100 pages.");
+  const addressField = field("Address", accountAddress, ACCOUNT_SOURCES[0]!.hint);
+  const accountForm = h("form", { class: "st-connect-form cb-card", "aria-labelledby": "st-connect-account-title", "data-account-form": "", novalidate: true, hidden: true },
+    h("h2", { id: "st-connect-account-title", class: "st-drop-title" }, "Connect Google Drive or Notion"),
+    h("p", { class: "cb-muted" }, "Sign in once with read-only access. The course follows the file or page: edits become reviewable updates."),
+    field("What to connect", accountSource),
+    addressField,
+    childrenField,
+    field("Check for changes", accountSchedule, "These sources have no webhook: they are checked on this schedule."),
+    h("div", { class: "cb-actions" }, accountSubmit), accountStatus, accountError);
+  const syncAccountFields = () => {
+    const spec = ACCOUNT_SOURCES.find((s) => s.value === accountSource.value) ?? ACCOUNT_SOURCES[0]!;
+    childrenField.hidden = spec.value !== "notion";
+    const hint = addressField.querySelector(".cb-small");
+    if (hint) hint.textContent = spec.hint;
+  };
+  accountSource.addEventListener("change", syncAccountFields);
+  syncAccountFields();
+
   const done = h("section", { class: "st-connected cb-card", "aria-labelledby": "st-connected-title", "data-connected": "", hidden: true });
-  const forms = h("div", { class: "st-connect-forms" }, gitForm, urlForm);
+  const forms = h("div", { class: "st-connect-forms" }, gitForm, urlForm, accountForm);
   root.replaceChildren(
     h("h2", { class: "cb-h3", id: "st-connect-title" }, "Or connect a source that changes"),
     h("p", { class: "cb-muted" }, "Instead of a file, follow a repository or some web pages. We read them now, start the interview, and look for changes on a schedule."),
     forms, done);
   root.setAttribute("aria-labelledby", "st-connect-title");
 
-  function setBusy(on: boolean, kind: "git" | "url", text: string): void {
+  function setBusy(on: boolean, kind: "git" | "url" | "account", text: string): void {
     busy = on;
     for (const el of root.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | HTMLButtonElement>("input, select, textarea, button")) el.disabled = on;
-    for (const form of [gitForm, urlForm]) form.toggleAttribute("aria-busy", on);
-    (kind === "git" ? gitStatus : urlStatus).textContent = on ? text : "";
+    for (const form of [gitForm, urlForm, accountForm]) form.toggleAttribute("aria-busy", on);
+    (kind === "git" ? gitStatus : kind === "url" ? urlStatus : accountStatus).textContent = on ? text : "";
     if (on) announce(text);
   }
 
-  async function run(kind: "git" | "url", payload: Parameters<typeof lc.sources.connect>[1], checking: string, errorEl: HTMLElement): Promise<void> {
-    let sessionId: string | null = null;
+  async function run(kind: "git" | "url" | "account", payload: Parameters<typeof lc.sources.connect>[1], checking: string, errorEl: HTMLElement, existingSession?: string): Promise<void> {
+    let sessionId: string | null = existingSession ?? null;
     setBusy(true, kind, checking);
     try {
-      sessionId = (await cb.sessions.create()).session.id;
+      sessionId ??= (await cb.sessions.create()).session.id;
       const result = await lc.sources.connect(sessionId, payload);
       setBusy(false, kind, "");
       connected(sessionId, result);
@@ -169,6 +220,35 @@ export function mountConnect(root: HTMLElement, deps: ConnectDeps = {}): void {
     void run("git", gitPayload(values), CHECKING_REPOSITORY, gitError);
   });
 
+  accountForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (busy) return;
+    accountError.textContent = "";
+    const values: AccountForm = { source: accountSource.value, address: accountAddress.value, children: accountChildren.checked, schedule: accountSchedule.value };
+    const problem = accountFormProblem(values);
+    if (problem) {
+      accountError.textContent = problem;
+      accountAddress.focus();
+      return;
+    }
+    const provider = (ACCOUNT_SOURCES.find((s) => s.value === values.source) ?? ACCOUNT_SOURCES[0]!).provider;
+    void (async () => {
+      let sessionId: string | null = null;
+      setBusy(true, "account", "Opening the sign-in…");
+      try {
+        sessionId = (await cb.sessions.create()).session.id;
+        const { url } = await lc.oauth.start(provider, sessionId);
+        remember({ sessionId, values });
+        navigate(url);
+      } catch (e) {
+        setBusy(false, "account", "");
+        if (sessionId) await cb.sessions.delete(sessionId).catch(() => undefined);
+        accountError.textContent = message(e, "The sign-in could not be started. Try again.");
+        announce(accountError.textContent);
+      }
+    })();
+  });
+
   urlForm.addEventListener("submit", (event) => {
     event.preventDefault();
     if (busy) return;
@@ -182,6 +262,37 @@ export function mountConnect(root: HTMLElement, deps: ConnectDeps = {}): void {
     }
     void run("url", urlPayload(values), CHECKING_PAGES, urlError);
   });
+
+  /* ------------------------------------------------------------ offer the account sources, and finish a sign-in */
+  void lc.connectors.list().then((list) => {
+    const offered = list.filter((c) => c.key === "google-drive" || c.key === "notion");
+    if (offered.length === 0) return;
+    for (const option of [...accountSource.options]) if (!offered.some((c) => c.key === option.value)) option.remove();
+    accountForm.hidden = false;
+    syncAccountFields();
+    const notReady = offered.filter((c) => c.oauth && !c.oauth.configured).map((c) => c.label);
+    if (notReady.length === offered.length) {
+      accountSubmit.disabled = true;
+      accountStatus.textContent = `Signing in with ${notReady.join(" or ")} is not set up on this installation. Ask an admin to add the OAuth client.`;
+    }
+  }).catch(() => undefined);
+
+  const back = new URLSearchParams(window.location.search);
+  const pending = recall();
+  if (pending && (back.has("grant") || back.has("oauth_error"))) {
+    accountForm.hidden = false;
+    remember(null);
+    window.history.replaceState(null, "", window.location.pathname);
+    const grant = back.get("grant");
+    if (grant) {
+      accountSource.value = pending.values.source;
+      void run("account", accountPayload(pending.values, grant), CHECKING_ACCOUNT, accountError, pending.sessionId);
+    } else {
+      void cb.sessions.delete(pending.sessionId).catch(() => undefined);
+      accountError.textContent = back.get("oauth_error") || "The sign-in did not finish. Try again.";
+      announce(accountError.textContent);
+    }
+  }
 }
 
 const root = document.querySelector<HTMLElement>("[data-studio-connect]");
