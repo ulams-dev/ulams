@@ -80,9 +80,4 @@ class Audio extends AbstractTopicFileContent
     {
         return 'audio';
     }
-
-    public function getMorphClass()
-    {
-        return self::class;
-    }
 }

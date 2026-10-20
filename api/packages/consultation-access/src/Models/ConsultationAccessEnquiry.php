@@ -2,6 +2,8 @@
 
 namespace Ulams\ConsultationAccess\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
+use Ulams\Core\Models\Concerns\HasMorphTypeColumns;
 use Ulams\Auth\Models\User;
 use Ulams\ConsultationAccess\Database\Factories\ConsultationAccessEnquiryFactory;
 use Ulams\Consultations\Models\ConsultationUserPivot;
@@ -37,7 +39,12 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class ConsultationAccessEnquiry extends Model
 {
+    use HasMorphAlias;
     use HasFactory;
+    use HasMorphTypeColumns;
+
+    /** @var array<int, string> polymorphic type columns, stored as morph aliases (see MorphMap) */
+    protected $morphTypeColumns = ['related_type'];
 
     protected $fillable = [
         'consultation_id',

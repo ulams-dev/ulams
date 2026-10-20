@@ -1895,6 +1895,138 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/compliance/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List required-training assignments
+         * @description Required training. Admin endpoints need `compliance_manage`; `my-assignments` is the learner's own list
+         *     and `team/assignments` lists the direct reports of the manager that is logged in.
+         */
+        get: operations["2c3373bf66dd00da0930fa2edfb68abe"];
+        put?: never;
+        /** Assign a required course to users */
+        post: operations["ebd818284769f0e51596e29cb410c941"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/assignments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Cancel an open assignment */
+        delete: operations["3c057052b2e71f40988118ed795c3e97"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/compliance/my-assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My required training */
+        get: operations["6a372ee91c7a21ff71136379f9ebe106"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/compliance/team/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Required training of my direct reports */
+        get: operations["264066cc0d144cd659245a18a95fcfe8"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/courses/{course}/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Compliance settings of a course (defaults when none are saved)
+         * @description Compliance policy of a course. Permission `compliance_manage`.
+         */
+        get: operations["93c92e732efea74950d4e07588c1dcec"];
+        /** Save the compliance settings of a course */
+        put: operations["880742a2284ef8508bf0b991089b50db"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/managers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List manager links
+         * @description Who escalations of a user's overdue training go to. Permission `compliance_manage`. Until an HRIS
+         *     import exists (Phase 6.3) the links are maintained here.
+         */
+        get: operations["56c18234b7847869bf716285432c7a87"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/managers/{user}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set or clear the manager of a user */
+        put: operations["ff4db86dd866dc0203dea9e380b6526f"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/consultation-access-enquiries": {
         parameters: {
             query?: never;
@@ -7148,6 +7280,46 @@ export interface paths {
         patch: operations["b183ee48bea13fe9a93ec2d2b0516fce"];
         trace?: never;
     };
+    "/api/certificates/verify/{certificateId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Verify a certificate
+         * @description Public and throttled. Returns the status (valid, expired or revoked), the course, the holder name (masked per tenant setting), issue and expiry dates. Unknown ids answer 404.
+         */
+        get: operations["0d52c028fb85e73772dccdbca022cbd9"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/pdfs/{id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Revoke a certificate
+         * @description Marks the certificate revoked. It stays verifiable and shows as revoked. Needs the fabricjs_pdf_revoke permission.
+         */
+        post: operations["b730270f051e59923958ec296225cfe2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/pdfs": {
         parameters: {
             query?: never;
@@ -9898,6 +10070,10 @@ export interface components {
             path?: string;
             assignable_type?: string;
             assignable_id?: number;
+            /** @description valid, expired or revoked */
+            status?: string;
+            /** Format: date-time */
+            expires_at?: string | null;
         };
         Template: {
             /** @description template id */
@@ -14938,6 +15114,296 @@ export interface operations {
             };
             /** @description Server-side error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "2c3373bf66dd00da0930fa2edfb68abe": {
+        parameters: {
+            query?: {
+                status?: "assigned" | "overdue" | "completed" | "cancelled";
+                user_id?: number;
+                course_id?: number;
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description assignments with user, course and certificate */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ebd818284769f0e51596e29cb410c941: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    course_id: number;
+                    user_ids: number[];
+                    /** Format: date-time */
+                    due_at?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description one assignment per user (existing open ones are returned unchanged) */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "3c057052b2e71f40988118ed795c3e97": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description cancelled assignment */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown assignment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "6a372ee91c7a21ff71136379f9ebe106": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the logged-in user's assignments, newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "264066cc0d144cd659245a18a95fcfe8": {
+        parameters: {
+            query?: {
+                status?: "assigned" | "overdue" | "completed" | "cancelled";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description assignments of the users that have the logged-in user as manager (empty for everyone else) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "93c92e732efea74950d4e07588c1dcec": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description mandatory, validity_days, recertify_before_days, default_due_days, reminder_days, escalation_days */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "880742a2284ef8508bf0b991089b50db": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    mandatory?: boolean;
+                    /** @description Days a new certificate stays valid; null = never expires */
+                    validity_days?: number | null;
+                    /** @description Start recertification this many days before expiry; 0 = off */
+                    recertify_before_days?: number | null;
+                    /** @description Due date offset for assignments without an explicit date */
+                    default_due_days?: number | null;
+                    reminder_days?: number[] | null;
+                    escalation_days?: number[] | null;
+                };
+            };
+        };
+        responses: {
+            /** @description saved settings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "56c18234b7847869bf716285432c7a87": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description user_id and manager_id pairs */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ff4db86dd866dc0203dea9e380b6526f: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    manager_id?: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description the link, or null when cleared */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -26604,6 +27070,118 @@ export interface operations {
                         message?: string;
                     };
                 };
+            };
+        };
+    };
+    "0d52c028fb85e73772dccdbca022cbd9": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description random certificate id encoded in the QR code */
+                certificateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            certificate_id?: string;
+                            /** @enum {string} */
+                            status?: "valid" | "expired" | "revoked";
+                            title?: string;
+                            course_title?: string | null;
+                            holder_name?: string | null;
+                            /** Format: date-time */
+                            issued_at?: string;
+                            /** Format: date-time */
+                            expires_at?: string | null;
+                            /** Format: date-time */
+                            revoked_at?: string | null;
+                            issuer?: string;
+                        };
+                    };
+                };
+            };
+            /** @description unknown certificate id */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    b730270f051e59923958ec296225cfe2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description id of the generated PDF */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    reason: string;
+                };
+            };
+        };
+        responses: {
+            /** @description successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown PDF */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

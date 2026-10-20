@@ -1,0 +1,66 @@
+---
+title: Compliance and required training
+description: Make a course mandatory with a due date, let certificates expire and renew themselves, and have overdue training escalated to a manager.
+sidebar:
+  order: 10
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The compliance module turns a course into **required training**: a person is assigned the course with a due
+date, is reminded, and, when they are late, their manager is told. Certificates can expire and the course
+is offered again before they do. Everything is available through the API (`/api/admin/compliance`, permission
+`compliance_manage`); there is no admin screen yet.
+
+<Aside type="note">
+This page describes the API. The certificate side (verification page, revocation) is in [Certificates](/admin/certificates/).
+</Aside>
+
+## Course settings
+
+`PUT /api/admin/compliance/courses/{course}/settings`:
+
+| Field | Meaning |
+|---|---|
+| `mandatory` | Marks the course as required training. |
+| `validity_days` | How long a new certificate stays valid. Empty: it never expires. |
+| `recertify_before_days` | Start recertification this many days before the certificate expires. Default 30; `0` turns it off. |
+| `default_due_days` | Due date for assignments created without one. |
+| `reminder_days` | Days before a due date or expiry on which a reminder is sent. Default 30, 7, 1. |
+| `escalation_days` | Days after the due date on which the manager is told. Default 1, 7. |
+
+Only courses with saved settings are recertified. Certificates already issued keep the expiry they were
+issued with.
+
+## Assigning training
+
+`POST /api/admin/compliance/assignments` with `course_id`, `user_ids` and an optional `due_at`:
+
+- The person gets access to the course and the due date becomes their course deadline, so the existing
+  deadline reminder and their course list stay in step.
+- Assigning again does not create a second assignment; a new, earlier due date is used.
+- A person who already holds a valid certificate for the course is marked completed at once.
+- If their certificate expired, their progress in the course is cleared so they can take it again.
+- The assignment closes when the person finishes the course and is linked to the certificate that was issued.
+- `DELETE /api/admin/compliance/assignments/{id}` cancels an open assignment.
+
+Learners read their own list at `GET /api/compliance/my-assignments`. A manager reads their direct reports at
+`GET /api/compliance/team/assignments`.
+
+## Managers
+
+Escalations go to the manager linked to the person: `PUT /api/admin/compliance/managers/{user}` with
+`{"manager_id": 12}` (or `null` to clear). Until an HRIS import exists, links are kept here. Without a manager an
+escalation waits and is sent after one is linked.
+
+## What is sent and when
+
+`php artisan compliance:process` runs every day at 06:00 (scheduler) and does, in this order:
+
+1. Opens a recertification assignment, due on the expiry date, for each certificate inside its recertification window.
+2. Sends **certificate expiring** reminders, **certificate expired** notices (up to 7 days after expiry).
+3. Sends **training due soon**, **training overdue** and, to the manager, **training escalated**.
+
+Each notice is recorded once, so running the command again, or late, never repeats one. If several reminder
+days have passed, only the most urgent is sent. The six e-mails are editable under
+**Configuration → Templates** like any other e-mail template.

@@ -46,6 +46,7 @@ return [
     ['api/auth/social/*', 'public'],
     ['api/auth/email/*', 'public'],
     ['api/health*', 'public'],
+    ['api/certificates/verify/*', 'public'],
     ['api/core/health-check', 'public'],
     ['api/name', 'public'],
     ['api/documentation', 'public'],
@@ -147,6 +148,7 @@ return [
 
     // ---- certificates --------------------------------------------------------------------------
     ['api/admin/pdfs*', 'certificates'],
+    ['api/admin/compliance*', 'certificates'],
 
     // ---- commerce ------------------------------------------------------------------------------
     ['api/admin/orders*', 'commerce'],
@@ -204,6 +206,7 @@ return [
     ['api/tutors*', 'learner'],
     ['api/content/*', 'learner'],
     ['api/pdfs*', 'learner'],
+    ['api/compliance/*', 'learner'],
     ['api/questionnaire/*', 'learner'],
     ['api/scorm/*', 'learner'],
     ['api/cmi5/*', 'learner'],

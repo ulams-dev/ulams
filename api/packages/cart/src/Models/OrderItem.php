@@ -2,6 +2,8 @@
 
 namespace Ulams\Cart\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphTypeColumns;
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Cart\QueryBuilders\OrderItemModelQueryBuilder;
 use Ulams\Cart\Support\OrderItemCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -55,6 +57,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class OrderItem extends Model
 {
+    use HasMorphAlias;
+    use HasMorphTypeColumns;
+
+    /** @var array<int, string> polymorphic type columns, stored as morph aliases (see MorphMap) */
+    protected $morphTypeColumns = ['buyable_type'];
     protected $guarded = ['id'];
 
     protected $casts = ['options' => 'array'];

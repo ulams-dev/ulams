@@ -5468,6 +5468,11 @@
             "minimum": 0,
             "maximum": 100
           },
+          "progressNote": {
+            "type": "string",
+            "description": "Line under the progress bar: what is next and how much is left",
+            "maxLength": 200
+          },
           "id": {
             "type": "string",
             "description": "Anchor id for in-page links (letters, digits, dashes)",

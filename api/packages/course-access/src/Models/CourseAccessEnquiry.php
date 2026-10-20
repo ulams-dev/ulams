@@ -2,6 +2,7 @@
 
 namespace Ulams\CourseAccess\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Core\Models\User;
 use Ulams\CourseAccess\Database\Factories\CourseAccessEnquiryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class CourseAccessEnquiry extends Model
 {
+    use HasMorphAlias;
     use HasFactory;
 
     protected $fillable = [

@@ -49,9 +49,4 @@ class OEmbed extends AbstractTopicContent
     {
         return [];
     }
-
-    public function getMorphClass()
-    {
-        return self::class;
-    }
 }

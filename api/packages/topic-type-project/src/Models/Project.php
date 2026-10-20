@@ -110,11 +110,6 @@ class Project extends AbstractTopicContent
         $this->attributes['notify_users'] = json_encode(array_filter($value), JSON_NUMERIC_CHECK);
     }
 
-    public function getMorphClass()
-    {
-        return self::class;
-    }
-
     protected static function booted(): void
     {
         parent::booted();

@@ -1,0 +1,56 @@
+---
+title: Certificates
+description: Issue certificates that expire, let anyone verify one from its QR code, and revoke a certificate that is no longer valid.
+sidebar:
+  order: 9
+modules:
+  - templates-pdf
+learnerRoutes:
+  - /certificates/verify/[id]
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+A learner who finishes a course receives a PDF certificate (see [Templates](/admin/templates/) for how
+the design is edited). Every certificate carries a random certificate ID and a QR code that opens a
+public **verification page**, so an employer or auditor can check a printed copy.
+
+## Verification page
+
+`/certificates/verify/<certificate id>` on the academy's learner site shows, without any login:
+
+- the status, written out as text: **valid**, **expired** or **revoked**;
+- the course, the holder's name, the issue date, the expiry date and the issuing academy.
+
+Nothing else about the learner is shown. An unknown ID answers "No certificate found". The page is
+not indexed by search engines and is not cached. The API behind it,
+`GET /api/certificates/verify/{certificateId}`, is public and throttled (60 requests a minute per client by default).
+
+The default certificate template encodes `@VarCertificateVerifyUrl` as its QR code. The URL is built from the
+academy's learner site (the **Front URL** in the global settings) and falls back to the API host when that is not set.
+`PDF_CERTIFICATE_VERIFY_URL` overrides the pattern (`{FRONTEND_URL}`, `{APP_URL}` and `{id}`).
+
+## Expiry
+
+A certificate can expire. Without any other setting, certificates never expire. Set
+`PDF_CERTIFICATE_VALIDITY_DAYS` (for example `365`) to give every new certificate that many days of validity.
+The expiry date is stored on the certificate when it is issued and is available to templates as
+`@VarCertificateExpiresAt` (empty when the certificate does not expire). The compliance module
+([Phase 6 plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-6-compliance.md)) replaces the single
+setting with a validity per course.
+
+## Revoking a certificate
+
+An administrator with the `fabricjs_pdf_revoke` permission revokes a certificate with a reason
+(`POST /api/admin/pdfs/{id}/revoke`). A revoked certificate is not deleted: verification keeps answering, now with the
+status **revoked**, so a printed copy always shows its true state. Revoking twice keeps the first reason.
+
+<Aside type="note">
+`PDF_CERTIFICATE_VERIFY_NAME` controls the holder name on the verification page: `full` (default),
+`initials` or `none`.
+</Aside>
+
+## API fields
+
+Certificates in `GET /api/pdfs` and `GET /api/pdfs/{id}` carry `status`, `expires_at`, `revoked_at` and
+`course_version` (the course's last update at the time of issue).

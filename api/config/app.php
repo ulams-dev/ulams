@@ -230,6 +230,7 @@ return [
         Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider::class,
         Ulams\LivingCourse\UlamsLivingCourseServiceProvider::class,
         Ulams\Adapt\UlamsAdaptServiceProvider::class,
+        Ulams\Compliance\UlamsComplianceServiceProvider::class,
         Ulams\Translations\UlamsTranslationsServiceProvider::class,
         Ulams\Video\UlamsVideoServiceProvider::class,
         Ulams\Vouchers\UlamsVouchersServiceProvider::class,

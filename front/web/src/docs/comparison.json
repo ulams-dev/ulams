@@ -246,6 +246,7 @@
                     "text": "A PDF certificate is issued when a learner finishes a course, from a template designed in the admin panel (the default is A4 landscape with a QR code). The template is stored with each certificate.",
                     "packages": [
                       "templates-pdf",
+                      "compliance",
                       "courses"
                     ]
                   }

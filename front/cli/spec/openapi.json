@@ -1788,6 +1788,31 @@
     },
     "type": "object"
    },
+   "ExamplePluginGreetingResource": {
+    "properties": {
+     "greeting": {
+      "example": "Hello from the example plugin, Ada",
+      "type": "string"
+     },
+     "user_id": {
+      "nullable": true,
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   },
+   "ExamplePluginSendGreetingRequest": {
+    "properties": {
+     "user_id": {
+      "description": "Recipient",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "user_id"
+    ],
+    "type": "object"
+   },
    "FabricPDF": {
     "properties": {
      "assignable_id": {
@@ -1800,12 +1825,21 @@
       "description": "pdfme template (JSON) the PDF is rendered from",
       "type": "object"
      },
+     "expires_at": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     },
      "id": {
       "description": "template id",
       "type": "integer"
      },
      "path": {
       "description": "path to rendered PDF binary file",
+      "type": "string"
+     },
+     "status": {
+      "description": "valid, expired or revoked",
       "type": "string"
      },
      "title": {
@@ -2107,6 +2141,18 @@
      "title",
      "order",
      "course_id"
+    ],
+    "type": "object"
+   },
+   "LoginPencilSpaceRequest": {
+    "properties": {
+     "redirect_url": {
+      "example": "https://my.pencilapp.com",
+      "type": "string"
+     }
+    },
+    "required": [
+     "redirect_url"
     ],
     "type": "object"
    },
@@ -3376,6 +3422,69 @@
     ],
     "type": "object"
    },
+   "TopicAudio": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
+   "TopicCmi5Au": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
+   "TopicH5P": {
+    "properties": {
+     "content": {
+      "$ref": "#/components/schemas/H5PContentSummary"
+     },
+     "id": {
+      "description": "id"
+     },
+     "value": {
+      "description": "H5P content id (h5p.contents.id, H5P service)",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
+   "TopicImage": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
    "TopicInteractive": {
     "properties": {
      "completion_rule": {
@@ -3514,6 +3623,44 @@
     ],
     "type": "object"
    },
+   "TopicOEmbed": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
+   "TopicPDF": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "length": {
+      "description": "length",
+      "type": "integer"
+     },
+     "page_count": {
+      "description": "page_count",
+      "type": "integer"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
    "TopicResource": {
     "properties": {
      "id": {
@@ -3537,6 +3684,43 @@
      "topic_id",
      "path",
      "name"
+    ],
+    "type": "object"
+   },
+   "TopicRichText": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "length": {
+      "description": "length",
+      "type": "integer"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
+   "TopicScormSco": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "uuid": {
+      "description": "uuid"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
     ],
     "type": "object"
    },
@@ -5421,6 +5605,341 @@
     "summary": "Delete cmi5 package by id",
     "tags": [
      "cmi5"
+    ]
+   }
+  },
+  "/api/admin/compliance/assignments": {
+   "get": {
+    "description": "Required training. Admin endpoints need `compliance_manage`; `my-assignments` is the learner's own list\nand `team/assignments` lists the direct reports of the manager that is logged in.",
+    "operationId": "2c3373bf66dd00da0930fa2edfb68abe",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "status",
+      "schema": {
+       "enum": [
+        "assigned",
+        "overdue",
+        "completed",
+        "cancelled"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "user_id",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "course_id",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "per_page",
+      "schema": {
+       "default": 25,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "assignments with user, course and certificate"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List required-training assignments",
+    "tags": [
+     "Compliance"
+    ]
+   },
+   "post": {
+    "operationId": "ebd818284769f0e51596e29cb410c941",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "course_id": {
+          "type": "integer"
+         },
+         "due_at": {
+          "format": "date-time",
+          "nullable": true,
+          "type": "string"
+         },
+         "user_ids": {
+          "items": {
+           "type": "integer"
+          },
+          "type": "array"
+         }
+        },
+        "required": [
+         "course_id",
+         "user_ids"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "one assignment per user (existing open ones are returned unchanged)"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Assign a required course to users",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/assignments/{id}": {
+   "delete": {
+    "operationId": "3c057052b2e71f40988118ed795c3e97",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "cancelled assignment"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown assignment"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Cancel an open assignment",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/courses/{course}/settings": {
+   "get": {
+    "description": "Compliance policy of a course. Permission `compliance_manage`.",
+    "operationId": "93c92e732efea74950d4e07588c1dcec",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "mandatory, validity_days, recertify_before_days, default_due_days, reminder_days, escalation_days"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Compliance settings of a course (defaults when none are saved)",
+    "tags": [
+     "Compliance"
+    ]
+   },
+   "put": {
+    "operationId": "880742a2284ef8508bf0b991089b50db",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "default_due_days": {
+          "description": "Due date offset for assignments without an explicit date",
+          "nullable": true,
+          "type": "integer"
+         },
+         "escalation_days": {
+          "items": {
+           "type": "integer"
+          },
+          "nullable": true,
+          "type": "array"
+         },
+         "mandatory": {
+          "type": "boolean"
+         },
+         "recertify_before_days": {
+          "description": "Start recertification this many days before expiry; 0 = off",
+          "nullable": true,
+          "type": "integer"
+         },
+         "reminder_days": {
+          "items": {
+           "type": "integer"
+          },
+          "nullable": true,
+          "type": "array"
+         },
+         "validity_days": {
+          "description": "Days a new certificate stays valid; null = never expires",
+          "nullable": true,
+          "type": "integer"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "saved settings"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Save the compliance settings of a course",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/managers": {
+   "get": {
+    "description": "Who escalations of a user's overdue training go to. Permission `compliance_manage`. Until an HRIS\nimport exists (Phase 6.3) the links are maintained here.",
+    "operationId": "56c18234b7847869bf716285432c7a87",
+    "responses": {
+     "200": {
+      "description": "user_id and manager_id pairs"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List manager links",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/managers/{user}": {
+   "put": {
+    "operationId": "ff4db86dd866dc0203dea9e380b6526f",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "user",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "manager_id": {
+          "nullable": true,
+          "type": "integer"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "the link, or null when cleared"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Set or clear the manager of a user",
+    "tags": [
+     "Compliance"
     ]
    }
   },
@@ -9023,6 +9542,62 @@
     "summary": "Manually triggered event for users",
     "tags": [
      "Templates"
+    ]
+   }
+  },
+  "/api/admin/example-plugin/greetings": {
+   "post": {
+    "operationId": "d3fb7486e6f0342a50a072c25180a56f",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ExamplePluginSendGreetingRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/ExamplePluginGreetingResource"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful operation"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Missing the example-plugin_send-greeting permission"
+     },
+     "422": {
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Send the tenant's greeting to a user (dispatches GreetingSent)",
+    "tags": [
+     "Admin Example plugin"
     ]
    }
   },
@@ -13550,6 +14125,71 @@
      }
     ],
     "summary": "Preview a pdfme template with sample data",
+    "tags": [
+     "Template PDFs"
+    ]
+   }
+  },
+  "/api/admin/pdfs/{id}/revoke": {
+   "post": {
+    "description": "Marks the certificate revoked. It stays verifiable and shows as revoked. Needs the fabricjs_pdf_revoke permission.",
+    "operationId": "b730270f051e59923958ec296225cfe2",
+    "parameters": [
+     {
+      "description": "id of the generated PDF",
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "reason": {
+          "maxLength": 500,
+          "type": "string"
+         }
+        },
+        "required": [
+         "reason"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {}
+      },
+      "description": "successful operation"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "unknown PDF"
+     },
+     "422": {
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Revoke a certificate",
     "tags": [
      "Template PDFs"
     ]
@@ -24247,6 +24887,97 @@
     ]
    }
   },
+  "/api/certificates/verify/{certificateId}": {
+   "get": {
+    "description": "Public and throttled. Returns the status (valid, expired or revoked), the course, the holder name (masked per tenant setting), issue and expiry dates. Unknown ids answer 404.",
+    "operationId": "0d52c028fb85e73772dccdbca022cbd9",
+    "parameters": [
+     {
+      "description": "random certificate id encoded in the QR code",
+      "in": "path",
+      "name": "certificateId",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "certificate_id": {
+             "type": "string"
+            },
+            "course_title": {
+             "nullable": true,
+             "type": "string"
+            },
+            "expires_at": {
+             "format": "date-time",
+             "nullable": true,
+             "type": "string"
+            },
+            "holder_name": {
+             "nullable": true,
+             "type": "string"
+            },
+            "issued_at": {
+             "format": "date-time",
+             "type": "string"
+            },
+            "issuer": {
+             "type": "string"
+            },
+            "revoked_at": {
+             "format": "date-time",
+             "nullable": true,
+             "type": "string"
+            },
+            "status": {
+             "enum": [
+              "valid",
+              "expired",
+              "revoked"
+             ],
+             "type": "string"
+            },
+            "title": {
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "successful operation"
+     },
+     "404": {
+      "description": "unknown certificate id"
+     },
+     "429": {
+      "description": "too many requests"
+     }
+    },
+    "summary": "Verify a certificate",
+    "tags": [
+     "Template PDFs"
+    ]
+   }
+  },
   "/api/cmi5/courses/{id}": {
    "get": {
     "description": "Course cmi5 launch params",
@@ -24377,6 +25108,59 @@
     "summary": "Launch a cmi5 AU",
     "tags": [
      "cmi5"
+    ]
+   }
+  },
+  "/api/compliance/my-assignments": {
+   "get": {
+    "operationId": "6a372ee91c7a21ff71136379f9ebe106",
+    "responses": {
+     "200": {
+      "description": "the logged-in user's assignments, newest first"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "My required training",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/compliance/team/assignments": {
+   "get": {
+    "operationId": "264066cc0d144cd659245a18a95fcfe8",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "status",
+      "schema": {
+       "enum": [
+        "assigned",
+        "overdue",
+        "completed",
+        "cancelled"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "assignments of the users that have the logged-in user as manager (empty for everyone else)"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Required training of my direct reports",
+    "tags": [
+     "Compliance"
     ]
    }
   },
@@ -26799,6 +27583,49 @@
     ]
    }
   },
+  "/api/example-plugin/hello": {
+   "get": {
+    "operationId": "135e63fb1233fe1195a5455e99a8d7cc",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "name",
+      "required": false,
+      "schema": {
+       "maxLength": 80,
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/ExamplePluginGreetingResource"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful operation"
+     }
+    },
+    "summary": "The tenant's greeting",
+    "tags": [
+     "Example plugin"
+    ]
+   }
+  },
   "/api/health-check": {
    "get": {
     "operationId": "1125991bf9cc6c8f0c66c0899d22d579",
@@ -28896,6 +29723,58 @@
     "summary": "Display the specified generated PDF",
     "tags": [
      "Template PDFs"
+    ]
+   }
+  },
+  "/api/pencil-spaces/login": {
+   "post": {
+    "operationId": "1339bf07bf18203c7739849ebd9a18f8",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LoginPencilSpaceRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "url": {
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successfull operation"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Generate a direct login link",
+    "tags": [
+     "Pencil Spaces"
     ]
    }
   },
@@ -32867,6 +33746,10 @@
    "name": "cmi5"
   },
   {
+   "description": "Compliance",
+   "name": "Compliance"
+  },
+  {
    "description": "Admin Consultation Access",
    "name": "Admin Consultation Access"
   },
@@ -32933,6 +33816,14 @@
   {
    "description": "Admin Dictionary Words",
    "name": "Admin Dictionary Words"
+  },
+  {
+   "description": "Admin Example plugin",
+   "name": "Admin Example plugin"
+  },
+  {
+   "description": "Example plugin",
+   "name": "Example plugin"
   },
   {
    "description": "Files",
@@ -33021,6 +33912,10 @@
   {
    "description": "Payments",
    "name": "Payments"
+  },
+  {
+   "description": "Pencil Spaces",
+   "name": "Pencil Spaces"
   },
   {
    "description": "Admin Permissions",

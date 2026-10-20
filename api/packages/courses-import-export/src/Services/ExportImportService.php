@@ -2,6 +2,7 @@
 
 namespace Ulams\CoursesImportExport\Services;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Categories\Models\Category;
 use Ulams\Categories\Repositories\Contracts\CategoriesRepositoryContract;
 use Ulams\Courses\Http\Requests\CreateTopicAPIRequest;
@@ -326,6 +327,8 @@ class ExportImportService implements ExportImportServiceContract
 
         $topicData = array_merge($topicData, $topicData['topicable'] ?? []);
         unset($topicData['topicable']);
+        // an export names the content class or its morph alias
+        $topicData['topicable_type'] = MorphMap::classOf($topicData['topicable_type']);
 
         if (in_array($topicData['topicable_type'], $this->topicTypes) || isset(self::$registeredStrategies[$topicData['topicable_type']])) {
             $strategy = $this->getTopicTypeImportStrategy($topicData['topicable_type']);

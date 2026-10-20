@@ -2,6 +2,7 @@
 
 namespace Ulams\TopicTypeGift;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Categories\UlamsCategoriesServiceProvider;
 use Ulams\Courses\UlamsCourseServiceProvider;
 use Ulams\Courses\Facades\Topic;
@@ -76,6 +77,10 @@ class UlamsTopicTypeGiftServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        MorphMap::register([
+            'topic.gift_quiz' => \Ulams\TopicTypeGift\Models\GiftQuiz::class,
+        ]);
+
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(UlamsTopicTypesServiceProvider::class);
         $this->app->register(UlamsCourseServiceProvider::class);

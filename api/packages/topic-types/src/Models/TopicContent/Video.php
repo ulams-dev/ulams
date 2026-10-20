@@ -11,27 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 /**
- * @OA\Schema(
- *      schema="TopicVideo",
- *      required={"value"},
- *      @OA\Property(
- *          property="id",
- *          description="id",
- *          @OA\Schema(
- *             type="integer",
- *         )
- *      ),
- *      @OA\Property(
- *          property="value",
- *          description="value",
- *          type="string"
- *      ),
- *      @OA\Property(
- *          property="poster",
- *          description="poster",
- *          type="string"
- *      )
- * )
+ * The TopicVideo OpenAPI schema is declared once, in Ulams\Video\Models\Video.
  *
  * @property int $height
  * @property int $width
@@ -146,10 +126,5 @@ class Video extends AbstractTopicFileContent
         }
 
         return $results;
-    }
-
-    public function getMorphClass()
-    {
-        return self::class;
     }
 }

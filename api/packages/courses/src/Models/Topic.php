@@ -2,6 +2,9 @@
 
 namespace Ulams\Courses\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphTypeColumns;
+use Ulams\Core\Support\MorphMap;
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Courses\Database\Factories\TopicFactory;
 use Ulams\Courses\Facades\Topic as TopicFacade;
 use Illuminate\Database\Eloquent\Builder;
@@ -104,7 +107,12 @@ use Illuminate\Validation\Rule;
  */
 class Topic extends Model
 {
+    use HasMorphAlias;
     use HasFactory;
+    use HasMorphTypeColumns;
+
+    /** @var array<int, string> polymorphic type columns, stored as morph aliases (see MorphMap) */
+    protected $morphTypeColumns = ['topicable_type'];
 
     public $table = 'topics';
 
@@ -154,7 +162,7 @@ class Topic extends Model
             'introduction' => ['string'],
             'description' => ['string'],
             'lesson_id' => ['integer', 'exists:lessons,id'],
-            'topicable_type' => ['string', Rule::in(TopicFacade::availableContentClasses())],
+            'topicable_type' => ['string', Rule::in(self::contentTypeNames())],
             'order' => ['integer'],
             'active' => ['boolean'],
             'preview' => ['boolean'],
@@ -162,6 +170,14 @@ class Topic extends Model
             'json' => ['json'],
             'duration' => ['nullable', 'string', 'max:255'],
         ];
+    }
+
+    /** The class names and the morph aliases a client may send as `topicable_type`. */
+    public static function contentTypeNames(): array
+    {
+        $classes = TopicFacade::availableContentClasses();
+
+        return array_values(array_unique(array_merge($classes, array_map(fn (string $class) => MorphMap::aliasOrClass($class), $classes))));
     }
 
     public function lesson(): BelongsTo

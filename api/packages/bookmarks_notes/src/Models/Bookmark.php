@@ -2,6 +2,7 @@
 
 namespace Ulams\Bookmarks\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphTypeColumns;
 use Ulams\Bookmarks\Database\Factories\BookmarkFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +32,10 @@ use Illuminate\Support\Carbon;
 class Bookmark extends Model
 {
     use HasFactory;
+    use HasMorphTypeColumns;
+
+    /** @var array<int, string> polymorphic type columns, stored as morph aliases (see MorphMap) */
+    protected $morphTypeColumns = ['bookmarkable_type'];
 
     protected $guarded = ['id'];
 
