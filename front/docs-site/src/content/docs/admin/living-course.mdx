@@ -40,6 +40,8 @@ The requirements of the Course Builder apply: a configured `AI_DRIVER`, a queue 
 | `LIVING_COURSE_ALLOWED_HOSTS` | empty | Allow-list of hosts (comma separated) the connectors may reach. Empty means any public host; once set, only these. |
 | `LIVING_COURSE_INSECURE_HOSTS` | empty | Hosts allowed over plain HTTP or on private addresses (development only). |
 | `LIVING_COURSE_LEARNER_NOTICE_AFTER_DAYS` | `3` | Days before an unseen update notice reaches a learner by e-mail. |
+| `LIVING_COURSE_GIT_TIMEOUT` | `120` | Seconds one `git` command of the `git-cli` connector may run. |
+| `LIVING_COURSE_GIT_CLONE_MB` | `200` | A `git-cli` clone larger than this is stopped. |
 | `AI_TASK_UPDATE_PROFILE` | the default profile | Model profile of the analysis (`update` task); the model name lives in `config/ai.php`. |
 | `AI_TASK_NEW_LESSON_PROFILE` | the default profile | Model profile of suggested lessons for new source sections (`new_lesson` task). |
 
@@ -50,6 +52,7 @@ Every model call of the analysis is logged in `ai_calls` with its model, tokens 
 ## Connectors and webhooks
 
 - **Upload** needs nothing. **Git** reads GitHub, GitLab and Gitea or Forgejo hosts through their APIs with a token the author provides; tokens are stored encrypted and never returned. **URL** reads up to 20 web pages and stores their Markdown.
+- **Git on any server** (`git-cli`, off by default) reads a repository on a server without a supported API with the `git` command: add `git-cli` to `LIVING_COURSE_CONNECTORS` on an image that ships git (the ulams PHP image does from this version; rebuild yours). It clones shallowly and read-only into a temporary directory that is always removed, over https only, to public addresses only (the same checks and host allow-list as the other connectors), without hooks, submodules, LFS or redirects, with an empty environment so server secrets are never visible to it, and stops a clone that grows past `LIVING_COURSE_GIT_CLONE_MB` or runs longer than `LIVING_COURSE_GIT_TIMEOUT`. The access token is sent as a request header from the environment; it is never in a URL, argument, log or error message, and what git prints is never shown to authors because it comes from the remote. A webhook is optional: a script or CI job can POST a body signed with the connection's secret in `X-Ulams-Signature`.
 - Every outbound request goes through one SSRF-safe client: private and link-local addresses, redirects to them and unlisted hosts are refused.
 - The webhook of a connection is `https://<tenant API host>/api/living-course/webhooks/{id}`; the studio shows it with its secret. GitHub (`X-Hub-Signature-256`), GitLab (`X-Gitlab-Token`) and Gitea signatures are verified, deliveries are deduplicated and the endpoint is throttled. Polling is the fallback when a webhook is not possible. Signature headers, replies and a `curl` example are in [Living Course internals](/developers/living-course/#webhook-requests). The route must be reachable from your Git host without a login; it is throttled to 60 requests a minute per webhook, refuses bodies over 1 MB and logs a refused signature once a minute per connection in the audit trail (`webhook.rejected`).
 
