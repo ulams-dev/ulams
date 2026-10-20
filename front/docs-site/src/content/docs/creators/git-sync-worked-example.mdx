@@ -1,0 +1,222 @@
+---
+title: "Keep a course in sync with a Git repository: a worked example"
+description: A real run of Living Course on a small runbook repository, from the commit to the reviewed proposal, the suggested lesson and the applied update, with the actual requests, counts and limits.
+sidebar:
+  order: 41
+modules:
+  - living-course
+  - course-builder
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+This page follows one example from the first commit to an applied update, using output recorded from a
+real run of the code, not written by hand. The example is the one used in the Living Course posts: a
+runbook says "escalate after 10 minutes", a commit changes it to 15, and the course has to follow.
+
+Read [Build a course with AI](/creators/course-builder/) first for the screens, and
+[Living Course settings](/admin/living-course/) for how an admin turns the Git connectors on.
+
+<Aside type="caution" title="What was real and what was scripted">
+**Real:** the `git` command, a real Git repository with two commits, the `git-cli` connector, the
+database, the revision and fragment diff, the impact analysis, the proposal, the decisions, the apply
+and the audit trail. **Scripted:** the AI. The run used the built-in fake driver, which answers from the
+source text with fixed rules, so the wording of lessons, quiz options and "reasons" below is mechanical
+and says nothing about real model quality. **Not exercised:** a hosted Git server over https (the
+repository was a local one, read through the connector's test-only `file://` mode), the Studio screens
+(no screenshots were taken), and the Google Drive and Notion APIs. See [What this does not
+prove](#what-this-does-not-prove).
+</Aside>
+
+## The setup
+
+A repository with one file, `docs/runbook.md`, and a README that must not become course content. Version 1
+has four sections (Escalation, Severity levels, Communication, Rollback). The sentence that matters:
+
+```text
+If you have not found the cause within 10 minutes of acknowledging a severity 1 alert,
+escalate to the secondary on-call engineer. [...]
+```
+
+Commit `c2f3d0c` is "Add the on-call runbook". The run used a throwaway PostgreSQL container and the
+living-course test harness on a laptop; nothing touched a running stack.
+
+## 1. Connect the repository
+
+The author connects the repository to a new course session. The request, with the access token shown
+as the placeholder it was in the run:
+
+```http
+POST /api/admin/living-course/sessions/{session}/sources/connect
+```
+
+```json
+{
+  "connector": "git-cli",
+  "config": { "url": "file:///tmp/runbooks-repo", "branch": "main", "paths": ["docs/**/*.md"] },
+  "secrets": { "token": "tok_example_not_a_real_token" },
+  "schedule": "daily"
+}
+```
+
+The answer (trimmed) is `201`: the connection is `active`, `secretsSet` lists `token` and
+`webhook_secret` (values are never returned again), and the source has **1 revision, 8 fragments,
+328 tokens**. Only `docs/runbook.md` was read: the `paths` filter left the README out. The webhook
+secret is shown once in the real answer and left out here.
+
+Connecting took **186 ms** (`git clone`, listing and reading the file, building the fragments).
+
+## 2. Build the course
+
+The course was built the usual way, with the fake driver: the interview (60 minutes, 10-minute
+lessons, a quiz), an approved outline, approved generation and apply. The result:
+
+| | |
+|---|---|
+| Modules, lessons | 1, 3 |
+| Learning objectives | 4 |
+| Text blocks | 6 |
+| Quiz questions | 5 |
+| Model calls (fake) | 12 |
+
+The three lessons cite fragments of the source: lesson 1.2 "When to escalate" cites
+`frg_ehil42efdkl7` (§1.1 of the runbook), which holds the "10 minutes" sentence. Its first quiz question
+has the 10-minute statement as the correct option. Building took about 2.3 seconds in total.
+
+## 3. The commit
+
+Commit `cb70b95`, "Escalate after 15 minutes, add the post-incident review", changes two things:
+
+- "10 minutes" becomes "15 minutes" in §1.1;
+- a new section "After the incident / Post-incident review" is added at the end.
+
+The author presses **Check now** (`POST /api/admin/living-course/connections/{connection}/check`,
+`202 queued`). The connector first asks the server for the head commit (`git ls-remote`): it
+differs from the stored one, so it clones, reads the file and stores **revision 2**
+(9 fragments, 384 tokens). The whole check, including the analysis below, took **541 ms**.
+
+## 4. What changed, without a model
+
+Change detection is deterministic. The revision's `counts` are `changed: 1, added: 1`, and the changed
+fragment is classified `substantive` with the signal `number` (similarity 0.864). The word diff the
+studio shows is this, as returned by `GET /api/admin/living-course/revisions/{revision}/changes`:
+
+```json
+"wordDiff": [
+  ["=", "If you have not found the cause within"],
+  ["-", " 10"],
+  ["+", " 15"],
+  ["=", " minutes of acknowledging a severity 1 alert, escalate to the secondary on-call engineer. [...]"]
+]
+```
+
+## 5. What the course needs: the proposal
+
+The citations are the index: five elements of lesson 1.2 cite the changed fragment. The proposal
+(`GET /api/admin/living-course/proposals/{proposal}`) has these counts:
+
+| | |
+|---|---|
+| Items | 6 |
+| Elements to review | 5 (2 blocks, 2 quiz questions, 1 objective) |
+| Marked "changes the meaning" | 5 |
+| Quiz answers to check | 2 |
+| Uncovered new sections | 1 |
+| Analysis calls | 1 update call and 1 grounding check, both fake |
+
+One analysis call covers a whole lesson (the "group"). Its results, per item:
+
+| Item | Kind | Class |
+|---|---|---|
+| Lesson 1.2, objective 1 | no change needed | none |
+| Lesson 1.2, block 1 and block 2 | update | major |
+| Lesson 1.2, Q1 and Q2 | update | answer changed |
+| §5.1 Post-incident review | new in the source | not covered |
+
+The first block, as the author reviews it (`before` and `after`; the ids and the citation stay):
+
+```json
+"before": { "markdown": "If you have not found the cause within 10 minutes of acknowledging a severity 1 alert, ...",
+            "citations": ["frg_ehil42efdkl7"] },
+"after":  { "markdown": "If you have not found the cause within 15 minutes of acknowledging a severity 1 alert, ...",
+            "citations": ["frg_ehil42efdkl7"] }
+```
+
+The first quiz question gets the same treatment: the correct option moves from "within 10 minutes"
+to "within 15 minutes" and its explanation follows. Because the *correct answer* changed, the item is
+marked `answer_changed` and `answerCheck: true`: the author is asked to look at it, and learners'
+earlier scores stay on record. Every item cites `runbook.md §1.1 When to escalate`, so each claim in
+the proposal can be checked against the passage in the new revision. Nothing in the course had
+changed at this point: every item was `pending`.
+
+## 6. A section no lesson covers
+
+The new "Post-incident review" section is not cited by any lesson, so it appears as an *uncovered*
+item. The author presses **Suggest a lesson**:
+
+```http
+POST /api/admin/living-course/proposals/{proposal}/items/{item}/suggest-lesson
+```
+
+The answer (`200`, **42 ms**) turns the item into `new_lesson`, still `pending`. Its `after` holds the
+module it would go into and a full lesson with one objective and one block whose text is the section's
+own sentences (the fake driver copies; a real model writes). Every part cites the new fragment
+`frg_tzj4fbuloihy`. The lesson has no quiz yet.
+
+## 7. Decide and apply
+
+In the run, all six items were accepted with **Accept all** (`decisions: { accepted: 6 }`) and the
+proposal was applied (`POST .../apply`, `202`, **353 ms**). A real author would normally open the items
+one by one, and could reject any of them: a rejected item changes nothing.
+
+| | Before | After |
+|---|---|---|
+| Lessons | 3 | 4 (the suggested one) |
+| Minutes | 60 | 65 |
+| Objectives | 4 | 5 |
+| Text blocks | 6 | 7 |
+| Quiz questions | 5 | 5 |
+
+The apply went through the Course Builder's domain services as a new course version (kind `update`),
+the source revision 2 became the live source, and the audit trail records who accepted what against
+which revision. Learners who had finished the course would see "New since you finished" for the new
+lesson and a notice for the lesson whose text changed; the run had no learners.
+
+## The numbers
+
+| Step | Time on a laptop, local repository |
+|---|---|
+| Connect, clone and read revision 1 | 186 ms |
+| Interview, outline | 179 ms |
+| Generate and apply the course | 2.1 s |
+| Check, revision 2 and the whole analysis | 541 ms |
+| Suggest a lesson | 42 ms |
+| Apply the update | 353 ms |
+
+The cost meter showed **19,588 micro-dollars (about $0.02)** for the update (analysis 15,525, the
+suggested lesson about 4,000). That is the fake driver's token counts multiplied by the price table
+in the configuration: **no model was called and nothing was billed.** With a real model the figure
+would be real money, capped per proposal and per month by `LIVING_COURSE_PROPOSAL_COST_USD` and
+`LIVING_COURSE_SOURCE_MONTHLY_USD`. The analysis estimate shown before running was 35,650.
+
+## What this does not prove
+
+- **Real model quality.** The fake driver rewrites a sentence by copying source text. The wording of
+  the lessons, the quiz distractors ("A short guide for the engineer on call.") and the reasons are
+  mechanical. Whether a real model proposes good updates, and how often the grounding check flags a
+  claim, is measured by the eval command, not by this run.
+- **A hosted Git server.** The repository was local. The https path (address checks, pinned address, no
+  redirects, token header) is covered by tests with a recording fake `git`, but this run did not
+  clone from GitHub, GitLab, Gitea or a self-hosted server.
+- **Google Drive and Notion.** They were not part of this run. Their connectors are tested only
+  against scripted servers; the live Google and Notion APIs and their sign-in were never called.
+- **The Studio screens.** No screenshots were taken. The data above is what the screens show.
+- **Scale and timing.** The repository is one file of 1.8 KB. The timings say the pipeline has no
+  hidden cost for a small source; they do not predict a large one.
+
+## Try it yourself
+
+With the stack running, connect a repository from **New course**, then commit a change and press
+**Check now**. For a hosted server, an admin first adds `git-cli` to `LIVING_COURSE_CONNECTORS` on an
+image that ships `git` ([Living Course settings](/admin/living-course/)). The endpoints are listed in
+[Living Course internals](/developers/living-course/).
