@@ -1126,8 +1126,9 @@ Recorded in ADR 0090. The 17 decisions above stand; these details differ from th
   an add and a remove.
 - The URL connector stores the converted Markdown as the raw revision.
 - The living-course tests have their own CI shard (`living`).
+- Google Drive and Notion (6.6) are built as `GoogleDriveConnector` and `NotionConnector` with an OAuth sign-in
+  (`OAuthService`), polling only; Google Docs are exported as Markdown, not DOCX.
 - A suggested lesson for an uncovered section (`new_lesson` item) and the `git-cli` connector for any
-  https Git server (ADR 0090) were added after the first delivery; Google Drive and Notion follow as
-  plugins on the connector contract (6.6).
+  https Git server (ADR 0090) were added after the first delivery.
 - The studio hosts connection management (connect a repository, webhook URL and secret, schedule, check
   now) on the Sources page, as planned for M3.6, together with the review and audit screens.

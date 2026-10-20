@@ -39,6 +39,11 @@ see, so they are recorded here.
   off, the clone is shallow, single-branch, no checkout, with no hooks, submodules or LFS, runs with an
   empty environment in a temporary directory with a size and time cap, only regular files are read by
   blob id, the token travels in an environment header and git's own messages are never shown.
+- **Google Drive and Notion are connectors with an account sign-in** (`OAuthConnector`), built into the package
+  and opt-in like `git-cli`, not separate plugin packages: the OAuth app belongs to the installation, the
+  browser only ever holds a one-time server-side grant (encrypted, ten minutes, bound to the user), and the
+  refresh token (Google) or access token (Notion) lives encrypted in the connection. Google Docs are exported as
+  Markdown instead of DOCX (the plan's choice), which keeps headings and lists without a converter.
 
 ## Consequences
 
