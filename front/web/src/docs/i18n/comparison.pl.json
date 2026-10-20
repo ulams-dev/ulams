@@ -522,7 +522,10 @@
                   {
                     "title": "Tutor AI",
                     "text": "Odpowiada wyłącznie na podstawie źródeł kursu, z cytowaniami, i mówi, gdy pytanie wykracza poza zakres.",
-                    "status": "coming"
+                    "status": "coming",
+                    "packages": [
+                      "tutor"
+                    ]
                   }
                 ],
                 "audience": "owner"

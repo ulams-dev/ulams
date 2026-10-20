@@ -522,7 +522,10 @@
                   {
                     "title": "AI tutor",
                     "text": "Answers only from the course sources with citations, and says when a question is out of scope.",
-                    "status": "coming"
+                    "status": "coming",
+                    "packages": [
+                      "tutor"
+                    ]
                   }
                 ],
                 "audience": "owner"

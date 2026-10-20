@@ -22939,6 +22939,41 @@
     ]
    }
   },
+  "/api/admin/tutor/courses/{course}/analytics": {
+   "get": {
+    "operationId": "7fdfad52f16b2d736611d388ee7cb219",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Counts only; `smallGroup` below the minimum group size. No transcripts, no names"
+     },
+     "403": {
+      "description": "Needs learner_insights_view or authorship of the course"
+     },
+     "404": {
+      "description": "Unknown course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Anonymous tutor analytics for a course: questions, out-of-scope share and refusals during attempts",
+    "tags": [
+     "Tutor"
+    ]
+   }
+  },
   "/api/admin/user-groups/": {
    "get": {
     "description": "",
@@ -36384,6 +36419,166 @@
     ]
    }
   },
+  "/api/tutor/conversations/{conversation}": {
+   "delete": {
+    "operationId": "bef2fce36ea6ce97000cfe78cefbb4a7",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "conversation",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Deleted"
+     },
+     "404": {
+      "description": "Not the learner's conversation"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete one of the learner's conversations",
+    "tags": [
+     "Tutor"
+    ]
+   },
+   "get": {
+    "operationId": "5402b4d10648e674934c633b0d48a361",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "conversation",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Messages in order"
+     },
+     "404": {
+      "description": "Not the learner's conversation"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One of the learner's conversations with its messages",
+    "tags": [
+     "Tutor"
+    ]
+   }
+  },
+  "/api/tutor/courses/{course}/conversations": {
+   "get": {
+    "operationId": "3ff2256b082d977def1cadca5a39afaf",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Newest first"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The learner's own conversations in a course",
+    "tags": [
+     "Tutor"
+    ]
+   }
+  },
+  "/api/tutor/courses/{course}/messages": {
+   "post": {
+    "operationId": "5fac8fc8aa5c813d6da8b67dfe389e46",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "conversationId": {
+          "nullable": true,
+          "type": "string"
+         },
+         "text": {
+          "maxLength": 1000,
+          "type": "string"
+         },
+         "topicId": {
+          "description": "The topic the learner has open: its content is added to the search",
+          "nullable": true,
+          "type": "integer"
+         }
+        },
+        "required": [
+         "text"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "`answer`, `citations` (label, topic, source fragments), `refusal` (none, out_of_scope, attempt_active, unsafe), `inScope`, `remaining` questions today"
+     },
+     "403": {
+      "description": "The learner may not attend the course"
+     },
+     "404": {
+      "description": "Unknown course or conversation"
+     },
+     "429": {
+      "description": "Daily or monthly limit reached, or too many requests"
+     },
+     "503": {
+      "description": "The tutor is switched off or AI is disabled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Ask the course tutor a question; it answers only from the course, with citations",
+    "tags": [
+     "Tutor"
+    ]
+   }
+  },
   "/api/tutors": {
    "get": {
     "description": "Get Tutors",
@@ -37135,6 +37330,10 @@
   {
    "description": "Translations",
    "name": "Translations"
+  },
+  {
+   "description": "Tutor",
+   "name": "Tutor"
   },
   {
    "description": "Video",
