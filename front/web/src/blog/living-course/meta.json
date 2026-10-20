@@ -1,0 +1,81 @@
+{
+  "slug": "living-course",
+  "date": "2026-10-16",
+  "series": true,
+  "en": {
+    "title": "Living Course: 10 minutes → 15 minutes",
+    "description": "One number changes in a runbook. ULAMS shows the diff, finds the lessons and questions that rely on it, and proposes fixes the author approves.",
+    "tags": [
+      "Living Course"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "In the clip: two versions of the example runbook (v1 and v2), the source diff, the impacted lesson and question, and one accepted proposal (lesson 2.1, first block). The course stays unpublished. Analysis cost: about $0.02."
+    },
+    "imagesHeading": "In pictures",
+    "images": [
+      {
+        "name": "review",
+        "width": 1200,
+        "height": 917,
+        "alt": "Review a source update: revision 1 → 2, with the impact on lessons and quiz questions.",
+        "caption": "Review a source update: revision 1 → 2, with the impact on lessons and quiz questions."
+      },
+      {
+        "name": "accepted",
+        "width": 1080,
+        "height": 1350,
+        "alt": "A proposed fix in diff form: the answer and explanation change from 10 to 15 minutes.",
+        "caption": "A proposed fix in diff form: the answer and explanation change from 10 to 15 minutes."
+      },
+      {
+        "name": "sources",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Sources: revision 2 added, one passage changed.",
+        "caption": "Sources: revision 2 added, one passage changed."
+      }
+    ]
+  },
+  "pl": {
+    "title": "Living Course: 10 minut → 15 minut",
+    "description": "W runbooku zmienia się jedna liczba. ULAMS pokazuje diff, znajduje lekcje i pytania, które się na niej opierają, i proponuje poprawki, które zatwierdza autor.",
+    "tags": [
+      "Living Course"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "W filmie: dwie wersje przykładowego runbooka (v1 i v2), diff źródła, dotknięta lekcja i pytanie oraz jedna zaakceptowana propozycja (lekcja 2.1, pierwszy blok). Kurs pozostaje nieopublikowany. Koszt analizy: około 0,02 USD."
+    },
+    "imagesHeading": "Na obrazkach",
+    "images": [
+      {
+        "name": "review",
+        "width": 1200,
+        "height": 917,
+        "alt": "Przegląd aktualizacji źródła: rewizja 1 → 2, z wpływem na lekcje i pytania quizu.",
+        "caption": "Przegląd aktualizacji źródła: rewizja 1 → 2, z wpływem na lekcje i pytania quizu."
+      },
+      {
+        "name": "accepted",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Proponowana poprawka w postaci diffu: odpowiedź i wyjaśnienie zmieniają się z 10 na 15 minut.",
+        "caption": "Proponowana poprawka w postaci diffu: odpowiedź i wyjaśnienie zmieniają się z 10 na 15 minut."
+      },
+      {
+        "name": "sources",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Źródła: dodana rewizja 2, zmieniony jeden fragment.",
+        "caption": "Źródła: dodana rewizja 2, zmieniony jeden fragment."
+      }
+    ]
+  }
+}

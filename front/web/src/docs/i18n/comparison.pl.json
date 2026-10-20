@@ -22,6 +22,10 @@
             "href": "/pl/comparison/"
           },
           {
+            "label": "Blog",
+            "href": "/pl/blog/"
+          },
+          {
             "label": "Dokumentacja",
             "href": "https://ulams-dev.github.io/ulams/"
           }

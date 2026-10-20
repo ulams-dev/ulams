@@ -1,0 +1,41 @@
+{
+  "slug": "from-2022-to-2026",
+  "date": "2026-10-12",
+  "series": true,
+  "en": {
+    "title": "2022 → 2026: the headless course format, four years later",
+    "description": "The name ULAMS goes back to the 2022 ULAM Headless Course Format paper. What held up after four years.",
+    "tags": [
+      "History",
+      "Headless"
+    ],
+    "imagesHeading": "In pictures",
+    "images": [
+      {
+        "name": "paper",
+        "width": 1080,
+        "height": 1350,
+        "alt": "The first page of the paper (31 January 2022) above today's course preview.",
+        "caption": "The first page of the paper (31 January 2022) above today's course preview."
+      }
+    ]
+  },
+  "pl": {
+    "title": "2022 → 2026: bezgłowy format kursu po czterech latach",
+    "description": "Nazwa ULAMS pochodzi z artykułu ULAM Headless Course Format z 2022 roku. Co przetrwało cztery lata.",
+    "tags": [
+      "Historia",
+      "Headless"
+    ],
+    "imagesHeading": "Na obrazkach",
+    "images": [
+      {
+        "name": "paper",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Pierwsza strona artykułu (31 stycznia 2022) nad dzisiejszym podglądem kursu.",
+        "caption": "Pierwsza strona artykułu (31 stycznia 2022) nad dzisiejszym podglądem kursu."
+      }
+    ]
+  }
+}

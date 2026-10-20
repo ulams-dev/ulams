@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-// Export the six product pages and their SEO routes from the production Astro build.
+// Export the product pages, the blog (English and Polish) and their SEO routes from the production Astro build.
 // Build with ULAMS_IMAGE_SERVICE=noop, then pass a new output directory and the public host.
 import { spawn } from "node:child_process";
 import { request } from "node:http";
-import { cpSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -14,7 +14,12 @@ const host = process.argv[3] ?? "ulams.app";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const dist = join(root, "front/web/dist");
 const port = Number(process.env.ULAMS_STATIC_RENDER_PORT ?? 4399);
-const pages = ["/", "/pl/", "/zh/", "/comparison/", "/pl/comparison/", "/zh/comparison/"];
+// One directory per post in front/web/src/blog (meta.json, en.md, pl.md); the media is in public/blog and is copied with the client build.
+const posts = readdirSync(join(root, "front/web/src/blog"), { withFileTypes: true }).filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
+const blogPages = ["/blog/", "/pl/blog/", ...posts.flatMap((slug) => [`/blog/${slug}/`, `/pl/blog/${slug}/`])];
+const pages = ["/", "/pl/", "/zh/", "/comparison/", "/pl/comparison/", "/zh/comparison/", ...blogPages];
+// Only the landings list live demo courses; the other pages are static documents.
+const needsDemoCourses = (path) => ["/", "/pl/", "/zh/"].includes(path);
 const get = (path) => new Promise((done, reject) => {
   const req = request({ host: "127.0.0.1", port, path, headers: { host, "x-forwarded-host": host, "x-forwarded-proto": "https" } }, (res) => {
     let body = "";
@@ -36,7 +41,7 @@ try {
   cpSync(join(dist, "client"), out, { recursive: true });
   for (const path of pages) {
     let response = await get(path);
-    if (!path.includes("comparison")) {
+    if (needsDemoCourses(path)) {
       for (let attempt = 0; attempt < 20 && response.status === 200 && !response.body.includes("/learn/"); attempt++) {
         await new Promise((done) => setTimeout(done, 1500));
         response = await get(path);
@@ -60,8 +65,8 @@ try {
     if (response.status !== 200) throw new Error(`${path}: HTTP ${response.status}`);
     writeFileSync(join(out, path.slice(1)), response.body);
   }
-  writeFileSync(join(out, "_headers"), "/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n/_astro/*\n  Cache-Control: public, max-age=31536000, immutable\n/landing/*\n  Cache-Control: public, max-age=86400\n");
-  console.log(`Exported ${pages.length} product pages, robots.txt, sitemap.xml and assets to ${out}`);
+  writeFileSync(join(out, "_headers"), "/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n/_astro/*\n  Cache-Control: public, max-age=31536000, immutable\n/landing/*\n  Cache-Control: public, max-age=86400\n/blog/*\n  Cache-Control: public, max-age=86400\n");
+  console.log(`Exported ${pages.length} pages (${blogPages.length} of them the blog), robots.txt, sitemap.xml and assets to ${out}`);
 } finally {
   server.kill();
 }
