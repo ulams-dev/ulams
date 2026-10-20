@@ -983,3 +983,14 @@ Where the code differs from the plan above, and what is still open:
 - Nudges use the notifications package: `LearnerNudged` carries a `User`; the e-mail template is in
   `templates-email`. `n=<id>.<signature>` in the continue link is verified by
   `POST /api/learner-insights/nudges/opened`.
+
+## 22. Implementation notes (M4.7)
+
+- Retrieval ORs the words of the question (`to_tsquery`) instead of `websearch_to_tsquery`, which ANDs them:
+  a natural-language question rarely matches every word of one chunk. Ranking is `ts_rank_cd`.
+- The attempt guard reads open `QuizAttempt` rows directly (`topic-type-gift` was not changed): an attempt without
+  an end time that was never submitted stays open.
+- The index is checked for freshness at the first question (applied version or content hash) instead of listening to
+  every builder event; `tutor:index` forces a rebuild.
+- Top terms of the questions (8.6) are not computed: the analytics are counts and the out-of-scope share.
+- The tutor panel (learner UI), streaming and the eval command are open.
