@@ -290,6 +290,21 @@ export interface ConnectorInfo {
   configSchema: Record<string, unknown>;
   secretFields: string[];
   webhooks: boolean;
+  /** Connectors that sign in with a Google or Notion account: which provider, and whether an admin set up its OAuth client. */
+  oauth?: { provider: "google" | "notion"; configured: boolean };
+}
+
+/** Settings of the `google-drive` connector; secret `refresh_token`, or `grant` from the sign-in. */
+export interface GoogleDriveConfig {
+  /** The id or the address of a Google Docs, text, Word or PDF file or of a folder. */
+  fileId: string;
+}
+
+/** Settings of the `notion` connector; secret `token`, or `grant` from the sign-in. */
+export interface NotionConfig {
+  /** The id or the address of a Notion page. */
+  pageId: string;
+  includeChildren?: boolean;
 }
 
 export type GitHost = "github" | "gitlab" | "gitea";
@@ -322,8 +337,8 @@ export interface UrlConfig {
 }
 
 export interface ConnectInput {
-  connector: "git" | "git-cli" | "url" | string;
-  config: GitConfig | GitCliConfig | UrlConfig | Record<string, unknown>;
+  connector: "git" | "git-cli" | "url" | "google-drive" | "notion" | string;
+  config: GitConfig | GitCliConfig | UrlConfig | GoogleDriveConfig | NotionConfig | Record<string, unknown>;
   /** For Git: `{ token }`, optional for public repositories. */
   secrets?: Record<string, string>;
   schedule?: "hourly" | "daily" | "weekly" | "manual";
@@ -517,6 +532,10 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
     connectors: {
       /** The kinds of source this installation offers. */
       list: async () => (await call<ConnectorInfo[]>("GET", "/connectors")).data,
+    },
+    oauth: {
+      /** The vendor sign-in address (Google or Notion) for a session; the tokens stay on the server and come back as a one-time `grant` for `sources.connect` (`secrets: { grant }`). 422 when the sign-in is not set up. */
+      start: async (provider: "google" | "notion", sessionId: string) => (await call<{ url: string }>("POST", `/oauth/${id(provider)}/start`, undefined, { sessionId })).data,
     },
     connections: {
       /** Asks for a check now (202, queued). Throws 409 for an upload source or a paused connection. */

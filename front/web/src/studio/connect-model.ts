@@ -92,6 +92,36 @@ export function gitPayload(form: GitForm): ConnectInput {
   return { connector: "git", config, ...(token ? { secrets: { token } } : {}), schedule: asSchedule(form.schedule) };
 }
 
+/* ------------------------------------------------------------------ Google Drive and Notion */
+
+export type AccountSource = "google-drive" | "notion";
+
+export const ACCOUNT_SOURCES: Array<{ value: AccountSource; label: string; provider: "google" | "notion"; hint: string }> = [
+  { value: "google-drive", label: "Google Drive file or folder", provider: "google", hint: "The address of a Google Docs file, a text, Word or PDF file, or a folder. Share it with the Google account you sign in with." },
+  { value: "notion", label: "Notion page", provider: "notion", hint: "The address of a Notion page. Choose the page in the Notion sign-in so it is shared with this app." },
+];
+
+export interface AccountForm {
+  source: string;
+  address: string;
+  children: boolean;
+  schedule: string;
+}
+
+export function accountFormProblem(form: AccountForm): string | null {
+  const address = form.address.trim();
+  if (!ACCOUNT_SOURCES.some((s) => s.value === form.source)) return "Choose what to connect.";
+  if (form.source === "google-drive") return /^https:\/\/(docs|drive)\.google\.com\/\S+$/i.test(address) || /^[A-Za-z0-9_-]{10,100}$/.test(address) ? null : "Paste the address of the Google Docs file or folder, or its id.";
+  return /^https:\/\/(www\.)?notion\.(so|site)\/\S+$/i.test(address) || /^[0-9a-f-]{32,36}$/i.test(address) ? null : "Paste the address of the Notion page, or its id.";
+}
+
+/** What the connect request sends once the sign-in is done; the grant replaces any token. */
+export function accountPayload(form: AccountForm, grant?: string): ConnectInput {
+  const address = form.address.trim();
+  const config: Record<string, unknown> = form.source === "notion" ? { pageId: address, ...(form.children ? { includeChildren: true } : {}) } : { fileId: address };
+  return { connector: form.source, config, ...(grant ? { secrets: { grant } } : {}), schedule: asSchedule(form.schedule) };
+}
+
 export function urlFormProblem(form: UrlForm): string | null {
   const urls = splitList(form.urls);
   if (urls.length === 0) return "Add at least one page address.";
@@ -153,6 +183,8 @@ export function connectionFacts(c: SourceConnection): ConnectionFact[] {
     if (paths.length) facts.push({ label: "Paths", value: paths.join(", ") });
     return facts;
   }
+  if (c.connector === "google-drive") return [{ label: "Google Drive", value: String(cfg.fileId ?? "") }];
+  if (c.connector === "notion") return [{ label: "Notion page", value: String(cfg.pageId ?? "") + (cfg.includeChildren ? " and the pages under it" : "") }];
   if (c.connector === "url") {
     const urls = Array.isArray(cfg.urls) ? cfg.urls.map(String) : [];
     const facts: ConnectionFact[] = [{ label: urls.length === 1 ? "Page" : "Pages", value: urls.length > 1 ? `${urls.length} pages on ${hostOf(urls[0])}` : (urls[0] ?? "") }];
