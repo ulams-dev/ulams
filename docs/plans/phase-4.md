@@ -994,3 +994,12 @@ Where the code differs from the plan above, and what is still open:
   option ids) is empty until `quiz.answer` signals carry the chosen options.
 - `reflection_feedback` is limited per learner per day with a cache counter, not stored in the database.
 - The holdout (20 % get no remediation) belongs to M4.8 with the experiments package.
+
+## 23. Implementation notes (M4.8, backend)
+
+- The experiments package (leftover L2-23) does not exist yet. The remediation holdout is a stable hash share in
+  `RemediationService` with the comparison in `OutcomeTracker::helpedVsHoldout()`, off by default (consent model
+  pending #58). The adaptive-interface A/B and the delayed-retention measure wait for that package.
+- The presentation profile is derived on every request from the statuses, not stored in
+  `learner_presentation_profiles`; only the learner's overrides are stored (`insights.presentation.<course>`).
+- `learner-insights:eval` and `tutor:eval` (real-model evals), the Playwright journey and the front work of M4.8 are open.
