@@ -15,7 +15,7 @@ Shipped so far (milestone M4.1, the signal stream):
   after commit (`RecordSignalJob`, queue `LEARNER_INSIGHTS_QUEUE`).
 - Listeners for progress (`TopicProgressUpdated`, `TopicFinished`, `CourseStarted`,
   `CourseFinished`), GIFT quizzes (attempt started and finished, one signal per graded answer),
-  SCORM completion and logins.
+  SCORM completion, H5P results and logins.
 - `POST /api/learner-insights/signals` for player signals (`media.replayed`, `media.seeked_back`).
 - Commands: `learner-insights:backfill` (from existing progress, enrolments and quiz data, idempotent),
   `learner-insights:timeline --user= --course=`, `learner-insights:prune` (daily, retention 180 days).

@@ -970,8 +970,8 @@ Where the code differs from the plan above, and what is still open:
 - `quiz.answer` signals are written when an attempt finishes (one per graded answer), not from an
   answer observer: open answers have no score until graded, and the finish event carries the attempt.
   The hashed `chosen` option ids (needed for the remediation pattern key, M4.5) are not recorded yet.
-- Not yet recorded: `xapi.result` (LRS observer) and `h5p.result` (H5P progress observer). The types
-  exist in `SignalType`; the observers are open items of M4.1.
+- Not yet recorded: `xapi.result` (LRS observer, cmi5 and xAPI: a statement has to be mapped to a topic through
+  the launch session first). `h5p.result` is recorded from the H5P progress model (and by the backfill).
 - `repetition` alone is evaluated and returned by the scorer (`lowWeight`), but not persisted or
   announced: only elements with a strong rule get a stored status and a `LearnerStruggling` event.
 - Course-level reasons of a struggling or at-risk learner include the reasons of the struggling elements.
