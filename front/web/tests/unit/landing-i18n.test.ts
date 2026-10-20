@@ -217,7 +217,7 @@ describe("language switcher", () => {
     const header = doc.children!.find((c) => c.component === "SiteHeader")!;
     expect(header.props!.homeHref).toBe("/zh/");
     expect((header.props!.languages as unknown[]).length).toBe(3);
-    expect((header.props!.links as unknown[]).length).toBe(4);
+    expect((header.props!.links as unknown[]).length).toBe(5);
     expect(JSON.stringify(validateDocument(doc, { demos: [] }).filter((p) => p.component === "SiteHeader"))).toBe("[]");
   });
 });

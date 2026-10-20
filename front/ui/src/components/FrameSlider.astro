@@ -30,7 +30,7 @@ const total = frames.length;
         </div>
       )
     }
-    <ulams-frame-slider class="u-frames__player" role="region" aria-roledescription="carousel" aria-label={title ?? previous}>
+    <ulams-frame-slider class="u-frames__player" role="group" aria-roledescription="carousel" aria-label={title ?? previous}>
       <div class="u-frames__nav">
         <button class="u-frames__btn" type="button" data-prev>
           <Icon name="back" />
@@ -44,18 +44,18 @@ const total = frames.length;
       </div>
       {
         frames.map((frame, index) => (
-          <figure
+          <div
             class="u-frames__slide"
             data-frame
             role="group"
             aria-roledescription="slide"
             aria-label={`${index + 1} / ${total}`}
           >
-            <figcaption class="u-frames__caption">{frame.caption}</figcaption>
+            <p class="u-frames__caption">{frame.caption}</p>
             <a class="u-frames__zoom" href={frame.image.src} target="_blank" rel="noopener" aria-label={`Open full size: ${frame.image.alt}`}>
               <Img {...frame.image} sizes="100vw" priority={index === 0} fit="contain" />
             </a>
-          </figure>
+          </div>
         ))
       }
     </ulams-frame-slider>

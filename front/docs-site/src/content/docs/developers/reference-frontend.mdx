@@ -16,6 +16,15 @@ learnerRoutes:
   - /pl/comparison
   - /zh/comparison
   - /faq
+  - /course-generation
+  - /course-generation/microdosing-study
+  - /course-generation/stablecoin-report
+  - /pl/course-generation
+  - /pl/course-generation/microdosing-study
+  - /pl/course-generation/stablecoin-report
+  - /zh/course-generation
+  - /zh/course-generation/microdosing-study
+  - /zh/course-generation/stablecoin-report
   - /pl/faq
   - /zh/faq
   - /robots.txt
@@ -49,6 +58,7 @@ What learners see is described in [Learners](/learners/); this page covers the c
     - index.astro landing (tenant document) or platform landing
     - comparison.astro and pl/comparison.astro, zh/comparison.astro
     - faq.astro and pl/faq.astro, zh/faq.astro
+    - course-generation/ (index, microdosing-study, stablecoin-report), also under pl/ and zh/
     - blog/ and pl/blog/ the blog: index and one page per post
     - sitemap.xml.ts and robots.txt.ts (platform-host only)
     - courses/[id].astro
@@ -74,6 +84,8 @@ FAQ page, linked from the footer, at `/faq/`, `/pl/faq/` and `/zh/faq/`. Its que
 ids in every language. All page families use server rendered catalogue documents and the existing sourced comparison data. Public
 product claims keep their actual roadmap status, including when a local preview setting hides those
 labels elsewhere.
+
+The course-generation pages (`/course-generation/`, `/pl/course-generation/`, `/zh/course-generation/`) show two real courses built from a source document, one page per case study (`microdosing-study`, `stablecoin-report`) with a frame slider of the Course Builder steps.
 
 The blog is at `/blog/` (English) and `/pl/blog/` (Polish); there is no Chinese blog, so the Chinese header links to the
 English one. Posts are files in `front/web/src/blog`, rendered with the `BlogIndex` and `BlogPost` catalogue
