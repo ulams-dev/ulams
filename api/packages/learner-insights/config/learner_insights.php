@@ -27,6 +27,20 @@ return [
         'per_learner_week' => (int) env('LEARNER_INSIGHTS_NUDGES_PER_LEARNER_WEEK', 2),
     ],
 
+    // Personal remediations (plan 7.2): grounded extra help, cached per struggle pattern, AI required
+    'remediation' => [
+        'enabled' => (bool) env('LEARNER_INSIGHTS_REMEDIATION_ENABLED', true),
+        // new generations per learner per day; above it the learner sees nothing new (cached help still works)
+        'per_learner_day' => (int) env('LEARNER_INSIGHTS_REMEDIATION_PER_LEARNER_DAY', 3),
+        // feedback on a learner's own explanation (Feynman), per learner per day
+        'reflections_per_day' => (int) env('LEARNER_INSIGHTS_REFLECTIONS_PER_DAY', 5),
+        // monthly AI spend of remediations, in USD, for the tenant and for one course
+        'tenant_monthly_usd' => (float) env('LEARNER_INSIGHTS_MONTHLY_USD', 20),
+        'course_monthly_usd' => (float) env('LEARNER_INSIGHTS_COURSE_MONTHLY_USD', 5),
+        // a failed generation is not retried for this many hours
+        'retry_after_hours' => 24,
+    ],
+
     // Days an intervention may take to count as recovered
     'interventions' => ['window_days' => (int) env('LEARNER_INSIGHTS_RECOVERY_WINDOW_DAYS', 14)],
 

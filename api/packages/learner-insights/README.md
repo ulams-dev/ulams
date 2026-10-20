@@ -38,6 +38,23 @@ Milestone M4.2, transparent scoring:
   rules; `learner-insights:cohort-stats` (03:00) computes median times per element.
 - A status is information only: nothing reads it for grades, access, certificates or enrolment.
 
+Milestone M4.5, personal remediations (courses built with the Course Builder only):
+
+- `LearnerStruggling` creates or reuses the cached remediation of the struggle pattern
+  (`sha256(element, applied version, rule, kind, language)`: explanation and practice after failed
+  answers, explanation and worked example after slow or abandoned elements), assigns it to the learner
+  with the reasons, and queues `GenerateRemediationJob` on a miss. A second learner with the same
+  pattern costs nothing.
+- `RemediationGenerator` sends only the element, its cited fragments, the lesson objectives and a generic
+  difficulty (no learner data; `ai_calls.user_id` is null). The output must follow the schema, cite only
+  the provided fragments, pass the markup checks and the Course Builder `grounding` task; an unsupported
+  claim triggers one regeneration, then the remediation is `failed` and nothing is shown. Tenant and
+  course monthly budgets and a daily cap of new generations per learner apply.
+- `GET /api/learner-insights/courses/{course}/topics/{topic}/support`, `POST .../assignments/{id}/feedback`,
+  `/hide` and `/reflection` (Feynman feedback on the learner's own text, limited per day, text not stored).
+- Remediations retire when the element's applied version changes (`learner-insights:retire-remediations`).
+- The learner UI components are not part of this package; the endpoints return a declarative `document`.
+
 Privacy: nothing is recorded while `learner_insights.enabled` is false, for a learner who set the
 user setting `insights.enabled` to false, or, with `learner_insights.require_consent`, before the
 user setting `insights.consent` exists. Signals never reach an LLM.
