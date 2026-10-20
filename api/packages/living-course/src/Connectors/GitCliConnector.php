@@ -338,20 +338,46 @@ final class GitCliConnector implements SourceConnector
         $max = (int) config('living_course.git_cli.clone_bytes', 200 * 1048576);
 
         return function () use ($home, $max): ?string {
-            $size = 0;
-            if (!is_dir($home . '/repo')) {
-                return null;
+            $size = self::treeSize($home . '/repo', $max);
+
+            return $size > $max ? sprintf('The repository is larger than %d MB. Use a smaller repository or a mirror with only the documentation.', $max / 1048576) : null;
+        };
+    }
+
+    /**
+     * Bytes of regular files under a directory that git may be changing while we look: entries that vanish
+     * (a temporary pack, a removed directory) are skipped, and counting stops once `$stopAt` is passed.
+     */
+    public static function treeSize(string $dir, int $stopAt = PHP_INT_MAX): int
+    {
+        $size = 0;
+        $pending = [$dir];
+        while ($pending !== []) {
+            $current = array_pop($pending);
+            $entries = @scandir($current);
+            if ($entries === false) {
+                continue;
             }
-            $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($home . '/repo', \FilesystemIterator::SKIP_DOTS));
-            foreach ($it as $file) {
-                $size += $file->isFile() ? $file->getSize() : 0;
-                if ($size > $max) {
-                    return sprintf('The repository is larger than %d MB. Use a smaller repository or a mirror with only the documentation.', $max / 1048576);
+            foreach ($entries as $entry) {
+                if ($entry === '.' || $entry === '..') {
+                    continue;
+                }
+                $path = $current . '/' . $entry;
+                if (is_link($path)) {
+                    continue;
+                }
+                if (is_dir($path)) {
+                    $pending[] = $path;
+                } elseif (($bytes = @filesize($path)) !== false) {
+                    $size += $bytes;
+                    if ($size > $stopAt) {
+                        return $size;
+                    }
                 }
             }
+        }
 
-            return null;
-        };
+        return $size;
     }
 
     private function workDir(): string
