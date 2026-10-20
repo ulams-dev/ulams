@@ -15,9 +15,11 @@ use Ulams\Compliance\Events\TrainingEscalated;
 use Ulams\Compliance\Events\TrainingOverdue;
 use Ulams\Compliance\Http\Controllers\AssignmentController;
 use Ulams\Compliance\Http\Controllers\CourseSettingsController;
+use Ulams\Compliance\Http\Controllers\DashboardController;
 use Ulams\Compliance\Http\Controllers\ManagerController;
 use Ulams\Compliance\Http\Controllers\PathController;
 use Ulams\Compliance\Http\Controllers\RuleController;
+use Ulams\Compliance\Http\Controllers\ScheduleController;
 use Ulams\Compliance\Http\Controllers\ReportController;
 use Ulams\Compliance\Listeners\CertificateIssuedListener;
 use Ulams\Compliance\Listeners\CourseFinishedListener;
@@ -75,6 +77,7 @@ class UlamsComplianceServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'ulams-compliance');
 
         Event::listen(CourseFinished::class, CourseFinishedListener::class);
         Event::listen(PdfCreated::class, CertificateIssuedListener::class);
@@ -149,6 +152,11 @@ class UlamsComplianceServiceProvider extends ServiceProvider
             Route::put('rules/{id}', [RuleController::class, 'update']);
             Route::delete('rules/{id}', [RuleController::class, 'destroy']);
             Route::post('rules/{id}/evaluate', [RuleController::class, 'evaluate']);
+            Route::get('dashboard', [DashboardController::class, 'show']);
+            Route::get('schedules', [ScheduleController::class, 'index']);
+            Route::post('schedules', [ScheduleController::class, 'store']);
+            Route::put('schedules/{id}', [ScheduleController::class, 'update']);
+            Route::delete('schedules/{id}', [ScheduleController::class, 'destroy']);
             Route::get('report', [ReportController::class, 'index']);
             Route::get('report/export', [ReportController::class, 'export']);
         });

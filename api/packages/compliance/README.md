@@ -50,6 +50,15 @@ with BOM, cells starting with `=`, `+`, `-` or `@` are neutralised) or JSON line
 `compliance_exports` (who, dataset, filters, row count). The course version of a certificate is the Living Course
 version (`v<n>`) when there is one, otherwise the course's last update at issue time.
 
+## Dashboard and scheduled reports (Phase 6.5)
+
+`DashboardService` answers `GET /api/admin/compliance/dashboard` (`compliance_report`): open, overdue and completed
+assignments, completion rate, average days to complete, certificate health (valid, expiring in 30 and 90 days,
+expired, revoked) and the same per course, most overdue first. Learner Insights metrics (struggle and recovery) are
+not part of it yet. `ReportSchedule` rows (`/api/admin/compliance/schedules`) e-mail a dataset as CSV or JSON lines
+daily, weekly or monthly (06:00) from `compliance:process`; recipients are tenant users, never free-text addresses.
+For BI tools the report endpoints and the export are the API (scoped tokens, area `certificates`).
+
 ## API
 
 | Method | Path | Who |
@@ -67,6 +76,8 @@ version (`v<n>`) when there is one, otherwise the course's last update at issue 
 | GET | `/api/compliance/my-paths` | the learner |
 | GET | `/api/admin/compliance/report?dataset=` | `compliance_report` |
 | GET | `/api/admin/compliance/report/export?dataset=&format=csv\|jsonl` | `compliance_report` |
+| GET | `/api/admin/compliance/dashboard` | `compliance_report` |
+| GET, POST, PUT, DELETE | `/api/admin/compliance/schedules[/{id}]` | `compliance_report` |
 | GET | `/api/compliance/my-assignments` | the learner |
 | GET | `/api/compliance/team/assignments` | a manager, their direct reports only |
 

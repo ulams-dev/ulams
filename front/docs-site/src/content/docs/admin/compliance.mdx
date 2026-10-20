@@ -113,3 +113,19 @@ Filters: `course_id`, `user_id`, `status` (assignments: assigned, overdue, compl
 expired, revoked), `from` and `to` (assigned or issued dates). Every export is recorded with who ran it, the dataset,
 the filters and the number of rows. In CSV, text that a spreadsheet could read as a formula is prefixed with an
 apostrophe.
+
+## Dashboard
+
+`GET /api/admin/compliance/dashboard` (permission `compliance_report`, optional `course_id`) returns the numbers a
+dashboard needs: open, overdue and completed assignments, the completion rate and average days to complete,
+certificates that are valid, expiring within 30 or 90 days, expired or revoked, and the same per course with the most
+overdue course first. Struggle and recovery rates from Learner Insights are not included yet.
+
+## Scheduled reports and BI tools
+
+`POST /api/admin/compliance/schedules` sets up a report that is e-mailed as an attachment every day, week or month at
+06:00: `name`, `dataset`, `frequency`, optional `format` (`csv` or `jsonl`) and `filters`, and `recipient_ids`. Recipients
+are users of this academy, never free-text addresses. A failing schedule is skipped and tried again at its next time.
+
+BI tools can read the same data through the API: create a scoped access token with the certificates scope and call
+`/api/admin/compliance/report` (paginated JSON) or `/report/export` (CSV or JSON lines).

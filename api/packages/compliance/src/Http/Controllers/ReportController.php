@@ -4,11 +4,9 @@ namespace Ulams\Compliance\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Ulams\Compliance\Enums\CompliancePermissionsEnum;
 use Ulams\Compliance\Services\ComplianceReportService;
-use Ulams\Compliance\Services\CsvExporter;
 
 /**
  * Compliance report and audit export. Permission `compliance_report`. Datasets: `assignments` (required
@@ -37,7 +35,7 @@ use Ulams\Compliance\Services\CsvExporter;
  */
 class ReportController extends ComplianceController
 {
-    public function __construct(private ComplianceReportService $reports, private CsvExporter $csv)
+    public function __construct(private ComplianceReportService $reports)
     {
     }
 
@@ -61,37 +59,13 @@ class ReportController extends ComplianceController
         $this->guard($request, CompliancePermissionsEnum::REPORT);
         [$dataset, $filters] = $this->input($request);
         $format = $request->input('format', 'csv') === 'jsonl' ? 'jsonl' : 'csv';
-        $columns = $this->reports->columns($dataset);
-        $query = $this->reports->query($dataset, $filters);
         $userId = $request->user()->getKey();
         $name = sprintf('compliance-%s-%s.%s', $dataset, now()->format('Ymd-His'), $format);
 
-        return response()->streamDownload(function () use ($query, $dataset, $columns, $format, $filters, $userId) {
+        return response()->streamDownload(function () use ($dataset, $filters, $format, $userId) {
             $out = fopen('php://output', 'w');
-            $count = 0;
-            if ($format === 'csv') {
-                $this->csv->header($out, $columns);
-            }
-            $query->chunkById(500, function ($records) use ($out, $dataset, $columns, $format, &$count) {
-                foreach ($records as $record) {
-                    $row = $this->reports->row($dataset, $record);
-                    if ($format === 'csv') {
-                        $this->csv->row($out, $columns, $row);
-                    } else {
-                        fwrite($out, json_encode(array_intersect_key($row, array_flip($columns)), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n");
-                    }
-                    $count++;
-                }
-            });
+            $this->reports->write($dataset, $filters, $format, $out, $userId);
             fclose($out);
-            DB::table('compliance_exports')->insert([
-                'user_id' => $userId,
-                'dataset' => $dataset,
-                'format' => $format,
-                'filters' => json_encode($filters),
-                'row_count' => $count,
-                'created_at' => now(),
-            ]);
         }, $name, ['Content-Type' => $format === 'csv' ? 'text/csv; charset=UTF-8' : 'application/x-ndjson', 'Cache-Control' => 'no-store']);
     }
 

@@ -1989,6 +1989,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/compliance/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Compliance dashboard
+         * @description Required training (open, overdue, completed, completion rate, average days to complete), certificate health (valid, expiring in 30 and 90 days, expired, revoked) and the same per course, the most overdue first.
+         */
+        get: operations["f2230a18943f767052cb81ef740cb76d"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/compliance/managers": {
         parameters: {
             query?: never;
@@ -2197,6 +2217,46 @@ export interface paths {
         /** Preview or run a rule now */
         post: operations["23815d271ae4a93876545922062b1320"];
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/schedules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List scheduled reports
+         * @description Scheduled reports: a compliance dataset e-mailed as CSV or JSON lines every day, week or month to
+         *     tenant users. Permission `compliance_report`.
+         */
+        get: operations["ac978e24488a5cfaf3e6f82b263cd401"];
+        put?: never;
+        /** Schedule a report */
+        post: operations["d74bfc0aff8707287d16b91b727cb709"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/schedules/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update a scheduled report */
+        put: operations["c442737e92c7e076013b0ec6e4e6e0bb"];
+        post?: never;
+        /** Delete a scheduled report */
+        delete: operations["64656e7acdb2a20e4797cd437dd587a0"];
         options?: never;
         head?: never;
         patch?: never;
@@ -16174,6 +16234,34 @@ export interface operations {
             };
         };
     };
+    f2230a18943f767052cb81ef740cb76d: {
+        parameters: {
+            query?: {
+                /** @description Limit to one course */
+                course_id?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description assignments, certificates and courses blocks */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "56c18234b7847869bf716285432c7a87": {
         parameters: {
             query?: never;
@@ -16666,6 +16754,126 @@ export interface operations {
         responses: {
             /** @description count and a sample of the users that match and are not enrolled yet; enrolled count when dry_run is false */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ac978e24488a5cfaf3e6f82b263cd401: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description schedules */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    d74bfc0aff8707287d16b91b727cb709: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    /** @enum {string} */
+                    dataset: "assignments" | "certificates" | "audit";
+                    /** @enum {string} */
+                    frequency: "daily" | "weekly" | "monthly";
+                    /** @enum {string} */
+                    format?: "csv" | "jsonl";
+                    /** @description course_id, user_id, status, from, to */
+                    filters?: Record<string, never>;
+                    /** @description Ids of users of this tenant */
+                    recipient_ids: number[];
+                };
+            };
+        };
+        responses: {
+            /** @description the schedule; the first run is the next 06:00 */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    c442737e92c7e076013b0ec6e4e6e0bb: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the schedule */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown schedule */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "64656e7acdb2a20e4797cd437dd587a0": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown schedule */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
