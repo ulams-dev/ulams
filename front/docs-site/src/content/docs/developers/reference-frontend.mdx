@@ -29,6 +29,8 @@ learnerRoutes:
   - /zh/faq
   - /robots.txt
   - /sitemap.xml
+  - /llms.txt
+  - /llms/courses/[id].md
 ---
 
 import { Aside, FileTree } from "@astrojs/starlight/components";
@@ -61,6 +63,7 @@ What learners see is described in [Learners](/learners/); this page covers the c
     - course-generation/ (index, microdosing-study, stablecoin-report), also under pl/ and zh/
     - blog/ and pl/blog/ the blog: index and one page per post
     - sitemap.xml.ts and robots.txt.ts (platform-host only)
+    - llms.txt.ts and llms/courses/[id].md.ts the academy's index and public course pages as Markdown for agents
     - courses/[id].astro
     - learn/[courseId]/ lesson player and finish page
     - events/, account/, login.astro, logout.ts, tenants.astro, platform.astro
@@ -97,6 +100,17 @@ application; Comparison is a collection page with breadcrumbs; FAQ emits one `FA
 question, so its topic lists render with `jsonLd: false`. JSON-LD omits ratings, offers and
 counts. `/robots.txt` points to `/sitemap.xml`; the sitemap lists the nine canonical product URLs, the
 blog index and every blog post (English and Polish), each with its alternate languages. Both endpoints return 404 on tenant hosts.
+
+### Markdown for agents
+
+Every academy host serves `/llms.txt` ([llmstxt.org](https://llmstxt.org) format: the academy and its public
+courses, each linked to its Markdown page) and `/llms/courses/<id>.md`, the page `/courses/<id>` shows
+without signing in, as Markdown: title, lead, level, language, duration, teachers, tags, price, the
+description and the syllabus with the format and length of every topic. Both come from the public API data
+the HTML page uses (`src/lib/llms.ts`, pure functions with unit tests), are cached for 15 minutes and carry
+nothing private: lesson content needs an enrolment and is not exposed. The platform host answers
+`/llms.txt` with the product's own file; `/llms/courses/<id>.md` is 404 there. The documentation site's
+own machine-readable files are described in [Machine-readable docs and schemas](/developers/machine-readable/).
 
 The comparison matrix uses native tables with captions and scoped row and column headers. On narrow
 screens, each table scrolls inside a keyboard-focusable region so the document itself does not scroll

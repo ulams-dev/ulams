@@ -31,4 +31,4 @@ A schema is never edited in place: a breaking change gets a new file and `$id`.
 - Good: always in step with the pages; nothing to host separately; works under the Pages base path.
 - Good: the schemas have one canonical public address each, listed in `schemas/index.json`.
 - Bad: a new component needs a line in the converter (the check fails on a component it leaves behind).
-- Open: per-tenant `llms.txt` and Markdown for public course pages in the learner web app.
+- Per academy, the learner web app serves `/llms.txt` and `/llms/courses/<id>.md` from the public API data (`front/web/src/lib/llms.ts`); lesson content is not exposed.
