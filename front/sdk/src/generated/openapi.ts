@@ -7269,6 +7269,46 @@ export interface paths {
         patch: operations["b183ee48bea13fe9a93ec2d2b0516fce"];
         trace?: never;
     };
+    "/api/certificates/verify/{certificateId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Verify a certificate
+         * @description Public and throttled. Returns the status (valid, expired or revoked), the course, the holder name (masked per tenant setting), issue and expiry dates. Unknown ids answer 404.
+         */
+        get: operations["0d52c028fb85e73772dccdbca022cbd9"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/pdfs/{id}/revoke": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Revoke a certificate
+         * @description Marks the certificate revoked. It stays verifiable and shows as revoked. Needs the fabricjs_pdf_revoke permission.
+         */
+        post: operations["b730270f051e59923958ec296225cfe2"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/pdfs": {
         parameters: {
             query?: never;
@@ -10019,6 +10059,10 @@ export interface components {
             path?: string;
             assignable_type?: string;
             assignable_id?: number;
+            /** @description valid, expired or revoked */
+            status?: string;
+            /** Format: date-time */
+            expires_at?: string | null;
         };
         Template: {
             /** @description template id */
@@ -27015,6 +27059,118 @@ export interface operations {
                         message?: string;
                     };
                 };
+            };
+        };
+    };
+    "0d52c028fb85e73772dccdbca022cbd9": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description random certificate id encoded in the QR code */
+                certificateId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            certificate_id?: string;
+                            /** @enum {string} */
+                            status?: "valid" | "expired" | "revoked";
+                            title?: string;
+                            course_title?: string | null;
+                            holder_name?: string | null;
+                            /** Format: date-time */
+                            issued_at?: string;
+                            /** Format: date-time */
+                            expires_at?: string | null;
+                            /** Format: date-time */
+                            revoked_at?: string | null;
+                            issuer?: string;
+                        };
+                    };
+                };
+            };
+            /** @description unknown certificate id */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    b730270f051e59923958ec296225cfe2: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description id of the generated PDF */
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    reason: string;
+                };
+            };
+        };
+        responses: {
+            /** @description successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown PDF */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

@@ -8,4 +8,5 @@ class PdfPermissionsEnum extends BasicEnum
 {
     const PDF_READ_ALL = 'fabricjs_pdf_read_all';
     const PDF_LIST = 'fabricjs_list';
+    const PDF_REVOKE = 'fabricjs_pdf_revoke';
 }

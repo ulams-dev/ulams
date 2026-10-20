@@ -7,7 +7,8 @@ import { courseUpdatesDoc, NO_NOTICES, type LearnerNotices } from "../../lib/not
 import { chromeFor, withSessionLink } from "../../lib/docs.ts";
 import { courseHeaderDoc, descriptionDoc, purchaseDoc, syllabusDoc } from "../../lib/page-docs.ts";
 import { themeFor } from "../../lib/theme.ts";
-import { completionPercent, flattenTopics, resumeTopic } from "@ulams/sdk";
+import { courseStanding, flattenTopics } from "@ulams/sdk";
+import { standingNote } from "../../lib/standing.ts";
 import { lessonModels, topicHref } from "../../lib/view-model.ts";
 import { readSession } from "../../lib/session.ts";
 
@@ -29,6 +30,7 @@ const chrome = chromeFor(theme);
 // Returning learners (session cookie present) see their progress; others get the public page.
 const token = readSession(Astro.cookies, Astro.locals.secure);
 let progress: number | undefined;
+let progressNote = "";
 let resumeHref = course!.learnHref;
 let updatesDoc: UiNode | null = null;
 if (token) {
@@ -37,8 +39,10 @@ if (token) {
     new Promise<null>((r) => setTimeout(() => r(null), 900)),
   ]);
   if (program?.access) {
-    progress = completionPercent(program.course, program.progress);
-    const next = resumeTopic(program.course, program.progress);
+    const standing = courseStanding(program.course, program.progress);
+    progress = standing.percent;
+    progressNote = standingNote(standing);
+    const next = standing.next ?? flattenTopics(program.course)[0];
     if (next) resumeHref = topicHref(id, next.id);
     course!.lessons = lessonModels(program.course, { progress: program.progress });
     // Living Course: what changed since the learner completed or started lessons.
@@ -69,7 +73,7 @@ const generated = landing && validateDocument(landing, landingData).length === 0
       </>
     ) : (
       <>
-        <Render doc={courseHeaderDoc(theme, course!, progress, resumeHref)} data={site} />
+        <Render doc={courseHeaderDoc(theme, course!, progress, resumeHref, progressNote)} data={site} />
         {updatesDoc && <Render doc={updatesDoc} />}
         <Render doc={syllabusDoc(theme, course!)} data={site} />
         <section class="u-container u-course-about" aria-label="About the course">

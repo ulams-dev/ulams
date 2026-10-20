@@ -1,5 +1,5 @@
 {
- "summary": "536/594 covered, 58 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "536/596 covered, 59 excluded, 1 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1250,6 +1250,12 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/pdfs/{id}/revoke",
+   "summary": "Revoke a certificate",
+   "command": "",
+   "status": "missing"
+  },
+  {
    "key": "GET /api/admin/productables/",
    "summary": "",
    "command": "productables.list",
@@ -2490,6 +2496,12 @@
    "summary": "",
    "command": "public.categories-tree",
    "status": "covered"
+  },
+  {
+   "key": "GET /api/certificates/verify/{certificateId}",
+   "summary": "Verify a certificate",
+   "command": "",
+   "status": "excluded: browser-only"
   },
   {
    "key": "GET /api/cmi5/courses/{id}",

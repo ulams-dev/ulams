@@ -1800,12 +1800,21 @@
       "description": "pdfme template (JSON) the PDF is rendered from",
       "type": "object"
      },
+     "expires_at": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     },
      "id": {
       "description": "template id",
       "type": "integer"
      },
      "path": {
       "description": "path to rendered PDF binary file",
+      "type": "string"
+     },
+     "status": {
+      "description": "valid, expired or revoked",
       "type": "string"
      },
      "title": {
@@ -13668,6 +13677,71 @@
     ]
    }
   },
+  "/api/admin/pdfs/{id}/revoke": {
+   "post": {
+    "description": "Marks the certificate revoked. It stays verifiable and shows as revoked. Needs the fabricjs_pdf_revoke permission.",
+    "operationId": "b730270f051e59923958ec296225cfe2",
+    "parameters": [
+     {
+      "description": "id of the generated PDF",
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "reason": {
+          "maxLength": 500,
+          "type": "string"
+         }
+        },
+        "required": [
+         "reason"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {}
+      },
+      "description": "successful operation"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "unknown PDF"
+     },
+     "422": {
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Revoke a certificate",
+    "tags": [
+     "Template PDFs"
+    ]
+   }
+  },
   "/api/admin/productables/": {
    "get": {
     "description": "Get list of all productables",
@@ -24357,6 +24431,97 @@
     },
     "tags": [
      "Categories"
+    ]
+   }
+  },
+  "/api/certificates/verify/{certificateId}": {
+   "get": {
+    "description": "Public and throttled. Returns the status (valid, expired or revoked), the course, the holder name (masked per tenant setting), issue and expiry dates. Unknown ids answer 404.",
+    "operationId": "0d52c028fb85e73772dccdbca022cbd9",
+    "parameters": [
+     {
+      "description": "random certificate id encoded in the QR code",
+      "in": "path",
+      "name": "certificateId",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "certificate_id": {
+             "type": "string"
+            },
+            "course_title": {
+             "nullable": true,
+             "type": "string"
+            },
+            "expires_at": {
+             "format": "date-time",
+             "nullable": true,
+             "type": "string"
+            },
+            "holder_name": {
+             "nullable": true,
+             "type": "string"
+            },
+            "issued_at": {
+             "format": "date-time",
+             "type": "string"
+            },
+            "issuer": {
+             "type": "string"
+            },
+            "revoked_at": {
+             "format": "date-time",
+             "nullable": true,
+             "type": "string"
+            },
+            "status": {
+             "enum": [
+              "valid",
+              "expired",
+              "revoked"
+             ],
+             "type": "string"
+            },
+            "title": {
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "successful operation"
+     },
+     "404": {
+      "description": "unknown certificate id"
+     },
+     "429": {
+      "description": "too many requests"
+     }
+    },
+    "summary": "Verify a certificate",
+    "tags": [
+     "Template PDFs"
     ]
    }
   },
