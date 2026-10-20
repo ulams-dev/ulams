@@ -108,11 +108,8 @@ class PermissionsSeeder extends Seeder
         $this->call(CourseBuilderPermissionSeeder::class);
         $this->call(LivingCoursePermissionSeeder::class);
         $this->call(AdaptPermissionSeeder::class);
-<<<<<<< HEAD
         $this->call(WebhookPermissionSeeder::class);
-=======
         $this->call(CompliancePermissionSeeder::class);
->>>>>>> f934946e1 (feat(compliance): required training, certificate validity per course, recertification and escalation)
 
         // if there are no users, we need to create first admin 
 
