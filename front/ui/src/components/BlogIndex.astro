@@ -1,0 +1,139 @@
+---
+import { pageLocale } from "../lib/i18n.ts";
+
+interface Post {
+  title: string;
+  description?: string;
+  href: string;
+  date: string;
+  tags?: string[];
+  image?: { src: string; width: number; height: number };
+}
+interface Props {
+  id?: string;
+  eyebrow?: string;
+  title: string;
+  intro?: string;
+  posts: Post[];
+}
+const { id = "posts", eyebrow, title, intro, posts } = Astro.props;
+const locale = pageLocale(Astro);
+const tag = locale === "pl" ? "pl-PL" : locale === "zh" ? "zh-CN" : "en-GB";
+const fmt = new Intl.DateTimeFormat(tag, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+// Newest first, whatever order the document lists them in.
+const sorted = [...posts].sort((a, b) => b.date.localeCompare(a.date));
+const label = (date: string) => fmt.format(new Date(`${date}T00:00:00Z`));
+---
+
+<section class="u-section u-blogx" id={id} aria-labelledby={`${id}-title`}>
+  <div class="u-container">
+    <header class="u-section-head">
+      {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
+      <h1 class="u-h2" id={`${id}-title`}>{title}</h1>
+      {intro && <p class="u-lead">{intro}</p>}
+    </header>
+    <ul class="u-blogx__list" role="list">
+      {
+        sorted.map((post) => (
+          <li>
+            <article class="u-blogx__card">
+              {post.image && (
+                <img class="u-blogx__thumb" src={post.image.src} alt="" width={post.image.width} height={post.image.height} loading="lazy" decoding="async" />
+              )}
+              <div class="u-blogx__body">
+                <p class="u-blogx__meta">
+                  <time datetime={post.date}>{label(post.date)}</time>
+                  {post.tags && post.tags.length > 0 && <span class="u-blogx__tags">{post.tags.join(" · ")}</span>}
+                </p>
+                <h2 class="u-blogx__title">
+                  <a href={post.href}>{post.title}</a>
+                </h2>
+                {post.description && <p class="u-blogx__text">{post.description}</p>}
+              </div>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .u-blogx__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(16px, 2.4vw, 28px);
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  }
+  .u-blogx__card {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-card-bg);
+    transition: border-color 0.2s;
+  }
+  .u-blogx__card:hover,
+  .u-blogx__card:focus-within {
+    border-color: var(--ulams-color-primary);
+  }
+  .u-blogx__thumb {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: top;
+    background: var(--ulams-color-border);
+  }
+  .u-blogx__body {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    padding: 18px 20px 22px;
+  }
+  .u-blogx__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-blogx__tags {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.6875rem;
+    align-self: center;
+  }
+  .u-blogx__title {
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.25;
+  }
+  .u-blogx__title a {
+    color: var(--ulams-color-header);
+    text-decoration: none;
+  }
+  /* The whole card is the click target; the title link is the only tab stop. */
+  .u-blogx__title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+  .u-blogx__title a:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .u-blogx__text {
+    margin: 0;
+    color: var(--ulams-color-muted);
+    font-size: 0.9375rem;
+    line-height: 1.55;
+  }
+</style>

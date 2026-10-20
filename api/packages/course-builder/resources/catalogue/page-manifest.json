@@ -2713,6 +2713,279 @@
         "additionalProperties": false
       }
     },
+    "BlogIndex": {
+      "description": "The list of blog posts as cards, newest first: date, title, description, topics and an optional thumbnail. The whole card links to the post. Renders the page heading (h1), so use it once, as the lead of a blog index page.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "posts"
+          },
+          "eyebrow": {
+            "type": "string",
+            "description": "Small label above the title",
+            "maxLength": 80
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "intro": {
+            "type": "string",
+            "description": "One or two sentences under the title",
+            "maxLength": 600
+          },
+          "posts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Post title",
+                  "maxLength": 160
+                },
+                "description": {
+                  "type": "string",
+                  "description": "One or two sentences about the post",
+                  "maxLength": 300
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Link to the post",
+                  "maxLength": 2048
+                },
+                "date": {
+                  "type": "string",
+                  "description": "Publication date, YYYY-MM-DD",
+                  "maxLength": 10
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "Topic",
+                    "maxLength": 40
+                  },
+                  "description": "Topics",
+                  "default": [],
+                  "maxItems": 6
+                },
+                "image": {
+                  "type": "object",
+                  "properties": {
+                    "src": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Thumbnail URL (decorative, the title says what the post is)",
+                      "maxLength": 2048
+                    },
+                    "width": {
+                      "type": "integer",
+                      "description": "Intrinsic width in px",
+                      "minimum": 1
+                    },
+                    "height": {
+                      "type": "integer",
+                      "description": "Intrinsic height in px",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [
+                    "src",
+                    "width",
+                    "height"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "title",
+                "href",
+                "date"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Posts",
+            "default": [],
+            "maxItems": 200,
+            "minItems": 1
+          }
+        },
+        "required": [
+          "title",
+          "posts"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "BlogPost": {
+      "description": "One blog post: back link, date and byline, title (h1), lead, topics, an optional clip with a caption (native controls), the Markdown body, an optional gallery of captioned screenshots and an optional Markdown footer. Use it once, as the lead of a post page.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Anchor id",
+            "maxLength": 40,
+            "default": "post"
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title",
+            "maxLength": 160
+          },
+          "lead": {
+            "type": "string",
+            "description": "Standfirst under the title",
+            "maxLength": 400
+          },
+          "date": {
+            "type": "string",
+            "description": "Publication date, YYYY-MM-DD",
+            "maxLength": 10
+          },
+          "author": {
+            "type": "string",
+            "description": "Author name for the byline",
+            "maxLength": 80
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Topic",
+              "maxLength": 40
+            },
+            "description": "Topics",
+            "default": [],
+            "maxItems": 6
+          },
+          "backHref": {
+            "type": "string",
+            "format": "href",
+            "description": "Link back to the list of posts",
+            "maxLength": 2048
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Post body in Markdown",
+            "maxLength": 60000
+          },
+          "video": {
+            "type": "object",
+            "properties": {
+              "src": {
+                "type": "string",
+                "format": "href",
+                "description": "MP4 URL",
+                "maxLength": 2048
+              },
+              "poster": {
+                "type": "string",
+                "format": "href",
+                "description": "Poster image URL",
+                "maxLength": 2048
+              },
+              "width": {
+                "type": "integer",
+                "description": "Width in px",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "description": "Height in px",
+                "minimum": 1
+              },
+              "caption": {
+                "type": "string",
+                "description": "Says what the clip shows (also its text alternative)",
+                "maxLength": 600
+              }
+            },
+            "required": [
+              "src",
+              "width",
+              "height"
+            ],
+            "additionalProperties": false
+          },
+          "imagesHeading": {
+            "type": "string",
+            "description": "Heading of the screenshot gallery",
+            "maxLength": 120
+          },
+          "imagesIntro": {
+            "type": "string",
+            "description": "Sentence under the gallery heading",
+            "maxLength": 300
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "src": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Image URL",
+                  "maxLength": 2048
+                },
+                "alt": {
+                  "type": "string",
+                  "description": "Text alternative",
+                  "maxLength": 300
+                },
+                "width": {
+                  "type": "integer",
+                  "description": "Intrinsic width in px",
+                  "minimum": 1
+                },
+                "height": {
+                  "type": "integer",
+                  "description": "Intrinsic height in px",
+                  "minimum": 1
+                },
+                "caption": {
+                  "type": "string",
+                  "description": "Caption",
+                  "maxLength": 300
+                }
+              },
+              "required": [
+                "src",
+                "alt",
+                "width",
+                "height"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Screenshots",
+            "default": [],
+            "maxItems": 20
+          },
+          "footer": {
+            "type": "string",
+            "description": "Markdown after the gallery (related posts)",
+            "maxLength": 4000
+          }
+        },
+        "required": [
+          "title",
+          "date",
+          "backHref",
+          "markdown"
+        ],
+        "additionalProperties": false
+      }
+    },
     "CtaBand": {
       "description": "Closing call to action: a banner or a newsletter-style band.",
       "children": false,

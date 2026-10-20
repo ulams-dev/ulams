@@ -8,6 +8,16 @@ export type UiLocale = "en" | "pl" | "zh";
 
 export interface UiStrings {
   featuresOf: string;
+  /** Link from a blog post back to the list of posts. */
+  blogBack: string;
+  /** Byline of a blog post; `{author}` is replaced. */
+  blogBy: string;
+  /** Accessible name of the list of topics of a post. */
+  blogTags: string;
+  /** Shown inside a blog video when the browser cannot play it. */
+  blogNoVideo: string;
+  /** Link text that downloads the video instead. */
+  blogDownload: string;
   packageDocs: string;
   skip: string;
   navMain: string;
@@ -61,6 +71,11 @@ export interface UiStrings {
 
 const en: UiStrings = {
   featuresOf: "Features for {title}",
+  blogBack: "All posts",
+  blogBy: "By {author}",
+  blogTags: "Topics",
+  blogNoVideo: "Your browser cannot play this video.",
+  blogDownload: "Download it",
   packageDocs: "Package documentation",
   skip: "Skip to content",
   navMain: "Main",
@@ -122,6 +137,11 @@ const en: UiStrings = {
 
 const pl: UiStrings = {
   featuresOf: "Funkcje: {title}",
+  blogBack: "Wszystkie wpisy",
+  blogBy: "Autor: {author}",
+  blogTags: "Tematy",
+  blogNoVideo: "Twoja przeglądarka nie odtworzy tego filmu.",
+  blogDownload: "Pobierz go",
   packageDocs: "Dokumentacja pakietu",
   skip: "Przejdź do treści",
   navMain: "Główna",
@@ -183,6 +203,11 @@ const pl: UiStrings = {
 
 const zh: UiStrings = {
   featuresOf: "{title} 的功能",
+  blogBack: "全部文章",
+  blogBy: "作者：{author}",
+  blogTags: "主题",
+  blogNoVideo: "您的浏览器无法播放此视频。",
+  blogDownload: "下载视频",
   packageDocs: "软件包文档",
   skip: "跳到正文",
   navMain: "主导航",
