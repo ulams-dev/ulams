@@ -26,6 +26,9 @@ operations:
   # --- compliance (certificates, required training, reports)
   "GET /api/admin/compliance/managers": { id: compliance.managers-list }
   "PUT /api/admin/compliance/managers/{user}": { id: compliance.managers-set, summary: "Set or clear (manager_id null) the manager that overdue training escalates to" }
+  "GET /api/admin/compliance/paths/{id}": { id: compliance.paths-get }
+  "POST /api/admin/compliance/paths/{id}/enrollments": { id: compliance.paths-enroll, summary: "Enrol users in a learning path" }
+  "POST /api/admin/compliance/rules/{id}/evaluate": { id: compliance.rules-evaluate, summary: "Preview (default) or run (--dry-run false) an enrolment rule" }
   "GET /api/admin/compliance/report/export": { id: compliance.report-export, output: file, summary: "Download a compliance dataset as CSV or JSON lines (use --out)" }
 
   # --- courses

@@ -22,6 +22,23 @@ and `templates-pdf` through their services and events and changes none of them.
 - **Events** (templated through `templates-email`): `TrainingAssigned`, `TrainingDueSoon`, `TrainingOverdue`,
   `TrainingEscalated` (recipient: the manager), `CertificateExpiringSoon`, `CertificateExpired`.
 
+## Learning paths and enrolment rules (Phase 6.2)
+
+- **Paths** (`compliance_paths`, `compliance_path_steps`): an ordered set of courses; a step lists the courses of
+  the same path that must be done first (`prerequisites`; unknown ids, self references and cycles are rejected).
+  Enrolling a learner (`PathEnrollmentService::enroll`, once per learner and path) turns each step into a required
+  training assignment as soon as its prerequisites are done, so only startable courses are assigned. Finishing a
+  course unlocks the next steps; finishing the last one completes the path. A course counts as done with a valid
+  certificate, or, when it issues none, once it is finished.
+- **Rules** (`compliance_rules`): conditions on user attributes (all must hold) enrol a user in a path, due in N
+  days. Attributes: `group` (group names), a user column or a custom user field (model-fields), e.g. `department`,
+  `role`, `location`. Operators: `equals`, `not_equals`, `in`, `contains`, `starts_with`, `ends_with`, `exists`
+  (case-insensitive; hidden attributes such as passwords are unreadable). Rules run whenever a user is saved and in
+  the daily `compliance:process`; a user is enrolled in a path once, so a rule never re-enrols someone who finished
+  it or was removed by hand. `POST /rules/{id}/evaluate` previews (default) or runs a rule now.
+- **Events** `PathEnrolled` and `PathCompleted` (e-mail templates registered); due, reminder and escalation
+  notices come from the step assignments.
+
 ## Report and audit export
 
 `ComplianceReportService` serves three datasets, filterable by `course_id`, `user_id`, `status`, `from` and `to`:
@@ -42,6 +59,12 @@ version (`v<n>`) when there is one, otherwise the course's last update at issue 
 | DELETE | `/api/admin/compliance/assignments/{id}` | `compliance_manage` |
 | GET | `/api/admin/compliance/managers` | `compliance_manage` |
 | PUT | `/api/admin/compliance/managers/{user}` | `compliance_manage` |
+| GET, POST | `/api/admin/compliance/paths` | `compliance_manage` |
+| GET, PUT, DELETE | `/api/admin/compliance/paths/{id}` | `compliance_manage` |
+| POST | `/api/admin/compliance/paths/{id}/enrollments` | `compliance_manage` |
+| GET, POST, PUT, DELETE | `/api/admin/compliance/rules[/{id}]` | `compliance_manage` |
+| POST | `/api/admin/compliance/rules/{id}/evaluate` | `compliance_manage` |
+| GET | `/api/compliance/my-paths` | the learner |
 | GET | `/api/admin/compliance/report?dataset=` | `compliance_report` |
 | GET | `/api/admin/compliance/report/export?dataset=&format=csv\|jsonl` | `compliance_report` |
 | GET | `/api/compliance/my-assignments` | the learner |
