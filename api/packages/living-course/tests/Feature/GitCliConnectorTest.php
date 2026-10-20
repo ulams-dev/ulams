@@ -332,4 +332,28 @@ SH);
         $this->actingAs($stranger, 'api')->postJson("/api/admin/living-course/connections/{$connection->id}/check")->assertForbidden();
         $this->assertSame(1, Connection::query()->count());
     }
+
+    public function testTheSizeWatchSurvivesDirectoriesThatVanishWhileItCounts(): void
+    {
+        $dir = $this->tmp();
+        mkdir($dir . '/a/b', 0777, true);
+        file_put_contents($dir . '/a/b/pack', str_repeat('x', 100));
+        file_put_contents($dir . '/file', str_repeat('x', 50));
+        symlink('/etc/hostname', $dir . '/link');
+
+        $this->assertSame(150, GitCliConnector::treeSize($dir));
+        $this->assertSame(0, GitCliConnector::treeSize($dir . '/missing'), 'a directory that is already gone counts as empty');
+        $this->assertGreaterThan(60, GitCliConnector::treeSize($dir, 60), 'stops once past the limit');
+
+        // a writer that creates and removes directories while the watch runs must never make it throw
+        $churn = $dir . '/churn';
+        $script = 'end=$(( $(date +%s) + 2 )); while [ $(date +%s) -lt $end ]; do mkdir -p ' . escapeshellarg($churn . '/objects/pack') . ' && echo y > ' . escapeshellarg($churn . '/objects/pack/p') . '; rm -rf ' . escapeshellarg($churn) . '; done';
+        $process = proc_open(['sh', '-c', $script], [], $pipes);
+        $until = microtime(true) + 1.0;
+        while (microtime(true) < $until) {
+            $this->assertGreaterThanOrEqual(150, GitCliConnector::treeSize($dir));
+        }
+        proc_terminate($process);
+        proc_close($process);
+    }
 }
