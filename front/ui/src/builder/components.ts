@@ -997,6 +997,7 @@ const ITEM_KIND: Record<string, { label: string; icon: "tilde" | "check" | "minu
   no_change: { label: "No change needed", icon: "check" },
   manual: { label: "Update by hand", icon: "alert" },
   uncovered: { label: "New in the source", icon: "plus" },
+  new_lesson: { label: "Suggested lesson", icon: "plus" },
 };
 const ITEM_STATUS: Record<string, { label: string; icon: "check" | "minus" | "clock" | "alert" }> = {
   pending: { label: "Not decided yet", icon: "clock" },
@@ -1006,14 +1007,15 @@ const ITEM_STATUS: Record<string, { label: string; icon: "check" | "minus" | "cl
   stale: { label: "Edited after the analysis", icon: "alert" },
 };
 /** Button words per kind: what "accept" means differs when nothing is written to the course. */
-const ACCEPT_LABEL: Record<string, string> = { no_change: "Agree, no change", manual: "Mark as handled", uncovered: "Acknowledge" };
-const REJECT_LABEL: Record<string, string> = { no_change: "Disagree", manual: "Keep as it is", uncovered: "Skip", remove: "Keep the element", update: "Reject" };
+const ACCEPT_LABEL: Record<string, string> = { no_change: "Agree, no change", manual: "Mark as handled", uncovered: "Acknowledge", new_lesson: "Add this lesson" };
+const REJECT_LABEL: Record<string, string> = { no_change: "Disagree", manual: "Keep as it is", uncovered: "Skip", remove: "Keep the element", update: "Reject", new_lesson: "Do not add" };
 const KIND_NOTE: Record<string, string> = {
   citation_remap: "Only the citations change: the source text this element relies on moved or was renumbered. The wording stays the same.",
   remove: "The source no longer covers this. Accepting removes the element from the course.",
   no_change: "AI found no change needed. Nothing is written to the course unless you ask for changes.",
   manual: "This needs an update by hand: it has not been analysed. Open it in the workspace and edit it there.",
-  uncovered: "A new section in the source that no lesson covers yet. Add a lesson for it in the workspace.",
+  uncovered: "A new section in the source that no lesson covers yet. Ask for a suggested lesson, or add one yourself in the workspace.",
+  new_lesson: "AI suggested this lesson from the new section, and every part of it cites that section. Accepting adds it to the course when you apply the update; nothing changes before.",
 };
 
 function fieldDiff(f: Props): HTMLElement {
@@ -1044,7 +1046,7 @@ const UpdateItem: Renderer = (p, ctx, id) => {
   const max = Number(p.maxRegenerations ?? 3);
   const used = Number(p.regenerations ?? 0);
   const canDecide = p.canDecide !== false;
-  const canRegenerate = p.canRegenerate !== false && ["update", "no_change", "remove", "manual"].includes(kind);
+  const canRegenerate = p.canRegenerate !== false && ["update", "no_change", "remove", "manual", "new_lesson"].includes(kind);
   let status = String(p.status);
 
   const live = h("p", { class: "cb-sr", role: "status", "aria-live": "polite" });
@@ -1136,6 +1138,18 @@ const UpdateItem: Renderer = (p, ctx, id) => {
       h("span", { class: "cb-muted cb-small cb-item-count" }, exhausted ? `You asked ${used} times. Edit it by hand in the workspace.` : used > 0 ? `Asked for changes ${used} of ${max} times` : ""),
       form
     );
+  }
+
+  if (kind === "uncovered" && p.canSuggest) {
+    const suggest = h("button", { type: "button", class: "cb-btn cb-btn-small cb-btn-primary", "data-suggest-lesson": "" }, icon("plus"), "Suggest a lesson");
+    suggest.addEventListener("click", () => {
+      suggest.disabled = true;
+      root.setAttribute("aria-busy", "true");
+      live.textContent = "";
+      window.setTimeout(() => (live.textContent = `Writing a lesson for ${String(p.label)}…`), 30);
+      act(ctx, id, "suggest_lesson", { itemId: p.itemId });
+    });
+    controls.append(suggest);
   }
 
   const fields = (p.fields as Props[] | undefined) ?? [];

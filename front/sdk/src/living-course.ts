@@ -166,16 +166,18 @@ export type ProposalStatus =
   | "superseded"
   | "failed";
 
-export type ItemKind = "update" | "citation_remap" | "remove" | "no_change" | "manual" | "uncovered";
+export type ItemKind = "update" | "citation_remap" | "remove" | "no_change" | "manual" | "uncovered" | "new_lesson";
 export type ItemType = "block" | "question" | "objective" | "lesson" | "course" | "section";
 export type ItemStatus = "pending" | "accepted" | "rejected" | "conflict" | "stale";
-export type ChangeClass = "none" | "minor" | "major" | "answer_changed" | "removed";
+export type ChangeClass = "none" | "minor" | "major" | "answer_changed" | "removed" | "added";
 
 export interface ProposalCounts {
   items: number;
   elements: number;
   remaps: number;
   uncovered: number;
+  /** Lessons suggested for uncovered sections (items of kind `new_lesson`). */
+  newLessons?: number;
   major: number;
   answerChecks: number;
   groups: number;
@@ -483,6 +485,13 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
       /** One new call for one element; at most three per item. */
       regenerate: async (proposalId: string, itemId: string, comment: string) =>
         (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/regenerate`, undefined, { comment })).data,
+      /**
+       * One AI call: a lesson for a new source section no lesson covers. The item becomes `new_lesson`
+       * (`after.lesson` holds the lesson, `after.module` where it goes); it is applied only when accepted.
+       * Throws 409 (not an uncovered section, or settled), 422 `budget` or 503 `ai_disabled`.
+       */
+      suggestLesson: async (proposalId: string, itemId: string) =>
+        (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/suggest-lesson`)).data,
       /** Saves the note learners see (plain text, up to 500 characters); an empty note brings back the suggested one. Only while the proposal is open. */
       setLearnerNote: async (proposalId: string, note: string) =>
         (await call<LearnerNoteResult>("PUT", `/proposals/${id(proposalId)}/learner-note`, undefined, { note })).data,

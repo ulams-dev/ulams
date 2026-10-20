@@ -328,6 +328,24 @@ describe("interactions round-trip as A2UI actions", () => {
     const item = (over: Record<string, unknown> = {}) => single("UpdateItem", { ...builderFixtures.UpdateItem!, ...over });
     const find = (root: ParentNode, text: string) => [...root.querySelectorAll("button")].find((b) => b.textContent?.includes(text))!;
 
+    it("offers Suggest a lesson on an uncovered section and reports it to the host", () => {
+      const c = ctx();
+      const main = mount(item({ kind: "uncovered", elementType: "section", fields: undefined, flags: undefined, answerCheck: false, answerChanged: false, canSuggest: true }), c);
+      expect(main.textContent).toContain("Ask for a suggested lesson");
+      find(main, "Suggest a lesson").click();
+      expect(c.actions[0]).toMatchObject({ name: "suggest_lesson", context: { itemId: "01item1" } });
+      expect(find(main, "Suggest a lesson").disabled).toBe(true);
+      expect(mount(item({ kind: "uncovered", elementType: "section", fields: undefined, canSuggest: false })).textContent).not.toContain("Suggest a lesson");
+    });
+
+    it("shows a suggested lesson with its added text, a decision and the option to ask again", () => {
+      const main = mount(item({ kind: "new_lesson", elementType: "lesson", answerCheck: false, answerChanged: false, flags: undefined, fields: [{ path: "lesson.title", label: "Lesson title", after: "Storing beans" }] }));
+      expect(main.textContent).toContain("Suggested lesson");
+      expect(main.textContent).toContain("Storing beans");
+      expect(find(main, "Add this lesson")).toBeTruthy();
+      expect(find(main, "Ask for changes")).toBeTruthy();
+    });
+
     it("shows the word diff, reason, warnings, citations and counts without relying on colour", () => {
       const main = mount(item());
       expect(main.querySelector("article")?.getAttribute("aria-labelledby")).toBeTruthy();

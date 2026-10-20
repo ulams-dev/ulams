@@ -53,6 +53,22 @@ describe("fields of an element", () => {
     expect(fieldsFor(item({ after: null }))).toEqual([]);
   });
 
+  it("shows a suggested lesson as added fields: module, title, objectives and text", () => {
+    const row = item({
+      kind: "new_lesson", type: "lesson", before: null,
+      after: { module: { id: "m1", title: "Storage" }, lesson: { id: "l9", title: "Storing beans", summary: "Keep beans fresh.", objectives: [{ text: "Store beans well." }], blocks: [{ markdown: "Keep beans airtight." }] } },
+    });
+    expect(fieldsFor(row)).toEqual([
+      { path: "module", label: "Goes into module", after: "Storage" },
+      { path: "lesson.title", label: "Lesson title", after: "Storing beans" },
+      { path: "lesson.summary", label: "Summary", after: "Keep beans fresh." },
+      { path: "lesson.objectives.0", label: "Learning objective 1", after: "Store beans well." },
+      { path: "lesson.blocks.0", label: "Text 1", after: "Keep beans airtight." },
+    ]);
+    const fresh = item({ kind: "new_lesson", type: "lesson", before: null, after: { module: { id: null, title: "New module" }, lesson: { title: "T" } } });
+    expect(fieldsFor(fresh)[0]).toMatchObject({ label: "New module" });
+  });
+
   it("handles objectives, lessons and the course title", () => {
     const objective = item({ type: "objective", before: { id: "o", text: "Old" }, after: { id: "o", text: "New" } });
     expect(fieldsFor(objective)[0]).toMatchObject({ label: "Learning objective", before: "Old", after: "New" });
@@ -73,6 +89,16 @@ describe("catalogue props", () => {
     expect(props).toMatchObject({ answerChanged: true, answerCheck: true, flags: ["Possibly unsupported: filtered water"], signals: ["number"], sources: "Based on §3.2 Ratios", href: "/studio/s/s1/workspace", maxRegenerations: 3 });
   });
 
+  it("offers Suggest a lesson only where the caller allows it and the props still validate", () => {
+    const uncovered = item({ kind: "uncovered", type: "section", before: null, after: null });
+    const props = itemProps(uncovered, { ...ctx, canSuggest: true });
+    expect(props.canSuggest).toBe(true);
+    expect(validate(builderCatalogue.UpdateItem.props, props).issues).toEqual([]);
+    expect(itemProps(uncovered, ctx)).not.toHaveProperty("canSuggest");
+    const lesson = item({ kind: "new_lesson", type: "lesson", before: null, after: { module: { id: "m", title: "M" }, lesson: { title: "T", blocks: [{ markdown: "x" }] } } });
+    expect(validate(builderCatalogue.UpdateItem.props, itemProps(lesson, ctx)).issues).toEqual([]);
+  });
+
   it("builds ImpactSummary props and leaves learner impact to the extension point", () => {
     const props = impactProps(detail([item()]));
     expect(validate(builderCatalogue.ImpactSummary.props, props).issues).toEqual([]);
@@ -88,6 +114,7 @@ describe("decisions and apply", () => {
     const model = applyModel(detail(rows));
     expect(model).toEqual({ applicable: 1, undecided: 3, conflicts: 1, rejected: 0, canApply: true });
     expect(applySummary(model)).toBe("1 accepted · 3 undecided · 0 rejected · 1 in conflict");
+    expect(applyModel(detail([item(), item({ id: "n1", kind: "new_lesson", type: "lesson", status: "accepted", elementId: "l9" })])).applicable).toBe(1);
     expect(applyModel(detail([item()])).canApply).toBe(false);
     expect(applyModel(detail(rows, { status: "applying" })).canApply).toBe(false);
   });

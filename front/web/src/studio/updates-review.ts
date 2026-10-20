@@ -352,6 +352,7 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     }
     const decidable = canDecide(p.status, aiEnabled);
     const regenerate = aiEnabled && p.status === "ready";
+    const suggest = aiEnabled && (p.status === "ready" || p.status === "no_impact");
     const toolbar = p.status === "ready" ? bulkToolbar() : null;
     itemsCol.replaceChildren(
       ...(toolbar ? [toolbar] : []),
@@ -362,15 +363,15 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
           h("ul", { class: "st-items" }, g.items.map((item) => {
             const host = h("li", { "data-item-host": item.id });
             itemHosts.set(item.id, host);
-            host.replaceChildren(itemSurface(item, decidable, regenerate));
+            host.replaceChildren(itemSurface(item, decidable, regenerate, suggest));
             return host;
           })));
       })
     );
   }
 
-  const itemSurface = (item: ProposalItem, decidable: boolean, regenerate: boolean): HTMLElement =>
-    surface("UpdateItem", itemProps(item, { sessionId, canDecide: decidable, canRegenerate: regenerate }), (action) => void onItemAction(action));
+  const itemSurface = (item: ProposalItem, decidable: boolean, regenerate: boolean, suggest = false): HTMLElement =>
+    surface("UpdateItem", itemProps(item, { sessionId, canDecide: decidable, canRegenerate: regenerate, canSuggest: suggest }), (action) => void onItemAction(action));
 
   function bulkToolbar(): HTMLElement {
     const slot = h("div", { "data-reject-slot": "" });
@@ -456,6 +457,22 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
       } catch (error) {
         notify(message(error, "The decision could not be saved."), "error");
         host(itemId)?.replaceChildren(itemSurface(item, true, aiEnabled && detail.status === "ready"));
+      }
+    } else if (action.name === "suggest_lesson") {
+      try {
+        const result = await lc.proposals.suggestLesson(proposalId, itemId);
+        replaceItem(result.item, { ...detail, ...result.proposal });
+        itemsKey = "";
+        renderHeader();
+        renderItemsIfChanged();
+        renderApplyBar();
+        updateGroupProgress();
+        host(itemId)?.querySelector<HTMLElement>("[data-focus-target]")?.focus();
+        announce(`A lesson is suggested for ${result.item.label}. Review it and decide.`);
+      } catch (error) {
+        const info = apiErrorInfo(error);
+        notify(info.code === "ai_disabled" ? "AI is disabled on this installation. Add the lesson by hand in the workspace." : message(error, "A lesson could not be suggested."), "error");
+        host(itemId)?.replaceChildren(itemSurface(item, canDecide(detail.status, aiEnabled), false, info.code !== "ai_disabled" && aiEnabled));
       }
     } else if (action.name === "regenerate_item") {
       const comment = String(action.context.comment ?? "");

@@ -726,7 +726,7 @@ export const builderCatalogue = {
   },
   UpdateItem: {
     description:
-      "One proposed change to one element of the course after its source changed, for the author to decide on: the element, what kind of proposal it is (update, citation update, removal, no change needed, update by hand, new section in the source), why, the old and new text with word-level marks, citation chips, warnings (possibly unsupported claim, the answer may be wrong or changed), and the controls Accept, Reject, Reset and Ask for changes with a comment field. Conflict and edited-after-analysis states explain what to do. Props come from the update proposal, never from the model.",
+      "One proposed change to one element of the course after its source changed, for the author to decide on: the element, what kind of proposal it is (update, citation update, removal, no change needed, update by hand, new section in the source, suggested new lesson), why, the old and new text with word-level marks, citation chips, warnings (possibly unsupported claim, the answer may be wrong or changed), and the controls Accept, Reject, Reset and Ask for changes with a comment field. Conflict and edited-after-analysis states explain what to do. Props come from the update proposal, never from the model.",
     modelSelectable: false,
     children: false,
     props: obj(
@@ -735,7 +735,7 @@ export const builderCatalogue = {
         elementId: str("Element in the course", 32),
         elementType: oneOf(["block", "question", "objective", "lesson", "course", "section"], "What the element is"),
         label: str("Element shown to the author, e.g. Lesson 2.1 › Q2", 200),
-        kind: oneOf(["update", "citation_remap", "remove", "no_change", "manual", "uncovered"], "Kind of proposal"),
+        kind: oneOf(["update", "citation_remap", "remove", "no_change", "manual", "uncovered", "new_lesson"], "Kind of proposal"),
         status: oneOf(["pending", "accepted", "rejected", "conflict", "stale"], "Decision state"),
         reason: str("Why the element changes, plain text", 500),
         severity: oneOf(["minor", "major"], "How much the meaning changes"),
@@ -762,6 +762,7 @@ export const builderCatalogue = {
         maxRegenerations: int("Most times the author may ask for changes", { minimum: 1, maximum: 10 }),
         canDecide: bool("Decisions are open (the analysis is finished and the proposal is not settled)"),
         canRegenerate: bool("Ask for changes is available (AI is enabled)"),
+        canSuggest: bool("Suggest a lesson is available for a new source section (AI is enabled)"),
         href: str("Link to the element in the workspace", 400),
       },
       ["itemId", "elementId", "elementType", "label", "kind", "status"]
