@@ -64,6 +64,15 @@ return [
         'urls' => 20,
     ],
 
+    // The `git-cli` connector (any Git server over https, read with the git command; enable it with
+    // LIVING_COURSE_CONNECTORS=upload,git,url,git-cli on an image that ships git)
+    'git_cli' => [
+        // seconds for one git command
+        'timeout' => (int) env('LIVING_COURSE_GIT_TIMEOUT', 120),
+        // a clone that grows past this is stopped (shallow, single branch, no checkout)
+        'clone_bytes' => (int) env('LIVING_COURSE_GIT_CLONE_MB', 200) * 1048576,
+    ],
+
     // Raw revisions are kept on the Course Builder private disk under this prefix
     'revisions_prefix' => 'living-course/revisions',
 ];
