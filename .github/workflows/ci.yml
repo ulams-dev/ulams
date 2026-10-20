@@ -213,7 +213,7 @@ jobs:
       - name: Build the reference frontend
         run: corepack yarn workspace @ulams/web build
       - name: Axe and keyboard checks
-        run: corepack yarn workspace @ulams/web exec playwright test -c playwright.a11y.config.ts
+        run: corepack yarn workspace @ulams/web test:a11y
       - name: Playwright report
         if: failure()
         uses: actions/upload-artifact@v6
