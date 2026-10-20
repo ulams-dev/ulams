@@ -1,5 +1,5 @@
 {
- "summary": "560/627 covered, 62 excluded, 5 missing, 5 routes missing from the spec",
+ "summary": "565/627 covered, 62 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -2086,8 +2086,8 @@
   {
    "key": "GET /api/admin/tutor/courses/{course}/analytics",
    "summary": "Anonymous tutor analytics for a course: questions, out-of-scope share and refusals during attempts",
-   "command": "",
-   "status": "missing"
+   "command": "tutor.courses-analytics",
+   "status": "covered"
   },
   {
    "key": "GET /api/admin/user-groups/",
@@ -3700,26 +3700,26 @@
   {
    "key": "GET /api/tutor/conversations/{conversation}",
    "summary": "One of the learner's conversations with its messages",
-   "command": "",
-   "status": "missing"
+   "command": "my.tutor-conversations-list",
+   "status": "covered"
   },
   {
    "key": "DELETE /api/tutor/conversations/{conversation}",
    "summary": "Delete one of the learner's conversations",
-   "command": "",
-   "status": "missing"
+   "command": "my.tutor-conversations-delete",
+   "status": "covered"
   },
   {
    "key": "GET /api/tutor/courses/{course}/conversations",
    "summary": "The learner's own conversations in a course",
-   "command": "",
-   "status": "missing"
+   "command": "my.tutor-courses-conversations",
+   "status": "covered"
   },
   {
    "key": "POST /api/tutor/courses/{course}/messages",
    "summary": "Ask the course tutor a question; it answers only from the course, with citations",
-   "command": "",
-   "status": "missing"
+   "command": "my.tutor-courses-messages",
+   "status": "covered"
   },
   {
    "key": "GET /api/tutors",
