@@ -64,3 +64,19 @@ escalation waits and is sent after one is linked.
 Each notice is recorded once, so running the command again, or late, never repeats one. If several reminder
 days have passed, only the most urgent is sent. The six e-mails are editable under
 **Configuration → Templates** like any other e-mail template.
+
+## Reports and audit export
+
+`GET /api/admin/compliance/report?dataset=...` (permission `compliance_report`) returns a paginated table; the
+same URL under `/report/export` downloads every matching row as CSV (or JSON lines with `format=jsonl`).
+
+| Dataset | Answers |
+|---|---|
+| `assignments` | Who had to do which course, by when, whether they did (and when), days overdue, escalation level, and the certificate with its status, expiry and course version. |
+| `certificates` | Every certificate: holder, issue and expiry date, valid, expired or revoked, revocation reason, course version. |
+| `audit` | The tamper-evident Living Course audit entries (course versions, who changed what), when Living Course is installed. |
+
+Filters: `course_id`, `user_id`, `status` (assignments: assigned, overdue, completed, cancelled; certificates: valid,
+expired, revoked), `from` and `to` (assigned or issued dates). Every export is recorded with who ran it, the dataset,
+the filters and the number of rows. In CSV, text that a spreadsheet could read as a formula is prefixed with an
+apostrophe.
