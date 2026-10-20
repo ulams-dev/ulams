@@ -45,7 +45,7 @@ interface CsvGroupAPISwagger
     /**
      * @OA\Post(
      *      tags={"Admin CSV"},
-     *      path="/api/admin/csv/groups",
+     *      path="/api/admin/csv/groups", operationId="csv.groups",
      *      description="Imports group from csv",
      *      security={
      *          {"passport": {}},
@@ -70,10 +70,7 @@ interface CsvGroupAPISwagger
      *              )
      *          )
      *      ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="successful operation",
-     *      ),
+     *     @OA\Response(response=200, description="successful operation", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",

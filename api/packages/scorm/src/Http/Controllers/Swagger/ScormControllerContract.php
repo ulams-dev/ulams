@@ -15,7 +15,7 @@ interface ScormControllerContract
 {
     /**
      * @OA\Post(
-     *     path="/api/admin/scorm/upload",
+     *     path="/api/admin/scorm/upload", operationId="scorm.upload",
      *     summary="Convert ZIP Scorm Package into Ulams LMS Scorm storage",
      *     tags={"SCORM"},
      *     security={
@@ -35,10 +35,7 @@ interface ScormControllerContract
      *              )
      *          )
      *      ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="scorm data",
-     *      ),
+     *     @OA\Response(response=200, description="scorm data", @OA\JsonContent(ref="#/components/schemas/ScormUploadResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -60,7 +57,7 @@ interface ScormControllerContract
 
     /**
      * @OA\Post(
-     *     path="/api/admin/scorm/parse",
+     *     path="/api/admin/scorm/parse", operationId="scorm.parse",
      *     summary="Parse ZIP Scorm to see if it's valid",
      *     tags={"SCORM"},
      *     security={
@@ -80,10 +77,7 @@ interface ScormControllerContract
      *              )
      *          )
      *      ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="scorm data",
-     *      ),
+     *     @OA\Response(response=200, description="scorm data", @OA\JsonContent(ref="#/components/schemas/ScormParseResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -187,7 +181,7 @@ interface ScormControllerContract
 
     /**
      * @OA\Get(
-     *     path="/api/admin/scorm/",
+     *     path="/api/admin/scorm/", operationId="scorm.list",
      *     summary="Read a page identified by a given slug identifier",
      *     tags={"SCORM"},
      *     security={
@@ -209,10 +203,7 @@ interface ScormControllerContract
      *             type="number"
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="",
-     *      ),
+     *     @OA\Response(response=200, description="", @OA\JsonContent(ref="#/components/schemas/ScormPackagePageResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -234,16 +225,13 @@ interface ScormControllerContract
 
     /**
      * @OA\Get(
-     *     path="/api/admin/scorm/scos",
+     *     path="/api/admin/scorm/scos", operationId="scorm.scos",
      *     summary="Get all scos",
      *     tags={"SCORM"},
      *     security={
      *         {"passport": {}},
      *     },
-     *     @OA\Response(
-     *         response=200,
-     *         description="",
-     *      ),
+     *     @OA\Response(response=200, description="", @OA\JsonContent(ref="#/components/schemas/ScormScoListResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -265,7 +253,7 @@ interface ScormControllerContract
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/scorm/{scorm_id}",
+     *     path="/api/admin/scorm/{scorm_id}", operationId="scorm.delete",
      *     summary="Delete scorm package by id",
      *     tags={"SCORM"},
      *     security={
@@ -280,10 +268,7 @@ interface ScormControllerContract
      *             type="number"
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="",
-     *      ),
+     *     @OA\Response(response=200, description="", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",

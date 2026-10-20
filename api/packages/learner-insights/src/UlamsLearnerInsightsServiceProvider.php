@@ -17,6 +17,7 @@ use Ulams\Courses\Events\CourseFinished;
 use Ulams\Courses\Events\CourseStarted;
 use Ulams\Courses\Events\TopicFinished;
 use Ulams\Courses\Events\TopicProgressUpdated;
+use Ulams\Courses\Models\H5PUserProgress;
 use Ulams\LearnerInsights\Console\BackfillCommand;
 use Ulams\LearnerInsights\Console\CohortStatsCommand;
 use Ulams\LearnerInsights\Console\EvaluateCommand;
@@ -101,6 +102,7 @@ class UlamsLearnerInsightsServiceProvider extends ServiceProvider
         Event::listen(QuizAttemptFinishedEvent::class, [RecordSignals::class, 'quizFinished']);
         Event::listen(ScormScoCompleted::class, [RecordSignals::class, 'scormCompleted']);
         Event::listen(Login::class, [RecordSignals::class, 'login']);
+        H5PUserProgress::saved(fn (H5PUserProgress $p) => $this->app->make(RecordSignals::class)->h5pProgress($p));
         // interventions: an at-risk learner may be nudged; a recovery closes open interventions
         Event::listen(LearnerAtRisk::class, fn (LearnerAtRisk $e) => $this->app->make(NudgeService::class)->consider($e->userId, $e->courseId, $e->reasons));
         Event::listen(LearnerStruggling::class, fn (LearnerStruggling $e) => $this->app->make(RemediationService::class)->onStruggling($e->userId, $e->courseId, $e->elementKey, $e->reasons));

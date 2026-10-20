@@ -292,7 +292,7 @@ interface UserGroupsSwagger
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/user-groups/{id}",
+     *     path="/api/admin/user-groups/{id}", operationId="groups.delete",
      *     summary="Delete group",
      *     description="",
      *     tags={"Admin User Groups"},
@@ -308,10 +308,7 @@ interface UserGroupsSwagger
      *              format="int64",
      *          ),
      *      ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="successful operation, Group deleted"
-     *     ),
+     *     @OA\Response(response=200, description="successful operation, Group deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
      * )
      */
     public function deleteGroup(UserGroupDeleteRequest $request): JsonResponse;

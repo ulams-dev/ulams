@@ -79,6 +79,20 @@ class BackfillCommand extends Command
             }
         });
 
+        // H5P results: the latest statement per learner, topic and verb
+        if (DB::getSchemaBuilder()->hasTable('h5p_user_progress')) {
+            $q = DB::table('h5p_user_progress')->orderBy('id');
+            if ($course) {
+                $q->whereIn('topic_id', DB::table('topics')->join('lessons', 'lessons.id', '=', 'topics.lesson_id')->where('lessons.course_id', $course)->select('topics.id'));
+            }
+            $q->chunkById($chunk, function ($rows) use ($emit) {
+                foreach ($rows as $row) {
+                    $scaled = data_get((array) json_decode((string) $row->data, true), 'result.score.scaled');
+                    $emit(new SignalData((int) $row->user_id, SignalType::H5P_RESULT, 'backfill', 'h5p_user_progress:' . $row->id, CarbonImmutable::parse($row->updated_at ?? $row->created_at), null, (int) $row->topic_id, null, is_numeric($scaled) ? round(max(0.0, min(1.0, (float) $scaled)), 4) : null, ['verb' => (string) $row->event]));
+                }
+            });
+        }
+
         // GIFT attempts and graded answers
         if (DB::getSchemaBuilder()->hasTable('topic_gift_quiz_attempts')) {
             $morph = (new \Ulams\TopicTypeGift\Models\GiftQuiz())->getMorphClass();
