@@ -10814,6 +10814,60 @@
     ]
    }
   },
+  "/api/admin/living-course/oauth/{provider}/start": {
+   "post": {
+    "description": "\"Connect your Google or Notion account\" for the Drive and Notion connectors. The start needs the same right\nas connecting a source; the callback is the vendor's redirect and is authorised by the encrypted,\nexpiring state of the start. The tokens never reach the browser: it only gets a one-time grant id that\nthe connect request redeems.",
+    "operationId": "bd86624c8018d1140c42b43d19961c34",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "enum": [
+        "google",
+        "notion"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "sessionId": {
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "url to send the browser to"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "422": {
+      "description": "sign-in not set up on this installation"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The vendor sign-in address for Connect your account (provider google or notion); the session must be one the caller may change",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
   "/api/admin/living-course/proposals/{proposal}": {
    "get": {
     "operationId": "13412db1de147bf01a7835b034597bb9",
@@ -26160,6 +26214,54 @@
     ]
    }
   },
+  "/api/living-course/oauth/{provider}/callback": {
+   "get": {
+    "operationId": "3b68837e9e8fc5734bb6d7892485c759",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "enum": [
+        "google",
+        "notion"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "code",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "state",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "grant (when no return address is configured)"
+     },
+     "302": {
+      "description": "redirect to the studio"
+     },
+     "422": {
+      "description": "sign-in refused or expired"
+     }
+    },
+    "summary": "The vendor's redirect after the sign-in: redirects to the studio with a one-time grant, or answers with it",
+    "tags": [
+     "Living Course"
+    ]
+   }
+  },
   "/api/living-course/webhooks/{webhookId}": {
    "post": {
     "description": "Inbound webhooks of source hosts (ADR 0032). Public route, authenticated by the signature with the\nconnection's own secret: invalid signatures are refused and logged, duplicates answer 200 without\nwork, only pushes to the tracked branch that touch the tracked paths queue a (debounced) check.\nPayloads are never sent to the model and never stored, only their digest.",
@@ -31707,6 +31809,10 @@
   {
    "description": "Living Course learner",
    "name": "Living Course learner"
+  },
+  {
+   "description": "Living Course",
+   "name": "Living Course"
   },
   {
    "description": "Living Course webhooks",
