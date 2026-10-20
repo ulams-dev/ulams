@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ulams.dev/schemas/course-brief/v2.json",
   "title": "Course Brief v2",
-  "description": "The author's answers from the interview. Every field records who decided it. v2 adds optional theme, pricing and site; a v1 document is a valid v2 document.",
+  "description": "The author's answers from the interview. Every field records who decided it. v2 adds optional theme, pricing, site and design (learner shell, activity mix, prior experience, style); a v1 document is a valid v2 document.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -139,6 +139,28 @@
         "currency": {
           "type": "string",
           "pattern": "^[A-Z]{3}$"
+        }
+      }
+    },
+    "design": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "shell": {
+          "type": "string",
+          "enum": ["course", "scroll", "slides"]
+        },
+        "activity": {
+          "type": "string",
+          "enum": ["balanced", "practice", "visual", "scenario", "minimal"]
+        },
+        "experience": {
+          "type": "string",
+          "enum": ["new", "some", "practising"]
+        },
+        "style": {
+          "type": "string",
+          "enum": ["editorial", "technical", "playful", "minimal"]
         }
       }
     },

@@ -14,7 +14,7 @@ describe("workflows.json", () => {
     const keys = workflowsData.tabs.map((t) => t.key);
     expect(new Set(keys).size).toBe(keys.length);
     for (const tab of workflowsData.tabs as Array<{ key: string; lines: Array<{ kind: string; text: string }>; window: string }>) {
-      expect(["terminal", "chat", "studio"], tab.key).toContain(tab.window);
+      expect(["terminal", "chat", "studio", "admin"], tab.key).toContain(tab.window);
       for (const line of tab.lines) {
         expect(WORKFLOW_KINDS as readonly string[], tab.key).toContain(line.kind);
         expect(line.text.length, tab.key).toBeGreaterThan(0);

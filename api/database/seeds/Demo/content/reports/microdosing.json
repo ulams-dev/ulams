@@ -1,0 +1,167 @@
+{
+  "title": "Reading the Microdosing Survey: Findings and Limits",
+  "subtitle": "For clinicians and researchers who need to assess what a large cross-sectional microdosing study found and where its conclusions stop.",
+  "summary": "For clinicians and researchers who need to assess what a large cross-sectional microdosing study found and where its conclusions stop.",
+  "description": "This course walks through a large cross-sectional survey of adults who microdose psychedelics and a matched group of non-microdosers. You will learn how participants were recruited and classified, and what the study reported about their demographics, mental health history, motives, and practices, including substance, dose category, frequency, and stacking. The course reports the DASS-21 depression, anxiety, and stress differences among participants with mental health concerns, together with their effect sizes. It closes by examining the design limits, self-selection and recruitment bias, and the safety questions the authors identify as requiring further research.",
+  "level": "beginner",
+  "language": "en",
+  "duration": "30 min",
+  "target_group": "Clinicians and researchers. Findings and limits only, not a how-to.",
+  "lessons": [
+    {
+      "title": "What the Study Found",
+      "summary": "This module covers the study's design, who microdoses, why, and how mental health symptom scores compared between groups.",
+      "duration": null,
+      "topics": [
+        {
+          "type": "richtext",
+          "title": "Study Design and Who Microdoses",
+          "summary": "This lesson covers how the study recruited participants, defined microdosers, and compared their demographics and mental health histories with non-microdosers.",
+          "introduction": null,
+          "description": null,
+          "duration": "10 min",
+          "preview": false,
+          "fields": {
+            "value": "When you read a survey of a behaviour that is difficult to observe, the first question is who was asked and how groups were defined. This lesson answers that for the microdosing study. The authors describe microdosing as successive self-administration, within a limited time window, of doses of psychedelics that do not impair normal functioning and are predominantly sub-sensorium. They also note that the exact parameters of a microdose and of regular microdosing have yet to be firmly articulated. Keep that looseness in mind as you read.\n\n#### Recruitment and sample\n\nParticipants completed questionnaires and assessments entirely within a mobile application. To encourage participation, users were explicitly not asked for personally identifiable information, and use of the application was designed to be completely anonymous. All participants endorsed being 18 or older and able to respond to an English survey. Because the study was anonymous, these criteria could not be verified beyond self-report. All participants gave informed consent. The baseline survey was completed by **8703 respondents from 84 nations**. The USA contributed 62.2% and Canada 12.7%.\n\n1. Participants were asked: \"Are you currently engaged in a regular practice of microdosing?\"\n2. **Microdosers** were those reporting a current microdose practice at the time of participation. **4050 respondents (46.5%)** were microdosers.\n3. **Non-microdosers** included people who had never microdosed and people with a history of microdosing who were not microdosing during the study. There were **4653 (53.5%)**.\n4. Mental health was assessed by asking whether participants currently had any psychological, mental health or addiction concerns. Those who said yes chose one or more categories from a drop-down menu.\n\n> **Reading note:** The non-microdoser group mixes people who have never microdosed with former microdosers. Group membership rests on a single self-reported question about current practice.\n\n#### Demographic differences\n\nThe authors summarise that microdosers were generally similar to non-microdosing controls on demographics. Two differences reached significance. Microdosers were **more likely to be older** (χ² = 44.91, p < 0.01) and **more likely to live in an urban rather than a suburban area** (χ² = 26.27, p < 0.01).\n\n| Mental health or substance use concern | Microdosers | Non-microdosers | Result |\n|---|---|---|---|\n| Any concern | 32% | 27% | Higher in microdosers (p < 0.01) |\n| Anxiety | 22% | 18% | No significant difference (p = 0.07) |\n| Depression | 21% | 17% | Higher in microdosers (p < 0.01) |\n| PTSD/trauma-related | 10% | 7% | Higher in microdosers (p < 0.01) |\n| Tobacco dependence | 6% | 6% | Higher in microdosers (p < 0.05) |\n\nBipolar disorder, eating disorder, schizophrenia, panic attacks, autism spectrum disorder and several other concerns did not differ between groups.\n\n#### Other substance use\n\nMicrodosers were less likely to use alcohol frequently and more likely to abstain from it entirely. They were also more likely to abstain from tobacco, and more likely to use cannabis frequently. Most respondents (87%) reported lifetime use of larger doses of psilocybin or LSD, and microdosers reported higher lifetime use than non-microdosers (92% vs 83%).\n\n---\n\n**Sources**\n\n1. Introduction — Adults who microdose psychedelics report health related motivations and lower levels of anxiety and depression compared to non-microdosers\n2. §1 Open — Adults who microdose psychedelics report health related motivations and lower levels of anxiety and depression compared to non-microdosers\n3. §1 Open — Adults who microdose psychedelics report health related motivations and lower levels of anxiety and depression compared to non-microdosers\n4. §1 Open — Adults who microdose psychedelics report health related motivations and lower levels of anxiety and depression compared to non-microdosers\n5. §1 Open — Adults who microdose psychedelics report health related motivations and lower levels of anxiety and depression compared to non-microdosers\n"
+          },
+          "questions": null
+        },
+        {
+          "type": "gift",
+          "title": "Quiz: Study Design and Who Microdoses",
+          "summary": null,
+          "introduction": null,
+          "description": null,
+          "duration": null,
+          "preview": false,
+          "fields": {
+            "value": "Check what you learned in “Study Design and Who Microdoses”.",
+            "max_attempts": null,
+            "min_pass_score": null,
+            "counts_to_grade": false,
+            "weight": 1,
+            "randomize_order": false
+          },
+          "questions": [
+            {
+              "type": "multiple_choice",
+              "gift": "How were participants classified as microdosers in this study? {=They reported a current regular practice of microdosing at the time of participation#Group membership rested on one self-reported question about a current regular practice of microdosing. Former microdosers were placed in the non-microdoser group, so lifetime history alone did not define microdosers. ~They had ever microdosed at any point in their lives ~They were confirmed as microdosers by a clinician interview ~They had microdosed for at least one year before enrolling}",
+              "score": 1
+            },
+            {
+              "type": "multiple_choice_with_multiple_right_answers",
+              "gift": "Which TWO statements correctly describe how the study sample was recruited and surveyed? {~%50%Respondents were self-selected and recruited through media related to psychedelic use, such as podcasts and conference presentations ~%50%Participation was anonymous and completed within a mobile application, so inclusion criteria could not be verified beyond self-report ~%-50%Participants were randomly sampled from the general population and interviewed in clinics ~%-50%Participants were verified as adults through identity checks before consenting}",
+              "score": 1
+            },
+            {
+              "type": "multiple_choice",
+              "gift": "Which statement best describes how microdosers differed from non-microdosers at baseline? {=They were more likely to be older and live in urban areas, and more likely to report any mental health or substance use concern#The groups were largely similar on demographics apart from age and urban setting, while microdosers more often reported any concern, depression and PTSD/trauma. Anxiety (p \\= 0.07) and bipolar disorder did not differ significantly, which makes the last option tempting but wrong. ~They differed markedly in gender, income and education, but not in mental health history ~They were less likely to report any mental health concern, including depression and PTSD ~They were more likely to report anxiety and bipolar disorder specifically}",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "type": "richtext",
+          "title": "Motives and Reported Practices",
+          "summary": "This lesson reviews the motives respondents gave and the substances, dose categories, frequencies and stacking practices they reported.",
+          "introduction": null,
+          "description": null,
+          "duration": "10 min",
+          "preview": false,
+          "fields": {
+            "value": "The previous lesson described who took part in this survey and how microdosers were identified. Here we ask what these respondents said they were doing and why. Keep in mind throughout that all of the data are self-reported and cross-sectional, so the figures describe reported practice, not outcomes.\n\n### Motives\n\nAcross all microdosers, the most widely endorsed motive was **enhancing mindfulness**, followed by improving mood, enhancing creativity and enhancing learning. Mindfulness and creativity were highly endorsed regardless of mental health status. The other motives differed between groups.\n\n- **With mental health concerns:** more motivated to reduce anxiety, decrease substance use and improve mood.\n- **Without mental health concerns:** more likely to microdose to enhance learning.\n- **Female respondents:** more likely to report improving mood and decreasing anxiety.\n- **Male respondents:** more likely to endorse enhancing learning, increasing sociability and decreasing substance use.\n\n| Motive | No mental health concerns | Mental health concerns |\n|---|---|---|\n| Improve mood | 70.6% | 87.3% |\n| Decrease anxiety | 47.0% | 78.0% |\n| Decrease substance use | 18.3% | 41.5% |\n| Enhance learning | 60.0% | 54.6% |\n| Enhance mindfulness | 82.0% | 84.9% |\n\n### Psilocybin versus LSD\n\nOver 85% of respondents reported psilocybin as their primary substance, compared with about 11% for LSD. Psilocybin users were more likely to use high or medium microdoses. The modal frequency was 1–4 times per week in both groups, but psilocybin users were more likely to use daily or near-daily. In the table, 54.7% of psilocybin users reported stacking versus 26.0% of LSD users. The most common stacked additions, across both groups, were Lion's Mane mushroom (39% of microdosers), niacin (18%) and chocolate (5%). The ranking was the same for both substances. Psilocybin users were also more likely to endorse decreasing anxiety and improving sleep as motives, whereas DASS-21 scores did not differ between the two groups.\n\nRespondents who stacked were more likely to endorse enhancing creativity (77% vs. 71%) and enhancing learning (56% vs. 44%). Stackers did not differ from non-stackers on depression, anxiety or stress.\n\n> **Why stacking evidence is limited:** the authors say the popularity of stacking likely reflects positive anecdotal reports rather than a strong empirical basis, and to their knowledge no studies have directly tested synergistic effects with psilocybin. Proposed mechanisms follow from the stacked substance studied alone, and empirical studies of most stacked substances are limited and largely involve animal models. Claims about synergy in humans therefore call for caution.\n\nThe study's own data add further limits. Animal models suggest the effect of Lion's Mane may depend on whether mycelium or fruitbody is consumed, and the survey could not make that distinction. The authors call the proposed mechanisms underlying stacking speculative. They also note that there is no consistent definition of low, medium and high doses for each substance, which limits interpretation of the dose and frequency differences between psilocybin and LSD.\n\n---\n\n**Sources**\n\n1. §1 Open — Adults who microdose psychedelics report health related motivations and lower levels of anxiety and depression compared to non-microdosers\n2. §1 Open — Adults who microdose psychedelics report health related motivations and lower levels of anxiety and depression compared to non-microdosers\n3. §1 Open — Adults who microdose psychedelics report health related motivations and lower levels of anxiety and depression compared to non-microdosers\n4. §1 Open — Adults who microdose psychedelics report health related motivations and lower levels of anxiety and depression compared to non-microdosers\n"
+          },
+          "questions": null
+        },
+        {
+          "type": "gift",
+          "title": "Quiz: Motives and Reported Practices",
+          "summary": null,
+          "introduction": null,
+          "description": null,
+          "duration": null,
+          "preview": false,
+          "fields": {
+            "value": "Check what you learned in “Motives and Reported Practices”.",
+            "max_attempts": null,
+            "min_pass_score": null,
+            "counts_to_grade": false,
+            "weight": 1,
+            "randomize_order": false
+          },
+          "questions": [
+            {
+              "type": "multiple_choice",
+              "gift": "Which motive was endorsed more often by respondents WITHOUT mental health concerns than by those with mental health concerns? {=Enhancing learning#Respondents without mental health concerns were more likely to microdose to enhance learning (60.0% vs. 54.6%). The other three motives were more prominent among respondents reporting mental health concerns. ~Decreasing anxiety ~Decreasing substance use ~Improving mood}",
+              "score": 1
+            },
+            {
+              "type": "multiple_choice",
+              "gift": "Which statement best summarises the reported differences between psilocybin and LSD microdosers? {=Psilocybin users more often used medium or high doses, used daily or near-daily more often, and stacked more often.#Psilocybin users reported higher or medium doses, more daily or near-daily use, and more stacking (54.7% vs. 26.0%). The modal frequency was 1-4 times per week in both groups, and the ranking of stacked substances was the same. ~LSD users more often used medium or high doses and stacked more often, while both groups used it equally often. ~Psilocybin users stacked more often, but the modal frequency was daily use in both groups. ~The two groups differed in dose and stacking but ranked the types of stacking differently.}",
+              "score": 1
+            },
+            {
+              "type": "multiple_choice_with_multiple_right_answers",
+              "gift": "According to the authors, which of the following are reasons the evidence for stacking effects is limited? {~%50%No studies have directly tested synergistic effects of stacked substances with psilocybin. ~%50%Empirical studies of most stacked substances are limited and largely involve animal models. ~%-50%Stacking was reported by too few respondents to be analysed. ~%-50%Stackers differed from non-stackers on depression, anxiety and stress, confounding the results.}",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Interpreting the Evidence",
+      "summary": "This module examines the mental health comparison and the limits on what the study can support.",
+      "duration": null,
+      "topics": [
+        {
+          "type": "richtext",
+          "title": "Mental Health Outcomes and Their Limits",
+          "summary": "This lesson examines the lower DASS-21 scores among microdosers with mental health concerns and the design, sampling and safety caveats that qualify them.",
+          "introduction": null,
+          "description": null,
+          "duration": "10 min",
+          "preview": false,
+          "fields": {
+            "value": "You have probably seen headlines claiming that microdosing improves mood. This lesson looks at the one analysis in the paper that most directly bears on that claim, and at the caveats the authors attach to it. The comparison used the Depression, Anxiety, Stress subscales of the DASS-21. It was restricted to respondents who endorsed a current mental health or addiction concern and who completed the scales: **863 microdosers** and **788 non-microdosers**.\n\n| Subscale | Microdosers (M, SD) | Non-microdosers (M, SD) | Effect size (d) |\n|---|---|---|---|\n| Anxiety | 11.64 (8.98) | 13.22 (9.32) | 0.17 |\n| Depression | 18.34 (11.96) | 20.58 (11.70) | 0.19 |\n| Stress | 19.90 (10.44) | 21.10 (9.40) | 0.12 |\n\nAnxiety and depression differences reached p < 0.01. The stress difference had p = 0.01. Gender analyses showed relative equivalence across males and females. A supplementary analysis limited to respondents with lifetime use of larger psilocybin or LSD doses gave an equivalent pattern.\n\n> **Statistically significant is not the same as large.** The authors state that these effects were in the range typically characterised as small. Any conclusion about clinical importance should take that into account, along with the limits of self-report and a cross-sectional design.\n\n### Why causation cannot be inferred\n\nThe authors note that the cross-sectional design precludes causal inference. Lower scores among microdosers cannot show that microdosing reduced symptoms. The sample also carries selection concerns:\n\n- Respondents were self-selected, which introduces response bias.\n- Recruitment came through venues favourable toward psychedelic use, which may have overrepresented people who respond favourably to microdosing.\n- The app was unavailable on Android, so participation was limited to people with Apple devices.\n- Microdosing practices before study participation were not assessed, so the influence of longer-standing practice is unknown.\n\nThe authors say their characterisation of therapeutic use should be interpreted with caution pending replication using more systematic recruitment. They call for longitudinal designs such as randomised clinical trials and large cohort studies. They also note that a more comprehensive psychodiagnostic approach would improve confidence in generalising to clinical populations.\n\n### Open safety questions\n\nThe authors write that the findings suggest microdosing does not appear to be associated with increased *acute* negative outcomes, even among people with mental health concerns. They pair this with a caveat: carefully controlled clinical trials are needed to clarify risks and benefits. Preliminary results suggest microdosing has a safety profile similar to large-dose use, but repeated use over long periods raises concerns distinct to microdosing. One example is possible cardiac valvulopathy from repeated activation of serotonin 5-HT2b receptors via psilocin, a concern specific to psilocybin. Pre-clinical research has not suggested psilocybin-related valvulopathy, but the authors say it requires consideration. More broadly, safety data from infrequent large doses need further research before being extrapolated to consistent microdosing.\n\n**Reading the result as a clinician.** A patient with anxiety asks whether microdosing will lower their symptoms. Applying this paper: microdosers with mental health concerns scored slightly lower on anxiety (d = 0.17) than comparable non-microdosers. However, the data are cross-sectional, self-selected and self-reported, so the paper cannot say microdosing caused the difference. The authors also flag unresolved questions about long-term repeated use. The defensible summary is an association of small size, with causation and long-term safety still unknown.\n\n---\n\n**Sources**\n\n1. §1 Open — Adults who microdose psychedelics report health related motivations and lower levels of anxiety and depression compared to non-microdosers\n2. §1 Open — Adults who microdose psychedelics report health related motivations and lower levels of anxiety and depression compared to non-microdosers\n3. §1 Open — Adults who microdose psychedelics report health related motivations and lower levels of anxiety and depression compared to non-microdosers\n"
+          },
+          "questions": null
+        },
+        {
+          "type": "gift",
+          "title": "Quiz: Mental Health Outcomes and Their Limits",
+          "summary": null,
+          "introduction": null,
+          "description": null,
+          "duration": null,
+          "preview": false,
+          "fields": {
+            "value": "Check what you learned in “Mental Health Outcomes and Their Limits”.",
+            "max_attempts": null,
+            "min_pass_score": null,
+            "counts_to_grade": false,
+            "weight": 1,
+            "randomize_order": false
+          },
+          "questions": [
+            {
+              "type": "multiple_choice",
+              "gift": "Among respondents with mental health concerns, microdosers scored lower than non-microdosers on the DASS-21 subscales. How did the authors characterise the size of these effects (d \\= 0.12 to 0.19)? {=Statistically significant but in the range typically characterised as small#The authors report effect sizes of 0.12 to 0.19 and say these are typically considered small, so conclusions about clinical import should be cautious. Statistical significance does not imply a large or clinically important effect. ~Large enough to show clinical importance for most patients ~Moderate, comparable to conventional treatments for depression ~Not statistically significant on any subscale}",
+              "score": 1
+            },
+            {
+              "type": "multiple_choice_with_multiple_right_answers",
+              "gift": "Which features of the study mean its results cannot support the conclusion that microdosing reduced anxiety and depression? Select all that apply. {~%50%The design was cross-sectional, which precludes causal inference ~%50%Respondents were self-selected and recruited through venues favourable toward psychedelic use ~%-33.33333%Microdosing practices before study participation were not assessed ~%-33.33333%The DASS-21 was completed by only a handful of participants ~%-33.33333%The comparison group was drawn from a clinical trial}",
+              "score": 1
+            },
+            {
+              "type": "multiple_choice",
+              "gift": "Which safety concern do the authors raise as specific to repeated, long-term psilocybin microdosing and requiring further research? {=Cardiac valvulopathy linked to repeated activation of serotonin 5-HT2b receptors#The authors describe possible valvulopathy from repeated 5-HT2b activation via psilocin, though pre-clinical research has not suggested it. The findings suggested no increase in acute negative outcomes, so acute psychosis is not the concern raised. ~Acute psychosis in people with mental health concerns ~Dependence on niacin used in stacking ~Loss of response to large-dose psilocybin in therapy}",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

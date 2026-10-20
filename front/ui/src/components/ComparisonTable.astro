@@ -418,8 +418,10 @@ const MARK: Record<Kind, string> = { yes: "✓", no: "–", partial: "◐", plug
     overflow-wrap: anywhere;
   }
   @media (max-width: 1180px) {
+    /* scrolling both ways inside the box keeps the product row sticky while the first column is too */
     .u-compare__scroll {
-      overflow-x: auto;
+      overflow: auto;
+      max-height: calc(100svh - 96px);
       scroll-snap-type: x proximity;
     }
     .u-compare__table {

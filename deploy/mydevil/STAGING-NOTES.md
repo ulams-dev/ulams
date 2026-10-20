@@ -46,6 +46,10 @@ New tenant: add `<slug>.ulams.app`, `<slug>-api`, `<slug>-admin` with `ULAMS_HOS
 with `production-hosts.py` (add the slug to `ULAMS_SLUGS`), a bucket and its binding and alias in `storage.worker.js` / `storage.wrangler.toml`, then
 `ulams:tenant:create <slug> ...` as before.
 
+Two reading academies (2026-10-15), one course each, rebuilt by the hourly demo reset from `database/seeds/Demo/content/reports/`:
+`microdosing.ulams.app` (`/learn/1/1`, database `p1157_u_micro` because `p1157_u_microdosing` exceeds MyDevil's 16-character name) and
+`stablecoins.ulams.app` (`/learn/1/1`, database `p1157_u_stable`). Hosts, buckets and the storage Worker aliases use the full slug.
+
 
 A STAGING install on the product owner's MyDevil account (issue #159), done from the runbook in
 `README.md`. The same text is kept on the server as `~/ulams/DEPLOY-NOTES.md`. No secrets are written

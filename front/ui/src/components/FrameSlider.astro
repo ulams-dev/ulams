@@ -1,0 +1,177 @@
+---
+import Img from "./Img.astro";
+import Icon from "./Icon.astro";
+
+interface Frame {
+  image: { src: string; alt: string; width: number; height: number };
+  caption: string;
+}
+
+interface Props {
+  id?: string;
+  title?: string;
+  intro?: string;
+  previous?: string;
+  next?: string;
+  frames: Frame[];
+}
+
+const { id = "frames", title, intro, previous = "Previous", next = "Next", frames } = Astro.props;
+const total = frames.length;
+---
+
+<section class="u-section u-frames" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
+  <div class="u-container">
+    {
+      (title || intro) && (
+        <div class="u-section-head u-section-head--center">
+          {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
+          {intro && <p class="u-lead">{intro}</p>}
+        </div>
+      )
+    }
+    <ulams-frame-slider class="u-frames__player" role="group" aria-roledescription="carousel" aria-label={title ?? previous}>
+      <div class="u-frames__nav">
+        <button class="u-frames__btn" type="button" data-prev>
+          <Icon name="back" />
+          <span>{previous}</span>
+        </button>
+        <p class="u-frames__status" data-status aria-live="polite">{`1 / ${total}`}</p>
+        <button class="u-frames__btn" type="button" data-next>
+          <span>{next}</span>
+          <Icon name="chevron" />
+        </button>
+      </div>
+      {
+        frames.map((frame, index) => (
+          <div
+            class="u-frames__slide"
+            data-frame
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`${index + 1} / ${total}`}
+          >
+            <p class="u-frames__caption">{frame.caption}</p>
+            <a class="u-frames__zoom" href={frame.image.src} target="_blank" rel="noopener" aria-label={`Open full size: ${frame.image.alt}`}>
+              <Img {...frame.image} sizes="100vw" priority={index === 0} fit="contain" />
+            </a>
+          </div>
+        ))
+      }
+    </ulams-frame-slider>
+  </div>
+</section>
+
+<script>
+  import "../elements/frame-slider.ts";
+</script>
+
+<style>
+  .u-frames__player {
+    display: grid;
+    gap: 16px;
+    outline: none;
+  }
+  .u-frames__player:focus-visible {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 6px;
+    border-radius: var(--ulams-radius-card);
+  }
+  .u-frames__nav {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .u-frames__player[data-ready] .u-frames__nav {
+    display: flex;
+  }
+  .u-frames__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 8px 16px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-button);
+    background: var(--ulams-color-card-bg);
+    color: var(--ulams-color-text);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .u-frames__btn :global(svg) {
+    width: 18px;
+    height: 18px;
+  }
+  .u-frames__btn:hover {
+    background: var(--ulams-color-surface);
+  }
+  .u-frames__btn:focus-visible {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 3px;
+  }
+  .u-frames__status {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: var(--ulams-color-muted);
+  }
+  .u-frames__slide {
+    display: grid;
+    gap: 18px;
+    width: 100%;
+    margin: 0;
+  }
+  .u-frames__player[data-ready] .u-frames__slide:not(.is-active),
+  .u-frames__slide[hidden] {
+    display: none !important;
+  }
+  .u-frames__zoom {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-card-bg);
+    cursor: zoom-in;
+  }
+  .u-frames__zoom :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    object-position: top center;
+  }
+  .u-frames__caption {
+    width: 100%;
+    margin: 0;
+    padding: 16px 22px;
+    border-left: 4px solid var(--ulams-color-accent);
+    border-radius: 0 10px 10px 0;
+    background: var(--ulams-color-card-bg);
+    color: #10283b;
+    font-size: clamp(1.25rem, 0.55rem + 1.15vw, 1.6rem);
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+    text-wrap: pretty;
+  }
+  @media (max-width: 640px) {
+    .u-frames__btn span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .u-frames__zoom :global(img) {
+      transition: none;
+    }
+  }
+</style>

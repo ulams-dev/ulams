@@ -4,6 +4,7 @@ namespace Ulams\CourseBuilder\Events;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Ulams\CourseBuilder\Ingestion\TextEncoding;
 use Ulams\CourseBuilder\Models\Event;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
@@ -33,7 +34,7 @@ final class EventLog
             'session_id' => $session->id,
             'run_id' => $run?->id,
             'type' => $type,
-            'payload' => ['type' => $type] + $payload + ['timestamp' => (int) floor(microtime(true) * 1000)],
+            'payload' => TextEncoding::utf8(['type' => $type] + $payload + ['timestamp' => (int) floor(microtime(true) * 1000)]),
         ]);
         try {
             Cache::put(self::cacheKey($session->id), $event->id, now()->addHour());

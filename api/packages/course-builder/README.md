@@ -4,12 +4,21 @@ Turns an author's source (Markdown, PDF, DOCX) into a cited course through a sho
 outline with learning objectives the author approves, generated lessons and quizzes, and an apply
 through the LMS domain services. Afterwards any element can be refined by chatting about it; every
 change is a reviewable diff and a new blueprint version. Records: ADR 0010, 0011, 0022–0029; plan
-`docs/plans/phase-2.md`.
+`docs/plans/phase-2.md`. The shared course-design policy for API and local agents is ADR 0103 and
+`docs/plans/phase-2-course-design-skill.md`.
 
 - Author guide: [`docs/course-builder/author-guide.md`](../../../docs/course-builder/author-guide.md)
 - Settings, limits, permissions, queues: [`docs/course-builder/admin-settings.md`](../../../docs/course-builder/admin-settings.md)
 - Architecture, AG-UI stream, adding a step, eval command: [`docs/course-builder/developer-notes.md`](../../../docs/course-builder/developer-notes.md)
 - Prompts and how to iterate on them: [`resources/prompts/README.md`](resources/prompts/README.md)
+- Course-design capability policy: [`resources/course-design/policy.json`](resources/course-design/policy.json)
+
+The policy inventories learner shells, native formats, every official H5P content type, GIFT
+question types, tracking signals, fallbacks and accessibility requirements. Inventory does not mean
+generation permission: `CourseDesignPolicy::apiGeneratable()` intersects `api-generated` entries
+with the installation's enabled content types and installed H5P libraries. The project Agent Skill
+at `.cursor/skills/ulams-course-designer/` reads the same policy and uses the existing CLI/MCP
+builder workflow. Run `yarn course-design:check` to verify that its compact inventory is current.
 
 ```
 Upload ─▶ IngestRun: Source Document + fragments (frg_… ids from the heading position)

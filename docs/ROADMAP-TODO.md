@@ -11,6 +11,12 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (2026-10-15) Shared course-design skill uses a canonical JSON policy with thin Laravel and
+      local Agent Skill adapters; learner shells are course/sidebar, one-page scroll and slides
+      (presentation = slides); all H5P types are inventoried but only tested deterministic mappers
+      may generate them; white-label design uses approved tokens and uploaded assets, never arbitrary
+      CSS (ADR 0103 Accepted; `docs/plans/phase-2-course-design-skill.md` approved).
+
 - [x] (new) Umami integration on the owned landing, documentation and six demos: automatic pageviews,
       demo_open versus demos_scroll, exact CSP origins and per-browser exclusion
       (ADR 0101 Proposed; requested by owner 2026-10-12). Documentation published through PR #247 and GitHub Pages run 38295754529.
@@ -478,6 +484,12 @@ approved apply through domain services → element chat edits. Designs:
 
 ### 2.7 Generative UI
 Architecture
+- [ ] (new) Shared course-design policy and Agent Skill: one schema-validated capability, pedagogy,
+      learner-shell, branding and tracking contract for the Laravel builder and local agents
+      (`docs/plans/phase-2-course-design-skill.md`, ADR 0103 Accepted; partial: M2.6a policy,
+      runtime adapter and project skill implemented; the interview now stores shell, activity,
+      experience and style on the brief and the outline/lesson prompts read them; learner-player
+      shells and eval review still pending)
 - [x] Verify current A2UI / AG-UI versions and choose renderer (CopilotKit vs own) (A2UI v0.9,
       `@ag-ui/core` 1.0.2, own renderer; ADR 0011, 0023)
 - [ ] UI component catalogue: name, props JSON Schema, model description, accessible

@@ -1,0 +1,181 @@
+{
+  "title": "ulams — Najczęstsze pytania",
+  "description": "Odpowiedzi o ULAMS: headless LMS, kursy ze źródeł, AI i dane, self-hosting, integracje, akademie i sprzedaż.",
+  "eyebrow": "FAQ",
+  "heading": "Najczęstsze pytania",
+  "intro": "Czym jest ULAMS, jak powstają kursy z Twoich źródeł, czego wymaga własny hosting i jak platforma łączy się z resztą Twoich systemów.",
+  "contact": "Zadaj nam pytanie",
+  "docs": "Przeczytaj dokumentację",
+  "sections": [
+    {
+      "id": "about",
+      "title": "O ULAMS",
+      "items": [
+        {
+          "q": "Czym jest ULAMS i dla kogo powstał?",
+          "a": "ULAMS to otwarta platforma LMS do tworzenia i udostępniania kursów. Pomaga zespołom przekształcać dokumentację produktu, instrukcje i materiały wewnętrzne w szkolenia dla klientów, developerów i pracowników."
+        },
+        {
+          "q": "Co oznacza „headless LMS”? Czy muszę budować własny frontend?",
+          "a": "Headless oznacza, że treści i funkcje platformy są dostępne przez API, niezależnie od interfejsu użytkownika. Możesz korzystać z dostarczonego interfejsu ULAMS albo zbudować własne doświadczenie edukacyjne w swojej aplikacji."
+        },
+        {
+          "q": "Czy mogę wypróbować ULAMS przed instalacją?",
+          "a": "Tak. Na stronie znajdziesz dema dostępne z perspektywy uczestnika i administratora, bez zakładania konta. Środowiska demonstracyjne są regularnie resetowane, więc nie służą do przechowywania własnych materiałów."
+        },
+        {
+          "q": "Czy muszę umieć programować, żeby korzystać z ULAMS?",
+          "a": "Autorzy mogą tworzyć i zarządzać kursami przez panel administracyjny oraz Studio. Instalacja i utrzymanie własnego środowiska wymagają wiedzy technicznej. Programowanie jest potrzebne, jeśli chcesz zbudować własny frontend, rozszerzyć platformę lub przygotować niestandardową integrację."
+        },
+        {
+          "q": "Czym ULAMS różni się od innych LMS-ów?",
+          "a": "ULAMS łączy backend dostępny przez API, możliwość samodzielnego hostowania oraz opcjonalne tworzenie kursów ze źródeł z kontrolą autora. Możesz korzystać z gotowego interfejsu lub zaprojektować własny. To szczególnie przydatne, gdy edukacja ma być częścią Twojego produktu i potrzebujesz kontroli nad integracjami, danymi oraz sposobem prezentacji kursów."
+        },
+        {
+          "q": "Czy ULAMS będzie dobrym wyborem dla każdej organizacji?",
+          "a": "Najlepiej sprawdzi się tam, gdzie ważne są integracje, własna infrastruktura lub niestandardowe doświadczenie edukacyjne. Samodzielne wdrożenie oznacza odpowiedzialność za konfigurację, aktualizacje i utrzymanie. Jeśli potrzebujesz gotowej usługi zarządzanej, warto najpierw ustalić, kto będzie odpowiadał za te zadania."
+        }
+      ]
+    },
+    {
+      "id": "courses",
+      "title": "Kursy, źródła i AI",
+      "items": [
+        {
+          "q": "Z jakich materiałów mogę stworzyć kurs?",
+          "a": "Course Builder przyjmuje dokumenty Markdown, PDF i DOCX. Najlepiej sprawdzają się materiały z czytelną strukturą i tekstem — zeskanowany PDF bez warstwy tekstowej wymaga wcześniejszego rozpoznania tekstu. Domyślny limit pliku wynosi 20 MB, a dokumentu PDF — 300 stron."
+        },
+        {
+          "q": "Co oznaczają odwołania do źródeł w wygenerowanym kursie?",
+          "a": "Odwołania pozwalają sprawdzić fragment dokumentu, na którym opiera się lekcja lub pytanie. ULAMS sprawdza zgodność wygenerowanych lekcji z cytowanymi fragmentami i oznacza treści wymagające uwagi. To ułatwia weryfikację, ale nie zastępuje oceny autora."
+        },
+        {
+          "q": "Czy AI może opublikować kurs bez mojej zgody?",
+          "a": "W procesie Course Builder autor zatwierdza strukturę kursu i proponowane zmiany. Kurs jest najpierw tworzony jako nieopublikowany, a publikacja jest osobnym krokiem. Możesz sprawdzić podgląd i poprawić treść przed udostępnieniem jej uczestnikom."
+        },
+        {
+          "q": "Co się dzieje, gdy moja dokumentacja się zmieni?",
+          "a": "Living Course porównuje wersje źródeł i wskazuje powiązane elementy kursu, które mogą wymagać aktualizacji. Możesz przesłać nową wersję dokumentu lub skonfigurować połączenie z repozytorium Git albo stroną internetową. Zmiany w kursie wymagają decyzji autora — wykrycie nowej wersji źródła nie nadpisuje automatycznie opublikowanej treści."
+        },
+        {
+          "q": "Czy moje dokumenty trafiają do zewnętrznego dostawcy AI?",
+          "a": "Przy korzystaniu z generowania AI fragmenty materiałów potrzebne do wykonania zadania są przekazywane do skonfigurowanej usługi modelu. Obecny Course Builder korzysta z Claude przez API Anthropic. Self-hosting platformy nie oznacza lokalnego przetwarzania przez model AI. Funkcje AI można wyłączyć, nadal korzystając z pozostałych funkcji LMS."
+        },
+        {
+          "q": "Czy mogę korzystać z ULAMS bez AI?",
+          "a": "Tak. AI jest opcjonalne. Możesz ręcznie tworzyć kursy, dodawać materiały, zarządzać uczestnikami i dostępem oraz śledzić postępy. Wyłączenie AI nie wyłącza pozostałych funkcji LMS i nie wymaga posiadania klucza do usługi modelu."
+        }
+      ]
+    },
+    {
+      "id": "content",
+      "title": "Funkcje i treści",
+      "items": [
+        {
+          "q": "Jakie moduły i funkcje obsługuje ULAMS?",
+          "a": "Kursy i treści: kursy, lekcje, tekst, wideo, audio, obrazy, PDF i osadzane materiały. Treści interaktywne: H5P, SCORM, cmi5, LiaScript, quizy i zadania projektowe. Użytkownicy i dostęp: konta, grupy, role, uprawnienia i dostęp do kursów. Ocena i raportowanie: wyniki, postępy, raporty oraz certyfikaty PDF. Organizacja nauki: webinary, konsultacje, wydarzenia stacjonarne, powiadomienia, notatki i zakładki. Sprzedaż: moduły płatności, koszyka i kuponów. Tworzenie i utrzymanie treści: Course Builder oraz Living Course. Integracje i wiele akademii: REST API, narzędzia developerskie i obsługa tenantów. Zakres dostępny w konkretnym interfejsie zależy od wersji, konfiguracji i podłączonych usług."
+        },
+        {
+          "q": "Czy mogę wykorzystać istniejące kursy SCORM i materiały interaktywne?",
+          "a": "Tak. ULAMS przyjmuje pakiety SCORM 1.2 i SCORM 2004 oraz obsługuje treści H5P i pakiety cmi5. Możesz łączyć je z innymi materiałami w kursie. Przed wdrożeniem warto sprawdzić własne pakiety, odtwarzanie i zapisywanie postępów w docelowym środowisku."
+        },
+        {
+          "q": "Czy mogę przenieść materiały i użytkowników z obecnego LMS-a?",
+          "a": "ULAMS obsługuje import pakietów SCORM oraz import i eksport kursów w formacie .ulam. Dostępny jest także moduł importu i eksportu użytkowników przez CSV. Przeniesienie pozostałych danych, np. historii postępów lub zakupów, wymaga oceny zgodności i przygotowania migracji. Import materiałów nie oznacza automatycznego odtworzenia całej historii poprzedniej platformy."
+        },
+        {
+          "q": "Czy interfejs dla uczestników jest dostępny cyfrowo?",
+          "a": "Strony dla uczestników są budowane zgodnie z WCAG 2.2 AA: obsługa klawiaturą, widoczny fokus, teksty alternatywne i ograniczenie animacji. Automatyczne testy dostępności są częścią zestawu testów. Jeśli budujesz własny frontend, za jego dostępność odpowiadasz Ty."
+        }
+      ]
+    },
+    {
+      "id": "hosting",
+      "title": "Instalacja i hosting",
+      "items": [
+        {
+          "q": "Czy mogę uruchomić ULAMS na własnej infrastrukturze?",
+          "a": "Tak. ULAMS można uruchomić na własnym serwerze z wykorzystaniem kontenerów. Dokumentacja opisuje konfigurację aplikacji, domen, poczty, przechowywania plików i kopii zapasowych. Wdrożenie produkcyjne wymaga konfiguracji oraz przetestowania wybranego środowiska."
+        },
+        {
+          "q": "Co muszę mieć, aby zainstalować ULAMS?",
+          "a": "Do standardowego wdrożenia potrzebujesz serwera z 64-bitowym Linuxem, Docker Engine i Docker Compose v2. Potrzebne są również domena i konfiguracja DNS oraz HTTPS, miejsce na pliki kursów i usługa SMTP do wysyłania wiadomości. Instrukcja instalacji opisuje konfigurację tych elementów. Klucz do dostawcy AI jest potrzebny tylko wtedy, gdy chcesz korzystać z generowania treści."
+        },
+        {
+          "q": "Jak mocny serwer jest potrzebny?",
+          "a": "Dokumentacja podaje orientacyjnie 2 vCPU, 4 GB RAM i 40 GB SSD do testów z niewielką liczbą użytkowników. Dla małego wdrożenia produkcyjnego wskazuje 4 vCPU, 8 GB RAM i 80 GB SSD. Są to szacunki, a nie gwarancja wydajności. Potrzeby zależą m.in. od liczby jednoczesnych użytkowników, importów pakietów i przetwarzania wideo; przestrzeń na materiały kursowe należy zaplanować osobno."
+        },
+        {
+          "q": "Czy mogę przetestować cały stos lokalnie?",
+          "a": "Tak. Zainstaluj CLI i uruchom ulams stack up, mając Docker Compose. Tryb deweloperski używa deterministycznych odpowiedzi AI, bez płatnych wywołań modeli. Wymagany jest Node.js 22.12 lub nowszy."
+        },
+        {
+          "q": "Gdzie mogę wdrożyć platformę?",
+          "a": "Użyj Docker Compose na własnym serwerze albo manifestów Kubernetes w istniejącym klastrze. Stos może działać na VPS lub maszynie wirtualnej w AWS, Google Cloud i Azure. Produkcja wymaga DNS, HTTPS i trwałego przechowywania danych."
+        },
+        {
+          "q": "Jak zatrzymać stos bez utraty kursów?",
+          "a": "Uruchom ulams stack down. Dane i klucze pozostają dostępne po ponownym stack up w tym samym katalogu instalacji. Dopiero stack down --purge --yes świadomie usuwa trwałe dane."
+        },
+        {
+          "q": "Ile kosztuje korzystanie z ULAMS?",
+          "a": "Kod platformy jest dostępny open source na licencji MIT. Przy samodzielnym hostowaniu ponosisz koszty infrastruktury, utrzymania i usług zewnętrznych, z których korzystasz. Generowanie treści przez AI jest rozliczane przez dostawcę modelu; ULAMS pokazuje koszty generowania i pozwala ustawić limity budżetu. Poszczególne komponenty mają własne licencje opisane w dokumentacji; H5P działa jako osobna usługa na licencji GPL."
+        },
+        {
+          "q": "Jak zaktualizować ULAMS do nowej wersji?",
+          "a": "Najpierw zrób kopię zapasową bazy danych i plików, a potem wykonaj kroki aktualizacji opisane w dokumentacji dla Twojego wdrożenia. Aktualizacja uruchamia migracje bazy danych platformy i każdej akademii. Przed aktualizacją produkcji sprawdź w opisie wydania zmiany, które wymagają konfiguracji."
+        }
+      ]
+    },
+    {
+      "id": "integrations",
+      "title": "Integracje i rozszerzenia",
+      "items": [
+        {
+          "q": "Czy ULAMS mogę połączyć z własną aplikacją lub backendem Python?",
+          "a": "Tak, integracja odbywa się przez REST API, więc aplikacja może być napisana w Pythonie lub innym języku obsługującym HTTP. ULAMS udostępnia również dokumentację OpenAPI, SDK, CLI i interfejs MCP. Zakres integracji — w tym logowanie i dostęp do kursów — należy dopasować do architektury Twojej aplikacji."
+        },
+        {
+          "q": "Czy agenci mogą obsługiwać ULAMS?",
+          "a": "CLI i interfejs MCP umożliwiają współpracę z agentami. Możesz używać Claude Code, Codex, OpenCode lub Gemini CLI albo integrować się bezpośrednio przez REST API."
+        },
+        {
+          "q": "Czy mogę rozbudować ULAMS o własne funkcje?",
+          "a": "Tak. Platforma ma modularną architekturę i udostępnia kod źródłowy. Możesz tworzyć własne moduły API, typy treści, komponenty interfejsu i integracje. Dokumentacja zawiera przewodniki oraz przykładowy moduł rozszerzenia."
+        }
+      ]
+    },
+    {
+      "id": "academies",
+      "title": "Akademie, marka i sprzedaż",
+      "items": [
+        {
+          "q": "Czy mogę prowadzić kilka akademii na jednej instalacji?",
+          "a": "Tak. ULAMS obsługuje wiele akademii, czyli tenantów. Każda może mieć własne adresy, bazę danych, zasoby plikowe, konta i motyw. Pozwala to prowadzić osobne środowiska dla klientów, marek lub działów. Ich tworzenie i utrzymanie wymaga konfiguracji przez operatora platformy."
+        },
+        {
+          "q": "Czy mogę dostosować wygląd akademii do swojej marki?",
+          "a": "Tak. Akademia może mieć własną nazwę, motyw, kolor akcentu i domenę. Jeśli potrzebujesz dalej idących zmian, możesz rozbudować dostarczony frontend lub stworzyć własny interfejs korzystający z API ULAMS."
+        },
+        {
+          "q": "Czy mogę sprzedawać dostęp do kursów?",
+          "a": "Platforma zawiera moduły cen, płatności, koszyka i kuponów. Uruchomienie sprzedaży wymaga konfiguracji obsługiwanej bramki płatniczej i sprawdzenia całego procesu: od zakupu do przyznania dostępu. Dostępność poszczególnych scenariuszy sprzedaży zależy od używanej wersji i interfejsu."
+        }
+      ]
+    },
+    {
+      "id": "help",
+      "title": "Pomoc i współtworzenie",
+      "items": [
+        {
+          "q": "Gdzie mogę uzyskać pomoc?",
+          "a": "Zacznij od dokumentacji. Z pytaniami o self-hosting, integracje lub projekt skorzystaj z formularza kontaktowego na stronie głównej. Błędy i propozycje funkcji zgłaszaj w systemie zgłoszeń na GitHubie."
+        },
+        {
+          "q": "Jak mogę współtworzyć ULAMS?",
+          "a": "ULAMS jest rozwijany otwarcie na GitHubie. Możesz zgłaszać błędy, proponować zmiany w dokumentacji i wysyłać pull requesty. Sekcja dokumentacji o współtworzeniu wyjaśnia, jak zorganizowany jest kod i jak przeglądane są zmiany."
+        }
+      ]
+    }
+  ]
+}

@@ -22,6 +22,10 @@
             "href": "/zh/comparison/"
           },
           {
+            "label": "生成",
+            "href": "/zh/course-generation/"
+          },
+          {
             "label": "博客",
             "href": "/blog/"
           },
@@ -1026,6 +1030,10 @@
           "component": "Faq",
           "props": {
             "id": "faq",
+            "more": {
+              "label": "更多问题请查看 FAQ 页面",
+              "href": "/zh/faq/"
+            },
             "eyebrow": "FAQ",
             "title": "开始前的常见问题",
             "items": [
@@ -1082,19 +1090,19 @@
           },
           {
             "label": "演示",
-            "href": "#demos"
+            "href": "/zh/#demos"
           },
           {
             "label": "智能体工作流",
-            "href": "#agents"
+            "href": "/zh/#agents"
           },
           {
             "label": "标准",
-            "href": "#standards"
+            "href": "/zh/#standards"
           },
           {
             "label": "自托管",
-            "href": "#self-host"
+            "href": "/zh/#self-host"
           },
           {
             "label": "文档",
@@ -1106,14 +1114,15 @@
           },
           {
             "label": "FAQ",
-            "href": "#faq"
+            "href": "/zh/faq/"
           },
           {
             "label": "联系",
             "href": "/zh/#contact"
           }
         ],
-        "note": "开源 · MIT"
+        "note": "开源 · MIT",
+        "mail": true
       }
     }
   ]
