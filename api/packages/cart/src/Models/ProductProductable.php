@@ -2,6 +2,7 @@
 
 namespace Ulams\Cart\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphTypeColumns;
 use Ulams\Cart\Contracts\Productable;
 use Ulams\Cart\Services\Contracts\ProductServiceContract;
 use Exception;
@@ -38,6 +39,11 @@ use Throwable;
  */
 class ProductProductable extends Model
 {
+    use HasMorphTypeColumns;
+
+    /** @var array<int, string> polymorphic type columns, stored as morph aliases (see MorphMap) */
+    protected $morphTypeColumns = ['productable_type'];
+
     protected $table = 'products_productables';
 
     protected $guarded = ['id'];

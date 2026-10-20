@@ -54,9 +54,4 @@ class Cmi5Au extends AbstractTopicContent
         // TODO
         return [];
     }
-
-    public function getMorphClass()
-    {
-        return self::class;
-    }
 }

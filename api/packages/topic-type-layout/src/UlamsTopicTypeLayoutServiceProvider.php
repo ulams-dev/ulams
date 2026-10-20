@@ -2,6 +2,7 @@
 
 namespace Ulams\TopicTypeLayout;
 
+use Ulams\Core\Support\MorphMap;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Courses\Facades\Topic;
 use Ulams\Courses\UlamsCourseServiceProvider;
@@ -23,6 +24,10 @@ class UlamsTopicTypeLayoutServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        MorphMap::register([
+            'topic.layout' => \Ulams\TopicTypeLayout\Models\LayoutTopic::class,
+        ]);
+
         $this->app->register(UlamsTopicTypesServiceProvider::class);
         $this->app->register(UlamsCourseServiceProvider::class);
     }

@@ -2,12 +2,14 @@
 
 namespace Ulams\Cart\Tests\Mocks;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class ExampleProductableBase extends Model
 {
+    use HasMorphAlias;
     protected $table = 'test_productables';
 
     protected $guarded = ['id'];

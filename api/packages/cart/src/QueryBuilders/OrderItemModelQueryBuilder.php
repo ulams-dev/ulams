@@ -4,9 +4,10 @@ namespace Ulams\Cart\QueryBuilders;
 
 use Ulams\Cart\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
+use Ulams\Core\Models\MorphTypeBuilder;
 use Illuminate\Database\Eloquent\Model;
 
-class OrderItemModelQueryBuilder extends Builder
+class OrderItemModelQueryBuilder extends MorphTypeBuilder
 {
     public function whereProductId(int $product_id): OrderItemModelQueryBuilder
     {

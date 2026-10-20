@@ -2,6 +2,7 @@
 
 namespace Ulams\TopicTypeGift\Dtos\Criteria;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Core\Dtos\Contracts\DtoContract;
 use Ulams\Core\Dtos\Contracts\InstantiateFromRequest;
 use Ulams\Core\Dtos\CriteriaDto as BaseCriteriaDto;
@@ -44,7 +45,7 @@ class QuizAttemptCriteriaDto extends BaseCriteriaDto implements DtoContract, Ins
                                       WHERE t.topicable_type = ? 
                                             AND l.course_id = ?
                                             AND topic_gift_quiz_attempts.topic_gift_quiz_id = tgg.id)',
-                    [GiftQuiz::class, $request->get('course_id')]
+                    [MorphMap::aliasOrClass(GiftQuiz::class), $request->get('course_id')]
                 )
             );
         }
@@ -62,7 +63,7 @@ class QuizAttemptCriteriaDto extends BaseCriteriaDto implements DtoContract, Ins
                                       WHERE t.topicable_type = ? 
                                             AND ca.author_id = ?
                                             AND topic_gift_quiz_attempts.topic_gift_quiz_id = tgg.id)',
-                    [GiftQuiz::class, $request->user()->getKey()]
+                    [MorphMap::aliasOrClass(GiftQuiz::class), $request->user()->getKey()]
                 )
             );
         }

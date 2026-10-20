@@ -127,9 +127,4 @@ class Video extends AbstractTopicFileContent
 
         return $results;
     }
-
-    public function getMorphClass()
-    {
-        return self::class;
-    }
 }

@@ -2,6 +2,7 @@
 
 namespace Ulams\Courses\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Courses\Database\Factories\LessonFactory;
 use Ulams\ModelFields\Traits\ModelFields;
 use Illuminate\Database\Eloquent\Builder;
@@ -79,6 +80,7 @@ use Illuminate\Support\Carbon;
  */
 class Lesson extends Model
 {
+    use HasMorphAlias;
     use HasFactory;
     use ModelFields;
 

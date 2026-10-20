@@ -4,6 +4,7 @@ namespace Ulams\Courses\Models;
 
 use Ulams\Auth\Support\GroupTree;
 use Ulams\Categories\Models\Category;
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Core\Models\User as CoreUser;
 use Ulams\Courses\Database\Factories\CourseFactory;
 use Ulams\Courses\Enum\CourseStatusEnum;
@@ -192,7 +193,7 @@ use Peopleaps\Scorm\Model\ScormScoModel;
 
 class Course extends Model
 {
-    use HasFactory;
+    use HasFactory, HasMorphAlias;
 
     public $table = 'courses';
 
@@ -474,10 +475,5 @@ class Course extends Model
                 event(new CourseStatusChanged($course));
             }
         });
-    }
-
-    public function getMorphClass()
-    {
-        return self::class;
     }
 }

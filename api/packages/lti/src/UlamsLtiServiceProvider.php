@@ -2,6 +2,7 @@
 
 namespace Ulams\Lti;
 
+use Ulams\Core\Support\MorphMap;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Support\Facades\Event;
@@ -55,6 +56,10 @@ class UlamsLtiServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        MorphMap::register([
+            'topic.lti' => \Ulams\Lti\Models\LtiLink::class,
+        ]);
+
         $this->mergeConfigFrom(__DIR__ . '/config.php', self::CONFIG_KEY);
         $this->app->register(UlamsTopicTypesServiceProvider::class);
         $this->app->register(UlamsCourseServiceProvider::class);

@@ -2,6 +2,7 @@
 
 namespace Ulams\CourseAccess;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\CourseAccess\Providers\AuthServiceProvider;
 use Ulams\CourseAccess\Providers\SettingsServiceProvider;
 use Ulams\CourseAccess\Repositories\Contracts\CourseAccessEnquiryRepositoryContract;
@@ -37,6 +38,10 @@ class UlamsCourseAccessServiceProvider extends ServiceProvider
 
     public function register()
     {
+        MorphMap::register([
+            'course_access_enquiry' => \Ulams\CourseAccess\Models\CourseAccessEnquiry::class,
+        ]);
+
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(SettingsServiceProvider::class);
     }

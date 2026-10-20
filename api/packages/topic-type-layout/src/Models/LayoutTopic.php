@@ -83,9 +83,4 @@ class LayoutTopic extends AbstractTopicContent
     {
         return [];
     }
-
-    public function getMorphClass()
-    {
-        return self::class;
-    }
 }

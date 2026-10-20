@@ -133,11 +133,6 @@ class GiftQuiz extends AbstractTopicContent
         return GiftQuizFactory::new();
     }
 
-    public function getMorphClass()
-    {
-        return self::class;
-    }
-
     protected static function booted(): void
     {
         parent::booted();

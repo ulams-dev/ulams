@@ -2,6 +2,7 @@
 
 namespace Ulams\AssignWithoutAccount\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphTypeColumns;
 use Ulams\AssignWithoutAccount\Database\Factories\UserSubmissionFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -40,6 +41,10 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class UserSubmission extends Model
 {
     use HasFactory;
+    use HasMorphTypeColumns;
+
+    /** @var array<int, string> polymorphic type columns, stored as morph aliases (see MorphMap) */
+    protected $morphTypeColumns = ['morphable_type'];
 
     protected $fillable = [
         'email',

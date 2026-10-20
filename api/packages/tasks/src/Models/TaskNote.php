@@ -2,6 +2,7 @@
 
 namespace Ulams\Tasks\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Tasks\Database\Factories\TaskNoteFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,6 +28,7 @@ use Illuminate\Support\Carbon;
  */
 class TaskNote extends Model
 {
+    use HasMorphAlias;
     use HasFactory;
 
     protected $guarded = ['id'];
