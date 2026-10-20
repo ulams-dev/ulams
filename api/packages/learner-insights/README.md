@@ -55,6 +55,16 @@ Milestone M4.5, personal remediations (courses built with the Course Builder onl
 - Remediations retire when the element's applied version changes (`learner-insights:retire-remediations`).
 - The learner UI components are not part of this package; the endpoints return a declarative `document`.
 
+Milestone M4.6, analytics for authors and admins (`Services/Analytics`, endpoints under
+`/api/admin/learner-insights`): per-course summary (progress, completion, quiz performance, status
+distribution, nudges and personal help with recovery rates), the sections that confuse people (per
+element struggle, remediation and recovery rates with the top reasons), the list of struggling and
+at-risk learners and one learner's timeline (individual data: permission
+`learner_insights_view_individuals`, or course authors when `learner_insights.instructors_see_individuals`
+is on), and a queued backfill. Groups smaller than `learner_insights.min_group_size` (10) are withheld on
+the server. Authors of the course and holders of `learner_insights_view` see the aggregates. Turning a
+high-struggle element into a Living Course update proposal is not built yet.
+
 Privacy: nothing is recorded while `learner_insights.enabled` is false, for a learner who set the
 user setting `insights.enabled` to false, or, with `learner_insights.require_consent`, before the
 user setting `insights.consent` exists. Signals never reach an LLM.
