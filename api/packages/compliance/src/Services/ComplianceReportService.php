@@ -26,6 +26,47 @@ class ComplianceReportService
         'audit' => ['id', 'created_at', 'course_id', 'action', 'actor_type', 'actor_id', 'subject_type', 'subject_id', 'version_from', 'version_to', 'prev_hash', 'hash'],
     ];
 
+    public function __construct(private CsvExporter $csv)
+    {
+    }
+
+    /**
+     * Writes every row of a dataset to a stream as CSV or JSON lines and records the export (who, dataset,
+     * filters, row count). `$userId` is null for a scheduled report.
+     *
+     * @param resource $stream
+     * @return int rows written
+     */
+    public function write(string $dataset, array $filters, string $format, $stream, ?int $userId): int
+    {
+        $columns = $this->columns($dataset);
+        $count = 0;
+        if ($format === 'csv') {
+            $this->csv->header($stream, $columns);
+        }
+        $this->query($dataset, $filters)->chunkById(500, function ($records) use ($stream, $dataset, $columns, $format, &$count) {
+            foreach ($records as $record) {
+                $row = $this->row($dataset, $record);
+                if ($format === 'csv') {
+                    $this->csv->row($stream, $columns, $row);
+                } else {
+                    fwrite($stream, json_encode(array_intersect_key($row, array_flip($columns)), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "\n");
+                }
+                $count++;
+            }
+        });
+        DB::table('compliance_exports')->insert([
+            'user_id' => $userId,
+            'dataset' => $dataset,
+            'format' => $format,
+            'filters' => json_encode($filters),
+            'row_count' => $count,
+            'created_at' => now(),
+        ]);
+
+        return $count;
+    }
+
     public function available(string $dataset): bool
     {
         return in_array($dataset, self::DATASETS, true) && ($dataset !== 'audit' || Schema::hasTable('living_course_audit'));
