@@ -3,7 +3,6 @@
 namespace Ulams\TopicTypes\Models\TopicContent;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -67,13 +66,15 @@ class Image extends AbstractTopicFileContent
 
     protected function processUploadedFiles(): void
     {
-        $imagePath = Storage::path($this->value);
-
-        if (Config::get('filesystems.default') === 's3') {
-            $imagePath = Storage::url($this->value);
+        // Read the file through the disk (the internal S3 endpoint), never over its public URL: inside the
+        // containers the public host (storage.localhost) resolves to the container itself.
+        try {
+            $contents = Storage::get($this->value);
+        } catch (\Throwable) {
+            return;
         }
 
-        $sizes = getimagesize($imagePath);
+        $sizes = is_string($contents) && $contents !== '' ? @getimagesizefromstring($contents) : false;
         if ($sizes) {
             $this->width = $sizes[0];
             $this->height = $sizes[1];
