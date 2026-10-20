@@ -79,4 +79,13 @@ class CertificateExpiryTest extends TestCase
 
         $this->assertSame(now()->addDays(30)->format('Y-m-d'), $pdf->expires_at->format('Y-m-d'));
     }
+
+    public function testTheQrUrlPointsToTheLearnerSiteWhenOneIsConfigured(): void
+    {
+        config(['app.url' => 'https://api.acme.test']);
+        $this->assertSame('https://api.acme.test/certificates/verify/abc-123', \Ulams\TemplatesPdf\Core\PdfVariables::verifyUrl('abc-123'));
+
+        \Ulams\Settings\Models\Setting::query()->create(['key' => 'frontURL', 'group' => 'global', 'value' => 'https://learn.acme.test/', 'type' => 'text', 'public' => true, 'enumerable' => false]);
+        $this->assertSame('https://learn.acme.test/certificates/verify/abc-123', \Ulams\TemplatesPdf\Core\PdfVariables::verifyUrl('abc-123'));
+    }
 }

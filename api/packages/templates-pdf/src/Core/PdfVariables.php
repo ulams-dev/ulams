@@ -54,13 +54,27 @@ abstract class PdfVariables extends AbstractTemplateVariableClass implements Tem
         return [];
     }
 
+    private static function frontendUrl(): ?string
+    {
+        try {
+            $url = \Ulams\Settings\Models\Setting::query()->where('group', 'global')->where('key', 'frontURL')->value('value');
+        } catch (\Throwable) {
+            return null;
+        }
+
+        return is_string($url) && $url !== '' ? rtrim($url, '/') : null;
+    }
+
     public static function verifyUrl(string $certificateId): string
     {
         $pattern = (string) config(UlamsTemplatesPdfServiceProvider::CONFIG_KEY . '.verify_url', '{APP_URL}/certificates/verify/{id}');
 
+        $app = rtrim((string) config('app.url'), '/');
+
         return strtr($pattern, [
-            '{APP_URL}' => rtrim((string) config('app.url'), '/'),
-            '{FRONTEND_URL}' => rtrim((string) config('app.frontend_url'), '/'),
+            '{APP_URL}' => $app,
+            // the learner site of the tenant (setting global.frontURL), the API host when it is not set
+            '{FRONTEND_URL}' => self::frontendUrl() ?: $app,
             '{id}' => rawurlencode($certificateId),
         ]);
     }

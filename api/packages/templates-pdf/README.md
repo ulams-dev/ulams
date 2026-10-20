@@ -25,8 +25,8 @@ rendered by the `api/pdf` service (see `api/pdf/README.md`).
   variables of the event (`template_create` or `template_update` permission).
 - `GET /api/pdfs/fonts` and `/api/pdfs/fonts/{file}` (public) proxy the renderer's OFL fonts for the designer.
 - Every PDF gets `@VarCertificateId` (random UUID, also `fabric_pdfs.certificate_id`) and
-  `@VarCertificateVerifyUrl` (`verify_url`, default `{APP_URL}/certificates/verify/{id}`; the learner site serves
-  the page at `/certificates/verify/{id}`), which the default certificate encodes as a QR code.
+  `@VarCertificateVerifyUrl` (`verify_url`, default `{FRONTEND_URL}/certificates/verify/{id}`: the tenant's learner site
+  from the setting `global.frontURL`, the API host when it is not set; the learner site serves the page), which the default certificate encodes as a QR code.
 
 ## Certificate lifecycle
 

@@ -26,9 +26,9 @@ Nothing else about the learner is shown. An unknown ID answers "No certificate f
 not indexed by search engines and is not cached. The API behind it,
 `GET /api/certificates/verify/{certificateId}`, is public and throttled (60 requests a minute per client by default).
 
-The default certificate template encodes `@VarCertificateVerifyUrl` as its QR code. The default URL
-`{APP_URL}/certificates/verify/{id}` points to the API host; set `PDF_CERTIFICATE_VERIFY_URL` to
-`{FRONTEND_URL}/certificates/verify/{id}` so the QR code opens the learner site.
+The default certificate template encodes `@VarCertificateVerifyUrl` as its QR code. The URL is built from the
+academy's learner site (the **Front URL** in the global settings) and falls back to the API host when that is not set.
+`PDF_CERTIFICATE_VERIFY_URL` overrides the pattern (`{FRONTEND_URL}`, `{APP_URL}` and `{id}`).
 
 ## Expiry
 

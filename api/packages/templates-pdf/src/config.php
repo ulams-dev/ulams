@@ -24,10 +24,6 @@ return [
     ],
 
     /*
-     * Verification URL encoded in the certificate QR code (@VarCertificateVerifyUrl).
-     * Placeholders: {APP_URL}, {FRONTEND_URL}, {id} (the certificate id).
-     */
-    /*
      * Public verification endpoint (GET /api/certificates/verify/{id}). `holder_name`: full, initials or
      * none; `throttle`: requests per minute and client.
      */
@@ -42,5 +38,10 @@ return [
      */
     'validity_days' => (int) env('PDF_CERTIFICATE_VALIDITY_DAYS', 0),
 
-    'verify_url' => env('PDF_CERTIFICATE_VERIFY_URL', '{APP_URL}/certificates/verify/{id}'),
+    /*
+     * Verification URL encoded in the certificate QR code (@VarCertificateVerifyUrl).
+     * Placeholders: {APP_URL}, {FRONTEND_URL} (the tenant's learner site, setting global.frontURL; the API host
+     * when it is not set), {id} (the certificate id). The learner site serves /certificates/verify/{id}.
+     */
+    'verify_url' => env('PDF_CERTIFICATE_VERIFY_URL', '{FRONTEND_URL}/certificates/verify/{id}'),
 ];
