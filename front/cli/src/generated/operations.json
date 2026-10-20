@@ -2970,6 +2970,30 @@
   "tag": "Interactive"
  },
  {
+  "method": "POST",
+  "path": "/api/learner-insights/assignments/{assignment}/feedback",
+  "summary": "Say whether a piece of extra help was useful",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "POST",
+  "path": "/api/learner-insights/assignments/{assignment}/hide",
+  "summary": "Hide a piece of extra help",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "POST",
+  "path": "/api/learner-insights/assignments/{assignment}/reflection",
+  "summary": "Get feedback on the learner's own explanation of the idea (the text is sent to the AI provider and not stored)",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "GET",
+  "path": "/api/learner-insights/courses/{course}/topics/{topic}/support",
+  "summary": "Extra help for the learner in a topic, with the reasons it was offered",
+  "tag": "Learner insights"
+ },
+ {
   "method": "DELETE",
   "path": "/api/learner-insights/me",
   "summary": "Erase the learner's personalisation data (the opt-out and consent settings stay)",
