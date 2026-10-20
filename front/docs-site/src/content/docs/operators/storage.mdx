@@ -40,6 +40,11 @@ limit recorded in `api/docs/multidomain.md`).
 what browsers use. They differ when the store sits on the internal network (the example's MinIO:
 `http://minio:9000` inside, `https://storage.<content domain>` outside).
 
+Server-side code reads files through the disk (`AWS_ENDPOINT`) and never fetches its own public URL. In the
+development stack `storage.localhost` resolves to the container itself, so a request to it from inside a
+container would not reach the store; for example, the Image topic reads its dimensions from the stored
+file, not from `AWS_URL`.
+
 <Aside type="caution" title="SCORM packages on a local disk">
   `SCORM_DISK` defaults to `local`, so extracted SCORM packages are written under the API's
   `storage/` directory (the `api_storage` volume in the example) and must be backed up with it.
