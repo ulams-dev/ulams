@@ -2,6 +2,7 @@
 
 namespace Ulams\Webinar;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Webinar\Providers\EventServiceProvider;
 use Ulams\Jitsi\UlamsJitsiServiceProvider;
 use Ulams\Settings\UlamsSettingsServiceProvider;
@@ -20,6 +21,11 @@ use Illuminate\Support\ServiceProvider;
  */
 class UlamsWebinarServiceProvider extends ServiceProvider
 {
+    /** Morph aliases of the models of this package (see Ulams\Core\Support\MorphMap); tests of packages that only use the models register them too. */
+    public const MORPH_ALIASES = [
+        'webinar' => \Ulams\Webinar\Models\Webinar::class,
+    ];
+
     public const SERVICES = [
         WebinarServiceContract::class => WebinarService::class
     ];
@@ -50,6 +56,8 @@ class UlamsWebinarServiceProvider extends ServiceProvider
 
     public function register()
     {
+        MorphMap::register(self::MORPH_ALIASES);
+
         $this->mergeConfigFrom(__DIR__ . '/config.php', 'ulams_webinar');
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(UlamsJitsiServiceProvider::class);

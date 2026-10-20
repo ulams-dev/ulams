@@ -131,6 +131,11 @@ These run automatically and are idempotent where noted:
   `model_type`, `productable_type`, notification types and JSON payloads) to `Ulams\`, and the
   administrable config keys `escolalms_*` to `ulams_*`. It works on PostgreSQL and MySQL and has a
   `down()`.
+- **Morph aliases.** The migration `store_morph_aliases` then rewrites the class names in every
+  polymorphic column (`<name>_type` next to `<name>_id`: `topicable_type`, `model_type`,
+  `productable_type`, `buyable_type`, ...) to stable aliases such as `topic.rich_text`, `course` and
+  `user`, so a renamed class can no longer orphan rows. Only values that are exactly a known class
+  name change, it is idempotent and has a `down()`. The API still shows and accepts class names.
 - **Passport 13.** `upgrade_oauth_clients_to_passport_13` converts `oauth_clients` (grant types,
   redirect URIs, hashed secrets) and keeps client UUIDs, so client IDs stay the same.
 - **Recommender tables dropped.** The analytics cache tables and the `ulams_recommender.*` config

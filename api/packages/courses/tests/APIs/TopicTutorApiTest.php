@@ -190,7 +190,7 @@ class TopicTutorApiTest extends TestCase
 
         $this->assertDatabaseHas('topics', [
             'id' => $clonedTopicId,
-            'topicable_type' => ExampleTopicType::class,
+            'topicable_type' => 'topic.example', // the database stores the morph alias
             'topicable_id' => $data->data->topicable->id,
         ]);
 

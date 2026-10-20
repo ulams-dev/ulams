@@ -2,6 +2,7 @@
 
 namespace Treestoneit\ShoppingCart\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphTypeColumns;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
@@ -39,6 +40,11 @@ use Illuminate\Support\Arr;
  */
 class CartItem extends Model
 {
+    use HasMorphTypeColumns;
+
+    /** @var array<int, string> polymorphic type columns, stored as morph aliases (see MorphMap) */
+    protected $morphTypeColumns = ['buyable_type'];
+
     /**
      * The attributes that aren't mass assignable.
      *

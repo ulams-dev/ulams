@@ -2,6 +2,7 @@
 
 namespace Ulams\Reports\Stats\Course;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Cart\Enums\OrderStatus;
 use Ulams\Cart\Enums\ProductType;
 use Ulams\Cart\Models\OrderItem;
@@ -32,7 +33,7 @@ class MoneyEarned extends AbstractCourseStat
             ->where('buyable_type', Product::class)
             ->whereHas(
                 'buyable',
-                fn (Builder $query) => $query->getModel()->getMorphClass() !== Product::class
+                fn (Builder $query) => $query->getModel()->getMorphClass() !== MorphMap::aliasOrClass(Product::class)
                     ? $query
                     : $query->where('type', ProductType::SINGLE)
                     ->whereHas(
@@ -52,7 +53,7 @@ class MoneyEarned extends AbstractCourseStat
             ->where('buyable_type', Product::class)
             ->whereHas(
                 'buyable',
-                fn (Builder $query) => $query->getModel()->getMorphClass() !== Product::class
+                fn (Builder $query) => $query->getModel()->getMorphClass() !== MorphMap::aliasOrClass(Product::class)
                     ? $query
                     : $query->where('type', ProductType::BUNDLE)
                     ->whereHas(
@@ -69,7 +70,7 @@ class MoneyEarned extends AbstractCourseStat
             $product = $orderItem->buyable;
             assert($product instanceof Product);
             $productablesCount = $product->productables->sum('quantity');
-            $courseCount = optional($orderItem->buyable->productables->where('productable_type', $this->course->getMorphClass())->where('productable_id', $this->course->getKey())->first())->quantity;
+            $courseCount = optional($orderItem->buyable->productables->where('productable_type', MorphMap::classOf($this->course->getMorphClass()))->where('productable_id', $this->course->getKey())->first())->quantity;
             if ($courseCount > 0 && $productablesCount > 0) {
                 $price = ($orderItem->subtotal * $courseCount / $productablesCount);
             } else {

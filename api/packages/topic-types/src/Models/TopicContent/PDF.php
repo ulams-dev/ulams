@@ -77,9 +77,4 @@ class PDF extends AbstractTopicFileContent
     {
         $this->processUploadedFiles();
     }
-
-    public function getMorphClass()
-    {
-        return self::class;
-    }
 }

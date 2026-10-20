@@ -84,9 +84,4 @@ class ScormSco extends AbstractTopicContent
 
         return [[$zipPath, $destination]];
     }
-
-    public function getMorphClass()
-    {
-        return self::class;
-    }
 }
