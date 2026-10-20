@@ -11166,6 +11166,58 @@
     ]
    }
   },
+  "/api/admin/living-course/proposals/{proposal}/items/{item}/suggest-lesson": {
+   "post": {
+    "operationId": "97417256ee326a05e89c866134cf714c",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "item",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the item with the suggested lesson"
+     },
+     "403": {
+      "description": "not allowed"
+     },
+     "404": {
+      "description": "unknown"
+     },
+     "409": {
+      "description": "not an uncovered section, or settled"
+     },
+     "422": {
+      "description": "budget"
+     },
+     "503": {
+      "description": "AI disabled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Suggest a new lesson for a new source section no lesson covers (one AI call; the item becomes `new_lesson` for review as a diff)",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
   "/api/admin/living-course/proposals/{proposal}/learner-note": {
    "put": {
     "operationId": "5f1fff47bbf112a36833f964fdd2e5fe",

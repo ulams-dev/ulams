@@ -762,6 +762,39 @@ export const livingCommands: AnyCommand[] = [
   }),
   defineCommand({
     ...common,
+    id: "living.proposals.suggest-lesson",
+    summary:
+      "Suggest a new lesson for a new source section that no lesson covers",
+    description:
+      "One model call. The item becomes a `new_lesson` proposal the author reviews as a diff; nothing changes in the course until it is accepted and applied.",
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: [`POST ${LC}/proposals/{proposal}/items/{item}/suggest-lesson`],
+    positionals: ["proposal"],
+    input: z.object({ proposal, item }),
+    output: z.unknown(),
+    examples: [
+      {
+        title: "Suggest a lesson for an uncovered section",
+        argv: "living proposals suggest-lesson <proposal> --item <item> --json",
+      },
+    ],
+    plan: async (_ctx, i) =>
+      planOf("POST", `/proposals/${i.proposal}/items/${i.item}/suggest-lesson`),
+    async run(ctx, i) {
+      return {
+        data: await lc(
+          ctx,
+          "POST",
+          "/proposals/{proposal}/items/{item}/suggest-lesson",
+          { params: { proposal: i.proposal, item: i.item } }
+        ),
+      };
+    },
+  }),
+  defineCommand({
+    ...common,
     id: "living.proposals.accept-all",
     summary: "Accept every pending item of a proposal",
     kind: "write",
