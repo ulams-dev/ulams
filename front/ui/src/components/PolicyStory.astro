@@ -974,8 +974,9 @@ const alternatives = [
   }
   .ps-controls button {
     display: grid;
-    width: var(--ps-mark);
-    height: var(--ps-mark);
+    /* WCAG 2.2 target size (2.5.8): the mark can shrink on phones, the target cannot */
+    width: max(var(--ps-mark), 24px);
+    height: max(var(--ps-mark), 24px);
     padding: 0;
     color: var(--ulams-color-primary);
     background: transparent;
