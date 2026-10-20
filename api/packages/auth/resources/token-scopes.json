@@ -177,6 +177,10 @@
             "area": "public"
         },
         {
+            "pattern": "api/certificates/verify/*",
+            "area": "public"
+        },
+        {
             "pattern": "api/core/health-check",
             "area": "public"
         },
