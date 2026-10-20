@@ -55,6 +55,23 @@ operations:
   "DELETE /api/admin/tokens/{id}": { id: tokens.revoke-any, positionals: [id] }
   "GET /api/admin/tokens/{id}/audit": { id: tokens.audit, positionals: [id] }
   "GET /api/admin/agent-audit": { id: tokens.agent-audit }
+  "PATCH /api/auth/tokens/{id}": { id: tokens.set-limit, positionals: [id], summary: "Change the per-minute rate limit of one of my tokens (null removes it)" }
+  "GET /api/auth/tokens/{id}/usage": { id: tokens.usage, positionals: [id], summary: "Requests per day of one of my tokens and its rate limit window" }
+  "PATCH /api/admin/tokens/{id}": { id: tokens.set-limit-any, positionals: [id], summary: "Change the per-minute rate limit of any token" }
+  "GET /api/admin/tokens/{id}/usage": { id: tokens.usage-any, positionals: [id], summary: "Requests per day of any token and its rate limit window" }
+
+  # --- outgoing webhooks (7.3); the path parameter names differ, so the generator cannot tell list from get
+  "GET /api/admin/webhooks/events": { id: webhooks.events }
+  "GET /api/admin/webhooks/endpoints": { id: webhooks.endpoints-list }
+  "POST /api/admin/webhooks/endpoints": { id: webhooks.endpoints-create, summary: "Register a webhook endpoint (the signing secret is shown once)", examples: [{ title: "Send course completions to a CRM", argv: "webhooks endpoints-create --url https://crm.example.com/hooks/ulams --events course.completed --json" }] }
+  "GET /api/admin/webhooks/endpoints/{endpoint}": { id: webhooks.endpoints-get, positionals: [endpoint] }
+  "PUT /api/admin/webhooks/endpoints/{endpoint}": { id: webhooks.endpoints-update, positionals: [endpoint] }
+  "DELETE /api/admin/webhooks/endpoints/{endpoint}": { id: webhooks.endpoints-delete, positionals: [endpoint] }
+  "POST /api/admin/webhooks/endpoints/{endpoint}/rotate-secret": { id: webhooks.endpoints-rotate-secret, positionals: [endpoint] }
+  "POST /api/admin/webhooks/endpoints/{endpoint}/test": { id: webhooks.endpoints-test, positionals: [endpoint], summary: "Send one sample event and show the receiver's answer" }
+  "GET /api/admin/webhooks/deliveries": { id: webhooks.deliveries-list }
+  "GET /api/admin/webhooks/deliveries/{delivery}": { id: webhooks.deliveries-get, positionals: [delivery] }
+  "POST /api/admin/webhooks/deliveries/{delivery}/replay": { id: webhooks.deliveries-replay, positionals: [delivery], summary: "Send a delivery again (same event id, fresh signature)" }
 
   # --- users
   "PUT /api/admin/user/{id}": { id: users.update }

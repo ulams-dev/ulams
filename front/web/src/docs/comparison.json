@@ -887,7 +887,7 @@
                   },
                   {
                     "title": "MCP server for AI agents",
-                    "text": "ulams mcp serves every CLI command as MCP tools over stdio or Streamable HTTP, for Claude Code, Claude Desktop and other MCP clients: 23 tools by default, up to 535 with all toolsets. Built from the repository today; the npm package is planned.",
+                    "text": "ulams mcp serves every CLI command as MCP tools over stdio or Streamable HTTP, for Claude Code, Claude Desktop and other MCP clients: 23 tools by default, up to 550 with all toolsets. Built from the repository today; the npm package is planned.",
                     "href": "https://ulams-dev.github.io/ulams/developers/agents/"
                   },
                   {

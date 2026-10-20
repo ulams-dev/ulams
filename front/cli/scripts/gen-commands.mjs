@@ -23,6 +23,8 @@ const AREAS = [
   [/^\/api\/admin\/(reports|stats|questionnaire|question|quiz-|tasks)/, "reports"],
   [/^\/api\/admin\/lti/, "lti"],
   [/^\/api\/admin\/course-builder/, "builder"],
+  [/^\/api\/(auth\/tokens|admin\/(tokens|agent-audit))/, "tokens"],
+  [/^\/api\/admin\/webhooks/, "webhooks"],
 ];
 
 /** Areas with hand-written commands only (builder.ts, living.ts, tenants.ts): runs and operations, not CRUD. */
