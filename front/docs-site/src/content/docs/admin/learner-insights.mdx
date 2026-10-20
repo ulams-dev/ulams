@@ -49,6 +49,23 @@ All values are defaults; change them per tenant with the settings `learner_insig
 
 A finished course is always on track. A struggling element returns to on track when the learner passes or finishes it. Statuses change only on transitions: the events `LearnerStruggling`, `LearnerAtRisk` and `LearnerRecovered` fire once per transition, never on a repeated evaluation. The first evaluation follows new signals within about a minute (one evaluation per learner and course per minute); the nightly `learner-insights:evaluate` covers the rules that depend on time passing, and `learner-insights:cohort-stats` computes the medians.
 
+## Personal help
+
+For courses built with the [Course Builder](/admin/course-builder/), a learner who is struggling with an element gets short extra help: an explanation and a practice question, or an explanation and a worked example. It is written from the sources the course cites, shown with those sources, an "AI-generated" label and the reason it was offered, and checked before it is shown: a claim the sources do not support means nothing is shown. Help is cached per difficulty and per version of the element, so most learners cost nothing, and it is retired when an author changes the element. AI must be configured (`AI_DRIVER`); without it nothing is generated and the rest of Learner Insights works as before. Learners can say "helpful" or "not helpful", hide a piece of help, or switch it off for a course or entirely. Learners can also paste their own explanation of the idea and get feedback (the text is sent to the AI provider and not stored). What reaches the provider is described in [data flows and DPIA](/operators/dpia-learner-insights/).
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `LEARNER_INSIGHTS_REMEDIATION_ENABLED` | `true` | Tenant switch for personal help (the module itself must be on) |
+| `LEARNER_INSIGHTS_REMEDIATION_PER_LEARNER_DAY` | `3` | New generations per learner per day |
+| `LEARNER_INSIGHTS_REFLECTIONS_PER_DAY` | `5` | Feedback requests on a learner's own explanation per day |
+| `LEARNER_INSIGHTS_MONTHLY_USD` | `20` | Monthly AI spend of personal help for the tenant |
+| `LEARNER_INSIGHTS_COURSE_MONTHLY_USD` | `5` | Monthly AI spend of personal help for one course |
+| `AI_TASK_REMEDIATION_PROFILE`, `AI_TASK_REFLECTION_PROFILE` | `default`, `light` | Model profiles of the two tasks |
+
+## Reminders
+
+An at-risk learner gets one reminder per course per 7 days and at most two per week in total, in the app and by e-mail, with the reason and a link to the next unfinished topic. Each suppressed reminder is logged with its reason. After 14 days the reminder counts as recovered (the learner finished a topic or passed a quiz again) or not recovered. Switch reminders off for the tenant with `learner_insights.nudges.enabled`; learners switch them off in their settings.
+
 ## Privacy controls
 
 | Control | Effect |
@@ -64,7 +81,8 @@ A finished course is always on track. A struggling element returns to on track w
 |---|---|---|
 | `LEARNER_INSIGHTS_ENABLED` | `false` | Master switch for the installation (the tenant setting overrides it) |
 | `LEARNER_INSIGHTS_REQUIRE_CONSENT` | `false` | Consent mode |
-| `LEARNER_INSIGHTS_QUEUE_CONNECTION`, `LEARNER_INSIGHTS_QUEUE` | default queue | Where signals are recorded |
+| `LEARNER_INSIGHTS_QUEUE_CONNECTION`, `LEARNER_INSIGHTS_QUEUE` | default queue | Where signals are recorded and statuses evaluated |
+| `LEARNER_INSIGHTS_AI_QUEUE_CONNECTION`, `LEARNER_INSIGHTS_AI_QUEUE` | the Course Builder queue | Where personal help is generated (the long queue with a `retry_after` above the job timeout, see [queues and scheduler](/operators/queues-and-scheduler/)) |
 | `LEARNER_INSIGHTS_RETENTION_SIGNALS_DAYS` | `180` | Retention window |
 | `LEARNER_INSIGHTS_CLIENT_SIGNALS_PER_MINUTE` | `60` | Rate limit of the player endpoint, per learner |
 | `LEARNER_INSIGHTS_EVALUATE_DEBOUNCE_SECONDS` | `60` | One evaluation per learner and course in this window |

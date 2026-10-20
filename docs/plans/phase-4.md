@@ -1,6 +1,6 @@
 # Phase 4 plan: Personalisation
 
-Status: approved by blanket instruction 2026-10-20, defaults used (open owner decisions #58 to #63 are closed; the ADRs 0057 to 0062 stay Proposed until accepted, see #64). Implementation in progress: M4.1 to M4.4 shipped in the first PR (see `api/packages/learner-insights/README.md`).
+Status: approved by blanket instruction 2026-10-20, defaults used (open owner decisions #58 to #63 are closed; the ADRs 0057 to 0062 stay Proposed until accepted, see #64). Implementation in progress: M4.1 to M4.4 in the first PR, M4.5 (API) in the second (see `api/packages/learner-insights/README.md`).
 
 Phase 4 adds the second pillar of the product: courses that **adapt to each learner**, with every
 recommendation explained and grounded in the course's cited sources. It covers every Phase 4 item in
@@ -983,6 +983,17 @@ Where the code differs from the plan above, and what is still open:
 - Nudges use the notifications package: `LearnerNudged` carries a `User`; the e-mail template is in
   `templates-email`. `n=<id>.<signature>` in the continue link is verified by
   `POST /api/learner-insights/nudges/opened`.
+
+## 20. Implementation notes (M4.5)
+
+- Remediation documents are stored as declarative blocks (`Prose`, `WorkedExample`, `PracticeQuestion`,
+  `ElaborativeQuestion`, each with props and citations). The learner catalogue components that render them
+  and the "Extra help for you" card are not built yet (front work of M4.5), so the API returns the document
+  as data.
+- One remediation row per `(pattern_key, kind)` and one model call per row; the pattern detail (the wrong
+  option ids) is empty until `quiz.answer` signals carry the chosen options.
+- `reflection_feedback` is limited per learner per day with a cache counter, not stored in the database.
+- The holdout (20 % get no remediation) belongs to M4.8 with the experiments package.
 
 ## 22. Implementation notes (M4.7)
 

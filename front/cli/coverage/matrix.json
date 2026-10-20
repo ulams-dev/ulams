@@ -1,5 +1,5 @@
 {
- "summary": "565/627 covered, 62 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "560/626 covered, 66 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -2084,12 +2084,6 @@
    "status": "covered"
   },
   {
-   "key": "GET /api/admin/tutor/courses/{course}/analytics",
-   "summary": "Anonymous tutor analytics for a course: questions, out-of-scope share and refusals during attempts",
-   "command": "tutor.courses-analytics",
-   "status": "covered"
-  },
-  {
    "key": "GET /api/admin/user-groups/",
    "summary": "List groups",
    "command": "groups.list",
@@ -2978,6 +2972,30 @@
    "status": "excluded: content-runtime"
   },
   {
+   "key": "POST /api/learner-insights/assignments/{assignment}/feedback",
+   "summary": "Say whether a piece of extra help was useful",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/learner-insights/assignments/{assignment}/hide",
+   "summary": "Hide a piece of extra help",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/learner-insights/assignments/{assignment}/reflection",
+   "summary": "Get feedback on the learner's own explanation of the idea (the text is sent to the AI provider and not stored)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/learner-insights/courses/{course}/topics/{topic}/support",
+   "summary": "Extra help for the learner in a topic, with the reasons it was offered",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
    "key": "GET /api/learner-insights/me",
    "summary": "The learner's own statuses with reasons, their privacy settings and the retention periods",
    "command": "",
@@ -3695,30 +3713,6 @@
    "key": "GET /api/translations",
    "summary": "Get a list of public translations",
    "command": "public.translations-list",
-   "status": "covered"
-  },
-  {
-   "key": "GET /api/tutor/conversations/{conversation}",
-   "summary": "One of the learner's conversations with its messages",
-   "command": "my.tutor-conversations-list",
-   "status": "covered"
-  },
-  {
-   "key": "DELETE /api/tutor/conversations/{conversation}",
-   "summary": "Delete one of the learner's conversations",
-   "command": "my.tutor-conversations-delete",
-   "status": "covered"
-  },
-  {
-   "key": "GET /api/tutor/courses/{course}/conversations",
-   "summary": "The learner's own conversations in a course",
-   "command": "my.tutor-courses-conversations",
-   "status": "covered"
-  },
-  {
-   "key": "POST /api/tutor/courses/{course}/messages",
-   "summary": "Ask the course tutor a question; it answers only from the course, with citations",
-   "command": "my.tutor-courses-messages",
    "status": "covered"
   },
   {
