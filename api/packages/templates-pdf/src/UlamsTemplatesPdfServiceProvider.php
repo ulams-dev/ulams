@@ -7,6 +7,8 @@ use Ulams\TemplatesPdf\Console\MigrateReportBroTemplatesCommand;
 use Ulams\TemplatesPdf\Providers\AuthServiceProvider;
 use Ulams\TemplatesPdf\Providers\CourseTemplatesServiceProvider;
 use Ulams\TemplatesPdf\Providers\UserTemplateServiceProvider;
+use Ulams\TemplatesPdf\Services\ConfigCertificateValidity;
+use Ulams\TemplatesPdf\Services\Contracts\CertificateValidityContract;
 use Ulams\TemplatesPdf\Services\Contracts\PdfGeneratorContract;
 use Ulams\TemplatesPdf\Services\Contracts\PdfRendererContract;
 use Ulams\TemplatesPdf\Services\PdfGenerator;
@@ -22,6 +24,7 @@ class UlamsTemplatesPdfServiceProvider extends ServiceProvider
     public $singletons = [
         PdfRendererContract::class => PdfServiceRenderer::class,
         PdfGeneratorContract::class => PdfGenerator::class,
+        CertificateValidityContract::class => ConfigCertificateValidity::class,
     ];
 
     public function register()

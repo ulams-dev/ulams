@@ -27,5 +27,20 @@ return [
      * Verification URL encoded in the certificate QR code (@VarCertificateVerifyUrl).
      * Placeholders: {APP_URL}, {FRONTEND_URL}, {id} (the certificate id).
      */
+    /*
+     * Public verification endpoint (GET /api/certificates/verify/{id}). `holder_name`: full, initials or
+     * none; `throttle`: requests per minute and client.
+     */
+    'verify' => [
+        'holder_name' => env('PDF_CERTIFICATE_VERIFY_NAME', 'full'),
+        'throttle' => (int) env('PDF_CERTIFICATE_VERIFY_THROTTLE', 60),
+    ],
+
+    /*
+     * Default certificate validity in days (0 = never expires). The compliance package overrides it per
+     * course through CertificateValidityContract.
+     */
+    'validity_days' => (int) env('PDF_CERTIFICATE_VALIDITY_DAYS', 0),
+
     'verify_url' => env('PDF_CERTIFICATE_VERIFY_URL', '{APP_URL}/certificates/verify/{id}'),
 ];

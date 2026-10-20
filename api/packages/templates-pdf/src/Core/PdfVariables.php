@@ -15,6 +15,7 @@ abstract class PdfVariables extends AbstractTemplateVariableClass implements Tem
     const VAR_TODAY = '@VarToday';
     const VAR_CERTIFICATE_ID = '@VarCertificateId';
     const VAR_CERTIFICATE_VERIFY_URL = '@VarCertificateVerifyUrl';
+    const VAR_CERTIFICATE_EXPIRES_AT = '@VarCertificateExpiresAt';
 
     public static function mockedVariables(?User $user = null): array
     {
@@ -25,6 +26,7 @@ abstract class PdfVariables extends AbstractTemplateVariableClass implements Tem
             self::VAR_TODAY => today()->format('d.m.Y'),
             self::VAR_CERTIFICATE_ID => $id,
             self::VAR_CERTIFICATE_VERIFY_URL => self::verifyUrl($id),
+            self::VAR_CERTIFICATE_EXPIRES_AT => today()->addYear()->format('d.m.Y'),
         ];
     }
 
@@ -39,6 +41,12 @@ abstract class PdfVariables extends AbstractTemplateVariableClass implements Tem
             self::VAR_CERTIFICATE_ID => $id,
             self::VAR_CERTIFICATE_VERIFY_URL => self::verifyUrl($id),
         ];
+    }
+
+    /** Version label of what the certificate attests (e.g. the course revision); null when unknown. */
+    public static function versionFromEvent(EventWrapper $event): ?string
+    {
+        return null;
     }
 
     public static function requiredSections(): array
