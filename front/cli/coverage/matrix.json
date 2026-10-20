@@ -1,5 +1,5 @@
 {
- "summary": "519/568 covered, 49 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "521/570 covered, 49 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -893,6 +893,12 @@
    "key": "GET /api/admin/living-course/connectors",
    "summary": "The source connectors this installation offers, with their settings schema",
    "command": "living.connectors.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/oauth/{provider}/start",
+   "summary": "The vendor sign-in address for Connect your account (provider google or notion); the session must be one the caller may change",
+   "command": "living.oauth.start",
    "status": "covered"
   },
   {
@@ -2723,6 +2729,12 @@
    "key": "POST /api/living-course/notices/{notice}/dismiss",
    "summary": "Mark a notice as reviewed",
    "command": "my.living-course-notices-dismiss",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/living-course/oauth/{provider}/callback",
+   "summary": "The vendor's redirect after the sign-in: redirects to the studio with a one-time grant, or answers with it",
+   "command": "public.living-course-oauth-callback",
    "status": "covered"
   },
   {
