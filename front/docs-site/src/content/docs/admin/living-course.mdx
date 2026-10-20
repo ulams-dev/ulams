@@ -41,6 +41,7 @@ The requirements of the Course Builder apply: a configured `AI_DRIVER`, a queue 
 | `LIVING_COURSE_INSECURE_HOSTS` | empty | Hosts allowed over plain HTTP or on private addresses (development only). |
 | `LIVING_COURSE_LEARNER_NOTICE_AFTER_DAYS` | `3` | Days before an unseen update notice reaches a learner by e-mail. |
 | `AI_TASK_UPDATE_PROFILE` | the default profile | Model profile of the analysis (`update` task); the model name lives in `config/ai.php`. |
+| `AI_TASK_NEW_LESSON_PROFILE` | the default profile | Model profile of suggested lessons for new source sections (`new_lesson` task). |
 
 Not configurable by environment variable (set in `api/packages/living-course/config/living_course.php`): at most 48 checks per connection and day, 5 update proposals per source and day, 3 regenerations per item, 3000 output tokens per analysis group, 3 failed checks before a connection shows **Error**, and a weekly digest of learner notices.
 
