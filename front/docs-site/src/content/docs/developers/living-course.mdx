@@ -11,7 +11,7 @@ The package `api/packages/living-course` (`Ulams\LivingCourse`) builds on the [C
 
 ## Flow
 
-1. A **connector** fetches a source (upload, Git repository, web pages) and the course builder's own ingestion turns it into fragments with stable ids and a `file_path`. Each fetch that differs from the last one becomes a **revision** (numbered per source; raw files are kept on the private disk).
+1. A **connector** fetches a source (upload, Git repository through a host API or, for other servers, the `git` command with `GitCliConnector`, web pages) and the course builder's own ingestion turns it into fragments with stable ids and a `file_path`. Each fetch that differs from the last one becomes a **revision** (numbered per source; raw files are kept on the private disk).
 2. **Change detection** is deterministic and costs nothing: `FragmentDiff` pairs fragments by id, heading path and token similarity (`TokenDiff`, `Normaliser`) and classifies them as unchanged, changed, moved, added or removed. A change is substantive above `living_course.diff.substantive_ratio` or when a modality word flips (`not`, `must`, `deprecated`, per language).
 3. **Impact** (`ImpactAnalyzer`) maps changed fragments to the course elements that cite them through the blueprint's citations; `StalenessService` stores `element_status` (current, stale, source removed) so the studio and the API show what is out of date.
 4. **Analysis** (`AnalysisService`) groups impacted elements (one group per lesson or question set), estimates the cost and, below the auto threshold or after confirmation, runs one model call per group as steps of a Course Builder run of kind `sync`. The model sees the old fragments, the new fragments and the current element, and answers with an update that must cite fragments of the new revision (`UpdateValidator`; unknown or uncited output is rejected, and source text is untrusted data in the prompt).
@@ -39,6 +39,8 @@ Authors and reviewers (`auth:api`, scope `living-course:read` for GET and `livin
 | `POST proposals/{p}/analyse` `{confirmEstimate?}` | 202 started; 409 when the estimate needs confirming; 422 when budget blocked; 503 with AI off |
 | `POST proposals/{p}/items/{i}/accept`, `reject`, `reset` | Decide one item; 409 when it is not decidable now |
 | `POST proposals/{p}/items/{i}/regenerate` `{comment}` | New suggestion for one item (one call, at most 3 per item) |
+| `POST oauth/{provider}/start` `{sessionId}` | The vendor sign-in address (`google` or `notion`); 422 when the installation has no OAuth client, 403 for another author's session |
+| `GET /api/living-course/oauth/{provider}/callback` | The vendor's redirect (no login: the encrypted, expiring state is the credential): exchanges the code, keeps the tokens server-side and redirects to `LIVING_COURSE_OAUTH_RETURN_URL` with `?grant=` (or answers with it). Connect or `PUT connections/{c}` with `secrets: {grant}` redeems it once |
 | `POST proposals/{p}/items/{i}/suggest-lesson` | A lesson for an `uncovered` item (one AI call, 503 with AI off, 409 for any other item or a settled proposal); reopens a `no_impact` proposal of the newest revision |
 | `POST proposals/{p}/accept-all`, `reject`, `reanalyse` | Accept every undecided update, removal, no-change item and suggested lesson; reject the whole proposal and acknowledge the revision; start again from the newest revision |
 | `PUT proposals/{p}/learner-note` `{note}` | Plain text, up to 500 characters |

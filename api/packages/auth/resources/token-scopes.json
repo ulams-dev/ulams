@@ -261,6 +261,10 @@
             "area": "public"
         },
         {
+            "pattern": "api/living-course/oauth/*/callback",
+            "area": "public"
+        },
+        {
             "pattern": "api/admin/courses/*/access*",
             "area": "enrolments"
         },

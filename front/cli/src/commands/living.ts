@@ -233,6 +233,40 @@ export const livingCommands: AnyCommand[] = [
   }),
   defineCommand({
     ...common,
+    id: "living.oauth.start",
+    summary:
+      "The sign-in address to connect a Google Drive or Notion account to a course",
+    description:
+      'Open the address in a browser and sign in. The server keeps the tokens; the page you land on shows a one-time grant (valid ten minutes). Pass it to `living sources connect` as --secrets \'{"grant":"<grant>"}\' with --connector google-drive or notion. Needs the OAuth client of the installation (`living connectors list` shows whether it is set up).',
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: [`POST ${LC}/oauth/{provider}/start`],
+    positionals: ["provider"],
+    input: z.object({
+      provider: z.enum(["google", "notion"]).describe("google (Drive) or notion."),
+      session: z.string().describe("The course session the source will be added to."),
+    }),
+    output: z.unknown(),
+    examples: [
+      {
+        title: "Sign in to Google Drive",
+        argv: "living oauth start google --session <session> --json",
+      },
+    ],
+    plan: async (_ctx, i) =>
+      planOf("POST", `/oauth/${i.provider}/start`, { sessionId: i.session }),
+    async run(ctx, i) {
+      return {
+        data: await lc(ctx, "POST", "/oauth/{provider}/start", {
+          params: { provider: i.provider },
+          body: { sessionId: i.session },
+        }),
+      };
+    },
+  }),
+  defineCommand({
+    ...common,
     id: "living.connectors.list",
     summary: "List the source connectors this instance offers",
     kind: "read",

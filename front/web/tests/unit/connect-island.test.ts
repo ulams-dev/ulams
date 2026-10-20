@@ -9,12 +9,14 @@ interface Call {
   body: unknown;
 }
 
-function stubApi(connect: () => Response) {
+function stubApi(connect: () => Response, connectors: unknown[] = []) {
   if (typeof AbortSignal.timeout !== "function") (AbortSignal as unknown as { timeout: () => AbortSignal }).timeout = () => new AbortController().signal;
   const calls: Call[] = [];
   vi.stubGlobal("fetch", async (url: string, init?: RequestInit) => {
     const method = init?.method ?? "GET";
     calls.push({ method, url, body: typeof init?.body === "string" ? JSON.parse(init.body) : undefined });
+    if (method === "GET" && url.endsWith("/connectors")) return new Response(JSON.stringify({ success: true, data: connectors }));
+    if (method === "POST" && url.endsWith("/oauth/google/start")) return new Response(JSON.stringify({ success: true, data: { url: "https://accounts.google.com/o/oauth2/v2/auth?state=abc" } }));
     if (method === "POST" && url.endsWith("/sessions")) return new Response(JSON.stringify({ success: true, data: { session: { id: SESSION } } }), { status: 201 });
     if (method === "DELETE" && url.endsWith(`/sessions/${SESSION}`)) return new Response(JSON.stringify({ success: true, data: { id: SESSION } }));
     if (url.endsWith(`/sessions/${SESSION}/sources/connect`)) return connect();
@@ -34,9 +36,11 @@ const gitResult = (secret: string | null) =>
   }), { status: 201 });
 
 async function mount(navigate = vi.fn()) {
-  document.body.innerHTML = `<section data-studio-connect></section><div data-announcer></div>`;
+  // the module mounts itself when the page has the section; add it after the import to mount once, with the injected navigate
+  document.body.innerHTML = `<div data-announcer></div>`;
   vi.resetModules();
   const { mountConnect } = await import("../../src/studio/connect.ts");
+  document.body.insertAdjacentHTML("afterbegin", `<section data-studio-connect></section>`);
   const root = document.querySelector<HTMLElement>("[data-studio-connect]")!;
   mountConnect(root, { navigate });
   return { root, navigate };
@@ -49,7 +53,16 @@ const type = (root: HTMLElement, selector: string, value: string) => {
 };
 const submit = (root: HTMLElement, selector: string) => root.querySelector<HTMLFormElement>(selector)!.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  window.sessionStorage.clear();
+  window.history.replaceState(null, "", "/");
+});
+
+const accountConnectors = (configured = true) => [
+  { key: "git", label: "Git repository", configSchema: {}, secretFields: ["token"], webhooks: true },
+  { key: "google-drive", label: "Google Drive", configSchema: {}, secretFields: ["refresh_token"], webhooks: false, oauth: { provider: "google", configured } },
+];
 
 describe("connect forms island", () => {
   it("renders both forms with labelled fields", async () => {
@@ -74,7 +87,7 @@ describe("connect forms island", () => {
     type(root, "[name=repository]", "docs");
     submit(root, "[data-git-form]");
     expect(root.querySelector("[data-git-form] [role=alert]")?.textContent).toMatch(/owner\/name/);
-    expect(calls).toHaveLength(0);
+    expect(calls.filter((c) => c.method !== "GET")).toHaveLength(0);
   });
 
   it("connects a repository, shows the secret once and continues into the interview", async () => {
@@ -135,5 +148,72 @@ describe("connect forms island", () => {
     type(root, "[name=repository]", "ulams-dev/docs");
     submit(root, "[data-git-form]");
     await vi.waitFor(() => expect(root.querySelector("[data-git-form] [role=alert]")?.textContent).toMatch(/unreachable/i));
+  });
+
+  describe("Google Drive and Notion", () => {
+    const driveResult = () => new Response(JSON.stringify({ success: true, data: { connection: { id: "c3", connector: "google-drive", config: { fileId: "x" }, webhookUrl: null }, source: { id: "src3", name: "Brewing guide" }, webhookSecret: null } }), { status: 201 });
+
+    it("stays hidden unless an admin turned a connector on, and then offers only those", async () => {
+      stubApi(() => driveResult());
+      const { root } = await mount();
+      await new Promise((r) => setTimeout(r, 10));
+      expect(root.querySelector<HTMLElement>("[data-account-form]")!.hidden).toBe(true);
+
+      stubApi(() => driveResult(), accountConnectors());
+      const second = await mount();
+      await vi.waitFor(() => expect(second.root.querySelector<HTMLElement>("[data-account-form]")!.hidden).toBe(false));
+      expect([...second.root.querySelectorAll<HTMLOptionElement>("[name=account_source] option")].map((o) => o.value)).toEqual(["google-drive"]);
+      expect(second.root.querySelector("[data-account-form] h2")?.textContent).toBe("Connect Google Drive or Notion");
+      for (const control of second.root.querySelectorAll("[data-account-form] input, [data-account-form] select")) {
+        expect(second.root.querySelector(`label[for="${control.id}"]`), control.outerHTML).not.toBeNull();
+      }
+    });
+
+    it("says so and disables the button when the sign-in is not set up", async () => {
+      stubApi(() => driveResult(), accountConnectors(false));
+      const { root } = await mount();
+      await vi.waitFor(() => expect(root.querySelector("[data-account-form] [role=status]")?.textContent).toMatch(/not set up/));
+      expect(root.querySelector<HTMLButtonElement>("[data-account-form] button[type=submit]")!.disabled).toBe(true);
+    });
+
+    it("sends the browser to the sign-in and remembers the form without any token", async () => {
+      const calls = stubApi(() => driveResult(), accountConnectors());
+      const { root, navigate } = await mount();
+      await vi.waitFor(() => expect(root.querySelector<HTMLElement>("[data-account-form]")!.hidden).toBe(false));
+      type(root, "[name=account_address]", "nope");
+      submit(root, "[data-account-form]");
+      expect(root.querySelector("[data-account-form] [role=alert]")?.textContent).toMatch(/Paste the address of the Google Docs/);
+      expect(calls.filter((c) => c.method === "POST")).toHaveLength(0);
+
+      type(root, "[name=account_address]", "https://docs.google.com/document/d/1AbCdEfGhIjKlMnOp/edit");
+      submit(root, "[data-account-form]");
+      await vi.waitFor(() => expect(navigate).toHaveBeenCalledWith("https://accounts.google.com/o/oauth2/v2/auth?state=abc"));
+      expect(calls.find((c) => c.url.endsWith("/oauth/google/start"))!.body).toEqual({ sessionId: SESSION });
+      const stored = String(window.sessionStorage.getItem("ulams.studio.oauth-pending"));
+      expect(JSON.parse(stored)).toMatchObject({ sessionId: SESSION, values: { source: "google-drive", address: "https://docs.google.com/document/d/1AbCdEfGhIjKlMnOp/edit" } });
+      expect(stored).not.toMatch(/token|grant/i);
+    });
+
+    it("finishes the connection when the sign-in returns with a grant", async () => {
+      window.sessionStorage.setItem("ulams.studio.oauth-pending", JSON.stringify({ sessionId: SESSION, values: { source: "google-drive", address: "1AbCdEfGhIjKlMnOp", children: false, schedule: "weekly" } }));
+      window.history.replaceState(null, "", "/studio/new?provider=google&grant=0123abcd");
+      const calls = stubApi(() => driveResult(), accountConnectors());
+      const { navigate } = await mount();
+      await vi.waitFor(() => expect(navigate).toHaveBeenCalledWith(`/studio/s/${SESSION}`));
+      expect(calls.find((c) => c.url.endsWith("/sources/connect"))!.body).toEqual({ connector: "google-drive", config: { fileId: "1AbCdEfGhIjKlMnOp" }, secrets: { grant: "0123abcd" }, schedule: "weekly" });
+      expect(calls.filter((c) => c.method === "POST" && c.url.endsWith("/sessions"))).toHaveLength(0);
+      expect(window.location.search).toBe("");
+      expect(window.sessionStorage.getItem("ulams.studio.oauth-pending")).toBeNull();
+    });
+
+    it("shows a refused or cancelled sign-in and removes the empty session", async () => {
+      window.sessionStorage.setItem("ulams.studio.oauth-pending", JSON.stringify({ sessionId: SESSION, values: { source: "google-drive", address: "1AbCdEfGhIjKlMnOp", children: false, schedule: "daily" } }));
+      window.history.replaceState(null, "", "/studio/new?provider=google&oauth_error=" + encodeURIComponent("The sign-in was cancelled or refused. Start again."));
+      const calls = stubApi(() => driveResult(), accountConnectors());
+      const { root, navigate } = await mount();
+      await vi.waitFor(() => expect(root.querySelector("[data-account-form] [role=alert]")?.textContent).toBe("The sign-in was cancelled or refused. Start again."));
+      expect(calls.some((c) => c.method === "DELETE" && c.url.endsWith(`/sessions/${SESSION}`))).toBe(true);
+      expect(navigate).not.toHaveBeenCalled();
+    });
   });
 });

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  connectionFacts, connectionState, gitFormProblem, gitPayload, hasToken, hintFor, normaliseRepository, scheduleLabel, splitList, urlFormProblem, urlPayload,
+  accountFormProblem, accountPayload, connectionFacts, connectionState, gitFormProblem, gitPayload, hasToken, hintFor, normaliseRepository, scheduleLabel, splitList, urlFormProblem, urlPayload,
   type GitForm,
 } from "../../src/studio/connect-model.ts";
 
@@ -27,6 +27,19 @@ describe("connect form model", () => {
       secrets: { token: "tok" },
       schedule: "weekly",
     });
+  });
+
+  it("builds the payload of another server, read with git, from its full https address", () => {
+    const other = git({ host: "other", repository: " https://git.example.com/team/docs.git ", baseUrl: "https://ignored.example", branch: "docs", paths: "docs/**/*.md", token: "tok" });
+    expect(gitFormProblem(other)).toBeNull();
+    expect(gitPayload(other)).toEqual({ connector: "git-cli", config: { url: "https://git.example.com/team/docs.git", branch: "docs", paths: ["docs/**/*.md"] }, secrets: { token: "tok" }, schedule: "daily" });
+    expect(gitFormProblem(git({ host: "other", repository: "team/docs" }))).toMatch(/starting with https/);
+    expect(gitFormProblem(git({ host: "other", repository: "http://git.example.com/a.git" }))).toMatch(/starting with https/);
+    expect(gitFormProblem(git({ host: "other", repository: "https://user@git.example.com/a.git" }))).toMatch(/starting with https/);
+    expect(connectionFacts({ connector: "git-cli", config: { url: "https://git.example.com/team/docs.git", branch: "docs" } } as never)).toEqual([
+      { label: "Server", value: "git.example.com" }, { label: "Repository", value: "team/docs" }, { label: "Branch", value: "docs" },
+    ]);
+    expect(hintFor("other").title).toBe("your Git server");
   });
 
   it("does not send a server address for GitHub and falls back to a daily schedule", () => {
@@ -88,5 +101,20 @@ describe("connection panel model", () => {
     expect(hintFor("gitlab").steps.join(" ")).toMatch(/Secret token/);
     expect(hintFor("github").steps.join(" ")).toMatch(/application\/json/);
     expect(hintFor("unknown").host).toBe("github");
+  });
+
+  it("checks and builds the Google Drive and Notion forms", () => {
+    const drive = { source: "google-drive", address: " https://docs.google.com/document/d/1AbCdEfGhIjKlMnOp/edit ", children: false, schedule: "weekly" };
+    expect(accountFormProblem(drive)).toBeNull();
+    expect(accountPayload(drive, "g1")).toEqual({ connector: "google-drive", config: { fileId: "https://docs.google.com/document/d/1AbCdEfGhIjKlMnOp/edit" }, secrets: { grant: "g1" }, schedule: "weekly" });
+    expect(accountFormProblem({ ...drive, address: "1AbCdEfGhIjKlMnOp" })).toBeNull();
+    expect(accountFormProblem({ ...drive, address: "https://evil.example/d/1AbCdEfGhIjKlMnOp" })).toMatch(/Google Docs/);
+    const notion = { source: "notion", address: "https://www.notion.so/Coffee-handbook-0123456789abcdef0123456789abcdef", children: true, schedule: "nonsense" };
+    expect(accountFormProblem(notion)).toBeNull();
+    expect(accountPayload(notion)).toEqual({ connector: "notion", config: { pageId: notion.address, includeChildren: true }, schedule: "daily" });
+    expect(accountFormProblem({ ...notion, address: "docs" })).toMatch(/Notion page/);
+    expect(accountFormProblem({ ...notion, source: "dropbox" })).toMatch(/Choose/);
+    expect(connectionFacts({ connector: "notion", config: { pageId: "abc", includeChildren: true } } as never)).toEqual([{ label: "Notion page", value: "abc and the pages under it" }]);
+    expect(connectionFacts({ connector: "google-drive", config: { fileId: "1Ab" } } as never)).toEqual([{ label: "Google Drive", value: "1Ab" }]);
   });
 });

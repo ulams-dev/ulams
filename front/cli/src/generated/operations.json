@@ -894,6 +894,12 @@
   "tag": "Admin Living Course"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/living-course/oauth/{provider}/start",
+  "summary": "The vendor sign-in address for Connect your account (provider google or notion); the session must be one the caller may change",
+  "tag": "Admin Living Course"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/living-course/proposals/{proposal}",
   "summary": "A proposal with its items grouped by lesson, citations and source changes",
@@ -2722,6 +2728,12 @@
   "path": "/api/living-course/notices/{notice}/dismiss",
   "summary": "Mark a notice as reviewed",
   "tag": "Living Course learner"
+ },
+ {
+  "method": "GET",
+  "path": "/api/living-course/oauth/{provider}/callback",
+  "summary": "The vendor's redirect after the sign-in: redirects to the studio with a one-time grant, or answers with it",
+  "tag": "Living Course"
  },
  {
   "method": "POST",

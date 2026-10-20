@@ -831,6 +831,9 @@
   gap: 4px;
   min-width: 0;
 }
+.st-connect-form[hidden] {
+  display: none;
+}
 .st-connect-form[aria-busy="true"] {
   cursor: progress;
 }

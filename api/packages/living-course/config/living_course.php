@@ -64,6 +64,24 @@ return [
         'urls' => 20,
     ],
 
+    // The `git-cli` connector (any Git server over https, read with the git command; enable it with
+    // LIVING_COURSE_CONNECTORS=upload,git,url,git-cli on an image that ships git)
+    'git_cli' => [
+        // seconds for one git command
+        'timeout' => (int) env('LIVING_COURSE_GIT_TIMEOUT', 120),
+        // a clone that grows past this is stopped (shallow, single branch, no checkout)
+        'clone_bytes' => (int) env('LIVING_COURSE_GIT_CLONE_MB', 200) * 1048576,
+    ],
+
+    // "Connect your account" for the Google Drive and Notion connectors (OAuth apps owned by the installation;
+    // tenants can set their own in the settings). Add the keys to LIVING_COURSE_CONNECTORS to offer the connectors.
+    'oauth' => [
+        // where the browser goes after the sign-in, with ?grant=...&provider=...; empty answers with JSON instead
+        'return_url' => env('LIVING_COURSE_OAUTH_RETURN_URL'),
+        'google' => ['client_id' => env('LIVING_COURSE_GOOGLE_CLIENT_ID'), 'client_secret' => env('LIVING_COURSE_GOOGLE_CLIENT_SECRET')],
+        'notion' => ['client_id' => env('LIVING_COURSE_NOTION_CLIENT_ID'), 'client_secret' => env('LIVING_COURSE_NOTION_CLIENT_SECRET')],
+    ],
+
     // Raw revisions are kept on the Course Builder private disk under this prefix
     'revisions_prefix' => 'living-course/revisions',
 ];
