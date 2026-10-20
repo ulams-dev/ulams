@@ -5943,6 +5943,242 @@
     ]
    }
   },
+  "/api/admin/compliance/paths": {
+   "get": {
+    "description": "Learning paths: ordered courses with prerequisites. Admin endpoints need `compliance_manage`;\n`my-paths` is the learner's own view.",
+    "operationId": "848dd384d1948e3ce688ddb978a8ab86",
+    "responses": {
+     "200": {
+      "description": "paths with steps (course_id, position, prerequisites)"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List learning paths with their steps",
+    "tags": [
+     "Compliance"
+    ]
+   },
+   "post": {
+    "operationId": "9c35e0b0106aa305dcf0000ad601def7",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "description": {
+          "nullable": true,
+          "type": "string"
+         },
+         "steps": {
+          "description": "Ordered; prerequisites are course ids of this path",
+          "items": {
+           "properties": {
+            "course_id": {
+             "type": "integer"
+            },
+            "prerequisites": {
+             "items": {
+              "type": "integer"
+             },
+             "type": "array"
+            }
+           },
+           "type": "object"
+          },
+          "type": "array"
+         },
+         "title": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "title"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "the path"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Unknown course, foreign prerequisite or a cycle"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create a learning path",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/paths/{id}": {
+   "delete": {
+    "operationId": "c557dceb128facf12a2dfdc971754389",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "deleted"
+     },
+     "404": {
+      "description": "Unknown path"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete a learning path (its assignments stay)",
+    "tags": [
+     "Compliance"
+    ]
+   },
+   "get": {
+    "operationId": "7ccaa87473b40f2d0ac408f14e1b80f6",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the path with enrolment counts"
+     },
+     "404": {
+      "description": "Unknown path"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Show a learning path",
+    "tags": [
+     "Compliance"
+    ]
+   },
+   "put": {
+    "operationId": "bf41e9d2ce3086e7f1b3c2d04e0c6683",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the path"
+     },
+     "422": {
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Update a learning path (steps are replaced when sent)",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/paths/{id}/enrollments": {
+   "post": {
+    "operationId": "1e3fb0a5ae89c646b9830dcc70002b4c",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "due_at": {
+          "format": "date-time",
+          "nullable": true,
+          "type": "string"
+         },
+         "user_ids": {
+          "items": {
+           "type": "integer"
+          },
+          "type": "array"
+         }
+        },
+        "required": [
+         "user_ids"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "enrolments (a user already in the path keeps theirs)"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Enrol users in a learning path",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
   "/api/admin/compliance/report": {
    "get": {
     "description": "Compliance report and audit export. Permission `compliance_report`. Datasets: `assignments` (required\ntraining and its outcome), `certificates` (every certificate with the course version it attests) and `audit`\n(hash-chained Living Course audit entries, when that package is installed).",
@@ -6117,6 +6353,216 @@
      }
     ],
     "summary": "Audit export of a compliance dataset",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/rules": {
+   "get": {
+    "description": "Enrolment rules: \"a user with these attributes is enrolled in this path, due in N days\". Permission\n`compliance_manage`. Attributes: `group` (group names), a user column or a custom user field (model-fields).\nRules run when a user is saved and in the daily `compliance:process`.",
+    "operationId": "25552b0990ec1298f4c70a4210b0a6f2",
+    "responses": {
+     "200": {
+      "description": "rules"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List enrolment rules",
+    "tags": [
+     "Compliance"
+    ]
+   },
+   "post": {
+    "operationId": "1ae8eca2ef17dbbc8b50095fb827098b",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "active": {
+          "type": "boolean"
+         },
+         "conditions": {
+          "description": "All must hold",
+          "items": {
+           "properties": {
+            "attribute": {
+             "example": "department",
+             "type": "string"
+            },
+            "operator": {
+             "enum": [
+              "equals",
+              "not_equals",
+              "in",
+              "contains",
+              "starts_with",
+              "ends_with",
+              "exists"
+             ],
+             "type": "string"
+            },
+            "value": {
+             "items": {
+              "type": "string"
+             },
+             "type": "array"
+            }
+           },
+           "type": "object"
+          },
+          "type": "array"
+         },
+         "due_days": {
+          "nullable": true,
+          "type": "integer"
+         },
+         "name": {
+          "type": "string"
+         },
+         "path_id": {
+          "type": "integer"
+         }
+        },
+        "required": [
+         "name",
+         "path_id",
+         "conditions"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "the rule"
+     },
+     "422": {
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create an enrolment rule",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/rules/{id}": {
+   "delete": {
+    "operationId": "84553e124989e0ee5140750e2817efe9",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "deleted"
+     },
+     "404": {
+      "description": "Unknown rule"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete an enrolment rule (existing enrolments stay)",
+    "tags": [
+     "Compliance"
+    ]
+   },
+   "put": {
+    "operationId": "4df9c1e8ee1423240716a279cfdba1fd",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the rule"
+     },
+     "404": {
+      "description": "Unknown rule"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Update an enrolment rule",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/rules/{id}/evaluate": {
+   "post": {
+    "operationId": "23815d271ae4a93876545922062b1320",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "dry_run": {
+          "default": true,
+          "type": "boolean"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "count and a sample of the users that match and are not enrolled yet; enrolled count when dry_run is false"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Preview or run a rule now",
     "tags": [
      "Compliance"
     ]
@@ -25417,6 +25863,25 @@
      }
     ],
     "summary": "My required training",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/compliance/my-paths": {
+   "get": {
+    "operationId": "97dad8c915c3b434e68c3289da0d9005",
+    "responses": {
+     "200": {
+      "description": "each enrolment with the path steps and their status (done, available, locked)"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "My learning paths",
     "tags": [
      "Compliance"
     ]

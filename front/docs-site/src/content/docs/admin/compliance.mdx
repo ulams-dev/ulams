@@ -65,6 +65,39 @@ Each notice is recorded once, so running the command again, or late, never repea
 days have passed, only the most urgent is sent. The six e-mails are editable under
 **Configuration → Templates** like any other e-mail template.
 
+## Learning paths
+
+A learning path is an ordered set of courses with prerequisites: `POST /api/admin/compliance/paths` with a title and
+`steps` (`course_id` and the `prerequisites`, course ids of the same path). A path cannot list a course twice, name
+a prerequisite outside the path or contain a cycle.
+
+Enrolling people (`POST /api/admin/compliance/paths/{id}/enrollments`, with an optional `due_at`) assigns the courses
+that can be started. Each time a learner finishes a course, the courses it unlocks are assigned, with the same due
+date, so the usual reminders, overdue notices and manager escalation apply to every step. When the last course is
+finished the path is complete. Learners see their paths and each step as `done`, `available` or `locked` at
+`GET /api/compliance/my-paths`. A learner is enrolled in a path once; courses they have already finished (with a
+valid certificate) are not assigned again.
+
+## Enrolment rules
+
+A rule enrols everyone whose attributes match into a path, due in N days: `POST /api/admin/compliance/rules` with
+`name`, `path_id`, `due_days` and `conditions`, for example department equals Finance:
+
+```json
+{"name": "Finance onboarding", "path_id": 3, "due_days": 30,
+ "conditions": [{"attribute": "department", "operator": "equals", "value": ["Finance"]}]}
+```
+
+| Attribute | What it reads |
+|---|---|
+| `group` | The names of the user's groups. |
+| a user column or custom field | e.g. `email`, or a field you added in Configuration (department, role, location). |
+
+Operators: `equals`, `not_equals`, `in`, `contains`, `starts_with`, `ends_with`, `exists`. Comparisons ignore case and
+every condition of a rule must hold. Rules are checked whenever a user is created or changed and once a day (which
+also catches new group members). `POST /api/admin/compliance/rules/{id}/evaluate` shows who a rule would enrol
+(`dry_run`, the default) or enrols them now.
+
 ## Reports and audit export
 
 `GET /api/admin/compliance/report?dataset=...` (permission `compliance_report`) returns a paginated table; the

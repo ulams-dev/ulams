@@ -1,5 +1,5 @@
 {
- "summary": "548/610 covered, 62 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "560/622 covered, 62 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -194,6 +194,42 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/compliance/paths",
+   "summary": "List learning paths with their steps",
+   "command": "compliance.paths-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/paths",
+   "summary": "Create a learning path",
+   "command": "compliance.paths-add",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/paths/{id}",
+   "summary": "Show a learning path",
+   "command": "compliance.paths-get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/paths/{id}",
+   "summary": "Update a learning path (steps are replaced when sent)",
+   "command": "compliance.paths-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/paths/{id}",
+   "summary": "Delete a learning path (its assignments stay)",
+   "command": "compliance.paths-delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/paths/{id}/enrollments",
+   "summary": "Enrol users in a learning path",
+   "command": "compliance.paths-enroll",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/compliance/report",
    "summary": "Compliance report",
    "command": "compliance.report",
@@ -203,6 +239,36 @@
    "key": "GET /api/admin/compliance/report/export",
    "summary": "Audit export of a compliance dataset",
    "command": "compliance.report-export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/rules",
+   "summary": "List enrolment rules",
+   "command": "compliance.rules-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/rules",
+   "summary": "Create an enrolment rule",
+   "command": "compliance.rules-add",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/rules/{id}",
+   "summary": "Update an enrolment rule",
+   "command": "compliance.rules-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/rules/{id}",
+   "summary": "Delete an enrolment rule (existing enrolments stay)",
+   "command": "compliance.rules-delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/rules/{id}/evaluate",
+   "summary": "Preview or run a rule now",
+   "command": "compliance.rules-evaluate",
    "status": "covered"
   },
   {
@@ -2585,6 +2651,12 @@
    "key": "GET /api/compliance/my-assignments",
    "summary": "My required training",
    "command": "my.compliance-my-assignments",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/compliance/my-paths",
+   "summary": "My learning paths",
+   "command": "my.compliance-my-paths",
    "status": "covered"
   },
   {

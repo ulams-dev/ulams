@@ -193,6 +193,42 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/compliance/paths",
+  "summary": "List learning paths with their steps",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/paths",
+  "summary": "Create a learning path",
+  "tag": "Compliance"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/compliance/paths/{id}",
+  "summary": "Delete a learning path (its assignments stay)",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/paths/{id}",
+  "summary": "Show a learning path",
+  "tag": "Compliance"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/compliance/paths/{id}",
+  "summary": "Update a learning path (steps are replaced when sent)",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/paths/{id}/enrollments",
+  "summary": "Enrol users in a learning path",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/compliance/report",
   "summary": "Compliance report",
   "tag": "Compliance"
@@ -201,6 +237,36 @@
   "method": "GET",
   "path": "/api/admin/compliance/report/export",
   "summary": "Audit export of a compliance dataset",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/rules",
+  "summary": "List enrolment rules",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/rules",
+  "summary": "Create an enrolment rule",
+  "tag": "Compliance"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/compliance/rules/{id}",
+  "summary": "Delete an enrolment rule (existing enrolments stay)",
+  "tag": "Compliance"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/compliance/rules/{id}",
+  "summary": "Update an enrolment rule",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/rules/{id}/evaluate",
+  "summary": "Preview or run a rule now",
   "tag": "Compliance"
  },
  {
@@ -2583,6 +2649,12 @@
   "method": "GET",
   "path": "/api/compliance/my-assignments",
   "summary": "My required training",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/compliance/my-paths",
+  "summary": "My learning paths",
   "tag": "Compliance"
  },
  {

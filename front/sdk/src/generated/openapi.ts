@@ -2027,6 +2027,81 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/compliance/paths": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List learning paths with their steps
+         * @description Learning paths: ordered courses with prerequisites. Admin endpoints need `compliance_manage`;
+         *     `my-paths` is the learner's own view.
+         */
+        get: operations["848dd384d1948e3ce688ddb978a8ab86"];
+        put?: never;
+        /** Create a learning path */
+        post: operations["9c35e0b0106aa305dcf0000ad601def7"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/paths/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Show a learning path */
+        get: operations["7ccaa87473b40f2d0ac408f14e1b80f6"];
+        /** Update a learning path (steps are replaced when sent) */
+        put: operations["bf41e9d2ce3086e7f1b3c2d04e0c6683"];
+        post?: never;
+        /** Delete a learning path (its assignments stay) */
+        delete: operations["c557dceb128facf12a2dfdc971754389"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/paths/{id}/enrollments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Enrol users in a learning path */
+        post: operations["1e3fb0a5ae89c646b9830dcc70002b4c"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/compliance/my-paths": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My learning paths */
+        get: operations["97dad8c915c3b434e68c3289da0d9005"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/compliance/report": {
         parameters: {
             query?: never;
@@ -2063,6 +2138,64 @@ export interface paths {
         get: operations["3acf773678f0412d5c87db4033bdca59"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List enrolment rules
+         * @description Enrolment rules: "a user with these attributes is enrolled in this path, due in N days". Permission
+         *     `compliance_manage`. Attributes: `group` (group names), a user column or a custom user field (model-fields).
+         *     Rules run when a user is saved and in the daily `compliance:process`.
+         */
+        get: operations["25552b0990ec1298f4c70a4210b0a6f2"];
+        put?: never;
+        /** Create an enrolment rule */
+        post: operations["1ae8eca2ef17dbbc8b50095fb827098b"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/rules/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Update an enrolment rule */
+        put: operations["4df9c1e8ee1423240716a279cfdba1fd"];
+        post?: never;
+        /** Delete an enrolment rule (existing enrolments stay) */
+        delete: operations["84553e124989e0ee5140750e2817efe9"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/rules/{id}/evaluate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Preview or run a rule now */
+        post: operations["23815d271ae4a93876545922062b1320"];
         delete?: never;
         options?: never;
         head?: never;
@@ -15574,6 +15707,209 @@ export interface operations {
             };
         };
     };
+    "848dd384d1948e3ce688ddb978a8ab86": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description paths with steps (course_id, position, prerequisites) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "9c35e0b0106aa305dcf0000ad601def7": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    title: string;
+                    description?: string | null;
+                    /** @description Ordered; prerequisites are course ids of this path */
+                    steps?: {
+                        course_id?: number;
+                        prerequisites?: number[];
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description the path */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course, foreign prerequisite or a cycle */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "7ccaa87473b40f2d0ac408f14e1b80f6": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the path with enrolment counts */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown path */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    bf41e9d2ce3086e7f1b3c2d04e0c6683: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the path */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    c557dceb128facf12a2dfdc971754389: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown path */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "1e3fb0a5ae89c646b9830dcc70002b4c": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    user_ids: number[];
+                    /** Format: date-time */
+                    due_at?: string | null;
+                };
+            };
+        };
+        responses: {
+            /** @description enrolments (a user already in the path keeps theirs) */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "97dad8c915c3b434e68c3289da0d9005": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description each enrolment with the path steps and their status (done, available, locked) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     d242d8d8ef7331df5dc2c3332ae63873: {
         parameters: {
             query: {
@@ -15650,6 +15986,154 @@ export interface operations {
             };
             /** @description Unknown dataset */
             422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "25552b0990ec1298f4c70a4210b0a6f2": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description rules */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "1ae8eca2ef17dbbc8b50095fb827098b": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    path_id: number;
+                    active?: boolean;
+                    due_days?: number | null;
+                    /** @description All must hold */
+                    conditions: {
+                        /** @example department */
+                        attribute?: string;
+                        /** @enum {string} */
+                        operator?: "equals" | "not_equals" | "in" | "contains" | "starts_with" | "ends_with" | "exists";
+                        value?: string[];
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description the rule */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "4df9c1e8ee1423240716a279cfdba1fd": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the rule */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown rule */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "84553e124989e0ee5140750e2817efe9": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown rule */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "23815d271ae4a93876545922062b1320": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @default true */
+                    dry_run?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description count and a sample of the users that match and are not enrolled yet; enrolled count when dry_run is false */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
