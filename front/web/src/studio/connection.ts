@@ -211,7 +211,7 @@ export function connectionPanel(options: PanelOptions): ConnectionPanel | null {
 
   function webhookBlock(): HTMLElement | null {
     const c = connection();
-    if (c.connector !== "git" || !c.webhookUrl) return null;
+    if ((c.connector !== "git" && c.connector !== "git-cli") || !c.webhookUrl) return null;
     const url = copyField("Webhook URL", c.webhookUrl, { "data-webhook-url": "" });
     const rotate = h("button", { type: "button", class: "cb-btn cb-btn-small", "aria-expanded": String(rotating), "data-rotate": "" }, "Rotate secret") as HTMLButtonElement;
     rotate.addEventListener("click", () => {
@@ -233,7 +233,7 @@ export function connectionPanel(options: PanelOptions): ConnectionPanel | null {
       secret ? secretReveal(secret) : null,
       h("div", { class: "cb-actions" }, rotating ? null : rotate),
       confirm,
-      webhookHints(c.config.host));
+      webhookHints(c.connector === "git-cli" ? "other" : c.config.host));
   }
 
   async function doRotate(): Promise<void> {

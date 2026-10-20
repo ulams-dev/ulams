@@ -294,6 +294,15 @@ export interface ConnectorInfo {
 
 export type GitHost = "github" | "gitlab" | "gitea";
 
+/** `git-cli`: any server over https, read with the git command (only where an admin enabled it). Secret `token` is optional. */
+export interface GitCliConfig {
+  url: string;
+  branch?: string;
+  username?: string;
+  paths?: string[];
+  extensions?: string[];
+}
+
 export interface GitConfig {
   host: GitHost;
   /** Gitea, Forgejo and self-hosted GitLab. */
@@ -313,8 +322,8 @@ export interface UrlConfig {
 }
 
 export interface ConnectInput {
-  connector: "git" | "url" | string;
-  config: GitConfig | UrlConfig | Record<string, unknown>;
+  connector: "git" | "git-cli" | "url" | string;
+  config: GitConfig | GitCliConfig | UrlConfig | Record<string, unknown>;
   /** For Git: `{ token }`, optional for public repositories. */
   secrets?: Record<string, string>;
   schedule?: "hourly" | "daily" | "weekly" | "manual";
