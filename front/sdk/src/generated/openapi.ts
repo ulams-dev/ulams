@@ -4654,6 +4654,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/learner-insights/courses/{course}/topics/{topic}/support": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Extra help for the learner in a topic, with the reasons it was offered */
+        get: operations["25f77a3543fceb7f4ff5e1fdfa8a6eed"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/assignments/{assignment}/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Say whether a piece of extra help was useful */
+        post: operations["6e7a991fadf81546157800178da0a729"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/assignments/{assignment}/hide": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Hide a piece of extra help */
+        post: operations["470829e7ca39d311b96b52d12494e0f4"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/assignments/{assignment}/reflection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Get feedback on the learner's own explanation of the idea (the text is sent to the AI provider and not stored) */
+        post: operations["364792271758395ada19f682879b9334"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/liascript": {
         parameters: {
             query?: never;
@@ -21249,6 +21317,148 @@ export interface operations {
             };
             /** @description Unknown rule or parameter, or an invalid value */
             422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "25f77a3543fceb7f4ff5e1fdfa8a6eed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `enabled`, and per assignment: `status` (generating or ready), `kind`, `document` (declarative blocks), `citations`, `reasons`, `why`, `feedback` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The learner may not attend the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown topic or the topic is not in the course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "6e7a991fadf81546157800178da0a729": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    helpful: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Saved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not the learner's assignment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "470829e7ca39d311b96b52d12494e0f4": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Hidden */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not the learner's assignment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "364792271758395ada19f682879b9334": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    text: string;
+                };
+            };
+        };
+        responses: {
+            /** @description `correct`, `missing`, `followUp`, `citations`, `remaining` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not the learner's assignment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Daily limit reached */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description AI is disabled or the feedback could not be produced */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
