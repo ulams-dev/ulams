@@ -86,7 +86,7 @@ describe("workflow tabs", () => {
     const shipped = workflowsData.tabs.filter((t) => ["claude-code", "claude-mcp", "cli"].includes(t.key));
     expect(shipped).toHaveLength(3);
     for (const tab of shipped) expect(tab.status).toBe("available");
-    for (const key of ["api", "studio"]) expect(workflowsData.tabs.find((t) => t.key === key)?.status).toBe("available");
+    for (const key of ["admin", "api", "studio"]) expect(workflowsData.tabs.find((t) => t.key === key)?.status).toBe("available");
   });
   it("actual keeps the badges; final removes them", () => {
     const actual = workflowsModel("actual");

@@ -2,6 +2,8 @@
 import { ctaEvent } from "../lib/analytics.ts";
 import { uiStrings, pageLocale } from "../lib/i18n.ts";
 import Icon from "./Icon.astro";
+import NewTabMark from "./NewTabMark.astro";
+import { linkTarget } from "../lib/links.ts";
 
 interface Props {
   variant?: "banner" | "newsletter" | "terminal";
@@ -27,7 +29,7 @@ const t = uiStrings(pageLocale(Astro));
         <h2 class="u-h2" id={`${id}-title`}>{title}</h2>
         {text && <p class="u-lead">{text}</p>}
         {bullets.length > 0 && <ul class="u-cta__bullets" role="list">{bullets.map((bullet) => <li>
-          {bullet.href ? <a href={bullet.href}>{bullet.title}<Icon name="external" /></a> : <strong>{bullet.title}</strong>}
+          {bullet.href ? <a href={bullet.href} {...linkTarget(bullet.href)}>{bullet.title}<NewTabMark href={bullet.href} /></a> : <strong>{bullet.title}</strong>}
           <p>{bullet.text}</p>
         </li>)}</ul>}
         {note && <p class="u-cta__note">{note}</p>}
@@ -43,14 +45,16 @@ const t = uiStrings(pageLocale(Astro));
         )
       }
       <div class="u-actions">
-        <a class="u-btn" href={cta.href} data-umami-event={ctaEvent(cta.href)}>
+        <a class="u-btn" href={cta.href} {...linkTarget(cta.href)} data-umami-event={ctaEvent(cta.href)}>
           {cta.label}
+          <NewTabMark href={cta.href} />
           <Icon name="arrow" />
         </a>
         {
           secondary && (
-            <a class="u-btn u-btn--ghost" href={secondary.href} data-umami-event={ctaEvent(secondary.href)}>
+            <a class="u-btn u-btn--ghost" href={secondary.href} {...linkTarget(secondary.href)} data-umami-event={ctaEvent(secondary.href)}>
               {secondary.label}
+              <NewTabMark href={secondary.href} />
             </a>
           )
         }

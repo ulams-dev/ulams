@@ -346,6 +346,8 @@ export class UlamsWorkflows extends HTMLElement {
         pause.setAttribute("title", label);
       }
     }
+    const box = this.panels[i]?.parentElement;
+    const from = box?.getBoundingClientRect().height ?? 0;
     this.tabs.forEach((tab, k) => {
       const on = k === i;
       tab.setAttribute("aria-selected", String(on));
@@ -362,6 +364,39 @@ export class UlamsWorkflows extends HTMLElement {
         s.player.update();
       }
     });
+    if (box) this.resize(box, from);
+    this.reveal(this.tabs[i]);
+  }
+
+  /** Keeps the active tab visible when the tab row scrolls sideways (narrow screens). */
+  private reveal(tab: HTMLElement | undefined): void {
+    const row = tab?.parentElement;
+    if (!tab || !row || row.scrollWidth <= row.clientWidth) return;
+    const offset = tab.getBoundingClientRect().left - row.getBoundingClientRect().left + row.scrollLeft;
+    row.scrollTo({ left: offset - 8, behavior: this.reduced ? "auto" : "smooth" });
+  }
+
+  /** Animates the panel box from its previous height to the height of the newly active panel. */
+  private resize(box: HTMLElement, from: number): void {
+    box.style.height = "";
+    const to = this.panels[this.index]?.getBoundingClientRect().height ?? 0;
+    if (this.reduced || !from || Math.abs(to - from) < 1) {
+      box.removeAttribute("data-resizing");
+      return;
+    }
+    box.removeAttribute("data-resizing");
+    box.style.height = `${from}px`;
+    void box.offsetHeight;
+    box.setAttribute("data-resizing", "");
+    box.style.height = `${to}px`;
+    const done = (e?: TransitionEvent): void => {
+      if (e && (e.target !== box || e.propertyName !== "height")) return;
+      box.removeEventListener("transitionend", done);
+      if (box.style.height !== `${to}px`) return;
+      box.style.height = "";
+      box.removeAttribute("data-resizing");
+    };
+    box.addEventListener("transitionend", done);
   }
 
   private hold(on: boolean): void {

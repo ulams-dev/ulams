@@ -1,0 +1,31 @@
+{
+  "props": {
+    "title": "Each screen, in order",
+    "intro": "Previous and next above the image; the explanation sits under it.",
+    "previous": "Previous",
+    "next": "Next",
+    "frames": [
+      {
+        "image": {
+          "src": "/og-image.png",
+          "alt": "Studio home before a source is uploaded",
+          "width": 1200,
+          "height": 630
+        },
+        "caption": "The Studio home, before a source is uploaded."
+      },
+      {
+        "image": {
+          "src": "/og-image.png",
+          "alt": "The published course in the learner view",
+          "width": 1200,
+          "height": 630
+        },
+        "caption": "The learner view of the published course."
+      }
+    ]
+  },
+  "invalid": {
+    "frames": []
+  }
+}

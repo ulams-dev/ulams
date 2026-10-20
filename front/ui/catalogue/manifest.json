@@ -94,13 +94,13 @@
             "type": "integer",
             "description": "Position in the interview, from 1",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "total": {
             "type": "integer",
             "description": "Number of questions",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "options": {
             "type": "array",
@@ -209,13 +209,13 @@
             "type": "integer",
             "description": "Position in the interview, from 1",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "total": {
             "type": "integer",
             "description": "Number of questions",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "options": {
             "type": "array",
@@ -306,13 +306,13 @@
             "type": "integer",
             "description": "Position in the interview, from 1",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "total": {
             "type": "integer",
             "description": "Number of questions",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "totalOptions": {
             "type": "array",
@@ -431,13 +431,13 @@
             "type": "integer",
             "description": "Position in the interview, from 1",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "total": {
             "type": "integer",
             "description": "Number of questions",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "options": {
             "type": "array",
@@ -528,13 +528,13 @@
             "type": "integer",
             "description": "Position in the interview, from 1",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "total": {
             "type": "integer",
             "description": "Number of questions",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "currency": {
             "type": "string",
@@ -638,13 +638,13 @@
             "type": "integer",
             "description": "Position in the interview, from 1",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "total": {
             "type": "integer",
             "description": "Number of questions",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "presets": {
             "type": "array",
@@ -763,13 +763,13 @@
             "type": "integer",
             "description": "Position in the interview, from 1",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "total": {
             "type": "integer",
             "description": "Number of questions",
             "minimum": 1,
-            "maximum": 10
+            "maximum": 16
           },
           "value": {
             "type": "object",

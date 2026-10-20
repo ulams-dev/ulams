@@ -1,9 +1,9 @@
 import type { APIRoute } from "astro";
-import { LOCALES, LOCALE_META, publicOrigin, publicPagePath } from "../i18n/locales.ts";
+import { LOCALES, LOCALE_META, PUBLIC_PAGES, publicOrigin, publicPagePath } from "../i18n/locales.ts";
 import { BLOG_LOCALES, blogPath, blogSources } from "../lib/blog.ts";
 
 const xml = (value: string) => value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll('"', "&quot;");
-const PAGES = ["overview", "comparison"] as const;
+const PAGES = PUBLIC_PAGES;
 
 export const GET: APIRoute = ({ request, url, locals }) => {
   if (!locals.platform) return new Response("Not found", { status: 404 });

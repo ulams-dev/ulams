@@ -8,6 +8,7 @@ export type UiLocale = "en" | "pl" | "zh";
 
 export interface UiStrings {
   featuresOf: string;
+  featureCount: string;
   /** Link from a blog post back to the list of posts. */
   blogBack: string;
   /** Byline of a blog post; `{author}` is replaced. */
@@ -66,11 +67,20 @@ export interface UiStrings {
   terminal: string;
   /** Contains `{link}` where the ulams link goes. */
   footerBuiltOn: string;
+  /** Placeholder until the browser fills in the contact address. */
+  mailLabel: string;
+  newTab: string;
   studioWindow: string;
+  adminSection: string;
+  adminNew: string;
+  adminCourse: string;
+  adminStatus: string;
+  adminLearners: string;
 }
 
 const en: UiStrings = {
   featuresOf: "Features for {title}",
+  featureCount: "{n} features",
   blogBack: "All posts",
   blogBy: "By {author}",
   blogTags: "Topics",
@@ -132,11 +142,19 @@ const en: UiStrings = {
   checked: " (checked {date})",
   terminal: "Terminal",
   studioWindow: "Studio · Course builder",
+  adminSection: "Section",
+  adminNew: "New course",
+  adminCourse: "Course",
+  adminStatus: "Status",
+  adminLearners: "Learners",
   footerBuiltOn: "Built on {link}, the open headless LMS.",
+  mailLabel: "Email",
+  newTab: "(opens in a new tab)",
 };
 
 const pl: UiStrings = {
   featuresOf: "Funkcje: {title}",
+  featureCount: "Funkcje: {n}",
   blogBack: "Wszystkie wpisy",
   blogBy: "Autor: {author}",
   blogTags: "Tematy",
@@ -198,11 +216,19 @@ const pl: UiStrings = {
   checked: " (sprawdzono {date})",
   terminal: "Terminal",
   studioWindow: "Studio · Kreator kursów",
+  adminSection: "Sekcja",
+  adminNew: "Nowy kurs",
+  adminCourse: "Kurs",
+  adminStatus: "Status",
+  adminLearners: "Kursanci",
   footerBuiltOn: "Zbudowane na {link}, otwartym headless LMS.",
+  mailLabel: "E-mail",
+  newTab: "(otwiera się w nowej karcie)",
 };
 
 const zh: UiStrings = {
   featuresOf: "{title} 的功能",
+  featureCount: "{n} 项功能",
   blogBack: "全部文章",
   blogBy: "作者：{author}",
   blogTags: "主题",
@@ -264,7 +290,14 @@ const zh: UiStrings = {
   checked: "（核查于 {date}）",
   terminal: "终端",
   studioWindow: "工作室 · 课程构建器",
+  adminSection: "栏目",
+  adminNew: "新建课程",
+  adminCourse: "课程",
+  adminStatus: "状态",
+  adminLearners: "学员",
   footerBuiltOn: "基于 {link} 构建，一个开放的无头 LMS。",
+  mailLabel: "邮箱",
+  newTab: "（在新标签页中打开）",
 };
 
 const TABLE: Record<UiLocale, UiStrings> = { en, pl, zh };

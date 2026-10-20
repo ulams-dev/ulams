@@ -1,8 +1,8 @@
 // ulams storage: public read of the R2 buckets under /<name>/<key> (R2 has no bucket policies). <name> is the short name
 // (`ulams` for the platform, the tenant slug for a tenant) or the bucket name (`ulams-staging-<slug>`), which older stored URLs use.
 // A bucket cannot be renamed, so the short names are what the tenants' AWS_URL points at (TENANCY_BUCKET_PUBLIC_URL).
-const BUCKETS = { 'ulams-staging': 'B_ULAMS_STAGING', 'ulams-staging-coffee': 'B_ULAMS_STAGING_COFFEE', 'ulams-staging-gravity': 'B_ULAMS_STAGING_GRAVITY', 'ulams-staging-poland': 'B_ULAMS_STAGING_POLAND', 'ulams-staging-ulam': 'B_ULAMS_STAGING_ULAM', 'ulams-staging-oncall': 'B_ULAMS_STAGING_ONCALL', 'ulams-staging-nightsky': 'B_ULAMS_STAGING_NIGHTSKY' };
-const ALIASES = { ulams: 'ulams-staging', coffee: 'ulams-staging-coffee', gravity: 'ulams-staging-gravity', poland: 'ulams-staging-poland', ulam: 'ulams-staging-ulam', oncall: 'ulams-staging-oncall', nightsky: 'ulams-staging-nightsky' };
+const BUCKETS = { 'ulams-staging': 'B_ULAMS_STAGING', 'ulams-staging-coffee': 'B_ULAMS_STAGING_COFFEE', 'ulams-staging-gravity': 'B_ULAMS_STAGING_GRAVITY', 'ulams-staging-poland': 'B_ULAMS_STAGING_POLAND', 'ulams-staging-ulam': 'B_ULAMS_STAGING_ULAM', 'ulams-staging-oncall': 'B_ULAMS_STAGING_ONCALL', 'ulams-staging-nightsky': 'B_ULAMS_STAGING_NIGHTSKY', 'ulams-staging-microdosing': 'B_ULAMS_STAGING_MICRODOSING', 'ulams-staging-stablecoins': 'B_ULAMS_STAGING_STABLECOINS' };
+const ALIASES = { ulams: 'ulams-staging', coffee: 'ulams-staging-coffee', gravity: 'ulams-staging-gravity', poland: 'ulams-staging-poland', ulam: 'ulams-staging-ulam', oncall: 'ulams-staging-oncall', nightsky: 'ulams-staging-nightsky', microdosing: 'ulams-staging-microdosing', stablecoins: 'ulams-staging-stablecoins' };
 export default {
   async fetch(request, env) {
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors() });
