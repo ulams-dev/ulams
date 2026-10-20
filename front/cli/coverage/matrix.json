@@ -194,6 +194,18 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/compliance/report",
+   "summary": "Compliance report",
+   "command": "compliance.report",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/report/export",
+   "summary": "Audit export of a compliance dataset",
+   "command": "compliance.report-export",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/config",
    "summary": "Get admin config",
    "command": "config.list",
