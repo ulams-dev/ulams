@@ -13,6 +13,7 @@ modules:
   - categories
   - cmi5
   - commerce
+  - compliance
   - consultation-access
   - consultations
   - core
@@ -257,6 +258,16 @@ SCORM by an isolated GPL-3.0 worker ([ADR 0013](/decisions/0013-adapt-build-work
 Off by default: `ADAPT_SOURCE_ENABLED=true` turns on `/api/admin/adapt` (permission `adapt_manage`,
 404 otherwise). The worker itself is not built yet, so builds cannot run outside tests. No admin
 screen.
+
+### [compliance](/reference/packages/compliance/)
+
+Certificate validity, required training and escalation (Phase 6.1; plan `docs/plans/phase-6-compliance.md`).
+Per-course settings (`CourseSetting`), required-training assignments (`Assignment`, which grant access through
+`course-access` and write the course deadline), manager links and an append-only notification log. A daily
+`compliance:process` run sends certificate and due-date reminders, starts recertification before expiry and escalates
+overdue training to the manager; six e-mail templates are registered with `templates-email`. API under
+`/api/admin/compliance` (permission `compliance_manage`) and `/api/compliance`. No admin screen yet. See
+[Compliance and required training](/admin/compliance/).
 
 ### [lti](/reference/packages/lti/)
 
