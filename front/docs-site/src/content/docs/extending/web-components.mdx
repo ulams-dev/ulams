@@ -1,0 +1,70 @@
+---
+title: Embeddable web components
+description: The learner widgets of @ulams/ui as framework-free custom elements (catalogue, my courses, continue), with their attributes, how they authenticate and how to embed them on another site.
+sidebar:
+  order: 9
+modules:
+  - ui
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+`@ulams/ui` ships three learner widgets as plain custom elements. They need no framework, render
+in a shadow root so a host page's CSS cannot break them, and read their data with `@ulams/sdk`.
+
+| Element | Shows | Needs a learner token |
+|---|---|---|
+| `<ulams-catalogue limit="6">` | The published courses (title, summary, level, duration), 1 to 24 of them | no |
+| `<ulams-my-courses>` | The learner's courses with a progress bar and a Start, Continue or Review link | yes |
+| `<ulams-continue>` | One card: the course in progress (else the first unfinished one) and a link to its next topic | yes |
+
+The quiz, H5P, video and progress elements in `front/ui/src/elements` are part of the lesson
+player and only work inside the reference frontend. The tutor and certificate badge widgets wait
+for their APIs (the AI tutor and certificate verification are not on `main` yet).
+
+## Use them
+
+Inside the reference frontend, add the element to a page. It calls the page's own `/bff`, so the
+learner's httpOnly session cookie is used and no token is exposed:
+
+```html
+<ulams-continue></ulams-continue>
+```
+
+On another site, import the module once and point the element at the tenant API:
+
+```html
+<script type="module">
+  import "@ulams/ui/elements/widgets.ts"; // through your bundler
+</script>
+<ulams-catalogue api-url="https://acme.ulams.app" limit="4"
+  course-href="https://learn.acme.example/courses/{course}"></ulams-catalogue>
+<ulams-my-courses api-url="https://acme.ulams.app" token="LEARNER_TOKEN"></ulams-my-courses>
+```
+
+| Attribute | Meaning | Default |
+|---|---|---|
+| `api-url` | Tenant API origin; without it the element uses `/bff` | none |
+| `token` | The learner's API token (a token can never do more than its owner) | none |
+| `limit` | Catalogue only: number of courses | 6 |
+| `course-href` | Course link template, `{course}` is replaced | `/courses/{course}` |
+| `learn-href` | Lesson link template, `{course}` and `{topic}` are replaced | `/learn/{course}/{topic}` |
+
+<Aside type="caution">
+Never put an admin or tutor token in a page. For learner widgets on a public site prefer a
+short-lived learner token created for that purpose (account page, "My tokens"), and set CORS on the
+tenant API for your origin. Link templates accept only relative paths and `http(s)` URLs; anything
+else becomes `#`.
+</Aside>
+
+## Behaviour
+
+- Loading, empty and error states are announced (`role="status"` and `role="alert"`); the error has
+  a "Try again" link. Changing an attribute reloads the widget.
+- Text from the API is set with `textContent`, never as HTML.
+- Links meet the 24 px target size (buttons are 44 px), show a 3 px focus ring, and progress bars
+  carry `role="progressbar"` with a name and value.
+- Theme variables (`--ulams-color-*`) pass through the shadow root; defaults give at least 4.5:1
+  contrast on a white page.
+
+Tests: `front/ui/tests/widgets.test.ts` (rendering, attributes, errors, XSS, axe).

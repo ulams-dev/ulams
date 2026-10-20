@@ -1,5 +1,5 @@
 {
- "summary": "536/588 covered, 52 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "537/587 covered, 50 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -612,12 +612,6 @@
    "summary": "Manually triggered event for users",
    "command": "events.trigger-manually",
    "status": "covered"
-  },
-  {
-   "key": "POST /api/admin/example-plugin/greetings",
-   "summary": "Send the tenant's greeting to a user (dispatches GreetingSent)",
-   "command": "",
-   "status": "excluded: not-for-cli"
   },
   {
    "key": "DELETE /api/admin/file/delete",
@@ -1235,6 +1229,12 @@
    "key": "POST /api/admin/pdfs/preview",
    "summary": "Preview a pdfme template with sample data",
    "command": "pdfs.preview",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/pdfs/{id}/revoke",
+   "summary": "Revoke a certificate",
+   "command": "pdfs.revoke",
    "status": "covered"
   },
   {
@@ -2480,6 +2480,12 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/certificates/verify/{certificateId}",
+   "summary": "Verify a certificate",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
    "key": "GET /api/cmi5/courses/{id}",
    "summary": "Get Course cmi5 launch params",
    "command": "",
@@ -2760,12 +2766,6 @@
    "summary": "Get a listing of the Stationary events and Webinars",
    "command": "public.events-feed",
    "status": "covered"
-  },
-  {
-   "key": "GET /api/example-plugin/hello",
-   "summary": "The tenant's greeting",
-   "command": "",
-   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/health-check",
@@ -3072,12 +3072,6 @@
    "summary": "Display the specified generated PDF",
    "command": "my.pdfs-get",
    "status": "covered"
-  },
-  {
-   "key": "POST /api/pencil-spaces/login",
-   "summary": "Generate a direct login link",
-   "command": "",
-   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/platform/operations",

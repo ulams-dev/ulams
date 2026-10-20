@@ -2,6 +2,7 @@
 # `ulams api` can still call them; they do not count as coverage.
 inbound-webhook: []
 browser-only:
+  - "GET /api/certificates/verify/*"
   - "GET /api/auth/social/*"
   - "POST /api/auth/social/complete/*"
   - "GET /api/auth/email/verify/*"

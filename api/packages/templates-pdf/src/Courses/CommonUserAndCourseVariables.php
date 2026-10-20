@@ -58,6 +58,13 @@ abstract class CommonUserAndCourseVariables extends PdfVariables
         ]);
     }
 
+    public static function versionFromEvent(EventWrapper $event): ?string
+    {
+        $updated = $event->getCourse()->updated_at;
+
+        return $updated ? Carbon::make($updated)->utc()->format('Y-m-d\TH:i:s\Z') : null;
+    }
+
     public static function requiredVariables(): array
     {
         return [

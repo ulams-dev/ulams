@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   completionPercent,
+  courseStanding,
   durationToMinutes,
   flattenTopics,
   resumeTopic,
@@ -77,5 +78,40 @@ describe("h5p helpers", () => {
     expect(isH5PEmbedMessage({ type: "other" })).toBe(false);
     expect(isCompletingStatement({ verb: { id: "http://adlnet.gov/expapi/verbs/completed" } })).toBe(true);
     expect(isCompletingStatement({ verb: { id: "http://adlnet.gov/expapi/verbs/interacted" } })).toBe(false);
+  });
+});
+
+describe("courseStanding", () => {
+  const timed: Pick<Course, "lessons"> = {
+    lessons: [
+      {
+        id: 1,
+        title: "I",
+        order: 1,
+        topics: [
+          { id: 1, title: "a", lesson_id: 1, order: 1, topicable_type: "X\\Video", duration: "5 min" },
+          { id: 2, title: "b", lesson_id: 1, order: 2, topicable_type: "X\\RichText", duration: "12" },
+          { id: 3, title: "c", lesson_id: 1, order: 3, topicable_type: "X\\GiftQuiz" },
+        ],
+      },
+    ],
+  };
+  const row = (topic_id: number, status: number) => ({ id: topic_id, topic_id, status, seconds: 0 }) as never;
+
+  it("names the next topic and sums the minutes still to do", () => {
+    const standing = courseStanding(timed, [row(1, 1)]);
+    expect(standing).toMatchObject({ percent: 33, done: 1, total: 3, left: 2, remainingMinutes: 12, finished: false });
+    expect(standing.next?.id).toBe(2);
+  });
+
+  it("starts at the first topic and ends with no next topic", () => {
+    expect(courseStanding(timed, []).next?.id).toBe(1);
+    expect(courseStanding(timed, []).remainingMinutes).toBe(17);
+    const all = courseStanding(timed, [row(1, 1), row(2, 1), row(3, 1)]);
+    expect(all).toMatchObject({ percent: 100, left: 0, remainingMinutes: 0, finished: true, next: null });
+  });
+
+  it("is empty for a course without topics", () => {
+    expect(courseStanding({ lessons: [] }, [])).toMatchObject({ percent: 0, total: 0, next: null, finished: false });
   });
 });

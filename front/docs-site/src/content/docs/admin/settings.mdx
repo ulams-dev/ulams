@@ -116,6 +116,18 @@ text on it, so WCAG AA contrast holds whatever colour you choose.
 New tenants get both rows from `php artisan ulams:tenant:create … --theme=… --accent=…`; see
 [Tenants](/admin/tenants/).
 
+### Propose a theme from a brand
+
+`proposeBrandTheme()` in `@ulams/ui/theme/brand-import.ts` turns pasted brand input into a
+proposal, with no agent: a JSON object of colours, CSS custom properties (`--brand-primary: #c2552d;`),
+colours from a URL query, or a plain list of colours. It picks the preset with the same light or dark
+mood and the nearest accent hue, uses the brand colour as `theme.accent`, and returns the contrast
+checks (the brand accent, the accent as rendered after the adjustment above, and brand text on the
+brand background). `themeDiff()` lists what approving it would change against the current
+settings. The proposal is data only: nothing is saved until an admin sets `theme.theme` and
+`theme.accent` (or runs `ulams theme set`). Tenant themes keep the preset's own page colours, so a
+brand background only chooses light or dark. Logos and fonts are not imported.
+
 ## Package configuration tabs
 
 <Aside>

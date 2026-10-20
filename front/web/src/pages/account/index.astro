@@ -3,7 +3,8 @@
 import Render from "@ulams/ui/Render.astro";
 import Icon from "@ulams/ui/components/Icon.astro";
 import Img from "@ulams/ui/components/Img.astro";
-import type { CourseProgressSummary } from "@ulams/sdk";
+import { courseStanding, type CourseProgressSummary } from "@ulams/sdk";
+import { standingNote } from "../../lib/standing.ts";
 import Base from "../../layouts/Base.astro";
 import { getAllProgress, getProfile, getSettings, getSiteModel } from "../../lib/data.ts";
 import { chromeFor, withSessionLink } from "../../lib/docs.ts";
@@ -78,7 +79,10 @@ const courses = (progress ?? []).map((entry) => {
   const done = items.filter((p) => p.status === 1).length;
   const percent = total ? Math.round((done / total) * 100) : 0;
   const next = items.find((p) => p.status !== 1);
+  // the program (when the API returns it with the summary) names the next topic and the time left
+  const note = course.lessons?.length ? standingNote(courseStanding(course, items)) : "";
   return {
+    note,
     id: course.id,
     title: course.title,
     summary: course.summary ?? undefined,
@@ -145,6 +149,7 @@ const courses = (progress ?? []).map((entry) => {
                       {c.percent}% · {c.done}/{c.total} topics
                     </span>
                   </div>
+                  {c.note && <p class="u-account__next">{c.note}</p>}
                   <a class="u-btn u-btn--sm" href={c.href}>
                     {c.percent === 0 ? "Start" : c.percent === 100 ? "Review" : "Continue"}
                     <Icon name="arrow" />
@@ -357,6 +362,11 @@ const courses = (progress ?? []).map((entry) => {
   .u-account__summary {
     color: var(--ulams-color-muted);
     font-size: 0.925rem;
+  }
+  .u-account__next {
+    margin: 0;
+    color: var(--ulams-color-muted);
+    font-size: 0.875rem;
   }
   .u-account__progress {
     display: flex;

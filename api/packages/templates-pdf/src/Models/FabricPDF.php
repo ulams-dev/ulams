@@ -43,6 +43,17 @@ use Ulams\TemplatesPdf\Events\PdfCreated;
  *           property="assignable_id",
  *           type="integer",
  *       ),
+ *      @OA\Property(
+ *           property="status",
+ *           description="valid, expired or revoked",
+ *           type="string",
+ *      ),
+ *      @OA\Property(
+ *           property="expires_at",
+ *           type="string",
+ *           format="date-time",
+ *           nullable=true,
+ *      ),
  * )
  */
 class FabricPDF extends Model
@@ -55,6 +66,8 @@ class FabricPDF extends Model
         'id' => 'integer',
         'content' => 'array',
         'vars' => 'array',
+        'expires_at' => 'datetime',
+        'revoked_at' => 'datetime',
     ];
 
     protected $guarded = [
@@ -64,6 +77,25 @@ class FabricPDF extends Model
     protected static function newFactory()
     {
         return FabricPdfFactory::new();
+    }
+
+    public const STATUS_VALID = 'valid';
+    public const STATUS_EXPIRED = 'expired';
+    public const STATUS_REVOKED = 'revoked';
+
+    /** Revocation wins over expiry: a revoked certificate is never "expired". */
+    public function status(): string
+    {
+        if ($this->revoked_at !== null) {
+            return self::STATUS_REVOKED;
+        }
+
+        return $this->expires_at !== null && $this->expires_at->isPast() ? self::STATUS_EXPIRED : self::STATUS_VALID;
+    }
+
+    public function isValid(): bool
+    {
+        return $this->status() === self::STATUS_VALID;
     }
 
     public function user()

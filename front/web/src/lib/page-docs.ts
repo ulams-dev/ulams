@@ -33,7 +33,7 @@ export const HERO_VARIANT: Record<ThemeName, "editorial" | "console" | "adventur
 
 const LESSON_NOUN: Record<ThemeName, string> = { coffee: "Chapter", oncall: "Module", nightsky: "Mission", gravity: "Module", poland: "Chapter", ulam: "Notebook", platform: "Lesson" };
 
-export function courseHeaderDoc(theme: ThemeName, course: CourseModel, progress: number | undefined, resumeHref: string): UiNode {
+export function courseHeaderDoc(theme: ThemeName, course: CourseModel, progress: number | undefined, resumeHref: string, progressNote?: string): UiNode {
   return {
     component: "CourseHeader",
     props: {
@@ -51,6 +51,7 @@ export function courseHeaderDoc(theme: ThemeName, course: CourseModel, progress:
       primaryCta: { label: progress ? "Continue learning" : "Start learning", href: resumeHref },
       secondaryCta: course.previewHref !== course.learnHref ? { label: "Free preview", href: course.previewHref } : undefined,
       progress,
+      progressNote: progressNote || undefined,
     },
   };
 }
