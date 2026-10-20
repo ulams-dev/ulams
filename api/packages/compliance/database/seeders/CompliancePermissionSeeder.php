@@ -19,5 +19,6 @@ class CompliancePermissionSeeder extends Seeder
             Permission::findOrCreate($permission, 'api');
         }
         Role::findOrCreate(UserRole::ADMIN, 'api')->givePermissionTo(CompliancePermissionsEnum::getValues());
+        Role::findOrCreate(UserRole::TUTOR, 'api')->givePermissionTo(CompliancePermissionsEnum::COMPETENCIES);
     }
 }
