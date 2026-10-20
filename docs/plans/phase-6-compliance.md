@@ -130,6 +130,14 @@ Owner-action issue: one combined issue for these defaults.
 1. This plan (docs only).
 2. M1 certificates: `templates-pdf` expiry, revoke, verification endpoint, frontend verification page, docs.
 3. M2 `compliance` package: course settings, assignments, reminders, recertification, escalation.
-4. M3 compliance report and audit export.
-5. Later, not in this pass if size demands: rule engine and learning paths (6.2), dashboards and BI export
-   (6.5), competency framework (6.6), policy owner dashboard (6.1.1 parts that do not need the Living Course UI).
+4. M3 compliance report and audit export (assignments, certificates, Living Course audit entries; CSV and JSON lines).
+5. M4 (6.2) learning paths with prerequisites and attribute rules, in the same package. Design: `compliance_paths` and
+   `compliance_path_steps` (course, position, prerequisite course ids; cycles rejected), `compliance_path_enrollments`
+   (one per user and path), `compliance_rules` (conditions on the `group` pseudo attribute, user columns and
+   model-fields custom fields; all conditions must hold; due in N days). Enrolment assigns only startable steps through
+   `AssignmentService`, so reminders and escalation apply unchanged; finishing a course unlocks the next steps. Rules run
+   on user save and in the daily `compliance:process`. No new dependency. Kept in this package rather than a new one
+   because every step is a compliance assignment (due dates, escalation, reports).
+6. Not in this pass: dashboards, BI export and scheduled reports (6.5), competency framework (6.6), the policy owner
+   dashboard and policy-change reassignment (6.1.1; they need the Living Course policy UI), an admin screen for any of
+   the above (the API, CLI commands and docs are done; admin screens are a separate frontend milestone).
