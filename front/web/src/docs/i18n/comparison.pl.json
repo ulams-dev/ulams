@@ -505,12 +505,18 @@
                   {
                     "title": "Analityka kursu dla autorów",
                     "text": "Pulpit dla każdego kursu z postępami, ukończeniem, wynikami quizów i fragmentami, które mylą uczących się.",
-                    "status": "coming"
+                    "status": "coming",
+                    "packages": [
+                      "learner-insights"
+                    ]
                   },
                   {
                     "title": "Uczący się zagrożeni porażką",
                     "text": "Punktacja ryzyka oparta na regułach, z czytelnymi uzasadnieniami i progami dla każdego tenanta, oraz ograniczane częstotliwościowo przypomnienia.",
-                    "status": "coming"
+                    "status": "coming",
+                    "packages": [
+                      "learner-insights"
+                    ]
                   },
                   {
                     "title": "Tutor AI",
