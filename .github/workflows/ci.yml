@@ -167,8 +167,8 @@ jobs:
           --filter=admin --filter=front --filter=api-h5p --filter=api-pdf
           --concurrency=2
 
-      # The reference frontend and its libraries: typecheck, lint and unit tests. Playwright (e2e,
-      # visual, a11y) needs the whole stack and stays out of CI.
+      # The reference frontend and its libraries: typecheck, lint and unit tests. Playwright e2e and
+      # visual need the whole stack and stay out of CI; the axe suite has its own job (web-a11y).
       - name: Typecheck, lint, test (web, ui, sdk, interactive-bridge)
         run: >-
           corepack yarn turbo run typecheck lint test
@@ -188,6 +188,39 @@ jobs:
       # Every operation of the API's OpenAPI snapshot has a CLI command or a reasoned exclusion.
       - name: CLI endpoint coverage
         run: corepack yarn workspace ulams coverage
+
+  # The learner pages of the reference frontend against a mock tenant API (no PHP, Postgres or Docker):
+  # axe (WCAG 2.2 AA) light and dark at desktop and 360 px, keyboard focus and reduced motion.
+  web-a11y:
+    name: Web accessibility (axe, keyboard)
+    needs: changes
+    if: needs.changes.outputs.js == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      HUSKY: "0"
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - run: corepack enable
+      - run: corepack yarn install --frozen-lockfile
+      - name: Install Chromium
+        run: corepack yarn playwright install --with-deps chromium
+      - name: Build the reference frontend
+        run: corepack yarn workspace @ulams/web build
+      - name: Axe and keyboard checks
+        run: corepack yarn workspace @ulams/web exec playwright test -c playwright.a11y.config.ts
+      - name: Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: web-a11y-playwright
+          path: front/web/test-results
+          retention-days: 7
 
   # The interactive content packages (demo-content) in a real browser, on throwaway servers: each package
   # loads in the opaque sandbox, steps advance, no request leaves the origin, keyboard, WebGL fallback, axe.
