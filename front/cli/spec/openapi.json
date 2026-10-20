@@ -5943,6 +5943,185 @@
     ]
    }
   },
+  "/api/admin/compliance/report": {
+   "get": {
+    "description": "Compliance report and audit export. Permission `compliance_report`. Datasets: `assignments` (required\ntraining and its outcome), `certificates` (every certificate with the course version it attests) and `audit`\n(hash-chained Living Course audit entries, when that package is installed).",
+    "operationId": "d242d8d8ef7331df5dc2c3332ae63873",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "dataset",
+      "required": true,
+      "schema": {
+       "enum": [
+        "assignments",
+        "certificates",
+        "audit"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "course_id",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "user_id",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "description": "assignments: assigned, overdue, completed, cancelled; certificates: valid, expired, revoked",
+      "in": "query",
+      "name": "status",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "assigned or issued on or after this date",
+      "in": "query",
+      "name": "from",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     },
+     {
+      "description": "assigned or issued on or before this date",
+      "in": "query",
+      "name": "to",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "per_page",
+      "schema": {
+       "default": 50,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "columns and rows of the dataset, with pagination meta"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Unknown dataset"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Compliance report",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/report/export": {
+   "get": {
+    "description": "Streams every matching row as CSV (default) or JSON lines. The export itself is recorded (who, dataset, filters, row count).",
+    "operationId": "3acf773678f0412d5c87db4033bdca59",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "dataset",
+      "required": true,
+      "schema": {
+       "enum": [
+        "assignments",
+        "certificates",
+        "audit"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "format",
+      "schema": {
+       "default": "csv",
+       "enum": [
+        "csv",
+        "jsonl"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "course_id",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "user_id",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "status",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "from",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "to",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "file download"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Unknown dataset"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Audit export of a compliance dataset",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
   "/api/admin/config": {
    "get": {
     "description": "Get a listing of registered config keys",

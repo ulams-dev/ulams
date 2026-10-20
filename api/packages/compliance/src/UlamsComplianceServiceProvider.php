@@ -16,6 +16,7 @@ use Ulams\Compliance\Events\TrainingOverdue;
 use Ulams\Compliance\Http\Controllers\AssignmentController;
 use Ulams\Compliance\Http\Controllers\CourseSettingsController;
 use Ulams\Compliance\Http\Controllers\ManagerController;
+use Ulams\Compliance\Http\Controllers\ReportController;
 use Ulams\Compliance\Listeners\CertificateIssuedListener;
 use Ulams\Compliance\Listeners\CourseFinishedListener;
 use Ulams\Compliance\Mail\CertificateExpiredVariables;
@@ -107,6 +108,8 @@ class UlamsComplianceServiceProvider extends ServiceProvider
             Route::delete('assignments/{id}', [AssignmentController::class, 'destroy']);
             Route::get('managers', [ManagerController::class, 'index']);
             Route::put('managers/{user}', [ManagerController::class, 'update']);
+            Route::get('report', [ReportController::class, 'index']);
+            Route::get('report/export', [ReportController::class, 'export']);
         });
         Route::group(['prefix' => 'api/compliance', 'middleware' => ['auth:api']], function () {
             Route::get('my-assignments', [AssignmentController::class, 'mine']);

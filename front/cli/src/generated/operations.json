@@ -193,6 +193,18 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/compliance/report",
+  "summary": "Compliance report",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/report/export",
+  "summary": "Audit export of a compliance dataset",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/config",
   "summary": "Get admin config",
   "tag": "Admin Settings"

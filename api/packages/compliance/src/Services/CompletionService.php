@@ -2,6 +2,8 @@
 
 namespace Ulams\Compliance\Services;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Ulams\Compliance\Enums\AssignmentStatus;
 use Ulams\Compliance\Models\Assignment;
 use Ulams\Core\Models\User;
@@ -55,6 +57,8 @@ class CompletionService
             ->whereNull('superseded_by_id')
             ->update(['superseded_by_id' => $certificate->getKey()]);
 
+        $this->recordCourseVersion($certificate);
+
         $assignment = Assignment::query()
             ->where('user_id', $certificate->user_id)
             ->where('course_id', $certificate->assignable_id)
@@ -64,5 +68,20 @@ class CompletionService
             ->latest('id')
             ->first();
         $assignment?->forceFill(['certificate_id' => $certificate->getKey()])->save();
+    }
+
+    /**
+     * The version a certificate attests: the Living Course version of the course when that package keeps
+     * one, otherwise the course's last update (set by templates-pdf) stays.
+     */
+    private function recordCourseVersion(FabricPDF $certificate): void
+    {
+        if (!Schema::hasTable('living_course_audit')) {
+            return;
+        }
+        $version = DB::table('living_course_audit')->where('course_id', $certificate->assignable_id)->max('version_to');
+        if ($version) {
+            $certificate->forceFill(['course_version' => 'v' . $version])->saveQuietly();
+        }
     }
 }

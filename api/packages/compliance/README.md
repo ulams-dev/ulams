@@ -22,6 +22,17 @@ and `templates-pdf` through their services and events and changes none of them.
 - **Events** (templated through `templates-email`): `TrainingAssigned`, `TrainingDueSoon`, `TrainingOverdue`,
   `TrainingEscalated` (recipient: the manager), `CertificateExpiringSoon`, `CertificateExpired`.
 
+## Report and audit export
+
+`ComplianceReportService` serves three datasets, filterable by `course_id`, `user_id`, `status`, `from` and `to`:
+`assignments` (who was required to do what, due, completed, overdue days, escalation level, certificate and its
+status and expiry, course version), `certificates` (every certificate with holder, issue and expiry dates, status,
+revocation reason and the course version it attests) and `audit` (the hash-chained Living Course audit entries,
+only when that package is installed). The JSON report is paginated; the export streams everything as CSV (UTF-8
+with BOM, cells starting with `=`, `+`, `-` or `@` are neutralised) or JSON lines, and each export is recorded in
+`compliance_exports` (who, dataset, filters, row count). The course version of a certificate is the Living Course
+version (`v<n>`) when there is one, otherwise the course's last update at issue time.
+
 ## API
 
 | Method | Path | Who |
@@ -31,6 +42,8 @@ and `templates-pdf` through their services and events and changes none of them.
 | DELETE | `/api/admin/compliance/assignments/{id}` | `compliance_manage` |
 | GET | `/api/admin/compliance/managers` | `compliance_manage` |
 | PUT | `/api/admin/compliance/managers/{user}` | `compliance_manage` |
+| GET | `/api/admin/compliance/report?dataset=` | `compliance_report` |
+| GET | `/api/admin/compliance/report/export?dataset=&format=csv\|jsonl` | `compliance_report` |
 | GET | `/api/compliance/my-assignments` | the learner |
 | GET | `/api/compliance/team/assignments` | a manager, their direct reports only |
 
