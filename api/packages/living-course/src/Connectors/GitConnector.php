@@ -11,6 +11,7 @@ use Ulams\CourseBuilder\Ingestion\SourceIngestor;
 use Ulams\LivingCourse\Connectors\Git\GiteaClient;
 use Ulams\LivingCourse\Connectors\Git\GitHostClient;
 use Ulams\LivingCourse\Connectors\Git\GitHubClient;
+use Ulams\LivingCourse\Connectors\Git\FileLimits;
 use Ulams\LivingCourse\Connectors\Git\GitLabClient;
 use Ulams\LivingCourse\Connectors\Git\PathFilter;
 use Ulams\LivingCourse\Models\Connection;
@@ -229,20 +230,7 @@ final class GitConnector implements SourceConnector
     /** @param array<int,array{path:string,blob:string,size:?int}> $files */
     private function assertLimits(array $files): void
     {
-        $limits = (array) config('living_course.connector_limits');
-        if (count($files) > (int) $limits['files']) {
-            throw new ConnectorException(sprintf('%d files match, more than the limit of %d. Narrow the paths (for example docs/**/*.md).', count($files), (int) $limits['files']));
-        }
-        $total = 0;
-        foreach ($files as $f) {
-            if ($f['size'] !== null && $f['size'] > (int) $limits['file_bytes']) {
-                throw new ConnectorException(sprintf('%s is larger than %d KB, the limit for one source file.', $f['path'], (int) $limits['file_bytes'] / 1024));
-            }
-            $total += (int) $f['size'];
-        }
-        if ($total > (int) $limits['total_bytes']) {
-            throw new ConnectorException(sprintf('The selected files add up to more than %d MB. Narrow the paths.', (int) $limits['total_bytes'] / 1048576));
-        }
+        FileLimits::assert($files);
     }
 
     /** The bytes of a file as stored with the previous revision (an unchanged blob is not downloaded again). */

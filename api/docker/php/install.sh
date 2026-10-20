@@ -13,9 +13,11 @@ SRC_DIR="$(cd "$(dirname "$0")" && pwd)"
 # - ffmpeg (ffmpeg + ffprobe): HLS processing in packages/video (php-ffmpeg)
 # - jpegoptim, optipng, pngquant, gifsicle: spatie/image-optimizer in packages/images
 # - unzip: composer dist installs
+# - git: the `git-cli` Living Course connector (read-only shallow clones of repositories on any server)
 apk add --no-cache \
     bash \
     ffmpeg \
+    git \
     gifsicle \
     jpegoptim \
     optipng \
