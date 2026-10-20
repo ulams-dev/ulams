@@ -98,6 +98,25 @@ every condition of a rule must hold. Rules are checked whenever a user is create
 also catches new group members). `POST /api/admin/compliance/rules/{id}/evaluate` shows who a rule would enrol
 (`dry_run`, the default) or enrols them now.
 
+## Competencies and skill profiles
+
+`/api/admin/compliance/competencies` holds the competency framework: a tree of areas and skills (`name`, optional
+`code`, `parent_id`). Administrators change it; authors can read it.
+
+Courses are tagged with competencies:
+
+- An author (or administrator) tags a course directly: `PUT /api/admin/compliance/courses/{course}/competencies/{competency}`.
+- `POST .../competencies/suggest` asks the AI which competencies the course teaches. It returns **suggestions**, each
+  with a one-line reason and the lessons that teach it. Nothing is tagged until the author confirms a suggestion with
+  the same `PUT`; `DELETE` rejects it. Suggestions never count towards anyone's skills. Each call is logged with model,
+  tokens and cost like every other AI call, and the course text is treated as data, never as instructions.
+
+A learner's **skill profile** (`GET /api/compliance/my-skills`) lists the confirmed competencies of the courses they
+have done, with the courses that prove them, when they were earned and when they lapse (an expired or revoked
+certificate removes the skill). Administrators read anyone's profile at `/api/admin/compliance/users/{user}/skills`.
+Enrolment rules can use it: the attribute `competency` with `not_equals` and a competency name enrols everyone who
+lacks that skill.
+
 ## Reports and audit export
 
 `GET /api/admin/compliance/report?dataset=...` (permission `compliance_report`) returns a paginated table; the
