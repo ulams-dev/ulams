@@ -73,6 +73,8 @@ return [
     ['api/living-course/courses/*/freshness', 'learner'],
     ['api/living-course/notices/*/dismiss', 'learner'],
     ['api/living-course/webhooks/*', 'public'],
+    // the vendor's browser redirect after "Connect your account": no token, the encrypted expiring state is the credential
+    ['api/living-course/oauth/*/callback', 'public'],
 
     // ---- enrolments (before the broader courses and users prefixes) ----------------------------
     ['api/admin/courses/*/access*', 'enrolments'],
