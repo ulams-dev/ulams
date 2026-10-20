@@ -443,6 +443,89 @@
     },
     "type": "object"
    },
+   "ApiTokenUsage": {
+    "properties": {
+     "daily": {
+      "items": {
+       "properties": {
+        "date": {
+         "format": "date",
+         "type": "string"
+        },
+        "errors": {
+         "type": "integer"
+        },
+        "rate_limited": {
+         "type": "integer"
+        },
+        "requests": {
+         "type": "integer"
+        }
+       },
+       "type": "object"
+      },
+      "type": "array"
+     },
+     "days": {
+      "type": "integer"
+     },
+     "from": {
+      "format": "date",
+      "type": "string"
+     },
+     "last_used_at": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     },
+     "rate_limit_per_minute": {
+      "nullable": true,
+      "type": "integer"
+     },
+     "to": {
+      "format": "date",
+      "type": "string"
+     },
+     "token_id": {
+      "type": "string"
+     },
+     "totals": {
+      "properties": {
+       "errors": {
+        "description": "4xx and 5xx answers except 429",
+        "type": "integer"
+       },
+       "rate_limited": {
+        "type": "integer"
+       },
+       "requests": {
+        "type": "integer"
+       }
+      },
+      "type": "object"
+     },
+     "window": {
+      "description": "The current one-minute window; null when the token has no limit",
+      "nullable": true,
+      "properties": {
+       "limit": {
+        "type": "integer"
+       },
+       "remaining": {
+        "type": "integer"
+       },
+       "resets_in_seconds": {
+        "type": "integer"
+       },
+       "used": {
+        "type": "integer"
+       }
+      },
+      "type": "object"
+     }
+    },
+    "type": "object"
+   },
    "BookmarkCreateRequest": {
     "properties": {
      "bookmarkable_id": {
@@ -3634,6 +3717,174 @@
      },
      "status": {
       "description": "status",
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "WebhookDelivery": {
+    "properties": {
+     "attempt_log": {
+      "description": "One entry per HTTP attempt (delivery detail only)",
+      "items": {
+       "properties": {
+        "created_at": {
+         "format": "date-time",
+         "type": "string"
+        },
+        "duration_ms": {
+         "type": "integer"
+        },
+        "error": {
+         "nullable": true,
+         "type": "string"
+        },
+        "number": {
+         "type": "integer"
+        },
+        "response_body": {
+         "nullable": true,
+         "type": "string"
+        },
+        "status_code": {
+         "nullable": true,
+         "type": "integer"
+        }
+       },
+       "type": "object"
+      },
+      "type": "array"
+     },
+     "attempts": {
+      "type": "integer"
+     },
+     "created_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "delivered_at": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     },
+     "endpoint_id": {
+      "type": "string"
+     },
+     "event_id": {
+      "example": "evt_01j9z8x3v7c5qk2m4n6p8r0t1w",
+      "type": "string"
+     },
+     "event_type": {
+      "example": "course.completed",
+      "type": "string"
+     },
+     "id": {
+      "type": "string"
+     },
+     "is_test": {
+      "type": "boolean"
+     },
+     "last_status_code": {
+      "nullable": true,
+      "type": "integer"
+     },
+     "next_attempt_at": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     },
+     "payload": {
+      "description": "The event that was signed and sent (delivery detail only)",
+      "type": "object"
+     },
+     "replay_of": {
+      "nullable": true,
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "pending",
+       "retrying",
+       "succeeded",
+       "failed",
+       "cancelled"
+      ],
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "WebhookEndpoint": {
+    "properties": {
+     "api_version": {
+      "example": "2026-10-20",
+      "type": "string"
+     },
+     "consecutive_failures": {
+      "type": "integer"
+     },
+     "created_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "description": {
+      "nullable": true,
+      "type": "string"
+     },
+     "disabled_reason": {
+      "nullable": true,
+      "type": "string"
+     },
+     "enabled": {
+      "type": "boolean"
+     },
+     "events": {
+      "description": "Event types, or [*] for every available event",
+      "items": {
+       "example": "course.completed",
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "id": {
+      "example": "01j9z8x3v7c5qk2m4n6p8r0t1w",
+      "type": "string"
+     },
+     "last_delivery_at": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     },
+     "secret": {
+      "description": "The signing secret; only in the response that creates the endpoint or rotates its secret",
+      "type": "string"
+     },
+     "secret_hint": {
+      "description": "Last characters of the signing secret",
+      "type": "string"
+     },
+     "url": {
+      "example": "https://example.com/hooks/ulams",
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "WebhookEventType": {
+    "properties": {
+     "description": {
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "available",
+       "planned",
+       "test"
+      ],
+      "type": "string"
+     },
+     "type": {
+      "example": "course.completed",
       "type": "string"
      }
     },
@@ -18178,6 +18429,85 @@
     "tags": [
      "Admin Tokens"
     ]
+   },
+   "patch": {
+    "operationId": "b0ba3dd8b743ae9ff292c0e293b1b4bb",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "rate_limit_per_minute": {
+          "description": "null removes the limit",
+          "maximum": 6000,
+          "minimum": 1,
+          "nullable": true,
+          "type": "integer"
+         }
+        },
+        "required": [
+         "rate_limit_per_minute"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/ApiToken"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Updated token"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "description": "Needs token_manage or token owner"
+     },
+     "404": {
+      "description": "Unknown token"
+     },
+     "422": {
+      "description": "Invalid limit"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Change the per-minute rate limit of any scoped token",
+    "tags": [
+     "Admin Tokens"
+    ]
    }
   },
   "/api/admin/tokens/{id}/audit": {
@@ -18220,6 +18550,72 @@
      }
     ],
     "summary": "Audit log of one token",
+    "tags": [
+     "Admin Tokens"
+    ]
+   }
+  },
+  "/api/admin/tokens/{id}/usage": {
+   "get": {
+    "operationId": "e59477b5e13ada6fe8a76d685ed668a9",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "days",
+      "schema": {
+       "default": 30,
+       "maximum": 90,
+       "minimum": 1,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/ApiTokenUsage"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Usage"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "description": "Needs token_manage or token owner"
+     },
+     "404": {
+      "description": "Unknown token"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Request counts of one token per day, and its rate limit window",
     "tags": [
      "Admin Tokens"
     ]
@@ -20847,6 +21243,629 @@
     ]
    }
   },
+  "/api/admin/webhooks/deliveries": {
+   "get": {
+    "operationId": "webhooks.deliveries.list",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "endpoint_id",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "status",
+      "schema": {
+       "enum": [
+        "pending",
+        "retrying",
+        "succeeded",
+        "failed",
+        "cancelled"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "event_type",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "per_page",
+      "schema": {
+       "maximum": 100,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/WebhookDelivery"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "meta": {
+           "type": "object"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Deliveries and pagination meta"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delivery log (newest first)",
+    "tags": [
+     "Admin Webhooks"
+    ]
+   }
+  },
+  "/api/admin/webhooks/deliveries/{delivery}": {
+   "get": {
+    "operationId": "webhooks.deliveries.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "delivery",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/WebhookDelivery"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Delivery"
+     },
+     "404": {
+      "description": "Not found"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One delivery with its payload and every attempt",
+    "tags": [
+     "Admin Webhooks"
+    ]
+   }
+  },
+  "/api/admin/webhooks/deliveries/{delivery}/replay": {
+   "post": {
+    "operationId": "webhooks.deliveries.replay",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "delivery",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/WebhookDelivery"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The new delivery, queued"
+     },
+     "404": {
+      "description": "Not found"
+     },
+     "429": {
+      "description": "Too many replays"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Send a delivery again as a new delivery with the same event id",
+    "tags": [
+     "Admin Webhooks"
+    ]
+   }
+  },
+  "/api/admin/webhooks/endpoints": {
+   "get": {
+    "operationId": "webhooks.endpoints.list",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/WebhookEndpoint"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Endpoints"
+     },
+     "403": {
+      "description": "Needs webhook_manage"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List webhook endpoints",
+    "tags": [
+     "Admin Webhooks"
+    ]
+   },
+   "post": {
+    "operationId": "webhooks.endpoints.create",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "description": {
+          "nullable": true,
+          "type": "string"
+         },
+         "events": {
+          "example": [
+           "course.completed"
+          ],
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         },
+         "url": {
+          "example": "https://example.com/hooks/ulams",
+          "type": "string"
+         }
+        },
+        "required": [
+         "url",
+         "events"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/WebhookEndpoint"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Created"
+     },
+     "403": {
+      "description": "Needs webhook_manage"
+     },
+     "422": {
+      "description": "Invalid events, a URL that is not https or points to a private address, or the endpoint limit"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create a webhook endpoint (the signing secret is returned once)",
+    "tags": [
+     "Admin Webhooks"
+    ]
+   }
+  },
+  "/api/admin/webhooks/endpoints/{endpoint}": {
+   "delete": {
+    "operationId": "webhooks.endpoints.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "endpoint",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Deleted"
+     },
+     "404": {
+      "description": "Not found"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete a webhook endpoint and its delivery log",
+    "tags": [
+     "Admin Webhooks"
+    ]
+   },
+   "get": {
+    "operationId": "webhooks.endpoints.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "endpoint",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/WebhookEndpoint"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Endpoint"
+     },
+     "404": {
+      "description": "Not found"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One webhook endpoint",
+    "tags": [
+     "Admin Webhooks"
+    ]
+   },
+   "put": {
+    "operationId": "webhooks.endpoints.update",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "endpoint",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "description": {
+          "nullable": true,
+          "type": "string"
+         },
+         "enabled": {
+          "type": "boolean"
+         },
+         "events": {
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         },
+         "url": {
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/WebhookEndpoint"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Updated"
+     },
+     "404": {
+      "description": "Not found"
+     },
+     "422": {
+      "description": "Invalid input"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Change a webhook endpoint (URL, events, enabled)",
+    "tags": [
+     "Admin Webhooks"
+    ]
+   }
+  },
+  "/api/admin/webhooks/endpoints/{endpoint}/rotate-secret": {
+   "post": {
+    "operationId": "webhooks.endpoints.rotate-secret",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "endpoint",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/WebhookEndpoint"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Endpoint with the new secret"
+     },
+     "404": {
+      "description": "Not found"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Replace the signing secret (returned once; the old one stops working at once)",
+    "tags": [
+     "Admin Webhooks"
+    ]
+   }
+  },
+  "/api/admin/webhooks/endpoints/{endpoint}/test": {
+   "post": {
+    "operationId": "webhooks.endpoints.test",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "endpoint",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "event_type": {
+          "description": "A sample of this event type; default webhook.test",
+          "example": "course.completed",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/WebhookDelivery"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The finished delivery"
+     },
+     "404": {
+      "description": "Not found"
+     },
+     "429": {
+      "description": "Too many test sends"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Send a sample event once and return the result",
+    "tags": [
+     "Admin Webhooks"
+    ]
+   }
+  },
+  "/api/admin/webhooks/events": {
+   "get": {
+    "description": "Outgoing webhooks (Phase 7.3). Admin only (`webhook_manage`); the data lives in the tenant's own\ndatabase, so an id from another tenant never resolves.",
+    "operationId": "webhooks.events.list",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/WebhookEventType"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Event types"
+     },
+     "403": {
+      "description": "Needs webhook_manage"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Webhook event types (available and planned)",
+    "tags": [
+     "Admin Webhooks"
+    ]
+   }
+  },
   "/api/admin/webinars": {
    "get": {
     "operationId": "498256da7f0c76193971b11fc2d54a84",
@@ -22321,6 +23340,151 @@
      }
     ],
     "summary": "Revoke one of my scoped tokens",
+    "tags": [
+     "Auth"
+    ]
+   },
+   "patch": {
+    "operationId": "508a5f1fdf2cd141032333dc6b321888",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "rate_limit_per_minute": {
+          "description": "null removes the limit",
+          "maximum": 6000,
+          "minimum": 1,
+          "nullable": true,
+          "type": "integer"
+         }
+        },
+        "required": [
+         "rate_limit_per_minute"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/ApiToken"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Updated token"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "description": "Somebody else's token"
+     },
+     "404": {
+      "description": "Unknown token"
+     },
+     "422": {
+      "description": "Invalid limit"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Change the per-minute rate limit of one of my tokens",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
+  "/api/auth/tokens/{id}/usage": {
+   "get": {
+    "operationId": "f94ab68202f6875216fd64b854ce6c8d",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "days",
+      "schema": {
+       "default": 30,
+       "maximum": 90,
+       "minimum": 1,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/ApiTokenUsage"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Usage"
+     },
+     "401": {
+      "description": "Unauthenticated"
+     },
+     "403": {
+      "description": "Somebody else's token"
+     },
+     "404": {
+      "description": "Unknown token"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Request counts of one of my tokens per day, and its rate limit window",
     "tags": [
      "Auth"
     ]
@@ -31831,6 +32995,10 @@
   {
    "description": "Vouchers",
    "name": "Vouchers"
+  },
+  {
+   "description": "Admin Webhooks",
+   "name": "Admin Webhooks"
   },
   {
    "description": "Webinars",

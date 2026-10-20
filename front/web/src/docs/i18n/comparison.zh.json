@@ -887,7 +887,7 @@
                   },
                   {
                     "title": "面向 AI 智能体的 MCP 服务器",
-                    "text": "ulams mcp 通过 stdio 或 Streamable HTTP 把每条 CLI 命令作为 MCP 工具提供给 Claude Code、Claude Desktop 等 MCP 客户端：默认 23 个工具，启用全部工具集最多 535 个。目前从仓库构建，npm 包在计划中。",
+                    "text": "ulams mcp 通过 stdio 或 Streamable HTTP 把每条 CLI 命令作为 MCP 工具提供给 Claude Code、Claude Desktop 等 MCP 客户端：默认 23 个工具，启用全部工具集最多 550 个。目前从仓库构建，npm 包在计划中。",
                     "href": "https://ulams-dev.github.io/ulams/developers/agents/"
                   },
                   {

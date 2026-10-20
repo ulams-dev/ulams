@@ -4,6 +4,23 @@
  */
 
 export interface paths {
+    "/api/contact": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a message to the ULAMS team */
+        post: operations["submitPublicContactMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/events": {
         parameters: {
             query?: never;
@@ -180,6 +197,24 @@ export interface paths {
         post?: never;
         /** Revoke any scoped token */
         delete: operations["86c0bd374d2c2016525af40c59f2a18e"];
+        options?: never;
+        head?: never;
+        /** Change the per-minute rate limit of any scoped token */
+        patch: operations["b0ba3dd8b743ae9ff292c0e293b1b4bb"];
+        trace?: never;
+    };
+    "/api/admin/tokens/{id}/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Request counts of one token per day, and its rate limit window */
+        get: operations["e59477b5e13ada6fe8a76d685ed668a9"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -994,6 +1029,24 @@ export interface paths {
         post?: never;
         /** Revoke one of my scoped tokens */
         delete: operations["fef5ceb391432c3471ee2e3223e7db42"];
+        options?: never;
+        head?: never;
+        /** Change the per-minute rate limit of one of my tokens */
+        patch: operations["508a5f1fdf2cd141032333dc6b321888"];
+        trace?: never;
+    };
+    "/api/auth/tokens/{id}/usage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Request counts of one of my tokens per day, and its rate limit window */
+        get: operations["f94ab68202f6875216fd64b854ce6c8d"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -3991,6 +4044,30 @@ export interface paths {
          * @description Needs h5p_delete. Deletes through the H5P service (content files, user states, results).
          */
         delete: operations["b0a324657785d13259c1774c2e3e6ee2"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/images/img": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Resize an image on the fly and redirect to the cached copy
+         * @description Public endpoint, throttled by `images.render`. The cached file name is `sha1(path . json_encode(params))` plus the extension, so the same request always returns the same URL. The first request creates the copy, optimises it and stores it on the configured disk; later requests only redirect. A failed resize does not return an error status: the redirect points to an SVG that contains the error message.
+         */
+        get: operations["c1018d19acdbc8f5d4393c3e15a2673d"];
+        put?: never;
+        /**
+         * Resize many images at once
+         * @description Public endpoint, throttled by `images.render`. Returns one entry per requested image, in the same order, with the URL of the cached copy.
+         */
+        post: operations["36e67e71a3fe444b36689e207b3db13a"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -8039,6 +8116,149 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/webhooks/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Webhook event types (available and planned)
+         * @description Outgoing webhooks (Phase 7.3). Admin only (`webhook_manage`); the data lives in the tenant's own
+         *     database, so an id from another tenant never resolves.
+         */
+        get: operations["webhooks.events.list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/endpoints": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List webhook endpoints */
+        get: operations["webhooks.endpoints.list"];
+        put?: never;
+        /** Create a webhook endpoint (the signing secret is returned once) */
+        post: operations["webhooks.endpoints.create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/endpoints/{endpoint}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One webhook endpoint */
+        get: operations["webhooks.endpoints.get"];
+        /** Change a webhook endpoint (URL, events, enabled) */
+        put: operations["webhooks.endpoints.update"];
+        post?: never;
+        /** Delete a webhook endpoint and its delivery log */
+        delete: operations["webhooks.endpoints.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/endpoints/{endpoint}/rotate-secret": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Replace the signing secret (returned once; the old one stops working at once) */
+        post: operations["webhooks.endpoints.rotate-secret"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/endpoints/{endpoint}/test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a sample event once and return the result */
+        post: operations["webhooks.endpoints.test"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/deliveries": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Delivery log (newest first) */
+        get: operations["webhooks.deliveries.list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/deliveries/{delivery}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One delivery with its payload and every attempt */
+        get: operations["webhooks.deliveries.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/webhooks/deliveries/{delivery}/replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a delivery again as a new delivery with the same event id */
+        post: operations["webhooks.deliveries.replay"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/webinars/generate-jitsi/{id}": {
         parameters: {
             query?: never;
@@ -8313,6 +8533,37 @@ export interface components {
              * @example ulams_pat_eyJ0eXAi...
              */
             token?: string;
+        };
+        ApiTokenUsage: {
+            token_id?: string;
+            days?: number;
+            /** Format: date */
+            from?: string;
+            /** Format: date */
+            to?: string;
+            rate_limit_per_minute?: number | null;
+            /** @description The current one-minute window; null when the token has no limit */
+            window?: {
+                limit?: number;
+                used?: number;
+                remaining?: number;
+                resets_in_seconds?: number;
+            } | null;
+            /** Format: date-time */
+            last_used_at?: string | null;
+            totals?: {
+                requests?: number;
+                /** @description 4xx and 5xx answers except 429 */
+                errors?: number;
+                rate_limited?: number;
+            };
+            daily?: {
+                /** Format: date */
+                date?: string;
+                requests?: number;
+                errors?: number;
+                rate_limited?: number;
+            }[];
         };
         ApiTokenList: {
             success?: boolean;
@@ -9852,6 +10103,67 @@ export interface components {
             active?: boolean[];
             exclude_promotions?: boolean[];
         };
+        WebhookEndpoint: {
+            /** @example 01j9z8x3v7c5qk2m4n6p8r0t1w */
+            id?: string;
+            /** @example https://example.com/hooks/ulams */
+            url?: string;
+            description?: string | null;
+            /** @description Event types, or [*] for every available event */
+            events?: string[];
+            /** @example 2026-10-20 */
+            api_version?: string;
+            enabled?: boolean;
+            disabled_reason?: string | null;
+            consecutive_failures?: number;
+            /** @description Last characters of the signing secret */
+            secret_hint?: string;
+            /** @description The signing secret; only in the response that creates the endpoint or rotates its secret */
+            secret?: string;
+            /** Format: date-time */
+            last_delivery_at?: string | null;
+            /** Format: date-time */
+            created_at?: string;
+        };
+        WebhookDelivery: {
+            id?: string;
+            endpoint_id?: string;
+            /** @example evt_01j9z8x3v7c5qk2m4n6p8r0t1w */
+            event_id?: string;
+            /** @example course.completed */
+            event_type?: string;
+            /** @enum {string} */
+            status?: "pending" | "retrying" | "succeeded" | "failed" | "cancelled";
+            attempts?: number;
+            last_status_code?: number | null;
+            is_test?: boolean;
+            replay_of?: string | null;
+            /** Format: date-time */
+            next_attempt_at?: string | null;
+            /** Format: date-time */
+            delivered_at?: string | null;
+            /** Format: date-time */
+            created_at?: string;
+            /** @description The event that was signed and sent (delivery detail only) */
+            payload?: Record<string, never>;
+            /** @description One entry per HTTP attempt (delivery detail only) */
+            attempt_log?: {
+                number?: number;
+                status_code?: number | null;
+                response_body?: string | null;
+                error?: string | null;
+                duration_ms?: number;
+                /** Format: date-time */
+                created_at?: string;
+            }[];
+        };
+        WebhookEventType: {
+            /** @example course.completed */
+            type?: string;
+            description?: string;
+            /** @enum {string} */
+            status?: "available" | "planned" | "test";
+        };
         Webinar: {
             /** @description id */
             id?: number;
@@ -9924,6 +10236,57 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    submitPublicContactMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    /** Format: email */
+                    email: string;
+                    subject: string;
+                    message: string;
+                    /** @description Spam honeypot; leave empty */
+                    website?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Message delivered to the private contact inbox */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Input validation failed */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit exceeded */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Message delivery is temporarily unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "71ee276c27779404579ddadb0153d795": {
         parameters: {
             query?: {
@@ -10382,6 +10745,116 @@ export interface operations {
                 content?: never;
             };
             /** @description Needs token_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown token */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    b0ba3dd8b743ae9ff292c0e293b1b4bb: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description null removes the limit */
+                    rate_limit_per_minute: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Updated token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["ApiToken"];
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs token_manage or token owner */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown token */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid limit */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    e59477b5e13ada6fe8a76d685ed668a9: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Usage */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["ApiTokenUsage"];
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs token_manage or token owner */
             403: {
                 headers: {
                     [name: string]: unknown;
@@ -12325,6 +12798,116 @@ export interface operations {
                     "application/json": {
                         success?: boolean;
                         message?: string;
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Somebody else's token */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown token */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "508a5f1fdf2cd141032333dc6b321888": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description null removes the limit */
+                    rate_limit_per_minute: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description Updated token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["ApiToken"];
+                    };
+                };
+            };
+            /** @description Unauthenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Somebody else's token */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown token */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid limit */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    f94ab68202f6875216fd64b854ce6c8d: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Usage */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["ApiTokenUsage"];
                     };
                 };
             };
@@ -16329,7 +16912,26 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @description The imported course (id, title, status and the other simple-resource fields) */
+                        data?: Record<string, never>;
+                    };
+                };
+            };
+            /** @description The package could not be imported */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error?: string;
+                    };
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -18335,12 +18937,19 @@ export interface operations {
             };
         };
         responses: {
-            /** @description successful operation */
+            /** @description Paths of the stored files */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: string[];
+                    };
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -18351,13 +18960,6 @@ export interface operations {
             };
             /** @description user doesn't have required access rights */
             403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description one of the uploaded files already exists */
-            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -18388,12 +18990,20 @@ export interface operations {
             };
         };
         responses: {
-            /** @description successful operation */
+            /** @description The file was moved */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @example true */
+                        data?: boolean;
+                    };
+                };
             };
             /** @description invalid request */
             302: {
@@ -18443,12 +19053,20 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description successful operation */
+            /** @description The file was deleted */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @example true */
+                        data?: boolean;
+                    };
+                };
             };
             /** @description file doesn't exists */
             400: {
@@ -18564,6 +19182,123 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    c1018d19acdbc8f5d4393c3e15a2673d: {
+        parameters: {
+            query: {
+                /** @description Path of the source image on the storage disk */
+                path: string;
+                /** @description Predefined size from `config('images.public.size_definitions')`; wins over `w` and `h` */
+                size?: string;
+                /** @description Target width in pixels; the aspect ratio is kept and the image is never enlarged */
+                w?: number;
+                /** @description Target height in pixels; the aspect ratio is kept and the image is never enlarged */
+                h?: number;
+                /** @description Output format; the source extension is kept when it is omitted or unsupported */
+                format?: "jpg" | "png" | "gif" | "webp";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Redirect to the cached, resized file */
+            302: {
+                headers: {
+                    /** @description URL of the cached file */
+                    Location?: string;
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many requests (`images.render` throttle) */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example Too Many Attempts. */
+                        message?: string;
+                    };
+                };
+            };
+        };
+    };
+    "36e67e71a3fe444b36689e207b3db13a": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    paths: {
+                        /**
+                         * @description Path of the source image on the storage disk
+                         * @example avatars/1/avatar.jpg
+                         */
+                        path: string;
+                        params?: {
+                            /**
+                             * @description Predefined size
+                             * @example thumbnail
+                             */
+                            size?: string | null;
+                            /** @example 100 */
+                            w?: number | null;
+                            /** @example 100 */
+                            h?: number | null;
+                        } | null;
+                    }[];
+                };
+            };
+        };
+        responses: {
+            /** @description Resized images */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example http://localhost/storage/imgcache/68840270724ee4ff0b481f4fbd2299e13dfe2447.jpg */
+                        url?: string;
+                        /** @example imgcache/68840270724ee4ff0b481f4fbd2299e13dfe2447.jpg */
+                        path?: string;
+                        /** @example 68840270724ee4ff0b481f4fbd2299e13dfe2447 */
+                        hash?: string;
+                    }[];
+                };
+            };
+            /** @description Validation error (more than 20 paths, a dimension outside 1-4096) */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        message?: string;
+                        errors?: Record<string, never>;
+                    };
+                };
+            };
+            /** @description Too many requests (`images.render` throttle) */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @example Too Many Attempts. */
+                        message?: string;
+                    };
+                };
             };
         };
     };
@@ -22488,7 +23223,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["Question"];
+                    };
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -22580,7 +23322,15 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @example true */
+                        data?: boolean;
+                    };
+                };
             };
             /** @description cannot find a question */
             400: {
@@ -22634,7 +23384,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["Question"];
+                    };
+                };
             };
             /** @description cannot find a question with provided slug identifier */
             400: {
@@ -22756,7 +23513,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["QuestionAnswer"];
+                    };
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -22849,7 +23613,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["Questionnaire"];
+                    };
+                };
             };
             /** @description endpoint requires authentication */
             401: {
@@ -22948,7 +23719,15 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @example true */
+                        data?: boolean;
+                    };
+                };
             };
             /** @description cannot find a questionnaire */
             400: {
@@ -23002,7 +23781,14 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["Questionnaire"];
+                    };
+                };
             };
             /** @description cannot find a questionnaire */
             400: {
@@ -23161,7 +23947,15 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @example true */
+                        data?: boolean;
+                    };
+                };
             };
             /** @description cannot find a questionnaire */
             400: {
@@ -23216,7 +24010,15 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        /** @example true */
+                        data?: boolean;
+                    };
+                };
             };
             /** @description cannot find a questionnaire */
             400: {
@@ -27688,12 +28490,29 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description List of available */
+            /** @description Processed videos with the state of their conversion to HLS */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": {
+                        /** @example true */
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            /** @example 1 */
+                            id?: number;
+                            /** @example 12 */
+                            topic_id?: number | null;
+                            topic_title?: string | null;
+                            /** @description The topic json, with the ffmpeg state under `ffmpeg` */
+                            json?: Record<string, never> | null;
+                            /** @enum {string|null} */
+                            state?: "coding" | "finished" | "error" | null;
+                        }[];
+                    };
+                };
             };
             /** @description Endpoint requires authentication */
             401: {
@@ -27888,6 +28707,415 @@ export interface operations {
                 content: {
                     "application/json": unknown;
                 };
+            };
+        };
+    };
+    "webhooks.events.list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event types */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookEventType"][];
+                    };
+                };
+            };
+            /** @description Needs webhook_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Endpoints */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookEndpoint"][];
+                    };
+                };
+            };
+            /** @description Needs webhook_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @example https://example.com/hooks/ulams */
+                    url: string;
+                    description?: string | null;
+                    /**
+                     * @example [
+                     *       "course.completed"
+                     *     ]
+                     */
+                    events: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookEndpoint"];
+                    };
+                };
+            };
+            /** @description Needs webhook_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid events, a URL that is not https or points to a private address, or the endpoint limit */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                endpoint: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Endpoint */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookEndpoint"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                endpoint: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    url?: string;
+                    description?: string | null;
+                    events?: string[];
+                    enabled?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookEndpoint"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid input */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                endpoint: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.rotate-secret": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                endpoint: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Endpoint with the new secret */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookEndpoint"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.endpoints.test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                endpoint: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description A sample of this event type; default webhook.test
+                     * @example course.completed
+                     */
+                    event_type?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description The finished delivery */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookDelivery"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many test sends */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.deliveries.list": {
+        parameters: {
+            query?: {
+                endpoint_id?: string;
+                status?: "pending" | "retrying" | "succeeded" | "failed" | "cancelled";
+                event_type?: string;
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deliveries and pagination meta */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookDelivery"][];
+                        meta?: Record<string, never>;
+                    };
+                };
+            };
+        };
+    };
+    "webhooks.deliveries.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                delivery: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Delivery */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookDelivery"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "webhooks.deliveries.replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                delivery: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The new delivery, queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["WebhookDelivery"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many replays */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
