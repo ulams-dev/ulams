@@ -4231,6 +4231,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/example-plugin/greetings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send the tenant's greeting to a user (dispatches GreetingSent) */
+        post: operations["d3fb7486e6f0342a50a072c25180a56f"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/example-plugin/hello": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The tenant's greeting */
+        get: operations["135e63fb1233fe1195a5455e99a8d7cc"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/file/list": {
         parameters: {
             query?: never;
@@ -6254,6 +6288,23 @@ export interface paths {
         get: operations["f401848d7a54b26f990d035eb48970f2"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/pencil-spaces/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Generate a direct login link */
+        post: operations["1339bf07bf18203c7739849ebd9a18f8"];
         delete?: never;
         options?: never;
         head?: never;
@@ -9816,6 +9867,15 @@ export interface components {
             /** Format: date-time */
             updated_at?: string;
         };
+        ExamplePluginSendGreetingRequest: {
+            /** @description Recipient */
+            user_id: number;
+        };
+        ExamplePluginGreetingResource: {
+            /** @example Hello from the example plugin, Ada */
+            greeting?: string;
+            user_id?: number | null;
+        };
         H5PContentListRequest: {
             title?: string;
             main_library?: string;
@@ -9979,6 +10039,10 @@ export interface components {
             payable_type?: string;
             /** @description user_id */
             user_id?: number;
+        };
+        LoginPencilSpaceRequest: {
+            /** @example https://my.pencilapp.com */
+            redirect_url: string;
         };
         Role: {
             /** @description id */
@@ -10576,6 +10640,63 @@ export interface components {
              * @description graded_at
              */
             graded_at?: string;
+        };
+        TopicAudio: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+        };
+        TopicCmi5Au: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+        };
+        TopicH5P: {
+            /** @description id */
+            id?: unknown;
+            /** @description H5P content id (h5p.contents.id, H5P service) */
+            value: number;
+            content?: components["schemas"]["H5PContentSummary"];
+        };
+        TopicImage: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+        };
+        TopicOEmbed: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+        };
+        TopicPDF: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+            /** @description length */
+            length?: number;
+            /** @description page_count */
+            page_count?: number;
+        };
+        TopicRichText: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+            /** @description length */
+            length?: number;
+        };
+        TopicScormSco: {
+            /** @description id */
+            id?: unknown;
+            /** @description value */
+            value: string;
+            /** @description uuid */
+            uuid?: unknown;
         };
         "language-line-save-request": {
             /** @description group */
@@ -20038,6 +20159,81 @@ export interface operations {
             };
         };
     };
+    d3fb7486e6f0342a50a072c25180a56f: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExamplePluginSendGreetingRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        data?: components["schemas"]["ExamplePluginGreetingResource"];
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Not authenticated */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing the example-plugin_send-greeting permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "135e63fb1233fe1195a5455e99a8d7cc": {
+        parameters: {
+            query?: {
+                name?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        data?: components["schemas"]["ExamplePluginGreetingResource"];
+                        message?: string;
+                    };
+                };
+            };
+        };
+    };
     "6326becc1437440c7baf201e5dab9191": {
         parameters: {
             query?: {
@@ -24575,6 +24771,36 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    "1339bf07bf18203c7739849ebd9a18f8": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginPencilSpaceRequest"];
+            };
+        };
+        responses: {
+            /** @description Successfull operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        data?: {
+                            url?: string;
+                        };
+                        message?: string;
+                    };
                 };
             };
         };
