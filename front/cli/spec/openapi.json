@@ -1788,6 +1788,31 @@
     },
     "type": "object"
    },
+   "ExamplePluginGreetingResource": {
+    "properties": {
+     "greeting": {
+      "example": "Hello from the example plugin, Ada",
+      "type": "string"
+     },
+     "user_id": {
+      "nullable": true,
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   },
+   "ExamplePluginSendGreetingRequest": {
+    "properties": {
+     "user_id": {
+      "description": "Recipient",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "user_id"
+    ],
+    "type": "object"
+   },
    "FabricPDF": {
     "properties": {
      "assignable_id": {
@@ -2116,6 +2141,18 @@
      "title",
      "order",
      "course_id"
+    ],
+    "type": "object"
+   },
+   "LoginPencilSpaceRequest": {
+    "properties": {
+     "redirect_url": {
+      "example": "https://my.pencilapp.com",
+      "type": "string"
+     }
+    },
+    "required": [
+     "redirect_url"
     ],
     "type": "object"
    },
@@ -3385,6 +3422,69 @@
     ],
     "type": "object"
    },
+   "TopicAudio": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
+   "TopicCmi5Au": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
+   "TopicH5P": {
+    "properties": {
+     "content": {
+      "$ref": "#/components/schemas/H5PContentSummary"
+     },
+     "id": {
+      "description": "id"
+     },
+     "value": {
+      "description": "H5P content id (h5p.contents.id, H5P service)",
+      "type": "integer"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
+   "TopicImage": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
    "TopicInteractive": {
     "properties": {
      "completion_rule": {
@@ -3523,6 +3623,44 @@
     ],
     "type": "object"
    },
+   "TopicOEmbed": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
+   "TopicPDF": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "length": {
+      "description": "length",
+      "type": "integer"
+     },
+     "page_count": {
+      "description": "page_count",
+      "type": "integer"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
    "TopicResource": {
     "properties": {
      "id": {
@@ -3546,6 +3684,43 @@
      "topic_id",
      "path",
      "name"
+    ],
+    "type": "object"
+   },
+   "TopicRichText": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "length": {
+      "description": "length",
+      "type": "integer"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
+    ],
+    "type": "object"
+   },
+   "TopicScormSco": {
+    "properties": {
+     "id": {
+      "description": "id"
+     },
+     "uuid": {
+      "description": "uuid"
+     },
+     "value": {
+      "description": "value",
+      "type": "string"
+     }
+    },
+    "required": [
+     "value"
     ],
     "type": "object"
    },
@@ -9032,6 +9207,62 @@
     "summary": "Manually triggered event for users",
     "tags": [
      "Templates"
+    ]
+   }
+  },
+  "/api/admin/example-plugin/greetings": {
+   "post": {
+    "operationId": "d3fb7486e6f0342a50a072c25180a56f",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/ExamplePluginSendGreetingRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/ExamplePluginGreetingResource"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful operation"
+     },
+     "401": {
+      "description": "Not authenticated"
+     },
+     "403": {
+      "description": "Missing the example-plugin_send-greeting permission"
+     },
+     "422": {
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Send the tenant's greeting to a user (dispatches GreetingSent)",
+    "tags": [
+     "Admin Example plugin"
     ]
    }
   },
@@ -26964,6 +27195,49 @@
     ]
    }
   },
+  "/api/example-plugin/hello": {
+   "get": {
+    "operationId": "135e63fb1233fe1195a5455e99a8d7cc",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "name",
+      "required": false,
+      "schema": {
+       "maxLength": 80,
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/ExamplePluginGreetingResource"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successful operation"
+     }
+    },
+    "summary": "The tenant's greeting",
+    "tags": [
+     "Example plugin"
+    ]
+   }
+  },
   "/api/health-check": {
    "get": {
     "operationId": "1125991bf9cc6c8f0c66c0899d22d579",
@@ -29061,6 +29335,58 @@
     "summary": "Display the specified generated PDF",
     "tags": [
      "Template PDFs"
+    ]
+   }
+  },
+  "/api/pencil-spaces/login": {
+   "post": {
+    "operationId": "1339bf07bf18203c7739849ebd9a18f8",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/LoginPencilSpaceRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "url": {
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Successfull operation"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Generate a direct login link",
+    "tags": [
+     "Pencil Spaces"
     ]
    }
   },
@@ -33100,6 +33426,14 @@
    "name": "Admin Dictionary Words"
   },
   {
+   "description": "Admin Example plugin",
+   "name": "Admin Example plugin"
+  },
+  {
+   "description": "Example plugin",
+   "name": "Example plugin"
+  },
+  {
    "description": "Files",
    "name": "Files"
   },
@@ -33186,6 +33520,10 @@
   {
    "description": "Payments",
    "name": "Payments"
+  },
+  {
+   "description": "Pencil Spaces",
+   "name": "Pencil Spaces"
   },
   {
    "description": "Admin Permissions",

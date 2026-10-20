@@ -612,6 +612,12 @@
   "tag": "Templates"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/example-plugin/greetings",
+  "summary": "Send the tenant's greeting to a user (dispatches GreetingSent)",
+  "tag": "Admin Example plugin"
+ },
+ {
   "method": "DELETE",
   "path": "/api/admin/file/delete",
   "summary": "Delete given file",
@@ -2767,6 +2773,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/example-plugin/hello",
+  "summary": "The tenant's greeting",
+  "tag": "Example plugin"
+ },
+ {
+  "method": "GET",
   "path": "/api/health-check",
   "summary": "Check health of the application",
   "tag": "Api"
@@ -3070,6 +3082,12 @@
   "path": "/api/pdfs/generate/{id}",
   "summary": "Download a generated PDF (certificate)",
   "tag": "Template PDFs"
+ },
+ {
+  "method": "POST",
+  "path": "/api/pencil-spaces/login",
+  "summary": "Generate a direct login link",
+  "tag": "Pencil Spaces"
  },
  {
   "method": "GET",
