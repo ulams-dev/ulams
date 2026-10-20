@@ -13207,6 +13207,152 @@
     ]
    }
   },
+  "/api/admin/learner-insights/backfill": {
+   "post": {
+    "operationId": "a1d3f3d3eeb05fef75a994753f235014",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "courseId": {
+          "type": "integer"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "202": {
+      "description": "Queued"
+     },
+     "403": {
+      "description": "Needs learner_insights_manage"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Build signals from existing data for a course or the whole tenant (queued)",
+    "tags": [
+     "Learner insights admin"
+    ]
+   }
+  },
+  "/api/admin/learner-insights/courses/{course}/elements": {
+   "get": {
+    "operationId": "434f32f9c1ed7c8292badc04fb9243a0",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "period",
+      "required": false,
+      "schema": {
+       "default": 30,
+       "enum": [
+        7,
+        30,
+        90
+       ],
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "sort",
+      "required": false,
+      "schema": {
+       "enum": [
+        "struggle",
+        "active",
+        "recovery"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Elements; those with fewer active learners than the minimum group are returned as `hidden`"
+     },
+     "403": {
+      "description": "Needs learner_insights_view or authorship of the course"
+     },
+     "404": {
+      "description": "Unknown course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The sections that confuse people: per element struggle rate, remediation and recovery, with the top reasons",
+    "tags": [
+     "Learner insights admin"
+    ]
+   }
+  },
+  "/api/admin/learner-insights/courses/{course}/learners": {
+   "get": {
+    "operationId": "21f5f6039d2438ee867a19042114faa3",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "status",
+      "required": false,
+      "schema": {
+       "enum": [
+        "struggling",
+        "at_risk",
+        "on_track"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Individual statuses"
+     },
+     "403": {
+      "description": "Needs learner_insights_view_individuals, or the tenant setting that lets course authors see individuals"
+     },
+     "404": {
+      "description": "Unknown course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Learners who are struggling or at risk, with the reasons (individual data)",
+    "tags": [
+     "Learner insights admin"
+    ]
+   }
+  },
   "/api/admin/learner-insights/courses/{course}/settings": {
    "get": {
     "operationId": "9c77662d818d0b2504eb4515d8575e04",
@@ -13293,6 +13439,98 @@
      }
     ],
     "summary": "Replace the threshold overrides of one course",
+    "tags": [
+     "Learner insights admin"
+    ]
+   }
+  },
+  "/api/admin/learner-insights/courses/{course}/summary": {
+   "get": {
+    "operationId": "a1df41d3358dc1cd8af4e185ca565484",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "period",
+      "required": false,
+      "schema": {
+       "default": 30,
+       "enum": [
+        7,
+        30,
+        90
+       ],
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Aggregates; `smallGroup` is true (and only `enrolled` is given) below the minimum group size"
+     },
+     "403": {
+      "description": "Needs learner_insights_view or authorship of the course"
+     },
+     "404": {
+      "description": "Unknown course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Per-course analytics: progress, completion, quiz performance, status distribution and interventions",
+    "tags": [
+     "Learner insights admin"
+    ]
+   }
+  },
+  "/api/admin/learner-insights/learners/{user}/courses/{course}/timeline": {
+   "get": {
+    "operationId": "bc2ab09eaf41103290fd2767f585a2b6",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "user",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Newest first"
+     },
+     "403": {
+      "description": "Needs learner_insights_view_individuals"
+     },
+     "404": {
+      "description": "Unknown course or learner"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One learner's signals in a course with element labels (support)",
     "tags": [
      "Learner insights admin"
     ]
