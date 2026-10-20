@@ -25,8 +25,8 @@ class GenerateRemediationJob implements ShouldQueue, ShouldBeUnique
 
     public function __construct(public readonly string $remediationId)
     {
-        $this->onConnection(config('learner_insights.queue_connection'));
-        $this->onQueue(config('learner_insights.queue'));
+        $this->onConnection(config('learner_insights.ai_queue_connection'));
+        $this->onQueue(config('learner_insights.ai_queue'));
     }
 
     public function uniqueId(): string

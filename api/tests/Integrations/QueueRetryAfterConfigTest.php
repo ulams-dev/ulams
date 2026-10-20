@@ -12,6 +12,7 @@ use Ulams\CourseBuilder\Jobs\StepJob;
 use Ulams\Tenancy\Jobs\DeleteTenantJob;
 use Ulams\Tenancy\Jobs\ProvisionTenantJob;
 use Ulams\CoursesImportExport\Jobs\CloneCourse;
+use Ulams\LearnerInsights\Jobs\GenerateRemediationJob;
 use Ulams\LivingCourse\Jobs\AnalyseGroupJob;
 use Ulams\LivingCourse\Jobs\CheckSourceJob;
 use Ulams\LivingCourse\Jobs\ProgressRulesJob;
@@ -36,6 +37,7 @@ class QueueRetryAfterConfigTest extends TestCase
         AnalyseGroupJob::class => ['packages/living-course/config/living_course.php', 'queue_connection', 'queue'],
         CheckSourceJob::class => ['packages/living-course/config/living_course.php', 'queue_connection', 'queue'],
         ProgressRulesJob::class => ['packages/living-course/config/living_course.php', 'queue_connection', 'queue'],
+        GenerateRemediationJob::class => ['packages/learner-insights/config/learner_insights.php', 'ai_queue_connection', 'ai_queue'],
         BuildAdaptSource::class => ['packages/adapt/src/config.php', 'queue_connection', 'queue'],
         ProcessVideo::class => ['packages/video/src/config.php', 'queue_connection', 'queue'],
         CloneCourse::class => ['config/queue.php', 'long_job.connection', 'long_job.queue'],
@@ -164,7 +166,7 @@ class QueueRetryAfterConfigTest extends TestCase
     {
         $keys = array_unique(array_merge(array_keys($env), [
             'COURSE_BUILDER_QUEUE_CONNECTION', 'COURSE_BUILDER_QUEUE', 'LIVING_COURSE_QUEUE_CONNECTION',
-            'LIVING_COURSE_QUEUE', 'ADAPT_QUEUE_CONNECTION', 'ADAPT_QUEUE', 'VIDEO_QUEUE_CONNECTION', 'VIDEO_QUEUE',
+            'LIVING_COURSE_QUEUE', 'LEARNER_INSIGHTS_AI_QUEUE_CONNECTION', 'LEARNER_INSIGHTS_AI_QUEUE', 'ADAPT_QUEUE_CONNECTION', 'ADAPT_QUEUE', 'VIDEO_QUEUE_CONNECTION', 'VIDEO_QUEUE',
             'LONG_JOB_QUEUE_CONNECTION', 'LONG_JOB_CONNECTION', 'LONG_JOB_QUEUE',
         ]));
         $saved = [];

@@ -80,7 +80,8 @@ An at-risk learner gets one reminder per course per 7 days and at most two per w
 |---|---|---|
 | `LEARNER_INSIGHTS_ENABLED` | `false` | Master switch for the installation (the tenant setting overrides it) |
 | `LEARNER_INSIGHTS_REQUIRE_CONSENT` | `false` | Consent mode |
-| `LEARNER_INSIGHTS_QUEUE_CONNECTION`, `LEARNER_INSIGHTS_QUEUE` | default queue | Where signals are recorded |
+| `LEARNER_INSIGHTS_QUEUE_CONNECTION`, `LEARNER_INSIGHTS_QUEUE` | default queue | Where signals are recorded and statuses evaluated |
+| `LEARNER_INSIGHTS_AI_QUEUE_CONNECTION`, `LEARNER_INSIGHTS_AI_QUEUE` | the Course Builder queue | Where personal help is generated (the long queue with a `retry_after` above the job timeout, see [queues and scheduler](/operators/queues-and-scheduler/)) |
 | `LEARNER_INSIGHTS_RETENTION_SIGNALS_DAYS` | `180` | Retention window |
 | `LEARNER_INSIGHTS_CLIENT_SIGNALS_PER_MINUTE` | `60` | Rate limit of the player endpoint, per learner |
 | `LEARNER_INSIGHTS_EVALUATE_DEBOUNCE_SECONDS` | `60` | One evaluation per learner and course in this window |

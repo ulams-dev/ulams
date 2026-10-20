@@ -12,6 +12,11 @@ return [
     'queue_connection' => env('LEARNER_INSIGHTS_QUEUE_CONNECTION'),
     'queue' => env('LEARNER_INSIGHTS_QUEUE'),
 
+    // Queue for the jobs that call the model (remediation generation, up to 300 s): the Course Builder queue, whose
+    // `retry_after` is above its job timeout (ADR 0083), like Living Course. The short jobs above stay on the default queue.
+    'ai_queue_connection' => env('LEARNER_INSIGHTS_AI_QUEUE_CONNECTION', env('COURSE_BUILDER_QUEUE_CONNECTION', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? env('QUEUE_CONNECTION') . '-builder' : null)),
+    'ai_queue' => env('LEARNER_INSIGHTS_AI_QUEUE', env('COURSE_BUILDER_QUEUE', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? 'builder' : null)),
+
     // a burst of signals of one learner in one course costs one evaluation per this many seconds
     'evaluate_debounce_seconds' => (int) env('LEARNER_INSIGHTS_EVALUATE_DEBOUNCE_SECONDS', 60),
 
