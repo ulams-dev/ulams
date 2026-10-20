@@ -29,6 +29,7 @@ class DeadlineProcessor
         private ManagerService $managers,
         private RecertificationService $recertification,
         private RuleEngine $rules,
+        private ScheduledReportService $scheduledReports,
     ) {
     }
 
@@ -46,6 +47,7 @@ class DeadlineProcessor
             'due_reminders' => $this->dueReminders($now),
             'overdue' => $this->overdue($now),
             'escalations' => $this->escalations($now),
+            'scheduled_reports' => $this->scheduledReports->run($now),
         ];
     }
 

@@ -5869,6 +5869,39 @@
     ]
    }
   },
+  "/api/admin/compliance/dashboard": {
+   "get": {
+    "description": "Required training (open, overdue, completed, completion rate, average days to complete), certificate health (valid, expiring in 30 and 90 days, expired, revoked) and the same per course, the most overdue first.",
+    "operationId": "f2230a18943f767052cb81ef740cb76d",
+    "parameters": [
+     {
+      "description": "Limit to one course",
+      "in": "query",
+      "name": "course_id",
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "assignments, certificates and courses blocks"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Compliance dashboard",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
   "/api/admin/compliance/managers": {
    "get": {
     "description": "Who escalations of a user's overdue training go to. Permission `compliance_manage`. Until an HRIS\nimport exists (Phase 6.3) the links are maintained here.",
@@ -6563,6 +6596,166 @@
      }
     ],
     "summary": "Preview or run a rule now",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/schedules": {
+   "get": {
+    "description": "Scheduled reports: a compliance dataset e-mailed as CSV or JSON lines every day, week or month to\ntenant users. Permission `compliance_report`.",
+    "operationId": "ac978e24488a5cfaf3e6f82b263cd401",
+    "responses": {
+     "200": {
+      "description": "schedules"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List scheduled reports",
+    "tags": [
+     "Compliance"
+    ]
+   },
+   "post": {
+    "operationId": "d74bfc0aff8707287d16b91b727cb709",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "dataset": {
+          "enum": [
+           "assignments",
+           "certificates",
+           "audit"
+          ],
+          "type": "string"
+         },
+         "filters": {
+          "description": "course_id, user_id, status, from, to",
+          "type": "object"
+         },
+         "format": {
+          "enum": [
+           "csv",
+           "jsonl"
+          ],
+          "type": "string"
+         },
+         "frequency": {
+          "enum": [
+           "daily",
+           "weekly",
+           "monthly"
+          ],
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         },
+         "recipient_ids": {
+          "description": "Ids of users of this tenant",
+          "items": {
+           "type": "integer"
+          },
+          "type": "array"
+         }
+        },
+        "required": [
+         "name",
+         "dataset",
+         "frequency",
+         "recipient_ids"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "the schedule; the first run is the next 06:00"
+     },
+     "422": {
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Schedule a report",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/schedules/{id}": {
+   "delete": {
+    "operationId": "64656e7acdb2a20e4797cd437dd587a0",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "deleted"
+     },
+     "404": {
+      "description": "Unknown schedule"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete a scheduled report",
+    "tags": [
+     "Compliance"
+    ]
+   },
+   "put": {
+    "operationId": "c442737e92c7e076013b0ec6e4e6e0bb",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the schedule"
+     },
+     "404": {
+      "description": "Unknown schedule"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Update a scheduled report",
     "tags": [
      "Compliance"
     ]

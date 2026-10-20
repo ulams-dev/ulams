@@ -181,6 +181,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/compliance/dashboard",
+  "summary": "Compliance dashboard",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/compliance/managers",
   "summary": "List manager links",
   "tag": "Compliance"
@@ -267,6 +273,30 @@
   "method": "POST",
   "path": "/api/admin/compliance/rules/{id}/evaluate",
   "summary": "Preview or run a rule now",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/schedules",
+  "summary": "List scheduled reports",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/schedules",
+  "summary": "Schedule a report",
+  "tag": "Compliance"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/compliance/schedules/{id}",
+  "summary": "Delete a scheduled report",
+  "tag": "Compliance"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/compliance/schedules/{id}",
+  "summary": "Update a scheduled report",
   "tag": "Compliance"
  },
  {
