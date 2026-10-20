@@ -1,0 +1,224 @@
+---
+title: Migrate from Wellms
+description: Moving a Wellms (EscolaLMS) installation to ulams - what changed, two migration paths, custom package changes, removed features and a verification checklist.
+sidebar:
+  order: 11
+modules:
+  - api
+  - tenancy
+  - courses-import-export
+  - h5p
+needsReview: "Written from the code, the ADRs and the migrations. The project has not yet migrated a real production Wellms database end to end: rehearse on a copy and report what you find."
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+ulams started as a fork of Wellms (EscolaLMS), so the data model, the REST API and the admin panel
+share a lineage. A migration is a **moderate** job for the content and a **small to medium** one for
+the server, and the cost depends on three things: how many custom packages you wrote, whether you use
+H5P, and whether you run a Wellms frontend of your own. The table below is the short answer.
+
+| You have | Effort | Why |
+|---|---|---|
+| Courses, lessons, quizzes, files, no custom code | Small | Export and import, or restore a database copy and run the migrations |
+| H5P content | Medium | H5P is now a separate service; content is re-imported as `.h5p` packages |
+| Custom PHP packages or config on top of `escolalms/*` | Medium | Namespace and config key renames, see [Custom packages](#custom-packages-and-config) |
+| Your own React frontend on the API | Depends | Check each endpoint you call, see [API compatibility](#api-compatibility) |
+| Several Wellms sites on one API (multi-domain) | Medium | Each site becomes a ulams tenant |
+
+## What changed since Wellms
+
+| Area | Wellms | ulams | Reference |
+|---|---|---|---|
+| Code layout | About 50 `escolalms/*` Composer packages | One repository, the packages vendored in `api/packages` | [ADR 0001](/decisions/0001-monorepo-with-vendored-packages/) |
+| Names | `EscolaLms\` namespace, `escolalms_*` config keys | `Ulams\` namespace, `ulams_*` config keys | [ADR 0002](/decisions/0002-rename-to-ulams/) |
+| Framework | Laravel 9, PHP 8.3 | Laravel 13, PHP 8.4 | [Upgrades](/operators/upgrades/) |
+| H5P | `escolalms/headless-h5p` inside the API (GPL code linked in) | Separate Node.js service (Lumi), embedded by iframe | [ADR 0003](/decisions/0003-h5p-as-isolated-gpl-service/) |
+| Recommender | `escolalms/recommender` and its ML services | Removed | [ADR 0006](/decisions/0006-remove-recommender/) |
+| Tenants | Hand-made env file per domain | `ulams:tenant:*` commands: database, bucket, keys and Redis prefix per tenant | [Tenancy](/developers/tenancy/) |
+| Learner frontend | React app | Astro reference frontend; the old React app is kept as a legacy app | [Legacy React app](/learners/legacy-react-app/) |
+| Security | Several upstream findings | Fixed in the vendored packages | `docs/security/upstream-notice.md` in the repository |
+
+## Before you start
+
+<Steps>
+
+1. **Bring Wellms to its latest release first** and run its migrations. ulams carries the migrations
+   from the last Wellms state it forked from; a much older database is easier to bring forward in two
+   steps (Wellms, then ulams) than in one.
+
+2. **Back up** the database, the object storage bucket and the `.env` files
+   ([Backups](/operators/backups/)). Keep the Wellms installation running until you have verified the
+   new one.
+
+3. **List what you rely on**: custom packages, custom config files, webhooks, integrations that call
+   the API, the H5P content you have, the payment drivers in use, and any use of the removed features
+   below.
+
+4. **Set up ulams** on a test host with the [one-command stack](/operators/one-command-stack/) or the
+   [self-hosting guide](/operators/self-hosting/). Do the whole migration there first.
+
+</Steps>
+
+## Path A: export and import (recommended for content)
+
+Use this when you want a clean ulams installation and mainly need the courses.
+
+<Steps>
+
+1. In Wellms, export each course from **Courses → List → Export**. The ZIP holds `content.json` and
+   the files.
+
+2. In ulams, use **Courses → List → Import file**. See [Import, export and clone courses](/creators/import-export/)
+   for what each content type carries across.
+
+3. Recreate what is not part of the export: users and groups, access lists, products and prices,
+   learner progress, attempts and certificates. Users can be loaded with the CSV import in
+   **Users**; progress is not carried over.
+
+4. Check each imported course before publishing: status, dates, access, price, and the quiz
+   questions.
+
+</Steps>
+
+<Aside type="caution">
+The import page lists which topic types survive a round trip. The export format comes from the same
+package lineage, but the project has not tested a ZIP exported by every Wellms release: import one
+course first and compare it with the original.
+</Aside>
+
+## Path B: restore the database into a tenant
+
+Use this when learners, progress and certificates must stay. The ulams migrations were written for
+databases created before the rename, so they can run on a Wellms database.
+
+<Steps>
+
+1. Create a tenant on the ulams platform. This creates the database, role, bucket, keys and Redis
+   prefix ([First admin and first tenant](/operators/first-tenant/)):
+
+   ```bash
+   docker compose exec api php artisan ulams:tenant:create acme --name="Acme Academy"
+   ```
+
+2. Replace the new tenant database with a dump of the Wellms database (stop the tenant's workers
+   while you restore, and keep the database and role names that step 1 created).
+
+3. Copy the Wellms bucket contents into the tenant bucket. File paths are stored in the database,
+   so keep the same object keys.
+
+4. Run the upgrade. `ulams:upgrade` runs the migrations and the one-off steps for every tenant, and
+   `ulams:tenant:sync-env --migrate` rebuilds env files and keys:
+
+   ```bash
+   docker compose exec api php artisan ulams:upgrade --dry-run
+   docker compose exec api php artisan ulams:upgrade
+   ```
+
+5. Do the follow-ups in [After the database migration](#after-the-database-migration).
+
+</Steps>
+
+### What the migrations do for you
+
+These run automatically and are idempotent where noted:
+
+- **Renamed migration history.** `App\Support\LegacyMigrationNames` rewrites migration rows whose file
+  names carried the `escolalms` prefix, before any `migrate` command, so Laravel does not try to
+  create existing tables again.
+- **Renamed class names and config keys.** The migration `rename_legacy_identifiers_to_ulams`
+  rewrites the stored `EscolaLms\` class names (polymorphic columns such as `topicable_type`,
+  `model_type`, `productable_type`, notification types and JSON payloads) to `Ulams\`, and the
+  administrable config keys `escolalms_*` to `ulams_*`. It works on PostgreSQL and MySQL and has a
+  `down()`.
+- **Passport 13.** `upgrade_oauth_clients_to_passport_13` converts `oauth_clients` (grant types,
+  redirect URIs, hashed secrets) and keeps client UUIDs, so client IDs stay the same.
+- **Recommender tables dropped.** The analytics cache tables and the `ulams_recommender.*` config
+  keys are removed. This is irreversible, so keep the backup.
+- **SQL views.** Views created before the rename carry old class names; `ulams:db:recreate-views`
+  (part of `ulams:upgrade`) recreates them.
+
+### After the database migration
+
+- **Everyone signs in again.** A tenant has its own `APP_KEY` and Passport key pair, so tokens issued
+  by Wellms are not valid. API clients keep their IDs, but secrets are now stored hashed: keep the
+  secrets you hold.
+- **H5P content does not move with the database.** The Wellms H5P tables are not read by the new H5P
+  service ([ADR 0003](/decisions/0003-h5p-as-isolated-gpl-service/)). Export each content item as an
+  `.h5p` package from Wellms and upload it to the ulams H5P service; imported courses (Path A) do this
+  for you. Then point the lesson topics at the new content. See [H5P](/operators/h5p/).
+- **Payment callbacks verify the provider now.** The public payment callback no longer trusts the
+  request alone, so configure the Stripe webhook signing secret and the Przelewy24 credentials in the
+  payment settings before going live, and test a payment end to end. See [Sales](/admin/sales/).
+- **Run a smoke test**: sign in, open a course, play a quiz, play an H5P item, download a
+  certificate, make a test payment.
+
+## Custom packages and config
+
+Packages you wrote against `escolalms/*` need these changes:
+
+| Change | From | To |
+|---|---|---|
+| Namespace | `EscolaLms\Courses\…` | `Ulams\Courses\…` |
+| Class names | `EscolaLmsCourseServiceProvider` | `UlamsCourseServiceProvider` |
+| Config keys | `escolalms_auth.registration` | `ulams_auth.registration` |
+| Published config files | `config/escola_auth.php`, `escola_settings.php`, `escola_templates_email.php` | `config/ulams_auth.php`, `ulams_settings.php`, `ulams_templates_email.php` |
+| Composer dependency | `escolalms/<name>` from Packagist | The package under `api/packages/<name>`; add your own as a folder there and list its provider in `api/config/app.php` |
+| Framework API | Laravel 9 | Laravel 13: for example `$dates` is replaced by `$casts`, and date differences are signed in Carbon 3 |
+
+Search your code for the old prefix, then run the test suite on the new framework version:
+
+```bash
+grep -rn "EscolaLms\|escolalms_\|escola_" src config
+```
+
+Do not depend on `escolalms/recommender`; it has no replacement in ulams (see below). Also update
+integrations that read config keys through the administrable settings: the key names changed.
+
+## API compatibility
+
+The REST API keeps its lineage: courses, lessons, topics, users, progress, quizzes, payments and
+the admin endpoints are the same packages. Check these before pointing a frontend at it:
+
+- **H5P**: the endpoints of `escolalms/headless-h5p` are replaced by the H5P service at `/h5p/*` on
+  the API host; the API itself only has `GET /api/admin/h5p/contents` and `DELETE /api/admin/h5p/unused`.
+- **Removed**: the recommender endpoints, the webcam screenshot endpoints of Consultations and
+  Webinar (`save-screen`, `signed-screen-urls`) and `POST api/test-websockets`.
+- **Authentication**: Passport 13 with scoped API tokens added; personal access tokens still work.
+- **Reference**: the generated [API reference](/reference/api-endpoints/) and the
+  [API browser](/developers/api-browser/) list every current endpoint, so diff them against the calls
+  your frontend makes.
+
+If you ran the Wellms React learner app, the ulams repository still contains it as a legacy app, so
+you can keep your interface while you move the server, then switch to the Astro reference frontend
+later ([Legacy React app](/learners/legacy-react-app/)).
+
+## Removed or changed features
+
+| Feature | Status in ulams |
+|---|---|
+| Recommender and "AI" meeting analysis (emotion and attention from webcam frames) | Removed for privacy and dependency reasons; the `ulams:upgrade` step `meetings_purge_frames` deletes the stored frames |
+| H5P inside the API | Replaced by the separate H5P service |
+| xAPI store (`escolalms/lrs`) | Replaced by a first-party xAPI store that verifies token signatures |
+| Webcam screenshot capture in webinars and consultations | Removed |
+| Payments | Provider callbacks verified; client-supplied payment parameters ignored |
+| Cart, vouchers, invoices | Kept; a Sylius-based shop is planned and not built yet |
+
+## Verification checklist
+
+- [ ] `php artisan migrate:status` shows nothing pending on the platform and on the tenant.
+- [ ] `ulams:upgrade` finished without errors; `ulams:tenant:list` shows the tenant active.
+- [ ] No row still holds the old prefix, for example `select count(*) from topics where topicable_type like 'EscolaLms%'` returns 0.
+- [ ] Course, lesson and topic counts match Wellms.
+- [ ] Sample files, videos and images load from the tenant bucket.
+- [ ] A learner's progress and a certificate match the old installation.
+- [ ] H5P items play and report results.
+- [ ] A queue job (video conversion, e-mail) runs and the scheduler is running.
+- [ ] A test payment is confirmed.
+
+## If it goes wrong
+
+Stop the tenant, drop its database and bucket with `ulams:tenant:delete acme --force`, and repeat.
+Because you restored a copy, the Wellms installation was never touched. Report anything the
+migrations did not handle as a GitHub issue with the table and column names, so that the next
+migration is easier.

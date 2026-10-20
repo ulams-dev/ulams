@@ -87,8 +87,8 @@ describe("translated landing documents keep the English structure", () => {
       const links = header.props!.links as Array<{ href: string }>;
       expect(links.length).toBeLessThanOrEqual(6);
       expect(links.map((l) => l.href)).toEqual(lang === "pl"
-        ? ["/pl/", "/pl/comparison/", "/pl/course-generation/", "https://ulams-dev.github.io/ulams/"]
-        : ["/zh/", "/zh/comparison/", "/zh/course-generation/", "https://ulams-dev.github.io/ulams/"]);
+        ? ["/pl/", "/pl/comparison/", "/pl/course-generation/", "/pl/blog/", "https://ulams-dev.github.io/ulams/"]
+        : ["/zh/", "/zh/comparison/", "/zh/course-generation/", "/blog/", "https://ulams-dev.github.io/ulams/"]);
       expect(header.props).not.toHaveProperty("languages");
     });
     it(`${lang}: final display lifts status flags but keeps the Helm delivery notice`, () => {

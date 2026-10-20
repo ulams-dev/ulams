@@ -26,6 +26,10 @@
             "href": "/course-generation/"
           },
           {
+            "label": "Blog",
+            "href": "/blog/"
+          },
+          {
             "label": "Docs",
             "href": "https://ulams-dev.github.io/ulams/"
           }

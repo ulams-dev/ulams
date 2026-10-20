@@ -764,6 +764,89 @@ export const registry = {
     ),
     fallback: (p) => join(p.title, p.intro, titles(p.groups)),
   },
+  BlogIndex: {
+    description:
+      "The list of blog posts as cards, newest first: date, title, description, topics and an optional thumbnail. The whole card links to the post. Renders the page heading (h1), so use it once, as the lead of a blog index page.",
+    category: "section",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        id: text("Anchor id", { default: "posts", maxLength: 40 }),
+        eyebrow: EYEBROW,
+        title: TITLE,
+        intro: INTRO,
+        posts: list(
+          obj(
+            {
+              title: text("Post title", { maxLength: 160 }),
+              description: text("One or two sentences about the post", { maxLength: 300 }),
+              href: href("Link to the post"),
+              date: text("Publication date, YYYY-MM-DD", { maxLength: 10 }),
+              tags: list(text("Topic", { maxLength: 40 }), "Topics", { maxItems: 6 }),
+              image: obj(
+                { src: href("Thumbnail URL (decorative, the title says what the post is)"), width: int("Intrinsic width in px", { minimum: 1 }), height: int("Intrinsic height in px", { minimum: 1 }) },
+                ["src", "width", "height"]
+              ),
+            },
+            ["title", "href", "date"]
+          ),
+          "Posts",
+          { minItems: 1, maxItems: 200 }
+        ),
+      },
+      ["title", "posts"]
+    ),
+    fallback: (p) => join(p.title, p.intro, titles(p.posts)),
+  },
+  BlogPost: {
+    description:
+      "One blog post: back link, date and byline, title (h1), lead, topics, an optional clip with a caption (native controls), the Markdown body, an optional gallery of captioned screenshots and an optional Markdown footer. Use it once, as the lead of a post page.",
+    category: "section",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        id: text("Anchor id", { default: "post", maxLength: 40 }),
+        title: TITLE,
+        lead: text("Standfirst under the title", { maxLength: 400 }),
+        date: text("Publication date, YYYY-MM-DD", { maxLength: 10 }),
+        author: text("Author name for the byline", { maxLength: 80 }),
+        tags: list(text("Topic", { maxLength: 40 }), "Topics", { maxItems: 6 }),
+        backHref: href("Link back to the list of posts"),
+        markdown: text("Post body in Markdown", { maxLength: 60000 }),
+        video: obj(
+          {
+            src: href("MP4 URL"),
+            poster: href("Poster image URL"),
+            width: int("Width in px", { minimum: 1 }),
+            height: int("Height in px", { minimum: 1 }),
+            caption: text("Says what the clip shows (also its text alternative)", { maxLength: 600 }),
+          },
+          ["src", "width", "height"]
+        ),
+        imagesHeading: text("Heading of the screenshot gallery", { maxLength: 120 }),
+        imagesIntro: text("Sentence under the gallery heading", { maxLength: 300 }),
+        images: list(
+          obj(
+            {
+              src: href("Image URL"),
+              alt: text("Text alternative", { maxLength: 300 }),
+              width: int("Intrinsic width in px", { minimum: 1 }),
+              height: int("Intrinsic height in px", { minimum: 1 }),
+              caption: text("Caption", { maxLength: 300 }),
+            },
+            ["src", "alt", "width", "height"]
+          ),
+          "Screenshots",
+          { maxItems: 20 }
+        ),
+        footer: text("Markdown after the gallery (related posts)", { maxLength: 4000 }),
+      },
+      ["title", "date", "backHref", "markdown"]
+    ),
+    fallback: (p) => join(p.title, p.lead, p.markdown),
+  },
   CtaBand: {
     description: "Closing call to action: a banner or a newsletter-style band.",
     category: "section",

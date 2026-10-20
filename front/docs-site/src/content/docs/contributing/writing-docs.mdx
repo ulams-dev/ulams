@@ -3,6 +3,11 @@ title: Writing docs
 description: How the ulams documentation site works, how to add a page, what the coverage check enforces, and which pages are generated from the repository.
 sidebar:
   order: 5
+learnerRoutes:
+  - /blog
+  - /blog/[slug]
+  - /pl/blog
+  - /pl/blog/[slug]
 ---
 
 import { Aside, Steps, Tabs, TabItem, FileTree } from "@astrojs/starlight/components";
@@ -164,6 +169,31 @@ an admin route, a learner page or a topic type, add or extend a page in the same
 The "Edit page" link on a generated page already points to its source file. Relative links in the
 sources are rewritten: links to another ADR or the roadmap become site links, everything else
 becomes a GitHub link, so write ordinary relative links in the source files.
+
+## Blog posts
+
+The blog is part of the product landing (`ulams.app/blog/`, Polish at `/pl/blog/`), not of this site. Its posts
+live in `front/web/src/blog/<slug>/` and are rendered by `/blog` and `/blog/[slug]` (and `/pl/blog`,
+`/pl/blog/[slug]`). To add a post:
+
+1. Create `front/web/src/blog/<slug>/` with `en.md`, `pl.md` (the body in Markdown, no headings above `##`, the
+   same text in both languages) and `meta.json`.
+2. In `meta.json` set `slug`, `date` (`YYYY-MM-DD`, not in the future) and `series` (`true` appends the closing
+   sentence of the ten-day series). For each language (`en`, `pl`) give `title`, `description` (up to 300
+   characters), `tags`, and optionally `video`, `imagesHeading`, `imagesIntro`, `images` and `footer` (Markdown
+   after the screenshots, for example related posts). `video` is `{ file, poster, width, height, caption }`;
+   every image is `{ name, width, height, alt, caption }`. The Polish entry must be translated, including the
+   captions and the alt texts.
+3. Put the media in `front/web/public/blog/<slug>/`: clips (`clip.mp4`, with a `poster.jpg`) and screenshots
+   (`<name>.webp`). Each file must stay under 2 MB, the CI check rejects bigger new files. Keep the file names
+   the same in `meta.json`.
+4. Link to other posts as `/blog/<slug>/` in English and `/pl/blog/<slug>/` in Polish.
+5. Run `corepack yarn workspace @ulams/web test`: `tests/unit/blog.test.ts` checks that both languages exist,
+   that every referenced file exists and that no file is left unused.
+
+The index and the sitemap list the new post without further changes, and the static export of the landing
+(`deploy/mydevil/cloudflare/landing-static.mjs`) crawls one page per post directory.
+Say what is real and what is a demo, as in the existing posts: no claims that are not in the code.
 
 ## Screenshots
 

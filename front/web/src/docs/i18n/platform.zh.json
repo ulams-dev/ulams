@@ -26,6 +26,10 @@
             "href": "/zh/course-generation/"
           },
           {
+            "label": "博客",
+            "href": "/blog/"
+          },
+          {
             "label": "文档",
             "href": "https://ulams-dev.github.io/ulams/"
           }

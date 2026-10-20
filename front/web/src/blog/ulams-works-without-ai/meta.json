@@ -1,0 +1,67 @@
+{
+  "slug": "ulams-works-without-ai",
+  "date": "2026-10-13",
+  "series": true,
+  "en": {
+    "title": "Plot twist: ULAMS works without AI",
+    "description": "ULAMS is a regular LMS first: build courses by hand, manage learners and access, track progress. AI is optional.",
+    "tags": [
+      "Admin panel"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "In the clip: a course subtitle edited by hand in the admin panel, saved with Submit, and seen at once in the learner preview. The course stays a draft. No generation involved."
+    },
+    "imagesHeading": "In pictures",
+    "images": [
+      {
+        "name": "admin",
+        "width": 1080,
+        "height": 1350,
+        "alt": "The course editor in the admin panel.",
+        "caption": "The course editor in the admin panel."
+      },
+      {
+        "name": "learner",
+        "width": 1080,
+        "height": 1350,
+        "alt": "The learner's preview shows the new subtitle: “Edited by the author, without AI.”",
+        "caption": "The learner's preview shows the new subtitle: “Edited by the author, without AI.”"
+      }
+    ]
+  },
+  "pl": {
+    "title": "Zwrot akcji: ULAMS działa bez AI",
+    "description": "ULAMS to przede wszystkim zwykły LMS: kursy tworzysz ręcznie, zarządzasz uczestnikami i dostępem, śledzisz postępy. AI jest opcjonalne.",
+    "tags": [
+      "Panel administratora"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "W filmie: podtytuł kursu edytowany ręcznie w panelu administratora, zapisany przyciskiem Submit i od razu widoczny w podglądzie ucznia. Kurs pozostaje szkicem. Bez generowania."
+    },
+    "imagesHeading": "Na obrazkach",
+    "images": [
+      {
+        "name": "admin",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Edytor kursu w panelu administratora.",
+        "caption": "Edytor kursu w panelu administratora."
+      },
+      {
+        "name": "learner",
+        "width": 1080,
+        "height": 1350,
+        "alt": "Podgląd ucznia pokazuje nowy podtytuł: „Edited by the author, without AI.”",
+        "caption": "Podgląd ucznia pokazuje nowy podtytuł: „Edited by the author, without AI.”"
+      }
+    ]
+  }
+}

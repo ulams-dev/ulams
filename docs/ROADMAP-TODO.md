@@ -98,6 +98,10 @@ small commits → tests → summary.
 
 ## Open decisions
 
+- [ ] (new) Organic marketing campaign (`docs/plans/organic-marketing.md`, draft): analytics, SEO, Hacker News, Product Hunt,
+      Reddit, directories, LinkedIn and e-learning communities. Waiting for approval; nothing is published before the owner
+      opens the publishing gate (decisions 1-8 of its section 12)
+
 - [ ] Final name (favourite **ULAMS**; alternatives Wellam, Monte, Spiral, Automata, UlamOS)
   - [x] GitHub organisation: `ulams` is taken; register `ulams-dev` (fallbacks: `ulams-hq`,
         `ulamslabs`, `ulams-ai`) (note: `ulams-dev/ulams` created and pushed 2026-10-08)

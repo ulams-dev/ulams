@@ -49,6 +49,7 @@ What learners see is described in [Learners](/learners/); this page covers the c
     - index.astro landing (tenant document) or platform landing
     - comparison.astro and pl/comparison.astro, zh/comparison.astro
     - faq.astro and pl/faq.astro, zh/faq.astro
+    - blog/ and pl/blog/ the blog: index and one page per post
     - sitemap.xml.ts and robots.txt.ts (platform-host only)
     - courses/[id].astro
     - learn/[courseId]/ lesson player and finish page
@@ -74,12 +75,16 @@ ids in every language. All page families use server rendered catalogue documents
 product claims keep their actual roadmap status, including when a local preview setting hides those
 labels elsewhere.
 
+The blog is at `/blog/` (English) and `/pl/blog/` (Polish); there is no Chinese blog, so the Chinese header links to the
+English one. Posts are files in `front/web/src/blog`, rendered with the `BlogIndex` and `BlogPost` catalogue
+components; see [Writing docs](/contributing/writing-docs/#blog-posts) to add one.
+
 `Base.astro` renders a page title, description, canonical URL, localized `hreflang` links including
 `x-default`, Open Graph and X card tags, and escaped JSON-LD. Overview describes ulams as a software
 application; Comparison is a collection page with breadcrumbs; FAQ emits one `FAQPage` with every
 question, so its topic lists render with `jsonLd: false`. JSON-LD omits ratings, offers and
-counts. `/robots.txt` points to `/sitemap.xml`; the sitemap lists just the nine canonical product URLs
-and their alternate languages. Both endpoints return 404 on tenant hosts.
+counts. `/robots.txt` points to `/sitemap.xml`; the sitemap lists the nine canonical product URLs, the
+blog index and every blog post (English and Polish), each with its alternate languages. Both endpoints return 404 on tenant hosts.
 
 The comparison matrix uses native tables with captions and scoped row and column headers. On narrow
 screens, each table scrolls inside a keyboard-focusable region so the document itself does not scroll
