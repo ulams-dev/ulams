@@ -399,6 +399,16 @@ On **New course**, next to the upload area, you find **Connect a repository** an
 `https://`. The optional **main content selector** is a CSS selector (for example `main` or `article`)
 for the part of the page to read; without it we read the main content of the page.
 
+**Connect Google Drive or Notion** (shown when your admin turned them on): choose **Google Drive file or
+folder** or **Notion page**, paste its address and press **Sign in and connect**. You sign in at Google or
+Notion with read-only access and come back to the studio, which finishes the connection; your password and
+the access tokens are never shown to the studio or to anyone else. Share the file, folder or page with the
+account you signed in with (for Notion, pick the page in the sign-in). A Google Docs file is read as text, a
+folder as its Google Docs, text, Word and PDF files, and a Notion page can include the pages under it (three
+levels, 100 pages). Images, embeds and files inside pages are not read. These sources have no webhook: they
+are checked on the schedule you choose. If Google or Notion stops accepting the saved sign-in, the status
+shows **Error** with "Connect your account again"; sign in again from the Sources page.
+
 Press the button. The form says it is checking, reads the files or pages, shows revision 1 as the
 source of a new course and continues into the interview as for an uploaded file. If the source is
 refused, you see the reason as the server gave it (for example that the repository was not found, that no file
