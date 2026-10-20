@@ -46,6 +46,7 @@ return [
     ['api/auth/social/*', 'public'],
     ['api/auth/email/*', 'public'],
     ['api/health*', 'public'],
+    ['api/certificates/verify/*', 'public'],
     ['api/core/health-check', 'public'],
     ['api/name', 'public'],
     ['api/documentation', 'public'],

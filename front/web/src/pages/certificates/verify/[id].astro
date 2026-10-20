@@ -1,0 +1,93 @@
+---
+/** What the certificate QR code leads to: the public verification record (status, course, holder, dates). */
+import Render from "@ulams/ui/Render.astro";
+import Base from "../../../layouts/Base.astro";
+import { getSettings, getSiteModel } from "../../../lib/data.ts";
+import { chromeFor, withSessionLink } from "../../../lib/docs.ts";
+import { themeFor } from "../../../lib/theme.ts";
+import { hasSession } from "../../../lib/session.ts";
+import { formatDate, statusCopy, verifyCertificate } from "../../../lib/certificate-verify.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+const [site, settings, result] = await Promise.all([
+  getSiteModel(tenant),
+  getSettings(tenant).catch(() => null),
+  verifyCertificate(tenant, String(Astro.params.id ?? "")),
+]);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const chrome = chromeFor(theme);
+if (result.kind === "unknown") Astro.response.status = 404;
+if (result.kind === "unavailable") Astro.response.status = 503;
+// Certificate pages are personal records: keep them out of search results and caches.
+Astro.response.headers.set("Cache-Control", "no-store");
+const certificate = result.kind === "found" ? result.certificate : null;
+const copy = certificate ? statusCopy(certificate) : null;
+---
+
+<Base theme={theme} accent={settings?.theme?.accent} title={`Certificate verification — ${site.tenant.name}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+  {chrome.header && <Render doc={withSessionLink(chrome.header, hasSession(Astro.cookies, Astro.locals.secure))} data={site} />}
+  <main id="main" tabindex="-1" class="u-container u-verify">
+    <p class="u-eyebrow">{site.tenant.name}</p>
+    <h1>Certificate verification</h1>
+    {certificate && copy ? (
+      <section class={`u-verify__card u-verify__card--${certificate.status}`} aria-labelledby="verify-status">
+        <h2 id="verify-status" role="status">{copy.heading}</h2>
+        <p>{copy.text}</p>
+        <dl>
+          {certificate.holder_name && (<><dt>Holder</dt><dd>{certificate.holder_name}</dd></>)}
+          {certificate.course_title && (<><dt>Course</dt><dd>{certificate.course_title}</dd></>)}
+          <dt>Issued</dt><dd>{formatDate(certificate.issued_at)}</dd>
+          {certificate.expires_at && (<><dt>Expires</dt><dd>{formatDate(certificate.expires_at)}</dd></>)}
+          {certificate.issuer && (<><dt>Issued by</dt><dd>{certificate.issuer}</dd></>)}
+          <dt>Certificate ID</dt><dd><code>{certificate.certificate_id}</code></dd>
+        </dl>
+      </section>
+    ) : result.kind === "unknown" ? (
+      <section class="u-verify__card" aria-labelledby="verify-status">
+        <h2 id="verify-status" role="status">No certificate found</h2>
+        <p>There is no certificate with this ID at {site.tenant.name}. Check that the link or QR code was copied completely.</p>
+      </section>
+    ) : (
+      <section class="u-verify__card" aria-labelledby="verify-status">
+        <h2 id="verify-status" role="status">Verification is not available right now</h2>
+        <p>The certificate could not be checked. Try again in a moment.</p>
+        <p><a class="u-btn" href={Astro.url.pathname}>Try again</a></p>
+      </section>
+    )}
+  </main>
+  {chrome.footer && <Render doc={chrome.footer} data={site} />}
+</Base>
+
+<style>
+  main:focus {
+    outline: none;
+  }
+  .u-verify {
+    display: grid;
+    gap: 14px;
+    padding-block: clamp(40px, 6vw, 80px);
+    max-width: 44rem;
+  }
+  .u-verify__card {
+    border: 2px solid currentColor;
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: grid;
+    gap: 12px;
+  }
+  .u-verify__card dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 6px 16px;
+    margin: 0;
+  }
+  .u-verify__card dt {
+    font-weight: 600;
+  }
+  .u-verify__card dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+</style>

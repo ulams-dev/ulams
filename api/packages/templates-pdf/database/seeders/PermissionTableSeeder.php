@@ -21,6 +21,7 @@ class PermissionTableSeeder extends Seeder
         $permissions = [
             PdfPermissionsEnum::PDF_READ_ALL,
             PdfPermissionsEnum::PDF_LIST,
+            PdfPermissionsEnum::PDF_REVOKE,
 
         ];
 

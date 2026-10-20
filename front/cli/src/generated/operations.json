@@ -1225,6 +1225,12 @@
  },
  {
   "method": "POST",
+  "path": "/api/admin/pdfs/{id}/revoke",
+  "summary": "Revoke a certificate",
+  "tag": "Template PDFs"
+ },
+ {
+  "method": "POST",
   "path": "/api/admin/pdfs/preview",
   "summary": "Preview a pdfme template with sample data",
   "tag": "Template PDFs"
@@ -2470,6 +2476,12 @@
   "path": "/api/categories/tree",
   "summary": "",
   "tag": "Categories"
+ },
+ {
+  "method": "GET",
+  "path": "/api/certificates/verify/{certificateId}",
+  "summary": "Verify a certificate",
+  "tag": "Template PDFs"
  },
  {
   "method": "GET",
