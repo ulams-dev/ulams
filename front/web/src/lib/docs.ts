@@ -53,27 +53,28 @@ function findNode(node: UiNode, component: string): UiNode | null {
   return null;
 }
 
-/** In-page links of the landing ("#pricing") point back to the landing from other pages. */
-function absolutise(value: unknown): unknown {
-  if (typeof value === "string") return value.startsWith("#") ? `/${value}` : value;
-  if (Array.isArray(value)) return value.map(absolutise);
+/** In-page links of the landing ("#pricing") point back to the landing (of the language) from other pages. */
+function absolutise(value: unknown, home: string): unknown {
+  if (typeof value === "string") return value.startsWith("#") ? `${home}${value}` : value;
+  if (Array.isArray(value)) return value.map((item) => absolutise(item, home));
   if (value && typeof value === "object") {
-    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, k === "href" ? absolutise(v) : absolutiseDeep(v)]));
+    return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, k === "href" ? absolutise(v, home) : absolutiseDeep(v, home)]));
   }
   return value;
 }
-const absolutiseDeep = (value: unknown): unknown =>
-  Array.isArray(value) || (value && typeof value === "object") ? absolutise(value) : value;
+const absolutiseDeep = (value: unknown, home: string): unknown =>
+  Array.isArray(value) || (value && typeof value === "object") ? absolutise(value, home) : value;
 
-/** The tenant's site header and footer (from its landing document), for every other page. */
-export function chromeFor(theme: ThemeName): { header: UiNode | null; footer: UiNode | null } {
-  const doc = landingDocs[theme];
+/** The tenant's site header and footer (from its landing document, in a language), for every other page. */
+export function chromeFor(theme: ThemeName, locale: Locale = "en"): { header: UiNode | null; footer: UiNode | null } {
+  const doc = landingDocFor(theme, locale);
   if (!doc) return { header: null, footer: null };
   const header = findNode(doc, "SiteHeader");
   const footer = findNode(doc, "SiteFooter");
+  const home = locale === "en" ? "/" : `/${locale}/`;
   return {
-    header: header ? { ...header, props: absolutise(header.props) as Record<string, unknown> } : null,
-    footer: footer ? { ...footer, props: absolutise(footer.props) as Record<string, unknown> } : null,
+    header: header ? { ...header, props: absolutise(header.props, home) as Record<string, unknown> } : null,
+    footer: footer ? { ...footer, props: absolutise(footer.props, home) as Record<string, unknown> } : null,
   };
 }
 

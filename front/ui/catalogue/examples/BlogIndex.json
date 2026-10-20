@@ -1,0 +1,21 @@
+{
+  "props": {
+    "id": "posts",
+    "eyebrow": "blog",
+    "title": "Notes from building ULAMS",
+    "intro": "Courses from documentation, cited generation and how to run it yourself.",
+    "posts": [
+      {
+        "title": "Living Course: 10 minutes → 15 minutes",
+        "description": "One number changes in a runbook. ULAMS shows the diff and proposes fixes.",
+        "href": "/blog/living-course/",
+        "date": "2026-10-16",
+        "tags": ["Living Course"],
+        "image": { "src": "/blog/living-course/poster.jpg", "width": 720, "height": 900 }
+      }
+    ]
+  },
+  "invalid": {
+    "posts": [{ "title": "No link or date" }]
+  }
+}

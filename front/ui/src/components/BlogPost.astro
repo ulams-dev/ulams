@@ -1,0 +1,159 @@
+---
+import Prose from "./Prose.astro";
+import { fill, pageLocale, uiStrings } from "../lib/i18n.ts";
+
+interface Props {
+  id?: string;
+  title: string;
+  lead?: string;
+  date: string;
+  author?: string;
+  tags?: string[];
+  backHref: string;
+  markdown: string;
+  video?: { src: string; poster?: string; width: number; height: number; caption?: string };
+  imagesHeading?: string;
+  imagesIntro?: string;
+  images?: Array<{ src: string; alt: string; width: number; height: number; caption?: string }>;
+  footer?: string;
+}
+const { id = "post", title, lead, date, author, tags = [], backHref, markdown, video, imagesHeading, imagesIntro, images = [], footer } = Astro.props;
+const locale = pageLocale(Astro);
+const t = uiStrings(locale);
+const tag = locale === "pl" ? "pl-PL" : locale === "zh" ? "zh-CN" : "en-GB";
+const dateLabel = new Intl.DateTimeFormat(tag, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(new Date(`${date}T00:00:00Z`));
+---
+
+<article class="u-section u-blogp" id={id} aria-labelledby={`${id}-title`}>
+  <div class="u-container u-blogp__wrap">
+    <a class="u-blogp__back" href={backHref}><span aria-hidden="true">←</span> {t.blogBack}</a>
+    <header class="u-blogp__head">
+      <p class="u-blogp__meta">
+        <time datetime={date}>{dateLabel}</time>
+        {author && <span>{fill(t.blogBy, { author })}</span>}
+      </p>
+      <h1 class="u-h2" id={`${id}-title`}>{title}</h1>
+      {lead && <p class="u-lead">{lead}</p>}
+      {
+        tags.length > 0 && (
+          <ul class="u-blogp__tags" role="list" aria-label={t.blogTags}>
+            {tags.map((name) => <li class="u-tag">{name}</li>)}
+          </ul>
+        )
+      }
+    </header>
+    {
+      video && (
+        <figure class:list={["u-blogp__video", { "u-blogp__video--wide": video.width >= video.height }]}>
+          <video controls playsinline preload="metadata" poster={video.poster} width={video.width} height={video.height} aria-describedby={video.caption ? `${id}-video-caption` : undefined}>
+            <source src={video.src} type="video/mp4" />
+            {t.blogNoVideo} <a href={video.src}>{t.blogDownload}</a>.
+          </video>
+          {video.caption && <figcaption id={`${id}-video-caption`}>{video.caption}</figcaption>}
+        </figure>
+      )
+    }
+    <Prose markdown={markdown} />
+    {
+      images.length > 0 && (
+        <section class="u-blogp__images" aria-labelledby={`${id}-images`}>
+          {imagesHeading && <h2 id={`${id}-images`}>{imagesHeading}</h2>}
+          {imagesIntro && <p>{imagesIntro}</p>}
+          {images.map((image) => (
+            <figure class:list={["u-blogp__figure", { "u-blogp__figure--portrait": image.height > image.width }]}>
+              <img src={image.src} alt={image.alt} width={image.width} height={image.height} loading="lazy" decoding="async" />
+              {image.caption && <figcaption>{image.caption}</figcaption>}
+            </figure>
+          ))}
+        </section>
+      )
+    }
+    {footer && <Prose markdown={footer} />}
+  </div>
+</article>
+
+<style>
+  .u-blogp__wrap {
+    display: grid;
+    gap: clamp(20px, 3vw, 32px);
+    max-width: calc(46rem + 2 * var(--ulams-gutter));
+  }
+  .u-blogp__back {
+    justify-self: start;
+    color: var(--ulams-color-primary-on-light);
+    text-underline-offset: 3px;
+    font-size: 0.9375rem;
+  }
+  .u-blogp__head {
+    display: grid;
+    gap: 14px;
+  }
+  .u-blogp__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-blogp__head h1 {
+    margin: 0;
+    text-wrap: balance;
+  }
+  .u-blogp__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .u-blogp__video,
+  .u-blogp__figure {
+    margin: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .u-blogp__video video {
+    display: block;
+    width: 100%;
+    max-width: 26rem;
+    height: auto;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: #000;
+  }
+  .u-blogp__video--wide video {
+    max-width: 100%;
+  }
+  figcaption {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--ulams-color-muted);
+    max-width: 70ch;
+  }
+  .u-blogp__images {
+    display: grid;
+    gap: 24px;
+  }
+  .u-blogp__images h2 {
+    margin: 0;
+    font-size: 1.55rem;
+    line-height: 1.2;
+  }
+  .u-blogp__images > p {
+    margin: 0;
+    max-width: 70ch;
+  }
+  .u-blogp__figure img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-blogp__figure--portrait img {
+    max-width: 26rem;
+  }
+</style>

@@ -24,8 +24,6 @@ export const collections = {
         coming: z.boolean().optional(),
         /** Documented from the code but not verified end to end; a string says what to check. */
         needsReview: z.union([z.boolean(), z.string()]).optional(),
-        /** Blog posts (src/content/docs/blog): the publication date, shown in the post list and the byline. */
-        date: z.coerce.date().optional(),
         /** Generated pages: the repository files the content comes from. */
         generatedFrom: z.string().optional(),
       }),

@@ -1,0 +1,13 @@
+---
+/** The blog of the platform landing, in English. Only on a platform host. */
+import Render from "@ulams/ui/Render.astro";
+import Base from "../../layouts/Base.astro";
+import { blogIndexPage } from "../../lib/blog.ts";
+
+if (!Astro.locals.platform) return Astro.rewrite("/404");
+const page = blogIndexPage("en", Astro.request, Astro.url);
+---
+
+<Base theme="platform" title={page.meta.title} description={page.meta.description} lang={page.meta.lang} canonical={page.canonical} alternates={page.alternates} ogLocale={page.ogLocale} jsonLd={page.jsonLd}>
+  <Render doc={page.doc} data={page.data} />
+</Base>

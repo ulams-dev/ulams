@@ -1,0 +1,111 @@
+{
+  "slug": "runbook-to-course-in-five-steps",
+  "date": "2026-10-10",
+  "series": true,
+  "en": {
+    "title": "From runbook to course in five steps",
+    "description": "Upload a document, set the brief, review the structure, read the lessons, preview. A real model, a real document, 4 cents for the whole proposal.",
+    "tags": [
+      "Course generation",
+      "Studio"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "In the clip: the Studio on the On-Call academy. Sonnet writes the content, Haiku handles the lighter steps, about $0.04 in total. The generation step is sped up and labelled in the film. The course is saved as an unpublished draft."
+    },
+    "imagesHeading": "In pictures",
+    "images": [
+      {
+        "name": "source",
+        "width": 1080,
+        "height": 1350,
+        "alt": "1. Drop the source document in: ULAMS reads it into passages it can cite.",
+        "caption": "1. Drop the source document in: ULAMS reads it into passages it can cite."
+      },
+      {
+        "name": "brief",
+        "width": 1080,
+        "height": 1350,
+        "alt": "2. Set the brief: audience, level, duration, tone, assessments.",
+        "caption": "2. Set the brief: audience, level, duration, tone, assessments."
+      },
+      {
+        "name": "outline",
+        "width": 1080,
+        "height": 1350,
+        "alt": "3. Review the proposed structure: modules, lessons and learning objectives.",
+        "caption": "3. Review the proposed structure: modules, lessons and learning objectives."
+      },
+      {
+        "name": "generated",
+        "width": 1080,
+        "height": 1350,
+        "alt": "4. Read the generated lessons and questions. The cost so far is on screen.",
+        "caption": "4. Read the generated lessons and questions. The cost so far is on screen."
+      },
+      {
+        "name": "preview",
+        "width": 1080,
+        "height": 1350,
+        "alt": "5. Open the preview before anything is published.",
+        "caption": "5. Open the preview before anything is published."
+      }
+    ]
+  },
+  "pl": {
+    "title": "Od runbooka do kursu w pięciu krokach",
+    "description": "Wgraj dokument, ustaw brief, sprawdź strukturę, przeczytaj lekcje, obejrzyj podgląd. Prawdziwy model, prawdziwy dokument, 4 centy za całą propozycję.",
+    "tags": [
+      "Generowanie kursów",
+      "Studio"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "W filmie: Studio na akademii On-Call. Sonnet pisze treść, Haiku obsługuje lżejsze kroki, razem około 0,04 USD. Krok generowania jest przyspieszony i tak oznaczony w filmie. Kurs zapisano jako nieopublikowany szkic."
+    },
+    "imagesHeading": "Na obrazkach",
+    "images": [
+      {
+        "name": "source",
+        "width": 1080,
+        "height": 1350,
+        "alt": "1. Wrzuć dokument źródłowy: ULAMS czyta go na fragmenty, które może cytować.",
+        "caption": "1. Wrzuć dokument źródłowy: ULAMS czyta go na fragmenty, które może cytować."
+      },
+      {
+        "name": "brief",
+        "width": 1080,
+        "height": 1350,
+        "alt": "2. Ustaw brief: odbiorcy, poziom, czas trwania, ton, sprawdziany.",
+        "caption": "2. Ustaw brief: odbiorcy, poziom, czas trwania, ton, sprawdziany."
+      },
+      {
+        "name": "outline",
+        "width": 1080,
+        "height": 1350,
+        "alt": "3. Sprawdź proponowaną strukturę: moduły, lekcje i cele nauczania.",
+        "caption": "3. Sprawdź proponowaną strukturę: moduły, lekcje i cele nauczania."
+      },
+      {
+        "name": "generated",
+        "width": 1080,
+        "height": 1350,
+        "alt": "4. Przeczytaj wygenerowane lekcje i pytania. Dotychczasowy koszt widać na ekranie.",
+        "caption": "4. Przeczytaj wygenerowane lekcje i pytania. Dotychczasowy koszt widać na ekranie."
+      },
+      {
+        "name": "preview",
+        "width": 1080,
+        "height": 1350,
+        "alt": "5. Otwórz podgląd, zanim cokolwiek zostanie opublikowane.",
+        "caption": "5. Otwórz podgląd, zanim cokolwiek zostanie opublikowane."
+      }
+    ]
+  }
+}

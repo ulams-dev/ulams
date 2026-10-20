@@ -1,0 +1,33 @@
+{
+  "slug": "lets-talk",
+  "date": "2026-10-18",
+  "series": false,
+  "en": {
+    "title": "Looking for 3 teams to talk about ULAMS",
+    "description": "Ten days of one example, from runbook to course to update, and an invitation to talk to teams that teach customers technical things.",
+    "tags": [
+      "Contact"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "In the clip: runbook, course, source, the 10 → 15 minute diff, the learner preview and a closing card."
+    }
+  },
+  "pl": {
+    "title": "Szukam 3 zespołów do rozmowy o ULAMS",
+    "description": "Dziesięć dni z jednym przykładem, od runbooka przez kurs do aktualizacji, i zaproszenie do rozmowy dla zespołów, które uczą klientów technicznych rzeczy.",
+    "tags": [
+      "Kontakt"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 720,
+      "height": 900,
+      "caption": "W filmie: runbook, kurs, źródło, diff 10 → 15 minut, podgląd ucznia i karta końcowa."
+    }
+  }
+}
