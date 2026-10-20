@@ -880,7 +880,8 @@
                     "title": "Rozszerzalność przez pakiety",
                     "text": "Każda funkcja to pakiet composera z własnymi trasami, uprawnieniami, ustawieniami i zdarzeniami. Działający przykład pokazuje cały wzorzec.",
                     "packages": [
-                      "example-plugin"
+                      "example-plugin",
+                      "webhooks"
                     ],
                     "href": "https://ulams-dev.github.io/ulams/extending/new-package/"
                   },
@@ -936,7 +937,7 @@
                   },
                   {
                     "title": "Webhooki przychodzące",
-                    "text": "Webhooki dla pushy Git w Living Course, Stripe i nagrań Jitsi. Webhooków wychodzących jeszcze nie ma.",
+                    "text": "Webhooki dla pushy Git w Living Course, Stripe i nagrań Jitsi. Podpisane webhooki wychodzące z ponawianiem, powtórkami i dziennikiem dostaw mają osobną stronę dokumentacji.",
                     "href": "https://ulams-dev.github.io/ulams/developers/webhooks/"
                   }
                 ],

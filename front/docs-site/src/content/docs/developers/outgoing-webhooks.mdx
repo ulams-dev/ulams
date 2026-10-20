@@ -1,0 +1,221 @@
+---
+title: Outgoing webhooks
+description: Send signed, versioned event payloads from an academy to your own URLs. Covers endpoints, the event types, the HMAC signature and how to verify it, retries and backoff, the delivery log, test sends, replays and the SSRF rules for target URLs.
+sidebar:
+  order: 9
+modules:
+  - webhooks
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+An academy can call your server when something happens in it: a learner finishes a course, is
+enrolled, receives a certificate, or a Living Course update proposal needs review. You register an
+**endpoint** (an https URL and the event types it wants), ulams sends each matching event as a signed
+JSON `POST`, retries failures with exponential backoff, and keeps a **delivery log** you can inspect,
+**test** and **replay**.
+
+Webhooks are per academy (tenant): each tenant has its own endpoints, secrets and log, in its own
+database. The API that manages them is `api/admin/webhooks` and needs the `webhook_manage` permission
+(given to the admin role) or, for a [scoped token](/developers/scoped-tokens/), the `webhooks:read` or
+`webhooks:write` scope. The receiving side of other systems (Stripe, Jitsi, Git pushes) is described in
+[Webhooks](/developers/webhooks/).
+
+## Event types
+
+| Type | Sent when | `data.object` |
+|---|---|---|
+| `course.completed` | A learner finished a course | `user` (`id`, `email`, `name`), `course` (`id`, `title`), `completed_at` |
+| `enrolment.created` | A learner was given access to a course | `user`, `course`, `created_at` |
+| `update_proposal.ready` | A Living Course update proposal is ready for review. Once per proposal, however many reviewers are notified | `proposal_id`, `session_id`, `course_title`, `elements`, `answer_checks`, `status` |
+| `update_proposal.applied` | A proposal was reviewed and applied to the course (the "accepted" event) | `proposal_id`, `session_id`, `number`, `status`, `counts` |
+| `certificate.issued` | A course certificate PDF was generated | `user`, `certificate_id`, `course_id`, `issued_at` |
+| `webhook.test` | You pressed **test**. Never sent to subscribers | `message`, `test: true` |
+
+Subscribe with exact types, or with `*` for every available event (including types added later). The
+list is also served by `GET /api/admin/webhooks/events`, with the status `available` (wired today) or
+`planned`. Planned and not yet sent: `course.published`, `course.started`, `order.paid`,
+`order.refunded` (Phase 6) and `learner.registered`. They cannot be subscribed to yet; a wildcard
+endpoint receives them once they exist.
+
+Only events that already exist as domain events are wired, and the payload carries ids and the
+learner's name and e-mail, never lesson content, answers or source text. Subscribe only the endpoints
+that need personal data.
+
+## The payload
+
+```json
+{
+  "id": "evt_01j9z8x3v7c5qk2m4n6p8r0t1w",
+  "object": "event",
+  "type": "course.completed",
+  "api_version": "2026-10-20",
+  "created": 1792454400,
+  "data": {
+    "object": {
+      "user": { "id": 42, "email": "ada@example.com", "name": "Ada Lovelace" },
+      "course": { "id": 12, "title": "Latte art" },
+      "completed_at": "2026-10-20T08:00:00+00:00"
+    }
+  }
+}
+```
+
+`id` identifies the event, not the delivery: a retry and a replay carry the same `id`, so treat it as
+your idempotency key. Events can arrive more than once and out of order.
+
+### Versions
+
+An endpoint is pinned to the `api_version` that was current when it was created (`2026-10-20` today) and
+keeps receiving that shape. A version only gains fields. A change that removes or renames a field gets a
+new version, announced in the changelog, and an endpoint moves to it only when you recreate it. Ignore
+fields you do not know.
+
+## Requests ulams makes
+
+```http
+POST /hooks/ulams HTTP/1.1
+Content-Type: application/json
+User-Agent: Ulams-Webhooks/1
+Ulams-Signature: t=1792454400,v1=5257a869e7ecebeda32affa62cdca3fa51cad7e77a0e56ff536d0ce8e108d8bd
+Ulams-Event-Id: evt_01j9z8x3v7c5qk2m4n6p8r0t1w
+Ulams-Event-Type: course.completed
+Ulams-Delivery-Id: 01j9z8x3w1n4f8d2h6k0m3q5s7
+Ulams-Delivery-Attempt: 1
+Ulams-Api-Version: 2026-10-20
+```
+
+Answer with any **2xx** status within 10 seconds. Anything else, a timeout or a connection error is a
+failed attempt. Do the slow work after answering. Redirects are not followed.
+
+## Verify the signature
+
+Every request is signed with the endpoint's secret (`whsec_…`, shown once when you create the endpoint
+or rotate it). The header is `Ulams-Signature: t=<unix seconds>,v1=<hex>`, where `v1` is
+`HMAC-SHA256(secret, "<t>.<raw body>")`. The timestamp is inside the signed text, and it is new on
+every attempt, so a captured request cannot be replayed later: reject anything older than five minutes.
+
+Compute the HMAC over the **raw bytes** of the body, before any JSON parsing, and compare in constant time.
+
+```js
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+export function verify(header, rawBody, secret, toleranceSeconds = 300) {
+  const parts = Object.fromEntries(header.split(",").map((p) => p.trim().split("=")));
+  const t = Number(parts.t);
+  if (!t || Math.abs(Date.now() / 1000 - t) > toleranceSeconds) return false;
+  const expected = createHmac("sha256", secret).update(`${t}.${rawBody}`).digest("hex");
+  const given = Buffer.from(parts.v1 ?? "", "hex");
+  const want = Buffer.from(expected, "hex");
+  return given.length === want.length && timingSafeEqual(given, want);
+}
+```
+
+```php
+function verify(string $header, string $rawBody, string $secret, int $tolerance = 300): bool
+{
+    parse_str(str_replace(',', '&', $header), $p);
+    if (!isset($p['t'], $p['v1']) || abs(time() - (int) $p['t']) > $tolerance) {
+        return false;
+    }
+
+    return hash_equals(hash_hmac('sha256', $p['t'] . '.' . $rawBody, $secret), $p['v1']);
+}
+```
+
+The same check is `Ulams\Webhooks\Support\WebhookSignature::verify()` in the API package.
+
+## Retries and the delivery log
+
+A failed attempt is retried through the queue with exponential backoff: after 1 minute, 5 minutes,
+30 minutes, 2 hours, 6 hours, 12 hours and 24 hours, for at most eight attempts in all (about two days).
+Then the delivery is `failed`. An endpoint whose deliveries fail 25 times in a row is **disabled**
+(with the reason); enable it again after fixing the receiver, which also clears the counter.
+
+| Delivery status | Meaning |
+|---|---|
+| `pending` | Queued, no attempt yet |
+| `retrying` | At least one attempt failed; the next one is at `next_attempt_at` |
+| `succeeded` | A 2xx answer |
+| `failed` | Out of attempts |
+| `cancelled` | The endpoint was disabled or deleted before the attempt |
+
+Each attempt is logged with the status code, the first 2 000 characters of the answer, the error when
+there was no answer, and the duration. Deliveries and attempts are deleted after 30 days
+(`webhooks:prune`). The queue worker must run for deliveries to happen; with the synchronous queue
+driver (development) the first attempt happens inside the request that caused the event and retries
+wait for the scheduler (`webhooks:retry-due`, every minute).
+
+## Test sends and replays
+
+- **Test**: `POST /api/admin/webhooks/endpoints/{id}/test` sends one sample event (`webhook.test`, or a
+  sample of any type with `{"event_type": "course.completed"}`) right now, without retries, and
+  returns the finished delivery with the receiver's answer. A test never counts against the
+  endpoint's failure counter.
+- **Replay**: `POST /api/admin/webhooks/deliveries/{id}/replay` sends the stored event again as a new
+  delivery with the same event `id` and a fresh signature. Use it after fixing a receiver. It works on
+  a disabled endpoint.
+
+Both call out to a third party, so they have their own limit (10 per minute per user) on top of the
+general one (60 per minute); see [Rate limits](/developers/rate-limits/).
+
+## Target URLs and SSRF
+
+A webhook URL is chosen by an admin, so ulams does not trust it. The same guard applies when you register
+an endpoint and at every delivery:
+
+- **https only**; no user name or password in the URL; no redirects.
+- Every address the host name resolves to must be **public**: loopback, private (10/8, 172.16/12,
+  192.168/16), link-local (including the cloud metadata address 169.254.169.254), carrier-grade NAT,
+  unique-local and multicast IPv6 addresses, and IPv4-mapped forms of those are refused.
+- The address that passed the check is **pinned** for the connection, so the name cannot resolve
+  elsewhere between the check and the request (DNS rebinding). A name that starts resolving to a
+  private address after registration simply fails its deliveries.
+
+Operators can opt in to `http` and private addresses for local development with
+`WEBHOOKS_ALLOW_INSECURE=true`, and restrict an academy to listed hosts with
+`WEBHOOKS_ALLOWED_HOSTS=hooks.example.com,other.example.org`. Do not enable the first in production.
+
+## Secrets
+
+The signing secret is stored encrypted (Laravel's application key) and is returned only by the request
+that creates the endpoint or rotates its secret; every later read shows the last four characters
+(`secret_hint`). **Rotate** with `POST …/endpoints/{id}/rotate-secret`: the old secret stops working
+immediately, so deploy the new one to the receiver first if you cannot tolerate failed deliveries (they
+are retried, so a short gap is normally harmless).
+
+## Endpoints of the management API
+
+| Method and path | Purpose |
+|---|---|
+| `GET /api/admin/webhooks/events` | Event types and their status |
+| `GET`, `POST /api/admin/webhooks/endpoints` | List and create (up to 20 per academy) |
+| `GET`, `PUT`, `DELETE /api/admin/webhooks/endpoints/{id}` | Read, change (`url`, `description`, `events`, `enabled`) and delete with its log |
+| `POST /api/admin/webhooks/endpoints/{id}/rotate-secret` | New secret, returned once |
+| `POST /api/admin/webhooks/endpoints/{id}/test` | Test send |
+| `GET /api/admin/webhooks/deliveries` | Log, filter by `endpoint_id`, `status`, `event_type` |
+| `GET /api/admin/webhooks/deliveries/{id}` | One delivery with its payload and every attempt |
+| `POST /api/admin/webhooks/deliveries/{id}/replay` | Replay |
+
+All are in the [API reference](/developers/api-reference/) under "Admin Webhooks".
+
+<Aside type="note" title="CLI and admin screen">
+  The [CLI](/developers/cli/) has the commands `ulams webhooks endpoints-list|endpoints-create|endpoints-update|endpoints-delete|endpoints-rotate-secret|endpoints-test`,
+  `deliveries-list|deliveries-get|deliveries-replay` and `events` (they need the `webhooks:read` or
+  `webhooks:write` scope). There is no admin screen yet; one under **Settings** is planned.
+</Aside>
+
+## Configuration
+
+`api/packages/webhooks/src/config.php` (config key `ulams_webhooks`): `api_version`, `max_endpoints`,
+`max_attempts`, `backoff_seconds`, `timeout`, `response_body_bytes`, `disable_after_failures`,
+`retention_days`, `api_rate_limit`, `send_rate_limit`, and the environment variables
+`WEBHOOKS_ALLOW_INSECURE`, `WEBHOOKS_ALLOWED_HOSTS`, `WEBHOOKS_QUEUE` and `WEBHOOKS_QUEUE_CONNECTION`.
+The scheduler needs `php artisan schedule:run` every minute, as for every tenant.
+
+## Adding an event type
+
+Add the domain event class, a description and a payload builder to
+`api/packages/webhooks/src/Support/EventCatalog.php` (the class is named as a string, so the package
+does not depend on the package that fires it), a sample for the test send, and a row to the table
+above. A test in `DomainEventsTest` fails if an `available` type has no listener.

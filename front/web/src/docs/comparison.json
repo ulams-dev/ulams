@@ -880,7 +880,8 @@
                     "title": "Extensible by packages",
                     "text": "Every feature is a composer package with its own routes, permissions, settings and events. A worked example shows the pattern end to end.",
                     "packages": [
-                      "example-plugin"
+                      "example-plugin",
+                      "webhooks"
                     ],
                     "href": "https://ulams-dev.github.io/ulams/extending/new-package/"
                   },
@@ -936,7 +937,7 @@
                   },
                   {
                     "title": "Inbound webhooks",
-                    "text": "Webhooks for Living Course Git pushes, Stripe and Jitsi recordings. There are no outgoing webhooks yet.",
+                    "text": "Webhooks for Living Course Git pushes, Stripe and Jitsi recordings. Outgoing signed webhooks with retries, replay and a delivery log are documented on their own page.",
                     "href": "https://ulams-dev.github.io/ulams/developers/webhooks/"
                   }
                 ],
