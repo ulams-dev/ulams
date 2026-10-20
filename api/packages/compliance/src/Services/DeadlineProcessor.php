@@ -28,6 +28,7 @@ class DeadlineProcessor
         private NotificationLog $log,
         private ManagerService $managers,
         private RecertificationService $recertification,
+        private RuleEngine $rules,
     ) {
     }
 
@@ -38,6 +39,7 @@ class DeadlineProcessor
         $this->settings->forget();
 
         return [
+            'rule_enrolments' => $this->rules->evaluateAll(),
             'recertifications' => $this->recertification->run($now),
             'certificate_reminders' => $this->certificateReminders($now),
             'certificates_expired' => $this->certificatesExpired($now),
