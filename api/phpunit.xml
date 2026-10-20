@@ -142,6 +142,9 @@
     <testsuite name="learner-insights">
       <directory suffix="Test.php">./packages/learner-insights/tests</directory>
     </testsuite>
+    <testsuite name="compliance">
+      <directory suffix="Test.php">./packages/compliance/tests</directory>
+    </testsuite>
     <testsuite name="adapt">
       <directory suffix="Test.php">./packages/adapt/tests</directory>
     </testsuite>
@@ -239,6 +242,7 @@
       <directory suffix=".php">./packages/liascript/</directory>
       <directory suffix=".php">./packages/interactive/</directory>
       <directory suffix=".php">./packages/adapt/</directory>
+      <directory suffix=".php">./packages/compliance/</directory>
       <directory suffix=".php">./packages/ai/</directory>
       <directory suffix=".php">./packages/commerce/</directory>
 <directory suffix=".php">./packages/course-builder/</directory>

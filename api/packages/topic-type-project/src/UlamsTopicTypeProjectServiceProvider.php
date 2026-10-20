@@ -2,6 +2,7 @@
 
 namespace Ulams\TopicTypeProject;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Courses\UlamsCourseServiceProvider;
 use Ulams\Courses\Facades\Topic;
 use Ulams\TopicTypeProject\Providers\AuthServiceProvider;
@@ -46,6 +47,11 @@ class UlamsTopicTypeProjectServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        MorphMap::register([
+            'project_solution' => \Ulams\TopicTypeProject\Models\ProjectSolution::class,
+            'topic.project' => \Ulams\TopicTypeProject\Models\Project::class,
+        ]);
+
         $this->app->register(AuthServiceProvider::class);
         $this->app->register(UlamsTopicTypesServiceProvider::class);
         $this->app->register(UlamsCourseServiceProvider::class);

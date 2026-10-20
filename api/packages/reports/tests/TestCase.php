@@ -2,6 +2,7 @@
 
 namespace Ulams\Reports\Tests;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Auth\UlamsAuthServiceProvider;
 use Ulams\Cart\UlamsCartServiceProvider;
 use Ulams\Cart\Facades\Shop;
@@ -28,6 +29,15 @@ class TestCase extends CoreTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        // the models the questionnaires and reports refer to store their morph aliases
+        foreach ([
+            \Ulams\Courses\UlamsCourseServiceProvider::MORPH_ALIASES,
+            \Ulams\Consultations\UlamsConsultationsServiceProvider::MORPH_ALIASES,
+            \Ulams\Webinar\UlamsWebinarServiceProvider::MORPH_ALIASES,
+            \Ulams\StationaryEvents\UlamsStationaryEventsServiceProvider::MORPH_ALIASES,
+        ] as $aliases) {
+            MorphMap::register($aliases);
+        }
         Passport::useClientModel(Client::class);
         $this->seed(ReportsPermissionSeeder::class);
 

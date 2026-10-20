@@ -246,6 +246,7 @@
                     "text": "Certyfikat PDF jest wystawiany po ukończeniu kursu, na podstawie szablonu zaprojektowanego w panelu administratora (domyślny to A4 poziomo z kodem QR). Szablon jest zapisywany razem z każdym certyfikatem.",
                     "packages": [
                       "templates-pdf",
+                      "compliance",
                       "courses"
                     ]
                   }

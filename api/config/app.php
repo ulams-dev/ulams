@@ -231,6 +231,7 @@ return [
         Ulams\LivingCourse\UlamsLivingCourseServiceProvider::class,
         Ulams\LearnerInsights\UlamsLearnerInsightsServiceProvider::class,
         Ulams\Adapt\UlamsAdaptServiceProvider::class,
+        Ulams\Compliance\UlamsComplianceServiceProvider::class,
         Ulams\Translations\UlamsTranslationsServiceProvider::class,
         Ulams\Video\UlamsVideoServiceProvider::class,
         Ulams\Vouchers\UlamsVouchersServiceProvider::class,

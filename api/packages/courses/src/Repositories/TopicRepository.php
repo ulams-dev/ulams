@@ -2,6 +2,7 @@
 
 namespace Ulams\Courses\Repositories;
 
+use Ulams\Core\Support\MorphMap;
 use Error;
 use Ulams\Courses\Exceptions\TopicException;
 use Ulams\Courses\Http\Requests\CreateTopicAPIRequest;
@@ -244,7 +245,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
         $replaced = null;
 
         if ($request->has('topicable_type')) {
-            $class = $request->input('topicable_type');
+            $class = MorphMap::classOf($request->input('topicable_type'));
 
             if (!in_array($class, $this->contentClasses)) {
                 throw new Error("Type '$class' is not allowed");
@@ -278,7 +279,7 @@ class TopicRepository extends BaseRepository implements TopicRepositoryContract
      */
     private function createTopicContentModelFromRequest(FormRequest $request, Topic $topic): Model
     {
-        $class = $request->input('topicable_type');
+        $class = MorphMap::classOf($request->input('topicable_type'));
 
         if (!in_array($class, $this->contentClasses)) {
             throw new Error("Type '$class' is not allowed");

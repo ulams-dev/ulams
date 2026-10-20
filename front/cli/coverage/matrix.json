@@ -1,5 +1,5 @@
 {
- "summary": "536/596 covered, 59 excluded, 1 missing, 5 routes missing from the spec",
+ "summary": "536/610 covered, 62 excluded, 12 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -150,6 +150,60 @@
    "summary": "Delete cmi5 package by id",
    "command": "cmi5.delete",
    "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/assignments",
+   "summary": "List required-training assignments",
+   "command": "",
+   "status": "missing"
+  },
+  {
+   "key": "POST /api/admin/compliance/assignments",
+   "summary": "Assign a required course to users",
+   "command": "",
+   "status": "missing"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/assignments/{id}",
+   "summary": "Cancel an open assignment",
+   "command": "",
+   "status": "missing"
+  },
+  {
+   "key": "GET /api/admin/compliance/courses/{course}/settings",
+   "summary": "Compliance settings of a course (defaults when none are saved)",
+   "command": "",
+   "status": "missing"
+  },
+  {
+   "key": "PUT /api/admin/compliance/courses/{course}/settings",
+   "summary": "Save the compliance settings of a course",
+   "command": "",
+   "status": "missing"
+  },
+  {
+   "key": "GET /api/admin/compliance/managers",
+   "summary": "List manager links",
+   "command": "",
+   "status": "missing"
+  },
+  {
+   "key": "PUT /api/admin/compliance/managers/{user}",
+   "summary": "Set or clear the manager of a user",
+   "command": "",
+   "status": "missing"
+  },
+  {
+   "key": "GET /api/admin/compliance/report",
+   "summary": "Compliance report",
+   "command": "",
+   "status": "missing"
+  },
+  {
+   "key": "GET /api/admin/compliance/report/export",
+   "summary": "Audit export of a compliance dataset",
+   "command": "",
+   "status": "missing"
   },
   {
    "key": "GET /api/admin/config",
@@ -612,6 +666,12 @@
    "summary": "Manually triggered event for users",
    "command": "events.trigger-manually",
    "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/example-plugin/greetings",
+   "summary": "Send the tenant's greeting to a user (dispatches GreetingSent)",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "DELETE /api/admin/file/delete",
@@ -2522,6 +2582,18 @@
    "status": "excluded: content-runtime"
   },
   {
+   "key": "GET /api/compliance/my-assignments",
+   "summary": "My required training",
+   "command": "",
+   "status": "missing"
+  },
+  {
+   "key": "GET /api/compliance/team/assignments",
+   "summary": "Required training of my direct reports",
+   "command": "",
+   "status": "missing"
+  },
+  {
    "key": "GET /api/config",
    "summary": "Get a listing of public config values.",
    "command": "public.config-list",
@@ -2784,6 +2856,12 @@
    "summary": "Get a listing of the Stationary events and Webinars",
    "command": "public.events-feed",
    "status": "covered"
+  },
+  {
+   "key": "GET /api/example-plugin/hello",
+   "summary": "The tenant's greeting",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/health-check",
@@ -3126,6 +3204,12 @@
    "summary": "Display the specified generated PDF",
    "command": "my.pdfs-get",
    "status": "covered"
+  },
+  {
+   "key": "POST /api/pencil-spaces/login",
+   "summary": "Generate a direct login link",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/platform/operations",

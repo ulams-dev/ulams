@@ -151,6 +151,60 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/compliance/assignments",
+  "summary": "List required-training assignments",
+  "tag": "Compliance"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/compliance/assignments",
+  "summary": "Assign a required course to users",
+  "tag": "Compliance"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/compliance/assignments/{id}",
+  "summary": "Cancel an open assignment",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/courses/{course}/settings",
+  "summary": "Compliance settings of a course (defaults when none are saved)",
+  "tag": "Compliance"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/compliance/courses/{course}/settings",
+  "summary": "Save the compliance settings of a course",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/managers",
+  "summary": "List manager links",
+  "tag": "Compliance"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/compliance/managers/{user}",
+  "summary": "Set or clear the manager of a user",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/report",
+  "summary": "Compliance report",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/compliance/report/export",
+  "summary": "Audit export of a compliance dataset",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/config",
   "summary": "Get admin config",
   "tag": "Admin Settings"
@@ -610,6 +664,12 @@
   "path": "/api/admin/events/trigger-manually/{id}",
   "summary": "Manually triggered event for users",
   "tag": "Templates"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/example-plugin/greetings",
+  "summary": "Send the tenant's greeting to a user (dispatches GreetingSent)",
+  "tag": "Admin Example plugin"
  },
  {
   "method": "DELETE",
@@ -2521,6 +2581,18 @@
  },
  {
   "method": "GET",
+  "path": "/api/compliance/my-assignments",
+  "summary": "My required training",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
+  "path": "/api/compliance/team/assignments",
+  "summary": "Required training of my direct reports",
+  "tag": "Compliance"
+ },
+ {
+  "method": "GET",
   "path": "/api/config",
   "summary": "Get a listing of public config values.",
   "tag": "Settings"
@@ -2782,6 +2854,12 @@
   "path": "/api/events",
   "summary": "Get a listing of the Stationary events and Webinars",
   "tag": "Events"
+ },
+ {
+  "method": "GET",
+  "path": "/api/example-plugin/hello",
+  "summary": "The tenant's greeting",
+  "tag": "Example plugin"
  },
  {
   "method": "GET",
@@ -3124,6 +3202,12 @@
   "path": "/api/pdfs/generate/{id}",
   "summary": "Download a generated PDF (certificate)",
   "tag": "Template PDFs"
+ },
+ {
+  "method": "POST",
+  "path": "/api/pencil-spaces/login",
+  "summary": "Generate a direct login link",
+  "tag": "Pencil Spaces"
  },
  {
   "method": "GET",

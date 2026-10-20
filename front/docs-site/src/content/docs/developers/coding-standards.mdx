@@ -90,6 +90,16 @@ self-hosting. `escolalms/recommender` must not be used or depended on.
 - LMS entities change through package services and repositories, never by writing tables directly.
 - No model names hard-coded outside config; the LLM is mocked in tests; every LLM call logs model,
   tokens and cost.
+- Polymorphic relations store **morph aliases**, never class names (`topic.rich_text`, `course`,
+  `product`, ...), so a renamed or moved class cannot orphan rows. Register the alias of every
+  class that can be the target of a `*_type` column from the package's service provider with
+  `MorphMap::register([...])` and give the model `HasMorphAlias`; give a model that owns a
+  `morphTo()` relation `HasMorphTypeColumns` and list the column in `$morphTypeColumns`. The map is
+  enforced after boot: a class without an alias throws `ClassMorphViolationException`. Aliases never
+  change once released. The attribute and the API keep showing the class name and accept either
+  form; raw SQL and `DB::table()` queries on the column must use the alias
+  (`MorphMap::aliasOrClass(Foo::class)`). `tests/Integrations/MorphMapCoverageTest` fails when a
+  topic content class, a productable or a `morphTo()` owner is added without one.
 
 <Aside type="note" title="No PHP linters are wired up">
 `api/composer.json` has no PHP-CS-Fixer, Pint, PHPStan or Deptrac. The `extra.hooks.pre-commit`

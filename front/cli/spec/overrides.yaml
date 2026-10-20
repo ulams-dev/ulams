@@ -23,6 +23,11 @@ operations:
   "POST /api/admin/consultation-access-enquiries/approve/{proposedTermId}": { id: consultations.access-enquiries-approve }
   "POST /api/admin/consultation-access-enquiries/disapprove/{id}": { id: consultations.access-enquiries-disapprove }
 
+  # --- compliance (certificates, required training, reports)
+  "GET /api/admin/compliance/managers": { id: compliance.managers-list }
+  "PUT /api/admin/compliance/managers/{user}": { id: compliance.managers-set, summary: "Set or clear (manager_id null) the manager that overdue training escalates to" }
+  "GET /api/admin/compliance/report/export": { id: compliance.report-export, output: file, summary: "Download a compliance dataset as CSV or JSON lines (use --out)" }
+
   # --- courses
   "GET /api/admin/courses/{id}/clone": { id: courses.clone, kind: write, idempotent: false, summary: "Clone a course with its lessons and topics" }
   "GET /api/admin/courses/{id}/export": { id: courses.export, output: file, summary: "Export a course as a .zip (use --out)" }

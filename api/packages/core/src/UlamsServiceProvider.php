@@ -6,6 +6,7 @@ use Illuminate\Database\Events\MigrationsEnded;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Database\Events\SchemaLoaded;
 use Illuminate\Support\Facades\Event;
+use Ulams\Core\Support\MorphMap;
 use Ulams\Core\Support\SchemaColumns;
 use Ulams\Core\Http\Middleware\EnforceTrustedOrigin;
 use Ulams\Core\Http\Middleware\Idempotency;
@@ -32,6 +33,15 @@ class UlamsServiceProvider extends ServiceProvider
 
     public function register()
     {
+        // Every other class registers its own aliases (Ulams\Core\Support\MorphMap). The user model is configurable:
+        // its alias is fixed and resolves to the configured class once the configuration is final.
+        $this->app->booted(function () {
+            $user = config('auth.providers.users.model');
+            MorphMap::replace(MorphMap::USER, is_string($user) && is_a($user, \Ulams\Core\Models\User::class, true) ? $user : \Ulams\Core\Models\User::class);
+            // once every provider has booted, a model without an alias fails instead of storing its class name
+            MorphMap::enforce();
+        });
+
         // @phpstan-ignore-next-line
         if (!$this->app->getProviders(\Ulams\ModelFields\ModelFieldsServiceProvider::class)
             && class_exists(\Ulams\ModelFields\ModelFieldsServiceProvider::class)) {

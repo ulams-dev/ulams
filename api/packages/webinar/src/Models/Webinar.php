@@ -2,6 +2,7 @@
 
 namespace Ulams\Webinar\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphAlias;
 use Ulams\Tags\Models\Tag;
 use Ulams\Webinar\Database\Factories\WebinarFactory;
 use Ulams\Webinar\Enum\WebinarStatusEnum;
@@ -123,6 +124,7 @@ use Illuminate\Support\Facades\Storage;
  */
 class Webinar extends Model
 {
+    use HasMorphAlias;
     use HasFactory;
 
     protected $fillable = [

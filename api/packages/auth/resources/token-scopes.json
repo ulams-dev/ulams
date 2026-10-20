@@ -512,6 +512,10 @@
             "area": "certificates"
         },
         {
+            "pattern": "api/admin/compliance*",
+            "area": "certificates"
+        },
+        {
             "pattern": "api/admin/orders*",
             "area": "commerce"
         },
@@ -715,6 +719,10 @@
         },
         {
             "pattern": "api/pdfs*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/compliance/*",
             "area": "learner"
         },
         {

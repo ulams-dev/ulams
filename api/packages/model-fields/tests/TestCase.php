@@ -17,6 +17,10 @@ class TestCase extends CoreTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        \Ulams\Core\Support\MorphMap::register([
+            'test.model_fields_user' => \Ulams\ModelFields\Tests\Models\User::class,
+            'test.model_fields_trait_user' => \Ulams\ModelFields\Tests\TraitTest\Models\User::class,
+        ]);
         $this->seed(PermissionTableSeeder::class);
     }
 

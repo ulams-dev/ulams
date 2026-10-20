@@ -2,6 +2,7 @@
 
 namespace Ulams\TemplatesPdf\Models;
 
+use Ulams\Core\Models\Concerns\HasMorphTypeColumns;
 use Ulams\Core\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -59,6 +60,10 @@ use Ulams\TemplatesPdf\Events\PdfCreated;
 class FabricPDF extends Model
 {
     use HasFactory;
+    use HasMorphTypeColumns;
+
+    /** @var array<int, string> polymorphic type columns, stored as morph aliases (see MorphMap) */
+    protected $morphTypeColumns = ['assignable_type'];
 
     protected $table = 'fabric_pdfs';
 

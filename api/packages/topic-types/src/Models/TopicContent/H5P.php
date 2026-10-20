@@ -119,11 +119,6 @@ class H5P extends AbstractTopicContent
         return $this->h5pContent->main_library ?? null;
     }
 
-    public function getMorphClass()
-    {
-        return self::class;
-    }
-
     /**
      * topic-h5p config entry for the content's library: exact "Machine.Name x.y" first,
      * then any configured version of the same machine name.

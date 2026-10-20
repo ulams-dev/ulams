@@ -151,6 +151,7 @@ return [
 
     // ---- certificates --------------------------------------------------------------------------
     ['api/admin/pdfs*', 'certificates'],
+    ['api/admin/compliance*', 'certificates'],
 
     // ---- commerce ------------------------------------------------------------------------------
     ['api/admin/orders*', 'commerce'],
@@ -208,6 +209,7 @@ return [
     ['api/tutors*', 'learner'],
     ['api/content/*', 'learner'],
     ['api/pdfs*', 'learner'],
+    ['api/compliance/*', 'learner'],
     ['api/questionnaire/*', 'learner'],
     ['api/scorm/*', 'learner'],
     ['api/cmi5/*', 'learner'],

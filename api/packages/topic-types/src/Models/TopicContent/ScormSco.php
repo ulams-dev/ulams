@@ -22,7 +22,7 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *          property="value",
  *          description="value",
  *          type="string"
- *      )
+ *      ),
  *      @OA\Property(
  *          property="uuid",
  *          description="uuid",
@@ -83,10 +83,5 @@ class ScormSco extends AbstractTopicContent
         Storage::getDriver()->writeStream($destination, $inputStream);
 
         return [[$zipPath, $destination]];
-    }
-
-    public function getMorphClass()
-    {
-        return self::class;
     }
 }

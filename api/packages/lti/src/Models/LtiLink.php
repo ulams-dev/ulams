@@ -74,9 +74,4 @@ class LtiLink extends AbstractTopicContent
     {
         return [];
     }
-
-    public function getMorphClass()
-    {
-        return self::class;
-    }
 }

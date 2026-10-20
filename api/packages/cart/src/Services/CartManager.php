@@ -2,6 +2,7 @@
 
 namespace Ulams\Cart\Services;
 
+use Ulams\Core\Support\MorphMap;
 use Ulams\Cart\Models\Cart;
 use Ulams\Cart\Models\CartItem;
 use Ulams\Cart\Models\Contracts\Base\Buyable;
@@ -85,7 +86,7 @@ class CartManager extends BaseCartManager implements CartManagerContract
     {
         assert($buyable instanceof Model);
         /** @var CartItem|null $cartItem */
-        $cartItem = $this->content()->where('buyable_id', $buyable->getKey())->where('buyable_type', $buyable->getMorphClass())->first();
+        $cartItem = $this->content()->where('buyable_id', $buyable->getKey())->where('buyable_type', MorphMap::classOf($buyable->getMorphClass()))->first();
 
         return $cartItem;
     }

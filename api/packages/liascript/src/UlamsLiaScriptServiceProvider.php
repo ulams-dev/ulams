@@ -2,6 +2,7 @@
 
 namespace Ulams\LiaScript;
 
+use Ulams\Core\Support\MorphMap;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Courses\Facades\Topic;
 use Ulams\Courses\UlamsCourseServiceProvider;
@@ -32,6 +33,10 @@ class UlamsLiaScriptServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        MorphMap::register([
+            'topic.liascript' => \Ulams\LiaScript\Models\LiaScriptTopic::class,
+        ]);
+
         $this->mergeConfigFrom(__DIR__ . '/config.php', self::CONFIG_KEY);
         $this->app->register(UlamsUploadsServiceProvider::class);
         $this->app->register(UlamsTopicTypesServiceProvider::class);
