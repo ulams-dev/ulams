@@ -37,6 +37,9 @@ has access to the course:
 
 - the header shows the completion percentage;
 - the primary button reads "Continue learning" and opens the first topic that is not completed;
+- a line under the bar says what is next and how much is left, from the topic durations the API
+  returns: "Next: Roasting - about 1 h 10 min left", "3 topics - about 1 h 15 min in total" before
+  the first topic, or "Course complete" at 100%; without durations it counts topics;
 - topics in the program show whether they are done.
 
 A learner without a session sees the public page; "Start learning" opens `/learn/<id>`, which

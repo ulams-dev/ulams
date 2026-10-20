@@ -95,3 +95,34 @@ export function resumeTopic(course: Pick<Course, "lessons">, progress: TopicProg
   const done = new Set(progress.filter((p) => p.status === 1).map((p) => p.topic_id));
   return topics.find((t) => !done.has(t.id)) ?? topics[0] ?? null;
 }
+
+export interface CourseStanding {
+  /** Share of completed topics, 0-100. */
+  percent: number;
+  done: number;
+  total: number;
+  /** The topic to open next (first not completed), null when the course is empty or finished. */
+  next: Topic | null;
+  /** Topics not completed yet, including `next`. */
+  left: number;
+  /** Minutes of the topics not completed yet, from their durations (0 when none is known). */
+  remainingMinutes: number;
+  finished: boolean;
+}
+
+/** Where a learner stands in a course: what is next and how much is left, from the program and the progress rows. */
+export function courseStanding(course: Pick<Course, "lessons">, progress: TopicProgress[]): CourseStanding {
+  const topics = flattenTopics(course);
+  const doneIds = new Set(progress.filter((p) => p.status === 1).map((p) => p.topic_id));
+  const open = topics.filter((t) => !doneIds.has(t.id));
+  const done = topics.length - open.length;
+  return {
+    percent: topics.length ? Math.round((done / topics.length) * 100) : 0,
+    done,
+    total: topics.length,
+    next: open[0] ?? null,
+    left: open.length,
+    remainingMinutes: open.reduce((sum, t) => sum + durationToMinutes(t.duration), 0),
+    finished: topics.length > 0 && open.length === 0,
+  };
+}
