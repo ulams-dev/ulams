@@ -994,3 +994,13 @@ Where the code differs from the plan above, and what is still open:
   option ids) is empty until `quiz.answer` signals carry the chosen options.
 - `reflection_feedback` is limited per learner per day with a cache counter, not stored in the database.
 - The holdout (20 % get no remediation) belongs to M4.8 with the experiments package.
+
+## 21. Implementation notes (M4.6)
+
+- The element rates are computed live from signals, transitions, assignments and interventions for the selected
+  period, not from a nightly `learner_insights_element_daily` table: distinct-learner counts cannot be derived
+  from daily counts. Add the table when a tenant's signal volume makes the queries slow.
+- "Propose a course improvement" (`ProposalService::createFromInsights`) is open: Living Course proposals are
+  built around two source revisions, so an insights-triggered proposal needs its own entry point in
+  `living-course` (owner of that package to review).
+- The studio Insights page and the admin settings screen are not built.
