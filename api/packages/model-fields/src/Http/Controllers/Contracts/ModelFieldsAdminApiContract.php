@@ -95,7 +95,7 @@ interface ModelFieldsAdminApiContract
 
     /**
      * @OA\Post(
-     *     path="/api/admin/model-fields",
+     *     path="/api/admin/model-fields", operationId="model-fields.create",
      *     summary="Create or update metafile",
      *     tags={"Admin Model Fields"},
      *     security={
@@ -106,10 +106,7 @@ interface ModelFieldsAdminApiContract
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Metadata")
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="Metadata created successfully",
-     *      ),
+     *     @OA\Response(response=200, description="Metadata created successfully", @OA\JsonContent(ref="#/components/schemas/ModelFieldMetadataResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -135,7 +132,7 @@ interface ModelFieldsAdminApiContract
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/model-fields",
+     *     path="/api/admin/model-fields", operationId="model-fields.delete",
      *     summary="delete metafile and related values from model",
      *     tags={"Admin Model Fields"},
      *     security={
@@ -146,10 +143,7 @@ interface ModelFieldsAdminApiContract
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Metadata")
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="Metadata created successfully",
-     *      ),
+     *     @OA\Response(response=200, description="Metadata created successfully", @OA\JsonContent(ref="#/components/schemas/ApiBooleanResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",

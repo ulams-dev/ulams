@@ -1,0 +1,61 @@
+---
+title: Learner Insights data flows and DPIA
+description: What Learner Insights stores, what may reach an AI provider, how long it is kept, and a data protection impact assessment template for tenants that switch it on.
+sidebar:
+  order: 40
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Learner Insights is **off by default** for every tenant. This page is for the person who decides to switch it on: it lists what is stored, what leaves your installation and when, and gives a template for the data protection impact assessment (DPIA) your organisation may need. It is a template, not legal advice.
+
+## What is stored
+
+| Data | Where | Kept | Personal |
+|---|---|---|---|
+| Learner signals (what the learner opened, answered, finished, replayed) | `learner_signals` in the tenant database | 180 days | Yes |
+| Statuses ("struggling", "at risk") with their reasons and the history of changes | `learner_statuses`, `learner_status_transitions` | while enrolled, then 365 days | Yes |
+| Interventions (nudges sent or suppressed, extra help shown, the outcome) | `learner_interventions`, `learner_remediation_assignments` | 365 days | Yes |
+| Extra help documents (explanations, examples, practice) | `learner_remediations` | until the course element changes | No: shared by every learner with the same difficulty |
+| What was exported or erased | `learner_insights_audit` | kept | Counts only, no content |
+
+A signal has a type, a time, a course element and at most a few numbers or yes/no values. It never holds free text, an answer the learner typed or a quiz option's text.
+
+## What can reach an AI provider
+
+AI is used only for the extra help ("remediation") and, when the learner submits their own explanation, for feedback on it. Scoring, statuses and nudges use no AI.
+
+| Task | Sent to the provider | Never sent |
+|---|---|---|
+| Extra help | The course element, the source passages it cites, the lesson objectives, a generic sentence that learners find the part hard | The learner's identity, e-mail, other courses, signals, history, scores |
+| Feedback on the learner's own explanation | The text the learner chose to submit, the source passages of the element | Identity, history. The text is not stored by ulams |
+
+Every call is logged with the model, tokens and cost in `ai_calls`, without a user id. The provider and model are configured per installation and per tenant (`AI_DRIVER`, task profiles); no model name is hard-coded. Check your provider's commercial terms for the retention and training terms that apply to your account before you enable AI: ulams does not train models and sends no customer content anywhere else. A self-hosted model can be used through the same driver interface.
+
+Help is built only from the course's own cited sources. Every piece shows an "AI-generated" label, the sources it relies on and the reason it was offered.
+
+## Controls for the learner
+
+Each learner can see their own statuses with reasons, switch personal help and reminders off, opt out of everything, give or withdraw consent (when your tenant requires it), download everything stored about them as JSON and erase it. A deleted account is erased immediately. See the [settings guide](/admin/learner-insights/) for the keys.
+
+<Aside type="caution">
+Statuses are information for the learner and aggregates for authors. They are never used for grades, access, certificates or enrolment, and no screen shows an individual learner's status to an instructor unless the tenant explicitly allows it.
+</Aside>
+
+## DPIA template
+
+Copy this table into your own assessment and fill in the right column.
+
+| Question | Learner Insights default | Your answer |
+|---|---|---|
+| Purpose | Help learners who struggle or drift away, and show authors which parts of a course confuse people | |
+| Legal basis | Legitimate interest with a per-learner opt-out, or explicit consent when `learner_insights.require_consent` is on | |
+| Data subjects | Learners enrolled in courses of the tenant | |
+| Data categories | Learning activity (see the table above), derived statuses | |
+| Special categories | None collected | |
+| Recipients | Tenant admins (aggregates; individual statuses with a dedicated permission), the AI provider (course content only, see above) | |
+| Retention | Signals 180 days, histories 365 days, extra help until the element changes | |
+| Automated decisions with legal effect | None: statuses do not affect grades, access or certificates | |
+| Risks | Profiling concerns, false positives that annoy learners, ungrounded AI text | |
+| Mitigations | Off by default, opt-out and consent mode, plain-language reasons, conservative thresholds and rate limits (one nudge per course per week), grounding check and citations on every AI text, export and erasure | |
+| Residual risk and decision | | |

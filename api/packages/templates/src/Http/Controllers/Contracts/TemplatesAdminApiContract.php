@@ -76,7 +76,7 @@ interface TemplatesAdminApiContract
 
     /**
      * @OA\Post(
-     *     path="/api/admin/templates",
+     *     path="/api/admin/templates", operationId="templates.create",
      *     summary="Create a new template identified by id",
      *     tags={"Templates"},
      *     security={
@@ -87,10 +87,7 @@ interface TemplatesAdminApiContract
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Template")
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="template created successfully",
-     *      ),
+     *     @OA\Response(response=200, description="template created successfully", @OA\JsonContent(ref="#/components/schemas/TemplateResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -120,7 +117,7 @@ interface TemplatesAdminApiContract
 
     /**
      * @OA\Patch(
-     *     path="/api/admin/templates/{id}",
+     *     path="/api/admin/templates/{id}", operationId="templates.update",
      *     summary="Update an existing template identified by id",
      *     tags={"Templates"},
      *     security={
@@ -140,10 +137,7 @@ interface TemplatesAdminApiContract
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Template")
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="template updated successfully",
-     *      ),
+     *     @OA\Response(response=200, description="template updated successfully", @OA\JsonContent(ref="#/components/schemas/TemplateRecordResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -173,7 +167,7 @@ interface TemplatesAdminApiContract
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/templates/{id}",
+     *     path="/api/admin/templates/{id}", operationId="templates.delete",
      *     summary="Delete a template identified by a id",
      *     tags={"Templates"},
      *     security={
@@ -188,10 +182,7 @@ interface TemplatesAdminApiContract
      *             type="integer"
      *         )
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="template deleted successfully",
-     *      ),
+     *     @OA\Response(response=200, description="template deleted successfully", @OA\JsonContent(ref="#/components/schemas/ApiBooleanResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -259,7 +250,7 @@ interface TemplatesAdminApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/admin/templates/variables",
+     *     path="/api/admin/templates/variables", operationId="templates.variables",
      *     summary="Dictionary list of available template variables",
      *     tags={"Templates"},
      *     security={
@@ -274,10 +265,7 @@ interface TemplatesAdminApiContract
      *             type="string"
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="",
-     *      ),
+     *     @OA\Response(response=200, description="", @OA\JsonContent(ref="#/components/schemas/TemplateVariablesResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -300,7 +288,7 @@ interface TemplatesAdminApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/admin/templates/{id}/preview",
+     *     path="/api/admin/templates/{id}/preview", operationId="templates.preview",
      *     summary="Read a template identified by a given id identifier",
      *     tags={"Templates"},
      *     security={
@@ -315,10 +303,7 @@ interface TemplatesAdminApiContract
      *             type="string"
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Preview details",
-     *      ),
+     *     @OA\Response(response=200, description="Preview details", @OA\JsonContent(ref="#/components/schemas/TemplatePreviewResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -340,7 +325,7 @@ interface TemplatesAdminApiContract
 
     /**
      * @OA\Post(
-     *     path="/api/admin/templates/{id}/assign",
+     *     path="/api/admin/templates/{id}/assign", operationId="templates.assign",
      *     summary="Assign template to model (of class assignable to the Variable Set)",
      *     tags={"Templates"},
      *     security={
@@ -364,10 +349,7 @@ interface TemplatesAdminApiContract
      *              ),
      *          )
      *      ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Preview details",
-     *      ),
+     *     @OA\Response(response=200, description="Preview details", @OA\JsonContent(ref="#/components/schemas/TemplateResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -389,7 +371,7 @@ interface TemplatesAdminApiContract
 
     /**
      * @OA\Post(
-     *     path="/api/admin/templates/{id}/unassign",
+     *     path="/api/admin/templates/{id}/unassign", operationId="templates.unassign",
      *     summary="Remove template assignment to model",
      *     tags={"Templates"},
      *     security={
@@ -413,10 +395,7 @@ interface TemplatesAdminApiContract
      *              ),
      *          )
      *      ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Preview details",
-     *      ),
+     *     @OA\Response(response=200, description="Preview details", @OA\JsonContent(ref="#/components/schemas/TemplateResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -438,7 +417,7 @@ interface TemplatesAdminApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/admin/templates/assignable",
+     *     path="/api/admin/templates/assignable", operationId="templates.assignable",
      *     summary="Get Templates that can be assigned to model",
      *     tags={"Templates"},
      *     security={
@@ -471,10 +450,7 @@ interface TemplatesAdminApiContract
      *             type="string"
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="List of Templates that can be assigned",
-     *     ),
+     *     @OA\Response(response=200, description="List of Templates that can be assigned", @OA\JsonContent(ref="#/components/schemas/TemplateListResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -496,7 +472,7 @@ interface TemplatesAdminApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/admin/templates/assigned",
+     *     path="/api/admin/templates/assigned", operationId="templates.assigned",
      *     summary="Get Template assigned to the model",
      *     tags={"Templates"},
      *     security={
@@ -520,10 +496,7 @@ interface TemplatesAdminApiContract
      *             type="integer"
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Preview details",
-     *      ),
+     *     @OA\Response(response=200, description="Preview details", @OA\JsonContent(ref="#/components/schemas/TemplateListResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",

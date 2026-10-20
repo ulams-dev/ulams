@@ -1,6 +1,6 @@
 # Phase 4 plan: Personalisation
 
-Status: approved by blanket instruction 2026-10-20, defaults used (open owner decisions #58 to #63 are closed; the ADRs 0057 to 0062 stay Proposed until accepted, see #64). Implementation in progress: M4.1 to M4.4 shipped in the first PR (see `api/packages/learner-insights/README.md`).
+Status: approved by blanket instruction 2026-10-20, defaults used (open owner decisions #58 to #63 are closed; the ADRs 0057 to 0062 stay Proposed until accepted, see #64). Implementation in progress: M4.1 to M4.4 in the first PR, M4.5 (API) in the second (see `api/packages/learner-insights/README.md`).
 
 Phase 4 adds the second pillar of the product: courses that **adapt to each learner**, with every
 recommendation explained and grounded in the course's cited sources. It covers every Phase 4 item in
@@ -970,8 +970,8 @@ Where the code differs from the plan above, and what is still open:
 - `quiz.answer` signals are written when an attempt finishes (one per graded answer), not from an
   answer observer: open answers have no score until graded, and the finish event carries the attempt.
   The hashed `chosen` option ids (needed for the remediation pattern key, M4.5) are not recorded yet.
-- Not yet recorded: `xapi.result` (LRS observer) and `h5p.result` (H5P progress observer). The types
-  exist in `SignalType`; the observers are open items of M4.1.
+- Not yet recorded: `xapi.result` (LRS observer, cmi5 and xAPI: a statement has to be mapped to a topic through
+  the launch session first). `h5p.result` is recorded from the H5P progress model (and by the backfill).
 - `repetition` alone is evaluated and returned by the scorer (`lowWeight`), but not persisted or
   announced: only elements with a strong rule get a stored status and a `LearnerStruggling` event.
 - Course-level reasons of a struggling or at-risk learner include the reasons of the struggling elements.
@@ -983,3 +983,14 @@ Where the code differs from the plan above, and what is still open:
 - Nudges use the notifications package: `LearnerNudged` carries a `User`; the e-mail template is in
   `templates-email`. `n=<id>.<signature>` in the continue link is verified by
   `POST /api/learner-insights/nudges/opened`.
+
+## 20. Implementation notes (M4.5)
+
+- Remediation documents are stored as declarative blocks (`Prose`, `WorkedExample`, `PracticeQuestion`,
+  `ElaborativeQuestion`, each with props and citations). The learner catalogue components that render them
+  and the "Extra help for you" card are not built yet (front work of M4.5), so the API returns the document
+  as data.
+- One remediation row per `(pattern_key, kind)` and one model call per row; the pattern detail (the wrong
+  option ids) is empty until `quiz.answer` signals carry the chosen options.
+- `reflection_feedback` is limited per learner per day with a cache counter, not stored in the database.
+- The holdout (20 % get no remediation) belongs to M4.8 with the experiments package.

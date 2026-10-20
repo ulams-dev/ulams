@@ -262,7 +262,7 @@ interface UserSwagger
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/users/{id}",
+     *     path="/api/admin/users/{id}", operationId="users.delete",
      *     summary="Delete user",
      *     description="",
      *     tags={"Admin Users"},
@@ -278,10 +278,7 @@ interface UserSwagger
      *              format="int64",
      *          ),
      *      ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="successful operation",
-     *     ),
+     *     @OA\Response(response=200, description="successful operation", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
      *     @OA\Response(
      *          response=400,
      *          description="Invalid id",

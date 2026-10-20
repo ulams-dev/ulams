@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Ulams\Ai\Fake\FakeResponders;
+use Ulams\Ai\Prompts\PromptRegistry;
 use Ulams\Auth\Events\AccountDeleted;
 use Ulams\Auth\Events\Login;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
@@ -15,14 +17,19 @@ use Ulams\Courses\Events\CourseFinished;
 use Ulams\Courses\Events\CourseStarted;
 use Ulams\Courses\Events\TopicFinished;
 use Ulams\Courses\Events\TopicProgressUpdated;
+use Ulams\Courses\Models\H5PUserProgress;
 use Ulams\LearnerInsights\Console\BackfillCommand;
 use Ulams\LearnerInsights\Console\CohortStatsCommand;
 use Ulams\LearnerInsights\Console\EvaluateCommand;
 use Ulams\LearnerInsights\Console\PruneCommand;
+use Ulams\LearnerInsights\Console\RetireRemediationsCommand;
 use Ulams\LearnerInsights\Console\TimelineCommand;
 use Ulams\LearnerInsights\Events\LearnerAtRisk;
 use Ulams\LearnerInsights\Events\LearnerRecovered;
+use Ulams\LearnerInsights\Events\LearnerStruggling;
+use Ulams\LearnerInsights\Fake\RemediationResponders;
 use Ulams\LearnerInsights\Listeners\RecordSignals;
+use Ulams\LearnerInsights\Remediation\RemediationService;
 use Ulams\LearnerInsights\Scoring\RiskScorer;
 use Ulams\LearnerInsights\Scoring\RuleBasedScorer;
 use Ulams\LearnerInsights\Services\Eligibility;
@@ -51,6 +58,11 @@ class UlamsLearnerInsightsServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/learner_insights.php', 'learner_insights');
         $this->app->register(UlamsCourseBuilderServiceProvider::class);
+        // AI tasks of this package (the profile of a task is never a model id, ADR 0013)
+        $tasks = (array) config('ai.tasks', []);
+        $tasks['remediation'] ??= ['profile' => env('AI_TASK_REMEDIATION_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 6000];
+        $tasks['reflection_feedback'] ??= ['profile' => env('AI_TASK_REFLECTION_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 2000];
+        config(['ai.tasks' => $tasks]);
 
         if (class_exists(UlamsSettingsServiceProvider::class)) {
             if (!$this->app->getProviders(UlamsSettingsServiceProvider::class)) {
@@ -76,6 +88,8 @@ class UlamsLearnerInsightsServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->app->make(PromptRegistry::class)->addPath('learner-insights', __DIR__ . '/../resources/prompts');
+        RemediationResponders::register($this->app->make(FakeResponders::class));
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'learner-insights');
 
         RateLimiter::for('learner-insights-signals', fn (Request $request) => Limit::perMinute((int) config('learner_insights.client_signals_per_minute'))->by('li-signals:' . ($request->user()?->getKey() ?? $request->ip())));
@@ -88,14 +102,16 @@ class UlamsLearnerInsightsServiceProvider extends ServiceProvider
         Event::listen(QuizAttemptFinishedEvent::class, [RecordSignals::class, 'quizFinished']);
         Event::listen(ScormScoCompleted::class, [RecordSignals::class, 'scormCompleted']);
         Event::listen(Login::class, [RecordSignals::class, 'login']);
+        H5PUserProgress::saved(fn (H5PUserProgress $p) => $this->app->make(RecordSignals::class)->h5pProgress($p));
         // interventions: an at-risk learner may be nudged; a recovery closes open interventions
         Event::listen(LearnerAtRisk::class, fn (LearnerAtRisk $e) => $this->app->make(NudgeService::class)->consider($e->userId, $e->courseId, $e->reasons));
+        Event::listen(LearnerStruggling::class, fn (LearnerStruggling $e) => $this->app->make(RemediationService::class)->onStruggling($e->userId, $e->courseId, $e->elementKey, $e->reasons));
         Event::listen(LearnerRecovered::class, fn (LearnerRecovered $e) => $this->app->make(OutcomeTracker::class)->recovered($e->userId, $e->courseId, $e->elementKey));
         // erasure right: everything stored about a deleted account goes with it
         Event::listen(AccountDeleted::class, fn (AccountDeleted $e) => $this->app->make(Privacy::class)->erase((int) $e->getUser()->getAuthIdentifier(), null, 'account_deleted'));
 
         if ($this->app->runningInConsole()) {
-            $this->commands([BackfillCommand::class, TimelineCommand::class, PruneCommand::class, EvaluateCommand::class, CohortStatsCommand::class]);
+            $this->commands([BackfillCommand::class, TimelineCommand::class, PruneCommand::class, EvaluateCommand::class, CohortStatsCommand::class, RetireRemediationsCommand::class]);
         }
 
         // per tenant: `schedule:run` runs for the platform and for every tenant domain
@@ -103,6 +119,7 @@ class UlamsLearnerInsightsServiceProvider extends ServiceProvider
             $schedule->command('learner-insights:prune')->dailyAt('02:40')->withoutOverlapping();
             $schedule->command('learner-insights:cohort-stats')->dailyAt('03:00')->withoutOverlapping();
             $schedule->command('learner-insights:evaluate')->dailyAt('03:30')->withoutOverlapping();
+            $schedule->command('learner-insights:retire-remediations')->dailyAt('04:00')->withoutOverlapping();
         });
     }
 }

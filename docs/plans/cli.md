@@ -673,6 +673,7 @@ exit 12 `FEATURE_DISABLED` before calling the API.
   column "untyped", sorted by noun). Pattern: one reusable `Envelope` schema with `allOf` + the resource
   schema already defined in the package's `Swagger/` folder. Each batch regenerates `spec/openapi.json`,
   `front/sdk/src/generated/openapi.ts` and the CLI commands in the same PR.
+- **Status 2026-10-20:** 60 operations of the generated noun commands (templates, pages, roles, csv, model-fields, users and groups delete, scorm, cmi5, adapt, interactive, liascript, user-submissions) have typed envelope responses and `operationId`s equal to the CLI ids, as docblock annotations with the shared schemas in `api/app/Http/Controllers/Swagger/ResponseSchemas.php`; the rest and the conversion to attributes (L0-11) are open.
 - Add stable `operationId`s while converting (`courses.list` style, matching the CLI id) so the generator
   can prefer them over path-derived names. Not required for M2.
 - New endpoints from S1–S4 get attributes (if L0-11 has landed) or docblocks.

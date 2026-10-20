@@ -51,7 +51,7 @@ interface PagesAdminApiContract
 
     /**
      * @OA\Post(
-     *     path="/api/admin/pages",
+     *     path="/api/admin/pages", operationId="pages.create",
      *     summary="Create a new page identified by id",
      *     tags={"Pages"},
      *     security={
@@ -62,10 +62,7 @@ interface PagesAdminApiContract
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Page")
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="page created successfully",
-     *      ),
+     *     @OA\Response(response=200, description="page created successfully", @OA\JsonContent(ref="#/components/schemas/PageResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -92,7 +89,7 @@ interface PagesAdminApiContract
 
     /**
      * @OA\Patch(
-     *     path="/api/admin/pages/{id}",
+     *     path="/api/admin/pages/{id}", operationId="pages.update",
      *     summary="Update an existing page identified by id",
      *     tags={"Pages"},
      *     security={
@@ -112,10 +109,7 @@ interface PagesAdminApiContract
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Page")
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="page updated successfully",
-     *      ),
+     *     @OA\Response(response=200, description="page updated successfully", @OA\JsonContent(ref="#/components/schemas/PageResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -142,7 +136,7 @@ interface PagesAdminApiContract
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/pages/{id}",
+     *     path="/api/admin/pages/{id}", operationId="pages.delete",
      *     summary="Delete a page identified by a id",
      *     tags={"Pages"},
      *     security={
@@ -157,10 +151,7 @@ interface PagesAdminApiContract
      *             type="integer"
      *         )
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="page deleted successfully",
-     *      ),
+     *     @OA\Response(response=200, description="page deleted successfully", @OA\JsonContent(ref="#/components/schemas/ApiBooleanResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",

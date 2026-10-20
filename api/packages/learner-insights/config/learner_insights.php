@@ -12,6 +12,11 @@ return [
     'queue_connection' => env('LEARNER_INSIGHTS_QUEUE_CONNECTION'),
     'queue' => env('LEARNER_INSIGHTS_QUEUE'),
 
+    // Queue for the jobs that call the model (remediation generation, up to 300 s): the Course Builder queue, whose
+    // `retry_after` is above its job timeout (ADR 0083), like Living Course. The short jobs above stay on the default queue.
+    'ai_queue_connection' => env('LEARNER_INSIGHTS_AI_QUEUE_CONNECTION', env('COURSE_BUILDER_QUEUE_CONNECTION', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? env('QUEUE_CONNECTION') . '-builder' : null)),
+    'ai_queue' => env('LEARNER_INSIGHTS_AI_QUEUE', env('COURSE_BUILDER_QUEUE', in_array(env('QUEUE_CONNECTION'), ['database', 'redis'], true) ? 'builder' : null)),
+
     // a burst of signals of one learner in one course costs one evaluation per this many seconds
     'evaluate_debounce_seconds' => (int) env('LEARNER_INSIGHTS_EVALUATE_DEBOUNCE_SECONDS', 60),
 
@@ -25,6 +30,20 @@ return [
         'per_course_days' => (int) env('LEARNER_INSIGHTS_NUDGES_PER_COURSE_DAYS', 7),
         // and at most this many per learner in 7 days across courses
         'per_learner_week' => (int) env('LEARNER_INSIGHTS_NUDGES_PER_LEARNER_WEEK', 2),
+    ],
+
+    // Personal remediations (plan 7.2): grounded extra help, cached per struggle pattern, AI required
+    'remediation' => [
+        'enabled' => (bool) env('LEARNER_INSIGHTS_REMEDIATION_ENABLED', true),
+        // new generations per learner per day; above it the learner sees nothing new (cached help still works)
+        'per_learner_day' => (int) env('LEARNER_INSIGHTS_REMEDIATION_PER_LEARNER_DAY', 3),
+        // feedback on a learner's own explanation (Feynman), per learner per day
+        'reflections_per_day' => (int) env('LEARNER_INSIGHTS_REFLECTIONS_PER_DAY', 5),
+        // monthly AI spend of remediations, in USD, for the tenant and for one course
+        'tenant_monthly_usd' => (float) env('LEARNER_INSIGHTS_MONTHLY_USD', 20),
+        'course_monthly_usd' => (float) env('LEARNER_INSIGHTS_COURSE_MONTHLY_USD', 5),
+        // a failed generation is not retried for this many hours
+        'retry_after_hours' => 24,
     ],
 
     // Days an intervention may take to count as recovered

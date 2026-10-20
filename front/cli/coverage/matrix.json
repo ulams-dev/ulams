@@ -1,5 +1,5 @@
 {
- "summary": "565/627 covered, 62 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "565/631 covered, 66 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -3000,6 +3000,30 @@
    "summary": "Progress events from the lesson page",
    "command": "",
    "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/learner-insights/assignments/{assignment}/feedback",
+   "summary": "Say whether a piece of extra help was useful",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/learner-insights/assignments/{assignment}/hide",
+   "summary": "Hide a piece of extra help",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/learner-insights/assignments/{assignment}/reflection",
+   "summary": "Get feedback on the learner's own explanation of the idea (the text is sent to the AI provider and not stored)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/learner-insights/courses/{course}/topics/{topic}/support",
+   "summary": "Extra help for the learner in a topic, with the reasons it was offered",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/learner-insights/me",

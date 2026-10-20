@@ -1,0 +1,182 @@
+---
+/** Personalisation & privacy: my status with reasons, switches, export, erase (Learner Insights, ADR 0061). */
+import Render from "@ulams/ui/Render.astro";
+import Base from "../../layouts/Base.astro";
+import { getSettings, getSiteModel } from "../../lib/data.ts";
+import { chromeFor, withSessionLink } from "../../lib/docs.ts";
+import { themeFor } from "../../lib/theme.ts";
+import { FAILURE_TEXT, eraseInsights, exportInsights, getInsights, parseSettingsForm, saveSettings, statusText } from "../../lib/insights.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/");
+const token = Astro.locals.token;
+if (!token) return Astro.redirect("/login?next=/account/personalisation");
+
+let current = await getInsights(tenant, token);
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  const action = String(form.get("action") ?? "");
+  if (action === "export") {
+    const file = await exportInsights(tenant, token);
+    if (file.ok) {
+      return new Response(file.body, {
+        headers: {
+          "Content-Type": "application/json",
+          "Content-Disposition": 'attachment; filename="my-learning-data.json"',
+          "Cache-Control": "private, no-store",
+        },
+      });
+    }
+    return Astro.redirect("/account/personalisation?notice=export-failed", 303);
+  }
+  if (action === "save-settings" && current.ok) {
+    const result = await saveSettings(tenant, token, parseSettingsForm(form, current.me.requiresConsent));
+    return Astro.redirect(`/account/personalisation?notice=${result.ok ? "saved" : "failed"}`, 303);
+  }
+  if (action === "erase") {
+    if (form.get("confirm") !== "on") return Astro.redirect("/account/personalisation?notice=confirm-erase", 303);
+    const result = await eraseInsights(tenant, token);
+    return Astro.redirect(`/account/personalisation?notice=${result.ok ? "erased" : "failed"}`, 303);
+  }
+}
+
+const NOTICES: Record<string, { text: string; error: boolean }> = {
+  saved: { text: "Your choices are saved.", error: false },
+  erased: { text: "What was stored about your learning in this academy has been deleted. Your choices stay as they were.", error: false },
+  failed: { text: "That did not work. Try again in a moment.", error: true },
+  "export-failed": { text: "Your data could not be prepared. Try again in a moment.", error: true },
+  "confirm-erase": { text: "Tick the box to confirm before deleting.", error: true },
+};
+const notice = NOTICES[Astro.url.searchParams.get("notice") ?? ""];
+
+const [settings, site] = await Promise.all([getSettings(tenant).catch(() => null), getSiteModel(tenant).catch(() => null)]);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const chrome = chromeFor(theme);
+const me = current.ok ? current.me : null;
+Astro.response.headers.set("Cache-Control", "private, no-store");
+---
+
+<Base theme={theme} accent={settings?.theme?.accent} title={`Personalisation & privacy — ${site?.tenant.name ?? "ulams"}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  {chrome.header && site && <Render doc={withSessionLink(chrome.header, true)} data={site} />}
+  <main id="main" class="u-container u-account" tabindex="-1">
+    <nav aria-label="Breadcrumb"><a href="/account">My learning</a></nav>
+    <h1 class="u-h2">Personalisation &amp; privacy</h1>
+    <p class="u-account__lead">
+      This academy can follow how you move through a course to notice when a part is hard or when you have been away, and then offer extra
+      help or one reminder. You see everything it knows about you here, you can switch any part off, and you can take your data with you or
+      delete it. It never affects your results, certificates or access.
+    </p>
+
+    {notice && <p class={notice.error ? "u-account__error" : "u-account__notice"} role={notice.error ? "alert" : "status"}>{notice.text}</p>}
+
+    {
+      !me ? (
+        <p class="u-account__empty" role="alert">
+          {FAILURE_TEXT[current.ok ? "unavailable" : current.reason]} <a href="/account/personalisation">Try again</a>.
+        </p>
+      ) : (
+        <>
+          {!me.enabled && (
+            <p class="u-account__notice" role="status">
+              Personalisation is switched off in this academy, so nothing is recorded about you. The choices below apply if it is switched on later.
+            </p>
+          )}
+
+          <section aria-labelledby="status-title" class="u-account__courses">
+            <h2 id="status-title" class="u-h2">Where you are</h2>
+            {
+              me.courses.length === 0 ? (
+                <p class="u-account__empty">Nothing is flagged in any of your courses.</p>
+              ) : (
+                <ul role="list">
+                  {me.courses.map((c) => {
+                    const s = statusText(c.status);
+                    return (
+                      <li class="u-card">
+                        <h3>{c.title ?? `Course ${c.courseId}`}</h3>
+                        <p>
+                          <strong>{s.label}.</strong> {s.help}
+                        </p>
+                        {c.reasons.length > 0 && (
+                          <>
+                            <p id={`why-${c.courseId}`}>Why you are seeing this:</p>
+                            <ul aria-labelledby={`why-${c.courseId}`}>
+                              {c.reasons.map((r) => <li>{r.message}</li>)}
+                            </ul>
+                          </>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )
+            }
+          </section>
+
+          <form method="post" action="/account/personalisation" class="u-account__create u-card" aria-labelledby="choices-title">
+            <h2 id="choices-title" class="u-h2">Your choices</h2>
+            <input type="hidden" name="action" value="save-settings" />
+            <label class="u-account__choice">
+              <input type="checkbox" name="enabled" checked={me.settings.enabled} />
+              <span>
+                <strong>Follow my learning</strong>
+                <span class="u-account__hint">Turn off to stop recording anything about how you move through courses.</span>
+              </span>
+            </label>
+            <label class="u-account__choice">
+              <input type="checkbox" name="help" checked={me.settings.help} />
+              <span>
+                <strong>Offer me extra help</strong>
+                <span class="u-account__hint">Short explanations and practice written from the course's own sources when a part is hard. It is labelled as AI-generated.</span>
+              </span>
+            </label>
+            <label class="u-account__choice">
+              <input type="checkbox" name="nudges" checked={me.settings.nudges} />
+              <span>
+                <strong>Send me a reminder when I have been away</strong>
+                <span class="u-account__hint">At most one per course a week, in the app and by e-mail.</span>
+              </span>
+            </label>
+            {me.requiresConsent && (
+              <label class="u-account__choice">
+                <input type="checkbox" name="consent" checked={me.settings.consent !== null} />
+                <span>
+                  <strong>I agree to this</strong>
+                  <span class="u-account__hint">This academy only records anything after you agree. You can withdraw at any time.</span>
+                </span>
+              </label>
+            )}
+            <label class="u-account__choice">
+              <input type="checkbox" name="erase_existing" />
+              <span>
+                <strong>Also delete what was recorded so far when I turn "Follow my learning" off</strong>
+              </span>
+            </label>
+            <button class="u-btn" type="submit">Save my choices</button>
+          </form>
+
+          <section class="u-account__create u-card" aria-labelledby="data-title">
+            <h2 id="data-title" class="u-h2">Your data</h2>
+            <p>
+              Activity is kept for {me.retention.signalsDays} days, statuses and history for {me.retention.historyDays} days, then deleted automatically.
+            </p>
+            <form method="post" action="/account/personalisation">
+              <input type="hidden" name="action" value="export" />
+              <button class="u-btn u-btn--ghost" type="submit">Download my data (JSON)</button>
+            </form>
+            <form method="post" action="/account/personalisation" aria-labelledby="erase-title">
+              <h3 id="erase-title">Delete my data</h3>
+              <input type="hidden" name="action" value="erase" />
+              <label class="u-account__choice">
+                <input type="checkbox" name="confirm" />
+                <span>I understand that this deletes everything stored about my learning here, and cannot be undone.</span>
+              </label>
+              <button class="u-btn u-btn--ghost" type="submit">Delete my data</button>
+            </form>
+          </section>
+        </>
+      )
+    }
+  </main>
+</Base>

@@ -5,6 +5,7 @@ use Ulams\LearnerInsights\Http\Controllers\ClientSignalController;
 use Ulams\LearnerInsights\Http\Controllers\MeController;
 use Ulams\LearnerInsights\Http\Controllers\NudgeOpenedController;
 use Ulams\LearnerInsights\Http\Controllers\SettingsController;
+use Ulams\LearnerInsights\Http\Controllers\SupportController;
 
 // Learner endpoints: every route acts on the authenticated learner only.
 Route::group([
@@ -12,6 +13,10 @@ Route::group([
     'middleware' => ['auth:api'],
 ], function () {
     Route::post('signals', [ClientSignalController::class, 'store'])->middleware('throttle:learner-insights-signals');
+    Route::get('courses/{course}/topics/{topic}/support', [SupportController::class, 'index'])->whereNumber(['course', 'topic']);
+    Route::post('assignments/{assignment}/feedback', [SupportController::class, 'feedback']);
+    Route::post('assignments/{assignment}/hide', [SupportController::class, 'hide']);
+    Route::post('assignments/{assignment}/reflection', [SupportController::class, 'reflection'])->middleware('throttle:10,1');
     Route::post('nudges/opened', [NudgeOpenedController::class, 'store']);
     Route::get('me', [MeController::class, 'show']);
     Route::put('me/settings', [MeController::class, 'updateSettings']);
