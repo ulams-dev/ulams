@@ -19,8 +19,9 @@ class BackfillJob implements ShouldQueue
 
     public function __construct(public readonly ?int $courseId = null)
     {
-        $this->onConnection(config('learner_insights.queue_connection'));
-        $this->onQueue(config('learner_insights.queue'));
+        // up to 30 minutes: the long Course Builder queue, whose retry_after is above the timeout (ADR 0083)
+        $this->onConnection(config('learner_insights.ai_queue_connection'));
+        $this->onQueue(config('learner_insights.ai_queue'));
     }
 
     public function handle(): void
