@@ -16,10 +16,13 @@ export const SCHEDULES: Array<{ value: Schedule; label: string }> = [
 
 export const scheduleLabel = (schedule: string | null | undefined): string => SCHEDULES.find((s) => s.value === schedule)?.label ?? "Not scheduled";
 
-export const HOSTS: Array<{ value: GitHost; label: string }> = [
+export type FormHost = GitHost | "other";
+
+export const HOSTS: Array<{ value: FormHost; label: string }> = [
   { value: "github", label: "GitHub" },
   { value: "gitlab", label: "GitLab" },
   { value: "gitea", label: "Gitea or Forgejo" },
+  { value: "other", label: "Another server (read with git)" },
 ];
 
 export const MAX_URLS = 20;
@@ -64,6 +67,7 @@ export function normaliseRepository(text: string): string {
 /** The first problem of the form in plain words, or null. The API checks everything again. */
 export function gitFormProblem(form: GitForm): string | null {
   if (!HOSTS.some((h) => h.value === form.host)) return "Choose where the repository lives.";
+  if (form.host === "other") return /^https:\/\/[^\s@/]+(\/\S*)?$/i.test(form.repository.trim()) ? null : "Write the full address of the repository, starting with https://, for example https://git.example.com/team/docs.git.";
   if (!REPOSITORY.test(normaliseRepository(form.repository))) return "Write the repository as owner/name, for example ulams-dev/docs.";
   if (form.host === "gitea" && !/^https?:\/\/\S+$/i.test(form.baseUrl.trim())) return "Gitea and Forgejo need the address of your server, for example https://git.example.com.";
   if (form.baseUrl.trim() !== "" && !/^https?:\/\/\S+$/i.test(form.baseUrl.trim())) return "The server address must start with https://.";
@@ -71,6 +75,14 @@ export function gitFormProblem(form: GitForm): string | null {
 }
 
 export function gitPayload(form: GitForm): ConnectInput {
+  if (form.host === "other") {
+    const config: Record<string, unknown> = { url: form.repository.trim() };
+    if (form.branch.trim()) config.branch = form.branch.trim();
+    const paths = splitList(form.paths);
+    if (paths.length) config.paths = paths;
+    const token = form.token.trim();
+    return { connector: "git-cli", config, ...(token ? { secrets: { token } } : {}), schedule: asSchedule(form.schedule) };
+  }
   const config: Record<string, unknown> = { host: form.host, repository: normaliseRepository(form.repository) };
   if (form.host !== "github" && form.baseUrl.trim()) config.base_url = form.baseUrl.trim().replace(/\/+$/, "");
   if (form.branch.trim()) config.branch = form.branch.trim();
@@ -131,6 +143,16 @@ export function connectionFacts(c: SourceConnection): ConnectionFact[] {
     if (paths.length) facts.push({ label: "Paths", value: paths.join(", ") });
     return facts;
   }
+  if (c.connector === "git-cli") {
+    const facts: ConnectionFact[] = [
+      { label: "Server", value: hostOf(typeof cfg.url === "string" ? cfg.url : undefined) },
+      { label: "Repository", value: (typeof cfg.url === "string" ? (() => { try { return new URL(cfg.url).pathname.replace(/^\/|\.git$/g, ""); } catch { return cfg.url; } })() : "") },
+      { label: "Branch", value: String(cfg.branch ?? "main") },
+    ];
+    const paths = Array.isArray(cfg.paths) ? cfg.paths.map(String) : [];
+    if (paths.length) facts.push({ label: "Paths", value: paths.join(", ") });
+    return facts;
+  }
   if (c.connector === "url") {
     const urls = Array.isArray(cfg.urls) ? cfg.urls.map(String) : [];
     const facts: ConnectionFact[] = [{ label: urls.length === 1 ? "Page" : "Pages", value: urls.length > 1 ? `${urls.length} pages on ${hostOf(urls[0])}` : (urls[0] ?? "") }];
@@ -157,7 +179,7 @@ export function connectionUrls(c: SourceConnection): string[] {
 export const hasToken = (c: Pick<SourceConnection, "secretsSet">): boolean => (c.secretsSet ?? []).includes("token");
 
 export interface HostHint {
-  host: GitHost;
+  host: FormHost;
   title: string;
   steps: string[];
 }
@@ -190,6 +212,15 @@ export const WEBHOOK_HINTS: HostHint[] = [
       "Open the repository, then Settings, Webhooks, Add webhook, Gitea (or Forgejo).",
       "Paste the webhook URL into Target URL and set Content type to application/json.",
       "Paste the secret into Secret and choose Push events only.",
+    ],
+  },
+  {
+    host: "other",
+    title: "your Git server",
+    steps: [
+      "Most servers cannot sign a webhook the way we need, so a small script or CI job does it: after each push, send a POST with a JSON body such as {\"ref\": \"refs/heads/main\"} to the webhook URL.",
+      "Compute the HMAC-SHA256 of the exact body with the secret and send it in the X-Ulams-Signature header as sha256=<hex>.",
+      "Or skip the webhook: the source is checked on your schedule.",
     ],
   },
 ];

@@ -110,6 +110,12 @@ final class SourceConnections
     /** @param array<string,mixed> $config */
     private function name(string $key, array $config): string
     {
+        if (isset($config['url']) && is_string($config['url'])) {
+            $parts = parse_url($config['url']) ?: [];
+
+            return trim((string) ($parts['host'] ?? '') . '/' . trim((string) ($parts['path'] ?? ''), '/'), '/') ?: $key;
+        }
+
         return (string) ($config['repository'] ?? $config['urls'][0] ?? $key);
     }
 

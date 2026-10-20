@@ -31,6 +31,7 @@ use Ulams\CourseBuilder\Pipeline\Llm;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\SessionState;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
+use Ulams\LivingCourse\Connectors\GitCliConnector;
 use Ulams\LivingCourse\Connectors\GitConnector;
 use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
 use Ulams\LivingCourse\Connectors\UploadConnector;
@@ -87,6 +88,7 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
         $registry->register(new UploadConnector());
         $registry->register(new GitConnector());
         $registry->register(new UrlConnector());
+        $registry->register(new GitCliConnector());
         $this->app->make(PromptRegistry::class)->addPath('living-course', __DIR__ . '/../resources/prompts');
         UpdateResponder::register($this->app->make(FakeResponders::class));
         SessionState::extendSummary('living-course', fn (Session $s) => ['freshness' => $this->app->make(StalenessService::class)->summary($s)]);

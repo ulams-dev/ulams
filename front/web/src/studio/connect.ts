@@ -60,10 +60,10 @@ export function mountConnect(root: HTMLElement, deps: ConnectDeps = {}): void {
   const gitSubmit = h("button", { type: "submit", class: "cb-btn cb-btn-primary" }, "Connect the repository") as HTMLButtonElement;
   const gitForm = h("form", { class: "st-connect-form cb-card", "aria-labelledby": "st-connect-git-title", "data-git-form": "", novalidate: true },
     h("h2", { id: "st-connect-git-title", class: "st-drop-title" }, "Connect a repository"),
-    h("p", { class: "cb-muted" }, "Read Markdown from GitHub, GitLab, Gitea or Forgejo. The course follows the repository: new commits become reviewable updates."),
+    h("p", { class: "cb-muted" }, "Read Markdown from GitHub, GitLab, Gitea, Forgejo or another Git server. The course follows the repository: new commits become reviewable updates."),
     field("Where does it live?", host),
     field("Server address", baseUrl, "Only for Gitea, Forgejo and a self-hosted GitLab, for example https://git.example.com."),
-    field("Repository", repository, "Write it as owner/name, for example ulams-dev/docs."),
+    field("Repository", repository, "Write it as owner/name, for example ulams-dev/docs. For another server, the full https address, for example https://git.example.com/team/docs.git (an admin must have turned this on)."),
     field("Branch", branch, "Leave empty for the default branch."),
     field("Folders and files to read", paths, "One pattern per line, for example docs/**/*.md. Leave empty to read every Markdown file."),
     field("Access token (optional)", token, "Public repositories work without one; GitHub then allows only 60 requests an hour. The token is stored for checks and never shown again."),
@@ -72,7 +72,7 @@ export function mountConnect(root: HTMLElement, deps: ConnectDeps = {}): void {
 
   const syncServerField = () => {
     const wrap = baseUrl.closest(".st-field") as HTMLElement;
-    wrap.hidden = host.value === "github";
+    wrap.hidden = host.value === "github" || host.value === "other";
     baseUrl.required = host.value === "gitea";
   };
   host.addEventListener("change", syncServerField);
@@ -145,7 +145,7 @@ export function mountConnect(root: HTMLElement, deps: ConnectDeps = {}): void {
       h("p", { class: "cb-muted" }, "Add a webhook on your host so changes are found at once. Without it we still check on your schedule."),
       result.connection.webhookUrl ? copyField("Webhook URL", result.connection.webhookUrl, { "data-webhook-url": "" }) : null,
       secretReveal(result.webhookSecret),
-      webhookHints(result.connection.config.host),
+      webhookHints(result.connection.connector === "git-cli" ? "other" : result.connection.config.host),
       h("div", { class: "cb-actions" }, link),
     ];
     done.replaceChildren(...parts.filter((n): n is Node => n !== null));

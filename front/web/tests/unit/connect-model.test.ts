@@ -29,6 +29,19 @@ describe("connect form model", () => {
     });
   });
 
+  it("builds the payload of another server, read with git, from its full https address", () => {
+    const other = git({ host: "other", repository: " https://git.example.com/team/docs.git ", baseUrl: "https://ignored.example", branch: "docs", paths: "docs/**/*.md", token: "tok" });
+    expect(gitFormProblem(other)).toBeNull();
+    expect(gitPayload(other)).toEqual({ connector: "git-cli", config: { url: "https://git.example.com/team/docs.git", branch: "docs", paths: ["docs/**/*.md"] }, secrets: { token: "tok" }, schedule: "daily" });
+    expect(gitFormProblem(git({ host: "other", repository: "team/docs" }))).toMatch(/starting with https/);
+    expect(gitFormProblem(git({ host: "other", repository: "http://git.example.com/a.git" }))).toMatch(/starting with https/);
+    expect(gitFormProblem(git({ host: "other", repository: "https://user@git.example.com/a.git" }))).toMatch(/starting with https/);
+    expect(connectionFacts({ connector: "git-cli", config: { url: "https://git.example.com/team/docs.git", branch: "docs" } } as never)).toEqual([
+      { label: "Server", value: "git.example.com" }, { label: "Repository", value: "team/docs" }, { label: "Branch", value: "docs" },
+    ]);
+    expect(hintFor("other").title).toBe("your Git server");
+  });
+
   it("does not send a server address for GitHub and falls back to a daily schedule", () => {
     const payload = gitPayload(git({ baseUrl: "https://example.com", schedule: "yearly" }));
     expect(payload.config).not.toHaveProperty("base_url");
