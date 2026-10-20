@@ -1,5 +1,5 @@
 {
- "summary": "536/610 covered, 62 excluded, 12 missing, 5 routes missing from the spec",
+ "summary": "548/610 covered, 62 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -154,56 +154,56 @@
   {
    "key": "GET /api/admin/compliance/assignments",
    "summary": "List required-training assignments",
-   "command": "",
-   "status": "missing"
+   "command": "compliance.assignments-list",
+   "status": "covered"
   },
   {
    "key": "POST /api/admin/compliance/assignments",
    "summary": "Assign a required course to users",
-   "command": "",
-   "status": "missing"
+   "command": "compliance.assignments-add",
+   "status": "covered"
   },
   {
    "key": "DELETE /api/admin/compliance/assignments/{id}",
    "summary": "Cancel an open assignment",
-   "command": "",
-   "status": "missing"
+   "command": "compliance.assignments-delete",
+   "status": "covered"
   },
   {
    "key": "GET /api/admin/compliance/courses/{course}/settings",
    "summary": "Compliance settings of a course (defaults when none are saved)",
-   "command": "",
-   "status": "missing"
+   "command": "compliance.courses-settings-list",
+   "status": "covered"
   },
   {
    "key": "PUT /api/admin/compliance/courses/{course}/settings",
    "summary": "Save the compliance settings of a course",
-   "command": "",
-   "status": "missing"
+   "command": "compliance.courses-settings-set",
+   "status": "covered"
   },
   {
    "key": "GET /api/admin/compliance/managers",
    "summary": "List manager links",
-   "command": "",
-   "status": "missing"
+   "command": "compliance.managers-list",
+   "status": "covered"
   },
   {
    "key": "PUT /api/admin/compliance/managers/{user}",
    "summary": "Set or clear the manager of a user",
-   "command": "",
-   "status": "missing"
+   "command": "compliance.managers-set",
+   "status": "covered"
   },
   {
    "key": "GET /api/admin/compliance/report",
    "summary": "Compliance report",
-   "command": "",
-   "status": "missing"
+   "command": "compliance.report",
+   "status": "covered"
   },
   {
    "key": "GET /api/admin/compliance/report/export",
    "summary": "Audit export of a compliance dataset",
-   "command": "",
-   "status": "missing"
+   "command": "compliance.report-export",
+   "status": "covered"
   },
   {
    "key": "GET /api/admin/config",
@@ -1312,8 +1312,8 @@
   {
    "key": "POST /api/admin/pdfs/{id}/revoke",
    "summary": "Revoke a certificate",
-   "command": "",
-   "status": "missing"
+   "command": "pdfs.revoke",
+   "status": "covered"
   },
   {
    "key": "GET /api/admin/productables/",
@@ -2584,14 +2584,14 @@
   {
    "key": "GET /api/compliance/my-assignments",
    "summary": "My required training",
-   "command": "",
-   "status": "missing"
+   "command": "my.compliance-my-assignments",
+   "status": "covered"
   },
   {
    "key": "GET /api/compliance/team/assignments",
    "summary": "Required training of my direct reports",
-   "command": "",
-   "status": "missing"
+   "command": "my.compliance-team-assignments",
+   "status": "covered"
   },
   {
    "key": "GET /api/config",
