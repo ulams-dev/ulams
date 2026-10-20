@@ -36,4 +36,7 @@ interface PersonalAccessTokenServiceContract
     public function find(string $tokenId): ?ApiTokenMeta;
 
     public function revoke(ApiTokenMeta $meta): void;
+
+    /** Set (or with null remove) the per-minute request limit of a scoped token. */
+    public function setRateLimit(ApiTokenMeta $meta, ?int $perMinute): ApiTokenMeta;
 }

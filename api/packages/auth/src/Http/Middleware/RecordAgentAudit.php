@@ -10,6 +10,7 @@ use Throwable;
 use Ulams\Auth\Models\AgentAuditLog;
 use Ulams\Auth\Support\TokenContext;
 use Ulams\Auth\Support\TokenScopes;
+use Ulams\Auth\Support\TokenUsage;
 
 /**
  * Writes the append-only agent audit log (ADR 0074, docs/plans/cli.md 6.3): one row per request made
@@ -36,6 +37,7 @@ class RecordAgentAudit
                 return;
             }
             $this->touch($context, $request);
+            TokenUsage::record($context->tokenId, $response->getStatusCode(), (bool) $request->attributes->get('ulams.rate_limited', false));
 
             $write = !in_array($request->getMethod(), ['GET', 'HEAD', 'OPTIONS'], true);
             $area = $request->attributes->get('ulams.scope_area');

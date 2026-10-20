@@ -37,6 +37,7 @@ other method `:write`. Scopes only narrow the user's own permissions.
 | `lti` | `admin/lti` |
 | `builder` | `admin/course-builder` |
 | `living-course` | `admin/living-course` (when installed) |
+| `webhooks` | `admin/webhooks`: outgoing webhook endpoints, delivery log, test sends and replays ([Outgoing webhooks](/developers/outgoing-webhooks/)) |
 | `learner` | profile, my courses, progress, bookmarks, notifications, cart, own orders |
 | `tokens` | `auth/tokens`, `admin/tokens`, `admin/agent-audit` |
 | `platform` | [platform tenant API](/operators/platform-api/) (platform hosts only) |
@@ -67,14 +68,43 @@ All limits of the API are in [Rate limits](/developers/rate-limits/).
 | `GET /api/auth/tokens` | Own scoped tokens (`include_revoked=1`) |
 | `POST /api/auth/tokens` `{name, scopes[], expires_in_days, kind, agent_name, rate_limit_per_minute}` | Create; 201 with `data.token` (shown once). A token can only create tokens whose scopes it already has |
 | `DELETE /api/auth/tokens/{id}` | Revoke own token |
+| `PATCH /api/auth/tokens/{id}` `{rate_limit_per_minute}` | Change the per-minute rate limit of own token (`null` removes it; scopes and expiry never change after creation) |
+| `GET /api/auth/tokens/{id}/usage?days=30` | Requests per day and the current rate limit window of own token |
 | `GET /api/auth/tokens/current` | The token of this request: scopes, kind, expiry, user, host and host kind |
 | `GET /api/admin/tokens` | Every user's tokens (`token_manage`; filters `user_id`, `kind`) |
 | `DELETE /api/admin/tokens/{id}` | Revoke any token |
+| `PATCH /api/admin/tokens/{id}` | Change the rate limit of any token (owner or `token_manage`) |
+| `GET /api/admin/tokens/{id}/usage` | Usage of any token (owner or `token_manage`) |
 | `GET /api/admin/tokens/{id}/audit` | Audit rows of one token (owner or `token_manage`) |
 | `GET /api/admin/agent-audit` | Audit log (`token_id`, `user_id`, `from`, `to`) |
 
 Lifetime: 1 to 365 days, 30 on a platform host; at most 50 active tokens per user
 (`AUTH_MAX_TOKENS_PER_USER`). The admin screen is described in [API tokens](/admin/api-tokens/).
+
+## Rate limits and usage
+
+A token can carry `rate_limit_per_minute` (1 to 6 000), set when it is created and changeable later with
+`PATCH`. The window is one minute per token; an exhausted token gets 429 `rate_limited` with
+`Retry-After`, and the refusal does not use up the scope check order (a 403 never counts against the limit).
+
+`GET /api/auth/tokens/{id}/usage` (or the `admin/` form) answers how the token is used, from counters
+that are written after the response, so they cost the request nothing:
+
+```json
+{
+  "token_id": "…", "days": 30, "from": "2026-09-21", "to": "2026-10-20",
+  "rate_limit_per_minute": 60,
+  "window": { "limit": 60, "used": 12, "remaining": 48, "resets_in_seconds": 41 },
+  "last_used_at": "2026-10-20T08:00:00+00:00",
+  "totals": { "requests": 1840, "errors": 12, "rate_limited": 3 },
+  "daily": [{ "date": "2026-10-20", "requests": 120, "errors": 1, "rate_limited": 0 }]
+}
+```
+
+`errors` are 4xx and 5xx answers except 429. `window` is `null` when the token has no limit. Only counts
+are kept (no paths, bodies or IP addresses; the [agent audit log](#agent-audit-log) has those for
+writes). Daily counters older than 97 days are deleted by `ulams:auth:prune-agent-audit`. From the CLI:
+`ulams tokens usage <id>`, `ulams tokens set-limit <id> --rate-limit-per-minute 60`.
 
 ## Device login
 
