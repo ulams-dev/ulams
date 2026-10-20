@@ -14,6 +14,7 @@
         "living-course",
         "learner",
         "tokens",
+        "webhooks",
         "platform"
     ],
     "scopes": [
@@ -43,6 +44,8 @@
         "learner:write",
         "tokens:read",
         "tokens:write",
+        "webhooks:read",
+        "webhooks:write",
         "platform:read",
         "platform:write",
         "*"
@@ -61,7 +64,8 @@
             "builder:read",
             "living-course:read",
             "learner:read",
-            "tokens:read"
+            "tokens:read",
+            "webhooks:read"
         ],
         "author": [
             "courses:write",
@@ -235,6 +239,10 @@
         {
             "pattern": "api/admin/agent-audit*",
             "area": "tokens"
+        },
+        {
+            "pattern": "api/admin/webhooks*",
+            "area": "webhooks"
         },
         {
             "pattern": "api/admin/course-builder*",

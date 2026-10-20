@@ -880,7 +880,8 @@
                     "title": "通过软件包扩展",
                     "text": "每项功能都是一个 composer 软件包，拥有自己的路由、权限、设置和事件。一个完整示例展示了整个模式。",
                     "packages": [
-                      "example-plugin"
+                      "example-plugin",
+                      "webhooks"
                     ],
                     "href": "https://ulams-dev.github.io/ulams/extending/new-package/"
                   },
@@ -936,7 +937,7 @@
                   },
                   {
                     "title": "入站 Webhook",
-                    "text": "支持 Living Course 的 Git 推送、Stripe 和 Jitsi 录制的 Webhook。目前还没有出站 Webhook。",
+                    "text": "支持 Living Course 的 Git 推送、Stripe 和 Jitsi 录制的 Webhook。带重试、重放和投递日志的已签名出站 Webhook 有单独的文档页面。",
                     "href": "https://ulams-dev.github.io/ulams/developers/webhooks/"
                   }
                 ],

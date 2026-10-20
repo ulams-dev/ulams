@@ -22,6 +22,7 @@ tenant has its own cache prefix ([Tenancy](/developers/tenancy/)).
 | `POST /api/demo/login` | 60 / min | user or IP | fixed |
 | `/api/platform/*` ([platform API](/operators/platform-api/)) | 60 / min | user | fixed |
 | Any request with a scoped token that has `rate_limit_per_minute` | 1 to 6000 / min, set when the token is created | token | `rate_limit_per_minute` on `POST /api/auth/tokens` |
+| `/api/admin/webhooks/*` ([outgoing webhooks](/developers/outgoing-webhooks/)) | 60 / min; test sends and replays also 10 / min | user | `ulams_webhooks.api_rate_limit`, `send_rate_limit` (config) |
 | `POST /api/living-course/webhooks/{id}` | 60 / min; also 48 automatic checks per connection and day | webhook id | `living_course.poll.checks_per_connection_per_day` |
 | `POST /api/jitsi/recorded-video` | 60 / min | IP | fixed |
 | `POST /api/lti/tool/exchange` | 30 / min | IP | fixed |

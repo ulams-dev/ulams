@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/webhooks/2026-10-20/event.json",
+  "title": "ulams webhook event, api_version 2026-10-20",
+  "description": "The JSON body of every outgoing webhook request for endpoints pinned to api_version 2026-10-20. Later versions only add fields; receivers must ignore fields they do not know. `id` identifies the event (a retry or replay carries the same id), `created` is the time the event was recorded in unix seconds.",
+  "type": "object",
+  "required": ["id", "object", "type", "api_version", "created", "data"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^evt_[0-9a-z]{26}$" },
+    "object": { "const": "event" },
+    "api_version": { "const": "2026-10-20" },
+    "created": { "type": "integer", "minimum": 0 },
+    "type": {
+      "enum": ["course.completed", "enrolment.created", "update_proposal.ready", "update_proposal.applied", "certificate.issued", "webhook.test"]
+    },
+    "data": {
+      "type": "object",
+      "required": ["object"],
+      "properties": { "object": { "type": "object" } }
+    }
+  },
+  "oneOf": [
+    {
+      "properties": { "type": { "const": "course.completed" }, "data": { "properties": { "object": { "$ref": "#/$defs/courseCompleted" } } } }
+    },
+    {
+      "properties": { "type": { "const": "enrolment.created" }, "data": { "properties": { "object": { "$ref": "#/$defs/enrolmentCreated" } } } }
+    },
+    {
+      "properties": { "type": { "const": "update_proposal.ready" }, "data": { "properties": { "object": { "$ref": "#/$defs/updateProposalReady" } } } }
+    },
+    {
+      "properties": { "type": { "const": "update_proposal.applied" }, "data": { "properties": { "object": { "$ref": "#/$defs/updateProposalApplied" } } } }
+    },
+    {
+      "properties": { "type": { "const": "certificate.issued" }, "data": { "properties": { "object": { "$ref": "#/$defs/certificateIssued" } } } }
+    },
+    {
+      "properties": { "type": { "const": "webhook.test" }, "data": { "properties": { "object": { "$ref": "#/$defs/test" } } } }
+    }
+  ],
+  "$defs": {
+    "user": {
+      "type": "object",
+      "required": ["id", "email", "name"],
+      "properties": {
+        "id": { "type": "integer" },
+        "email": { "type": ["string", "null"] },
+        "name": { "type": "string" }
+      }
+    },
+    "course": {
+      "type": "object",
+      "required": ["id", "title"],
+      "properties": {
+        "id": { "type": "integer" },
+        "title": { "type": "string" }
+      }
+    },
+    "courseCompleted": {
+      "type": "object",
+      "required": ["user", "course", "completed_at"],
+      "properties": {
+        "user": { "$ref": "#/$defs/user" },
+        "course": { "$ref": "#/$defs/course" },
+        "completed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "enrolmentCreated": {
+      "type": "object",
+      "required": ["user", "course", "created_at"],
+      "properties": {
+        "user": { "$ref": "#/$defs/user" },
+        "course": { "$ref": "#/$defs/course" },
+        "created_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "updateProposalReady": {
+      "type": "object",
+      "required": ["proposal_id", "session_id", "course_title", "elements", "answer_checks", "status"],
+      "properties": {
+        "proposal_id": { "type": "string" },
+        "session_id": { "type": "string" },
+        "course_title": { "type": "string" },
+        "elements": { "type": "integer", "minimum": 0 },
+        "answer_checks": { "type": "integer", "minimum": 0 },
+        "status": { "enum": ["ready", "awaiting_analysis", "budget_blocked"] }
+      }
+    },
+    "updateProposalApplied": {
+      "type": "object",
+      "required": ["proposal_id", "session_id", "number", "status", "counts"],
+      "properties": {
+        "proposal_id": { "type": "string" },
+        "session_id": { "type": "string" },
+        "number": { "type": "integer", "minimum": 1 },
+        "status": { "type": "string" },
+        "counts": { "type": "object", "additionalProperties": { "type": "integer" } }
+      }
+    },
+    "certificateIssued": {
+      "type": "object",
+      "required": ["user", "certificate_id", "course_id", "issued_at"],
+      "properties": {
+        "user": { "$ref": "#/$defs/user" },
+        "certificate_id": { "type": ["integer", "string"] },
+        "course_id": { "type": ["integer", "string"] },
+        "issued_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "test": {
+      "type": "object",
+      "properties": { "test": { "const": true } }
+    }
+  }
+}

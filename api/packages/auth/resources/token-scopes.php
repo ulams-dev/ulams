@@ -8,7 +8,7 @@
  * patterns above general ones.
  *
  * Areas: courses, users, enrolments, settings, events, certificates, commerce, reports, lti,
- * builder, living-course, learner, tokens, platform, plus two pseudo areas:
+ * builder, living-course, learner, tokens, webhooks, platform, plus two pseudo areas:
  *   public  any valid scoped token may call it (identity, health, anonymous endpoints);
  *   none    never callable with a scoped token (it would mint unscoped credentials, change the
  *           account's credentials or let a scoped token widen its own rights).
@@ -64,6 +64,10 @@ return [
     ['api/auth/tokens*', 'tokens'],
     ['api/admin/tokens*', 'tokens'],
     ['api/admin/agent-audit*', 'tokens'],
+
+    // ---- webhooks ------------------------------------------------------------------------------
+    // test sends and replays are POSTs, so they need webhooks:write
+    ['api/admin/webhooks*', 'webhooks'],
 
     // ---- builder and living course -------------------------------------------------------------
     ['api/admin/course-builder*', 'builder'],
