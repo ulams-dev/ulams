@@ -15,34 +15,34 @@ use Ulams\LiaScript\Services\LiaScriptService;
 /**
  * LiaScript sources (spec 1.1): versioned Markdown plus assets.
  *
- * @OA\Get(path="/api/admin/liascript", summary="List LiaScript sources", tags={"Admin LiaScript"}, security={{"passport": {}}},
- *     @OA\Response(response=200, description="documents"), @OA\Response(response=403, description="liascript_manage required"))
- * @OA\Post(path="/api/admin/liascript", summary="Create from Markdown, an .md file or a .zip (Markdown + assets)", tags={"Admin LiaScript"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/liascript", operationId="liascript.list", summary="List LiaScript sources", tags={"Admin LiaScript"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="documents", @OA\JsonContent(ref="#/components/schemas/LiaScriptDocumentPageResponse")), @OA\Response(response=403, description="liascript_manage required"))
+ * @OA\Post(path="/api/admin/liascript", operationId="liascript.create", summary="Create from Markdown, an .md file or a .zip (Markdown + assets)", tags={"Admin LiaScript"}, security={{"passport": {}}},
  *     @OA\RequestBody(@OA\MediaType(mediaType="multipart/form-data", @OA\Schema(
  *         @OA\Property(property="title", type="string"), @OA\Property(property="markdown", type="string"), @OA\Property(property="file", type="string", format="binary")))),
- *     @OA\Response(response=201, description="document with version 1 and warnings"), @OA\Response(response=422, description="invalid Markdown or upload"))
- * @OA\Get(path="/api/admin/liascript/{id}", summary="Show a LiaScript source", tags={"Admin LiaScript"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="document"))
- * @OA\Put(path="/api/admin/liascript/{id}", summary="Rename a LiaScript source", tags={"Admin LiaScript"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="document"))
- * @OA\Delete(path="/api/admin/liascript/{id}", summary="Delete a LiaScript source with all versions and assets", tags={"Admin LiaScript"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="deleted"))
+ *     @OA\Response(response=201, description="document with version 1 and warnings", @OA\JsonContent(ref="#/components/schemas/LiaScriptDocumentResponse")), @OA\Response(response=422, description="invalid Markdown or upload"))
+ * @OA\Get(path="/api/admin/liascript/{id}", operationId="liascript.get", summary="Show a LiaScript source", tags={"Admin LiaScript"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="document", @OA\JsonContent(ref="#/components/schemas/LiaScriptDocumentResponse")))
+ * @OA\Put(path="/api/admin/liascript/{id}", operationId="liascript.update", summary="Rename a LiaScript source", tags={"Admin LiaScript"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="document", @OA\JsonContent(ref="#/components/schemas/LiaScriptDocumentResponse")))
+ * @OA\Delete(path="/api/admin/liascript/{id}", operationId="liascript.delete", summary="Delete a LiaScript source with all versions and assets", tags={"Admin LiaScript"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
  * @OA\Get(path="/api/admin/liascript/{id}/source", summary="Markdown of the current or a given version", tags={"Admin LiaScript"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\Parameter(name="version", in="query", required=false, @OA\Schema(type="integer")),
  *     @OA\Response(response=200, description="text/markdown", @OA\MediaType(mediaType="text/markdown")))
- * @OA\Get(path="/api/admin/liascript/{id}/versions", summary="List versions", tags={"Admin LiaScript"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="versions"))
- * @OA\Post(path="/api/admin/liascript/{id}/versions", summary="Add a version from Markdown or an upload", tags={"Admin LiaScript"}, security={{"passport": {}}},
- *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=201, description="document"))
- * @OA\Post(path="/api/admin/liascript/{id}/versions/{version}/restore", summary="Restore a version (adds a new version with its content)", tags={"Admin LiaScript"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/liascript/{id}/versions", operationId="liascript.versions-list", summary="List versions", tags={"Admin LiaScript"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="versions", @OA\JsonContent(ref="#/components/schemas/LiaScriptVersionListResponse")))
+ * @OA\Post(path="/api/admin/liascript/{id}/versions", operationId="liascript.versions-add", summary="Add a version from Markdown or an upload", tags={"Admin LiaScript"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=201, description="document", @OA\JsonContent(ref="#/components/schemas/LiaScriptDocumentResponse")))
+ * @OA\Post(path="/api/admin/liascript/{id}/versions/{version}/restore", operationId="liascript.versions-restore", summary="Restore a version (adds a new version with its content)", tags={"Admin LiaScript"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Parameter(name="version", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=201, description="document"))
- * @OA\Post(path="/api/admin/liascript/{id}/preview", summary="Live preview of unsaved Markdown on the tenant content origin", tags={"Admin LiaScript"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="version", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=201, description="document", @OA\JsonContent(ref="#/components/schemas/LiaScriptDocumentResponse")))
+ * @OA\Post(path="/api/admin/liascript/{id}/preview", operationId="liascript.preview", summary="Live preview of unsaved Markdown on the tenant content origin", tags={"Admin LiaScript"}, security={{"passport": {}}},
  *     description="Publishes the text as a short-lived draft next to the current version (its assets resolve) and returns a player URL without progress tracking. Nothing is saved as a version.",
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\RequestBody(@OA\JsonContent(required={"markdown"}, @OA\Property(property="markdown", type="string"))),
- *     @OA\Response(response=200, description="{url, sections, warnings}"), @OA\Response(response=422, description="invalid Markdown"),
+ *     @OA\Response(response=200, description="{url, sections, warnings}", @OA\JsonContent(ref="#/components/schemas/LiaScriptPreviewResponse")), @OA\Response(response=422, description="invalid Markdown"),
  *     @OA\Response(response=503, description="no content origin or player not installed"))
  */
 class LiaScriptController extends Controller

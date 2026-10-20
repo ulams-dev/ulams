@@ -99,7 +99,7 @@ interface CsvUserAPISwagger
     /**
      * @OA\Post(
      *      tags={"Admin CSV"},
-     *      path="/api/admin/csv/users",
+     *      path="/api/admin/csv/users", operationId="csv.users-add",
      *      description="Imports users from csv",
      *      security={
      *          {"passport": {}},
@@ -124,10 +124,7 @@ interface CsvUserAPISwagger
      *              )
      *          )
      *      ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="successful operation",
-     *      ),
+     *     @OA\Response(response=200, description="successful operation", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
