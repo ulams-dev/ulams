@@ -49,6 +49,15 @@ class RemediationService
             return [];
         }
 
+        if ($this->inHoldout($userId)) {
+            // the control group: no help, but the outcome is measured the same way (detail `holdout`)
+            if (!Intervention::query()->where('user_id', $userId)->where('course_id', $courseId)->where('element_key', $elementKey)->where('detail', 'holdout')->where('outcome', Intervention::PENDING)->exists()) {
+                Intervention::query()->create(['user_id' => $userId, 'course_id' => $courseId, 'element_key' => $elementKey, 'kind' => Intervention::REMEDIATION, 'outcome' => Intervention::PENDING, 'detail' => 'holdout', 'window_days' => (int) config('learner_insights.interventions.window_days'), 'created_at' => CarbonImmutable::now()]);
+            }
+
+            return [];
+        }
+
         $assignments = [];
         foreach ($kinds as $kind) {
             $key = $this->patternKey($element, $rule, $kind);
@@ -89,6 +98,14 @@ class RemediationService
         }
 
         return $assignments;
+    }
+
+    /** A stable share of learners (by a hash of their id, never random per event) is kept out of personal help to measure its effect. */
+    public function inHoldout(int $userId): bool
+    {
+        $percent = (int) config('learner_insights.remediation.holdout_percent');
+
+        return $percent > 0 && (crc32('holdout:' . $userId) % 100) < $percent;
     }
 
     /** sha256 of element, version, rule, kind, language and the pattern detail (never learner data). */

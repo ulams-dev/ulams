@@ -55,6 +55,17 @@ Milestone M4.5, personal remediations (courses built with the Course Builder onl
 - Remediations retire when the element's applied version changes (`learner-insights:retire-remediations`).
 - The learner UI components are not part of this package; the endpoints return a declarative `document`.
 
+Milestone M4.8, quality bar and adaptive interface:
+
+- `learner_insights.remediation.holdout_percent` (default 0, the plan proposes 20 once a tenant opts in)
+  keeps a stable share of learners (a hash of the learner id) out of personal help; their struggles are
+  still logged as interventions with detail `holdout`, so `OutcomeTracker::helpedVsHoldout()` compares
+  recovery of helped and unhelped learners over the same window.
+- `PresentationProfiles` and `GET/PUT /api/learner-insights/courses/{course}/presentation`: behind
+  `learner_insights.adaptive_interface` (default off) the rules derive density, steps or whole lesson,
+  navigation and visible hints from the statuses, with the reasons; the learner's overrides always win. No
+  model is involved.
+
 Privacy: nothing is recorded while `learner_insights.enabled` is false, for a learner who set the
 user setting `insights.enabled` to false, or, with `learner_insights.require_consent`, before the
 user setting `insights.consent` exists. Signals never reach an LLM.

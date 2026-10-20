@@ -71,6 +71,8 @@ class UlamsLearnerInsightsServiceProvider extends ServiceProvider
             // key, rules, public, read-only: the tenant admin switches the module and its privacy mode
             AdministrableConfig::registerConfig('learner_insights.enabled', ['boolean'], false, false);
             AdministrableConfig::registerConfig('learner_insights.require_consent', ['boolean'], false, false);
+            AdministrableConfig::registerConfig('learner_insights.adaptive_interface', ['boolean'], false, false);
+            AdministrableConfig::registerConfig('learner_insights.remediation.holdout_percent', ['integer', 'min:0', 'max:50'], false, false);
             AdministrableConfig::registerConfig('learner_insights.nudges.enabled', ['boolean'], false, false);
             AdministrableConfig::registerConfig('learner_insights.nudges.per_course_days', ['integer', 'min:1', 'max:90'], false, false);
             AdministrableConfig::registerConfig('learner_insights.nudges.per_learner_week', ['integer', 'min:1', 'max:14'], false, false);

@@ -66,6 +66,27 @@ class OutcomeTracker
         return ['recovered' => $recovered, 'closed' => $closed, 'rate' => $closed > 0 ? round($recovered / $closed, 4) : null];
     }
 
+    /**
+     * Recovery of learners who got personal help against the holdout that did not (same window, same measure).
+     * Not proof of an effect on its own: the groups are only comparable when the holdout is a stable random share.
+     *
+     * @return array{helped:array{recovered:int,closed:int,rate:?float},holdout:array{recovered:int,closed:int,rate:?float}}
+     */
+    public function helpedVsHoldout(?int $courseId = null): array
+    {
+        $count = function (bool $holdout) use ($courseId) {
+            $q = Intervention::query()->where('kind', Intervention::REMEDIATION)->whereIn('outcome', [Intervention::RECOVERED, Intervention::NOT_RECOVERED]);
+            $courseId !== null && $q->where('course_id', $courseId);
+            $holdout ? $q->where('detail', 'holdout') : $q->whereNull('detail');
+            $closed = (clone $q)->count();
+            $recovered = (clone $q)->where('outcome', Intervention::RECOVERED)->count();
+
+            return ['recovered' => $recovered, 'closed' => $closed, 'rate' => $closed > 0 ? round($recovered / $closed, 4) : null];
+        };
+
+        return ['helped' => $count(false), 'holdout' => $count(true)];
+    }
+
     private function open(int $userId, int $courseId): Builder
     {
         return Intervention::query()->where('user_id', $userId)->where('course_id', $courseId)->where('outcome', Intervention::PENDING);
