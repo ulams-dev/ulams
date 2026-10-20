@@ -60,7 +60,8 @@ services:
       - LARAVEL_MAIL_PORT=1025
       - LARAVEL_MAIL_USERNAME=null
       - LARAVEL_MAIL_PASSWORD=null
-      - LARAVEL_MJML_BINARY_PATH=/usr/bin/mjml
+      # E-mail templates are rendered by the mjml service below (the PHP image has no Node)
+      - LARAVEL_MJML_API_URL=http://mjml:15500/v1
       - LARAVEL_TRACKER_ENABLED=false
       - LARAVEL_FILESYSTEM_DRIVER=s3
       - LARAVEL_AWS_ACCESS_KEY_ID=admin
@@ -263,10 +264,13 @@ services:
     command: "valkey-server --requirepass ${REDIS_PASSWORD:-ulams}"
 
   mjml:
-    image: danihodovic/mjml-server
-
+    # same pinned image as deploy/vps-cloudflare/compose.yml; HTTP API on port 15500, internal only
+    image: danihodovic/mjml-server:4.15.3
+    networks:
+      - ulams
+    restart: unless-stopped
     # ports:
-    #   - 8080:80
+    #   - 15500:15500
 
   minio:
     # bitnami/* images were removed from Docker Hub; the same image lives under bitnamilegacy/*

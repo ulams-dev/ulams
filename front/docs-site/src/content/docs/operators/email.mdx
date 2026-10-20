@@ -48,10 +48,20 @@ an MJML HTTP service:
 |---|---|
 | `MJML_API_URL` | `http://mjml:15500/v1` |
 
-Setting `MJML_API_URL` switches the renderer to the API (`config/ulams_templates_email.php`). The
-example runs `danihodovic/mjml-server` on the internal network; it needs no inbound or outbound
-access. Alternatives are the hosted MJML API (`MJML_API_ID`, `MJML_API_SECRET`) or a binary path
-(`MJML_BINARY_PATH`) in a custom image.
+Setting `MJML_API_URL` switches the renderer to the HTTP service (`config/ulams_templates_email.php`).
+The development stack (`api/docker-compose.yml`) and the production examples run the pinned
+`danihodovic/mjml-server` image on the internal `ulams` network; it needs no inbound or outbound
+access, and in the development stack the `api` service gets `LARAVEL_MJML_API_URL=http://mjml:15500/v1`.
+
+The renderer is chosen in this order:
+
+1. `MJML_API_URL` is set: the HTTP service renders the template.
+2. `MJML_BINARY_PATH` points to an executable file (a custom image that contains Node and `mjml`).
+3. Neither is available: the text of the template is sent without layout (one paragraph per block,
+   buttons as `label (address)`), and the API logs the warning `No MJML renderer is configured` once
+   per process. Nothing fails and no empty message is sent.
+
+If the HTML of a template looks unstyled, check the log for that warning first.
 
 ## Queues and the scheduler
 
@@ -66,4 +76,5 @@ platform and `queue.sh` for tenants, both inside `api` unless disabled with `DIS
 
 Use a staging relay or a capture service (the development stack uses MailHog on port 8025)
 before pointing a server at real learners. A password-reset request from the sign-in page is a
-quick end-to-end test of SMTP, MJML and the queue.
+quick end-to-end test of SMTP, MJML and the queue; the message should arrive formatted, not as plain
+paragraphs.

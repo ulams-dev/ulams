@@ -2,34 +2,43 @@
 
 namespace Ulams\TemplatesEmail\Services;
 
-use Ulams\TemplatesEmail\UlamsTemplatesEmailServiceProvider;
+use Illuminate\Support\Facades\Log;
+use Qferrer\Mjml\RendererInterface;
 use Ulams\TemplatesEmail\Mjml\BinaryRenderer;
+use Ulams\TemplatesEmail\Mjml\PlainTextRenderer;
 use Ulams\TemplatesEmail\Services\Contracts\MjmlServiceContract;
-use Exception;
-use Qferrer\Mjml\Renderer\ApiRenderer;
-use Ulams\TemplatesEmail\Services\CurlApi;
-use Ulams\TemplatesEmail\Services\CurlRenderer;
+use Ulams\TemplatesEmail\UlamsTemplatesEmailServiceProvider;
 
 class MjmlService implements MjmlServiceContract
 {
+    private static bool $warned = false;
+
     public function render(string $mjml): string
     {
+        return $this->renderer()->render($mjml);
+    }
 
-        if (config(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.api_url')) {
-            $api = new CurlApi(config(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.api_url'));
-            $renderer = new CurlRenderer($api);
-        } else if (config(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.use_api')) {
-            $apiId = config(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.api_id');
-            $apiSecret = config(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.api_secret');
-
-            if (empty($apiId) || empty($apiSecret)) {
-                throw new Exception('Missing MJML API id and/or secret');
-            }
-
-            $renderer = new ApiRenderer($apiId);
-        } else {
-            $renderer = new BinaryRenderer();
+    /**
+     * The MJML HTTP service (MJML_API_URL) wins; a local mjml binary (MJML_BINARY_PATH) is used only when the
+     * file is executable; otherwise the text of the template is sent without layout and a warning is logged once.
+     */
+    public function renderer(): RendererInterface
+    {
+        $apiUrl = config(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.api_url');
+        if (!empty($apiUrl)) {
+            return new CurlRenderer(new CurlApi($apiUrl));
         }
-        return $renderer->render($mjml);
+
+        $binary = config(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.binary_path');
+        if (!empty($binary) && is_executable($binary)) {
+            return new BinaryRenderer();
+        }
+
+        if (!self::$warned) {
+            self::$warned = true;
+            Log::warning('No MJML renderer is configured (set MJML_API_URL, e.g. http://mjml:15500/v1); e-mail templates are rendered as plain text.');
+        }
+
+        return new PlainTextRenderer();
     }
 }
