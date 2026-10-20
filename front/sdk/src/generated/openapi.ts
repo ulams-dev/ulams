@@ -4736,6 +4736,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/living-course/proposals/{proposal}/items/{item}/suggest-lesson": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Suggest a new lesson for a new source section no lesson covers (one AI call; the item becomes `new_lesson` for review as a diff) */
+        post: operations["97417256ee326a05e89c866134cf714c"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/living-course/proposals/{proposal}/accept-all": {
         parameters: {
             query?: never;
@@ -20695,6 +20712,62 @@ export interface operations {
             };
             /** @description not decidable now */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "97417256ee326a05e89c866134cf714c": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                proposal: string;
+                item: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the item with the suggested lesson */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not an uncovered section, or settled */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description budget */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description AI disabled */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };

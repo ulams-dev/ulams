@@ -1,5 +1,5 @@
 {
- "summary": "533/582 covered, 49 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "534/583 covered, 49 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -941,6 +941,12 @@
    "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/reset",
    "summary": "Back to undecided",
    "command": "living.proposals.reset",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/suggest-lesson",
+   "summary": "Suggest a new lesson for a new source section no lesson covers (one AI call; the item becomes `new_lesson` for review as a diff)",
+   "command": "living.proposals.suggest-lesson",
    "status": "covered"
   },
   {
