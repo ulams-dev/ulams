@@ -70,7 +70,7 @@ export default defineConfig({
         PageTitle: "./src/components/PageTitle.astro",
       },
       plugins: validateLinks
-        ? [starlightLinksValidator({ errorOnLocalLinks: false, exclude: ["/api/**"] })]
+        ? [starlightLinksValidator({ errorOnLocalLinks: false, exclude: ["/api/**", "/openapi.json", "/llms.txt", "/llms-full.txt", "/schemas/**"] })]
         : [],
       sidebar: [
         { label: "Getting started", items: [{ autogenerate: { directory: "getting-started" } }] },
