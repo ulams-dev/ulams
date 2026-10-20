@@ -30521,6 +30521,188 @@
     ]
    }
   },
+  "/api/learner-insights/assignments/{assignment}/feedback": {
+   "post": {
+    "operationId": "6e7a991fadf81546157800178da0a729",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "assignment",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "helpful": {
+          "type": "boolean"
+         }
+        },
+        "required": [
+         "helpful"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Saved"
+     },
+     "404": {
+      "description": "Not the learner's assignment"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Say whether a piece of extra help was useful",
+    "tags": [
+     "Learner insights"
+    ]
+   }
+  },
+  "/api/learner-insights/assignments/{assignment}/hide": {
+   "post": {
+    "operationId": "470829e7ca39d311b96b52d12494e0f4",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "assignment",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Hidden"
+     },
+     "404": {
+      "description": "Not the learner's assignment"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Hide a piece of extra help",
+    "tags": [
+     "Learner insights"
+    ]
+   }
+  },
+  "/api/learner-insights/assignments/{assignment}/reflection": {
+   "post": {
+    "operationId": "364792271758395ada19f682879b9334",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "assignment",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "text": {
+          "maxLength": 2000,
+          "type": "string"
+         }
+        },
+        "required": [
+         "text"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "`correct`, `missing`, `followUp`, `citations`, `remaining`"
+     },
+     "404": {
+      "description": "Not the learner's assignment"
+     },
+     "429": {
+      "description": "Daily limit reached"
+     },
+     "503": {
+      "description": "AI is disabled or the feedback could not be produced"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Get feedback on the learner's own explanation of the idea (the text is sent to the AI provider and not stored)",
+    "tags": [
+     "Learner insights"
+    ]
+   }
+  },
+  "/api/learner-insights/courses/{course}/topics/{topic}/support": {
+   "get": {
+    "operationId": "25f77a3543fceb7f4ff5e1fdfa8a6eed",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "path",
+      "name": "topic",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "`enabled`, and per assignment: `status` (generating or ready), `kind`, `document` (declarative blocks), `citations`, `reasons`, `why`, `feedback`"
+     },
+     "403": {
+      "description": "The learner may not attend the course"
+     },
+     "404": {
+      "description": "Unknown topic or the topic is not in the course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Extra help for the learner in a topic, with the reasons it was offered",
+    "tags": [
+     "Learner insights"
+    ]
+   }
+  },
   "/api/learner-insights/me": {
    "delete": {
     "operationId": "5f90c5e0835acf49fc0dfcc29003a322",
