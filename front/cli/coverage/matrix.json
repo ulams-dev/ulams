@@ -1,5 +1,5 @@
 {
- "summary": "560/610 covered, 50 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "565/615 covered, 50 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -182,6 +182,12 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/compliance/dashboard",
+   "summary": "Compliance dashboard",
+   "command": "compliance.dashboard",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/compliance/managers",
    "summary": "List manager links",
    "command": "compliance.managers-list",
@@ -269,6 +275,30 @@
    "key": "POST /api/admin/compliance/rules/{id}/evaluate",
    "summary": "Preview or run a rule now",
    "command": "compliance.rules-evaluate",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/schedules",
+   "summary": "List scheduled reports",
+   "command": "compliance.schedules-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/schedules",
+   "summary": "Schedule a report",
+   "command": "compliance.schedules-add",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/schedules/{id}",
+   "summary": "Update a scheduled report",
+   "command": "compliance.schedules-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/schedules/{id}",
+   "summary": "Delete a scheduled report",
+   "command": "compliance.schedules-delete",
    "status": "covered"
   },
   {
