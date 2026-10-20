@@ -1,0 +1,152 @@
+---
+/**
+ * "Copy page" and "Open in ..." actions under the title of every docs page, for readers who work with an AI
+ * assistant. The Markdown source of a page is published next to it as `<page>/index.md` by
+ * `scripts/agent-files.mjs` (the same files `llms.txt` links to). Nothing is sent anywhere until the reader
+ * picks an assistant; the link only carries the address of the Markdown page.
+ */
+const entry = Astro.locals.starlightRoute.entry;
+const show = entry.data.template !== "splash" && !entry.id.startsWith("catalogue/preview");
+---
+
+{
+  show && (
+    <ulams-page-actions class="page-actions">
+      <button type="button" class="page-actions__copy" data-copy>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2" /><path d="M5 15V6a2 2 0 0 1 2-2h9" /></svg>
+        <span data-label>Copy page</span>
+      </button>
+      <details class="page-actions__menu">
+        <summary aria-label="More ways to use this page with AI">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        </summary>
+        <ul>
+          <li><a data-view href="#" target="_blank" rel="noopener">View as Markdown</a></li>
+          <li><a data-open="https://claude.ai/new?q=" href="#" target="_blank" rel="noopener">Open in Claude</a></li>
+          <li><a data-open="https://chatgpt.com/?q=" href="#" target="_blank" rel="noopener">Open in ChatGPT</a></li>
+        </ul>
+      </details>
+      <span class="page-actions__status" role="status" aria-live="polite" data-status />
+    </ulams-page-actions>
+  )
+}
+
+<script>
+  class UlamsPageActions extends HTMLElement {
+    connectedCallback() {
+      const path = location.pathname.replace(/\/?$/, "/");
+      const markdown = new URL(`${path}index.md`, location.origin).href;
+      const prompt = `Read ${markdown} so I can ask questions about it.`;
+      this.querySelector<HTMLAnchorElement>("[data-view]")!.href = markdown;
+      this.querySelectorAll<HTMLAnchorElement>("[data-open]").forEach((a) => {
+        a.href = `${a.dataset.open}${encodeURIComponent(prompt)}`;
+      });
+      const label = this.querySelector<HTMLElement>("[data-label]")!;
+      const status = this.querySelector<HTMLElement>("[data-status]")!;
+      this.querySelector<HTMLButtonElement>("[data-copy]")!.addEventListener("click", async () => {
+        try {
+          const response = await fetch(markdown);
+          if (!response.ok) throw new Error(String(response.status));
+          await navigator.clipboard.writeText(await response.text());
+          label.textContent = "Copied";
+          status.textContent = "Page copied as Markdown";
+        } catch {
+          label.textContent = "Copy failed";
+          status.textContent = "The Markdown page could not be copied";
+        }
+        setTimeout(() => {
+          label.textContent = "Copy page";
+          status.textContent = "";
+        }, 2000);
+      });
+      // Close the menu on an outside click or Escape.
+      const menu = this.querySelector<HTMLDetailsElement>("details")!;
+      document.addEventListener("click", (event) => {
+        if (menu.open && !menu.contains(event.target as Node)) menu.open = false;
+      });
+      menu.addEventListener("keydown", (event) => {
+        if ((event as KeyboardEvent).key === "Escape") {
+          menu.open = false;
+          menu.querySelector("summary")!.focus();
+        }
+      });
+    }
+  }
+  customElements.define("ulams-page-actions", UlamsPageActions);
+</script>
+
+<style>
+  .page-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+    margin-top: 0.75rem;
+  }
+  .page-actions__copy,
+  .page-actions__menu summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.7rem;
+    border: 1px solid var(--sl-color-gray-5);
+    background: var(--sl-color-bg-nav);
+    color: var(--sl-color-gray-2);
+    font-size: var(--sl-text-sm);
+    cursor: pointer;
+    line-height: 1.2;
+  }
+  .page-actions__copy {
+    border-radius: 0.4rem 0 0 0.4rem;
+  }
+  .page-actions__menu summary {
+    border-left: 0;
+    border-radius: 0 0.4rem 0.4rem 0;
+    list-style: none;
+  }
+  .page-actions__menu summary::-webkit-details-marker {
+    display: none;
+  }
+  .page-actions__copy:hover,
+  .page-actions__menu summary:hover {
+    color: var(--sl-color-white);
+    border-color: var(--sl-color-gray-3);
+  }
+  .page-actions__menu {
+    position: static;
+  }
+  .page-actions__menu ul {
+    position: absolute;
+    z-index: 10;
+    top: calc(100% + 0.25rem);
+    left: 0;
+    min-width: 13rem;
+    margin: 0;
+    padding: 0.25rem;
+    list-style: none;
+    background: var(--sl-color-bg-nav);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.4rem;
+    box-shadow: var(--sl-shadow-md);
+  }
+  .page-actions__menu li a {
+    display: block;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.3rem;
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+    font-size: var(--sl-text-sm);
+  }
+  .page-actions__menu li a:hover,
+  .page-actions__menu li a:focus-visible {
+    background: var(--sl-color-gray-6);
+    color: var(--sl-color-white);
+  }
+  .page-actions__status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+</style>
