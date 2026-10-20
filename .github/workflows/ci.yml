@@ -30,7 +30,7 @@ env:
     gift-reports=topic-type-gift,reports,dictionaries
     commerce=cart,commerce,vouchers,payments,invoices,consultations,consultation-access,webinar,jitsi,assign-without-account
     platform=Integrations,auth,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,ai,webhooks
-    content=templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
+    content=compliance,templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
 
 jobs:
   changes:

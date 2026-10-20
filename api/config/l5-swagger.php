@@ -50,6 +50,7 @@ return [
                     base_path('packages/liascript/src'),
                     base_path('packages/interactive/src'),
                     base_path('packages/adapt/src'),
+                    base_path('packages/compliance/src'),
                     base_path('packages/notifications/src'),
                     base_path('packages/mattermost/src'),
                     base_path('packages/model-fields/src'),
