@@ -92,6 +92,32 @@ class MorphMapCoverageTest extends TestCase
         $this->assertSame([], $missing, 'These models define a morphTo() relation: use HasMorphTypeColumns and list the type column in $morphTypeColumns (or add the file to OWNERS_WITHOUT_TYPE_COLUMNS with a reason).');
     }
 
+    public function test_every_model_that_owns_a_morph_relation_or_is_a_morph_target_has_an_alias(): void
+    {
+        $root = dirname(__DIR__, 2);
+        $missing = [];
+        foreach ($this->phpFiles([$root . '/packages', $root . '/app']) as $file) {
+            $relative = ltrim(substr($file, strlen($root)), '/');
+            $source = (string) file_get_contents($file);
+            if (str_contains($relative, '/tests/') || !preg_match('/^class (\w+) extends/m', $source, $name) || !preg_match('/^namespace ([^;]+);/m', $source, $ns)) {
+                continue;
+            }
+            // a morphMany/morphOne/morphToMany owner, a ModelFields or Payable model, or a stored target: its class name is passed to the relation
+            if (!preg_match('/->(morphMany|morphOne|morphToMany|morphedByMany)\(|use ModelFields;|use Payable;|use HasMorphAlias;/', $source)) {
+                continue;
+            }
+            $class = $ns[1] . '\\' . $name[1];
+            if (!class_exists($class) || !is_subclass_of($class, Model::class) || (new \ReflectionClass($class))->isAbstract()) {
+                continue;
+            }
+            if (MorphMap::aliasOf($class) === null) {
+                $missing[] = $class;
+            }
+        }
+
+        $this->assertSame([], $missing, 'These models need a morph alias (MorphMap::register in the package service provider, and the frozen list in App\\Support\\LegacyMorphClassNames only if the class name was ever stored).');
+    }
+
     public function test_the_type_columns_of_every_owner_exist_in_the_schema_as_declared(): void
     {
         $owners = 0;
