@@ -106,7 +106,7 @@ interface PermissionsAdminApiContract
 
     /**
      * @OA\Post(
-     *     path="/api/admin/roles",
+     *     path="/api/admin/roles", operationId="roles.create",
      *     summary="Find or Create a Role",
      *     tags={"Admin Permissions"},
      *     security={
@@ -117,10 +117,7 @@ interface PermissionsAdminApiContract
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/Role")
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="Role created of found successfully",
-     *      ),
+     *     @OA\Response(response=200, description="Role created of found successfully", @OA\JsonContent(ref="#/components/schemas/RoleResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -146,7 +143,7 @@ interface PermissionsAdminApiContract
 
     /**
      * @OA\Patch(
-     *     path="/api/admin/roles/{name}",
+     *     path="/api/admin/roles/{name}", operationId="roles.update",
      *     summary="Update an existing Role identified by name by list or new permissions",
      *     tags={"Admin Permissions"},
      *     security={
@@ -180,10 +177,7 @@ interface PermissionsAdminApiContract
      *          )
      *
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="role updated successfully",
-     *      ),
+     *     @OA\Response(response=200, description="role updated successfully", @OA\JsonContent(ref="#/components/schemas/PermissionListResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",
@@ -213,7 +207,7 @@ interface PermissionsAdminApiContract
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/roles/{name}",
+     *     path="/api/admin/roles/{name}", operationId="roles.delete",
      *     summary="Delete a Role identified by a name",
      *     tags={"Admin Permissions"},
      *     security={
@@ -228,10 +222,7 @@ interface PermissionsAdminApiContract
      *             type="integer"
      *         )
      *     ),
-     *     @OA\Response(
-     *          response=200,
-     *          description="role deleted successfully",
-     *      ),
+     *     @OA\Response(response=200, description="role deleted successfully", @OA\JsonContent(ref="#/components/schemas/ApiBooleanResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="endpoint requires authentication",

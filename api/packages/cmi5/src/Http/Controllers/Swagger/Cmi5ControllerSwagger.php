@@ -13,7 +13,7 @@ interface Cmi5ControllerSwagger
 {
     /**
      * @OA\Post(
-     *     path="/api/admin/cmi5",
+     *     path="/api/admin/cmi5", operationId="cmi5.upload",
      *     summary="Convert ZIP Cmi5 Package into Ulams LMS Cmi5 storage",
      *     tags={"cmi5"},
      *     security={
@@ -33,10 +33,7 @@ interface Cmi5ControllerSwagger
      *              )
      *          )
      *      ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Cmi5 data",
-     *      ),
+     *     @OA\Response(response=200, description="Cmi5 data", @OA\JsonContent(ref="#/components/schemas/Cmi5Response")),
      *     @OA\Response(
      *          response=401,
      *          description="Endpoint requires authentication",
@@ -128,7 +125,7 @@ interface Cmi5ControllerSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/cmi5/",
+     *     path="/api/admin/cmi5/", operationId="cmi5.list",
      *     summary="Get a listing of the cmi5",
      *     tags={"cmi5"},
      *     security={
@@ -150,10 +147,7 @@ interface Cmi5ControllerSwagger
      *             type="number"
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="List of available cmi5s",
-     *      ),
+     *     @OA\Response(response=200, description="List of available cmi5s", @OA\JsonContent(ref="#/components/schemas/Cmi5PageResponse")),
      *     @OA\Response(
      *          response=401,
      *          description="Endpoint requires authentication",
@@ -175,7 +169,7 @@ interface Cmi5ControllerSwagger
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/cmi5/{id}",
+     *     path="/api/admin/cmi5/{id}", operationId="cmi5.delete",
      *     summary="Delete cmi5 package by id",
      *     tags={"cmi5"},
      *     security={
@@ -190,10 +184,7 @@ interface Cmi5ControllerSwagger
      *             type="number"
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Cmi5 deleted successfully",
-     *      ),
+     *     @OA\Response(response=200, description="Cmi5 deleted successfully", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
      *     @OA\Response(
      *          response=401,
      *          description="Endpoint requires authentication",

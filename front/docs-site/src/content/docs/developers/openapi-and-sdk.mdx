@@ -108,6 +108,23 @@ published `api` image), copy it out first:
 docker cp <container>:/var/www/html/storage/api-docs/api-docs.json api/storage/api-docs/api-docs.json
 ```
 
+## Response schemas and operation ids
+
+Operations that the CLI turns into noun commands carry a typed 2xx response and an `operationId` equal to the
+CLI command id (`templates.list`, `adapt.versions-add`). Typed answers follow one pattern, defined in
+`api/app/Http/Controllers/Swagger/ResponseSchemas.php`:
+
+- `ApiEnvelope` is the answer of every JSON endpoint: `success` and `message`. A page also has `meta` (`ApiPage`).
+- `<Name>Response` is the envelope plus `data` typed by the resource the controller returns (`TemplateResponse`,
+  `AdaptSourceListResponse`, `InteractivePackagePageResponse`); an answer without data (a delete) is `ApiEnvelope` itself.
+- The data schemas (`TemplateData`, `PageData`, ...) mirror the Resource classes field for field. When a resource
+  changes, change its schema in the same commit.
+
+To type a new endpoint: add the data schema and its `<Name>Response` to `ResponseSchemas.php`, then reference it in the
+operation: `@OA\Response(response=200, description="...", @OA\JsonContent(ref="#/components/schemas/<Name>Response"))`
+and `operationId="<noun>.<verb>"`. Regenerate the document and run the refresh commands of the CLI (`sync-spec`,
+`generate`, `coverage`) and the SDK. Non-JSON answers (a file, Markdown) keep their own media type and no envelope.
+
 ## Limits of the current document
 
 The annotations describe request bodies and paths well but almost no response bodies, so most
