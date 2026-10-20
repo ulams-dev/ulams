@@ -22,7 +22,7 @@ use Peopleaps\Scorm\Model\ScormScoModel;
  *          property="value",
  *          description="value",
  *          type="string"
- *      )
+ *      ),
  *      @OA\Property(
  *          property="uuid",
  *          description="uuid",
