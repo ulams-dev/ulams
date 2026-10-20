@@ -33,3 +33,8 @@ internal:
   - "GET /api/lti/jwks"
 deprecated:
   - "GET /api/tags/uniqueTags"
+not-for-cli:
+  # learner-owned data and player signals; the learner frontend calls them (Learner Insights, plan phase-4 §11.2)
+  - "* /api/learner-insights/*"
+  # thresholds are tenant and course settings; a CLI command comes with the studio insights page (M4.6)
+  - "* /api/admin/learner-insights/*"

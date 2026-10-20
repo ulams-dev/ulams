@@ -10330,6 +10330,119 @@
     ]
    }
   },
+  "/api/admin/learner-insights/courses/{course}/settings": {
+   "get": {
+    "operationId": "9c77662d818d0b2504eb4515d8575e04",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "`overrides` and `effective`"
+     },
+     "403": {
+      "description": "Needs learner_insights_manage"
+     },
+     "404": {
+      "description": "Unknown course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Thresholds of one course: the overrides and the effective values",
+    "tags": [
+     "Learner insights admin"
+    ]
+   },
+   "put": {
+    "operationId": "29ff700e65215c07c0921eab7b7f067d",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "rules": {
+          "example": {
+           "inactivity": {
+            "inactive_days": 5
+           }
+          },
+          "type": "object"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "`overrides` and `effective`"
+     },
+     "403": {
+      "description": "Needs learner_insights_manage"
+     },
+     "404": {
+      "description": "Unknown course"
+     },
+     "422": {
+      "description": "Unknown rule or parameter, or an invalid value"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Replace the threshold overrides of one course",
+    "tags": [
+     "Learner insights admin"
+    ]
+   }
+  },
+  "/api/admin/learner-insights/settings": {
+   "get": {
+    "operationId": "98277e4fe39205922b58c1f242442681",
+    "responses": {
+     "200": {
+      "description": "Rules by name, each with its parameters"
+     },
+     "403": {
+      "description": "Needs learner_insights_manage"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The effective rule thresholds of the tenant (defaults and tenant settings)",
+    "tags": [
+     "Learner insights admin"
+    ]
+   }
+  },
   "/api/admin/lessons": {
    "get": {
     "description": "Get all Lessons",
@@ -27194,6 +27307,222 @@
     ]
    }
   },
+  "/api/learner-insights/me": {
+   "delete": {
+    "operationId": "5f90c5e0835acf49fc0dfcc29003a322",
+    "responses": {
+     "200": {
+      "description": "Rows deleted per table"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Erase the learner's personalisation data (the opt-out and consent settings stay)",
+    "tags": [
+     "Learner insights"
+    ]
+   },
+   "get": {
+    "operationId": "f5444148162292e1600efef859082883",
+    "responses": {
+     "200": {
+      "description": "`enabled` (module on for the tenant), `settings`, `courses` (status and reasons per course and element), `retention`"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The learner's own statuses with reasons, their privacy settings and the retention periods",
+    "tags": [
+     "Learner insights"
+    ]
+   }
+  },
+  "/api/learner-insights/me/export": {
+   "get": {
+    "operationId": "e8d9d5e552ce8d917c667e07e9ad8b50",
+    "responses": {
+     "200": {
+      "description": "A JSON file"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Download everything stored about the learner (signals, statuses, transitions) as JSON",
+    "tags": [
+     "Learner insights"
+    ]
+   }
+  },
+  "/api/learner-insights/me/settings": {
+   "put": {
+    "operationId": "2aa6efa84e5f2caa3262d0d220fdcba0",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "consent": {
+          "type": "boolean"
+         },
+         "enabled": {
+          "type": "boolean"
+         },
+         "eraseExisting": {
+          "description": "With enabled=false: also delete what was recorded before",
+          "type": "boolean"
+         },
+         "help": {
+          "type": "boolean"
+         },
+         "nudges": {
+          "type": "boolean"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "The settings after the change"
+     },
+     "422": {
+      "description": "Invalid value"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Opt out of personalisation, switch personal help or nudges, give or withdraw consent",
+    "tags": [
+     "Learner insights"
+    ]
+   }
+  },
+  "/api/learner-insights/nudges/opened": {
+   "post": {
+    "operationId": "5fb116b0e6d5931a11e9a765cf0f2a2a",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "n": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "n"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "description": "Recorded (once per nudge)"
+     },
+     "404": {
+      "description": "The token is not genuine or the nudge belongs to another learner"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The learner followed the link of a nudge (the frontend sends the signed `n` of the link)",
+    "tags": [
+     "Learner insights"
+    ]
+   }
+  },
+  "/api/learner-insights/signals": {
+   "post": {
+    "operationId": "3f489761d0d00887b23614e3804b9522",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "media": {
+          "enum": [
+           "video",
+           "audio"
+          ],
+          "type": "string"
+         },
+         "ref": {
+          "description": "Client generated id, used to drop duplicates",
+          "format": "uuid",
+          "type": "string"
+         },
+         "topicId": {
+          "type": "integer"
+         },
+         "type": {
+          "enum": [
+           "media.replayed",
+           "media.seeked_back"
+          ],
+          "type": "string"
+         },
+         "value": {
+          "description": "Seconds",
+          "type": "number"
+         }
+        },
+        "required": [
+         "type",
+         "topicId",
+         "ref"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "description": "Accepted (nothing is stored when the module is off or the learner opted out)"
+     },
+     "403": {
+      "description": "The learner may not attend the course of the topic"
+     },
+     "404": {
+      "description": "Unknown topic"
+     },
+     "429": {
+      "description": "Too many signals"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Record a media signal (replay, seek back) from the player",
+    "tags": [
+     "Learner insights"
+    ]
+   }
+  },
   "/api/liascript/launches/{topic}": {
    "post": {
     "description": "Learners play a LiaScript topic on the tenant content origin and the player reports progress.",
@@ -32957,6 +33286,14 @@
   {
    "description": "Invoices",
    "name": "Invoices"
+  },
+  {
+   "description": "Learner insights",
+   "name": "Learner insights"
+  },
+  {
+   "description": "Learner insights admin",
+   "name": "Learner insights admin"
   },
   {
    "description": "Admin LiaScript",
