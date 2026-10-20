@@ -1,5 +1,5 @@
 {
- "summary": "546/596 covered, 50 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "548/598 covered, 50 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
