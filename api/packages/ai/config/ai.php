@@ -53,6 +53,8 @@ return [
         'grounding' => ['profile' => env('AI_TASK_GROUNDING_PROFILE', 'light'), 'effort' => 'medium', 'max_tokens' => 4000],
         // Living Course: patches for the elements affected by a source change (one call per lesson group)
         'update' => ['profile' => env('AI_TASK_UPDATE_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
+        // Living Course: a suggested lesson for new source sections that no lesson covers
+        'new_lesson' => ['profile' => env('AI_TASK_NEW_LESSON_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
     ],
     'task_defaults' => ['profile' => 'default', 'effort' => 'medium', 'max_tokens' => 8000],
 

@@ -19,7 +19,7 @@ use Ulams\CourseBuilder\Pipeline\PromptContext;
 final class DecisionService
 {
     /** Item kinds that carry something the author decides (remaps are accepted by default, uncovered is informational). */
-    public const DECIDABLE = ['update', 'no_change', 'remove', 'manual', 'citation_remap', 'uncovered'];
+    public const DECIDABLE = ['update', 'no_change', 'remove', 'manual', 'citation_remap', 'uncovered', 'new_lesson'];
 
     public function __construct(
         private readonly AuditLog $audit,
@@ -27,6 +27,7 @@ final class DecisionService
         private readonly RevisionService $revisions,
         private readonly StalenessService $staleness,
         private readonly PromptContext $context,
+        private readonly LessonSuggester $lessons,
     ) {
     }
 
@@ -62,7 +63,7 @@ final class DecisionService
         $this->assertOpen($proposal);
         $count = 0;
         DB::transaction(function () use ($proposal, $userId, &$count) {
-            foreach (ProposalItem::query()->where('proposal_id', $proposal->id)->where('status', 'pending')->whereIn('kind', ['update', 'no_change', 'remove'])->get() as $item) {
+            foreach (ProposalItem::query()->where('proposal_id', $proposal->id)->where('status', 'pending')->whereIn('kind', ['update', 'no_change', 'remove', 'new_lesson'])->get() as $item) {
                 $item->forceFill(['status' => 'accepted', 'decided_by' => $userId, 'decided_at' => now()])->save();
                 $this->audit->record('item.accepted', $this->context($proposal, $item, $userId) + []);
                 $count++;
@@ -94,6 +95,9 @@ final class DecisionService
     public function regenerate(Proposal $proposal, ProposalItem $item, string $comment, int $userId): ProposalItem
     {
         $this->assertOpen($proposal);
+        if ($item->kind === 'new_lesson') {
+            return $this->lessons->suggest($proposal, $item, $userId, mb_substr(trim($comment), 0, 1000) ?: 'Please try again.');
+        }
         if (!in_array($item->kind, ['update', 'no_change', 'remove', 'manual'], true)) {
             throw new ProposalException('This item has nothing to regenerate.', 409);
         }
@@ -110,6 +114,12 @@ final class DecisionService
         $this->audit->record('item.regenerated', $this->context($proposal, $item, $userId) + ['ai_call_ids' => array_slice((array) $item->ai_call_ids, -6)]);
 
         return $item->refresh();
+    }
+
+    /** A lesson for a source section no lesson covers (one call, then the author reviews it as a diff). */
+    public function suggestLesson(Proposal $proposal, ProposalItem $item, int $userId): ProposalItem
+    {
+        return $this->lessons->suggest($proposal, $item, $userId);
     }
 
     /** @return array<string,mixed> */

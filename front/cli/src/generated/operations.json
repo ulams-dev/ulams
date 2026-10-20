@@ -942,6 +942,12 @@
   "tag": "Admin Living Course"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/items/{item}/suggest-lesson",
+  "summary": "Suggest a new lesson for a new source section no lesson covers (one AI call; the item becomes `new_lesson` for review as a diff)",
+  "tag": "Admin Living Course"
+ },
+ {
   "method": "PUT",
   "path": "/api/admin/living-course/proposals/{proposal}/learner-note",
   "summary": "The text learners see for updated lessons (plain text, up to 500 characters)",

@@ -60,7 +60,15 @@ final class ApplyService
         $elements = $this->impact->elements($current->document);
         $conflicts = [];
         $accepted = [];
-        foreach (ProposalItem::query()->where('proposal_id', $proposal->id)->whereIn('kind', ['update', 'remove', 'citation_remap'])->whereIn('status', ['accepted', 'conflict', 'stale'])->get() as $item) {
+        foreach (ProposalItem::query()->where('proposal_id', $proposal->id)->whereIn('kind', ['update', 'remove', 'citation_remap', 'new_lesson'])->whereIn('status', ['accepted', 'conflict', 'stale'])->get() as $item) {
+            if ($item->kind === 'new_lesson') {
+                // nothing to compare: the lesson is new, and only a stale item (never set for it) would block
+                if ($item->status !== 'accepted') {
+                    $item->forceFill(['status' => 'accepted'])->save();
+                }
+                $accepted[] = $item;
+                continue;
+            }
             $el = $elements[$item->element_id] ?? null;
             if ($item->status === 'stale' || $el === null || Blueprint::fingerprint(self::snapshot($el['type'], $el['node'])) !== Blueprint::fingerprint($item->before)) {
                 $item->forceFill(['status' => 'conflict'])->save();
@@ -127,7 +135,7 @@ final class ApplyService
         }
 
         $items = ProposalItem::query()->where('proposal_id', $proposal->id)->get();
-        $applied = $items->where('status', 'accepted')->whereIn('kind', ['update', 'remove', 'citation_remap']);
+        $applied = $items->where('status', 'accepted')->whereIn('kind', ['update', 'remove', 'citation_remap', 'new_lesson']);
         $callIds = array_values(array_unique(array_merge(...$applied->map(fn ($i) => (array) $i->ai_call_ids)->all() ?: [[]])));
 
         DB::transaction(function () use ($proposal, $session, $current, $doc, $to, $from, $author, $userId, $callIds, $items, $applied, $run) {
@@ -143,7 +151,7 @@ final class ApplyService
             $counts = (array) $proposal->counts;
             $counts['applied'] = $applied->count();
             $counts['rejected'] = $items->where('status', 'rejected')->count();
-            $counts['undecided'] = $items->whereIn('status', ['pending', 'stale', 'conflict'])->whereIn('kind', ['update', 'remove', 'no_change', 'manual'])->count();
+            $counts['undecided'] = $items->whereIn('status', ['pending', 'stale', 'conflict'])->whereIn('kind', ['update', 'remove', 'no_change', 'manual', 'new_lesson'])->count();
             $proposal->forceFill(['status' => 'applied', 'result_version_id' => $version->id, 'applied_at' => now(), 'counts' => $counts, 'error' => null])->save();
             $this->audit->record('proposal.applied', [
                 'session_id' => $session->id, 'subject_type' => 'proposal', 'subject_id' => $proposal->id, 'source_id' => $proposal->source_id,
@@ -171,15 +179,23 @@ final class ApplyService
         }
         $removedFragments = FragmentChange::query()->where('to_revision_id', $proposal->to_revision_id)->where('kind', 'removed')->pluck('old_fragment_id')->all();
         $removals = [];
+        $lessons = [];
         foreach ($accepted as $item) {
             if ($item->kind === 'remove') {
                 $removals[] = $item;
+                continue;
+            }
+            if ($item->kind === 'new_lesson') {
+                $lessons[] = $item;
                 continue;
             }
             $doc = $item->kind === 'citation_remap' ? $this->remapElement($doc, $item) : $this->replace($doc, $item);
         }
         foreach ($removals as $item) {
             $doc = $this->remove($doc, $item->element_id);
+        }
+        foreach ($lessons as $item) {
+            $doc = $this->addLesson($doc, $item);
         }
         $doc = $this->dropEmptyContainers($doc);
         // every moved passage keeps its text under a new id: citations anywhere follow it
@@ -256,6 +272,27 @@ final class ApplyService
         }
 
         return $this->replace($doc, $item);
+    }
+
+    /** A suggested lesson goes to the end of its module; when that module is gone it starts a module of its own. */
+    private function addLesson(array $doc, ProposalItem $item): array
+    {
+        $after = (array) $item->after;
+        $lesson = (array) ($after['lesson'] ?? []);
+        if ($lesson === [] || Blueprint::find($doc, (string) $lesson['id']) !== null) {
+            return $doc;
+        }
+        $moduleId = $after['module']['id'] ?? null;
+        foreach ($doc['modules'] as $m => $module) {
+            if ($moduleId !== null && $module['id'] === $moduleId) {
+                $doc['modules'][$m]['lessons'][] = $lesson;
+
+                return $doc;
+            }
+        }
+        $doc['modules'][] = ['id' => Blueprint::newId(), 'title' => (string) ($after['module']['title'] ?? $lesson['title']), 'lessons' => [$lesson]];
+
+        return $doc;
     }
 
     private function remove(array $doc, string $elementId): array
