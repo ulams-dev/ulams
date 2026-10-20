@@ -2027,6 +2027,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/compliance/report": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Compliance report
+         * @description Compliance report and audit export. Permission `compliance_report`. Datasets: `assignments` (required
+         *     training and its outcome), `certificates` (every certificate with the course version it attests) and `audit`
+         *     (hash-chained Living Course audit entries, when that package is installed).
+         */
+        get: operations["d242d8d8ef7331df5dc2c3332ae63873"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/report/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Audit export of a compliance dataset
+         * @description Streams every matching row as CSV (default) or JSON lines. The export itself is recorded (who, dataset, filters, row count).
+         */
+        get: operations["3acf773678f0412d5c87db4033bdca59"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/consultation-access-enquiries": {
         parameters: {
             query?: never;
@@ -15403,6 +15445,89 @@ export interface operations {
                 content?: never;
             };
             /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    d242d8d8ef7331df5dc2c3332ae63873: {
+        parameters: {
+            query: {
+                dataset: "assignments" | "certificates" | "audit";
+                course_id?: number;
+                user_id?: number;
+                /** @description assignments: assigned, overdue, completed, cancelled; certificates: valid, expired, revoked */
+                status?: string;
+                /** @description assigned or issued on or after this date */
+                from?: string;
+                /** @description assigned or issued on or before this date */
+                to?: string;
+                per_page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description columns and rows of the dataset, with pagination meta */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown dataset */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "3acf773678f0412d5c87db4033bdca59": {
+        parameters: {
+            query: {
+                dataset: "assignments" | "certificates" | "audit";
+                format?: "csv" | "jsonl";
+                course_id?: number;
+                user_id?: number;
+                status?: string;
+                from?: string;
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description file download */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown dataset */
             422: {
                 headers: {
                     [name: string]: unknown;
