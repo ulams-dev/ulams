@@ -195,6 +195,14 @@ The index and the sitemap list the new post without further changes, and the sta
 (`deploy/mydevil/cloudflare/landing-static.mjs`) crawls one page per post directory.
 Say what is real and what is a demo, as in the existing posts: no claims that are not in the code.
 
+## Copy page and open in an AI assistant
+
+Every page has a **Copy page** button under its title and a menu with **View as Markdown**, **Open in Claude** and
+**Open in ChatGPT** (`src/components/PageActions.astro`, shown by the `PageTitle` override; not on the splash home).
+The button copies the Markdown source of the page, which `scripts/agent-files.mjs` publishes next to every page as
+`<page>/index.md` (the same files `llms.txt` links to). The assistant links carry only the address of that Markdown
+page in the prompt; nothing is sent until the reader opens the link. Pages need no frontmatter for this.
+
 ## Screenshots
 
 Screens are `.webp` files in `src/assets/screens`, captured with:
