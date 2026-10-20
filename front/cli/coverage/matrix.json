@@ -1,5 +1,5 @@
 {
- "summary": "560/610 covered, 50 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "560/622 covered, 62 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -734,6 +734,12 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/example-plugin/greetings",
+   "summary": "Send the tenant's greeting to a user (dispatches GreetingSent)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
    "key": "DELETE /api/admin/file/delete",
    "summary": "Delete given file",
    "command": "file.delete",
@@ -876,6 +882,24 @@
    "summary": "Upload a new version (the manifest id must match)",
    "command": "interactive.add-version",
    "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/learner-insights/courses/{course}/settings",
+   "summary": "Thresholds of one course: the overrides and the effective values",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "PUT /api/admin/learner-insights/courses/{course}/settings",
+   "summary": "Replace the threshold overrides of one course",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/learner-insights/settings",
+   "summary": "The effective rule thresholds of the tenant (defaults and tenant settings)",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/admin/lessons",
@@ -2906,6 +2930,12 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/example-plugin/hello",
+   "summary": "The tenant's greeting",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
    "key": "GET /api/health-check",
    "summary": "Check health of the application",
    "command": "",
@@ -2940,6 +2970,42 @@
    "summary": "Progress events from the lesson page",
    "command": "",
    "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/learner-insights/me",
+   "summary": "The learner's own statuses with reasons, their privacy settings and the retention periods",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "DELETE /api/learner-insights/me",
+   "summary": "Erase the learner's personalisation data (the opt-out and consent settings stay)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/learner-insights/me/export",
+   "summary": "Download everything stored about the learner (signals, statuses, transitions) as JSON",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "PUT /api/learner-insights/me/settings",
+   "summary": "Opt out of personalisation, switch personal help or nudges, give or withdraw consent",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/learner-insights/nudges/opened",
+   "summary": "The learner followed the link of a nudge (the frontend sends the signed `n` of the link)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/learner-insights/signals",
+   "summary": "Record a media signal (replay, seek back) from the player",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "POST /api/liascript/launches/{topic}",
@@ -3210,6 +3276,12 @@
    "summary": "Display the specified generated PDF",
    "command": "my.pdfs-get",
    "status": "covered"
+  },
+  {
+   "key": "POST /api/pencil-spaces/login",
+   "summary": "Generate a direct login link",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/platform/operations",

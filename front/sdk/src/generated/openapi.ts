@@ -4533,6 +4533,127 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/learner-insights/nudges/opened": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** The learner followed the link of a nudge (the frontend sends the signed `n` of the link) */
+        post: operations["5fb116b0e6d5931a11e9a765cf0f2a2a"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/signals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Record a media signal (replay, seek back) from the player */
+        post: operations["3f489761d0d00887b23614e3804b9522"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The learner's own statuses with reasons, their privacy settings and the retention periods */
+        get: operations["f5444148162292e1600efef859082883"];
+        put?: never;
+        post?: never;
+        /** Erase the learner's personalisation data (the opt-out and consent settings stay) */
+        delete: operations["5f90c5e0835acf49fc0dfcc29003a322"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/me/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Opt out of personalisation, switch personal help or nudges, give or withdraw consent */
+        put: operations["2aa6efa84e5f2caa3262d0d220fdcba0"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/me/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download everything stored about the learner (signals, statuses, transitions) as JSON */
+        get: operations["e8d9d5e552ce8d917c667e07e9ad8b50"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The effective rule thresholds of the tenant (defaults and tenant settings) */
+        get: operations["98277e4fe39205922b58c1f242442681"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/courses/{course}/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Thresholds of one course: the overrides and the effective values */
+        get: operations["9c77662d818d0b2504eb4515d8575e04"];
+        /** Replace the threshold overrides of one course */
+        put: operations["29ff700e65215c07c0921eab7b7f067d"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/liascript": {
         parameters: {
             query?: never;
@@ -20838,6 +20959,296 @@ export interface operations {
             };
             /** @description server-side error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "5fb116b0e6d5931a11e9a765cf0f2a2a": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    n: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Recorded (once per nudge) */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The token is not genuine or the nudge belongs to another learner */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "3f489761d0d00887b23614e3804b9522": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    type: "media.replayed" | "media.seeked_back";
+                    topicId: number;
+                    /** @description Seconds */
+                    value?: number;
+                    /** @enum {string} */
+                    media?: "video" | "audio";
+                    /**
+                     * Format: uuid
+                     * @description Client generated id, used to drop duplicates
+                     */
+                    ref: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Accepted (nothing is stored when the module is off or the learner opted out) */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The learner may not attend the course of the topic */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown topic */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too many signals */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    f5444148162292e1600efef859082883: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `enabled` (module on for the tenant), `settings`, `courses` (status and reasons per course and element), `retention` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "5f90c5e0835acf49fc0dfcc29003a322": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Rows deleted per table */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "2aa6efa84e5f2caa3262d0d220fdcba0": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    enabled?: boolean;
+                    help?: boolean;
+                    nudges?: boolean;
+                    consent?: boolean;
+                    /** @description With enabled=false: also delete what was recorded before */
+                    eraseExisting?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description The settings after the change */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid value */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    e8d9d5e552ce8d917c667e07e9ad8b50: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A JSON file */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "98277e4fe39205922b58c1f242442681": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Rules by name, each with its parameters */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs learner_insights_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "9c77662d818d0b2504eb4515d8575e04": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `overrides` and `effective` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs learner_insights_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "29ff700e65215c07c0921eab7b7f067d": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @example {
+                     *       "inactivity": {
+                     *         "inactive_days": 5
+                     *       }
+                     *     }
+                     */
+                    rules?: Record<string, never>;
+                };
+            };
+        };
+        responses: {
+            /** @description `overrides` and `effective` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs learner_insights_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown rule or parameter, or an invalid value */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };

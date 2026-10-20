@@ -229,6 +229,7 @@ return [
         Ulams\Ai\UlamsAiServiceProvider::class,
         Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider::class,
         Ulams\LivingCourse\UlamsLivingCourseServiceProvider::class,
+        Ulams\LearnerInsights\UlamsLearnerInsightsServiceProvider::class,
         Ulams\Adapt\UlamsAdaptServiceProvider::class,
         Ulams\Compliance\UlamsComplianceServiceProvider::class,
         Ulams\Translations\UlamsTranslationsServiceProvider::class,

@@ -883,6 +883,24 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/learner-insights/courses/{course}/settings",
+  "summary": "Thresholds of one course: the overrides and the effective values",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/learner-insights/courses/{course}/settings",
+  "summary": "Replace the threshold overrides of one course",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/learner-insights/settings",
+  "summary": "The effective rule thresholds of the tenant (defaults and tenant settings)",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/lessons",
   "summary": "Get a listing of the Lessons.",
   "tag": "Admin Courses"
@@ -2950,6 +2968,42 @@
   "path": "/api/interactive/topics/{topic}/events",
   "summary": "Progress events from the lesson page",
   "tag": "Interactive"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/learner-insights/me",
+  "summary": "Erase the learner's personalisation data (the opt-out and consent settings stay)",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "GET",
+  "path": "/api/learner-insights/me",
+  "summary": "The learner's own statuses with reasons, their privacy settings and the retention periods",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "GET",
+  "path": "/api/learner-insights/me/export",
+  "summary": "Download everything stored about the learner (signals, statuses, transitions) as JSON",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/learner-insights/me/settings",
+  "summary": "Opt out of personalisation, switch personal help or nudges, give or withdraw consent",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "POST",
+  "path": "/api/learner-insights/nudges/opened",
+  "summary": "The learner followed the link of a nudge (the frontend sends the signed `n` of the link)",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "POST",
+  "path": "/api/learner-insights/signals",
+  "summary": "Record a media signal (replay, seek back) from the player",
+  "tag": "Learner insights"
  },
  {
   "method": "POST",

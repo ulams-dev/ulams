@@ -506,12 +506,18 @@
                   {
                     "title": "Per-course author analytics",
                     "text": "A dashboard per course with progress, completion, quiz performance and the sections that confuse people.",
-                    "status": "coming"
+                    "status": "coming",
+                    "packages": [
+                      "learner-insights"
+                    ]
                   },
                   {
                     "title": "At-risk learners",
                     "text": "Rule-based risk scoring with human-readable reasons and per-tenant thresholds, and rate-limited nudges.",
-                    "status": "coming"
+                    "status": "coming",
+                    "packages": [
+                      "learner-insights"
+                    ]
                   },
                   {
                     "title": "AI tutor",

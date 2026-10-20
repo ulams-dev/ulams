@@ -80,6 +80,9 @@ return [
     ['api/living-course/webhooks/*', 'public'],
     // the vendor's browser redirect after "Connect your account": no token, the encrypted expiring state is the credential
     ['api/living-course/oauth/*/callback', 'public'],
+    // Learner Insights: thresholds are tenant settings; everything else acts on the signed-in learner only
+    ['api/admin/learner-insights*', 'settings'],
+    ['api/learner-insights*', 'learner'],
 
     // ---- enrolments (before the broader courses and users prefixes) ----------------------------
     ['api/admin/courses/*/access*', 'enrolments'],

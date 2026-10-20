@@ -1,0 +1,81 @@
+---
+title: Learner Insights settings
+description: Turn on learner insights for a tenant, tune the struggling and at-risk rules, choose privacy and retention settings and backfill existing data.
+sidebar:
+  order: 27
+modules:
+  - learner-insights
+---
+
+Learner Insights records what learners do in a course as small, structured signals and scores them with transparent rules into two statuses: **struggling** (with an element, such as a quiz question) and **at risk** (of dropping out). Every status carries the reasons in plain language. Later steps of the personalisation phase add nudges, personal help and author analytics. This page covers the signal stream and the rules. It adds no admin route yet: it is configured with settings, one set of permissions and a few commands. Signals and statuses are never sent to an AI provider, and a status never affects grades, access or certificates.
+
+## Turn it on
+
+The module ships with the API and is always loaded, but it is **off for every tenant** until you switch it on. After an upgrade run once per tenant:
+
+```bash
+php artisan migrate --force
+php artisan db:seed --class="Ulams\\LearnerInsights\\Database\\Seeders\\LearnerInsightsPermissionSeeder" --force
+php artisan learner-insights:backfill --dry-run   # how many signals existing data would give
+```
+
+Switch it on with the tenant setting `learner_insights.enabled` (`POST /api/admin/config`, or `LEARNER_INSIGHTS_ENABLED=true` for the whole installation). The seeder creates the permissions `learner_insights_view`, `learner_insights_view_individuals` and `learner_insights_manage` and gives them to the `admin` role. Tutors get none of them by default.
+
+## What is recorded
+
+| Signal | From |
+|---|---|
+| `course.started`, `course.completed` | enrolment progress events |
+| `topic.opened`, `topic.progressed`, `topic.completed` | progress saves (time spent as seconds, never page content) |
+| `quiz.attempt_started`, `quiz.attempt_finished`, `quiz.answer` | GIFT quizzes (score ratio and whether the answer was fully correct, never the answer text) |
+| `scorm.status` | SCORM completion |
+| `media.replayed`, `media.seeked_back` | the video and audio players |
+| `session.login` | sign-in |
+
+Each signal belongs to a learner, usually a course and an element: the element of the Course Builder blueprint when the course was built with it, otherwise the topic or question id. There is no free text in any signal.
+
+## The rules
+
+All values are defaults; change them per tenant with the settings `learner_insights.rules.<rule>.<parameter>` (`POST /api/admin/config`) and per course with `PUT /api/admin/learner-insights/courses/{course}/settings` (permission `learner_insights_manage`), for example `{"rules": {"inactivity": {"inactive_days": 5}}}`.
+
+| Rule | Fires when | Result | Defaults |
+|---|---|---|---|
+| `inactivity` | no activity in the course for `inactive_days` | learner **at risk** | 7 days; `struggling_elements_at_risk` = 3 struggling elements plus 3 inactive days is also at risk |
+| `failed_attempts` | the same question answered wrongly `failed_answers` times since the last correct answer, or `failed_quiz_attempts` failed attempts of one quiz since the last pass | element **struggling** | 2 and 2 |
+| `slow_element` | time on an element is more than `slow_factor` times the cohort median (cohort of at least `min_cohort` learners who finished it) | element **struggling** | 3 times, cohort 10 |
+| `abandoned_element` | an element was opened `abandoned_days` ago, not finished, while the learner worked on other parts | element **struggling** | 5 days |
+| `repetition` | `replays` replays or seeks back in media, or `revisits` revisits of a finished topic within 7 days | low weight: only counts together with another rule | 3 and 3 |
+
+A finished course is always on track. A struggling element returns to on track when the learner passes or finishes it. Statuses change only on transitions: the events `LearnerStruggling`, `LearnerAtRisk` and `LearnerRecovered` fire once per transition, never on a repeated evaluation. The first evaluation follows new signals within about a minute (one evaluation per learner and course per minute); the nightly `learner-insights:evaluate` covers the rules that depend on time passing, and `learner-insights:cohort-stats` computes the medians.
+
+## Privacy controls
+
+| Control | Effect |
+|---|---|
+| `learner_insights.enabled` (tenant) | Nothing is recorded while it is off |
+| `learner_insights.require_consent` (tenant) | Nothing is recorded for a learner until the user setting `insights.consent` exists |
+| `insights.enabled` = false (user setting) | The learner opted out: nothing is recorded about them |
+| `learner_insights.retention.signals_days` (tenant, default 180) | Older signals are deleted by the daily `learner-insights:prune` |
+
+## Environment variables
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `LEARNER_INSIGHTS_ENABLED` | `false` | Master switch for the installation (the tenant setting overrides it) |
+| `LEARNER_INSIGHTS_REQUIRE_CONSENT` | `false` | Consent mode |
+| `LEARNER_INSIGHTS_QUEUE_CONNECTION`, `LEARNER_INSIGHTS_QUEUE` | default queue | Where signals are recorded |
+| `LEARNER_INSIGHTS_RETENTION_SIGNALS_DAYS` | `180` | Retention window |
+| `LEARNER_INSIGHTS_CLIENT_SIGNALS_PER_MINUTE` | `60` | Rate limit of the player endpoint, per learner |
+| `LEARNER_INSIGHTS_EVALUATE_DEBOUNCE_SECONDS` | `60` | One evaluation per learner and course in this window |
+
+## Commands
+
+```bash
+php artisan learner-insights:backfill --course=1     # build signals from existing progress, enrolments and quiz data (idempotent, --dry-run, --since=)
+php artisan learner-insights:timeline --user=42 --course=1   # one learner's journey with element labels (support)
+php artisan learner-insights:prune                   # runs daily at 02:40 per tenant
+php artisan learner-insights:cohort-stats            # runs daily at 03:00 per tenant
+php artisan learner-insights:evaluate                # runs daily at 03:30 per tenant (--course=)
+```
+
+Progress and SCORM keep only their latest state, so backfilled history is coarse. The backfill respects the module switch, opt-outs and the retention window.
