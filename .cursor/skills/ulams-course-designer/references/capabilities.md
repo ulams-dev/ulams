@@ -33,7 +33,6 @@ its fallback.
 - `native.image` — **Image or figure** · `author-import`: Show a source image, diagram, screenshot or labelled figure. Fallback: Caption and long description.
 - `h5p.interactive-video` — **H5P Interactive Video** · `author-import`: Add questions and navigation to a supplied video. Fallback: Captioned video, transcript and separate quiz.
 - `h5p.agamotto` — **H5P Agamotto** · `author-import`: Compare a sequence of images that gradually change. Fallback: Ordered images with captions and descriptions.
-- `h5p.audio` — **H5P Audio** · `author-import`: Play supplied audio inside an H5P container. Fallback: Native audio player and transcript.
 - `h5p.chart` — **H5P Chart** · `author-import`: Show supplied values as a bar or pie chart. Fallback: Data table and textual summary.
 - `h5p.collage` — **H5P Collage** · `author-import`: Arrange several supplied images as one visual overview. Fallback: Image list with captions.
 - `h5p.image-hotspots` — **H5P Image Hotspots** · `author-import`: Reveal information attached to regions of a supplied image or diagram. Fallback: Labelled figure followed by a hotspot detail list.
@@ -129,7 +128,6 @@ its fallback.
 ## Sources
 
 - [H5P content types and applications](https://h5p.org/content-types-and-applications) — checked 2026-10-15
-- [H5P Hub machine-readable content types](https://api.h5p.org/v1/content-types/) — checked 2026-10-15
 - [H5P xAPI documentation](https://h5p.org/documentation/x-api) — checked 2026-10-15
 - [LiaScript documentation](https://liascript.github.io/) — checked 2026-10-15
 - [WCAG 2.2](https://www.w3.org/TR/WCAG22/) — checked 2026-10-15
