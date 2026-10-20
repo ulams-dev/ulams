@@ -8797,6 +8797,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/tutor/courses/{course}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Ask the course tutor a question; it answers only from the course, with citations */
+        post: operations["5fac8fc8aa5c813d6da8b67dfe389e46"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tutor/courses/{course}/conversations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The learner's own conversations in a course */
+        get: operations["3ff2256b082d977def1cadca5a39afaf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tutor/conversations/{conversation}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One of the learner's conversations with its messages */
+        get: operations["5402b4d10648e674934c633b0d48a361"];
+        put?: never;
+        post?: never;
+        /** Delete one of the learner's conversations */
+        delete: operations["bef2fce36ea6ce97000cfe78cefbb4a7"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/tutor/courses/{course}/analytics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Anonymous tutor analytics for a course: questions, out-of-scope share and refusals during attempts */
+        get: operations["7fdfad52f16b2d736611d388ee7cb219"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/video/states": {
         parameters: {
             query?: never;
@@ -31614,6 +31683,171 @@ export interface operations {
                 content: {
                     "application/json": unknown;
                 };
+            };
+        };
+    };
+    "5fac8fc8aa5c813d6da8b67dfe389e46": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    text: string;
+                    conversationId?: string | null;
+                    /** @description The topic the learner has open: its content is added to the search */
+                    topicId?: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description `answer`, `citations` (label, topic, source fragments), `refusal` (none, out_of_scope, attempt_active, unsafe), `inScope`, `remaining` questions today */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The learner may not attend the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course or conversation */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Daily or monthly limit reached, or too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The tutor is switched off or AI is disabled */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "3ff2256b082d977def1cadca5a39afaf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "5402b4d10648e674934c633b0d48a361": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Messages in order */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not the learner's conversation */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    bef2fce36ea6ce97000cfe78cefbb4a7: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                conversation: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not the learner's conversation */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "7fdfad52f16b2d736611d388ee7cb219": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Counts only; `smallGroup` below the minimum group size. No transcripts, no names */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs learner_insights_view or authorship of the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

@@ -1,0 +1,35 @@
+---
+title: Course tutor settings
+description: Switch on the course tutor, set its daily and monthly limits, choose the model profile and see what learners and authors can and cannot see.
+sidebar:
+  order: 28
+modules:
+  - tutor
+---
+
+The course tutor lets a learner ask a question inside a course and get a short answer built only from that course's own content, with links back to the lesson. When the course does not cover the question it says so instead of guessing. While a learner has a quiz attempt open it does not give or confirm quiz answers. It is **off for every tenant** until you switch it on, and it needs AI to be configured (`AI_DRIVER`).
+
+## Turn it on
+
+The module ships with the API. After an upgrade run `php artisan migrate --force` once per tenant, then set the tenant setting `tutor.enabled` to true (`POST /api/admin/config`, or `TUTOR_ENABLED=true` for the whole installation). The first question in a course builds its search index; `php artisan tutor:index --course=1` rebuilds it by hand.
+
+## How it answers
+
+The tutor searches the lesson text of the course (and, for courses built with the Course Builder, the source passages that text cites) with PostgreSQL full-text search, adds the lesson the learner has open, and sends those pieces, the last six messages and the question to the model. Every answer must cite the pieces it used; an answer without valid citations is not shown. Quiz questions, answer options, explanations and final tests are never indexed, so the tutor cannot find them. Text of a learner or of a source is treated as data and cannot change the tutor's rules.
+
+During an open quiz attempt the tutor explains concepts in general terms or declines, and a check on the server drops any answer that contains a correct option. An attempt that was never submitted and has no time limit counts as open, which errs on the side of not helping.
+
+## Limits and settings
+
+| Setting or variable | Default | Meaning |
+|---|---|---|
+| `tutor.enabled` / `TUTOR_ENABLED` | `false` | Tenant switch |
+| `TUTOR_DAILY_QUESTIONS` | `30` | Questions per learner per day |
+| `TUTOR_PER_MINUTE` | `6` | Requests per learner per minute |
+| `TUTOR_TENANT_MONTHLY_USD` | `30` | Monthly AI spend of the tutor for the tenant |
+| `TUTOR_RETENTION_DAYS` | `90` | Conversations are deleted this many days after the last message |
+| `AI_TASK_TUTOR_PROFILE` | `light` | Model profile of the tutor |
+
+## Privacy
+
+Conversations belong to the learner, who can list and delete them; an account deletion erases them. No screen shows transcripts to authors or admins. The analytics endpoint `GET /api/admin/tutor/courses/{course}/analytics` returns counts only (questions, the share the course did not cover, refusals during attempts), and only for groups of at least `LEARNER_INSIGHTS_MIN_GROUP_SIZE` learners. The model sees the question, recent messages and course content, never the learner's name, e-mail, results or history, and the call is logged without a user.
