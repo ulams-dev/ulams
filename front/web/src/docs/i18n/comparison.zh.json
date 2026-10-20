@@ -505,12 +505,18 @@
                   {
                     "title": "单门课程的作者分析",
                     "text": "每门课程一个仪表盘，展示进度、完成率、测验表现以及让学员困惑的章节。",
-                    "status": "coming"
+                    "status": "coming",
+                    "packages": [
+                      "learner-insights"
+                    ]
                   },
                   {
                     "title": "有风险的学员",
                     "text": "基于规则的风险评分，带有易读的理由和按租户设置的阈值，并有限频的提醒。",
-                    "status": "coming"
+                    "status": "coming",
+                    "packages": [
+                      "learner-insights"
+                    ]
                   },
                   {
                     "title": "AI 导师",

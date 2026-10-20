@@ -1,6 +1,6 @@
 # Phase 4 plan: Personalisation
 
-Status: **draft, waiting for the product owner's approval**. Nothing in this plan is implemented.
+Status: approved by blanket instruction 2026-10-20, defaults used (open owner decisions #58 to #63 are closed; the ADRs 0057 to 0062 stay Proposed until accepted, see #64). Implementation in progress: M4.1 to M4.4 shipped in the first PR (see `api/packages/learner-insights/README.md`).
 
 Phase 4 adds the second pillar of the product: courses that **adapt to each learner**, with every
 recommendation explained and grounded in the course's cited sources. It covers every Phase 4 item in
@@ -958,3 +958,28 @@ M4.3 front commits (15–16) can run in parallel with M4.2 API commits.
 17. **Experiments**: remediation holdout 20 % and adaptive interface A/B, both through the experiments
     package (consent default pending #58).
 18. **No new dependencies.**
+
+---
+
+## 19. Implementation notes (M4.1 to M4.4)
+
+Where the code differs from the plan above, and what is still open:
+
+- `learner_statuses.element_key` is the empty string for the course-level row instead of NULL, so the
+  unique index also holds for it on PostgreSQL.
+- `quiz.answer` signals are written when an attempt finishes (one per graded answer), not from an
+  answer observer: open answers have no score until graded, and the finish event carries the attempt.
+  The hashed `chosen` option ids (needed for the remediation pattern key, M4.5) are not recorded yet.
+- Not yet recorded: `xapi.result` (LRS observer) and `h5p.result` (H5P progress observer). The types
+  exist in `SignalType`; the observers are open items of M4.1.
+- `repetition` alone is evaluated and returned by the scorer (`lowWeight`), but not persisted or
+  announced: only elements with a strong rule get a stored status and a `LearnerStruggling` event.
+- Course-level reasons of a struggling or at-risk learner include the reasons of the struggling elements.
+- The admin settings page of M4.2 (a screen in `admin/`) is not built. The thresholds are tenant settings
+  (`learner_insights.rules.<rule>.<param>` through `POST /api/admin/config`) and per-course overrides
+  (`GET/PUT /api/admin/learner-insights/courses/{course}/settings`), both documented.
+- The audit of exports and erasures is the package's own `learner_insights_audit` table (counts only):
+  the Living Course audit trail is bound to builder sessions.
+- Nudges use the notifications package: `LearnerNudged` carries a `User`; the e-mail template is in
+  `templates-email`. `n=<id>.<signature>` in the continue link is verified by
+  `POST /api/learner-insights/nudges/opened`.

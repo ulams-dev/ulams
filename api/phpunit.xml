@@ -139,6 +139,9 @@
     <testsuite name="webhooks">
       <directory suffix="Test.php">./packages/webhooks/tests</directory>
     </testsuite>
+    <testsuite name="learner-insights">
+      <directory suffix="Test.php">./packages/learner-insights/tests</directory>
+    </testsuite>
     <testsuite name="compliance">
       <directory suffix="Test.php">./packages/compliance/tests</directory>
     </testsuite>
@@ -245,6 +248,7 @@
 <directory suffix=".php">./packages/course-builder/</directory>
       <directory suffix=".php">./packages/living-course/</directory>
       <directory suffix=".php">./packages/webhooks/</directory>
+      <directory suffix=".php">./packages/learner-insights/</directory>
       <directory suffix=".php">./packages/vouchers/</directory>
       <directory suffix=".php">./packages/consultations/</directory>
       <directory suffix=".php">./packages/consultation-access/</directory>

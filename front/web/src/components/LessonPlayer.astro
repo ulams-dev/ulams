@@ -264,7 +264,14 @@ const resources = topic.resources ?? [];
   const tree = document.querySelector<HTMLDetailsElement>("[data-tree]");
   if (tree && !CSS.supports("selector(::details-content)") && matchMedia("(min-width: 961px)").matches) tree.open = true;
   // keep the current topic in view inside the program
-  document.querySelector(".u-tree [aria-current='page']")?.scrollIntoView({ block: "center", behavior: "instant" });
+  // (scroll the program itself: scrollIntoView moves the browser's Tab starting point to the current topic,
+  // which skips the skip link and the header for keyboard users)
+  const current = document.querySelector<HTMLElement>(".u-tree [aria-current='page']");
+  const scroller = current?.closest("nav");
+  if (current && scroller) {
+    const top = current.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop;
+    scroller.scrollTop = Math.max(0, top - (scroller.clientHeight - current.offsetHeight) / 2);
+  }
 
   // j / k (or [ and ]) move between topics, like the tools engineers use every day
   document.addEventListener("keydown", (event) => {

@@ -277,6 +277,14 @@
             "area": "public"
         },
         {
+            "pattern": "api/admin/learner-insights*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/learner-insights*",
+            "area": "learner"
+        },
+        {
             "pattern": "api/admin/courses/*/access*",
             "area": "enrolments"
         },
