@@ -9,11 +9,13 @@
     "sync": "node --experimental-strip-types --no-warnings scripts/sync-content.mjs",
     "coverage": "node --experimental-strip-types --no-warnings scripts/coverage.mjs",
     "dev": "yarn sync && yarn api-browser && astro dev --port 4322",
-    "build": "yarn sync && yarn coverage && yarn api-browser && astro build",
+    "build": "yarn sync && yarn coverage && yarn api-browser && astro build && yarn agent-files",
     "preview": "astro preview --port 4322",
     "typecheck": "yarn sync && astro check",
-    "lint": "yarn sync && yarn coverage",
+    "lint": "yarn sync && yarn coverage && yarn agent-files:check",
     "screenshots": "node scripts/screenshots.mjs",
+    "agent-files": "node --experimental-strip-types --no-warnings scripts/agent-files.mjs",
+    "agent-files:check": "node --experimental-strip-types --no-warnings scripts/agent-files.mjs --check",
     "api-browser": "node scripts/vendor-scalar.mjs && node --experimental-strip-types --no-warnings scripts/openapi.mjs"
   },
   "dependencies": {
