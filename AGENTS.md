@@ -32,7 +32,7 @@ practical map.
 
 - **CLI**: `ulams` (built from `front/cli`, `corepack yarn workspace ulams build`) prints a JSON
   envelope with `--json`, exits with a code per error class, describes any command with
-  `ulams schema <command>` and signs in with `ulams login`. Writes accept `--dry-run`. Guide:
+  `ulams schema` (every command as JSON) and `ulams describe <command>` (one command) and signs in with `ulams login`. Writes accept `--dry-run`. Guide:
   `front/docs-site/src/content/docs/developers/cli.mdx`.
 - **MCP**: `ulams mcp` serves the same commands as MCP tools (toolsets, read-only mode, confirmation
   for destructive tools): `front/docs-site/src/content/docs/developers/agents.mdx`.
