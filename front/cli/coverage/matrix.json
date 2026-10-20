@@ -1,5 +1,5 @@
 {
- "summary": "546/596 covered, 50 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "548/598 covered, 50 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -191,6 +191,18 @@
    "key": "PUT /api/admin/compliance/managers/{user}",
    "summary": "Set or clear the manager of a user",
    "command": "compliance.managers-set",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/report",
+   "summary": "Compliance report",
+   "command": "compliance.report",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/report/export",
+   "summary": "Audit export of a compliance dataset",
+   "command": "compliance.report-export",
    "status": "covered"
   },
   {

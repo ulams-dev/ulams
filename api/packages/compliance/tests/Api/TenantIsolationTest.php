@@ -31,6 +31,8 @@ class TenantIsolationTest extends TestCase
             ['DELETE', '/api/admin/compliance/assignments/1', []],
             ['GET', '/api/admin/compliance/managers', []],
             ['PUT', '/api/admin/compliance/managers/1', ['manager_id' => null]],
+            ['GET', '/api/admin/compliance/report?dataset=assignments', []],
+            ['GET', '/api/admin/compliance/report/export?dataset=certificates', []],
             ['GET', '/api/compliance/my-assignments', []],
             ['GET', '/api/compliance/team/assignments', []],
         ];
