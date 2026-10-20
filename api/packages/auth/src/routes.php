@@ -33,9 +33,13 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('auth/tokens', [TokenController::class, 'store']);
         Route::get('auth/tokens/current', [TokenController::class, 'current']);
         Route::delete('auth/tokens/{id}', [TokenController::class, 'destroy']);
+        Route::patch('auth/tokens/{id}', [TokenController::class, 'update']);
+        Route::get('auth/tokens/{id}/usage', [TokenController::class, 'usage']);
 
         Route::get('admin/tokens', [TokenAdminController::class, 'index']);
         Route::delete('admin/tokens/{id}', [TokenAdminController::class, 'destroy']);
+        Route::patch('admin/tokens/{id}', [TokenAdminController::class, 'update']);
+        Route::get('admin/tokens/{id}/usage', [TokenAdminController::class, 'usage']);
         Route::get('admin/tokens/{id}/audit', [TokenAdminController::class, 'audit']);
         Route::get('admin/agent-audit', [TokenAdminController::class, 'agentAudit']);
     });

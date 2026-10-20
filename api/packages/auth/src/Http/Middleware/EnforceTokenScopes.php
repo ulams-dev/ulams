@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Symfony\Component\HttpFoundation\Response;
+use Ulams\Auth\Support\EnforceKey;
 use Ulams\Auth\Support\TokenContext;
 use Ulams\Auth\Support\TokenScopes;
 
@@ -47,8 +48,10 @@ class EnforceTokenScopes
 
         $limit = $context->meta->rate_limit_per_minute;
         if ($limit !== null) {
-            $key = 'ulams-token:' . $context->tokenId;
+            $key = EnforceKey::for($context->tokenId);
             if (RateLimiter::tooManyAttempts($key, $limit)) {
+                $request->attributes->set('ulams.rate_limited', true);
+
                 return response()->json([
                     'success' => false,
                     'message' => 'This token exceeded its rate limit.',

@@ -11,11 +11,14 @@ use Ulams\Auth\Http\Requests\Tokens\CreateTokenRequest;
 use Ulams\Auth\Http\Requests\Tokens\CurrentTokenRequest;
 use Ulams\Auth\Http\Requests\Tokens\ListTokensRequest;
 use Ulams\Auth\Http\Requests\Tokens\RevokeTokenRequest;
+use Ulams\Auth\Http\Requests\Tokens\TokenUsageRequest;
+use Ulams\Auth\Http\Requests\Tokens\UpdateTokenRequest;
 use Ulams\Auth\Http\Resources\ApiTokenCreatedResource;
 use Ulams\Auth\Http\Resources\ApiTokenResource;
 use Ulams\Auth\Services\Contracts\PersonalAccessTokenServiceContract;
 use Ulams\Auth\Support\TokenContext;
 use Ulams\Auth\Support\TokenScopes;
+use Ulams\Auth\Support\TokenUsage;
 use Ulams\Core\Http\Controllers\UlamsBaseController;
 
 /** The signed-in user's own scoped personal access tokens (ADR 0074). */
@@ -59,6 +62,18 @@ class TokenController extends UlamsBaseController implements TokenSwagger
         $this->tokens->revoke($request->tokenMeta());
 
         return $this->sendSuccess(__('Token revoked'));
+    }
+
+    public function usage(TokenUsageRequest $request): JsonResponse
+    {
+        return $this->sendResponse(TokenUsage::summary($request->tokenMeta(), (int) $request->input('days', 30)), __('Token usage'));
+    }
+
+    public function update(UpdateTokenRequest $request): JsonResponse
+    {
+        $meta = $this->tokens->setRateLimit($request->tokenMeta(), $request->validated()['rate_limit_per_minute'] ?? null);
+
+        return $this->sendResponseForResource(ApiTokenResource::make($meta), __('Token updated'));
     }
 
     public function current(CurrentTokenRequest $request): JsonResponse
