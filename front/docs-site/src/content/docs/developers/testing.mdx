@@ -168,6 +168,34 @@ corepack yarn test:web:e2e            # yarn workspace @ulams/web test:e2e
 
 Add every new learner page to the `PAGES` list in `a11y.spec.ts`.
 
+### Accessibility in CI (no API stack)
+
+`yarn workspace @ulams/web test:a11y` builds nothing itself: run `yarn workspace @ulams/web build`
+first. It starts a mock tenant API (`front/web/tests/mock-api/server.mjs`, the captured coffee
+fixtures plus a two-question quiz) and the built server, then runs `tests/a11y` in the two projects.
+CI runs it as the `Web accessibility (axe, keyboard)` job.
+
+- `learner.a11y.spec.ts`: axe (WCAG 2.2 AA tags) over home, course page, lesson player, quiz intro
+  and question, finish, account, login and 404, in a light theme (`coffee`) and a dark one
+  (`nightsky`), at desktop and 360 px, with reduced motion on. The platform landing is scanned once.
+- `keyboard.a11y.spec.ts`: the skip link is the first Tab stop and leads into `main`, every Tab
+  stop is visible and shows a focus indicator, and no infinite animation runs under reduced motion.
+
+A new learner page goes into `PAGES` in `learner.a11y.spec.ts` (and, if the mock does not serve its
+data, a route into `mock-api/server.mjs`).
+
+**Checklist for a new learner-facing page or component**
+
+1. One `h1`, landmarks (`header`, `main#main`, `footer`), the skip link from `Base.astro`.
+2. Every control is reachable and operable by keyboard, with a visible focus indicator of 3 px or
+   more; no keyboard trap; focus order follows the visual order.
+3. Targets are at least 24×24 CSS px (WCAG 2.5.8), also on a 360 px screen.
+4. Text contrast 4.5:1 (3:1 for large text and UI parts) in every theme the page can show in.
+5. Motion respects `prefers-reduced-motion`: no looping animation, no auto-advancing content.
+6. Do not move the browser's Tab starting point on load (`scrollIntoView` does: scroll the
+   container instead).
+7. Add the page to the axe suite and run it light and dark, desktop and phone.
+
 </TabItem>
 <TabItem label="admin">
 
