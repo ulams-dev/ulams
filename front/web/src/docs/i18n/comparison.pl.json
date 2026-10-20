@@ -22,6 +22,10 @@
             "href": "/pl/comparison/"
           },
           {
+            "label": "Budowa",
+            "href": "/pl/course-generation/"
+          },
+          {
             "label": "Blog",
             "href": "/pl/blog/"
           },
@@ -1026,6 +1030,10 @@
           "component": "Faq",
           "props": {
             "id": "faq",
+            "more": {
+              "label": "Więcej pytań na stronie FAQ",
+              "href": "/pl/faq/"
+            },
             "eyebrow": "FAQ",
             "title": "Pytania przed rozpoczęciem",
             "items": [
@@ -1082,19 +1090,19 @@
           },
           {
             "label": "Dema",
-            "href": "#demos"
+            "href": "/pl/#demos"
           },
           {
             "label": "Przepływy agentów",
-            "href": "#agents"
+            "href": "/pl/#agents"
           },
           {
             "label": "Standardy",
-            "href": "#standards"
+            "href": "/pl/#standards"
           },
           {
             "label": "Self-hosting",
-            "href": "#self-host"
+            "href": "/pl/#self-host"
           },
           {
             "label": "Dokumentacja",
@@ -1106,14 +1114,15 @@
           },
           {
             "label": "FAQ",
-            "href": "#faq"
+            "href": "/pl/faq/"
           },
           {
             "label": "Kontakt",
             "href": "/pl/#contact"
           }
         ],
-        "note": "Otwarty kod · MIT"
+        "note": "Otwarty kod · MIT",
+        "mail": true
       }
     }
   ]

@@ -117,7 +117,7 @@ const alternatives = [
       </section>)}
     </div>
     <div class="ps-bottom">
-      <div class="ps-navigation" role="tablist" aria-label={ariaLabel}>{v.chapters.map((label, i) => <button type="button" role="tab" id={`policy-tab-${i}`} aria-controls={`policy-panel-${i}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-step={i}><Icon name={icons[i] ?? "book"} /><span>{label}</span><i /></button>)}</div>
+      <div class="ps-navigation" role="tablist" aria-label={ariaLabel}>{v.chapters.map((label, i) => <button type="button" role="tab" id={`policy-tab-${i}`} aria-controls={`policy-panel-${i}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-step={i} style={`--ps-dwell:${i === 0 ? 10500 : i === 1 ? 15000 : 6000}ms`}><span class="ps-step-mark"><Icon name={icons[i] ?? "book"} /></span><i class="ps-dwell" aria-hidden="true"><b></b></i><span>{label}</span></button>)}</div>
       <div class="ps-controls"><button type="button" data-play aria-label={t.pause} title={t.pause} data-pause-label={t.pause} data-play-label={t.play} aria-pressed="false"><Icon name="pause" class="ps-pause-icon" /><Icon name="play" class="ps-play-icon" /></button><button type="button" data-replay aria-label={t.replay} title={t.replay}><Icon name="sync" /></button></div>
     </div>
   </ulams-policy-story>
@@ -190,6 +190,7 @@ const alternatives = [
       this.observer.observe(this);
       document.addEventListener("visibilitychange", this.onVisibility);
       this.motion.addEventListener("change", this.onMotion);
+      this.armDwell();
       this.updatePlayback();
     }
     disconnectedCallback() {
@@ -209,6 +210,9 @@ const alternatives = [
         tab.setAttribute("aria-selected", String(n === i));
         tab.tabIndex = n === i ? 0 : -1;
       });
+      const scenes = this.panels[i]?.parentElement;
+      const from = scenes?.getBoundingClientRect().height ?? 0;
+      if (scenes) scenes.style.height = "";
       this.panels.forEach((panel) => { panel.hidden = true; });
       // Restart the selected scene's visual sequence, including when replaying scene zero.
       void this.offsetWidth;
@@ -218,6 +222,34 @@ const alternatives = [
         const chat = panel.querySelector<HTMLElement>(".ps-brief-chat");
         if (chat) chat.scrollTop = 0;
       }
+      if (scenes) this.resize(scenes, from);
+      this.armDwell();
+    }
+    /** Animate the scene box to the height of the new chapter so no chapter leaves empty space. */
+    private resize(scenes: HTMLElement, from: number) {
+      scenes.removeAttribute("data-resizing");
+      const to = scenes.getBoundingClientRect().height;
+      if (this.motion.matches || !from || Math.abs(to - from) < 1) return;
+      scenes.style.height = `${from}px`;
+      void scenes.offsetHeight;
+      scenes.setAttribute("data-resizing", "");
+      scenes.style.height = `${to}px`;
+      const done = (event: TransitionEvent) => {
+        if (event.target !== scenes || event.propertyName !== "height") return;
+        scenes.removeEventListener("transitionend", done);
+        if (scenes.style.height !== `${to}px`) return;
+        scenes.style.height = "";
+        scenes.removeAttribute("data-resizing");
+      };
+      scenes.addEventListener("transitionend", done);
+    }
+    /** Restart the bar under the active icon so it fills across that chapter's duration. */
+    private armDwell() {
+      this.tabs.forEach((tab) => tab.querySelector(".ps-dwell")?.classList.remove("is-running"));
+      const dwell = this.tabs[this.index]?.querySelector<HTMLElement>(".ps-dwell");
+      if (!dwell || this.motion.matches) return;
+      void dwell.offsetWidth;
+      dwell.classList.add("is-running");
     }
     private updatePlayback() {
       clearTimeout(this.timer);
@@ -278,6 +310,10 @@ const alternatives = [
   }
   .ps-scenes {
     display: grid;
+  }
+  .ps-scenes[data-resizing] {
+    overflow: hidden;
+    transition: height 0.35s ease;
   }
   .ps-panel {
     display: grid;
@@ -819,66 +855,142 @@ const alternatives = [
     border-color: var(--ulams-color-positive);
   }
   .ps-bottom {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    padding: 0 24px 20px;
+    --ps-mark: 36px;
+    --ps-tray: color-mix(in srgb, var(--ulams-color-primary) 4%, var(--ulams-color-surface));
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 12px;
+    align-items: start;
+    margin: 0 16px 16px;
+    padding: 14px 16px;
+    background: var(--ps-tray);
+    border: 1px solid var(--ulams-color-border);
+    border-radius: 18px;
   }
   .ps-navigation {
+    position: relative;
     display: grid;
-    flex: 1;
     grid-template-columns: repeat(7, minmax(0, 1fr));
-    gap: 7px;
+    align-items: start;
+  }
+  .ps-navigation::before {
+    content: "";
+    position: absolute;
+    top: calc((var(--ps-mark) - 2px) / 2);
+    right: calc(100% / 14);
+    left: calc(100% / 14);
+    height: 2px;
+    background: color-mix(in srgb, var(--ulams-color-primary) 18%, var(--ulams-color-border));
+    border-radius: 99px;
   }
   .ps-navigation button {
     position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: 6px;
     align-items: center;
-    padding: 10px 2px 12px;
+    min-width: 0;
+    padding: 0;
     color: var(--ulams-color-muted);
-    font: 600 0.6rem/1.3 var(--ulams-font-family-body);
+    font: 650 0.68rem/1.15 var(--ulams-font-family-body);
     text-align: center;
     background: transparent;
     border: 0;
     cursor: pointer;
   }
-  .ps-navigation :global(svg) {
-    width: 16px;
+  .ps-step-mark {
+    display: grid;
+    width: var(--ps-mark);
+    height: var(--ps-mark);
+    place-items: center;
+    color: var(--ulams-color-muted);
+    background: var(--ulams-color-card-bg);
+    border: 1.5px solid var(--ulams-color-border);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px var(--ps-tray);
+    transition: background 0.25s var(--ulams-ease), color 0.25s var(--ulams-ease), border-color 0.25s var(--ulams-ease);
   }
-  .ps-navigation button > i {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 2px;
-    background: var(--ulams-color-border);
+  .ps-navigation :global(svg) {
+    width: 15px;
+    height: 15px;
+  }
+  .ps-navigation button > span:last-of-type {
+    max-width: 100%;
+  }
+  .ps-dwell {
+    display: block;
+    width: 28px;
+    height: 3px;
+    overflow: hidden;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--ulams-color-primary) 14%, var(--ulams-color-border));
+  }
+  .ps-dwell b {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--ulams-brand-orange);
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+  .ps-dwell.is-running b {
+    animation: ps-dwell linear var(--ps-dwell, 6s) forwards;
+  }
+  .ps-navigation button:has(~ button[aria-selected="true"]) .ps-dwell b {
+    transform: scaleX(1);
+  }
+  @keyframes ps-dwell {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  .ps-navigation button:hover .ps-step-mark {
+    color: var(--ulams-color-primary);
+    border-color: var(--ulams-color-primary);
+  }
+  .ps-navigation button:has(~ button[aria-selected="true"]) {
+    color: var(--ulams-color-primary);
+  }
+  .ps-navigation button:has(~ button[aria-selected="true"]) .ps-step-mark {
+    color: var(--ulams-color-primary);
+    background: color-mix(in srgb, var(--ulams-color-primary) 10%, var(--ulams-color-card-bg));
+    border-color: color-mix(in srgb, var(--ulams-color-primary) 40%, var(--ulams-color-border));
   }
   .ps-navigation button[aria-selected="true"] {
     color: var(--ulams-color-primary);
   }
-  .ps-navigation button[aria-selected="true"] > i {
-    background: var(--ulams-color-accent);
+  .ps-navigation button[aria-selected="true"] .ps-step-mark {
+    color: #fff;
+    background: var(--ulams-color-primary);
+    border-color: var(--ulams-color-primary);
   }
   .ps-controls {
     display: flex;
-    gap: 5px;
+    gap: 4px;
+    align-items: center;
+    align-self: stretch;
+    padding-left: 12px;
+    border-left: 1px solid var(--ulams-color-border);
   }
   .ps-controls button {
     display: grid;
-    width: 32px;
-    height: 32px;
+    width: var(--ps-mark);
+    height: var(--ps-mark);
     padding: 0;
     color: var(--ulams-color-primary);
-    background: var(--ulams-color-bg);
-    border: 1px solid var(--ulams-color-border);
-    border-radius: 50%;
+    background: transparent;
+    border: 0;
+    border-radius: 10px;
     cursor: pointer;
     place-items: center;
+    transition: background 0.2s var(--ulams-ease);
+  }
+  .ps-controls button:hover {
+    background: color-mix(in srgb, var(--ulams-color-primary) 10%, transparent);
   }
   .ps-controls :global(svg) {
-    width: 14px;
+    width: 16px;
+    height: 16px;
   }
   .ps-controls :global(.ps-play-icon),
   .ps-controls [aria-pressed="true"] :global(.ps-pause-icon) {
@@ -1062,6 +1174,7 @@ const alternatives = [
   @keyframes ps-draw { from { opacity:0; transform:scaleY(0); } to { opacity:1; transform:scaleY(1); } }
   @keyframes ps-stamp { from { opacity:0; transform:scale(.7); } to { opacity:1; transform:scale(1); } }
   ulams-policy-story[data-settled] * { animation:none!important; }
+  ulams-policy-story[data-settled] .ps-navigation button[aria-selected="true"] .ps-dwell b { transform:scaleX(1); }
   ulams-policy-story[data-animation-paused]:not([data-settled]) * { animation-play-state:paused!important; }
   @keyframes ps-upload { from { transform:scaleX(0); } to { transform:scaleX(1); } }
   @keyframes ps-paper-enter {
@@ -1097,7 +1210,7 @@ const alternatives = [
       grid-template-columns: minmax(0, 1fr);
       gap: 20px;
       align-content: start;
-      min-height: 800px;
+      min-height: 0;
       padding: 20px;
     }
     .ps-upload-actor, .ps-upload-file>div, .ps-brief-bar, .ps-ingest-node b, .ps-brief-question, .ps-brief-answer { font-size:.65rem; }
@@ -1109,21 +1222,104 @@ const alternatives = [
       font-size: 0.8rem;
     }
     .ps-scene {
-      min-height: 350px;
+      min-height: 0;
       padding: 14px;
     }
+    .ps-brief-chat {
+      height: 260px;
+    }
+    /* one chapter at a time, with its picker pinned under the site header in three rows */
+    ulams-policy-story {
+      --ps-sticky-top: 68px;
+      --ps-topline-h: 40px;
+      display: flex;
+      flex-direction: column;
+      overflow: visible;
+    }
+    .ps-scenes { order: 2; }
+    .ps-topline {
+      order: 0;
+      position: sticky;
+      top: var(--ps-sticky-top);
+      z-index: 31;
+      height: var(--ps-topline-h);
+      box-sizing: border-box;
+      background: var(--ulams-color-bg);
+    }
     .ps-bottom {
-      flex-wrap: wrap;
-      padding: 0 15px 16px;
+      --ps-mark: 18px;
+      order: 1;
+      position: sticky;
+      top: calc(var(--ps-sticky-top) + var(--ps-topline-h));
+      z-index: 30;
+      display: block;
+      margin: 0;
+      padding: 8px;
+      background: color-mix(in srgb, var(--ulams-color-bg) 94%, transparent);
+      border-width: 1px 0;
+      border-radius: 0;
+      backdrop-filter: saturate(1.4) blur(14px);
+      -webkit-backdrop-filter: saturate(1.4) blur(14px);
     }
     .ps-navigation {
-      flex-basis: 100%;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .ps-navigation::before { content: none; }
+    .ps-navigation button {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      align-items: center;
+      justify-content: center;
+      min-height: 52px;
+      padding: 6px 2px 5px;
+      border: 1px solid var(--ulams-color-border);
+      border-radius: 10px;
+      background: var(--ulams-color-card-bg);
+      font-size: 0.68rem;
+      line-height: 1.1;
+      text-align: center;
+    }
+    .ps-step-mark {
+      order: 0;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+    .ps-navigation :global(svg) { width: 15px; height: 15px; }
+    .ps-navigation button > span:last-of-type {
+      order: 1;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .ps-dwell {
+      order: 2;
+      width: 100%;
+    }
+    .ps-navigation button[aria-selected="true"] {
+      color: #fff;
+      background: var(--ulams-color-primary);
+      border-color: var(--ulams-color-primary);
+    }
+    .ps-navigation button[aria-selected="true"] .ps-step-mark {
+      color: #fff;
+      background: transparent;
+      border-color: transparent;
     }
     .ps-controls {
-      margin-left: auto;
-    }
-    .ps-navigation button {
-      font-size: 0.53rem;
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      /* the empty fourth cell of the second row */
+      width: calc((100% - 16px - 18px) / 4);
+      height: 52px;
+      justify-content: center;
+      padding-left: 0;
+      border-left: 0;
     }
     .ps-topline {
       padding: 12px 16px;
@@ -1177,6 +1373,11 @@ const alternatives = [
     .ps-chat-typing { display:none; }
     .policy-story * {
       animation: none !important;
+      transition: none !important;
+    }
+    .ps-navigation button[aria-selected="true"] .ps-dwell b,
+    ulams-policy-story[data-settled] .ps-navigation button[aria-selected="true"] .ps-dwell b {
+      transform: scaleX(1);
     }
   }
 </style>

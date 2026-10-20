@@ -2,6 +2,8 @@
 import { ctaEvent } from "../lib/analytics.ts";
 import { uiStrings, pageLocale, fill } from "../lib/i18n.ts";
 import Icon from "./Icon.astro";
+import NewTabMark from "./NewTabMark.astro";
+import { linkTarget } from "../lib/links.ts";
 import Logo from "../brand/Logo.astro";
 
 interface Link {
@@ -61,7 +63,7 @@ const isCurrent = (href: string): boolean => {
           <ul>
             {links.map((link) => (
               <li>
-                <a href={link.href} data-umami-event={ctaEvent(link.href)} aria-current={isCurrent(link.href) ? "page" : undefined}>{link.label}</a>
+                <a href={link.href} {...linkTarget(link.href)} data-umami-event={ctaEvent(link.href)} aria-current={isCurrent(link.href) ? "page" : undefined}>{link.label}<NewTabMark href={link.href} /></a>
               </li>
             ))}
           </ul>
@@ -84,11 +86,12 @@ const isCurrent = (href: string): boolean => {
           </nav>
         )
       }
-      {signIn && <a class="u-header__signin" href={signIn.href}>{signIn.label}</a>}
+      {signIn && <a class="u-header__signin" href={signIn.href} {...linkTarget(signIn.href)}>{signIn.label}<NewTabMark href={signIn.href} /></a>}
       {
         cta && (
-          <a class="u-btn u-btn--sm" href={cta.href} data-umami-event={ctaEvent(cta.href)}>
+          <a class="u-btn u-btn--sm" href={cta.href} {...linkTarget(cta.href)} data-umami-event={ctaEvent(cta.href)}>
             {cta.label}
+            <NewTabMark href={cta.href} />
           </a>
         )
       }
@@ -103,12 +106,12 @@ const isCurrent = (href: string): boolean => {
               <ul>
                 {links.map((link) => (
                   <li>
-                    <a href={link.href} data-umami-event={ctaEvent(link.href)} aria-current={isCurrent(link.href) ? "page" : undefined}>{link.label}</a>
+                    <a href={link.href} {...linkTarget(link.href)} data-umami-event={ctaEvent(link.href)} aria-current={isCurrent(link.href) ? "page" : undefined}>{link.label}<NewTabMark href={link.href} /></a>
                   </li>
                 ))}
                 {signIn && (
                   <li>
-                    <a href={signIn.href}>{signIn.label}</a>
+                    <a href={signIn.href} {...linkTarget(signIn.href)}>{signIn.label}<NewTabMark href={signIn.href} /></a>
                   </li>
                 )}
               </ul>
@@ -321,7 +324,7 @@ const isCurrent = (href: string): boolean => {
   .u-menu__panel a:hover {
     background: var(--ulams-color-card-bg);
   }
-  @media (max-width: 900px) {
+  @media (max-width: 1080px) {
     .u-nav,
     .u-header__signin {
       display: none;

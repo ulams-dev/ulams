@@ -1,0 +1,14 @@
+---
+/** 案例：稳定币报告变成有引用的课程。 */
+import Render from "@ulams/ui/Render.astro";
+import Base from "../../../layouts/Base.astro";
+import { caseStudyPage } from "../../../lib/course-generation-page.ts";
+
+if (!Astro.locals.platform) return Astro.rewrite("/404");
+const page = caseStudyPage("zh", "stablecoin-report", Astro.request, Astro.url);
+if (!page) return Astro.rewrite("/404");
+---
+
+<Base theme="platform" title={page.meta.title} description={page.meta.description} lang={page.meta.lang} canonical={page.canonical} alternates={page.alternates} ogLocale={page.ogLocale} jsonLd={page.jsonLd}>
+  <Render doc={page.doc} data={page.data} />
+</Base>

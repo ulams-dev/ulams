@@ -21,9 +21,9 @@ test("the policy lifecycle appears once at the top and uses a neutral example ca
 test("workflow tabs: roving tabindex, aria wiring, arrow keys, transcripts", async ({ page }) => {
   await open(page);
   const tabs = page.locator('#agents [role="tab"]');
-  await expect(tabs).toHaveCount(5);
+  await expect(tabs).toHaveCount(6);
   await expect(page.locator("#agents ulams-workflows")).toBeVisible();
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     const controls = await tabs.nth(i).getAttribute("aria-controls");
     await expect(page.locator(`#${controls}[role="tabpanel"]`)).toHaveCount(1);
   }
@@ -35,7 +35,7 @@ test("workflow tabs: roving tabindex, aria wiring, arrow keys, transcripts", asy
   await expect(tabs.nth(1)).toHaveAttribute("aria-selected", "true");
   await expect(tabs.nth(1)).toBeFocused();
   await page.keyboard.press("End");
-  await expect(tabs.nth(4)).toHaveAttribute("aria-selected", "true");
+  await expect(tabs.nth(5)).toHaveAttribute("aria-selected", "true");
   await page.keyboard.press("Home");
   await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
   // the transcript is plain text in the DOM, whatever the animation shows
@@ -113,7 +113,8 @@ test.describe("reduced motion", () => {
   });
 });
 
-test("interface buttons have equal widths and heights", async ({ page }) => {
+test("interface buttons have equal widths and heights", async ({ page }, info) => {
+  test.skip(info.project.name === "phone", "narrow screens scroll a row of label-sized chips");
   await open(page);
   const sizes = await page.locator('#agents [role="tab"]').evaluateAll((els) => els.map((el) => {
     const box = el.getBoundingClientRect();
@@ -127,7 +128,7 @@ test("interface selector has icons, no redundant availability badges and a visib
   await open(page);
   const selector = page.locator("#agents .u-wf__tabs");
   await expect(selector.locator(".u-status--available")).toHaveCount(0);
-  await expect(selector.locator(".u-wf__tab-icon")).toHaveCount(5);
+  await expect(selector.locator(".u-wf__tab-icon")).toHaveCount(6);
   const tabs = selector.locator('[role="tab"]');
   const inactive = await tabs.nth(2).evaluate((el) => getComputedStyle(el).backgroundColor);
   await tabs.nth(2).click();
@@ -135,4 +136,52 @@ test("interface selector has icons, no redundant availability badges and a visib
   await page.waitForTimeout(250);
   const active = await tabs.nth(2).evaluate((el) => getComputedStyle(el).backgroundColor);
   expect(active).not.toBe(inactive);
+});
+
+test("the interface stage fits the active panel, so no tab leaves empty space", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await open(page);
+  const tabs = page.locator('#agents [role="tab"]');
+  const heights = new Set<number>();
+  for (let i = 0; i < (await tabs.count()); i++) {
+    await tabs.nth(i).click();
+    const { box, panel } = await page.evaluate(() => ({
+      box: document.querySelector("#agents .u-wf__panels")!.getBoundingClientRect().height,
+      panel: document.querySelector("#agents .u-wf__panel[data-active]")!.getBoundingClientRect().height,
+    }));
+    expect(Math.abs(box - panel)).toBeLessThan(1);
+    heights.add(Math.round(panel));
+  }
+  expect(heights.size).toBeGreaterThan(1);
+});
+
+test("documentation and GitHub links open in a new tab and say so", async ({ page }) => {
+  await open(page);
+  const links = page.locator('a[href^="https://ulams-dev.github.io"], a[href^="https://github.com"]');
+  expect(await links.count()).toBeGreaterThan(3);
+  for (const link of await links.all()) {
+    await expect(link).toHaveAttribute("target", "_blank");
+    await expect(link).toHaveAttribute("rel", /noopener/);
+    await expect(link.locator(".u-newtab")).toHaveCount(1);
+  }
+  await expect(page.locator('a[href^="/"][target="_blank"]')).toHaveCount(0);
+});
+
+test("phones pin the chapter list in two rows under the site header", async ({ page }, info) => {
+  test.skip(info.project.name !== "phone", "wider screens keep the chapter stepper");
+  await open(page);
+  const story = page.locator("ulams-policy-story");
+  const nav = story.locator(".ps-navigation");
+  await expect(story.locator(".ps-panel:visible")).toHaveCount(1);
+  const rows = await nav.locator("button").evaluateAll((els) => new Set(els.map((el) => Math.round(el.getBoundingClientRect().top))).size);
+  expect(rows).toBe(2);
+  const clipped = await nav.locator("button > span:last-of-type").evaluateAll((els) => els.filter((el) => el.scrollWidth > el.clientWidth + 1).map((el) => el.textContent));
+  expect(clipped).toEqual([]);
+  await story.locator(".ps-panel:visible").scrollIntoViewIfNeeded();
+  const stuck = await nav.evaluate((el) => getComputedStyle(el.parentElement!).position);
+  expect(stuck).toBe("sticky");
+  const before = await nav.boundingBox();
+  await page.mouse.wheel(0, 500);
+  const after = await nav.boundingBox();
+  expect(Math.abs(after!.y - before!.y)).toBeLessThan(2);
 });

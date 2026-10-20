@@ -63,3 +63,21 @@ test("the header highlights the current page in every language", async ({ page }
     }
   }
 });
+
+test("the product names stay visible while the comparison scrolls", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(url);
+  const scroll = page.locator("#compare .u-compare__scroll").first();
+  await scroll.scrollIntoViewIfNeeded();
+  const header = scroll.locator("thead th").nth(1);
+  const before = await header.boundingBox();
+  await scroll.evaluate((el) => {
+    if (el.scrollHeight > el.clientHeight) el.scrollTop = 600;
+    else window.scrollBy(0, 600);
+  });
+  await page.waitForTimeout(100);
+  const after = await header.boundingBox();
+  const top = await scroll.boundingBox();
+  expect(after!.y).toBeGreaterThanOrEqual(Math.min(before!.y, top!.y) - 1);
+  expect(after!.y).toBeLessThan(page.viewportSize()!.height);
+});

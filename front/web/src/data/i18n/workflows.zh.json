@@ -1,6 +1,47 @@
 {
-  "description": "运行 ulams 的五种方式：Claude Code、搭配 ulams MCP 服务器的 Claude、ulams 命令行、REST API 与 SDK，以及工作室。",
+  "description": "运行 ulams 的六种方式：管理后台、Claude Code、搭配 ulams MCP 服务器的 Claude、ulams 命令行、REST API 与 SDK，以及工作室。",
   "tabs": [
+    {
+      "key": "admin",
+      "label": "管理后台",
+      "status": "available",
+      "window": "admin",
+      "title": "管理后台",
+      "caption": "管理后台是常规入口：课程、人员、报名和报告。",
+      "lines": [
+        {
+          "kind": "note",
+          "text": "课程"
+        },
+        {
+          "kind": "note",
+          "text": "人员"
+        },
+        {
+          "kind": "note",
+          "text": "报名"
+        },
+        {
+          "kind": "note",
+          "text": "报告"
+        },
+        {
+          "kind": "card",
+          "text": "On-Call",
+          "args": "已发布 | 86"
+        },
+        {
+          "kind": "card",
+          "text": "Gravity Lab",
+          "args": "已发布 | 42"
+        },
+        {
+          "kind": "card",
+          "text": "咖啡图谱",
+          "args": "草稿 | 0"
+        }
+      ]
+    },
     {
       "key": "claude-code",
       "label": "Claude Code",
@@ -203,7 +244,7 @@
       "status": "available",
       "window": "studio",
       "title": "工作室 · 课程构建器",
-      "caption": "经典的使用方式依然保留：以对话驱动的工作室，AI 的每一处改动都是由你批准的差异对比。",
+      "caption": "工作室是可视化的课程构建器：AI 的每一处改动都是由你批准的差异对比。",
       "lines": [
         {
           "kind": "user",

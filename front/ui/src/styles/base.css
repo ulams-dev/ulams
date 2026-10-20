@@ -294,6 +294,18 @@ select {
   height: 1.15em;
   flex: none;
 }
+.u-header a:has(> .u-newtab),
+.u-footer a:has(> .u-newtab) {
+  white-space: nowrap;
+}
+.u-icon.u-newtab {
+  display: inline-block;
+  width: 0.85em;
+  height: 0.85em;
+  margin-left: 0.3em;
+  vertical-align: -0.05em;
+  opacity: 0.75;
+}
 
 /* Format / media tags */
 .u-tag {

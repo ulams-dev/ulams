@@ -87,8 +87,8 @@ describe("translated landing documents keep the English structure", () => {
       const links = header.props!.links as Array<{ href: string }>;
       expect(links.length).toBeLessThanOrEqual(6);
       expect(links.map((l) => l.href)).toEqual(lang === "pl"
-        ? ["/pl/", "/pl/comparison/", "/pl/blog/", "https://ulams-dev.github.io/ulams/"]
-        : ["/zh/", "/zh/comparison/", "/blog/", "https://ulams-dev.github.io/ulams/"]);
+        ? ["/pl/", "/pl/comparison/", "/pl/course-generation/", "/pl/blog/", "https://ulams-dev.github.io/ulams/"]
+        : ["/zh/", "/zh/comparison/", "/zh/course-generation/", "/blog/", "https://ulams-dev.github.io/ulams/"]);
       expect(header.props).not.toHaveProperty("languages");
     });
     it(`${lang}: final display lifts status flags but keeps the Helm delivery notice`, () => {
@@ -217,7 +217,7 @@ describe("language switcher", () => {
     const header = doc.children!.find((c) => c.component === "SiteHeader")!;
     expect(header.props!.homeHref).toBe("/zh/");
     expect((header.props!.languages as unknown[]).length).toBe(3);
-    expect((header.props!.links as unknown[]).length).toBe(4);
+    expect((header.props!.links as unknown[]).length).toBe(5);
     expect(JSON.stringify(validateDocument(doc, { demos: [] }).filter((p) => p.component === "SiteHeader"))).toBe("[]");
   });
 });

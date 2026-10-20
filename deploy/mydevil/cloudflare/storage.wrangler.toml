@@ -33,3 +33,11 @@ bucket_name = "ulams-staging-oncall"
 [[r2_buckets]]
 binding = "B_ULAMS_STAGING_NIGHTSKY"
 bucket_name = "ulams-staging-nightsky"
+
+[[r2_buckets]]
+binding = "B_ULAMS_STAGING_MICRODOSING"
+bucket_name = "ulams-staging-microdosing"
+
+[[r2_buckets]]
+binding = "B_ULAMS_STAGING_STABLECOINS"
+bucket_name = "ulams-staging-stablecoins"

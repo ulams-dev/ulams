@@ -43,8 +43,8 @@ const QUESTION_BASE = {
   why: str("One sentence on why the question matters for this source", 300),
   status: QUESTION_STATUS,
   decidedBy: DECIDED_BY,
-  step: int("Position in the interview, from 1", { minimum: 1, maximum: 10 }),
-  total: int("Number of questions", { minimum: 1, maximum: 10 }),
+  step: int("Position in the interview, from 1", { minimum: 1, maximum: 16 }),
+  total: int("Number of questions", { minimum: 1, maximum: 16 }),
 };
 const OBJECTIVE = obj(
   {
