@@ -36,6 +36,7 @@ return [
                     app_path(),
                     base_path('packages/auth/src'),
                     base_path('packages/webhooks/src'),
+                    base_path('packages/knowledge-export/src'),
                     base_path('packages/cart/src'),
                     base_path('packages/categories/src'),
                     base_path('packages/courses/src'),

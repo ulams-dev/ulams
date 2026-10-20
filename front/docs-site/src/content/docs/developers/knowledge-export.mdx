@@ -1,0 +1,70 @@
+---
+title: Knowledge export
+description: Export a course, or every published course of an academy, as a pack of cited chunks for retrieval in company agents. Covers the file format, how citations are decided, the API and CLI, automatic re-export and the webhook.
+sidebar:
+  order: 10
+---
+
+A knowledge pack is a course as chunked text that a company agent can index for RAG. It comes from the
+same content learners read, so people and agents see one source of truth. Every chunk says where it came
+from: the source fragments the Course Builder wrote it from, with section label, source name and pages.
+
+## What is exported
+
+- The course subtitle and description, and the text of every **active rich-text topic** of every active
+  lesson, in order. Only courses that learners can see are exported (published, inside their active window).
+- Topics without text to chunk (video, H5P, quizzes, files) are counted as `skipped` in the manifest.
+- Text is split along headings with the same rules the Living Course uses for source documents: fenced code
+  is never split and sections are packed between 150 and 600 tokens (`knowledge_export.min_tokens`, `max_tokens`).
+
+## Citations
+
+A chunk is cited only when its text is, word for word, a block of the blueprint the Course Builder last applied
+to the course. The block's source fragments become the chunk's `citations`. Text an author wrote or changed
+afterwards, and courses written by hand, are exported with `uncited: true` and an empty `citations`. Nothing is
+guessed. Fragments that left the live table because their source changed are still resolved through the archive.
+
+## Files
+
+| Scope | Files |
+|---|---|
+| `course` | `manifest.json` and `chunks.jsonl` |
+| `tenant` | `index.json` and, per published course, `courses/{id}/manifest.json` and `courses/{id}/chunks.jsonl` |
+
+`chunks.jsonl` has one JSON object per line, described by the public schema
+[`/schemas/knowledge/1/chunk.json`](/schemas/knowledge/1/chunk.json); the manifest by
+[`/schemas/knowledge/1/manifest.json`](/schemas/knowledge/1/manifest.json). `pack_hash` covers chunk ids, text
+hashes and citations: unchanged content gives the same hash, so a consumer can skip a re-import. Chunk ids are
+stable for the same course, topic and position, so they work as upsert keys.
+
+## API and CLI
+
+Admin only (permission `knowledge_manage`). A scoped token needs `courses:read`; starting an export does not change any course.
+
+| Call | CLI |
+|---|---|
+| `POST /api/admin/knowledge/exports` with `scope` (`course` or `tenant`) and `course_id` | `ulams knowledge exports-create --scope course --course-id 12` |
+| `GET /api/admin/knowledge/exports` | `ulams knowledge exports-list` |
+| `GET /api/admin/knowledge/exports/{export}` | `ulams knowledge exports-get <export>` |
+| `GET /api/admin/knowledge/exports/{export}/download?file=manifest\|chunks\|index&course=` | `ulams knowledge exports-download <export> --file chunks --out chunks.jsonl` |
+| `GET /api/admin/knowledge/courses/{course}/latest` | `ulams knowledge latest <course>` |
+
+An export runs on the queue and starts as `queued`, then `running`, then `ready` or `failed` (with `error`).
+The newest five ready exports per course (and for the tenant) are kept; older ones are deleted with their files.
+
+## Automatic re-export
+
+A course that was exported once is exported again when a topic's text or the course status changes. Changes
+within two minutes collapse into one run, which reads the content when it starts. If the pack hash is
+unchanged, nothing is written and nothing is sent. Turn it off with `KNOWLEDGE_EXPORT_AUTO=false`. Tenant
+exports are not repeated automatically; start one when you need it. A [`knowledge.exported`
+webhook](/developers/outgoing-webhooks/) tells your pipeline when there is a new pack.
+
+## Configuration
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `KNOWLEDGE_EXPORT_DISK` | the default filesystem disk | Where packs are written (R2 in production) |
+| `KNOWLEDGE_EXPORT_BASE_URL` | host of `FRONTEND_URL` | Base of the links in each chunk (`/learn/{course}/{topic}`) |
+| `KNOWLEDGE_EXPORT_AUTO` | `true` | Re-export changed courses |
+| `KNOWLEDGE_EXPORT_QUEUE`, `KNOWLEDGE_EXPORT_QUEUE_CONNECTION` | default | Queue for export jobs |

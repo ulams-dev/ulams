@@ -890,7 +890,8 @@
                     "text": "每项功能都是一个 composer 软件包，拥有自己的路由、权限、设置和事件。一个完整示例展示了整个模式。",
                     "packages": [
                       "example-plugin",
-                      "webhooks"
+                      "webhooks",
+                      "knowledge-export"
                     ],
                     "href": "https://ulams-dev.github.io/ulams/extending/new-package/"
                   },

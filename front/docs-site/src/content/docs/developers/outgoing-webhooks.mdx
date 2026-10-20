@@ -30,6 +30,7 @@ database. The API that manages them is `api/admin/webhooks` and needs the `webho
 | `update_proposal.ready` | A Living Course update proposal is ready for review. Once per proposal, however many reviewers are notified | `proposal_id`, `session_id`, `course_title`, `elements`, `answer_checks`, `status` |
 | `update_proposal.applied` | A proposal was reviewed and applied to the course (the "accepted" event) | `proposal_id`, `session_id`, `number`, `status`, `counts` |
 | `certificate.issued` | A course certificate PDF was generated | `user`, `certificate_id`, `course_id`, `issued_at` |
+| `knowledge.exported` | A [knowledge pack](/developers/knowledge-export/) was written. An automatic re-export that finds nothing new sends nothing | `export_id`, `scope`, `course_id`, `trigger`, `pack_hash`, `courses`, `chunks`, `uncited_chunks`, `finished_at` |
 | `webhook.test` | You pressed **test**. Never sent to subscribers | `message`, `test: true` |
 
 Subscribe with exact types, or with `*` for every available event (including types added later). The

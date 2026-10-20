@@ -2582,6 +2582,82 @@
     },
     "type": "object"
    },
+   "KnowledgeExport": {
+    "properties": {
+     "chunks": {
+      "type": "integer"
+     },
+     "course_id": {
+      "nullable": true,
+      "type": "integer"
+     },
+     "courses": {
+      "type": "integer"
+     },
+     "created_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "error": {
+      "nullable": true,
+      "type": "string"
+     },
+     "files": {
+      "description": "Names for the download endpoint",
+      "items": {
+       "enum": [
+        "manifest",
+        "chunks",
+        "index"
+       ],
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "finished_at": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     },
+     "id": {
+      "example": "01j9z8x3v7c5qk2m4n6p8r0t1w",
+      "type": "string"
+     },
+     "pack_hash": {
+      "description": "SHA-256 over the chunk ids, text hashes and citations; unchanged content gives the same hash",
+      "nullable": true,
+      "type": "string"
+     },
+     "scope": {
+      "enum": [
+       "course",
+       "tenant"
+      ],
+      "type": "string"
+     },
+     "status": {
+      "enum": [
+       "queued",
+       "running",
+       "ready",
+       "failed"
+      ],
+      "type": "string"
+     },
+     "trigger": {
+      "enum": [
+       "manual",
+       "auto"
+      ],
+      "type": "string"
+     },
+     "uncited_chunks": {
+      "description": "Chunks without source citations (hand-written or edited text)",
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   },
    "Lesson": {
     "properties": {
      "active_from": {
@@ -13521,6 +13597,286 @@
     "summary": "Upload a new version (the manifest id must match)",
     "tags": [
      "Admin Interactive"
+    ]
+   }
+  },
+  "/api/admin/knowledge/courses/{course}/latest": {
+   "get": {
+    "operationId": "knowledge.courses.latest",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/KnowledgeExport"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Export"
+     },
+     "404": {
+      "description": "The course was never exported"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The latest ready export of a course",
+    "tags": [
+     "Admin Knowledge"
+    ]
+   }
+  },
+  "/api/admin/knowledge/exports": {
+   "get": {
+    "description": "Knowledge packs for company RAG (Phase 7.6). Admin only (`knowledge_manage`); packs live in the tenant's own\ndatabase and storage, so an id from another tenant never resolves.",
+    "operationId": "knowledge.exports.list",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "course_id",
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/KnowledgeExport"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Exports"
+     },
+     "403": {
+      "description": "Needs knowledge_manage"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Knowledge exports, newest first",
+    "tags": [
+     "Admin Knowledge"
+    ]
+   },
+   "post": {
+    "operationId": "knowledge.exports.create",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "course_id": {
+          "description": "Required for scope course",
+          "type": "integer"
+         },
+         "scope": {
+          "enum": [
+           "course",
+           "tenant"
+          ],
+          "type": "string"
+         }
+        },
+        "required": [
+         "scope"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/KnowledgeExport"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Queued"
+     },
+     "403": {
+      "description": "Needs knowledge_manage"
+     },
+     "422": {
+      "description": "Unknown course, or a course learners cannot see"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Start a knowledge export of one course or of the whole tenant",
+    "tags": [
+     "Admin Knowledge"
+    ]
+   }
+  },
+  "/api/admin/knowledge/exports/{export}": {
+   "get": {
+    "operationId": "knowledge.exports.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "export",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/KnowledgeExport"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Export"
+     },
+     "404": {
+      "description": "Not found"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One knowledge export",
+    "tags": [
+     "Admin Knowledge"
+    ]
+   }
+  },
+  "/api/admin/knowledge/exports/{export}/download": {
+   "get": {
+    "operationId": "knowledge.exports.download",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "export",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "file",
+      "required": true,
+      "schema": {
+       "enum": [
+        "manifest",
+        "chunks",
+        "index"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "description": "Course of a tenant export (for manifest and chunks)",
+      "in": "query",
+      "name": "course",
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/x-ndjson": {
+        "schema": {
+         "type": "string"
+        }
+       }
+      },
+      "description": "The file (JSON, or JSON Lines for chunks)"
+     },
+     "404": {
+      "description": "Not found, or the export is not ready"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Download a file of a ready export (manifest.json, chunks.jsonl or index.json)",
+    "tags": [
+     "Admin Knowledge"
     ]
    }
   },
@@ -37819,6 +38175,10 @@
   {
    "description": "Invoices",
    "name": "Invoices"
+  },
+  {
+   "description": "Admin Knowledge",
+   "name": "Admin Knowledge"
   },
   {
    "description": "Learner insights",

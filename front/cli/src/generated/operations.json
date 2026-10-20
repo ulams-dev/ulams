@@ -966,6 +966,36 @@
   "tag": "Admin Interactive"
  },
  {
+  "method": "GET",
+  "path": "/api/admin/knowledge/courses/{course}/latest",
+  "summary": "The latest ready export of a course",
+  "tag": "Admin Knowledge"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/knowledge/exports",
+  "summary": "Knowledge exports, newest first",
+  "tag": "Admin Knowledge"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/knowledge/exports",
+  "summary": "Start a knowledge export of one course or of the whole tenant",
+  "tag": "Admin Knowledge"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/knowledge/exports/{export}",
+  "summary": "One knowledge export",
+  "tag": "Admin Knowledge"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/knowledge/exports/{export}/download",
+  "summary": "Download a file of a ready export (manifest.json, chunks.jsonl or index.json)",
+  "tag": "Admin Knowledge"
+ },
+ {
   "method": "POST",
   "path": "/api/admin/learner-insights/backfill",
   "summary": "Build signals from existing data for a course or the whole tenant (queued)",

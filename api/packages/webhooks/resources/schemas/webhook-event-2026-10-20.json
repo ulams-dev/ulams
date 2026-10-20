@@ -11,7 +11,7 @@
     "api_version": { "const": "2026-10-20" },
     "created": { "type": "integer", "minimum": 0 },
     "type": {
-      "enum": ["course.completed", "enrolment.created", "update_proposal.ready", "update_proposal.applied", "certificate.issued", "webhook.test"]
+      "enum": ["course.completed", "enrolment.created", "update_proposal.ready", "update_proposal.applied", "certificate.issued", "knowledge.exported", "webhook.test"]
     },
     "data": {
       "type": "object",
@@ -34,6 +34,9 @@
     },
     {
       "properties": { "type": { "const": "certificate.issued" }, "data": { "properties": { "object": { "$ref": "#/$defs/certificateIssued" } } } }
+    },
+    {
+      "properties": { "type": { "const": "knowledge.exported" }, "data": { "properties": { "object": { "$ref": "#/$defs/knowledgeExported" } } } }
     },
     {
       "properties": { "type": { "const": "webhook.test" }, "data": { "properties": { "object": { "$ref": "#/$defs/test" } } } }
@@ -106,6 +109,21 @@
         "certificate_id": { "type": ["integer", "string"] },
         "course_id": { "type": ["integer", "string"] },
         "issued_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "knowledgeExported": {
+      "type": "object",
+      "required": ["export_id", "scope", "course_id", "trigger", "pack_hash", "courses", "chunks", "uncited_chunks", "finished_at"],
+      "properties": {
+        "export_id": { "type": "string" },
+        "scope": { "enum": ["course", "tenant"] },
+        "course_id": { "type": ["integer", "null"] },
+        "trigger": { "enum": ["manual", "auto"] },
+        "pack_hash": { "type": "string" },
+        "courses": { "type": "integer", "minimum": 0 },
+        "chunks": { "type": "integer", "minimum": 0 },
+        "uncited_chunks": { "type": "integer", "minimum": 0 },
+        "finished_at": { "type": "string", "format": "date-time" }
       }
     },
     "test": {
