@@ -186,7 +186,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] (new) Fix the ungrouped `orWhere` in `CourseAccessService::getUserCourseIds` and similar queries
 - [x] (new) Remove the tracker Logs screen in admin and other tracker leftovers
 - [x] (new) Fix the tenant video processing queue (jobs dispatched to a queue no tenant worker consumes)
-- [ ] (new) `Relation::enforceMorphMap` for topic types so class renames never orphan data
+- [x] (new) `Relation::enforceMorphMap` for topic types so class renames never orphan data (enforced map, polymorphic columns store stable aliases, #278)
 - [x] (new) ADR for the tenancy package (docs/decisions/0007)
 - [ ] (new) Upgrade PostgreSQL 12 (EOL) to 16/17 with a tested dump/restore path
 - [ ] (new) Drop Soketi until realtime is needed (broadcast driver is `log`); Laravel Reverb after 0.2
@@ -219,8 +219,8 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
       exist in the upstream EscolaLMS packages; notify upstream users
       (partial: notice drafted in `docs/security/upstream-notice.md`; sending it is an owner action, #50)
 
-- [ ] (new) mjml: the `mjml` compose service is not on the `ulams` network and `MJML_API_URL` is not set
-      (templates fall back silently); wire it or drop the service
+- [x] (new) mjml: the `mjml` compose service is not on the `ulams` network and `MJML_API_URL` is not set
+      (templates fall back silently); wire it or drop the service (on the `ulams` network, plain-text fallback, image size read through the disk, #263)
 - [ ] (new) Publish images to GHCR (`ghcr.io/ulams-dev/*`, decided 2026-10-08); publish the base image as `ulams/php:8.3` with source offers for its GPL programs (see
       `api/docker/php/NOTICE`) (GHCR publishing done in `publish.yml`; base image is PHP 8.4; source offer tracked in L0-15; #44)
 
@@ -247,7 +247,7 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [ ] (new) Replace MinIO with SeaweedFS (or RustFS) and give each tenant its own S3 identity (ADR 0041, plan L0-03)
 - [x] (new) `ulams:upgrade`: one idempotent per-tenant upgrade command (plan L0-19) (ADR 0081; the cmi5 and frame steps run once their commands land)
 - [x] (new) Fix `Cmi5Policy::delete` checking the read permission (new `cmi5_delete` permission, admins only; plan L0-09)
-- [ ] (new) Five packages with `@OA\` annotations are missing from the Swagger scan paths (plan L0-11)
+- [x] (new) Five packages with `@OA\` annotations are missing from the Swagger scan paths (plan L0-11) (example-plugin, pencil-spaces and topic-types were the ones still unscanned; they are scanned now and a test fails when a package with annotations is not, #259)
 
 ### 0.2 Framework upgrade
 - [x] Upgrade plan from Laravel 9 (EOL) to supported Laravel/PHP: order, breaking changes,
@@ -583,26 +583,26 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 `front/docs/design/stitch/personalisation/`. Owner questions #59–#63.
 
 ### 4.1 `learner-insights` package
-- [ ] Append-only learner signal stream mapped to blueprint element IDs; queues; backfill
-- [ ] Rule-based risk scoring with human-readable reasons; per-tenant thresholds
-- [ ] `RiskScorer` interface for future ML
-- [ ] Statuses and events: `LearnerStruggling`, `LearnerAtRisk`
-- [ ] Personal remediations (learner-scoped, grounded, cached per struggle pattern)
-- [ ] Nudges via `notifications`, rate-limited
-- [ ] Recovery rate measurement
-- [ ] Author analytics; high-struggle elements → update proposals
+- [x] Append-only learner signal stream mapped to blueprint element IDs; queues; backfill (`api/packages/learner-insights`, M4.1, #277; H5P results recorded as signals, #292)
+- [x] Rule-based risk scoring with human-readable reasons; per-tenant thresholds (M4.2, #277)
+- [x] `RiskScorer` interface for future ML (#277)
+- [x] Statuses and events: `LearnerStruggling`, `LearnerAtRisk` (also `LearnerRecovered`, `LearnerNudged`, #277)
+- [ ] Personal remediations (learner-scoped, grounded, cached per struggle pattern) (not merged: M4.5, PR #281 open)
+- [x] Nudges via `notifications`, rate-limited (M4.4, per learner and per course limits, #277)
+- [x] Recovery rate measurement (outcome tracker and `LearnerRecovered`, `learner-insights:cohort-stats`, M4.4, #277)
+- [ ] Author analytics; high-struggle elements → update proposals (not merged: M4.6, PR #283 open)
 - [ ] (new) Per-course analytics dashboard for authors and admins: progress, completion, quiz performance, at-risk
       learners and the sections that confuse people, per course (Phase 4, M4.6 author analytics; shown as "Coming" in the
       white-label section of the platform landing)
-- [ ] Privacy: per-tenant toggle, retention, explanations, minimal data to LLM
-- [ ] Rule unit tests, synthetic learner journeys, tenant isolation
+- [ ] Privacy: per-tenant toggle, retention, explanations, minimal data to LLM (partial: per-course toggle, retention pruning, privacy controls and the learner personalisation and privacy page merged, #277 and #289; minimal data to the LLM waits for remediations and the tutor)
+- [ ] Rule unit tests, synthetic learner journeys, tenant isolation (partial: rule unit tests and the journey scenario test merged, #277; a dedicated tenant isolation suite is not confirmed)
 - [ ] (new) Streaming tutor answers (LLM client streaming over the SSE event log)
 - [ ] (new) Partition `learner_signals` by month when a tenant exceeds 50M rows
 - [ ] (new) Remediations for courses not built with the Course Builder
 - [ ] (new) `TopicProgressUpdated` event in `courses` for non-completion progress (ids only)
 
 ### 4.2 AI tutor
-- [ ] Answers only from course sources with citations; says when out of scope
+- [ ] Answers only from course sources with citations; says when out of scope (not merged: AI tutor, PR #287 open)
 - [ ] No quiz answers during active attempts
 - [ ] Rate/cost limits; anonymised analytics
 
@@ -620,21 +620,23 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Themeable from builder presets; per-tenant theme (partial: `--ulams-*` theme files per demo
       preset in `front/ui/src/styles/themes`, chosen from `theme.theme`; accent from `theme.accent`
       applied server-side with AA contrast; builder presets not connected yet)
-- [ ] (new) Brand import: built-in brand importer (no agent needed) that generates a tenant theme preset from a Figma
+- [x] (new) Brand import: built-in brand importer (no agent needed) that generates a tenant theme preset from a Figma
       file, a Stitch DESIGN.md or a brand guide (tokens, fonts, logo), proposed as a diff the admin approves (today an
       agent with the ulams CLI and the design tool's MCP does it: `ulams theme set`, `ulams settings set`)
+      (done: importer that proposes a tenant theme with contrast checks, `front/ui/src/theme/brand-import.ts`, #297)
 - [ ] PWA offline mode with tested sync/conflict rules
 - [ ] Single frontend for LMS **and** Sylius commerce (catalogue, checkout, account)
 - [ ] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge) (partial:
-      `<ulams-quiz>`, `<ulams-h5p>`, `<ulams-video>`, `<ulams-progress>` in `front/ui/src/elements`)
+      `<ulams-quiz>`, `<ulams-h5p>`, `<ulams-video>`, `<ulams-progress>` in `front/ui/src/elements`;
+      `<ulams-catalogue>`, `<ulams-my-courses>`, `<ulams-continue>` added in `widgets.ts`, #296; tutor and certificate badge pending)
 - [ ] TypeScript SDK from OpenAPI; widget docs with live examples (partial: `@ulams/sdk` in `front/sdk`,
       fetch-only; request paths typed from the generated spec, response types hand-written because the
       spec has no response schemas; no widget docs yet)
-- [ ] Learner UX: "continue", "what's next", progress and time estimates, short lessons
+- [ ] Learner UX: "continue", "what's next", progress and time estimates, short lessons (partial: what is next and how much is left on the course page and account, #295; "continue" widget, #296)
 - [ ] Semantic search with cited AI answers
 - [ ] **WCAG 2.2 AA** + European Accessibility Act; axe in CI (partial: reference frontend has landmarks,
       skip link, focus-visible, reduced motion, 360 px layout and a theme contrast test; axe scan of
-      every page type in the Playwright e2e passes, not wired into CI yet)
+      every page type in the Playwright e2e passes; axe and keyboard suite now runs in CI as the `web-a11y` job, #294; European Accessibility Act documentation and learner-facing coverage of every new screen still open)
 - [ ] Admin UX: templates, guided empty states, sample course, bulk operations, saved filters
 - [ ] AI transparency everywhere (diffs, citations, reasons one click away)
 - [ ] Metrics: time to first course, time to first enrolment, admin task times
@@ -709,7 +711,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 ## Phase 6: Market-essential modules
 
 ### 6.1 Certificates and compliance
-- [ ] Extend existing Wellms certificates (don't duplicate)
+- [x] Extend existing Wellms certificates (don't duplicate) (`templates-pdf` extended with expiry, verification and revocation, #273)
 - [ ] (new) Remove ReportBro completely and replace it with **pdfme** (recommended: MIT, actively
       maintained, WYSIWYG designer for variable-based PDF templates, JSON templates, QR/barcode schemas).
       Why: the ReportBro designer (`reportbro-designer`, AGPL-3.0) is bundled into admin, the server image
@@ -745,13 +747,13 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) On an approved policy change, update affected course variants, invalidate superseded certificates,
       notify learners and policy owners with a source diff, assign a new exam for a minor change or a new
       course for a major change, and issue a replacement PDF certificate after completion (Coming).
-- [ ] Verification URL/QR, expiry, recertification, reminders
-- [ ] Mandatory training with due dates and manager escalation
-- [ ] Compliance reports and audit export (linked to Phase 3 audit trail)
+- [x] Verification URL/QR, expiry, recertification, reminders (verification endpoint and page, QR, expiry, revocation, #273; recertification and reminders, #298)
+- [x] Mandatory training with due dates and manager escalation (`api/packages/compliance`, #298)
+- [x] Compliance reports and audit export (linked to Phase 3 audit trail) (#276)
 
 ### 6.2 Automated enrolment and paths
-- [ ] Rule engine (attribute → path, due in N days), on change and on schedule
-- [ ] Learning paths with prerequisites; lifecycle notifications
+- [x] Rule engine (attribute → path, due in N days), on change and on schedule (attribute enrolment rules and `RuleEngine`, #280)
+- [ ] Learning paths with prerequisites; lifecycle notifications (partial: learning paths with prerequisites merged, #280; lifecycle notifications beyond the deadline reminders of #298 not confirmed)
 
 ### 6.3 Identity and HR
 - [ ] SAML 2.0 and OIDC per tenant · SCIM 2.0 · HRIS import (CSV/API first)
@@ -774,12 +776,12 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Partner/customer portals with scoped admins and reports
 
 ### 6.5 Analytics and ROI
-- [ ] Dashboards (completion, results, struggle/recovery, certificates, overdue)
-- [ ] BI export/API, scheduled reports, optional business KPI link
+- [ ] Dashboards (completion, results, struggle/recovery, certificates, overdue) (not merged: compliance dashboard, PR #284 open)
+- [ ] BI export/API, scheduled reports, optional business KPI link (partial: CSV audit export merged, #276; scheduled reports not merged, PR #284 open)
 
 ### 6.6 Skills and competencies
-- [ ] Competency framework; AI-suggested tags confirmed by author
-- [ ] Learner skill profiles feeding Learner Insights and path rules
+- [ ] Competency framework; AI-suggested tags confirmed by author (not merged: PR #286 open)
+- [ ] Learner skill profiles feeding Learner Insights and path rules (not merged: PR #286 open)
 
 ---
 
@@ -813,7 +815,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] AI hints without revealing solutions
 
 ### 7.3 API, SDK, webhooks
-- [ ] Complete published OpenAPI; TS SDK first, PHP second
+- [ ] Complete published OpenAPI; TS SDK first, PHP second (partial: response schemas and operationIds for the 60 CLI operations, #299; plan in `docs/plans/phase-7.md`, #300; complete coverage and the PHP SDK in progress, not merged)
 - [x] Stripe-style webhooks (signed, retries, replay, delivery log, test sends, versioned events) (`api/packages/webhooks`, #261; no admin screen yet, API, CLI and docs only)
 - [ ] Scoped API keys with rate limits and usage stats (partial: token usage stats done in #261; per-token rate limits not verified)
 - [x] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
@@ -821,13 +823,13 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [x] (new) S2 device login: own RFC 8628 flow + `/cli/authorize` page in the web app (ADR 0075, merged in PRs #101, #127, #129; #74 closed)
 - [x] (new) S3 platform tenant API with queued provisioning, off by default, `ulams tenants …` (ADR 0078, 0085; #79 default "off by default"; ADR acceptance pending)
 - [x] (new) S4 course builder run-status endpoint `GET /api/admin/course-builder/runs/{run}`
-- [ ] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds
-- [ ] (new) API browser in the docs site (Scalar over `api/scripts/openapi.php`, built in docs CI without a database); OpenAPI for
-      `images` fixed and response bodies added for video states, files and course import (partial: implemented in the
-      feature-catalogue PR, pending merge; questionnaire and question endpoints now have response bodies too)
-- [ ] (new) Feature index on the platform landing (`FeatureIndex`, 14 collapsed groups, 101 features including MCP, teacher and sales analytics, 54 H5P content types, EN/PL/ZH,
-      `ItemList` JSON-LD) with a drift test against `api/packages` (partial: implemented in the feature-catalogue PR, pending merge)
-- [ ] `npx create-ulams` / `docker compose up` with seed data
+- [x] (new) S5 OpenAPI response schemas for the top 60 operations the CLI uses, after L0-11; stable operationIds (typed response schemas and operationIds for 60 CLI operations, #299)
+- [x] (new) API browser in the docs site (Scalar over `api/scripts/openapi.php`, built in docs CI without a database); OpenAPI for
+      `images` fixed and response bodies added for video states, files and course import (merged in the
+      feature-catalogue PR, #242; questionnaire and question endpoints have response bodies too)
+- [x] (new) Feature index on the platform landing (`FeatureIndex`, 14 collapsed groups, 101 features including MCP, teacher and sales analytics, 54 H5P content types, EN/PL/ZH,
+      `ItemList` JSON-LD) with a drift test against `api/packages` (merged in the feature-catalogue PR, #242)
+- [ ] `npx create-ulams` / `docker compose up` with seed data (partial: `ulams` CLI one-command Docker and Kubernetes stack installation, #249; `create-ulams` planned in `docs/plans/phase-7.md`, in progress, not merged)
 - [ ] Docs site with runnable examples; free cloud sandbox tenant (partial: Starlight site in `front/docs-site` on branch `docs/starlight-site`; runnable examples and the sandbox tenant pending)
 
 ### 7.4 Plugin system
@@ -851,7 +853,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 
 ### 7.6 Machine-readable content
 - [x] `llms.txt`, Markdown version of every page, public schemas, `AGENTS.md` (docs site build output, #261; per-academy `/llms.txt` and Markdown course pages in the web app, #274; "Copy page" and "Open in Claude/ChatGPT" buttons, #272)
-- [ ] Knowledge export (cited chunks for company RAG), auto re-export on change
+- [ ] Knowledge export (cited chunks for company RAG), auto re-export on change (planned in `docs/plans/phase-7.md`, #300; implementation in progress, not merged)
 
 ---
 
