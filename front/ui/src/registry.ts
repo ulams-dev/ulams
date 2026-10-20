@@ -1407,6 +1407,7 @@ export const registry = {
         primaryCta: LINK,
         secondaryCta: LINK,
         progress: int("Learner completion 0–100; omit when unknown", { maximum: 100 }),
+        progressNote: text("Line under the progress bar: what is next and how much is left", { maxLength: 200 }),
       },
       ["title"]
     ),
