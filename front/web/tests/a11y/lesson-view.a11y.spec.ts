@@ -189,8 +189,23 @@ test.describe("a reading in parts", () => {
     for (let i = 1; i < total; i++) await page.getByRole("button", { name: "Next part" }).click();
     await expect(page.locator("[data-end-of-content]")).toBeAttached();
     expect(await page.locator("[data-end-of-content]").evaluate((el) => (el as HTMLElement).hidden)).toBe(false);
-    const animated = await page.evaluate(() => [...document.querySelectorAll("ulams-parts, ulams-parts *, [data-lesson-view], [data-lesson-view] *")].flatMap((el) => el.getAnimations().map(() => el.tagName)));
-    expect(animated, "no animation under prefers-reduced-motion").toEqual([]);
+    // Reduced motion collapses durations to 0.01 ms; it does not remove the Animation objects, which stay in
+    // getAnimations() until the next frame. Under load that frame arrives late, so sampling them is a race.
+    // Assert the contract instead: no element has a perceptible duration, and anything still listed finishes at once.
+    const slow = await page.evaluate(async () => {
+      const scope = [...document.querySelectorAll("ulams-parts, ulams-parts *, [data-lesson-view], [data-lesson-view] *")];
+      const ms = (value: string) => value.split(",").map((part) => (part.trim().endsWith("ms") ? parseFloat(part) : parseFloat(part) * 1000));
+      const offenders = scope.flatMap((el) => {
+        const style = getComputedStyle(el);
+        const longest = Math.max(...ms(style.animationDuration), ...ms(style.transitionDuration));
+        return longest > 1 ? [`${el.tagName} ${longest}ms`] : [];
+      });
+      const pending = scope.flatMap((el) => el.getAnimations());
+      await Promise.all(pending.map((animation) => animation.finished.catch(() => undefined)));
+      return { offenders, remaining: scope.flatMap((el) => el.getAnimations().filter((a) => a.playState === "running" && Number(a.effect?.getComputedTiming().duration) > 1).map(() => el.tagName)) };
+    });
+    expect(slow.offenders, "no perceptible animation or transition duration under prefers-reduced-motion").toEqual([]);
+    expect(slow.remaining, "no animation keeps running under prefers-reduced-motion").toEqual([]);
   });
 
   test("the program starts closed and the footer's Next takes the free space once the navigation is linear", async ({ page }, info) => {
