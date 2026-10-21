@@ -521,6 +521,30 @@ jobs:
       - name: Course Builder apply on the fake driver, failed job recording
         run: php scripts/nodev-smoke.php
 
+  # The API image carries the PHP ini and php-fpm pool files (api/docker). Upload progress must stay off in
+  # it (CVE-2026-109619, php.net advisory 2026-10-21-5): read the setting back from the built image through
+  # php-cli ini scanning and through the php-fpm pool config. No PHP version gate here yet.
+  php-image:
+    name: PHP image settings
+    needs: changes
+    if: needs.changes.outputs.php == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build
+        run: docker build -t smoke-api api
+      - name: Upload progress is off
+        run: |
+          docker run --rm smoke-api php -v | head -1
+          test "$(docker run --rm smoke-api php -r 'echo ini_get("session.upload_progress.enabled");')" = "0"
+          docker run --rm smoke-api php-fpm -tt 2>&1 | grep -F 'php_admin_value[session.upload_progress.enabled] = 0'
+          docker run --rm smoke-api php-fpm -t
+
   # The static images (admin, legacy front) run as non-root on nginx-unprivileged (ADR 0056):
   # build them, start them with settings in the environment and check what they serve.
   images:

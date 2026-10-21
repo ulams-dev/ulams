@@ -36,6 +36,17 @@ hostile input.
   httpOnly cookie and adds it server-side, for the player's own calls only, in its `/h5p` proxy, so
   H5P content scripts never see a token ([H5P in production](/operators/h5p/#the-state-proxy-of-the-reference-front)).
 
+## PHP upload progress is disabled
+
+The PHP images set `session.upload_progress.enabled = 0` in the ini files (`api/docker/conf/php/`) and
+as `php_admin_value[session.upload_progress.enabled] = 0` in the php-fpm pool, so it applies before a
+request is parsed and cannot be changed by `ini_set()` or a `.user.ini`. ulams does not use upload
+progress, and the PHP project names it as the interim measure for CVE-2026-109619, a critical
+unauthenticated remote code execution bug fixed in PHP 8.4.27 and 8.3.36
+([advisory](https://www.php.net/archive/2026.php#2026-10-21-5)). If you run PHP outside our images
+(shared hosting, your own packages), set the same value in `php.ini` or the pool and update PHP.
+CI reads the setting back from the built image.
+
 ## SVG, HTML and other active files
 
 - In buckets, `ActiveContentSafeS3Adapter` sets `Content-Type` from the file extension (an HTML
