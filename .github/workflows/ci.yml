@@ -73,6 +73,9 @@ jobs:
       # `ulams.app` host in source files. Legitimate ones are listed in scripts/hosts-allowed.txt.
       - name: No hard-coded ulams.app hosts
         run: node scripts/check-hosts.mjs
+      # PostgreSQL has one tag in api/docker-compose.yml, every workflow, the CLI and the examples.
+      - name: Pinned images agree
+        run: node scripts/check-pinned-images.mjs
       - name: Every API package has a README.md
         run: |
           missing=0
@@ -284,9 +287,9 @@ jobs:
       run:
         working-directory: api
     services:
-      # Same major as api/docker-compose.yml; move together when Postgres is upgraded.
+      # Same tag as api/docker-compose.yml and the other workflows: scripts/check-pinned-images.mjs fails when they differ.
       postgres:
-        image: postgres:12
+        image: postgres:17.11-alpine
         env:
           # Matches the <env> defaults in api/phpunit.xml (DB default/default/secret on 127.0.0.1).
           POSTGRES_DB: default
@@ -456,7 +459,7 @@ jobs:
         working-directory: api
     services:
       postgres:
-        image: postgres:12
+        image: postgres:17.11-alpine
         env:
           POSTGRES_DB: default
           POSTGRES_USER: default

@@ -223,14 +223,16 @@ services:
   #   networks:
   #     - ulams
 
+  # PostgreSQL 17 on a new data directory. A stack that still has docker/postgres-data (PostgreSQL 12)
+  # runs `make pg-upgrade` once: it fills docker/postgres17-data from the old data.
   postgres:
-    image: postgres:12
+    image: postgres:17.11-alpine
     # ports:
     #   - "5432:5432"
     networks:
       - ulams
     volumes:
-      - ./docker/postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres17-data:/var/lib/postgresql/data
       - ./docker/postgres-backups:/var/lib/postgresql/backups
     environment:
       - "POSTGRES_DB=${POSTGRES_DB:-default}"
