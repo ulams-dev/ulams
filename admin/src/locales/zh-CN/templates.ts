@@ -17,4 +17,28 @@ export default {
   'templates.send_test_hint': '仅发送到您自己的邮箱，内容为当前未保存的内容。',
   'templates.test_sent': '测试邮件已发送至 {recipient}。',
   'templates.test_failed': '无法发送测试邮件。',
+  'templates.editor_mode': '编辑模式',
+  'templates.editor_mode_code': '代码',
+  'templates.editor_mode_visual': '可视化',
+  'templates.editor_beta': '测试版',
+  'templates.visual_beta_notice':
+    '可视化模式为测试版，暂时无法完全使用键盘操作。仅使用键盘编辑时请选择代码模式。',
+  'templates.visual_checking': '正在检查可视化编辑器能否完整表示此模板...',
+  'templates.visual_loading': '正在加载可视化编辑器...',
+  'templates.visual_load_failed': '无法加载可视化编辑器。您可以继续在代码模式中编辑。',
+  'templates.visual_blocked': '此模板保持在代码模式',
+  'templates.visual_blocked_html': '这不是 MJML 文档（没有 <mjml> 根元素），可视化编辑器无法打开。',
+  'templates.visual_blocked_lossy': '可视化编辑器会删除或更改以下标记。模板未被修改。',
+  'templates.visual_lost': '将被删除或更改',
+  'templates.visual_added': '将被添加',
+  'templates.visual_more': '……另有 {count} 项',
+  'templates.visual_convert': '转换并检查',
+  'templates.visual_diff_title': '检查转换结果',
+  'templates.visual_diff_hint':
+    '以 - 开头的行将被删除，以 + 开头的行将被添加。确认后，模板文本将被替换为转换结果并在可视化模式中打开。取消则不会有任何更改。',
+  'templates.visual_diff_confirm': '替换并打开可视化模式',
+  'templates.visual_diff_cancel': '保留我的 MJML',
+  'templates.visual_canvas': '可视化邮件编辑器',
+  'templates.visual_variables_hint':
+    '请在文本块中输入变量，例如 @VarUserName。此列表的插入功能仅适用于代码模式。',
 };

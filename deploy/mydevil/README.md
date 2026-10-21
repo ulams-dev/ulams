@@ -20,7 +20,7 @@ operator-facing summary is the docs page *Install on MyDevil (shared hosting)*
 | Plan | MD2 (50 GB SSD/NVMe), valid until 2026-12-18; 2FA on; the account also hosts the owner's other live sites (PHP and pointer types): never change them while testing |
 | Limits | max memory **4 GB** (`ulimit -m 4096000`), max user processes **70**, open files 3000, no disk quota shown, CPU time unlimited |
 | PHP | `php56` to `php85`; default CLI 8.3. `php84` has `pdo_pgsql`, `pgsql`, `redis`, `imagick`, `gd`, `intl`, `zip`, `bcmath`, `sodium`, `pcntl`, `posix`, `sockets`, `apcu`, `memcached`, `mbstring`, OPcache, `gmp`, `exif`: every extension ulams needs. CLI `memory_limit` 512M, `disable_functions` empty |
-| PostgreSQL | **16.10** on the shared server `pgsql51.mydevil.net`, created with `devil pgsql`; no databases yet. ulams is developed against 12 and its default for 0-2 is 17 (#41): 16 is in between and no migration uses a version-specific feature, and a full `php artisan migrate` on a fresh PostgreSQL 16.15 passes (168 tables); the full test suite has not been run on 16 |
+| PostgreSQL | **16.10** on the shared server `pgsql51.mydevil.net`, created with `devil pgsql`; no databases yet. ulams runs on 17 everywhere else (#41): 16 is one major behind and no migration uses a version-specific feature, and a full `php artisan migrate` on a fresh PostgreSQL 16.15 passes (168 tables); the full test suite has not been run on 16 |
 | Node | `node16` to `node26`; default 22.22 |
 | Tools present | `redis-server`, `redis-cli`, `ffmpeg`, `ffprobe`, `screen`, `tmux`, `flock`, `rsync`, `git`, `curl`, `openssl`, `psql`, `pg_dump`. `composer84` is not on the path (not needed: `vendor/` is built elsewhere) |
 | Network | outbound HTTPS works (`api.anthropic.com` answers) |
@@ -82,6 +82,14 @@ sh check-host.sh            # upload it first: scp deploy/mydevil/bin/check-host
 It prints the PHP extensions of `php84`, the tools present (`ffmpeg`, `redis-server`, `screen`, `flock`,
 `node22`, ...), outbound reachability (Anthropic API), `devil info`, `ulimit` and the process count.
 Send the output to the repository (an issue) so the "to confirm" items here can be closed.
+
+The survey also **checks the PHP version** and ends with exit code 1 (and a `FAIL` line) when it is below the
+fixed release of its branch: 8.4.27, 8.3.36, 8.5.12 or 8.2.35 (php.net advisory
+[2026-10-21-5](https://www.php.net/archive/2026.php#2026-10-21-5), two critical unauthenticated RCE bugs;
+issue #327). 8.1 and older get no fix at all. MyDevil's PHP is theirs to update, so on `FAIL` keep the host
+offline (Cloudflare) and ask support for the patched `php84`; re-run the script after they confirm, and lift the
+block only on a pass. The comparison can be tried without a host: `sh check-host.sh --check-version 8.4.26`
+(exit 1), and `sh deploy/mydevil/test/check-host-version.sh` runs the whole test (CI runs it in the "Deploy files" job).
 
 Make PHP 8.4 the CLI default (the account default is 8.3; the CLI binary is `php84`:
 <https://pomoc.mydevil.net/PHP/>). Binexec (running your own binaries from your home directory, off on

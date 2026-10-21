@@ -60,8 +60,10 @@ Route::group(['prefix' => 'api'], function () {
         });
 
         Route::group(['prefix' => 'social'], function () {
-            Route::get('{provider}', [AuthApiController::class, 'socialRedirect']);
-            Route::get('{provider}/callback', [AuthApiController::class, 'socialCallback']);
+            Route::get('{provider}', [AuthApiController::class, 'socialRedirect'])->middleware('throttle:ulams-social-login');
+            Route::get('{provider}/callback', [AuthApiController::class, 'socialCallback'])->middleware('throttle:ulams-social-login');
+            // redeemed by the front end's server with the verifier of the browser that started the login
+            Route::post('exchange', [AuthApiController::class, 'socialExchange'])->middleware('throttle:ulams-social-exchange');
             Route::post('complete/{token}', [AuthApiController::class, 'completeSocialData']);
         });
 

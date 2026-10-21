@@ -138,11 +138,13 @@ For a complete installation with generated credentials and readiness checks, use
 | H5P profile calls | `http://caddy` | `http://caddy:8081`, an internal plain-HTTP listener (port 80 redirects to HTTPS) |
 | Object storage | MinIO always on | External S3, or MinIO behind `--profile minio` |
 | Tools | Adminer, MailHog, Soketi | None; broadcasting stays on the `log` driver as in development |
-| PostgreSQL | `postgres:12` (also used in CI) | `postgres:17-alpine` <Badge text="Recommended" variant="tip" /> |
+| PostgreSQL | `postgres:17.11-alpine` (also used in CI) | `postgres:17.11-alpine` |
 
 <Aside>
-  PostgreSQL 12 is what CI tests against, and it is out of upstream support. The example uses
-  17; the project has not run its test suite on it.
+  PostgreSQL 17 is the version everywhere: the development stack, CI and this example. If you
+  followed an older version of this page and run PostgreSQL 12, which is out of upstream
+  support, move it with the tested path in
+  [Upgrade PostgreSQL to a new major version](/operators/upgrades/#upgrade-postgresql-to-a-new-major-version).
 </Aside>
 
 ## The files

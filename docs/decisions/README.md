@@ -51,7 +51,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0034](0034-tamper-evident-audit-trail.md) | A tamper-evident audit trail for Living Course | Accepted |
 | [0038](0038-brand-identity-orbital-folio.md) | Brand identity: Orbital Folio | Proposed |
 | [0039](0039-author-preview-of-draft-courses.md) | Author preview of draft courses runs on its own routes with the author's token | Proposed |
-| [0040](0040-postgresql-17.md) | PostgreSQL 17 with a tested dump-and-restore upgrade | Proposed |
+| [0040](0040-postgresql-17.md) | PostgreSQL 17 with a tested dump-and-restore upgrade | Accepted |
 | [0041](0041-seaweedfs-and-per-tenant-s3-identities.md) | SeaweedFS replaces MinIO; per-tenant S3 identities; server-side reads use the internal endpoint | Proposed |
 | [0042](0042-no-websocket-server.md) | No WebSocket server: Soketi and Pusher removed, Reverb only when a feature needs push | Proposed |
 | [0043](0043-enforced-morph-map.md) | An enforced morph map with stable aliases for polymorphic types | Proposed (data layer implemented 2026-10-21, see "Implementation") |
@@ -119,8 +119,17 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0105](0105-stream-tutor-answers-over-the-sse-event-log.md) | Stream tutor answers over the SSE event log | Accepted |
 | [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted |
 | [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Accepted |
+| [0108](0108-signed-images-and-cve-scanning.md) | Keyless-signed images, SBOM release assets and Trivy scanning with a patch policy | Proposed |
+| [0109](0109-helm-chart-next-to-the-stack-launcher.md) | A Helm chart for production Kubernetes next to the stack launcher | Proposed |
+| [0120](0120-identity-package-and-sso-libraries.md) | An identity package with onelogin/php-saml, an in-house OIDC client and an in-house SCIM server | Accepted |
+| [0121](0121-sso-login-handoff-account-linking-and-scim-tokens.md) | SSO login handoff by one-time code, strict account linking and SCIM tokens on service users | Accepted |
 | [0130](0130-entitlements-are-the-access-source-of-truth.md) | Entitlements are the access source of truth, fed by verified Sylius order events | Proposed |
 | [0131](0131-sylius-service-and-bridge-bundle.md) | One Sylius 2.3 service with a channel per tenant and a ulams bridge bundle | Proposed |
 | [0132](0132-commerce-identity-lms-issued-shop-tokens.md) | Single login for commerce: LMS-issued shop tokens trusted by Sylius | Proposed |
+| [0160](0160-course-as-code-sync-through-blueprint-v3-import-versions.md) | Course-as-code sync through Blueprint v3 import versions | Proposed |
+| [0161](0161-cli-release-engineering.md) | CLI release engineering: release-please, npm trusted publishing, attested binaries | Proposed |
+| [0170](0170-code-exercise-runners.md) | Code exercises run in our own browser runner inside the opaque content-origin sandbox, with an optional gVisor server runner for verified grading | Proposed |
+| [0171](0171-extension-manifest-and-trust-model.md) | Extensions: operator-installed composer packages with an `ulams-extension.json` manifest, per-point contract versions and optional Sigstore signing | Proposed |
+| [0172](0172-hosted-mcp-gateway-on-cloudflare-workers.md) | Hosted MCP gateway on Cloudflare Workers sharing the CLI tool registry, OAuth at the gateway and scoped tokens upstream | Proposed |
 
 <!-- END GENERATED: adr-index -->

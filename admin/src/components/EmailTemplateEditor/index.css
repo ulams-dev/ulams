@@ -45,3 +45,40 @@
   background: #fff;
   border: 1px solid #d9d9d9;
 }
+
+.email-template-editor__modes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.email-template-editor__beta {
+  margin-inline-end: 0;
+}
+
+.email-template-editor__visual {
+  min-height: 70vh;
+  border: 1px solid #d9d9d9;
+}
+
+.email-template-editor__diff {
+  max-height: 50vh;
+  margin: 0;
+  padding: 8px;
+  overflow: auto;
+  font-size: 13px;
+  white-space: pre-wrap;
+  background: #fafafa;
+  border: 1px solid #d9d9d9;
+}
+
+.email-template-editor__diff-del {
+  color: #820014;
+  background: #fff1f0;
+}
+
+.email-template-editor__diff-add {
+  color: #135200;
+  background: #f6ffed;
+}

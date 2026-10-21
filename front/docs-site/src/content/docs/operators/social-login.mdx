@@ -1,0 +1,76 @@
+---
+title: Social login
+description: Switching on sign-in with Google and Facebook for a tenant - provider credentials, redirect URIs, allowed return origins, linking rules for existing accounts, and what each error means.
+sidebar:
+  order: 13
+modules:
+  - auth
+  - web
+learnerRoutes:
+  - /auth/social/[provider]
+  - /auth/social/callback
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Learners can sign in with Google or Facebook. This page is for the person who runs the instance; the
+protocol is in [Authentication](/developers/authentication/#social-login).
+
+## Set it up
+
+1. **Create the OAuth client** at the provider (Google Cloud console, Meta for developers). The
+   redirect URI is the tenant **API** callback: `https://<tenant-api-host>/api/auth/social/google/callback`
+   (`.../facebook/callback` for Facebook).
+2. **Enter the client id and secret** in the admin panel under Settings (the social login section),
+   one set per tenant.
+3. **Allow the front end to receive the login.** After the provider, the API sends the browser back to
+   the front end, but only to an origin it trusts: `FRONTEND_URL`, `ADMIN_URL`, `APP_URL` or one of
+   `TRUSTED_ORIGINS` of that tenant (exact scheme, host and port). A front end on another origin
+   (a staging copy, a second site) must be added to `TRUSTED_ORIGINS`, or the start request is refused
+   with `422`. Outside production localhost origins are trusted for development.
+4. **Show the buttons.** The reference frontend shows them on `/login` for the providers listed in
+   `ULAMS_SOCIAL_LOGIN` (`google,facebook`; empty by default). The legacy front has its own buttons.
+
+| Variable | Where | Meaning |
+|---|---|---|
+| `ULAMS_SOCIAL_LOGIN` | `web` | Providers with a button on `/login`, comma separated |
+| `TRUSTED_ORIGINS` | `api`, per tenant | Extra origins the API may return to after login |
+| `AUTH_SOCIAL_GOOGLE_TRUSTED_DOMAINS` | `api` | E-mail domains for which Google may link an existing account (see below), comma separated; `gmail.com` is always included |
+
+## Existing accounts
+
+Signing in with a provider for the first time creates a student account (without a password) or logs
+in to the account already linked to that provider identity. When an account with the same e-mail
+address **already exists**, it is linked automatically only if:
+
+- the provider reports the address as verified (Google does; Facebook does not, so Facebook never
+  links by e-mail),
+- the address is in a domain trusted for the provider: `gmail.com`, plus the domains you list in
+  `AUTH_SOCIAL_GOOGLE_TRUSTED_DOMAINS` (list your own Google Workspace domain there, never a public
+  mail provider you do not control), and
+- the account is not an admin, tutor or superadmin.
+
+Otherwise the user comes back with `error=link_required` and signs in once with the e-mail and
+password. Admin accounts are never linked automatically; an admin who wants Google sign-in is linked
+by another admin.
+
+A local account whose e-mail address was never confirmed, claimed through a trusted verified provider,
+loses its password and tokens first: someone who registered an address they do not own cannot keep the
+account.
+
+## Troubleshooting
+
+| What the user sees | Cause |
+|---|---|
+| 422 when the login starts | The return URL is not an allowed origin: add the front end to `TRUSTED_ORIGINS` |
+| "The login attempt is invalid or has expired" (400) after the provider | The state is older than 10 minutes, was used twice (back button, reload), or the callback reached another tenant host than the one that started the login |
+| Back on the login page with "Sign-in failed" | The one-time code expired (60 seconds), was used already, or the browser lost its verifier (cookies blocked, another browser or device) |
+| `error=link_required` | An account with that address exists and may not be linked automatically, see above |
+| `error=email_unverified` | The provider did not confirm the address; a confirmation e-mail was sent |
+| `error=account_unavailable` | The account is deactivated |
+
+<Aside type="note">
+  An access token never appears in a URL, a server log or the browser history. The one-time code in
+  the callback URL is useless without the verifier of the browser that started the login. The
+  [security note](/operators/security/#social-login) lists what changed.
+</Aside>

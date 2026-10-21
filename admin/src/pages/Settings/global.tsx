@@ -167,6 +167,17 @@ const booleanSettings = (
       type: 'boolean',
       data: false,
     })),
+    {
+      // Visual mode of the e-mail template editor; turn it off to keep Code view only.
+      key: 'templates.email.visual_editor',
+      group: 'global',
+      value: 'true',
+      public: true,
+      enumerable: true,
+      sort: 1,
+      type: 'boolean',
+      data: true,
+    },
     ...templateTabsKeys.map((key) => ({
       key: `hideTemplateTab-${key}`,
       group: 'global',

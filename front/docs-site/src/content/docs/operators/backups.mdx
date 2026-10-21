@@ -105,3 +105,13 @@ during the restore, for example by stopping the `api` container on a single serv
 recreate the database from the dump, sync the bucket back, then start again. The platform
 registry row of the tenant does not change, so its env file and keys stay valid. H5P libraries are
 shared: restoring `h5p_libraries` affects every tenant.
+
+## Major-version upgrade of PostgreSQL
+
+A dump taken on one major version restores into a newer one, which is how
+[PostgreSQL is upgraded](/operators/upgrades/#upgrade-postgresql-to-a-new-major-version): the
+script `deploy/scripts/pg-major-upgrade.sh` takes the roles and every database dump with the new
+version's `pg_dump`, restores them into an empty cluster and compares tables, row counts, sequences and
+indexes. Restoring a backup of PostgreSQL 12 into 17 by hand works the same way as the steps above;
+run `deploy/scripts/pg-verify.sh` against a server that still holds the old data if you want the same
+comparison.

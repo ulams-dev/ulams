@@ -107,7 +107,7 @@ Services in `api/docker-compose.yml`, all on the `ulams` network:
 | `api` | built from `api/Dockerfile.develop` | php-fpm on port 9000, plus the queue workers and the scheduler (lean mode) | `http://api.localhost`, `http://<slug>.localhost` |
 | `h5p` | built from `api/h5p/Dockerfile` | H5P player, editor and content API | `/h5p/*` on every API host |
 | `pdf` | built from `api/pdf/Dockerfile` | PDF renderer for certificates and templates | internal only |
-| `postgres` | `postgres:12` | Database; data in `api/docker/postgres-data` | internal; Adminer |
+| `postgres` | `postgres:17.11-alpine` | Database; data in `api/docker/postgres17-data` (a stack that still has `postgres-data` from PostgreSQL 12 runs `make pg-upgrade` once, see [Upgrades](/operators/upgrades/#upgrade-postgresql-to-a-new-major-version)) | internal; Adminer |
 | `redis` | `valkey/valkey:8-alpine` | Cache, queues, Horizon (password `ulams`) | internal |
 | `minio` | `bitnamilegacy/minio:latest` | S3-compatible storage; data in `api/docker/minio_storage` | `http://storage.localhost`, console at `http://minio.localhost` |
 | `mailhog` | `mailhog/mailhog` | Catches outgoing mail | http://localhost:8025 |
