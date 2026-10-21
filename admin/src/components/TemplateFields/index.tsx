@@ -1,9 +1,10 @@
 import ProForm, { ProFormText, ProFormTextArea } from '@ant-design/pro-form';
 import { Space, Tag, Typography } from 'antd';
 import React, { useCallback } from 'react';
-import { FormattedMessage } from 'umi';
+import { FormattedMessage, getLocale, useModel } from 'umi';
 import AutoCompleteArea from '../AutoCompleteArea';
 import EmailTemplateEditor from '../EmailTemplateEditor';
+import { isVisualEditorEnabled } from '../EmailTemplateEditor/featureSwitch';
 import PdfEditor from '../PdfEditor';
 import './index.css';
 
@@ -16,6 +17,8 @@ interface FormWysiwygProps {
 }
 
 export const TemplateFields: React.FC<FormWysiwygProps> = ({ name, field, variables = [] }) => {
+  const { initialState } = useModel('@@initialState');
+  const visualEnabled = isVisualEditorEnabled(initialState?.config);
   const renderRequiredVariables = useCallback(
     (requiredVars: string[]) => {
       if (!!requiredVars.length) {
@@ -184,6 +187,8 @@ export const TemplateFields: React.FC<FormWysiwygProps> = ({ name, field, variab
                     error={form.getFieldError(name)}
                     event={form.getFieldValue('event')}
                     title={form.getFieldValue('title')}
+                    visualEnabled={visualEnabled}
+                    locale={getLocale()}
                   />
                 );
               }}

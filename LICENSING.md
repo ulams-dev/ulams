@@ -55,6 +55,8 @@ that has no closer licence file. This page is an engineering summary, not legal 
 | `@ag-ui/core` | MIT | `front/sdk` | AG-UI event types; its schemas subpath (zod) is only used in tests |
 | `@ulams/interactive-bridge` | MIT | `front/interactive-bridge` | The `ulams-ix` bridge (own code, no dependencies) |
 | `diff` (jsdiff) | BSD-3-Clause | `front/ui` | Word-level diffs in the builder's DiffView; keep its notice in distributed bundles |
+| `grapesjs` | BSD-3-Clause | `admin` | Visual e-mail template editor (ADR 0107); lazy chunk, keep its notice in distributed bundles |
+| `grapesjs-mjml` | BSD-3-Clause | `admin` | MJML plugin of the editor; its `mjml-browser` (MIT) is vendored in the bundle; the broken `@types/mjml-core@~4.18` range is pinned to 4.15.2 through `resolutions` (types only) |
 | A2UI v0.9 JSON Schemas | Apache-2.0 | `front/ui/vendor/a2ui/v0.9` | Unmodified copies of the A2UI message schemas, pinned at a commit (URL and SHA in the `NOTICE` there, with the `LICENSE` text and a README). Used only for dev-mode and test validation of `a2ui-surface` envelopes; not part of production bundles |
 
 DOCX is read by a first-party converter (no PhpWord, which is LGPL-3.0-only; ADR 0026). No A2UI renderer or
