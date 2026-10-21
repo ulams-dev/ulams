@@ -524,6 +524,46 @@ jobs:
       - name: Course Builder apply on the fake driver, failed job recording
         run: php scripts/nodev-smoke.php
 
+  # Vulnerabilities in the lockfiles (composer.lock, yarn.lock) and misconfiguration in Dockerfiles, Compose
+  # and Kubernetes files, with Trivy from one pinned image (.github/scripts/trivy.sh). Only findings with a
+  # fix available count, and only CRITICAL and HIGH fail the job (patch policy in SECURITY.md). Accepted
+  # exceptions are in .trivyignore.yaml, each with a reason and an expiry that scripts/check-trivyignore.mjs
+  # enforces. The SARIF report goes to code scanning when that is enabled for the repository.
+  security-scan:
+    name: Security scan (Trivy)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Exceptions are complete and not expired
+        run: |
+          node --test scripts/check-trivyignore.test.mjs
+          node scripts/check-trivyignore.mjs
+      - name: Shellcheck of the supply-chain scripts
+        run: docker run --rm -v "$PWD/.github/scripts:/mnt" koalaman/shellcheck:stable -e SC1091 /mnt/trivy.sh /mnt/supply-chain.sh /mnt/release-assets.sh /mnt/test-supply-chain.sh
+      - name: Trivy database cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/trivy-ulams
+          key: trivy-db-${{ github.run_id }}
+          restore-keys: trivy-db-
+      - name: Report for code scanning
+        run: FORMAT=sarif OUTPUT=trivy-fs.sarif EXIT_CODE=0 sh .github/scripts/trivy.sh fs
+      # Needs code scanning enabled in the repository settings and a token that may write it (not on forks or
+      # Dependabot pull requests): never a reason to fail the build.
+      - name: Upload to code scanning
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+        with:
+          sarif_file: trivy-fs.sarif
+          category: trivy-fs
+      - name: Fixable critical and high findings
+        run: sh .github/scripts/trivy.sh fs
+
   # The API image carries the PHP ini and php-fpm pool files (api/docker). Upload progress must stay off in
   # it (CVE-2026-109619, php.net advisory 2026-10-21-5): read the setting back from the built image through
   # php-cli ini scanning and through the php-fpm pool config. No PHP version gate here yet.
@@ -541,6 +581,16 @@ jobs:
           token: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build
         run: docker build -t smoke-api api
+      - name: Trivy database cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/trivy-ulams
+          key: trivy-db-${{ github.run_id }}
+          restore-keys: trivy-db-
+      # Fixable CRITICAL findings in the image fail the job (patch policy: SECURITY.md); HIGH ones are reported
+      # by the nightly scan. Accepted exceptions live in .trivyignore.yaml.
+      - name: Trivy (fixable critical)
+        run: IMAGE_SRC=docker sh .github/scripts/trivy.sh image smoke-api
       - name: Upload progress is off
         run: |
           docker run --rm smoke-api php -v | head -1
@@ -572,6 +622,14 @@ jobs:
           token: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build
         run: docker build -f ${{ matrix.name }}/Dockerfile -t smoke-${{ matrix.name }} .
+      - name: Trivy database cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/trivy-ulams
+          key: trivy-db-${{ github.run_id }}
+          restore-keys: trivy-db-
+      - name: Trivy (fixable critical)
+        run: IMAGE_SRC=docker sh .github/scripts/trivy.sh image smoke-${{ matrix.name }}
       - name: Start, request and check
         run: |
           docker run -d --name smoke -p 8080:8080 -e ${{ matrix.prefix }}API_URL=https://api.example.com -e ${{ matrix.prefix }}NOT_ALLOWED=1 -e SECRET_TOKEN=must-not-leak smoke-${{ matrix.name }}
@@ -652,7 +710,7 @@ jobs:
 
   ci-ok:
     name: CI OK
-    needs: [changes, js, demo-content, php, php-no-dev, php-sdk, images, deploy]
+    needs: [changes, js, demo-content, php, php-no-dev, php-sdk, images, deploy, security-scan]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -660,6 +718,6 @@ jobs:
       - name: Fail if any job failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: |
-          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} demo-content=${{ needs.demo-content.result }} php=${{ needs.php.result }} php-no-dev=${{ needs.php-no-dev.result }} php-sdk=${{ needs.php-sdk.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }}"
+          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} demo-content=${{ needs.demo-content.result }} php=${{ needs.php.result }} php-no-dev=${{ needs.php-no-dev.result }} php-sdk=${{ needs.php-sdk.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }} security-scan=${{ needs.security-scan.result }}"
           exit 1
       - run: echo "All required jobs passed or were skipped by the path filters."
