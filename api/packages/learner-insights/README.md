@@ -84,7 +84,10 @@ user setting `insights.consent` exists. Signals never reach an LLM.
 ```bash
 vendor/bin/phpunit --testsuite learner-insights
 php artisan learner-insights:backfill --course=1 --dry-run
+php artisan learner-insights:eval --fixtures=all --author=1   # remediations on golden fixtures, fake driver; --live for the real model
 ```
+
+The eval commands (`learner-insights:eval`, `tutor:eval`) are documented in `front/docs-site/src/content/docs/developers/learner-evals.mdx`; real-model runs are capped by `LEARNER_INSIGHTS_EVAL_MONTHLY_USD`.
 
 The package reads LMS data and changes it only through domain services;
 `tests/Unit/GuardsTest.php` enforces this, no model names in `src/`, and ids-only events.
