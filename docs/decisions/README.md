@@ -119,5 +119,8 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0105](0105-stream-tutor-answers-over-the-sse-event-log.md) | Stream tutor answers over the SSE event log | Accepted |
 | [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted |
 | [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Accepted |
+| [0150](0150-pwa-offline-mode-and-progress-sync-rules.md) | PWA offline mode: saved lessons and idempotent, monotonic progress sync | Proposed |
+| [0151](0151-search-full-text-first-with-optional-embeddings.md) | Search: full text and model query rewrite first, optional pgvector embeddings | Proposed |
+| [0152](0152-first-party-ux-metrics-without-personal-data.md) | First-party UX metrics stored in the tenant, without personal data | Proposed |
 
 <!-- END GENERATED: adr-index -->
