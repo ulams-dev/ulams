@@ -244,7 +244,9 @@ jobs:
 
   # The admin in a real browser without a backend: the built admin is served statically and every API call is
   # answered by a deterministic in-browser mock (admin/src/e2e/mocked/mockApi.ts). Covers the pdfme certificate
-  # designer (open, edit, preview, save, reopen), the legacy ReportBro banner and axe (WCAG 2.2 AA).
+  # designer (open, edit, preview, save, reopen), the legacy ReportBro banner, the e-mail template editor (axe in
+  # code, visual, preview and image dialog, the keyboard-only path, reduced motion, locales, no request leaves the
+  # origin) and axe (WCAG 2.2 AA).
   # The other admin specs in src/e2e need a live API and stay out of CI.
   admin-a11y:
     name: Admin browser tests (Playwright, axe)

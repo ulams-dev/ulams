@@ -1,5 +1,6 @@
 import type { Editor } from 'grapesjs';
-import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import KeyboardPanel from './KeyboardPanel';
 import { parseMarkup, treeLines } from './roundTrip';
 import { createEditor, exportMjml, type VisualOptions } from './visual/engine';
 import type { VisualEditorHandle } from './visual/handle';
@@ -33,9 +34,12 @@ const VisualEditor = forwardRef<VisualEditorHandle, VisualEditorProps>(function 
 ) {
   const box = useRef<HTMLDivElement | null>(null);
   const instance = useRef<Editor | null>(null);
+  const [current, setCurrent] = useState<Editor | null>(null);
   const handler = useRef(onChange);
   handler.current = onChange;
   const picker = useRef(pickImage);
+  const labelRef = useRef(label);
+  labelRef.current = label;
   picker.current = pickImage;
 
   useImperativeHandle(ref, () => ({
@@ -50,6 +54,11 @@ const VisualEditor = forwardRef<VisualEditorHandle, VisualEditorProps>(function 
       pickImage: () => (picker.current ? picker.current() : Promise.resolve(undefined)),
     });
     instance.current = editor;
+    setCurrent(editor);
+    // The canvas is an iframe: it needs a name for screen readers (WCAG 4.1.2).
+    const nameFrame = () => editor.Canvas.getFrameEl()?.setAttribute('title', labelRef.current);
+    editor.on('canvas:frame:load', nameFrame);
+    editor.on('load', nameFrame);
     let baseline: string | undefined;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let active = true;
@@ -74,6 +83,7 @@ const VisualEditor = forwardRef<VisualEditorHandle, VisualEditorProps>(function 
     return () => {
       active = false;
       instance.current = null;
+      setCurrent(null);
       if (timer) clearTimeout(timer);
       editor.destroy();
     };
@@ -82,7 +92,15 @@ const VisualEditor = forwardRef<VisualEditorHandle, VisualEditorProps>(function 
   }, []);
 
   return (
-    <div ref={box} role="region" aria-label={label} className="email-template-editor__visual" />
+    <>
+      {current && (
+        <KeyboardPanel
+          editor={current}
+          chooseImage={(component) => current.runCommand('open-assets', { target: component })}
+        />
+      )}
+      <div ref={box} role="region" aria-label={label} className="email-template-editor__visual" />
+    </>
   );
 });
 

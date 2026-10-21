@@ -71,6 +71,7 @@ describe('editor configuration', () => {
   it('has no remote icon stylesheet, no storage and no locale detection', () => {
     expect(config.cssIcons).toBe('');
     expect(config.storageManager).toBe(false);
+    expect(config.telemetry).toBe(false);
     expect(config.i18n?.detectLocale).toBe(false);
     expect(config.i18n?.locale).toBe('pl');
   });

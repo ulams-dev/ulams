@@ -1,6 +1,6 @@
 import AutoCompleteArea from '@/components/AutoCompleteArea';
 import { renderEmailDraft, testSendEmailDraft } from '@/services/ulams/templates';
-import { Alert, Button, Col, Radio, Row, Spin, Tag } from 'antd';
+import { Alert, Button, Col, Radio, Row, Spin } from 'antd';
 import React, { Suspense, useCallback, useRef, useState } from 'react';
 import { FormattedMessage, Link, useIntl } from 'umi';
 import { insertAtSelection, requestErrorMessage, type DraftRequest } from './draft';
@@ -78,7 +78,7 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
     { type: 'success' | 'error'; message: string } | undefined
   >();
 
-  // Code is the default view for everybody: the visual mode is beta and not yet keyboard operable.
+  // Code is the default view for everybody; Visual is one click or arrow key away.
   const [requestedMode, setRequestedMode] = useState<Mode>('code');
   const [checking, setChecking] = useState(false);
   const [block, setBlock] = useState<VisualBlock | undefined>();
@@ -232,15 +232,12 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
             <Radio.Button value="code">
               <FormattedMessage id="templates.editor_mode_code" />
             </Radio.Button>
-            <Radio.Button value="visual" aria-describedby="email-editor-beta">
-              <FormattedMessage id="templates.editor_mode_visual" />{' '}
-              <Tag color="orange" className="email-template-editor__beta">
-                <FormattedMessage id="templates.editor_beta" />
-              </Tag>
+            <Radio.Button value="visual" aria-describedby="email-editor-visual-hint">
+              <FormattedMessage id="templates.editor_mode_visual" />
             </Radio.Button>
           </Radio.Group>
-          <span id="email-editor-beta" className="email-template-editor__hint">
-            <FormattedMessage id="templates.visual_beta_notice" />
+          <span id="email-editor-visual-hint" className="email-template-editor__hint">
+            <FormattedMessage id="templates.visual_keyboard_hint" />
           </span>
           <div aria-live="polite">
             {checking && (

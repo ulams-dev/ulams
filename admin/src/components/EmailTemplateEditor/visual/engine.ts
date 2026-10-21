@@ -46,6 +46,8 @@ export const buildConfig = (
 ): EditorConfig => ({
   fromElement: false,
   storageManager: false,
+  // GrapesJS sends anonymous usage data to app.grapesjs.com unless told not to: no telemetry (plan 4.10).
+  telemetry: false,
   // GrapesJS loads Font Awesome 4.7 from cdnjs by default; the editor must work offline.
   cssIcons: '',
   // Chips and locked shared parts are a decoration of the stored text, undone by exportMjml.

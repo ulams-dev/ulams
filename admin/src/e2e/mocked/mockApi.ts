@@ -14,6 +14,30 @@ const PDF_CHANNEL = 'Ulams\\TemplatesPdf\\Core\\PdfChannel';
 export const VARIABLES = ['@VarUserName', '@VarCourseTitle', '@VarFinishDate'];
 export const REQUIRED_VARIABLES = ['@VarUserName'];
 
+export const EMAIL_EVENT = 'Ulams\\Auth\\Events\\PasswordForgotten';
+const EMAIL_CHANNEL = 'Ulams\\TemplatesEmail\\Core\\EmailChannel';
+
+export const EMAIL_VARIABLES = ['@VarUserName', '@VarActionLink', '@VarActionLinkExpiration'];
+export const EMAIL_REQUIRED_VARIABLES = ['@VarActionLink'];
+
+/** Representable MJML: opens in Visual mode without the conversion dialog. */
+export const EMAIL_TEMPLATE = `<mjml lang="en">
+  <mj-body>
+    <mj-section>
+      <mj-column>
+        <mj-text>Hello @VarUserName, you asked to reset your password.</mj-text>
+        <mj-button href="@VarActionLink">Reset password</mj-button>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>`;
+
+/** 1x1 PNG, what the image upload endpoint "stores". */
+export const PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+  'base64',
+);
+
 /** pdfme template with the one required field. */
 export const SAMPLE_TEMPLATE = {
   basePdf: { width: 297, height: 210, padding: [0, 0, 0, 0] },
@@ -66,31 +90,67 @@ export type MockApi = {
   saves: Record<string, any>[];
   /** Bodies of every POST /api/admin/pdfs/preview, in order. */
   previews: Record<string, any>[];
+  /** Bodies of every POST /api/admin/templates/email/render, in order. */
+  renders: Record<string, any>[];
+  /** Number of images uploaded through POST /api/admin/templates/email/images. */
+  uploads: () => number;
 };
 
 export async function mockApi(
   page: Page,
-  options: { template?: unknown; templateId?: number } = {},
+  options: {
+    template?: unknown;
+    templateId?: number;
+    kind?: 'pdf' | 'email';
+    locale?: string;
+  } = {},
 ): Promise<MockApi> {
+  const email = options.kind === 'email';
   const id = options.templateId ?? 7;
-  let content = JSON.stringify(options.template ?? SAMPLE_TEMPLATE);
-  const state: MockApi = { content: () => content, saves: [], previews: [] };
+  let content = email
+    ? String(options.template ?? EMAIL_TEMPLATE)
+    : JSON.stringify(options.template ?? SAMPLE_TEMPLATE);
+  let uploads = 0;
+  const state: MockApi = {
+    content: () => content,
+    saves: [],
+    previews: [],
+    renders: [],
+    uploads: () => uploads,
+  };
 
   // The API origin comes from /runtime-config.json (scripts/serve-dist.cjs), like in the Docker image.
-  await page.addInitScript((token) => {
-    window.localStorage.setItem('TOKEN', token);
-    window.localStorage.setItem('umi_locale', 'en-US');
-  }, TOKEN);
+  await page.addInitScript(
+    ({ token, locale }) => {
+      window.localStorage.setItem('TOKEN', token);
+      window.localStorage.setItem('umi_locale', locale);
+    },
+    { token: TOKEN, locale: options.locale ?? 'en-US' },
+  );
 
-  const template = () => ({
-    id,
-    name: 'Course certificate',
-    type: 'pdf',
-    event: EVENT,
-    channel: PDF_CHANNEL,
-    default: true,
-    sections: [{ key: 'content', content }],
-  });
+  const template = () =>
+    email
+      ? {
+          id,
+          name: 'Password reset',
+          type: 'email',
+          event: EMAIL_EVENT,
+          channel: EMAIL_CHANNEL,
+          default: true,
+          sections: [
+            { key: 'title', content: 'Reset your password' },
+            { key: 'content', content },
+          ],
+        }
+      : {
+          id,
+          name: 'Course certificate',
+          type: 'pdf',
+          event: EVENT,
+          channel: PDF_CHANNEL,
+          default: true,
+          sections: [{ key: 'content', content }],
+        };
 
   const handler = async (route: Route) => {
     const request = route.request();
@@ -115,6 +175,9 @@ export async function mockApi(
     }
 
     if (method === 'GET') {
+      if (path.startsWith('/storage/email/')) {
+        return route.fulfill({ status: 200, contentType: 'image/png', headers: cors, body: PNG });
+      }
       if (path === '/api/profile/me') {
         return json(
           ok({
@@ -137,7 +200,37 @@ export async function mockApi(
         return json(ok({}));
       }
       if (path === '/api/core/packages') {
-        return json(ok({ 'templates-pdf': '1.0.0' }));
+        return json(ok({ 'templates-pdf': '1.0.0', 'templates-email': '1.0.0' }));
+      }
+      if (path === '/api/admin/templates/variables' && email) {
+        return json(
+          ok({
+            [EMAIL_EVENT]: {
+              [EMAIL_CHANNEL]: {
+                assignable_class: '',
+                class: EMAIL_EVENT,
+                required_variables: EMAIL_REQUIRED_VARIABLES,
+                variables: EMAIL_VARIABLES,
+                sections: {
+                  title: {
+                    type: 'text',
+                    required_variables: [],
+                    required: true,
+                    default_content: 'Reset your password',
+                    readonly: false,
+                  },
+                  content: {
+                    type: 'mjml',
+                    required_variables: EMAIL_REQUIRED_VARIABLES,
+                    required: true,
+                    default_content: EMAIL_TEMPLATE,
+                    readonly: false,
+                  },
+                },
+              },
+            },
+          }),
+        );
       }
       if (path === '/api/admin/templates/variables') {
         return json(
@@ -183,6 +276,38 @@ export async function mockApi(
         content = section.content;
       }
       return json(ok(template(), { message: 'Template updated' }));
+    }
+
+    if (method === 'POST' && path === '/api/admin/templates/email/render') {
+      const body = request.postDataJSON();
+      state.renders.push(body);
+      return json(
+        ok({
+          title: body.title,
+          html: `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>${
+            body.title
+          }</title></head><body><p>Rendered preview, ${
+            String(body.content).length
+          } characters of MJML.</p></body></html>`,
+          errors: [],
+          missing_variables: [],
+          warnings: [],
+        }),
+      );
+    }
+
+    if (method === 'POST' && path === '/api/admin/templates/email/images') {
+      uploads += 1;
+      return json(
+        ok({
+          url: `${API_ORIGIN}/storage/email/image-${uploads}.png`,
+          name: `image-${uploads}.png`,
+          mime: 'image/png',
+          size: PNG.length,
+          width: 1,
+          height: 1,
+        }),
+      );
     }
 
     if (method === 'POST' && path === '/api/admin/pdfs/preview') {
