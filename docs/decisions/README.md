@@ -119,5 +119,8 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0105](0105-stream-tutor-answers-over-the-sse-event-log.md) | Stream tutor answers over the SSE event log | Accepted |
 | [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted |
 | [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Accepted |
+| [0140](0140-policy-lifecycle-package.md) | Policy lifecycle as a package orchestrating Living Course, Course Builder and compliance | Proposed |
+| [0141](0141-department-academies-as-host-aliases.md) | Department academies as branded host aliases inside one tenant | Proposed |
+| [0142](0142-scoped-admins-by-group.md) | Scoped admins for partner and customer portals, scoped by group | Proposed |
 
 <!-- END GENERATED: adr-index -->
