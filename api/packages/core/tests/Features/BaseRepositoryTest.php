@@ -59,10 +59,11 @@ class BaseRepositoryTest extends TestCase
         $paginator = $this->repository->paginate(10);
         $this->assertTrue($paginator instanceof LengthAwarePaginator);
 
-        $firstResult = $paginator->getCollection()->first();
-
+        // paginate() applies no ORDER BY, so row order is up to the database; assert on the page content instead.
         $this->assertEquals(10, $paginator->total());
-        $this->assertEquals($this->user->getKey(), $firstResult->getKey());
+        $this->assertCount(10, $paginator->getCollection());
+        $this->assertContains($this->user->getKey(), $paginator->getCollection()->pluck('id')->all());
+        $this->assertContains($this->last_user->getKey(), $paginator->getCollection()->pluck('id')->all());
     }
 
     public function testAllQuery(): void
