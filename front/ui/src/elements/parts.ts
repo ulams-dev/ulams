@@ -36,9 +36,7 @@ class UlamsParts extends HTMLElement {
     const prev = this.querySelector<HTMLButtonElement>("[data-prev]");
     const next = this.querySelector<HTMLButtonElement>("[data-next]");
     const atEnd = this.index === total - 1;
-    // a disabled button that held focus would drop it: move focus to the other button first
-    if (prev && this.index === 0 && document.activeElement === prev) next?.focus();
-    if (next && atEnd && document.activeElement === next) prev?.focus();
+    // focus always moves to the part heading below, so a button that becomes disabled never held it
     if (prev) prev.disabled = this.index === 0;
     if (next) next.disabled = atEnd;
     const status = this.querySelector<HTMLElement>("[data-status]");

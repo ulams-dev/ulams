@@ -11,11 +11,13 @@ import Prose from "@ulams/ui/components/Prose.astro";
 import { formatLabel, formatMinutes } from "@ulams/ui/format";
 import { completionPercent, flattenTopics, topicNeighbours, type Course, type PublicSettings, type Tenant, type TopicProgress } from "@ulams/sdk";
 import Base from "../layouts/Base.astro";
+import LessonView from "./LessonView.astro";
 import PreviewBanner from "./PreviewBanner.astro";
 import { apiFor, cmi5Launch, getLearnerNotices, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../lib/data.ts";
 import { interactiveLaunch, interactivePreview, isImmersive } from "../lib/interactive.ts";
 import { completionMode, formatOf, topicDoc, topicMinutes } from "../lib/page-docs.ts";
 import { NO_NOTICES, topicNoticeDocs } from "../lib/notices.ts";
+import { getPresentation, profileOf } from "../lib/presentation.ts";
 import { getSupport, supportCardId, supportDocs, supportIsLong } from "../lib/support.ts";
 import { learnerLocale } from "../lib/locale.ts";
 import { uiStrings } from "@ulams/ui/i18n";
@@ -79,10 +81,15 @@ const tracked = Boolean(token) && !preview;
 // Living Course: "updated since you completed it", the quiz re-attempt notice and the opt-in marker.
 // and the learner's own "Extra help for you" (Learner Insights). Both are fetched together and neither is fatal.
 const locale = learnerLocale(course.language);
-const [notices, supportItems] = await Promise.all([
+// The lesson view (Learner Insights presentation profile) comes with them; without it the default view shows.
+const [notices, supportItems, presentationState] = await Promise.all([
   access && tracked ? getLearnerNotices(tenant, token!, courseId) : NO_NOTICES,
   access && tracked && !custom ? getSupport(tenant, token!, courseId, topicId, locale) : [],
+  access && tracked && !custom ? getPresentation(tenant, token!, courseId, locale) : null,
 ]);
+const presentation = profileOf(presentationState);
+const linear = presentation.navigation === "linear";
+const lessonViewSaved = ({ ok: "ok", failed: "failed" } as const)[Astro.url.searchParams.get("lesson-view") as "ok" | "failed"] ?? null;
 const noticeDocs = topicNoticeDocs(notices, topicId, done);
 const supportNodes = supportDocs(supportItems, locale);
 const readySupport = supportNodes.find((n) => n.props?.status === "ready");
@@ -110,7 +117,7 @@ const interactive = !interactiveTopic
 const immersive = isImmersive(interactive);
 // External tool (LTI 1.3): the tool's login URL with a single-use hint; scores come back through AGS.
 const lti = topic.topicable_type.endsWith("\\LtiLink") && access && tracked ? await ltiLaunch(tenant, token!, topic.id) : null;
-const doc = custom ? null : topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, cmi5Src, liascript, interactive, lti, preview: Boolean(preview) });
+const doc = custom ? null : topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, cmi5Src, liascript, interactive, lti, preview: Boolean(preview), presentation, locale });
 const format = formatOf(topic);
 const minutes = topicMinutes(topic);
 const lessonNoun = { coffee: "Chapter", oncall: "Module", nightsky: "Mission", gravity: "Module", poland: "Chapter", ulam: "Notebook", platform: "Lesson" }[theme];
@@ -126,7 +133,7 @@ const tutorOn = access && tracked;
 
 <Base theme={theme} accent={settings?.theme?.accent} title={`${topic.title} — ${course.title}`} demo={preview ? null : { adminUrl: tenant.adminUrl, slug: tenant.slug }} bodyClass="u-player-body" noindex={Boolean(preview)} baseTarget={preview?.framed ? "_top" : undefined}>
   {preview && preview.banner !== false && <PreviewBanner published={isPublished(course)} studioHref={studioHref(preview.sessionId)} publicHref={`/courses/${courseId}`} />}
-  <div class:list={["u-player", { "u-player--immersive": immersive }]}>
+  <div class:list={["u-player", { "u-player--immersive": immersive, "u-player--linear": linear }]} data-density={presentation.density === "compact" ? "compact" : undefined}>
     <header class="u-player__top">
       <a class="u-player__back" href={backHref}>
         <Icon name="back" />
@@ -145,6 +152,7 @@ const tutorOn = access && tracked;
         <span class="u-player__track"></span>
         <span data-progress-label>{percent}%</span>
       </div>
+      {presentationState && <LessonView part="control" state={presentationState} courseId={courseId} locale={locale} next={Astro.url.pathname} />}
       <a class="u-player__home" href="/" aria-label="Home"><Icon name="book" /></a>
     </header>
 
@@ -214,6 +222,7 @@ const tutorOn = access && tracked;
         {jumpLink && <p class="u-player__jump"><a href={jumpLink} lang={locale === "en" ? undefined : locale}>{jumpText}</a></p>}
         {topic.introduction && <div class="u-player__intro"><Prose markdown={topic.introduction} size="lg" /></div>}
         </div>
+        {presentationState && <LessonView part="notice" state={presentationState} courseId={courseId} locale={locale} next={Astro.url.pathname} saved={lessonViewSaved} />}
         {
           !access && (
             <p class="u-player__notice" role="note">
@@ -281,7 +290,7 @@ const tutorOn = access && tracked;
 
   // browsers without ::details-content: open the program on desktop
   const tree = document.querySelector<HTMLDetailsElement>("[data-tree]");
-  if (tree && !CSS.supports("selector(::details-content)") && matchMedia("(min-width: 961px)").matches) tree.open = true;
+  if (tree && !document.querySelector(".u-player--linear") && !CSS.supports("selector(::details-content)") && matchMedia("(min-width: 961px)").matches) tree.open = true;
   // keep the current topic in view inside the program
   // (scroll the program itself: scrollIntoView moves the browser's Tab starting point to the current topic,
   // which skips the skip link and the header for keyboard users)
@@ -291,6 +300,15 @@ const tutorOn = access && tracked;
     const top = current.getBoundingClientRect().top - scroller.getBoundingClientRect().top + scroller.scrollTop;
     scroller.scrollTop = Math.max(0, top - (scroller.clientHeight - current.offsetHeight) / 2);
   }
+
+  // Escape closes the lesson view panel and returns focus to its button
+  const view = document.querySelector<HTMLDetailsElement>("[data-lesson-view]");
+  view?.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !view.open) return;
+    event.preventDefault();
+    view.open = false;
+    view.querySelector<HTMLElement>("summary")?.focus();
+  });
 
   // j / k (or [ and ]) move between topics, like the tools engineers use every day
   document.addEventListener("keydown", (event) => {
@@ -517,7 +535,7 @@ const tutorOn = access && tracked;
   }
   .u-player__content {
     display: grid;
-    gap: 22px;
+    gap: var(--ulams-block-gap, 22px);
     max-width: 880px;
     margin: 0 auto;
     padding: clamp(24px, 4vw, 56px) clamp(16px, 4vw, 48px) 48px;
@@ -573,6 +591,53 @@ const tutorOn = access && tracked;
     border: 1px solid var(--ulams-color-warn);
     background: color-mix(in srgb, var(--ulams-color-warn) 12%, transparent);
     font-weight: 600;
+  }
+  /* Linear navigation: the program stays closed behind its summary on every width and the lesson uses the full column */
+  .u-player--linear {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "top"
+      "tree"
+      "main"
+      "bar";
+  }
+  .u-player--linear .u-player__tree {
+    position: relative;
+    z-index: 25;
+    top: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--ulams-color-border);
+  }
+  .u-player--linear .u-player__tree nav {
+    max-height: min(60dvh, 28rem);
+  }
+  .u-player--linear .u-player__tree summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .u-player--linear .u-player__tree summary span {
+    margin-left: auto;
+    font-weight: 500;
+    color: var(--ulams-color-muted);
+  }
+  .u-player--linear .u-player__tree::details-content {
+    content-visibility: hidden;
+    display: none;
+  }
+  .u-player--linear .u-player__tree[open]::details-content {
+    content-visibility: visible;
+    display: block;
+  }
+  /* the footer leads with Next: it takes the free space and the secondary actions stay compact */
+  .u-player--linear .u-player__bar [data-key-next] {
+    flex: 1 1 auto;
+    justify-content: center;
+    max-width: 22rem;
   }
   /* Interactive in background mode: the package fills the page, the heading and the text are cards */
   .u-player--immersive {
