@@ -546,11 +546,11 @@ Simulations (opt-in)
 Adaptive interface (feature flag)
 - [x] Per-learner density, chunking, navigation, visible hints from Learner Insights (moved to `docs/plans/phase-4.md` M4.8; #59) (presentation profile API merged, derived per request with learner overrides, #288; the lesson view form, compact density, lesson parts, linear navigation, hints shown at start and the "why" notice merged in M-UI4, #320; the A/B and delayed-retention measure of this feature stays under Impact measurement)
 - [x] Remediation components: Feynman reflection, elaborative questions, worked examples (moved to `docs/plans/phase-4.md` M4.5; #59) (API and declarative blocks merged, #281; catalogue components, manifest check before storage, the "Extra help for you" card and ADR 0106 merged in M-UI1, #315; Feynman reflection with AI feedback and the AI-assisted lesson label merged in M-UI2, #319; the demo academies do not turn the module on, owner question O1 of `docs/plans/phase-5-learner-ui.md`)
-- [ ] Surveys with SUS, UEQ, NASA-TLX + behavioural metrics
+- [ ] Surveys with SUS, UEQ, NASA-TLX + behavioural metrics (plan: `docs/plans/phase-4-experiments-and-analytics.md`, LX-4 to LX-8)
 
 Impact measurement
-- [ ] Built-in A/B experiments per course; delayed retention (3–7 days) as primary metric
-- [ ] Results visible to authors; opt-in per tenant, consent where required
+- [ ] Built-in A/B experiments per course; delayed retention (3–7 days) as primary metric (plan: `docs/plans/phase-4-experiments-and-analytics.md`, LX-4 to LX-8)
+- [ ] Results visible to authors; opt-in per tenant, consent where required (plan: `docs/plans/phase-4-experiments-and-analytics.md`, LX-4 to LX-8)
 
 Quality
 - [x] Component playground with model-facing descriptions (in the docs site instead of Storybook, ADR 0054,
@@ -599,6 +599,8 @@ Plan (new): `docs/plans/phase-4.md` (draft, waiting for approval; ADRs 0057–00
 stream → M4.2 risk scoring → M4.3 privacy and transparency → M4.4 nudges and recovery → M4.5 remediations →
 M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments, evals. Designs:
 `front/docs/design/stitch/personalisation/`. Owner questions #59–#63.
+Plan for the remaining Learner Insights items, experiments and surveys (new): `docs/plans/phase-4-experiments-and-analytics.md`
+(draft; milestones LX-1 studio Insights page → LX-11 partitioning; ADRs 0180, 0181 Proposed).
 
 ### 4.1 `learner-insights` package
 - [x] Append-only learner signal stream mapped to blueprint element IDs; queues; backfill (`api/packages/learner-insights`, M4.1, #277; H5P results recorded as signals, #292)
@@ -618,7 +620,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) Remediation holdout (20 % get no remediation) and the adaptive interface presentation profile, backend (M4.8 API, #288: holdout is a stable hash share, off by default pending #58; comparison in `OutcomeTracker::helpedVsHoldout()`; the experiments package and the A/B and delayed-retention measure are not built)
 - [ ] (new) Partition `learner_signals` by month when a tenant exceeds 50M rows
 - [ ] (new) Remediations for courses not built with the Course Builder
-- [ ] (new) `TopicProgressUpdated` event in `courses` for non-completion progress (ids only)
+- [x] (new) `TopicProgressUpdated` event in `courses` for non-completion progress (ids only) (built and tested in #277: `CourseProgressRepository`, `CourseProgressEventTest`, consumed by `RecordSignals::topicProgressed`)
 
 ### 4.2 AI tutor
 - [x] Answers only from course sources with citations; says when out of scope (`api/packages/tutor`, M4.7 API, #287; off by default per tenant)

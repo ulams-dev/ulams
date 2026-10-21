@@ -134,6 +134,8 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0170](0170-code-exercise-runners.md) | Code exercises run in our own browser runner inside the opaque content-origin sandbox, with an optional gVisor server runner for verified grading | Proposed |
 | [0171](0171-extension-manifest-and-trust-model.md) | Extensions: operator-installed composer packages with an `ulams-extension.json` manifest, per-point contract versions and optional Sigstore signing | Proposed |
 | [0172](0172-hosted-mcp-gateway-on-cloudflare-workers.md) | Hosted MCP gateway on Cloudflare Workers sharing the CLI tool registry, OAuth at the gateway and scoped tokens upstream | Proposed |
+| [0180](0180-experiment-assignment-exposure-and-statistics.md) | Course experiments: salted assignment, exposure logging and fixed-horizon statistics with guard rails | Proposed |
+| [0181](0181-insights-improvement-proposals-in-living-course.md) | Improvement proposals from learner insights are Living Course proposals of their own kind | Proposed |
 | [0190](0190-tenant-isolation-route-coverage.md) | Tenant isolation for every endpoint through one route-walking test and a public-route allow-list | Proposed |
 | [0191](0191-learning-benefit-claims-register.md) | Register of learning-benefit claims, checked in CI | Proposed |
 
