@@ -129,6 +129,9 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0140](0140-policy-lifecycle-package.md) | Policy lifecycle as a package orchestrating Living Course, Course Builder and compliance | Proposed |
 | [0141](0141-department-academies-as-host-aliases.md) | Department academies as branded host aliases inside one tenant | Proposed |
 | [0142](0142-scoped-admins-by-group.md) | Scoped admins for partner and customer portals, scoped by group | Proposed |
+| [0150](0150-pwa-offline-mode-and-progress-sync-rules.md) | PWA offline mode: saved lessons and idempotent, monotonic progress sync | Proposed |
+| [0151](0151-search-full-text-first-with-optional-embeddings.md) | Search: full text and model query rewrite first, optional pgvector embeddings | Proposed |
+| [0152](0152-first-party-ux-metrics-without-personal-data.md) | First-party UX metrics stored in the tenant, without personal data | Proposed |
 | [0160](0160-course-as-code-sync-through-blueprint-v3-import-versions.md) | Course-as-code sync through Blueprint v3 import versions | Accepted |
 | [0161](0161-cli-release-engineering.md) | CLI release engineering: release-please, npm trusted publishing, attested binaries | Proposed |
 | [0170](0170-code-exercise-runners.md) | Code exercises run in our own browser runner inside the opaque content-origin sandbox, with an optional gVisor server runner for verified grading | Accepted |
