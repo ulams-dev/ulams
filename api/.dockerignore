@@ -18,6 +18,8 @@ docker/www_logs
 docker/postgres-backups
 docker/minio_storage
 docker/postgres-data
+docker/postgres17-data
+docker/pg-upgrade-dumps
 !docker/conf
 
 .env.local.testing
