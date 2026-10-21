@@ -129,6 +129,7 @@ export type TopicKind =
   | "scorm"
   | "liascript"
   | "interactive"
+  | "code_exercise"
   | "layout"
   | "lti"
   | "cmi5"

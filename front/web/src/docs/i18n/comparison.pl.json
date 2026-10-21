@@ -102,6 +102,13 @@
                     ]
                   },
                   {
+                    "title": "Ćwiczenia z kodem",
+                    "text": "Pliki startowe i widoczne testy dla JavaScript i TypeScript, uruchamiane przez uczestnika w odizolowanej piaskownicy przeglądarki bez dostępu do sieci. Każde uruchomienie to próba ćwiczeniowa, która wpływa na postęp i sygnały o uczestniku, ale nigdy nie liczy się do certyfikatów.",
+                    "packages": [
+                      "code-exercises"
+                    ]
+                  },
+                  {
                     "title": "Lekcje z układem",
                     "text": "Treść lekcji złożona z zatwierdzonych komponentów dydaktycznych, takich jak osie czasu, karty do odwracania, kroki i wyróżnienia.",
                     "packages": [

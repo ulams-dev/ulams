@@ -1,0 +1,31 @@
+{
+  "props": {
+    "src": "https://content.localhost/runtime/code-runner/1/runner.html",
+    "title": "Make sum add",
+    "topicId": 42,
+    "language": "javascript",
+    "files": [
+      {
+        "path": "sum.js",
+        "content": "export function sum(a, b) {\n  return 0;\n}\n"
+      }
+    ],
+    "tests": [
+      {
+        "path": "sum.test.js",
+        "content": "import { sum } from './sum.js';\n\ntest('adds two numbers', () => expect(sum(1, 2)).toBe(3));\ntest('adds negative numbers', () => expect(sum(-1, -2)).toBe(-3));\n"
+      }
+    ],
+    "timeoutMs": 5000,
+    "passScore": 100,
+    "completionRule": "on_pass",
+    "text": "Change `sum` so that it returns the sum of its two arguments. Press **Run tests** to check your work.",
+    "locale": "en"
+  },
+  "invalid": {
+    "src": "javascript:alert(1)",
+    "title": "Unsafe",
+    "files": [],
+    "tests": []
+  }
+}

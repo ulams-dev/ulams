@@ -35,6 +35,7 @@ export const FORMAT_BY_KIND: Record<TopicKind, Format | undefined> = {
   scorm: "scorm",
   liascript: "interactive",
   interactive: "interactive",
+  code_exercise: "interactive",
   layout: "interactive",
   lti: "interactive",
   cmi5: "tracked",

@@ -10,8 +10,10 @@ import { createServer } from "node:http";
 import { Buffer } from "node:buffer";
 import { clearTimeout, setTimeout } from "node:timers";
 import { createHash, randomBytes } from "node:crypto";
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { existsSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { codeExerciseTopics, launchOf } from "./code-exercises.mjs";
 
 const fixture = (name) => JSON.parse(readFileSync(fileURLToPath(new URL(`../fixtures/${name}.json`, import.meta.url)), "utf8"));
 const coffee = fixture("coffee");
@@ -90,7 +92,7 @@ const practiceTopic = {
     markdown_fallback: "Practice: dial in a pour-over.",
   },
 };
-program.lessons[0].topics = [...program.lessons[0].topics, quizTopic, practiceTopic];
+program.lessons[0].topics = [...program.lessons[0].topics, quizTopic, practiceTopic, ...codeExerciseTopics];
 
 const questions = [
   { id: 1, type: "multiple_choice", score: 1, order: 1, title: null, question: "Which species is called Robusta?", options: { answers: ["Coffea arabica", "Coffea canephora", "Coffea liberica"] } },
@@ -338,8 +340,31 @@ const insightsRoutes = [
   ["GET", /^\/api\/admin\/learner-insights\/learners\/(\d+)\/courses\/(\d+)\/timeline$/, ({ match }) => (Number(match[2]) === 4 ? { __status: 403, message: "This action is unauthorized." } : insightsTimeline)],
 ];
 
+// Code exercises (ADR 0170): launches, and the attempts the lesson page reports, kept per tenant and topic
+const codeAttempts = new Map();
+const attemptsOf = (tenant, topic) => codeAttempts.get(`${tenant}:${topic}`) ?? [];
+const CODE_TOPICS = new Map(codeExerciseTopics.map((t) => [t.id, t]));
+const RUNNER_URL = `http://127.0.0.1:${process.env.MOCK_API_PORT ?? 4390}/runtime/code-runner/1/runner.html`;
+
 const routes = [
   ...insightsRoutes,
+  ["POST", /^\/api\/code-exercises\/launches\/(\d+)$/, ({ tenant, match }) => {
+    const topic = CODE_TOPICS.get(Number(match[1]));
+    return topic ? launchOf(topic, RUNNER_URL, attemptsOf(tenant, topic.id)) : { __status: 404, message: "Not a code exercise" };
+  }],
+  ["POST", /^\/api\/code-exercises\/topics\/(\d+)\/attempts$/, ({ tenant, match, body }) => {
+    const topic = CODE_TOPICS.get(Number(match[1]));
+    if (!topic) return { __status: 404, message: "Not a code exercise" };
+    const results = body?.results;
+    const valid = Array.isArray(results) && results.length >= 1 && results.length <= 200 && results.every((r) => typeof r?.name === "string" && ["pass", "fail", "error"].includes(r?.status));
+    if (!valid) return { __status: 422, message: "Invalid results" };
+    const rows = attemptsOf(tenant, topic.id);
+    const passed = results.filter((r) => r.status === "pass").length;
+    const score = Math.round((passed / results.length) * 100);
+    const row = { id: rows.length + 1, attempt_no: rows.length + 1, mode: "practice", verified: false, passed, total: results.length, score, results, runner: body.runner ?? null, files_hash: body.files_hash ?? null };
+    codeAttempts.set(`${tenant}:${topic.id}`, [...rows, row]);
+    return { attempt: row, status: score >= topic.topicable.pass_score ? 1 : 2 };
+  }],
   ["GET", /^\/api\/compliance\/my-assignments$/, () => assignments],
   ["GET", /^\/api\/compliance\/my-paths$/, () => myPaths],
   ["GET", /^\/api\/compliance\/my-skills$/, () => mySkills],
@@ -486,6 +511,26 @@ const server = createServer((req, res) => {
     res.end(JSON.stringify({ reset: true }));
     return;
   }
+  // forget the code exercise attempts of a tenant (its own reset: the other specs share the tenants, and the general reset is theirs)
+  if (req.method === "POST" && path === "/__mock/reset-code") {
+    req.resume();
+    for (const key of [...codeAttempts.keys()]) if (key.startsWith(`${url.searchParams.get("tenant") ?? ""}:`)) codeAttempts.delete(key);
+    res.end(JSON.stringify({ reset: true }));
+    return;
+  }
+  // the attempts a tenant has recorded for a code exercise (for the tests)
+  const recorded = /^\/__mock\/code-attempts\/(\d+)$/.exec(path);
+  if (req.method === "GET" && recorded) {
+    req.resume();
+    res.end(JSON.stringify(attemptsOf(url.searchParams.get("tenant") ?? "", Number(recorded[1]))));
+    return;
+  }
+  // the content origin of the runner (ADR 0170): the static files, with the headers the API sets
+  if ((req.method === "GET" || req.method === "HEAD") && path.startsWith("/runtime/code-runner/1/")) {
+    req.resume();
+    serveRunner(path.slice("/runtime/code-runner/1/".length), res);
+    return;
+  }
   if (req.method === "GET" && /^\/api\/pdfs\/generate\/9$/.test(path)) {
     req.resume();
     res.setHeader("Content-Type", "application/pdf");
@@ -514,6 +559,37 @@ const server = createServer((req, res) => {
   req.on("data", (chunk) => chunks.push(chunk));
   req.on("end", () => respond(req, res, path, route, Buffer.concat(chunks).toString("utf8")));
 });
+
+/**
+ * The runner's files on a content origin, with what the API and the proxy set (ADR 0170): the policies come from
+ * api/packages/code-exercises/resources/runner-csp.json, the same file RunnerHeaders reads. The pages that may
+ * frame them are the apps of every tenant on this machine (*.app.localhost).
+ */
+const requireHere = createRequire(import.meta.url);
+const runnerDir = fileURLToPath(new URL("../../../../api/packages/code-exercises/resources/runtime/code-runner/1/", import.meta.url));
+const policies = JSON.parse(readFileSync(fileURLToPath(new URL("../../../../api/packages/code-exercises/resources/runner-csp.json", import.meta.url)), "utf8"));
+const policy = (name) => policies[name].map((d) => d.replace("{ancestors}", "http://*.app.localhost:*")).join("; ");
+const RUNNER_FILES = { "runner.html": "text/html; charset=UTF-8", "exec.html": "text/html; charset=UTF-8", "runner.js": "text/javascript; charset=UTF-8", "exec.js": "text/javascript; charset=UTF-8", "esbuild.js": "text/javascript; charset=UTF-8", "esbuild.wasm": "application/wasm" };
+
+function serveRunner(file, res) {
+  const type = RUNNER_FILES[file];
+  // the wasm file is not committed (14 MB): the one of the esbuild-wasm package is the same file
+  const path = file === "esbuild.wasm" && !existsSync(`${runnerDir}${file}`) ? `${fileURLToPath(new URL(".", pathToFileURL(requireHere.resolve("esbuild-wasm/package.json"))))}esbuild.wasm` : `${runnerDir}${file}`;
+  if (!type || !existsSync(path)) {
+    res.statusCode = 404;
+    res.setHeader("Content-Type", "text/plain");
+    res.end("Not found");
+    return;
+  }
+  res.setHeader("Content-Type", type);
+  res.setHeader("Content-Security-Policy", file === "runner.html" ? policy("runner") : file === "exec.html" ? policy("exec") : policies.other);
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.end(readFileSync(path));
+}
 
 /** Server-sent events of a streamed tutor answer, a few hundred ms apart; honours Last-Event-ID. */
 function streamRun(req, res, runId) {

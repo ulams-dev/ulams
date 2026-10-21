@@ -19,6 +19,8 @@ export const BFF_RULES: BffRule[] = [
   { method: "POST", pattern: /^\/api\/courses\/progress\/\d+\/h5p$/, writesProgress: true },
   // Interactive topics: the lesson page forwards the bridge's events with the learner's own session (ADR 0086)
   { method: "POST", pattern: /^\/api\/interactive\/topics\/\d+\/events$/, writesProgress: true },
+  // Code exercises: the lesson page reports a finished run of the visible tests as a practice attempt (ADR 0170)
+  { method: "POST", pattern: /^\/api\/code-exercises\/topics\/\d+\/attempts$/, writesProgress: true },
   { method: "GET", pattern: /^\/api\/quiz-attempts$/ },
   { method: "GET", pattern: /^\/api\/quiz-attempts\/\d+$/ },
   { method: "POST", pattern: /^\/api\/quiz-attempts$/ },
