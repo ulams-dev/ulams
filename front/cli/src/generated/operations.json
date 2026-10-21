@@ -2654,13 +2654,19 @@
  {
   "method": "GET",
   "path": "/api/auth/social/{provider}/callback",
-  "summary": "Redirect after sucessfull login",
+  "summary": "Redirect after successful login",
   "tag": "Auth"
  },
  {
   "method": "POST",
   "path": "/api/auth/social/complete/{token}",
   "summary": "Complete the missing data from socials",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/social/exchange",
+  "summary": "Exchange a one-time social login code for a token",
   "tag": "Auth"
  },
  {

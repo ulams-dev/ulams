@@ -39,6 +39,23 @@ hostile input.
   httpOnly cookie and adds it server-side, for the player's own calls only, in its `/h5p` proxy, so
   H5P content scripts never see a token ([H5P in production](/operators/h5p/#the-state-proxy-of-the-reference-front)).
 
+## Social login
+
+Sign-in with Google and Facebook is hardened (ADR 0121, [operator guide](/operators/social-login/)):
+
+- the return URL is checked against the tenant's own origins, so the login cannot be used as an open
+  redirect;
+- the browser gets a one-time code (60 seconds, single use, bound to the tenant and to a verifier only
+  that browser holds), never an access token in the URL;
+- the OAuth `state` is signed, expires after 10 minutes and works once;
+- an existing account is linked by e-mail only for a verified address in a trusted domain, never an
+  admin, and an address the provider did not verify is never marked verified;
+- earlier versions stored the literal password `1` for accounts created through a provider: those
+  accounts now have no password. If you ran an earlier version, accounts created by social login
+  before this fix can be signed in with the password `1`; ask those users to reset their password (or
+  reset them yourself) after upgrading.
+- deactivating or deleting a user revokes all of their tokens.
+
 ## PHP upload progress is disabled
 
 The PHP images set `session.upload_progress.enabled = 0` in the ini files (`api/docker/conf/php/`) and

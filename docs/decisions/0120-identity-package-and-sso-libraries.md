@@ -1,6 +1,6 @@
 # 0120. An identity package with onelogin/php-saml, an in-house OIDC client and an in-house SCIM server
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-21
 - Plan: `docs/plans/phase-6-identity.md`; spec `docs/ROADMAP-PROMPT.md` 6.3
 
