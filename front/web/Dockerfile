@@ -25,7 +25,7 @@ COPY front/web/package.json front/web/package.json
 
 # ---- deps: full install for the build -------------------------------------
 FROM manifests AS deps
-RUN yarn install --frozen-lockfile --ignore-scripts --non-interactive --network-timeout 600000 \
+RUN n=1; until yarn install --frozen-lockfile --ignore-scripts --non-interactive --network-timeout 600000; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying yarn install ($n/3)" >&2; sleep 5; done \
     && yarn cache clean
 
 # ---- build -----------------------------------------------------------------
@@ -40,7 +40,7 @@ RUN yarn --cwd front/web build
 
 # ---- prod-deps: runtime node_modules only (sharp ships per-platform binaries) --
 FROM manifests AS prod-deps
-RUN yarn install --frozen-lockfile --production --ignore-scripts --non-interactive --network-timeout 600000 \
+RUN n=1; until yarn install --frozen-lockfile --production --ignore-scripts --non-interactive --network-timeout 600000; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying yarn install ($n/3)" >&2; sleep 5; done \
     && yarn cache clean \
     && mkdir -p front/web/node_modules
 
