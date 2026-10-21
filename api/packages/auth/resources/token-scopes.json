@@ -260,6 +260,10 @@
             "area": "builder"
         },
         {
+            "pattern": "api/admin/course-as-code*",
+            "area": "builder"
+        },
+        {
             "pattern": "api/admin/living-course*",
             "area": "living-course"
         },

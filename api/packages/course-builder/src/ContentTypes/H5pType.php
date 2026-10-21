@@ -3,6 +3,7 @@
 namespace Ulams\CourseBuilder\ContentTypes;
 
 use Ulams\CourseBuilder\Apply\LessonMarkdown;
+use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\TopicTypes\Models\TopicContent\H5P;
 use Ulams\TopicTypes\Models\TopicContent\RichText;
@@ -74,7 +75,7 @@ final class H5pType implements ContentType
             return ["warning: {$where}: an H5P lesson without its activity is applied as plain text"];
         }
         $w = "{$where} activity";
-        $errors = [...Checks::citations($interaction['citations'] ?? [], $known, $w), ...H5pLibraries::errors((string) $interaction['library'], (array) $interaction['data'], $w)];
+        $errors = [...Checks::citations($interaction['citations'] ?? [], $known, $w, Blueprint::minCitations($interaction)), ...H5pLibraries::errors((string) $interaction['library'], (array) $interaction['data'], $w)];
         if (!in_array($interaction['library'], $this->libraries->allowed(), true)) {
             $errors[] = "{$w}: {$interaction['library']} is not an allowed library";
         } elseif (!isset($this->libraries->installed()[$interaction['library']])) {

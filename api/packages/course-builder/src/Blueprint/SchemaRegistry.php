@@ -25,10 +25,10 @@ final class SchemaRegistry
         return $this->cache[$name] ??= (array) json_decode((string) file_get_contents(self::root() . "/{$name}.json"), true, 512, JSON_THROW_ON_ERROR);
     }
 
-    /** Validates a blueprint against the schema of its own `schemaVersion` (v1 documents stay valid). @return string[] */
+    /** Validates a blueprint against the schema of its own `schemaVersion` (v1 and v2 documents stay valid). @return string[] */
     public function validateBlueprint(array $doc): array
     {
-        return $this->validate('course-blueprint/v' . ((int) ($doc['schemaVersion'] ?? 1) >= 2 ? 2 : 1), $doc);
+        return $this->validate('course-blueprint/v' . min(3, max(1, (int) ($doc['schemaVersion'] ?? 1))), $doc);
     }
 
     /** @return string[] */

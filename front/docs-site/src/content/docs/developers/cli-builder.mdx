@@ -151,6 +151,18 @@ connection cap with `Last-Event-ID`, never repeated). The last line is the norma
 `lastEventId` (pass it to `--after` to continue). `--until-run` exits 0 on that run's `RUN_FINISHED` and 9 on `RUN_ERROR`
 with the event in `error.details`. For agents, `builder events list` returns a bounded batch as ordinary JSON.
 
+## Course as code (works with AI off)
+
+`ulams course …` moves a course between the academy and a file, without the AI pipeline and **without needing AI to be enabled**
+(the commands above exit 12 when it is off; these do not). `course export <course> --out blueprint.json` writes the current
+Blueprint v3 document with its version ids, `course import --file blueprint.json` stores your edit as a proposed version and prints the
+element diff, `course diff <version>` shows it again, `course approve <version>` makes it the current version and `course apply
+<session>` and `course publish <session>` put it in front of learners. A push is always a proposal: **only a person can approve**
+(a login or a CLI token you created; agent tokens and MCP clients get `APPROVAL_REQUIRES_HUMAN`). The endpoints, the error codes and
+the rule for text you wrote yourself (`origin: author`, which may have no citations) are in the
+[Course Builder API](/developers/course-builder-api/#course-as-code-endpoints-work-with-ai-off). These commands are the thin
+first layer; the folder format with Markdown lessons and `course push`/`course pull` build on them.
+
 ## Living Course
 
 ```bash

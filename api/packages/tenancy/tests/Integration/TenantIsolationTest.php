@@ -271,6 +271,32 @@ class TenantIsolationTest extends TestCase
         $this->assertNotContains($id, array_column($list['data'] ?? [], 'id'));
     }
 
+    /**
+     * Course-as-code endpoints (ADR 0160) resolve only inside their tenant: another tenant's token gets 404 for
+     * A's session and version ids and A's token is rejected on B. Needs a session, so it is skipped with AI off.
+     */
+    public function testCourseAsCodeEndpointsDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $created = $this->request(self::A, 'POST', '/api/admin/course-builder/sessions', $tokenA, ['title' => 'Isolation probe']);
+        if ($created->getStatusCode() === 503) {
+            $this->markTestSkipped('AI is disabled on the probe tenants');
+        }
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['session']['id'];
+        $versionId = '01aaaaaaaaaaaaaaaaaaaaaaaa';
+        $body = ['document' => ['schemaVersion' => 3], 'baseVersionId' => $versionId];
+
+        foreach ([['POST', "/api/admin/course-as-code/sessions/{$id}/imports", $body], ['POST', "/api/admin/course-as-code/sessions/{$id}/apply", []], ['POST', "/api/admin/course-as-code/sessions/{$id}/publish", []]] as [$method, $uri, $payload]) {
+            $onB = $this->request(self::B, $method, $uri, $tokenB, $payload);
+            $this->assertSame(404, $onB->getStatusCode(), "{$method} {$uri}");
+            $this->assertStringNotContainsString('Isolation probe', (string) $onB->getBody());
+            $this->assertSame(401, $this->request(self::B, $method, $uri, $tokenA, $payload)->getStatusCode(), "{$method} {$uri} with A's token");
+        }
+        $this->assertSame(401, $this->request(self::B, 'GET', '/api/admin/course-as-code/courses/1/blueprint', $tokenA)->getStatusCode());
+    }
+
     private function login(string $slug): string
     {
         $response = $this->request($slug, 'POST', '/api/auth/login', null, [

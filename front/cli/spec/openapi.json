@@ -9703,6 +9703,298 @@
     ]
    }
   },
+  "/api/admin/course-as-code/courses/{course}/blueprint": {
+   "get": {
+    "description": "Course-as-code API (ADR 0160, prefix `/api/admin/course-as-code`, `auth:api`, permission\n`course_builder_use`). It works with AI off: there is no AI gate on this route group. A push is\nalways a proposed version; a person approves it (agent tokens and MCP clients never can).",
+    "operationId": "admin.course-as-code.courses.by-course.blueprint.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the blueprint with versionId, appliedVersionId and drift"
+     },
+     "403": {
+      "description": "another author's course"
+     },
+     "404": {
+      "description": "unknown course"
+     },
+     "409": {
+      "description": "NOT_ADOPTED (no builder session) or NO_BLUEPRINT"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Export a course as a Blueprint v3 document (current version, drift, applied version)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/sessions/{session}/apply": {
+   "post": {
+    "operationId": "admin.course-as-code.sessions.by-session.apply.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "apply run"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Apply the current version to the course (no AI needed)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/sessions/{session}/imports": {
+   "post": {
+    "operationId": "admin.course-as-code.sessions.by-session.imports.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "baseVersionId": {
+          "type": "string"
+         },
+         "document": {
+          "type": "object"
+         },
+         "message": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "document",
+         "baseVersionId"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "unchanged: the document equals the current version, no version is created"
+     },
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "proposed version, element diff and warnings"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown session"
+     },
+     "409": {
+      "description": "BASE_OUTDATED (with the remote diff) or NO_BLUEPRINT"
+     },
+     "413": {
+      "description": "document too large"
+     },
+     "422": {
+      "description": "INVALID_BLUEPRINT, BASE_UNKNOWN or a missing field"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Import a Blueprint v3 document as a proposed version of kind import",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/sessions/{session}/publish": {
+   "post": {
+    "operationId": "admin.course-as-code.sessions.by-session.publish.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "published"
+     },
+     "409": {
+      "description": "blocking items or unacknowledged warnings"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Publish the applied course (no AI needed)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/versions/{version}/approve": {
+   "post": {
+    "operationId": "admin.course-as-code.versions.by-version.approve.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "version",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "approved; apply it next"
+     },
+     "403": {
+      "description": "APPROVAL_REQUIRES_HUMAN"
+     },
+     "409": {
+      "description": "not proposed, or STALE_PROPOSAL (the course changed after the import was proposed)"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Approve a proposed import (people and CLI tokens; never agents or MCP clients)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/versions/{version}/diff": {
+   "get": {
+    "operationId": "admin.course-as-code.versions.by-version.diff.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "version",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "against",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "changes"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Element-aware diff of a version against its parent or ?against=",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
   "/api/admin/course-builder/fragments/{fragment}": {
    "get": {
     "operationId": "admin.course-builder.fragments.by-fragment.get",
@@ -40744,6 +41036,10 @@
   {
    "description": "Course Access",
    "name": "Course Access"
+  },
+  {
+   "description": "Admin Course-as-code",
+   "name": "Admin Course-as-code"
   },
   {
    "description": "Admin Course Builder",
