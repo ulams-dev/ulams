@@ -1,6 +1,6 @@
 # Plan: visual e-mail template editor on top of MJML
 
-Status: **draft, waiting for owner approval.** No implementation starts before approval.
+Status: **approved by the owner; M0 spike done (see `email-visual-editor-spike.md`, ADR 0107 Accepted).**
 
 ## 1. Goal
 
@@ -308,7 +308,7 @@ Of the generated e-mails:
 
 | Package | Where | Licence | Maintenance | Size | Self-hosting impact |
 |---|---|---|---|---|---|
-| `grapesjs` 0.23.x (pinned) | admin, runtime, lazy chunk | BSD-3-Clause | active, release 2026-10-15 | npm unpacked 12.5 MB; shipped chunk to be measured in M0 (`npm run analyze`); budget ≤ 350 KB gzip for the editor chunk | none: bundled; transitive deps `backbone`, `underscore`, `codemirror@5`, `backbone-undo`, `html-entities`, `promise-polyfill`, `codemirror-formatting` (licences listed by `license-checker` in M0) |
+| `grapesjs` 0.23.x (pinned) | admin, runtime, lazy chunk | BSD-3-Clause | active, release 2026-10-15 | npm unpacked 12.5 MB; shipped chunk to be measured in M0 (`npm run analyze`); budget ≤ 350 KB gzip for the editor chunk (superseded: the owner accepted **700 KB gzip** on 2026-10-21 after the spike measured about 660 KB, ADR 0107) | none: bundled; transitive deps `backbone`, `underscore`, `codemirror@5`, `backbone-undo`, `html-entities`, `promise-polyfill`, `codemirror-formatting` (licences listed by `license-checker` in M0) |
 | `grapesjs-mjml` 1.0.x (pinned) | admin, runtime, lazy chunk | BSD-3-Clause | slower (yearly releases); fallback is to vendor it as a package under `admin/src/lib/grapesjs-mjml` (as done for `src/lib/markdown-editor`) | npm unpacked 4.1 MB incl. `mjml-browser` | none; pulls `mjml-browser ^4.18` (MIT) → `html-minifier-terser` (MIT, pulls `terser` BSD-2-Clause, `clean-css` MIT), `buffer`, `process`, `path-browserify` (MIT) |
 | `@axe-core/playwright` 4.13.0 | admin, devDependency | MPL-2.0 (unchanged files, dev only) | active | dev only | none; same version as `front/web` |
 
@@ -377,6 +377,8 @@ coverage, full transitive licence list, compatibility with MJML 4.17 server outp
 embed in antd. Decision rule: GrapesJS unless template 3 loses markup that the 4.6 check cannot
 detect, or the chunk exceeds the budget by > 50 %. **Stop for owner approval of the ADR.**
 
+**Delivery order (owner decision, ADR 0107):** the code-only editor ships first (M1, M2), then visual mode (M3 to M5); keyboard alternatives are required in M5.
+
 **M1. Server: draft render, test send, hardening.** Endpoints of 4.5, `MjmlContentRule`,
 `CurlApi` bounds, MJML errors surfaced on save, a11y checker (warnings only), tests incl. tenant
 isolation. Demo: `ulams` CLI or curl renders a draft and returns warnings; test e-mail arrives in
@@ -413,7 +415,7 @@ seeded PL/ZH defaults, tests.
   Mitigation: the Preview tab always shows the server HTML; align minor versions (Q4).
 - **R4 Silent markup loss.** Mitigated by 4.6 and the round-trip tests; the check errs on the side
   of Code mode.
-- **R5 Bundle size and admin performance.** Lazy chunk, budget in M0.
+- **R5 Bundle size and admin performance.** Lazy chunk, budget 700 KB gzip (ADR 0107).
 - **R6 Accessibility of the upstream editor** may not reach WCAG 2.2 AA (drag-and-drop, hover-only
   tooltips). Staff UI, so not the learner non-negotiable, but we document gaps and keep Code mode
   as a fully accessible path.

@@ -1,0 +1,1 @@
+{ "compilerOptions": { "target": "es2015", "module": "esnext", "moduleResolution": "node", "jsx": "react-jsx", "strict": false, "skipLibCheck": true, "esModuleInterop": true, "allowSyntheticDefaultImports": true, "outDir": "dist" }, "exclude": ["dist"] }
