@@ -526,8 +526,8 @@ Simulations (opt-in)
 - [ ] Must pass solvability loop; author approval required; off by default in self-hosted
 
 Adaptive interface (feature flag)
-- [ ] Per-learner density, chunking, navigation, visible hints from Learner Insights (moved to `docs/plans/phase-4.md` M4.8; #59)
-- [ ] Remediation components: Feynman reflection, elaborative questions, worked examples (moved to `docs/plans/phase-4.md` M4.5; #59)
+- [ ] Per-learner density, chunking, navigation, visible hints from Learner Insights (moved to `docs/plans/phase-4.md` M4.8; #59) (partial: presentation profile API merged, derived per request with learner overrides, #288; the front work is open)
+- [ ] Remediation components: Feynman reflection, elaborative questions, worked examples (moved to `docs/plans/phase-4.md` M4.5; #59) (partial: API and declarative blocks merged, #281; the catalogue components and the learner card are not built)
 - [ ] Surveys with SUS, UEQ, NASA-TLX + behavioural metrics
 
 Impact measurement
@@ -587,24 +587,26 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [x] Rule-based risk scoring with human-readable reasons; per-tenant thresholds (M4.2, #277)
 - [x] `RiskScorer` interface for future ML (#277)
 - [x] Statuses and events: `LearnerStruggling`, `LearnerAtRisk` (also `LearnerRecovered`, `LearnerNudged`, #277)
-- [ ] Personal remediations (learner-scoped, grounded, cached per struggle pattern) (not merged: M4.5, PR #281 open)
+- [x] Personal remediations (learner-scoped, grounded, cached per struggle pattern) (M4.5 API, #281; the learner components and the "Extra help for you" card are tracked under Phase 2.7)
 - [x] Nudges via `notifications`, rate-limited (M4.4, per learner and per course limits, #277)
 - [x] Recovery rate measurement (outcome tracker and `LearnerRecovered`, `learner-insights:cohort-stats`, M4.4, #277)
-- [ ] Author analytics; high-struggle elements → update proposals (not merged: M4.6, PR #283 open)
+- [ ] Author analytics; high-struggle elements → update proposals (partial: author and admin analytics API merged, #283; the Living Course proposal from insights, `ProposalService::createFromInsights`, is open)
 - [ ] (new) Per-course analytics dashboard for authors and admins: progress, completion, quiz performance, at-risk
-      learners and the sections that confuse people, per course (Phase 4, M4.6 author analytics; shown as "Coming" in the
+      learners and the sections that confuse people, per course (Phase 4, M4.6 author analytics; API merged, #283, studio Insights page not built; shown as "Coming" in the
       white-label section of the platform landing)
 - [ ] Privacy: per-tenant toggle, retention, explanations, minimal data to LLM (partial: per-course toggle, retention pruning, privacy controls and the learner personalisation and privacy page merged, #277 and #289; minimal data to the LLM waits for remediations and the tutor)
 - [ ] Rule unit tests, synthetic learner journeys, tenant isolation (partial: rule unit tests and the journey scenario test merged, #277; a dedicated tenant isolation suite is not confirmed)
 - [ ] (new) Streaming tutor answers (LLM client streaming over the SSE event log)
+- [ ] (new) Remediation holdout (20 % get no remediation) and the adaptive interface presentation profile, backend (M4.8 API, #288: holdout is a stable hash share, off by default pending #58; comparison in `OutcomeTracker::helpedVsHoldout()`; the experiments package and the A/B and delayed-retention measure are not built)
 - [ ] (new) Partition `learner_signals` by month when a tenant exceeds 50M rows
 - [ ] (new) Remediations for courses not built with the Course Builder
 - [ ] (new) `TopicProgressUpdated` event in `courses` for non-completion progress (ids only)
 
 ### 4.2 AI tutor
-- [ ] Answers only from course sources with citations; says when out of scope (not merged: AI tutor, PR #287 open)
-- [ ] No quiz answers during active attempts
-- [ ] Rate/cost limits; anonymised analytics
+- [x] Answers only from course sources with citations; says when out of scope (`api/packages/tutor`, M4.7 API, #287; off by default per tenant)
+- [x] No quiz answers during active attempts (`AttemptGuard`, #287)
+- [x] Rate/cost limits; anonymised analytics (30 questions per learner per day, counts only, #287)
+- [ ] (new) Tutor panel in the learner UI and the `tutor:eval` and `learner-insights:eval` real-model eval commands (M4.7 and M4.8; open)
 
 ### 4.3 Trust and transparency
 - [ ] Reasons for every recommendation · AI on/off and provider per tenant
@@ -776,12 +778,12 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] Partner/customer portals with scoped admins and reports
 
 ### 6.5 Analytics and ROI
-- [ ] Dashboards (completion, results, struggle/recovery, certificates, overdue) (not merged: compliance dashboard, PR #284 open)
-- [ ] BI export/API, scheduled reports, optional business KPI link (partial: CSV audit export merged, #276; scheduled reports not merged, PR #284 open)
+- [ ] Dashboards (completion, results, struggle/recovery, certificates, overdue) (partial: dashboard API merged, #284; struggle and recovery numbers and the admin screen are not built)
+- [ ] BI export/API, scheduled reports, optional business KPI link (partial: CSV and JSON lines export merged, #276, #284; scheduled e-mail reports merged, #284; no BI connector beyond the export and the report API, no business KPI link)
 
 ### 6.6 Skills and competencies
-- [ ] Competency framework; AI-suggested tags confirmed by author (not merged: PR #286 open)
-- [ ] Learner skill profiles feeding Learner Insights and path rules (not merged: PR #286 open)
+- [x] Competency framework; AI-suggested tags confirmed by author (`api/packages/compliance`, #286)
+- [x] Learner skill profiles feeding Learner Insights and path rules (`SkillProfileService`, the `competency` enrolment rule attribute, #286)
 
 ---
 
