@@ -1,0 +1,87 @@
+---
+/**
+ * The accessibility statement of the academy (European Accessibility Act). A template filled with the tenant's
+ * name and contact from its public settings; the operator owns the facts and the page says so. It needs no session.
+ */
+import Render from "@ulams/ui/Render.astro";
+import { accessibilityStrings } from "@ulams/ui/accessibility-strings";
+import { fill, formatDate } from "@ulams/ui/training-strings";
+import Base from "../layouts/Base.astro";
+import { getSettings, getSiteModel } from "../lib/data.ts";
+import { statementModel } from "../lib/accessibility-statement.ts";
+import { chromeFor, withSessionLink } from "../lib/docs.ts";
+import { accountLocale } from "../lib/locale.ts";
+import { themeFor } from "../lib/theme.ts";
+import "../styles/statement.css";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.rewrite("/404");
+
+const [settings, site] = await Promise.all([getSettings(tenant).catch(() => null), getSiteModel(tenant).catch(() => null)]);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const locale = accountLocale(settings);
+const t = accessibilityStrings(locale);
+const model = statementModel(settings, tenant.slug);
+const chrome = chromeFor(theme);
+const updated = model.updated ? formatDate(locale, model.updated) || model.updated : "";
+const name = (template: string) => fill(template, { name: model.name });
+---
+
+<Base theme={theme} accent={settings?.theme?.accent} title={`${t.title} — ${model.name}`} description={name(t.lead)} lang={locale} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  {chrome.header && site && <Render doc={withSessionLink(chrome.header, true)} data={site} />}
+  <main id="main" class="u-container u-stmt" tabindex="-1">
+    <nav class="u-stmt__crumb" aria-label="Breadcrumb"><a href="/">{t.breadcrumbHome}</a></nav>
+    <header class="u-stmt__block">
+      <h1 class="u-h2">{t.title}</h1>
+      <p class="u-stmt__lead">{name(t.lead)}</p>
+      {updated && <p class="u-stmt__meta">{fill(t.updated, { date: updated })}</p>}
+    </header>
+
+    <section class="u-stmt__block" aria-labelledby="stmt-operator">
+      <h2 id="stmt-operator">{t.operatorHeading}</h2>
+      <p>{name(t.operatorText)}</p>
+    </section>
+
+    <section class="u-stmt__block" aria-labelledby="stmt-target">
+      <h2 id="stmt-target">{t.targetHeading}</h2>
+      <p>{t.targetText}</p>
+    </section>
+
+    <section class="u-stmt__block" aria-labelledby="stmt-tested">
+      <h2 id="stmt-tested">{t.testedHeading}</h2>
+      <ul>{t.tested.map((item) => <li>{item}</li>)}</ul>
+    </section>
+
+    <section class="u-stmt__block" aria-labelledby="stmt-features">
+      <h2 id="stmt-features">{t.featuresHeading}</h2>
+      <ul>{t.features.map((item) => <li>{item}</li>)}</ul>
+    </section>
+
+    <section class="u-stmt__block" aria-labelledby="stmt-limits">
+      <h2 id="stmt-limits">{t.limitsHeading}</h2>
+      <ul>{t.limits.map((item) => <li>{item}</li>)}</ul>
+    </section>
+
+    {
+      model.notes.length > 0 && (
+        <section class="u-stmt__block" aria-labelledby="stmt-notes">
+          <h2 id="stmt-notes">{t.notesHeading}</h2>
+          {model.notes.map((paragraph) => <p>{paragraph}</p>)}
+        </section>
+      )
+    }
+
+    <section class="u-stmt__block" aria-labelledby="stmt-feedback">
+      <h2 id="stmt-feedback">{t.feedbackHeading}</h2>
+      <p>{t.feedbackText}</p>
+      {model.email ? <p>{t.feedbackMail} <a href={`mailto:${model.email}`}>{model.email}</a></p> : <p>{t.feedbackNoMail}</p>}
+    </section>
+
+    <section class="u-stmt__block" aria-labelledby="stmt-enforcement">
+      <h2 id="stmt-enforcement">{t.enforcementHeading}</h2>
+      <p>{model.enforcement ?? t.enforcementDefault}</p>
+    </section>
+
+  </main>
+  {chrome.footer && site && <Render doc={chrome.footer} data={site} />}
+</Base>
