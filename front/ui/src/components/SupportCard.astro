@@ -1,0 +1,154 @@
+---
+import AiLabel from "./AiLabel.astro";
+import WhyThis from "./WhyThis.astro";
+import { pageLocale, uiStrings } from "../lib/i18n.ts";
+
+interface Props {
+  assignmentId?: string;
+  status?: "generating" | "ready" | "failed";
+  summary?: string;
+  reasons?: string[];
+  aiLabel?: string;
+  feedback?: "helpful" | "not_helpful";
+  locale?: string;
+  id?: string;
+}
+const { assignmentId, status = "ready", summary, reasons = [], aiLabel, feedback, locale, id } = Astro.props;
+const t = uiStrings(locale ?? pageLocale(Astro));
+const key = id ?? assignmentId ?? "help";
+const headingId = `u-support-${key}-title`;
+const ready = status === "ready";
+---
+
+<section class="u-support" id={id} aria-labelledby={headingId} data-status={status} role="region">
+  <header class="u-support__head">
+    <h2 class="u-support__title" id={headingId}>{t.supportTitle}</h2>
+    {ready && aiLabel && <AiLabel text={aiLabel} />}
+  </header>
+  {status === "generating" && <p class="u-support__state">{t.supportGenerating}</p>}
+  {status === "failed" && <p class="u-support__state">{t.supportFailed}</p>}
+  {
+    ready && (
+      <>
+        {summary && <p class="u-support__summary">{summary}</p>}
+        <div class="u-support__blocks">
+          <slot />
+        </div>
+        {reasons.length > 0 && <WhyThis reasons={reasons} locale={locale} />}
+        {assignmentId && (
+          <ulams-support
+            assignment-id={assignmentId}
+            data-saved-text={t.supportSaved}
+            data-failed-text={t.supportSaveFailed}
+            data-hidden-text={t.supportHidden}
+          >
+            <div class="u-support__feedback" role="group" aria-label={t.supportFeedbackLabel} data-feedback hidden>
+              <button class="u-btn u-btn--ghost u-btn--sm" type="button" data-answer="helpful" aria-pressed={feedback === "helpful" ? "true" : "false"}>
+                {t.supportHelped}
+              </button>
+              <button class="u-btn u-btn--ghost u-btn--sm" type="button" data-answer="not_helpful" aria-pressed={feedback === "not_helpful" ? "true" : "false"}>
+                {t.supportNotHelpful}
+              </button>
+              <button class="u-btn u-btn--link u-btn--sm" type="button" data-hide>
+                {t.supportHide}
+              </button>
+            </div>
+            <div class="u-support__confirm" role="group" aria-labelledby={`${headingId}-ask`} data-confirm hidden>
+              <p id={`${headingId}-ask`}>{t.supportHideAsk}</p>
+              <button class="u-btn u-btn--sm" type="button" data-hide-yes>
+                {t.supportHideYes}
+              </button>
+              <button class="u-btn u-btn--ghost u-btn--sm" type="button" data-hide-no>
+                {t.supportHideNo}
+              </button>
+            </div>
+            <p class="u-support__status" role="status" aria-live="polite" data-status-text />
+          </ulams-support>
+        )}
+      </>
+    )
+  }
+</section>
+
+<script>
+  import "../elements/support.ts";
+</script>
+
+<style>
+  .u-support {
+    display: grid;
+    gap: 14px;
+    padding: 18px 20px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    border-left: 4px solid var(--ulams-color-primary);
+    background: var(--ulams-color-card-bg);
+    color: var(--ulams-color-text);
+  }
+  .u-support__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+  }
+  .u-support__title {
+    font-family: var(--ulams-font-family-body);
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .u-support__summary {
+    max-width: 70ch;
+    overflow-wrap: anywhere;
+  }
+  .u-support__state {
+    font-weight: 600;
+  }
+  .u-support__blocks {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+  }
+  ulams-support {
+    display: grid;
+    gap: 10px;
+  }
+  .u-support__feedback,
+  .u-support__confirm {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+  }
+  .u-support__feedback[hidden],
+  .u-support__confirm[hidden] {
+    display: none;
+  }
+  .u-support__feedback :global(.u-btn),
+  .u-support__confirm :global(.u-btn) {
+    min-height: 44px;
+  }
+  .u-support__feedback :global(.u-btn[aria-pressed="true"]) {
+    border: 2px solid var(--ulams-color-primary);
+    font-weight: 700;
+  }
+  .u-support__feedback :global(.u-btn[aria-pressed="true"])::before {
+    content: "✓ ";
+  }
+  .u-support__status {
+    font-weight: 600;
+  }
+  .u-support__status:empty {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .u-support {
+      animation: u-support-in 0.25s ease-out;
+    }
+  }
+  @keyframes u-support-in {
+    from {
+      opacity: 0;
+    }
+  }
+</style>

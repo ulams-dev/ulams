@@ -1,0 +1,8 @@
+{
+  "props": {
+    "reasons": ["You answered this question wrongly 2 times", "This part of the course has been hard for other learners too"]
+  },
+  "invalid": {
+    "reasons": []
+  }
+}

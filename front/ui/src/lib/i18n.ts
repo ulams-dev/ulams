@@ -76,6 +76,29 @@ export interface UiStrings {
   adminCourse: string;
   adminStatus: string;
   adminLearners: string;
+  /** "Extra help for you" card on the lesson page (Learner Insights). */
+  supportTitle: string;
+  supportGenerating: string;
+  supportFailed: string;
+  supportWhy: string;
+  supportSources: string;
+  supportFeedbackLabel: string;
+  supportHelped: string;
+  supportNotHelpful: string;
+  supportSaved: string;
+  supportSaveFailed: string;
+  supportHide: string;
+  supportHideAsk: string;
+  supportHideYes: string;
+  supportHideNo: string;
+  supportHidden: string;
+  supportJump: string;
+  supportCheck: string;
+  supportChoose: string;
+  supportCorrect: string;
+  supportNotQuite: string;
+  supportNoScript: string;
+  supportThoughts: string;
 }
 
 const en: UiStrings = {
@@ -150,6 +173,28 @@ const en: UiStrings = {
   footerBuiltOn: "Built on {link}, the open headless LMS.",
   mailLabel: "Email",
   newTab: "(opens in a new tab)",
+  supportTitle: "Extra help for you",
+  supportGenerating: "Preparing an explanation…",
+  supportFailed: "We could not prepare extra help this time.",
+  supportWhy: "Why am I seeing this?",
+  supportSources: "Sources",
+  supportFeedbackLabel: "Was this extra help useful?",
+  supportHelped: "This helped",
+  supportNotHelpful: "Not helpful",
+  supportSaved: "Thanks. Your answer is saved.",
+  supportSaveFailed: "Could not save that. Try again.",
+  supportHide: "Hide extra help for this lesson",
+  supportHideAsk: "Hide this help? It will not come back for this lesson.",
+  supportHideYes: "Yes, hide it",
+  supportHideNo: "Keep it",
+  supportHidden: "Extra help hidden for this lesson.",
+  supportJump: "Extra help is available below",
+  supportCheck: "Check",
+  supportChoose: "Choose an answer first.",
+  supportCorrect: "Correct",
+  supportNotQuite: "Not quite",
+  supportNoScript: "Checking an answer needs JavaScript.",
+  supportThoughts: "Your thoughts (stay on this device)",
 };
 
 const pl: UiStrings = {
@@ -224,6 +269,28 @@ const pl: UiStrings = {
   footerBuiltOn: "Zbudowane na {link}, otwartym headless LMS.",
   mailLabel: "E-mail",
   newTab: "(otwiera się w nowej karcie)",
+  supportTitle: "Dodatkowa pomoc dla Ciebie",
+  supportGenerating: "Przygotowujemy wyjaśnienie…",
+  supportFailed: "Tym razem nie udało się przygotować dodatkowej pomocy.",
+  supportWhy: "Dlaczego to widzę?",
+  supportSources: "Źródła",
+  supportFeedbackLabel: "Czy ta pomoc była przydatna?",
+  supportHelped: "To pomogło",
+  supportNotHelpful: "Nie pomogło",
+  supportSaved: "Dziękujemy. Odpowiedź została zapisana.",
+  supportSaveFailed: "Nie udało się tego zapisać. Spróbuj ponownie.",
+  supportHide: "Ukryj dodatkową pomoc w tej lekcji",
+  supportHideAsk: "Ukryć tę pomoc? Nie wróci w tej lekcji.",
+  supportHideYes: "Tak, ukryj",
+  supportHideNo: "Zostaw",
+  supportHidden: "Dodatkowa pomoc w tej lekcji jest ukryta.",
+  supportJump: "Dodatkowa pomoc jest poniżej",
+  supportCheck: "Sprawdź",
+  supportChoose: "Najpierw wybierz odpowiedź.",
+  supportCorrect: "Dobrze",
+  supportNotQuite: "Jeszcze nie",
+  supportNoScript: "Sprawdzanie odpowiedzi wymaga JavaScriptu.",
+  supportThoughts: "Twoje przemyślenia (zostają na tym urządzeniu)",
 };
 
 const zh: UiStrings = {
@@ -298,6 +365,28 @@ const zh: UiStrings = {
   footerBuiltOn: "基于 {link} 构建，一个开放的无头 LMS。",
   mailLabel: "邮箱",
   newTab: "（在新标签页中打开）",
+  supportTitle: "为你准备的额外帮助",
+  supportGenerating: "正在准备讲解……",
+  supportFailed: "这次未能准备好额外帮助。",
+  supportWhy: "为什么会看到这个？",
+  supportSources: "来源",
+  supportFeedbackLabel: "这份额外帮助有用吗？",
+  supportHelped: "有帮助",
+  supportNotHelpful: "没有帮助",
+  supportSaved: "谢谢，你的回答已保存。",
+  supportSaveFailed: "无法保存，请重试。",
+  supportHide: "在本课中隐藏额外帮助",
+  supportHideAsk: "隐藏这份帮助？本课中将不再显示。",
+  supportHideYes: "是，隐藏",
+  supportHideNo: "保留",
+  supportHidden: "本课的额外帮助已隐藏。",
+  supportJump: "下方有额外帮助",
+  supportCheck: "检查",
+  supportChoose: "请先选择一个答案。",
+  supportCorrect: "正确",
+  supportNotQuite: "不太对",
+  supportNoScript: "检查答案需要启用 JavaScript。",
+  supportThoughts: "你的想法（仅保存在此设备上）",
 };
 
 const TABLE: Record<UiLocale, UiStrings> = { en, pl, zh };

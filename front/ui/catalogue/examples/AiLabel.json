@@ -1,0 +1,10 @@
+{
+  "props": {
+    "text": "AI-generated, based on this course's sources",
+    "tone": "generated"
+  },
+  "invalid": {
+    "text": "Unknown tone",
+    "tone": "loud"
+  }
+}
