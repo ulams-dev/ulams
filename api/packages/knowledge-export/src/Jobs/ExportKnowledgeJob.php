@@ -27,10 +27,11 @@ class ExportKnowledgeJob implements ShouldQueue
     public static function enqueue(string $exportId, int $delaySeconds = 0): void
     {
         $job = new self($exportId);
-        if ($connection = config('knowledge_export.queue_connection')) {
+        // the long-job connection has a retry_after above $timeout (ADR 0083)
+        if ($connection = config('queue.long_job.connection')) {
             $job->onConnection($connection);
         }
-        if ($queue = config('knowledge_export.queue')) {
+        if ($queue = config('queue.long_job.queue')) {
             $job->onQueue($queue);
         }
         if ($delaySeconds > 0) {

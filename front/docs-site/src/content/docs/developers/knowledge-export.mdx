@@ -3,6 +3,8 @@ title: Knowledge export
 description: Export a course, or every published course of an academy, as a pack of cited chunks for retrieval in company agents. Covers the file format, how citations are decided, the API and CLI, automatic re-export and the webhook.
 sidebar:
   order: 10
+modules:
+  - knowledge-export
 ---
 
 A knowledge pack is a course as chunked text that a company agent can index for RAG. It comes from the
@@ -49,7 +51,7 @@ Admin only (permission `knowledge_manage`). A scoped token needs `courses:read`;
 | `GET /api/admin/knowledge/exports/{export}/download?file=manifest\|chunks\|index&course=` | `ulams knowledge exports-download <export> --file chunks --out chunks.jsonl` |
 | `GET /api/admin/knowledge/courses/{course}/latest` | `ulams knowledge latest <course>` |
 
-An export runs on the queue and starts as `queued`, then `running`, then `ready` or `failed` (with `error`).
+An export runs on the long-job queue (`LONG_JOB_QUEUE_CONNECTION`) and starts as `queued`, then `running`, then `ready` or `failed` (with `error`).
 The newest five ready exports per course (and for the tenant) are kept; older ones are deleted with their files.
 
 ## Automatic re-export
@@ -67,4 +69,3 @@ webhook](/developers/outgoing-webhooks/) tells your pipeline when there is a new
 | `KNOWLEDGE_EXPORT_DISK` | the default filesystem disk | Where packs are written (R2 in production) |
 | `KNOWLEDGE_EXPORT_BASE_URL` | host of `FRONTEND_URL` | Base of the links in each chunk (`/learn/{course}/{topic}`) |
 | `KNOWLEDGE_EXPORT_AUTO` | `true` | Re-export changed courses |
-| `KNOWLEDGE_EXPORT_QUEUE`, `KNOWLEDGE_EXPORT_QUEUE_CONNECTION` | default | Queue for export jobs |

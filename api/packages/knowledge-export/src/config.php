@@ -23,9 +23,6 @@ return [
     // Exports kept per course (and for the tenant); older ones and their files are deleted.
     'keep' => 5,
 
-    'queue' => env('KNOWLEDGE_EXPORT_QUEUE'),
-    'queue_connection' => env('KNOWLEDGE_EXPORT_QUEUE_CONNECTION'),
-
     // Per user and minute.
     'api_rate_limit' => 60,
     'start_rate_limit' => 10,
