@@ -91,3 +91,10 @@ The eval commands (`learner-insights:eval`, `tutor:eval`) are documented in `fro
 
 The package reads LMS data and changes it only through domain services;
 `tests/Unit/GuardsTest.php` enforces this, no model names in `src/`, and ids-only events.
+
+Two suites keep new code inside the privacy and isolation rules. `tests/Feature/TenantIsolationTest.php`
+lists every route of the package and fails when a route is missing from the list, so a new endpoint cannot skip
+the cross-tenant checks (the tutor has the same suite). `tests/Feature/LlmMinimisationTest.php` reads every
+request made to the model for a recognisable learner and fails when it carries an id, name, address, other
+course, signal type or status; `tests/Unit/LlmBoundaryTest.php` fails when a class outside the remediation code
+starts using the AI package.
