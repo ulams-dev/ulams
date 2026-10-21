@@ -16,7 +16,7 @@ use Ulams\CourseBuilder\Models\Version;
  */
 final class VersionService
 {
-    public const CONTENT_KINDS = ['content', 'patch', 'author', 'restore', 'update'];
+    public const CONTENT_KINDS = ['content', 'patch', 'author', 'restore', 'update', 'import'];
 
     public function create(
         Session $session,

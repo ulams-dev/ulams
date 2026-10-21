@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $session_id
  * @property int $number
  * @property string|null $parent_id
- * @property string $kind outline | content | patch | author | restore | update
+ * @property string $kind outline | content | patch | author | restore | update | import (a course-as-code push, ADR 0160)
  * @property array $document
  * @property array|null $diff_from_parent
  * @property string $origin ai | author | restore
