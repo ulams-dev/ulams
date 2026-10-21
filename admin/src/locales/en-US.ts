@@ -10,6 +10,7 @@ import consultations from './en-US/consultations';
 import courses from './en-US/courses';
 import events from './en-US/events';
 import fabric from './en-US/fabric';
+import insights from './en-US/insights';
 import notifications from './en-US/notifications';
 import templates from './en-US/templates';
 import vouchers from './en-US/vouchers';
@@ -159,6 +160,7 @@ export default {
   ...fabric,
   ...vouchers,
   ...courses,
+  ...insights,
   ...events,
   branding: 'Branding',
   product_details: 'Product details',
