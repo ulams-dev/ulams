@@ -555,6 +555,10 @@
             "area": "commerce"
         },
         {
+            "pattern": "api/commerce/webhooks/*",
+            "area": "public"
+        },
+        {
             "pattern": "api/admin/reports*",
             "area": "reports"
         },

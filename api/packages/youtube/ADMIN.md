@@ -2,13 +2,13 @@
 
 If you see this message, it means you need to configure the YouTube package.
 
-![Modal](https://github.com/EscolaLMS/Youtube/assets/59456825/b08ad70f-5617-4830-8c49-e9c17201fa4e)
+![Modal](docs/img/admin-01.png)
 
 To configure the YouTube package, follow these steps:
 1. Go to Settings and then select the "Services" tab. 
 2. Set the selected variables.
 
-![Settings](https://github.com/EscolaLMS/Youtube/assets/59456825/a9563365-e49b-4734-a4ef-0466dca79ff5)
+![Settings](docs/img/admin-02.png)
 
 
 You can find the necessary values on your Google Developers Console account.

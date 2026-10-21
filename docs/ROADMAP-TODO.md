@@ -163,6 +163,12 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [ ] (new) Remaining legacy references (partial: `escolalms/php` replaced by a base built in-repo, ReportBro removed and replaced by pdfme): replace the `escolalms/php` and `escolalms/reportbro-server`
       images, decide on upstream provenance links, reword ADR prose, retarget Docker Hub publishing
       workflows, replace the `ulams.app` placeholder domain, recreate SQL views in pre-rename databases
+      Note 2026-10-21 (TD-1): partial list updated. Done: `escolalms/php` image replaced (`api/docker/php`), ReportBro removed,
+      no Docker Hub publishing (pull mirror only), upstream CI/coverage badges and hot-linked upstream images removed or copied
+      into `api/packages/<pkg>/docs/img/` (provenance stays in the "Based on EscolaLMS" lines, `LICENSING.md` and package `LICENSE`
+      files), documentation links read `ULAMS_DOCS_URL` (default `https://ulams-dev.github.io/ulams/`) and `scripts/check-hosts.mjs`
+      fails CI on a new hard-coded `ulams.app` host, SQL views are recreated by `ulams:db:recreate-views` inside `ulams:upgrade`.
+      Left: pointing `docs.ulams.app` at the docs once the owner sets up the subdomain (owner action); ADR prose rewording
 - [x] (new) Fix `php artisan route:list` (Mattermost client connects in its constructor)
 - [x] (new) CI (partial: root `ci.yml` with path filters, PHP shards, licence guards and Dependabot committed; not yet run on GitHub — the branch is unpushed; publishing workflows intentionally dropped): move workflows to the root `.github/` with path filters; drop MySQL services; run Jest
       in admin/front; Dockerfiles build from the repo root
@@ -223,11 +229,16 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
       (templates fall back silently); wire it or drop the service (on the `ulams` network, plain-text fallback, image size read through the disk, #263)
 - [ ] (new) Publish images to GHCR (`ghcr.io/ulams-dev/*`, decided 2026-10-08); publish the base image as `ulams/php:8.3` with source offers for its GPL programs (see
       `api/docker/php/NOTICE`) (GHCR publishing done in `publish.yml`; base image is PHP 8.4; source offer tracked in L0-15; #44)
+      Note 2026-10-21 (TD-1): the base image is `php:8.4-fpm-alpine`, not `ulams/php:8.3` (superseded, #44). The written source
+      offer (three years, on request, no source tarballs) is in `api/docker/php/NOTICE`; the image lists its exact Alpine packages
+      in `/usr/share/doc/ulams/apk-packages.txt` and carries the label `org.ulams.alpine-release`; `publish.yml` prints the list
+      in the run summary. Ready to tick once this merges and the next image publish shows the label and summary
 
 - [x] (new) Delete `front/src/style/` (deleted in `974776f0` with its exclusions; #44)
 - [x] (new) Cart on tenants crashes without a Stripe publishable key (`stripe.tsx` calls
       `stripeKey.includes` on null); show a configuration message instead
-- [ ] (new) Yarn install on Node 23 needs `--ignore-engines` (obsolete: Node 23 is EOL; Node 22 and 24 supported; #44)
+- [x] (new) Yarn install on Node 23 needs `--ignore-engines` (obsolete: Node 23 is EOL; Node 22 and 24 supported; #44)
+      Note 2026-10-21 (TD-1): closed as obsolete; `--ignore-engines` removed from `developers/cli.mdx` and `developers/claude-code.mdx` (#44)
 - [ ] (new) Dependency holds (Dependabot ignore rules in `.github/dependabot.yml`): `sharp` 0.35 fails to load
       in the docs-site build on the CI runner (MissingSharp; Astro depends on `sharp ^0.34`); `@ant-design/pro-components`
       2.8.5 to 2.8.10 break admin typecheck (`@ant-design/pro-form` 2.31.5+ declaration files import `src/...`).
@@ -333,11 +344,13 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [x] (new) Students have no `scorm_track-update` permission, so the legacy `/api/scorm/track` rejects
       them and the front's legacy SCORM player never tracked (seeded for students, confirmed 2026-10-09; re-run
       `PermissionsSeeder` on existing tenants). SCORM completion now completes the SCORM topics using the SCO
-- [ ] (new) Production: serve content origins from a separate registrable domain (not same-site with the
+- [x] (new) Production: serve content origins from a separate registrable domain (not same-site with the
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
       `api/docs/content-origin.md`; deployment pending). Note 2026-10-09: the owner chose the same-site
       `*.content.ulams.app` instead; the separate domain stays supported (ADR 0014, amended)
       (partial: deployment docs with DNS and TLS steps done (operators/content-origin) and the registered LTI tool origins are in the front's `frame-src` (ADR 0044); the real domain is owner decision #24)
+      Note 2026-10-21 (TD-1): obsolete as worded (same-site `*.content.ulams.app` chosen, #24 closed; the separate-domain mode stays
+      supported and documented); the deployment itself is the Phase 8 item "First production deployment on the VPS and Cloudflare"
 - [x] (new) Same-site content subdomain hardening: `__Host-` cookies, exact-Origin checks on front and API,
       sandboxed player frames, COOP/CORP headers, both modes documented
 - [x] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector (collector
@@ -360,6 +373,8 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       (sync queue) sent the previous LTI score; now dispatched after saving (found by the Moodle run, ADR 0018)
 - [ ] (new) Turn on the nightly conformance runs (`NIGHTLY_CONFORMANCE=true`) and run the saLTIre job once
       with an operator
+      Note 2026-10-21 (TD-1): first half done: the repository variable `NIGHTLY_CONFORMANCE` has been `true` since 2026-10-09 and the
+      scheduled run passes again since #306. Left: one operator run of the saLTIre job (#141, owner action)
 - [x] (new) Adapt Path B admin screen (sources, versions, build status)
 - [x] (new) Astro front: H5P plays without a token, so learner state is not restored (decide: a short-lived
       H5P token from the BFF, or state through the BFF) (decided: state through the BFF, ADR 0045; the `/h5p`
@@ -818,11 +833,14 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [x] (new) OpenAPI covers the course builder and Living Course; SDK types and CLI spec regenerated (504 of 547 operations covered, 0 missing)
 - [x] (new) "My tokens" on the web account page (create, list, revoke; axe)
 - [ ] (new) M5 course-as-code: Blueprint v2, Markdown + directives format, sync base and conflict diffs
-      (after Phase 3; citations for author blocks pending #78)
+      (after Phase 3; citations for author blocks pending #78) (plan `docs/plans/phase-7-course-as-code.md`, draft, milestones
+      CAC-1..8 and M6-a/b, ADRs 0160–0161 Proposed; note: the schema becomes Blueprint v3 because v2 is already the content-type schema)
 - [ ] (new) M6 CLI release: npm `ulams` (pending #77), bun-compiled binaries (signing pending #76), Docker image
 - [ ] (new) Endpoints to import a blueprint as a builder version and export a course as a blueprint (for M5)
 
 ### 7.2 Code exercises
+- [ ] (new) Plan `docs/plans/phase-7-agents-extensions.md` for 7.2, 7.4, 7.5 and the 7.3 docs/sandbox item
+      (milestones AX-1…AX-11; ADRs 0170–0172 Proposed)
 - [ ] WebContainers/Sandpack (JS/TS), Pyodide (Python), optional server sandbox
 - [ ] Autograding with author tests → attempts and learner signals
 - [ ] AI hints without revealing solutions

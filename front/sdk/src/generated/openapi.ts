@@ -550,7 +550,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Redirect to social login */
+        /**
+         * Redirect to social login
+         * @description Starts a login with Google or Facebook. `return_url` must be an origin of the tenant's own apps (otherwise 422). `challenge` is the S256 challenge of a random verifier that the caller keeps secret (base64url of its SHA-256, 43 characters). After the provider's consent the browser is sent to `return_url` with a one-time `code` (60 seconds, single use) to redeem at POST /api/auth/social/exchange together with the verifier; failures arrive as `error` (provider_denied, provider_failed, link_required, email_unverified, account_unavailable).
+         */
         get: operations["auth.social.by-provider.get"];
         put?: never;
         post?: never;
@@ -567,10 +570,33 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Redirect after sucessfull login */
+        /**
+         * Redirect after successful login
+         * @description The provider's callback. Checks the signed, single-use state and sends the browser to the return URL with a one-time `code` (and `complete=false` when the provider gave no e-mail address and the sign-up must be completed) or an `error` reason. An access token is never put in a URL.
+         */
         get: operations["auth.social.by-provider.callback.get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/social/exchange": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Exchange a one-time social login code for a token
+         * @description Redeems the `code` of a social login redirect together with the secret `verifier` whose S256 challenge started the login. The code works once, within 60 seconds, on the tenant that issued it. Call it from the front end's server, never from a page that may be logged. Returns the access token (`complete=true`) or, when the sign-up needs an e-mail address, `pre_user_token` for POST /api/auth/social/complete/{token} (`complete=false`).
+         */
+        post: operations["auth.social.exchange.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1890,6 +1916,30 @@ export interface paths {
         post?: never;
         /** Delete cmi5 package by id */
         delete: operations["cmi5.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/commerce/webhooks/{provider}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Receive a signed order event of the commerce provider
+         * @description Inbound order events of a commerce provider (ADR 0130). Public route, authenticated by the signature with the
+         *     tenant's own secret, never by a session: the body is verified (HMAC over `<t>.<raw body>`, 300 s tolerance,
+         *     the secret being rotated out also accepted), its event id must equal the `Ulams-Event-Id` header, and its channel
+         *     must be this tenant's channel. A valid event is stored once per event id and queued; a duplicate answers 200
+         *     with no work. The payload is untrusted: only the envelope is read, and the job re-reads the order from the provider.
+         */
+        post: operations["commerce.webhooks.by-provider.post"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -13411,8 +13461,9 @@ export interface operations {
     };
     "auth.social.by-provider.get": {
         parameters: {
-            query?: {
+            query: {
                 return_url?: string;
+                challenge: string;
             };
             header?: never;
             path: {
@@ -13422,20 +13473,31 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description successful operation */
+            /** @description Redirect to the provider */
             302: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Unknown provider, return URL not allowed or challenge missing */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
     "auth.social.by-provider.callback.get": {
         parameters: {
-            query?: never;
+            query: {
+                state: string;
+            };
             header?: never;
             path: {
                 provider: "facebook" | "google";
@@ -13444,13 +13506,68 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description successful operation */
+            /** @description Redirect to the return URL with a code or an error */
             302: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description The state is missing, forged, expired or already used */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "auth.social.exchange.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    code: string;
+                    /** @description 43 to 128 characters of [A-Za-z0-9._~-] */
+                    verifier: string;
+                };
+            };
+        };
+        responses: {
+            /** @description successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description The code is invalid, expired, already used or does not match the verifier */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
@@ -16597,6 +16714,65 @@ export interface operations {
             };
             /** @description Server-side error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "commerce.webhooks.by-provider.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description duplicate delivery, nothing to do */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description the event is stored and queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description invalid or expired signature, malformed event or another tenant's channel */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown provider or webhooks not configured */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description body too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description rate limit */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };

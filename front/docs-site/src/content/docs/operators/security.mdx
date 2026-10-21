@@ -36,6 +36,34 @@ hostile input.
   httpOnly cookie and adds it server-side, for the player's own calls only, in its `/h5p` proxy, so
   H5P content scripts never see a token ([H5P in production](/operators/h5p/#the-state-proxy-of-the-reference-front)).
 
+## Social login
+
+Sign-in with Google and Facebook is hardened (ADR 0121, [operator guide](/operators/social-login/)):
+
+- the return URL is checked against the tenant's own origins, so the login cannot be used as an open
+  redirect;
+- the browser gets a one-time code (60 seconds, single use, bound to the tenant and to a verifier only
+  that browser holds), never an access token in the URL;
+- the OAuth `state` is signed, expires after 10 minutes and works once;
+- an existing account is linked by e-mail only for a verified address in a trusted domain, never an
+  admin, and an address the provider did not verify is never marked verified;
+- earlier versions stored the literal password `1` for accounts created through a provider. New
+  accounts have no password, and the upgrade step `disarm_legacy_social_passwords` replaces the
+  hash of the old ones with a random one nobody knows and revokes their tokens (see
+  [Upgrades](/operators/upgrades/)). Those users sign in with the provider again, or set a password
+  with "forgot password". Until you have run `ulams:upgrade` on a platform that was created before
+  this fix, those accounts can still be signed in to with the password `1`;
+- deactivating or deleting a user revokes all of their tokens.
+
+## Links in e-mails
+
+Every link the API builds from a `return_url` sent by the caller (password reset, e-mail
+verification, account deletion, accounts created by an admin or imported from CSV) must point at the
+tenant's own front end, admin or one of `TRUSTED_ORIGINS`, by exact scheme, host and port. Any
+other URL is refused with `422` before an e-mail is sent, so a stranger cannot have a reset or
+verification token sent to another site. A front end on another origin (a staging copy, a second
+site) must be listed in `TRUSTED_ORIGINS` of that tenant.
+
 ## PHP upload progress is disabled
 
 The PHP images set `session.upload_progress.enabled = 0` in the ini files (`api/docker/conf/php/`) and
@@ -46,6 +74,21 @@ unauthenticated remote code execution bug fixed in PHP 8.4.27 and 8.3.36
 ([advisory](https://www.php.net/archive/2026.php#2026-10-21-5)). If you run PHP outside our images
 (shared hosting, your own packages), set the same value in `php.ini` or the pool and update PHP.
 CI reads the setting back from the built image.
+
+The image build also refuses a PHP older than 8.4.27 (`MIN_PHP_VERSION` build arg, default in
+`api/docker/php/install.sh`, applied by `api/docker/php/Dockerfile`, `api/Dockerfile` and
+`api/Dockerfile.develop`). If you build your own image and the build stops with "below the required
+minimum", rebuild with `docker build --pull`; the official PHP image can lag a security release by a day or
+two. Check a running container with `docker exec <api container> php -v`.
+
+### Is my PHP current?
+
+The `PHP freshness` workflow (`.github/workflows/php-freshness.yml`) runs daily in the ulams repository. It
+compares the latest PHP 8.4 release on php.net with the official `php:8.4-fpm-alpine` image and with our
+published `ghcr.io/ulams-dev/php:8.4`, and opens (or updates) one GitHub issue labelled `security` when either
+is behind; it closes the issue when both are current. It reports through the issue and does not fail the run.
+Check your own container with `docker exec <api container> php -v`, and a MyDevil host with
+`deploy/mydevil/bin/check-host.sh`. Dependabot also watches the `php` base image in the Dockerfiles.
 
 ## SVG, HTML and other active files
 

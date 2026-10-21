@@ -24,7 +24,7 @@ token issued by one tenant is rejected by every other.
 | `GET /api/auth/refresh` (authenticated) | Issues a new token with the same lifetime class as the current one |
 | `POST /api/auth/logout` (authenticated) | Revokes the current token |
 | `POST /api/auth/register`, `/api/auth/password/forgot`, `/api/auth/password/reset`, `/api/auth/email/verify/{id}/{hash}` | Registration, password reset, e-mail verification |
-| `GET /api/auth/social/{provider}` and `/callback` | Socialite login (stateless), then `POST /api/auth/social/complete/{token}` if data is missing |
+| `GET /api/auth/social/{provider}`, `/callback` and `POST /api/auth/social/exchange` | Google and Facebook login: signed state, one-time code instead of a token in the URL, then `POST /api/auth/social/complete/{token}` if the provider gave no e-mail (see [Social login](#social-login)) |
 | `POST /api/admin/auth/impersonate` | An admin gets a token for another user |
 | `GET /api/profile/me` | The current user with roles and permissions |
 
@@ -51,6 +51,61 @@ development only).
 
 `/api/auth/login`, register and the password endpoints have no application-level rate limiter; see
 [Rate limits](/developers/rate-limits/) for what is throttled and why you should limit them at the proxy.
+
+## Social login
+
+Google and Facebook sign-in (`GET /api/auth/social/{provider}`) hands the result to the front end
+with a **one-time code**, never with an access token in the URL (ADR 0121). The same state and code
+primitives (`LoginHandoffService` in the `auth` package) are used by the OIDC and SAML logins.
+
+1. The front end creates a random **verifier** (43 to 128 characters of `[A-Za-z0-9._~-]`) and keeps
+   it where only this browser can read it: the reference frontend uses an httpOnly cookie, the legacy
+   front `sessionStorage`. It sends the S256 **challenge** (`base64url(sha256(verifier))`, 43
+   characters) with the start request:
+   `GET /api/auth/social/google?return_url=https://learn.example.com/auth/social/callback&challenge=…`.
+2. `return_url` must be an origin of the tenant's own apps: `FRONTEND_URL`, `ADMIN_URL`, `APP_URL` or
+   `TRUSTED_ORIGINS` (exact scheme, host and port; localhost outside production). Anything else is a
+   `422`. Without `return_url` the user returns to `FRONTEND_URL/authentication`.
+3. The API sends the user to the provider with a **signed state**: a random nonce, the provider, the
+   tenant host and an expiry, signed with a key derived from the tenant's `APP_KEY`. The return URL
+   and the challenge stay on the server. The state lives 10 minutes and works once.
+4. The provider calls `GET /api/auth/social/{provider}/callback?state=…`. A missing, forged, expired,
+   replayed or foreign state is answered with `400` and no redirect. Otherwise the browser is sent to
+   `return_url` with `?code=…&complete=true`, or `?code=…&complete=false` when the provider gave no
+   e-mail address, or `?error=<reason>`.
+5. The front end's **server** redeems the code with the verifier:
+
+```bash
+curl -s http://coffee.localhost/api/auth/social/exchange \
+  -H 'Content-Type: application/json' -H 'Accept: application/json' \
+  -d '{"code":"…","verifier":"…"}'
+# {"success":true,"message":"Login successful","data":{"complete":true,"token":"eyJ0eXAi…","expires_at":"…"}}
+# complete=false: {"data":{"complete":false,"pre_user_token":"…"}} for POST /api/auth/social/complete/{token}
+```
+
+A code lives 60 seconds, works once and only on the tenant and with the verifier it was issued for. A
+wrong verifier burns the code. Every refusal is the same `400`, whatever the reason. The endpoints are
+throttled per IP (30 per minute each, see [Rate limits](/developers/rate-limits/)).
+
+`?error=` reasons: `provider_denied` (the user cancelled), `provider_failed` (the provider refused
+the request), `link_required` (an account with this address exists and may not be linked
+automatically, the user signs in with the password), `email_unverified` (a confirmation e-mail was
+sent), `account_unavailable` (deactivated).
+
+**Account linking.** A provider identity is linked once (unique per provider and provider id). An
+**existing** account is linked by e-mail only when all of this holds: the provider says the address is
+verified (`email_verified`), the domain is trusted for that provider (`gmail.com` for Google, plus
+`AUTH_SOCIAL_GOOGLE_TRUSTED_DOMAINS`; Facebook never), and the account is not an admin, a tutor or a
+superadmin. A local account that never confirmed its address loses its password and tokens when it is
+claimed this way, so a squatter who registered someone else's address cannot keep access. A new
+account created through a provider has no password and is confirmed only if the provider vouches for
+the address; otherwise it gets the usual confirmation e-mail. Setup and troubleshooting:
+[Social login for operators](/operators/social-login/).
+
+**Reference frontend.** `/auth/social/{provider}` starts a login (providers switched on with
+`ULAMS_SOCIAL_LOGIN`), `/auth/social/callback` redeems the code on the server, stores the token in the
+session cookie and redirects on. Both answer with `Cache-Control: no-store` and `Referrer-Policy:
+no-referrer`.
 
 ## Roles and permissions
 
@@ -124,6 +179,7 @@ Long-lived, scope-limited, revocable personal access tokens (`ulams_pat_...`) ar
 - **SCORM tracking token**: `POST /api/scorm/launch/{sco}` returns a player URL with a token bound to
   the tenant, user and SCO, sent as `X-Ulams-Tracking-Token` (not `Authorization`, because Passport
   blanks bearer headers that are not its tokens). It cannot call any other endpoint.
+- **Revoked on deactivation.** Deactivating or deleting a user revokes all of their access and refresh tokens (login, remember-me, scoped API and CLI tokens), whoever deactivates them.
 - **Internal service tokens**: the API calls the H5P and PDF services with `X-Internal-Token`;
   browsers never hold these.
 

@@ -125,6 +125,9 @@ class AuthApi
         'authSocialCompleteByTokenPost' => [
             'application/json',
         ],
+        'authSocialExchangePost' => [
+            'application/json',
+        ],
         'authTokensByIdDelete' => [
             'application/json',
         ],
@@ -4919,35 +4922,37 @@ class AuthApi
     /**
      * Operation authSocialByProviderCallbackGet
      *
-     * Redirect after sucessfull login
+     * Redirect after successful login
      *
      * @param  string $provider provider (required)
+     * @param  string $state state (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialByProviderCallbackGet'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return void
      */
-    public function authSocialByProviderCallbackGet($provider, string $contentType = self::contentTypes['authSocialByProviderCallbackGet'][0])
+    public function authSocialByProviderCallbackGet($provider, $state, string $contentType = self::contentTypes['authSocialByProviderCallbackGet'][0])
     {
-        $this->authSocialByProviderCallbackGetWithHttpInfo($provider, $contentType);
+        $this->authSocialByProviderCallbackGetWithHttpInfo($provider, $state, $contentType);
     }
 
     /**
      * Operation authSocialByProviderCallbackGetWithHttpInfo
      *
-     * Redirect after sucessfull login
+     * Redirect after successful login
      *
      * @param  string $provider (required)
+     * @param  string $state (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialByProviderCallbackGet'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return array of null, HTTP status code, HTTP response headers (array of strings)
      */
-    public function authSocialByProviderCallbackGetWithHttpInfo($provider, string $contentType = self::contentTypes['authSocialByProviderCallbackGet'][0])
+    public function authSocialByProviderCallbackGetWithHttpInfo($provider, $state, string $contentType = self::contentTypes['authSocialByProviderCallbackGet'][0])
     {
-        $request = $this->authSocialByProviderCallbackGetRequest($provider, $contentType);
+        $request = $this->authSocialByProviderCallbackGetRequest($provider, $state, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -4976,6 +4981,14 @@ class AuthApi
 
         } catch (ApiException $e) {
             switch ($e->getCode()) {
+                case 400:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
             }
             throw $e;
         }
@@ -4984,17 +4997,18 @@ class AuthApi
     /**
      * Operation authSocialByProviderCallbackGetAsync
      *
-     * Redirect after sucessfull login
+     * Redirect after successful login
      *
      * @param  string $provider (required)
+     * @param  string $state (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialByProviderCallbackGet'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function authSocialByProviderCallbackGetAsync($provider, string $contentType = self::contentTypes['authSocialByProviderCallbackGet'][0])
+    public function authSocialByProviderCallbackGetAsync($provider, $state, string $contentType = self::contentTypes['authSocialByProviderCallbackGet'][0])
     {
-        return $this->authSocialByProviderCallbackGetAsyncWithHttpInfo($provider, $contentType)
+        return $this->authSocialByProviderCallbackGetAsyncWithHttpInfo($provider, $state, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -5005,18 +5019,19 @@ class AuthApi
     /**
      * Operation authSocialByProviderCallbackGetAsyncWithHttpInfo
      *
-     * Redirect after sucessfull login
+     * Redirect after successful login
      *
      * @param  string $provider (required)
+     * @param  string $state (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialByProviderCallbackGet'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function authSocialByProviderCallbackGetAsyncWithHttpInfo($provider, string $contentType = self::contentTypes['authSocialByProviderCallbackGet'][0])
+    public function authSocialByProviderCallbackGetAsyncWithHttpInfo($provider, $state, string $contentType = self::contentTypes['authSocialByProviderCallbackGet'][0])
     {
         $returnType = '';
-        $request = $this->authSocialByProviderCallbackGetRequest($provider, $contentType);
+        $request = $this->authSocialByProviderCallbackGetRequest($provider, $state, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -5045,18 +5060,26 @@ class AuthApi
      * Create request for operation 'authSocialByProviderCallbackGet'
      *
      * @param  string $provider (required)
+     * @param  string $state (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialByProviderCallbackGet'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function authSocialByProviderCallbackGetRequest($provider, string $contentType = self::contentTypes['authSocialByProviderCallbackGet'][0])
+    public function authSocialByProviderCallbackGetRequest($provider, $state, string $contentType = self::contentTypes['authSocialByProviderCallbackGet'][0])
     {
 
         // verify the required parameter 'provider' is set
         if ($provider === null || (is_array($provider) && count($provider) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $provider when calling authSocialByProviderCallbackGet'
+            );
+        }
+
+        // verify the required parameter 'state' is set
+        if ($state === null || (is_array($state) && count($state) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $state when calling authSocialByProviderCallbackGet'
             );
         }
 
@@ -5068,6 +5091,15 @@ class AuthApi
         $httpBody = '';
         $multipart = false;
 
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $state,
+            'state', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            true // required
+        ) ?? []);
 
 
         // path params
@@ -5139,6 +5171,7 @@ class AuthApi
      * Redirect to social login
      *
      * @param  string $provider provider (required)
+     * @param  string $challenge challenge (required)
      * @param  string $return_url return_url (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialByProviderGet'] to see the possible values for this operation
      *
@@ -5146,9 +5179,9 @@ class AuthApi
      * @throws \InvalidArgumentException
      * @return void
      */
-    public function authSocialByProviderGet($provider, $return_url = null, string $contentType = self::contentTypes['authSocialByProviderGet'][0])
+    public function authSocialByProviderGet($provider, $challenge, $return_url = null, string $contentType = self::contentTypes['authSocialByProviderGet'][0])
     {
-        $this->authSocialByProviderGetWithHttpInfo($provider, $return_url, $contentType);
+        $this->authSocialByProviderGetWithHttpInfo($provider, $challenge, $return_url, $contentType);
     }
 
     /**
@@ -5157,6 +5190,7 @@ class AuthApi
      * Redirect to social login
      *
      * @param  string $provider (required)
+     * @param  string $challenge (required)
      * @param  string $return_url (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialByProviderGet'] to see the possible values for this operation
      *
@@ -5164,9 +5198,9 @@ class AuthApi
      * @throws \InvalidArgumentException
      * @return array of null, HTTP status code, HTTP response headers (array of strings)
      */
-    public function authSocialByProviderGetWithHttpInfo($provider, $return_url = null, string $contentType = self::contentTypes['authSocialByProviderGet'][0])
+    public function authSocialByProviderGetWithHttpInfo($provider, $challenge, $return_url = null, string $contentType = self::contentTypes['authSocialByProviderGet'][0])
     {
-        $request = $this->authSocialByProviderGetRequest($provider, $return_url, $contentType);
+        $request = $this->authSocialByProviderGetRequest($provider, $challenge, $return_url, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -5195,6 +5229,14 @@ class AuthApi
 
         } catch (ApiException $e) {
             switch ($e->getCode()) {
+                case 422:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
             }
             throw $e;
         }
@@ -5206,15 +5248,16 @@ class AuthApi
      * Redirect to social login
      *
      * @param  string $provider (required)
+     * @param  string $challenge (required)
      * @param  string $return_url (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialByProviderGet'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function authSocialByProviderGetAsync($provider, $return_url = null, string $contentType = self::contentTypes['authSocialByProviderGet'][0])
+    public function authSocialByProviderGetAsync($provider, $challenge, $return_url = null, string $contentType = self::contentTypes['authSocialByProviderGet'][0])
     {
-        return $this->authSocialByProviderGetAsyncWithHttpInfo($provider, $return_url, $contentType)
+        return $this->authSocialByProviderGetAsyncWithHttpInfo($provider, $challenge, $return_url, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -5228,16 +5271,17 @@ class AuthApi
      * Redirect to social login
      *
      * @param  string $provider (required)
+     * @param  string $challenge (required)
      * @param  string $return_url (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialByProviderGet'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function authSocialByProviderGetAsyncWithHttpInfo($provider, $return_url = null, string $contentType = self::contentTypes['authSocialByProviderGet'][0])
+    public function authSocialByProviderGetAsyncWithHttpInfo($provider, $challenge, $return_url = null, string $contentType = self::contentTypes['authSocialByProviderGet'][0])
     {
         $returnType = '';
-        $request = $this->authSocialByProviderGetRequest($provider, $return_url, $contentType);
+        $request = $this->authSocialByProviderGetRequest($provider, $challenge, $return_url, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -5266,19 +5310,27 @@ class AuthApi
      * Create request for operation 'authSocialByProviderGet'
      *
      * @param  string $provider (required)
+     * @param  string $challenge (required)
      * @param  string $return_url (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialByProviderGet'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function authSocialByProviderGetRequest($provider, $return_url = null, string $contentType = self::contentTypes['authSocialByProviderGet'][0])
+    public function authSocialByProviderGetRequest($provider, $challenge, $return_url = null, string $contentType = self::contentTypes['authSocialByProviderGet'][0])
     {
 
         // verify the required parameter 'provider' is set
         if ($provider === null || (is_array($provider) && count($provider) === 0)) {
             throw new \InvalidArgumentException(
                 'Missing the required parameter $provider when calling authSocialByProviderGet'
+            );
+        }
+
+        // verify the required parameter 'challenge' is set
+        if ($challenge === null || (is_array($challenge) && count($challenge) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $challenge when calling authSocialByProviderGet'
             );
         }
 
@@ -5299,6 +5351,15 @@ class AuthApi
             'form', // style
             true, // explode
             false // required
+        ) ?? []);
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $challenge,
+            'challenge', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            true // required
         ) ?? []);
 
 
@@ -5639,6 +5700,383 @@ class AuthApi
                 $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($auth_email_resend_post_request));
             } else {
                 $httpBody = $auth_email_resend_post_request;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation authSocialExchangePost
+     *
+     * Exchange a one-time social login code for a token
+     *
+     * @param  \Ulams\Sdk\Model\AuthSocialExchangePostRequest $auth_social_exchange_post_request auth_social_exchange_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialExchangePost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope
+     */
+    public function authSocialExchangePost($auth_social_exchange_post_request, string $contentType = self::contentTypes['authSocialExchangePost'][0])
+    {
+        list($response) = $this->authSocialExchangePostWithHttpInfo($auth_social_exchange_post_request, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation authSocialExchangePostWithHttpInfo
+     *
+     * Exchange a one-time social login code for a token
+     *
+     * @param  \Ulams\Sdk\Model\AuthSocialExchangePostRequest $auth_social_exchange_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialExchangePost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function authSocialExchangePostWithHttpInfo($auth_social_exchange_post_request, string $contentType = self::contentTypes['authSocialExchangePost'][0])
+    {
+        $request = $this->authSocialExchangePostRequest($auth_social_exchange_post_request, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                case 400:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                case 422:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                case 400:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                case 422:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation authSocialExchangePostAsync
+     *
+     * Exchange a one-time social login code for a token
+     *
+     * @param  \Ulams\Sdk\Model\AuthSocialExchangePostRequest $auth_social_exchange_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialExchangePost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function authSocialExchangePostAsync($auth_social_exchange_post_request, string $contentType = self::contentTypes['authSocialExchangePost'][0])
+    {
+        return $this->authSocialExchangePostAsyncWithHttpInfo($auth_social_exchange_post_request, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation authSocialExchangePostAsyncWithHttpInfo
+     *
+     * Exchange a one-time social login code for a token
+     *
+     * @param  \Ulams\Sdk\Model\AuthSocialExchangePostRequest $auth_social_exchange_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialExchangePost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function authSocialExchangePostAsyncWithHttpInfo($auth_social_exchange_post_request, string $contentType = self::contentTypes['authSocialExchangePost'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+        $request = $this->authSocialExchangePostRequest($auth_social_exchange_post_request, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'authSocialExchangePost'
+     *
+     * @param  \Ulams\Sdk\Model\AuthSocialExchangePostRequest $auth_social_exchange_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authSocialExchangePost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function authSocialExchangePostRequest($auth_social_exchange_post_request, string $contentType = self::contentTypes['authSocialExchangePost'][0])
+    {
+
+        // verify the required parameter 'auth_social_exchange_post_request' is set
+        if ($auth_social_exchange_post_request === null || (is_array($auth_social_exchange_post_request) && count($auth_social_exchange_post_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $auth_social_exchange_post_request when calling authSocialExchangePost'
+            );
+        }
+
+
+        $resourcePath = '/api/auth/social/exchange';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($auth_social_exchange_post_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($auth_social_exchange_post_request));
+            } else {
+                $httpBody = $auth_social_exchange_post_request;
             }
         } elseif (count($formParams) > 0) {
             if ($multipart) {

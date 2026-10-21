@@ -23,6 +23,7 @@ modules:
   - csv-users
   - demo
   - dictionaries
+  - entitlements
   - files
   - h5p
   - images
@@ -333,8 +334,17 @@ admin routes under `/api/admin`. Depends on `payments` and registers `shopping-c
 
 The `CommerceProvider` interface (`syncProduct`, `createCheckout`, `handleOrderEvent`) and the
 `WellmsCartProvider` adapter that creates cart products for courses through the cart services,
-with the mapping in `commerce_product_links`. Used by the Course Builder to price a course; no
-routes. A Sylius adapter is planned (Phase 6.4).
+with the mapping in `commerce_product_links`. Used by the Course Builder to price a course. It
+also receives signed order events from a provider that reports orders by webhook
+(`POST /api/commerce/webhooks/{provider}`, public), applies them and repairs missed ones with
+`ulams:commerce:reconcile`; see [Entitlements and order events](/developers/entitlements-and-order-events/).
+A Sylius adapter is planned (Phase 6.4).
+
+### [entitlements](/reference/packages/entitlements/)
+
+What granted a user access to a course (`entitlements`: subject, validity, unique source key) and
+`EntitlementService`, the only writer of purchased access: it grants and revokes through
+`CourseAccessService`, so `course_user` stays the projection every policy reads. No routes.
 
 ### [shopping-cart](/reference/packages/shopping-cart/)
 

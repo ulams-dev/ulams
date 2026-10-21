@@ -1,6 +1,5 @@
 # Model Fields
 
-
 ## What does it do
 
 This package allows you to add unlimited extra primitive fields to any model.
@@ -145,7 +144,6 @@ use Ulams\ModelFields\Models\Metadata;
 
 public function addOrUpdateMetadataField(string $class_type, string $name, string $type, string $default = '', array $rules = null, $visibility = 1 << 0): Metadata;
 
-
 ```
 
 Once new field is added you can use is as any other attribute of model
@@ -154,7 +152,6 @@ Once new field is added you can use is as any other attribute of model
 $extraAttributes = [
     'description' => 'to be or not to be',
 ];
-
 
 $user = User::create(array_merge([
     'first_name' => 'John',
@@ -391,8 +388,6 @@ All the endpoints are defined in [![swagger](https://img.shields.io/badge/docume
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
-
-Test details [![codecov](https://codecov.io/gh/Ulams/model-fields/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/model-fields) [![phpunit](https://github.com/EscolaLMS/model-fields/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/model-fields/actions/workflows/test.yml)
 
 ## Events
 

@@ -1,3 +1,4 @@
+import { adminDocsUrl } from '@/lib/docs';
 import ProCard from '@ant-design/pro-card';
 import { Button, Col, Row, Typography } from 'antd';
 import { FormattedMessage } from 'umi';
@@ -39,11 +40,7 @@ export const DashboardComponent: React.FC = () => {
                   </Text>
                 </div>
                 <div style={{ marginTop: '0.5em' }}>
-                  <Button
-                    type="primary"
-                    href={'https://docs.ulams.app/app-guide/'}
-                    target={'_blank'}
-                  >
+                  <Button type="primary" href={adminDocsUrl('admin/')} target={'_blank'}>
                     <FormattedMessage id="learn_more" />
                   </Button>
                 </div>
