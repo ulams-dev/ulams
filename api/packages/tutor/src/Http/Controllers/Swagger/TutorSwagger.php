@@ -9,6 +9,20 @@ use Ulams\Tutor\Http\Requests\AskRequest;
 interface TutorSwagger
 {
     /**
+     * @OA\Get(
+     *   path="/api/tutor/courses/{course}/status", operationId="tutor.courses.by-course.status.get",
+     *   summary="Whether the course tutor is available to the learner, how many questions are left today and whether a quiz attempt is open",
+     *   tags={"Tutor"},
+     *   security={{"passport": {}}},
+     *   @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
+     *   @OA\Response(response=200, description="`enabled` (tutor on for the tenant), `aiEnabled` (AI on), `remaining` and `dailyLimit` questions, `attemptActive` (a quiz attempt is open: the tutor explains concepts only)", @OA\JsonContent(ref="#/components/schemas/ApiJson")),
+     *   @OA\Response(response=403, description="The learner may not attend the course"),
+     *   @OA\Response(response=404, description="Unknown course")
+     * )
+     */
+    public function status(Request $request, int $course): JsonResponse;
+
+    /**
      * @OA\Post(
      *   path="/api/tutor/courses/{course}/messages", operationId="tutor.courses.by-course.messages.post",
      *   summary="Ask the course tutor a question; it answers only from the course, with citations",
