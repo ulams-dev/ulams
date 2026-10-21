@@ -288,4 +288,40 @@ class RemediationTest extends TestCase
 
         $this->getJson($url, ['Authorization' => 'Bearer ' . $token])->assertUnauthorized();
     }
+
+    public function testTheHoldoutGetsNoHelpButIsMeasuredTheSameWay(): void
+    {
+        config(['learner_insights.remediation.holdout_percent' => 100]);
+        $user = $this->enrolled();
+        $this->struggle($user);
+
+        $this->assertSame(0, Remediation::query()->count());
+        $this->assertSame(0, \Ulams\Ai\Models\AiCall::query()->where('subject_type', 'learner_remediation')->count());
+        $this->assertSame(0, RemediationAssignment::query()->count());
+        $this->support($user)->assertOk()->assertJsonPath('data.items', []);
+        $control = Intervention::query()->where('kind', 'remediation')->firstOrFail();
+        $this->assertSame('holdout', $control->detail);
+        $this->assertSame('pending', $control->outcome);
+
+        // a second struggle does not add a second open control entry; finishing the element closes it as recovered
+        $this->struggle($user, $this->questionId);
+        $this->assertSame(1, Intervention::query()->where('detail', 'holdout')->count());
+        app(\Ulams\LearnerInsights\Services\OutcomeTracker::class)->progressed($user->getKey(), $this->course->getKey(), $this->questionElement);
+        $rates = app(\Ulams\LearnerInsights\Services\OutcomeTracker::class)->helpedVsHoldout($this->course->getKey());
+        $this->assertSame(['recovered' => 1, 'closed' => 1, 'rate' => 1.0], $rates['holdout']);
+        $this->assertSame(['recovered' => 0, 'closed' => 0, 'rate' => null], $rates['helped']);
+    }
+
+    public function testTheHoldoutIsAStableShareOfLearners(): void
+    {
+        config(['learner_insights.remediation.holdout_percent' => 20]);
+        $service = app(RemediationService::class);
+        $ids = range(1, 500);
+        $in = array_filter($ids, fn ($id) => $service->inHoldout($id));
+
+        $this->assertEqualsWithDelta(100, count($in), 30, 'about a fifth');
+        $this->assertSame(array_values($in), array_values(array_filter($ids, fn ($id) => $service->inHoldout($id))), 'the same learners every time');
+        config(['learner_insights.remediation.holdout_percent' => 0]);
+        $this->assertFalse($service->inHoldout(1));
+    }
 }

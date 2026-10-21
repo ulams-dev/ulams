@@ -62,6 +62,14 @@ For courses built with the [Course Builder](/admin/course-builder/), a learner w
 | `LEARNER_INSIGHTS_COURSE_MONTHLY_USD` | `5` | Monthly AI spend of personal help for one course |
 | `AI_TASK_REMEDIATION_PROFILE`, `AI_TASK_REFLECTION_PROFILE` | `default`, `light` | Model profiles of the two tasks |
 
+### Measuring whether the help works
+
+A recovery rate alone does not prove that the help worked. `LEARNER_INSIGHTS_REMEDIATION_HOLDOUT_PERCENT` (default `0`, off) keeps that share of learners (the same learners every time) out of personal help, while their progress is still measured. Compare the recovery of both groups before you claim a benefit; ask your learners' representatives or data protection officer before switching it on, because some learners then get no help on purpose.
+
+## Adaptive interface
+
+With `learner_insights.adaptive_interface` on (default off), the reference frontend asks `GET /api/learner-insights/courses/{course}/presentation` and shows lessons in steps with hints for a learner who has struggled with several parts, keeps the outline linear for a learner at risk, and uses a compact layout for a learner who moves through the course quickly. The answer says why, and the learner can switch any choice back (for example "show the whole lesson"). No AI is involved.
+
 ## Reminders
 
 An at-risk learner gets one reminder per course per 7 days and at most two per week in total, in the app and by e-mail, with the reason and a link to the next unfinished topic. Each suppressed reminder is logged with its reason. After 14 days the reminder counts as recovered (the learner finished a topic or passed a quiz again) or not recovered. Switch reminders off for the tenant with `learner_insights.nudges.enabled`; learners switch them off in their settings.

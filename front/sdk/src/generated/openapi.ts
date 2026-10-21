@@ -4936,6 +4936,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/learner-insights/courses/{course}/presentation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** How the course is presented to the learner (density, steps, navigation, hints) and why */
+        get: operations["d050c656077d6b825dc5d82d259a0782"];
+        /** Override how the course is presented (for example show the whole lesson); null removes an override */
+        put: operations["55dddbb04369cf10907080cf504daabb"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/learner-insights/settings": {
         parameters: {
             query?: never;
@@ -22720,6 +22738,80 @@ export interface operations {
         responses: {
             /** @description A JSON file */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    d050c656077d6b825dc5d82d259a0782: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `adaptive` (the tenant switch), `profile` (what to show), `derived` (what the rules chose), `overrides` (the learner's choices), `why` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The learner may not attend the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "55dddbb04369cf10907080cf504daabb": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @enum {string|null} */
+                    density?: "comfortable" | "compact" | null;
+                    /** @enum {string|null} */
+                    chunking?: "whole" | "steps" | null;
+                    /** @enum {string|null} */
+                    navigation?: "linear" | "overview" | null;
+                    /** @enum {integer|null} */
+                    hints?: 0 | 1 | 2 | 3 | null;
+                };
+            };
+        };
+        responses: {
+            /** @description The profile after the change */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The learner may not attend the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid option */
+            422: {
                 headers: {
                     [name: string]: unknown;
                 };

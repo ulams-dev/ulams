@@ -3115,6 +3115,18 @@
  },
  {
   "method": "GET",
+  "path": "/api/learner-insights/courses/{course}/presentation",
+  "summary": "How the course is presented to the learner (density, steps, navigation, hints) and why",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/learner-insights/courses/{course}/presentation",
+  "summary": "Override how the course is presented (for example show the whole lesson); null removes an override",
+  "tag": "Learner insights"
+ },
+ {
+  "method": "GET",
   "path": "/api/learner-insights/courses/{course}/topics/{topic}/support",
   "summary": "Extra help for the learner in a topic, with the reasons it was offered",
   "tag": "Learner insights"

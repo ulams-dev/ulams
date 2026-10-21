@@ -31463,6 +31463,116 @@
     ]
    }
   },
+  "/api/learner-insights/courses/{course}/presentation": {
+   "get": {
+    "operationId": "d050c656077d6b825dc5d82d259a0782",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "`adaptive` (the tenant switch), `profile` (what to show), `derived` (what the rules chose), `overrides` (the learner's choices), `why`"
+     },
+     "403": {
+      "description": "The learner may not attend the course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "How the course is presented to the learner (density, steps, navigation, hints) and why",
+    "tags": [
+     "Learner insights"
+    ]
+   },
+   "put": {
+    "operationId": "55dddbb04369cf10907080cf504daabb",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "chunking": {
+          "enum": [
+           "whole",
+           "steps"
+          ],
+          "nullable": true,
+          "type": "string"
+         },
+         "density": {
+          "enum": [
+           "comfortable",
+           "compact"
+          ],
+          "nullable": true,
+          "type": "string"
+         },
+         "hints": {
+          "enum": [
+           0,
+           1,
+           2,
+           3
+          ],
+          "nullable": true,
+          "type": "integer"
+         },
+         "navigation": {
+          "enum": [
+           "linear",
+           "overview"
+          ],
+          "nullable": true,
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "description": "The profile after the change"
+     },
+     "403": {
+      "description": "The learner may not attend the course"
+     },
+     "422": {
+      "description": "Invalid option"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Override how the course is presented (for example show the whole lesson); null removes an override",
+    "tags": [
+     "Learner insights"
+    ]
+   }
+  },
   "/api/learner-insights/courses/{course}/topics/{topic}/support": {
    "get": {
     "operationId": "25f77a3543fceb7f4ff5e1fdfa8a6eed",

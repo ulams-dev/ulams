@@ -5,6 +5,7 @@ use Ulams\LearnerInsights\Http\Controllers\AnalyticsController;
 use Ulams\LearnerInsights\Http\Controllers\ClientSignalController;
 use Ulams\LearnerInsights\Http\Controllers\MeController;
 use Ulams\LearnerInsights\Http\Controllers\NudgeOpenedController;
+use Ulams\LearnerInsights\Http\Controllers\PresentationController;
 use Ulams\LearnerInsights\Http\Controllers\SettingsController;
 use Ulams\LearnerInsights\Http\Controllers\SupportController;
 
@@ -15,6 +16,8 @@ Route::group([
 ], function () {
     Route::post('signals', [ClientSignalController::class, 'store'])->middleware('throttle:learner-insights-signals');
     Route::get('courses/{course}/topics/{topic}/support', [SupportController::class, 'index'])->whereNumber(['course', 'topic']);
+    Route::get('courses/{course}/presentation', [PresentationController::class, 'show'])->whereNumber('course');
+    Route::put('courses/{course}/presentation', [PresentationController::class, 'update'])->whereNumber('course');
     Route::post('assignments/{assignment}/feedback', [SupportController::class, 'feedback']);
     Route::post('assignments/{assignment}/hide', [SupportController::class, 'hide']);
     Route::post('assignments/{assignment}/reflection', [SupportController::class, 'reflection'])->middleware('throttle:10,1');

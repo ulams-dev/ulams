@@ -1015,3 +1015,12 @@ Where the code differs from the plan above, and what is still open:
   every builder event; `tutor:index` forces a rebuild.
 - Top terms of the questions (8.6) are not computed: the analytics are counts and the out-of-scope share.
 - The tutor panel (learner UI), streaming and the eval command are open.
+
+## 23. Implementation notes (M4.8, backend)
+
+- The experiments package (leftover L2-23) does not exist yet. The remediation holdout is a stable hash share in
+  `RemediationService` with the comparison in `OutcomeTracker::helpedVsHoldout()`, off by default (consent model
+  pending #58). The adaptive-interface A/B and the delayed-retention measure wait for that package.
+- The presentation profile is derived on every request from the statuses, not stored in
+  `learner_presentation_profiles`; only the learner's overrides are stored (`insights.presentation.<course>`).
+- `learner-insights:eval` and `tutor:eval` (real-model evals), the Playwright journey and the front work of M4.8 are open.

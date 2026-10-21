@@ -38,9 +38,15 @@ return [
         'per_learner_week' => (int) env('LEARNER_INSIGHTS_NUDGES_PER_LEARNER_WEEK', 2),
     ],
 
+    // Adaptive interface (ADR 0062): a presentation profile derived from statuses, overridable by the learner. Off by default.
+    'adaptive_interface' => (bool) env('LEARNER_INSIGHTS_ADAPTIVE_INTERFACE', false),
+
     // Personal remediations (plan 7.2): grounded extra help, cached per struggle pattern, AI required
     'remediation' => [
         'enabled' => (bool) env('LEARNER_INSIGHTS_REMEDIATION_ENABLED', true),
+        // Quality bar: this share of the eligible learners (a stable hash of the learner) gets no remediation, so its
+        // effect can be measured against them. 0 disables the holdout; the plan proposes 20 once a tenant opts in.
+        'holdout_percent' => (int) env('LEARNER_INSIGHTS_REMEDIATION_HOLDOUT_PERCENT', 0),
         // new generations per learner per day; above it the learner sees nothing new (cached help still works)
         'per_learner_day' => (int) env('LEARNER_INSIGHTS_REMEDIATION_PER_LEARNER_DAY', 3),
         // feedback on a learner's own explanation (Feynman), per learner per day
