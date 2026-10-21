@@ -171,11 +171,11 @@ class NudgeTest extends TestCase
         Event::fake([LearnerNudged::class]);
         $j = $this->dropOut();
         $j->day(8)->nightly();
-        $this->assertSame('pending', Intervention::query()->value('outcome'));
+        $this->assertSame('pending', Intervention::query()->orderBy('id')->value('outcome'));
 
         // the learner returns and finishes the next topic
         $j->day(9)->open('t2')->complete('t2');
-        $this->assertSame('recovered', Intervention::query()->value('outcome'));
+        $this->assertSame('recovered', Intervention::query()->orderBy('id')->value('outcome'));
         $this->assertSame(['recovered' => 1, 'closed' => 1, 'rate' => 1.0], app(OutcomeTracker::class)->rate($j->course->getKey(), 'nudge'));
 
         // a second learner never comes back: closed after the 14-day window
@@ -185,7 +185,11 @@ class NudgeTest extends TestCase
         $this->assertSame(1, Intervention::query()->where('user_id', $second->user->getKey())->where('outcome', 'pending')->count());
         $second->day(43)->nightly();
 
-        $this->assertSame('not_recovered', Intervention::query()->where('user_id', $second->user->getKey())->where('outcome', '!=', 'suppressed')->value('outcome'));
+        // The sweep runs before the expiry in the same nightly run, so on day 43 the still at-risk learner is nudged
+        // again (a new pending row) while the day-28 nudge is closed. Pick the first nudge explicitly: an unordered
+        // value() returns whichever tuple Postgres scans first, which changes with the page's dead-tuple layout.
+        $firstNudge = Intervention::query()->where('user_id', $second->user->getKey())->where('kind', Intervention::NUDGE)->where('outcome', '!=', 'suppressed')->orderBy('id')->first();
+        $this->assertSame('not_recovered', $firstNudge->outcome);
         $rate = app(OutcomeTracker::class)->rate($j->course->getKey(), 'nudge');
         $closed = Intervention::query()->whereIn('outcome', ['recovered', 'not_recovered'])->count();
         $recovered = Intervention::query()->where('outcome', 'recovered')->count();
