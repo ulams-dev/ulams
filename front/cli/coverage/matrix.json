@@ -1,5 +1,5 @@
 {
- "summary": "570/638 covered, 68 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "580/646 covered, 66 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -170,6 +170,54 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/compliance/competencies",
+   "summary": "The competency framework as a tree",
+   "command": "compliance.competencies-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/competencies",
+   "summary": "Add a competency",
+   "command": "compliance.competencies-add",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/competencies/{id}",
+   "summary": "Rename or move a competency",
+   "command": "compliance.competencies-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/competencies/{id}",
+   "summary": "Delete a competency (its sub-competencies move up, course tags go)",
+   "command": "compliance.competencies-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/courses/{course}/competencies",
+   "summary": "Competency tags of a course (confirmed and suggested)",
+   "command": "compliance.courses-competencies",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/courses/{course}/competencies/suggest",
+   "summary": "Ask the AI which competencies the course teaches",
+   "command": "compliance.courses-competencies-suggest",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/courses/{course}/competencies/{competency}",
+   "summary": "Tag a course with a competency (confirmed by the author), or confirm a suggestion",
+   "command": "compliance.courses-competencies-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/courses/{course}/competencies/{competency}",
+   "summary": "Remove a tag or reject a suggestion",
+   "command": "compliance.courses-competencies-delete",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/compliance/courses/{course}/settings",
    "summary": "Compliance settings of a course (defaults when none are saved)",
    "command": "compliance.courses-settings-list",
@@ -299,6 +347,12 @@
    "key": "DELETE /api/admin/compliance/schedules/{id}",
    "summary": "Delete a scheduled report",
    "command": "compliance.schedules-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/users/{user}/skills",
+   "summary": "The skill profile of a user",
+   "command": "compliance.users-skills",
    "status": "covered"
   },
   {
@@ -2696,6 +2750,12 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/compliance/my-skills",
+   "summary": "My skill profile",
+   "command": "my.compliance-my-skills",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/compliance/team/assignments",
    "summary": "Required training of my direct reports",
    "command": "my.compliance-team-assignments",
@@ -3022,18 +3082,6 @@
   {
    "key": "POST /api/learner-insights/assignments/{assignment}/reflection",
    "summary": "Get feedback on the learner's own explanation of the idea (the text is sent to the AI provider and not stored)",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
-   "key": "GET /api/learner-insights/courses/{course}/presentation",
-   "summary": "How the course is presented to the learner (density, steps, navigation, hints) and why",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
-   "key": "PUT /api/learner-insights/courses/{course}/presentation",
-   "summary": "Override how the course is presented (for example show the whole lesson); null removes an override",
    "command": "",
    "status": "excluded: not-for-cli"
   },

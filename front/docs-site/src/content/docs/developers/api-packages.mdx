@@ -265,7 +265,7 @@ Certificate validity, required training and escalation (Phase 6.1; plan `docs/pl
 Per-course settings (`CourseSetting`), required-training assignments (`Assignment`, which grant access through
 `course-access` and write the course deadline), manager links and an append-only notification log. A daily
 `compliance:process` run sends certificate and due-date reminders, starts recertification before expiry and escalates
-overdue training to the manager; six e-mail templates are registered with `templates-email`. Learning paths with prerequisites and attribute rules that enrol users in a path (Phase 6.2). Dashboard numbers and scheduled e-mail reports (Phase 6.5). Report and audit export
+overdue training to the manager; six e-mail templates are registered with `templates-email`. Learning paths with prerequisites and attribute rules that enrol users in a path (Phase 6.2). Dashboard numbers and scheduled e-mail reports (Phase 6.5), a competency framework with author-confirmed AI tag suggestions and learner skill profiles (Phase 6.6). Report and audit export
 (assignments, certificates, Living Course audit entries; CSV or JSON lines) at `/api/admin/compliance/report`
 (permission `compliance_report`). API under `/api/admin/compliance` (permission `compliance_manage`) and `/api/compliance`. No admin screen yet. See
 [Compliance and required training](/admin/compliance/).

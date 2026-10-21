@@ -6,6 +6,9 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Ulams\Ai\Fake\FakeResponders;
+use Ulams\Ai\Prompts\PromptRegistry;
+use Ulams\Ai\UlamsAiServiceProvider;
 use Ulams\Compliance\Console\ProcessComplianceCommand;
 use Ulams\Compliance\Events\CertificateExpired;
 use Ulams\Compliance\Events\CertificateExpiringSoon;
@@ -13,13 +16,17 @@ use Ulams\Compliance\Events\TrainingAssigned;
 use Ulams\Compliance\Events\TrainingDueSoon;
 use Ulams\Compliance\Events\TrainingEscalated;
 use Ulams\Compliance\Events\TrainingOverdue;
+use Ulams\Compliance\Fake\CompetencyResponder;
 use Ulams\Compliance\Http\Controllers\AssignmentController;
+use Ulams\Compliance\Http\Controllers\CompetencyController;
+use Ulams\Compliance\Http\Controllers\CourseCompetencyController;
 use Ulams\Compliance\Http\Controllers\CourseSettingsController;
 use Ulams\Compliance\Http\Controllers\DashboardController;
 use Ulams\Compliance\Http\Controllers\ManagerController;
 use Ulams\Compliance\Http\Controllers\PathController;
 use Ulams\Compliance\Http\Controllers\RuleController;
 use Ulams\Compliance\Http\Controllers\ScheduleController;
+use Ulams\Compliance\Http\Controllers\SkillsController;
 use Ulams\Compliance\Http\Controllers\ReportController;
 use Ulams\Compliance\Listeners\CertificateIssuedListener;
 use Ulams\Compliance\Listeners\CourseFinishedListener;
@@ -68,6 +75,7 @@ class UlamsComplianceServiceProvider extends ServiceProvider
         $this->app->register(UlamsCourseServiceProvider::class);
         $this->app->register(UlamsCourseAccessServiceProvider::class);
         $this->app->register(UlamsTemplatesPdfServiceProvider::class);
+        $this->app->register(UlamsAiServiceProvider::class);
 
         // Per-course validity replaces the single templates-pdf setting, which stays the fallback.
         $fallback = fn () => $this->app->make(\Ulams\TemplatesPdf\Services\ConfigCertificateValidity::class);
@@ -78,6 +86,8 @@ class UlamsComplianceServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'ulams-compliance');
+        CompetencyResponder::register($this->app->make(FakeResponders::class));
+        $this->app->make(PromptRegistry::class)->addPath('compliance', __DIR__ . '/../resources/prompts');
 
         Event::listen(CourseFinished::class, CourseFinishedListener::class);
         Event::listen(PdfCreated::class, CertificateIssuedListener::class);
@@ -133,7 +143,7 @@ class UlamsComplianceServiceProvider extends ServiceProvider
 
     private function registerRoutes(): void
     {
-        Route::group(['prefix' => 'api/admin/compliance', 'middleware' => ['auth:api'], 'where' => ['course' => '[0-9]+', 'id' => '[0-9]+', 'user' => '[0-9]+']], function () {
+        Route::group(['prefix' => 'api/admin/compliance', 'middleware' => ['auth:api'], 'where' => ['course' => '[0-9]+', 'id' => '[0-9]+', 'user' => '[0-9]+', 'competency' => '[0-9]+']], function () {
             Route::get('courses/{course}/settings', [CourseSettingsController::class, 'show']);
             Route::put('courses/{course}/settings', [CourseSettingsController::class, 'update']);
             Route::get('assignments', [AssignmentController::class, 'index']);
@@ -152,6 +162,15 @@ class UlamsComplianceServiceProvider extends ServiceProvider
             Route::put('rules/{id}', [RuleController::class, 'update']);
             Route::delete('rules/{id}', [RuleController::class, 'destroy']);
             Route::post('rules/{id}/evaluate', [RuleController::class, 'evaluate']);
+            Route::get('competencies', [CompetencyController::class, 'index']);
+            Route::post('competencies', [CompetencyController::class, 'store']);
+            Route::put('competencies/{id}', [CompetencyController::class, 'update']);
+            Route::delete('competencies/{id}', [CompetencyController::class, 'destroy']);
+            Route::get('courses/{course}/competencies', [CourseCompetencyController::class, 'index']);
+            Route::post('courses/{course}/competencies/suggest', [CourseCompetencyController::class, 'suggest']);
+            Route::put('courses/{course}/competencies/{competency}', [CourseCompetencyController::class, 'confirm']);
+            Route::delete('courses/{course}/competencies/{competency}', [CourseCompetencyController::class, 'destroy']);
+            Route::get('users/{user}/skills', [SkillsController::class, 'user']);
             Route::get('dashboard', [DashboardController::class, 'show']);
             Route::get('schedules', [ScheduleController::class, 'index']);
             Route::post('schedules', [ScheduleController::class, 'store']);
@@ -163,6 +182,7 @@ class UlamsComplianceServiceProvider extends ServiceProvider
         Route::group(['prefix' => 'api/compliance', 'middleware' => ['auth:api']], function () {
             Route::get('my-assignments', [AssignmentController::class, 'mine']);
             Route::get('my-paths', [PathController::class, 'mine']);
+            Route::get('my-skills', [SkillsController::class, 'mine']);
             Route::get('team/assignments', [AssignmentController::class, 'team']);
         });
     }

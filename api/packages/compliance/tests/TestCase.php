@@ -29,6 +29,14 @@ class TestCase extends \Ulams\Core\Tests\TestCase
         $this->seed(CompliancePermissionSeeder::class);
     }
 
+    protected function fake(): \Ulams\Ai\Drivers\FakeDriver
+    {
+        $driver = $this->app->make(\Ulams\Ai\Contracts\LlmDriver::class);
+        \assert($driver instanceof \Ulams\Ai\Drivers\FakeDriver);
+
+        return $driver;
+    }
+
     protected function getPackageProviders($app): array
     {
         $providers = [
@@ -53,5 +61,9 @@ class TestCase extends \Ulams\Core\Tests\TestCase
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('passport.client_uuids', true);
         $app['config']->set('ulams_templates_pdf.storage.render_on_create', false);
+        $app['config']->set('ai.driver', 'fake');
+        $app['config']->set('ai.fake.mode', 'synthetic');
+        $app['config']->set('ai.fake.cassettes', __DIR__ . '/cassettes');
+        $app['config']->set('ai.limits.tenant_monthly_usd', 1000000);
     }
 }

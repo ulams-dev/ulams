@@ -1968,6 +1968,106 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/compliance/competencies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The competency framework as a tree
+         * @description The competency framework: a tree of competencies (areas and skills). Reading needs `compliance_manage` or
+         *     `compliance_competencies` (authors pick from it); changing it needs `compliance_manage`.
+         */
+        get: operations["b3de7eb4605a30bd629c7f6917d958a1"];
+        put?: never;
+        /** Add a competency */
+        post: operations["a7e316c92826fafd4c54db3bbbf48101"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/competencies/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Rename or move a competency */
+        put: operations["129dd95b964cef0e6b2d6b6d7bbe1e6d"];
+        post?: never;
+        /** Delete a competency (its sub-competencies move up, course tags go) */
+        delete: operations["450150daeb5ad411de06a26a641666d7"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/courses/{course}/competencies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Competency tags of a course (confirmed and suggested)
+         * @description Competency tags of a course. AI suggests, the author confirms: suggestions are `suggested` and count for
+         *     nothing (no skill profile, no rule) until confirmed. Allowed for `compliance_manage`, or for
+         *     `compliance_competencies` on a course the user authors.
+         */
+        get: operations["8d349c4eb830ae3a05059b66ba860585"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/courses/{course}/competencies/{competency}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Tag a course with a competency (confirmed by the author), or confirm a suggestion */
+        put: operations["55c922f7e402529c9501f489895c9b6d"];
+        post?: never;
+        /** Remove a tag or reject a suggestion */
+        delete: operations["fb59ea9192b141f5437f9f1aebe16991"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/courses/{course}/competencies/suggest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Ask the AI which competencies the course teaches
+         * @description One AI call (logged with model, tokens and cost). Replaces the pending suggestions; confirmed tags are untouched. Needs a competency framework and at least one lesson.
+         */
+        post: operations["6e4332a16f2de20096327d388d9c37d1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/compliance/courses/{course}/settings": {
         parameters: {
             query?: never;
@@ -2257,6 +2357,44 @@ export interface paths {
         post?: never;
         /** Delete a scheduled report */
         delete: operations["64656e7acdb2a20e4797cd437dd587a0"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/compliance/my-skills": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * My skill profile
+         * @description Learner skill profiles: the confirmed competencies of the courses a learner has done, with when they were earned
+         *     and when they lapse.
+         */
+        get: operations["7736a59f48867c584e5582cbc356489f"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/compliance/users/{user}/skills": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The skill profile of a user */
+        get: operations["379baab3fca782356f3107a1ce615c1b"];
+        put?: never;
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -16239,6 +16377,236 @@ export interface operations {
             };
         };
     };
+    b3de7eb4605a30bd629c7f6917d958a1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description competencies with nested children */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    a7e316c92826fafd4c54db3bbbf48101: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    name: string;
+                    code?: string | null;
+                    description?: string | null;
+                    parent_id?: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description the competency */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "129dd95b964cef0e6b2d6b6d7bbe1e6d": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the competency */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Moving it under itself or its descendants */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "450150daeb5ad411de06a26a641666d7": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown competency */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "8d349c4eb830ae3a05059b66ba860585": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description tags with status, source, rationale and the lessons they point at */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "55c922f7e402529c9501f489895c9b6d": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                competency: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the confirmed tag */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course or competency */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    fb59ea9192b141f5437f9f1aebe16991: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                competency: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description removed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "6e4332a16f2de20096327d388d9c37d1": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the new suggestions, for the author to confirm */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description AI is not configured or the call failed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "93c92e732efea74950d4e07588c1dcec": {
         parameters: {
             query?: never;
@@ -16960,6 +17328,58 @@ export interface operations {
                 content?: never;
             };
             /** @description Unknown schedule */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "7736a59f48867c584e5582cbc356489f": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description competencies with the courses that prove them, earned_at and expires_at */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "379baab3fca782356f3107a1ce615c1b": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description competencies */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown user */
             404: {
                 headers: {
                     [name: string]: unknown;
