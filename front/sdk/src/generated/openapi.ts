@@ -4782,6 +4782,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/learner-insights/courses/{course}/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Per-course analytics: progress, completion, quiz performance, status distribution and interventions */
+        get: operations["a1df41d3358dc1cd8af4e185ca565484"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/courses/{course}/elements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The sections that confuse people: per element struggle rate, remediation and recovery, with the top reasons */
+        get: operations["434f32f9c1ed7c8292badc04fb9243a0"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/courses/{course}/learners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Learners who are struggling or at risk, with the reasons (individual data) */
+        get: operations["21f5f6039d2438ee867a19042114faa3"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/learners/{user}/courses/{course}/timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One learner's signals in a course with element labels (support) */
+        get: operations["bc2ab09eaf41103290fd2767f585a2b6"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/learner-insights/backfill": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Build signals from existing data for a course or the whole tenant (queued) */
+        post: operations["a1d3f3d3eeb05fef75a994753f235014"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/learner-insights/signals": {
         parameters: {
             query?: never;
@@ -22332,6 +22417,181 @@ export interface operations {
             };
             /** @description The token is not genuine or the nudge belongs to another learner */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    a1df41d3358dc1cd8af4e185ca565484: {
+        parameters: {
+            query?: {
+                period?: 7 | 30 | 90;
+            };
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Aggregates; `smallGroup` is true (and only `enrolled` is given) below the minimum group size */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs learner_insights_view or authorship of the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "434f32f9c1ed7c8292badc04fb9243a0": {
+        parameters: {
+            query?: {
+                period?: 7 | 30 | 90;
+                sort?: "struggle" | "active" | "recovery";
+            };
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Elements; those with fewer active learners than the minimum group are returned as `hidden` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs learner_insights_view or authorship of the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "21f5f6039d2438ee867a19042114faa3": {
+        parameters: {
+            query?: {
+                status?: "struggling" | "at_risk" | "on_track";
+            };
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Individual statuses */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs learner_insights_view_individuals, or the tenant setting that lets course authors see individuals */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    bc2ab09eaf41103290fd2767f585a2b6: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                user: number;
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs learner_insights_view_individuals */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course or learner */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    a1d3f3d3eeb05fef75a994753f235014: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    courseId?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Needs learner_insights_manage */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };

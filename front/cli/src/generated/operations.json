@@ -966,6 +966,24 @@
   "tag": "Admin Interactive"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/learner-insights/backfill",
+  "summary": "Build signals from existing data for a course or the whole tenant (queued)",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/learner-insights/courses/{course}/elements",
+  "summary": "The sections that confuse people: per element struggle rate, remediation and recovery, with the top reasons",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/learner-insights/courses/{course}/learners",
+  "summary": "Learners who are struggling or at risk, with the reasons (individual data)",
+  "tag": "Learner insights admin"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/learner-insights/courses/{course}/settings",
   "summary": "Thresholds of one course: the overrides and the effective values",
@@ -975,6 +993,18 @@
   "method": "PUT",
   "path": "/api/admin/learner-insights/courses/{course}/settings",
   "summary": "Replace the threshold overrides of one course",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/learner-insights/courses/{course}/summary",
+  "summary": "Per-course analytics: progress, completion, quiz performance, status distribution and interventions",
+  "tag": "Learner insights admin"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/learner-insights/learners/{user}/courses/{course}/timeline",
+  "summary": "One learner's signals in a course with element labels (support)",
   "tag": "Learner insights admin"
  },
  {

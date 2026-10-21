@@ -1,5 +1,5 @@
 {
- "summary": "580/648 covered, 68 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "580/651 covered, 71 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -968,6 +968,24 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/learner-insights/backfill",
+   "summary": "Build signals from existing data for a course or the whole tenant (queued)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/learner-insights/courses/{course}/elements",
+   "summary": "The sections that confuse people: per element struggle rate, remediation and recovery, with the top reasons",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/learner-insights/courses/{course}/learners",
+   "summary": "Learners who are struggling or at risk, with the reasons (individual data)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
    "key": "GET /api/admin/learner-insights/courses/{course}/settings",
    "summary": "Thresholds of one course: the overrides and the effective values",
    "command": "",
@@ -976,6 +994,18 @@
   {
    "key": "PUT /api/admin/learner-insights/courses/{course}/settings",
    "summary": "Replace the threshold overrides of one course",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/learner-insights/courses/{course}/summary",
+   "summary": "Per-course analytics: progress, completion, quiz performance, status distribution and interventions",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/learner-insights/learners/{user}/courses/{course}/timeline",
+   "summary": "One learner's signals in a course with element labels (support)",
    "command": "",
    "status": "excluded: not-for-cli"
   },
@@ -3082,18 +3112,6 @@
   {
    "key": "POST /api/learner-insights/assignments/{assignment}/reflection",
    "summary": "Get feedback on the learner's own explanation of the idea (the text is sent to the AI provider and not stored)",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
-   "key": "GET /api/learner-insights/courses/{course}/presentation",
-   "summary": "How the course is presented to the learner (density, steps, navigation, hints) and why",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
-   "key": "PUT /api/learner-insights/courses/{course}/presentation",
-   "summary": "Override how the course is presented (for example show the whole lesson); null removes an override",
    "command": "",
    "status": "excluded: not-for-cli"
   },
