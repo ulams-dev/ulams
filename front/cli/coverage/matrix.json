@@ -1,5 +1,5 @@
 {
- "summary": "589/664 covered, 75 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "595/670 covered, 75 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -443,6 +443,42 @@
    "key": "DELETE /api/admin/course-access-enquiries/{id}",
    "summary": "Remove the specified Course Access Enquiry",
    "command": "access.enquiries-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-as-code/courses/{course}/blueprint",
+   "summary": "Export a course as a Blueprint v3 document (current version, drift, applied version)",
+   "command": "course.export",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-as-code/sessions/{session}/apply",
+   "summary": "Apply the current version to the course (no AI needed)",
+   "command": "course.apply",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-as-code/sessions/{session}/imports",
+   "summary": "Import a Blueprint v3 document as a proposed version of kind import",
+   "command": "course.import",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-as-code/sessions/{session}/publish",
+   "summary": "Publish the applied course (no AI needed)",
+   "command": "course.publish",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-as-code/versions/{version}/approve",
+   "summary": "Approve a proposed import (people and CLI tokens; never agents or MCP clients)",
+   "command": "course.approve",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-as-code/versions/{version}/diff",
+   "summary": "Element-aware diff of a version against its parent or ?against=",
+   "command": "course.diff",
    "status": "covered"
   },
   {
