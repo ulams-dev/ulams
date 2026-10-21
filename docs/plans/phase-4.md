@@ -995,6 +995,17 @@ Where the code differs from the plan above, and what is still open:
 - `reflection_feedback` is limited per learner per day with a cache counter, not stored in the database.
 - The holdout (20 % get no remediation) belongs to M4.8 with the experiments package.
 
+## 22. Implementation notes (M4.7)
+
+- Retrieval ORs the words of the question (`to_tsquery`) instead of `websearch_to_tsquery`, which ANDs them:
+  a natural-language question rarely matches every word of one chunk. Ranking is `ts_rank_cd`.
+- The attempt guard reads open `QuizAttempt` rows directly (`topic-type-gift` was not changed): an attempt without
+  an end time that was never submitted stays open.
+- The index is checked for freshness at the first question (applied version or content hash) instead of listening to
+  every builder event; `tutor:index` forces a rebuild.
+- Top terms of the questions (8.6) are not computed: the analytics are counts and the out-of-scope share.
+- The tutor panel (learner UI), streaming and the eval command are open.
+
 ## 23. Implementation notes (M4.8, backend)
 
 - The experiments package (leftover L2-23) does not exist yet. The remediation holdout is a stable hash share in

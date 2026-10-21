@@ -2113,6 +2113,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/tutor/courses/{course}/analytics",
+  "summary": "Anonymous tutor analytics for a course: questions, out-of-scope share and refusals during attempts",
+  "tag": "Tutor"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/user-groups/",
   "summary": "List groups",
   "tag": "Admin User Groups"
@@ -3754,6 +3760,30 @@
   "path": "/api/translations",
   "summary": "Get a list of public translations",
   "tag": "Translations"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/tutor/conversations/{conversation}",
+  "summary": "Delete one of the learner's conversations",
+  "tag": "Tutor"
+ },
+ {
+  "method": "GET",
+  "path": "/api/tutor/conversations/{conversation}",
+  "summary": "One of the learner's conversations with its messages",
+  "tag": "Tutor"
+ },
+ {
+  "method": "GET",
+  "path": "/api/tutor/courses/{course}/conversations",
+  "summary": "The learner's own conversations in a course",
+  "tag": "Tutor"
+ },
+ {
+  "method": "POST",
+  "path": "/api/tutor/courses/{course}/messages",
+  "summary": "Ask the course tutor a question; it answers only from the course, with citations",
+  "tag": "Tutor"
  },
  {
   "method": "GET",
