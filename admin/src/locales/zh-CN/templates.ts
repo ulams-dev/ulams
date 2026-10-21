@@ -40,5 +40,25 @@ export default {
   'templates.visual_diff_cancel': '保留我的 MJML',
   'templates.visual_canvas': '可视化邮件编辑器',
   'templates.visual_variables_hint':
-    '请在文本块中输入变量，例如 @VarUserName。此列表的插入功能仅适用于代码模式。',
+    '先在邮件中选中一个文本块，再选择变量，将其作为标签添加。编辑文本时标签插入光标处，否则添加到文本块末尾。',
+  'templates.visual_inserted': '已插入 {token}。',
+  'templates.visual_select_text': '请先在邮件中选中一个文本块，然后再次选择 {token}。',
+  'templates.required_missing': '尚未使用的必填变量',
+  'templates.shared_parts': '共享部分',
+  'templates.shared_parts_hint':
+    '这些部分来自“设置”，在编辑器中已锁定。在“设置”中修改后，所有使用它们的模板都会更新。',
+  'templates.shared_parts_edit': '在“设置”中编辑',
+  'templates.image_title': '插入图片',
+  'templates.image_hint':
+    'PNG、JPEG、GIF 或 WebP，最大 2 MB。图片存储在您的学院空间，邮件从该处加载。邮件不支持 SVG。',
+  'templates.image_file': '图片文件',
+  'templates.image_wrong_type': '请选择 PNG、JPEG、GIF 或 WebP 图片。不接受 SVG 和其他文件。',
+  'templates.image_too_large': '图片超过 2 MB。',
+  'templates.image_failed': '图片上传失败。',
+  'templates.image_uploading': '正在上传图片...',
+  'templates.image_alt': '替代文本',
+  'templates.image_alt_hint': '为看不到图片的人描述图片内容。必填，除非图片仅作装饰。',
+  'templates.image_decorative': '此图片仅用于装饰（无替代文本）',
+  'templates.image_insert': '插入图片',
+  'templates.image_cancel': '取消',
 };

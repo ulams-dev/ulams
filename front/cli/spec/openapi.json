@@ -23739,6 +23739,99 @@
     ]
    }
   },
+  "/api/admin/templates/email/images": {
+   "post": {
+    "description": "Stores a PNG, JPEG, GIF or WebP image (up to 2 MB by default) in the storage of the current tenant and returns its public URL, which e-mail clients fetch remotely. The type is sniffed from the content; SVG and every other type is refused. The stored name is random. Throttled to 30 requests per minute per user.",
+    "operationId": "templates.email.images",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "properties": {
+         "image": {
+          "description": "PNG, JPEG, GIF or WebP file",
+          "format": "binary",
+          "type": "string"
+         }
+        },
+        "required": [
+         "image"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "height": {
+             "type": "integer"
+            },
+            "mime": {
+             "type": "string"
+            },
+            "name": {
+             "description": "path in the tenant storage",
+             "type": "string"
+            },
+            "size": {
+             "description": "bytes",
+             "type": "integer"
+            },
+            "url": {
+             "description": "public URL to put in mj-image src",
+             "type": "string"
+            },
+            "width": {
+             "type": "integer"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "the stored image"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "user doesn't have required access rights"
+     },
+     "422": {
+      "description": "not an accepted image, or too large"
+     },
+     "429": {
+      "description": "too many requests"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Upload an image for an e-mail template",
+    "tags": [
+     "Templates"
+    ]
+   }
+  },
   "/api/admin/templates/email/render": {
    "post": {
     "description": "Nothing is stored and nothing is sent. Returns the rendered HTML with the sample values of the event, the MJML errors reported by the renderer and accessibility warnings (warnings never fail the request). Throttled to 30 requests per minute per user.",

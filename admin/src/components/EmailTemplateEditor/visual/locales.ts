@@ -53,11 +53,49 @@ export const zhPlugin = {
   },
 };
 
+/** Strings of the Ulams additions (chips, shared parts, link and image fields) of the editor. */
+export const ulamsMessages: Record<string, { ulams: Record<string, string> }> = {
+  en: {
+    ulams: {
+      partial: 'Shared part {token}. Edit it in Settings; it cannot be changed here.',
+      href_variable: 'Link from a variable',
+      variable_none: 'Choose a variable',
+      choose_image: 'Choose or upload an image',
+    },
+  },
+  pl: {
+    ulams: {
+      partial: 'Część wspólna {token}. Edytuj ją w Ustawieniach, tutaj nie można jej zmienić.',
+      href_variable: 'Link ze zmiennej',
+      variable_none: 'Wybierz zmienną',
+      choose_image: 'Wybierz lub wgraj obraz',
+    },
+  },
+  zh: {
+    ulams: {
+      partial: '共享部分 {token}。请在“设置”中编辑，此处无法修改。',
+      href_variable: '来自变量的链接',
+      variable_none: '选择变量',
+      choose_image: '选择或上传图片',
+    },
+  },
+  fr: {
+    ulams: {
+      partial:
+        'Partie partagée {token}. Modifiez-la dans les Paramètres, elle ne peut pas être changée ici.',
+      href_variable: 'Lien depuis une variable',
+      variable_none: 'Choisir une variable',
+      choose_image: 'Choisir ou téléverser une image',
+    },
+  },
+};
+
 /** Locales of the editor UI. `detectLocale` stays off, the admin decides the language. */
 export const editorMessages: Record<string, Record<string, unknown>> = {
-  pl: { ...withDefault(plCore), ...withDefault(plPlugin) },
-  zh: { ...withDefault(zhCore), ...zhPlugin },
-  fr: { ...withDefault(frCore), ...withDefault(frPlugin) },
+  en: { ...ulamsMessages.en },
+  pl: { ...withDefault(plCore), ...withDefault(plPlugin), ...ulamsMessages.pl },
+  zh: { ...withDefault(zhCore), ...zhPlugin, ...ulamsMessages.zh },
+  fr: { ...withDefault(frCore), ...withDefault(frPlugin), ...ulamsMessages.fr },
 };
 
 /** Maps an admin locale (`pl-PL`) to a locale of the editor, English when there is none. */
@@ -65,3 +103,7 @@ export const editorLocale = (adminLocale: string | undefined): string => {
   const short = (adminLocale ?? 'en').toLowerCase().split(/[-_]/)[0];
   return short in editorMessages ? short : 'en';
 };
+
+/** Label of a locked shared part inside the canvas, `{token}` is replaced by the caller. */
+export const partialMessage = (adminLocale: string | undefined): string =>
+  ulamsMessages[editorLocale(adminLocale)].ulams.partial;

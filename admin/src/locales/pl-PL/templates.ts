@@ -54,5 +54,28 @@ export default {
   'templates.visual_diff_cancel': 'Zachowaj mój MJML',
   'templates.visual_canvas': 'Wizualny edytor e-maili',
   'templates.visual_variables_hint':
-    'Wpisz zmienną, na przykład @VarUserName, w bloku tekstowym. Wstawianie z tej listy działa tylko w trybie Kod.',
+    'Zaznacz blok tekstowy w wiadomości, a potem wybierz zmienną, aby dodać ją jako znacznik. Podczas edycji tekstu znacznik trafia w miejsce kursora, w przeciwnym razie na koniec bloku.',
+  'templates.visual_inserted': 'Wstawiono {token}.',
+  'templates.visual_select_text':
+    'Najpierw zaznacz blok tekstowy w wiadomości, a potem ponownie wybierz {token}.',
+  'templates.required_missing': 'Wymagane zmienne, które nie zostały jeszcze użyte',
+  'templates.shared_parts': 'Części wspólne',
+  'templates.shared_parts_hint':
+    'Te części pochodzą z Ustawień i są w edytorze zablokowane. Zmień je w Ustawieniach, a zaktualizują się wszystkie szablony, które z nich korzystają.',
+  'templates.shared_parts_edit': 'Edytuj w Ustawieniach',
+  'templates.image_title': 'Wstaw obraz',
+  'templates.image_hint':
+    'PNG, JPEG, GIF lub WebP do 2 MB. Obraz jest przechowywany w Twojej akademii, a wiadomość pobiera go stamtąd. SVG nie jest obsługiwany w wiadomościach e-mail.',
+  'templates.image_file': 'Plik obrazu',
+  'templates.image_wrong_type':
+    'Wybierz obraz PNG, JPEG, GIF lub WebP. SVG i inne pliki nie są akceptowane.',
+  'templates.image_too_large': 'Obraz jest większy niż 2 MB.',
+  'templates.image_failed': 'Nie udało się wgrać obrazu.',
+  'templates.image_uploading': 'Wgrywanie obrazu...',
+  'templates.image_alt': 'Tekst alternatywny',
+  'templates.image_alt_hint':
+    'Opisz obraz dla osób, które go nie widzą. Pole wymagane, chyba że obraz jest tylko dekoracją.',
+  'templates.image_decorative': 'Ten obraz jest dekoracyjny (bez tekstu alternatywnego)',
+  'templates.image_insert': 'Wstaw obraz',
+  'templates.image_cancel': 'Anuluj',
 };
