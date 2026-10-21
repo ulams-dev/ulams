@@ -20,6 +20,7 @@ use Ulams\Courses\Events\TopicProgressUpdated;
 use Ulams\Courses\Models\H5PUserProgress;
 use Ulams\LearnerInsights\Console\BackfillCommand;
 use Ulams\LearnerInsights\Console\CohortStatsCommand;
+use Ulams\LearnerInsights\Console\EvalCommand;
 use Ulams\LearnerInsights\Console\EvaluateCommand;
 use Ulams\LearnerInsights\Console\PruneCommand;
 use Ulams\LearnerInsights\Console\RetireRemediationsCommand;
@@ -114,7 +115,7 @@ class UlamsLearnerInsightsServiceProvider extends ServiceProvider
         Event::listen(AccountDeleted::class, fn (AccountDeleted $e) => $this->app->make(Privacy::class)->erase((int) $e->getUser()->getAuthIdentifier(), null, 'account_deleted'));
 
         if ($this->app->runningInConsole()) {
-            $this->commands([BackfillCommand::class, TimelineCommand::class, PruneCommand::class, EvaluateCommand::class, CohortStatsCommand::class, RetireRemediationsCommand::class]);
+            $this->commands([BackfillCommand::class, TimelineCommand::class, PruneCommand::class, EvaluateCommand::class, EvalCommand::class, CohortStatsCommand::class, RetireRemediationsCommand::class]);
         }
 
         // per tenant: `schedule:run` runs for the platform and for every tenant domain
