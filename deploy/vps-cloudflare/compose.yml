@@ -366,10 +366,11 @@ services:
         limits:
           memory: 256M
 
-  # MJML rendering for e-mail templates (internal only)
+  # MJML rendering for e-mail templates (internal only): the ulams MJML service (deploy/stack/mjml,
+  # MJML 4.x, POST /v1/render). The image has its own health check.
   mjml:
     <<: *service
-    image: danihodovic/mjml-server:4.15.3
+    image: ghcr.io/ulams-dev/mjml:${ULAMS_VERSION:?set ULAMS_VERSION}
     security_opt:
       - no-new-privileges:true
     deploy:

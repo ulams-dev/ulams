@@ -112,7 +112,7 @@ Services in `api/docker-compose.yml`, all on the `ulams` network:
 | `minio` | `bitnamilegacy/minio:latest` | S3-compatible storage; data in `api/docker/minio_storage` | `http://storage.localhost`, console at `http://minio.localhost` |
 | `mailhog` | `mailhog/mailhog` | Catches outgoing mail | http://localhost:8025 |
 | `adminer` | `adminer` | Database UI (server `postgres`, user `default`, password `secret`) | http://localhost:8078 |
-| `mjml` | `danihodovic/mjml-server` | MJML rendering for e-mail templates | internal |
+| `mjml` | built from `deploy/stack/mjml` | MJML rendering for e-mail templates | internal |
 | `soketi` | `quay.io/soketi/soketi:latest` | WebSocket server | `http://ws.localhost`, metrics at `http://metrics.localhost` |
 | `clamav` | `clamav/clamav:1.4` | Optional virus scanning of uploads | only with the `av` profile |
 
