@@ -611,6 +611,10 @@ jobs:
             docker pull "$src" && docker tag "$src" "$img"
           done
       - run: deploy/vps-cloudflare/scripts/validate.sh
+      - name: MyDevil PHP version check
+        run: |
+          sh deploy/mydevil/test/check-host-version.sh
+          docker run --rm -v "$PWD/deploy/mydevil:/mnt" koalaman/shellcheck:stable -e SC3045,SC2016 bin/check-host.sh test/check-host-version.sh
 
   # The PHP client in sdk-php/ is generated from front/cli/spec/openapi.json (openapi-generator, pinned image):
   # regenerate and fail on any difference, then run its tests against canned answers.

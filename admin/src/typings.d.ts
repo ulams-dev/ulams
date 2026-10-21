@@ -26,3 +26,6 @@ interface Window {
   /** Reference web app (AI Course Builder), e.g. https://coffee.app.example */
   REACT_APP_STUDIO_URL?: string;
 }
+
+declare module 'grapesjs/locale/*';
+declare module 'grapesjs-mjml/locale/*';
