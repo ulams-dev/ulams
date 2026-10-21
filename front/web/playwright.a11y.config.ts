@@ -45,6 +45,7 @@ export default defineConfig({
         ULAMS_CONTENT_ORIGIN: "",
         ULAMS_CACHE_TTL: "600",
         ULAMS_COOKIE_SECURE: "false",
+        ULAMS_SOCIAL_LOGIN: "google,facebook",
       },
     },
   ],
