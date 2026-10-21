@@ -19,8 +19,8 @@ in a shadow root so a host page's CSS cannot break them, and read their data wit
 | `<ulams-continue>` | One card: the course in progress (else the first unfinished one) and a link to its next topic | yes |
 
 The quiz, H5P, video and progress elements in `front/ui/src/elements` are part of the lesson
-player and only work inside the reference frontend. The tutor and certificate badge widgets wait
-for their APIs (the AI tutor and certificate verification are not on `main` yet).
+player and only work inside the reference frontend. The certificate badge widget waits for its
+milestone; the course tutor is described [below](#the-course-tutor).
 
 ## Use them
 
@@ -68,3 +68,38 @@ else becomes `#`.
   contrast on a white page.
 
 Tests: `front/ui/tests/widgets.test.ts` (rendering, attributes, errors, XSS, axe).
+
+## The course tutor
+
+`<ulams-tutor>` is a launcher button, "Ask the course tutor", that opens a panel where a learner asks
+questions and gets answers from the course only. Every answer is labelled "AI tutor · answers only
+from this course" and links to the lessons it comes from. The panel keeps the learner's earlier
+conversations of the course (they can reopen or delete them; they are removed automatically after
+the retention period) and shows how many questions are left today. While a quiz attempt is open it
+says so and explains concepts only.
+
+```html
+<script type="module">
+  import "@ulams/ui/elements/tutor.ts"; // through your bundler
+</script>
+<ulams-tutor course-id="5" topic-id="12" api-url="https://acme.ulams.app" token="LEARNER_TOKEN"
+  learn-href="https://learn.acme.example/learn/{course}/{topic}"></ulams-tutor>
+```
+
+| Attribute | Meaning | Default |
+|---|---|---|
+| `course-id` | The course the tutor answers from (required) | none |
+| `topic-id` | The lesson that is open; its content is added to the search | none |
+| `api-url`, `token` | As for the other widgets | `/bff` |
+| `learn-href` | Link template of the citations | `/learn/{course}/{topic}` |
+| `lang` | Interface language: `en`, `pl` or `zh` | the page language |
+
+The element asks `GET /api/tutor/courses/{course}/status` first and stays hidden when the tutor or AI
+is switched off for the tenant, or the learner may not attend the course. The panel script
+(about 17 KB gzipped) loads the first time the launcher is used. On a screen 720 px wide or more the
+panel is a side sheet and the lesson stays readable; on a phone it is a full-screen dialog. Esc and
+the close button return focus to the launcher. Answers are rendered from Markdown with raw HTML,
+images and unsafe links removed.
+
+Tests: `front/ui/tests/tutor-element.test.ts` and `front/web/tests/a11y/tutor.a11y.spec.ts` (axe,
+keyboard, layout).
