@@ -1,0 +1,8 @@
+{
+  "props": {
+    "items": [{ "label": "Brewing basics: the ratio" }, { "label": "Grind size and extraction", "href": "/learn/1/4" }]
+  },
+  "invalid": {
+    "items": []
+  }
+}

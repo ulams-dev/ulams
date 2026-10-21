@@ -1,0 +1,20 @@
+{
+  "props": {
+    "title": "Try it yourself",
+    "markdown": "Use the ratio from the worked example.",
+    "practice": {
+      "stem": "How much coffee do you need for 480 ml of water at a 1:16 ratio?",
+      "options": [
+        { "text": "20 g", "correct": false },
+        { "text": "30 g", "correct": true },
+        { "text": "48 g", "correct": false }
+      ],
+      "explanation": "480 divided by 16 is 30, so 30 g of coffee."
+    }
+  },
+  "invalid": {
+    "title": "One option only",
+    "markdown": "Too few options.",
+    "practice": { "stem": "Which one?", "options": [{ "text": "Only", "correct": true }], "explanation": "There must be at least two options." }
+  }
+}

@@ -527,7 +527,7 @@ Simulations (opt-in)
 
 Adaptive interface (feature flag)
 - [ ] Per-learner density, chunking, navigation, visible hints from Learner Insights (moved to `docs/plans/phase-4.md` M4.8; #59) (partial: presentation profile API merged, derived per request with learner overrides, #288; the front work is open)
-- [ ] Remediation components: Feynman reflection, elaborative questions, worked examples (moved to `docs/plans/phase-4.md` M4.5; #59) (partial: API and declarative blocks merged, #281; the catalogue components and the learner card are not built)
+- [ ] Remediation components: Feynman reflection, elaborative questions, worked examples (moved to `docs/plans/phase-4.md` M4.5; #59) (partial: API and declarative blocks merged, #281; M-UI1 in review: the catalogue components for the blocks, the manifest check before storage and the "Extra help for you" card; the Feynman reflection is M-UI2)
 - [ ] Surveys with SUS, UEQ, NASA-TLX + behavioural metrics
 
 Impact measurement

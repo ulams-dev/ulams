@@ -1,4 +1,4 @@
-import type { Tenant } from "@ulams/sdk";
+import type { InsightsCourse, InsightsMe, InsightsReason, InsightsSettings, SettingsChange, Tenant } from "@ulams/sdk";
 
 /**
  * "Personalisation & privacy" (Learner Insights, ADR 0061): the learner sees their own status with the reasons,
@@ -6,34 +6,7 @@ import type { Tenant } from "@ulams/sdk";
  * erases it. Plain forms posted to /account/personalisation, no script. The API scopes every call to the caller
  * and decides what is recorded; this module validates the forms and forwards with the learner's own token.
  */
-export interface InsightsReason {
-  rule: string;
-  message: string;
-}
-
-export interface InsightsCourse {
-  courseId: number;
-  title: string | null;
-  status: "on_track" | "struggling" | "at_risk";
-  reasons: InsightsReason[];
-  since: string | null;
-  elements: Array<{ elementKey: string; status: string; reasons: InsightsReason[] }>;
-}
-
-export interface InsightsSettings {
-  enabled: boolean;
-  help: boolean;
-  nudges: boolean;
-  consent: string | null;
-}
-
-export interface InsightsMe {
-  enabled: boolean;
-  settings: InsightsSettings;
-  requiresConsent: boolean;
-  courses: InsightsCourse[];
-  retention: { signalsDays: number; historyDays: number };
-}
+export type { InsightsCourse, InsightsMe, InsightsReason, InsightsSettings, SettingsChange };
 
 export type Failure = "unauthenticated" | "unavailable";
 
@@ -70,14 +43,6 @@ export async function getInsights(tenant: Pick<Tenant, "apiUrl">, token: string)
   } catch {
     return { ok: false, reason: "unavailable" };
   }
-}
-
-export interface SettingsChange {
-  enabled: boolean;
-  help: boolean;
-  nudges: boolean;
-  consent?: boolean;
-  eraseExisting?: boolean;
 }
 
 /** An unchecked checkbox is absent from a form post, so the form carries a marker and every switch is read by presence. */

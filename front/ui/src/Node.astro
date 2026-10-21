@@ -57,6 +57,13 @@ import Timeline from "./components/Timeline.astro";
 import FlipCards from "./components/FlipCards.astro";
 import CodeBlock from "./components/CodeBlock.astro";
 import PracticeActivity from "./components/PracticeActivity.astro";
+import WorkedExample from "./components/WorkedExample.astro";
+import PracticeQuestion from "./components/PracticeQuestion.astro";
+import ElaborativeQuestion from "./components/ElaborativeQuestion.astro";
+import CitationList from "./components/CitationList.astro";
+import AiLabel from "./components/AiLabel.astro";
+import WhyThis from "./components/WhyThis.astro";
+import SupportCard from "./components/SupportCard.astro";
 
 // Every registry entry must have an implementation (checked by the type below).
 const COMPONENTS: Record<ComponentName, (props: any) => any> = {
@@ -115,6 +122,13 @@ const COMPONENTS: Record<ComponentName, (props: any) => any> = {
   FlipCards,
   CodeBlock,
   PracticeActivity,
+  WorkedExample,
+  PracticeQuestion,
+  ElaborativeQuestion,
+  CitationList,
+  AiLabel,
+  WhyThis,
+  SupportCard,
 };
 
 interface Props {

@@ -72,3 +72,76 @@ for (const path of PAGES) {
     expect(looping, "no looping animation under prefers-reduced-motion").toEqual([]);
   });
 }
+
+/**
+ * "Extra help for you" by keyboard: every control is reached with Tab, toggles with Space or Enter, is at least
+ * 24 x 24 CSS px (2.5.8), and is never hidden behind the sticky player footer or header (2.4.11).
+ */
+const MOCK = process.env.MOCK_API_PORT ?? "4390";
+const helpHost = (project: string) => base(project === "desktop" ? "coffee" : "nightsky");
+
+test("keyboard: extra help feedback and hide", async ({ page }, info) => {
+  const slug = info.project.name === "desktop" ? "coffee" : "nightsky";
+  await page.request.post(`http://127.0.0.1:${MOCK}/__mock/reset?tenant=${slug}`);
+  await page.goto(`${helpHost(info.project.name)}/learn/1/11`, { waitUntil: "load" });
+  const helped = page.getByRole("button", { name: "This helped" });
+  await helped.focus();
+  await page.keyboard.press("Space");
+  await expect(helped).toHaveAttribute("aria-pressed", "true");
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Not helpful" })).toBeFocused();
+  await page.keyboard.press("Tab");
+  const hide = page.getByRole("button", { name: "Hide extra help for this lesson" });
+  await expect(hide).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("button", { name: "Keep it" })).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Yes, hide it" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("h1.u-player__title")).toBeFocused();
+  await expect(page.getByRole("region", { name: /Extra help for you/ })).toHaveCount(0);
+});
+
+test("keyboard: the practice question is answered with the arrow keys and Check", async ({ page }, info) => {
+  await page.goto(`${helpHost(info.project.name)}/learn/1/3`, { waitUntil: "load" });
+  const first = page.getByLabel("Coffea arabica");
+  await first.focus();
+  await page.keyboard.press("ArrowDown");
+  await expect(page.getByLabel("Coffea canephora")).toBeChecked();
+  await page.getByRole("button", { name: "Check" }).focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("ulams-practice-question [data-result]")).toContainText("Not quite.");
+});
+
+test("keyboard: every control of the cards is big enough and never behind the sticky footer or header", async ({ page }, info) => {
+  await page.goto(`${helpHost(info.project.name)}/learn/1/3`, { waitUntil: "load" });
+  const controls = page.locator("[data-status='ready'] button:visible, [data-status='ready'] input:visible, [data-status='ready'] textarea:visible, [data-status='ready'] summary:visible");
+  const count = await controls.count();
+  expect(count).toBeGreaterThan(5);
+  for (let i = 0; i < count; i++) {
+    const control = controls.nth(i);
+    await control.focus();
+    const report = await control.evaluate((el) => {
+      const box = el.getBoundingClientRect();
+      const label = el.closest("label")?.getBoundingClientRect();
+      const bar = document.querySelector(".u-player__bar")?.getBoundingClientRect();
+      const top = document.querySelector(".u-player__top")?.getBoundingClientRect();
+      const overlaps = (r?: DOMRect) => Boolean(r) && box.bottom > r!.top && box.top < r!.bottom && box.right > r!.left && box.left < r!.right;
+      return {
+        name: `${el.tagName.toLowerCase()} ${(el.textContent ?? "").trim().slice(0, 30)}`,
+        width: Math.max(box.width, label?.width ?? 0),
+        height: Math.max(box.height, label?.height ?? 0),
+        hiddenBy: overlaps(bar) ? "footer" : overlaps(top) ? "header" : "",
+      };
+    });
+    expect(report.width, `${report.name} width`).toBeGreaterThanOrEqual(24);
+    expect(report.height, `${report.name} height`).toBeGreaterThanOrEqual(24);
+    expect(report.hiddenBy, `${report.name} is covered by the ${report.hiddenBy}`).toBe("");
+  }
+});
+
+test("reduced motion: the extra help cards do not animate", async ({ page }, info) => {
+  await page.goto(`${helpHost(info.project.name)}/learn/1/3`, { waitUntil: "load" });
+  const animated = await page.evaluate(() => [...document.querySelectorAll("[data-status='ready'], [data-status='ready'] *")].flatMap((el) => el.getAnimations().map(() => el.tagName)));
+  expect(animated, "no animation under prefers-reduced-motion").toEqual([]);
+});

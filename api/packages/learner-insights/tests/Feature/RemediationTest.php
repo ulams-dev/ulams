@@ -16,6 +16,7 @@ use Ulams\LearnerInsights\Models\Intervention;
 use Ulams\LearnerInsights\Models\Remediation;
 use Ulams\LearnerInsights\Models\RemediationAssignment;
 use Ulams\LearnerInsights\Models\Signal;
+use Ulams\LearnerInsights\Remediation\RemediationManifest;
 use Ulams\LearnerInsights\Remediation\RemediationService;
 use Ulams\LearnerInsights\Services\SignalRecorder;
 use Ulams\LearnerInsights\Signals\SignalData;
@@ -174,6 +175,38 @@ class RemediationTest extends TestCase
         $this->struggle($this->enrolled());
 
         $this->assertSame(Remediation::FAILED, Remediation::query()->where('kind', 'explanation')->value('status'));
+    }
+
+    public function testABlockThatTheLearnerPageCannotRenderFailsTheRemediation(): void
+    {
+        // a stricter copy of the manifest: generated prose may be at most 3 characters long
+        $manifest = json_decode((string) file_get_contents(__DIR__ . '/../../resources/remediation-manifest.json'), true);
+        $manifest['components']['Prose']['props']['properties']['markdown']['maxLength'] = 3;
+        $path = tempnam(sys_get_temp_dir(), 'remediation-manifest');
+        file_put_contents($path, json_encode($manifest));
+        $this->app->instance(RemediationManifest::class, new RemediationManifest($path));
+        $user = $this->enrolled();
+
+        $this->struggle($user);
+
+        @unlink($path);
+        $explanation = Remediation::query()->where('kind', 'explanation')->firstOrFail();
+        $this->assertSame(Remediation::FAILED, $explanation->status);
+        $this->assertSame(['invalid_block'], $explanation->flags);
+        $this->assertNull($explanation->document);
+        $this->assertCount(0, array_filter($this->support($user)->json('data.items'), fn ($i) => $i['kind'] === 'explanation'));
+    }
+
+    public function testEveryStoredBlockMatchesTheCatalogueManifest(): void
+    {
+        $this->struggle($this->enrolled());
+
+        $manifest = new RemediationManifest();
+        $stored = Remediation::query()->where('status', Remediation::READY)->get();
+        $this->assertCount(2, $stored);
+        foreach ($stored as $remediation) {
+            $this->assertSame([], $manifest->validate($remediation->document['blocks']), $remediation->kind);
+        }
     }
 
     public function testPreferencesAndSwitchesStopHelp(): void

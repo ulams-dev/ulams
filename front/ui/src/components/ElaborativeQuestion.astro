@@ -1,0 +1,66 @@
+---
+import { renderMarkdown } from "../lib/markdown.ts";
+import { pageLocale, uiStrings } from "../lib/i18n.ts";
+
+interface Props {
+  title: string;
+  markdown: string;
+  locale?: string;
+  id?: string;
+}
+const { title, markdown, locale, id } = Astro.props;
+const t = uiStrings(locale ?? pageLocale(Astro));
+const hash = [...`${title}|${markdown}`].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) >>> 0, 7).toString(36);
+const key = id ?? hash;
+const html = renderMarkdown(markdown);
+---
+
+<article class="u-eq" id={id} aria-labelledby={`u-eq-${key}-title`}>
+  <h3 class="u-eq__title" id={`u-eq-${key}-title`}>{title}</h3>
+  <div class="u-eq__body" set:html={html} />
+  <label class="u-eq__label" for={`u-eq-${key}-notes`}>{t.supportThoughts}</label>
+  <textarea class="u-eq__notes" id={`u-eq-${key}-notes`} rows="4" maxlength="2000" autocomplete="off" spellcheck="true"></textarea>
+</article>
+
+<style>
+  .u-eq {
+    display: grid;
+    gap: 0.6em;
+    padding: 14px 16px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    border-left: 4px solid var(--ulams-color-accent, var(--ulams-color-primary));
+    background: var(--ulams-color-card-bg);
+  }
+  .u-eq__title {
+    font-size: 1.1rem;
+    line-height: 1.3;
+    color: var(--ulams-color-header);
+  }
+  .u-eq__body {
+    max-width: 70ch;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+  }
+  .u-eq__body :global(> * + *) {
+    margin-top: 0.8em;
+  }
+  .u-eq__label {
+    font-weight: 600;
+  }
+  .u-eq__notes {
+    width: 100%;
+    max-width: 70ch;
+    padding: 10px 12px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    background: var(--ulams-color-bg, #fff);
+    color: inherit;
+    font: inherit;
+    resize: vertical;
+  }
+  .u-eq__notes:focus-visible {
+    outline: 2px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+</style>
