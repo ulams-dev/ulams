@@ -1921,6 +1921,89 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/code-exercises/launches/{topic}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Open a code exercise
+         * @description Code exercises (ADR 0170). The exercise runs in the browser sandbox on the tenant content origin; this
+         *     API hands the page the exercise and the runner's address, and records the results the page reports for
+         *     the learner's own session (no token ever reaches the frame).
+         */
+        post: operations["code-exercises.launches.by-topic.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/code-exercises/topics/{topic}/attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My attempts at a code exercise */
+        get: operations["code-exercises.topics.by-topic.attempts.get"];
+        put?: never;
+        /**
+         * Report the result of a run
+         * @description The learner's browser ran the visible tests and reports each test's result. The score is recomputed here and the attempt is stored as a practice attempt (verified = false): it moves the topic's progress by its completion rule and records a learner signal, and never counts for certificates or compliance.
+         */
+        post: operations["code-exercises.topics.by-topic.attempts.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/code-exercises/topics/{topic}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Preview a code exercise as its author
+         * @description The same answer as a launch, for a user who may edit the course. Nothing is tracked.
+         */
+        get: operations["admin.code-exercises.topics.by-topic.preview.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/code-exercises/topics/{topic}/attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Attempts at a code exercise (teacher report)
+         * @description Every learner's attempts at the exercise, newest first, for a user who may edit the course. Practice attempts are marked verified = false.
+         */
+        get: operations["admin.code-exercises.topics.by-topic.attempts.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/commerce/webhooks/{provider}": {
         parameters: {
             query?: never;
@@ -10480,6 +10563,29 @@ export interface components {
             /** @description order */
             order?: number;
         };
+        TopicCodeExercise: {
+            id?: number;
+            /** @enum {string} */
+            language: "javascript" | "typescript";
+            /** @description Starter files (a JSON string is accepted in multipart requests): at most 20, 64 KB each, 256 KB together */
+            files: {
+                path?: string;
+                content?: string;
+            }[];
+            /** @description Test files the learner can read and run in the browser */
+            visible_tests: {
+                path?: string;
+                content?: string;
+            }[];
+            /** @description A run is stopped after this long (500 to 30000) */
+            timeout_ms?: number;
+            /** @enum {string} */
+            completion_rule?: "on_pass" | "on_attempt";
+            /** @description Percentage of passing tests that completes the topic (on_pass) */
+            pass_score?: number;
+            /** @description The task, in Markdown */
+            text?: string | null;
+        };
         AdminApproveConsultationAccessEnquiryRequest: {
             /** @description meeting_link */
             meeting_link?: string;
@@ -16841,6 +16947,266 @@ export interface operations {
             };
             /** @description Server-side error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "code-exercises.launches.by-topic.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {runner: {url, version}, exercise, attempts}; runner.url is the sandboxed runner page on the content origin */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise, or the type is switched off */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no content origin */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "code-exercises.topics.by-topic.attempts.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The caller's own attempts, newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "code-exercises.topics.by-topic.attempts.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    results: {
+                        name: string;
+                        /** @enum {string} */
+                        status: "pass" | "fail" | "error";
+                        message?: string | null;
+                    }[];
+                    /** @description sha256 of the submitted files */
+                    files_hash?: string | null;
+                    runner?: string | null;
+                    duration_ms?: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description {attempt, status}; status 1 means the topic is complete */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid result */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.code-exercises.topics.by-topic.preview.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {runner, exercise} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed to edit the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no content origin */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.code-exercises.topics.by-topic.attempts.get": {
+        parameters: {
+            query?: {
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A page of attempts with the learner's id and name */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed to edit the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

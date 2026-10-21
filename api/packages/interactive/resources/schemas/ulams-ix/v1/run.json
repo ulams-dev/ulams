@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/ulams-ix/v1/run.json",
+  "title": "run",
+  "description": "Parent to runner (code exercises, ADR 0170). Run the loaded tests against these files. Messages of this type may be up to 640 KB.",
+  "type": "object",
+  "required": [
+    "ulams-ix",
+    "type",
+    "nonce",
+    "runId",
+    "files"
+  ],
+  "properties": {
+    "ulams-ix": {
+      "const": 1
+    },
+    "type": {
+      "const": "run"
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "runId": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 2147483647
+    },
+    "files": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "required": [
+          "path",
+          "content"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_][A-Za-z0-9_./-]{0,79}$"
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 65536
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

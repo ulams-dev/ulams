@@ -11,6 +11,7 @@ import { LEARNER_LAYOUT_COMPONENTS, registry, type ComponentName, type ThemeName
 import { stripLeadingTitle } from "@ulams/ui/markdown";
 import { validate } from "@ulams/ui/schema";
 import { interactiveNode, type InteractiveResult } from "./interactive.ts";
+import { codeExerciseNode, type CodeExerciseResult } from "./code-exercise.ts";
 import { DEFAULT_PRESENTATION, proseNode, withInitialHints } from "./presentation.ts";
 import { FORMAT_BY_KIND, type CourseModel, type SiteModel } from "./view-model.ts";
 
@@ -134,6 +135,8 @@ export interface TopicDocInput {
   liascript?: { url: string; sections?: number } | { error: string } | null;
   /** For Interactive topics: the launch (or the author preview) result (see interactiveLaunch). */
   interactive?: InteractiveResult | null;
+  /** For code exercise topics: the launch (or the author preview) result (see codeExerciseLaunch). */
+  codeExercise?: CodeExerciseResult | null;
   /** For external-tool topics: the LTI launch (see ltiLaunch). */
   lti?: { url: string; presentation: string; tool: string } | { error: string } | null;
   /** Author preview: nothing that records progress runs (quizzes, tracked launches, H5P xAPI). */
@@ -170,7 +173,7 @@ export function layoutNodes(topicable: unknown): UiNode[] | null {
 }
 
 /** Body of the lesson player for one topic. */
-export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, cmi5Src = null, liascript = null, interactive = null, lti = null, preview = false, presentation = DEFAULT_PRESENTATION, locale = "en" }: TopicDocInput): UiNode {
+export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, cmi5Src = null, liascript = null, interactive = null, codeExercise = null, lti = null, preview = false, presentation = DEFAULT_PRESENTATION, locale = "en" }: TopicDocInput): UiNode {
   const kind = topicKind(topic.topicable_type);
   const s = playerStrings(locale);
   const t = (topic.topicable ?? {}) as Record<string, unknown>;
@@ -312,6 +315,18 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
       if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
       break;
     }
+    case "code_exercise": {
+      children.push(
+        !codeExercise && preview
+          ? { component: "Callout", props: { tone: "key", title: "Not run in preview", text: "Learners edit and run this exercise here, and each run is stored as a practice attempt. This preview does not start it, so nothing is recorded." } }
+          : codeExerciseNode(codeExercise, { title: topic.title, course, topicId: topic.id, preview, locale })
+      );
+      // the topic's own text still shows when the exercise cannot be opened
+      const own = str(t.text);
+      if (own && (!codeExercise || "error" in codeExercise)) children.push({ component: "Prose", props: { markdown: own } });
+      if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
+      break;
+    }
     case "layout": {
       // catalogue components from the stored document (ADR 0052); an invalid document shows the fallback
       const nodes = layoutNodes(t);
@@ -380,6 +395,9 @@ export function completionMode(topic: Topic): "view" | "manual" | "media" | "h5p
       return "h5p";
     case "interactive":
       // the package completes the topic through the bridge: `ulams:complete` from <ulams-interactive>
+      return "external";
+    case "code_exercise":
+      // a passing run (or any run, by the exercise's rule) completes the topic: `ulams:complete` from <ulams-code-exercise>
       return "external";
     case "layout":
       // viewed, except that a practice activity completes the topic with its first checked attempt

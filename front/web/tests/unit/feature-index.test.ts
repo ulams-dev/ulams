@@ -11,9 +11,9 @@ const index = (doc: UiNode): Index => doc.children!.find((n) => n.component === 
 const en = index(comparisonDocFor("en")!);
 
 describe("comparison stakeholder feature catalogue", () => {
-  it("restores all 101 descriptions and 54 H5P content types", () => {
+  it("restores all 102 descriptions and 54 H5P content types", () => {
     const items = en.groups.flatMap((g) => g.items);
-    expect(items).toHaveLength(101);
+    expect(items).toHaveLength(102);
     expect(items.every((item) => item.text.length > 0)).toBe(true);
     expect(en.groups.find((g) => g.id === "h5p")!.tags).toHaveLength(54);
   });

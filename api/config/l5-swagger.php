@@ -51,6 +51,7 @@ return [
                     base_path('packages/lti/src'),
                     base_path('packages/liascript/src'),
                     base_path('packages/interactive/src'),
+                    base_path('packages/code-exercises/src'),
                     base_path('packages/adapt/src'),
                     base_path('packages/compliance/src'),
                     base_path('packages/notifications/src'),

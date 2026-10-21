@@ -163,6 +163,9 @@
     <testsuite name="interactive">
       <directory suffix="Test.php">./packages/interactive/tests</directory>
     </testsuite>
+    <testsuite name="code-exercises">
+      <directory suffix="Test.php">./packages/code-exercises/tests</directory>
+    </testsuite>
     <testsuite name="lti">
       <directory suffix="Test.php">./packages/lti/tests</directory>
     </testsuite>
@@ -250,6 +253,7 @@
       <directory suffix=".php">./packages/lti/</directory>
       <directory suffix=".php">./packages/liascript/</directory>
       <directory suffix=".php">./packages/interactive/</directory>
+      <directory suffix=".php">./packages/code-exercises/</directory>
       <directory suffix=".php">./packages/adapt/</directory>
       <directory suffix=".php">./packages/compliance/</directory>
       <directory suffix=".php">./packages/ai/</directory>

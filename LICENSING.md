@@ -21,6 +21,7 @@ that has no closer licence file. This page is an engineering summary, not legal 
 | `admin/src/lib/markdown-editor` | BSD-3-Clause, © General Outline, Inc. | The notice must be reproduced in distributed builds |
 | `admin/src/lib/gift-pegjs` | MIT, © Christopher P. Fuhrman | |
 | `front/interactive-bridge` | MIT | The `ulams-ix` bridge (ADR 0087); packages under any licence may include it |
+| `front/code-runner` | MIT | The browser runner of code exercises (ADR 0170); its built files ship in `api/packages/code-exercises/resources/runtime/` |
 | `demo-content/*` | MIT for code, CC BY 4.0 for course text and data; exceptions are named in each package's `NOTICE` | Content packages for the demo academies, played only as sandboxed content (ADR 0088); nothing outside the folder imports them (lint) |
 
 ## Rules for the codebase
@@ -54,6 +55,7 @@ that has no closer licence file. This page is an engineering summary, not legal 
 | `league/html-to-markdown` | MIT | `api/packages/living-course` | Converts web pages of the URL connector to Markdown before fragmenting; used unmodified |
 | `@ag-ui/core` | MIT | `front/sdk` | AG-UI event types; its schemas subpath (zod) is only used in tests |
 | `@ulams/interactive-bridge` | MIT | `front/interactive-bridge` | The `ulams-ix` bridge (own code, no dependencies) |
+| `esbuild-wasm` | MIT, © Evan Wallace | `front/code-runner` | Bundles a code exercise in the learner's browser (ADR 0170). `lib/browser.min.js` is committed unchanged in `api/packages/code-exercises/resources/runtime/code-runner/1/` and `esbuild.wasm` (14 MB) is fetched at image build, pinned by checksum (`bin/fetch-esbuild.sh`); keep its notice in distributed builds |
 | `diff` (jsdiff) | BSD-3-Clause | `front/ui` | Word-level diffs in the builder's DiffView; keep its notice in distributed bundles |
 | `grapesjs` | BSD-3-Clause | `admin` | Visual e-mail template editor (ADR 0107); lazy chunk, keep its notice in distributed bundles |
 | `grapesjs-mjml` | BSD-3-Clause | `admin` | MJML plugin of the editor; its `mjml-browser` (MIT) is vendored in the bundle; the broken `@types/mjml-core@~4.18` range is pinned to 4.15.2 through `resolutions` (types only) |

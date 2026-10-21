@@ -14,7 +14,7 @@ final class SignalWindow
         SignalType::COURSE_STARTED, SignalType::TOPIC_OPENED, SignalType::TOPIC_PROGRESSED, SignalType::TOPIC_COMPLETED,
         SignalType::QUIZ_ATTEMPT_STARTED, SignalType::QUIZ_ATTEMPT_FINISHED, SignalType::QUIZ_ANSWER,
         SignalType::SCORM_STATUS, SignalType::XAPI_RESULT, SignalType::H5P_RESULT,
-        SignalType::MEDIA_REPLAYED, SignalType::MEDIA_SEEKED_BACK, SignalType::TUTOR_QUESTION,
+        SignalType::MEDIA_REPLAYED, SignalType::MEDIA_SEEKED_BACK, SignalType::TUTOR_QUESTION, SignalType::CODE_ATTEMPT_FINISHED,
     ];
 
     /** @param Collection<int,Signal> $signals */

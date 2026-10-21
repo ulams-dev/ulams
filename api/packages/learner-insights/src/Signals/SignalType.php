@@ -27,8 +27,9 @@ final class SignalType
     public const NUDGE_SENT = 'nudge.sent';
     public const NUDGE_OPENED = 'nudge.opened';
     public const TUTOR_QUESTION = 'tutor.question';
+    public const CODE_ATTEMPT_FINISHED = 'code.attempt_finished';
 
-    public const SOURCES = ['progress', 'gift', 'scorm', 'lrs', 'h5p', 'auth', 'client', 'tutor', 'remediation', 'nudge', 'backfill'];
+    public const SOURCES = ['progress', 'gift', 'scorm', 'lrs', 'h5p', 'auth', 'client', 'tutor', 'remediation', 'nudge', 'backfill', 'code'];
 
     /** Types a browser may send through POST /api/learner-insights/signals. */
     public const CLIENT_TYPES = [self::MEDIA_REPLAYED, self::MEDIA_SEEKED_BACK];
@@ -54,6 +55,7 @@ final class SignalType
         self::NUDGE_SENT => ['nudge_id', 'channel'],
         self::NUDGE_OPENED => ['nudge_id', 'channel'],
         self::TUTOR_QUESTION => ['conversation_id'],
+        self::CODE_ATTEMPT_FINISHED => ['attempt_no', 'passed', 'verified'],
     ];
 
     public const MAX_DATA_BYTES = 2048;

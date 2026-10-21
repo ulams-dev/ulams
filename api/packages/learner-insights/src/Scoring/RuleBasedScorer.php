@@ -12,7 +12,7 @@ use Ulams\LearnerInsights\Signals\SignalType;
  */
 final class RuleBasedScorer implements RiskScorer
 {
-    public const VERSION = '1';
+    public const VERSION = '2';
 
     public function key(): string
     {
@@ -113,8 +113,9 @@ final class RuleBasedScorer implements RiskScorer
             }
         }
 
-        // failed attempts of the same quiz since the last pass
-        $byQuiz = $ctx->signals->ofType(SignalType::QUIZ_ATTEMPT_FINISHED)->groupBy('element_key');
+        // failed attempts of the same quiz or code exercise since the last pass (practice attempts count: this is
+        // information for the learner and the teacher, never a grade)
+        $byQuiz = $ctx->signals->ofType(SignalType::QUIZ_ATTEMPT_FINISHED, SignalType::CODE_ATTEMPT_FINISHED)->groupBy('element_key');
         foreach ($byQuiz as $key => $attempts) {
             $failures = 0;
             foreach ($attempts as $attempt) {

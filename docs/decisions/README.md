@@ -131,7 +131,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0142](0142-scoped-admins-by-group.md) | Scoped admins for partner and customer portals, scoped by group | Proposed |
 | [0160](0160-course-as-code-sync-through-blueprint-v3-import-versions.md) | Course-as-code sync through Blueprint v3 import versions | Accepted |
 | [0161](0161-cli-release-engineering.md) | CLI release engineering: release-please, npm trusted publishing, attested binaries | Proposed |
-| [0170](0170-code-exercise-runners.md) | Code exercises run in our own browser runner inside the opaque content-origin sandbox, with an optional gVisor server runner for verified grading | Proposed |
+| [0170](0170-code-exercise-runners.md) | Code exercises run in our own browser runner inside the opaque content-origin sandbox, with an optional gVisor server runner for verified grading | Accepted |
 | [0171](0171-extension-manifest-and-trust-model.md) | Extensions: operator-installed composer packages with an `ulams-extension.json` manifest, per-point contract versions and optional Sigstore signing | Proposed |
 | [0172](0172-hosted-mcp-gateway-on-cloudflare-workers.md) | Hosted MCP gateway on Cloudflare Workers sharing the CLI tool registry, OAuth at the gateway and scoped tokens upstream | Proposed |
 | [0180](0180-experiment-assignment-exposure-and-statistics.md) | Course experiments: salted assignment, exposure logging and fixed-horizon statistics with guard rails | Proposed |

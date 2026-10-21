@@ -5,6 +5,7 @@ import {
   AudioOutlined,
   BookOutlined,
   CarryOutOutlined,
+  CodeOutlined,
   ExperimentOutlined,
   FileImageOutlined,
   FilePdfOutlined,
@@ -22,6 +23,7 @@ import {
 import { Button, Divider, Space, Tooltip } from 'antd';
 import { useCallback, useState } from 'react';
 
+import { isCodeExercisesEnabled } from '@/services/ulams/codeExercise';
 import { TopicType } from '@/services/ulams/enums';
 import { isInteractiveEnabled } from '@/services/ulams/interactive';
 import { FormattedMessage, useIntl, useModel } from 'umi';
@@ -200,6 +202,20 @@ export const TopicTypesSelector: React.FC<{
                 block
                 onClick={() => setSelected(TopicType.Interactive)}
                 icon={<ExperimentOutlined />}
+              />
+            </Tooltip>
+          )}
+        {!positionsToHide?.includes(TopicType.CodeExercise) &&
+          !topicTypeIsDisabled(TopicType.CodeExercise) &&
+          isCodeExercisesEnabled(initialState?.publicConfig) && (
+            <Tooltip
+              placement="right"
+              title={<FormattedMessage id="CodeExercise" defaultMessage="Code exercise" />}
+            >
+              <Button
+                block
+                onClick={() => setSelected(TopicType.CodeExercise)}
+                icon={<CodeOutlined />}
               />
             </Tooltip>
           )}

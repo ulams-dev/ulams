@@ -24,7 +24,7 @@ env:
   # Every <testsuite> in api/phpunit.xml must appear exactly once (checked in each shard).
   # Grouped by package area and balanced on local run times (~100-130 s of tests per shard).
   PHPUNIT_SHARDS: |
-    learning=courses,course-access,courses-import-export,scorm,cmi5,h5p,lrs,bookmarks_notes,video,uploads,lti,liascript,interactive,adapt,course-builder
+    learning=courses,course-access,courses-import-export,scorm,cmi5,h5p,lrs,bookmarks_notes,video,uploads,lti,liascript,interactive,code-exercises,adapt,course-builder
     living=living-course,learner-insights,tutor,knowledge-export
     tasks-topics=tasks,topic-types,topic-type-layout,topic-type-project,categories,tags,stationary-events
     gift-reports=topic-type-gift,reports,dictionaries
@@ -181,10 +181,11 @@ jobs:
 
       # The reference frontend and its libraries: typecheck, lint and unit tests. Playwright e2e and
       # visual need the whole stack and stay out of CI; the axe suite has its own job (web-a11y).
-      - name: Typecheck, lint, test (web, ui, sdk, interactive-bridge)
+      # @ulams/code-runner: its test also fails when the runner files committed in api/packages/code-exercises are stale.
+      - name: Typecheck, lint, test (web, ui, sdk, interactive-bridge, code-runner)
         run: >-
           corepack yarn turbo run typecheck lint test
-          --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk --filter=@ulams/interactive-bridge
+          --filter=@ulams/web --filter=@ulams/ui --filter=@ulams/sdk --filter=@ulams/interactive-bridge --filter=@ulams/code-runner
           --concurrency=2
 
       # Interactive content packages (ADR 0088): the boundary lint, manifests, unit tests and the gravity build.

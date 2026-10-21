@@ -16,6 +16,7 @@ import LessonView from "./LessonView.astro";
 import PreviewBanner from "./PreviewBanner.astro";
 import { apiFor, cmi5Launch, getLearnerNotices, getPublicConfig, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../lib/data.ts";
 import { interactiveLaunch, interactivePreview, isImmersive } from "../lib/interactive.ts";
+import { codeExerciseLaunch, codeExercisePreview } from "../lib/code-exercise.ts";
 import { completionMode, formatOf, topicDoc, topicMinutes } from "../lib/page-docs.ts";
 import { NO_NOTICES, topicNoticeDocs } from "../lib/notices.ts";
 import { getPresentation, profileOf } from "../lib/presentation.ts";
@@ -125,9 +126,19 @@ const interactive = !interactiveTopic
       ? await interactiveLaunch(tenant, token!, topic.id)
       : null;
 const immersive = isImmersive(interactive);
+// Code exercise: the exercise and the runner's address on the content origin; the page reports each run through the BFF.
+const codeExercise = !topic.topicable_type.endsWith("\\CodeExerciseTopic")
+  ? null
+  : preview
+    ? authorToken
+      ? await codeExercisePreview(tenant, authorToken, topic.id)
+      : null
+    : access && tracked
+      ? await codeExerciseLaunch(tenant, token!, topic.id)
+      : null;
 // External tool (LTI 1.3): the tool's login URL with a single-use hint; scores come back through AGS.
 const lti = topic.topicable_type.endsWith("\\LtiLink") && access && tracked ? await ltiLaunch(tenant, token!, topic.id) : null;
-const doc = custom ? null : topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, cmi5Src, liascript, interactive, lti, preview: Boolean(preview), presentation, locale });
+const doc = custom ? null : topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, cmi5Src, liascript, interactive, codeExercise, lti, preview: Boolean(preview), presentation, locale });
 const format = formatOf(topic);
 const minutes = topicMinutes(topic);
 const lessonNoun = t.lessonNoun[themeKey(theme)];

@@ -104,6 +104,8 @@ class UlamsLearnerInsightsServiceProvider extends ServiceProvider
         Event::listen(TopicProgressUpdated::class, [RecordSignals::class, 'topicProgressed']);
         Event::listen(QuizAttemptStartedEvent::class, [RecordSignals::class, 'quizStarted']);
         Event::listen(QuizAttemptFinishedEvent::class, [RecordSignals::class, 'quizFinished']);
+        // the code exercises package is optional: its event is named by string, so nothing is loaded without it
+        Event::listen('Ulams\\CodeExercises\\Events\\CodeAttemptFinished', [RecordSignals::class, 'codeFinished']);
         Event::listen(ScormScoCompleted::class, [RecordSignals::class, 'scormCompleted']);
         Event::listen(Login::class, [RecordSignals::class, 'login']);
         H5PUserProgress::saved(fn (H5PUserProgress $p) => $this->app->make(RecordSignals::class)->h5pProgress($p));

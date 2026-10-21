@@ -20,6 +20,7 @@ export const TOPIC_CLASSES = {
   liascript: "Ulams\\LiaScript\\Models\\LiaScriptTopic",
   interactive: "Ulams\\Interactive\\Models\\InteractiveTopic",
   layout: "Ulams\\TopicTypeLayout\\Models\\LayoutTopic",
+  code_exercise: "Ulams\\CodeExercises\\Models\\CodeExerciseTopic",
   quiz: "Ulams\\TopicTypeGift\\Models\\GiftQuiz",
   project: "Ulams\\TopicTypeProject\\Models\\Project",
   lti: "Ulams\\Lti\\Models\\LtiLink",
@@ -347,6 +348,41 @@ export const topicCommands: AnyCommand[] = [
     plan: plan(["POST /api/admin/topics (LayoutTopic)"]),
     async run(ctx, i) {
       return { data: await createTopic(ctx, i, { type: "layout", value: undefined, extra: { document: i.document, markdown_fallback: i.fallback } }) };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "topics.create-code-exercise",
+    summary: "Create a code exercise topic: starter files and visible tests the learner runs in the browser sandbox",
+    description:
+      "A code exercise topic gives the learner files to edit and tests to run, in the browser, in an isolated sandbox with no network (JavaScript and TypeScript). --files are the starter files and --tests the visible test files: each a JSON (or YAML) list of { path, content }, inline or @path. Test files call test(name, fn) and expect(value).toBe(...) (also toEqual, toThrow, toContain and the usual matchers) and import the learner's files with relative paths. Limits: 20 files and 10 test files, 64 KB each, 256 KB together; paths are relative, without .. or hidden names; JavaScript allows .js .mjs .json .txt .md and TypeScript also .ts. --timeout-ms (500 to 30000, default 5000) stops a run. The topic completes after a passing run (--completion on_pass, with --pass-score as the percentage of passing tests, default 100) or after any run (--completion on_attempt). A run is a practice attempt: it moves progress but never counts for certificates or compliance. The API validates every file and answers 422 with the field of each problem.",
+    endpoints: ["POST /api/admin/topics"],
+    input: z.object({
+      ...base,
+      language: z.enum(["javascript", "typescript"]).default("javascript").describe("Language of the exercise."),
+      files: z.array(z.object({ path: z.string(), content: z.string() })).min(1).describe("Starter files: a JSON list of { path, content }, inline or @path."),
+      tests: z.array(z.object({ path: z.string(), content: z.string() })).min(1).describe("Visible test files: a JSON list of { path, content }, inline or @path."),
+      timeoutMs: z.number().int().min(500).max(30000).optional().describe("Stop a run after this many milliseconds (default 5000)."),
+      completion: z.enum(["on_pass", "on_attempt"]).default("on_pass").describe("When the topic completes."),
+      passScore: z.number().int().min(1).max(100).optional().describe("Percentage of passing tests that completes the topic (--completion on_pass; default 100)."),
+      text: z.string().optional().meta({ fileInput: true }).describe("The task in Markdown, or @path."),
+    }),
+    output: z.unknown(),
+    examples: [
+      { title: "A JavaScript exercise with one starter file and its tests", argv: "topics create-code-exercise --lesson 12 --title \"Make sum add\" --files @starter.json --tests @tests.json --text @task.md --json" },
+    ],
+    plan: plan(["POST /api/admin/topics (CodeExerciseTopic)"]),
+    async run(ctx, i) {
+      const extra = {
+        language: i.language,
+        files: i.files,
+        visible_tests: i.tests,
+        completion_rule: i.completion,
+        ...(i.timeoutMs !== undefined ? { timeout_ms: i.timeoutMs } : {}),
+        ...(i.passScore !== undefined ? { pass_score: i.passScore } : {}),
+        ...(i.text !== undefined ? { text: i.text } : {}),
+      };
+      return { data: await createTopic(ctx, i, { type: "code_exercise", value: undefined, extra }) };
     },
   }),
   defineCommand({

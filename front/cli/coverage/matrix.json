@@ -1,5 +1,5 @@
 {
- "summary": "596/671 covered, 75 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "596/676 covered, 80 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -150,6 +150,18 @@
    "summary": "Delete cmi5 package by id",
    "command": "cmi5.delete",
    "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/code-exercises/topics/{topic}/attempts",
+   "summary": "Attempts at a code exercise (teacher report)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/admin/code-exercises/topics/{topic}/preview",
+   "summary": "Preview a code exercise as its author",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/admin/compliance/assignments",
@@ -2854,6 +2866,24 @@
   {
    "key": "GET /api/cmi5/player/{cmi5AuId}",
    "summary": "Launch a cmi5 AU",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/code-exercises/launches/{topic}",
+   "summary": "Open a code exercise",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "GET /api/code-exercises/topics/{topic}/attempts",
+   "summary": "My attempts at a code exercise",
+   "command": "",
+   "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/code-exercises/topics/{topic}/attempts",
+   "summary": "Report the result of a run",
    "command": "",
    "status": "excluded: content-runtime"
   },

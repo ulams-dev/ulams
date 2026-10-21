@@ -28,6 +28,7 @@ Switch it on with the tenant setting `learner_insights.enabled` (`POST /api/admi
 | `course.started`, `course.completed` | enrolment progress events |
 | `topic.opened`, `topic.progressed`, `topic.completed` | progress saves (time spent as seconds, never page content) |
 | `quiz.attempt_started`, `quiz.attempt_finished`, `quiz.answer` | GIFT quizzes (score ratio and whether the answer was fully correct, never the answer text) |
+| `code.attempt_finished` | a run of a [code exercise](/creators/code-exercises/): the attempt number and whether it passed, never the code (counted by the failed-attempts rule like quiz attempts) |
 | `scorm.status` | SCORM completion |
 | `h5p.result` | H5P results (the scaled score and the verb, never the xAPI statement) |
 | `media.replayed`, `media.seeked_back` | the video and audio players |

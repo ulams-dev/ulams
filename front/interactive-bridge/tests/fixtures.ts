@@ -30,6 +30,22 @@ export const VALID: Record<string, Message> = {
   score: { type: "score", raw: 8, max: 10, passed: true },
   event: { type: "event", verb: "http://adlnet.gov/expapi/verbs/interacted", object: "slider-velocity", result: { response: "11.2" } },
   error: { type: "error", code: "webgl-unavailable", message: "no webgl" },
+  loadExercise: { type: "loadExercise", language: "javascript", tests: [{ path: "sum.test.js", content: "test('adds', () => expect(1 + 2).toBe(3));" }], timeoutMs: 5000 },
+  run: { type: "run", runId: 1, files: [{ path: "sum.js", content: "export const sum = (a, b) => a + b;" }] },
+  reset: { type: "reset" },
+  runResult: {
+    type: "runResult",
+    runId: 1,
+    status: "failed",
+    tests: [
+      { name: "adds", status: "pass" },
+      { name: "subtracts", status: "fail", message: "Expected 1, received 3" },
+    ],
+    passed: 1,
+    total: 2,
+    durationMs: 12,
+    output: "hello",
+  },
 };
 
 export const env = (m: Message, nonce = NONCE): Envelope => ({ "ulams-ix": 1, nonce, ...m }) as Envelope;

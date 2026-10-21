@@ -375,6 +375,14 @@
             "area": "courses"
         },
         {
+            "pattern": "api/admin/code-exercises/topics/*/attempts",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/code-exercises*",
+            "area": "courses"
+        },
+        {
             "pattern": "api/admin/h5p*",
             "area": "courses"
         },
@@ -766,6 +774,10 @@
         },
         {
             "pattern": "api/interactive/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/code-exercises/*",
             "area": "learner"
         },
         {

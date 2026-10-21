@@ -35,4 +35,12 @@ class SignalTypeTest extends TestCase
         }
         $this->assertSame([SignalType::MEDIA_REPLAYED, SignalType::MEDIA_SEEKED_BACK], SignalType::CLIENT_TYPES);
     }
+
+    public function testCodeAttemptsCarryOnlyNumbersAndFlags(): void
+    {
+        $clean = SignalType::cleanData(SignalType::CODE_ATTEMPT_FINISHED, ['attempt_no' => 3, 'passed' => false, 'verified' => false, 'source_code' => 'alert(1)', 'results' => [['name' => 'x']]]);
+
+        $this->assertSame(['attempt_no' => 3, 'passed' => false, 'verified' => false], $clean);
+        $this->assertContains('code', SignalType::SOURCES);
+    }
 }

@@ -77,7 +77,8 @@ class ContentOriginHeadersConfigTest extends TestCase
         $this->assertMatchesRegularExpression('/^\s*\?Content-Security-Policy "default-src \'self\'; script-src \'self\' \'unsafe-inline\' \'unsafe-eval\';/m', $snippet);
         $this->assertDoesNotMatchRegularExpression('/^\s*Content-Security-Policy /m', $snippet);
         $this->assertSame(1, preg_match('/path (\/scorm\/\*[^\n]*)\n/', $snippet, $m));
-        $this->assertSame('/scorm/* /cmi5/* /adapt/* /liascript/* /interactive/*', trim($m[1]));
+        // /runtime/* is the code exercises runner (ADR 0170): static files that the API serves with a CSP of its own
+        $this->assertSame('/scorm/* /cmi5/* /adapt/* /liascript/* /interactive/* /runtime/*', trim($m[1]));
 
         // package uploads of up to UPLOADS_INTERACTIVE_MAX_MB, plus multipart overhead
         $this->assertSame(1, preg_match('/@large_uploads path (.*)\n/', $caddyfile, $m));

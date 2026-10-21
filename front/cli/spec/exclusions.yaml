@@ -31,6 +31,10 @@ content-runtime:
   - "POST /api/interactive/launches/*"
   - "GET /api/interactive/showcase"
   - "POST /api/interactive/topics/{topic}/events"
+  # code exercises (ADR 0170): the lesson page opens an exercise and reports each run of its tests with the learner's own session
+  - "POST /api/code-exercises/launches/*"
+  - "POST /api/code-exercises/topics/{topic}/attempts"
+  - "GET /api/code-exercises/topics/{topic}/attempts"
   - "POST /api/courses/progress/{topic_id}/h5p"
   - "* /api/pdfs/fonts*"
 internal:
@@ -43,6 +47,9 @@ not-for-cli:
   - "* /api/learner-insights/*"
   # thresholds are tenant and course settings; a CLI command comes with the studio insights page (M4.6)
   - "* /api/admin/learner-insights/*"
+  # the author preview opens the exercise in the learner site; the teacher report of attempts gets a command with the verified grading of AX-4
+  - "GET /api/admin/code-exercises/topics/{topic}/preview"
+  - "GET /api/admin/code-exercises/topics/{topic}/attempts"
   - "GET /api/example-plugin/hello"
   - "POST /api/admin/example-plugin/greetings"
   - "POST /api/pencil-spaces/login"

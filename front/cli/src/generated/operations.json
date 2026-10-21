@@ -151,6 +151,18 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/code-exercises/topics/{topic}/attempts",
+  "summary": "Attempts at a code exercise (teacher report)",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/code-exercises/topics/{topic}/preview",
+  "summary": "Preview a code exercise as its author",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/compliance/assignments",
   "summary": "List required-training assignments",
   "tag": "Compliance"
@@ -2854,6 +2866,24 @@
   "path": "/api/cmi5/player/{cmi5AuId}",
   "summary": "Launch a cmi5 AU",
   "tag": "cmi5"
+ },
+ {
+  "method": "POST",
+  "path": "/api/code-exercises/launches/{topic}",
+  "summary": "Open a code exercise",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "GET",
+  "path": "/api/code-exercises/topics/{topic}/attempts",
+  "summary": "My attempts at a code exercise",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "POST",
+  "path": "/api/code-exercises/topics/{topic}/attempts",
+  "summary": "Report the result of a run",
+  "tag": "Code exercises"
  },
  {
   "method": "POST",
