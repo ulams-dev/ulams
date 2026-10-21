@@ -1,5 +1,5 @@
 {
- "summary": "580/646 covered, 66 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "580/648 covered, 68 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -3082,6 +3082,18 @@
   {
    "key": "POST /api/learner-insights/assignments/{assignment}/reflection",
    "summary": "Get feedback on the learner's own explanation of the idea (the text is sent to the AI provider and not stored)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/learner-insights/courses/{course}/presentation",
+   "summary": "How the course is presented to the learner (density, steps, navigation, hints) and why",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "PUT /api/learner-insights/courses/{course}/presentation",
+   "summary": "Override how the course is presented (for example show the whole lesson); null removes an override",
    "command": "",
    "status": "excluded: not-for-cli"
   },
