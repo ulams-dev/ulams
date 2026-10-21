@@ -3126,6 +3126,113 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/course-as-code/courses/{course}/blueprint": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export a course as a Blueprint v3 document (current version, drift, applied version)
+         * @description Course-as-code API (ADR 0160, prefix `/api/admin/course-as-code`, `auth:api`, permission
+         *     `course_builder_use`). It works with AI off: there is no AI gate on this route group. A push is
+         *     always a proposed version; a person approves it (agent tokens and MCP clients never can).
+         */
+        get: operations["admin.course-as-code.courses.by-course.blueprint.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/sessions/{session}/imports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import a Blueprint v3 document as a proposed version of kind import */
+        post: operations["admin.course-as-code.sessions.by-session.imports.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/versions/{version}/diff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Element-aware diff of a version against its parent or ?against= */
+        get: operations["admin.course-as-code.versions.by-version.diff.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/versions/{version}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve a proposed import (people and CLI tokens; never agents or MCP clients) */
+        post: operations["admin.course-as-code.versions.by-version.approve.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/sessions/{session}/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Apply the current version to the course (no AI needed) */
+        post: operations["admin.course-as-code.sessions.by-session.apply.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/sessions/{session}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish the applied course (no AI needed) */
+        post: operations["admin.course-as-code.sessions.by-session.publish.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/course-builder/sessions": {
         parameters: {
             query?: never;
@@ -19255,6 +19362,234 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ApiEnvelope"];
                 };
+            };
+        };
+    };
+    "admin.course-as-code.courses.by-course.blueprint.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the blueprint with versionId, appliedVersionId and drift */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description another author's course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description NOT_ADOPTED (no builder session) or NO_BLUEPRINT */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.sessions.by-session.imports.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    document: Record<string, never>;
+                    baseVersionId: string;
+                    message?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description unchanged: the document equals the current version, no version is created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description proposed version, element diff and warnings */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown session */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description BASE_OUTDATED (with the remote diff) or NO_BLUEPRINT */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description document too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description INVALID_BLUEPRINT, BASE_UNKNOWN or a missing field */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.versions.by-version.diff.get": {
+        parameters: {
+            query?: {
+                against?: string;
+            };
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description changes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.course-as-code.versions.by-version.approve.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description approved; apply it next */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description APPROVAL_REQUIRES_HUMAN */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not proposed, or STALE_PROPOSAL (the course changed after the import was proposed) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.sessions.by-session.apply.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description apply run */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.course-as-code.sessions.by-session.publish.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description published */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description blocking items or unacknowledged warnings */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
