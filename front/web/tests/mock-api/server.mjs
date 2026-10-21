@@ -7,6 +7,7 @@
  * shapes the learner pages read.
  */
 import { createServer } from "node:http";
+import { Buffer } from "node:buffer";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
@@ -174,12 +175,13 @@ function respond(req, res, path, route, rawBody) {
     return;
   }
   const tenant = String(req.headers["x-ulams-api-host"] ?? "").split(".")[0];
-  let body = null;
-  try {
-    body = rawBody ? JSON.parse(rawBody) : null;
-  } catch {
-    body = null;
-  }
+  const body = (() => {
+    try {
+      return rawBody ? JSON.parse(rawBody) : null;
+    } catch {
+      return null;
+    }
+  })();
   const match = route[1].exec(path);
   const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body });
   res.end(JSON.stringify({ success: true, data, meta: { current_page: 1, last_page: 1, per_page: 24, total: 1 } }));
