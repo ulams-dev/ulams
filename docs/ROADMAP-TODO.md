@@ -817,7 +817,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] AI hints without revealing solutions
 
 ### 7.3 API, SDK, webhooks
-- [ ] Complete published OpenAPI; TS SDK first, PHP second (partial: response schemas and operationIds for the 60 CLI operations, #299; plan in `docs/plans/phase-7.md`, #300; in the openapi-php-sdk PR, pending merge: readable unique operationIds and a typed 2xx response for every operation with a CI gate, a valid spec, and the generated PHP SDK in `sdk-php/`; the data of about 400 operations is still the generic envelope or a free-form object, to be replaced with precise schemas; no spec changelog yet)
+- [ ] Complete published OpenAPI; TS SDK first, PHP second (partial: response schemas and operationIds for the 60 CLI operations, #299; plan in `docs/plans/phase-7.md`, #300; every one of the 658 operations has a unique readable operationId and a typed 2xx response, enforced by the `ulams spec-quality` CI gate, and the PHP SDK `ulams/sdk` is generated with openapi-generator in `sdk-php/`, #309; still open: about 400 operations carry the generic `ApiEnvelope`/`ApiJson`, so `data` is untyped (mixed) in the PHP client until precise schemas replace it; no spec changelog yet; `ulams/sdk` is not published on Packagist)
 - [x] Stripe-style webhooks (signed, retries, replay, delivery log, test sends, versioned events) (`api/packages/webhooks`, #261; no admin screen yet, API, CLI and docs only)
 - [ ] Scoped API keys with rate limits and usage stats (partial: token usage stats done in #261; per-token rate limits not verified)
 - [x] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit
@@ -831,7 +831,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       feature-catalogue PR, #242; questionnaire and question endpoints have response bodies too)
 - [x] (new) Feature index on the platform landing (`FeatureIndex`, 14 collapsed groups, 101 features including MCP, teacher and sales analytics, 54 H5P content types, EN/PL/ZH,
       `ItemList` JSON-LD) with a drift test against `api/packages` (merged in the feature-catalogue PR, #242)
-- [ ] `npx create-ulams` / `docker compose up` with seed data (partial: `front/create-ulams` and the `--academy-name/--theme/--users` seed options of `ulams stack up` are in the create-ulams PR, pending merge; publishing to npm waits for #77; seed data is the academy name, theme and demo students, no sample course) (partial: `ulams` CLI one-command Docker and Kubernetes stack installation, #249; `create-ulams` planned in `docs/plans/phase-7.md`, in progress, not merged)
+- [ ] `npx create-ulams` / `docker compose up` with seed data (partial: `ulams` CLI one-command Docker and Kubernetes stack installation, #249; `front/create-ulams` (`npx create-ulams`, wraps `ulams stack up`) with the `--academy-name/--theme/--users` seed options is merged, #310; seed data is the academy name, theme and demo students, no sample course; publishing to npm waits for #77; no real `docker compose` start was tested in the PR)
 - [ ] Docs site with runnable examples; free cloud sandbox tenant (partial: Starlight site in `front/docs-site` on branch `docs/starlight-site`; runnable examples and the sandbox tenant pending)
 
 ### 7.4 Plugin system
@@ -855,7 +855,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 
 ### 7.6 Machine-readable content
 - [x] `llms.txt`, Markdown version of every page, public schemas, `AGENTS.md` (docs site build output, #261; per-academy `/llms.txt` and Markdown course pages in the web app, #274; "Copy page" and "Open in Claude/ChatGPT" buttons, #272)
-- [ ] Knowledge export (cited chunks for company RAG), auto re-export on change (planned in `docs/plans/phase-7.md`, #300; implemented in the knowledge-export PR, pending merge; chunks cited from the applied blueprint, uncited ones flagged, per-course packs plus a tenant index, auto re-export, `knowledge.exported` webhook, CLI and public schemas)
+- [x] Knowledge export (cited chunks for company RAG), auto re-export on change (`api/packages/knowledge-export`, #304: chunks cited from the applied blueprint with uncited ones flagged, per-course JSONL packs plus a tenant index, auto re-export on change, `knowledge.exported` webhook, `ulams knowledge` CLI commands, public schemas)
 
 ---
 
