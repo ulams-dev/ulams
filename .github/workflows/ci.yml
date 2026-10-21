@@ -242,6 +242,45 @@ jobs:
           path: front/web/test-results
           retention-days: 7
 
+  # The admin in a real browser without a backend: the built admin is served statically and every API call is
+  # answered by a deterministic in-browser mock (admin/src/e2e/mocked/mockApi.ts). Covers the pdfme certificate
+  # designer (open, edit, preview, save, reopen), the legacy ReportBro banner and axe (WCAG 2.2 AA).
+  # The other admin specs in src/e2e need a live API and stay out of CI.
+  admin-a11y:
+    name: Admin browser tests (Playwright, axe)
+    needs: changes
+    if: needs.changes.outputs.js == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HUSKY: "0"
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - run: corepack enable
+      - run: corepack yarn install --frozen-lockfile
+      - name: Install Chromium
+        run: corepack yarn playwright install --with-deps chromium
+      - name: Build the admin
+        working-directory: admin
+        env:
+          REACT_APP_API_URL: http://api.mock
+        run: corepack yarn build
+      - name: Playwright (mocked API)
+        working-directory: admin
+        run: corepack yarn playwright:mock
+      - name: Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: admin-a11y-playwright
+          path: admin/test-results
+          retention-days: 7
+
   # The interactive content packages (demo-content) in a real browser, on throwaway servers: each package
   # loads in the opaque sandbox, steps advance, no request leaves the origin, keyboard, WebGL fallback, axe.
   demo-content:
