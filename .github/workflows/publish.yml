@@ -67,6 +67,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # The base tag moves with every PHP release: record the exact version the image is built on and tag it
+      # (immutable-looking tag next to the moving 8.4), so a deployment can say which PHP it runs.
+      - name: PHP version of the base image
+        id: php-version
+        run: |
+          base=$(sed -n 's/^ARG PHP_IMAGE=//p' api/docker/php/Dockerfile)
+          docker pull "$base"
+          version=$(docker run --rm "$base" php -r 'echo PHP_VERSION;')
+          echo "$base is PHP $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
       - name: PHP base metadata
         id: php-meta
         uses: docker/metadata-action@v6
@@ -76,6 +87,7 @@ jobs:
           tags: |
             ${{ env.METADATA_TAGS }}
             type=raw,value=8.4,enable={{is_default_branch}}
+            type=raw,value=${{ steps.php-version.outputs.version }},enable={{is_default_branch}}
           labels: |
             org.opencontainers.image.title=ulams php
             org.opencontainers.image.description=PHP 8.4 FPM runtime of the ulams API (official php:8.4-fpm-alpine plus extensions and tools). Third-party notices: /usr/local/src/ulams-php/NOTICE
@@ -92,6 +104,8 @@ jobs:
           context: api/docker/php
           file: api/docker/php/Dockerfile
           platforms: ${{ env.PLATFORMS }}
+          # Always take the newest official base layers: a cached FROM would keep an unpatched PHP.
+          pull: true
           push: true
           tags: ${{ steps.php-meta.outputs.tags }}
           labels: ${{ steps.php-meta.outputs.labels }}
