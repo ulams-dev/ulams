@@ -201,6 +201,8 @@ export interface Topic {
   introduction?: string | null;
   description?: string | null;
   duration?: string | null;
+  /** Program responses: the topic was applied from an AI Course Builder session (shown as "Created with AI assistance"). */
+  ai_assisted?: boolean;
   resources?: Resource[];
   json?: { chapters?: Array<{ time: number; title: string }> } & Record<string, unknown>;
 }
