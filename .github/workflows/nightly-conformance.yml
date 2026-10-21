@@ -59,6 +59,8 @@ jobs:
       (github.event_name == 'workflow_dispatch' && inputs.adapt)
     runs-on: ubuntu-latest
     timeout-minutes: 40
+    # The docker-hub-mirror step restarts the Docker daemon, which stops service containers without a
+    # restart policy; --restart always brings postgres and valkey back.
     services:
       postgres:
         image: postgres:12
@@ -71,10 +73,12 @@ jobs:
         options: >-
           --health-cmd "pg_isready -U default -d default"
           --health-interval 5s --health-timeout 5s --health-retries 20
+          --restart always
       valkey:
         image: valkey/valkey:8-alpine
         ports:
           - 6379:6379
+        options: --restart always
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/docker-hub-mirror
@@ -156,10 +160,12 @@ jobs:
         options: >-
           --health-cmd "pg_isready -U default -d default"
           --health-interval 5s --health-timeout 5s --health-retries 20
+          --restart always
       valkey:
         image: valkey/valkey:8-alpine
         ports:
           - 6379:6379
+        options: --restart always
     env:
       # ulams serves http://ulams.test:18000 on the host; Moodle reaches it through host-gateway
       APP_URL: http://ulams.test:18000
@@ -280,10 +286,12 @@ jobs:
         options: >-
           --health-cmd "pg_isready -U default -d default"
           --health-interval 5s --health-timeout 5s --health-retries 20
+          --restart always
       valkey:
         image: valkey/valkey:8-alpine
         ports:
           - 6379:6379
+        options: --restart always
     env:
       QUEUE_CONNECTION: sync
       SALTIRE_PLATFORM: ${{ inputs.saltire_platform }}
