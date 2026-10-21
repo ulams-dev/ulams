@@ -42,5 +42,8 @@ calls `onTimeout`.
 ## Files
 
 - `schema/v1/*.json`: the JSON Schemas of every message (the API copies them).
+- Code exercises ([ADR 0170](../../docs/decisions/0170-code-exercise-runners.md)) add `loadExercise`, `run`, `reset` (page to runner) and
+  `runResult` (runner to page) as optional message types, up to 640 KB instead of 16 KB; `host.loadExercise/run/reset` and
+  `bridge.runResult` are the two ends. Hosts and packages that do not know them drop them.
 - `schema/ulams-interactive.v1.json`: the manifest schema (a test keeps the API's copy identical).
 - `npm run build` writes `dist/interactive-bridge.js` (under 3 KB min+gzip, MIT header).

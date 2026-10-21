@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/ulams-ix/v1/reset.json",
+  "title": "reset",
+  "description": "Parent to runner (code exercises, ADR 0170). Stop any run and forget its state.",
+  "type": "object",
+  "required": [
+    "ulams-ix",
+    "type",
+    "nonce"
+  ],
+  "properties": {
+    "ulams-ix": {
+      "const": 1
+    },
+    "type": {
+      "const": "reset"
+    },
+    "nonce": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    }
+  },
+  "additionalProperties": false
+}
