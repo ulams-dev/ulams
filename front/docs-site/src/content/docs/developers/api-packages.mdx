@@ -195,6 +195,14 @@ attempts and answers (`/api/quiz-attempts`, `/api/quiz-answers`), admin routes f
 attempts. Admin screen `/courses/quiz-reports`; questions are edited in the course editor (the admin
 parses GIFT with `@ulams/gift-pegjs`).
 
+### [code-exercises](/reference/packages/code-exercises/)
+
+The **code exercise** topic type ([ADR 0170](/decisions/0170-code-exercise-runners/)): starter files and visible
+tests for JavaScript and TypeScript, run by the learner in the browser sandbox of the content origin
+(`front/code-runner`), with practice attempts, progress and the `code.attempt_finished` learner signal. Topics go
+through the topic API; learner routes under `/api/code-exercises`, preview and teacher report under
+`/api/admin/code-exercises`. Guide: [Code exercises](/creators/code-exercises/).
+
 ### [topic-type-layout](/reference/packages/topic-type-layout/)
 
 The Layout topic (`LayoutTopic`, ADR 0052): a document of approved learner components plus a Markdown
