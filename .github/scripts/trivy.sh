@@ -22,26 +22,46 @@ set -eu
 
 # Bump together with the version in the comment. Pinned by digest so a moved tag cannot change what we run.
 TRIVY_IMAGE="${TRIVY_IMAGE:-ghcr.io/aquasecurity/trivy:0.76.0@sha256:2416d1f74045b57274df1a340eee6b510cacd73c66a6ccb8da092b117eb7d222}"
-# The default mirror host rate-limits shared CI runners now and then, so give Trivy a second source.
-export TRIVY_DB_REPOSITORY="${TRIVY_DB_REPOSITORY:-public.ecr.aws/aquasecurity/trivy-db:2,ghcr.io/aquasecurity/trivy-db:2}"
+# Either host rate-limits shared CI runners now and then, so Trivy gets two sources, tried in this order.
+export TRIVY_DB_REPOSITORY="${TRIVY_DB_REPOSITORY:-ghcr.io/aquasecurity/trivy-db:2,public.ecr.aws/aquasecurity/trivy-db:2}"
 
 mode="${1:-}"; [ "$#" -gt 0 ] && shift
 cache="${TRIVY_CACHE:-$HOME/.cache/trivy-ulams}"
 mkdir -p "$cache"
 
-args="--skip-version-check --ignore-unfixed --exit-code ${EXIT_CODE:-1} --format ${FORMAT:-table}"
+args="--skip-version-check --skip-db-update --ignore-unfixed --exit-code ${EXIT_CODE:-1} --format ${FORMAT:-table}"
 [ -n "${OUTPUT:-}" ] && args="$args --output /src/$OUTPUT"
 [ -f "${IGNOREFILE:-.trivyignore.yaml}" ] && args="$args --ignorefile /src/${IGNOREFILE:-.trivyignore.yaml}"
 
-run() {
-  # shellcheck disable=SC2086  # $args is a deliberate word list without spaces inside values
-  docker run --rm \
-    -e TRIVY_USERNAME -e TRIVY_PASSWORD -e TRIVY_DB_REPOSITORY \
-    -v "$cache:/root/.cache" -v "$PWD:/src" -w /src \
-    ${DOCKER_SOCKET:+-v /var/run/docker.sock:/var/run/docker.sock} \
-    "$TRIVY_IMAGE" "$@"
+# The container runs as root; hand the cache back to the caller so actions/cache can read it afterwards.
+fix_cache_owner() {
+  [ "$(id -u)" = 0 ] || docker run --rm -v "$cache:/c" --entrypoint chown "$TRIVY_IMAGE" -R "$(id -u):$(id -g)" /c >/dev/null 2>&1 || true
 }
 
+# The vulnerability database is downloaded without registry credentials (they are for the image under scan and
+# would be refused by the second mirror), with retries, and the scan itself then skips the update.
+update_db() {
+  attempt=1
+  while ! docker run --rm -e TRIVY_DB_REPOSITORY -v "$cache:/root/.cache" "$TRIVY_IMAGE" \
+      image --skip-version-check --quiet --download-db-only; do
+    [ "$attempt" -lt 3 ] || { echo "could not download the Trivy vulnerability database" >&2; fix_cache_owner; exit 1; }
+    attempt=$((attempt + 1)); sleep 10
+  done
+}
+
+run() {
+  status=0
+  # shellcheck disable=SC2086  # $args is a deliberate word list without spaces inside values
+  docker run --rm \
+    -e TRIVY_USERNAME -e TRIVY_PASSWORD \
+    -v "$cache:/root/.cache" -v "$PWD:/src" -w /src \
+    ${DOCKER_SOCKET:+-v /var/run/docker.sock:/var/run/docker.sock} \
+    "$TRIVY_IMAGE" "$@" || status=$?
+  fix_cache_owner
+  return "$status"
+}
+
+update_db
 case "$mode" in
   fs)
     # shellcheck disable=SC2086
@@ -50,7 +70,7 @@ case "$mode" in
     ;;
   source-sbom)
     out="${1:?output file}"
-    run fs --skip-version-check --format spdx-json --output "/src/$out" --skip-dirs node_modules --skip-dirs vendor --skip-dirs .git .
+    run fs --skip-version-check --skip-db-update --format spdx-json --output "/src/$out" --skip-dirs node_modules --skip-dirs vendor --skip-dirs .git .
     ;;
   image)
     ref="${1:?image reference}"
