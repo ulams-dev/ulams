@@ -42,7 +42,7 @@ use Ulams\Auth\Http\Requests\Device\ShowDeviceRequestRequest;
 interface DeviceAuthSwagger
 {
     /**
-     * @OA\Post(path="/api/auth/device/code", summary="Start a device login (RFC 8628)", tags={"Auth"},
+     * @OA\Post(path="/api/auth/device/code", operationId="auth.device.code.post", summary="Start a device login (RFC 8628)", tags={"Auth"},
      *     description="No authentication. Throttled to 10 requests per minute per IP.",
      *     @OA\RequestBody(required=true, @OA\JsonContent(required={"client_name","scopes"},
      *         @OA\Property(property="client_name", type="string", example="ulams-cli on mateusz-mbp"),
@@ -55,7 +55,7 @@ interface DeviceAuthSwagger
     public function code(DeviceCodeRequest $request): JsonResponse;
 
     /**
-     * @OA\Post(path="/api/auth/device/token", summary="Poll for the token of a device login (RFC 8628)", tags={"Auth"},
+     * @OA\Post(path="/api/auth/device/token", operationId="auth.device.token.post", summary="Poll for the token of a device login (RFC 8628)", tags={"Auth"},
      *     description="No authentication. Poll every `interval` seconds. Errors are HTTP 400 with an RFC 8628 error code. The token is returned once.",
      *     @OA\RequestBody(required=true, @OA\JsonContent(required={"device_code"},
      *         @OA\Property(property="device_code", type="string"),
@@ -67,7 +67,7 @@ interface DeviceAuthSwagger
     public function token(DeviceTokenRequest $request): JsonResponse;
 
     /**
-     * @OA\Get(path="/api/auth/device/requests/{user_code}", summary="Details of a pending device request (for the approval page)", tags={"Auth"}, security={{"passport": {}}},
+     * @OA\Get(path="/api/auth/device/requests/{user_code}", operationId="auth.device.requests.by-user-code.get", summary="Details of a pending device request (for the approval page)", tags={"Auth"}, security={{"passport": {}}},
      *     description="Needs a login token of the approving user (not a scoped token). Throttled to 5 requests per minute per user.",
      *     @OA\Parameter(name="user_code", in="path", required=true, @OA\Schema(type="string", example="BDWP-HQPK")),
      *     @OA\Response(response=200, description="The request", @OA\JsonContent(
@@ -79,7 +79,7 @@ interface DeviceAuthSwagger
     public function show(ShowDeviceRequestRequest $request): JsonResponse;
 
     /**
-     * @OA\Post(path="/api/auth/device/requests/{user_code}/approve", summary="Approve a device request", tags={"Auth"}, security={{"passport": {}}},
+     * @OA\Post(path="/api/auth/device/requests/{user_code}/approve", operationId="auth.device.requests.by-user-code.approve.post", summary="Approve a device request", tags={"Auth"}, security={{"passport": {}}},
      *     description="Mints a scoped token for the approving user with the approved scopes that the client requested. The CLI collects it on its next poll.",
      *     @OA\Parameter(name="user_code", in="path", required=true, @OA\Schema(type="string")),
      *     @OA\RequestBody(required=true, @OA\JsonContent(required={"scopes"},
@@ -96,7 +96,7 @@ interface DeviceAuthSwagger
     public function approve(ApproveDeviceRequestRequest $request): JsonResponse;
 
     /**
-     * @OA\Post(path="/api/auth/device/requests/{user_code}/deny", summary="Deny a device request", tags={"Auth"}, security={{"passport": {}}},
+     * @OA\Post(path="/api/auth/device/requests/{user_code}/deny", operationId="auth.device.requests.by-user-code.deny.post", summary="Deny a device request", tags={"Auth"}, security={{"passport": {}}},
      *     @OA\Parameter(name="user_code", in="path", required=true, @OA\Schema(type="string")),
      *     @OA\Response(response=200, description="Denied", @OA\JsonContent(
      *         @OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),

@@ -17,15 +17,15 @@ use Ulams\LivingCourse\Support\Presenter;
 /**
  * Connecting a source through a connector, checking it on demand and rotating its webhook secret.
  *
- * @OA\Get(path="/api/admin/living-course/connectors", summary="The source connectors this installation offers, with their settings schema", tags={"Admin Living Course"}, security={{"passport": {}}}, @OA\Response(response=200, description="connectors"))
- * @OA\Post(path="/api/admin/living-course/sessions/{session}/sources/connect", summary="Add a source through a connector (Git repository, web pages, plugins); validates and fetches revision 1", tags={"Admin Living Course"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/living-course/connectors", operationId="admin.living-course.connectors.get", summary="The source connectors this installation offers, with their settings schema", tags={"Admin Living Course"}, security={{"passport": {}}}, @OA\Response(response=200, description="connectors", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Post(path="/api/admin/living-course/sessions/{session}/sources/connect", operationId="admin.living-course.sessions.by-session.sources.connect.post", summary="Add a source through a connector (Git repository, web pages, plugins); validates and fetches revision 1", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="connector", type="string"), @OA\Property(property="config", type="object"), @OA\Property(property="secrets", type="object"), @OA\Property(property="schedule", type="string"))),
- *     @OA\Response(response=201, description="connection, source and the webhook secret (shown once)"), @OA\Response(response=422, description="settings refused by the connector"))
- * @OA\Post(path="/api/admin/living-course/connections/{connection}/check", summary="Check the source now", tags={"Admin Living Course"}, security={{"passport": {}}},
- *     @OA\Parameter(name="connection", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=202, description="queued"), @OA\Response(response=409, description="nothing to check"))
- * @OA\Post(path="/api/admin/living-course/connections/{connection}/webhook-secret", summary="Rotate the webhook secret (returned once)", tags={"Admin Living Course"}, security={{"passport": {}}},
- *     @OA\Parameter(name="connection", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="the new secret"))
+ *     @OA\Response(response=201, description="connection, source and the webhook secret (shown once)", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=422, description="settings refused by the connector"))
+ * @OA\Post(path="/api/admin/living-course/connections/{connection}/check", operationId="admin.living-course.connections.by-connection.check.post", summary="Check the source now", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="connection", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=202, description="queued", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=409, description="nothing to check"))
+ * @OA\Post(path="/api/admin/living-course/connections/{connection}/webhook-secret", operationId="admin.living-course.connections.by-connection.webhook-secret.post", summary="Rotate the webhook secret (returned once)", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="connection", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="the new secret", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
  */
 class ConnectController extends Controller
 {

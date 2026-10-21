@@ -21,9 +21,9 @@ use Ulams\LivingCourse\Services\CheckLimiter;
  * work, only pushes to the tracked branch that touch the tracked paths queue a (debounced) check.
  * Payloads are never sent to the model and never stored, only their digest.
  *
- * @OA\Post(path="/api/living-course/webhooks/{webhookId}", summary="Receive a push webhook of a connected repository", tags={"Living Course webhooks"},
+ * @OA\Post(path="/api/living-course/webhooks/{webhookId}", operationId="living-course.webhooks.by-webhookid.post", summary="Receive a push webhook of a connected repository", tags={"Living Course webhooks"},
  *     @OA\Parameter(name="webhookId", in="path", required=true, @OA\Schema(type="string")),
- *     @OA\Response(response=202, description="a check is queued"), @OA\Response(response=200, description="ignored or duplicate"),
+ *     @OA\Response(response=202, description="a check is queued", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=200, description="ignored or duplicate", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
  *     @OA\Response(response=401, description="invalid signature"), @OA\Response(response=404, description="unknown webhook"), @OA\Response(response=413, description="body too large"), @OA\Response(response=429, description="rate limit"))
  */
 class WebhookController extends Controller

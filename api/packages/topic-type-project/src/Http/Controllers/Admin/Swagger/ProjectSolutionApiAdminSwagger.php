@@ -13,7 +13,7 @@ interface ProjectSolutionApiAdminSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/topic-project-solutions",
+     *      path="/api/admin/topic-project-solutions", operationId="admin.topic-project-solutions.get",
      *      summary="Get a listing of the project solutions",
      *      tags={"Admin Project Solution"},
      *      description="Get all project solutions",
@@ -88,9 +88,7 @@ interface ProjectSolutionApiAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -114,7 +112,7 @@ interface ProjectSolutionApiAdminSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/topic-project-solutions/{id}",
+     *      path="/api/admin/topic-project-solutions/{id}", operationId="admin.topic-project-solutions.by-id.get",
      *      summary="Get a single project solution",
      *      tags={"Admin Project Solution"},
      *      description="Get a single project solution (with tutor feedback) by id",
@@ -154,7 +152,7 @@ interface ProjectSolutionApiAdminSwagger
 
     /**
      * @OA\Patch(
-     *      path="/api/admin/topic-project-solutions/{id}/feedback",
+     *      path="/api/admin/topic-project-solutions/{id}/feedback", operationId="admin.topic-project-solutions.by-id.feedback.patch",
      *      summary="Add, edit or remove tutor feedback for a project solution",
      *      tags={"Admin Project Solution"},
      *      description="Sets the tutor feedback (rich text or video link) on a project solution. Sending null or an empty string removes it.",
@@ -204,7 +202,7 @@ interface ProjectSolutionApiAdminSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/topic-project-solutions/{id}",
+     *      path="/api/admin/topic-project-solutions/{id}", operationId="admin.topic-project-solutions.by-id.delete",
      *      summary="Remove the specified Project Solution",
      *      tags={"Admin Project Solution"},
      *      description="Delete Project Solution",
@@ -223,9 +221,7 @@ interface ProjectSolutionApiAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -248,7 +244,7 @@ interface ProjectSolutionApiAdminSwagger
 
     /**
      * @OA\Patch(
-     *      path="/api/admin/topic-project-solutions/{id}/grade",
+     *      path="/api/admin/topic-project-solutions/{id}/grade", operationId="admin.topic-project-solutions.by-id.grade.patch",
      *      summary="Grade the specified Project Solution",
      *      tags={"Admin Project Solution"},
      *      description="Set score and max_score for a Project Solution",
@@ -274,9 +270,7 @@ interface ProjectSolutionApiAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

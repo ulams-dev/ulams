@@ -10,7 +10,7 @@ class FrameOriginsController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/lti/frame-origins",
+     *     path="/api/lti/frame-origins", operationId="lti.frame-origins.get",
      *     summary="Origins of the enabled external tools of this tenant",
      *     description="For the front's Content Security Policy: the `frame-src` of a learner page must name the origins a tool launch loads (its OIDC login, launch and deep-linking URLs). Public and cached for 5 minutes; it reveals only the origins of tools the tenant registered for its learners.",
      *     tags={"LTI"},

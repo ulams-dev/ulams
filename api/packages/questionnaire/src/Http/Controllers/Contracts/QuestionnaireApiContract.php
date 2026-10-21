@@ -14,7 +14,7 @@ interface QuestionnaireApiContract
 {
     /**
      * @OA\Get(
-     *     path="/api/questionnaire/{model_type_title}/{model_id}",
+     *     path="/api/questionnaire/{model_type_title}/{model_id}", operationId="questionnaire.by-model-type-title.by-model-id.get",
      *     summary="Lists available questionnaires",
      *     tags={"Questionnaire"},
      *     security={
@@ -70,7 +70,7 @@ interface QuestionnaireApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/questionnaire/{model_type_title}/{model_id}/{id}",
+     *     path="/api/questionnaire/{model_type_title}/{model_id}/{id}", operationId="questionnaire.by-model-type-title.by-model-id.by-id.get",
      *     summary="Read a questionnaire identified by a given id identifier and model",
      *     tags={"Questionnaire"},
      *     security={
@@ -126,7 +126,7 @@ interface QuestionnaireApiContract
 
     /**
      * @OA\Post(
-     *     path="/api/questionnaire/{model_type_title}/{model_id}/{id}",
+     *     path="/api/questionnaire/{model_type_title}/{model_id}/{id}", operationId="questionnaire.by-model-type-title.by-model-id.by-id.post",
      *     summary="Save a questionnaire answers",
      *     tags={"Questionnaire"},
      *     security={
@@ -187,7 +187,7 @@ interface QuestionnaireApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/questionnaire/stars/{model_type_title}/{model_id}",
+     *     path="/api/questionnaire/stars/{model_type_title}/{model_id}", operationId="questionnaire.stars.by-model-type-title.by-model-id.get",
      *     summary="Read a questionnaire stars identified by a given model title and model id identifier",
      *     tags={"QuestionnaireStars"},
      *     @OA\Parameter(
@@ -231,7 +231,7 @@ interface QuestionnaireApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/questionnaire/{model_type_title}/{model_id}/questions/{question_id}/answers",
+     *     path="/api/questionnaire/{model_type_title}/{model_id}/questions/{question_id}/answers", operationId="questionnaire.by-model-type-title.by-model-id.questions.by-question-id.answers.get",
      *     summary="Read a question answers by a given model title and model id identifier",
      *     tags={"Questionnaire"},
      *     @OA\Parameter(
@@ -316,7 +316,7 @@ interface QuestionnaireApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/questionnaire/{model_type_title}/{model_id}/questions/{question_id}/stars",
+     *     path="/api/questionnaire/{model_type_title}/{model_id}/questions/{question_id}/stars", operationId="questionnaire.by-model-type-title.by-model-id.questions.by-question-id.stars.get",
      *     summary="Read a model stars by a given model title, model id identifier and question id.",
      *     tags={"Questionnaire"},
      *     @OA\Parameter(

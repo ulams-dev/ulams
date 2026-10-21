@@ -9,16 +9,14 @@ interface ConfigControllerContract
 {
     /**
      * @OA\Get(
-     *      path="/api/config",
+     *      path="/api/config", operationId="config.get",
      *      summary="Get a listing of public config values.",
      *      tags={"Settings"},
      *      description="Get public config values",
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

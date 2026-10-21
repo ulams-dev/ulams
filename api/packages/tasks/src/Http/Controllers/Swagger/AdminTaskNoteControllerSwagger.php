@@ -12,7 +12,7 @@ interface AdminTaskNoteControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/tasks/notes",
+     *      path="/api/admin/tasks/notes", operationId="admin.tasks.notes.post",
      *      summary="Store a newly created task note",
      *      tags={"Admin Tasks Notes"},
      *      description="Store Task Note",
@@ -54,7 +54,7 @@ interface AdminTaskNoteControllerSwagger
 
     /**
      * @OA\Patch(
-     *      path="/api/admin/tasks/notes/{id}",
+     *      path="/api/admin/tasks/notes/{id}", operationId="admin.tasks.notes.by-id.patch",
      *      summary="Update task note",
      *      tags={"Admin Tasks Notes"},
      *      description="Update Task Note",
@@ -105,7 +105,7 @@ interface AdminTaskNoteControllerSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/tasks/notes/{id}",
+     *      path="/api/admin/tasks/notes/{id}", operationId="admin.tasks.notes.by-id.delete",
      *      summary="Remove the specified task notes",
      *      tags={"Admin Tasks Notes"},
      *      description="Delete Task Note",
@@ -124,9 +124,7 @@ interface AdminTaskNoteControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

@@ -12,7 +12,7 @@ interface BulkNotificationControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/bulk-notifications/send",
+     *      path="/api/admin/bulk-notifications/send", operationId="admin.bulk-notifications.send.post",
      *      summary="Store a newly notification",
      *      tags={"Admin Bulk Notifications"},
      *      description="Store Bulk Notification",
@@ -54,7 +54,7 @@ interface BulkNotificationControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/bulk-notifications/send/multicast",
+     *      path="/api/admin/bulk-notifications/send/multicast", operationId="admin.bulk-notifications.send.multicast.post",
      *      summary="Store a newly notification",
      *      tags={"Admin Bulk Notifications"},
      *      description="Store Bulk Notification",
@@ -97,7 +97,7 @@ interface BulkNotificationControllerSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/bulk-notifications",
+     *      path="/api/admin/bulk-notifications", operationId="admin.bulk-notifications.get",
      *      summary="Get a listing of the bulk notifications",
      *      tags={"Admin Bulk Notifications"},
      *      description="Get all Bulk Notifications",
@@ -136,9 +136,7 @@ interface BulkNotificationControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

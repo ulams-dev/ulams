@@ -1,0 +1,32 @@
+# Operations whose 2xx answer is not a JSON body, so it has no response schema (checked by scripts/spec-quality.mjs).
+# Every other operation must declare a typed 2xx response. Reasons: redirect, file-download, event-stream,
+# html-page, javascript-file, font-file, binary-pdf. A 204 answer needs no entry.
+"GET /api/admin/compliance/report/export": file-download
+"GET /api/admin/course-builder/sessions/{session}/events": event-stream
+"GET /api/admin/csv/users": file-download
+"GET /api/admin/gift-questions/export": file-download
+"GET /api/admin/living-course/audit/export": file-download
+"GET /api/admin/living-course/sessions/{session}/audit/export": file-download
+"GET /api/admin/orders/export": file-download
+"GET /api/admin/payments/export": file-download
+"GET /api/admin/quiz-attempts/export": file-download
+"GET /api/admin/stats/course/{course_id}/export": file-download
+"GET /api/admin/stats/topic/{topic_id}/export": file-download
+"GET /api/auth/email/verify/{id}/{hash}": redirect
+"GET /api/auth/social/{provider}": redirect
+"GET /api/auth/social/{provider}/callback": redirect
+"GET /api/cmi5/player/{cmi5AuId}": html-page
+"GET /api/courses/{id}/preview/{topic_id}": html-page
+"GET /api/courses/{id}/scorm": html-page
+"GET /api/images/img": redirect
+"GET /api/learner-insights/me/export": file-download
+"GET /api/living-course/oauth/{provider}/callback": redirect
+"GET /api/lti/platform/authorize": redirect
+"GET /api/lti/tool/login": redirect
+"GET /api/pdfs/fonts/{file}": font-file
+"GET /api/scorm/assets/scorm-again.min.js": javascript-file
+"GET /api/scorm/play/{uuid}": html-page
+"GET /api/scorm/show/{uuid}": html-page
+"POST /api/admin/pdfs/preview": binary-pdf
+"POST /api/lti/platform/deep-links": html-page
+"POST /api/lti/tool/launch": html-page

@@ -16,12 +16,12 @@ class NudgeOpenedController extends Controller
 {
     /**
      * @OA\Post(
-     *   path="/api/learner-insights/nudges/opened",
+     *   path="/api/learner-insights/nudges/opened", operationId="learner-insights.nudges.opened.post",
      *   summary="The learner followed the link of a nudge (the frontend sends the signed `n` of the link)",
      *   tags={"Learner insights"},
      *   security={{"passport": {}}},
      *   @OA\RequestBody(required=true, @OA\JsonContent(required={"n"}, @OA\Property(property="n", type="string"))),
-     *   @OA\Response(response=202, description="Recorded (once per nudge)"),
+     *   @OA\Response(response=202, description="Recorded (once per nudge)", @OA\JsonContent(ref="#/components/schemas/ApiJson")),
      *   @OA\Response(response=404, description="The token is not genuine or the nudge belongs to another learner")
      * )
      */

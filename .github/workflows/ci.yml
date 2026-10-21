@@ -44,6 +44,7 @@ jobs:
       js: ${{ steps.filter.outputs.js }}
       demo: ${{ steps.filter.outputs.demo }}
       deploy: ${{ steps.filter.outputs.deploy }}
+      sdk: ${{ steps.filter.outputs.sdk }}
       php: ${{ steps.api.outputs.php == 'true' || steps.filter.outputs.ci == 'true' }}
     steps:
       - uses: actions/checkout@v7
@@ -97,6 +98,10 @@ jobs:
               - "yarn.lock"
               - ".github/**"
             ci:
+              - ".github/**"
+            sdk:
+              - "sdk-php/**"
+              - "front/cli/spec/openapi.json"
               - ".github/**"
             deploy:
               - "deploy/**"
@@ -188,6 +193,10 @@ jobs:
       # Every operation of the API's OpenAPI snapshot has a CLI command or a reasoned exclusion.
       - name: CLI endpoint coverage
         run: corepack yarn workspace ulams coverage
+
+      # Phase 7.3: every operation has a readable unique operationId and a typed 2xx response (or a reasoned exception).
+      - name: OpenAPI quality (operationIds, typed responses)
+        run: corepack yarn workspace ulams spec-quality
 
   # The learner pages of the reference frontend against a mock tenant API (no PHP, Postgres or Docker):
   # axe (WCAG 2.2 AA) light and dark at desktop and 360 px, keyboard focus and reduced motion.
@@ -575,9 +584,40 @@ jobs:
           done
       - run: deploy/vps-cloudflare/scripts/validate.sh
 
+  # The PHP client in sdk-php/ is generated from front/cli/spec/openapi.json (openapi-generator, pinned image):
+  # regenerate and fail on any difference, then run its tests against canned answers.
+  php-sdk:
+    name: PHP SDK (generated client)
+    needs: changes
+    if: needs.changes.outputs.sdk == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: curl, json, mbstring
+          coverage: none
+          tools: composer:v2
+      - name: Regenerate the client and fail on any difference
+        run: |
+          sdk-php/generate.sh
+          git add -N sdk-php
+          if ! git diff --exit-code --stat -- sdk-php; then
+            echo "::error::sdk-php is out of date with front/cli/spec/openapi.json: run sdk-php/generate.sh and commit the result"
+            exit 1
+          fi
+      - run: composer install --working-dir=sdk-php --no-interaction --prefer-dist
+      - run: sdk-php/vendor/bin/phpunit -c sdk-php/phpunit.xml
+
   ci-ok:
     name: CI OK
-    needs: [changes, js, demo-content, php, php-no-dev, images, deploy]
+    needs: [changes, js, demo-content, php, php-no-dev, php-sdk, images, deploy]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -585,6 +625,6 @@ jobs:
       - name: Fail if any job failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: |
-          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} demo-content=${{ needs.demo-content.result }} php=${{ needs.php.result }} php-no-dev=${{ needs.php-no-dev.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }}"
+          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} demo-content=${{ needs.demo-content.result }} php=${{ needs.php.result }} php-no-dev=${{ needs.php-no-dev.result }} php-sdk=${{ needs.php-sdk.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }}"
           exit 1
       - run: echo "All required jobs passed or were skipped by the path filters."

@@ -27,10 +27,10 @@ use Ulams\LiaScript\Services\LiaScriptService;
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="document", @OA\JsonContent(ref="#/components/schemas/LiaScriptDocumentResponse")))
  * @OA\Delete(path="/api/admin/liascript/{id}", operationId="liascript.delete", summary="Delete a LiaScript source with all versions and assets", tags={"Admin LiaScript"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
- * @OA\Get(path="/api/admin/liascript/{id}/source", summary="Markdown of the current or a given version", tags={"Admin LiaScript"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/liascript/{id}/source", operationId="admin.liascript.by-id.source.get", summary="Markdown of the current or a given version", tags={"Admin LiaScript"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\Parameter(name="version", in="query", required=false, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="text/markdown", @OA\MediaType(mediaType="text/markdown")))
+ *     @OA\Response(response=200, description="text/markdown", @OA\JsonContent(ref="#/components/schemas/ApiJson")))
  * @OA\Get(path="/api/admin/liascript/{id}/versions", operationId="liascript.versions-list", summary="List versions", tags={"Admin LiaScript"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="versions", @OA\JsonContent(ref="#/components/schemas/LiaScriptVersionListResponse")))
  * @OA\Post(path="/api/admin/liascript/{id}/versions", operationId="liascript.versions-add", summary="Add a version from Markdown or an upload", tags={"Admin LiaScript"}, security={{"passport": {}}},

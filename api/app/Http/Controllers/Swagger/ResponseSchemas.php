@@ -10,7 +10,11 @@ namespace App\Http\Controllers\Swagger;
  *
  * @OA\Schema(schema="ApiEnvelope", type="object", required={"success"}, description="Every JSON answer of the API: success flag and a message; the payload is `data` (and `meta` for pages).",
  *     @OA\Property(property="success", type="boolean"),
- *     @OA\Property(property="message", type="string"))
+ *     @OA\Property(property="message", type="string"),
+ *     @OA\Property(property="data", description="The payload: an object, a list or a scalar, depending on the operation (typed in the operations that have a resource schema)"),
+ *     @OA\Property(property="meta", ref="#/components/schemas/ApiPage"))
+ *
+ * @OA\Schema(schema="ApiJson", type="object", additionalProperties=true, description="A JSON answer whose body is not described yet (it does not follow the ApiEnvelope, or the controller builds it by hand). Replace with a precise schema when the endpoint gets one.")
  *
  * @OA\Schema(schema="ApiPage", type="object", description="Pagination meta of a page of results. Controllers that build it by hand send only current_page, last_page and total.",
  *     @OA\Property(property="current_page", type="integer"),

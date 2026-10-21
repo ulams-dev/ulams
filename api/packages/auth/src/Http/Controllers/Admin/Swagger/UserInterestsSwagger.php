@@ -12,7 +12,7 @@ interface UserInterestsSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/users/{id}/interests",
+     *     path="/api/admin/users/{id}/interests", operationId="admin.users.by-id.interests.get",
      *     summary="Get user interests",
      *     description="",
      *     tags={"Admin User Interests"},
@@ -44,7 +44,7 @@ interface UserInterestsSwagger
 
     /**
      * @OA\Put(
-     *     path="/api/admin/users/{id}/interests",
+     *     path="/api/admin/users/{id}/interests", operationId="admin.users.by-id.interests.put",
      *     summary="Set user interests",
      *     description="Set user interests",
      *     tags={"Admin User Interests"},
@@ -89,7 +89,7 @@ interface UserInterestsSwagger
 
     /**
      * @OA\Post(
-     *     path="/api/admin/users/{id}/interests",
+     *     path="/api/admin/users/{id}/interests", operationId="admin.users.by-id.interests.post",
      *     summary="Add single user interest",
      *     description="Add single user interest",
      *     tags={"Admin User Interests"},
@@ -136,7 +136,7 @@ interface UserInterestsSwagger
 
     /**
      * @OA\Delete(
-     *     path="/api/admin/users/{id}/interests/{interest_id}",
+     *     path="/api/admin/users/{id}/interests/{interest_id}", operationId="admin.users.by-id.interests.by-interest-id.delete",
      *     summary="Add single user interest",
      *     description="",
      *     tags={"Admin User Interests"},

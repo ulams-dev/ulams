@@ -14,7 +14,7 @@ interface ImagesControllerSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/images/img",
+     *     path="/api/images/img", operationId="images.img.get",
      *     summary="Resize an image on the fly and redirect to the cached copy",
      *     description="Public endpoint, throttled by `images.render`. The cached file name is `sha1(path . json_encode(params))` plus the extension, so the same request always returns the same URL. The first request creates the copy, optimises it and stores it on the configured disk; later requests only redirect. A failed resize does not return an error status: the redirect points to an SVG that contains the error message.",
      *     tags={"Images"},
@@ -69,7 +69,7 @@ interface ImagesControllerSwagger
 
     /**
      * @OA\Post(
-     *     path="/api/images/img",
+     *     path="/api/images/img", operationId="images.img.post",
      *     summary="Resize many images at once",
      *     description="Public endpoint, throttled by `images.render`. Returns one entry per requested image, in the same order, with the URL of the cached copy.",
      *     tags={"Images"},

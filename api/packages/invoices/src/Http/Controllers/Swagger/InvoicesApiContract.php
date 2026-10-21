@@ -9,7 +9,7 @@ interface InvoicesApiContract
 {
     /**
      * @OA\Get(
-     *     path="/api/order-invoices/{id}",
+     *     path="/api/order-invoices/{id}", operationId="order-invoices.by-id.get",
      *     summary="Get invoice identified by a given id identifier of order",
      *     tags={"Invoices"},
      *     security={
@@ -26,7 +26,7 @@ interface InvoicesApiContract
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="",
+     *         description="", @OA\JsonContent(ref="#/components/schemas/ApiJson")
      *      ),
      *     @OA\Response(
      *          response=401,

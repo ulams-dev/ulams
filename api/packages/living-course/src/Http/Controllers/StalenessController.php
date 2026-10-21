@@ -11,9 +11,9 @@ use Ulams\LivingCourse\Services\StalenessService;
 /**
  * Staleness per element and per course. Works with AI disabled.
  *
- * @OA\Get(path="/api/admin/living-course/sessions/{session}/staleness", summary="Per-element staleness and the course summary", tags={"Admin Living Course"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/living-course/sessions/{session}/staleness", operationId="admin.living-course.sessions.by-session.staleness.get", summary="Per-element staleness and the course summary", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
- *     @OA\Response(response=200, description="summary and elements"), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown session"))
+ *     @OA\Response(response=200, description="summary and elements", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown session"))
  */
 class StalenessController extends Controller
 {

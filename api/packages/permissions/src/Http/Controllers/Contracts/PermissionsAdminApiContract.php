@@ -65,7 +65,7 @@ interface PermissionsAdminApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/admin/roles",
+     *     path="/api/admin/roles", operationId="admin.roles.get",
      *     summary="Lists available roles",
      *     tags={"Admin Permissions"},
      *     security={
@@ -248,7 +248,7 @@ interface PermissionsAdminApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/admin/roles/{name}",
+     *     path="/api/admin/roles/{name}", operationId="admin.roles.by-name.get",
      *     summary="Read a role and returns list of all permissions ",
      *     tags={"Admin Permissions"},
      *     security={

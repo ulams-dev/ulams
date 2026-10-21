@@ -36,7 +36,7 @@ use Ulams\Tenancy\Http\Requests\SetPlatformTenantEnvRequest;
 interface PlatformTenantSwagger
 {
     /**
-     * @OA\Get(path="/api/platform/tenants", summary="List the tenants", tags={"Platform"}, security={{"passport": {}}},
+     * @OA\Get(path="/api/platform/tenants", operationId="platform.tenants.get", summary="List the tenants", tags={"Platform"}, security={{"passport": {}}},
      *     @OA\Response(response=200, description="Tenants", @OA\JsonContent(@OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
      *         @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/PlatformTenant")))),
      *     @OA\Response(response=403, description="Not a platform administrator, or the token lacks platform:read"),
@@ -45,7 +45,7 @@ interface PlatformTenantSwagger
     public function index(ListPlatformRequest $request): JsonResponse;
 
     /**
-     * @OA\Get(path="/api/platform/tenants/{slug}", summary="One tenant", tags={"Platform"}, security={{"passport": {}}},
+     * @OA\Get(path="/api/platform/tenants/{slug}", operationId="platform.tenants.by-slug.get", summary="One tenant", tags={"Platform"}, security={{"passport": {}}},
      *     @OA\Parameter(name="slug", in="path", required=true, @OA\Schema(type="string")),
      *     @OA\Response(response=200, description="The tenant", @OA\JsonContent(@OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
      *         @OA\Property(property="data", ref="#/components/schemas/PlatformTenant"))),
@@ -54,7 +54,7 @@ interface PlatformTenantSwagger
     public function show(ListPlatformRequest $request, string $slug): JsonResponse;
 
     /**
-     * @OA\Post(path="/api/platform/tenants", summary="Create a tenant (queued; poll the operation)", tags={"Platform"}, security={{"passport": {}}},
+     * @OA\Post(path="/api/platform/tenants", operationId="platform.tenants.post", summary="Create a tenant (queued; poll the operation)", tags={"Platform"}, security={{"passport": {}}},
      *     @OA\RequestBody(required=true, @OA\JsonContent(required={"slug"},
      *         @OA\Property(property="slug", type="string", example="acme", description="2-30 lowercase letters and digits, starting with a letter"),
      *         @OA\Property(property="name", type="string"), @OA\Property(property="theme", type="string", example="coffee"),
@@ -68,7 +68,7 @@ interface PlatformTenantSwagger
     public function store(CreatePlatformTenantRequest $request): JsonResponse;
 
     /**
-     * @OA\Patch(path="/api/platform/tenants/{slug}/env", summary="Override or reset inheritable settings (AI driver, models) of a tenant", tags={"Platform"}, security={{"passport": {}}},
+     * @OA\Patch(path="/api/platform/tenants/{slug}/env", operationId="platform.tenants.by-slug.env.patch", summary="Override or reset inheritable settings (AI driver, models) of a tenant", tags={"Platform"}, security={{"passport": {}}},
      *     @OA\Parameter(name="slug", in="path", required=true, @OA\Schema(type="string")),
      *     @OA\RequestBody(required=true, @OA\JsonContent(
      *         @OA\Property(property="set", type="object", example={"AI_DRIVER": "fake"}, additionalProperties=@OA\AdditionalProperties(type="string")),
@@ -80,7 +80,7 @@ interface PlatformTenantSwagger
     public function env(SetPlatformTenantEnvRequest $request, string $slug): JsonResponse;
 
     /**
-     * @OA\Delete(path="/api/platform/tenants/{slug}", summary="Delete a tenant and all its data (queued; send the slug as confirm)", tags={"Platform"}, security={{"passport": {}}},
+     * @OA\Delete(path="/api/platform/tenants/{slug}", operationId="platform.tenants.by-slug.delete", summary="Delete a tenant and all its data (queued; send the slug as confirm)", tags={"Platform"}, security={{"passport": {}}},
      *     @OA\Parameter(name="slug", in="path", required=true, @OA\Schema(type="string")),
      *     @OA\RequestBody(required=true, @OA\JsonContent(required={"confirm"}, @OA\Property(property="confirm", type="string", description="Must equal the slug"))),
      *     @OA\Response(response=202, description="Queued", @OA\JsonContent(@OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),

@@ -10,7 +10,7 @@ interface DictionaryWordApiControllerSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/dictionaries/{slug}/words",
+     *      path="/api/dictionaries/{slug}/words", operationId="dictionaries.by-slug.words.get",
      *      summary="Get a listing of the Dictionary Word",
      *      tags={"Dictionaries"},
      *      @OA\Parameter(
@@ -77,7 +77,7 @@ interface DictionaryWordApiControllerSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/dictionaries/{slug}/words/{id}",
+     *      path="/api/dictionaries/{slug}/words/{id}", operationId="dictionaries.by-slug.words.by-id.get",
      *      summary="Display the specified Dictionary Word",
      *      tags={"Dictionaries"},
      *      @OA\Parameter(
@@ -129,7 +129,7 @@ interface DictionaryWordApiControllerSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/dictionaries/{slug}/words/categories",
+     *      path="/api/dictionaries/{slug}/words/categories", operationId="dictionaries.by-slug.words.categories.get",
      *      summary="Get the categories used in the dictionary for a given slug",
      *      tags={"Dictionaries"},
      *      @OA\Parameter(

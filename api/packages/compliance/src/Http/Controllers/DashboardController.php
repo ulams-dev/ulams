@@ -10,10 +10,10 @@ use Ulams\Compliance\Services\DashboardService;
 /**
  * Compliance dashboard numbers. Permission `compliance_report`.
  *
- * @OA\Get(path="/api/admin/compliance/dashboard", summary="Compliance dashboard", tags={"Compliance"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/compliance/dashboard", operationId="admin.compliance.dashboard.get", summary="Compliance dashboard", tags={"Compliance"}, security={{"passport": {}}},
  *     description="Required training (open, overdue, completed, completion rate, average days to complete), certificate health (valid, expiring in 30 and 90 days, expired, revoked) and the same per course, the most overdue first.",
  *     @OA\Parameter(name="course_id", in="query", description="Limit to one course", @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="assignments, certificates and courses blocks"), @OA\Response(response=403, description="Forbidden"))
+ *     @OA\Response(response=200, description="assignments, certificates and courses blocks", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"))
  */
 class DashboardController extends ComplianceController
 {

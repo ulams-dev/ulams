@@ -17,14 +17,12 @@ interface CategorySwagger
     /**
      * @OA\Get(
      *      tags={"Categories"},
-     *      path="/api/categories",
+     *      path="/api/categories", operationId="categories.get",
      *      description="Get Categories",
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -40,14 +38,12 @@ interface CategorySwagger
     /**
      * @OA\Get(
      *      tags={"Categories"},
-     *      path="/api/categories/tree",
+     *      path="/api/categories/tree", operationId="categories.tree.get",
      *      description="Get Categories Tree",
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -63,7 +59,7 @@ interface CategorySwagger
     /**
      * @OA\Get(
      *     tags={"Categories"},
-     *      path="/api/admin/categories/{id}",
+     *      path="/api/admin/categories/{id}", operationId="admin.categories.by-id.get",
      *      description="Get single Categories",
      *      @OA\Parameter(
      *          name="id",
@@ -76,9 +72,7 @@ interface CategorySwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -94,7 +88,7 @@ interface CategorySwagger
     /**
      * @OA\Post(
      *     tags={"Categories"},
-     *     path="/api/admin/categories",
+     *     path="/api/admin/categories", operationId="admin.categories.post",
      *     summary="Category create",
      *     description="Create single Categories",
      *     security={
@@ -136,9 +130,7 @@ interface CategorySwagger
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -154,7 +146,7 @@ interface CategorySwagger
     /**
      * @OA\Post(
      *     tags={"Categories"},
-     *     path="/api/admin/categories/{id}",
+     *     path="/api/admin/categories/{id}", operationId="admin.categories.by-id.post",
      *     summary="Update category",
      *     description="Update single Categories",
      *     security={
@@ -204,9 +196,7 @@ interface CategorySwagger
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -225,7 +215,7 @@ interface CategorySwagger
      *     security={
      *         {"passport": {}},
      *     },
-     *     path="/api/admin/categories/{id}",
+     *     path="/api/admin/categories/{id}", operationId="admin.categories.by-id.delete",
      *     summary="Destroy category",
      *     description="Destroy the specified category",
      *     @OA\Parameter(
@@ -239,9 +229,7 @@ interface CategorySwagger
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -256,7 +244,7 @@ interface CategorySwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/categories/sort",
+     *      path="/api/admin/categories/sort", operationId="admin.categories.sort.post",
      *      tags={"Categories"},
      *      security={
      *          {"passport": {}},

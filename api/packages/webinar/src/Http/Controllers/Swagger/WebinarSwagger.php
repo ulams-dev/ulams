@@ -15,7 +15,7 @@ interface WebinarSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/webinars",
+     *      path="/api/admin/webinars", operationId="admin.webinars.get",
      *      tags={"Admin Webinars"},
      *      @OA\Parameter(
      *          name="order_by",
@@ -76,9 +76,7 @@ interface WebinarSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -102,7 +100,7 @@ interface WebinarSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/webinars",
+     *      path="/api/admin/webinars", operationId="admin.webinars.post",
      *      summary="Store a newly created Webinar in storage",
      *      tags={"Admin Webinars"},
      *      description="Store Webinar",
@@ -119,9 +117,7 @@ interface WebinarSwagger
      *      @OA\Response(
      *          response=201,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -144,7 +140,7 @@ interface WebinarSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/webinars/{id}",
+     *      path="/api/admin/webinars/{id}", operationId="admin.webinars.by-id.get",
      *      summary="Display the specified Webinar",
      *      tags={"Admin Webinars"},
      *      description="Get Webinars",
@@ -163,9 +159,7 @@ interface WebinarSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -188,7 +182,7 @@ interface WebinarSwagger
 
     /**
      * @OA\Put(
-     *      path="/api/admin/webinars/{id}",
+     *      path="/api/admin/webinars/{id}", operationId="admin.webinars.by-id.put",
      *      summary="Update the specified Webinar in storage",
      *      tags={"Admin Webinars"},
      *      description="Update Webinar",
@@ -214,9 +208,7 @@ interface WebinarSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -239,7 +231,7 @@ interface WebinarSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/webinars/{id}",
+     *      path="/api/admin/webinars/{id}", operationId="admin.webinars.by-id.delete",
      *      summary="Remove the specified Webinar from storage",
      *      tags={"Admin Webinars"},
      *      description="Delete Webinar",
@@ -258,9 +250,7 @@ interface WebinarSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -284,7 +274,7 @@ interface WebinarSwagger
     /**
      * @OA\Get(
      *      tags={"Admin Webinars"},
-     *      path="/api/admin/webinars/users/assignable",
+     *      path="/api/admin/webinars/users/assignable", operationId="admin.webinars.users.assignable.get",
      *      description="Get users assignable to webinars",
      *      security={
      *          {"passport": {}},
@@ -300,9 +290,7 @@ interface WebinarSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -318,7 +306,7 @@ interface WebinarSwagger
     /**
      * @OA\Get(
      *      tags={"Admin Webinars"},
-     *      path="/api/admin/webinars/{id}/users",
+     *      path="/api/admin/webinars/{id}/users", operationId="admin.webinars.by-id.users.get",
      *      description="Get webinars users",
      *      security={
      *          {"passport": {}},
@@ -343,9 +331,7 @@ interface WebinarSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,

@@ -27,13 +27,13 @@ class PlatformController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/lti/launches/{topic}",
+     *     path="/api/lti/launches/{topic}", operationId="lti.launches.by-topic.post",
      *     summary="Start an LTI launch of an external-tool topic",
      *     description="Returns the tool's OIDC login URL (with a signed, 2-minute login_hint) to open in an iframe or a new window.",
      *     tags={"LTI"},
      *     security={{"passport": {}}},
      *     @OA\Parameter(name="topic", in="path", required=true, @OA\Schema(type="integer")),
-     *     @OA\Response(response=200, description="{url, presentation, tool}"),
+     *     @OA\Response(response=200, description="{url, presentation, tool}", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
      *     @OA\Response(response=401, description="endpoint requires authentication"),
      *     @OA\Response(response=403, description="no access to the topic"),
      *     @OA\Response(response=404, description="unknown topic"),
@@ -62,7 +62,7 @@ class PlatformController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/lti/platform/authorize",
+     *     path="/api/lti/platform/authorize", operationId="lti.platform.authorize.get",
      *     summary="OIDC authentication endpoint (the tool redirects the browser here)",
      *     description="Checks client_id, redirect_uri and the login_hint (single use) and posts a signed id_token to the tool. Also accepts POST.",
      *     tags={"LTI"},
@@ -84,10 +84,10 @@ class PlatformController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/lti/platform/token",
+     *     path="/api/lti/platform/token", operationId="lti.platform.token.post",
      *     summary="AGS access token (OAuth 2 client credentials with a JWT client assertion)",
      *     tags={"LTI"},
-     *     @OA\Response(response=200, description="{access_token, token_type, expires_in, scope}"),
+     *     @OA\Response(response=200, description="{access_token, token_type, expires_in, scope}", @OA\JsonContent(ref="#/components/schemas/ApiJson")),
      *     @OA\Response(response=400, description="invalid request or scope"),
      *     @OA\Response(response=401, description="invalid client assertion")
      * )
@@ -103,7 +103,7 @@ class PlatformController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/lti/platform/deep-links",
+     *     path="/api/lti/platform/deep-links", operationId="lti.platform.deep-links.post",
      *     summary="Deep-linking return URL (the tool posts the author's selection here)",
      *     description="Verifies the LtiDeepLinkingResponse JWT and creates one external-tool topic per ltiResourceLink item in the lesson the request was made for.",
      *     tags={"LTI"},

@@ -85,7 +85,7 @@ use Ulams\Webhooks\Support\EventCatalog;
  *     @OA\Response(response=404, description="Not found"), @OA\Response(response=422, description="Invalid input"))
  * @OA\Delete(path="/api/admin/webhooks/endpoints/{endpoint}", operationId="webhooks.endpoints.delete", summary="Delete a webhook endpoint and its delivery log", tags={"Admin Webhooks"}, security={{"passport": {}}},
  *     @OA\Parameter(name="endpoint", in="path", required=true, @OA\Schema(type="string")),
- *     @OA\Response(response=200, description="Deleted"), @OA\Response(response=404, description="Not found"))
+ *     @OA\Response(response=200, description="Deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="Not found"))
  * @OA\Post(path="/api/admin/webhooks/endpoints/{endpoint}/rotate-secret", operationId="webhooks.endpoints.rotate-secret", summary="Replace the signing secret (returned once; the old one stops working at once)", tags={"Admin Webhooks"}, security={{"passport": {}}},
  *     @OA\Parameter(name="endpoint", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Response(response=200, description="Endpoint with the new secret", @OA\JsonContent(@OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),

@@ -17,16 +17,16 @@ use Ulams\LiaScript\Services\ProgressToken;
 /**
  * Learners play a LiaScript topic on the tenant content origin and the player reports progress.
  *
- * @OA\Post(path="/api/liascript/launches/{topic}", summary="Start a LiaScript topic on the tenant content origin", tags={"LiaScript"}, security={{"passport": {}}},
+ * @OA\Post(path="/api/liascript/launches/{topic}", operationId="liascript.launches.by-topic.post", summary="Start a LiaScript topic on the tenant content origin", tags={"LiaScript"}, security={{"passport": {}}},
  *     @OA\Parameter(name="topic", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="{url, sections, version}; url carries a topic-scoped progress token in its fragment"),
+ *     @OA\Response(response=200, description="{url, sections, version}; url carries a topic-scoped progress token in its fragment", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
  *     @OA\Response(response=401, description="endpoint requires authentication"), @OA\Response(response=403, description="no access to the course"),
  *     @OA\Response(response=404, description="not a LiaScript topic"), @OA\Response(response=503, description="no content origin or player not installed"))
- * @OA\Post(path="/api/liascript/progress/{topic}", summary="Progress reported by the content-origin player", tags={"LiaScript"},
+ * @OA\Post(path="/api/liascript/progress/{topic}", operationId="liascript.progress.by-topic.post", summary="Progress reported by the content-origin player", tags={"LiaScript"},
  *     description="Authenticated with the progress token (X-Ulams-Tracking-Token). The topic is complete when the learner reaches the last section, or LiaScript reports completed/passed.",
  *     @OA\Parameter(name="topic", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="location", type="integer"), @OA\Property(property="status", type="string"))),
- *     @OA\Response(response=200, description="{status: in_progress|complete}"), @OA\Response(response=401, description="invalid or expired token"))
+ *     @OA\Response(response=200, description="{status: in_progress|complete}", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=401, description="invalid or expired token"))
  */
 class LiaScriptLearnerController extends Controller
 {

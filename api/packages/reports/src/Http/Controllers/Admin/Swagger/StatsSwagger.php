@@ -15,7 +15,7 @@ interface StatsSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/stats/available",
+     *     path="/api/admin/stats/available", operationId="admin.stats.available.get",
      *     summary="Get list of available stats for models",
      *     description="",
      *     tags={"Admin Reports"},
@@ -38,7 +38,7 @@ interface StatsSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/stats/course/{course_id}",
+     *     path="/api/admin/stats/course/{course_id}", operationId="admin.stats.course.by-course-id.get",
      *     summary="Calculate stats for Course",
      *     description="",
      *     tags={"Admin Reports"},
@@ -82,7 +82,7 @@ interface StatsSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/stats/topic/{topic_id}",
+     *     path="/api/admin/stats/topic/{topic_id}", operationId="admin.stats.topic.by-topic-id.get",
      *     summary="Calculate stats for Topic",
      *     description="",
      *     tags={"Admin Reports"},
@@ -126,7 +126,7 @@ interface StatsSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/stats/cart",
+     *     path="/api/admin/stats/cart", operationId="admin.stats.cart.get",
      *     summary="Calculate stats for Cart",
      *     description="",
      *     tags={"Admin Reports"},
@@ -161,7 +161,7 @@ interface StatsSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/stats/date-range",
+     *     path="/api/admin/stats/date-range", operationId="admin.stats.date-range.get",
      *     summary="Calculate stats for Course",
      *     description="",
      *     tags={"Admin Reports"},
@@ -214,7 +214,7 @@ interface StatsSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/stats/course/{course_id}/export",
+     *     path="/api/admin/stats/course/{course_id}/export", operationId="admin.stats.course.by-course-id.export.get",
      *     summary="Export stat for Course",
      *     description="",
      *     tags={"Admin Reports"},
@@ -258,7 +258,7 @@ interface StatsSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/stats/topic/{topic_id}/export",
+     *     path="/api/admin/stats/topic/{topic_id}/export", operationId="admin.stats.topic.by-topic-id.export.get",
      *     summary="Export stat for Topic",
      *     description="",
      *     tags={"Admin Reports"},

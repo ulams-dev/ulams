@@ -9,7 +9,7 @@ interface GreetingAdminApiSwagger
 {
     /**
      * @OA\Post(
-     *      path="/api/admin/example-plugin/greetings",
+     *      path="/api/admin/example-plugin/greetings", operationId="admin.example-plugin.greetings.post",
      *      summary="Send the tenant's greeting to a user (dispatches GreetingSent)",
      *      tags={"Admin Example plugin"},
      *      security={{"passport": {}}},

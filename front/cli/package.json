@@ -23,6 +23,7 @@
     "sync-spec": "node scripts/sync-spec.mjs",
     "generate": "node scripts/gen-commands.mjs",
     "coverage": "node scripts/coverage.mjs",
+    "spec-quality": "node scripts/spec-quality.mjs",
     "eval": "node evals/run.mjs"
   },
   "dependencies": {

@@ -13,9 +13,9 @@ use Ulams\Compliance\Services\ComplianceReportService;
  * Scheduled reports: a compliance dataset e-mailed as CSV or JSON lines every day, week or month to
  * tenant users. Permission `compliance_report`.
  *
- * @OA\Get(path="/api/admin/compliance/schedules", summary="List scheduled reports", tags={"Compliance"}, security={{"passport": {}}},
- *     @OA\Response(response=200, description="schedules"), @OA\Response(response=403, description="Forbidden"))
- * @OA\Post(path="/api/admin/compliance/schedules", summary="Schedule a report", tags={"Compliance"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/compliance/schedules", operationId="admin.compliance.schedules.get", summary="List scheduled reports", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="schedules", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"))
+ * @OA\Post(path="/api/admin/compliance/schedules", operationId="admin.compliance.schedules.post", summary="Schedule a report", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\RequestBody(required=true, @OA\MediaType(mediaType="application/json", @OA\Schema(type="object", required={"name","dataset","frequency","recipient_ids"},
  *         @OA\Property(property="name", type="string"),
  *         @OA\Property(property="dataset", type="string", enum={"assignments","certificates","audit"}),
@@ -23,13 +23,13 @@ use Ulams\Compliance\Services\ComplianceReportService;
  *         @OA\Property(property="format", type="string", enum={"csv","jsonl"}),
  *         @OA\Property(property="filters", type="object", description="course_id, user_id, status, from, to"),
  *         @OA\Property(property="recipient_ids", type="array", description="Ids of users of this tenant", @OA\Items(type="integer"))))),
- *     @OA\Response(response=201, description="the schedule; the first run is the next 06:00"), @OA\Response(response=422, description="Validation error"))
- * @OA\Put(path="/api/admin/compliance/schedules/{id}", summary="Update a scheduled report", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=201, description="the schedule; the first run is the next 06:00", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=422, description="Validation error"))
+ * @OA\Put(path="/api/admin/compliance/schedules/{id}", operationId="admin.compliance.schedules.by-id.put", summary="Update a scheduled report", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="the schedule"), @OA\Response(response=404, description="Unknown schedule"))
- * @OA\Delete(path="/api/admin/compliance/schedules/{id}", summary="Delete a scheduled report", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="the schedule", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="Unknown schedule"))
+ * @OA\Delete(path="/api/admin/compliance/schedules/{id}", operationId="admin.compliance.schedules.by-id.delete", summary="Delete a scheduled report", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="deleted"), @OA\Response(response=404, description="Unknown schedule"))
+ *     @OA\Response(response=200, description="deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="Unknown schedule"))
  */
 class ScheduleController extends ComplianceController
 {

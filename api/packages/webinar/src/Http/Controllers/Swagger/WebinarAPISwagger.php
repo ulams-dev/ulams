@@ -12,7 +12,7 @@ interface WebinarAPISwagger
      *      security={
      *          {"passport": {}},
      *      },
-     *      path="/api/webinars/generate-jitsi/{id}",
+     *      path="/api/webinars/generate-jitsi/{id}", operationId="webinars.generate-jitsi.by-id.get",
      *      description="Generate jitsi object for approved webinar",
      *      @OA\Parameter(
      *          name="id",
@@ -25,9 +25,7 @@ interface WebinarAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -69,7 +67,7 @@ interface WebinarAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/webinars",
+     *      path="/api/webinars", operationId="webinars.get",
      *      summary="Get a listing of the Webinars.",
      *      tags={"Webinars"},
      *      description="Get all Webinars",
@@ -141,9 +139,7 @@ interface WebinarAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -167,7 +163,7 @@ interface WebinarAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/webinars/{id}",
+     *      path="/api/webinars/{id}", operationId="webinars.by-id.get",
      *      summary="Display the specified Webinar",
      *      tags={"Webinars"},
      *      description="Get Webinar",
@@ -183,9 +179,7 @@ interface WebinarAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -208,7 +202,7 @@ interface WebinarAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/webinars/me",
+     *      path="/api/webinars/me", operationId="webinars.me.get",
      *      security={
      *          {"passport": {}},
      *      },
@@ -284,9 +278,7 @@ interface WebinarAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -310,7 +302,7 @@ interface WebinarAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/webinars/start-live-stream/{id}",
+     *      path="/api/webinars/start-live-stream/{id}", operationId="webinars.start-live-stream.by-id.get",
      *      security={
      *          {"passport": {}},
      *      },
@@ -328,9 +320,7 @@ interface WebinarAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiJson"),
      *      )
      * )
      */

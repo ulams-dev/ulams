@@ -25,7 +25,7 @@ class ToolController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/lti/tool/login",
+     *     path="/api/lti/tool/login", operationId="lti.tool.login.get",
      *     summary="OIDC login initiation from a registered platform (also POST)",
      *     tags={"LTI"},
      *     @OA\Parameter(name="lti_storage_target", in="query", required=false, description="Client Side postMessage Storage: the platform's storage frame. Present: the response is a page that puts the nonce in the platform's storage before it continues.", @OA\Schema(type="string")),
@@ -54,7 +54,7 @@ class ToolController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/lti/tool/launch",
+     *     path="/api/lti/tool/launch", operationId="lti.tool.launch.post",
      *     summary="LTI launch (resource link or deep-linking request) from a registered platform",
      *     description="Resource link: maps the platform user, grants course access and redirects to the front with a one-time code. Deep linking: shows the course picker.",
      *     tags={"LTI"},
@@ -82,12 +82,12 @@ class ToolController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/lti/tool/launch/verify",
+     *     path="/api/lti/tool/launch/verify", operationId="lti.tool.launch.verify.post",
      *     summary="Second step of a launch whose login used the platform's storage (Client Side postMessage Storage)",
      *     description="Posted by the storage page with the id_token, the state and the value read from the platform's storage. A different value is refused; an empty one (storage unavailable) falls back to the server-side state. Then it behaves like /api/lti/tool/launch.",
      *     tags={"LTI"},
      *     @OA\Response(response=302, description="redirect to the front landing page"),
-     *     @OA\Response(response=200, description="course picker (deep linking)"),
+     *     @OA\Response(response=200, description="course picker (deep linking)", @OA\JsonContent(ref="#/components/schemas/ApiJson")),
      *     @OA\Response(response=401, description="the value does not match, or the login expired")
      * )
      */
@@ -123,10 +123,10 @@ class ToolController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/lti/tool/deep-link",
+     *     path="/api/lti/tool/deep-link", operationId="lti.tool.deep-link.post",
      *     summary="Return the courses picked in the deep-linking picker to the platform",
      *     tags={"LTI"},
-     *     @OA\Response(response=200, description="auto-submitting form with the LtiDeepLinkingResponse JWT"),
+     *     @OA\Response(response=200, description="auto-submitting form with the LtiDeepLinkingResponse JWT", @OA\JsonContent(ref="#/components/schemas/ApiJson")),
      *     @OA\Response(response=410, description="the deep-linking session expired")
      * )
      */
@@ -146,11 +146,11 @@ class ToolController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/lti/tool/exchange",
+     *     path="/api/lti/tool/exchange", operationId="lti.tool.exchange.post",
      *     summary="Exchange the one-time launch code for an API token",
      *     tags={"LTI"},
      *     @OA\RequestBody(required=true, @OA\JsonContent(@OA\Property(property="code", type="string"))),
-     *     @OA\Response(response=200, description="{token, course_id}"),
+     *     @OA\Response(response=200, description="{token, course_id}", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
      *     @OA\Response(response=401, description="expired or used code")
      * )
      */

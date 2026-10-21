@@ -11,7 +11,7 @@ interface PaymentsSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/payments",
+     *      path="/api/payments", operationId="payments.get",
      *      summary="Search payments",
      *      tags={"Payments"},
      *      description="Get filtered and paginated Payments",
@@ -116,9 +116,7 @@ interface PaymentsSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -142,7 +140,7 @@ interface PaymentsSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/payments/{id}",
+     *      path="/api/payments/{id}", operationId="payments.by-id.get",
      *      summary="Display the specified Payment",
      *      tags={"Payments"},
      *      description="Get Payment",
@@ -161,9 +159,7 @@ interface PaymentsSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

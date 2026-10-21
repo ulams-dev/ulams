@@ -13,7 +13,7 @@ interface AdminBookmarkControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/bookmarks",
+     *      path="/api/admin/bookmarks", operationId="admin.bookmarks.post",
      *      summary="Store a newly created bookmark",
      *      tags={"Admin Bookmarks"},
      *      description="Store Bookmark",
@@ -55,7 +55,7 @@ interface AdminBookmarkControllerSwagger
 
     /**
      * @OA\Patch(
-     *      path="/api/admin/bookmarks/{id}",
+     *      path="/api/admin/bookmarks/{id}", operationId="admin.bookmarks.by-id.patch",
      *      summary="Update bookmark",
      *      tags={"Admin Bookmarks"},
      *      description="Store Bookmark",
@@ -106,7 +106,7 @@ interface AdminBookmarkControllerSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/bookmarks/{id}",
+     *      path="/api/admin/bookmarks/{id}", operationId="admin.bookmarks.by-id.delete",
      *      summary="Remove the specified bookmark",
      *      tags={"Admin Bookmarks"},
      *      description="Delete Bookmarks",
@@ -125,9 +125,7 @@ interface AdminBookmarkControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -150,7 +148,7 @@ interface AdminBookmarkControllerSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/bookmarks",
+     *      path="/api/admin/bookmarks", operationId="admin.bookmarks.get",
      *      summary="Get a listing of the bookmarks",
      *      tags={"Admin Bookmarks"},
      *      description="Get all bookmarks",
@@ -232,9 +230,7 @@ interface AdminBookmarkControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

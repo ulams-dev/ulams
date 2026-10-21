@@ -18,7 +18,7 @@ interface ProfileSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/profile/me",
+     *      path="/api/profile/me", operationId="profile.me.get",
      *      description="Get logged user info",
      *      tags={"Profile"},
      *      security={
@@ -27,9 +27,7 @@ interface ProfileSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -44,7 +42,7 @@ interface ProfileSwagger
 
     /**
      * @OA\Put(
-     *      path="/api/profile/me",
+     *      path="/api/profile/me", operationId="profile.me.put",
      *      description="Update the profile",
      *      tags={"Profile"},
      *      security={
@@ -127,9 +125,7 @@ interface ProfileSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -145,7 +141,7 @@ interface ProfileSwagger
     /**
      * @OA\Put(
      *      tags={"profile"},
-     *      path="/api/profile/me-auth",
+     *      path="/api/profile/me-auth", operationId="profile.me-auth.put",
      *      description="Update the profile authorization data",
      *      tags={"Profile"},
      *      security={
@@ -162,9 +158,7 @@ interface ProfileSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -179,7 +173,7 @@ interface ProfileSwagger
 
     /**
      * @OA\Put(
-     *      path="/api/profile/password",
+     *      path="/api/profile/password", operationId="profile.password.put",
      *      description="Update password",
      *      tags={"Profile"},
      *      security={
@@ -212,9 +206,7 @@ interface ProfileSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -229,7 +221,7 @@ interface ProfileSwagger
 
     /**
      * @OA\Put(
-     *     path="/api/profile/interests",
+     *     path="/api/profile/interests", operationId="profile.interests.put",
      *     summary="Update user interests",
      *     tags={"Profile"},
      *     security={
@@ -250,9 +242,7 @@ interface ProfileSwagger
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")
      *     )
      * )
      */
@@ -260,7 +250,7 @@ interface ProfileSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/profile/upload-avatar",
+     *      path="/api/profile/upload-avatar", operationId="profile.upload-avatar.post",
      *      description="Upload avatar",
      *      tags={"Profile"},
      *      security={
@@ -276,9 +266,7 @@ interface ProfileSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -293,7 +281,7 @@ interface ProfileSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/profile/delete-avatar",
+     *      path="/api/profile/delete-avatar", operationId="profile.delete-avatar.delete",
      *      description="Delete avatar",
      *      tags={"Profile"},
      *      security={
@@ -302,9 +290,7 @@ interface ProfileSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -319,7 +305,7 @@ interface ProfileSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/profile/settings",
+     *      path="/api/profile/settings", operationId="profile.settings.get",
      *      description="Get user settings",
      *      tags={"Profile"},
      *      security={
@@ -328,9 +314,7 @@ interface ProfileSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -345,7 +329,7 @@ interface ProfileSwagger
 
     /**
      * @OA\Put(
-     *     path="/api/profile/settings",
+     *     path="/api/profile/settings", operationId="profile.settings.put",
      *     summary="Update user settings",
      *     tags={"Profile"},
      *     security={
@@ -370,9 +354,7 @@ interface ProfileSwagger
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")
      *     )
      * )
      */
@@ -380,7 +362,7 @@ interface ProfileSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/profile",
+     *      path="/api/profile", operationId="profile.delete",
      *      description="Delete user profile",
      *      tags={"Profile"},
      *      security={
@@ -389,9 +371,7 @@ interface ProfileSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -406,7 +386,7 @@ interface ProfileSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/profile/delete/init",
+     *      path="/api/profile/delete/init", operationId="profile.delete.init.post",
      *      description="Create user deletion request",
      *      tags={"Profile"},
      *      security={
@@ -424,9 +404,7 @@ interface ProfileSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -441,7 +419,7 @@ interface ProfileSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/profile/delete/{userId}/{token}",
+     *      path="/api/profile/delete/{userId}/{token}", operationId="profile.delete.by-userid.by-token.get",
      *      description="Create user deletion request",
      *      tags={"Profile"},
      *      security={
@@ -466,9 +444,7 @@ interface ProfileSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,

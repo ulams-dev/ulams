@@ -20,26 +20,26 @@ use Ulams\Courses\Models\Course;
  * Required training. Admin endpoints need `compliance_manage`; `my-assignments` is the learner's own list
  * and `team/assignments` lists the direct reports of the manager that is logged in.
  *
- * @OA\Get(path="/api/admin/compliance/assignments", summary="List required-training assignments", tags={"Compliance"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/compliance/assignments", operationId="admin.compliance.assignments.get", summary="List required-training assignments", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="status", in="query", @OA\Schema(type="string", enum={"assigned","overdue","completed","cancelled"})),
  *     @OA\Parameter(name="user_id", in="query", @OA\Schema(type="integer")),
  *     @OA\Parameter(name="course_id", in="query", @OA\Schema(type="integer")),
  *     @OA\Parameter(name="per_page", in="query", @OA\Schema(type="integer", default=25)),
- *     @OA\Response(response=200, description="assignments with user, course and certificate"), @OA\Response(response=403, description="Forbidden"))
- * @OA\Post(path="/api/admin/compliance/assignments", summary="Assign a required course to users", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="assignments with user, course and certificate", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"))
+ * @OA\Post(path="/api/admin/compliance/assignments", operationId="admin.compliance.assignments.post", summary="Assign a required course to users", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\RequestBody(required=true, @OA\MediaType(mediaType="application/json", @OA\Schema(type="object", required={"course_id","user_ids"},
  *         @OA\Property(property="course_id", type="integer"),
  *         @OA\Property(property="user_ids", type="array", @OA\Items(type="integer")),
  *         @OA\Property(property="due_at", type="string", format="date-time", nullable=true)))),
- *     @OA\Response(response=201, description="one assignment per user (existing open ones are returned unchanged)"), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=422, description="Validation error"))
- * @OA\Delete(path="/api/admin/compliance/assignments/{id}", summary="Cancel an open assignment", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=201, description="one assignment per user (existing open ones are returned unchanged)", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=422, description="Validation error"))
+ * @OA\Delete(path="/api/admin/compliance/assignments/{id}", operationId="admin.compliance.assignments.by-id.delete", summary="Cancel an open assignment", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="cancelled assignment"), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=404, description="Unknown assignment"))
- * @OA\Get(path="/api/compliance/my-assignments", summary="My required training", tags={"Compliance"}, security={{"passport": {}}},
- *     @OA\Response(response=200, description="the logged-in user's assignments, newest first"))
- * @OA\Get(path="/api/compliance/team/assignments", summary="Required training of my direct reports", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="cancelled assignment", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=404, description="Unknown assignment"))
+ * @OA\Get(path="/api/compliance/my-assignments", operationId="compliance.my-assignments.get", summary="My required training", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="the logged-in user's assignments, newest first", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Get(path="/api/compliance/team/assignments", operationId="compliance.team.assignments.get", summary="Required training of my direct reports", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="status", in="query", @OA\Schema(type="string", enum={"assigned","overdue","completed","cancelled"})),
- *     @OA\Response(response=200, description="assignments of the users that have the logged-in user as manager (empty for everyone else)"))
+ *     @OA\Response(response=200, description="assignments of the users that have the logged-in user as manager (empty for everyone else)", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
  */
 class AssignmentController extends ComplianceController
 {

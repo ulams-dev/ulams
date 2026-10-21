@@ -12,7 +12,7 @@ interface ProductSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/products",
+     *      path="/api/products", operationId="products.get",
      *      description="Search products",
      *      tags={"Products"},
      *      security={
@@ -114,9 +114,7 @@ interface ProductSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -147,7 +145,7 @@ interface ProductSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/products/my",
+     *      path="/api/products/my", operationId="products.my.get",
      *      description="Search my products",
      *      tags={"Products"},
      *      security={
@@ -236,7 +234,7 @@ interface ProductSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/products/{id}",
+     *      path="/api/products/{id}", operationId="products.by-id.get",
      *      description="Read product",
      *      tags={"Products"},
      *      security={
@@ -253,9 +251,7 @@ interface ProductSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -287,7 +283,7 @@ interface ProductSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/products/cancel/{id}",
+     *      path="/api/products/cancel/{id}", operationId="products.cancel.by-id.post",
      *      description="Cancel recursive product",
      *      tags={"Products"},
      *      security={
@@ -304,9 +300,7 @@ interface ProductSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

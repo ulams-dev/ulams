@@ -99,7 +99,7 @@ interface ScormControllerContract
 
     /**
      * @OA\Get(
-     *     path="/api/scorm/play/{uuid}",
+     *     path="/api/scorm/play/{uuid}", operationId="scorm.play.by-uuid.get",
      *     summary="Read a page identified by a given slug identifier",
      *     tags={"SCORM"},
      *     security={
@@ -140,7 +140,7 @@ interface ScormControllerContract
 
     /**
      * @OA\Get(
-     *     path="/api/scorm/show/{uuid}",
+     *     path="/api/scorm/show/{uuid}", operationId="scorm.show.by-uuid.get",
      *     summary="Read a page identified by a given slug identifier",
      *     tags={"SCORM"},
      *     security={

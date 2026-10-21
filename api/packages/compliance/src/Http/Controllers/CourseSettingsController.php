@@ -12,10 +12,10 @@ use Ulams\Courses\Models\Course;
 /**
  * Compliance policy of a course. Permission `compliance_manage`.
  *
- * @OA\Get(path="/api/admin/compliance/courses/{course}/settings", summary="Compliance settings of a course (defaults when none are saved)", tags={"Compliance"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/compliance/courses/{course}/settings", operationId="admin.compliance.courses.by-course.settings.get", summary="Compliance settings of a course (defaults when none are saved)", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="mandatory, validity_days, recertify_before_days, default_due_days, reminder_days, escalation_days"), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=404, description="Unknown course"))
- * @OA\Put(path="/api/admin/compliance/courses/{course}/settings", summary="Save the compliance settings of a course", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="mandatory, validity_days, recertify_before_days, default_due_days, reminder_days, escalation_days", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=404, description="Unknown course"))
+ * @OA\Put(path="/api/admin/compliance/courses/{course}/settings", operationId="admin.compliance.courses.by-course.settings.put", summary="Save the compliance settings of a course", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\RequestBody(required=true, @OA\MediaType(mediaType="application/json", @OA\Schema(type="object",
  *         @OA\Property(property="mandatory", type="boolean"),
@@ -24,7 +24,7 @@ use Ulams\Courses\Models\Course;
  *         @OA\Property(property="default_due_days", type="integer", nullable=true, description="Due date offset for assignments without an explicit date"),
  *         @OA\Property(property="reminder_days", type="array", nullable=true, @OA\Items(type="integer")),
  *         @OA\Property(property="escalation_days", type="array", nullable=true, @OA\Items(type="integer"))))),
- *     @OA\Response(response=200, description="saved settings"), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=422, description="Validation error"))
+ *     @OA\Response(response=200, description="saved settings", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=422, description="Validation error"))
  */
 class CourseSettingsController extends ComplianceController
 {

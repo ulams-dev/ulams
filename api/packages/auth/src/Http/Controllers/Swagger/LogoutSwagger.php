@@ -9,7 +9,7 @@ interface LogoutSwagger
 {
     /**
      * @OA\Post(
-     *      path="/api/auth/logout",
+     *      path="/api/auth/logout", operationId="auth.logout.post",
      *      description="User logout",
      *      tags={"Auth"},
      *      security={
@@ -18,9 +18,7 @@ interface LogoutSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")
      *      )
      *   )
      */
