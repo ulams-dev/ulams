@@ -19,3 +19,7 @@ const normalise = (language: string | null | undefined): UiLocale | null => {
 export function learnerLocale(courseLanguage?: string | null, tenantDefault?: string | null): UiLocale {
   return normalise(courseLanguage) ?? normalise(tenantDefault) ?? "en";
 }
+
+/** The language of the account pages: the tenant default (`global.language` of the public settings), else English. */
+export const accountLocale = (settings: { global?: Record<string, unknown> } | null | undefined): UiLocale =>
+  learnerLocale(null, typeof settings?.global?.language === "string" ? settings.global.language : null);

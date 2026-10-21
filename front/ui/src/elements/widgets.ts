@@ -190,3 +190,6 @@ for (const [name, ctor] of [
 ] as const) {
   if (!customElements.get(name)) customElements.define(name, ctor);
 }
+
+// the certificate badge ships with the learner widgets: one import registers all of them
+import "./certificate-badge.ts";

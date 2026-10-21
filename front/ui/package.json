@@ -14,6 +14,7 @@
     "./format": "./src/lib/format.ts",
     "./analytics": "./src/lib/analytics.ts",
     "./i18n": "./src/lib/i18n.ts",
+    "./training-strings": "./src/lib/training-strings.ts",
     "./components/*": "./src/components/*",
     "./elements/*": "./src/elements/*",
     "./styles/*": "./src/styles/*",
