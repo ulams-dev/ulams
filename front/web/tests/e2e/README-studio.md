@@ -71,3 +71,9 @@ checks the readable refusal.
 Variables: `STUDIO_LEARNER_EMAIL`, `STUDIO_LEARNER_PASSWORD`, `STUDIO_BASE_URL` (default `http://e2e.app.localhost:4329`), `STUDIO_API_URL`
 (`http://127.0.0.1:18081`), `STUDIO_AUTHOR_EMAIL`, `STUDIO_AUTHOR_PASSWORD`. Each run creates one
 course in the database.
+
+`personalisation.spec.ts` is the full-stack Phase 5 journey (extra help with reasons, reflection, adaptive lesson view, tutor,
+training, accessibility statement). Same setup as the living-course spec, plus
+`LEARNER_INSIGHTS_ENABLED=1 LEARNER_INSIGHTS_ADAPTIVE_INTERFACE=1 TUTOR_ENABLED=1` on the API and a real queue. It runs
+`learner-insights:evaluate` through `PERSONALISATION_EVALUATE_CMD` (default `docker exec ulams-studio-e2e-api php artisan
+learner-insights:evaluate`): `PERSONALISATION_E2E=1 yarn workspace @ulams/web test:e2e tests/e2e/personalisation.spec.ts --workers=1`.

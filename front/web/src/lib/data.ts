@@ -25,6 +25,11 @@ export function getSettings(tenant: Tenant) {
   return publicData(tenant, "settings", () => apiFor(tenant).settings.public());
 }
 
+/** The tenant's public configuration (`GET /api/config`: switches such as `ai.label_generated_courses`). */
+export function getPublicConfig(tenant: Tenant) {
+  return publicData(tenant, "config", () => apiFor(tenant).settings.config());
+}
+
 /**
  * The generated landing document of a course (an active page `course-<id>`, written by the course
  * builder when it publishes), or null when the course has none. Never throws: the course page falls

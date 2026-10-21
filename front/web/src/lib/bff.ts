@@ -30,7 +30,7 @@ export const BFF_RULES: BffRule[] = [
   { method: "GET", pattern: /^\/api\/living-course\/courses\/\d+\/freshness$/ },
   // Learner Insights: the learner's own extra help (the API scopes every call to the caller)
   { method: "GET", pattern: /^\/api\/learner-insights\/courses\/\d+\/topics\/\d+\/support$/ },
-  { method: "POST", pattern: /^\/api\/learner-insights\/assignments\/[0-9A-Za-z]{26}\/(feedback|hide)$/ },
+  { method: "POST", pattern: /^\/api\/learner-insights\/assignments\/[0-9A-Za-z]{26}\/(feedback|hide|reflection)$/ },
   // Course tutor: the learner's own questions and conversations (the API scopes them to the caller)
   { method: "GET", pattern: /^\/api\/tutor\/courses\/\d+\/status$/ },
   { method: "POST", pattern: /^\/api\/tutor\/courses\/\d+\/messages$/ },

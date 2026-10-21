@@ -260,6 +260,10 @@
               "$data": "/courses/1/href",
               "$default": "/courses"
             }
+          },
+          {
+            "label": "Accessibility",
+            "href": "/accessibility"
           }
         ],
         "note": "Map: Natural Earth (public domain) via world-atlas (ISC). Code MIT, text and data CC BY 4.0, by Mateusz Wojczal. Fonts: Barlow and JetBrains Mono (SIL OFL 1.1)."

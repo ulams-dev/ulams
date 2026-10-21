@@ -39,7 +39,8 @@ describe("supportDocs", () => {
       props: { assignmentId: ID, status: "ready", summary: "A short explanation.", reasons: ["You answered this question wrongly 2 times"], aiLabel: "AI-generated, based on this course's sources", locale: "en" },
     });
     expect(card!.props).not.toHaveProperty("feedback");
-    expect(card!.children!.map((c) => c.component)).toEqual(["Prose", "CitationList", "PracticeQuestion", "CitationList"]);
+    expect(card!.children!.map((c) => c.component)).toEqual(["Prose", "CitationList", "PracticeQuestion", "CitationList", "FeynmanReflection"]);
+    expect(card!.children![4]).toMatchObject({ id: `support-${ID}-reflect`, props: { assignmentId: ID, locale: "en" } });
     expect(card!.children![0]!.props).toEqual({ title: "Another way", markdown: "Text" });
     expect(card!.children![1]!.props).toEqual({ items: [{ label: "§1 Brewing basics" }, { label: "§2 Grind size" }], locale: "en" });
     expect(card!.children![2]!.props).toMatchObject({ title: "Try it", practice: PRACTICE, locale: "en" });
@@ -61,7 +62,7 @@ describe("supportDocs", () => {
       for (const c of n.children ?? []) walk(c as never);
     };
     docs.forEach(walk);
-    expect(ids).toHaveLength(2 + 8);
+    expect(ids).toHaveLength(2 + 10);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
@@ -88,12 +89,12 @@ describe("supportDocs", () => {
   it("skips an item without a document and a block outside the remediation catalogue", () => {
     expect(supportDocs([item({ document: null })], "en")).toEqual([]);
     const [card] = supportDocs([item({ document: { summary: "s", blocks: [{ component: "Hero", props: { title: "x" }, citations: [F1] }, { component: "WorkedExample", props: { title: "t", markdown: "m" }, citations: [] }] } })], "en");
-    expect(card!.children!.map((c) => c.component)).toEqual(["WorkedExample"]);
+    expect(card!.children!.map((c) => c.component)).toEqual(["WorkedExample", "FeynmanReflection"]);
   });
 
   it("shows no source list for a citation the API did not resolve, and each source once", () => {
     const [card] = supportDocs([item({ document: { summary: "s", blocks: [{ component: "Prose", props: { markdown: "m" }, citations: ["frg_cccccccccccc"] }, { component: "Prose", props: { markdown: "n" }, citations: [F1, F1] }] } })], "en");
-    expect(card!.children!.map((c) => c.component)).toEqual(["Prose", "Prose", "CitationList"]);
+    expect(card!.children!.map((c) => c.component)).toEqual(["Prose", "Prose", "CitationList", "FeynmanReflection"]);
     expect((card!.children![2]!.props!.items as unknown[]).length).toBe(1);
   });
 
@@ -102,6 +103,13 @@ describe("supportDocs", () => {
     for (const child of card!.children!.filter((c) => c.component === "CitationList")) {
       for (const source of child.props!.items as Array<Record<string, unknown>>) expect(source).not.toHaveProperty("href");
     }
+  });
+
+  it("asks for a reflection only on a ready card, never on a generating one", () => {
+    const [ready] = supportDocs([item()], "pl");
+    expect(ready!.children!.at(-1)!.props).toMatchObject({ assignmentId: ID, locale: "pl" });
+    const [generating] = supportDocs([item({ status: "generating", document: null, citations: [] })], "en");
+    expect(generating!.children).toBeUndefined();
   });
 
   it("offers the header link only when the card is long", () => {
@@ -142,10 +150,14 @@ describe("getSupport", () => {
 });
 
 describe("BFF rules for extra help", () => {
-  it("forwards the support read, feedback and hide, and nothing else of Learner Insights", () => {
+  it("forwards the support read, feedback, hide and reflection, and nothing else of Learner Insights", () => {
     expect(matchBffRule("GET", "/api/learner-insights/courses/5/topics/12/support")).not.toBeNull();
     expect(matchBffRule("POST", `/api/learner-insights/assignments/${ID}/feedback`)).not.toBeNull();
     expect(matchBffRule("POST", `/api/learner-insights/assignments/${ID}/hide`)).not.toBeNull();
+    expect(matchBffRule("POST", `/api/learner-insights/assignments/${ID}/reflection`)).not.toBeNull();
+    expect(matchBffRule("GET", `/api/learner-insights/assignments/${ID}/reflection`)).toBeNull();
+    expect(matchBffRule("POST", "/api/learner-insights/assignments/short/reflection")).toBeNull();
+    expect(matchBffRule("POST", `/api/learner-insights/assignments/${ID}/reflection/x`)).toBeNull();
     expect(matchBffRule("POST", "/api/learner-insights/courses/5/topics/12/support")).toBeNull();
     expect(matchBffRule("GET", `/api/learner-insights/assignments/${ID}/feedback`)).toBeNull();
     expect(matchBffRule("DELETE", `/api/learner-insights/assignments/${ID}/hide`)).toBeNull();

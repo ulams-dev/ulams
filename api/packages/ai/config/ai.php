@@ -14,6 +14,10 @@ return [
     'timeout' => (int) env('AI_TIMEOUT', 600),
     'max_retries' => (int) env('AI_MAX_RETRIES', 2),
 
+    // AI content labelling (Phase 4.3): lessons applied from a builder session say "Created with AI assistance".
+    // A public tenant setting (`ai.label_generated_courses`); the learner front reads it from GET /api/settings.
+    'label_generated_courses' => (bool) env('AI_LABEL_GENERATED_COURSES', true),
+
     'profiles' => [
         'default' => [
             'model' => env('AI_MODEL_DEFAULT', 'claude-sonnet-5-5'),
