@@ -53,6 +53,30 @@ class SeedTenantDemoCommandTest extends TestCase
         $this->assertSame(1, Setting::query()->where(['group' => 'theme', 'key' => 'theme'])->count());
     }
 
+    public function testSeedsTheDefaultLanguageAndKeepsAnExistingChoice(): void
+    {
+        config(['ulams_tenancy.tenant_slug' => 'coffee']);
+
+        $this->artisan('ulams:tenant:seed-demo', ['--users' => 0, '--email-domain' => 'coffee.ulams.app'])->assertExitCode(0);
+        $this->getJson('/api/settings')->assertOk()->assertJsonPath('data.global.language', 'en');
+
+        $this->artisan('ulams:tenant:seed-demo', ['--users' => 0, '--email-domain' => 'coffee.ulams.app', '--language' => 'pl'])->assertExitCode(0);
+        $this->getJson('/api/settings')->assertJsonPath('data.global.language', 'pl');
+
+        // a re-run without the option leaves the admin's choice alone
+        $this->artisan('ulams:tenant:seed-demo', ['--users' => 0, '--email-domain' => 'coffee.ulams.app'])->assertExitCode(0);
+        $this->getJson('/api/settings')->assertJsonPath('data.global.language', 'pl');
+        $this->assertSame(1, Setting::query()->where(['group' => 'global', 'key' => 'language'])->count());
+    }
+
+    public function testRefusesALanguageTheLearnerAppDoesNotKnow(): void
+    {
+        config(['ulams_tenancy.tenant_slug' => 'coffee']);
+
+        $this->artisan('ulams:tenant:seed-demo', ['--language' => 'de'])->assertExitCode(1);
+        $this->assertSame(0, Setting::query()->where(['group' => 'global', 'key' => 'language'])->count());
+    }
+
     public function testRefusesToSeedThePlatform(): void
     {
         $this->artisan('ulams:tenant:seed-demo')->assertExitCode(1);
