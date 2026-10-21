@@ -83,6 +83,14 @@ It prints the PHP extensions of `php84`, the tools present (`ffmpeg`, `redis-ser
 `node22`, ...), outbound reachability (Anthropic API), `devil info`, `ulimit` and the process count.
 Send the output to the repository (an issue) so the "to confirm" items here can be closed.
 
+The survey also **checks the PHP version** and ends with exit code 1 (and a `FAIL` line) when it is below the
+fixed release of its branch: 8.4.27, 8.3.36, 8.5.12 or 8.2.35 (php.net advisory
+[2026-10-21-5](https://www.php.net/archive/2026.php#2026-10-21-5), two critical unauthenticated RCE bugs;
+issue #327). 8.1 and older get no fix at all. MyDevil's PHP is theirs to update, so on `FAIL` keep the host
+offline (Cloudflare) and ask support for the patched `php84`; re-run the script after they confirm, and lift the
+block only on a pass. The comparison can be tried without a host: `sh check-host.sh --check-version 8.4.26`
+(exit 1), and `sh deploy/mydevil/test/check-host-version.sh` runs the whole test (CI runs it in the "Deploy files" job).
+
 Make PHP 8.4 the CLI default (the account default is 8.3; the CLI binary is `php84`:
 <https://pomoc.mydevil.net/PHP/>). Binexec (running your own binaries from your home directory, off on
 this account) is **not needed for the plan below** (every tool it uses is a system binary); turn it on
