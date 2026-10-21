@@ -938,6 +938,9 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 
 ## Quality bar (every phase)
 
+Plan (new): `docs/plans/tech-debt-and-quality-bar.md` (draft; milestones TD-1…TD-10, ADRs 0190 and 0191 Proposed) also covers the
+open Phase 0 and Phase 1 tech-debt items outside the Phase 8 self-hosting plan.
+
 - [ ] Mocked LLM in tests + eval command on golden fixtures (schema, citation coverage, quiz
       answers supported, duration, cost)
 - [ ] Tenant isolation tests for every endpoint
