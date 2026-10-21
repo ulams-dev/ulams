@@ -35,7 +35,50 @@ const quizTopic = {
   topicable_type: "Ulams\\TopicTypes\\Models\\TopicContent\\GiftQuiz",
   topicable: { id: 1, value: "", max_attempts: 3, max_execution_time: 10, min_pass_score: 1, score: 2 },
 };
-program.lessons[0].topics = [...program.lessons[0].topics, quizTopic];
+// A Layout topic with a practice activity: the lesson view's "hints shown at the start" applies to it
+const PRACTICE_TOPIC_ID = 901;
+const practiceTopic = {
+  id: PRACTICE_TOPIC_ID,
+  title: "Dial in a pour-over",
+  lesson_id: program.lessons[0].id,
+  active: true,
+  preview: false,
+  order: 100,
+  topicable_id: 1,
+  topicable_type: "Ulams\\TopicTypeLayout\\Models\\LayoutTopic",
+  topicable: {
+    document: [
+      {
+        component: "PracticeActivity",
+        id: "practice-1",
+        props: {
+          title: "Pour-over practice",
+          intro: "Dial in a pour-over by changing one thing at a time.",
+          toolbox: [{ label: "Brew ratio chart", text: "1:16 is a good start." }],
+          challenges: [
+            {
+              id: "c1",
+              level: 1,
+              prompt: "The cup tastes sour. What do you change first?",
+              hints: [
+                { tier: "nudge", text: "Sour usually means under-extracted." },
+                { tier: "pointer", text: "Look at the grind size." },
+                { tier: "near_solution", text: "Grind a little finer." },
+              ],
+              options: [
+                { label: "Grind finer", correct: true, feedback: "A finer grind extracts more." },
+                { label: "Use cooler water", correct: false, feedback: "Cooler water extracts less." },
+              ],
+              workedSolution: "Grind finer and brew again.",
+            },
+          ],
+        },
+      },
+    ],
+    markdown_fallback: "Practice: dial in a pour-over.",
+  },
+};
+program.lessons[0].topics = [...program.lessons[0].topics, quizTopic, practiceTopic];
 
 const questions = [
   { id: 1, type: "multiple_choice", score: 1, order: 1, title: null, question: "Which species is called Robusta?", options: { answers: ["Coffea arabica", "Coffea canephora", "Coffea liberica"] } },
@@ -112,6 +155,36 @@ const supportOf = (tenant) => {
   return supportState.get(tenant);
 };
 const findAssignment = (tenant, id) => Object.values(supportOf(tenant)).flat().find((i) => i.assignmentId === id);
+
+// Learner Insights presentation profile (the lesson view). "nightsky" has adaptive presentation on and derives parts
+// with two hints shown at the start because lessons were hard; "coffee" has it off, so only the learner's own choices
+// apply. Choices are kept per tenant like the support items (reset with /__mock/reset).
+const PRESENTATION_DEFAULT = { density: "comfortable", chunking: "whole", navigation: "overview", hints: 0 };
+const PRESENTATION_OPTIONS = { density: ["comfortable", "compact"], chunking: ["whole", "steps"], navigation: ["overview", "linear"], hints: [0, 1, 2, 3] };
+const presentationDerived = (tenant) => (tenant === "nightsky" ? { ...PRESENTATION_DEFAULT, chunking: "steps", hints: 2 } : { ...PRESENTATION_DEFAULT });
+const presentationOverrides = new Map();
+const presentationOf = (tenant) => {
+  const overrides = presentationOverrides.get(tenant) ?? {};
+  const adaptive = tenant === "nightsky";
+  const derived = presentationDerived(tenant);
+  return {
+    adaptive,
+    profile: { ...PRESENTATION_DEFAULT, ...(adaptive ? derived : {}), ...overrides },
+    derived,
+    overrides,
+    why: adaptive ? ["Two lessons in this module were hard"] : [],
+  };
+};
+const changePresentation = (tenant, body) => {
+  const overrides = { ...(presentationOverrides.get(tenant) ?? {}) };
+  for (const [key, value] of Object.entries(body ?? {})) {
+    if (!(key in PRESENTATION_OPTIONS)) continue;
+    if (value === null) delete overrides[key];
+    else if (PRESENTATION_OPTIONS[key].includes(value)) overrides[key] = value;
+  }
+  presentationOverrides.set(tenant, overrides);
+  return presentationOf(tenant);
+};
 
 // Course tutor: on, 29 of 30 questions left, one earlier conversation; every question gets the same cited answer.
 const tutorStatus = { enabled: true, aiEnabled: true, remaining: 29, dailyLimit: 30, attemptActive: false };
@@ -191,6 +264,8 @@ const routes = [
       return { hidden: true };
     },
   ],
+  ["GET", /^\/api\/learner-insights\/courses\/1\/presentation$/, ({ tenant }) => presentationOf(tenant)],
+  ["PUT", /^\/api\/learner-insights\/courses\/1\/presentation$/, ({ tenant, body }) => changePresentation(tenant, body)],
   ["GET", /^\/api\/tutor\/courses\/1\/status$/, () => tutorStatus],
   ["GET", /^\/api\/tutor\/courses\/1\/conversations$/, () => [tutorEarlier]],
   ["POST", /^\/api\/tutor\/courses\/1\/messages$/, () => tutorAnswer],
@@ -230,6 +305,7 @@ const server = createServer((req, res) => {
   if (req.method === "POST" && path === "/__mock/reset") {
     req.resume();
     supportState.delete(url.searchParams.get("tenant") ?? "");
+    presentationOverrides.delete(url.searchParams.get("tenant") ?? "");
     res.end(JSON.stringify({ reset: true }));
     return;
   }

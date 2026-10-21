@@ -3,12 +3,14 @@
  * same catalogue and renderer as the landing documents, so the Course Builder can later
  * produce them the same way.
  */
-import { durationToMinutes, topicKind, type Course, type Lesson, type Tenant, type Topic } from "@ulams/sdk";
+import { durationToMinutes, topicKind, type Course, type Lesson, type Presentation, type Tenant, type Topic } from "@ulams/sdk";
+import type { UiLocale } from "@ulams/ui/i18n";
 import type { UiNode } from "@ulams/ui/render-core";
 import { LEARNER_LAYOUT_COMPONENTS, registry, type ComponentName, type ThemeName } from "@ulams/ui/registry";
 import { stripLeadingTitle } from "@ulams/ui/markdown";
 import { validate } from "@ulams/ui/schema";
 import { interactiveNode, type InteractiveResult } from "./interactive.ts";
+import { DEFAULT_PRESENTATION, proseNode, withInitialHints } from "./presentation.ts";
 import { FORMAT_BY_KIND, type CourseModel, type SiteModel } from "./view-model.ts";
 
 export const SYLLABUS_VARIANT: Record<ThemeName, "folio" | "timeline" | "missions" | "orbits" | "atlas"> = {
@@ -118,6 +120,9 @@ export interface TopicDocInput {
   lti?: { url: string; presentation: string; tool: string } | { error: string } | null;
   /** Author preview: nothing that records progress runs (quizzes, tracked launches, H5P xAPI). */
   preview?: boolean;
+  /** The learner's lesson view: parts for a reading, hints shown at the start of a practice. */
+  presentation?: Presentation;
+  locale?: UiLocale;
 }
 
 const str = (v: unknown): string | undefined => (typeof v === "string" && v.trim() !== "" ? v : undefined);
@@ -147,7 +152,7 @@ export function layoutNodes(topicable: unknown): UiNode[] | null {
 }
 
 /** Body of the lesson player for one topic. */
-export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, cmi5Src = null, liascript = null, interactive = null, lti = null, preview = false }: TopicDocInput): UiNode {
+export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, cmi5Src = null, liascript = null, interactive = null, lti = null, preview = false, presentation = DEFAULT_PRESENTATION, locale = "en" }: TopicDocInput): UiNode {
   const kind = topicKind(topic.topicable_type);
   const t = (topic.topicable ?? {}) as Record<string, unknown>;
   const children: UiNode[] = [];
@@ -187,7 +192,7 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
   switch (kind) {
     case "richtext": {
       const md = stripLeadingTitle(String(t.value ?? ""), topic.title);
-      children.push({ component: "Prose", props: { markdown: md, dropCap: theme === "coffee", size: theme === "nightsky" ? "lg" : "md" } });
+      children.push(proseNode(md, { dropCap: theme === "coffee", size: theme === "nightsky" ? "lg" : "md" }, presentation, locale));
       break;
     }
     case "video": {
@@ -296,7 +301,7 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
     case "layout": {
       // catalogue components from the stored document (ADR 0052); an invalid document shows the fallback
       const nodes = layoutNodes(t);
-      if (nodes) children.push(...nodes);
+      if (nodes) children.push(...withInitialHints(nodes, presentation.hints));
       else children.push({ component: "Prose", props: { markdown: str(t.markdown_fallback) ?? "" } });
       if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
       break;

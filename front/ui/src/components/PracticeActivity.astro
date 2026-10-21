@@ -10,12 +10,14 @@ interface Challenge {
 }
 interface Props {
   id?: string;
+  /** Hints shown when a challenge opens (the learner's lesson view). */
+  initialHints?: number;
   title?: string;
   intro: string;
   toolbox: Array<{ label: string; text?: string }>;
   challenges: Challenge[];
 }
-const { id = "practice", title, intro, toolbox, challenges } = Astro.props;
+const { id = "practice", initialHints = 0, title, intro, toolbox, challenges } = Astro.props;
 const LEVEL = { 1: "Guided", 2: "Supported", 3: "Independent" } as const;
 const TIER_ORDER: Tier[] = ["nudge", "pointer", "near_solution"];
 const TIER_LABEL: Record<Tier, string> = { nudge: "Nudge", pointer: "Pointer", near_solution: "Near the solution" };
@@ -38,7 +40,7 @@ const hintsOf = (c: Challenge) => [...(c.hints ?? [])].sort((a, b) => TIER_ORDER
       }
     </ul>
   </div>
-  <ulams-practice activity-id={id}>
+  <ulams-practice activity-id={id} initial-hints={initialHints > 0 ? initialHints : undefined}>
     <p class="u-practice__nojs" data-nojs>Hints, feedback and the worked solution need JavaScript. The tasks are listed below.</p>
     <ol class="u-practice__challenges" role="list">
       {
