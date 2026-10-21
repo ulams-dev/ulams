@@ -11,6 +11,7 @@ final class TutorException extends RuntimeException
     public const FORBIDDEN = 'forbidden';
     public const LIMIT = 'limit';
     public const UNAVAILABLE = 'unavailable';
+    public const BUSY = 'busy';
 
     public function __construct(public readonly string $reason, string $message, public readonly int $status)
     {

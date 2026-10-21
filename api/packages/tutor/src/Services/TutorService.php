@@ -17,10 +17,12 @@ use Ulams\Courses\Models\Course;
 use Ulams\LearnerInsights\Services\SignalRecorder;
 use Ulams\LearnerInsights\Signals\SignalData;
 use Ulams\LearnerInsights\Signals\SignalType;
+use Ulams\Tutor\Jobs\AnswerJob;
 use Ulams\Tutor\Models\Chunk;
 use Ulams\Tutor\Models\Conversation;
 use Ulams\Tutor\Models\Message;
 use Ulams\Tutor\Retrieval\TutorRetriever;
+use Ulams\Tutor\Streaming\RunLog;
 use Ulams\Tutor\Support\Leak;
 
 /**
@@ -35,6 +37,8 @@ class TutorService
 
     public const ATTEMPT_REFUSAL = "I can't help with quiz answers while a quiz attempt is open. Once you have submitted it, ask me again. Meanwhile I can explain the concepts from the lessons.";
 
+    public const LABEL = 'AI tutor · answers only from this course';
+
     public const FAILED = "I couldn't answer that. Please try asking in a different way.";
 
     public function __construct(
@@ -43,6 +47,7 @@ class TutorService
         private readonly TutorIndexer $indexer,
         private readonly TutorRetriever $retriever,
         private readonly AttemptGuard $guard,
+        private readonly RunLog $runs,
     ) {
     }
 
@@ -59,9 +64,43 @@ class TutorService
     }
 
     /**
-     * @return array{conversationId:string,messageId:string,answer:string,citations:array<int,array<string,mixed>>,refusal:string,inScope:bool,remaining:int}
+     * @return array{conversationId:string,messageId:string,questionId:string,answer:string,citations:array<int,array<string,mixed>>,refusal:string,inScope:bool,remaining:int}
      */
     public function ask(object $user, Course $course, string $question, ?int $topicId = null, ?string $conversationId = null): array
+    {
+        [$conversation, $learnerMessage] = $this->accept($user, $course, $question, $conversationId);
+
+        return $this->answer($conversation, $course, (int) $user->getKey(), $question, $learnerMessage->id, $topicId) + ['questionId' => $learnerMessage->id];
+    }
+
+    public function streaming(): bool
+    {
+        return (bool) config('tutor.stream.enabled');
+    }
+
+    /**
+     * Accepts a question and queues its answer (ADR 0105): the checks and the learner's message happen in the
+     * request, RUN_STARTED is written with them, and `AnswerJob` writes the rest of the events.
+     *
+     * @return array{conversationId:string,runId:string,questionId:string}
+     */
+    public function start(object $user, Course $course, string $question, ?int $topicId = null, ?string $conversationId = null): array
+    {
+        $runId = RunLog::newRunId();
+        [$conversation, $learnerMessage] = $this->accept($user, $course, $question, $conversationId, fn (Conversation $c) => $this->runs->started($runId, $c->id));
+        AnswerJob::dispatchFor(new AnswerJob($runId, $conversation->id, (int) $course->getKey(), (int) $user->getKey(), $question, $topicId, $learnerMessage->id));
+
+        return ['conversationId' => $conversation->id, 'runId' => $runId, 'questionId' => $learnerMessage->id];
+    }
+
+    /**
+     * Everything the request itself checks and stores before an answer is written, for the plain and the
+     * streamed path alike: the switch, course access, the limits, one running answer per conversation, the
+     * conversation and the learner's message. Counts the question.
+     *
+     * @return array{0:Conversation,1:Message}
+     */
+    public function accept(object $user, Course $course, string $question, ?string $conversationId = null, ?callable $inTransaction = null): array
     {
         $userId = (int) $user->getKey();
         if (!$this->enabled()) {
@@ -72,22 +111,46 @@ class TutorService
         }
         $this->assertWithinLimits($userId);
 
-        $conversation = $conversationId
-            ? Conversation::query()->where('user_id', $userId)->where('course_id', $course->getKey())->findOrFail($conversationId)
-            : Conversation::query()->create(['user_id' => $userId, 'course_id' => $course->getKey(), 'created_at' => now(), 'last_message_at' => now(), 'expires_at' => now()->addDays((int) config('tutor.retention_days'))]);
-        $history = $conversation->messages()->get()->slice(-6)->values();
+        return DB::transaction(function () use ($userId, $course, $question, $conversationId, $inTransaction) {
+            $conversation = $conversationId
+                ? Conversation::query()->where('user_id', $userId)->where('course_id', $course->getKey())->lockForUpdate()->findOrFail($conversationId)
+                : Conversation::query()->create(['user_id' => $userId, 'course_id' => $course->getKey(), 'created_at' => now(), 'last_message_at' => now(), 'expires_at' => now()->addDays((int) config('tutor.retention_days'))]);
+            if ($conversationId && $this->runs->openRun($conversation->id) !== null) {
+                throw new TutorException(TutorException::BUSY, 'The tutor is still answering your last question.', 409);
+            }
+            $this->countQuestion($userId);
+            $learnerMessage = Message::query()->create(['conversation_id' => $conversation->id, 'role' => 'learner', 'text' => $question, 'created_at' => now()]);
+            if ($inTransaction !== null) {
+                $inTransaction($conversation, $learnerMessage);
+            }
+
+            return [$conversation, $learnerMessage];
+        });
+    }
+
+    /**
+     * Retrieves, asks the model, checks the answer, stores the reply and records the signal. With `$onDelta` the
+     * text of the answer is forwarded as the model writes it, except while a quiz attempt is open: then the
+     * answer is generated whole and only released after the answer-leak check (ADR 0105).
+     *
+     * @param (callable(string):void)|null $onDelta
+     *
+     * @return array{conversationId:string,messageId:string,answer:string,citations:array<int,array<string,mixed>>,refusal:string,inScope:bool,remaining:int}
+     */
+    public function answer(Conversation $conversation, Course $course, int $userId, string $question, string $questionId, ?int $topicId = null, ?callable $onDelta = null): array
+    {
+        // the learner's message is already stored; the request carries it as the question
+        $history = $conversation->messages()->get()->reject(fn (Message $m) => $m->id === $questionId)->slice(-6)->values();
 
         $this->indexer->ensureFresh((int) $course->getKey());
         $chunks = $this->retrieve($course, $question, $topicId);
         $attempt = $this->guard->check($userId, (int) $course->getKey());
-        $this->countQuestion($userId);
-
-        $learnerMessage = Message::query()->create(['conversation_id' => $conversation->id, 'role' => 'learner', 'text' => $question, 'created_at' => now()]);
 
         $flags = [];
         $citations = [];
         try {
-            $result = $this->llm->generate($this->request($conversation, $chunks, $history, $question, $attempt['active']));
+            $request = $this->request($conversation, $chunks, $history, $question, $attempt['active']);
+            $result = $onDelta !== null && !$attempt['active'] ? $this->llm->stream($request, $onDelta) : $this->llm->generate($request);
             $data = $result->data;
             $callId = $result->callIds[count($result->callIds) - 1] ?? null;
             $answer = $data['answer'];
@@ -121,7 +184,7 @@ class TutorService
         $this->signal($userId, $course, $conversation, $reply);
 
         return [
-            'conversationId' => $conversation->id, 'messageId' => $reply->id, 'questionId' => $learnerMessage->id, 'answer' => $answer, 'citations' => $citations,
+            'conversationId' => $conversation->id, 'messageId' => $reply->id, 'answer' => $answer, 'citations' => $citations,
             'refusal' => $refusal, 'inScope' => $inScope, 'remaining' => $this->remaining($userId),
         ];
     }

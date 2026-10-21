@@ -45,6 +45,7 @@ class UlamsTutorServiceProvider extends ServiceProvider
             }
             AdministrableConfig::registerConfig('tutor.enabled', ['boolean'], false, false);
             AdministrableConfig::registerConfig('tutor.limits.daily_questions', ['integer', 'min:1', 'max:1000'], false, false);
+            AdministrableConfig::registerConfig('tutor.stream.enabled', ['boolean'], false, false);
             AdministrableConfig::registerConfig('tutor.retention_days', ['integer', 'min:1', 'max:3650'], false, false);
         }
     }
@@ -61,6 +62,7 @@ class UlamsTutorServiceProvider extends ServiceProvider
         $this->app['events']->listen(AccountDeleted::class, function (AccountDeleted $e) {
             $id = (int) $e->getUser()->getAuthIdentifier();
             $ids = DB::table('tutor_conversations')->where('user_id', $id)->pluck('id');
+            DB::table('tutor_events')->whereIn('conversation_id', $ids)->delete();
             DB::table('tutor_messages')->whereIn('conversation_id', $ids)->delete();
             DB::table('tutor_conversations')->where('user_id', $id)->delete();
             DB::table('tutor_daily_usage')->where('user_id', $id)->delete();
