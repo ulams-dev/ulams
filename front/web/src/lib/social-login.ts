@@ -1,5 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import type { Tenant } from "@ulams/sdk";
+import { accountStrings } from "@ulams/ui/account-strings";
 import { tenantFetch } from "./api-transport.ts";
 
 /**
@@ -92,8 +93,10 @@ const MESSAGES: Record<string, string> = {
 
 export const GENERIC_ERROR = "Sign-in failed. Try again.";
 
-export function errorMessage(reason: string | null | undefined): string {
-  return (reason && MESSAGES[reason]) || GENERIC_ERROR;
+export function errorMessage(reason: string | null | undefined, lang = "en"): string {
+  if (lang === "en") return (reason && MESSAGES[reason]) || GENERIC_ERROR;
+  const t = accountStrings(lang);
+  return (reason && (t.socialErrors as Record<string, string>)[reason]) || t.socialGeneric;
 }
 
 export type Exchange =

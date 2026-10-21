@@ -1,4 +1,6 @@
+import { playerStrings } from "../lib/player-strings.ts";
 import { bff, whenActive } from "./bff.ts";
+import { elementLang } from "./lang.ts";
 
 /**
  * <ulams-progress course-id topic-id complete="manual|view|media|h5p|quiz" status="0|1|2">
@@ -65,11 +67,11 @@ class UlamsProgress extends HTMLElement {
       const finished = all.filter((p) => p.status === 1).length;
       if (all.length) this.updateBar(Math.round((finished / all.length) * 100));
       document.querySelectorAll(`[data-topic-id="${topicId}"]`).forEach((el) => el.setAttribute("data-status", "done"));
-      this.announce("Topic marked as complete.");
+      this.announce(playerStrings(elementLang(this)).topicMarked);
     } catch {
       this.done = false;
       this.render();
-      this.announce("Could not save your progress. Try again.");
+      this.announce(playerStrings(elementLang(this)).progressFailed);
     }
   }
 
@@ -87,7 +89,8 @@ class UlamsProgress extends HTMLElement {
     if (!button) return;
     button.setAttribute("aria-pressed", String(this.done));
     const label = button.querySelector("[data-label]");
-    if (label) label.textContent = this.done ? (button.dataset.doneLabel ?? "Completed") : (button.dataset.todoLabel ?? "Mark as complete");
+    const t = playerStrings(elementLang(this));
+    if (label) label.textContent = this.done ? (button.dataset.doneLabel ?? t.completed) : (button.dataset.todoLabel ?? t.markComplete);
   }
 
   private announce(text: string): void {

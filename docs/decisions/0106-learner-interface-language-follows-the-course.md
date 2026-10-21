@@ -1,6 +1,6 @@
 # 0106. The learner interface language follows the course language
 
-- Status: Accepted (2026-10-21)
+- Status: Accepted (2026-10-21), amended 2026-10-21 (P5R-1)
 - Date: 2026-10-21
 - Plan: `docs/plans/phase-5-learner-ui.md` 3.10 (open question O6)
 
@@ -41,3 +41,16 @@ with no language uses the tenant default; account pages use the tenant default.
 - Bad: a learner who reads a Polish course with an English interface preference cannot choose English until
   the switch exists.
 - Open: native review of the Polish and Chinese strings (owner action, as for the landing, ADR 0096).
+
+## Amendment (2026-10-21, P5R-1)
+
+The condition above is met: the lesson player, the course page, the quiz, the finish page, the account page and
+sign-in are translated into Polish and Chinese (`player-strings.ts`, `account-strings.ts`). Therefore:
+
+- `<html lang>` is the interface language of the page: the course language on course, lesson and finish pages
+  (the tenant default when the course has none), the tenant default on account and sign-in pages. Catalogue
+  components read it through `Astro.locals.uiLocale` (`pageLocale`), browser elements through the closest `lang`.
+- The tenant default is the public setting `global.language` (`en`, `pl`, `zh`; the settings API refuses other
+  codes) with a "Default language" select in the admin panel. A per-learner switch stays a later item.
+- Content in a language the interface does not have (a German course) gets its own `lang` on its title and text
+  instead of changing the page language.

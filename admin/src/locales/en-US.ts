@@ -933,6 +933,12 @@ export default {
   'ConsultationsAccess.meetingType.pencil-spaces': 'Pencil spaces',
   'ConsultationsAccess.meetingLink': 'Meeting link',
   'Settings.package': 'Package {package}',
+  'Settings.defaultLanguage': 'Default language',
+  'Settings.defaultLanguage.help':
+    'Account pages and courses without a language use this language.',
+  'Settings.defaultLanguage.en': 'English',
+  'Settings.defaultLanguage.pl': 'Polish (polski)',
+  'Settings.defaultLanguage.zh': 'Chinese (中文)',
   consultation_term_date: 'Consultation term',
   meeting_link: 'Meeting link',
   logs: 'Logs',

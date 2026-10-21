@@ -13,7 +13,9 @@ import { lessonModels, topicHref } from "../../lib/view-model.ts";
 import { readSession } from "../../lib/session.ts";
 import LessonView from "../../components/LessonView.astro";
 import { getPresentation } from "../../lib/presentation.ts";
-import { learnerLocale } from "../../lib/locale.ts";
+import { contentLang, learnerPageLocale } from "../../lib/locale.ts";
+import { accountStrings } from "@ulams/ui/account-strings";
+import { playerStrings } from "@ulams/ui/player-strings";
 
 const tenant = Astro.locals.tenant;
 if (!tenant) return Astro.redirect("/tenants");
@@ -29,6 +31,11 @@ if (!course || course.id !== id) {
 }
 const theme = themeFor(settings?.theme?.theme, tenant.slug);
 const chrome = chromeFor(theme);
+const locale = learnerPageLocale(course?.language, settings);
+// the catalogue components read the page language from here (pageLocale in @ulams/ui/i18n)
+Astro.locals.uiLocale = locale;
+const t = playerStrings(locale);
+const cLang = contentLang(course?.language, locale);
 
 // Returning learners (session cookie present) see their progress; others get the public page.
 const token = readSession(Astro.cookies, Astro.locals.secure);
@@ -37,7 +44,7 @@ let progressNote = "";
 let resumeHref = course!.learnHref;
 let updatesDoc: UiNode | null = null;
 let presentationState: Awaited<ReturnType<typeof getPresentation>> = null;
-const lessonViewLocale = learnerLocale(course?.language);
+const lessonViewLocale = locale;
 if (token) {
   const program = await Promise.race([
     getProgram(tenant, token, id).catch(() => null),
@@ -46,7 +53,7 @@ if (token) {
   if (program?.access) {
     const standing = courseStanding(program.course, program.progress);
     progress = standing.percent;
-    progressNote = standingNote(standing);
+    progressNote = standingNote(standing, locale);
     const next = standing.next ?? flattenTopics(program.course)[0];
     if (next) resumeHref = topicHref(id, next.id);
     course!.lessons = lessonModels(program.course, { progress: program.progress });
@@ -66,20 +73,20 @@ const landingData = { site: { theme, brand: settings?.global?.companyName ?? cou
 const generated = landing && validateDocument(landing, landingData).length === 0 ? landing : null;
 ---
 
-<Base theme={theme} accent={settings?.theme?.accent} title={`${course!.title} — ${site.tenant.name}`} description={course!.summary?.slice(0, 160)} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
-  {chrome.header && <Render doc={withSessionLink(chrome.header, Boolean(token))} data={site} />}
+<Base theme={theme} accent={settings?.theme?.accent} lang={locale} title={`${course!.title} — ${site.tenant.name}`} description={course!.summary?.slice(0, 160)} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  {chrome.header && <Render doc={withSessionLink(chrome.header, Boolean(token), accountStrings(locale).myLearning)} data={site} />}
   <main id="main" tabindex="-1">
     {generated ? (
       <>
         {updatesDoc && <Render doc={updatesDoc} />}
         <Render doc={generated} data={landingData} />
-        <section class="u-container" aria-label="Enrol">
-          <Render doc={purchaseDoc(course!, site, resumeHref)} data={site} />
+        <section class="u-container" aria-label={t.enrol}>
+          <Render doc={purchaseDoc(course!, site, resumeHref, locale)} data={site} />
         </section>
       </>
     ) : (
       <>
-        <Render doc={courseHeaderDoc(theme, course!, progress, resumeHref, progressNote)} data={site} />
+        <Render doc={courseHeaderDoc(theme, course!, progress, resumeHref, progressNote, locale)} data={site} />
         {updatesDoc && <Render doc={updatesDoc} />}
         {presentationState && (
           <div class="u-container u-course-view">
@@ -87,13 +94,13 @@ const generated = landing && validateDocument(landing, landingData).length === 0
             <LessonView part="control" state={presentationState} courseId={id} locale={lessonViewLocale} next={Astro.url.pathname} />
           </div>
         )}
-        <Render doc={syllabusDoc(theme, course!)} data={site} />
-        <section class="u-container u-course-about" aria-label="About the course">
-          <div class="u-course-about__text">
+        <Render doc={syllabusDoc(theme, course!, locale)} data={site} />
+        <section class="u-container u-course-about" aria-label={t.aboutCourse}>
+          <div class="u-course-about__text" lang={cLang}>
             {description && <Render doc={description} data={site} />}
           </div>
           <div class="u-course-about__side">
-            <Render doc={purchaseDoc(course!, site, resumeHref)} data={site} />
+            <Render doc={purchaseDoc(course!, site, resumeHref, locale)} data={site} />
           </div>
         </section>
       </>

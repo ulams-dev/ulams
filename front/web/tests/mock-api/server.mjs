@@ -18,12 +18,22 @@ const coffee = fixture("coffee");
 // Two tenants share the content: "coffee" has the light theme, "nightsky" the dark one. The web server reaches
 // the API through ULAMS_API_INTERNAL_ORIGIN and names the tenant in X-Ulams-Api-Host.
 // "polski" is the coffee academy with Polish as the tenant default language (account pages follow it, ADR 0106)
+const nightskySettings = fixture("nightsky").settings;
 const settingsByTenant = {
   coffee: coffee.settings,
   nightsky: fixture("nightsky").settings,
+  // "zhongwen" is the same academy with Chinese as the tenant default (P5R-1)
+  zhongwen: { ...coffee.settings, global: { ...coffee.settings.global, language: "zh" } },
+  // and the dark academy (nightsky theme) in Polish and Chinese
+  nocpl: { ...nightskySettings, global: { ...nightskySettings.global, language: "pl" } },
+  noczh: { ...nightskySettings, global: { ...nightskySettings.global, language: "zh" } },
   polski: { ...coffee.settings, global: { ...coffee.settings.global, language: "pl", accessibilityEmail: "dostepnosc@coffee.test", accessibilityUpdated: "2026-10-01", accessibilityNotes: "Nagrania z kursu o kawie nie mają jeszcze napisów.\n\nPracujemy nad tym." } },
 };
 const program = fixture("coffee-program");
+// On these tenants the course has no language of its own, so the learner pages follow the tenant default
+// language (ADR 0106); on the others the course says "en" and the pages stay English.
+const LANGUAGELESS = new Set(["polski", "zhongwen", "nocpl", "noczh"]);
+const courseFor = (tenant, course) => (LANGUAGELESS.has(tenant) ? { ...course, language: null } : course);
 
 const QUIZ_TOPIC_ID = 900;
 const quizTopic = {
@@ -328,9 +338,9 @@ const routes = [
   ["GET", /^\/api\/config$/, () => ({ ai: { label_generated_courses: true } })],
   ["GET", /^\/api\/config$/, () => ({ ai: { label_generated_courses: true } })],
   ["GET", /^\/api\/settings$/, () => coffee.settings],
-  ["GET", /^\/api\/courses$/, () => [coffee.course]],
-  ["GET", /^\/api\/courses\/1$/, () => program],
-  ["GET", /^\/api\/courses\/1\/program$/, () => program],
+  ["GET", /^\/api\/courses$/, ({ tenant }) => [courseFor(tenant, coffee.course)]],
+  ["GET", /^\/api\/courses\/1$/, ({ tenant }) => courseFor(tenant, program)],
+  ["GET", /^\/api\/courses\/1\/program$/, ({ tenant }) => courseFor(tenant, program)],
   ["GET", /^\/api\/courses\/my$/, () => ({ ids: [1] })],
   ["GET", /^\/api\/courses\/progress$/, () => [{ course: { id: 1, title: program.title, summary: program.summary, image_url: null }, progress: progressRows }]],
   ["GET", /^\/api\/courses\/progress\/1$/, () => progressRows],

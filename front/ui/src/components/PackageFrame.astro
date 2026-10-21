@@ -1,6 +1,8 @@
 ---
 import { SANDBOX_SCORM } from "@ulams/sdk/frames";
 import Icon from "./Icon.astro";
+import { pageLocale } from "../lib/i18n.ts";
+import { playerStrings } from "../lib/player-strings.ts";
 
 interface Props {
   src: string;
@@ -13,12 +15,13 @@ interface Props {
   isolated?: boolean;
 }
 const { src, title, height = 640, isolated = false } = Astro.props;
+const t = playerStrings(pageLocale(Astro));
 ---
 
 <div class="u-package">
   <div class="u-package__bar">
     <span><Icon name="scorm" /> {title}</span>
-    {!isolated && <a class="u-btn u-btn--ghost u-btn--sm" href={src} target="_blank" rel="noopener"><Icon name="external" /> Full screen</a>}
+    {!isolated && <a class="u-btn u-btn--ghost u-btn--sm" href={src} target="_blank" rel="noopener"><Icon name="external" /> {t.packageFullScreen}</a>}
   </div>
   <div class="u-package__stage" style={`--h:${height}px`}>
     <div class="u-package__loading u-skeleton" aria-hidden="true"></div>
