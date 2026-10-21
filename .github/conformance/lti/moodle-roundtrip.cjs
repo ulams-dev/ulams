@@ -72,7 +72,9 @@ async function api(method, path, token, body) {
     await page.fill('#password', password);
     await Promise.all([page.waitForLoadState('load'), page.click('#loginbtn')]);
     if (page.url().includes('/login/')) {
-        fail('moodle-login', page.url());
+        const shown = (await page.locator('#loginerrormessage, .loginerrors, .alert-danger, .alert').allInnerTexts()).join(' | ').slice(0, 300);
+        const cookies = (await page.context().cookies()).map((c) => c.name).join(',');
+        fail('moodle-login', `${page.url()} message="${shown}" cookies=${cookies}`);
     }
 
     await page.goto(`${MOODLE}/mod/lti/launch.php?id=${cmid}&triggerview=0`);
