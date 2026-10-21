@@ -1,5 +1,5 @@
 {
- "summary": "588/662 covered, 74 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "588/663 covered, 75 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -2654,6 +2654,12 @@
    "status": "excluded: browser-only"
   },
   {
+   "key": "POST /api/auth/social/exchange",
+   "summary": "Exchange a one-time social login code for a token",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
    "key": "GET /api/auth/social/{provider}",
    "summary": "Redirect to social login",
    "command": "",
@@ -2661,7 +2667,7 @@
   },
   {
    "key": "GET /api/auth/social/{provider}/callback",
-   "summary": "Redirect after sucessfull login",
+   "summary": "Redirect after successful login",
    "command": "",
    "status": "excluded: browser-only"
   },

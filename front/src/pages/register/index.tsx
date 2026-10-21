@@ -1,4 +1,4 @@
-import { SetStateAction, useContext, useEffect, useState } from "react";
+import { SetStateAction, useCallback, useContext, useEffect, useState } from "react";
 import { UlamsContext } from "@ulams/sdk/react/context";
 import { Link, useHistory } from "react-router-dom";
 import Layout from "@/components/_App/Layout";
@@ -22,17 +22,17 @@ import { APP_URL } from "@/config/index";
 import { redirectPrefix } from "@/utils/router";
 import { isMobilePlatform } from "@/utils/index";
 import { metaDataKeys } from "@/utils/meta";
+import { useSocialCallback } from "@/hooks/useSocialCallback";
 
 const RegisterPage = () => {
   const { search } = useLocation();
-  const { user, socialAuthorize } = useContext(UlamsContext);
+  const { user } = useContext(UlamsContext);
   const [view, setView] = useState<"" | "success" | "register">("");
   const [modalVisible, setModalVisible] = useState(false);
   const { settings } = useContext(UlamsContext);
 
   const [email, setEmail] = useState<string>("");
   const history = useHistory();
-  const token = search.split("?token=")[1];
   const { t } = useTranslation();
 
   const footerFromApi: string =
@@ -56,14 +56,16 @@ const RegisterPage = () => {
       </Text>
     ),
   };
-  if (token) {
-    socialAuthorize(token);
-    setTimeout(() => {
-      history.push(routeRoutes.home);
-    }, 1000);
-  }
+  // social login: the redirect carries a one-time code, never a token (ADR 0121)
+  const onSocialDone = useCallback(
+    (ok: boolean) => {
+      if (ok) history.push(routeRoutes.home);
+    },
+    [history]
+  );
+  const finishingSocialLogin = useSocialCallback(search, onSocialDone);
 
-  if (!user.loading && !token && user.value) {
+  if (!user.loading && !finishingSocialLogin && user.value) {
     history.push(routeRoutes.home);
   }
 
