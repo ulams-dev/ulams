@@ -265,7 +265,7 @@ services:
 
   postgres:
     <<: *service
-    image: postgres:17-alpine
+    image: postgres:17.11-alpine
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-ulams}
       POSTGRES_USER: ${POSTGRES_USER:-ulams}

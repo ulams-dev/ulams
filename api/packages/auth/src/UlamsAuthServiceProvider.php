@@ -11,6 +11,7 @@ use Ulams\Auth\Console\Commands\CreateAdminCommand;
 use Ulams\Auth\Console\Commands\ExportTokenScopesCommand;
 use Ulams\Auth\Console\Commands\PruneAgentAuditCommand;
 use Ulams\Auth\Console\Commands\PruneDeviceAuthorizationsCommand;
+use Ulams\Auth\Console\Commands\PruneLoginHandoffCommand;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -103,12 +104,16 @@ class UlamsAuthServiceProvider extends ServiceProvider
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             $schedule->command('ulams:auth:prune-agent-audit')->daily();
             $schedule->command('ulams:auth:prune-device-authorizations')->hourly();
+            $schedule->command('ulams:auth:prune-login-handoff')->daily();
         });
         // device login: one bucket per endpoint. Unnamed `throttle:N,M` limiters on the same host and IP
         // share one counter, so the CLI's 5 s polling would eat the `code` budget of every other login
         // from the same address.
         RateLimiter::for('ulams-device-code', fn (Request $r) => Limit::perMinute(10)->by('device-code:' . $r->ip()));
         RateLimiter::for('ulams-device-token', fn (Request $r) => Limit::perMinute(60)->by('device-token:' . $r->ip()));
+        // social login (ADR 0121): the redirect and the callback share a bucket, the code exchange has its own
+        RateLimiter::for('ulams-social-login', fn (Request $r) => Limit::perMinute(30)->by('social-login:' . $r->ip()));
+        RateLimiter::for('ulams-social-exchange', fn (Request $r) => Limit::perMinute(30)->by('social-exchange:' . $r->ip()));
         // device approval: 5 requests per minute per signed-in user (lookups and answers share the bucket)
         RateLimiter::for('ulams-device-approve', fn (Request $r) => Limit::perMinute((int) config(self::CONFIG_KEY . '.device_approve_per_minute', 5))
             ->by('device-approve:' . ($r->user('api')?->getAuthIdentifier() ?? $r->ip())));
@@ -128,6 +133,7 @@ class UlamsAuthServiceProvider extends ServiceProvider
             ExportTokenScopesCommand::class,
             PruneAgentAuditCommand::class,
             PruneDeviceAuthorizationsCommand::class,
+            PruneLoginHandoffCommand::class,
         ]);
     }
 }

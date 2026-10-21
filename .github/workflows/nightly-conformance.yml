@@ -19,6 +19,10 @@ on:
         description: LTI 1.3 round trips with Moodle 5.0 (both directions)
         type: boolean
         default: true
+      pg_upgrade:
+        description: Upgrade a seeded PostgreSQL 12 cluster to 17 (dump and restore, plus logical replication)
+        type: boolean
+        default: true
       saltire:
         description: LTI 1.3 against saLTIre (needs an operator, see the job)
         type: boolean
@@ -63,7 +67,7 @@ jobs:
     # restart policy; --restart always brings postgres and valkey back.
     services:
       postgres:
-        image: postgres:12
+        image: postgres:17.11-alpine
         env:
           POSTGRES_DB: default
           POSTGRES_USER: default
@@ -150,7 +154,7 @@ jobs:
     timeout-minutes: 45
     services:
       postgres:
-        image: postgres:12
+        image: postgres:17.11-alpine
         env:
           POSTGRES_DB: default
           POSTGRES_USER: default
@@ -276,7 +280,7 @@ jobs:
     timeout-minutes: 45
     services:
       postgres:
-        image: postgres:12
+        image: postgres:17.11-alpine
         env:
           POSTGRES_DB: default
           POSTGRES_USER: default
@@ -387,3 +391,138 @@ jobs:
       - name: Logs
         if: failure()
         run: tail -200 /tmp/ulams.log || true
+
+  # P8-1 (docs/plans/phase-8-self-hosting.md 4.1): seed a PostgreSQL 12 cluster with the platform
+  # database and two tenant databases (with the H5P schema), move it to 17 with
+  # deploy/scripts/pg-major-upgrade.sh (which runs pg-verify.sh), run the tenant isolation suite on the
+  # result and, once a week (Sunday UTC) and on manual runs, the logical-replication path.
+  pg-upgrade:
+    name: PostgreSQL 12 to 17 upgrade
+    if: >-
+      (github.event_name == 'schedule' && vars.NIGHTLY_CONFORMANCE == 'true') ||
+      (github.event_name == 'workflow_dispatch' && inputs.pg_upgrade)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      # source version of the upgrade; the target is the default of pg-major-upgrade.sh
+      PG_OLD_IMAGE: postgres:12
+      POSTGRES_USER: default
+      POSTGRES_PASSWORD: secret
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Working directory for the data
+        run: echo "PG_WORK=$RUNNER_TEMP/pg-upgrade" >> "$GITHUB_ENV"
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: apcu, bcmath, exif, gd, intl, pcntl, pdo_pgsql, redis, zip
+          ini-values: memory_limit=2G
+          coverage: none
+          tools: composer:v2
+
+      - name: Install Composer dependencies
+        working-directory: api
+        run: |
+          cp docker/envs/.env.ci.postgres .env
+          composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Start PostgreSQL 12 on a data directory
+        run: |
+          mkdir -p "$PG_WORK"
+          docker run -d --name pg12 -p 5432:5432 -v "$PG_WORK/pg12:/var/lib/postgresql/data" \
+            -e POSTGRES_USER -e POSTGRES_PASSWORD -e POSTGRES_DB=default "$PG_OLD_IMAGE"
+          for _ in $(seq 1 60); do docker exec pg12 pg_isready -U default -d default && break; sleep 2; done
+          sleep 5
+          docker exec pg12 pg_isready -U default -d default
+
+      # The platform database gets the real migrations and the permission seed; each tenant database
+      # (a role and a database per tenant, as the provisioner makes them) gets the same, plus the H5P
+      # schema with content, a tsvector column with a GIN index and a table without a primary key.
+      - name: Seed the platform and two tenants
+        working-directory: api
+        run: |
+          php artisan migrate:fresh --force
+          php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"
+          psql_in() { docker exec -i -e PGPASSWORD=secret pg12 psql -U default -X -q -v ON_ERROR_STOP=1 "$@"; }
+          psql_in -d default -v tenant=platform < ../.github/pg-upgrade/h5p-fixture.sql
+          for t in alpha beta; do
+            psql_in -d postgres -c "CREATE ROLE ulams_$t LOGIN PASSWORD 'tenant-secret-$t'" -c "CREATE DATABASE ulams_$t OWNER ulams_$t"
+            DB_DATABASE="ulams_$t" DB_USERNAME="ulams_$t" DB_PASSWORD="tenant-secret-$t" php artisan migrate --force
+            DB_DATABASE="ulams_$t" DB_USERNAME="ulams_$t" DB_PASSWORD="tenant-secret-$t" \
+              php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"
+            psql_in -d "ulams_$t" -v tenant="$t" < ../.github/pg-upgrade/h5p-fixture.sql
+          done
+          docker exec pg12 psql -U default -d default -Atc "SELECT datname FROM pg_database WHERE NOT datistemplate"
+
+      - name: Stop PostgreSQL 12 cleanly
+        run: docker stop -t 60 pg12
+
+      - name: Upgrade (dump, restore, verify)
+        run: |
+          sh deploy/scripts/pg-major-upgrade.sh --old-data "$PG_WORK/pg12" --new-data "$PG_WORK/pg17" \
+            --old-image "$PG_OLD_IMAGE" --dump-dir "$PG_WORK/dumps"
+
+      - name: Start PostgreSQL 17 on the new data and check the application on it
+        working-directory: api
+        run: |
+          docker rm pg12
+          docker run -d --name pg17 -p 5432:5432 -v "$PG_WORK/pg17:/var/lib/postgresql/data" \
+            -e POSTGRES_USER -e POSTGRES_PASSWORD postgres:17.11-alpine
+          for _ in $(seq 1 60); do docker exec pg17 pg_isready -U default -d default && break; sleep 2; done
+          docker exec pg17 psql -U default -d default -Atc 'SHOW server_version'
+          # a tenant role logs in over the network (the container's own address, not the trusted
+          # loopback) with the password it had on 12, which is stored as an MD5 hash
+          docker exec -e PGPASSWORD=tenant-secret-alpha pg17 sh -c 'psql -h "$(hostname -i)" -U ulams_alpha -d ulams_alpha -Atc "SELECT count(*) FROM permissions"'
+          php artisan migrate --force
+          php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"
+
+      # Last: the suite resets the platform database.
+      - name: Tenant isolation suite on PostgreSQL 17
+        working-directory: api
+        run: |
+          php artisan passport:keys --force
+          php artisan passport:client --personal --no-interaction
+          mkdir -p vendor/orchestra/testbench-core/laravel/storage
+          cp storage/oauth-private.key storage/oauth-public.key vendor/orchestra/testbench-core/laravel/storage/
+          php artisan migrate --force --path=packages/courses/tests/Database/Migrations
+          ./vendor/bin/phpunit --testsuite tenancy
+
+      - name: Weekly gate for the logical-replication path
+        id: weekly
+        run: |
+          if [ "${{ github.event_name }}" = workflow_dispatch ] || [ "$(date -u +%u)" = 7 ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Logical replication from the same PostgreSQL 12 data
+        if: steps.weekly.outputs.run == 'true'
+        run: |
+          docker rm -f pg17
+          docker network create pgrepl
+          docker run -d --name old12 --network pgrepl -v "$PG_WORK/pg12:/var/lib/postgresql/data" \
+            -e POSTGRES_USER -e POSTGRES_PASSWORD "$PG_OLD_IMAGE" \
+            -c wal_level=logical -c max_replication_slots=10 -c max_wal_senders=10
+          docker run -d --name new17 --network pgrepl -e POSTGRES_USER -e POSTGRES_PASSWORD -e POSTGRES_DB=postgres \
+            postgres:17.11-alpine -c max_logical_replication_workers=12 -c max_worker_processes=24
+          for c in old12 new17; do
+            for _ in $(seq 1 60); do docker exec "$c" pg_isready -U default -d postgres && break; sleep 2; done
+          done
+          sleep 8
+          sh deploy/scripts/pg-logical-upgrade.sh start --old old12 --new new17
+          for _ in $(seq 1 60); do sh deploy/scripts/pg-logical-upgrade.sh status --old old12 --new new17 && break; sleep 5; done
+          # writes during the replication, picked up by the final catch-up
+          docker exec -e PGPASSWORD=secret old12 psql -U default -d ulams_alpha -c "INSERT INTO fixture_events (name) VALUES ('during replication')" \
+            -c "INSERT INTO h5p.contents (title, main_library, metadata, parameters) VALUES ('late', 'H5P.Accordion', '{}', '{}')"
+          sh deploy/scripts/pg-logical-upgrade.sh finish --old old12 --new new17
+
+      - name: Logs
+        if: failure()
+        run: |
+          docker ps -a
+          for c in pg12 pg17 old12 new17; do docker logs --tail 80 "$c" 2>&1 || true; done

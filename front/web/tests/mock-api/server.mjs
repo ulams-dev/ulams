@@ -9,6 +9,7 @@
 import { createServer } from "node:http";
 import { Buffer } from "node:buffer";
 import { clearTimeout, setTimeout } from "node:timers";
+import { createHash, randomBytes } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
@@ -349,6 +350,49 @@ const routes = [
   ["POST", /^\/api\/quiz-attempts\/1\/end$/, () => attempt(true)],
 ];
 
+/**
+ * Social login of the real API (ADR 0121), minus the provider: the start endpoint answers with the
+ * redirect back to `return_url` carrying a one-time code bound to the S256 challenge; the exchange
+ * checks verifier, single use and the 60 second lifetime. The tests never get a token in a URL.
+ */
+const socialCodes = new Map();
+const challengeFor = (verifier) => createHash("sha256").update(verifier).digest("base64url");
+
+function socialStart(url, res) {
+  const returnUrl = url.searchParams.get("return_url") ?? "";
+  const challenge = url.searchParams.get("challenge") ?? "";
+  const allowed = /^http:\/\/[a-z]+\.app\.localhost:\d+\//.test(returnUrl);
+  if (!allowed || !/^[A-Za-z0-9_-]{43}$/.test(challenge)) {
+    res.statusCode = 422;
+    res.end(JSON.stringify({ message: "The return URL is not allowed for this site or the challenge is missing." }));
+    return;
+  }
+  const code = randomBytes(32).toString("base64url");
+  socialCodes.set(code, { challenge, expires: Date.now() + 60_000, used: false });
+  res.statusCode = 302;
+  res.setHeader("Location", `${returnUrl}?code=${code}&complete=true`);
+  res.end();
+}
+
+function socialExchange(body, res) {
+  let input = {};
+  try {
+    input = JSON.parse(body || "{}");
+  } catch {
+    // answered below as an invalid code
+  }
+  const row = socialCodes.get(input.code);
+  const verifier = typeof input.verifier === "string" ? input.verifier : "";
+  const ok = row && !row.used && row.expires > Date.now() && challengeFor(verifier) === row.challenge;
+  if (row) row.used = true;
+  if (!ok) {
+    res.statusCode = 400;
+    res.end(JSON.stringify({ success: false, message: "The login code is invalid or has expired. Start again." }));
+    return;
+  }
+  res.end(JSON.stringify({ success: true, message: "Login successful", data: { complete: true, token: `social-token-${input.code.slice(0, 8)}`, expires_at: new Date(Date.now() + 86_400_000).toISOString() } }));
+}
+
 const server = createServer((req, res) => {
   const url = new URL(req.url ?? "/", "http://mock");
   const path = url.pathname;
@@ -367,6 +411,17 @@ const server = createServer((req, res) => {
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", 'attachment; filename="espresso-basics-9.pdf"');
     res.end(PDF);
+    return;
+  }
+  if (req.method === "GET" && path === "/api/auth/social/google") {
+    req.resume();
+    socialStart(url, res);
+    return;
+  }
+  if (req.method === "POST" && path === "/api/auth/social/exchange") {
+    const body = [];
+    req.on("data", (chunk) => body.push(chunk));
+    req.on("end", () => socialExchange(Buffer.concat(body).toString("utf8"), res));
     return;
   }
   const run = /^\/api\/tutor\/runs\/([0-9a-z]{26})\/events$/.exec(path);

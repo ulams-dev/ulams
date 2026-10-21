@@ -26,6 +26,7 @@ export default defineConfig({
       ULAMS_WARM_TENANTS: envField.string({ context: "server", access: "secret", optional: true }),
       ULAMS_COOKIE_SECURE: envField.string({ context: "server", access: "secret", optional: true }),
       ULAMS_COOKIE_FALLBACK_PREFIX: envField.string({ context: "server", access: "secret", optional: true }),
+      ULAMS_SOCIAL_LOGIN: envField.string({ context: "server", access: "secret", optional: true }),
       CSP_ENFORCE: envField.string({ context: "server", access: "secret", optional: true }),
       ULAMS_CONTENT_ORIGIN: envField.string({ context: "server", access: "secret", optional: true }),
       ULAMS_STORAGE_ORIGINS: envField.string({ context: "server", access: "secret", optional: true }),

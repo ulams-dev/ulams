@@ -1,6 +1,6 @@
 # 0121. SSO login handoff by one-time code, strict account linking and SCIM tokens on service users
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-21
 - Plan: `docs/plans/phase-6-identity.md` (4.3, 4.5, 4.7)
 
@@ -41,3 +41,11 @@ Option 1.
 - Good: SCIM reuses token listing, revocation, rate limits and the scope coverage test.
 - Bad: clients that read `?token=` (the legacy `front/src` app) must switch to the exchange.
 - Bad: one service user per SCIM-enabled provider appears in the users table (hidden from lists, cannot log in).
+
+## Implementation notes
+
+- ID-0 (social login) ships the handoff: the state string handed to the provider is signed (HMAC with a key
+  derived from the tenant `APP_KEY`; nonce, protocol, provider, host and expiry) on top of the server-side row,
+  so a forged or foreign state is refused before any lookup. The code is bound to the tenant host as well as to the verifier.
+- Automatic linking by e-mail also excludes tutors, not only admins and superadmins, and an unconfirmed local
+  account that is claimed this way loses its password and tokens first.

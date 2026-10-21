@@ -10,6 +10,7 @@ import {
   ULAMS_WARM_TENANTS,
   ULAMS_COOKIE_SECURE,
   ULAMS_COOKIE_FALLBACK_PREFIX,
+  ULAMS_SOCIAL_LOGIN,
   CSP_ENFORCE,
   ULAMS_CONTENT_ORIGIN,
   ULAMS_STORAGE_ORIGINS,
@@ -42,6 +43,8 @@ export const config = {
   cookieSecure: parseSecureMode(ULAMS_COOKIE_SECURE),
   /** Cookie name prefix over plain http (dev), where `__Host-` is rejected by browsers. */
   cookieFallbackPrefix: ULAMS_COOKIE_FALLBACK_PREFIX ?? "",
+  /** Social sign-in buttons on /login: `google`, `facebook` (comma separated). Empty = none; the tenant API must have the provider configured. */
+  socialLogin: ULAMS_SOCIAL_LOGIN ?? "",
   /**
    * Enforce the Content Security Policy (`CSP_ENFORCE=true`) or only report violations. Unset, it
    * enforces everywhere but in the production image (NODE_ENV=production), so developers see

@@ -57,7 +57,7 @@ in the `js` job, which fails when the lock file is not what `yarn install` would
 **`php` (PHPUnit, one job per shard)** runs when `php` is true or on manual dispatch. Matrix
 `shard: [learning, tasks-topics, gift-reports, commerce, platform, content]`, `fail-fast: false`:
 
-1. Service containers: `postgres:12` (database `default`, user `default`, password `secret`) and
+1. Service containers: `postgres:17.11-alpine` (database `default`, user `default`, password `secret`) and
    `valkey/valkey:8-alpine`, both with health checks.
 2. Resolves the shard's suites from `PHPUNIT_SHARDS` and checks that every `<testsuite>` in
    `api/phpunit.xml` is in exactly one shard.
@@ -84,7 +84,7 @@ check". Branch protection is configured in GitHub, not in the repository.
 
 ## H5P integration tests (`h5p-integration.yml`)
 
-Manual (`workflow_dispatch`). Starts `postgres:12`, `valkey/valkey:8-alpine` and
+Manual (`workflow_dispatch`). Starts `postgres:17.11-alpine`, `valkey/valkey:8-alpine` and
 `bitnamilegacy/minio:latest` as service containers, installs the workspaces, downloads the H5P
 core and editor files (`yarn workspace api-h5p download:core`), waits for MinIO and runs
 `corepack yarn test:h5p:integration` (`test/http.test.ts` and `test/pg-storage.test.ts`). The
