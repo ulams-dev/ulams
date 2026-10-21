@@ -36,7 +36,7 @@ COPY api/h5p/scripts/build-embed.mjs api/h5p/scripts/build-embed.mjs
 COPY api/h5p/embed-client api/h5p/embed-client
 COPY api/h5p/src api/h5p/src
 # tsc (server) + esbuild (embed pages: Lumi web components, bundled here only)
-RUN yarn --cwd api/h5p build
+RUN n=1; until yarn --cwd api/h5p build; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): yarn --cwd api/h5p build" >&2; sleep 5; done
 
 # ---- prod-deps: runtime node_modules only -----------------------------------
 FROM manifests AS prod-deps

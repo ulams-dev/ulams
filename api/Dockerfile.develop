@@ -30,7 +30,7 @@ RUN \
   && cp docker/conf/php/ulams-custom-php.ini /usr/local/etc/php/conf.d/ulams-custom-php.ini \  
   && cp docker/conf/php/ulams-custom-develop-php.ini /usr/local/etc/php/conf.d/ulams-custom-develop-php.ini \  
   && cp docker/conf/php/php-fpm-custom.conf /usr/local/etc/php-fpm.d/php-fpm-custom.conf
-RUN composer install --no-scripts --no-dev
+RUN n=1; until composer install --no-scripts --no-dev; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): composer install --no-scripts --no-dev" >&2; sleep 5; done
 # LiaScript player (BSD-3-Clause), pinned version and checksum, not kept in git
 RUN sh packages/liascript/bin/fetch-player.sh
 

@@ -16,6 +16,7 @@ class AskRequest extends FormRequest
         return [
             'text' => ['required', 'string', 'min:2', 'max:' . (int) config('tutor.limits.question_chars')],
             'conversationId' => ['sometimes', 'nullable', 'string', 'size:26'],
+            'stream' => ['sometimes', 'boolean'],
             'topicId' => ['sometimes', 'nullable', 'integer', 'min:1'],
         ];
     }

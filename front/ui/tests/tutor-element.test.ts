@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { setupDom } from "./astro-render.ts";
 import { renderBasicMarkdown } from "../src/lib/markdown-basic.ts";
-import { citationHref } from "../src/elements/tutor-panel.ts";
+import { citationHref, visibleDraft } from "../src/elements/tutor-panel.ts";
 
 const status = { enabled: true, aiEnabled: true, remaining: 29, dailyLimit: 30, attemptActive: false };
 const answer = {
@@ -19,7 +19,7 @@ const answer = {
 };
 const earlier = [{ id: "01JOLD000000000000000000AA", lastMessageAt: "2026-10-20T09:30:00+00:00", expiresAt: "2027-01-18T09:30:00+00:00" }];
 
-type Route = (init: RequestInit) => { status?: number; body?: unknown } | "offline";
+type Route = (init: RequestInit) => { status?: number; body?: unknown; stream?: ReadableStream<Uint8Array> } | "offline";
 let routes: Record<string, Route>;
 const calls: string[] = [];
 const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -29,7 +29,8 @@ const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => 
   if (!route) return new Response(JSON.stringify({ message: "nope" }), { status: 404 });
   const result = route(init ?? {});
   if (result === "offline") throw new TypeError("offline");
-  return new Response(JSON.stringify(result.body ?? { data: null }), { status: result.status ?? 200 });
+  if (result.stream) return new Response(result.stream, { status: result.status ?? 200, headers: { "Content-Type": "text/event-stream" } });
+  return new Response(typeof result.body === "string" ? result.body : JSON.stringify(result.body ?? { data: null }), { status: result.status ?? 200 });
 });
 
 const flush = async (times = 6) => {
@@ -58,6 +59,13 @@ beforeAll(async () => {
     this.dispatchEvent(new (dom.window as unknown as { Event: typeof Event }).Event("close"));
   };
   vi.stubGlobal("fetch", fetchMock);
+  const store = new Map<string, string>();
+  vi.stubGlobal("sessionStorage", {
+    getItem: (k: string) => store.get(k) ?? null,
+    setItem: (k: string, v: string) => void store.set(k, String(v)),
+    removeItem: (k: string) => void store.delete(k),
+    clear: () => store.clear(),
+  });
   await import("../src/elements/tutor.ts");
 });
 
@@ -343,3 +351,123 @@ describe("tutor strings", () => {
     expect(tutorStrings(undefined)).toBe(en);
   });
 });
+
+describe("<ulams-tutor> streamed answers", () => {
+  const run = { conversationId: answer.conversationId, runId: "01jrun00000000000000000ok", questionId: "q1" };
+  const EVENTS = `GET /bff/api/tutor/runs/${run.runId}/events`;
+  const enc = new TextEncoder();
+  const frame = (id: number, event: Record<string, unknown>) => enc.encode(`id: ${id}\ndata: ${JSON.stringify(event)}\n\n`);
+
+  /** An event stream the test feeds by hand. */
+  function controlled() {
+    let controller!: ReadableStreamDefaultController<Uint8Array>;
+    const stream = new ReadableStream<Uint8Array>({ start: (c) => (controller = c) });
+    return { stream, send: (id: number, event: Record<string, unknown>) => controller.enqueue(frame(id, event)), end: () => controller.close() };
+  }
+
+  beforeEach(() => {
+    sessionStorage.clear();
+    routes["GET /bff/api/tutor/courses/5/status"] = () => ({ body: { data: { ...status, streaming: true } } });
+    routes["POST /bff/api/tutor/courses/5/messages"] = () => ({ status: 202, body: { data: run } });
+  });
+
+  it("shows a busy draft outside the live log, then the validated answer replaces it and is announced once", async () => {
+    const feed = controlled();
+    routes[EVENTS] = () => ({ stream: feed.stream });
+    const p = await openPanel();
+    void p.ask("What is Robusta?");
+    await flush(8);
+    const sent = JSON.parse(String(fetchMock.mock.calls.filter((c) => String(c[0]).endsWith("/messages")).at(-1)![1]!.body));
+    expect(sent).toEqual({ text: "What is Robusta?", topicId: 12, stream: true });
+
+    feed.send(1, { type: "RUN_STARTED" });
+    feed.send(2, { type: "TEXT_MESSAGE_CONTENT", delta: "Draft sentence one. " });
+    await flush(12);
+    const draft = p.q<HTMLElement>("[data-draft]");
+    expect(draft.hidden).toBe(false);
+    expect(draft.textContent).toBe("Draft sentence one. ");
+    expect(draft.getAttribute("aria-busy")).toBe("true");
+    expect(draft.closest('[role="log"]')).toBeNull();
+    expect(p.q("[data-log]").getAttribute("aria-busy")).toBe("true");
+    expect(p.q("[data-log]").querySelector(".msg.tutor")).toBeNull();
+    // the running answer is remembered for a reload
+    expect(JSON.parse(sessionStorage.getItem("ulams-tutor-run:5")!).run.runId).toBe(run.runId);
+
+    feed.send(3, { type: "CUSTOM", name: "tutor.final", value: { ...answer, answer: "The checked answer.", questionId: "q1" } });
+    feed.send(4, { type: "RUN_FINISHED" });
+    feed.end();
+    await flush(14);
+    const log = p.q<HTMLElement>("[data-log]");
+    expect(log.querySelectorAll(".msg.tutor")).toHaveLength(1);
+    expect(log.querySelector(".msg.tutor")!.textContent).toContain("The checked answer.");
+    expect(log.textContent).not.toContain("Draft sentence one");
+    expect(log.querySelector(".msg.tutor .sources a")?.getAttribute("href")).toBe("/learn/5/12");
+    expect(p.q<HTMLElement>(".pending").hidden).toBe(true);
+    expect(log.hasAttribute("aria-busy")).toBe(false);
+    expect(sessionStorage.getItem("ulams-tutor-run:5")).toBeNull();
+    expect(p.q("[data-quota]").textContent).toBe("28 of 30 questions left today");
+  });
+
+  it("shows a failed run in words with a retry that keeps the question", async () => {
+    routes[EVENTS] = () => ({ body: `id: 1\ndata: ${JSON.stringify({ type: "RUN_ERROR", code: "error", message: "x" })}\n\n` });
+    const p = await openPanel();
+    await p.ask("What is Robusta?");
+    await flush(10);
+    expect(p.q<HTMLElement>(".error").hidden).toBe(false);
+    expect(p.q(".error").textContent).toContain("Something went wrong. Your question is kept.");
+    expect(p.q(".error button")?.textContent).toBe("Try again");
+    expect(p.q("[data-log]").querySelector(".msg.tutor")).toBeNull();
+  });
+
+  it("says that the tutor is still answering on a second question (409)", async () => {
+    routes["POST /bff/api/tutor/courses/5/messages"] = () => ({ status: 409, body: { message: "busy", reason: "busy" } });
+    const p = await openPanel();
+    await p.ask("And more?");
+    expect(p.q(".error").textContent).toContain("still answering your last question");
+  });
+
+  it("falls back to the plain request when the operator switched streaming off", async () => {
+    routes["GET /bff/api/tutor/courses/5/status"] = () => ({ body: { data: { ...status, streaming: false } } });
+    routes["POST /bff/api/tutor/courses/5/messages"] = () => ({ body: { data: answer } });
+    const p = await openPanel();
+    await p.ask("What is Robusta?");
+    const sent = JSON.parse(String(fetchMock.mock.calls.filter((c) => String(c[0]).endsWith("/messages")).at(-1)![1]!.body));
+    expect(sent.stream).toBeUndefined();
+    expect(p.q("[data-log]").querySelector(".msg.tutor")).not.toBeNull();
+    expect(calls.some((c) => c.includes("/runs/"))).toBe(false);
+  });
+
+  it("resumes a run after a reload when the panel opens", async () => {
+    sessionStorage.setItem("ulams-tutor-run:5", JSON.stringify({ run, text: "What is Robusta?" }));
+    routes[EVENTS] = () => ({
+      body: [
+        frameText(1, { type: "TEXT_MESSAGE_CONTENT", delta: "Part. " }),
+        frameText(2, { type: "CUSTOM", name: "tutor.final", value: { ...answer, answer: "Resumed answer.", questionId: "q1" } }),
+      ].join(""),
+    });
+    const p = await openPanel();
+    await flush(14);
+    const log = p.q<HTMLElement>("[data-log]");
+    expect(log.querySelector(".msg.learner")?.textContent).toContain("What is Robusta?");
+    expect(log.querySelector(".msg.tutor")?.textContent).toContain("Resumed answer.");
+    expect(sessionStorage.getItem("ulams-tutor-run:5")).toBeNull();
+  });
+
+  it("ignores a saved run when streaming is off", async () => {
+    sessionStorage.setItem("ulams-tutor-run:5", JSON.stringify({ run, text: "Q" }));
+    routes["GET /bff/api/tutor/courses/5/status"] = () => ({ body: { data: { ...status, streaming: false } } });
+    await openPanel();
+    expect(sessionStorage.getItem("ulams-tutor-run:5")).toBeNull();
+    expect(calls.some((c) => c.includes("/runs/"))).toBe(false);
+  });
+
+  it("holds back an unfinished sentence under reduced motion", () => {
+    expect(visibleDraft("One. Two is half", false)).toBe("One. Two is half");
+    expect(visibleDraft("One. Two is half", true)).toBe("One. ");
+    expect(visibleDraft("Only a half sentence", true)).toBe("");
+    expect(visibleDraft("Done!", true)).toBe("Done!");
+    expect(visibleDraft("Is it (really?) so", true)).toBe("Is it (really?) ");
+  });
+});
+
+const frameText = (id: number, event: Record<string, unknown>) => `id: ${id}\ndata: ${JSON.stringify(event)}\n\n`;

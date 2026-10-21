@@ -58,6 +58,7 @@ class TutorCoursesByCourseMessagesPostRequest implements ModelInterface, ArrayAc
       */
     protected static $openAPITypes = [
         'conversation_id' => 'string',
+        'stream' => 'bool',
         'text' => 'string',
         'topic_id' => 'int'
     ];
@@ -71,6 +72,7 @@ class TutorCoursesByCourseMessagesPostRequest implements ModelInterface, ArrayAc
       */
     protected static $openAPIFormats = [
         'conversation_id' => null,
+        'stream' => null,
         'text' => null,
         'topic_id' => null
     ];
@@ -82,6 +84,7 @@ class TutorCoursesByCourseMessagesPostRequest implements ModelInterface, ArrayAc
       */
     protected static array $openAPINullables = [
         'conversation_id' => true,
+        'stream' => false,
         'text' => false,
         'topic_id' => true
     ];
@@ -173,6 +176,7 @@ class TutorCoursesByCourseMessagesPostRequest implements ModelInterface, ArrayAc
      */
     protected static $attributeMap = [
         'conversation_id' => 'conversationId',
+        'stream' => 'stream',
         'text' => 'text',
         'topic_id' => 'topicId'
     ];
@@ -184,6 +188,7 @@ class TutorCoursesByCourseMessagesPostRequest implements ModelInterface, ArrayAc
      */
     protected static $setters = [
         'conversation_id' => 'setConversationId',
+        'stream' => 'setStream',
         'text' => 'setText',
         'topic_id' => 'setTopicId'
     ];
@@ -195,6 +200,7 @@ class TutorCoursesByCourseMessagesPostRequest implements ModelInterface, ArrayAc
      */
     protected static $getters = [
         'conversation_id' => 'getConversationId',
+        'stream' => 'getStream',
         'text' => 'getText',
         'topic_id' => 'getTopicId'
     ];
@@ -257,6 +263,7 @@ class TutorCoursesByCourseMessagesPostRequest implements ModelInterface, ArrayAc
     public function __construct(array $data = null)
     {
         $this->setIfExists('conversation_id', $data ?? [], null);
+        $this->setIfExists('stream', $data ?? [], null);
         $this->setIfExists('text', $data ?? [], null);
         $this->setIfExists('topic_id', $data ?? [], null);
     }
@@ -340,6 +347,33 @@ class TutorCoursesByCourseMessagesPostRequest implements ModelInterface, ArrayAc
             }
         }
         $this->container['conversation_id'] = $conversation_id;
+
+        return $this;
+    }
+
+    /**
+     * Gets stream
+     *
+     * @return bool|null
+     */
+    public function getStream()
+    {
+        return $this->container['stream'];
+    }
+
+    /**
+     * Sets stream
+     *
+     * @param bool|null $stream Queue the answer and return 202 with a run id; read it at `GET /api/tutor/runs/{run}/events`. Ignored (the answer comes back in the response) when the operator switched streaming off
+     *
+     * @return self
+     */
+    public function setStream($stream)
+    {
+        if (is_null($stream)) {
+            throw new \InvalidArgumentException('non-nullable stream cannot be null');
+        }
+        $this->container['stream'] = $stream;
 
         return $this;
     }

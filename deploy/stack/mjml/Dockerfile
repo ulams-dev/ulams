@@ -1,7 +1,7 @@
 FROM node:22-alpine
 WORKDIR /app
 COPY deploy/stack/mjml/package.json deploy/stack/mjml/package-lock.json ./
-RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
+RUN n=1; until npm ci --omit=dev --ignore-scripts; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): npm ci --omit=dev --ignore-scripts" >&2; sleep 5; done && npm cache clean --force
 COPY deploy/stack/mjml/server.mjs ./
 USER node
 EXPOSE 15500

@@ -1,6 +1,6 @@
 # 0107. Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-21
 - Plan: `docs/plans/email-visual-editor.md` (milestone M0), results in `docs/plans/email-visual-editor-spike.md`
 
@@ -31,8 +31,9 @@ Option 1, with conditions. Option 3 stays the fallback and ships first (M1, M2) 
   the plugin under `admin/src/lib/grapesjs-mjml` if upstream does not fix it.
 - The plan's size budget for the editor chunk (350 KB gzip, gate 525 KB) is replaced by **700 KB gzip**, because
   the measured chunk is about 660 KB (half of it `mjml-browser`) and the alternative is larger (767 KB) and
-  drops MJML. **This needs the owner's explicit acceptance.** If it is refused, M3 to M5 are dropped and the
-  code view stays.
+  drops MJML. The owner accepted this budget on 2026-10-21 (PR #328).
+- Order of delivery, accepted with the budget: the code-only editor ships first (M1 server safety, M2 code view
+  and live preview), then visual mode (M3 to M5), with keyboard alternatives required in M5.
 
 ## Consequences
 

@@ -26,7 +26,12 @@ class MjmlService implements MjmlServiceContract
     {
         $apiUrl = config(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.api_url');
         if (!empty($apiUrl)) {
-            return new CurlRenderer(new CurlApi($apiUrl));
+            return new CurlRenderer(new CurlApi(
+                $apiUrl,
+                null,
+                (int) config(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.connect_timeout', 5),
+                (int) config(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.timeout', 20)
+            ));
         }
 
         $binary = config(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.binary_path');

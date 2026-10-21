@@ -1,7 +1,7 @@
 # Spike results: visual e-mail editor library (M0)
 
 Plan: `docs/plans/email-visual-editor.md` (approved with the recommended defaults Q1-Q8). Decision record:
-`docs/decisions/0107-visual-email-editor-library.md` (Proposed). Run on 2026-10-21, time-boxed, throwaway
+`docs/decisions/0107-visual-email-editor-library.md` (Accepted). Run on 2026-10-21, time-boxed, throwaway
 prototypes in `spike/email-editor/` (not in the workspaces, not in CI, not wired into the admin app; the PR can
 be merged as docs only).
 

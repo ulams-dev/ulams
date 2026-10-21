@@ -14,7 +14,7 @@ COPY front/package.json front/package.json
 # scripts skipped: admin's `max setup` postinstall needs admin sources, husky needs .git
 RUN n=1; until yarn install --frozen-lockfile --ignore-scripts --network-timeout 1000000000; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying yarn install ($n/3)" >&2; sleep 5; done
 COPY front/ front/
-RUN cd front && yarn build && find dist -name '*.map' -delete
+RUN cd front && n=1; until yarn build; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): yarn build" >&2; sleep 5; done && find dist -name '*.map' -delete
 RUN echo $APP_VERSION >> front/dist/version.html
 
 
