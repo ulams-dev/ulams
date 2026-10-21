@@ -1,0 +1,65 @@
+{
+  "offline": {
+    "externalRequestsAttempted": [
+      "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css"
+    ],
+    "pageErrors": []
+  },
+  "axe": [
+    {
+      "id": "button-name",
+      "impact": "critical",
+      "nodes": 14,
+      "sample": ".css-cqo7mj"
+    },
+    {
+      "id": "image-alt",
+      "impact": "critical",
+      "nodes": 1,
+      "sample": "img"
+    },
+    {
+      "id": "label",
+      "impact": "critical",
+      "nodes": 1,
+      "sample": "input[aria-orientation=\"horizontal\"]"
+    },
+    {
+      "id": "link-name",
+      "impact": "serious",
+      "nodes": 1,
+      "sample": ".MuiTypography-inherit"
+    }
+  ],
+  "axeCounts": {
+    "violations": 4,
+    "nodes": 17,
+    "bySeverity": {
+      "critical": 3,
+      "serious": 1
+    }
+  },
+  "dom": {
+    "lang": "en",
+    "title": "EmailBuilder.js — Free and Open Source Template Builder.",
+    "tabbable": 34,
+    "iconButtonsNoName": 14,
+    "headings": 1
+  },
+  "tabDistinctStops60": 19,
+  "csp_strict": {
+    "violations": [
+      "style-src-elem https://cdnjs.cloudflare.com/ajax/libs/highlight.j",
+      "style-src-elem inline"
+    ],
+    "rendered": true,
+    "iframes": 0
+  },
+  "csp_styleInline": {
+    "violations": [
+      "style-src-elem https://cdnjs.cloudflare.com/ajax/libs/highlight.j"
+    ],
+    "rendered": true,
+    "iframes": 0
+  }
+}

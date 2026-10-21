@@ -118,5 +118,6 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0104](0104-machine-readable-docs-and-public-schemas.md) | Machine-readable documentation: llms.txt, Markdown pages and public JSON Schemas | Proposed |
 | [0105](0105-stream-tutor-answers-over-the-sse-event-log.md) | Stream tutor answers over the SSE event log | Proposed |
 | [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Proposed |
+| [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Proposed |
 
 <!-- END GENERATED: adr-index -->

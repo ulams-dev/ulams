@@ -1,0 +1,104 @@
+{
+  "axe": [
+    {
+      "id": "color-contrast",
+      "impact": "serious",
+      "nodes": 1,
+      "help": "Elements must meet minimum color contrast ratio thresholds",
+      "sample": ".gjs-sm-header"
+    }
+  ],
+  "axeCounts": {
+    "violations": 1,
+    "nodes": 1,
+    "bySeverity": {
+      "serious": 1
+    }
+  },
+  "keyboard": {
+    "tabbable": 70,
+    "blocks": 0,
+    "blocksWithTabindex": 0,
+    "blocksDraggableOnly": 0,
+    "iconOnlyButtonsWithoutName": 1,
+    "panelButtons": 15,
+    "panelButtonsWithAriaLabel": 0,
+    "panelButtonsWithRole": 0,
+    "canvasIframeTitle": "Editor canvas"
+  },
+  "tabStops": [
+    "IFRAME.gjs-frame",
+    "BODY. [outside]",
+    "IFRAME.gjs-frame",
+    "BODY. [outside]",
+    "IFRAME.gjs-frame",
+    "BODY. [outside]",
+    "IFRAME.gjs-frame",
+    "BODY. [outside]",
+    "IFRAME.gjs-frame",
+    "BODY. [outside]",
+    "IFRAME.gjs-frame",
+    "BODY. [outside]",
+    "IFRAME.gjs-frame",
+    "BODY. [outside]",
+    "IFRAME.gjs-frame",
+    "BODY. [outside]",
+    "IFRAME.gjs-frame",
+    "BODY. [outside]",
+    "IFRAME.gjs-frame",
+    "BODY. [outside]"
+  ],
+  "tabStopsInsideEditor": 30,
+  "keyboardAddBlock": {
+    "mjTextBefore": 0,
+    "mjTextAfter": 0,
+    "firstBlockTabindex": null
+  },
+  "csp": {
+    "strict": {
+      "csp": "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; worker-src 'none'; frame-src 'self'; base-uri 'none'; form-action 'none'",
+      "editorWorks": true,
+      "violations": [
+        "style-src-attr | inline | ",
+        "script-src | eval | ",
+        "style-src-elem | inline | ",
+        "style-src-elem | https://cdnjs.cloudflare.com/ajax/libs/f | "
+      ],
+      "errors": [
+        "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-f3SWd4sF/",
+        "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-XFVFJ6tco",
+        "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-Edoi1GlW0",
+        "Loading the stylesheet 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' violates the following Content Security Policy direc",
+        "Applying inline style violates the following Content Security Policy directive 'style-src 'self''. Either the 'unsafe-inline' keyword, a hash ('sha256-1OjyRYLAO"
+      ]
+    },
+    "styleInline": {
+      "csp": "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; worker-src 'none'; frame-src 'self'",
+      "editorWorks": true,
+      "violations": [
+        "script-src | eval | ",
+        "style-src-elem | https://cdnjs.cloudflare.com/ajax/libs/f | "
+      ],
+      "errors": [
+        "Loading the stylesheet 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' violates the following Content Security Policy direc"
+      ]
+    },
+    "styleInlineEval": {
+      "csp": "default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; worker-src 'none'; frame-src 'self'",
+      "editorWorks": true,
+      "violations": [
+        "style-src-elem | https://cdnjs.cloudflare.com/ajax/libs/f | "
+      ],
+      "errors": [
+        "Loading the stylesheet 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' violates the following Content Security Policy direc"
+      ]
+    }
+  },
+  "offline": {
+    "externalRequestsAttempted": [
+      "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css",
+      "https://fonts.googleapis.com/css?family=Inter",
+      "https://example.com/logo.png"
+    ]
+  }
+}

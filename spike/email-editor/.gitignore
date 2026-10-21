@@ -1,0 +1,11 @@
+node_modules/
+dist/
+package-lock.json
+emailbuilder-src/
+# emailbuilder/ is a copy of the upstream example app (MIT); only our measurement scripts are tracked
+emailbuilder/*
+!emailbuilder/audit.mjs
+!emailbuilder/render-test.mjs
+!emailbuilder/tsconfig.json
+!emailbuilder/audit.json
+!emailbuilder/editor.png
