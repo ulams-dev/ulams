@@ -47,6 +47,12 @@ unauthenticated remote code execution bug fixed in PHP 8.4.27 and 8.3.36
 (shared hosting, your own packages), set the same value in `php.ini` or the pool and update PHP.
 CI reads the setting back from the built image.
 
+The image build also refuses a PHP older than 8.4.27 (`MIN_PHP_VERSION` build arg, default in
+`api/docker/php/install.sh`, applied by `api/docker/php/Dockerfile`, `api/Dockerfile` and
+`api/Dockerfile.develop`). If you build your own image and the build stops with "below the required
+minimum", rebuild with `docker build --pull`; the official PHP image can lag a security release by a day or
+two. Check a running container with `docker exec <api container> php -v`.
+
 ## SVG, HTML and other active files
 
 - In buckets, `ActiveContentSafeS3Adapter` sets `Content-Type` from the file extension (an HTML
