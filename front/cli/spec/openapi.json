@@ -7163,6 +7163,288 @@
     ]
    }
   },
+  "/api/admin/compliance/competencies": {
+   "get": {
+    "description": "The competency framework: a tree of competencies (areas and skills). Reading needs `compliance_manage` or\n`compliance_competencies` (authors pick from it); changing it needs `compliance_manage`.",
+    "operationId": "b3de7eb4605a30bd629c7f6917d958a1",
+    "responses": {
+     "200": {
+      "description": "competencies with nested children"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The competency framework as a tree",
+    "tags": [
+     "Compliance"
+    ]
+   },
+   "post": {
+    "operationId": "a7e316c92826fafd4c54db3bbbf48101",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "code": {
+          "nullable": true,
+          "type": "string"
+         },
+         "description": {
+          "nullable": true,
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         },
+         "parent_id": {
+          "nullable": true,
+          "type": "integer"
+         }
+        },
+        "required": [
+         "name"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "description": "the competency"
+     },
+     "422": {
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Add a competency",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/competencies/{id}": {
+   "delete": {
+    "operationId": "450150daeb5ad411de06a26a641666d7",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "deleted"
+     },
+     "404": {
+      "description": "Unknown competency"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete a competency (its sub-competencies move up, course tags go)",
+    "tags": [
+     "Compliance"
+    ]
+   },
+   "put": {
+    "operationId": "129dd95b964cef0e6b2d6b6d7bbe1e6d",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the competency"
+     },
+     "422": {
+      "description": "Moving it under itself or its descendants"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Rename or move a competency",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/courses/{course}/competencies": {
+   "get": {
+    "description": "Competency tags of a course. AI suggests, the author confirms: suggestions are `suggested` and count for\nnothing (no skill profile, no rule) until confirmed. Allowed for `compliance_manage`, or for\n`compliance_competencies` on a course the user authors.",
+    "operationId": "8d349c4eb830ae3a05059b66ba860585",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "tags with status, source, rationale and the lessons they point at"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Competency tags of a course (confirmed and suggested)",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/courses/{course}/competencies/suggest": {
+   "post": {
+    "description": "One AI call (logged with model, tokens and cost). Replaces the pending suggestions; confirmed tags are untouched. Needs a competency framework and at least one lesson.",
+    "operationId": "6e4332a16f2de20096327d388d9c37d1",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the new suggestions, for the author to confirm"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "503": {
+      "description": "AI is not configured or the call failed"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Ask the AI which competencies the course teaches",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/courses/{course}/competencies/{competency}": {
+   "delete": {
+    "operationId": "fb59ea9192b141f5437f9f1aebe16991",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "path",
+      "name": "competency",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "removed"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Remove a tag or reject a suggestion",
+    "tags": [
+     "Compliance"
+    ]
+   },
+   "put": {
+    "operationId": "55c922f7e402529c9501f489895c9b6d",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "path",
+      "name": "competency",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "the confirmed tag"
+     },
+     "404": {
+      "description": "Unknown course or competency"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Tag a course with a competency (confirmed by the author), or confirm a suggestion",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
   "/api/admin/compliance/courses/{course}/settings": {
    "get": {
     "description": "Compliance policy of a course. Permission `compliance_manage`.",
@@ -8163,6 +8445,41 @@
      }
     ],
     "summary": "Update a scheduled report",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/admin/compliance/users/{user}/skills": {
+   "get": {
+    "operationId": "379baab3fca782356f3107a1ce615c1b",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "user",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "competencies"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown user"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The skill profile of a user",
     "tags": [
      "Compliance"
     ]
@@ -27853,6 +28170,26 @@
      }
     ],
     "summary": "My learning paths",
+    "tags": [
+     "Compliance"
+    ]
+   }
+  },
+  "/api/compliance/my-skills": {
+   "get": {
+    "description": "Learner skill profiles: the confirmed competencies of the courses a learner has done, with when they were earned\nand when they lapse.",
+    "operationId": "7736a59f48867c584e5582cbc356489f",
+    "responses": {
+     "200": {
+      "description": "competencies with the courses that prove them, earned_at and expires_at"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "My skill profile",
     "tags": [
      "Compliance"
     ]

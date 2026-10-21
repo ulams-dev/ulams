@@ -50,6 +50,20 @@ with BOM, cells starting with `=`, `+`, `-` or `@` are neutralised) or JSON line
 `compliance_exports` (who, dataset, filters, row count). The course version of a certificate is the Living Course
 version (`v<n>`) when there is one, otherwise the course's last update at issue time.
 
+## Competencies and skill profiles (Phase 6.6)
+
+- **Framework** (`compliance_competencies`): a tree of competencies (area, skill), optional unique `code`; cycles are
+  rejected, deleting a node lifts its children.
+- **Course tags** (`compliance_course_competencies`): `status` `suggested` or `confirmed`. AI proposes, the author
+  approves: `CompetencySuggester` makes one `competency_tags` call (logged in `ai_calls`, prompt
+  `resources/prompts/competency_tags`) with the framework and the course's lessons as untrusted data; every returned
+  competency id and lesson id is checked, each suggestion points at the lessons that teach it, and it stays
+  `suggested` until an author confirms it (`PUT .../competencies/{competency}`) or rejects it (`DELETE`). A
+  suggestion counts for nothing. Authors (`compliance_competencies`) tag the courses they author; admins any course.
+- **Skill profile** (`SkillProfileService`): the confirmed competencies of the courses a learner has done (valid
+  certificate, or finished when the course issues none), with `earned_at` and `expires_at`. It is the `competency`
+  attribute of the enrolment rules (`not_equals` means "lacks") and the data Learner Insights reads.
+
 ## Dashboard and scheduled reports (Phase 6.5)
 
 `DashboardService` answers `GET /api/admin/compliance/dashboard` (`compliance_report`): open, overdue and completed
@@ -76,6 +90,12 @@ For BI tools the report endpoints and the export are the API (scoped tokens, are
 | GET | `/api/compliance/my-paths` | the learner |
 | GET | `/api/admin/compliance/report?dataset=` | `compliance_report` |
 | GET | `/api/admin/compliance/report/export?dataset=&format=csv\|jsonl` | `compliance_report` |
+| GET, POST, PUT, DELETE | `/api/admin/compliance/competencies[/{id}]` | read: `compliance_manage` or `compliance_competencies`; write: `compliance_manage` |
+| GET | `/api/admin/compliance/courses/{course}/competencies` | manage, or `compliance_competencies` on an authored course |
+| POST | `/api/admin/compliance/courses/{course}/competencies/suggest` | same |
+| PUT, DELETE | `/api/admin/compliance/courses/{course}/competencies/{competency}` | same |
+| GET | `/api/admin/compliance/users/{user}/skills` | `compliance_report` |
+| GET | `/api/compliance/my-skills` | the learner |
 | GET | `/api/admin/compliance/dashboard` | `compliance_report` |
 | GET, POST, PUT, DELETE | `/api/admin/compliance/schedules[/{id}]` | `compliance_report` |
 | GET | `/api/compliance/my-assignments` | the learner |
