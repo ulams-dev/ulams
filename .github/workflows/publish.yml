@@ -3,6 +3,12 @@ name: Publish images
 # Builds the ulams container images and pushes them to GitHub Container Registry as
 # ghcr.io/ulams-dev/<name>, multi-arch (linux/amd64, linux/arm64), with provenance and an SBOM.
 #
+# Each platform is built natively (amd64 on ubuntu-latest, arm64 on ubuntu-24.04-arm; no QEMU, whose
+# emulation crashed Node and the C compiler), pushed by digest, and one merge job per image publishes
+# the multi-arch tags with `docker buildx imagetools create` (Docker's multi-platform pattern).
+# A dispatch from a branch gets only the <branch> and sha tags: latest, 8.4, the PHP version and the
+# release tags are enabled on the default branch and v* tags only.
+#
 # Tags: sha-<short>, <branch>, <version> and <major>.<minor> on v* tags, latest on main.
 #
 # Licences (see LICENSING.md):
@@ -29,7 +35,6 @@ concurrency:
 
 env:
   IMAGE_PREFIX: ghcr.io/ulams-dev
-  PLATFORMS: linux/amd64,linux/arm64
   # Put the OCI labels on the multi-arch index too, so GHCR shows description and licence.
   DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
   METADATA_TAGS: |
@@ -40,36 +45,20 @@ env:
     type=raw,value=latest,enable={{is_default_branch}}
 
 jobs:
-  # The API image is built on the published PHP runtime image, so both run in one job, in order.
-  api:
-    name: php + api
+  # Exact PHP and Alpine version of the official base image, for the php image tag and label.
+  php-version:
+    name: php version
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 10
+    outputs:
+      version: ${{ steps.php-version.outputs.version }}
+      alpine: ${{ steps.php-version.outputs.alpine }}
     steps:
       - uses: actions/checkout@v7
       - uses: ./.github/actions/docker-hub-mirror
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           token: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      # Newer QEMU builds crash Node/yarn on arm64 (uncaught target signal 4): pin an older emulator.
-      - uses: docker/setup-qemu-action@v4
-        with:
-          image: tonistiigi/binfmt:qemu-v7.0.0-28
-          platforms: arm64
-
-      - uses: docker/setup-buildx-action@v4
-        with:
-          # The docker-container builder ignores the daemon's mirror setting; give it its own.
-          buildkitd-config-inline: |
-            [registry."docker.io"]
-              mirrors = ["mirror.gcr.io"]
-
-      - uses: docker/login-action@v4
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
       # The base tag moves with every PHP release: record the exact version the image is built on and tag it
       # (immutable-looking tag next to the moving 8.4), so a deployment can say which PHP it runs.
@@ -84,6 +73,40 @@ jobs:
           alpine=$(docker run --rm "$base" cat /etc/alpine-release)
           echo "alpine=$alpine" >> "$GITHUB_OUTPUT"
 
+  php:
+    name: php (${{ matrix.slug }})
+    needs: php-version
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 120
+    env:
+      DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+    strategy:
+      fail-fast: true
+      matrix:
+        platform: [linux/amd64, linux/arm64]
+        include:
+          - { platform: linux/amd64, slug: amd64, runner: ubuntu-latest }
+          - { platform: linux/arm64, slug: arm64, runner: ubuntu-24.04-arm }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v4
+        with:
+          # The docker-container builder ignores the daemon's mirror setting; give it its own.
+          buildkitd-config-inline: |
+            [registry."docker.io"]
+              mirrors = ["mirror.gcr.io"]
+
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: PHP base metadata
         id: php-meta
         uses: docker/metadata-action@v6
@@ -93,39 +116,108 @@ jobs:
           tags: |
             ${{ env.METADATA_TAGS }}
             type=raw,value=8.4,enable={{is_default_branch}}
-            type=raw,value=${{ steps.php-version.outputs.version }},enable={{is_default_branch}}
+            type=raw,value=${{ needs.php-version.outputs.version }},enable={{is_default_branch}}
           labels: |
             org.opencontainers.image.title=ulams php
             org.opencontainers.image.description=PHP 8.4 FPM runtime of the ulams API (official php:8.4-fpm-alpine plus extensions and tools). Third-party notices: /usr/local/src/ulams-php/NOTICE
             org.opencontainers.image.licenses=Apache-2.0
-            org.ulams.alpine-release=${{ steps.php-version.outputs.alpine }}
+            org.ulams.alpine-release=${{ needs.php-version.outputs.alpine }}
           annotations: |
             org.opencontainers.image.title=ulams php
             org.opencontainers.image.description=PHP 8.4 FPM runtime of the ulams API
             org.opencontainers.image.licenses=Apache-2.0
 
-      - name: Build and push PHP base
-        id: php
+      - name: Build and push PHP base by digest
+        id: build
         uses: docker/build-push-action@v7
         with:
           context: api/docker/php
           file: api/docker/php/Dockerfile
-          platforms: ${{ env.PLATFORMS }}
+          platforms: ${{ matrix.platform }}
           # Always take the newest official base layers: a cached FROM would keep an unpatched PHP.
           pull: true
-          push: true
-          tags: ${{ steps.php-meta.outputs.tags }}
           labels: ${{ steps.php-meta.outputs.labels }}
           annotations: ${{ steps.php-meta.outputs.annotations }}
+          outputs: type=image,name=${{ env.IMAGE_PREFIX }}/php,push-by-digest=true,name-canonical=true,push=true
           provenance: mode=max
           sbom: true
-          cache-from: type=gha,scope=php
-          cache-to: type=gha,scope=php,mode=max
+          cache-from: type=gha,scope=php-${{ matrix.slug }}
+          cache-to: type=gha,scope=php-${{ matrix.slug }},mode=max
+
+      - name: Export digest
+        run: |
+          mkdir -p "$RUNNER_TEMP/digests"
+          digest="${{ steps.build.outputs.digest }}"
+          touch "$RUNNER_TEMP/digests/${digest#sha256:}"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: digests-php-${{ matrix.slug }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  php-merge:
+    name: php image
+    needs: [php-version, php]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DOCKER_METADATA_ANNOTATIONS_LEVELS: index
+    outputs:
+      digest: ${{ steps.merge.outputs.digest }}
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-php-*
+          merge-multiple: true
+
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: PHP base metadata
+        id: php-meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE_PREFIX }}/php
+          flavor: latest=false
+          tags: |
+            ${{ env.METADATA_TAGS }}
+            type=raw,value=8.4,enable={{is_default_branch}}
+            type=raw,value=${{ needs.php-version.outputs.version }},enable={{is_default_branch}}
+          labels: |
+            org.opencontainers.image.title=ulams php
+            org.opencontainers.image.description=PHP 8.4 FPM runtime of the ulams API (official php:8.4-fpm-alpine plus extensions and tools). Third-party notices: /usr/local/src/ulams-php/NOTICE
+            org.opencontainers.image.licenses=Apache-2.0
+            org.ulams.alpine-release=${{ needs.php-version.outputs.alpine }}
+          annotations: |
+            org.opencontainers.image.title=ulams php
+            org.opencontainers.image.description=PHP 8.4 FPM runtime of the ulams API
+            org.opencontainers.image.licenses=Apache-2.0
+
+
+      - name: Create the multi-arch image
+        id: merge
+        working-directory: ${{ runner.temp }}/digests
+        env:
+          IMAGE: ${{ env.IMAGE_PREFIX }}/php
+        run: |
+          set -euo pipefail
+          mapfile -t args < <(jq -r '(.tags[] | "-t\n" + .), (.annotations[]? | select(startswith("index:")) | "--annotation\n" + .)' <<< "$DOCKER_METADATA_OUTPUT_JSON")
+          # shellcheck disable=SC2046
+          docker buildx imagetools create "${args[@]}" $(printf "$IMAGE@sha256:%s " *)
+          first=$(jq -r '.tags[0]' <<< "$DOCKER_METADATA_OUTPUT_JSON")
+          docker buildx imagetools inspect "$first"
+          echo "digest=$(docker buildx imagetools inspect "$first" --format '{{json .Manifest}}' | jq -r .digest)" >> "$GITHUB_OUTPUT"
 
       # Part of the written GPL source offer (api/docker/php/NOTICE): the exact Alpine packages of the image.
       - name: Alpine package list in the run summary
         env:
-          IMAGE: ${{ env.IMAGE_PREFIX }}/php@${{ steps.php.outputs.digest }}
+          IMAGE: ${{ env.IMAGE_PREFIX }}/php@${{ steps.merge.outputs.digest }}
         run: |
           docker pull "$IMAGE"
           {
@@ -136,6 +228,41 @@ jobs:
             echo '```'
             echo "</details>"
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # The API image is built on the published PHP runtime image: api waits for php image.
+  api:
+    name: api (${{ matrix.slug }})
+    needs: php-merge
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 120
+    env:
+      DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
+    strategy:
+      fail-fast: true
+      matrix:
+        platform: [linux/amd64, linux/arm64]
+        include:
+          - { platform: linux/amd64, slug: amd64, runner: ubuntu-latest }
+          - { platform: linux/arm64, slug: arm64, runner: ubuntu-24.04-arm }
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v4
+        with:
+          # The docker-container builder ignores the daemon's mirror setting; give it its own.
+          buildkitd-config-inline: |
+            [registry."docker.io"]
+              mirrors = ["mirror.gcr.io"]
+
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: API metadata
         id: api-meta
@@ -153,33 +280,103 @@ jobs:
             org.opencontainers.image.description=ulams Laravel API (php-fpm, Horizon, queue workers, scheduler)
             org.opencontainers.image.licenses=Apache-2.0
 
-      - name: Build and push API
+      - name: Build and push API by digest
+        id: build
         uses: docker/build-push-action@v7
         with:
           context: api
           file: api/Dockerfile
-          # Pinned by digest: the API is built on exactly the base pushed above.
+          # Pinned by digest: the API is built on exactly the base published above.
           build-args: |
-            BASE_IMAGE=${{ env.IMAGE_PREFIX }}/php@${{ steps.php.outputs.digest }}
-          platforms: ${{ env.PLATFORMS }}
-          push: true
-          tags: ${{ steps.api-meta.outputs.tags }}
+            BASE_IMAGE=${{ env.IMAGE_PREFIX }}/php@${{ needs.php-merge.outputs.digest }}
+          platforms: ${{ matrix.platform }}
           labels: ${{ steps.api-meta.outputs.labels }}
           annotations: ${{ steps.api-meta.outputs.annotations }}
+          outputs: type=image,name=${{ env.IMAGE_PREFIX }}/api,push-by-digest=true,name-canonical=true,push=true
           provenance: mode=max
           sbom: true
-          cache-from: type=gha,scope=api
-          cache-to: type=gha,scope=api,mode=max
+          cache-from: type=gha,scope=api-${{ matrix.slug }}
+          cache-to: type=gha,scope=api-${{ matrix.slug }},mode=max
+
+      - name: Export digest
+        run: |
+          mkdir -p "$RUNNER_TEMP/digests"
+          digest="${{ steps.build.outputs.digest }}"
+          touch "$RUNNER_TEMP/digests/${digest#sha256:}"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: digests-api-${{ matrix.slug }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  api-merge:
+    name: php + api
+    needs: api
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DOCKER_METADATA_ANNOTATIONS_LEVELS: index
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-api-*
+          merge-multiple: true
+
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: API metadata
+        id: api-meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE_PREFIX }}/api
+          flavor: latest=false
+          tags: ${{ env.METADATA_TAGS }}
+          labels: |
+            org.opencontainers.image.title=ulams api
+            org.opencontainers.image.description=ulams Laravel API (php-fpm, Horizon, queue workers, scheduler)
+            org.opencontainers.image.licenses=Apache-2.0
+          annotations: |
+            org.opencontainers.image.title=ulams api
+            org.opencontainers.image.description=ulams Laravel API (php-fpm, Horizon, queue workers, scheduler)
+            org.opencontainers.image.licenses=Apache-2.0
+
+
+      - name: Create the multi-arch image
+        id: merge
+        working-directory: ${{ runner.temp }}/digests
+        env:
+          IMAGE: ${{ env.IMAGE_PREFIX }}/api
+        run: |
+          set -euo pipefail
+          mapfile -t args < <(jq -r '(.tags[] | "-t\n" + .), (.annotations[]? | select(startswith("index:")) | "--annotation\n" + .)' <<< "$DOCKER_METADATA_OUTPUT_JSON")
+          # shellcheck disable=SC2046
+          docker buildx imagetools create "${args[@]}" $(printf "$IMAGE@sha256:%s " *)
+          first=$(jq -r '.tags[0]' <<< "$DOCKER_METADATA_OUTPUT_JSON")
+          docker buildx imagetools inspect "$first"
+          echo "digest=$(docker buildx imagetools inspect "$first" --format '{{json .Manifest}}' | jq -r .digest)" >> "$GITHUB_OUTPUT"
 
   # Node services and frontends, all built from the repository root (one root yarn.lock).
   apps:
-    name: ${{ matrix.name }}
-    runs-on: ubuntu-latest
+    name: ${{ matrix.name }} (${{ matrix.slug }})
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 90
+    env:
+      DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest
     strategy:
       fail-fast: false
       matrix:
+        name: [h5p, pdf, admin, front, mjml, web]
+        platform: [linux/amd64, linux/arm64]
         include:
+          - { platform: linux/amd64, slug: amd64, runner: ubuntu-latest }
+          - { platform: linux/arm64, slug: arm64, runner: ubuntu-24.04-arm }
           - name: h5p
             file: api/h5p/Dockerfile
             licenses: GPL-3.0-or-later
@@ -211,12 +408,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           token: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Newer QEMU builds crash Node/yarn on arm64 (uncaught target signal 4): pin an older emulator.
-      - uses: docker/setup-qemu-action@v4
-        with:
-          image: tonistiigi/binfmt:qemu-v7.0.0-28
-          platforms: arm64
-
       - uses: docker/setup-buildx-action@v4
         with:
           # The docker-container builder ignores the daemon's mirror setting; give it its own.
@@ -246,7 +437,8 @@ jobs:
             org.opencontainers.image.description=${{ matrix.description }}
             org.opencontainers.image.licenses=${{ matrix.licenses }}
 
-      - name: Build and push
+      - name: Build and push by digest
+        id: build
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -254,12 +446,104 @@ jobs:
           build-args: |
             APP_VERSION=${{ steps.meta.outputs.version }}
             ADMIN_VERSION=${{ steps.meta.outputs.version }}
-          platforms: ${{ env.PLATFORMS }}
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
+          outputs: type=image,name=${{ env.IMAGE_PREFIX }}/${{ matrix.name }},push-by-digest=true,name-canonical=true,push=true
           provenance: mode=max
           sbom: true
-          cache-from: type=gha,scope=${{ matrix.name }}
-          cache-to: type=gha,scope=${{ matrix.name }},mode=max
+          cache-from: type=gha,scope=${{ matrix.name }}-${{ matrix.slug }}
+          cache-to: type=gha,scope=${{ matrix.name }}-${{ matrix.slug }},mode=max
+
+      - name: Export digest
+        run: |
+          mkdir -p "$RUNNER_TEMP/digests"
+          digest="${{ steps.build.outputs.digest }}"
+          touch "$RUNNER_TEMP/digests/${digest#sha256:}"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: digests-${{ matrix.name }}-${{ matrix.slug }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  apps-merge:
+    name: ${{ matrix.name }}
+    needs: apps
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DOCKER_METADATA_ANNOTATIONS_LEVELS: index
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [h5p, pdf, admin, front, mjml, web]
+        include:
+          - name: h5p
+            file: api/h5p/Dockerfile
+            licenses: GPL-3.0-or-later
+            description: "ulams H5P service (Lumi h5p-nodejs-library). GPL-3.0-or-later: licence at /app/api/h5p/LICENSE; corresponding source is this repository at the revision label (api/h5p) plus the H5P core and editor commits in the dev.ulams.h5p.* labels"
+          - name: pdf
+            file: api/pdf/Dockerfile
+            licenses: MIT
+            description: ulams PDF renderer (pdfme) for certificates and PDF templates
+          - name: admin
+            file: admin/Dockerfile
+            licenses: MIT
+            description: ulams admin panel (static build on nginx-unprivileged, port 8080; REACT_APP_* written to runtime-config.json at start)
+          - name: front
+            file: front/Dockerfile
+            licenses: MIT
+            description: ulams learner front (static build on nginx-unprivileged, port 8080; VITE_APP_* written to runtime-config.json at start)
+          - name: mjml
+            file: deploy/stack/mjml/Dockerfile
+            licenses: MIT
+            description: ulams native MJML email renderer (private HTTP service, /v1/render)
+          - name: web
+            file: front/web/Dockerfile
+            licenses: MIT
+            description: ulams reference frontend (Astro SSR, Node standalone server)
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-${{ matrix.name }}-*
+          merge-multiple: true
+
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.IMAGE_PREFIX }}/${{ matrix.name }}
+          flavor: latest=false
+          tags: ${{ env.METADATA_TAGS }}
+          labels: |
+            org.opencontainers.image.title=ulams ${{ matrix.name }}
+            org.opencontainers.image.description=${{ matrix.description }}
+            org.opencontainers.image.licenses=${{ matrix.licenses }}
+          annotations: |
+            org.opencontainers.image.title=ulams ${{ matrix.name }}
+            org.opencontainers.image.description=${{ matrix.description }}
+            org.opencontainers.image.licenses=${{ matrix.licenses }}
+
+
+      - name: Create the multi-arch image
+        id: merge
+        working-directory: ${{ runner.temp }}/digests
+        env:
+          IMAGE: ${{ env.IMAGE_PREFIX }}/${{ matrix.name }}
+        run: |
+          set -euo pipefail
+          mapfile -t args < <(jq -r '(.tags[] | "-t\n" + .), (.annotations[]? | select(startswith("index:")) | "--annotation\n" + .)' <<< "$DOCKER_METADATA_OUTPUT_JSON")
+          # shellcheck disable=SC2046
+          docker buildx imagetools create "${args[@]}" $(printf "$IMAGE@sha256:%s " *)
+          first=$(jq -r '.tags[0]' <<< "$DOCKER_METADATA_OUTPUT_JSON")
+          docker buildx imagetools inspect "$first"
+          echo "digest=$(docker buildx imagetools inspect "$first" --format '{{json .Manifest}}' | jq -r .digest)" >> "$GITHUB_OUTPUT"
