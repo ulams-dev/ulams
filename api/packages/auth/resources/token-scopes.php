@@ -70,6 +70,10 @@ return [
     // test sends and replays are POSTs, so they need webhooks:write
     ['api/admin/webhooks*', 'webhooks'],
 
+    // ---- knowledge export ----------------------------------------------------------------------
+    // reads course content and writes only the pack files, so starting an export needs courses:read
+    ['api/admin/knowledge*', 'courses', ['level' => 'read']],
+
     // ---- builder and living course -------------------------------------------------------------
     ['api/admin/course-builder*', 'builder'],
     ['api/admin/living-course*', 'living-course'],

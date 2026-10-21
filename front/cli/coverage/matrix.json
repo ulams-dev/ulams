@@ -1,5 +1,5 @@
 {
- "summary": "580/653 covered, 73 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "585/658 covered, 73 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -965,6 +965,36 @@
    "key": "POST /api/admin/interactive/{id}/versions",
    "summary": "Upload a new version (the manifest id must match)",
    "command": "interactive.add-version",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/knowledge/courses/{course}/latest",
+   "summary": "The latest ready export of a course",
+   "command": "knowledge.latest",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/knowledge/exports",
+   "summary": "Knowledge exports, newest first",
+   "command": "knowledge.exports-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/knowledge/exports",
+   "summary": "Start a knowledge export of one course or of the whole tenant",
+   "command": "knowledge.exports-create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/knowledge/exports/{export}",
+   "summary": "One knowledge export",
+   "command": "knowledge.exports-get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/knowledge/exports/{export}/download",
+   "summary": "Download a file of a ready export (manifest.json, chunks.jsonl or index.json)",
+   "command": "knowledge.exports-download",
    "status": "covered"
   },
   {

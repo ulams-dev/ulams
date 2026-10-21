@@ -855,7 +855,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 
 ### 7.6 Machine-readable content
 - [x] `llms.txt`, Markdown version of every page, public schemas, `AGENTS.md` (docs site build output, #261; per-academy `/llms.txt` and Markdown course pages in the web app, #274; "Copy page" and "Open in Claude/ChatGPT" buttons, #272)
-- [ ] Knowledge export (cited chunks for company RAG), auto re-export on change (planned in `docs/plans/phase-7.md`, #300; implementation in progress, not merged)
+- [ ] Knowledge export (cited chunks for company RAG), auto re-export on change (planned in `docs/plans/phase-7.md`, #300; implemented in the knowledge-export PR, pending merge; chunks cited from the applied blueprint, uncited ones flagged, per-course packs plus a tenant index, auto re-export, `knowledge.exported` webhook, CLI and public schemas)
 
 ---
 

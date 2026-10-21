@@ -12,6 +12,7 @@ use Ulams\CourseBuilder\Jobs\StepJob;
 use Ulams\Tenancy\Jobs\DeleteTenantJob;
 use Ulams\Tenancy\Jobs\ProvisionTenantJob;
 use Ulams\CoursesImportExport\Jobs\CloneCourse;
+use Ulams\KnowledgeExport\Jobs\ExportKnowledgeJob;
 use Ulams\LearnerInsights\Jobs\BackfillJob;
 use Ulams\LearnerInsights\Jobs\GenerateRemediationJob;
 use Ulams\LivingCourse\Jobs\AnalyseGroupJob;
@@ -45,6 +46,7 @@ class QueueRetryAfterConfigTest extends TestCase
         CloneCourse::class => ['config/queue.php', 'long_job.connection', 'long_job.queue'],
         ProvisionTenantJob::class => ['config/queue.php', 'long_job.connection', 'long_job.queue'],
         DeleteTenantJob::class => ['config/queue.php', 'long_job.connection', 'long_job.queue'],
+        ExportKnowledgeJob::class => ['config/queue.php', 'long_job.connection', 'long_job.queue'],
     ];
 
     public static function jobsAndDrivers(): array

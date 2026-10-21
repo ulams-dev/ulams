@@ -249,6 +249,13 @@
             "area": "webhooks"
         },
         {
+            "pattern": "api/admin/knowledge*",
+            "area": "courses",
+            "options": {
+                "level": "read"
+            }
+        },
+        {
             "pattern": "api/admin/course-builder*",
             "area": "builder"
         },

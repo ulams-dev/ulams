@@ -44,6 +44,8 @@ const SCHEMAS = [
   { path: "course-blueprint/v1.json", from: "api/packages/course-builder/resources/schemas/course-blueprint/v1.json" },
   { path: "course-blueprint/v2.json", from: "api/packages/course-builder/resources/schemas/course-blueprint/v2.json" },
   { path: "webhooks/2026-10-20/event.json", from: "api/packages/webhooks/resources/schemas/webhook-event-2026-10-20.json" },
+  { path: "knowledge/1/chunk.json", from: "api/packages/knowledge-export/resources/schemas/knowledge-chunk-1.json" },
+  { path: "knowledge/1/manifest.json", from: "api/packages/knowledge-export/resources/schemas/knowledge-manifest-1.json" },
   { path: "ui-catalogue/builder-v1.json", from: "front/ui/catalogue/manifest.json", title: "UI component catalogue for the course builder (A2UI, props as JSON Schema)" },
   { path: "ui-catalogue/page-v1.json", from: "front/ui/catalogue/page-manifest.json", title: "UI component catalogue for pages" },
   { path: "ui-catalogue/learner-layout-v1.json", from: "front/ui/catalogue/learner-layout-manifest.json", title: "UI component catalogue for learner layouts" },

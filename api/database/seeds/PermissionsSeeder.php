@@ -6,6 +6,7 @@ use Ulams\AssignWithoutAccount\Database\Seeders\AssignWithoutAccountPermissionSe
 use Ulams\Auth\Database\Seeders\AuthPermissionSeeder;
 use Ulams\Bookmarks\Database\Seeders\BookmarkPermissionSeeder;
 use Ulams\Webhooks\Database\Seeders\WebhookPermissionSeeder;
+use Ulams\KnowledgeExport\Database\Seeders\KnowledgePermissionSeeder;
 use Ulams\BulkNotifications\Database\Seeders\BulkNotificationPermissionSeeder;
 use Ulams\Cart\Database\Seeders\CartPermissionSeeder;
 use Ulams\Categories\Database\Seeders\CategoriesPermissionSeeder;
@@ -112,6 +113,7 @@ class PermissionsSeeder extends Seeder
         $this->call(AdaptPermissionSeeder::class);
         $this->call(WebhookPermissionSeeder::class);
         $this->call(CompliancePermissionSeeder::class);
+        $this->call(KnowledgePermissionSeeder::class);
 
         // if there are no users, we need to create first admin 
 

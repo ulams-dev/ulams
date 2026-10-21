@@ -40,6 +40,10 @@ final class EventCatalog
             'class' => 'Ulams\TemplatesPdf\Events\PdfCreated',
             'description' => 'A certificate PDF was generated for a learner.',
         ],
+        'knowledge.exported' => [
+            'class' => 'Ulams\KnowledgeExport\Events\KnowledgeExported',
+            'description' => 'A knowledge pack (cited chunks for RAG) was written for a course or the whole tenant; an automatic re-export that finds nothing new sends nothing.',
+        ],
     ];
 
     private const PLANNED = [
@@ -97,6 +101,7 @@ final class EventCatalog
                 'update_proposal.ready' => self::proposalReady($event),
                 'update_proposal.applied' => self::proposalApplied($event),
                 'certificate.issued' => self::certificate($event),
+                'knowledge.exported' => self::knowledgeExported($event),
                 default => null,
             };
         } catch (Throwable $e) {
@@ -118,6 +123,7 @@ final class EventCatalog
             'update_proposal.ready' => ['proposal_id' => '01SAMPLE0PROPOSAL0000000000', 'session_id' => '01SAMPLE0SESSION00000000000', 'course_title' => 'Sample course', 'elements' => 3, 'answer_checks' => 1, 'status' => 'ready'],
             'update_proposal.applied' => ['proposal_id' => '01SAMPLE0PROPOSAL0000000000', 'session_id' => '01SAMPLE0SESSION00000000000', 'number' => 2, 'status' => 'applied', 'counts' => ['applied' => 3]],
             'certificate.issued' => ['user' => $user, 'certificate_id' => 1, 'course_id' => 1, 'issued_at' => now()->toIso8601String()],
+            'knowledge.exported' => ['export_id' => '01SAMPLE0EXPORT00000000000', 'scope' => 'course', 'course_id' => 1, 'trigger' => 'auto', 'pack_hash' => str_repeat('a', 64), 'courses' => 1, 'chunks' => 12, 'uncited_chunks' => 2, 'finished_at' => now()->toIso8601String()],
             default => ['message' => 'This is a test event from ulams.'],
         };
     }
@@ -198,6 +204,27 @@ final class EventCatalog
                 'issued_at' => now()->toIso8601String(),
             ],
             'key' => null,
+        ];
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string} */
+    private static function knowledgeExported(object $event): array
+    {
+        $export = $event->export;
+
+        return [
+            'object' => [
+                'export_id' => (string) $export->id,
+                'scope' => (string) $export->scope,
+                'course_id' => $export->course_id,
+                'trigger' => (string) $export->trigger,
+                'pack_hash' => (string) $export->pack_hash,
+                'courses' => (int) $export->courses,
+                'chunks' => (int) $export->chunks,
+                'uncited_chunks' => (int) $export->uncited,
+                'finished_at' => $export->finished_at?->toIso8601String() ?? now()->toIso8601String(),
+            ],
+            'key' => 'knowledge.exported:' . $export->id,
         ];
     }
 }

@@ -5,6 +5,8 @@ namespace Ulams\Webhooks\Tests\Feature;
 use Ulams\Courses\Events\CourseAssigned;
 use Ulams\Courses\Events\CourseFinished;
 use Ulams\Courses\Models\Course;
+use Ulams\KnowledgeExport\Events\KnowledgeExported;
+use Ulams\KnowledgeExport\Models\KnowledgeExport;
 use Ulams\LivingCourse\Events\ProposalApplied;
 use Ulams\LivingCourse\Events\UpdateProposalReady;
 use Ulams\LivingCourse\Models\Proposal;
@@ -119,6 +121,23 @@ class DomainEventsTest extends TestCase
         $this->assertSame(55, $object['certificate_id']);
         $this->assertSame(12, $object['course_id']);
         $this->assertSame($learner->getKey(), $object['user']['id']);
+    }
+
+    public function testKnowledgeExportedIsSentOncePerExport(): void
+    {
+        $this->endpoint(['events' => ['knowledge.exported']]);
+        $this->receiver([200, 200]);
+        $export = new KnowledgeExport();
+        $export->forceFill([
+            'id' => '01j9z8x3v7c5qk2m4n6p8r0t1w', 'scope' => 'course', 'course_id' => 12, 'trigger' => 'auto', 'pack_hash' => str_repeat('b', 64),
+            'courses' => 1, 'chunks' => 9, 'uncited' => 2, 'finished_at' => now(),
+        ]);
+
+        event(new KnowledgeExported($export));
+        event(new KnowledgeExported($export));
+
+        $object = $this->sentObject('knowledge.exported');
+        $this->assertSame(['export_id' => '01j9z8x3v7c5qk2m4n6p8r0t1w', 'scope' => 'course', 'course_id' => 12, 'trigger' => 'auto', 'chunks' => 9, 'uncited_chunks' => 2], array_intersect_key($object, array_flip(['export_id', 'scope', 'course_id', 'trigger', 'chunks', 'uncited_chunks'])));
     }
 
     public function testAnEndpointThatDoesNotSubscribeGetsNothing(): void

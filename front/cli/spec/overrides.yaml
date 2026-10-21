@@ -81,6 +81,13 @@ operations:
   "GET /api/admin/webhooks/deliveries/{delivery}": { id: webhooks.deliveries-get, positionals: [delivery] }
   "POST /api/admin/webhooks/deliveries/{delivery}/replay": { id: webhooks.deliveries-replay, positionals: [delivery], summary: "Send a delivery again (same event id, fresh signature)" }
 
+  # --- knowledge export (7.6)
+  "GET /api/admin/knowledge/exports": { id: knowledge.exports-list }
+  "POST /api/admin/knowledge/exports": { id: knowledge.exports-create, summary: "Start a knowledge pack export of one course or of the whole tenant", examples: [{ title: "Export one course for company RAG", argv: "knowledge exports-create --scope course --course-id 12 --json" }] }
+  "GET /api/admin/knowledge/exports/{export}": { id: knowledge.exports-get, positionals: [export] }
+  "GET /api/admin/knowledge/exports/{export}/download": { id: knowledge.exports-download, positionals: [export], output: file, summary: "Download manifest.json, chunks.jsonl or index.json of a ready export (use --out)" }
+  "GET /api/admin/knowledge/courses/{course}/latest": { id: knowledge.latest, positionals: [course], summary: "The latest ready export of a course" }
+
   # --- users
   "PUT /api/admin/user/{id}": { id: users.update }
   "PATCH /api/admin/user/{id}": { id: users.patch }

@@ -4765,6 +4765,79 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/knowledge/exports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Knowledge exports, newest first
+         * @description Knowledge packs for company RAG (Phase 7.6). Admin only (`knowledge_manage`); packs live in the tenant's own
+         *     database and storage, so an id from another tenant never resolves.
+         */
+        get: operations["knowledge.exports.list"];
+        put?: never;
+        /** Start a knowledge export of one course or of the whole tenant */
+        post: operations["knowledge.exports.create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/knowledge/exports/{export}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One knowledge export */
+        get: operations["knowledge.exports.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/knowledge/exports/{export}/download": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Download a file of a ready export (manifest.json, chunks.jsonl or index.json) */
+        get: operations["knowledge.exports.download"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/knowledge/courses/{course}/latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The latest ready export of a course */
+        get: operations["knowledge.courses.latest"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/learner-insights/nudges/opened": {
         parameters: {
             query?: never;
@@ -4983,6 +5056,74 @@ export interface paths {
         /** Replace the threshold overrides of one course */
         put: operations["29ff700e65215c07c0921eab7b7f067d"];
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/courses/{course}/topics/{topic}/support": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Extra help for the learner in a topic, with the reasons it was offered */
+        get: operations["25f77a3543fceb7f4ff5e1fdfa8a6eed"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/assignments/{assignment}/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Say whether a piece of extra help was useful */
+        post: operations["6e7a991fadf81546157800178da0a729"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/assignments/{assignment}/hide": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Hide a piece of extra help */
+        post: operations["470829e7ca39d311b96b52d12494e0f4"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/learner-insights/assignments/{assignment}/reflection": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Get feedback on the learner's own explanation of the idea (the text is sent to the AI provider and not stored) */
+        post: operations["364792271758395ada19f682879b9334"];
         delete?: never;
         options?: never;
         head?: never;
@@ -10691,6 +10832,30 @@ export interface components {
             height?: number;
             /** @description Markdown shown beside the frame or over the background */
             text?: string | null;
+        };
+        KnowledgeExport: {
+            /** @example 01j9z8x3v7c5qk2m4n6p8r0t1w */
+            id?: string;
+            /** @enum {string} */
+            scope?: "course" | "tenant";
+            course_id?: number | null;
+            /** @enum {string} */
+            status?: "queued" | "running" | "ready" | "failed";
+            /** @enum {string} */
+            trigger?: "manual" | "auto";
+            /** @description SHA-256 over the chunk ids, text hashes and citations; unchanged content gives the same hash */
+            pack_hash?: string | null;
+            courses?: number;
+            chunks?: number;
+            /** @description Chunks without source citations (hand-written or edited text) */
+            uncited_chunks?: number;
+            error?: string | null;
+            /** @description Names for the download endpoint */
+            files?: ("manifest" | "chunks" | "index")[];
+            /** Format: date-time */
+            created_at?: string;
+            /** Format: date-time */
+            finished_at?: string | null;
         };
         TopicLiaScript: {
             id?: number;
@@ -22393,6 +22558,185 @@ export interface operations {
             };
         };
     };
+    "knowledge.exports.list": {
+        parameters: {
+            query?: {
+                course_id?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Exports */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["KnowledgeExport"][];
+                    };
+                };
+            };
+            /** @description Needs knowledge_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "knowledge.exports.create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @enum {string} */
+                    scope: "course" | "tenant";
+                    /** @description Required for scope course */
+                    course_id?: number;
+                };
+            };
+        };
+        responses: {
+            /** @description Queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["KnowledgeExport"];
+                    };
+                };
+            };
+            /** @description Needs knowledge_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course, or a course learners cannot see */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "knowledge.exports.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                export: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Export */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["KnowledgeExport"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "knowledge.exports.download": {
+        parameters: {
+            query: {
+                file: "manifest" | "chunks" | "index";
+                /** @description Course of a tenant export (for manifest and chunks) */
+                course?: number;
+            };
+            header?: never;
+            path: {
+                export: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The file (JSON, or JSON Lines for chunks) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/x-ndjson": string;
+                };
+            };
+            /** @description Not found, or the export is not ready */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "knowledge.courses.latest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Export */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["KnowledgeExport"];
+                    };
+                };
+            };
+            /** @description The course was never exported */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "5fb116b0e6d5931a11e9a765cf0f2a2a": {
         parameters: {
             query?: never;
@@ -22925,6 +23269,148 @@ export interface operations {
             };
             /** @description Unknown rule or parameter, or an invalid value */
             422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "25f77a3543fceb7f4ff5e1fdfa8a6eed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description `enabled`, and per assignment: `status` (generating or ready), `kind`, `document` (declarative blocks), `citations`, `reasons`, `why`, `feedback` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The learner may not attend the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown topic or the topic is not in the course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "6e7a991fadf81546157800178da0a729": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    helpful: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Saved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not the learner's assignment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "470829e7ca39d311b96b52d12494e0f4": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Hidden */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not the learner's assignment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "364792271758395ada19f682879b9334": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                assignment: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    text: string;
+                };
+            };
+        };
+        responses: {
+            /** @description `correct`, `missing`, `followUp`, `citations`, `remaining` */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not the learner's assignment */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Daily limit reached */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description AI is disabled or the feedback could not be produced */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };

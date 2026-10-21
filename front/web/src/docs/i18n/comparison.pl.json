@@ -888,7 +888,8 @@
                     "text": "Każda funkcja to pakiet composera z własnymi trasami, uprawnieniami, ustawieniami i zdarzeniami. Działający przykład pokazuje cały wzorzec.",
                     "packages": [
                       "example-plugin",
-                      "webhooks"
+                      "webhooks",
+                      "knowledge-export"
                     ],
                     "href": "https://ulams-dev.github.io/ulams/extending/new-package/"
                   },
