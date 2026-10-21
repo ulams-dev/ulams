@@ -483,7 +483,10 @@ Architecture
 - [ ] UI component catalogue: name, props JSON Schema, model description, accessible
       implementation, text fallback (partial: the 17 builder components and the approved learner
       layout set (Timeline, FlipCards, CodeBlock, PracticeActivity, Callout, Steps, ComparisonTable,
-      H5PFrame, LiaScriptLesson; L2-20); playground at `/catalogue/` in the docs site, L2-19)
+      H5PFrame, LiaScriptLesson; L2-20); playground at `/catalogue/` in the docs site, L2-19;
+      the learner support set (SupportCard, WorkedExample, PracticeQuestion, ElaborativeQuestion,
+      FeynmanReflection, CitationList, AiLabel, WhyThis, ProseSteps, CertificateBadge, TutorPanel)
+      merged with M-UI1 to M-UI5, #315, #319, #314, #320, #317)
 - [x] `render_ui` validated server-side; invalid/unknown → text fallback (structured output choice
       validated against the `@ulams/ui` manifest)
 - [x] Progressive streaming with skeletons; interactions sent back as structured events
@@ -526,8 +529,8 @@ Simulations (opt-in)
 - [ ] Must pass solvability loop; author approval required; off by default in self-hosted
 
 Adaptive interface (feature flag)
-- [ ] Per-learner density, chunking, navigation, visible hints from Learner Insights (moved to `docs/plans/phase-4.md` M4.8; #59) (partial: presentation profile API merged, derived per request with learner overrides, #288; the front work is open)
-- [ ] Remediation components: Feynman reflection, elaborative questions, worked examples (moved to `docs/plans/phase-4.md` M4.5; #59) (partial: API and declarative blocks merged, #281; M-UI1 in review: the catalogue components for the blocks, the manifest check before storage and the "Extra help for you" card; the Feynman reflection is M-UI2)
+- [x] Per-learner density, chunking, navigation, visible hints from Learner Insights (moved to `docs/plans/phase-4.md` M4.8; #59) (presentation profile API merged, derived per request with learner overrides, #288; the lesson view form, compact density, lesson parts, linear navigation, hints shown at start and the "why" notice merged in M-UI4, #320; the A/B and delayed-retention measure of this feature stays under Impact measurement)
+- [x] Remediation components: Feynman reflection, elaborative questions, worked examples (moved to `docs/plans/phase-4.md` M4.5; #59) (API and declarative blocks merged, #281; catalogue components, manifest check before storage, the "Extra help for you" card and ADR 0106 merged in M-UI1, #315; Feynman reflection with AI feedback and the AI-assisted lesson label merged in M-UI2, #319; the demo academies do not turn the module on, owner question O1 of `docs/plans/phase-5-learner-ui.md`)
 - [ ] Surveys with SUS, UEQ, NASA-TLX + behavioural metrics
 
 Impact measurement
@@ -596,7 +599,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       white-label section of the platform landing)
 - [ ] Privacy: per-tenant toggle, retention, explanations, minimal data to LLM (partial: per-course toggle, retention pruning, privacy controls and the learner personalisation and privacy page merged, #277 and #289; minimal data to the LLM waits for remediations and the tutor)
 - [ ] Rule unit tests, synthetic learner journeys, tenant isolation (partial: rule unit tests and the journey scenario test merged, #277; a dedicated tenant isolation suite is not confirmed)
-- [ ] (new) Streaming tutor answers (LLM client streaming over the SSE event log)
+- [x] (new) Streaming tutor answers (LLM client streaming over the SSE event log) (M-UI6, #322, ADR 0105: queued answer job, run event log, SSE with resume, never streamed during a quiz attempt, fallback to the plain request; time to first text on a real model is not measured yet, see the tutor panel item)
 - [ ] (new) Remediation holdout (20 % get no remediation) and the adaptive interface presentation profile, backend (M4.8 API, #288: holdout is a stable hash share, off by default pending #58; comparison in `OutcomeTracker::helpedVsHoldout()`; the experiments package and the A/B and delayed-retention measure are not built)
 - [ ] (new) Partition `learner_signals` by month when a tenant exceeds 50M rows
 - [ ] (new) Remediations for courses not built with the Course Builder
@@ -606,11 +609,11 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [x] Answers only from course sources with citations; says when out of scope (`api/packages/tutor`, M4.7 API, #287; off by default per tenant)
 - [x] No quiz answers during active attempts (`AttemptGuard`, #287)
 - [x] Rate/cost limits; anonymised analytics (30 questions per learner per day, counts only, #287)
-- [ ] (new) Tutor panel in the learner UI and the `tutor:eval` and `learner-insights:eval` real-model eval commands (M4.7 and M4.8; open)
+- [ ] (new) Tutor panel in the learner UI and the `tutor:eval` and `learner-insights:eval` real-model eval commands (M4.7 and M4.8) (partial: tutor panel, status endpoint, `<ulams-tutor>` (M-UI3, #314) and streamed answers (M-UI6, #322) merged; both eval commands merged on golden fixtures and the fake driver (M-UI7, #318); open: no `--live` run with a real API key yet, so the quality numbers and the time-to-first-text measurement (open question O4: drop streaming if the gain is under 1 s) are pending; needs `ANTHROPIC_API_KEY` and the eval cap)
 
 ### 4.3 Trust and transparency
-- [ ] Reasons for every recommendation · AI on/off and provider per tenant
-- [ ] AI content labelling · documented data flows, no training on customer content
+- [ ] Reasons for every recommendation · AI on/off and provider per tenant (partial: learner-side reasons on the Extra help card and on suggested lesson views, #315, #320; per-tenant provider choice not built)
+- [ ] AI content labelling · documented data flows, no training on customer content (partial: AI labels on remediations, reflection feedback, tutor answers and AI-assisted topics, #315, #319, #314; the data-flow documentation is open)
 
 ---
 
@@ -628,20 +631,28 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       (done: importer that proposes a tenant theme with contrast checks, `front/ui/src/theme/brand-import.ts`, #297)
 - [ ] PWA offline mode with tested sync/conflict rules
 - [ ] Single frontend for LMS **and** Sylius commerce (catalogue, checkout, account)
-- [ ] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge) (partial:
+- [x] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge) (
       `<ulams-quiz>`, `<ulams-h5p>`, `<ulams-video>`, `<ulams-progress>` in `front/ui/src/elements`;
-      `<ulams-catalogue>`, `<ulams-my-courses>`, `<ulams-continue>` added in `widgets.ts`, #296; tutor and certificate badge pending)
+      `<ulams-catalogue>`, `<ulams-my-courses>`, `<ulams-continue>` added in `widgets.ts`, #296; `<ulams-tutor>` merged with the tutor panel, #314, and `<ulams-certificate-badge>` with M-UI5, #317; all six named components now exist)
 - [ ] TypeScript SDK from OpenAPI; widget docs with live examples (partial: `@ulams/sdk` in `front/sdk`,
       fetch-only; request paths typed from the generated spec, response types hand-written because the
-      spec has no response schemas; no widget docs yet)
+      spec has no response schemas; insights, tutor (with streaming), compliance and certificate clients merged with the learner UI, #315, #314, #322, #317; widget docs with live examples for the tutor and certificate badge widgets not confirmed)
 - [ ] Learner UX: "continue", "what's next", progress and time estimates, short lessons (partial: what is next and how much is left on the course page and account, #295; "continue" widget, #296)
 - [ ] Semantic search with cited AI answers
 - [ ] **WCAG 2.2 AA** + European Accessibility Act; axe in CI (partial: reference frontend has landmarks,
       skip link, focus-visible, reduced motion, 360 px layout and a theme contrast test; axe scan of
-      every page type in the Playwright e2e passes; axe and keyboard suite now runs in CI as the `web-a11y` job, #294; European Accessibility Act documentation and learner-facing coverage of every new screen still open)
+      every page type in the Playwright e2e passes; axe and keyboard suite now runs in CI as the `web-a11y` job, #294; the accessibility gate (axe, keyboard and reduced-motion specs for the learner screens), the per-tenant `/accessibility` statement and the operator and learner EAA documentation merged in M-UI8, #325; open: the manual screen reader pass (VoiceOver and NVDA) is documented, not done, and the full-stack struggling-learner journey `front/web/tests/e2e/personalisation.spec.ts` is written but has not been run)
 - [ ] Admin UX: templates, guided empty states, sample course, bulk operations, saved filters
-- [ ] AI transparency everywhere (diffs, citations, reasons one click away)
+- [ ] AI transparency everywhere (diffs, citations, reasons one click away) (partial: learner surfaces done, #315, #319, #314, #320; fragment citations show a label, not a link, by design, O8)
 - [ ] Metrics: time to first course, time to first enrolment, admin task times
+- [x] (new) Learner views for required training, learning paths, certificates and skills: `/account/training`, `/account/skills`, a manager `/account/team`, certificate download through its own route and the account summary (M-UI5, #317; `docs/plans/phase-5-learner-ui.md`)
+- [x] (new) The finish page shows the issued certificate (with download and verify) instead of the mock preview (M-UI5, #317)
+- [x] (new) Per-tenant accessibility statement page `/accessibility` and European Accessibility Act documentation for operators and learners (M-UI8, #325)
+- [ ] (new) Translate the existing lesson player and account strings to Polish and Chinese (the new learner strings are in EN/PL/ZH with the learner locale of ADR 0106, #315; the older player, quiz and account strings are English only)
+- [ ] (new) Native review of the Polish and Chinese learner strings (owner action, as for the landing, ADR 0096)
+- [ ] (new) Tenant default-language setting for the account pages (ADR 0106 leaves the account pages in English until it exists; a per-learner switch stays a later item, O6)
+- [ ] (new) Visual e-mail template editor on top of MJML (plan `docs/plans/email-visual-editor.md`, #323; MJML stays the stored format; ADR 0107 Accepted by the owner, but the ADR and the M0 spike results are still in the open PR #328, not on `main`; M0 spike done; open: M1 server draft render, test send and hardening, M2 code view and live preview, M3 visual mode, M4 variables, partials and images, M5 accessibility and i18n, M6 per-language templates (optional); related e-mail security fixes merged: variable escaping #329, no local files through `mj-include` #331, bounded MJML API calls #332)
+- [ ] (new) Critical PHP RCE response (plan `docs/plans/security-php-rce-2026-10.md`, #326): SEC1 done and merged (#330: upload progress off, `pull: true` on publish, full-version tag, image smoke probe); open: SEC2 rebuild of the base image with the version gate once the official `php:8.4-fpm-alpine` is 8.4.27, SEC3 `check-host.sh` version check and the staging recovery steps, SEC4 freshness workflow and Dependabot check
 - [ ] (new) Reference frontend for the demos: UI catalogue `@ulams/ui` (JSON-schema registry, renderer
       with fallbacks, landing pages as A2UI-shaped documents), BFF with httpOnly session, demo auto-login,
       SWR cache of public API data (partial: implemented and tested, uncommitted; Caddy already points
