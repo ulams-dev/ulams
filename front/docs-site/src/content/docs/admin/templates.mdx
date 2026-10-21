@@ -124,6 +124,12 @@ either the MJML API (`use_api`, `api_url`, `api_id`, `api_secret`) or a local `m
 (`MJML_BINARY_PATH` in the environment). `default_template` is the MJML wrapper into which the
 content is placed (`@VarTemplateContent`).
 
+In the editor the code is on the left, with a list of the variables of the event (choose one to
+insert it at the cursor), and a preview with sample data on the right. The preview shows your
+unsaved changes, lists MJML errors, missing required variables and accessibility warnings, and
+**Send a test e-mail** sends the current content to your own address. See
+[E-mail](/operators/email/#in-the-admin) for details.
+
 Email templates exist for events of most packages: account registration, verification,
 blocking and deletion, password reset and change, group membership, course access and
 deadlines, payments, tasks, webinars and consultations, video processing, users imported from

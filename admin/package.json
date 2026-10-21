@@ -61,6 +61,9 @@
     "setupFilesAfterEnv": [
       "<rootDir>/config/jest/setupTests.js"
     ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/src/$1"
+    },
     "testPathIgnorePatterns": [
       "/e2e/"
     ],

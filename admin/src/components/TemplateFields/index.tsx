@@ -3,6 +3,7 @@ import { Space, Tag, Typography } from 'antd';
 import React, { useCallback } from 'react';
 import { FormattedMessage } from 'umi';
 import AutoCompleteArea from '../AutoCompleteArea';
+import EmailTemplateEditor from '../EmailTemplateEditor';
 import PdfEditor from '../PdfEditor';
 import './index.css';
 
@@ -172,28 +173,17 @@ export const TemplateFields: React.FC<FormWysiwygProps> = ({ name, field, variab
       case 'mjml':
         return (
           <React.Fragment>
-            <p>
-              <FormattedMessage id={'templates.to_create_template'} />{' '}
-              <a target="_blank" rel="noreferrer" href="https://mjml.io/try-it-live">
-                https://mjml.io/try-it-live
-              </a>
-            </p>
-            <code>
-              <FormattedMessage id={'code.snippet'} />
-            </code>
             <ProForm.Item shouldUpdate>
               {(form) => {
                 return (
-                  <AutoCompleteArea
+                  <EmailTemplateEditor
                     requiredVariables={field.required_variables}
                     variables={variables}
                     value={form.getFieldValue(name)}
                     onChange={(value: string) => form.setFieldsValue({ [name]: value })}
                     error={form.getFieldError(name)}
-                    styles={{
-                      width: '100%',
-                      height: '40vh',
-                    }}
+                    event={form.getFieldValue('event')}
+                    title={form.getFieldValue('title')}
                   />
                 );
               }}

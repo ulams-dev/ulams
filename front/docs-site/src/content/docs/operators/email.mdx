@@ -65,7 +65,24 @@ If the HTML of a template looks unstyled, check the log for that warning first.
 
 ## Previewing and test-sending a draft
 
-Two admin endpoints work on a draft that is not saved yet. Both need the `template_update`
+### In the admin
+
+On the page of an e-mail template (Configuration, Templates) the `content` section is a code editor
+with a live preview next to it. No setup is needed beyond the MJML service above.
+
+- **Code and variables.** Edit the MJML on the left. The Variables list shows the variables of the
+  event; choosing one inserts it at the cursor. Variables the event requires are marked `*`.
+- **Preview.** About a second after you stop typing, the unsaved draft is sent to the render
+  endpoint below and shown in a sandboxed frame (no scripts, no access to the admin session). The
+  list above the frame shows the MJML errors, the required variables the draft does not use and the
+  accessibility warnings. Sample data comes from the event, not from real learners.
+- **Send a test e-mail.** Sends the current unsaved content to your own address only.
+- The preview is not the saved e-mail: save the template to store it. If the MJML service is down
+  the editor shows an error and keeps the last good preview.
+
+### API
+
+The editor uses two admin endpoints that work on a draft that is not saved yet. Both need the `template_update`
 permission, read only the current tenant's settings and write nothing.
 
 | Endpoint | Does | Limit |

@@ -70,6 +70,29 @@ export async function preview(id: number, options?: AxiosRequestConfig) {
   );
 }
 
+export type EmailDraftBody = { event: string; title: string; content: string };
+
+export async function renderEmailDraft(body: EmailDraftBody, options?: AxiosRequestConfig) {
+  return request<API.DefaultResponse<API.EmailTemplateDraft>>(`/api/admin/templates/email/render`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+export async function testSendEmailDraft(body: EmailDraftBody, options?: AxiosRequestConfig) {
+  return request<API.DefaultResponse<API.EmailTemplateDraft>>(
+    `/api/admin/templates/email/test-send`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      data: body,
+      ...(options || {}),
+    },
+  );
+}
+
 /// api/admin/events/trigger-manually/{id}
 
 export async function triggerManualEvent(
