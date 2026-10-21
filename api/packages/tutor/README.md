@@ -32,6 +32,9 @@ Records: ADR 0060 (proposed), ADR 0061 (privacy); plan `docs/plans/phase-4.md` s
 ```bash
 vendor/bin/phpunit --testsuite tutor        # fake driver, a course built through the real builder pipeline
 php artisan tutor:index --course=1
+php artisan tutor:eval --fixtures=all --author=1          # golden questions on the fake driver; --live for the real model
 ```
+
+`tutor:eval` and `learner-insights:eval` are documented in `front/docs-site/src/content/docs/developers/learner-evals.mdx`.
 
 - Settings, env variables, privacy: `front/docs-site/src/content/docs/admin/tutor.mdx`

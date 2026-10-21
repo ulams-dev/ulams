@@ -118,7 +118,7 @@ test.describe("extra help for you", () => {
     const order = await page.evaluate(() => {
       const card = document.querySelector("[data-status='ready']")!;
       const body = document.querySelector(".u-player__content")!;
-      const lessonText = [...body.children].find((c) => c !== card && !c.matches(".u-player__lead, [data-status], .u-notice"));
+      const lessonText = [...body.children].find((c) => c !== card && !c.matches(".u-player__lead, [data-status], .u-notice, .u-lv-notice"));
       return lessonText ? Boolean(card.compareDocumentPosition(lessonText) & Node.DOCUMENT_POSITION_FOLLOWING) : true;
     });
     expect(order, "the card is before the lesson content").toBe(true);

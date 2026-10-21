@@ -124,6 +124,19 @@ class PdfTest extends TestCase
     }
 
 
+    public function testListExposesTheCertificateIdOfOwnCertificatesOnly(): void
+    {
+        $own = FabricPDF::factory()->createOne(['user_id' => $this->user->id, 'certificate_id' => 'd3f1c2d4-1111-4222-8333-444455556666']);
+        $other = FabricPDF::factory()->createOne(['user_id' => $this->user2->id, 'certificate_id' => 'e3f1c2d4-1111-4222-8333-444455556666']);
+
+        $response = $this->actingAs($this->user)->getJson('/api/pdfs')->assertOk();
+
+        $rows = collect($response->json('data'));
+        $this->assertSame('d3f1c2d4-1111-4222-8333-444455556666', $rows->firstWhere('id', $own->id)['certificate_id']);
+        $this->assertNull($rows->firstWhere('id', $other->id));
+        $this->assertStringNotContainsString('e3f1c2d4-1111-4222-8333-444455556666', $response->getContent());
+    }
+
     public function testListExistingAssignable(): void
     {
         $pdf1 = FabricPDF::factory()->createOne(

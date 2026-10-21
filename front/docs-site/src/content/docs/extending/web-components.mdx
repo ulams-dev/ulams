@@ -5,6 +5,8 @@ sidebar:
   order: 9
 modules:
   - ui
+learnerRoutes:
+  - /embed/[file]
 ---
 
 import { Aside } from "@astrojs/starlight/components";
@@ -19,8 +21,8 @@ in a shadow root so a host page's CSS cannot break them, and read their data wit
 | `<ulams-continue>` | One card: the course in progress (else the first unfinished one) and a link to its next topic | yes |
 
 The quiz, H5P, video and progress elements in `front/ui/src/elements` are part of the lesson
-player and only work inside the reference frontend. The certificate badge widget waits for its
-milestone; the course tutor is described [below](#the-course-tutor).
+player and only work inside the reference frontend. The certificate badge is described
+[below](#the-certificate-badge); so is the course tutor ([the course tutor](#the-course-tutor)).
 
 ## Use them
 
@@ -109,3 +111,36 @@ images and unsafe links removed.
 
 Tests: `front/ui/tests/tutor-element.test.ts` and `front/web/tests/a11y/tutor.a11y.spec.ts` (axe,
 keyboard, layout).
+
+## The certificate badge
+
+`<ulams-certificate-badge>` shows whether a certificate is valid, for whom and until when. It asks
+the public verification endpoint (`GET /api/certificates/verify/{id}`), so it needs no token and
+works on any page: a learner pastes it on a personal site or a profile. The status is written out
+("Valid", "Expired", "Revoked on 1 September 2026"), never colour alone, and the badge links to the
+verification page of the academy.
+
+The account page "My training" has a **Copy badge code** button next to every certificate that
+copies the snippet with the certificate id filled in:
+
+```html
+<script type="module" src="https://acme.ulams.app/embed/ulams-certificate-badge.js"></script>
+<ulams-certificate-badge certificate-id="b3f1c2d4-1111-4222-8333-444455556666"
+  api-url="https://acme.ulams.app"
+  verify-href="https://acme.ulams.app/certificates/verify/{id}"></ulams-certificate-badge>
+```
+
+| Attribute | Meaning | Default |
+|---|---|---|
+| `certificate-id` | The public certificate id (required) | none |
+| `api-url` | Tenant API origin (required outside the API's own origin) | none |
+| `verify-href` | Link template, `{id}` is replaced; relative and `http(s)` only | `/certificates/verify/{id}` |
+| `lang` | Interface language: `en`, `pl` or `zh` | the page language |
+
+The holder name is shown when the verification endpoint returns it (it does today). A bundler can
+import `@ulams/ui/elements/certificate-badge.ts` (or `widgets.ts`, which registers all widgets)
+instead of the script tag. Unknown ids, a missing id and an unreachable API each get their own
+announced message, and the error has a "Try again" link.
+
+Tests: `front/ui/tests/certificate-badge.test.ts` (states, XSS, languages, axe) and
+`front/web/tests/a11y/training.a11y.spec.ts` (the badge on a plain page).

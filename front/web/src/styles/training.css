@@ -1,0 +1,54 @@
+/* My training, certificates, skills and the team view. Status is always written out; colour only adds to it. */
+.u-tr { display: grid; gap: 32px; padding-block: 40px 24px; }
+.u-tr main:focus { outline: none; }
+.u-tr__crumb { font-size: 0.875rem; }
+.u-tr__crumb a { display: inline-flex; align-items: center; min-height: 24px; }
+.u-tr__lead { color: var(--ulams-color-muted); max-width: 68ch; }
+.u-tr__nav { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0; padding: 0; list-style: none; }
+.u-tr__nav a { display: inline-flex; align-items: center; min-height: 44px; padding-inline: 2px; text-underline-offset: 4px; }
+.u-tr__nav a[aria-current="page"] { font-weight: 700; text-decoration-thickness: 3px; }
+.u-tr__block { display: grid; gap: 16px; scroll-margin-top: 24px; }
+.u-tr__list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+.u-tr__row { display: grid; gap: 10px; padding: 16px 20px; border-left: 6px solid var(--ulams-color-border); justify-items: start; }
+.u-tr__row--bad { border-left-color: var(--ulams-color-error, #b3261e); }
+.u-tr__row--warn { border-left-color: var(--ulams-color-warning, #b07a00); }
+.u-tr__row--ok { border-left-color: var(--ulams-color-positive); }
+.u-tr__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.u-tr__head h3 { font-size: 1.1rem; overflow-wrap: anywhere; }
+.u-tr__status { font-weight: 700; }
+.u-tr__meta { display: flex; flex-wrap: wrap; gap: 4px 20px; margin: 0; color: var(--ulams-color-muted); font-size: 0.9rem; }
+.u-tr__facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px 24px; margin: 0; width: 100%; }
+.u-tr__facts dt { font-size: 0.75rem; color: var(--ulams-color-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.u-tr__facts dd { margin: 0; overflow-wrap: anywhere; }
+.u-tr__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.u-tr__actions a:not(.u-btn), .u-tr__actions button.u-tr__linkbtn { display: inline-flex; align-items: center; min-height: 44px; }
+.u-tr__linkbtn { background: none; border: 0; padding: 0; font: inherit; color: var(--ulams-color-primary-on-light, var(--ulams-color-primary)); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.u-tr__steps { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; width: 100%; }
+.u-tr__step { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; padding: 8px 12px; border: 1px solid var(--ulams-color-border); border-radius: var(--ulams-radius, 6px); }
+.u-tr__step--locked { color: var(--ulams-color-muted); }
+.u-tr__step-state { font-weight: 700; }
+.u-tr__code { width: 100%; }
+.u-tr__code summary { min-height: 24px; cursor: pointer; }
+.u-tr__code textarea { width: 100%; margin-top: 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.8125rem; padding: 8px 10px; }
+.u-tr__empty, .u-tr__error, .u-tr__notice { padding: 12px 16px; border: 1px solid var(--ulams-color-border); border-radius: var(--ulams-radius-card, 8px); }
+.u-tr__error { border-color: var(--ulams-color-error, #b3261e); }
+.u-tr__area { font-size: 1.15rem; }
+.u-tr__skill h4 { font-size: 1.05rem; }
+.u-tr__skill ul { margin: 0; padding-left: 1.1em; }
+.u-tr__filter { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; }
+.u-tr__filter label { font-weight: 600; display: grid; gap: 4px; }
+.u-tr__filter select { padding: 8px 10px; min-height: 44px; }
+.u-tr__table-wrap { overflow-x: auto; }
+.u-tr__table { width: 100%; border-collapse: collapse; }
+.u-tr__table th, .u-tr__table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--ulams-color-border); vertical-align: top; }
+.u-tr__table caption { text-align: left; padding-bottom: 8px; color: var(--ulams-color-muted); }
+.u-tr__summary { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; }
+.u-tr__summary a { display: inline-flex; align-items: center; min-height: 44px; }
+/* the demo badge sits at the bottom left: keep focused controls clear of it (WCAG 2.4.11) */
+.u-tr :is(a, button, input, select, summary, textarea) { scroll-margin-block-end: 88px; }
+@media (max-width: 640px) {
+  .u-tr__table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .u-tr__table tr { display: grid; gap: 2px; padding: 8px 0; border-bottom: 1px solid var(--ulams-color-border); }
+  .u-tr__table td { border: 0; padding: 2px 4px; }
+  .u-tr__table td::before { content: attr(data-label) ": "; font-weight: 700; }
+}

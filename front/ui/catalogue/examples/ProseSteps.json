@@ -1,0 +1,13 @@
+{
+  "props": {
+    "intro": "Three things decide how a cup tastes.",
+    "sections": [
+      { "heading": "Grind", "level": 2, "markdown": "A **medium** grind suits most brewers." },
+      { "heading": "Water", "level": 2, "markdown": "Use water at about 94 degrees." }
+    ],
+    "size": "md"
+  },
+  "invalid": {
+    "sections": [{ "heading": "Only one part", "markdown": "Too short." }]
+  }
+}

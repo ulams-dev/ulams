@@ -1465,6 +1465,35 @@ export const registry = {
     ),
     fallback: (p) => join(p.title, p.markdown),
   },
+  ProseSteps: {
+    description:
+      "A long reading shown one part at a time: an optional introduction and 2-12 parts, each with a heading and Markdown text. Previous and next controls move between parts with JavaScript; without it every part is on the page. Used by the adaptive lesson view for a learner who prefers lessons in parts.",
+    category: "learning",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        id: text("Anchor id", { default: "parts", maxLength: 40 }),
+        intro: text("Markdown shown above the first part", { maxLength: 60000 }),
+        sections: list(
+          obj(
+            {
+              heading: text("Heading of the part", { maxLength: 160 }),
+              level: int("Heading level, 2 or 3", { minimum: 2, maximum: 3, default: 2 }),
+              markdown: text("Markdown of the part", { maxLength: 60000 }),
+            },
+            ["heading", "markdown"]
+          ),
+          "The parts, in reading order",
+          { minItems: 2, maxItems: 12 }
+        ),
+        size: oneOf(["sm", "md", "lg"], "Text size", "md"),
+        locale: LOCALE,
+      },
+      ["sections"]
+    ),
+    fallback: (p) => join(p.intro, ...(Array.isArray(p.sections) ? p.sections.map((s) => join((s as { heading?: string }).heading, (s as { markdown?: string }).markdown)) : [])),
+  },
   Callout: {
     description: "Highlighted note inside a lesson: a tip, a warning or a key idea.",
     category: "learning",
@@ -1558,6 +1587,7 @@ export const registry = {
     props: obj(
       {
         id: text("Anchor id", { default: "practice", maxLength: 40 }),
+        initialHints: int("Hints already shown when the learner opens a challenge (0 to 3); set by the learner's lesson view, not by authors", { minimum: 0, maximum: 3, default: 0 }),
         title: TITLE,
         intro: text("What the learner will practise and why, in one or two sentences", { maxLength: 800 }),
         toolbox: list(

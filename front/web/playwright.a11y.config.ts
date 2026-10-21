@@ -39,7 +39,7 @@ export default defineConfig({
         ULAMS_TENANT_HOSTS: "{slug}.app.localhost=>http://{slug}.localhost",
         ULAMS_API_INTERNAL_ORIGIN: `http://127.0.0.1:${api}`,
         ULAMS_PLATFORM_HOSTS: "app.localhost",
-        ULAMS_DEMO_TENANTS: "coffee,nightsky",
+        ULAMS_DEMO_TENANTS: "coffee,nightsky,polski",
         ULAMS_WARM_TENANTS: "",
         ULAMS_DEFAULT_TENANT: "",
         ULAMS_CONTENT_ORIGIN: "",

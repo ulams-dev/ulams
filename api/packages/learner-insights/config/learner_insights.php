@@ -58,6 +58,9 @@ return [
         'retry_after_hours' => 24,
     ],
 
+    // Monthly spend of `learner-insights:eval --live`, in USD (the command refuses to start at the cap)
+    'eval' => ['monthly_usd' => (float) env('LEARNER_INSIGHTS_EVAL_MONTHLY_USD', 5)],
+
     // Days an intervention may take to count as recovered
     'interventions' => ['window_days' => (int) env('LEARNER_INSIGHTS_RECOVERY_WINDOW_DAYS', 14)],
 

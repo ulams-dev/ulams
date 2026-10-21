@@ -6,8 +6,8 @@
   "description": "ulams reference frontend: Astro SSR, zero JS by default, tenant-aware.",
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "node scripts/build-embed.mjs && astro dev",
+    "build": "node scripts/build-embed.mjs && astro build",
     "start": "HOST=0.0.0.0 PORT=4321 node --env-file-if-exists=.env ./dist/server/entry.mjs",
     "preview": "astro preview",
     "typecheck": "astro check && tsc --noEmit -p tsconfig.json",
@@ -30,6 +30,7 @@
     "@emnapi/runtime": "1.11.3",
     "@eslint/js": "10.0.1",
     "@playwright/test": "1.63.0",
+    "esbuild": "^0.27.0",
     "eslint": "10.12.0",
     "jsdom": "^20.0.0",
     "typescript": "5.9.3",

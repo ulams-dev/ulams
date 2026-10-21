@@ -1,0 +1,50 @@
+---
+/** Frame of the account sub-pages: site header and footer, breadcrumb, sub navigation and the page title. */
+import Render from "@ulams/ui/Render.astro";
+import Base from "../layouts/Base.astro";
+import { trainingStrings, type TrainingLocale } from "@ulams/ui/training-strings";
+import { chromeFor, withSessionLink } from "../lib/docs.ts";
+import type { ThemeName } from "@ulams/ui/registry";
+import type { SiteModel } from "../lib/view-model.ts";
+import "../styles/training.css";
+
+interface Props {
+  theme: ThemeName;
+  accent?: string;
+  title: string;
+  heading: string;
+  lead?: string;
+  locale: TrainingLocale;
+  current: "training" | "skills" | "team";
+  showTeam: boolean;
+  site: SiteModel | null;
+  demo: { adminUrl: string; slug: string };
+}
+const { theme, accent, title, heading, lead, locale, current, showTeam, site, demo } = Astro.props;
+const t = trainingStrings(locale);
+const chrome = chromeFor(theme);
+const links = [
+  { key: "training", href: "/account/training", label: t.accountTrainingLink },
+  { key: "skills", href: "/account/skills", label: t.accountSkillsLink },
+  ...(showTeam ? [{ key: "team", href: "/account/team", label: t.accountTeamLink }] : []),
+];
+---
+
+<Base theme={theme} accent={accent} title={`${title} — ${site?.tenant.name ?? "ulams"}`} lang={locale} demo={demo}>
+  {chrome.header && site && <Render doc={withSessionLink(chrome.header, true)} data={site} />}
+  <main id="main" class="u-container u-tr" tabindex="-1">
+    <nav class="u-tr__crumb" aria-label="Breadcrumb"><a href="/account">{t.breadcrumbHome}</a></nav>
+    <header class="u-tr__block">
+      <h1 class="u-h2">{heading}</h1>
+      {lead && <p class="u-tr__lead">{lead}</p>}
+      <nav aria-label={heading}>
+        <ul class="u-tr__nav" role="list">
+          {links.map((l) => <li><a href={l.href} aria-current={l.key === current ? "page" : undefined}>{l.label}</a></li>)}
+          {current === "training" && <li><a href="#certificates">{t.accountCertificatesLink}</a></li>}
+        </ul>
+      </nav>
+    </header>
+    <slot />
+  </main>
+  {chrome.footer && site && <Render doc={chrome.footer} data={site} />}
+</Base>

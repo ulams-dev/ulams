@@ -11,6 +11,9 @@ import { courseStanding, flattenTopics } from "@ulams/sdk";
 import { standingNote } from "../../lib/standing.ts";
 import { lessonModels, topicHref } from "../../lib/view-model.ts";
 import { readSession } from "../../lib/session.ts";
+import LessonView from "../../components/LessonView.astro";
+import { getPresentation } from "../../lib/presentation.ts";
+import { learnerLocale } from "../../lib/locale.ts";
 
 const tenant = Astro.locals.tenant;
 if (!tenant) return Astro.redirect("/tenants");
@@ -33,6 +36,8 @@ let progress: number | undefined;
 let progressNote = "";
 let resumeHref = course!.learnHref;
 let updatesDoc: UiNode | null = null;
+let presentationState: Awaited<ReturnType<typeof getPresentation>> = null;
+const lessonViewLocale = learnerLocale(course?.language);
 if (token) {
   const program = await Promise.race([
     getProgram(tenant, token, id).catch(() => null),
@@ -47,6 +52,7 @@ if (token) {
     course!.lessons = lessonModels(program.course, { progress: program.progress });
     // Living Course: what changed since the learner completed or started lessons.
     const learnerNotices = await Promise.race([getLearnerNotices(tenant, token, id), new Promise<LearnerNotices>((r) => setTimeout(() => r(NO_NOTICES), 900))]);
+    presentationState = await getPresentation(tenant, token, id, lessonViewLocale);
     const titles = new Map(flattenTopics(program.course).map((t) => [t.id, t.title] as const));
     updatesDoc = courseUpdatesDoc(learnerNotices, id, titles);
   }
@@ -75,6 +81,12 @@ const generated = landing && validateDocument(landing, landingData).length === 0
       <>
         <Render doc={courseHeaderDoc(theme, course!, progress, resumeHref, progressNote)} data={site} />
         {updatesDoc && <Render doc={updatesDoc} />}
+        {presentationState && (
+          <div class="u-container u-course-view">
+            <LessonView part="notice" state={{ ...presentationState, adaptive: false }} courseId={id} locale={lessonViewLocale} next={Astro.url.pathname} saved={({ ok: "ok", failed: "failed" } as const)[Astro.url.searchParams.get("lesson-view") as "ok" | "failed"] ?? null} />
+            <LessonView part="control" state={presentationState} courseId={id} locale={lessonViewLocale} next={Astro.url.pathname} />
+          </div>
+        )}
         <Render doc={syllabusDoc(theme, course!)} data={site} />
         <section class="u-container u-course-about" aria-label="About the course">
           <div class="u-course-about__text">
@@ -93,6 +105,14 @@ const generated = landing && validateDocument(landing, landingData).length === 0
 <style>
   main:focus {
     outline: none;
+  }
+  .u-course-view {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 16px;
   }
   .u-course-about {
     display: grid;

@@ -14,6 +14,7 @@ use Ulams\Auth\Events\AccountDeleted;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
 use Ulams\Settings\Facades\AdministrableConfig;
 use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Tutor\Console\EvalCommand;
 use Ulams\Tutor\Console\IndexCommand;
 use Ulams\Tutor\Console\PruneCommand;
 use Ulams\Tutor\Fake\TutorResponder;
@@ -69,7 +70,7 @@ class UlamsTutorServiceProvider extends ServiceProvider
         });
 
         if ($this->app->runningInConsole()) {
-            $this->commands([IndexCommand::class, PruneCommand::class]);
+            $this->commands([IndexCommand::class, PruneCommand::class, EvalCommand::class]);
         }
         $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command('tutor:prune')->dailyAt('02:50')->withoutOverlapping());
     }

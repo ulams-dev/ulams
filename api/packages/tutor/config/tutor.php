@@ -37,6 +37,9 @@ return [
         'events_retention_days' => (int) env('TUTOR_STREAM_EVENTS_RETENTION_DAYS', 1),
     ],
 
+    // Monthly spend of `tutor:eval --live`, in USD (the command refuses to start at the cap)
+    'eval' => ['monthly_usd' => (float) env('TUTOR_EVAL_MONTHLY_USD', 5)],
+
     'retrieval' => [
         // chunks matching the question across the course, plus up to `topic_chunks` of the open topic
         'top' => 8,

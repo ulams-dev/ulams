@@ -18,6 +18,8 @@ class PdfListResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
+            // public already on the verification endpoint; lets the learner build the verify link and badge
+            'certificate_id' => $this->certificate_id,
             'template' => $this->template,
             'user_id' => $this->user_id,
             'vars' => VarsParser::parseVars($this->vars),

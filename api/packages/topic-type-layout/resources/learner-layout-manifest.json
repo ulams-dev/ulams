@@ -778,6 +778,13 @@
             "maxLength": 40,
             "default": "practice"
           },
+          "initialHints": {
+            "type": "integer",
+            "description": "Hints already shown when the learner opens a challenge (0 to 3); set by the learner's lesson view, not by authors",
+            "minimum": 0,
+            "maximum": 3,
+            "default": 0
+          },
           "title": {
             "type": "string",
             "description": "Section title",
