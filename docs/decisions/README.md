@@ -119,5 +119,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0105](0105-stream-tutor-answers-over-the-sse-event-log.md) | Stream tutor answers over the SSE event log | Accepted |
 | [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted |
 | [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Accepted |
+| [0180](0180-experiment-assignment-exposure-and-statistics.md) | Course experiments: salted assignment, exposure logging and fixed-horizon statistics with guard rails | Proposed |
+| [0181](0181-insights-improvement-proposals-in-living-course.md) | Improvement proposals from learner insights are Living Course proposals of their own kind | Proposed |
 
 <!-- END GENERATED: adr-index -->
