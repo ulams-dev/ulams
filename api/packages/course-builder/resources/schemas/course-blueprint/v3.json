@@ -1,0 +1,922 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/course-blueprint/v3.json",
+  "title": "Course Blueprint v3",
+  "description": "One version of a course (ADR 0010, 0050, 0160). v3 reads every v2 and v1 document unchanged (only schemaVersion differs) and adds, for course-as-code: a per-element origin (ai, the default, or author) where only author elements may have no citations, lesson content types scorm, cmi5, video, file and embed with asset references, optional key slugs, meta, and a reserved exercises list. Element ids are ULIDs assigned by server code; citations are fragment ids of the session's sources.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "sources",
+    "course",
+    "modules",
+    "finalTest",
+    "pages"
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[0-9a-z]{26}$"
+    },
+    "fragmentId": {
+      "type": "string",
+      "pattern": "^frg_[a-z2-7]{12}$"
+    },
+    "citations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/fragmentId"
+      },
+      "maxItems": 20
+    },
+    "objective": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "text",
+        "citations"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 400
+        },
+        "citations": {
+          "$ref": "#/$defs/citations"
+        },
+        "meta": {
+          "$ref": "#/$defs/meta"
+        }
+      }
+    },
+    "block": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "markdown",
+        "citations",
+        "objectiveIds"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "paragraph",
+            "callout",
+            "steps",
+            "code",
+            "table",
+            "example"
+          ]
+        },
+        "markdown": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20000
+        },
+        "citations": {
+          "$ref": "#/$defs/citations"
+        },
+        "objectiveIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "origin": {
+          "$ref": "#/$defs/origin"
+        },
+        "meta": {
+          "$ref": "#/$defs/meta"
+        }
+      },
+      "if": {
+        "required": [
+          "origin"
+        ],
+        "properties": {
+          "origin": {
+            "const": "author"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "citations": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    "option": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "text",
+        "correct"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "correct": {
+          "type": "boolean"
+        },
+        "meta": {
+          "$ref": "#/$defs/meta"
+        }
+      }
+    },
+    "question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "stem",
+        "options",
+        "explanation",
+        "citations",
+        "objectiveIds"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "single",
+            "multiple",
+            "truefalse",
+            "short"
+          ]
+        },
+        "stem": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 1000
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/option"
+          },
+          "minItems": 1,
+          "maxItems": 8
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 2000
+        },
+        "citations": {
+          "$ref": "#/$defs/citations"
+        },
+        "objectiveIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "origin": {
+          "$ref": "#/$defs/origin"
+        },
+        "meta": {
+          "$ref": "#/$defs/meta"
+        }
+      },
+      "if": {
+        "required": [
+          "origin"
+        ],
+        "properties": {
+          "origin": {
+            "const": "author"
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "citations": {
+            "minItems": 1
+          }
+        }
+      }
+    },
+    "quiz": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "questions"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "passScore": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/question"
+          },
+          "maxItems": 50
+        },
+        "meta": {
+          "$ref": "#/$defs/meta"
+        }
+      }
+    },
+    "lesson": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "minutes",
+        "objectives",
+        "citations",
+        "contentType",
+        "status",
+        "blocks",
+        "quiz",
+        "flags"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 200
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "minutes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 600
+        },
+        "objectives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/objective"
+          },
+          "minItems": 1,
+          "maxItems": 8
+        },
+        "citations": {
+          "$ref": "#/$defs/citations"
+        },
+        "contentType": {
+          "type": "string",
+          "enum": [
+            "richtext",
+            "liascript",
+            "h5p",
+            "interactive",
+            "scorm",
+            "cmi5",
+            "video",
+            "file",
+            "embed"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "planned",
+            "generated",
+            "failed"
+          ]
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/block"
+          },
+          "maxItems": 60
+        },
+        "quiz": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/quiz"
+            }
+          ]
+        },
+        "flags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "maxItems": 20
+        },
+        "selfChecks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/question"
+          },
+          "maxItems": 6,
+          "description": "LiaScript lessons: inline questions after the text (rendered as LiaScript quizzes)"
+        },
+        "interaction": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/interaction"
+            }
+          ],
+          "description": "h5p and interactive lessons: the interaction that follows the text"
+        },
+        "origin": {
+          "$ref": "#/$defs/origin"
+        },
+        "key": {
+          "$ref": "#/$defs/key"
+        },
+        "meta": {
+          "$ref": "#/$defs/meta"
+        },
+        "asset": {
+          "$ref": "#/$defs/asset"
+        },
+        "assetRef": {
+          "$ref": "#/$defs/assetRef"
+        },
+        "video": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "provider"
+          ],
+          "properties": {
+            "provider": {
+              "type": "string",
+              "enum": [
+                "upload",
+                "youtube",
+                "vimeo"
+              ]
+            },
+            "url": {
+              "type": "string",
+              "maxLength": 500
+            }
+          }
+        },
+        "embed": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "url",
+            "title"
+          ],
+          "properties": {
+            "url": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        },
+        "exercises": {
+          "type": "array",
+          "maxItems": 0,
+          "description": "Reserved for code exercises (phase 7.2)"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "origin"
+            ],
+            "properties": {
+              "origin": {
+                "const": "author"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "citations": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "contentType"
+            ],
+            "properties": {
+              "contentType": {
+                "enum": [
+                  "scorm",
+                  "cmi5",
+                  "file"
+                ]
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "asset"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "contentType"
+            ],
+            "properties": {
+              "contentType": {
+                "const": "video"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "video"
+            ]
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "contentType"
+            ],
+            "properties": {
+              "contentType": {
+                "const": "embed"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "embed"
+            ]
+          }
+        }
+      ]
+    },
+    "module": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "lessons"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 200
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "lessons": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/lesson"
+          },
+          "minItems": 1,
+          "maxItems": 30
+        },
+        "key": {
+          "$ref": "#/$defs/key"
+        },
+        "meta": {
+          "$ref": "#/$defs/meta"
+        }
+      }
+    },
+    "h5pLibrary": {
+      "type": "string",
+      "enum": [
+        "H5P.Blanks",
+        "H5P.DragText",
+        "H5P.Dialogcards"
+      ]
+    },
+    "interaction": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "library",
+            "title",
+            "data",
+            "citations",
+            "objectiveIds"
+          ],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "kind": {
+              "const": "h5p"
+            },
+            "library": {
+              "$ref": "#/$defs/h5pLibrary"
+            },
+            "title": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 200
+            },
+            "data": {
+              "type": "object",
+              "description": "The fields of the library's own schema (resources/schemas/h5p/<library>.json), mapped to H5P parameters by our code"
+            },
+            "citations": {
+              "$ref": "#/$defs/citations"
+            },
+            "objectiveIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/id"
+              }
+            },
+            "origin": {
+              "$ref": "#/$defs/origin"
+            },
+            "meta": {
+              "$ref": "#/$defs/meta"
+            }
+          },
+          "if": {
+            "required": [
+              "origin"
+            ],
+            "properties": {
+              "origin": {
+                "const": "author"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "citations": {
+                "minItems": 1
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "kind",
+            "packageId",
+            "title",
+            "caption",
+            "citations",
+            "objectiveIds"
+          ],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/id"
+            },
+            "kind": {
+              "const": "interactive"
+            },
+            "packageId": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "title": {
+              "type": "string",
+              "minLength": 2,
+              "maxLength": 200
+            },
+            "startStep": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "endStep": {
+              "type": "string",
+              "maxLength": 64
+            },
+            "caption": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4000,
+              "description": "Markdown shown beside the interactive"
+            },
+            "citations": {
+              "$ref": "#/$defs/citations"
+            },
+            "objectiveIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/id"
+              }
+            },
+            "origin": {
+              "$ref": "#/$defs/origin"
+            },
+            "meta": {
+              "$ref": "#/$defs/meta"
+            }
+          },
+          "if": {
+            "required": [
+              "origin"
+            ],
+            "properties": {
+              "origin": {
+                "const": "author"
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "citations": {
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "origin": {
+      "type": "string",
+      "enum": [
+        "ai",
+        "author"
+      ],
+      "description": "Absent means ai. An element with origin author may have no citations; an element the AI creates or changes is always ai and must cite."
+    },
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "description": "Optional slug used for folder and file names in a course repository; unique among siblings. The id stays the identity."
+    },
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "createdBy": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "updatedAt": {
+          "type": "string",
+          "maxLength": 40
+        }
+      },
+      "description": "Room for tools; ignored by apply, never diffed."
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "bytes",
+        "mediaType"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300,
+          "description": "Relative to the assets folder of the course repository"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mediaType": {
+          "type": "string",
+          "maxLength": 120
+        }
+      }
+    },
+    "assetRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entityType",
+        "entityId"
+      ],
+      "properties": {
+        "entityType": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "entityId": {
+          "type": [
+            "integer",
+            "string"
+          ]
+        }
+      },
+      "description": "Set by the server after an upload or an adoption"
+    }
+  },
+  "properties": {
+    "schemaVersion": {
+      "const": 3
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "fragmentCount"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "fragmentCount": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "course": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "language",
+        "objectives"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 200
+        },
+        "subtitle": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "seo": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "title": {
+              "type": "string",
+              "maxLength": 70
+            },
+            "description": {
+              "type": "string",
+              "maxLength": 160
+            }
+          }
+        },
+        "language": {
+          "type": "string",
+          "pattern": "^[a-z]{2}$"
+        },
+        "audience": {
+          "type": "string",
+          "maxLength": 300
+        },
+        "objectives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/objective"
+          },
+          "maxItems": 12
+        },
+        "faq": {
+          "type": "array",
+          "maxItems": 12,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "question",
+              "answer",
+              "citations"
+            ],
+            "properties": {
+              "question": {
+                "type": "string",
+                "maxLength": 300
+              },
+              "answer": {
+                "type": "string",
+                "maxLength": 2000
+              },
+              "citations": {
+                "$ref": "#/$defs/citations"
+              },
+              "origin": {
+                "$ref": "#/$defs/origin"
+              }
+            }
+          }
+        },
+        "meta": {
+          "$ref": "#/$defs/meta"
+        }
+      }
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/module"
+      },
+      "minItems": 1,
+      "maxItems": 20
+    },
+    "finalTest": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/quiz"
+        }
+      ]
+    },
+    "pages": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "landing": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "header": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      }
+    }
+  }
+}

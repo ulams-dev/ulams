@@ -227,6 +227,9 @@ final class ApplyService
     private function replace(array $doc, ProposalItem $item): array
     {
         $after = (array) $item->after;
+        if (($after['origin'] ?? null) === 'author') {
+            $after['origin'] = 'ai'; // ADR 0160: what Living Course rewrites is no longer the author's text and must cite
+        }
         if ($item->element_type === 'objective') {
             foreach ($doc['course']['objectives'] ?? [] as $n => $o) {
                 if ($o['id'] === $item->element_id) {

@@ -4,6 +4,7 @@ namespace Ulams\CourseBuilder\ContentTypes;
 
 use Throwable;
 use Ulams\CourseBuilder\Apply\LessonMarkdown;
+use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\Interactive\Models\InteractivePackage;
 use Ulams\Interactive\Models\InteractiveTopic;
@@ -118,7 +119,7 @@ final class InteractiveType implements ContentType
             return ["warning: {$where}: an interactive lesson without its interactive is applied as plain text"];
         }
         $w = "{$where} interactive";
-        $errors = [...Checks::citations($interaction['citations'] ?? [], $known, $w), ...Checks::markup((string) $interaction['caption'], "{$w} text")];
+        $errors = [...Checks::citations($interaction['citations'] ?? [], $known, $w, Blueprint::minCitations($interaction)), ...Checks::markup((string) $interaction['caption'], "{$w} text")];
         $package = InteractivePackage::query()->find((int) $interaction['packageId']);
         if ($package === null) {
             return [...$errors, "{$w}: package {$interaction['packageId']} is not in your library"];
