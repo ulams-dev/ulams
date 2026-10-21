@@ -4852,6 +4852,76 @@
     ],
     "type": "object"
    },
+   "TopicCodeExercise": {
+    "properties": {
+     "completion_rule": {
+      "enum": [
+       "on_pass",
+       "on_attempt"
+      ],
+      "type": "string"
+     },
+     "files": {
+      "description": "Starter files (a JSON string is accepted in multipart requests): at most 20, 64 KB each, 256 KB together",
+      "items": {
+       "properties": {
+        "content": {
+         "type": "string"
+        },
+        "path": {
+         "type": "string"
+        }
+       },
+       "type": "object"
+      },
+      "type": "array"
+     },
+     "id": {
+      "type": "integer"
+     },
+     "language": {
+      "enum": [
+       "javascript",
+       "typescript"
+      ],
+      "type": "string"
+     },
+     "pass_score": {
+      "description": "Percentage of passing tests that completes the topic (on_pass)",
+      "type": "integer"
+     },
+     "text": {
+      "description": "The task, in Markdown",
+      "nullable": true,
+      "type": "string"
+     },
+     "timeout_ms": {
+      "description": "A run is stopped after this long (500 to 30000)",
+      "type": "integer"
+     },
+     "visible_tests": {
+      "description": "Test files the learner can read and run in the browser",
+      "items": {
+       "properties": {
+        "content": {
+         "type": "string"
+        },
+        "path": {
+         "type": "string"
+        }
+       },
+       "type": "object"
+      },
+      "type": "array"
+     }
+    },
+    "required": [
+     "language",
+     "files",
+     "visible_tests"
+    ],
+    "type": "object"
+   },
    "TopicH5P": {
     "properties": {
      "content": {
@@ -7180,6 +7250,109 @@
     "summary": "Delete cmi5 package by id",
     "tags": [
      "cmi5"
+    ]
+   }
+  },
+  "/api/admin/code-exercises/topics/{topic}/attempts": {
+   "get": {
+    "description": "Every learner's attempts at the exercise, newest first, for a user who may edit the course. Practice attempts are marked verified = false.",
+    "operationId": "admin.code-exercises.topics.by-topic.attempts.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "topic",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "per_page",
+      "schema": {
+       "maximum": 100,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "A page of attempts with the learner's id and name"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "not allowed to edit the course"
+     },
+     "404": {
+      "description": "not a code exercise"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Attempts at a code exercise (teacher report)",
+    "tags": [
+     "Code exercises"
+    ]
+   }
+  },
+  "/api/admin/code-exercises/topics/{topic}/preview": {
+   "get": {
+    "description": "The same answer as a launch, for a user who may edit the course. Nothing is tracked.",
+    "operationId": "admin.code-exercises.topics.by-topic.preview.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "topic",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "{runner, exercise}"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "not allowed to edit the course"
+     },
+     "404": {
+      "description": "not a code exercise"
+     },
+     "503": {
+      "description": "no content origin"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Preview a code exercise as its author",
+    "tags": [
+     "Code exercises"
     ]
    }
   },
@@ -30923,6 +31096,204 @@
     ]
    }
   },
+  "/api/code-exercises/launches/{topic}": {
+   "post": {
+    "description": "Code exercises (ADR 0170). The exercise runs in the browser sandbox on the tenant content origin; this\nAPI hands the page the exercise and the runner's address, and records the results the page reports for\nthe learner's own session (no token ever reaches the frame).",
+    "operationId": "code-exercises.launches.by-topic.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "topic",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "{runner: {url, version}, exercise, attempts}; runner.url is the sandboxed runner page on the content origin"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "no access to the course"
+     },
+     "404": {
+      "description": "not a code exercise, or the type is switched off"
+     },
+     "503": {
+      "description": "no content origin"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Open a code exercise",
+    "tags": [
+     "Code exercises"
+    ]
+   }
+  },
+  "/api/code-exercises/topics/{topic}/attempts": {
+   "get": {
+    "operationId": "code-exercises.topics.by-topic.attempts.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "topic",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The caller's own attempts, newest first"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "no access to the course"
+     },
+     "404": {
+      "description": "not a code exercise"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "My attempts at a code exercise",
+    "tags": [
+     "Code exercises"
+    ]
+   },
+   "post": {
+    "description": "The learner's browser ran the visible tests and reports each test's result. The score is recomputed here and the attempt is stored as a practice attempt (verified = false): it moves the topic's progress by its completion rule and records a learner signal, and never counts for certificates or compliance.",
+    "operationId": "code-exercises.topics.by-topic.attempts.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "topic",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "duration_ms": {
+          "nullable": true,
+          "type": "integer"
+         },
+         "files_hash": {
+          "description": "sha256 of the submitted files",
+          "nullable": true,
+          "type": "string"
+         },
+         "results": {
+          "items": {
+           "properties": {
+            "message": {
+             "nullable": true,
+             "type": "string"
+            },
+            "name": {
+             "type": "string"
+            },
+            "status": {
+             "enum": [
+              "pass",
+              "fail",
+              "error"
+             ],
+             "type": "string"
+            }
+           },
+           "required": [
+            "name",
+            "status"
+           ],
+           "type": "object"
+          },
+          "type": "array"
+         },
+         "runner": {
+          "nullable": true,
+          "type": "string"
+         }
+        },
+        "required": [
+         "results"
+        ],
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "{attempt, status}; status 1 means the topic is complete"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "no access to the course"
+     },
+     "404": {
+      "description": "not a code exercise"
+     },
+     "422": {
+      "description": "invalid result"
+     },
+     "429": {
+      "description": "too many requests"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Report the result of a run",
+    "tags": [
+     "Code exercises"
+    ]
+   }
+  },
   "/api/commerce/webhooks/{provider}": {
    "post": {
     "description": "Inbound order events of a commerce provider (ADR 0130). Public route, authenticated by the signature with the\ntenant's own secret, never by a session: the body is verified (HMAC over `<t>.<raw body>`, 300 s tolerance,\nthe secret being rotated out also accepted), its event id must equal the `Ulams-Event-Id` header, and its channel\nmust be this tenant's channel. A valid event is stored once per event id and queued; a duplicate answers 200\nwith no work. The payload is untrusted: only the envelope is read, and the job re-reads the order from the provider.",
@@ -41077,6 +41448,10 @@
   {
    "description": "cmi5",
    "name": "cmi5"
+  },
+  {
+   "description": "Code exercises",
+   "name": "Code exercises"
   },
   {
    "description": "Commerce webhooks",
