@@ -1,4 +1,5 @@
 import bulkNotifications from './pl-PL/bulkNotifications';
+import codeExercises from './pl-PL/codeExercises';
 import component from './pl-PL/component';
 import consultations from './pl-PL/consultations';
 import courses from './pl-PL/courses';
@@ -110,6 +111,7 @@ export default {
   ...consultations,
   ...fabric,
   ...vouchers,
+  ...codeExercises,
   ...courses,
   ...insights,
   ...events,

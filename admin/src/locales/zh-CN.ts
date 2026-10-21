@@ -1,3 +1,4 @@
+import codeExercises from './zh-CN/codeExercises';
 import component from './zh-CN/component';
 import globalHeader from './zh-CN/globalHeader';
 import insights from './zh-CN/insights';
@@ -25,4 +26,5 @@ export default {
   ...pwa,
   ...component,
   ...templates,
+  ...codeExercises,
 };

@@ -1,3 +1,4 @@
+import codeExercises from './en-US/codeExercises';
 import component from './en-US/component';
 import globalHeader from './en-US/globalHeader';
 import menu from './en-US/menu';
@@ -159,6 +160,7 @@ export default {
   ...consultations,
   ...fabric,
   ...vouchers,
+  ...codeExercises,
   ...courses,
   ...insights,
   ...events,

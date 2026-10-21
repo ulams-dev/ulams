@@ -17,6 +17,7 @@ import MediaUpload from './media/upload';
 import Resources from './resources';
 
 import ScormSelector from '@/components/Scorm';
+import type { CodeExerciseTopicable } from '@/services/ulams/codeExercise';
 import type { InteractiveTopicable } from '@/services/ulams/interactive';
 import type { LayoutTopicable } from '@/services/ulams/layout';
 import {
@@ -25,6 +26,7 @@ import {
   AudioOutlined,
   BookOutlined,
   CarryOutOutlined,
+  CodeOutlined,
   ExclamationCircleOutlined,
   ExperimentOutlined,
   FileImageOutlined,
@@ -36,6 +38,7 @@ import {
   VideoCameraAddOutlined,
   YoutubeOutlined,
 } from '@ant-design/icons';
+import CodeExerciseTopicForm from './media/codeExercise';
 import GiftQuiz from './media/giftquiz';
 import InteractiveTopicForm from './media/interactive';
 import LayoutTopicForm from './media/layout';
@@ -71,6 +74,8 @@ export const getTypeIcon = (type: string | undefined) => {
         return <BookOutlined />;
       case 'InteractiveTopic':
         return <ExperimentOutlined />;
+      case 'CodeExerciseTopic':
+        return <CodeOutlined />;
       case 'LayoutTopic':
         return <AppstoreOutlined />;
       case 'LtiLink':
@@ -327,6 +332,26 @@ export const Topic: React.FC = () => {
           {type && type === TopicType.Interactive && (
             <InteractiveTopicForm
               topicable={topic?.topicable as InteractiveTopicable | undefined}
+              onChange={(fields) =>
+                Object.entries(fields).forEach(([key, value]) =>
+                  updateValue(key as keyof API.Topic, value),
+                )
+              }
+            />
+          )}
+          {type && type === TopicType.CodeExercise && (
+            <CodeExerciseTopicForm
+              topicable={topic?.topicable as CodeExerciseTopicable | undefined}
+              courseId={state?.id}
+              topicId={topic?.id}
+              isNew={!!topic?.isNew}
+              learnerUrl={
+                initialState?.demo?.frontUrl ??
+                siblingAppUrl(window.location, 'admin', 'app') ??
+                (typeof initialState?.publicConfig?.frontURL === 'string'
+                  ? initialState.publicConfig.frontURL
+                  : null)
+              }
               onChange={(fields) =>
                 Object.entries(fields).forEach(([key, value]) =>
                   updateValue(key as keyof API.Topic, value),
