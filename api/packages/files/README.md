@@ -3,9 +3,6 @@
 Files browser package
 
 [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/Files/)
-[![codecov](https://codecov.io/gh/Ulams/Files/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Files)
-[![phpunit](https://github.com/EscolaLMS/Files/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Files/actions/workflows/test.yml)
-[![Maintainability](https://api.codeclimate.com/v1/badges/99e3f317974d77113a6a/maintainability)](https://codeclimate.com/github/Ulams/Files/maintainability)
 
 ## What does it do
 
@@ -28,8 +25,6 @@ All the endpoints are defined in [![swagger](https://img.shields.io/badge/docume
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests.
-[![phpunit](https://github.com/EscolaLMS/Files/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Files/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/Ulams/Files/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Files)
 
 ## Events
 

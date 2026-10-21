@@ -69,6 +69,10 @@ jobs:
       # The table in docs/decisions/README.md is generated from the ADR files (scripts/adr-index.mjs).
       - name: ADR index is up to date
         run: node scripts/adr-index.mjs --check
+      # Hostnames come from configuration (ULAMS_DOCS_URL, the tenant host pattern): no new hard-coded
+      # `ulams.app` host in source files. Legitimate ones are listed in scripts/hosts-allowed.txt.
+      - name: No hard-coded ulams.app hosts
+        run: node scripts/check-hosts.mjs
       # PostgreSQL has one tag in api/docker-compose.yml, every workflow, the CLI and the examples.
       - name: Pinned images agree
         run: node scripts/check-pinned-images.mjs
@@ -547,6 +551,11 @@ jobs:
           test "$(docker run --rm smoke-api php -r 'echo ini_get("session.upload_progress.enabled");')" = "0"
           docker run --rm smoke-api php-fpm -tt 2>&1 | grep -F 'php_admin_value[session.upload_progress.enabled] = 0'
           docker run --rm smoke-api php-fpm -t
+      # The written GPL source offer (api/docker/php/NOTICE) names this package list.
+      - name: Alpine package list for the GPL source offer
+        run: |
+          docker run --rm smoke-api sh -c 'test -s /usr/share/doc/ulams/apk-packages.txt && grep -E "^ffmpeg-[0-9]" /usr/share/doc/ulams/apk-packages.txt'
+          docker run --rm smoke-api grep -F 'apk-packages.txt' /usr/local/share/doc/ulams-php/NOTICE
 
   # The static images (admin, legacy front) run as non-root on nginx-unprivileged (ADR 0056):
   # build them, start them with settings in the environment and check what they serve.

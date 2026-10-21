@@ -9,6 +9,8 @@ export const DOCS_DIR = join(SITE_DIR, "src/content/docs");
 export const REPO_URL = "https://github.com/ulams-dev/ulams";
 export const BLOB = `${REPO_URL}/blob/main`;
 export const TREE = `${REPO_URL}/tree/main`;
+/** Images in a README are served from here: a `blob` URL is an HTML page, not the image. */
+export const RAW = REPO_URL.replace("https://github.com/", "https://raw.githubusercontent.com/") + "/main";
 export const EDIT = `${REPO_URL}/edit/main`;
 
 export const read = (rel) => readFileSync(join(ROOT, rel), "utf8");
@@ -116,7 +118,14 @@ export function rewriteLinks(md, sourceRel, mapInternal = () => null) {
     const kind = isDir(repoPath) ? TREE : BLOB;
     return `${kind}/${repoPath}${hash ? `#${hash}` : ""}`;
   };
+  // Relative images (package READMEs keep theirs in docs/img/) point at the raw file, not the GitHub page.
+  const fixImage = (target) => {
+    if (/^(https?:|data:|\/\/|#)/.test(target)) return target;
+    const [path] = target.split("#");
+    return `${RAW}/${path.startsWith("/") ? path.slice(1) : posix.normalize(posix.join(baseDir, path))}`;
+  };
   return md
+    .replace(/(!\[[^\]]*\]\()([^)\s]+)(\s+"[^"]*")?\)/g, (_, a, t, title = "") => `${a}${fixImage(t)}${title})`)
     .replace(/(\]\()([^)\s]+)(\s+"[^"]*")?\)/g, (_, a, t, title = "") => `${a}${fix(t)}${title})`)
     .replace(/^(\[[^\]]+\]:\s*)(\S+)/gm, (_, a, t) => `${a}${fix(t)}`);
 }

@@ -2,7 +2,6 @@
 
 Package Youtube integration 
 
-
 ## What does it do
 
 This package is used for creating Youtube livestream for Webinar in Ulams.
@@ -35,4 +34,3 @@ Or you can generated refresh token manual and enter for variable `services.youtu
 
 Run `./vendor/bin/phpunit --filter=Youtube` to run tests. See [tests](tests) folder as it's quite good staring point as documentation appendix.
 
-Test details [![codecov](https://codecov.io/gh/Ulams/Youtube/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Youtube) [![phpunit](https://github.com/EscolaLMS/Youtube/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Youtube/actions/workflows/test.yml)
