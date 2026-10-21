@@ -24,6 +24,7 @@ const PAGES: Array<[string, string]> = [
   ["skills", "/account/skills"],
   ["team", "/account/team"],
   ["team filtered", "/account/team?status=overdue"],
+  ["finish with the issued certificate", "/learn/2/finish"],
 ];
 
 test.use({ contextOptions: { reducedMotion: "reduce" } });
@@ -51,6 +52,7 @@ for (const [theme, slug] of THEMES) {
       await mockVerify(page);
       const response = await page.goto(`${host(slug)}${path}`, { waitUntil: "load" });
       expect(response?.status(), `HTTP status of ${path}`).toBe(200);
+      if (path.endsWith("/finish")) await expect(page.locator("ulams-certificate-badge section")).toBeVisible();
       const violations = await scan(page);
       expect(violations, violations.join("\n")).toEqual([]);
       // 1.4.10 reflow: no horizontal scroll at 320/360 px
@@ -180,4 +182,16 @@ test("the team view lists reports with overdue first and filters by status", asy
   await page.locator("select[name=status]").selectOption("assigned");
   await page.getByRole("button", { name: "Apply" }).click();
   await expect(page).toHaveURL(/status=assigned/);
+});
+
+test("the finish page shows the issued certificate for a finished course and a preview for an unfinished one", async ({ page }) => {
+  await mockVerify(page);
+  await page.goto(`${host("coffee")}/learn/2/finish`);
+  await expect(page.getByText("Your certificate", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Download PDF" })).toHaveAttribute("href", "/account/certificates/9.pdf");
+  await expect(page.getByRole("link", { name: "Verify", exact: true })).toBeVisible();
+  await expect(page.getByText("Preview: finish every topic")).toHaveCount(0);
+  await page.goto(`${host("coffee")}/learn/1/finish`);
+  await expect(page.getByRole("figure", { name: "Certificate preview" })).toBeVisible();
+  await expect(page.getByText("Preview: finish every topic to receive it")).toBeVisible();
 });

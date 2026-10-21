@@ -1,7 +1,9 @@
 ---
-/** Course finish: completion, certificate preview and what next. */
+/** Course finish: completion, the issued certificate (a labelled preview only while unfinished) and what next. */
 import Icon from "@ulams/ui/components/Icon.astro";
 import { completionPercent, flattenTopics } from "@ulams/sdk";
+import { formatDate, trainingLocale, trainingStrings } from "@ulams/ui/training-strings";
+import { certificateRow, loadCourseCertificate, siteOrigin } from "../../../lib/training.ts";
 import Base from "../../../layouts/Base.astro";
 import { apiFor, getProgram, getSettings } from "../../../lib/data.ts";
 import { themeFor } from "../../../lib/theme.ts";
@@ -25,14 +27,21 @@ const topics = flattenTopics(course);
 const remaining = topics.filter((t) => !progress.some((p) => p.topic_id === t.id && p.status === 1));
 const name = me ? [me.first_name, me.last_name].filter(Boolean).join(" ") : "Demo student";
 const finished = remaining.length === 0;
-const today = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "long", year: "numeric" }).format(new Date());
+const locale = trainingLocale(course.language);
+const t = trainingStrings(locale);
+const today = formatDate(locale, new Date().toISOString());
+// the real certificate, once the course is finished (never a mock for a finished course)
+const origin = siteOrigin(Astro.request.headers, Astro.locals.secure, Astro.url.origin);
+const issued = finished ? await loadCourseCertificate(tenant, token, courseId) : null;
+const row = issued ? certificateRow(issued, locale, new Date(), { webOrigin: origin, apiUrl: tenant.apiUrl }) : null;
+if (finished) Astro.response.headers.set("Cache-Control", "private, no-store");
 const company = settings?.global?.companyName ?? course.title;
 const headline = finished
   ? { coffee: "Your signature cup is ready.", oncall: "Incident closed. Well commanded.", nightsky: "Mission complete, explorer!", gravity: "Escape velocity reached", poland: "Measured and done", ulam: "Problem solved — no goose required", platform: "Course complete" }[theme]
   : { coffee: "The last page, almost.", oncall: "Almost there: a few items left.", nightsky: "So close to the stars!", gravity: "Almost in orbit", poland: "Nearly measured", ulam: "One more problem to go", platform: "Almost there" }[theme];
 ---
 
-<Base theme={theme} accent={settings?.theme?.accent} title={`Finish — ${course.title}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+<Base theme={theme} accent={settings?.theme?.accent} title={`Finish — ${course.title}`} lang={locale} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
   <main id="main" class="u-container u-finish">
     <div class="u-finish__confetti" aria-hidden="true">
       {Array.from({ length: 24 }, (_, i) => <i style={`--x:${(i * 37) % 100}%;--d:${(i % 7) * 0.15}s;--r:${(i * 47) % 360}deg`} />)}
@@ -44,17 +53,48 @@ const headline = finished
       <span>complete</span>
     </div>
 
-    <figure class="u-cert" aria-label="Certificate preview">
-      <p class="u-cert__org">{company}</p>
-      <p class="u-cert__label">Certificate of completion</p>
-      <p class="u-cert__name">{name}</p>
-      <p class="u-cert__course">{course.title}</p>
-      <p class="u-cert__meta">
-        <span>{today}</span>
-        <span>{finished ? "Issued" : "Preview: finish every topic to receive it"}</span>
-      </p>
-      <span class="u-cert__seal" aria-hidden="true"><Icon name="medal" /></span>
-    </figure>
+    {
+      row && issued ? (
+        <section class="u-finish__issued" aria-labelledby="issued-title">
+          <figure class="u-cert" aria-labelledby="issued-title">
+            <p class="u-cert__org">{company}</p>
+            <p class="u-cert__label" id="issued-title">{t.finishCertificate}</p>
+            <p class="u-cert__name">{name}</p>
+            <p class="u-cert__course">{row.title || course.title}</p>
+            <p class="u-cert__meta">
+              <span>{row.issued}</span>
+              <span>{row.statusText}</span>
+            </p>
+            <span class="u-cert__seal" aria-hidden="true"><Icon name="medal" /></span>
+          </figure>
+          <p class="u-actions u-finish__actions">
+            <a class="u-btn" href={row.downloadHref} download>{t.download}</a>
+            {row.verifyHref && <a class="u-btn u-btn--ghost" href={row.verifyHref}>{t.verify}</a>}
+          </p>
+          {
+            issued.certificate_id && (
+              <ulams-certificate-badge certificate-id={issued.certificate_id} api-url={tenant.apiUrl} verify-href={`${origin}/certificates/verify/{id}`} lang={locale} />
+            )
+          }
+        </section>
+      ) : finished ? (
+        <p class="u-finish__note">
+          {t.finishNotIssued} <a href="/account/training#certificates">{t.accountTrainingLink}</a>
+        </p>
+      ) : (
+        <figure class="u-cert" aria-label={t.finishPreview}>
+          <p class="u-cert__org">{company}</p>
+          <p class="u-cert__label">{t.finishPreview}</p>
+          <p class="u-cert__name">{name}</p>
+          <p class="u-cert__course">{course.title}</p>
+          <p class="u-cert__meta">
+            <span>{today}</span>
+            <span>{t.finishPreviewNote}</span>
+          </p>
+          <span class="u-cert__seal" aria-hidden="true"><Icon name="medal" /></span>
+        </figure>
+      )
+    }
 
     {
       !finished && (
@@ -78,6 +118,10 @@ const headline = finished
     </p>
   </main>
 </Base>
+
+<script>
+  import "@ulams/ui/elements/certificate-badge.ts";
+</script>
 
 <style>
   .u-finish {
@@ -239,6 +283,16 @@ const headline = finished
   .u-finish__left a:hover {
     border-color: var(--ulams-color-primary);
     transform: translateX(4px);
+  }
+  .u-finish__issued {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    justify-items: center;
+  }
+  .u-finish__note {
+    color: var(--ulams-color-muted);
+    max-width: 52ch;
   }
   .u-finish__actions {
     justify-content: center;
