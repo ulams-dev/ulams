@@ -81,6 +81,8 @@ jobs:
           version=$(docker run --rm "$base" php -r 'echo PHP_VERSION;')
           echo "$base is PHP $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
+          alpine=$(docker run --rm "$base" cat /etc/alpine-release)
+          echo "alpine=$alpine" >> "$GITHUB_OUTPUT"
 
       - name: PHP base metadata
         id: php-meta
@@ -96,6 +98,7 @@ jobs:
             org.opencontainers.image.title=ulams php
             org.opencontainers.image.description=PHP 8.4 FPM runtime of the ulams API (official php:8.4-fpm-alpine plus extensions and tools). Third-party notices: /usr/local/src/ulams-php/NOTICE
             org.opencontainers.image.licenses=Apache-2.0
+            org.ulams.alpine-release=${{ steps.php-version.outputs.alpine }}
           annotations: |
             org.opencontainers.image.title=ulams php
             org.opencontainers.image.description=PHP 8.4 FPM runtime of the ulams API
@@ -118,6 +121,21 @@ jobs:
           sbom: true
           cache-from: type=gha,scope=php
           cache-to: type=gha,scope=php,mode=max
+
+      # Part of the written GPL source offer (api/docker/php/NOTICE): the exact Alpine packages of the image.
+      - name: Alpine package list in the run summary
+        env:
+          IMAGE: ${{ env.IMAGE_PREFIX }}/php@${{ steps.php.outputs.digest }}
+        run: |
+          docker pull "$IMAGE"
+          {
+            echo "<details><summary>Alpine packages in the PHP image (GPL source offer)</summary>"
+            echo
+            echo '```'
+            docker run --rm "$IMAGE" cat /usr/share/doc/ulams/apk-packages.txt
+            echo '```'
+            echo "</details>"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: API metadata
         id: api-meta

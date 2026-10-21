@@ -100,3 +100,9 @@ it to a public registry) must be able to provide the corresponding source. Alpin
 repository and the exact package versions in the image (`apk info -v`) cover that. The full
 list is in [`NOTICE`](NOTICE), copied into the image as
 `/usr/local/share/doc/ulams-php/NOTICE`.
+
+The NOTICE carries a written offer for the corresponding source (no source tarballs are
+published next to releases). The offer names `/usr/share/doc/ulams/apk-packages.txt`, the
+sorted `apk info -v` list written by `install.sh`, and the image label
+`org.ulams.alpine-release`, which `publish.yml` sets from `/etc/alpine-release` of the base
+image. `publish.yml` also prints the list in the run summary of every published image.
