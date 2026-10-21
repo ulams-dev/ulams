@@ -1921,6 +1921,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/commerce/webhooks/{provider}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Receive a signed order event of the commerce provider
+         * @description Inbound order events of a commerce provider (ADR 0130). Public route, authenticated by the signature with the
+         *     tenant's own secret, never by a session: the body is verified (HMAC over `<t>.<raw body>`, 300 s tolerance,
+         *     the secret being rotated out also accepted), its event id must equal the `Ulams-Event-Id` header, and its channel
+         *     must be this tenant's channel. A valid event is stored once per event id and queued; a duplicate answers 200
+         *     with no work. The payload is untrusted: only the envelope is read, and the job re-reads the order from the provider.
+         */
+        post: operations["commerce.webhooks.by-provider.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/compliance/assignments": {
         parameters: {
             query?: never;
@@ -16690,6 +16714,65 @@ export interface operations {
             };
             /** @description Server-side error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "commerce.webhooks.by-provider.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description duplicate delivery, nothing to do */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description the event is stored and queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description invalid or expired signature, malformed event or another tenant's channel */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown provider or webhooks not configured */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description body too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description rate limit */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
