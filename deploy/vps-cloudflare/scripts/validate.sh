@@ -89,4 +89,11 @@ else
   bad "shellcheck: $(cat "$tmp/out")"
 fi
 
+# the PostgreSQL upgrade scripts (POSIX sh, shared by every compose install)
+if docker run --rm -v "$root/../scripts:/mnt:ro" -w /mnt koalaman/shellcheck:stable -x -s sh -S warning pg-lib.sh pg-verify.sh pg-major-upgrade.sh pg-logical-upgrade.sh >"$tmp/out" 2>&1; then
+  ok "shellcheck deploy/scripts/pg-*.sh"
+else
+  bad "shellcheck deploy/scripts: $(cat "$tmp/out")"
+fi
+
 exit "$failed"
