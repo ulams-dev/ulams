@@ -11,7 +11,7 @@ COPY api/package.json api/package.json
 COPY admin/package.json admin/package.json
 COPY front/package.json front/package.json
 # scripts skipped: `max setup` runs as part of `max build`, husky needs .git
-RUN yarn install --frozen-lockfile --ignore-scripts --network-timeout 1000000000
+RUN n=1; until yarn install --frozen-lockfile --ignore-scripts --network-timeout 1000000000; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying yarn install ($n/3)" >&2; sleep 5; done
 COPY front/src/lib/ front/src/lib/
 # the Layout topic editor checks documents with the catalogue's schema checker and manifest
 COPY front/ui/src/schema.ts front/ui/src/schema.ts
