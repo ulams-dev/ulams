@@ -119,5 +119,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0105](0105-stream-tutor-answers-over-the-sse-event-log.md) | Stream tutor answers over the SSE event log | Accepted |
 | [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted |
 | [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Accepted |
+| [0190](0190-tenant-isolation-route-coverage.md) | Tenant isolation for every endpoint through one route-walking test and a public-route allow-list | Proposed |
+| [0191](0191-learning-benefit-claims-register.md) | Register of learning-benefit claims, checked in CI | Proposed |
 
 <!-- END GENERATED: adr-index -->
