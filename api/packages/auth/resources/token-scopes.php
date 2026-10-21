@@ -83,6 +83,9 @@ return [
     // Learner Insights: thresholds are tenant settings; everything else acts on the signed-in learner only
     ['api/admin/learner-insights*', 'settings'],
     ['api/learner-insights*', 'learner'],
+    // the course tutor: the learner's questions and conversations; the analytics are an admin area
+    ['api/admin/tutor*', 'settings'],
+    ['api/tutor*', 'learner'],
 
     // ---- enrolments (before the broader courses and users prefixes) ----------------------------
     ['api/admin/courses/*/access*', 'enrolments'],

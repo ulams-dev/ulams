@@ -285,6 +285,14 @@
             "area": "learner"
         },
         {
+            "pattern": "api/admin/tutor*",
+            "area": "settings"
+        },
+        {
+            "pattern": "api/tutor*",
+            "area": "learner"
+        },
+        {
             "pattern": "api/admin/courses/*/access*",
             "area": "enrolments"
         },

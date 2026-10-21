@@ -521,7 +521,10 @@
                   {
                     "title": "AI 导师",
                     "text": "只根据课程来源作答并附带引用，遇到超出范围的问题会明确说明。",
-                    "status": "coming"
+                    "status": "coming",
+                    "packages": [
+                      "tutor"
+                    ]
                   }
                 ],
                 "audience": "owner"

@@ -1004,3 +1004,14 @@ Where the code differs from the plan above, and what is still open:
   built around two source revisions, so an insights-triggered proposal needs its own entry point in
   `living-course` (owner of that package to review).
 - The studio Insights page and the admin settings screen are not built.
+
+## 22. Implementation notes (M4.7)
+
+- Retrieval ORs the words of the question (`to_tsquery`) instead of `websearch_to_tsquery`, which ANDs them:
+  a natural-language question rarely matches every word of one chunk. Ranking is `ts_rank_cd`.
+- The attempt guard reads open `QuizAttempt` rows directly (`topic-type-gift` was not changed): an attempt without
+  an end time that was never submitted stays open.
+- The index is checked for freshness at the first question (applied version or content hash) instead of listening to
+  every builder event; `tutor:index` forces a rebuild.
+- Top terms of the questions (8.6) are not computed: the analytics are counts and the out-of-scope share.
+- The tutor panel (learner UI), streaming and the eval command are open.

@@ -1,5 +1,5 @@
 {
- "summary": "565/636 covered, 71 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "570/636 covered, 66 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -914,24 +914,6 @@
    "status": "covered"
   },
   {
-   "key": "POST /api/admin/learner-insights/backfill",
-   "summary": "Build signals from existing data for a course or the whole tenant (queued)",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
-   "key": "GET /api/admin/learner-insights/courses/{course}/elements",
-   "summary": "The sections that confuse people: per element struggle rate, remediation and recovery, with the top reasons",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
-   "key": "GET /api/admin/learner-insights/courses/{course}/learners",
-   "summary": "Learners who are struggling or at risk, with the reasons (individual data)",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
    "key": "GET /api/admin/learner-insights/courses/{course}/settings",
    "summary": "Thresholds of one course: the overrides and the effective values",
    "command": "",
@@ -940,18 +922,6 @@
   {
    "key": "PUT /api/admin/learner-insights/courses/{course}/settings",
    "summary": "Replace the threshold overrides of one course",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
-   "key": "GET /api/admin/learner-insights/courses/{course}/summary",
-   "summary": "Per-course analytics: progress, completion, quiz performance, status distribution and interventions",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
-   "key": "GET /api/admin/learner-insights/learners/{user}/courses/{course}/timeline",
-   "summary": "One learner's signals in a course with element labels (support)",
    "command": "",
    "status": "excluded: not-for-cli"
   },
@@ -2141,6 +2111,12 @@
    "key": "DELETE /api/admin/translations/{id}",
    "summary": "Remove the specified translation",
    "command": "translations.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/tutor/courses/{course}/analytics",
+   "summary": "Anonymous tutor analytics for a course: questions, out-of-scope share and refusals during attempts",
+   "command": "tutor.courses-analytics",
    "status": "covered"
   },
   {
@@ -3773,6 +3749,30 @@
    "key": "GET /api/translations",
    "summary": "Get a list of public translations",
    "command": "public.translations-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/tutor/conversations/{conversation}",
+   "summary": "One of the learner's conversations with its messages",
+   "command": "my.tutor-conversations-list",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/tutor/conversations/{conversation}",
+   "summary": "Delete one of the learner's conversations",
+   "command": "my.tutor-conversations-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/tutor/courses/{course}/conversations",
+   "summary": "The learner's own conversations in a course",
+   "command": "my.tutor-courses-conversations",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/tutor/courses/{course}/messages",
+   "summary": "Ask the course tutor a question; it answers only from the course, with citations",
+   "command": "my.tutor-courses-messages",
    "status": "covered"
   },
   {
