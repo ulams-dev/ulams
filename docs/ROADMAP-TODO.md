@@ -818,7 +818,8 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [x] (new) OpenAPI covers the course builder and Living Course; SDK types and CLI spec regenerated (504 of 547 operations covered, 0 missing)
 - [x] (new) "My tokens" on the web account page (create, list, revoke; axe)
 - [ ] (new) M5 course-as-code: Blueprint v2, Markdown + directives format, sync base and conflict diffs
-      (after Phase 3; citations for author blocks pending #78)
+      (after Phase 3; citations for author blocks pending #78) (plan `docs/plans/phase-7-course-as-code.md`, draft, milestones
+      CAC-1..8 and M6-a/b, ADRs 0160–0161 Proposed; note: the schema becomes Blueprint v3 because v2 is already the content-type schema)
 - [ ] (new) M6 CLI release: npm `ulams` (pending #77), bun-compiled binaries (signing pending #76), Docker image
 - [ ] (new) Endpoints to import a blueprint as a builder version and export a course as a blueprint (for M5)
 
