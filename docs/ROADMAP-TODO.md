@@ -740,33 +740,48 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 
 ### 6.1 Certificates and compliance
 - [x] Extend existing Wellms certificates (don't duplicate) (`templates-pdf` extended with expiry, verification and revocation, #273)
-- [ ] (new) Remove ReportBro completely and replace it with **pdfme** (recommended: MIT, actively
+- [x] (new) Remove ReportBro completely and replace it with **pdfme** (recommended: MIT, actively
       maintained, WYSIWYG designer for variable-based PDF templates, JSON templates, QR/barcode schemas).
       Why: the ReportBro designer (`reportbro-designer`, AGPL-3.0) is bundled into admin, the server image
       runs `reportbro-lib` (AGPL-3.0), and the default `REPORTBRO_URL` sends certificate data to
       reportbro.com. Removal checklist:
-  - [ ] Admin: replace `components/PdfEditor` and `components/TemplateFields` with the `@pdfme/ui`
+      Note 2026-10-21 (P6R-1): all sub-items are done; the stale partial notes below are history. Kept on purpose: the converter, the
+      `templates-pdf:migrate-reportbro` command and the migration, until the release after the next tagged release; then an upgrade
+      step (ADR 0081) removes them and fails loudly if a ReportBro template remains (docs/plans/phase-6-remaining.md 4.1).
+  - [x] Admin: replace `components/PdfEditor` and `components/TemplateFields` with the `@pdfme/ui`
         designer; drop `reportbro-designer` from `admin/package.json` (partial: designer with variables
         panel, API preview and save done, typecheck/build pass; not yet exercised in a browser; admin
         Jest is broken at baseline, so the new helper tests in `PdfEditor/template.test.ts` do not run)
-  - [ ] API `templates-pdf`: replace `ReportBroService`/contract, the `reportbro/report/run` routes and
+        Note 2026-10-21 (P6R-1): the designer runs in a browser and is covered by `admin/src/e2e/mocked/pdfDesigner.e2e.spec.ts` (open,
+        add a field from the variables panel by pointer and keyboard, edit a field, preview, save, reopen; the legacy banner; axe
+        WCAG 2.2 AA on the variables panel). That suite runs in CI (job `admin-a11y`, mocked API). Admin Jest runs again (#335);
+        `reportbro-designer` is gone from `admin/package.json`.
+  - [x] API `templates-pdf`: replace `ReportBroService`/contract, the `reportbro/report/run` routes and
         `FabricPdfController` with a pdfme renderer client; keep the existing variables and
         `CourseFinished` flow; store templates as pdfme JSON (partial: done and tested —
         `PdfRendererContract`, `POST /api/admin/pdfs/preview`, fonts proxy, certificates rendered once
         and stored; uncommitted)
-  - [ ] Renderer: small MIT Node worker `api/pdf` (pdfme generator; the API image has no Node), reached
+        Note 2026-10-21 (P6R-1): merged (#273); covered by `PdfPreviewTest`, `PdfTest`, `TemplateTest`, `CertificateVerificationTest`.
+  - [x] Renderer: small MIT Node worker `api/pdf` (pdfme generator; the API image has no Node), reached
         over HTTP like `api/h5p`; QR schema for certificate verification URLs (6.1) (partial: service,
         tests and Docker image done; the QR points to `{APP_URL}/certificates/verify/{id}`, the
         verification page does not exist yet)
-  - [ ] Remove the `reportbro` service from `api/docker-compose.yml`, `REPORTBRO_URL` from config and
+        Note 2026-10-21 (P6R-1): the verification page now exists (`front/web/src/pages/certificates/verify/[id].astro`, #273).
+  - [x] Remove the `reportbro` service from `api/docker-compose.yml`, `REPORTBRO_URL` from config and
         `.env.example`, and its mentions in docs and `LICENSING.md` (partial: done; historical mentions
         remain in `docs/reports/phase-0-audit.md`, `docs/plans/phase-0.md` and ADR 0002)
-  - [ ] Migrate existing templates (one-off converter or re-create); pdfme templates for the demo
+        Note 2026-10-21 (P6R-1): verified: no ReportBro service, route, env var or package remains; only the converter code below and
+        the historical mentions listed above.
+  - [x] Migrate existing templates (one-off converter or re-create); pdfme templates for the demo
         certificates; tests for template CRUD, rendering and the CourseFinished certificate (partial:
         converter migration + `templates-pdf:migrate-reportbro` done; themed JSON for coffee/oncall/nightsky
         in `templates-pdf/resources/pdfme`, not yet assigned by the demo seeding)
-  - [ ] Until then: set `REPORTBRO_URL` to the local server so no data leaves the installation
+        Note 2026-10-21 (P6R-1): the themed templates are assigned by the demo seeding (`DemoExperience::certificateContent`, all
+        demo academies); `ReportBroMigrationTest` covers the converter.
+  - [x] Until then: set `REPORTBRO_URL` to the local server so no data leaves the installation
         (obsolete once the pdfme change is merged: ReportBro and `REPORTBRO_URL` are gone)
+        Note 2026-10-21 (P6R-1): obsolete and moot: ReportBro and `REPORTBRO_URL` are gone, so no certificate data leaves the
+        installation. Ticked because the goal holds; raise if you would rather have it left open.
 - [ ] (new) Policy lifecycle delivery: link the uploaded policy version and cited fragments to all departmental
       course variants; use departments, duration, seniority and experience from the course brief;
       apply an uploaded style guide and provision distinct branded department domains (Coming).
