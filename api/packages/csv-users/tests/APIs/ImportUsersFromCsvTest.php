@@ -40,6 +40,17 @@ class ImportUsersFromCsvTest extends TestCase
         $response->assertUnauthorized();
     }
 
+    public function testImportRefusesAReturnUrlOfAnotherSite(): void
+    {
+        $admin = $this->makeAdmin();
+        foreach (['https://evil.example/set-password', 'https://localhost.evil.example/set-password', '//evil.example/x'] as $url) {
+            $this->actingAs($admin, 'api')->postJson('/api/admin/csv/users', [
+                'file' => UploadedFile::fake()->create('users.csv'),
+                'return_url' => $url,
+            ])->assertUnprocessable()->assertJsonValidationErrors(['return_url']);
+        }
+    }
+
     public function testAccessToImportUsersFromCSV(): void
     {
         $admin = $this->makeAdmin();

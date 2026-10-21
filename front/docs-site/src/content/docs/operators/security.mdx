@@ -47,11 +47,22 @@ Sign-in with Google and Facebook is hardened (ADR 0121, [operator guide](/operat
 - the OAuth `state` is signed, expires after 10 minutes and works once;
 - an existing account is linked by e-mail only for a verified address in a trusted domain, never an
   admin, and an address the provider did not verify is never marked verified;
-- earlier versions stored the literal password `1` for accounts created through a provider: those
-  accounts now have no password. If you ran an earlier version, accounts created by social login
-  before this fix can be signed in with the password `1`; ask those users to reset their password (or
-  reset them yourself) after upgrading.
+- earlier versions stored the literal password `1` for accounts created through a provider. New
+  accounts have no password, and the upgrade step `disarm_legacy_social_passwords` replaces the
+  hash of the old ones with a random one nobody knows and revokes their tokens (see
+  [Upgrades](/operators/upgrades/)). Those users sign in with the provider again, or set a password
+  with "forgot password". Until you have run `ulams:upgrade` on a platform that was created before
+  this fix, those accounts can still be signed in to with the password `1`;
 - deactivating or deleting a user revokes all of their tokens.
+
+## Links in e-mails
+
+Every link the API builds from a `return_url` sent by the caller (password reset, e-mail
+verification, account deletion, accounts created by an admin or imported from CSV) must point at the
+tenant's own front end, admin or one of `TRUSTED_ORIGINS`, by exact scheme, host and port. Any
+other URL is refused with `422` before an e-mail is sent, so a stranger cannot have a reset or
+verification token sent to another site. A front end on another origin (a staging copy, a second
+site) must be listed in `TRUSTED_ORIGINS` of that tenant.
 
 ## PHP upload progress is disabled
 

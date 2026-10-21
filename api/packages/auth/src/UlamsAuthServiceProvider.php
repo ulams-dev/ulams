@@ -8,6 +8,7 @@ use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Support\Facades\Event;
 use Laravel\Passport\Passport;
 use Ulams\Auth\Console\Commands\CreateAdminCommand;
+use Ulams\Auth\Console\Commands\DisarmLegacySocialPasswordsCommand;
 use Ulams\Auth\Console\Commands\ExportTokenScopesCommand;
 use Ulams\Auth\Console\Commands\PruneAgentAuditCommand;
 use Ulams\Auth\Console\Commands\PruneDeviceAuthorizationsCommand;
@@ -130,6 +131,7 @@ class UlamsAuthServiceProvider extends ServiceProvider
         ], self::CONFIG_KEY . '.config');
         $this->commands([
             CreateAdminCommand::class,
+            DisarmLegacySocialPasswordsCommand::class,
             ExportTokenScopesCommand::class,
             PruneAgentAuditCommand::class,
             PruneDeviceAuthorizationsCommand::class,
