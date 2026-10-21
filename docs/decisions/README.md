@@ -121,8 +121,15 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Accepted |
 | [0108](0108-signed-images-and-cve-scanning.md) | Keyless-signed images, SBOM release assets and Trivy scanning with a patch policy | Proposed |
 | [0109](0109-helm-chart-next-to-the-stack-launcher.md) | A Helm chart for production Kubernetes next to the stack launcher | Proposed |
+| [0120](0120-identity-package-and-sso-libraries.md) | An identity package with onelogin/php-saml, an in-house OIDC client and an in-house SCIM server | Proposed |
+| [0121](0121-sso-login-handoff-account-linking-and-scim-tokens.md) | SSO login handoff by one-time code, strict account linking and SCIM tokens on service users | Proposed |
 | [0140](0140-policy-lifecycle-package.md) | Policy lifecycle as a package orchestrating Living Course, Course Builder and compliance | Proposed |
 | [0141](0141-department-academies-as-host-aliases.md) | Department academies as branded host aliases inside one tenant | Proposed |
 | [0142](0142-scoped-admins-by-group.md) | Scoped admins for partner and customer portals, scoped by group | Proposed |
+| [0160](0160-course-as-code-sync-through-blueprint-v3-import-versions.md) | Course-as-code sync through Blueprint v3 import versions | Proposed |
+| [0161](0161-cli-release-engineering.md) | CLI release engineering: release-please, npm trusted publishing, attested binaries | Proposed |
+| [0170](0170-code-exercise-runners.md) | Code exercises run in our own browser runner inside the opaque content-origin sandbox, with an optional gVisor server runner for verified grading | Proposed |
+| [0171](0171-extension-manifest-and-trust-model.md) | Extensions: operator-installed composer packages with an `ulams-extension.json` manifest, per-point contract versions and optional Sigstore signing | Proposed |
+| [0172](0172-hosted-mcp-gateway-on-cloudflare-workers.md) | Hosted MCP gateway on Cloudflare Workers sharing the CLI tool registry, OAuth at the gateway and scoped tokens upstream | Proposed |
 
 <!-- END GENERATED: adr-index -->

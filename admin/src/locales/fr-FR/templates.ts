@@ -29,4 +29,31 @@ export default {
     'Envoyé uniquement à votre adresse, avec le contenu actuel non enregistré.',
   'templates.test_sent': 'E-mail de test envoyé à {recipient}.',
   'templates.test_failed': 'L’e-mail de test n’a pas pu être envoyé.',
+  'templates.editor_mode': 'Mode d’édition',
+  'templates.editor_mode_code': 'Code',
+  'templates.editor_mode_visual': 'Visuel',
+  'templates.editor_beta': 'Bêta',
+  'templates.visual_beta_notice':
+    'Le mode visuel est en bêta et ne peut pas encore être utilisé entièrement au clavier. Utilisez Code pour une édition au clavier seul.',
+  'templates.visual_checking': 'Vérification que l’éditeur visuel peut représenter ce modèle...',
+  'templates.visual_loading': 'Chargement de l’éditeur visuel...',
+  'templates.visual_load_failed':
+    'L’éditeur visuel n’a pas pu être chargé. Vous pouvez continuer dans Code.',
+  'templates.visual_blocked': 'Ce modèle reste dans Code',
+  'templates.visual_blocked_html':
+    'Ce n’est pas un document MJML (pas d’élément racine <mjml>), l’éditeur visuel ne peut pas l’ouvrir.',
+  'templates.visual_blocked_lossy':
+    'L’éditeur visuel supprimerait ou modifierait le code ci-dessous. Votre modèle n’a pas été modifié.',
+  'templates.visual_lost': 'Serait supprimé ou modifié',
+  'templates.visual_added': 'Serait ajouté',
+  'templates.visual_more': '...et {count} de plus',
+  'templates.visual_convert': 'Convertir et vérifier',
+  'templates.visual_diff_title': 'Vérifier la conversion',
+  'templates.visual_diff_hint':
+    'Les lignes commençant par - sont supprimées et celles commençant par + sont ajoutées. Si vous confirmez, le texte du modèle est remplacé par le résultat et s’ouvre en Visuel. Si vous annulez, rien ne change.',
+  'templates.visual_diff_confirm': 'Remplacer et ouvrir Visuel',
+  'templates.visual_diff_cancel': 'Conserver mon MJML',
+  'templates.visual_canvas': 'Éditeur d’e-mails visuel',
+  'templates.visual_variables_hint':
+    'Saisissez une variable comme @VarUserName dans un bloc de texte. L’insertion depuis cette liste ne fonctionne que dans Code.',
 };

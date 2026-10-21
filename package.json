@@ -57,6 +57,7 @@
     "turbo": "^2.11.7"
   },
   "resolutions": {
+    "@types/mjml-core": "4.15.2",
     "**/dva-immer/immer": "^9.0.6",
     "**/fmin/rollup": "^2.79.2",
     "underscore": "^1.12.1",
