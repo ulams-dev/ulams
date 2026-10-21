@@ -401,8 +401,7 @@
                     "text": "监控课程来源，找出引用了变更段落的课时和测验题，并提出带引用的更新，供你作为一份差异统一审阅。学员进度按明确的规则保留。",
                     "packages": [
                       "living-course"
-                    ],
-                    "status": "coming"
+                    ]
                   },
                   {
                     "title": "与服务商无关的 LLM 层",
@@ -499,8 +498,7 @@
                     "text": "Living Course 的每个决定都会进入防篡改的审计轨迹，学员进度遵循明确的规则。",
                     "packages": [
                       "living-course"
-                    ],
-                    "status": "coming"
+                    ]
                   },
                   {
                     "title": "单门课程的作者分析",
@@ -513,7 +511,6 @@
                   {
                     "title": "有风险的学员",
                     "text": "基于规则的风险评分，带有易读的理由和按租户设置的阈值，并有限频的提醒。",
-                    "status": "coming",
                     "packages": [
                       "learner-insights"
                     ]

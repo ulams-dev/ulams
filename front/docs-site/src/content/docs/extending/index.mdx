@@ -13,12 +13,12 @@ to the monorepo: usually a new package in `api/packages`, plus a component in th
 Upgrades are merges, not plugin updates.
 
 <Aside type="caution" title="Planned, not built">
-The roadmap (Phase 7.3 and 7.4 in `docs/ROADMAP-PROMPT.md`) adds a plugin system: extension
+The roadmap (Phase 7.4 in `docs/ROADMAP-PROMPT.md`) adds a plugin system: extension
 points for content components, UI catalogue components, source connectors, risk rules, webhook
 consumers and admin pages, plus a plugin manifest with versioning and compatibility checks,
 installable without forking core. The marketplace is to be designed for but not built. None of
-it is implemented yet; every Phase 7 item in `docs/ROADMAP-TODO.md` is open. See the
-[roadmap](/roadmap/).
+it is implemented yet; the plugin system items of Phase 7.4 in `docs/ROADMAP-TODO.md` are open.
+See the [roadmap](/roadmap/).
 </Aside>
 
 ## Extension points that exist today
@@ -32,6 +32,8 @@ it is implemented yet; every Phase 7 item in `docs/ROADMAP-TODO.md` is open. See
 | Send something when an event happens | A template variables class registered with `Template::register` | [Templates and channels](/extending/templates-and-channels/) |
 | Take payments with another provider | A gateway driver added with `PaymentGateway::extend` (partial support) | [Payment drivers](/extending/payment-drivers/) |
 | React to domain events | `Event::listen` in your provider | [Events and listeners](/extending/events-and-listeners/) |
+| Notify your own systems when something happens | Signed outgoing webhooks with retries, replay and a delivery log, managed through the API and CLI | [Outgoing webhooks](/developers/outgoing-webhooks/) |
+| Let a script or an agent call the API with limited rights | Scoped tokens with an optional per-token rate limit, the `ulams` CLI and the `ulams mcp` server | [Scoped tokens](/developers/scoped-tokens/), [For AI agents](/developers/agents/) |
 | Embed an external tool, or embed ulams in another LMS | LTI 1.3, platform and tool | [LTI tools](/extending/lti-tools/) |
 | Add interactive content types | H5P libraries in the isolated H5P service | [H5P content types](/extending/h5p-content-types/) |
 
@@ -48,23 +50,18 @@ Every extension follows the project's non-negotiables (`CLAUDE.md`):
 ## Coming
 
 <CardGrid>
-  <Card title="Outgoing webhooks">
-    <Badge text="Coming" variant="caution" /> Stripe-style signed webhooks with retries, replay
-    and a delivery log (roadmap 7.3). Today the API only receives webhooks; see
-    [Events and listeners](/extending/events-and-listeners/).
-  </Card>
   <Card title="Plugin manifest">
     <Badge text="Coming" variant="caution" /> Versioned plugins with compatibility checks,
     installable without forking core (roadmap 7.4).
   </Card>
-  <Card title="Scoped API keys and SDKs">
-    <Badge text="Coming" variant="caution" /> Scoped API keys with rate limits, a complete
-    OpenAPI document, then a PHP SDK after the TypeScript one (roadmap 7.3). `@ulams/sdk` exists
-    today in `front/sdk` as a fetch-only client.
+  <Card title="Complete OpenAPI and a PHP SDK">
+    <Badge text="Coming" variant="caution" /> Typed response schemas exist for the 60 operations the CLI uses; the rest of the
+    OpenAPI document and a PHP SDK after the TypeScript one are still to come (roadmap 7.3).
+    `@ulams/sdk` exists today in `front/sdk` as a fetch-only client.
   </Card>
-  <Card title="MCP server">
-    <Badge text="Coming" variant="caution" /> Tools for agents operating the platform, for admins
-    and authors as well as learners (roadmap 7.5).
+  <Card title="Webhooks admin screen">
+    <Badge text="Coming" variant="caution" /> Webhook endpoints are managed through the API and CLI; a screen under **Settings** is
+    still to come.
   </Card>
 </CardGrid>
 

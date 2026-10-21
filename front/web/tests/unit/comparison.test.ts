@@ -109,7 +109,7 @@ describe("comparison data (public claims about other products)", () => {
       expect(cell.source, row).toMatch(/^https:\/\/github\.com\/ulams-dev\/ulams\/blob\/main\//);
     }
     expect(ulams.cells.mcp?.value).toBe("Yes");
-    expect(ulams.cells.webhooks?.value).toBe("Coming");
+    expect(ulams.cells.webhooks?.value).toBe("Yes");
     expect(ulams.cells.course_as_code?.value).toBe("Coming");
     expect(ulams.cells.cli?.value).toBe("Yes");
     expect(ulams.cells.generative_ui?.value).toBe("Partial");

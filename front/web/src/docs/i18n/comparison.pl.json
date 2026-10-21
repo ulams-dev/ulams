@@ -402,8 +402,7 @@
                     "text": "Obserwuje źródła kursu, znajduje lekcje i pytania quizowe, które cytują zmienione fragmenty, i proponuje aktualizacje z cytowaniami do przejrzenia jako jeden diff. Postępy uczących się zachowują jawne reguły.",
                     "packages": [
                       "living-course"
-                    ],
-                    "status": "coming"
+                    ]
                   },
                   {
                     "title": "Warstwa LLM niezależna od dostawcy",
@@ -500,8 +499,7 @@
                     "text": "Każda decyzja Living Course trafia do ścieżki audytu odpornej na modyfikacje, a postępy uczących się podlegają jawnym regułom.",
                     "packages": [
                       "living-course"
-                    ],
-                    "status": "coming"
+                    ]
                   },
                   {
                     "title": "Analityka kursu dla autorów",
@@ -514,7 +512,6 @@
                   {
                     "title": "Uczący się zagrożeni porażką",
                     "text": "Punktacja ryzyka oparta na regułach, z czytelnymi uzasadnieniami i progami dla każdego tenanta, oraz ograniczane częstotliwościowo przypomnienia.",
-                    "status": "coming",
                     "packages": [
                       "learner-insights"
                     ]

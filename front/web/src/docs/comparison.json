@@ -402,8 +402,7 @@
                     "text": "Watches the sources of a course, finds the lessons and quiz questions that cite changed passages and proposes cited updates for you to review as one diff. Learner progress is preserved by explicit rules.",
                     "packages": [
                       "living-course"
-                    ],
-                    "status": "coming"
+                    ]
                   },
                   {
                     "title": "Provider-agnostic LLM layer",
@@ -500,8 +499,7 @@
                     "text": "Every Living Course decision lands in a tamper-evident audit trail, and learner progress follows explicit rules.",
                     "packages": [
                       "living-course"
-                    ],
-                    "status": "coming"
+                    ]
                   },
                   {
                     "title": "Per-course author analytics",
@@ -514,7 +512,6 @@
                   {
                     "title": "At-risk learners",
                     "text": "Rule-based risk scoring with human-readable reasons and per-tenant thresholds, and rate-limited nudges.",
-                    "status": "coming",
                     "packages": [
                       "learner-insights"
                     ]

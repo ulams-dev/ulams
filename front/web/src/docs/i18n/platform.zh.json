@@ -320,8 +320,7 @@
                 "note": "REST API"
               },
               {
-                "label": "Webhooks",
-                "status": "coming"
+                "label": "Webhooks"
               }
             ],
             "research": {
