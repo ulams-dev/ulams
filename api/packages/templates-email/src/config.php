@@ -4,6 +4,9 @@ return [
     'mjml' => [
         'api_url'          => env('MJML_API_URL', false),
         'use_api'          => env('MJML_USE_API', false),
+        // Seconds; the render service is internal, so keep them short
+        'connect_timeout'  => (int) env('MJML_CONNECT_TIMEOUT', 5),
+        'timeout'          => (int) env('MJML_TIMEOUT', 20),
         //
         'binary_path'      => env('MJML_BINARY_PATH'),
         //
