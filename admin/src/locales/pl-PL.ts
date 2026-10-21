@@ -5,6 +5,7 @@ import courses from './pl-PL/courses';
 import events from './pl-PL/events';
 import fabric from './pl-PL/fabric';
 import globalHeader from './pl-PL/globalHeader';
+import insights from './pl-PL/insights';
 import menu from './pl-PL/menu';
 import notifications from './pl-PL/notifications';
 import pages from './pl-PL/pages';
@@ -110,6 +111,7 @@ export default {
   ...fabric,
   ...vouchers,
   ...courses,
+  ...insights,
   ...events,
   ...bulkNotifications,
   branding: 'Branding',

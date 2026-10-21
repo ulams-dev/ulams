@@ -383,3 +383,21 @@ a.cb-fresh:hover { border-color: var(--ulams-studio-iris); }
 .cb-add-form { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
 .cb-variant-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 12px; }
 .cb-variant-approved { border-color: var(--ulams-studio-success); }
+
+/* Insights: figures, rate bars (decorative: the number is the content) and the data table */
+.cb-figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 0; }
+.cb-figure { background: var(--ulams-studio-sunken); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.cb-figure dt { font-size: 0.8rem; color: var(--ulams-studio-muted); }
+.cb-figure dd { margin: 0; font-size: 1.5rem; font-family: var(--ulams-studio-serif); display: flex; flex-direction: column; gap: 2px; overflow-wrap: anywhere; }
+.cb-figure-note { font-family: var(--ulams-studio-sans); font-size: 0.8rem; }
+.cb-rate { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.cb-rate-text { font-variant-numeric: tabular-nums; }
+.cb-rate-bar { display: inline-block; width: 64px; height: 8px; border-radius: 4px; background: var(--ulams-studio-line); overflow: hidden; }
+.cb-rate-fill { display: block; height: 100%; background: var(--ulams-studio-ink); }
+.cb-ins-scroll { position: relative; overflow-x: auto; border: 1px solid var(--ulams-studio-line); border-radius: var(--ulams-studio-radius); background: var(--ulams-studio-surface); }
+.cb-ins-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.cb-ins-table th, .cb-ins-table td { padding: 10px 12px; vertical-align: top; text-align: left; border-top: 1px solid var(--ulams-studio-line); }
+.cb-ins-table thead th { border-top: 0; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ulams-studio-muted); background: var(--ulams-studio-sunken); }
+.cb-ins-table tbody th { font-weight: 600; }
+.cb-ins-table .cb-num { text-align: right; font-variant-numeric: tabular-nums; }
+.cb-ins-table .cb-row-withheld th, .cb-ins-table .cb-row-withheld td { color: var(--ulams-studio-muted); font-style: italic; font-weight: 400; }

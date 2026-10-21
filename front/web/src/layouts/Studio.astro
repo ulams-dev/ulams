@@ -15,12 +15,15 @@ interface Props {
   /** Status pill text (e.g. "Draft · not published"). */
   status?: string;
   sessionId?: string | null;
-  active?: "builder" | "workspace" | "preview" | "done" | "sessions" | "sources" | "updates" | "audit";
+  active?: "builder" | "workspace" | "preview" | "done" | "sessions" | "sources" | "updates" | "audit" | "insights";
   /** The session has a course: updates can be proposed for it. */
   hasCourse?: boolean;
+  /** The course the page is about: adds "Insights", which is keyed by course, so it also works without a session. */
+  courseId?: number | null;
 }
 
-const { title, crumb, status, sessionId, active = "builder", hasCourse = false } = Astro.props;
+const { title, crumb, status, sessionId, active = "builder", hasCourse = false, courseId = null } = Astro.props;
+const insights = courseId === null ? [] : [{ key: "insights", href: `/studio/courses/${courseId}/insights`, label: "Insights" }];
 const nav = [
   { key: "sessions", href: "/studio", label: "Sessions" },
   ...(sessionId
@@ -33,8 +36,11 @@ const nav = [
         { key: "sources", href: `/studio/s/${sessionId}/sources`, label: "Sources" },
         ...(hasCourse ? [{ key: "updates", href: `/studio/s/${sessionId}/updates`, label: "Updates" }] : []),
         { key: "audit", href: `/studio/s/${sessionId}/audit`, label: "Audit" },
+        ...insights,
       ]
-    : [{ key: "builder", href: "/studio/new", label: "New course" }]),
+    : courseId === null
+      ? [{ key: "builder", href: "/studio/new", label: "New course" }]
+      : insights),
 ];
 ---
 
