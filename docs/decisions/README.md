@@ -117,7 +117,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0103](0103-outgoing-webhooks-package.md) | Outgoing webhooks as a package with Stripe-style signatures and the shared SSRF-safe client | Proposed |
 | [0104](0104-machine-readable-docs-and-public-schemas.md) | Machine-readable documentation: llms.txt, Markdown pages and public JSON Schemas | Proposed |
 | [0105](0105-stream-tutor-answers-over-the-sse-event-log.md) | Stream tutor answers over the SSE event log | Accepted |
-| [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted |
+| [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted (2026-10-21), amended 2026-10-21 (P5R-1) |
 | [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Accepted |
 | [0108](0108-signed-images-and-cve-scanning.md) | Keyless-signed images, SBOM release assets and Trivy scanning with a patch policy | Proposed |
 | [0109](0109-helm-chart-next-to-the-stack-launcher.md) | A Helm chart for production Kubernetes next to the stack launcher | Proposed |
