@@ -39725,6 +39725,48 @@
     ]
    }
   },
+  "/api/tutor/courses/{course}/status": {
+   "get": {
+    "operationId": "tutor.courses.by-course.status.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiJson"
+        }
+       }
+      },
+      "description": "`enabled` (tutor on for the tenant), `aiEnabled` (AI on), `remaining` and `dailyLimit` questions, `attemptActive` (a quiz attempt is open: the tutor explains concepts only)"
+     },
+     "403": {
+      "description": "The learner may not attend the course"
+     },
+     "404": {
+      "description": "Unknown course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Whether the course tutor is available to the learner, how many questions are left today and whether a quiz attempt is open",
+    "tags": [
+     "Tutor"
+    ]
+   }
+  },
   "/api/tutors": {
    "get": {
     "description": "Get Tutors",

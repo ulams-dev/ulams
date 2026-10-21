@@ -184,6 +184,48 @@ class TutorTest extends TestCase
         $this->actingAs($this->learner(), 'api')->postJson('/api/tutor/courses/99999/messages', ['text' => 'A question'])->assertNotFound();
     }
 
+    public function testStatusTellsThePageWhatItNeeds(): void
+    {
+        $user = $this->learner();
+        $url = "/api/tutor/courses/{$this->course->getKey()}/status";
+
+        $this->actingAs($user, 'api')->getJson($url)->assertOk()->assertExactJson(['data' => [
+            'enabled' => true, 'aiEnabled' => true, 'remaining' => 30, 'dailyLimit' => 30, 'attemptActive' => false,
+        ]]);
+        $this->ask($user, 'About ' . $this->topicWord())->assertOk();
+        $this->actingAs($user, 'api')->getJson($url)->assertJsonPath('data.remaining', 29);
+
+        $this->openAttempt($user);
+        $this->actingAs($user, 'api')->getJson($url)->assertJsonPath('data.attemptActive', true);
+        // another learner's open attempt is not this learner's
+        $this->actingAs($this->learner(), 'api')->getJson($url)->assertJsonPath('data.attemptActive', false);
+
+        config(['tutor.enabled' => false]);
+        $this->actingAs($user, 'api')->getJson($url)->assertOk()->assertJsonPath('data.enabled', false);
+    }
+
+    public function testStatusIsGatedByCourseAccessAndTenant(): void
+    {
+        $url = "/api/tutor/courses/{$this->course->getKey()}/status";
+        Auth::forgetGuards();
+        $this->getJson($url)->assertUnauthorized();
+        $this->actingAs($this->student(), 'api')->getJson($url)->assertForbidden();
+        $this->actingAs($this->learner(), 'api')->getJson('/api/tutor/courses/99999/status')->assertNotFound();
+
+        $user = $this->learner();
+        $headers = ['Authorization' => 'Bearer ' . $user->createToken('test')->accessToken];
+        $this->getJson($url, $headers)->assertOk();
+        Auth::forgetGuards();
+        $key = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
+        openssl_pkey_export($key, $private);
+        config(['passport.private_key' => $private, 'passport.public_key' => openssl_pkey_get_details($key)['key']]);
+        foreach ([AuthorizationServer::class, ResourceServer::class, AccessTokenRepository::class] as $service) {
+            $this->app->forgetInstance($service);
+        }
+        Auth::forgetGuards();
+        $this->getJson($url, $headers)->assertUnauthorized();
+    }
+
     public function testConversationsBelongToTheLearner(): void
     {
         $user = $this->learner();

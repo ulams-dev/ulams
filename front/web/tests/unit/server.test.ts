@@ -86,6 +86,22 @@ describe("BFF rules", () => {
     // author routes are only reachable through the studio BFF
     expect(matchBffRule("GET", "/api/admin/living-course/sessions/01hzzzzzzzzzzzzzzzzzzzzzzz/audit")).toBeNull();
   });
+  it("forwards the learner tutor routes and nothing else of the tutor", () => {
+    const id = "01JCONV00000000000000000AA";
+    expect(matchBffRule("GET", "/api/tutor/courses/5/status")).not.toBeNull();
+    expect(matchBffRule("POST", "/api/tutor/courses/5/messages")).not.toBeNull();
+    expect(matchBffRule("GET", "/api/tutor/courses/5/conversations")).not.toBeNull();
+    expect(matchBffRule("GET", `/api/tutor/conversations/${id}`)).not.toBeNull();
+    expect(matchBffRule("DELETE", `/api/tutor/conversations/${id}`)).not.toBeNull();
+    expect(matchBffRule("GET", "/api/tutor/courses/5/messages")).toBeNull();
+    expect(matchBffRule("POST", "/api/tutor/courses/5/status")).toBeNull();
+    expect(matchBffRule("PUT", `/api/tutor/conversations/${id}`)).toBeNull();
+    expect(matchBffRule("GET", "/api/tutor/courses/x/status")).toBeNull();
+    expect(matchBffRule("GET", "/api/tutor/conversations/short")).toBeNull();
+    expect(matchBffRule("GET", `/api/tutor/conversations/${id}/../../admin`)).toBeNull();
+    // the anonymous aggregates are for authors and admins, not the learner BFF
+    expect(matchBffRule("GET", "/api/admin/tutor/courses/5/analytics")).toBeNull();
+  });
   it("refuses cross-site writes", () => {
     const req = (headers: Record<string, string>, method = "POST") => new Request("http://coffee.app.localhost:4321/bff/x", { method, headers });
     expect(isSameOrigin(req({ origin: "http://coffee.app.localhost:4321" }), "http://coffee.app.localhost:4321")).toBe(true);

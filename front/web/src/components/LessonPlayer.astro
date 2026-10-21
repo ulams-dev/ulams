@@ -106,6 +106,8 @@ const Bar = preview ? "div" : "ulams-progress";
 const barAttrs = preview ? {} : { "course-id": courseId, "topic-id": topicId, complete: completionMode(topic), status: done ? "1" : "0" };
 const locked = (t: { preview?: boolean }) => !access && !t.preview;
 const resources = topic.resources ?? [];
+// Course tutor launcher: the same place on every lesson (WCAG 3.2.6); it hides itself when the tutor is off.
+const tutorOn = access && tracked;
 ---
 
 
@@ -240,6 +242,7 @@ const resources = topic.resources ?? [];
           <span />
         )
       }
+      {tutorOn && <ulams-tutor class="u-player__tutor" course-id={courseId} topic-id={topicId} />}
       {
         access && !preview ? (
           <button class="u-btn u-btn--sm u-player__complete" type="button" data-complete aria-pressed={done ? "true" : "false"} data-done-label="Completed" data-todo-label="Mark as complete">
@@ -259,6 +262,7 @@ const resources = topic.resources ?? [];
 
 <script>
   import "@ulams/ui/elements/progress.ts";
+  import "@ulams/ui/elements/tutor.ts";
 
   // browsers without ::details-content: open the program on desktop
   const tree = document.querySelector<HTMLDetailsElement>("[data-tree]");

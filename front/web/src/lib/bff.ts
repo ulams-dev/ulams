@@ -26,6 +26,12 @@ export const BFF_RULES: BffRule[] = [
   { method: "GET", pattern: /^\/api\/living-course\/courses\/\d+\/notices$/ },
   { method: "POST", pattern: /^\/api\/living-course\/notices\/\d+\/dismiss$/ },
   { method: "GET", pattern: /^\/api\/living-course\/courses\/\d+\/freshness$/ },
+  // Course tutor: the learner's own questions and conversations (the API scopes them to the caller)
+  { method: "GET", pattern: /^\/api\/tutor\/courses\/\d+\/status$/ },
+  { method: "POST", pattern: /^\/api\/tutor\/courses\/\d+\/messages$/ },
+  { method: "GET", pattern: /^\/api\/tutor\/courses\/\d+\/conversations$/ },
+  { method: "GET", pattern: /^\/api\/tutor\/conversations\/[0-9A-Za-z]{26}$/ },
+  { method: "DELETE", pattern: /^\/api\/tutor\/conversations\/[0-9A-Za-z]{26}$/ },
 ];
 
 export function matchBffRule(method: string, path: string): BffRule | null {

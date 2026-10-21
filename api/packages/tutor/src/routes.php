@@ -7,6 +7,7 @@ Route::group([
     'prefix' => 'api/tutor',
     'middleware' => ['auth:api'],
 ], function () {
+    Route::get('courses/{course}/status', [TutorController::class, 'status'])->whereNumber('course');
     Route::post('courses/{course}/messages', [TutorController::class, 'ask'])->whereNumber('course')->middleware('throttle:tutor');
     Route::get('courses/{course}/conversations', [TutorController::class, 'conversations'])->whereNumber('course');
     Route::get('conversations/{conversation}', [TutorController::class, 'show']);

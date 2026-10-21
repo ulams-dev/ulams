@@ -86,6 +86,9 @@ class TutorApi
         'tutorCoursesByCourseMessagesPost' => [
             'application/json',
         ],
+        'tutorCoursesByCourseStatusGet' => [
+            'application/json',
+        ],
     ];
 
     /**
@@ -1707,6 +1710,318 @@ class TutorApi
         $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
             'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation tutorCoursesByCourseStatusGet
+     *
+     * Whether the course tutor is available to the learner, how many questions are left today and whether a quiz attempt is open
+     *
+     * @param  int $course course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['tutorCoursesByCourseStatusGet'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array<string,mixed>
+     */
+    public function tutorCoursesByCourseStatusGet($course, string $contentType = self::contentTypes['tutorCoursesByCourseStatusGet'][0])
+    {
+        list($response) = $this->tutorCoursesByCourseStatusGetWithHttpInfo($course, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation tutorCoursesByCourseStatusGetWithHttpInfo
+     *
+     * Whether the course tutor is available to the learner, how many questions are left today and whether a quiz attempt is open
+     *
+     * @param  int $course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['tutorCoursesByCourseStatusGet'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of array<string,mixed>, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function tutorCoursesByCourseStatusGetWithHttpInfo($course, string $contentType = self::contentTypes['tutorCoursesByCourseStatusGet'][0])
+    {
+        $request = $this->tutorCoursesByCourseStatusGetRequest($course, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('array<string,mixed>' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('array<string,mixed>' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, 'array<string,mixed>', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = 'array<string,mixed>';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        'array<string,mixed>',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation tutorCoursesByCourseStatusGetAsync
+     *
+     * Whether the course tutor is available to the learner, how many questions are left today and whether a quiz attempt is open
+     *
+     * @param  int $course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['tutorCoursesByCourseStatusGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function tutorCoursesByCourseStatusGetAsync($course, string $contentType = self::contentTypes['tutorCoursesByCourseStatusGet'][0])
+    {
+        return $this->tutorCoursesByCourseStatusGetAsyncWithHttpInfo($course, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation tutorCoursesByCourseStatusGetAsyncWithHttpInfo
+     *
+     * Whether the course tutor is available to the learner, how many questions are left today and whether a quiz attempt is open
+     *
+     * @param  int $course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['tutorCoursesByCourseStatusGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function tutorCoursesByCourseStatusGetAsyncWithHttpInfo($course, string $contentType = self::contentTypes['tutorCoursesByCourseStatusGet'][0])
+    {
+        $returnType = 'array<string,mixed>';
+        $request = $this->tutorCoursesByCourseStatusGetRequest($course, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'tutorCoursesByCourseStatusGet'
+     *
+     * @param  int $course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['tutorCoursesByCourseStatusGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function tutorCoursesByCourseStatusGetRequest($course, string $contentType = self::contentTypes['tutorCoursesByCourseStatusGet'][0])
+    {
+
+        // verify the required parameter 'course' is set
+        if ($course === null || (is_array($course) && count($course) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $course when calling tutorCoursesByCourseStatusGet'
+            );
+        }
+
+
+        $resourcePath = '/api/tutor/courses/{course}/status';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($course !== null) {
+            $resourcePath = str_replace(
+                '{' . 'course' . '}',
+                ObjectSerializer::toPathValue($course),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'GET',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
