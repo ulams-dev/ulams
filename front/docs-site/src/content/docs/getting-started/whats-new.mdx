@@ -1,6 +1,6 @@
 ---
 title: What's new
-description: What each phase of the ulams roadmap has delivered so far (Phases 0 to 3 and the CLI, MCP server and API work of Phase 7), with links to the page that documents each feature.
+description: What each phase of the ulams roadmap has delivered so far (Phases 0 to 4 and 6, and the CLI, MCP server, API and webhook work of Phase 7), with links to the page that documents each feature.
 sidebar:
   order: 5
 ---
@@ -71,6 +71,26 @@ listed here. Features that exist only in the plan are marked "Coming" on their p
   [Living Course (developers)](/developers/living-course/).
 - Inbound webhooks and their signatures: [Webhooks](/developers/webhooks/).
 
+## Phase 4: Learner Insights and the course tutor (API)
+
+- **Learner Insights**: an append-only signal stream (H5P results included), transparent risk rules with reasons and
+  per-tenant thresholds, rate-limited nudges, personal remediations, analytics for authors and admins, an adaptive
+  interface profile and privacy controls: [Learner Insights](/admin/learner-insights/).
+- **Course tutor**: answers only from the course with citations, no help during an open quiz attempt, daily and
+  monthly limits: [Course tutor](/admin/tutor/).
+- Learners see and change what is recorded on the [personalisation and privacy page](/learners/personalisation/).
+- Not built yet: the studio Insights page, the learner remediation and adaptive components, and the tutor panel with
+  streaming answers.
+
+## Phase 6: Compliance and skills (API)
+
+- **Required training** with due dates, reminders and manager escalation, certificate validity per course,
+  recertification, public certificate verification and revocation: [Compliance](/admin/compliance/),
+  [Certificates](/admin/certificates/).
+- **Learning paths** with prerequisites, attribute enrolment rules, a compliance report and audit export, dashboard
+  numbers and scheduled e-mail reports, a competency framework with author-confirmed AI tags and skill profiles.
+- There is no admin screen for these yet. Sylius commerce, SAML/OIDC and SCIM are not built.
+
 ## Phase 7: CLI, MCP server and API
 
 - **`ulams` CLI** with one command registry for humans and agents: a stable JSON contract and exit codes, profiles, device
@@ -86,3 +106,6 @@ listed here. Features that exist only in the plan are marked "Coming" on their p
 - **Platform tenant API** for queued tenant provisioning, off by default: [Platform tenant API](/operators/platform-api/).
 - **OpenAPI and `@ulams/sdk`** regenerated from the API, including the builder and Living Course:
   [OpenAPI and SDK](/developers/openapi-and-sdk/), [SDK usage](/developers/sdk/).
+- **Outgoing webhooks**: signed and versioned deliveries with retries, replay, a delivery log and test sends, managed
+  through the API and CLI (no admin screen yet): [Outgoing webhooks](/developers/outgoing-webhooks/). Scoped tokens
+  also take a per-token rate limit and report usage.

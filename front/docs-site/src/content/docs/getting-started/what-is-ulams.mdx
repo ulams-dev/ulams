@@ -1,6 +1,6 @@
 ---
 title: What is ulams
-description: ulams in brief - a headless, multi-tenant LMS forked from Wellms, its planned Living Course and cited AI, and its open-source licensing.
+description: ulams in brief - a headless, multi-tenant LMS forked from Wellms, its Living Course and cited AI, and its open-source licensing.
 sidebar:
   order: 1
 ---
@@ -64,22 +64,35 @@ has its API at `coffee.localhost`, its learner site at `coffee.app.localhost` an
 - Demo mode for throwaway tenants: password-less login and an hourly reset
   ([demo academies](/getting-started/demos/)).
 - The Astro reference frontend for learners, used by the six demo academies.
+- **AI Course Builder with citations** and **Living Course**: upload sources, answer a short
+  interview, approve an outline, and get a course whose generated elements cite the source
+  fragments they are based on; when a source changes, ulams proposes the update as a reviewable
+  diff and keeps learner progress. AI proposes, the author approves. See
+  [Course Builder](/creators/course-builder/) and [Living Course](/admin/living-course/).
+- **Compliance** (`compliance` package): required training with due dates and manager
+  escalation, certificate validity with public verification and recertification, learning paths
+  and enrolment rules, reports and audit export, a dashboard, scheduled reports and a competency
+  framework with skill profiles. API only, no admin screen yet: [Compliance](/admin/compliance/).
+- **Learner Insights and the course tutor** (`learner-insights`, `tutor` packages): explainable
+  risk signals, nudges, personal remediations, author analytics and an adaptive interface
+  profile, and a tutor that answers only from the course. API only for now, plus the learner's
+  [personalisation and privacy page](/learners/personalisation/): [Learner Insights](/admin/learner-insights/),
+  [Course tutor](/admin/tutor/).
+- **Developer surface**: the `ulams` CLI, the MCP server, scoped tokens with per-token rate
+  limits and signed outgoing webhooks with retries and replay. See
+  [What's new](/getting-started/whats-new/).
 
 ## What is planned <Badge text="Coming" variant="caution" />
 
-None of the AI features are built yet; there is no LLM code in the repository.
-
-- **Living Course.** Courses connected to their sources (uploads, Git, later Drive or Notion).
-  When a source changes, ulams proposes an update as a diff, citing the changed fragments; the
-  author accepts or rejects it, and learner progress is preserved.
-- **AI Course Builder with citations.** Upload sources, answer a short interview, approve
-  learning objectives and an outline, and get a course where every generated element links to
-  the source fragment it is based on. AI proposes, the author approves every change. See
-  [Course Builder](/creators/course-builder/).
-- **Personalisation.** A new `learner-insights` module with explainable risk signals,
-  remediation and an AI tutor that answers only from course sources.
+- **The interfaces for the modules above.** An admin screen for compliance, a studio Insights
+  page and author analytics dashboard, learner components for remediation and an adaptive
+  layout, and the tutor panel with streaming answers.
 - **Commerce through Sylius** as a separate headless service, with the LMS keeping control of
   who has access.
+- **Identity**: SAML 2.0 and OIDC per tenant, and SCIM provisioning.
+- **Course-as-code with Git sync, a PHP SDK, knowledge export for company RAG, a plugin
+  manifest and `create-ulams`.**
+- **Self-hosting variants**: a Helm chart and the remaining deployment options (Phase 8).
 
 <Aside type="note">
 The order and status of these items are tracked in the [roadmap](/roadmap/). If a page in these

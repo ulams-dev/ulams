@@ -222,16 +222,16 @@
           "checkedAt": "2026-10-09"
         },
         "source_sync": {
-          "value": "Coming",
-          "note": "Living Course: update proposals as reviewable diffs",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
-          "checkedAt": "2026-10-09"
+          "value": "Yes",
+          "note": "Living Course: sources stay connected, updates arrive as reviewable cited diffs",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/living-course/src/UlamsLivingCourseServiceProvider.php",
+          "checkedAt": "2026-10-21"
         },
         "adaptive_paths": {
-          "value": "Coming",
-          "note": "Learner Insights package",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
-          "checkedAt": "2026-10-09"
+          "value": "Partial",
+          "note": "Learner Insights: risk rules, nudges and remediations through the API; adaptive learner interface not built",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/learner-insights/src/routes.php",
+          "checkedAt": "2026-10-21"
         },
         "h5p": {
           "value": "Yes",
@@ -312,7 +312,7 @@
         },
         "openapi": {
           "value": "Yes",
-          "note": "Generated with l5-swagger and served by the API; complete coverage is still on the roadmap",
+          "note": "Generated with l5-swagger; typed responses for 60 CLI operations, full coverage still on the roadmap",
           "source": "https://github.com/ulams-dev/ulams/blob/main/api/config/l5-swagger.php",
           "checkedAt": "2026-10-09"
         },
@@ -335,10 +335,10 @@
           "checkedAt": "2026-10-09"
         },
         "webhooks": {
-          "value": "Coming",
-          "note": "Roadmap 7.3: signed, retried outbound webhooks; payment gateways post to us today",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
-          "checkedAt": "2026-10-09"
+          "value": "Yes",
+          "note": "Signed outgoing webhooks with retries, replay and a delivery log (API and CLI; no admin screen yet)",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/webhooks/src/routes.php",
+          "checkedAt": "2026-10-21"
         },
         "course_as_code": {
           "value": "Coming",
