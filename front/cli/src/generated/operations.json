@@ -2814,6 +2814,12 @@
   "tag": "cmi5"
  },
  {
+  "method": "POST",
+  "path": "/api/commerce/webhooks/{provider}",
+  "summary": "Receive a signed order event of the commerce provider",
+  "tag": "Commerce webhooks"
+ },
+ {
   "method": "GET",
   "path": "/api/compliance/my-assignments",
   "summary": "My required training",

@@ -30538,6 +30538,60 @@
     ]
    }
   },
+  "/api/commerce/webhooks/{provider}": {
+   "post": {
+    "description": "Inbound order events of a commerce provider (ADR 0130). Public route, authenticated by the signature with the\ntenant's own secret, never by a session: the body is verified (HMAC over `<t>.<raw body>`, 300 s tolerance,\nthe secret being rotated out also accepted), its event id must equal the `Ulams-Event-Id` header, and its channel\nmust be this tenant's channel. A valid event is stored once per event id and queued; a duplicate answers 200\nwith no work. The payload is untrusted: only the envelope is read, and the job re-reads the order from the provider.",
+    "operationId": "commerce.webhooks.by-provider.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "duplicate delivery, nothing to do"
+     },
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the event is stored and queued"
+     },
+     "400": {
+      "description": "invalid or expired signature, malformed event or another tenant's channel"
+     },
+     "404": {
+      "description": "unknown provider or webhooks not configured"
+     },
+     "413": {
+      "description": "body too large"
+     },
+     "429": {
+      "description": "rate limit"
+     }
+    },
+    "summary": "Receive a signed order event of the commerce provider",
+    "tags": [
+     "Commerce webhooks"
+    ]
+   }
+  },
   "/api/compliance/my-assignments": {
    "get": {
     "operationId": "compliance.my-assignments.get",
@@ -40638,6 +40692,10 @@
   {
    "description": "cmi5",
    "name": "cmi5"
+  },
+  {
+   "description": "Commerce webhooks",
+   "name": "Commerce webhooks"
   },
   {
    "description": "Compliance",

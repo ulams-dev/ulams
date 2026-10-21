@@ -1,0 +1,80 @@
+---
+title: Entitlements and order events
+description: How a verified, idempotent order event from the commerce provider becomes (or removes) access to a course. Covers the entitlement model, the signed webhook, replay and duplicate handling, refunds, reconciliation and what is still a stub.
+sidebar:
+  order: 11
+modules:
+  - entitlements
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+<Aside type="caution">
+  This is the CM-1 prototype of Phase 6.4 (ADR 0130, still Proposed). No Sylius instance is wired in yet: the
+  flow is exercised with a fake provider in the test suite. The Wellms cart keeps granting access as before.
+</Aside>
+
+The LMS owns access. A commerce provider only reports that an order was paid, refunded or cancelled; it never
+decides who may open a course, and a browser redirect after payment never grants anything.
+
+## Entitlements
+
+An entitlement records one reason a user may open a course: `subject` (a course), `status` (`active`, `revoked`,
+`expired`), `valid_from` and `valid_until` (null = no end), `source_type` and a unique `source_key`. For an order
+line the key is `<provider>:<channel>:order_item:<id>`, so applying the same order twice changes nothing.
+
+`course_user` stays the projection that policies, H5P and SCORM read. `EntitlementService` is the only writer for
+purchased access and goes through `CourseAccessService`:
+
+- granting creates the entitlement and the `course_user` row, with the latest `valid_until` as `end_date`;
+- revoking marks the entitlement and recomputes the row: another active entitlement keeps access, otherwise the
+  row is removed. Progress is never deleted;
+- access that existed before the first purchase (an admin attached the course) is recorded as a `migration`
+  entitlement first, so a refund cannot remove it.
+
+## The order-event webhook
+
+`POST /api/commerce/webhooks/{provider}` is public. The credentials are:
+
+| Check | Refusal |
+|---|---|
+| `Ulams-Signature: t=<unix>,v1=<hex>`, HMAC-SHA256 over `<t>.<raw body>` with `COMMERCE_WEBHOOK_SECRET` (or `COMMERCE_WEBHOOK_SECRET_PREVIOUS` while rotating) | 400 |
+| `t` within 300 s of the server clock, so a captured request cannot be replayed later | 400 |
+| `Ulams-Event-Id` equals the payload `id`; payload matches schema `v1` | 400 |
+| Payload `channel_code` equals `COMMERCE_CHANNEL`, so a valid event for another tenant is refused | 400 |
+| Body at most 256 KB; rate limited | 413, 429 |
+| Unknown provider, or no secret or channel configured | 404 |
+
+A valid event is stored once per `(provider, event id)` and answers `202`; a redelivery answers `200` with
+`duplicate: true` and does nothing. Rejections are logged with the source address and never change state.
+
+The queued job (`ApplyOrderEvent`, 10 tries with backoff) does not trust the payload. Under a lock on the order
+it reads the order back from the provider and acts on the provider's current state: paid lines get entitlements,
+a refund or cancellation revokes, a line whose units were all refunded loses its entitlement, a goodwill amount
+refund keeps access, and an order the provider does not report as paid is `rejected`. An event whose per-order
+`sequence` is not above the last applied one is `stale`, so out-of-order delivery converges to the true state.
+Outcomes (`applied`, `stale`, `rejected`, `failed`) are kept in `commerce_order_events`.
+
+## Reconciliation
+
+`ulams:commerce:reconcile` reads the provider's event feed from a stored cursor, stores every event the LMS has
+not seen and applies it through the same job, then queues events that were stored but never applied. A blocked
+webhook URL or a dead worker on the provider side is therefore repaired. `--retry-failed` queues events the job
+gave up on again. Set `COMMERCE_RECONCILE=true` to run it every five minutes from the scheduler (per tenant).
+
+## Configuration
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `COMMERCE_CHANNEL` | none | The provider channel of this tenant |
+| `COMMERCE_WEBHOOK_SECRET` | none | Per-tenant HMAC secret (`whsec_...`) |
+| `COMMERCE_WEBHOOK_SECRET_PREVIOUS` | none | Secret being rotated out, accepted as well |
+| `COMMERCE_RECONCILE` | `false` | Schedule reconciliation every five minutes |
+
+## What is stubbed
+
+- The provider: `FakeCommerceProvider` (tests only) plays the Sylius Admin API and its event feed. The Sylius
+  adapter, the bridge bundle with its outbox, and `scripts/commerce-e2e.sh` follow in CM-3 and later.
+- Bundles are not expanded to courses yet: a paid line without a linked course fails the job loudly instead of
+  being skipped. Seat pools, the expiry job, the access backfill and the `CourseAccessService` decorator are CM-2 and CM-9.
+- The nightly `--full` sweep that compares paid orders with entitlements in both directions.

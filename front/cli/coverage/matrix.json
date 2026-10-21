@@ -1,5 +1,5 @@
 {
- "summary": "588/663 covered, 75 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "589/664 covered, 75 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -2814,6 +2814,12 @@
    "summary": "Launch a cmi5 AU",
    "command": "",
    "status": "excluded: content-runtime"
+  },
+  {
+   "key": "POST /api/commerce/webhooks/{provider}",
+   "summary": "Receive a signed order event of the commerce provider",
+   "command": "public.commerce-webhooks",
+   "status": "covered"
   },
   {
    "key": "GET /api/compliance/my-assignments",

@@ -167,6 +167,8 @@ return [
     ['api/admin/vouchers*', 'commerce'],
     ['api/admin/payments*', 'commerce'],
     ['api/admin/invoices*', 'commerce'],
+    // the provider's signed order events: verified by HMAC, timestamp and tenant channel, not by a token (ADR 0130)
+    ['api/commerce/webhooks/*', 'public'],
 
     // ---- reports -------------------------------------------------------------------------------
     ['api/admin/reports*', 'reports'],
