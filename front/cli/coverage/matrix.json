@@ -1,5 +1,5 @@
 {
- "summary": "570/641 covered, 71 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "580/646 covered, 66 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -170,6 +170,54 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/compliance/competencies",
+   "summary": "The competency framework as a tree",
+   "command": "compliance.competencies-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/competencies",
+   "summary": "Add a competency",
+   "command": "compliance.competencies-add",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/competencies/{id}",
+   "summary": "Rename or move a competency",
+   "command": "compliance.competencies-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/competencies/{id}",
+   "summary": "Delete a competency (its sub-competencies move up, course tags go)",
+   "command": "compliance.competencies-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/courses/{course}/competencies",
+   "summary": "Competency tags of a course (confirmed and suggested)",
+   "command": "compliance.courses-competencies",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/compliance/courses/{course}/competencies/suggest",
+   "summary": "Ask the AI which competencies the course teaches",
+   "command": "compliance.courses-competencies-suggest",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/compliance/courses/{course}/competencies/{competency}",
+   "summary": "Tag a course with a competency (confirmed by the author), or confirm a suggestion",
+   "command": "compliance.courses-competencies-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/compliance/courses/{course}/competencies/{competency}",
+   "summary": "Remove a tag or reject a suggestion",
+   "command": "compliance.courses-competencies-delete",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/compliance/courses/{course}/settings",
    "summary": "Compliance settings of a course (defaults when none are saved)",
    "command": "compliance.courses-settings-list",
@@ -299,6 +347,12 @@
    "key": "DELETE /api/admin/compliance/schedules/{id}",
    "summary": "Delete a scheduled report",
    "command": "compliance.schedules-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/compliance/users/{user}/skills",
+   "summary": "The skill profile of a user",
+   "command": "compliance.users-skills",
    "status": "covered"
   },
   {
@@ -914,24 +968,6 @@
    "status": "covered"
   },
   {
-   "key": "POST /api/admin/learner-insights/backfill",
-   "summary": "Build signals from existing data for a course or the whole tenant (queued)",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
-   "key": "GET /api/admin/learner-insights/courses/{course}/elements",
-   "summary": "The sections that confuse people: per element struggle rate, remediation and recovery, with the top reasons",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
-   "key": "GET /api/admin/learner-insights/courses/{course}/learners",
-   "summary": "Learners who are struggling or at risk, with the reasons (individual data)",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
    "key": "GET /api/admin/learner-insights/courses/{course}/settings",
    "summary": "Thresholds of one course: the overrides and the effective values",
    "command": "",
@@ -940,18 +976,6 @@
   {
    "key": "PUT /api/admin/learner-insights/courses/{course}/settings",
    "summary": "Replace the threshold overrides of one course",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
-   "key": "GET /api/admin/learner-insights/courses/{course}/summary",
-   "summary": "Per-course analytics: progress, completion, quiz performance, status distribution and interventions",
-   "command": "",
-   "status": "excluded: not-for-cli"
-  },
-  {
-   "key": "GET /api/admin/learner-insights/learners/{user}/courses/{course}/timeline",
-   "summary": "One learner's signals in a course with element labels (support)",
    "command": "",
    "status": "excluded: not-for-cli"
   },
@@ -2723,6 +2747,12 @@
    "key": "GET /api/compliance/my-paths",
    "summary": "My learning paths",
    "command": "my.compliance-my-paths",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/compliance/my-skills",
+   "summary": "My skill profile",
+   "command": "my.compliance-my-skills",
    "status": "covered"
   },
   {
