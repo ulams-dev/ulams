@@ -2,7 +2,8 @@
  * <ulams-practice activity-id="practice"> … li[data-challenge] … </ulams-practice>
  *
  * Scaffolded practice. Per challenge:
- * - hints (templates, one per tier) are shown one at a time, in tier order, on request;
+ * - hints (templates, one per tier) are shown one at a time, in tier order, on request; the attribute
+ *   `initial-hints` (0 to 3) shows the first ones when the challenge opens;
  * - a learner answer (radio option, or "I have tried it" for open tasks) is an *attempt*: it
  *   shows the feedback that explains why and fires `ulams:practice-attempt`
  *   ({ activityId, challengeId, optionIndex, correct }, bubbles) and `ulams:complete` on the document;
@@ -47,7 +48,7 @@ class UlamsPractice extends HTMLElement {
         return next ? `Show a hint (${next.dataset.label ?? "next"})` : "";
       };
       button.textContent = label();
-      button.addEventListener("click", () => {
+      const reveal = (focus: boolean): void => {
         const shown = this.hintsShown.get(challenge) ?? 0;
         const tpl = hints[shown];
         if (!tpl) return;
@@ -62,13 +63,19 @@ class UlamsPractice extends HTMLElement {
         if (shown + 1 >= hints.length) {
           // The button is about to disappear: move focus to the hint so it is not lost.
           button.remove();
-          p.tabIndex = -1;
-          p.focus();
+          if (focus) {
+            p.tabIndex = -1;
+            p.focus();
+          }
         } else {
           button.textContent = label();
         }
-      });
+      };
+      button.addEventListener("click", () => reveal(true));
+      // The learner's lesson view can show the first hints at the start (0 to 3); they stay one tier at a time.
+      const start = Math.max(0, Math.min(3, Number.parseInt(this.getAttribute("initial-hints") ?? "0", 10) || 0));
       hintBox.append(list, button);
+      for (let i = 0; i < start && i < hints.length; i++) reveal(false);
     }
     const actions = challenge.querySelector<HTMLElement>("[data-actions]");
     if (actions) actions.hidden = false;

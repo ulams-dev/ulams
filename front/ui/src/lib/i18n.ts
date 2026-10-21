@@ -98,6 +98,33 @@ export interface UiStrings {
   supportCorrect: string;
   supportNotQuite: string;
   supportNoScript: string;
+  /** Lesson shown in parts (adaptive lesson view). `{n}` and `{total}` are replaced. */
+  partsGroup: string;
+  partsStatus: string;
+  partsPrevious: string;
+  partsNext: string;
+  /** The learner's lesson view settings (adaptive presentation). */
+  lessonViewTitle: string;
+  lessonViewHelp: string;
+  lessonViewDensity: string;
+  lessonViewComfortable: string;
+  lessonViewCompact: string;
+  lessonViewChunking: string;
+  lessonViewWhole: string;
+  lessonViewSteps: string;
+  lessonViewNavigation: string;
+  lessonViewOverview: string;
+  lessonViewLinear: string;
+  lessonViewHints: string;
+  lessonViewHintsNone: string;
+  lessonViewSave: string;
+  lessonViewReset: string;
+  lessonViewSaved: string;
+  lessonViewFailed: string;
+  lessonViewSuggested: string;
+  lessonViewWhy: string;
+  lessonViewShowWhole: string;
+  lessonViewYours: string;
   supportThoughts: string;
   /** Added to the card heading when a lesson has several cards; `{n}` and `{total}` are replaced. */
   supportPosition: string;
@@ -214,6 +241,31 @@ const en: UiStrings = {
   supportCorrect: "Correct",
   supportNotQuite: "Not quite",
   supportNoScript: "Checking an answer needs JavaScript.",
+  partsGroup: "Lesson in parts",
+  partsStatus: "Part {n} of {total}",
+  partsPrevious: "Previous part",
+  partsNext: "Next part",
+  lessonViewTitle: "Lesson view",
+  lessonViewHelp: "Choose how lessons look. Only you see these choices, and they never change your results.",
+  lessonViewDensity: "Text spacing",
+  lessonViewComfortable: "Comfortable",
+  lessonViewCompact: "Compact",
+  lessonViewChunking: "Lesson parts",
+  lessonViewWhole: "Whole lesson",
+  lessonViewSteps: "One part at a time",
+  lessonViewNavigation: "Navigation",
+  lessonViewOverview: "Course overview",
+  lessonViewLinear: "Step by step",
+  lessonViewHints: "Hints shown at the start of an exercise",
+  lessonViewHintsNone: "None",
+  lessonViewSave: "Save lesson view",
+  lessonViewReset: "Reset to suggested",
+  lessonViewSaved: "Your lesson view is saved.",
+  lessonViewFailed: "The lesson view could not be saved. Try again in a moment.",
+  lessonViewSuggested: "We adjusted this lesson view for you.",
+  lessonViewWhy: "Why was it adjusted?",
+  lessonViewShowWhole: "Show the whole lesson",
+  lessonViewYours: "You changed the suggested lesson view.",
   supportThoughts: "Your thoughts (stay on this device)",
   supportPosition: "{n} of {total}",
   reflectPrompt: "Explain it in your own words",
@@ -328,6 +380,31 @@ const pl: UiStrings = {
   supportCorrect: "Dobrze",
   supportNotQuite: "Jeszcze nie",
   supportNoScript: "Sprawdzanie odpowiedzi wymaga JavaScriptu.",
+  partsGroup: "Lekcja w częściach",
+  partsStatus: "Część {n} z {total}",
+  partsPrevious: "Poprzednia część",
+  partsNext: "Następna część",
+  lessonViewTitle: "Widok lekcji",
+  lessonViewHelp: "Wybierz, jak wyglądają lekcje. Te ustawienia widzisz tylko Ty i nie zmieniają one Twoich wyników.",
+  lessonViewDensity: "Odstępy w tekście",
+  lessonViewComfortable: "Wygodne",
+  lessonViewCompact: "Zwarte",
+  lessonViewChunking: "Części lekcji",
+  lessonViewWhole: "Cała lekcja",
+  lessonViewSteps: "Jedna część naraz",
+  lessonViewNavigation: "Nawigacja",
+  lessonViewOverview: "Przegląd kursu",
+  lessonViewLinear: "Krok po kroku",
+  lessonViewHints: "Podpowiedzi widoczne na początku ćwiczenia",
+  lessonViewHintsNone: "Brak",
+  lessonViewSave: "Zapisz widok lekcji",
+  lessonViewReset: "Wróć do sugerowanego",
+  lessonViewSaved: "Widok lekcji został zapisany.",
+  lessonViewFailed: "Nie udało się zapisać widoku lekcji. Spróbuj za chwilę.",
+  lessonViewSuggested: "Dostosowaliśmy dla Ciebie widok tej lekcji.",
+  lessonViewWhy: "Dlaczego go zmieniono?",
+  lessonViewShowWhole: "Pokaż całą lekcję",
+  lessonViewYours: "Zmieniono sugerowany widok lekcji.",
   supportThoughts: "Twoje przemyślenia (zostają na tym urządzeniu)",
   supportPosition: "{n} z {total}",
   reflectPrompt: "Wyjaśnij to własnymi słowami",
@@ -442,6 +519,31 @@ const zh: UiStrings = {
   supportCorrect: "正确",
   supportNotQuite: "不太对",
   supportNoScript: "检查答案需要启用 JavaScript。",
+  partsGroup: "分段课程",
+  partsStatus: "第 {n} 部分，共 {total} 部分",
+  partsPrevious: "上一部分",
+  partsNext: "下一部分",
+  lessonViewTitle: "课程视图",
+  lessonViewHelp: "选择课程的显示方式。只有你能看到这些选择，它们不会影响你的成绩。",
+  lessonViewDensity: "文字间距",
+  lessonViewComfortable: "舒适",
+  lessonViewCompact: "紧凑",
+  lessonViewChunking: "课程分段",
+  lessonViewWhole: "整节课",
+  lessonViewSteps: "一次一部分",
+  lessonViewNavigation: "导航",
+  lessonViewOverview: "课程概览",
+  lessonViewLinear: "逐步前进",
+  lessonViewHints: "练习开始时显示的提示",
+  lessonViewHintsNone: "无",
+  lessonViewSave: "保存课程视图",
+  lessonViewReset: "恢复为建议设置",
+  lessonViewSaved: "课程视图已保存。",
+  lessonViewFailed: "无法保存课程视图，请稍后再试。",
+  lessonViewSuggested: "我们已为你调整了本课的视图。",
+  lessonViewWhy: "为什么调整？",
+  lessonViewShowWhole: "显示整节课",
+  lessonViewYours: "你更改了建议的课程视图。",
   supportThoughts: "你的想法（仅保存在此设备上）",
   supportPosition: "第 {n} 项，共 {total} 项",
   reflectPrompt: "用你自己的话解释",

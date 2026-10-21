@@ -38,7 +38,7 @@ if (dropCap) html = html.replace(/<p>(?!<em>[^<]*<\/em><\/p>)/, '<p class="u-dro
   .u-prose {
     max-width: 70ch;
     font-size: 1.0625rem;
-    line-height: 1.75;
+    line-height: var(--ulams-leading, 1.75);
   }
   .u-prose--sm {
     font-size: 0.9375rem;
@@ -47,12 +47,12 @@ if (dropCap) html = html.replace(/<p>(?!<em>[^<]*<\/em><\/p>)/, '<p class="u-dro
     font-size: 1.1875rem;
   }
   .u-prose :global(> * + *) {
-    margin-top: 1.1em;
+    margin-top: var(--ulams-flow-em, 1.1em);
   }
   .u-prose :global(h1),
   .u-prose :global(h2),
   .u-prose :global(h3) {
-    margin-top: 1.8em;
+    margin-top: var(--ulams-heading-gap, 1.8em);
     line-height: 1.2;
   }
   .u-prose :global(h1) {
