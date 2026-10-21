@@ -1,6 +1,5 @@
 # Course Access
 
-
 ## What does it do
 
 This package is used to manage access to the course for individual users and user groups. 
@@ -20,7 +19,6 @@ The endpoints are defined in [![swagger](https://img.shields.io/badge/documentat
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests.
-Test details [![codecov](https://codecov.io/gh/Ulams/Course-Access/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Course-Access)
 
 ## Events
 

@@ -2,7 +2,6 @@
 
 Package for statistics & reports
 
-
 ## Purpose
 
 This package contains web API for retrieving statistical data about other LMS components (or event any arbitrary non-LMS Models for which Metrics and/or Reports are registered).
@@ -87,8 +86,6 @@ All the endpoints are defined in [![swagger](https://img.shields.io/badge/docume
 ## Tests
 
 Run `./vendor/bin/phpunit --filter='Ulams\\Reports\\Tests'` to run tests.
-
-Test details: [![codecov](https://codecov.io/gh/Ulams/Reports/branch/main/graph/badge.svg?token=O91FHNKI6R)](https://codecov.io/gh/Ulams/Reports)
 
 ## Events
 

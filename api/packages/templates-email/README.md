@@ -2,7 +2,6 @@
 
 Package for email notifications with editable templates (for important user-related events)
 
-
 ## Purpose
 
 This package allows you to create email notifications for events emitted in Laravel app.
@@ -59,8 +58,6 @@ by `SettingsVariables::getHtmlSettingsValues()`.
 ## Tests
 
 Run `./vendor/bin/phpunit --filter 'Ulams\\TemplatesEmail\\Tests'` to run tests. See [tests](https://github.com/EscolaLMS/Templates-Email/tree/main/tests) folder as it contains a basic implementation of Variable (or Template description) class with minimal customisation - a quite good starting point for creating your own.
-
-Test details [![codecov](https://codecov.io/gh/Ulams/Templates-Email/branch/main/graph/badge.svg?token=O91FHNKI6R)](https://codecov.io/gh/Ulams/Templates-Email) [![Tests PHPUnit in environments](https://github.com/EscolaLMS/Templates-Email/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Templates-Email/actions/workflows/test.yml)
 
 ## Permissions
 
