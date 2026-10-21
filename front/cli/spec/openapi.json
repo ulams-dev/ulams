@@ -39563,6 +39563,9 @@
      },
      "404": {
       "description": "Not the learner's conversation"
+     },
+     "409": {
+      "description": "An answer is still being written"
      }
     },
     "security": [
@@ -39671,6 +39674,10 @@
           "nullable": true,
           "type": "string"
          },
+         "stream": {
+          "description": "Queue the answer and return 202 with a run id; read it at `GET /api/tutor/runs/{run}/events`. Ignored (the answer comes back in the response) when the operator switched streaming off",
+          "type": "boolean"
+         },
          "text": {
           "maxLength": 1000,
           "type": "string"
@@ -39701,11 +39708,24 @@
       },
       "description": "`answer`, `citations` (label, topic, source fragments), `refusal` (none, out_of_scope, attempt_active, unsafe), `inScope`, `remaining` questions today"
      },
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiJson"
+        }
+       }
+      },
+      "description": "`stream: true`: the question is stored and the answer is queued; `conversationId`, `runId`, `questionId`"
+     },
      "403": {
       "description": "The learner may not attend the course"
      },
      "404": {
       "description": "Unknown course or conversation"
+     },
+     "409": {
+      "description": "The conversation already has an answer running"
      },
      "429": {
       "description": "Daily or monthly limit reached, or too many requests"
@@ -39747,7 +39767,7 @@
         }
        }
       },
-      "description": "`enabled` (tutor on for the tenant), `aiEnabled` (AI on), `remaining` and `dailyLimit` questions, `attemptActive` (a quiz attempt is open: the tutor explains concepts only)"
+      "description": "`enabled` (tutor on for the tenant), `aiEnabled` (AI on), `remaining` and `dailyLimit` questions, `attemptActive` (a quiz attempt is open: the tutor explains concepts only), `streaming` (the operator allows streamed answers)"
      },
      "403": {
       "description": "The learner may not attend the course"
@@ -39762,6 +39782,47 @@
      }
     ],
     "summary": "Whether the course tutor is available to the learner, how many questions are left today and whether a quiz attempt is open",
+    "tags": [
+     "Tutor"
+    ]
+   }
+  },
+  "/api/tutor/runs/{run}/events": {
+   "get": {
+    "description": "Text events are a draft; the `CUSTOM` event `tutor.final` carries the validated answer with its citations and always replaces it. During an open quiz attempt only `tutor.final` is sent. The stream ends after `RUN_FINISHED` or `RUN_ERROR`, or after 25 seconds (reconnect with `Last-Event-ID`).",
+    "operationId": "tutor.runs.by-run.events.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "run",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "resume after this event id (or Last-Event-ID header)",
+      "in": "query",
+      "name": "after",
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "text/event-stream"
+     },
+     "404": {
+      "description": "Unknown run, or a run of another learner"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "AG-UI event stream (SSE) of one streamed tutor answer",
     "tags": [
      "Tutor"
     ]

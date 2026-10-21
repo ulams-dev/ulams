@@ -3913,6 +3913,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/tutor/runs/{run}/events",
+  "summary": "AG-UI event stream (SSE) of one streamed tutor answer",
+  "tag": "Tutor"
+ },
+ {
+  "method": "GET",
   "path": "/api/tutors",
   "summary": "",
   "tag": "Courses"
