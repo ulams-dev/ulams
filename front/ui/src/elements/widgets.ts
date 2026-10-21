@@ -34,6 +34,7 @@ ul { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
 a { color: var(--ulams-color-primary-on-light, #1d4ed8); text-underline-offset: 3px; }
 a.button { display: inline-flex; align-items: center; justify-self: start; min-height: 44px; padding: 0 16px; border-radius: 8px; background: var(--ulams-color-primary, #1d4ed8); color: var(--ulams-color-on-primary, #fff); font-weight: 700; text-decoration: none; }
 a:focus-visible { outline: 3px solid var(--ulams-color-primary, #1d4ed8); outline-offset: 2px; }
+a, button { scroll-margin-block-end: 88px; }
 .bar { height: 8px; border-radius: 4px; background: linear-gradient(90deg, var(--ulams-color-positive, #1a7f4b) var(--p), var(--ulams-color-border, #d0d0d8) var(--p)); }
 `;
 
