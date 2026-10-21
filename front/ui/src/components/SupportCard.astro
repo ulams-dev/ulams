@@ -1,7 +1,7 @@
 ---
 import AiLabel from "./AiLabel.astro";
 import WhyThis from "./WhyThis.astro";
-import { pageLocale, uiStrings } from "../lib/i18n.ts";
+import { fill, pageLocale, uiStrings } from "../lib/i18n.ts";
 
 interface Props {
   assignmentId?: string;
@@ -10,19 +10,23 @@ interface Props {
   reasons?: string[];
   aiLabel?: string;
   feedback?: "helpful" | "not_helpful";
+  position?: number;
+  total?: number;
   locale?: string;
   id?: string;
 }
-const { assignmentId, status = "ready", summary, reasons = [], aiLabel, feedback, locale, id } = Astro.props;
+const { assignmentId, status = "ready", summary, reasons = [], aiLabel, feedback, position, total, locale, id } = Astro.props;
 const t = uiStrings(locale ?? pageLocale(Astro));
 const key = id ?? assignmentId ?? "help";
 const headingId = `u-support-${key}-title`;
 const ready = status === "ready";
+// Several cards on one lesson are several landmarks: each needs its own name ("Extra help for you (1 of 2)").
+const heading = position && total && total > 1 ? `${t.supportTitle} (${fill(t.supportPosition, { n: position, total })})` : t.supportTitle;
 ---
 
 <section class="u-support" id={id} aria-labelledby={headingId} data-status={status} role="region" lang={locale && locale !== "en" ? locale : undefined}>
   <header class="u-support__head">
-    <h2 class="u-support__title" id={headingId}>{t.supportTitle}</h2>
+    <h2 class="u-support__title" id={headingId}>{heading}</h2>
     {ready && aiLabel && <AiLabel text={aiLabel} />}
   </header>
   {status === "generating" && <p class="u-support__state">{t.supportGenerating}</p>}
@@ -123,6 +127,9 @@ const ready = status === "ready";
   .u-support__feedback[hidden],
   .u-support__confirm[hidden] {
     display: none;
+  }
+  .u-support :global(button) {
+    scroll-margin-bottom: 96px;
   }
   .u-support__feedback :global(.u-btn),
   .u-support__confirm :global(.u-btn) {

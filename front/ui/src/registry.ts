@@ -1953,6 +1953,8 @@ export const registry = {
         reasons: list(text("One reason in plain text", { maxLength: 300 }), "Why this help is shown", { maxItems: 6 }),
         aiLabel: text("The AI label shown in the heading row", { maxLength: 120 }),
         feedback: oneOf(["helpful", "not_helpful"], "The learner's earlier answer, if any"),
+        position: int("Number of this card when the lesson has several (1, 2, …), so each region has its own name", { minimum: 1, maximum: 20 }),
+        total: int("How many cards the lesson has", { minimum: 1, maximum: 20 }),
         locale: LOCALE,
       },
       []

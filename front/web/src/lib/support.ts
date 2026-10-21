@@ -64,6 +64,13 @@ export function supportDocs(items: SupportItem[], locale: UiLocale): UiNode[] {
       children,
     });
   }
+  // Several cards on one lesson are several landmarks: each needs its own name ("Extra help for you (1 of 2)").
+  if (nodes.length > 1) {
+    const total = Math.min(nodes.length, 20);
+    nodes.forEach((node, i) => {
+      node.props = { ...node.props, position: Math.min(i + 1, 20), total };
+    });
+  }
   return nodes;
 }
 

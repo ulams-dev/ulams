@@ -99,6 +99,8 @@ export interface UiStrings {
   supportNotQuite: string;
   supportNoScript: string;
   supportThoughts: string;
+  /** Added to the card heading when a lesson has several cards; `{n}` and `{total}` are replaced. */
+  supportPosition: string;
 }
 
 const en: UiStrings = {
@@ -195,6 +197,7 @@ const en: UiStrings = {
   supportNotQuite: "Not quite",
   supportNoScript: "Checking an answer needs JavaScript.",
   supportThoughts: "Your thoughts (stay on this device)",
+  supportPosition: "{n} of {total}",
 };
 
 const pl: UiStrings = {
@@ -291,6 +294,7 @@ const pl: UiStrings = {
   supportNotQuite: "Jeszcze nie",
   supportNoScript: "Sprawdzanie odpowiedzi wymaga JavaScriptu.",
   supportThoughts: "Twoje przemyślenia (zostają na tym urządzeniu)",
+  supportPosition: "{n} z {total}",
 };
 
 const zh: UiStrings = {
@@ -387,6 +391,7 @@ const zh: UiStrings = {
   supportNotQuite: "不太对",
   supportNoScript: "检查答案需要启用 JavaScript。",
   supportThoughts: "你的想法（仅保存在此设备上）",
+  supportPosition: "第 {n} 项，共 {total} 项",
 };
 
 const TABLE: Record<UiLocale, UiStrings> = { en, pl, zh };

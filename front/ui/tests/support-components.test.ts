@@ -183,6 +183,15 @@ describe("the Extra help card renders accessibly", () => {
     expect(zh.textContent).toContain(uiStrings("zh").supportTitle);
   });
 
+  it("names each card of a lesson with its place, and a lone card without one", async () => {
+    const two = await mountDoc(card({ position: 2, total: 2 }, BLOCKS.slice(0, 1)));
+    expect(two.querySelector("h2")?.textContent).toBe("Extra help for you (2 of 2)");
+    const pl = await mountDoc(card({ position: 1, total: 3, locale: "pl" }, []));
+    expect(pl.querySelector("h2")?.textContent).toBe("Dodatkowa pomoc dla Ciebie (1 z 3)");
+    const one = await mountDoc(card({ position: 1, total: 1 }, []));
+    expect(one.querySelector("h2")?.textContent).toBe("Extra help for you");
+  });
+
   it("escapes HTML in blocks and in the plain-text props", async () => {
     const root = await mountDoc(card({ summary: "<img src=x onerror=alert(1)>" }, [{ component: "WorkedExample", props: { title: "<b>t</b>", markdown: "<script>alert(1)</script>" } }]));
     expect(root.querySelector("img")).toBeNull();

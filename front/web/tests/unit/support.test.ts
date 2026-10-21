@@ -65,6 +65,13 @@ describe("supportDocs", () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
+  it("numbers the cards only when a lesson has several, so every region has its own name", () => {
+    expect(supportDocs([item()], "en")[0]!.props).not.toHaveProperty("position");
+    const docs = supportDocs([item(), item({ assignmentId: ID2, status: "generating", document: null }), item({ assignmentId: ID, document: null })], "en");
+    expect(docs.map((d) => [d.props!.position, d.props!.total])).toEqual([[1, 2], [2, 2]]);
+    for (const doc of docs) expect(validateDocument(doc)).toEqual([]);
+  });
+
   it("carries the saved feedback and never more than six reasons", () => {
     const [card] = supportDocs([item({ feedback: "not_helpful", reasons: Array.from({ length: 9 }, (_, i) => `r${i}`) })], "en");
     expect(card!.props).toMatchObject({ feedback: "not_helpful" });

@@ -311,6 +311,10 @@ const resources = topic.resources ?? [];
   :global(.u-player-body) {
     background-attachment: scroll;
   }
+  /* a focused control is never hidden behind the sticky footer (WCAG 2.4.11) */
+  :global(html:has(.u-player)) {
+    scroll-padding-bottom: 96px;
+  }
   .u-player {
     display: grid;
     grid-template-columns: 320px minmax(0, 1fr);
