@@ -52,6 +52,7 @@ class CourseSettingsApiTest extends TestCase
     public function testNewCertificatesExpireAfterTheCourseValidity(): void
     {
         Notification::fake();
+        $this->travelTo(now()->setTime(12, 0)); // the expiry date must not depend on crossing midnight
         $this->seed(TemplatesPdfSeeder::class);
         $course = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
         $other = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
