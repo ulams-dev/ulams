@@ -5,6 +5,7 @@ namespace Ulams\Templates\Core;
 use Ulams\Settings\Models\Setting;
 use Illuminate\Mail\Markdown;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 abstract class SettingsVariables
@@ -57,6 +58,21 @@ abstract class SettingsVariables
             if (method_exists(__CLASS__, $func)) {
                 $result[$key] = static::{$func}($setting['value']);
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Like getSettingsValues(), but values that are HTML by design (markdown settings) are wrapped in an
+     * HtmlString so that HTML sections do not escape them. Use this in channels that render HTML.
+     */
+    public static function getHtmlSettingsValues(): array
+    {
+        $types = static::getSettingsTypes();
+        $result = [];
+        foreach (static::getSettingsValues() as $key => $value) {
+            $result[$key] = ($types[$key] ?? null) === 'markdown' ? new HtmlString((string) $value) : $value;
         }
 
         return $result;
