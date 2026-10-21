@@ -47,6 +47,15 @@ unauthenticated remote code execution bug fixed in PHP 8.4.27 and 8.3.36
 (shared hosting, your own packages), set the same value in `php.ini` or the pool and update PHP.
 CI reads the setting back from the built image.
 
+### Is my PHP current?
+
+The `PHP freshness` workflow (`.github/workflows/php-freshness.yml`) runs daily in the ulams repository. It
+compares the latest PHP 8.4 release on php.net with the official `php:8.4-fpm-alpine` image and with our
+published `ghcr.io/ulams-dev/php:8.4`, and opens (or updates) one GitHub issue labelled `security` when either
+is behind; it closes the issue when both are current. It reports through the issue and does not fail the run.
+Check your own container with `docker exec <api container> php -v`, and a MyDevil host with
+`deploy/mydevil/bin/check-host.sh`. Dependabot also watches the `php` base image in the Dockerfiles.
+
 ## SVG, HTML and other active files
 
 - In buckets, `ActiveContentSafeS3Adapter` sets `Content-Type` from the file extension (an HTML
