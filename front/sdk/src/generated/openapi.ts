@@ -550,7 +550,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Redirect to social login */
+        /**
+         * Redirect to social login
+         * @description Starts a login with Google or Facebook. `return_url` must be an origin of the tenant's own apps (otherwise 422). `challenge` is the S256 challenge of a random verifier that the caller keeps secret (base64url of its SHA-256, 43 characters). After the provider's consent the browser is sent to `return_url` with a one-time `code` (60 seconds, single use) to redeem at POST /api/auth/social/exchange together with the verifier; failures arrive as `error` (provider_denied, provider_failed, link_required, email_unverified, account_unavailable).
+         */
         get: operations["auth.social.by-provider.get"];
         put?: never;
         post?: never;
@@ -567,10 +570,33 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Redirect after sucessfull login */
+        /**
+         * Redirect after successful login
+         * @description The provider's callback. Checks the signed, single-use state and sends the browser to the return URL with a one-time `code` (and `complete=false` when the provider gave no e-mail address and the sign-up must be completed) or an `error` reason. An access token is never put in a URL.
+         */
         get: operations["auth.social.by-provider.callback.get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/social/exchange": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Exchange a one-time social login code for a token
+         * @description Redeems the `code` of a social login redirect together with the secret `verifier` whose S256 challenge started the login. The code works once, within 60 seconds, on the tenant that issued it. Call it from the front end's server, never from a page that may be logged. Returns the access token (`complete=true`) or, when the sign-up needs an e-mail address, `pre_user_token` for POST /api/auth/social/complete/{token} (`complete=false`).
+         */
+        post: operations["auth.social.exchange.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -13411,8 +13437,9 @@ export interface operations {
     };
     "auth.social.by-provider.get": {
         parameters: {
-            query?: {
+            query: {
                 return_url?: string;
+                challenge: string;
             };
             header?: never;
             path: {
@@ -13422,20 +13449,31 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description successful operation */
+            /** @description Redirect to the provider */
             302: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Unknown provider, return URL not allowed or challenge missing */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
     "auth.social.by-provider.callback.get": {
         parameters: {
-            query?: never;
+            query: {
+                state: string;
+            };
             header?: never;
             path: {
                 provider: "facebook" | "google";
@@ -13444,13 +13482,68 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description successful operation */
+            /** @description Redirect to the return URL with a code or an error */
             302: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description The state is missing, forged, expired or already used */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "auth.social.exchange.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    code: string;
+                    /** @description 43 to 128 characters of [A-Za-z0-9._~-] */
+                    verifier: string;
+                };
+            };
+        };
+        responses: {
+            /** @description successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description The code is invalid, expired, already used or does not match the verifier */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
