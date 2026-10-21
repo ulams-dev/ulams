@@ -36,3 +36,14 @@ Just define new variables in the *mail* group with the mjml code and then use th
 
 ![Content with global variables](docs/img/admin-08.png)
 
+
+## Visual editor
+
+Above the MJML code, the *Code* and *Visual* switch opens a block editor for the same MJML. It works with
+the mouse and fully with the keyboard: the *Structure and keyboard tools* panel adds, moves, removes and
+edits blocks (arrow keys in the structure, Alt+Up and Alt+Down to move, Delete to remove, Enter to edit a
+text or choose an image, Escape to stop editing text) and announces every change to screen readers.
+Images are uploaded to the tenant storage and need alternative text (or an explicit "decorative"). Shared
+parts (`@GlobalSettings...`) are locked: edit them in *Settings*. The default templates carry the `lang`
+and `dir` of the application language on `<mjml>`, so they do not trigger the `missing-lang` warning.
+Details and the key map: the *E-mail* page of the operator documentation, section *Visual mode*.
