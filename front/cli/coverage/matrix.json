@@ -1,5 +1,5 @@
 {
- "summary": "586/659 covered, 73 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "586/660 covered, 74 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -3912,6 +3912,12 @@
    "summary": "Whether the course tutor is available to the learner, how many questions are left today and whether a quiz attempt is open",
    "command": "my.tutor-courses-status",
    "status": "covered"
+  },
+  {
+   "key": "GET /api/tutor/runs/{run}/events",
+   "summary": "AG-UI event stream (SSE) of one streamed tutor answer",
+   "command": "",
+   "status": "excluded: browser-only"
   },
   {
    "key": "GET /api/tutors",

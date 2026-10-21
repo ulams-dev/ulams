@@ -34,6 +34,8 @@ export interface TutorStrings {
   disabled: string;
   network: string;
   failed: string;
+  /** A second question while the first answer is still being written. */
+  busy: string;
   retry: string;
   earlier: string;
   /** `{date}` is replaced. */
@@ -78,6 +80,7 @@ const en: TutorStrings = {
   disabled: "The tutor is not available right now.",
   network: "Could not reach the tutor. Your question is kept.",
   failed: "Something went wrong. Your question is kept.",
+  busy: "The tutor is still answering your last question. Wait a moment, then ask again.",
   retry: "Try again",
   earlier: "Earlier conversations",
   conversationOf: "Conversation of {date}",
@@ -120,6 +123,7 @@ const pl: TutorStrings = {
   disabled: "Korepetytor jest teraz niedostępny.",
   network: "Nie udało się połączyć z korepetytorem. Pytanie zostało zachowane.",
   failed: "Coś poszło nie tak. Pytanie zostało zachowane.",
+  busy: "Korepetytor wciąż odpowiada na poprzednie pytanie. Chwilę poczekaj i zapytaj ponownie.",
   retry: "Spróbuj ponownie",
   earlier: "Wcześniejsze rozmowy",
   conversationOf: "Rozmowa z {date}",
@@ -162,6 +166,7 @@ const zh: TutorStrings = {
   disabled: "助教暂时不可用。",
   network: "无法连接助教，你的问题已保留。",
   failed: "出了点问题，你的问题已保留。",
+  busy: "助教仍在回答你上一个问题。请稍等片刻再提问。",
   retry: "重试",
   earlier: "以往的对话",
   conversationOf: "{date} 的对话",

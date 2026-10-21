@@ -26,6 +26,13 @@ final class RecordingDriver implements LlmDriver
         return $this->inner->send($request);
     }
 
+    public function stream(DriverRequest $request, callable $onText): DriverResponse
+    {
+        $this->requests[] = $request;
+
+        return $this->inner->stream($request, $onText);
+    }
+
     public function name(): string
     {
         return $this->inner->name();

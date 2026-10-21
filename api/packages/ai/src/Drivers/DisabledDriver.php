@@ -18,4 +18,9 @@ final class DisabledDriver implements LlmDriver
     {
         throw new DriverException('AI is disabled on this installation.');
     }
+
+    public function stream(DriverRequest $request, callable $onText): DriverResponse
+    {
+        return $this->send($request);
+    }
 }

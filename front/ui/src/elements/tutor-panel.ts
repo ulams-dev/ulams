@@ -1,4 +1,4 @@
-import { tutorFailure, TUTOR_QUESTION_CHARS, type TutorCitation, type TutorConversationSummary, type TutorMessage, type TutorRefusal, type TutorStatus } from "@ulams/sdk";
+import { tutorFailure, TUTOR_QUESTION_CHARS, type TutorAnswer, type TutorRun, type TutorCitation, type TutorConversationSummary, type TutorMessage, type TutorRefusal, type TutorStatus } from "@ulams/sdk";
 import { renderBasicMarkdown } from "../lib/markdown-basic.ts";
 import { fill, tutorStrings, type TutorStrings } from "../lib/tutor-strings.ts";
 import type { TutorContext } from "./tutor.ts";
@@ -51,6 +51,7 @@ summary { min-height: 44px; display: flex; align-items: center; cursor: pointer;
 .sources ul { margin: 0; padding-inline-start: 20px; }
 .empty, .pending { padding: 0 16px; }
 .pending { display: grid; gap: 4px; }
+.draft { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5; }
 form { display: grid; gap: 8px; padding: 12px 16px 16px; border-top: 1px solid var(--ulams-color-border, #d0d0d8); }
 label { font-weight: 600; }
 textarea { width: 100%; min-height: 88px; resize: vertical; padding: 10px; border: 1px solid var(--ulams-color-text, #1b1b1f); border-radius: 8px; background: var(--ulams-color-bg, #fff); color: inherit; font: inherit; }
@@ -65,6 +66,18 @@ const h = <K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Record<string, 
   for (const kid of kids) el.append(kid);
   return el;
 };
+
+/**
+ * The part of a streamed draft to show. The server already writes text in sentence-sized steps; with reduced
+ * motion the panel also holds back an unfinished sentence, so text never grows word by word.
+ */
+export function visibleDraft(text: string, reducedMotion: boolean): string {
+  if (!reducedMotion) return text;
+  const match = /^[\s\S]*[.!?…。！？]["”’)\]]*(\s|$)/.exec(text);
+  return match ? match[0] : "";
+}
+
+const RUN_KEY = (course: number) => `ulams-tutor-run:${course}`;
 
 /** Fills `{course}` and `{topic}`; only relative and http(s) templates are accepted. */
 export function citationHref(template: string, course: number, topic: number): string {
@@ -92,6 +105,7 @@ export class TutorPanel {
   private remaining: number | null = null;
   private limit: number | null = null;
   private busy = false;
+  private streaming = false;
   private previousInset = "";
 
   constructor(private readonly ctx: TutorContext) {
@@ -177,7 +191,7 @@ export class TutorPanel {
     }
     this.ctx.launcher.setAttribute("aria-expanded", "true");
     this.field.focus();
-    void this.refresh();
+    void this.refresh().then(() => this.resume());
   }
 
   close(): void {
@@ -217,6 +231,7 @@ export class TutorPanel {
   }
 
   private paintStatus(status: TutorStatus): void {
+    this.streaming = status.streaming === true;
     this.remaining = status.remaining;
     this.limit = status.dailyLimit;
     this.quota.textContent = status.remaining > 0 ? fill(this.s.remaining, { n: status.remaining, limit: status.dailyLimit }) : fill(this.s.remainingNone, { n: status.dailyLimit });
@@ -325,7 +340,7 @@ export class TutorPanel {
   private fail(error: unknown, retry?: () => void): void {
     const s = this.s;
     const kind = tutorFailure(error);
-    const text = kind === "limit" ? s.limit : kind === "disabled" ? s.disabled : kind === "network" ? s.network : s.failed;
+    const text = kind === "limit" ? s.limit : kind === "disabled" ? s.disabled : kind === "network" ? s.network : kind === "busy" ? s.busy : s.failed;
     const kids: Array<Node | string> = [h("p", {}, text)];
     if (kind === "limit") {
       this.remaining = 0;
@@ -353,32 +368,111 @@ export class TutorPanel {
     this.clearError();
     this.log.setAttribute("aria-busy", "true");
     this.send.disabled = true;
-    this.pending.replaceChildren(h("p", { class: "who" }, this.s.you), h("p", {}, text), h("p", { class: "muted", "data-writing": "" }, this.s.writing));
-    this.pending.hidden = false;
+    this.showPending(text);
     const isNew = this.conversationId === null;
     try {
-      const answer = await this.ctx.client.ask(this.ctx.courseId, { text, conversationId: this.conversationId, topicId: this.ctx.topicId });
-      this.conversationId = answer.conversationId;
-      this.remaining = answer.remaining;
-      this.pending.hidden = true;
-      if (this.log.contains(this.empty)) this.empty.remove();
-      // question and answer land together, so the live log announces one finished answer
-      this.log.append(this.learnerMessage(text), this.tutorMessage(answer.answer, answer.citations, answer.refusal));
-      this.log.scrollTop = this.log.scrollHeight;
-      this.field.value = "";
-      this.updateCounter();
-      this.quota.textContent = answer.remaining > 0 ? fill(this.s.remaining, { n: answer.remaining, limit: this.dailyLimit() }) : fill(this.s.remainingNone, { n: this.dailyLimit() });
-      if (isNew) void this.refreshEarlier();
+      const question = { text, conversationId: this.conversationId, topicId: this.ctx.topicId };
+      const answer = this.streaming
+        ? await this.ctx.client.askStream(this.ctx.courseId, question, { onRun: (run) => this.remember(run, text), onDraft: (draft) => this.paintDraft(draft) })
+        : await this.ctx.client.ask(this.ctx.courseId, question);
+      this.finishAnswer(text, answer, isNew);
     } catch (error) {
       this.pending.hidden = true;
       this.fail(error, () => void this.submit());
     } finally {
-      this.busy = false;
-      this.log.removeAttribute("aria-busy");
-      const blocked = this.remaining !== null && this.remaining <= 0;
-      this.send.disabled = blocked;
-      this.field.disabled = blocked;
-      if (!blocked) this.field.focus();
+      this.settle();
+    }
+  }
+
+  private showPending(text: string): void {
+    this.pending.replaceChildren(
+      h("p", { class: "who" }, this.s.you),
+      h("p", {}, text),
+      // the draft is not part of the live log and is marked busy: screen readers hear the answer once, when it is final
+      h("p", { class: "draft", "data-draft": "", "aria-busy": "true", hidden: "" }),
+      h("p", { class: "muted", "data-writing": "" }, this.s.writing)
+    );
+    this.pending.hidden = false;
+  }
+
+  private paintDraft(text: string): void {
+    const draft = this.pending.querySelector<HTMLElement>("[data-draft]");
+    if (!draft) return;
+    const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    draft.textContent = visibleDraft(text, reduced);
+    draft.hidden = draft.textContent === "";
+    this.log.scrollTop = this.log.scrollHeight;
+  }
+
+  /** The validated answer replaces the draft: question and answer land together, so the live log announces one finished answer. */
+  private finishAnswer(text: string, answer: TutorAnswer, isNew: boolean): void {
+    this.forget();
+    this.conversationId = answer.conversationId;
+    this.remaining = answer.remaining;
+    this.pending.hidden = true;
+    if (this.log.contains(this.empty)) this.empty.remove();
+    this.log.append(this.learnerMessage(text), this.tutorMessage(answer.answer, answer.citations, answer.refusal));
+    this.log.scrollTop = this.log.scrollHeight;
+    this.field.value = "";
+    this.updateCounter();
+    this.quota.textContent = answer.remaining > 0 ? fill(this.s.remaining, { n: answer.remaining, limit: this.dailyLimit() }) : fill(this.s.remainingNone, { n: this.dailyLimit() });
+    if (isNew) void this.refreshEarlier();
+  }
+
+  private settle(): void {
+    this.busy = false;
+    this.log.removeAttribute("aria-busy");
+    const blocked = this.remaining !== null && this.remaining <= 0;
+    this.send.disabled = blocked;
+    this.field.disabled = blocked;
+    if (!blocked) this.field.focus();
+  }
+
+  /** Keeps the running answer across a reload (session only; the text stays on this device). */
+  private remember(run: TutorRun, text: string): void {
+    try {
+      sessionStorage.setItem(RUN_KEY(this.ctx.courseId), JSON.stringify({ run, text }));
+    } catch {
+      /* storage can be blocked: the answer is still stored on the server */
+    }
+  }
+
+  private forget(): void {
+    try {
+      sessionStorage.removeItem(RUN_KEY(this.ctx.courseId));
+    } catch {
+      /* ignore */
+    }
+  }
+
+  /** After a reload mid-answer: rejoin the run, replay its events and show the answer when it is final. */
+  private async resume(): Promise<void> {
+    if (this.busy) return;
+    let saved: { run: TutorRun; text: string } | null;
+    try {
+      saved = JSON.parse(sessionStorage.getItem(RUN_KEY(this.ctx.courseId)) ?? "null");
+    } catch {
+      saved = null;
+    }
+    if (!saved?.run?.runId || typeof saved.text !== "string" || !this.streaming) {
+      this.forget();
+      return;
+    }
+    this.busy = true;
+    this.clearError();
+    this.log.setAttribute("aria-busy", "true");
+    this.send.disabled = true;
+    this.conversationId = saved.run.conversationId;
+    this.showPending(saved.text);
+    try {
+      const answer = await this.ctx.client.followRun(saved.run, { onDraft: (draft) => this.paintDraft(draft) });
+      this.finishAnswer(saved.text, answer, true);
+    } catch (error) {
+      this.forget();
+      this.pending.hidden = true;
+      this.fail(error);
+    } finally {
+      this.settle();
     }
   }
 

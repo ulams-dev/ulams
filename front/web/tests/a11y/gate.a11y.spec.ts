@@ -164,3 +164,45 @@ test("reduced motion: the tutor panel opens and shows an answer without any anim
   });
   expect(moving).toEqual([]);
 });
+
+/* Streamed answers (M-UI6): the draft and the failed-run states on the tenant that streams (coffee), at both widths. */
+async function askStreaming(page: Page, text: string) {
+  await page.goto(`${host("coffee")}/learn/1/3`, { waitUntil: "load" });
+  await page.locator("ulams-tutor button.launcher").click();
+  await expect(page.locator("[data-tutor-panel] [data-quota]")).toHaveText("29 of 30 questions left today");
+  await page.locator("[data-tutor-panel] textarea").fill(text);
+  await page.keyboard.press("Control+Enter");
+}
+
+test("keyboard: while a streamed draft is written every control stays reachable, visible and not covered", async ({ page }) => {
+  await askStreaming(page, "Which species is called Robusta?");
+  await expect(page.locator("[data-tutor-panel] [data-draft]")).toBeVisible();
+  // the question field keeps focus while the answer is written; the stops after it (the send button is disabled,
+  // so on a wide screen focus moves on into the page, on a phone it stays in the modal) must be usable and uncovered
+  const stops = await tabStops(page, 12);
+  expect(stops.filter((s) => !s.visible || !s.indicator || s.covered || (!s.label.startsWith("a ") && (s.width < 24 || s.height < 24))).map((s) => s.label), "tutor draft").toEqual([]);
+  await expect(page.locator("[data-tutor-panel] .msg.tutor")).toBeVisible();
+});
+
+test("keyboard: after a failed run the retry button is reachable and not covered", async ({ page }) => {
+  await askStreaming(page, "This will boom");
+  const retry = page.locator("[data-tutor-panel] .error button", { hasText: "Try again" });
+  await expect(retry).toBeVisible();
+  await retry.focus();
+  const stops = await tabStops(page, 4);
+  expect(stops.filter((s) => !s.visible || !s.indicator || s.covered).map((s) => s.label)).toEqual([]);
+});
+
+test("reduced motion: a streamed draft appears and is replaced by the final answer without any animation", async ({ page }) => {
+  await askStreaming(page, "Which species is called Robusta?");
+  await expect(page.locator("[data-tutor-panel] [data-draft]")).toBeVisible();
+  const moving = () =>
+    page.evaluate(() => {
+      const roots: Array<Document | ShadowRoot> = [document];
+      document.querySelectorAll("*").forEach((el) => el.shadowRoot && roots.push(el.shadowRoot));
+      return roots.flatMap((r) => r.getAnimations()).filter((a) => a.playState === "running" && Number(a.effect?.getComputedTiming().activeDuration ?? 0) > 50).map((a) => (a instanceof CSSAnimation ? a.animationName : "other"));
+    });
+  expect(await moving(), "while the draft is shown").toEqual([]);
+  await expect(page.locator("[data-tutor-panel] .msg.tutor")).toBeVisible();
+  expect(await moving(), "after the final answer").toEqual([]);
+});

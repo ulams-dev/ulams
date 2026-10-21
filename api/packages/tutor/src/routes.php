@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Ulams\Tutor\Http\Controllers\RunEventsController;
 use Ulams\Tutor\Http\Controllers\TutorController;
 
 Route::group([
@@ -12,6 +13,7 @@ Route::group([
     Route::get('courses/{course}/conversations', [TutorController::class, 'conversations'])->whereNumber('course');
     Route::get('conversations/{conversation}', [TutorController::class, 'show']);
     Route::delete('conversations/{conversation}', [TutorController::class, 'destroy']);
+    Route::get('runs/{run}/events', [RunEventsController::class, 'stream']);
 });
 
 // Anonymous aggregates for authors and admins (permission check in the controller).

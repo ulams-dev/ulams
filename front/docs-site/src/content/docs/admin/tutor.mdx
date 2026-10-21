@@ -30,6 +30,17 @@ During an open quiz attempt the tutor explains concepts in general terms or decl
 | `TUTOR_EVAL_MONTHLY_USD` | `5` | Monthly cap of `tutor:eval --live`, see [evals](/developers/learner-evals/) |
 | `TUTOR_RETENTION_DAYS` | `90` | Conversations are deleted this many days after the last message |
 | `AI_TASK_TUTOR_PROFILE` | `light` | Model profile of the tutor |
+| `tutor.stream.enabled` / `TUTOR_STREAM_ENABLED` | `true` | Streamed answers (see below); off makes every question use the plain request |
+| `TUTOR_STREAM_TIMEOUT_SECONDS` | `60` | A queued answer that runs longer ends with an error and frees the conversation |
+| `TUTOR_STREAM_SSE_SECONDS` | `25` | A reader connection closes after this long and the widget reconnects where it left off |
+| `TUTOR_STREAM_EVENTS_RETENTION_DAYS` | `1` | Run events are deleted this many days after the answer ended |
+| `TUTOR_STREAM_QUEUE_CONNECTION`, `TUTOR_STREAM_QUEUE` | default | Queue of the answer job |
+
+## Streamed answers
+
+With streaming on, the widget shows the answer as it is written. The question is stored and the answer is queued (`POST /api/tutor/courses/{course}/messages` with `stream: true` answers 202 with a run id); a queue worker writes the answer, and the widget reads its events from `GET /api/tutor/runs/{run}/events` (server-sent events, resumable with `Last-Event-ID`, so a reload mid-answer continues). **A queue worker must be running** and the queue must not be `sync`, or the answer arrives only when it is complete. The text on screen is a draft: the final event carries the checked answer with its citations and replaces it, and a draft whose check fails is replaced by the standard "I couldn't answer that" message. While a learner has a quiz attempt open nothing is streamed: the answer is written whole, checked for correct options and shown only then.
+
+A learner can have one answer running per conversation; asking again meanwhile gives 409. A run that outlives `TUTOR_STREAM_TIMEOUT_SECONDS` ends with an error. Events are transport only: the stored message is the record, and the events are deleted a day after the run ends (and with their conversation after the retention period) by `tutor:prune`. Behind a reverse proxy keep response buffering off for `/bff/api/tutor/runs/*/events` (the reference frontend sends `X-Accel-Buffering: no`). Set `TUTOR_STREAM_ENABLED=false` to fall back to the plain request, which stays available either way.
 
 ## Privacy
 

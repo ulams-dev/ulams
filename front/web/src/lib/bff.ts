@@ -7,6 +7,8 @@ export interface BffRule {
   pattern: RegExp;
   /** Drops the cached progress after the call. */
   writesProgress?: boolean;
+  /** The response is a `text/event-stream`: piped through as it arrives, with `Last-Event-ID` forwarded. */
+  stream?: boolean;
 }
 
 export const BFF_RULES: BffRule[] = [
@@ -35,6 +37,8 @@ export const BFF_RULES: BffRule[] = [
   { method: "GET", pattern: /^\/api\/tutor\/courses\/\d+\/conversations$/ },
   { method: "GET", pattern: /^\/api\/tutor\/conversations\/[0-9A-Za-z]{26}$/ },
   { method: "DELETE", pattern: /^\/api\/tutor\/conversations\/[0-9A-Za-z]{26}$/ },
+  // Streamed tutor answers: the run's events over SSE (ADR 0105); the API resolves the run through the caller's own conversation
+  { method: "GET", pattern: /^\/api\/tutor\/runs\/[0-9A-Za-z]{26}\/events$/, stream: true },
 ];
 
 export function matchBffRule(method: string, path: string): BffRule | null {

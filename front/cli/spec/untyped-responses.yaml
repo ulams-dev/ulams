@@ -27,6 +27,7 @@
 "GET /api/scorm/assets/scorm-again.min.js": javascript-file
 "GET /api/scorm/play/{uuid}": html-page
 "GET /api/scorm/show/{uuid}": html-page
+"GET /api/tutor/runs/{run}/events": event-stream
 "POST /api/admin/pdfs/preview": binary-pdf
 "POST /api/lti/platform/deep-links": html-page
 "POST /api/lti/tool/launch": html-page

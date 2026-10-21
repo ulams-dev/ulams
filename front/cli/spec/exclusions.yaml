@@ -2,6 +2,8 @@
 # `ulams api` can still call them; they do not count as coverage.
 inbound-webhook: []
 browser-only:
+  # the SSE event log of one streamed tutor answer (ADR 0105); the learner widget reads it, a command would have nothing to wait for
+  - "GET /api/tutor/runs/*"
   - "GET /api/certificates/verify/*"
   - "GET /api/auth/social/*"
   - "POST /api/auth/social/complete/*"

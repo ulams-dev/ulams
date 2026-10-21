@@ -15,11 +15,12 @@ use Ulams\Tutor\Models\Conversation;
 use Ulams\Tutor\Services\AttemptGuard;
 use Ulams\Tutor\Services\TutorException;
 use Ulams\Tutor\Services\TutorService;
+use Ulams\Tutor\Streaming\RunLog;
 
 /** The learner's tutor. Conversations are owned by the learner: another learner's id is a 404. */
 class TutorController extends Controller implements TutorSwagger
 {
-    public function __construct(private readonly TutorService $tutor, private readonly LlmClient $llm, private readonly AttemptGuard $guard)
+    public function __construct(private readonly TutorService $tutor, private readonly LlmClient $llm, private readonly AttemptGuard $guard, private readonly RunLog $runs)
     {
     }
 
@@ -35,6 +36,7 @@ class TutorController extends Controller implements TutorSwagger
             'remaining' => $this->tutor->remaining((int) $user->getKey()),
             'dailyLimit' => (int) config('tutor.limits.daily_questions'),
             'attemptActive' => $this->guard->check((int) $user->getKey(), $course)['active'],
+            'streaming' => $this->tutor->streaming(),
         ]]);
     }
 
@@ -42,12 +44,17 @@ class TutorController extends Controller implements TutorSwagger
     {
         $model = Course::query()->findOrFail($course);
         try {
+            if ($request->boolean('stream') && $this->tutor->streaming()) {
+                $run = $this->tutor->start($request->user(), $model, (string) $request->input('text'), $request->integer('topicId') ?: null, $request->input('conversationId') ?: null);
+
+                return response()->json(['data' => $run], 202);
+            }
             $result = $this->tutor->ask($request->user(), $model, (string) $request->input('text'), $request->integer('topicId') ?: null, $request->input('conversationId') ?: null);
         } catch (TutorException $e) {
             return response()->json(['message' => $e->getMessage(), 'reason' => $e->reason], $e->status);
         }
 
-        return response()->json(['data' => $result + ['label' => 'AI tutor · answers only from this course']]);
+        return response()->json(['data' => $result + ['label' => TutorService::LABEL]]);
     }
 
     public function conversations(Request $request, int $course): JsonResponse
@@ -70,7 +77,11 @@ class TutorController extends Controller implements TutorSwagger
     public function destroy(Request $request, string $conversation): JsonResponse
     {
         $c = $this->owned($request, $conversation);
+        if ($this->runs->openRun($c->id) !== null) {
+            return response()->json(['message' => 'The tutor is still answering. Delete the conversation when it has finished.', 'reason' => TutorException::BUSY], 409);
+        }
         DB::transaction(function () use ($c) {
+            DB::table('tutor_events')->where('conversation_id', $c->id)->delete();
             DB::table('tutor_messages')->where('conversation_id', $c->id)->delete();
             $c->delete();
         });

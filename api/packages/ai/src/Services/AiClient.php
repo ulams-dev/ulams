@@ -53,6 +53,24 @@ final class AiClient implements LlmClient
 
     public function generate(LlmRequest $request): LlmResult
     {
+        return $this->execute($request, null);
+    }
+
+    public function stream(LlmRequest $request, callable $onDelta, string $field = 'answer'): LlmResult
+    {
+        $extractor = new JsonStringStream($field);
+
+        return $this->execute($request, function (string $raw) use ($extractor, $onDelta) {
+            $text = $extractor->feed($raw);
+            if ($text !== '') {
+                $onDelta($text);
+            }
+        });
+    }
+
+    /** @param (callable(string):void)|null $onText raw text deltas of the first attempt */
+    private function execute(LlmRequest $request, ?callable $onText): LlmResult
+    {
         if (!$this->enabled()) {
             throw new LlmException(LlmException::DISABLED, 'AI features are disabled on this installation (AI_DRIVER=disabled or no API key).');
         }
@@ -68,7 +86,7 @@ final class AiClient implements LlmClient
         for ($attempt = 1; $attempt <= self::MAX_ATTEMPTS; $attempt++) {
             $started = hrtime(true);
             try {
-                $response = $this->driver->send($call);
+                $response = $onText !== null && $attempt === 1 ? $this->driver->stream($call, $onText) : $this->driver->send($call);
             } catch (DriverException $e) {
                 $callIds[] = $this->log($request, $call, null, $attempt, 'error', (int) ((hrtime(true) - $started) / 1e6), $e->getMessage())->id;
 
