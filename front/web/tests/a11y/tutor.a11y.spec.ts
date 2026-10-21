@@ -93,3 +93,65 @@ test("tutor: a side sheet next to the lesson on a wide screen, a full-screen dia
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   }
 });
+
+/* ------------------------------------------------------------------ streamed answers (ADR 0105) */
+
+async function ask(page: Page, slug: string, text: string) {
+  await page.goto(`${host(slug)}${LESSON}`, { waitUntil: "load" });
+  await page.locator("ulams-tutor button.launcher").click();
+  await expect(page.locator("[data-tutor-panel] [data-quota]")).toHaveText("29 of 30 questions left today");
+  await page.locator("[data-tutor-panel] textarea").fill(text);
+  await page.keyboard.press("Control+Enter");
+}
+
+test("tutor streaming: the draft is busy and outside the live log, the final answer replaces it", async ({ page }) => {
+  await ask(page, "coffee", "Which species is called Robusta?");
+  const draft = page.locator("[data-tutor-panel] [data-draft]");
+  await expect(draft).toBeVisible();
+  await expect(draft).toHaveAttribute("aria-busy", "true");
+  await expect(draft).toContainText("Robusta is Coffea canephora.");
+  // not announced: the draft is not inside the polite log, and the log itself is busy until the answer is final
+  expect(await draft.evaluate((el) => !!el.closest('[role="log"]'))).toBe(false);
+  await expect(page.locator("[data-tutor-panel] [data-log]")).toHaveAttribute("aria-busy", "true");
+  expect(await scan(page), "while the draft is written").toEqual([]);
+
+  const answer = page.locator("[data-tutor-panel] .msg.tutor");
+  await expect(answer).toBeVisible();
+  await expect(draft).toBeHidden();
+  await expect(answer.locator(".sources a")).toHaveAttribute("href", "/learn/1/3");
+  await expect(page.locator("[data-tutor-panel] [data-log]")).not.toHaveAttribute("aria-busy", "true");
+  await expect(page.locator("[data-tutor-panel] [data-quota]")).toHaveText("28 of 30 questions left today");
+  expect(await scan(page), "after the final answer").toEqual([]);
+});
+
+test("tutor streaming: a run that fails says so in words and offers to try again", async ({ page }) => {
+  await ask(page, "coffee", "This will boom");
+  const error = page.locator("[data-tutor-panel] .error");
+  await expect(error).toBeVisible();
+  await expect(error).toContainText("Something went wrong. Your question is kept.");
+  await expect(error.getByRole("button", { name: "Try again" })).toBeVisible();
+  expect(await scan(page), "run error").toEqual([]);
+});
+
+test("tutor streaming: a run whose events cannot be read ends in an error, not a hang", async ({ page }) => {
+  await ask(page, "coffee", "Where did it gone");
+  await expect(page.locator("[data-tutor-panel] .error")).toBeVisible({ timeout: 10_000 });
+  await expect(page.locator("[data-tutor-panel] [data-draft]")).toBeHidden();
+});
+
+test("tutor streaming: a reload mid-answer resumes the run", async ({ page }) => {
+  await ask(page, "coffee", "Which species is called Robusta?");
+  await expect(page.locator("[data-tutor-panel] [data-draft]")).toBeVisible();
+  await page.reload({ waitUntil: "load" });
+  await page.locator("ulams-tutor button.launcher").click();
+  const answer = page.locator("[data-tutor-panel] .msg.tutor");
+  await expect(answer).toBeVisible({ timeout: 10_000 });
+  await expect(answer.locator(".sources a")).toHaveAttribute("href", "/learn/1/3");
+  await expect(page.locator("[data-tutor-panel] .msg.learner")).toContainText("Which species is called Robusta?");
+});
+
+test("tutor streaming: with the operator switch off the plain request answers and no draft appears", async ({ page }) => {
+  await ask(page, "nightsky", "Which species is called Robusta?");
+  await expect(page.locator("[data-tutor-panel] .msg.tutor")).toBeVisible();
+  await expect(page.locator("[data-tutor-panel] [data-draft]")).toBeHidden();
+});

@@ -21,15 +21,17 @@ export const ALL: APIRoute = async ({ params, request, locals, cookies, url }) =
     tenantFetch(tenant)(`${tenant.apiUrl}${path}${url.search}`, {
       method: request.method,
       headers: {
-        Accept: "application/json",
+        Accept: rule.stream ? "text/event-stream" : "application/json",
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
         "Current-timezone": request.headers.get("current-timezone") ?? "UTC",
         // the API picks the language from X-Locale (the translations package), not Accept-Language
+        ...(rule.stream && request.headers.get("last-event-id") ? { "Last-Event-ID": request.headers.get("last-event-id")! } : {}),
         ...(request.headers.get("x-locale") ? { "X-Locale": request.headers.get("x-locale")! } : {}),
       },
       body,
-      signal: AbortSignal.timeout(20_000),
+      // an event stream lives as long as the browser keeps it open (the API closes it after ~25 s)
+      signal: rule.stream ? request.signal : AbortSignal.timeout(20_000),
     });
 
   let response = await forward(locals.token).catch(() => null);
@@ -39,6 +41,12 @@ export const ALL: APIRoute = async ({ params, request, locals, cookies, url }) =
   }
   if (!response) return json(502, { message: "API unreachable" });
   if (rule.writesProgress && response.ok) invalidateProgress(tenant);
+  if (rule.stream && response.ok && response.body) {
+    return new Response(response.body, {
+      status: 200,
+      headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache, no-transform", "X-Accel-Buffering": "no" },
+    });
+  }
   return new Response(await response.text(), {
     status: response.status,
     headers: { "Content-Type": response.headers.get("content-type") ?? "application/json", "Cache-Control": "no-store" },

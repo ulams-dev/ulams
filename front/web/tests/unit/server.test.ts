@@ -99,6 +99,13 @@ describe("BFF rules", () => {
     expect(matchBffRule("GET", "/api/tutor/courses/x/status")).toBeNull();
     expect(matchBffRule("GET", "/api/tutor/conversations/short")).toBeNull();
     expect(matchBffRule("GET", `/api/tutor/conversations/${id}/../../admin`)).toBeNull();
+    // streamed answers: the run's events are an SSE route, read-only, piped through
+    expect(matchBffRule("GET", `/api/tutor/runs/${id}/events`)?.stream).toBe(true);
+    expect(matchBffRule("POST", `/api/tutor/runs/${id}/events`)).toBeNull();
+    expect(matchBffRule("GET", `/api/tutor/runs/${id}`)).toBeNull();
+    expect(matchBffRule("GET", "/api/tutor/runs/short/events")).toBeNull();
+    expect(matchBffRule("GET", `/api/tutor/runs/${id}/events/../../admin`)).toBeNull();
+    expect(matchBffRule("GET", `/api/tutor/conversations/${id}`)?.stream).toBeUndefined();
     // the anonymous aggregates are for authors and admins, not the learner BFF
     expect(matchBffRule("GET", "/api/admin/tutor/courses/5/analytics")).toBeNull();
   });

@@ -8,6 +8,7 @@
  */
 import { createServer } from "node:http";
 import { Buffer } from "node:buffer";
+import { clearTimeout, setTimeout } from "node:timers";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
@@ -109,6 +110,7 @@ const supportOf = (tenant) => {
 const findAssignment = (tenant, id) => Object.values(supportOf(tenant)).flat().find((i) => i.assignmentId === id);
 
 // Course tutor: on, 29 of 30 questions left, one earlier conversation; every question gets the same cited answer.
+// The `nightsky` tenant has streaming switched off (the operator switch), so its widget uses the plain request.
 const tutorStatus = { enabled: true, aiEnabled: true, remaining: 29, dailyLimit: 30, attemptActive: false };
 const tutorAnswer = {
   conversationId: "01JMOCKCONVERSATION00000A",
@@ -120,6 +122,21 @@ const tutorAnswer = {
   remaining: 28,
   label: "AI tutor · answers only from this course",
 };
+const RUN_OK = "01jmockrun00000000000000ok";
+const RUN_ERROR = "01jmockrun0000000000000err";
+const RUN_GONE = "01jmockrun000000000000gone";
+const TUTOR_EVENTS = (runId) =>
+  runId === RUN_ERROR
+    ? [{ type: "RUN_STARTED", runId }, { type: "RUN_ERROR", code: "error", message: "The tutor could not answer. Please ask again.", runId }]
+    : [
+        { type: "RUN_STARTED", runId },
+        { type: "TEXT_MESSAGE_START", messageId: "m", role: "assistant" },
+        { type: "TEXT_MESSAGE_CONTENT", messageId: "m", delta: "Robusta is Coffea canephora. " },
+        { type: "TEXT_MESSAGE_CONTENT", messageId: "m", delta: "It grows at lower altitudes." },
+        { type: "TEXT_MESSAGE_END", messageId: "m" },
+        { type: "CUSTOM", name: "tutor.final", value: { ...tutorAnswer, questionId: "01JMOCKQUESTION00000000A" } },
+        { type: "RUN_FINISHED", runId },
+      ];
 const tutorEarlier = { id: "01JMOCKEARLIER0000000000A", lastMessageAt: "2026-10-20T09:30:00+00:00", expiresAt: "2027-01-18T09:30:00+00:00" };
 
 const routes = [
@@ -142,9 +159,19 @@ const routes = [
       return { hidden: true };
     },
   ],
-  ["GET", /^\/api\/tutor\/courses\/1\/status$/, () => tutorStatus],
+  ["GET", /^\/api\/tutor\/courses\/1\/status$/, ({ tenant }) => ({ ...tutorStatus, streaming: tenant !== "nightsky" })],
   ["GET", /^\/api\/tutor\/courses\/1\/conversations$/, () => [tutorEarlier]],
-  ["POST", /^\/api\/tutor\/courses\/1\/messages$/, () => tutorAnswer],
+  [
+    "POST",
+    /^\/api\/tutor\/courses\/1\/messages$/,
+    ({ body, status }) => {
+      if (!body?.stream) return tutorAnswer;
+      status(202);
+      // a question containing "boom" gets a run that ends with RUN_ERROR, "gone" one whose events are missing
+      const runId = /boom/i.test(body.text) ? RUN_ERROR : /gone/i.test(body.text) ? RUN_GONE : RUN_OK;
+      return { conversationId: tutorAnswer.conversationId, runId, questionId: "01JMOCKQUESTION00000000A" };
+    },
+  ],
   ["GET", /^\/api\/tutor\/conversations\/01JMOCKEARLIER0000000000A$/, () => ({ id: tutorEarlier.id, courseId: 1, expiresAt: tutorEarlier.expiresAt, messages: [
     { id: "01JMOCKMSG1", role: "learner", text: "Which species is Robusta?", citations: [], refusal: null, at: tutorEarlier.lastMessageAt },
     { id: "01JMOCKMSG2", role: "tutor", text: tutorAnswer.answer, citations: tutorAnswer.citations, refusal: "none", at: tutorEarlier.lastMessageAt },
@@ -184,11 +211,39 @@ const server = createServer((req, res) => {
     res.end(JSON.stringify({ reset: true }));
     return;
   }
+  const run = /^\/api\/tutor\/runs\/([0-9a-z]{26})\/events$/.exec(path);
+  if (req.method === "GET" && run) {
+    streamRun(req, res, run[1]);
+    return;
+  }
   const route = routes.find(([method, pattern]) => method === req.method && pattern.test(path));
   const chunks = [];
   req.on("data", (chunk) => chunks.push(chunk));
   req.on("end", () => respond(req, res, path, route, Buffer.concat(chunks).toString("utf8")));
 });
+
+/** Server-sent events of a streamed tutor answer, a few hundred ms apart; honours Last-Event-ID. */
+function streamRun(req, res, runId) {
+  if (runId === RUN_GONE) {
+    res.statusCode = 404;
+    res.end(JSON.stringify({ message: "Not found (mock)" }));
+    return;
+  }
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  const after = Number(req.headers["last-event-id"] ?? 0);
+  const events = TUTOR_EVENTS(runId).map((event, i) => ({ id: i + 1, event }));
+  res.write("retry: 1000\n\n");
+  let i = events.findIndex((e) => e.id > after);
+  if (i < 0) return res.end();
+  // the draft stays on screen for about a second and a half before the final answer replaces it
+  const delays = runId === RUN_ERROR ? [50, 150] : [50, 100, 200, 300, 400, 1800, 1850];
+  const timers = events.slice(i).map((e) => setTimeout(() => {
+    res.write(`id: ${e.id}\ndata: ${JSON.stringify(e.event)}\n\n`);
+    if (e.id === events.length) res.end();
+  }, delays[e.id - 1]));
+  req.on("close", () => timers.forEach(clearTimeout));
+}
 
 function respond(req, res, path, route, rawBody) {
   if (!route) {
@@ -205,7 +260,7 @@ function respond(req, res, path, route, rawBody) {
     }
   })();
   const match = route[1].exec(path);
-  const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body });
+  const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body, status: (code) => (res.statusCode = code) });
   res.end(JSON.stringify({ success: true, data, meta: { current_page: 1, last_page: 1, per_page: 24, total: 1 } }));
 }
 
