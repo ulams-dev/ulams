@@ -27,7 +27,7 @@ RUN n=1; until yarn install --frozen-lockfile --ignore-scripts --non-interactive
 FROM deps AS build
 COPY api/pdf/tsconfig.json api/pdf/tsconfig.build.json api/pdf/
 COPY api/pdf/src api/pdf/src
-RUN yarn --cwd api/pdf build
+RUN n=1; until yarn --cwd api/pdf build; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): yarn --cwd api/pdf build" >&2; sleep 5; done
 
 # ---- prod-deps: runtime node_modules only -----------------------------------
 FROM manifests AS prod-deps

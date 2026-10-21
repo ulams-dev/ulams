@@ -36,7 +36,7 @@ COPY front/sdk front/sdk
 COPY front/interactive-bridge front/interactive-bridge
 COPY front/ui front/ui
 COPY front/web front/web
-RUN yarn --cwd front/web build
+RUN n=1; until yarn --cwd front/web build; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): yarn --cwd front/web build" >&2; sleep 5; done
 
 # ---- prod-deps: runtime node_modules only (sharp ships per-platform binaries) --
 FROM manifests AS prod-deps
