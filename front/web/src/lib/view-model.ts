@@ -35,6 +35,7 @@ export const FORMAT_BY_KIND: Record<TopicKind, Format | undefined> = {
   scorm: "scorm",
   liascript: "interactive",
   interactive: "interactive",
+  code_exercise: "interactive",
   layout: "interactive",
   lti: "interactive",
   cmi5: "tracked",
@@ -112,6 +113,8 @@ export interface CourseModel {
   previewHref: string;
   image?: ImageModel;
   durationLabel?: string;
+  /** `hours_to_complete` of the course, for the localized facts. */
+  hours?: number;
   lessonCount: number;
   topicCount: number;
   /** "6 lessons · 18 topics · ~9 h · 6 lessons" style summary from the API numbers. */
@@ -345,6 +348,7 @@ export function courseModel(course: Course, currency = "EUR", tutors: UserSummar
     previewHref: preview ? links.topic(course.id, preview.id) : links.learn(course.id),
     image: imageFromUrl(course.image_url ?? course.poster_url, course.title),
     durationLabel: clean(course.duration),
+    ...(course.hours_to_complete ? { hours: Number(course.hours_to_complete) } : {}),
     lessonCount: lessons.length,
     topicCount: topics.length,
     lessonsLabel: [`${lessons.length} lessons`, `${topics.length} topics`, minutes ? `about ${Math.round(minutes / 60)} h of material` : ""]

@@ -49,9 +49,15 @@ an MJML HTTP service:
 | `MJML_API_URL` | `http://mjml:15500/v1` |
 
 Setting `MJML_API_URL` switches the renderer to the HTTP service (`config/ulams_templates_email.php`).
-The development stack (`api/docker-compose.yml`) and the production examples run the pinned
-`danihodovic/mjml-server` image on the internal `ulams` network; it needs no inbound or outbound
-access, and in the development stack the `api` service gets `LARAVEL_MJML_API_URL=http://mjml:15500/v1`.
+The development stack (`api/docker-compose.yml`) builds the service from `deploy/stack/mjml`, and the
+production examples pull the same image as `ghcr.io/ulams-dev/mjml` (tagged like the other ulams
+images, `ULAMS_VERSION`). It is a small Node service on the latest MJML 4.x (4.18 today; the
+version is part of every answer as `mjml_version`) and runs on the internal `ulams` network; it needs
+no inbound or outbound access, and in the development stack the `api` service gets
+`LARAVEL_MJML_API_URL=http://mjml:15500/v1`. The visual editor draws its canvas with the same 4.x
+line, so the canvas and the sent e-mail stay close. An older stack that still runs
+`danihodovic/mjml-server` keeps working (same endpoint), but switch to the ulams image: it is the one
+that gets MJML updates with the platform.
 
 The renderer is chosen in this order:
 
@@ -80,12 +86,12 @@ with a live preview next to it. No setup is needed beyond the MJML service above
 - The preview is not the saved e-mail: save the template to store it. If the MJML service is down
   the editor shows an error and keeps the last good preview.
 
-### Visual mode (beta)
+### Visual mode
 
-Above the code editor a switch chooses between **Code** and **Visual (beta)**. Code is always the
-view the page opens in. Visual mode is a drag-and-drop editor (GrapesJS with the `grapesjs-mjml`
-plugin) that reads and writes the same MJML, so the stored template, the renderer and the preview
-do not change.
+Above the code editor a switch chooses between **Code** and **Visual**. Code is always the view the
+page opens in. Visual mode edits the same MJML (GrapesJS with the `grapesjs-mjml` plugin), so the
+stored template, the renderer and the preview do not change. It works with the mouse (drag and drop)
+and entirely with the keyboard.
 
 - **Nothing is lost silently.** Before Visual mode opens, the editor loads the template, exports it
   again and compares both as trees. Self-closing head tags (`<mj-font ... />`) are normalised first,
@@ -97,12 +103,64 @@ do not change.
   `<mjml>` root) always stay in Code view.
 - **Edits are written to the form** about 300 ms after you stop, and only when the content really
   changed, so opening Visual mode and leaving it does not rewrite a hand-written template.
-- **Not yet fully keyboard operable.** Blocks and panel buttons of the editor cannot be reached with
-  the keyboard alone, which is why the mode carries the beta label and Code stays the default. The
-  keyboard alternatives are planned (milestone M5 of the visual editor plan).
-- **Variables.** In Visual mode type the variable (`@VarUserName`) into a text block; the insert
-  list works in Code view only for now.
-- **Offline and CSP.** The editor is a separate script loaded when you open Visual mode (about 680
+- **Keyboard and screen readers.** The panel **Structure and keyboard tools** above the canvas does
+  everything drag and drop does, on the same model as the canvas:
+  - **Add block**: choose a block (section with 1, 2 or 3 columns, text, button, image, divider,
+    spacer) and press **Add block**. Content goes after the selected content block, into the selected
+    column, or into the first column of the selected section; a section goes after the section that
+    holds the selection. The new block is selected and focused.
+  - **Structure**: the e-mail as a tree. Selecting a block there selects it in the canvas and the
+    other way round.
+  - **Properties**: a form for the selected block (link address, alternative text, colours, font,
+    spacing, alignment). A field is saved with Enter or when you leave it.
+  - Changes (added, moved, removed, changed) are announced in a live region.
+
+  | Where | Key | Does |
+  |---|---|---|
+  | Structure | Up, Down | previous, next block (selects it) |
+  | Structure | Right, Left | open, close a branch (Left on a closed one goes to the parent) |
+  | Structure | Home, End | first, last block |
+  | Structure | Alt+Up, Alt+Down | move the block up or down; at the edge of a column it continues into the neighbouring column |
+  | Structure | Delete or Backspace | remove the block (shared parts cannot be removed) |
+  | Structure | Enter or Space | text block: edit the text; image: open the image dialog; other: go to the properties |
+  | Action bar | Left, Right, Home, End | move between the buttons (Tab leaves the bar) |
+  | While editing text | Escape | stop editing, back to the structure |
+  | While editing text | Ctrl+B, Ctrl+I | bold, italic |
+
+  The structure and the action bar are one Tab stop each (roving tabindex), and focus is visible on
+  every control. Reduced motion (`prefers-reduced-motion`) turns the transitions of the editor off.
+- **Known limits.** The grey toolbar of the canvas (device preview, code view) and the built-in
+  blocks, layers and style panels of GrapesJS are mouse tools; the panel above replaces what they do,
+  except the desktop/tablet/mobile width switch and the code view (use the Code mode). Bold, italic and
+  links inside a text are made with Ctrl+B and Ctrl+I; there is no keyboard way to make a link inside
+  a paragraph, set the button link in its properties instead. A content block cannot be moved into
+  another section by keyboard other than by moving it through the columns in between.
+- **Checks.** The editor is tested in a real browser with axe (WCAG 2.2 AA) in Code, Visual, preview
+  and image dialog, with a keyboard-only run, reduced motion, and a guard that fails on any request
+  outside the origin (the editor sends no telemetry). The preview frame is sandboxed without scripts,
+  so axe cannot enter it; the accessibility warnings of the generated e-mail are shown above it.
+- **Variables are chips.** A registered variable (`@VarUserName` or `${VarUserName}`) inside a text
+  block is shown as a chip that cannot be edited letter by letter: it is deleted or moved as one
+  piece. Select a text block and choose a variable in the list below the editor to add a chip at the
+  caret (while you edit the text) or at the end of the block. The stored MJML keeps the plain token,
+  so Code view, the server and the preview read the same text as before. Buttons and images have a
+  "Link from a variable" field next to their link field. A token you type yourself that is not in the
+  list stays plain text. The list also shows the required variables the content does not use yet,
+  updated as you type, with the same rule as the server (`@Var` or `${Var}` form).
+- **Shared headers and footers are locked.** A global setting (`@GlobalSettings…`, for example a
+  shared footer) that stands on its own in the layout is shown as a locked block: it cannot be
+  edited, moved, copied or removed inside the template, and it is never expanded into it, so a change
+  in Settings reaches every template that uses it. The editor lists these parts with an **Edit in
+  Settings** link. To remove one from a template, switch to Code view.
+- **Images.** The image block's **Choose or upload an image** button (or a double click on the image)
+  opens a dialog that uploads the file with `POST /api/admin/templates/email/images` to the storage of
+  the current tenant, then asks for the alternative text, which is required; an image that is only
+  decoration is marked explicitly and is written as `alt=""`. Accepted: PNG, JPEG, GIF and WebP up to
+  2 MB (`TEMPLATES_EMAIL_IMAGE_MAX_KB`). **SVG is refused**: it can carry scripts and most mail clients
+  do not draw it. The type is checked on the content, not on the file name, and the stored name is
+  random. Mail clients fetch the image from its public URL, so the storage of the tenant has to be
+  reachable from the internet.
+- **Offline and CSP.** The editor is a separate script loaded when you open Visual mode (about 690
   KB gzip; the build fails above 700 KB), is served by the admin itself and fetches nothing from a CDN.
   The blocks offered have no remote images. It needs no change of the admin Content-Security-Policy.
 
@@ -112,13 +170,14 @@ Without the setting, or with `true`, Visual mode is on.
 
 ### API
 
-The editor uses two admin endpoints that work on a draft that is not saved yet. Both need the `template_update`
-permission, read only the current tenant's settings and write nothing.
+The editor uses admin endpoints that work on a draft that is not saved yet. All need the `template_update`
+permission and work on the current tenant only. The first two write nothing; the third stores an image.
 
 | Endpoint | Does | Limit |
 |---|---|---|
 | `POST /api/admin/templates/email/render` | Renders `{event, title, content}` with the sample values of the event and returns the HTML | 30 per minute per user |
 | `POST /api/admin/templates/email/test-send` | Same, then sends the e-mail with the subject prefixed `[Test]` | 5 per minute per user |
+| `POST /api/admin/templates/email/images` | Stores one image (multipart field `image`) in the tenant storage and returns its public `url`, `name`, `mime`, `size`, `width` and `height`; `422` for SVG, other types, files that are not images and files over the size limit | 30 per minute per user |
 
 The test e-mail goes only to the address of the signed-in admin; the request has no recipient
 field and anything extra in the body is ignored. Optional `sample_overrides` (variable name to

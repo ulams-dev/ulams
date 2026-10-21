@@ -1,6 +1,6 @@
 # 0160. Course-as-code sync through Blueprint v3 import versions
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-21
 - Plan: `docs/plans/phase-7-course-as-code.md` (sections 4, 6, 7); amends ADR 0079 (Proposed); owner question #78
 

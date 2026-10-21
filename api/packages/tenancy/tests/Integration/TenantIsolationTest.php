@@ -100,6 +100,22 @@ class TenantIsolationTest extends TestCase
         $this->assertNotSame(200, $wrong->getStatusCode());
     }
 
+    public function testLearnerInsightsDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $created = $this->request(self::A, 'POST', '/api/admin/courses', $tokenA, ['title' => 'Insights probe ' . bin2hex(random_bytes(4)), 'status' => 'published']);
+        $this->assertContains($created->getStatusCode(), [200, 201], (string) $created->getBody());
+        $courseId = json_decode((string) $created->getBody(), true)['data']['id'];
+        $summary = "/api/admin/learner-insights/courses/{$courseId}/summary";
+
+        // the learner's own view and the aggregates of a course work in tenant A with A's token...
+        $this->assertSame(200, $this->request(self::A, 'GET', '/api/learner-insights/me', $tokenA)->getStatusCode());
+        $this->assertNotSame(401, $this->request(self::A, 'GET', $summary, $tokenA)->getStatusCode());
+        // ...and are refused on tenant B, whose Passport keys differ
+        $this->assertSame(401, $this->request(self::B, 'GET', '/api/learner-insights/me', $tokenA)->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'GET', $summary, $tokenA)->getStatusCode());
+    }
+
     public function testSocialLoginStateAndCodesDoNotCrossTenants(): void
     {
         $verifier = bin2hex(random_bytes(32));
@@ -269,6 +285,32 @@ class TenantIsolationTest extends TestCase
         }
         $list = json_decode((string) $this->request(self::B, 'GET', '/api/admin/course-builder/sessions', $tokenB)->getBody(), true);
         $this->assertNotContains($id, array_column($list['data'] ?? [], 'id'));
+    }
+
+    /**
+     * Course-as-code endpoints (ADR 0160) resolve only inside their tenant: another tenant's token gets 404 for
+     * A's session and version ids and A's token is rejected on B. Needs a session, so it is skipped with AI off.
+     */
+    public function testCourseAsCodeEndpointsDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $created = $this->request(self::A, 'POST', '/api/admin/course-builder/sessions', $tokenA, ['title' => 'Isolation probe']);
+        if ($created->getStatusCode() === 503) {
+            $this->markTestSkipped('AI is disabled on the probe tenants');
+        }
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['session']['id'];
+        $versionId = '01aaaaaaaaaaaaaaaaaaaaaaaa';
+        $body = ['document' => ['schemaVersion' => 3], 'baseVersionId' => $versionId];
+
+        foreach ([['POST', "/api/admin/course-as-code/sessions/{$id}/imports", $body], ['POST', "/api/admin/course-as-code/sessions/{$id}/apply", []], ['POST', "/api/admin/course-as-code/sessions/{$id}/publish", []]] as [$method, $uri, $payload]) {
+            $onB = $this->request(self::B, $method, $uri, $tokenB, $payload);
+            $this->assertSame(404, $onB->getStatusCode(), "{$method} {$uri}");
+            $this->assertStringNotContainsString('Isolation probe', (string) $onB->getBody());
+            $this->assertSame(401, $this->request(self::B, $method, $uri, $tokenA, $payload)->getStatusCode(), "{$method} {$uri} with A's token");
+        }
+        $this->assertSame(401, $this->request(self::B, 'GET', '/api/admin/course-as-code/courses/1/blueprint', $tokenA)->getStatusCode());
     }
 
     private function login(string $slug): string

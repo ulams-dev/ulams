@@ -196,7 +196,7 @@ final class PatchService
         }, $items);
         $clean = fn (array $b) => ['id' => $b['id'], 'kind' => $b['kind'], 'markdown' => trim($b['markdown']), 'citations' => array_values(array_unique($b['citations'])), 'objectiveIds' => array_values(array_unique($b['objectiveIds']))];
 
-        return match ($type) {
+        $merged = match ($type) {
             'course' => array_merge($old, array_filter(['title' => trim($r['title']), 'subtitle' => trim($r['subtitle']) ?: null, 'description' => trim($r['description']) ?: null], fn ($v) => $v !== null)),
             'module' => array_merge($old, ['title' => trim($r['title'])] + (trim($r['summary']) !== '' ? ['summary' => trim($r['summary'])] : [])),
             'lesson' => array_merge($old, ['title' => trim($r['title']), 'minutes' => (int) $r['minutes'], 'blocks' => array_map($clean, $keep($r['blocks'], $old['blocks'] ?? [])), 'flags' => []]
@@ -212,6 +212,13 @@ final class PatchService
                 'objectiveIds' => array_values(array_unique($r['objectiveIds'])),
             ],
         };
+
+        // ADR 0160: an element the AI changed is the AI's from now on and must cite (blocks and questions are rebuilt without `origin`)
+        if (($merged['origin'] ?? null) === 'author') {
+            $merged['origin'] = 'ai';
+        }
+
+        return $merged;
     }
 
     private function parentSummary(array $doc, array $found): array

@@ -121,7 +121,7 @@ H5P is not served from the content origin; see [H5P in production](/operators/h5
 
 The `content_origin` snippet, copied from the development Caddyfile with HTTPS hosts:
 
-- answers only `GET` and `HEAD` for `/scorm/*`, `/cmi5/*`, `/adapt/*`, `/liascript/*` and `/interactive/*`, and 404
+- answers only `GET` and `HEAD` for `/scorm/*`, `/cmi5/*`, `/adapt/*`, `/liascript/*`, `/interactive/*` and `/runtime/*` (the [code exercises](/creators/code-exercises/) runner, whose policies the API sets), and 404
   for everything else;
 - rewrites them to `GET /api/content/...` on the tenant API (php-fpm) with
   `Host`/`X-Forwarded-Host` set to the tenant API host and `X-Ulams-Content-Origin: 1`;

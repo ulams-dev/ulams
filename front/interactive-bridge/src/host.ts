@@ -1,4 +1,4 @@
-import { PROTOCOL, READY_TIMEOUT_MS, parseMessage, withinSize, type Envelope, type InitPayload, type PackageMessage, type ParentMessage } from "./protocol.ts";
+import { PROTOCOL, READY_TIMEOUT_MS, parseMessage, withinSize, type CodeFile, type CodeLanguage, type Envelope, type InitPayload, type PackageMessage, type ParentMessage } from "./protocol.ts";
 
 export interface HostOptions {
   /** The per-launch random nonce (at least 8 characters). */
@@ -21,6 +21,10 @@ export interface Host {
   setLocale(locale: string): void;
   pause(): void;
   resume(): void;
+  /** Code exercises (ADR 0170): hand the runner the tests and limits, ask for a run, stop everything. */
+  loadExercise(exercise: { language: CodeLanguage; tests: CodeFile[]; timeoutMs: number }): void;
+  run(request: { runId: number; files: CodeFile[] }): void;
+  reset(): void;
   /** Sends `init` now (also done on the frame's `load` event). */
   sendInit(): void;
   destroy(): void;
@@ -79,6 +83,9 @@ export function createHost(frame: HTMLIFrameElement, options: HostOptions): Host
     setLocale: (locale) => post({ type: "setLocale", locale }),
     pause: () => post({ type: "pause" }),
     resume: () => post({ type: "resume" }),
+    loadExercise: (exercise) => post({ type: "loadExercise", ...exercise }),
+    run: (request) => post({ type: "run", ...request }),
+    reset: () => post({ type: "reset" }),
     sendInit,
     destroy() {
       destroyed = true;

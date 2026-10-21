@@ -161,7 +161,7 @@ environment variables (`PDF_MAX_*`, `PDF_RENDER_TIMEOUT_MS`). See
 | MinIO | `bitnamilegacy/minio` | S3-compatible storage; bucket `ulams` for the platform, `ulams-<slug>` per tenant, public read |
 | Soketi | `quay.io/soketi/soketi` | Pusher-protocol websockets on `ws.localhost` (the dev API sets `BROADCAST_DRIVER=log`) |
 | MailHog | `mailhog/mailhog` | Catches outgoing mail; web UI on `localhost:8025` |
-| mjml | `danihodovic/mjml-server` | MJML API for e-mail templates (`templates-email`, used when `MJML_API_URL` is set) |
+| mjml | built from `deploy/stack/mjml` (published as `ghcr.io/ulams-dev/mjml`) | MJML API for e-mail templates (`templates-email`, used when `MJML_API_URL` is set) |
 | Adminer | `adminer` | Database UI on `localhost:8078` |
 | ClamAV | `clamav/clamav:1.4` | Optional upload scanning (`UPLOADS_SCANNER=clamd`), compose profile `av` |
 

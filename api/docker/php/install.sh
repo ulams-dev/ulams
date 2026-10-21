@@ -76,4 +76,10 @@ cp "$SRC_DIR"/conf/php-fpm.d/*.conf /usr/local/etc/php-fpm.d/
 mkdir -p /usr/local/share/doc/ulams-php /etc/supervisor/conf.d /etc/supervisor/custom.d
 cp "$SRC_DIR/NOTICE" /usr/local/share/doc/ulams-php/NOTICE
 
+# Exact versions of every Alpine package in the image: part of the written GPL source offer in
+# NOTICE (the offer names this file). Written last, after install-php-extensions removed its
+# build dependencies, so the list is what the image really contains.
+mkdir -p /usr/share/doc/ulams
+apk info -v | sort > /usr/share/doc/ulams/apk-packages.txt
+
 rm -rf /tmp/* /var/cache/apk/* /root/.cache "$SRC_DIR"

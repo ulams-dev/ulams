@@ -67,10 +67,13 @@ class LearnerNoticesTest extends TestCase
         $this->actingAs($author, 'api')->putJson("/api/admin/living-course/connections/{$connection->id}", ['settings' => ['show_pending_to_learners' => true]])->assertOk();
         $response = $this->actingAs($learner, 'api')->getJson($url)->assertOk();
         $this->assertCount(4, $response->json('data.topics'), 'lessons 2.1, 2.2, 4.1 and 4.2 (its source section was removed)');
-        $body = $response->getContent();
-        $this->assertStringNotContainsString('1:16', $body);
-        $this->assertStringNotContainsString('reason', $body);
-        $this->assertSame(['topicId', 'since'], array_keys($response->json('data.topics.0')));
+        // structure, not substrings of the encoded body: a timestamp can contain any short digit string
+        $this->assertSame(['topics'], array_keys($response->json('data')));
+        foreach ($response->json('data.topics') as $topic) {
+            $this->assertSame(['topicId', 'since'], array_keys($topic), 'no reason, no source text');
+            $this->assertIsInt($topic['topicId']);
+            $this->assertIsString($topic['since']);
+        }
 
         // younger than the delay: not shown yet
         ElementStatus::query()->where('session_id', $session->id)->update(['since' => now()->subHour()]);

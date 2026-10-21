@@ -102,6 +102,13 @@
                     ]
                   },
                   {
+                    "title": "Code exercises",
+                    "text": "Starter files and visible tests for JavaScript and TypeScript, run by the learner in an isolated browser sandbox with no network. Each run is a practice attempt that moves progress and feeds the learner signals, and never counts for certificates.",
+                    "packages": [
+                      "code-exercises"
+                    ]
+                  },
+                  {
                     "title": "Layout lessons",
                     "text": "A lesson body assembled from approved learning components such as timelines, flip cards, steps and callouts.",
                     "packages": [
@@ -727,7 +734,8 @@
                     "title": "Headless Sylius shop",
                     "text": "A separate Sylius 2.x service behind one frontend: catalogue, cart and checkout there, entitlements in the LMS.",
                     "packages": [
-                      "commerce"
+                      "commerce",
+                      "entitlements"
                     ],
                     "status": "coming"
                   }

@@ -1,0 +1,25 @@
+export default {
+  CodeExercise: '代码练习',
+  'codeexercise.about':
+    '学员在浏览器中编辑这些文件并运行测试。代码在没有网络的隔离沙箱中运行。每次运行都是一次练习尝试：它会影响学员的进度，但由学员的浏览器上报，因此永远不计入证书或合规。',
+  'codeexercise.language': '语言',
+  'codeexercise.timeout': '运行超过此时间后停止（毫秒）',
+  'codeexercise.completion': '主题完成条件',
+  'codeexercise.on_pass': '一次运行通过后',
+  'codeexercise.on_attempt': '任意一次运行后',
+  'codeexercise.pass_score': '通过的测试（%）',
+  'codeexercise.text': '任务（Markdown）',
+  'codeexercise.files': '起始文件（学员会编辑这些文件）',
+  'codeexercise.tests': '可见测试（学员可以阅读；使用 test(名称, fn) 和 expect(值)）',
+  'codeexercise.path': '文件路径',
+  'codeexercise.content': '内容',
+  'codeexercise.remove': '删除',
+  'codeexercise.remove_file': '删除文件 {path}',
+  'codeexercise.add_file': '添加文件',
+  'codeexercise.valid': '练习有效。',
+  'codeexercise.invalid': '练习存在问题：',
+  'codeexercise.preview': '在学员站点中预览',
+  'codeexercise.preview_after_save': '保存主题后即可获得预览链接。',
+  'codeexercise.hidden_tests_later':
+    '隐藏测试和已验证的评分将随服务器运行环境推出；目前所有测试都是可见的。',
+};

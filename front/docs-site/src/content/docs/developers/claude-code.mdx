@@ -17,7 +17,7 @@ instance to talk to (`http://coffee.localhost` on a local stack).
 1. Build the CLI and put it on your `PATH`:
 
    ```bash
-   corepack yarn install --ignore-engines
+   corepack yarn install
    corepack yarn workspace ulams build
    mkdir -p ~/.local/bin
    ln -sf "$PWD/front/cli/dist/ulams.mjs" ~/.local/bin/ulams     # the build marks it executable

@@ -28,6 +28,7 @@ Switch it on with the tenant setting `learner_insights.enabled` (`POST /api/admi
 | `course.started`, `course.completed` | enrolment progress events |
 | `topic.opened`, `topic.progressed`, `topic.completed` | progress saves (time spent as seconds, never page content) |
 | `quiz.attempt_started`, `quiz.attempt_finished`, `quiz.answer` | GIFT quizzes (score ratio and whether the answer was fully correct, never the answer text) |
+| `code.attempt_finished` | a run of a [code exercise](/creators/code-exercises/): the attempt number and whether it passed, never the code (counted by the failed-attempts rule like quiz attempts) |
 | `scorm.status` | SCORM completion |
 | `h5p.result` | H5P results (the scaled score and the verb, never the xAPI statement) |
 | `media.replayed`, `media.seeked_back` | the video and audio players |
@@ -79,7 +80,7 @@ An at-risk learner gets one reminder per course per 7 days and at most two per w
 
 `GET /api/admin/learner-insights/courses/{course}/summary` gives the per-course picture: how many learners are enrolled, active and finished, quiz scores and pass rate, how many learners are on track, struggling or at risk, and what reminders and personal help achieved. `.../elements` lists the sections that confuse people, ranked by the share of their learners who struggled, with the reasons and the share who recovered. Both accept `period=7|30|90` days. They are open to holders of the permission `learner_insights_view` (admins) and to the authors of the course.
 
-Nothing is shown for a group smaller than `LEARNER_INSIGHTS_MIN_GROUP_SIZE` (default 10): the API answers `smallGroup` or `hidden` instead of numbers, so a screen cannot leak a single learner. Names are available only through `.../learners` (struggling and at-risk learners with their reasons) and `/learners/{user}/courses/{course}/timeline`, which need the permission `learner_insights_view_individuals`. Authors of a course may use `.../learners` only when the tenant setting `learner_insights.instructors_see_individuals` is on (default off). `POST /api/admin/learner-insights/backfill` queues the backfill.
+Nothing is shown for a group smaller than `LEARNER_INSIGHTS_MIN_GROUP_SIZE` (default 10): the API answers `smallGroup` or `hidden` instead of numbers, so a screen cannot leak a single learner. Names are available only through `.../learners` (struggling and at-risk learners with their reasons) and `/learners/{user}/courses/{course}/timeline`, which need the permission `learner_insights_view_individuals`. Authors of a course may use `.../learners` only when the tenant setting `learner_insights.instructors_see_individuals` is on (default off). `POST /api/admin/learner-insights/backfill` queues the backfill. Authors read the same aggregates on the course's Insights page in the studio, described in [See where learners struggle](/creators/course-insights/); the **Insights** tab of a course in the admin summarises it and links to it.
 
 ## Privacy controls
 

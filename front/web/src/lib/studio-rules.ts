@@ -70,3 +70,30 @@ export function isLivingCourseCall(method: string, path: string): boolean {
   const rest = path.slice(LIVING_COURSE_PREFIX.length);
   return LIVING_COURSE_RULES.some((r) => r.method === method.toUpperCase() && r.pattern.test(rest));
 }
+
+/**
+ * Learner Insights analytics for authors (/api/admin/learner-insights). The browser reaches them as
+ * /studio/api/learner-insights/…; the BFF forwards the part after the prefix. `GET /me` is the author's own
+ * learner endpoint (/api/learner-insights/me): it only tells whether the module is on for the academy. The
+ * API checks authorship and the permissions (individual data has its own); this list keeps the BFF from
+ * being an open proxy. Everything here is read-only.
+ */
+export const INSIGHTS_PREFIX = "/learner-insights";
+export const INSIGHTS_RULES: Array<{ method: string; pattern: RegExp }> = [
+  { method: "GET", pattern: /^\/me$/ },
+  { method: "GET", pattern: /^\/courses\/\d{1,10}\/(summary|elements|learners)$/ },
+  { method: "GET", pattern: /^\/learners\/\d{1,10}\/courses\/\d{1,10}\/timeline$/ },
+];
+
+/** `path` is relative to the BFF root, e.g. `/learner-insights/courses/3/summary`. */
+export function isInsightsCall(method: string, path: string): boolean {
+  if (!path.startsWith(`${INSIGHTS_PREFIX}/`)) return false;
+  const rest = path.slice(INSIGHTS_PREFIX.length);
+  return INSIGHTS_RULES.some((r) => r.method === method.toUpperCase() && r.pattern.test(rest));
+}
+
+/** The API path of an allowed Insights call (`path` as for `isInsightsCall`). */
+export function insightsTarget(path: string): string {
+  const rest = path.slice(INSIGHTS_PREFIX.length);
+  return rest === "/me" ? "/api/learner-insights/me" : `/api/admin/learner-insights${rest}`;
+}

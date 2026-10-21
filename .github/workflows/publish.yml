@@ -3,7 +3,7 @@ name: Publish images
 # Builds the ulams container images and pushes them to GitHub Container Registry as
 # ghcr.io/ulams-dev/<name>, multi-arch (linux/amd64, linux/arm64), with provenance and an SBOM.
 #
-# Supply chain (ADR 0108, .github/scripts/supply-chain.sh): after each push the digest is scanned with Trivy
+# Supply chain (ADR 0108, .github/scripts/supply-chain.sh, job `supply-chain` after the image jobs): the pushed digest is scanned with Trivy
 # (fixable CRITICAL findings fail the job, and the image is then never signed), signed keyless with cosign
 # (GitHub OIDC identity of this workflow; the signature is on the index, so it also covers the BuildKit SBOM
 # and provenance attestations the index lists), and verified with the command operators use. The SBOM is
@@ -29,8 +29,6 @@ on:
 permissions:
   contents: read
   packages: write
-  # Keyless signing: the job asks GitHub for an OIDC token, Sigstore turns it into a short-lived certificate.
-  id-token: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -39,7 +37,6 @@ concurrency:
 env:
   IMAGE_PREFIX: ghcr.io/ulams-dev
   PLATFORMS: linux/amd64,linux/arm64
-  COSIGN_VERSION: v3.1.3
   # Put the OCI labels on the multi-arch index too, so GHCR shows description and licence.
   DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
   METADATA_TAGS: |
@@ -81,17 +78,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Pinned by commit (v4.1.2); the cosign release it installs is pinned in COSIGN_VERSION.
-      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
-        with:
-          cosign-release: ${{ env.COSIGN_VERSION }}
-      - name: Trivy database cache
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/trivy-ulams
-          key: trivy-db-${{ github.run_id }}
-          restore-keys: trivy-db-
-
       # The base tag moves with every PHP release: record the exact version the image is built on and tag it
       # (immutable-looking tag next to the moving 8.4), so a deployment can say which PHP it runs.
       - name: PHP version of the base image
@@ -102,6 +88,8 @@ jobs:
           version=$(docker run --rm "$base" php -r 'echo PHP_VERSION;')
           echo "$base is PHP $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
+          alpine=$(docker run --rm "$base" cat /etc/alpine-release)
+          echo "alpine=$alpine" >> "$GITHUB_OUTPUT"
 
       - name: PHP base metadata
         id: php-meta
@@ -117,6 +105,7 @@ jobs:
             org.opencontainers.image.title=ulams php
             org.opencontainers.image.description=PHP 8.4 FPM runtime of the ulams API (official php:8.4-fpm-alpine plus extensions and tools). Third-party notices: /usr/local/src/ulams-php/NOTICE
             org.opencontainers.image.licenses=Apache-2.0
+            org.ulams.alpine-release=${{ steps.php-version.outputs.alpine }}
           annotations: |
             org.opencontainers.image.title=ulams php
             org.opencontainers.image.description=PHP 8.4 FPM runtime of the ulams API
@@ -140,22 +129,20 @@ jobs:
           cache-from: type=gha,scope=php
           cache-to: type=gha,scope=php,mode=max
 
-      - name: Scan, sign and verify (php)
+      # Part of the written GPL source offer (api/docker/php/NOTICE): the exact Alpine packages of the image.
+      - name: Alpine package list in the run summary
         env:
-          REF: ${{ env.IMAGE_PREFIX }}/php@${{ steps.php.outputs.digest }}
-          TRIVY_USERNAME: ${{ github.actor }}
-          TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          IMAGE: ${{ env.IMAGE_PREFIX }}/php@${{ steps.php.outputs.digest }}
         run: |
-          sh .github/scripts/supply-chain.sh scan "$REF"
-          sh .github/scripts/supply-chain.sh sign "$REF"
-          sh .github/scripts/supply-chain.sh verify "$REF"
-      - name: SBOM attestation (php)
-        continue-on-error: true
-        env:
-          REF: ${{ env.IMAGE_PREFIX }}/php@${{ steps.php.outputs.digest }}
-        run: |
-          sh .github/scripts/supply-chain.sh attest "$REF"
-          VERIFY_ATTESTATION=1 sh .github/scripts/supply-chain.sh verify "$REF"
+          docker pull "$IMAGE"
+          {
+            echo "<details><summary>Alpine packages in the PHP image (GPL source offer)</summary>"
+            echo
+            echo '```'
+            docker run --rm "$IMAGE" cat /usr/share/doc/ulams/apk-packages.txt
+            echo '```'
+            echo "</details>"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: API metadata
         id: api-meta
@@ -174,7 +161,6 @@ jobs:
             org.opencontainers.image.licenses=Apache-2.0
 
       - name: Build and push API
-        id: api
         uses: docker/build-push-action@v7
         with:
           context: api
@@ -192,22 +178,6 @@ jobs:
           cache-from: type=gha,scope=api
           cache-to: type=gha,scope=api,mode=max
 
-      - name: Scan, sign and verify (api)
-        env:
-          REF: ${{ env.IMAGE_PREFIX }}/api@${{ steps.api.outputs.digest }}
-          TRIVY_USERNAME: ${{ github.actor }}
-          TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          sh .github/scripts/supply-chain.sh scan "$REF"
-          sh .github/scripts/supply-chain.sh sign "$REF"
-          sh .github/scripts/supply-chain.sh verify "$REF"
-      - name: SBOM attestation (api)
-        continue-on-error: true
-        env:
-          REF: ${{ env.IMAGE_PREFIX }}/api@${{ steps.api.outputs.digest }}
-        run: |
-          sh .github/scripts/supply-chain.sh attest "$REF"
-          VERIFY_ATTESTATION=1 sh .github/scripts/supply-chain.sh verify "$REF"
 
   # Node services and frontends, all built from the repository root (one root yarn.lock).
   apps:
@@ -268,17 +238,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Pinned by commit (v4.1.2); the cosign release it installs is pinned in COSIGN_VERSION.
-      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
-        with:
-          cosign-release: ${{ env.COSIGN_VERSION }}
-      - name: Trivy database cache
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/trivy-ulams
-          key: trivy-db-${{ github.run_id }}
-          restore-keys: trivy-db-
-
       - name: Metadata
         id: meta
         uses: docker/metadata-action@v6
@@ -296,7 +255,6 @@ jobs:
             org.opencontainers.image.licenses=${{ matrix.licenses }}
 
       - name: Build and push
-        id: build
         uses: docker/build-push-action@v7
         with:
           context: .
@@ -314,19 +272,63 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.name }}
           cache-to: type=gha,scope=${{ matrix.name }},mode=max
 
-      - name: Scan, sign and verify (${{ matrix.name }})
+  # Supply chain (ADR 0108): runs after the image jobs and works on the PUBLISHED images, so it does not care
+  # how they were built. The digest of each image is read from its sha-<short> tag (pushed on every run).
+  # Scan first: a fixable CRITICAL finding fails the job and the image stays unsigned.
+  supply-chain:
+    name: sign ${{ matrix.image }}
+    needs: [api, apps]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: read
+      # Keyless signing: the job asks GitHub for an OIDC token, Sigstore turns it into a short-lived certificate.
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [php, api, h5p, pdf, admin, front, mjml, web]
+    env:
+      TRIVY_USERNAME: ${{ github.actor }}
+      TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+      # Pinned by commit (v4.1.2); the cosign release it installs is pinned here.
+      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
+        with:
+          cosign-release: v3.1.3
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Trivy database cache
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/trivy-ulams
+          key: trivy-db-${{ github.run_id }}
+          restore-keys: trivy-db-
+      - name: Digest of this commit's image
+        id: ref
+        run: |
+          tag="sha-$(printf '%s' "$GITHUB_SHA" | cut -c1-7)"
+          digest="$(docker buildx imagetools inspect "$IMAGE_PREFIX/${{ matrix.image }}:$tag" --format '{{ json .Manifest }}' | jq -r .digest)"
+          echo "$IMAGE_PREFIX/${{ matrix.image }}:$tag is $digest"
+          echo "ref=$IMAGE_PREFIX/${{ matrix.image }}@$digest" >> "$GITHUB_OUTPUT"
+      - name: Scan, sign and verify
         env:
-          REF: ${{ env.IMAGE_PREFIX }}/${{ matrix.name }}@${{ steps.build.outputs.digest }}
-          TRIVY_USERNAME: ${{ github.actor }}
-          TRIVY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          REF: ${{ steps.ref.outputs.ref }}
         run: |
           sh .github/scripts/supply-chain.sh scan "$REF"
           sh .github/scripts/supply-chain.sh sign "$REF"
           sh .github/scripts/supply-chain.sh verify "$REF"
-      - name: SBOM attestation (${{ matrix.name }})
+      - name: SBOM attestation
         continue-on-error: true
         env:
-          REF: ${{ env.IMAGE_PREFIX }}/${{ matrix.name }}@${{ steps.build.outputs.digest }}
+          REF: ${{ steps.ref.outputs.ref }}
         run: |
           sh .github/scripts/supply-chain.sh attest "$REF"
           VERIFY_ATTESTATION=1 sh .github/scripts/supply-chain.sh verify "$REF"

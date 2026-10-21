@@ -8,6 +8,7 @@ import { defineConfig, devices } from "@playwright/test";
  */
 const web = process.env.A11Y_WEB_PORT ?? "4392";
 const api = process.env.MOCK_API_PORT ?? "4390";
+const evil = process.env.A11Y_EVIL_PORT ?? "4399";
 
 export default defineConfig({
   testDir: "tests/a11y",
@@ -25,7 +26,14 @@ export default defineConfig({
     {
       command: "node tests/mock-api/server.mjs",
       url: `http://127.0.0.1:${api}/api/settings`,
-      env: { MOCK_API_PORT: api },
+      env: { MOCK_API_PORT: api, A11Y_EVIL_PORT: evil },
+      reuseExistingServer: !process.env.CI,
+    },
+    // the attacker's server of the code exercise containment checks: it must never be called (tests/a11y/code-exercise.a11y.spec.ts)
+    {
+      command: "node tests/mock-api/evil.mjs",
+      url: `http://127.0.0.1:${evil}/__hits`,
+      env: { A11Y_EVIL_PORT: evil },
       reuseExistingServer: !process.env.CI,
     },
     {
@@ -39,7 +47,7 @@ export default defineConfig({
         ULAMS_TENANT_HOSTS: "{slug}.app.localhost=>http://{slug}.localhost",
         ULAMS_API_INTERNAL_ORIGIN: `http://127.0.0.1:${api}`,
         ULAMS_PLATFORM_HOSTS: "app.localhost",
-        ULAMS_DEMO_TENANTS: "coffee,nightsky,polski",
+        ULAMS_DEMO_TENANTS: "coffee,nightsky,polski,zhongwen,nocpl,noczh",
         ULAMS_WARM_TENANTS: "",
         ULAMS_DEFAULT_TENANT: "",
         ULAMS_CONTENT_ORIGIN: "",

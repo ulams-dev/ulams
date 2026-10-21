@@ -23,6 +23,8 @@ declare const REACT_APP_ENV: 'test' | 'dev' | 'pre' | false;
 interface Window {
   REACT_APP_API_URL?: string;
   REACT_APP_TENANT_API_HOST_PATTERN?: string;
+  /** Base URL of the documentation (`ULAMS_DOCS_URL`); empty: the published docs. */
+  REACT_APP_ULAMS_DOCS_URL?: string;
   /** Reference web app (AI Course Builder), e.g. https://coffee.app.example */
   REACT_APP_STUDIO_URL?: string;
 }

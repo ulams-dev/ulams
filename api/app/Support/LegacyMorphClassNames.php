@@ -33,6 +33,7 @@ class LegacyMorphClassNames
         'topic.layout' => ['Ulams\\TopicTypeLayout\\Models\\LayoutTopic'],
         'topic.lti' => ['Ulams\\Lti\\Models\\LtiLink'],
         'topic.interactive' => ['Ulams\\Interactive\\Models\\InteractiveTopic'],
+        'topic.code_exercise' => ['Ulams\\CodeExercises\\Models\\CodeExerciseTopic'],
         'webinar' => ['Ulams\\Webinar\\Models\\Webinar', 'App\\Models\\Webinar'],
         'consultation' => ['Ulams\\Consultations\\Models\\Consultation', 'App\\Models\\Consultation'],
         'stationary_event' => ['Ulams\\StationaryEvents\\Models\\StationaryEvent', 'App\\Models\\StationaryEvent'],

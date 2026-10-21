@@ -1,5 +1,8 @@
 import http from "node:http";
+import { createRequire } from "node:module";
 import mjml from "mjml";
+
+const mjmlVersion = createRequire(import.meta.url)("mjml/package.json").version;
 
 const maxBody = 1024 * 1024;
 const server = http.createServer(async (request, response) => {
@@ -22,7 +25,7 @@ const server = http.createServer(async (request, response) => {
     try { source = JSON.parse(raw).mjml; } catch { /* The existing PHP client also supports plain MJML. */ }
     if (typeof source !== "string") return send(400, { message: "Expected an MJML template" });
     const result = mjml(source, { validationLevel: "soft", ignoreIncludes: true });
-    return send(200, { html: result.html, errors: result.errors, mjml_version: "4.17.1" });
+    return send(200, { html: result.html, errors: result.errors, mjml_version: mjmlVersion });
   } catch {
     return send(400, { message: "Invalid MJML template" });
   }

@@ -1,4 +1,5 @@
 import type { Tenant } from "@ulams/sdk";
+import { accountStrings, fill, type AccountStrings } from "@ulams/ui/account-strings";
 import { describeScope } from "./cli-authorize.ts";
 
 /**
@@ -15,23 +16,34 @@ export interface TokenPreset {
   description: string;
 }
 
-export const PRESETS: readonly TokenPreset[] = [
-  { key: "read-only", scope: "@read-only", label: "Read only", description: "See courses, learners, progress and reports. Change nothing." },
-  { key: "author", scope: "@author", label: "Author", description: "Create and edit courses, use the AI Course Builder and Living Course, read reports." },
-  { key: "ci", scope: "@ci", label: "Automation", description: "Edit courses and run the builder from a script or a CI job." },
-  { key: "learner", scope: "@learner", label: "Learning", description: "Your own learning only: profile, progress, quizzes, notes." },
-  { key: "admin", scope: "@admin", label: "Everything my account can do", description: "Full access as you. Use for a trusted tool only." },
+const PRESET_SCOPES: ReadonlyArray<{ key: keyof AccountStrings["presets"]; scope: string }> = [
+  { key: "read-only", scope: "@read-only" },
+  { key: "author", scope: "@author" },
+  { key: "ci", scope: "@ci" },
+  { key: "learner", scope: "@learner" },
+  { key: "admin", scope: "@admin" },
 ];
+
+/** The presets of the create form with their text in the language. */
+export const presetsFor = (lang = "en"): readonly TokenPreset[] => {
+  const t = accountStrings(lang);
+  return PRESET_SCOPES.map((p) => ({ key: p.key, scope: p.scope, ...t.presets[p.key] }));
+};
+
+export const PRESETS: readonly TokenPreset[] = presetsFor("en");
 
 export const EXPIRY_DAYS = [7, 30, 90, 365] as const;
 export const DEFAULT_EXPIRY_DAYS = 90;
 
-export const KINDS = [
-  { value: "cli", label: "Command line (ulams)" },
-  { value: "agent", label: "AI agent" },
-  { value: "ci", label: "Automation or CI" },
-  { value: "integration", label: "Another application" },
-] as const;
+const KIND_VALUES = ["cli", "agent", "ci", "integration"] as const;
+
+/** The kinds of the create form with their label in the language. */
+export const kindsFor = (lang = "en"): ReadonlyArray<{ value: (typeof KIND_VALUES)[number]; label: string }> => {
+  const t = accountStrings(lang);
+  return KIND_VALUES.map((value) => ({ value, label: t.kinds[value] }));
+};
+
+export const KINDS = kindsFor("en");
 
 export interface TokenRow {
   id: string;
@@ -61,13 +73,14 @@ export interface CreateInput {
 export type FormResult = { ok: true; input: CreateInput } | { ok: false; error: string };
 
 /** Validates the create form. Unknown values never reach the API. */
-export function parseCreateForm(form: FormData): FormResult {
+export function parseCreateForm(form: FormData, lang = "en"): FormResult {
+  const t = accountStrings(lang);
   const name = String(form.get("name") ?? "").trim().replace(/\s+/g, " ");
-  if (name === "") return { ok: false, error: "Give the token a name so you can recognise it later." };
-  if (name.length > 100) return { ok: false, error: "The name can have at most 100 characters." };
-  if (/[<>]/.test(name)) return { ok: false, error: "The name cannot contain < or >." };
-  const preset = PRESETS.find((p) => p.key === String(form.get("access") ?? ""));
-  if (!preset) return { ok: false, error: "Choose what the token may do." };
+  if (name === "") return { ok: false, error: t.errNameRequired };
+  if (name.length > 100) return { ok: false, error: t.errNameLong };
+  if (/[<>]/.test(name)) return { ok: false, error: t.errNameChars };
+  const preset = PRESET_SCOPES.find((p) => p.key === String(form.get("access") ?? ""));
+  if (!preset) return { ok: false, error: t.errAccessRequired };
   const days = Number(form.get("days"));
   const kind = KINDS.find((k) => k.value === String(form.get("kind") ?? ""));
   return {
@@ -82,14 +95,15 @@ export function parseCreateForm(form: FormData): FormResult {
 }
 
 /** `@read-only` etc. are expanded by the API; show a stored scope list as short readable text. */
-export function summariseScopes(scopes: string[]): string {
-  if (scopes.includes("*")) return "Everything your account can do";
+export function summariseScopes(scopes: string[], lang = "en"): string {
+  const t = accountStrings(lang);
+  if (scopes.includes("*")) return t.scopesEverything;
   const write = scopes.filter((s) => s.endsWith(":write")).map((s) => s.split(":")[0]!);
   const read = scopes.filter((s) => s.endsWith(":read") && !write.includes(s.split(":")[0]!)).map((s) => s.split(":")[0]!);
   const parts: string[] = [];
-  if (write.length) parts.push(`Change: ${write.join(", ")}`);
-  if (read.length) parts.push(`Read: ${read.join(", ")}`);
-  return parts.join(" · ") || "No scopes";
+  if (write.length) parts.push(fill(t.scopesChange, { list: write.join(", ") }));
+  if (read.length) parts.push(fill(t.scopesRead, { list: read.join(", ") }));
+  return parts.join(" · ") || t.scopesNone;
 }
 
 /** Full list for a tooltip-free, screen-reader-friendly expansion. */
@@ -97,13 +111,10 @@ export const scopeLabels = (scopes: string[]): string[] => scopes.map((s) => des
 
 export type Failure = "unauthenticated" | "forbidden" | "invalid" | "throttled" | "unavailable";
 
-export const FAILURE_TEXT: Record<Failure, string> = {
-  unauthenticated: "Your session has expired. Sign in again.",
-  forbidden: "This sign-in cannot manage tokens.",
-  invalid: "The token could not be created with these settings.",
-  throttled: "Too many attempts. Wait a minute and try again.",
-  unavailable: "The server could not be reached. Try again in a moment.",
-};
+/** The text of a failure in the language (English by default). */
+export const failureText = (reason: Failure, lang = "en"): string => accountStrings(lang).failures[reason];
+
+export const FAILURE_TEXT: Record<Failure, string> = accountStrings("en").failures;
 
 const reasonFor = (status: number): Failure =>
   status === 401 ? "unauthenticated" : status === 403 ? "forbidden" : status === 422 ? "invalid" : status === 429 ? "throttled" : "unavailable";
@@ -150,12 +161,14 @@ export async function revokeToken(tenant: Tenant, token: string, id: string): Pr
   }
 }
 
-const DATE = new Intl.DateTimeFormat("en", { year: "numeric", month: "short", day: "numeric" });
+const DATE_LOCALE = { en: "en", pl: "pl-PL", zh: "zh-CN" } as const;
 
-export function formatDate(value: string | null | undefined): string {
-  if (!value) return "never";
+export function formatDate(value: string | null | undefined, lang = "en"): string {
+  const t = accountStrings(lang);
+  if (!value) return t.never;
   const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? "unknown" : DATE.format(d);
+  const locale = DATE_LOCALE[lang === "pl" || lang === "zh" ? lang : "en"];
+  return Number.isNaN(d.getTime()) ? t.unknown : new Intl.DateTimeFormat(locale, { year: "numeric", month: "short", day: "numeric" }).format(d);
 }
 
 /** Active tokens first, newest first; revoked ones are not listed by the API unless asked. */

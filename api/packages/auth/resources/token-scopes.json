@@ -260,6 +260,10 @@
             "area": "builder"
         },
         {
+            "pattern": "api/admin/course-as-code*",
+            "area": "builder"
+        },
+        {
             "pattern": "api/admin/living-course*",
             "area": "living-course"
         },
@@ -368,6 +372,14 @@
         },
         {
             "pattern": "api/admin/interactive*",
+            "area": "courses"
+        },
+        {
+            "pattern": "api/admin/code-exercises/topics/*/attempts",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/code-exercises*",
             "area": "courses"
         },
         {
@@ -553,6 +565,10 @@
         {
             "pattern": "api/admin/invoices*",
             "area": "commerce"
+        },
+        {
+            "pattern": "api/commerce/webhooks/*",
+            "area": "public"
         },
         {
             "pattern": "api/admin/reports*",
@@ -758,6 +774,10 @@
         },
         {
             "pattern": "api/interactive/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/code-exercises/*",
             "area": "learner"
         },
         {

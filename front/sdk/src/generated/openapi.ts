@@ -1921,6 +1921,113 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/code-exercises/launches/{topic}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Open a code exercise
+         * @description Code exercises (ADR 0170). The exercise runs in the browser sandbox on the tenant content origin; this
+         *     API hands the page the exercise and the runner's address, and records the results the page reports for
+         *     the learner's own session (no token ever reaches the frame).
+         */
+        post: operations["code-exercises.launches.by-topic.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/code-exercises/topics/{topic}/attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** My attempts at a code exercise */
+        get: operations["code-exercises.topics.by-topic.attempts.get"];
+        put?: never;
+        /**
+         * Report the result of a run
+         * @description The learner's browser ran the visible tests and reports each test's result. The score is recomputed here and the attempt is stored as a practice attempt (verified = false): it moves the topic's progress by its completion rule and records a learner signal, and never counts for certificates or compliance.
+         */
+        post: operations["code-exercises.topics.by-topic.attempts.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/code-exercises/topics/{topic}/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Preview a code exercise as its author
+         * @description The same answer as a launch, for a user who may edit the course. Nothing is tracked.
+         */
+        get: operations["admin.code-exercises.topics.by-topic.preview.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/code-exercises/topics/{topic}/attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Attempts at a code exercise (teacher report)
+         * @description Every learner's attempts at the exercise, newest first, for a user who may edit the course. Practice attempts are marked verified = false.
+         */
+        get: operations["admin.code-exercises.topics.by-topic.attempts.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/commerce/webhooks/{provider}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Receive a signed order event of the commerce provider
+         * @description Inbound order events of a commerce provider (ADR 0130). Public route, authenticated by the signature with the
+         *     tenant's own secret, never by a session: the body is verified (HMAC over `<t>.<raw body>`, 300 s tolerance,
+         *     the secret being rotated out also accepted), its event id must equal the `Ulams-Event-Id` header, and its channel
+         *     must be this tenant's channel. A valid event is stored once per event id and queued; a duplicate answers 200
+         *     with no work. The payload is untrusted: only the envelope is read, and the job re-reads the order from the provider.
+         */
+        post: operations["commerce.webhooks.by-provider.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/compliance/assignments": {
         parameters: {
             query?: never;
@@ -3097,6 +3204,113 @@ export interface paths {
          * @description Delete Course Access Enquiry
          */
         delete: operations["course-access-enquiries.by-id.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/courses/{course}/blueprint": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export a course as a Blueprint v3 document (current version, drift, applied version)
+         * @description Course-as-code API (ADR 0160, prefix `/api/admin/course-as-code`, `auth:api`, permission
+         *     `course_builder_use`). It works with AI off: there is no AI gate on this route group. A push is
+         *     always a proposed version; a person approves it (agent tokens and MCP clients never can).
+         */
+        get: operations["admin.course-as-code.courses.by-course.blueprint.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/sessions/{session}/imports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import a Blueprint v3 document as a proposed version of kind import */
+        post: operations["admin.course-as-code.sessions.by-session.imports.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/versions/{version}/diff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Element-aware diff of a version against its parent or ?against= */
+        get: operations["admin.course-as-code.versions.by-version.diff.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/versions/{version}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve a proposed import (people and CLI tokens; never agents or MCP clients) */
+        post: operations["admin.course-as-code.versions.by-version.approve.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/sessions/{session}/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Apply the current version to the course (no AI needed) */
+        post: operations["admin.course-as-code.sessions.by-session.apply.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/sessions/{session}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish the applied course (no AI needed) */
+        post: operations["admin.course-as-code.sessions.by-session.publish.post"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -8135,6 +8349,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/templates/email/images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload an image for an e-mail template
+         * @description Stores a PNG, JPEG, GIF or WebP image (up to 2 MB by default) in the storage of the current tenant and returns its public URL, which e-mail clients fetch remotely. The type is sniffed from the content; SVG and every other type is refused. The stored name is random. Throttled to 30 requests per minute per user.
+         */
+        post: operations["templates.email.images"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/certificates/verify/{certificateId}": {
         parameters: {
             query?: never;
@@ -10328,6 +10562,29 @@ export interface components {
             id?: number;
             /** @description order */
             order?: number;
+        };
+        TopicCodeExercise: {
+            id?: number;
+            /** @enum {string} */
+            language: "javascript" | "typescript";
+            /** @description Starter files (a JSON string is accepted in multipart requests): at most 20, 64 KB each, 256 KB together */
+            files: {
+                path?: string;
+                content?: string;
+            }[];
+            /** @description Test files the learner can read and run in the browser */
+            visible_tests: {
+                path?: string;
+                content?: string;
+            }[];
+            /** @description A run is stopped after this long (500 to 30000) */
+            timeout_ms?: number;
+            /** @enum {string} */
+            completion_rule?: "on_pass" | "on_attempt";
+            /** @description Percentage of passing tests that completes the topic (on_pass) */
+            pass_score?: number;
+            /** @description The task, in Markdown */
+            text?: string | null;
         };
         AdminApproveConsultationAccessEnquiryRequest: {
             /** @description meeting_link */
@@ -16697,6 +16954,325 @@ export interface operations {
             };
         };
     };
+    "code-exercises.launches.by-topic.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {runner: {url, version}, exercise, attempts}; runner.url is the sandboxed runner page on the content origin */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise, or the type is switched off */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no content origin */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "code-exercises.topics.by-topic.attempts.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The caller's own attempts, newest first */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "code-exercises.topics.by-topic.attempts.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    results: {
+                        name: string;
+                        /** @enum {string} */
+                        status: "pass" | "fail" | "error";
+                        message?: string | null;
+                    }[];
+                    /** @description sha256 of the submitted files */
+                    files_hash?: string | null;
+                    runner?: string | null;
+                    duration_ms?: number | null;
+                };
+            };
+        };
+        responses: {
+            /** @description {attempt, status}; status 1 means the topic is complete */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no access to the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid result */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.code-exercises.topics.by-topic.preview.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description {runner, exercise} */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed to edit the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description no content origin */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.code-exercises.topics.by-topic.attempts.get": {
+        parameters: {
+            query?: {
+                per_page?: number;
+            };
+            header?: never;
+            path: {
+                topic: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A page of attempts with the learner's id and name */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not allowed to edit the course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not a code exercise */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "commerce.webhooks.by-provider.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description duplicate delivery, nothing to do */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description the event is stored and queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description invalid or expired signature, malformed event or another tenant's channel */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown provider or webhooks not configured */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description body too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description rate limit */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "admin.compliance.assignments.get": {
         parameters: {
             query?: {
@@ -19172,6 +19748,234 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ApiEnvelope"];
                 };
+            };
+        };
+    };
+    "admin.course-as-code.courses.by-course.blueprint.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the blueprint with versionId, appliedVersionId and drift */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description another author's course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description NOT_ADOPTED (no builder session) or NO_BLUEPRINT */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.sessions.by-session.imports.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    document: Record<string, never>;
+                    baseVersionId: string;
+                    message?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description unchanged: the document equals the current version, no version is created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description proposed version, element diff and warnings */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown session */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description BASE_OUTDATED (with the remote diff) or NO_BLUEPRINT */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description document too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description INVALID_BLUEPRINT, BASE_UNKNOWN or a missing field */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.versions.by-version.diff.get": {
+        parameters: {
+            query?: {
+                against?: string;
+            };
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description changes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.course-as-code.versions.by-version.approve.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description approved; apply it next */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description APPROVAL_REQUIRES_HUMAN */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not proposed, or STALE_PROPOSAL (the course changed after the import was proposed) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.sessions.by-session.apply.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description apply run */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.course-as-code.sessions.by-session.publish.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description published */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description blocking items or unacknowledged warnings */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -30997,6 +31801,78 @@ export interface operations {
             };
             /** @description the MJML renderer is unavailable */
             503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "templates.email.images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description PNG, JPEG, GIF or WebP file
+                     */
+                    image: string;
+                };
+            };
+        };
+        responses: {
+            /** @description the stored image */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            /** @description public URL to put in mj-image src */
+                            url?: string;
+                            /** @description path in the tenant storage */
+                            name?: string;
+                            mime?: string;
+                            /** @description bytes */
+                            size?: number;
+                            width?: number;
+                            height?: number;
+                        };
+                    };
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description user doesn't have required access rights */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not an accepted image, or too large */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };

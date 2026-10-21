@@ -67,6 +67,12 @@ class RecordSignals
         }
     }
 
+    /** A finished run of a code exercise (ADR 0170); `$e` is Ulams\CodeExercises\Events\CodeAttemptFinished. */
+    public function codeFinished(object $e): void
+    {
+        $this->push(new SignalData((int) $e->userId, SignalType::CODE_ATTEMPT_FINISHED, 'code', 'code_attempt_finished:' . $e->attemptId, CarbonImmutable::now(), null, (int) $e->topicId, null, round($e->score / 100, 4), ['attempt_no' => $e->attemptNo, 'passed' => $e->passed, 'verified' => $e->verified]));
+    }
+
     public function quizStarted(QuizAttemptStartedEvent $e): void
     {
         $attempt = $e->getAttempt();

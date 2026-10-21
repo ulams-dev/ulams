@@ -4,6 +4,8 @@
  * /h5p proxy (same origin), see front/web/src/pages/h5p/[...path].ts.
  */
 import { SANDBOX_H5P } from "@ulams/sdk/frames";
+import { pageLocale } from "../lib/i18n.ts";
+import { playerLocale } from "../lib/player-strings.ts";
 
 interface Props {
   apiUrl: string;
@@ -13,7 +15,8 @@ interface Props {
   courseId?: number;
 }
 const { contentId, title, topicId } = Astro.props;
-const src = `/h5p/embed/play/${encodeURIComponent(String(contentId))}?language=en&hideActions=1`;
+const language = playerLocale(pageLocale(Astro));
+const src = `/h5p/embed/play/${encodeURIComponent(String(contentId))}?language=${language}&hideActions=1`;
 ---
 
 <ulams-h5p class="u-h5p" topic-id={topicId}>

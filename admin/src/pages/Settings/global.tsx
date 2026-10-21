@@ -364,6 +364,18 @@ const preInitialData: InitialDataRecords = {
     type: 'boolean',
     data: 'Ulams',
   },
+  // the learner app understands these codes only (en, pl, zh); the API refuses any other
+  language: {
+    id: -18,
+    key: 'language',
+    group: 'global',
+    value: 'en',
+    public: true,
+    enumerable: true,
+    sort: 0,
+    type: 'text',
+    data: 'en',
+  },
   technicalMaintenanceText: {
     id: -17,
     key: 'technicalMaintenanceText',

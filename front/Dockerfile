@@ -22,7 +22,8 @@ RUN echo $APP_VERSION >> front/dist/version.html
 FROM nginxinc/nginx-unprivileged:1.29-alpine@sha256:0c79d56aee561a1d81c63f00eee5fb5fe29279560cdc55e91425133104c7fbe6 AS httpd
 # Settings are read at start from the environment (names starting with VITE_APP_) and written to
 # /runtime-config.json, which index.html loads before the app boots (ADR 0056). Examples:
-#   VITE_APP_API_URL, VITE_APP_TENANT_API_HOST_PATTERN, VITE_APP_SENTRYDSN, VITE_APP_FIREBASE_*
+#   VITE_APP_API_URL, VITE_APP_TENANT_API_HOST_PATTERN, VITE_APP_SENTRYDSN, VITE_APP_FIREBASE_*,
+#   VITE_APP_ULAMS_DOCS_URL (ULAMS_DOCS_URL): base URL of the documentation
 USER root
 COPY front/nginx.conf /etc/nginx/conf.d/default.conf
 COPY front/entrypoint.sh /docker-entrypoint.d/40-runtime-config.sh

@@ -1,0 +1,33 @@
+{
+  "name": "@ulams/code-runner",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "description": "The browser runner of code exercises (ADR 0170): bundles an exercise with esbuild-wasm and runs its tests in a Worker inside two nested opaque sandboxed frames. Served from the tenant content origin.",
+  "type": "module",
+  "exports": {
+    "./bundle": "./src/bundle.ts",
+    "./harness": "./src/harness.ts",
+    "./protocol": "./src/protocol.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "node scripts/build.mjs",
+    "check-build": "node scripts/build.mjs --check",
+    "lint": "eslint src tests scripts",
+    "test": "node scripts/build.mjs --check && vitest run"
+  },
+  "dependencies": {
+    "@ulams/interactive-bridge": "0.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/node": "22.19.1",
+    "esbuild": "0.28.2",
+    "esbuild-wasm": "0.28.2",
+    "eslint": "10.12.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.1",
+    "vitest": "3.2.4"
+  }
+}

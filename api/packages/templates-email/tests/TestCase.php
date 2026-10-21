@@ -104,6 +104,8 @@ class TestCase extends CoreTestCase
     {
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('passport.client_uuids', true);
+        // the return URLs of the e-mail links the tests use
+        $app['config']->set('ulams.core.security.trusted_origins', ['https://ulams.app']);
         $app['config']->set(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.mjml.use_api', true);
         // Add api keys to local phpunit.xml / testbench.yaml; use github repository secrets in github actions
     }

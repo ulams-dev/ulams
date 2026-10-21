@@ -117,16 +117,29 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0103](0103-outgoing-webhooks-package.md) | Outgoing webhooks as a package with Stripe-style signatures and the shared SSRF-safe client | Proposed |
 | [0104](0104-machine-readable-docs-and-public-schemas.md) | Machine-readable documentation: llms.txt, Markdown pages and public JSON Schemas | Proposed |
 | [0105](0105-stream-tutor-answers-over-the-sse-event-log.md) | Stream tutor answers over the SSE event log | Accepted |
-| [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted |
+| [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted (2026-10-21), amended 2026-10-21 (P5R-1) |
 | [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Accepted |
 | [0108](0108-signed-images-and-cve-scanning.md) | Keyless-signed images, SBOM release assets and Trivy scanning with a patch policy | Accepted |
 | [0109](0109-helm-chart-next-to-the-stack-launcher.md) | A Helm chart for production Kubernetes next to the stack launcher | Proposed |
 | [0120](0120-identity-package-and-sso-libraries.md) | An identity package with onelogin/php-saml, an in-house OIDC client and an in-house SCIM server | Accepted |
 | [0121](0121-sso-login-handoff-account-linking-and-scim-tokens.md) | SSO login handoff by one-time code, strict account linking and SCIM tokens on service users | Accepted |
-| [0160](0160-course-as-code-sync-through-blueprint-v3-import-versions.md) | Course-as-code sync through Blueprint v3 import versions | Proposed |
+| [0130](0130-entitlements-are-the-access-source-of-truth.md) | Entitlements are the access source of truth, fed by verified Sylius order events | Proposed |
+| [0131](0131-sylius-service-and-bridge-bundle.md) | One Sylius 2.3 service with a channel per tenant and a ulams bridge bundle | Proposed |
+| [0132](0132-commerce-identity-lms-issued-shop-tokens.md) | Single login for commerce: LMS-issued shop tokens trusted by Sylius | Proposed |
+| [0140](0140-policy-lifecycle-package.md) | Policy lifecycle as a package orchestrating Living Course, Course Builder and compliance | Proposed |
+| [0141](0141-department-academies-as-host-aliases.md) | Department academies as branded host aliases inside one tenant | Proposed |
+| [0142](0142-scoped-admins-by-group.md) | Scoped admins for partner and customer portals, scoped by group | Proposed |
+| [0150](0150-pwa-offline-mode-and-progress-sync-rules.md) | PWA offline mode: saved lessons and idempotent, monotonic progress sync | Proposed |
+| [0151](0151-search-full-text-first-with-optional-embeddings.md) | Search: full text and model query rewrite first, optional pgvector embeddings | Proposed |
+| [0152](0152-first-party-ux-metrics-without-personal-data.md) | First-party UX metrics stored in the tenant, without personal data | Proposed |
+| [0160](0160-course-as-code-sync-through-blueprint-v3-import-versions.md) | Course-as-code sync through Blueprint v3 import versions | Accepted |
 | [0161](0161-cli-release-engineering.md) | CLI release engineering: release-please, npm trusted publishing, attested binaries | Proposed |
-| [0170](0170-code-exercise-runners.md) | Code exercises run in our own browser runner inside the opaque content-origin sandbox, with an optional gVisor server runner for verified grading | Proposed |
+| [0170](0170-code-exercise-runners.md) | Code exercises run in our own browser runner inside the opaque content-origin sandbox, with an optional gVisor server runner for verified grading | Accepted |
 | [0171](0171-extension-manifest-and-trust-model.md) | Extensions: operator-installed composer packages with an `ulams-extension.json` manifest, per-point contract versions and optional Sigstore signing | Proposed |
 | [0172](0172-hosted-mcp-gateway-on-cloudflare-workers.md) | Hosted MCP gateway on Cloudflare Workers sharing the CLI tool registry, OAuth at the gateway and scoped tokens upstream | Proposed |
+| [0180](0180-experiment-assignment-exposure-and-statistics.md) | Course experiments: salted assignment, exposure logging and fixed-horizon statistics with guard rails | Proposed |
+| [0181](0181-insights-improvement-proposals-in-living-course.md) | Improvement proposals from learner insights are Living Course proposals of their own kind | Proposed |
+| [0190](0190-tenant-isolation-route-coverage.md) | Tenant isolation for every endpoint through one route-walking test and a public-route allow-list | Proposed |
+| [0191](0191-learning-benefit-claims-register.md) | Register of learning-benefit claims, checked in CI | Proposed |
 
 <!-- END GENERATED: adr-index -->

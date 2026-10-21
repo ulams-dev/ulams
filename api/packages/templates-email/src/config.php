@@ -1,6 +1,11 @@
 <?php
 
 return [
+    'images' => [
+        // Largest image an admin can upload from the visual e-mail editor, in KB
+        'max_kb'    => (int) env('TEMPLATES_EMAIL_IMAGE_MAX_KB', 2048),
+        'directory' => 'email-images',
+    ],
     'mjml' => [
         'api_url'          => env('MJML_API_URL', false),
         'use_api'          => env('MJML_USE_API', false),

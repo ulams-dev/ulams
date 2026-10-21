@@ -79,11 +79,11 @@ export function chromeFor(theme: ThemeName, locale: Locale = "en"): { header: Ui
 }
 
 /** The header's sign-in link becomes "My learning" for a visitor with a session. */
-export function withSessionLink(doc: UiNode, loggedIn: boolean): UiNode {
+export function withSessionLink(doc: UiNode, loggedIn: boolean, label = "My learning"): UiNode {
   if (!loggedIn) return doc;
   const visit = (node: UiNode): UiNode => {
     if (node.component === "SiteHeader") {
-      return { ...node, props: { ...(node.props ?? {}), signIn: { label: "My learning", href: "/account" } } };
+      return { ...node, props: { ...(node.props ?? {}), signIn: { label, href: "/account" } } };
     }
     return node.children ? { ...node, children: node.children.map(visit) } : node;
   };

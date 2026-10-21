@@ -10,7 +10,7 @@ test("the comparison restores the full catalogue under six stakeholders", async 
   await expect(catalogue.locator(".u-fx__audience-nav a")).toHaveCount(6);
   await expect(catalogue.locator(".u-fx__audience")).toHaveCount(6);
   await expect(catalogue.locator(".u-fx__group")).toHaveCount(14);
-  await expect(catalogue.locator(".u-fx__item")).toHaveCount(101);
+  await expect(catalogue.locator(".u-fx__item")).toHaveCount(102);
   const ids = await catalogue.locator("[id]").evaluateAll((els) => els.map((el) => el.id));
   expect(new Set(ids).size).toBe(ids.length);
   await expect(catalogue.locator("#features-h5p .u-fx__tags li")).toHaveCount(54);
@@ -41,7 +41,7 @@ test("the complete feature descriptions are rendered without JavaScript", async 
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto(url);
-  await expect(page.locator(".u-fx__item")).toHaveCount(101);
+  await expect(page.locator(".u-fx__item")).toHaveCount(102);
   await page.locator("#features-content summary").click();
   await expect(page.locator("#features-content .u-fx__body")).toBeVisible();
   const structured = await page.locator('#features script[type="application/ld+json"]').textContent();

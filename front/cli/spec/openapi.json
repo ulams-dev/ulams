@@ -4852,6 +4852,76 @@
     ],
     "type": "object"
    },
+   "TopicCodeExercise": {
+    "properties": {
+     "completion_rule": {
+      "enum": [
+       "on_pass",
+       "on_attempt"
+      ],
+      "type": "string"
+     },
+     "files": {
+      "description": "Starter files (a JSON string is accepted in multipart requests): at most 20, 64 KB each, 256 KB together",
+      "items": {
+       "properties": {
+        "content": {
+         "type": "string"
+        },
+        "path": {
+         "type": "string"
+        }
+       },
+       "type": "object"
+      },
+      "type": "array"
+     },
+     "id": {
+      "type": "integer"
+     },
+     "language": {
+      "enum": [
+       "javascript",
+       "typescript"
+      ],
+      "type": "string"
+     },
+     "pass_score": {
+      "description": "Percentage of passing tests that completes the topic (on_pass)",
+      "type": "integer"
+     },
+     "text": {
+      "description": "The task, in Markdown",
+      "nullable": true,
+      "type": "string"
+     },
+     "timeout_ms": {
+      "description": "A run is stopped after this long (500 to 30000)",
+      "type": "integer"
+     },
+     "visible_tests": {
+      "description": "Test files the learner can read and run in the browser",
+      "items": {
+       "properties": {
+        "content": {
+         "type": "string"
+        },
+        "path": {
+         "type": "string"
+        }
+       },
+       "type": "object"
+      },
+      "type": "array"
+     }
+    },
+    "required": [
+     "language",
+     "files",
+     "visible_tests"
+    ],
+    "type": "object"
+   },
    "TopicH5P": {
     "properties": {
      "content": {
@@ -7180,6 +7250,109 @@
     "summary": "Delete cmi5 package by id",
     "tags": [
      "cmi5"
+    ]
+   }
+  },
+  "/api/admin/code-exercises/topics/{topic}/attempts": {
+   "get": {
+    "description": "Every learner's attempts at the exercise, newest first, for a user who may edit the course. Practice attempts are marked verified = false.",
+    "operationId": "admin.code-exercises.topics.by-topic.attempts.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "topic",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "per_page",
+      "schema": {
+       "maximum": 100,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "A page of attempts with the learner's id and name"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "not allowed to edit the course"
+     },
+     "404": {
+      "description": "not a code exercise"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Attempts at a code exercise (teacher report)",
+    "tags": [
+     "Code exercises"
+    ]
+   }
+  },
+  "/api/admin/code-exercises/topics/{topic}/preview": {
+   "get": {
+    "description": "The same answer as a launch, for a user who may edit the course. Nothing is tracked.",
+    "operationId": "admin.code-exercises.topics.by-topic.preview.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "topic",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "{runner, exercise}"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "not allowed to edit the course"
+     },
+     "404": {
+      "description": "not a code exercise"
+     },
+     "503": {
+      "description": "no content origin"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Preview a code exercise as its author",
+    "tags": [
+     "Code exercises"
     ]
    }
   },
@@ -9700,6 +9873,298 @@
     "summary": "Remove the specified Course Access Enquiry",
     "tags": [
      "Admin Course Access"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/courses/{course}/blueprint": {
+   "get": {
+    "description": "Course-as-code API (ADR 0160, prefix `/api/admin/course-as-code`, `auth:api`, permission\n`course_builder_use`). It works with AI off: there is no AI gate on this route group. A push is\nalways a proposed version; a person approves it (agent tokens and MCP clients never can).",
+    "operationId": "admin.course-as-code.courses.by-course.blueprint.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the blueprint with versionId, appliedVersionId and drift"
+     },
+     "403": {
+      "description": "another author's course"
+     },
+     "404": {
+      "description": "unknown course"
+     },
+     "409": {
+      "description": "NOT_ADOPTED (no builder session) or NO_BLUEPRINT"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Export a course as a Blueprint v3 document (current version, drift, applied version)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/sessions/{session}/apply": {
+   "post": {
+    "operationId": "admin.course-as-code.sessions.by-session.apply.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "apply run"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Apply the current version to the course (no AI needed)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/sessions/{session}/imports": {
+   "post": {
+    "operationId": "admin.course-as-code.sessions.by-session.imports.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "baseVersionId": {
+          "type": "string"
+         },
+         "document": {
+          "type": "object"
+         },
+         "message": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "document",
+         "baseVersionId"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "unchanged: the document equals the current version, no version is created"
+     },
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "proposed version, element diff and warnings"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown session"
+     },
+     "409": {
+      "description": "BASE_OUTDATED (with the remote diff) or NO_BLUEPRINT"
+     },
+     "413": {
+      "description": "document too large"
+     },
+     "422": {
+      "description": "INVALID_BLUEPRINT, BASE_UNKNOWN or a missing field"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Import a Blueprint v3 document as a proposed version of kind import",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/sessions/{session}/publish": {
+   "post": {
+    "operationId": "admin.course-as-code.sessions.by-session.publish.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "published"
+     },
+     "409": {
+      "description": "blocking items or unacknowledged warnings"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Publish the applied course (no AI needed)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/versions/{version}/approve": {
+   "post": {
+    "operationId": "admin.course-as-code.versions.by-version.approve.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "version",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "approved; apply it next"
+     },
+     "403": {
+      "description": "APPROVAL_REQUIRES_HUMAN"
+     },
+     "409": {
+      "description": "not proposed, or STALE_PROPOSAL (the course changed after the import was proposed)"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Approve a proposed import (people and CLI tokens; never agents or MCP clients)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/versions/{version}/diff": {
+   "get": {
+    "operationId": "admin.course-as-code.versions.by-version.diff.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "version",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "against",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "changes"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Element-aware diff of a version against its parent or ?against=",
+    "tags": [
+     "Admin Course-as-code"
     ]
    }
   },
@@ -23447,6 +23912,99 @@
     ]
    }
   },
+  "/api/admin/templates/email/images": {
+   "post": {
+    "description": "Stores a PNG, JPEG, GIF or WebP image (up to 2 MB by default) in the storage of the current tenant and returns its public URL, which e-mail clients fetch remotely. The type is sniffed from the content; SVG and every other type is refused. The stored name is random. Throttled to 30 requests per minute per user.",
+    "operationId": "templates.email.images",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "properties": {
+         "image": {
+          "description": "PNG, JPEG, GIF or WebP file",
+          "format": "binary",
+          "type": "string"
+         }
+        },
+        "required": [
+         "image"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "height": {
+             "type": "integer"
+            },
+            "mime": {
+             "type": "string"
+            },
+            "name": {
+             "description": "path in the tenant storage",
+             "type": "string"
+            },
+            "size": {
+             "description": "bytes",
+             "type": "integer"
+            },
+            "url": {
+             "description": "public URL to put in mj-image src",
+             "type": "string"
+            },
+            "width": {
+             "type": "integer"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "the stored image"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "user doesn't have required access rights"
+     },
+     "422": {
+      "description": "not an accepted image, or too large"
+     },
+     "429": {
+      "description": "too many requests"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Upload an image for an e-mail template",
+    "tags": [
+     "Templates"
+    ]
+   }
+  },
   "/api/admin/templates/email/render": {
    "post": {
     "description": "Nothing is stored and nothing is sent. Returns the rendered HTML with the sample values of the event, the MJML errors reported by the renderer and accessibility warnings (warnings never fail the request). Throttled to 30 requests per minute per user.",
@@ -30535,6 +31093,258 @@
     "summary": "Launch a cmi5 AU",
     "tags": [
      "cmi5"
+    ]
+   }
+  },
+  "/api/code-exercises/launches/{topic}": {
+   "post": {
+    "description": "Code exercises (ADR 0170). The exercise runs in the browser sandbox on the tenant content origin; this\nAPI hands the page the exercise and the runner's address, and records the results the page reports for\nthe learner's own session (no token ever reaches the frame).",
+    "operationId": "code-exercises.launches.by-topic.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "topic",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "{runner: {url, version}, exercise, attempts}; runner.url is the sandboxed runner page on the content origin"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "no access to the course"
+     },
+     "404": {
+      "description": "not a code exercise, or the type is switched off"
+     },
+     "503": {
+      "description": "no content origin"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Open a code exercise",
+    "tags": [
+     "Code exercises"
+    ]
+   }
+  },
+  "/api/code-exercises/topics/{topic}/attempts": {
+   "get": {
+    "operationId": "code-exercises.topics.by-topic.attempts.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "topic",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The caller's own attempts, newest first"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "no access to the course"
+     },
+     "404": {
+      "description": "not a code exercise"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "My attempts at a code exercise",
+    "tags": [
+     "Code exercises"
+    ]
+   },
+   "post": {
+    "description": "The learner's browser ran the visible tests and reports each test's result. The score is recomputed here and the attempt is stored as a practice attempt (verified = false): it moves the topic's progress by its completion rule and records a learner signal, and never counts for certificates or compliance.",
+    "operationId": "code-exercises.topics.by-topic.attempts.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "topic",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "duration_ms": {
+          "nullable": true,
+          "type": "integer"
+         },
+         "files_hash": {
+          "description": "sha256 of the submitted files",
+          "nullable": true,
+          "type": "string"
+         },
+         "results": {
+          "items": {
+           "properties": {
+            "message": {
+             "nullable": true,
+             "type": "string"
+            },
+            "name": {
+             "type": "string"
+            },
+            "status": {
+             "enum": [
+              "pass",
+              "fail",
+              "error"
+             ],
+             "type": "string"
+            }
+           },
+           "required": [
+            "name",
+            "status"
+           ],
+           "type": "object"
+          },
+          "type": "array"
+         },
+         "runner": {
+          "nullable": true,
+          "type": "string"
+         }
+        },
+        "required": [
+         "results"
+        ],
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "{attempt, status}; status 1 means the topic is complete"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "no access to the course"
+     },
+     "404": {
+      "description": "not a code exercise"
+     },
+     "422": {
+      "description": "invalid result"
+     },
+     "429": {
+      "description": "too many requests"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Report the result of a run",
+    "tags": [
+     "Code exercises"
+    ]
+   }
+  },
+  "/api/commerce/webhooks/{provider}": {
+   "post": {
+    "description": "Inbound order events of a commerce provider (ADR 0130). Public route, authenticated by the signature with the\ntenant's own secret, never by a session: the body is verified (HMAC over `<t>.<raw body>`, 300 s tolerance,\nthe secret being rotated out also accepted), its event id must equal the `Ulams-Event-Id` header, and its channel\nmust be this tenant's channel. A valid event is stored once per event id and queued; a duplicate answers 200\nwith no work. The payload is untrusted: only the envelope is read, and the job re-reads the order from the provider.",
+    "operationId": "commerce.webhooks.by-provider.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "duplicate delivery, nothing to do"
+     },
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the event is stored and queued"
+     },
+     "400": {
+      "description": "invalid or expired signature, malformed event or another tenant's channel"
+     },
+     "404": {
+      "description": "unknown provider or webhooks not configured"
+     },
+     "413": {
+      "description": "body too large"
+     },
+     "429": {
+      "description": "rate limit"
+     }
+    },
+    "summary": "Receive a signed order event of the commerce provider",
+    "tags": [
+     "Commerce webhooks"
     ]
    }
   },
@@ -40640,6 +41450,14 @@
    "name": "cmi5"
   },
   {
+   "description": "Code exercises",
+   "name": "Code exercises"
+  },
+  {
+   "description": "Commerce webhooks",
+   "name": "Commerce webhooks"
+  },
+  {
    "description": "Compliance",
    "name": "Compliance"
   },
@@ -40686,6 +41504,10 @@
   {
    "description": "Course Access",
    "name": "Course Access"
+  },
+  {
+   "description": "Admin Course-as-code",
+   "name": "Admin Course-as-code"
   },
   {
    "description": "Admin Course Builder",

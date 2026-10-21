@@ -66,6 +66,20 @@ class RuleBasedScorerTest extends TestCase
         $this->assertSame([], $this->assess($passed)->elements);
     }
 
+    public function testFailedCodeExerciseAttemptsCountLikeQuizAttemptsUntilThePass(): void
+    {
+        $fail = fn (Ctx $c, int $d) => $c->signal(SignalType::CODE_ATTEMPT_FINISHED, 'topic:6', $d, ['passed' => false, 'verified' => false, 'attempt_no' => 1], 0.0);
+        $a = $this->assess($fail($fail(Ctx::learner(), 3), 2));
+        $this->assertSame(['failed_attempts'], $this->rules($a->elements, 'topic:6'));
+        $this->assertSame('insights.reason.failed_quiz_attempts', $a->elements['topic:6']->reasons[0]->messageKey);
+
+        $passed = Ctx::learner();
+        $fail($passed, 4);
+        $fail($passed, 3);
+        $passed->signal(SignalType::CODE_ATTEMPT_FINISHED, 'topic:6', 2, ['passed' => true, 'verified' => false], 1.0);
+        $this->assertSame([], $this->assess($passed)->elements);
+    }
+
     public function testInactivityIsAtRiskExactlyAtTheThreshold(): void
     {
         $at = fn (int $days) => $this->assess(Ctx::learner()->signal(SignalType::TOPIC_PROGRESSED, 'topic:1', $days, [], 30));
@@ -155,6 +169,6 @@ class RuleBasedScorerTest extends TestCase
     {
         $scorer = new RuleBasedScorer();
         $this->assertSame('rules', $scorer->key());
-        $this->assertNotSame('', $scorer->version());
+        $this->assertSame('2', $scorer->version(), 'version 2 counts code exercise attempts');
     }
 }

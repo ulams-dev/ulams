@@ -1,6 +1,6 @@
 ---
 title: Course Builder API
-description: Every endpoint under /api/admin/course-builder, the run and AG-UI event model, how to read the event stream with curl, the actions you can send to a run, and what happens at the cost limits.
+description: Every endpoint under /api/admin/course-builder and the AI-free course-as-code endpoints (export and import a blueprint), the run and AG-UI event model, how to read the event stream with curl, the actions you can send to a run, and what happens at the cost limits.
 sidebar:
   order: 83
 modules:
@@ -17,7 +17,7 @@ are in [Course Builder settings](/admin/course-builder/); the internals are in [
   needs `builder:read` for GET and `builder:write` for everything else.
 - The user needs the `course_builder_use` permission. Only the author of a session (and admins) can read it; only the author can change it.
 - Responses are `{"success": true, "data": …, "message": "OK"}`; errors are `{"success": false, "message": "…"}`.
-- Every endpoint answers 503 with `"code": "ai_disabled"` while AI is off (`AI_DRIVER=disabled` or no API key).
+- Every endpoint below answers 503 with `"code": "ai_disabled"` while AI is off (`AI_DRIVER=disabled` or no API key); the [course-as-code endpoints](#course-as-code-endpoints-work-with-ai-off) do not.
 - Ids of sessions, runs and versions are ULIDs; fragments are `frg_…`.
 
 ## Endpoints
@@ -50,6 +50,57 @@ are in [Course Builder settings](/admin/course-builder/); the internals are in [
 
 The session `status` moves through `draft`, `ingesting`, `interviewing`, `outlining`, `outline_review`, `generating`,
 `apply_review`, `applying`, `applied` (or `failed`).
+
+## Course-as-code endpoints (work with AI off)
+
+Course-as-code moves a course between the academy and a repository without the AI pipeline. These endpoints live in their own
+route group, `/api/admin/course-as-code`, and **do not answer 503 while AI is off**: the same token scopes apply (`builder:read` for
+GET, `builder:write` for the rest) and so does the `course_builder_use` permission. The document they exchange is a
+Blueprint v3 (`schemas/course-blueprint/v3.json` on this site); v1 and v2 documents are read as v3 (only `schemaVersion` changes, nothing is lost).
+
+| Method and path | Purpose |
+|---|---|
+| `GET courses/{course}/blueprint` | The current version of a course as a v3 document: `courseId`, `sessionId`, `versionId`, `versionNumber`, `appliedVersionId`, `document`, and `drift` (elements an apply would change although an admin edited them). 409 `NOT_ADOPTED` for a course that was not made with the builder, 409 `NO_BLUEPRINT` before any content exists |
+| `POST sessions/{session}/imports` `{document, baseVersionId, message?}` | Store the document as a **proposed** version of kind `import` (origin `author`). 201 with `version`, `counts`, the element `changes`, `warnings` and `handEdited` (AI-written elements whose text you changed by hand). 200 with `unchanged: true` and no version when the document equals the current version (a `meta`-only change counts as unchanged). 422 `INVALID_BLUEPRINT` with `data.errors`, 422 `BASE_UNKNOWN`, 413 for a document over `COURSE_AS_CODE_MAX_DOCUMENT_MB` (8) |
+| `GET versions/{version}/diff?against=` | The element-aware diff, against the parent by default. It now includes self-checks and interactions |
+| `POST versions/{version}/approve` | Approve a proposed `import` (other kinds follow the builder's own flow). Needs a person, see below. 409 `NOT_PROPOSED`, 409 `STALE_PROPOSAL` when the course changed after the import was proposed |
+| `POST sessions/{session}/apply` `{overwrite?}`, `POST sessions/{session}/publish` | The same as in the builder group, without the AI gate |
+
+Errors carry a stable `code` next to `message`: `{"success": false, "message": "…", "code": "BASE_OUTDATED", "data": {…}}`.
+
+**A push is always a proposal.** Nothing reaches learners until a version is approved *and* applied. An import must be based on the
+current version: if the course changed since your export, the import is refused with 409 `BASE_OUTDATED` and `data.remote`, the diff
+between your base and the current version, so export again. (Merging disjoint edits arrives with the sync commands.) Only the document
+is trusted as data, never as instructions: it must pass the JSON Schema, the HTML, script-link and image checks and the citation
+rules, and the server keeps the `sources` list it already has.
+
+**Who may approve.** A person logged in to the studio, or a `cli` token created by a person. An `agent` token or a request sent with
+`X-Ulams-Client: mcp` never can (403 `APPROVAL_REQUIRES_HUMAN`): an agent proposes, the author approves. A `ci` token can approve only
+when the tenant setting `course_as_code.ci_may_approve` is on (default off; the merged pull request then counts as the review).
+Imports, approvals and who made them (user, token id and kind, `X-Ulams-Commit`, `X-Ulams-Change-Url`) are written to the session's
+event log as `course_as_code.imported` and `course_as_code.approved`.
+
+### Elements written by hand: `origin` and citations
+
+Every element the AI creates or changes must cite at least one source passage. Text you write yourself has no source to cite, so
+Blueprint v3 lets an element declare `origin: "author"` (blocks, lessons, questions, interactions and FAQ items; absent means `ai`):
+
+- Only `origin: author` elements may have zero citations. Any citation that is present must still be a passage of the session's sources.
+- Changing `ai` to `author` is possible only in an import, appears in the diff as a change of the field *Written by*, and is recorded in the
+  `course_as_code.imported` event. The AI pipeline never sets `author`: when the AI edits an author block it becomes `ai` again and must cite.
+- The import response and the publish check warn about author blocks without sources: Living Course cannot keep them up to date.
+
+A lesson can also carry `key` (a slug for folder and file names), `meta` (ignored by apply and never diffed) and the reserved
+`exercises` list. The content types `scorm`, `cmi5`, `video`, `file` and `embed` are part of the schema but are refused by this server
+until their asset upload ships; the response says so.
+
+```bash
+# export, edit, import, review, approve, apply (a login or CLI token; an agent token stops at the import)
+ulams course export 12 --out blueprint.json
+$EDITOR blueprint.json
+ulams course import --file blueprint.json --message "Fix the install step" --json
+ulams course diff <version> && ulams course approve <version> && ulams course apply <session>
+```
 
 ## Sending a message or an action
 

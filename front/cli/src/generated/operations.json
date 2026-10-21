@@ -151,6 +151,18 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/code-exercises/topics/{topic}/attempts",
+  "summary": "Attempts at a code exercise (teacher report)",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/code-exercises/topics/{topic}/preview",
+  "summary": "Preview a code exercise as its author",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/compliance/assignments",
   "summary": "List required-training assignments",
   "tag": "Compliance"
@@ -442,6 +454,42 @@
   "path": "/api/admin/course-access-enquiries/approve/{id}",
   "summary": "Approve the specified Course Access Enquiry",
   "tag": "Admin Course Access"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-as-code/courses/{course}/blueprint",
+  "summary": "Export a course as a Blueprint v3 document (current version, drift, applied version)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/sessions/{session}/apply",
+  "summary": "Apply the current version to the course (no AI needed)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/sessions/{session}/imports",
+  "summary": "Import a Blueprint v3 document as a proposed version of kind import",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/sessions/{session}/publish",
+  "summary": "Publish the applied course (no AI needed)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/versions/{version}/approve",
+  "summary": "Approve a proposed import (people and CLI tokens; never agents or MCP clients)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-as-code/versions/{version}/diff",
+  "summary": "Element-aware diff of a version against its parent or ?against=",
+  "tag": "Admin Course-as-code"
  },
  {
   "method": "GET",
@@ -2059,6 +2107,12 @@
  },
  {
   "method": "POST",
+  "path": "/api/admin/templates/email/images",
+  "summary": "Upload an image for an e-mail template",
+  "tag": "Templates"
+ },
+ {
+  "method": "POST",
   "path": "/api/admin/templates/email/render",
   "summary": "Render an unsaved e-mail template draft with sample data",
   "tag": "Templates"
@@ -2812,6 +2866,30 @@
   "path": "/api/cmi5/player/{cmi5AuId}",
   "summary": "Launch a cmi5 AU",
   "tag": "cmi5"
+ },
+ {
+  "method": "POST",
+  "path": "/api/code-exercises/launches/{topic}",
+  "summary": "Open a code exercise",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "GET",
+  "path": "/api/code-exercises/topics/{topic}/attempts",
+  "summary": "My attempts at a code exercise",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "POST",
+  "path": "/api/code-exercises/topics/{topic}/attempts",
+  "summary": "Report the result of a run",
+  "tag": "Code exercises"
+ },
+ {
+  "method": "POST",
+  "path": "/api/commerce/webhooks/{provider}",
+  "summary": "Receive a signed order event of the commerce provider",
+  "tag": "Commerce webhooks"
  },
  {
   "method": "GET",

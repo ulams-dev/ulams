@@ -1796,6 +1796,39 @@ export const registry = {
     ),
     fallback: (p) => String(p.title ?? ""),
   },
+  CodeExerciseLesson: {
+    description:
+      "A code exercise (JavaScript or TypeScript): the task, the learner's files in labelled text areas, the visible tests and their results. The code runs only in a sandboxed runner frame on the tenant content origin; results are practice grades reported through the learner session.",
+    category: "learning",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        src: href("The runner page on the content origin (from POST /api/code-exercises/launches/{topic})"),
+        title: text("Title", { maxLength: 160 }),
+        topicId: int("Topic id for the attempts call (omitted in a preview: nothing is tracked)"),
+        language: oneOf(["javascript", "typescript"], "Language of the exercise", "javascript"),
+        files: list(
+          obj({ path: text("Relative path of the file", { maxLength: 80 }), content: text("Starter content", { maxLength: 65536 }) }, ["path", "content"]),
+          "The learner's starter files",
+          { maxItems: 20 }
+        ),
+        tests: list(
+          obj({ path: text("Relative path of the test file", { maxLength: 80 }), content: text("Test source", { maxLength: 65536 }) }, ["path", "content"]),
+          "The visible test files",
+          { maxItems: 10 }
+        ),
+        timeoutMs: int("A run is stopped after this many milliseconds", { default: 5000, minimum: 500, maximum: 30000 }),
+        passScore: int("Percentage of passing tests that completes the topic", { minimum: 1, maximum: 100 }),
+        completionRule: oneOf(["on_pass", "on_attempt"], "When the topic completes", "on_pass"),
+        text: text("The task (Markdown)", { maxLength: 20000 }),
+        locale: text("Language of the interface texts", { maxLength: 16, default: "en" }),
+        attempts: obj({ count: int("Attempts so far"), best_score: int("Best score in percent") }, ["count"], "The learner's attempts so far"),
+      },
+      ["src", "title", "files", "tests"]
+    ),
+    fallback: (p) => String(p.title ?? ""),
+  },
   ActivityCard: {
     description: "Launch card for an activity that runs outside the page (cmi5 tracked activity, project hand-in).",
     category: "learning",

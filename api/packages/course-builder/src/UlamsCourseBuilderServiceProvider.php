@@ -105,6 +105,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/course_builder.php', 'course_builder');
+        $this->mergeConfigFrom(__DIR__ . '/../config/course_as_code.php', 'course_as_code');
         foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class, UlamsSettingsServiceProvider::class, UlamsCommerceServiceProvider::class, UlamsLiaScriptServiceProvider::class, UlamsH5PServiceProvider::class, UlamsInteractiveServiceProvider::class] as $provider) {
             $this->app->register($provider);
         }
@@ -126,6 +127,8 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
 
         // AI content labelling (4.3): public tenant switch, and `ai_assisted` on every topic of a program response
         AdministrableConfig::registerConfig('ai.label_generated_courses', ['boolean'], true, false);
+        // may a CI token approve an imported version (ADR 0160); private, off by default
+        AdministrableConfig::registerConfig('course_as_code.ci_may_approve', ['boolean'], false, false);
         TopicResource::extend('course-builder.ai_assisted', fn ($topic) => ['ai_assisted' => app(AiAssistedTopics::class)->is($topic)]);
 
         $this->app->make(PromptRegistry::class)->addPath(Llm::PROMPTS, __DIR__ . '/../resources/prompts');

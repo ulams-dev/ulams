@@ -1,7 +1,10 @@
 import type { Editor } from 'grapesjs';
-import React, { useEffect, useRef } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import KeyboardPanel from './KeyboardPanel';
 import { parseMarkup, treeLines } from './roundTrip';
-import { createEditor, exportMjml } from './visual/engine';
+import { createEditor, exportMjml, type VisualOptions } from './visual/engine';
+import type { VisualEditorHandle } from './visual/handle';
+import { insertVariable } from './visual/ulams';
 
 export const CHANGE_DELAY_MS = 300;
 
@@ -15,20 +18,47 @@ export type VisualEditorProps = {
   onChange: (mjml: string) => void;
   locale?: string;
   label: string;
+  /** Registered variables: they open as chips and fill the link pickers. */
+  variables?: string[];
+  /** Opens the image dialog, see `VisualOptions`. */
+  pickImage?: VisualOptions['pickImage'];
 };
 
 /**
  * GrapesJS with grapesjs-mjml in a fixed-height box. One editor instance per mount, destroyed on
  * unmount so the canvas iframe does not leak. The storage manager is off: the form is the store.
  */
-const VisualEditor: React.FC<VisualEditorProps> = ({ initial, onChange, locale, label }) => {
+const VisualEditor = forwardRef<VisualEditorHandle, VisualEditorProps>(function VisualEditor(
+  { initial, onChange, locale, label, variables, pickImage },
+  ref,
+) {
   const box = useRef<HTMLDivElement | null>(null);
+  const instance = useRef<Editor | null>(null);
+  const [current, setCurrent] = useState<Editor | null>(null);
   const handler = useRef(onChange);
   handler.current = onChange;
+  const picker = useRef(pickImage);
+  const labelRef = useRef(label);
+  labelRef.current = label;
+  picker.current = pickImage;
+
+  useImperativeHandle(ref, () => ({
+    insertVariable: (token) =>
+      instance.current ? insertVariable(instance.current, token) : 'no-target',
+  }));
 
   useEffect(() => {
     if (!box.current) return undefined;
-    const editor: Editor = createEditor(box.current, initial, locale);
+    const editor: Editor = createEditor(box.current, initial, locale, {
+      variables,
+      pickImage: () => (picker.current ? picker.current() : Promise.resolve(undefined)),
+    });
+    instance.current = editor;
+    setCurrent(editor);
+    // The canvas is an iframe: it needs a name for screen readers (WCAG 4.1.2).
+    const nameFrame = () => editor.Canvas.getFrameEl()?.setAttribute('title', labelRef.current);
+    editor.on('canvas:frame:load', nameFrame);
+    editor.on('load', nameFrame);
     let baseline: string | undefined;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let active = true;
@@ -52,6 +82,8 @@ const VisualEditor: React.FC<VisualEditorProps> = ({ initial, onChange, locale, 
 
     return () => {
       active = false;
+      instance.current = null;
+      setCurrent(null);
       if (timer) clearTimeout(timer);
       editor.destroy();
     };
@@ -60,8 +92,16 @@ const VisualEditor: React.FC<VisualEditorProps> = ({ initial, onChange, locale, 
   }, []);
 
   return (
-    <div ref={box} role="region" aria-label={label} className="email-template-editor__visual" />
+    <>
+      {current && (
+        <KeyboardPanel
+          editor={current}
+          chooseImage={(component) => current.runCommand('open-assets', { target: component })}
+        />
+      )}
+      <div ref={box} role="region" aria-label={label} className="email-template-editor__visual" />
+    </>
   );
-};
+});
 
 export default VisualEditor;

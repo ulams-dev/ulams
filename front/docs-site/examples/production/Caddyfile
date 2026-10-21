@@ -50,7 +50,7 @@
 
 	@package {
 		method GET HEAD
-		path /scorm/* /cmi5/* /adapt/* /liascript/* /interactive/*
+		path /scorm/* /cmi5/* /adapt/* /liascript/* /interactive/* /runtime/*
 	}
 	handle @package {
 		request_header -Cookie

@@ -13,21 +13,22 @@ import { topicHref } from "../../lib/view-model.ts";
 import {
   DEFAULT_EXPIRY_DAYS,
   EXPIRY_DAYS,
-  FAILURE_TEXT,
-  KINDS,
-  PRESETS,
   createToken,
+  failureText,
   formatDate,
   isExpired,
+  kindsFor,
   listTokens,
   parseCreateForm,
+  presetsFor,
   revokeToken,
   sortTokens,
   summariseScopes,
 } from "../../lib/tokens.ts";
 import type { CreatedToken } from "../../lib/tokens.ts";
 import { plural, trainingStrings } from "@ulams/ui/training-strings";
-import { accountLocale } from "../../lib/locale.ts";
+import { accountStrings, fill } from "@ulams/ui/account-strings";
+import { accountLocale, contentLang } from "../../lib/locale.ts";
 import { accountSummary, loadTeam, loadTraining } from "../../lib/training.ts";
 import "../../styles/training.css";
 
@@ -36,6 +37,10 @@ if (!tenant) return Astro.redirect("/");
 const token = Astro.locals.token;
 if (!token) return Astro.redirect("/login?next=/account");
 
+// the tenant default language decides the language of the page and of the form messages (P5R-1)
+const settings = await getSettings(tenant).catch(() => null);
+const trLocale = accountLocale(settings);
+
 // "My tokens": plain forms posted to this page. The secret of a new token is shown in this response only.
 const posted = Astro.request.method === "POST" ? await Astro.request.formData() : null;
 let created: CreatedToken | null = null;
@@ -43,12 +48,12 @@ let tokenError: string | null = null;
 if (posted) {
   const action = String(posted.get("action") ?? "");
   if (action === "create-token") {
-    const parsed = parseCreateForm(posted);
+    const parsed = parseCreateForm(posted, trLocale);
     if (!parsed.ok) tokenError = parsed.error;
     else {
       const result = await createToken(tenant, token, parsed.input);
       if (result.ok) created = result.token;
-      else tokenError = result.message ?? FAILURE_TEXT[result.reason];
+      else tokenError = result.message ?? failureText(result.reason, trLocale);
     }
   } else if (action === "revoke-token") {
     const result = await revokeToken(tenant, token, String(posted.get("id") ?? ""));
@@ -58,18 +63,20 @@ if (posted) {
 if (created) Astro.response.headers.set("Cache-Control", "private, no-store");
 const tokenNotice = Astro.url.searchParams.get("tokens");
 
-const [me, progress, settings, site, tokenList, training, team] = await Promise.all([
+const [me, progress, site, tokenList, training, team] = await Promise.all([
   getProfile(tenant, token).catch(() => null),
   getAllProgress(tenant, token).catch(() => null as CourseProgressSummary[] | null),
-  getSettings(tenant).catch(() => null),
   getSiteModel(tenant).catch(() => null),
   listTokens(tenant, token),
   loadTraining(tenant, token),
   loadTeam(tenant, token),
 ]);
 // "My training": counts that link to the training, skills and team pages (the team link only for managers)
-const trLocale = accountLocale(settings);
 const tr = trainingStrings(trLocale);
+const a = accountStrings(trLocale);
+const presets = presetsFor(trLocale);
+const kinds = kindsFor(trLocale);
+Astro.locals.uiLocale = trLocale;
 const summary = accountSummary(training, new Date());
 const trainingLinks = [
   ...(summary.overdue > 0 ? [{ href: "/account/training", text: plural(trLocale, tr.summaryOverdue, summary.overdue) }] : []),
@@ -81,7 +88,7 @@ const trainingLinks = [
 const tokens = tokenList.ok ? sortTokens(tokenList.tokens) : [];
 const theme = themeFor(settings?.theme?.theme, tenant.slug);
 const chrome = chromeFor(theme);
-const name = me ? [me.first_name, me.last_name].filter(Boolean).join(" ") : "Learner";
+const name = me ? [me.first_name, me.last_name].filter(Boolean).join(" ") : a.learner;
 const initials = name
   .split(" ")
   .map((p) => p.charAt(0))
@@ -97,10 +104,11 @@ const courses = (progress ?? []).map((entry) => {
   const percent = total ? Math.round((done / total) * 100) : 0;
   const next = items.find((p) => p.status !== 1);
   // the program (when the API returns it with the summary) names the next topic and the time left
-  const note = course.lessons?.length ? standingNote(courseStanding(course, items)) : "";
+  const note = course.lessons?.length ? standingNote(courseStanding(course, items), trLocale) : "";
   return {
     note,
     id: course.id,
+    lang: contentLang(course.language, trLocale),
     title: course.title,
     summary: course.summary ?? undefined,
     image: course.image_url ? { src: course.image_url, alt: "", width: 1600, height: 900 } : undefined,
@@ -112,8 +120,8 @@ const courses = (progress ?? []).map((entry) => {
 });
 ---
 
-<Base theme={theme} accent={settings?.theme?.accent} title={`My learning — ${site?.tenant.name ?? "ulams"}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
-  {chrome.header && site && <Render doc={withSessionLink(chrome.header, true)} data={site} />}
+<Base theme={theme} accent={settings?.theme?.accent} title={fill(a.pageTitle, { name: site?.tenant.name ?? "ulams" })} lang={trLocale} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  {chrome.header && site && <Render doc={withSessionLink(chrome.header, true, a.myLearning)} data={site} />}
   <main id="main" class="u-container u-account" tabindex="-1">
     <section class="u-account__profile u-card" aria-labelledby="profile-title">
       <span class="u-account__avatar" aria-hidden="true">{initials}</span>
@@ -123,7 +131,7 @@ const courses = (progress ?? []).map((entry) => {
         {me?.roles && me.roles.length > 0 && <p class="u-account__roles">{me.roles.join(" · ")}</p>}
       </div>
       <form method="post" action="/logout" class="u-account__logout">
-        <button class="u-btn u-btn--ghost u-btn--sm" type="submit">Log out</button>
+        <button class="u-btn u-btn--ghost u-btn--sm" type="submit">{a.logOut}</button>
       </form>
     </section>
 
@@ -135,15 +143,15 @@ const courses = (progress ?? []).map((entry) => {
     </section>
 
     <section aria-labelledby="courses-title" class="u-account__courses">
-      <h2 id="courses-title" class="u-h2">My courses</h2>
+      <h2 id="courses-title" class="u-h2">{a.myCourses}</h2>
       {
         progress === null ? (
           <p class="u-account__empty" role="alert">
-            Your courses could not be loaded right now. <a href="/account">Try again</a>.
+            {a.coursesFailed} <a href="/account">{a.tryAgain}</a>.
           </p>
         ) : courses.length === 0 ? (
           <p class="u-account__empty">
-            No courses yet. <a href="/">Browse the academy</a>.
+            {a.noCourses} <a href="/">{a.browseAcademy}</a>.
           </p>
         ) : (
           <ul role="list">
@@ -155,14 +163,14 @@ const courses = (progress ?? []).map((entry) => {
                   </div>
                 )}
                 <div class="u-account__body">
-                  <h3>
+                  <h3 lang={c.lang}>
                     <a href={`/courses/${c.id}`}>{c.title}</a>
                   </h3>
-                  {c.summary && <p class="u-account__summary">{c.summary}</p>}
+                  {c.summary && <p class="u-account__summary" lang={c.lang}>{c.summary}</p>}
                   <div
                     class="u-account__progress"
                     role="progressbar"
-                    aria-label={`Progress in ${c.title}`}
+                    aria-label={fill(a.progressIn, { title: c.title })}
                     aria-valuemin="0"
                     aria-valuemax="100"
                     aria-valuenow={c.percent}
@@ -170,12 +178,12 @@ const courses = (progress ?? []).map((entry) => {
                   >
                     <span class="u-account__track" />
                     <span>
-                      {c.percent}% · {c.done}/{c.total} topics
+                      {fill(a.progressLine, { percent: c.percent, done: c.done, total: c.total })}
                     </span>
                   </div>
                   {c.note && <p class="u-account__next">{c.note}</p>}
                   <a class="u-btn u-btn--sm" href={c.href}>
-                    {c.percent === 0 ? "Start" : c.percent === 100 ? "Review" : "Continue"}
+                    {c.percent === 0 ? a.start : c.percent === 100 ? a.review : a.continue}
                     <Icon name="arrow" />
                   </a>
                 </div>
@@ -187,29 +195,28 @@ const courses = (progress ?? []).map((entry) => {
     </section>
 
     <p class="u-account__lead">
-      <a href="/account/personalisation">Personalisation &amp; privacy</a>: what this academy knows about how you learn, and your choices.
+      <a href="/account/personalisation">{a.personalisationLink}</a>{a.personalisationText}
     </p>
 
     <section aria-labelledby="tokens-title" class="u-account__tokens" id="tokens">
-      <h2 id="tokens-title" class="u-h2">My tokens</h2>
+      <h2 id="tokens-title" class="u-h2">{a.tokensTitle}</h2>
       <p class="u-account__lead">
-        Tokens let the <code>ulams</code> command line, scripts and AI agents act as you. A token can never do more than your account can, and
-        you choose how much less. Copy a new token once, store it safely, and revoke it when you no longer need it.
+        {a.tokensLeadBefore}<code>ulams</code>{a.tokensLeadAfter}
       </p>
 
-      {tokenNotice === "revoked" && <p class="u-account__notice" role="status">Token revoked. It stops working at once.</p>}
-      {tokenNotice === "failed" && <p class="u-account__error" role="alert">The token could not be revoked. Try again.</p>}
+      {tokenNotice === "revoked" && <p class="u-account__notice" role="status">{a.tokenRevoked}</p>}
+      {tokenNotice === "failed" && <p class="u-account__error" role="alert">{a.tokenRevokeFailed}</p>}
       {tokenError && <p class="u-account__error" role="alert">{tokenError}</p>}
 
       {
         created && (
           <div class="u-account__secret u-card" role="status">
-            <h3>Copy your new token now</h3>
-            <p>It is shown only once. Keep it in a password manager or a secret store, never in code or a chat.</p>
-            <label for="new-token">Your new token “{created.name}”</label>
+            <h3>{a.copyNowTitle}</h3>
+            <p>{a.copyNowText}</p>
+            <label for="new-token">{fill(a.newTokenLabel, { name: created.name ?? "" })}</label>
             <input id="new-token" class="u-account__secret-value" type="text" readonly value={created.token} autocomplete="off" spellcheck="false" />
             <p>
-              Use it as <code>ULAMS_TOKEN</code> next to <code>ULAMS_URL={tenant.apiUrl}</code>, or run{" "}
+              {a.secretUseBefore}<code>ULAMS_TOKEN</code>{a.secretUseMiddle}<code>ULAMS_URL={tenant.apiUrl}</code>{a.secretUseAfter}
               <code>printf '%s' "$TOKEN" | ulams login --url {tenant.apiUrl} --token-stdin</code>.
             </p>
           </div>
@@ -219,44 +226,44 @@ const courses = (progress ?? []).map((entry) => {
       {
         !tokenList.ok ? (
           <p class="u-account__empty" role="alert">
-            {FAILURE_TEXT[tokenList.reason]} <a href="/account#tokens">Try again</a>.
+            {failureText(tokenList.reason, trLocale)} <a href="/account#tokens">{a.tryAgain}</a>.
           </p>
         ) : tokens.length === 0 ? (
-          <p class="u-account__empty">You have no tokens yet.</p>
+          <p class="u-account__empty">{a.noTokens}</p>
         ) : (
-          <ul role="list" class="u-account__token-list" aria-label="Your tokens">
+          <ul role="list" class="u-account__token-list" aria-label={a.tokenListLabel}>
             {tokens.map((t) => (
               <li class="u-account__token u-card">
                 <div class="u-account__token-head">
-                  <h3>{t.name ?? "Unnamed token"}</h3>
+                  <h3>{t.name ?? a.unnamedToken}</h3>
                   <span class={`u-account__badge${t.revoked || isExpired(t) ? " u-account__badge--off" : ""}`}>
-                    {t.revoked ? "Revoked" : isExpired(t) ? "Expired" : "Active"}
+                    {t.revoked ? a.statusRevoked : isExpired(t) ? a.statusExpired : a.statusActive}
                   </span>
                 </div>
                 <dl class="u-account__token-meta">
                   <div>
-                    <dt>Access</dt>
-                    <dd>{summariseScopes(t.scopes)}</dd>
+                    <dt>{a.access}</dt>
+                    <dd>{summariseScopes(t.scopes, trLocale)}</dd>
                   </div>
                   <div>
-                    <dt>Created</dt>
-                    <dd>{formatDate(t.created_at)}{t.created_via === "device" ? " · command line login" : ""}</dd>
+                    <dt>{a.created}</dt>
+                    <dd>{formatDate(t.created_at, trLocale)}{t.created_via === "device" ? a.commandLineLogin : ""}</dd>
                   </div>
                   <div>
-                    <dt>Expires</dt>
-                    <dd>{formatDate(t.expires_at)}</dd>
+                    <dt>{a.expires}</dt>
+                    <dd>{formatDate(t.expires_at, trLocale)}</dd>
                   </div>
                   <div>
-                    <dt>Last used</dt>
-                    <dd>{formatDate(t.last_used_at)}</dd>
+                    <dt>{a.lastUsed}</dt>
+                    <dd>{formatDate(t.last_used_at, trLocale)}</dd>
                   </div>
                 </dl>
                 {!t.revoked && (
                   <form method="post" action="/account">
                     <input type="hidden" name="action" value="revoke-token" />
                     <input type="hidden" name="id" value={t.id} />
-                    <button class="u-btn u-btn--ghost u-btn--sm" type="submit" aria-label={`Revoke token ${t.name ?? t.id.slice(0, 8)}`}>
-                      Revoke
+                    <button class="u-btn u-btn--ghost u-btn--sm" type="submit" aria-label={fill(a.revokeLabel, { name: t.name ?? t.id.slice(0, 8) })}>
+                      {a.revoke}
                     </button>
                   </form>
                 )}
@@ -267,17 +274,17 @@ const courses = (progress ?? []).map((entry) => {
       }
 
       <form method="post" action="/account#tokens" class="u-account__create u-card" aria-labelledby="create-token-title">
-        <h3 id="create-token-title">Create a token</h3>
+        <h3 id="create-token-title">{a.createTitle}</h3>
         <input type="hidden" name="action" value="create-token" />
         <div class="u-account__field">
-          <label for="token-name">Name</label>
+          <label for="token-name">{a.name}</label>
           <input id="token-name" name="name" type="text" required maxlength="100" autocomplete="off" aria-describedby="token-name-hint" />
-          <span id="token-name-hint" class="u-account__hint">For example “laptop” or “nightly build”.</span>
+          <span id="token-name-hint" class="u-account__hint">{a.nameHint}</span>
         </div>
         <fieldset class="u-account__field">
-          <legend>What may it do?</legend>
+          <legend>{a.whatMayItDo}</legend>
           {
-            PRESETS.map((p, i) => (
+            presets.map((p, i) => (
               <label class="u-account__choice">
                 <input type="radio" name="access" value={p.key} checked={i === 0} />
                 <span>
@@ -290,19 +297,19 @@ const courses = (progress ?? []).map((entry) => {
         </fieldset>
         <div class="u-account__row">
           <div class="u-account__field">
-            <label for="token-days">Valid for</label>
+            <label for="token-days">{a.validFor}</label>
             <select id="token-days" name="days">
-              {EXPIRY_DAYS.map((d) => <option value={d} selected={d === DEFAULT_EXPIRY_DAYS}>{d} days</option>)}
+              {EXPIRY_DAYS.map((d) => <option value={d} selected={d === DEFAULT_EXPIRY_DAYS}>{plural(trLocale, a.days, d)}</option>)}
             </select>
           </div>
           <div class="u-account__field">
-            <label for="token-kind">Used by</label>
+            <label for="token-kind">{a.usedBy}</label>
             <select id="token-kind" name="kind">
-              {KINDS.map((k) => <option value={k.value}>{k.label}</option>)}
+              {kinds.map((k) => <option value={k.value}>{k.label}</option>)}
             </select>
           </div>
         </div>
-        <button class="u-btn" type="submit">Create token</button>
+        <button class="u-btn" type="submit">{a.createButton}</button>
       </form>
     </section>
   </main>

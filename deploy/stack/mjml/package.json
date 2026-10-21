@@ -4,5 +4,5 @@
   "private": true,
   "type": "module",
   "license": "MIT",
-  "dependencies": { "mjml": "4.17.1" }
+  "dependencies": { "mjml": "4.18.0" }
 }

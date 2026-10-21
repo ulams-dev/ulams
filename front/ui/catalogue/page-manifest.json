@@ -6652,6 +6652,157 @@
         "additionalProperties": false
       }
     },
+    "CodeExerciseLesson": {
+      "description": "A code exercise (JavaScript or TypeScript): the task, the learner's files in labelled text areas, the visible tests and their results. The code runs only in a sandboxed runner frame on the tenant content origin; results are practice grades reported through the learner session.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "src": {
+            "type": "string",
+            "format": "href",
+            "description": "The runner page on the content origin (from POST /api/code-exercises/launches/{topic})",
+            "maxLength": 2048
+          },
+          "title": {
+            "type": "string",
+            "description": "Title",
+            "maxLength": 160
+          },
+          "topicId": {
+            "type": "integer",
+            "description": "Topic id for the attempts call (omitted in a preview: nothing is tracked)",
+            "minimum": 0
+          },
+          "language": {
+            "type": "string",
+            "enum": [
+              "javascript",
+              "typescript"
+            ],
+            "description": "Language of the exercise",
+            "default": "javascript"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Relative path of the file",
+                  "maxLength": 80
+                },
+                "content": {
+                  "type": "string",
+                  "description": "Starter content",
+                  "maxLength": 65536
+                }
+              },
+              "required": [
+                "path",
+                "content"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The learner's starter files",
+            "default": [],
+            "maxItems": 20
+          },
+          "tests": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Relative path of the test file",
+                  "maxLength": 80
+                },
+                "content": {
+                  "type": "string",
+                  "description": "Test source",
+                  "maxLength": 65536
+                }
+              },
+              "required": [
+                "path",
+                "content"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The visible test files",
+            "default": [],
+            "maxItems": 10
+          },
+          "timeoutMs": {
+            "type": "integer",
+            "description": "A run is stopped after this many milliseconds",
+            "minimum": 500,
+            "default": 5000,
+            "maximum": 30000
+          },
+          "passScore": {
+            "type": "integer",
+            "description": "Percentage of passing tests that completes the topic",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "completionRule": {
+            "type": "string",
+            "enum": [
+              "on_pass",
+              "on_attempt"
+            ],
+            "description": "When the topic completes",
+            "default": "on_pass"
+          },
+          "text": {
+            "type": "string",
+            "description": "The task (Markdown)",
+            "maxLength": 20000
+          },
+          "locale": {
+            "type": "string",
+            "description": "Language of the interface texts",
+            "maxLength": 16,
+            "default": "en"
+          },
+          "attempts": {
+            "type": "object",
+            "properties": {
+              "count": {
+                "type": "integer",
+                "description": "Attempts so far",
+                "minimum": 0
+              },
+              "best_score": {
+                "type": "integer",
+                "description": "Best score in percent",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "count"
+            ],
+            "description": "The learner's attempts so far",
+            "additionalProperties": false
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "src",
+          "title",
+          "files",
+          "tests"
+        ],
+        "additionalProperties": false
+      }
+    },
     "ActivityCard": {
       "description": "Launch card for an activity that runs outside the page (cmi5 tracked activity, project hand-in).",
       "children": false,

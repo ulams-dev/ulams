@@ -99,11 +99,14 @@ return [
         'cmi5' => 'ulams_cmi5.disk',
         'liascript' => 'ulams_liascript.disk',
         'interactive' => 'ulams_interactive.disk',
+        // the browser runner of code exercises (packages/code-exercises, ADR 0170): static files that ship with the API
+        'runtime' => 'ulams_code_exercises.runtime_disk',
     ],
     // Package types that set response headers (the CSP) for their files themselves: prefix => class
     // implementing Ulams\Uploads\Http\ContentHeaderProvider. The generic CSP of the proxy only applies
     // to files that come back without one.
     'content_headers' => [
         'interactive' => \Ulams\Interactive\Services\InteractiveCsp::class,
+        'runtime' => \Ulams\CodeExercises\Services\RunnerHeaders::class,
     ],
 ];

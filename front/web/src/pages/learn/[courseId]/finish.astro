@@ -3,7 +3,8 @@
 import Icon from "@ulams/ui/components/Icon.astro";
 import { completionPercent, flattenTopics } from "@ulams/sdk";
 import { formatDate, trainingStrings } from "@ulams/ui/training-strings";
-import { learnerLocale } from "../../../lib/locale.ts";
+import { learnerPageLocale } from "../../../lib/locale.ts";
+import { fill, playerStrings, themeKey } from "@ulams/ui/player-strings";
 import { certificateRow, loadCourseCertificate, siteOrigin } from "../../../lib/training.ts";
 import Base from "../../../layouts/Base.astro";
 import { apiFor, getProgram, getSettings } from "../../../lib/data.ts";
@@ -26,10 +27,12 @@ const { course, progress } = program;
 const percent = completionPercent(course, progress);
 const topics = flattenTopics(course);
 const remaining = topics.filter((t) => !progress.some((p) => p.topic_id === t.id && p.status === 1));
-const name = me ? [me.first_name, me.last_name].filter(Boolean).join(" ") : "Demo student";
 const finished = remaining.length === 0;
-const locale = learnerLocale(course.language, typeof settings?.global?.language === "string" ? settings.global.language : null);
+const locale = learnerPageLocale(course.language, settings);
+Astro.locals.uiLocale = locale;
 const t = trainingStrings(locale);
+const p = playerStrings(locale);
+const name = me ? [me.first_name, me.last_name].filter(Boolean).join(" ") : p.demoStudent;
 const today = formatDate(locale, new Date().toISOString());
 // the real certificate, once the course is finished (never a mock for a finished course)
 const origin = siteOrigin(Astro.request.headers, Astro.locals.secure, Astro.url.origin);
@@ -37,26 +40,24 @@ const issued = finished ? await loadCourseCertificate(tenant, token, courseId) :
 const row = issued ? certificateRow(issued, locale, new Date(), { webOrigin: origin, apiUrl: tenant.apiUrl }) : null;
 if (finished) Astro.response.headers.set("Cache-Control", "private, no-store");
 const company = settings?.global?.companyName ?? course.title;
-const headline = finished
-  ? { coffee: "Your signature cup is ready.", oncall: "Incident closed. Well commanded.", nightsky: "Mission complete, explorer!", gravity: "Escape velocity reached", poland: "Measured and done", ulam: "Problem solved — no goose required", platform: "Course complete" }[theme]
-  : { coffee: "The last page, almost.", oncall: "Almost there: a few items left.", nightsky: "So close to the stars!", gravity: "Almost in orbit", poland: "Nearly measured", ulam: "One more problem to go", platform: "Almost there" }[theme];
+const headline = (finished ? p.finishDone : p.finishAlmost)[themeKey(theme)];
 ---
 
-<Base theme={theme} accent={settings?.theme?.accent} title={`Finish — ${course.title}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+<Base theme={theme} accent={settings?.theme?.accent} title={`${p.finishTitle} — ${course.title}`} lang={locale} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
   <main id="main" class="u-container u-finish">
     <div class="u-finish__confetti" aria-hidden="true">
       {Array.from({ length: 24 }, (_, i) => <i style={`--x:${(i * 37) % 100}%;--d:${(i % 7) * 0.15}s;--r:${(i * 47) % 360}deg`} />)}
     </div>
     <p class="u-eyebrow">{course.title}</p>
     <h1 class="u-finish__title">{headline}</h1>
-    <div class="u-finish__ring" style={`--p:${percent}`} role="img" aria-label={`${percent}% of the course completed`}>
+    <div class="u-finish__ring" style={`--p:${percent}`} role="img" aria-label={fill(p.finishRing, { n: percent })}>
       <strong>{percent}%</strong>
-      <span>complete</span>
+      <span>{p.finishComplete}</span>
     </div>
 
     {
       row && issued ? (
-        <section class="u-finish__issued" aria-labelledby="issued-title" lang={locale}>
+        <section class="u-finish__issued" aria-labelledby="issued-title">
           <figure class="u-cert" aria-labelledby="issued-title">
             <p class="u-cert__org">{company}</p>
             <p class="u-cert__label" id="issued-title">{t.finishCertificate}</p>
@@ -83,7 +84,7 @@ const headline = finished
           {t.finishNotIssued} <a href="/account/training#certificates">{t.accountTrainingLink}</a>
         </p>
       ) : (
-        <figure class="u-cert" aria-label={t.finishPreview} lang={locale}>
+        <figure class="u-cert" aria-label={t.finishPreview}>
           <p class="u-cert__org">{company}</p>
           <p class="u-cert__label">{t.finishPreview}</p>
           <p class="u-cert__name">{name}</p>
@@ -100,7 +101,7 @@ const headline = finished
     {
       !finished && (
         <section class="u-finish__left" aria-labelledby="left-title">
-          <h2 id="left-title">Still open ({remaining.length})</h2>
+          <h2 id="left-title">{fill(p.stillOpen, { n: remaining.length })}</h2>
           <ul role="list">
             {remaining.slice(0, 6).map((t) => (
               <li>
@@ -114,8 +115,8 @@ const headline = finished
       )
     }
     <p class="u-actions u-finish__actions">
-      <a class="u-btn" href={`/courses/${courseId}`}>Back to the course</a>
-      <a class="u-btn u-btn--ghost" href="/">Home</a>
+      <a class="u-btn" href={`/courses/${courseId}`}>{p.finishBack}</a>
+      <a class="u-btn u-btn--ghost" href="/">{p.home}</a>
     </p>
   </main>
 </Base>

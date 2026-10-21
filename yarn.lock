@@ -17360,6 +17360,11 @@ esast-util-from-js@^2.0.0:
     esast-util-from-estree "^2.0.0"
     vfile-message "^4.0.0"
 
+esbuild-wasm@0.28.2:
+  version "0.28.2"
+  resolved "https://registry.yarnpkg.com/esbuild-wasm/-/esbuild-wasm-0.28.2.tgz#b1f69ae107aa8471b57756af4f8bc131407f4481"
+  integrity sha512-GccVwhv3mmOUVQHCQm2Ox/rby8n/EqUwvZxE6Pjfikrq/lWw9g9WX/u9EykWnpot3Ko6j426DgQdea2xWKIAQA==
+
 esbuild@0.21.4:
   version "0.21.4"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.21.4.tgz#ceb501def8edb12a5bfd9c55f3a96db698edf022"

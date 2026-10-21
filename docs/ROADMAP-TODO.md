@@ -163,6 +163,12 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [ ] (new) Remaining legacy references (partial: `escolalms/php` replaced by a base built in-repo, ReportBro removed and replaced by pdfme): replace the `escolalms/php` and `escolalms/reportbro-server`
       images, decide on upstream provenance links, reword ADR prose, retarget Docker Hub publishing
       workflows, replace the `ulams.app` placeholder domain, recreate SQL views in pre-rename databases
+      Note 2026-10-21 (TD-1): partial list updated. Done: `escolalms/php` image replaced (`api/docker/php`), ReportBro removed,
+      no Docker Hub publishing (pull mirror only), upstream CI/coverage badges and hot-linked upstream images removed or copied
+      into `api/packages/<pkg>/docs/img/` (provenance stays in the "Based on EscolaLMS" lines, `LICENSING.md` and package `LICENSE`
+      files), documentation links read `ULAMS_DOCS_URL` (default `https://ulams-dev.github.io/ulams/`) and `scripts/check-hosts.mjs`
+      fails CI on a new hard-coded `ulams.app` host, SQL views are recreated by `ulams:db:recreate-views` inside `ulams:upgrade`.
+      Left: pointing `docs.ulams.app` at the docs once the owner sets up the subdomain (owner action); ADR prose rewording
 - [x] (new) Fix `php artisan route:list` (Mattermost client connects in its constructor)
 - [x] (new) CI (partial: root `ci.yml` with path filters, PHP shards, licence guards and Dependabot committed; not yet run on GitHub — the branch is unpushed; publishing workflows intentionally dropped): move workflows to the root `.github/` with path filters; drop MySQL services; run Jest
       in admin/front; Dockerfiles build from the repo root
@@ -223,11 +229,16 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
       (templates fall back silently); wire it or drop the service (on the `ulams` network, plain-text fallback, image size read through the disk, #263)
 - [ ] (new) Publish images to GHCR (`ghcr.io/ulams-dev/*`, decided 2026-10-08); publish the base image as `ulams/php:8.3` with source offers for its GPL programs (see
       `api/docker/php/NOTICE`) (GHCR publishing done in `publish.yml`; base image is PHP 8.4; source offer tracked in L0-15; #44)
+      Note 2026-10-21 (TD-1): the base image is `php:8.4-fpm-alpine`, not `ulams/php:8.3` (superseded, #44). The written source
+      offer (three years, on request, no source tarballs) is in `api/docker/php/NOTICE`; the image lists its exact Alpine packages
+      in `/usr/share/doc/ulams/apk-packages.txt` and carries the label `org.ulams.alpine-release`; `publish.yml` prints the list
+      in the run summary. Ready to tick once this merges and the next image publish shows the label and summary
 
 - [x] (new) Delete `front/src/style/` (deleted in `974776f0` with its exclusions; #44)
 - [x] (new) Cart on tenants crashes without a Stripe publishable key (`stripe.tsx` calls
       `stripeKey.includes` on null); show a configuration message instead
-- [ ] (new) Yarn install on Node 23 needs `--ignore-engines` (obsolete: Node 23 is EOL; Node 22 and 24 supported; #44)
+- [x] (new) Yarn install on Node 23 needs `--ignore-engines` (obsolete: Node 23 is EOL; Node 22 and 24 supported; #44)
+      Note 2026-10-21 (TD-1): closed as obsolete; `--ignore-engines` removed from `developers/cli.mdx` and `developers/claude-code.mdx` (#44)
 - [ ] (new) Dependency holds (Dependabot ignore rules in `.github/dependabot.yml`): `sharp` 0.35 fails to load
       in the docs-site build on the CI runner (MissingSharp; Astro depends on `sharp ^0.34`); `@ant-design/pro-components`
       2.8.5 to 2.8.10 break admin typecheck (`@ant-design/pro-form` 2.31.5+ declaration files import `src/...`).
@@ -333,11 +344,13 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [x] (new) Students have no `scorm_track-update` permission, so the legacy `/api/scorm/track` rejects
       them and the front's legacy SCORM player never tracked (seeded for students, confirmed 2026-10-09; re-run
       `PermissionsSeeder` on existing tenants). SCORM completion now completes the SCORM topics using the SCO
-- [ ] (new) Production: serve content origins from a separate registrable domain (not same-site with the
+- [x] (new) Production: serve content origins from a separate registrable domain (not same-site with the
       app), and add registered LTI tool origins to the front/admin `frame-src` (documented in
       `api/docs/content-origin.md`; deployment pending). Note 2026-10-09: the owner chose the same-site
       `*.content.ulams.app` instead; the separate domain stays supported (ADR 0014, amended)
       (partial: deployment docs with DNS and TLS steps done (operators/content-origin) and the registered LTI tool origins are in the front's `frame-src` (ADR 0044); the real domain is owner decision #24)
+      Note 2026-10-21 (TD-1): obsolete as worded (same-site `*.content.ulams.app` chosen, #24 closed; the separate-domain mode stays
+      supported and documented); the deployment itself is the Phase 8 item "First production deployment on the VPS and Cloudflare"
 - [x] (new) Same-site content subdomain hardening: `__Host-` cookies, exact-Origin checks on front and API,
       sandboxed player frames, COOP/CORP headers, both modes documented
 - [x] (new) Enforce the front/admin CSP after a week of clean reports; add a report collector (collector
@@ -360,6 +373,8 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       (sync queue) sent the previous LTI score; now dispatched after saving (found by the Moodle run, ADR 0018)
 - [ ] (new) Turn on the nightly conformance runs (`NIGHTLY_CONFORMANCE=true`) and run the saLTIre job once
       with an operator
+      Note 2026-10-21 (TD-1): first half done: the repository variable `NIGHTLY_CONFORMANCE` has been `true` since 2026-10-09 and the
+      scheduled run passes again since #306. Left: one operator run of the saLTIre job (#141, owner action)
 - [x] (new) Adapt Path B admin screen (sources, versions, build status)
 - [x] (new) Astro front: H5P plays without a token, so learner state is not restored (decide: a short-lived
       H5P token from the BFF, or state through the BFF) (decided: state through the BFF, ADR 0045; the `/h5p`
@@ -531,11 +546,11 @@ Simulations (opt-in)
 Adaptive interface (feature flag)
 - [x] Per-learner density, chunking, navigation, visible hints from Learner Insights (moved to `docs/plans/phase-4.md` M4.8; #59) (presentation profile API merged, derived per request with learner overrides, #288; the lesson view form, compact density, lesson parts, linear navigation, hints shown at start and the "why" notice merged in M-UI4, #320; the A/B and delayed-retention measure of this feature stays under Impact measurement)
 - [x] Remediation components: Feynman reflection, elaborative questions, worked examples (moved to `docs/plans/phase-4.md` M4.5; #59) (API and declarative blocks merged, #281; catalogue components, manifest check before storage, the "Extra help for you" card and ADR 0106 merged in M-UI1, #315; Feynman reflection with AI feedback and the AI-assisted lesson label merged in M-UI2, #319; the demo academies do not turn the module on, owner question O1 of `docs/plans/phase-5-learner-ui.md`)
-- [ ] Surveys with SUS, UEQ, NASA-TLX + behavioural metrics
+- [ ] Surveys with SUS, UEQ, NASA-TLX + behavioural metrics (plan: `docs/plans/phase-4-experiments-and-analytics.md`, LX-4 to LX-8)
 
 Impact measurement
-- [ ] Built-in A/B experiments per course; delayed retention (3–7 days) as primary metric
-- [ ] Results visible to authors; opt-in per tenant, consent where required
+- [ ] Built-in A/B experiments per course; delayed retention (3–7 days) as primary metric (plan: `docs/plans/phase-4-experiments-and-analytics.md`, LX-4 to LX-8)
+- [ ] Results visible to authors; opt-in per tenant, consent where required (plan: `docs/plans/phase-4-experiments-and-analytics.md`, LX-4 to LX-8)
 
 Quality
 - [x] Component playground with model-facing descriptions (in the docs site instead of Storybook, ADR 0054,
@@ -584,6 +599,8 @@ Plan (new): `docs/plans/phase-4.md` (draft, waiting for approval; ADRs 0057–00
 stream → M4.2 risk scoring → M4.3 privacy and transparency → M4.4 nudges and recovery → M4.5 remediations →
 M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments, evals. Designs:
 `front/docs/design/stitch/personalisation/`. Owner questions #59–#63.
+Plan for the remaining Learner Insights items, experiments and surveys (new): `docs/plans/phase-4-experiments-and-analytics.md`
+(draft; milestones LX-1 studio Insights page → LX-11 partitioning; ADRs 0180, 0181 Proposed).
 
 ### 4.1 `learner-insights` package
 - [x] Append-only learner signal stream mapped to blueprint element IDs; queues; backfill (`api/packages/learner-insights`, M4.1, #277; H5P results recorded as signals, #292)
@@ -603,7 +620,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) Remediation holdout (20 % get no remediation) and the adaptive interface presentation profile, backend (M4.8 API, #288: holdout is a stable hash share, off by default pending #58; comparison in `OutcomeTracker::helpedVsHoldout()`; the experiments package and the A/B and delayed-retention measure are not built)
 - [ ] (new) Partition `learner_signals` by month when a tenant exceeds 50M rows
 - [ ] (new) Remediations for courses not built with the Course Builder
-- [ ] (new) `TopicProgressUpdated` event in `courses` for non-completion progress (ids only)
+- [x] (new) `TopicProgressUpdated` event in `courses` for non-completion progress (ids only) (built and tested in #277: `CourseProgressRepository`, `CourseProgressEventTest`, consumed by `RecordSignals::topicProgressed`)
 
 ### 4.2 AI tutor
 - [x] Answers only from course sources with citations; says when out of scope (`api/packages/tutor`, M4.7 API, #287; off by default per tenant)
@@ -725,33 +742,48 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 
 ### 6.1 Certificates and compliance
 - [x] Extend existing Wellms certificates (don't duplicate) (`templates-pdf` extended with expiry, verification and revocation, #273)
-- [ ] (new) Remove ReportBro completely and replace it with **pdfme** (recommended: MIT, actively
+- [x] (new) Remove ReportBro completely and replace it with **pdfme** (recommended: MIT, actively
       maintained, WYSIWYG designer for variable-based PDF templates, JSON templates, QR/barcode schemas).
       Why: the ReportBro designer (`reportbro-designer`, AGPL-3.0) is bundled into admin, the server image
       runs `reportbro-lib` (AGPL-3.0), and the default `REPORTBRO_URL` sends certificate data to
       reportbro.com. Removal checklist:
-  - [ ] Admin: replace `components/PdfEditor` and `components/TemplateFields` with the `@pdfme/ui`
+      Note 2026-10-21 (P6R-1): all sub-items are done; the stale partial notes below are history. Kept on purpose: the converter, the
+      `templates-pdf:migrate-reportbro` command and the migration, until the release after the next tagged release; then an upgrade
+      step (ADR 0081) removes them and fails loudly if a ReportBro template remains (docs/plans/phase-6-remaining.md 4.1).
+  - [x] Admin: replace `components/PdfEditor` and `components/TemplateFields` with the `@pdfme/ui`
         designer; drop `reportbro-designer` from `admin/package.json` (partial: designer with variables
         panel, API preview and save done, typecheck/build pass; not yet exercised in a browser; admin
         Jest is broken at baseline, so the new helper tests in `PdfEditor/template.test.ts` do not run)
-  - [ ] API `templates-pdf`: replace `ReportBroService`/contract, the `reportbro/report/run` routes and
+        Note 2026-10-21 (P6R-1): the designer runs in a browser and is covered by `admin/src/e2e/mocked/pdfDesigner.e2e.spec.ts` (open,
+        add a field from the variables panel by pointer and keyboard, edit a field, preview, save, reopen; the legacy banner; axe
+        WCAG 2.2 AA on the variables panel). That suite runs in CI (job `admin-a11y`, mocked API). Admin Jest runs again (#335);
+        `reportbro-designer` is gone from `admin/package.json`.
+  - [x] API `templates-pdf`: replace `ReportBroService`/contract, the `reportbro/report/run` routes and
         `FabricPdfController` with a pdfme renderer client; keep the existing variables and
         `CourseFinished` flow; store templates as pdfme JSON (partial: done and tested —
         `PdfRendererContract`, `POST /api/admin/pdfs/preview`, fonts proxy, certificates rendered once
         and stored; uncommitted)
-  - [ ] Renderer: small MIT Node worker `api/pdf` (pdfme generator; the API image has no Node), reached
+        Note 2026-10-21 (P6R-1): merged (#273); covered by `PdfPreviewTest`, `PdfTest`, `TemplateTest`, `CertificateVerificationTest`.
+  - [x] Renderer: small MIT Node worker `api/pdf` (pdfme generator; the API image has no Node), reached
         over HTTP like `api/h5p`; QR schema for certificate verification URLs (6.1) (partial: service,
         tests and Docker image done; the QR points to `{APP_URL}/certificates/verify/{id}`, the
         verification page does not exist yet)
-  - [ ] Remove the `reportbro` service from `api/docker-compose.yml`, `REPORTBRO_URL` from config and
+        Note 2026-10-21 (P6R-1): the verification page now exists (`front/web/src/pages/certificates/verify/[id].astro`, #273).
+  - [x] Remove the `reportbro` service from `api/docker-compose.yml`, `REPORTBRO_URL` from config and
         `.env.example`, and its mentions in docs and `LICENSING.md` (partial: done; historical mentions
         remain in `docs/reports/phase-0-audit.md`, `docs/plans/phase-0.md` and ADR 0002)
-  - [ ] Migrate existing templates (one-off converter or re-create); pdfme templates for the demo
+        Note 2026-10-21 (P6R-1): verified: no ReportBro service, route, env var or package remains; only the converter code below and
+        the historical mentions listed above.
+  - [x] Migrate existing templates (one-off converter or re-create); pdfme templates for the demo
         certificates; tests for template CRUD, rendering and the CourseFinished certificate (partial:
         converter migration + `templates-pdf:migrate-reportbro` done; themed JSON for coffee/oncall/nightsky
         in `templates-pdf/resources/pdfme`, not yet assigned by the demo seeding)
-  - [ ] Until then: set `REPORTBRO_URL` to the local server so no data leaves the installation
+        Note 2026-10-21 (P6R-1): the themed templates are assigned by the demo seeding (`DemoExperience::certificateContent`, all
+        demo academies); `ReportBroMigrationTest` covers the converter.
+  - [x] Until then: set `REPORTBRO_URL` to the local server so no data leaves the installation
         (obsolete once the pdfme change is merged: ReportBro and `REPORTBRO_URL` are gone)
+        Note 2026-10-21 (P6R-1): obsolete and moot: ReportBro and `REPORTBRO_URL` are gone, so no certificate data leaves the
+        installation. Ticked because the goal holds; raise if you would rather have it left open.
 - [ ] (new) Policy lifecycle delivery: link the uploaded policy version and cited fragments to all departmental
       course variants; use departments, duration, seniority and experience from the course brief;
       apply an uploaded style guide and provision distinct branded department domains (Coming).
@@ -907,6 +939,9 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 ---
 
 ## Quality bar (every phase)
+
+Plan (new): `docs/plans/tech-debt-and-quality-bar.md` (draft; milestones TD-1…TD-10, ADRs 0190 and 0191 Proposed) also covers the
+open Phase 0 and Phase 1 tech-debt items outside the Phase 8 self-hosting plan.
 
 - [ ] Mocked LLM in tests + eval command on golden fixtures (schema, citation coverage, quiz
       answers supported, duration, cost)

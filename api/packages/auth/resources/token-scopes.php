@@ -76,6 +76,7 @@ return [
 
     // ---- builder and living course -------------------------------------------------------------
     ['api/admin/course-builder*', 'builder'],
+    ['api/admin/course-as-code*', 'builder'],
     ['api/admin/living-course*', 'living-course'],
     // the learner's own update notices; the webhook is verified by its signature, not a token
     ['api/living-course/courses/*/notices', 'learner'],
@@ -111,6 +112,9 @@ return [
     ['api/admin/cmi5*', 'courses'],
     ['api/admin/liascript*', 'courses'],
     ['api/admin/interactive*', 'courses'],
+    // every learner's attempts at a code exercise are a report; the preview is course content (ADR 0170)
+    ['api/admin/code-exercises/topics/*/attempts', 'reports'],
+    ['api/admin/code-exercises*', 'courses'],
     ['api/admin/h5p*', 'courses'],
     ['api/admin/adapt*', 'courses'],
     ['api/admin/gift-*', 'courses'],
@@ -167,6 +171,8 @@ return [
     ['api/admin/vouchers*', 'commerce'],
     ['api/admin/payments*', 'commerce'],
     ['api/admin/invoices*', 'commerce'],
+    // the provider's signed order events: verified by HMAC, timestamp and tenant channel, not by a token (ADR 0130)
+    ['api/commerce/webhooks/*', 'public'],
 
     // ---- reports -------------------------------------------------------------------------------
     ['api/admin/reports*', 'reports'],
@@ -222,6 +228,7 @@ return [
     ['api/cmi5/*', 'learner'],
     ['api/liascript/*', 'learner'],
     ['api/interactive/*', 'learner'],
+    ['api/code-exercises/*', 'learner'],
     ['api/lti/*', 'learner'],
     ['api/pencil-spaces/*', 'learner'],
     ['api/core/packages', 'learner'],

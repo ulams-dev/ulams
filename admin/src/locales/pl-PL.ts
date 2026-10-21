@@ -1,10 +1,12 @@
 import bulkNotifications from './pl-PL/bulkNotifications';
+import codeExercises from './pl-PL/codeExercises';
 import component from './pl-PL/component';
 import consultations from './pl-PL/consultations';
 import courses from './pl-PL/courses';
 import events from './pl-PL/events';
 import fabric from './pl-PL/fabric';
 import globalHeader from './pl-PL/globalHeader';
+import insights from './pl-PL/insights';
 import menu from './pl-PL/menu';
 import notifications from './pl-PL/notifications';
 import pages from './pl-PL/pages';
@@ -109,7 +111,9 @@ export default {
   ...consultations,
   ...fabric,
   ...vouchers,
+  ...codeExercises,
   ...courses,
+  ...insights,
   ...events,
   ...bulkNotifications,
   branding: 'Branding',
@@ -651,6 +655,7 @@ export default {
     'Kliknij zmienną, aby dodać dla niej pole; zostanie wypełnione przy wystawianiu PDF. Zmienne można też wpisać w tekst tylko do odczytu, np. „Wystawione przez @VarAppName”.',
   'pdf_editor.variable_used': 'Użyta w szablonie',
   'pdf_editor.variable_add': 'Dodaj pole',
+  'pdf_editor.variable_add_aria': 'Dodaj pole dla {variable}',
   'pdf_editor.preview_failed': 'Nie udało się wygenerować podglądu',
   generated_pdfs: 'Wygenerowane PDFy',
   download_all: 'Pobierz wszystkie',
@@ -931,6 +936,11 @@ export default {
   'ConsultationsAccess.meetingType.jitsi': 'Jitsi',
   'ConsultationsAccess.meetingType.pencil-spaces': 'Pencil spaces',
   'ConsultationsAccess.meetingLink': 'Link do spotkania',
+  'Settings.defaultLanguage': 'Język domyślny',
+  'Settings.defaultLanguage.help': 'Strony konta i kursy bez języka używają tego języka.',
+  'Settings.defaultLanguage.en': 'Angielski (English)',
+  'Settings.defaultLanguage.pl': 'Polski',
+  'Settings.defaultLanguage.zh': 'Chiński (中文)',
   'Settings.package': 'Pakiet {package}',
   consultation_term_date: 'Termin konsultacji',
   meeting_link: 'Link do spotkania',

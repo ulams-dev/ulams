@@ -113,7 +113,7 @@ export function toMarkdown(text: string | null | undefined): string {
 
 const KIND_LABEL: Record<string, string> = {
   richtext: "reading", video: "video", audio: "audio", image: "image", pdf: "PDF", oembed: "embed", h5p: "interactive (H5P)",
-  scorm: "SCORM", liascript: "interactive (LiaScript)", interactive: "interactive", layout: "page", lti: "external tool (LTI)",
+  scorm: "SCORM", liascript: "interactive (LiaScript)", interactive: "interactive", code_exercise: "code exercise", layout: "page", lti: "external tool (LTI)",
   cmi5: "tracked (cmi5)", quiz: "quiz", project: "project",
 };
 
