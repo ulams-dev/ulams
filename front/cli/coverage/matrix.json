@@ -1,5 +1,5 @@
 {
- "summary": "595/670 covered, 75 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "596/671 covered, 75 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -2057,6 +2057,12 @@
    "key": "GET /api/admin/templates/assigned",
    "summary": "Get Template assigned to the model",
    "command": "templates.assigned",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/templates/email/images",
+   "summary": "Upload an image for an e-mail template",
+   "command": "templates.email-images",
    "status": "covered"
   },
   {

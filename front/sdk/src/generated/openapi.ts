@@ -8266,6 +8266,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/templates/email/images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload an image for an e-mail template
+         * @description Stores a PNG, JPEG, GIF or WebP image (up to 2 MB by default) in the storage of the current tenant and returns its public URL, which e-mail clients fetch remotely. The type is sniffed from the content; SVG and every other type is refused. The stored name is random. Throttled to 30 requests per minute per user.
+         */
+        post: operations["templates.email.images"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/certificates/verify/{certificateId}": {
         parameters: {
             query?: never;
@@ -31415,6 +31435,78 @@ export interface operations {
             };
             /** @description the MJML renderer is unavailable */
             503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "templates.email.images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description PNG, JPEG, GIF or WebP file
+                     */
+                    image: string;
+                };
+            };
+        };
+        responses: {
+            /** @description the stored image */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            /** @description public URL to put in mj-image src */
+                            url?: string;
+                            /** @description path in the tenant storage */
+                            name?: string;
+                            mime?: string;
+                            /** @description bytes */
+                            size?: number;
+                            width?: number;
+                            height?: number;
+                        };
+                    };
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description user doesn't have required access rights */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not an accepted image, or too large */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };

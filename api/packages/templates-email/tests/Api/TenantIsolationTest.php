@@ -4,7 +4,9 @@ namespace Ulams\TemplatesEmail\Tests\Api;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\Bridge\AccessTokenRepository;
 use League\OAuth2\Server\AuthorizationServer;
 use League\OAuth2\Server\ResourceServer;
@@ -26,22 +28,35 @@ class TenantIsolationTest extends TestCase
     {
         $this->seed(PermissionTableSeeder::class);
         Mail::fake();
+        Storage::fake();
         $token = $this->makeAdmin()->createToken('test')->accessToken;
         $body = ['event' => ManuallyTriggeredEvent::class, 'title' => 'Hi @VarUserName', 'content' => '<p>@VarUserName</p>'];
 
         $this->call_($token, '/api/admin/templates/email/render', $body)->assertOk();
         $this->call_($token, '/api/admin/templates/email/test-send', $body)->assertOk();
+        $this->call_($token, '/api/admin/templates/email/images', ['image' => $this->png()])->assertOk();
 
         $this->switchToTenantWithOwnKeys();
 
         $this->call_($token, '/api/admin/templates/email/render', $body)->assertUnauthorized();
         $this->call_($token, '/api/admin/templates/email/test-send', $body)->assertUnauthorized();
+        $this->call_($token, '/api/admin/templates/email/images', ['image' => $this->png()])->assertUnauthorized();
         Mail::assertSentCount(1);
+        // Only the first upload exists: the foreign token stored nothing.
+        $this->assertCount(1, Storage::disk()->allFiles('email-images'));
+    }
+
+    private function png(): UploadedFile
+    {
+        return UploadedFile::fake()->createWithContent('a.png', base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='));
     }
 
     private function call_(string $token, string $url, array $body)
     {
-        $response = $this->json('POST', $url, $body, ['Authorization' => 'Bearer ' . $token]);
+        $headers = ['Authorization' => 'Bearer ' . $token, 'Accept' => 'application/json'];
+        $response = isset($body['image'])
+            ? $this->post($url, $body, $headers)
+            : $this->json('POST', $url, $body, $headers);
         Auth::forgetGuards();
 
         return $response;
