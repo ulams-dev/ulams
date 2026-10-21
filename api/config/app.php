@@ -180,6 +180,7 @@ return [
         Ulams\Webhooks\UlamsWebhooksServiceProvider::class,
         Ulams\KnowledgeExport\UlamsKnowledgeExportServiceProvider::class,
         Ulams\Commerce\UlamsCommerceServiceProvider::class,
+        Ulams\Entitlements\UlamsEntitlementsServiceProvider::class,
         Ulams\BulkNotifications\UlamsBulkNotificationsServiceProvider::class,
         Ulams\Cart\UlamsCartServiceProvider::class,
         Ulams\Categories\UlamsCategoriesServiceProvider::class,

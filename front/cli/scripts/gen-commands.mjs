@@ -22,13 +22,13 @@ const AREAS = [
   [/^\/api\/admin\/(orders|products|productables|vouchers|payments|invoices)/, "commerce"],
   [/^\/api\/admin\/(reports|stats|questionnaire|question|quiz-|tasks)/, "reports"],
   [/^\/api\/admin\/lti/, "lti"],
-  [/^\/api\/admin\/course-builder/, "builder"],
+  [/^\/api\/admin\/course-(builder|as-code)/, "builder"],
   [/^\/api\/(auth\/tokens|admin\/(tokens|agent-audit))/, "tokens"],
   [/^\/api\/admin\/webhooks/, "webhooks"],
 ];
 
-/** Areas with hand-written commands only (builder.ts, living.ts, tenants.ts): runs and operations, not CRUD. */
-const HAND_WRITTEN = ["/api/admin/course-builder/", "/api/admin/living-course/", "/api/platform/"];
+/** Areas with hand-written commands only (builder.ts, course.ts, living.ts, tenants.ts): runs and operations, not CRUD. */
+const HAND_WRITTEN = ["/api/admin/course-builder/", "/api/admin/course-as-code/", "/api/admin/living-course/", "/api/platform/"];
 
 const kebab = (s) =>
   s

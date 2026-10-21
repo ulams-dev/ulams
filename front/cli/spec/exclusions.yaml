@@ -7,6 +7,8 @@ browser-only:
   - "GET /api/certificates/verify/*"
   - "GET /api/auth/social/*"
   - "POST /api/auth/social/complete/*"
+  # redeemed by the front end's server with the verifier of the browser that started a social login (ADR 0121)
+  - "POST /api/auth/social/exchange"
   - "GET /api/auth/email/verify/*"
   - "GET /api/consultations/approve-term/*"
   - "GET /api/consultations/reject-term/*"

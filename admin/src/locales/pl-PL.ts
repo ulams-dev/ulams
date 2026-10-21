@@ -651,6 +651,7 @@ export default {
     'Kliknij zmienną, aby dodać dla niej pole; zostanie wypełnione przy wystawianiu PDF. Zmienne można też wpisać w tekst tylko do odczytu, np. „Wystawione przez @VarAppName”.',
   'pdf_editor.variable_used': 'Użyta w szablonie',
   'pdf_editor.variable_add': 'Dodaj pole',
+  'pdf_editor.variable_add_aria': 'Dodaj pole dla {variable}',
   'pdf_editor.preview_failed': 'Nie udało się wygenerować podglądu',
   generated_pdfs: 'Wygenerowane PDFy',
   download_all: 'Pobierz wszystkie',

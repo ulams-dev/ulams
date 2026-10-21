@@ -34,6 +34,10 @@ Settings are plain environment variables, read when the container starts:
 | `admin` | every `REACT_APP_*` | `REACT_APP_TENANT_API_HOST_PATTERN`, `REACT_APP_API_URL`, `REACT_APP_STUDIO_URL`, `REACT_APP_SENTRYDSN`, `REACT_APP_YBUG` |
 | `front` | every `VITE_APP_*` | `VITE_APP_API_URL`, `VITE_APP_TENANT_API_HOST_PATTERN`, `VITE_APP_SENTRYDSN`, `VITE_APP_FIREBASE_*` |
 
+Documentation links in the admin panel and the front come from `ULAMS_DOCS_URL`, set as
+`REACT_APP_ULAMS_DOCS_URL` (admin) and `VITE_APP_ULAMS_DOCS_URL` (front). It defaults to
+`https://ulams-dev.github.io/ulams/` until `docs.ulams.app` serves the docs.
+
 At start the container writes them to `/runtime-config.json`; the page fetches that file before the
 app boots. Only variables with the prefix above are written, so other secrets in the container
 environment are never served. Open `https://<host>/runtime-config.json` to see what a running

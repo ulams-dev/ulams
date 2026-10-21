@@ -2,6 +2,7 @@
 
 namespace Ulams\CourseBuilder\ContentTypes;
 
+use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\LiaScript\Models\LiaScriptTopic;
 use Ulams\LiaScript\Services\Contracts\LiaScriptServiceContract;
@@ -55,7 +56,7 @@ final class LiaScriptType implements ContentType
         }
         foreach ($lesson['selfChecks'] ?? [] as $q => $check) {
             $w = "{$where} check " . ($q + 1);
-            $errors = [...$errors, ...Checks::citations($check['citations'] ?? [], $known, $w), ...Checks::questionShape($check, $w)];
+            $errors = [...$errors, ...Checks::citations($check['citations'] ?? [], $known, $w, Blueprint::minCitations($check)), ...Checks::questionShape($check, $w)];
             foreach (['stem', 'explanation'] as $field) {
                 $errors = [...$errors, ...Checks::markup((string) ($check[$field] ?? ''), "{$w} {$field}")];
             }

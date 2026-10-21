@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 20
     services:
       postgres:
-        image: postgres:12
+        image: postgres:17.11-alpine
         env:
           POSTGRES_DB: default
           POSTGRES_USER: default

@@ -727,7 +727,8 @@
                     "title": "Headless Sylius shop",
                     "text": "A separate Sylius 2.x service behind one frontend: catalogue, cart and checkout there, entitlements in the LMS.",
                     "packages": [
-                      "commerce"
+                      "commerce",
+                      "entitlements"
                     ],
                     "status": "coming"
                   }

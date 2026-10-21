@@ -75,7 +75,7 @@ class LessonFormatsTest extends TestCase
         $session = $this->generated(['liascript']);
         $this->assertSame(Session::APPLY_REVIEW, $session->status);
         $doc = $session->currentVersion->document;
-        $this->assertSame(2, $doc['schemaVersion']);
+        $this->assertSame(3, $doc['schemaVersion']);
         $this->assertSame([], app(SchemaRegistry::class)->validateBlueprint($doc));
 
         $first = $this->lesson($session, 0);

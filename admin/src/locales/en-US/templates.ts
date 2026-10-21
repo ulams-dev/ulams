@@ -28,4 +28,31 @@ export default {
   'templates.send_test_hint': 'Sent only to your own address, with the current unsaved content.',
   'templates.test_sent': 'Test e-mail sent to {recipient}.',
   'templates.test_failed': 'The test e-mail could not be sent.',
+  'templates.editor_mode': 'Editing mode',
+  'templates.editor_mode_code': 'Code',
+  'templates.editor_mode_visual': 'Visual',
+  'templates.editor_beta': 'Beta',
+  'templates.visual_beta_notice':
+    'Visual mode is in beta and cannot yet be fully operated with the keyboard. Use Code for keyboard-only editing.',
+  'templates.visual_checking': 'Checking that the visual editor can represent this template...',
+  'templates.visual_loading': 'Loading the visual editor...',
+  'templates.visual_load_failed':
+    'The visual editor could not be loaded. You can keep editing in Code.',
+  'templates.visual_blocked': 'This template stays in Code',
+  'templates.visual_blocked_html':
+    'It is not an MJML document (no <mjml> root), so the visual editor cannot open it.',
+  'templates.visual_blocked_lossy':
+    'The visual editor would remove or change the markup below. Your template was not changed.',
+  'templates.visual_lost': 'Would be removed or changed',
+  'templates.visual_added': 'Would be added',
+  'templates.visual_more': '...and {count} more',
+  'templates.visual_convert': 'Convert and review',
+  'templates.visual_diff_title': 'Review the conversion',
+  'templates.visual_diff_hint':
+    'Lines starting with - are removed and lines starting with + are added. If you confirm, the template text is replaced by the result and opens in Visual. If you cancel, nothing changes.',
+  'templates.visual_diff_confirm': 'Replace and open Visual',
+  'templates.visual_diff_cancel': 'Keep my MJML',
+  'templates.visual_canvas': 'Visual e-mail editor',
+  'templates.visual_variables_hint':
+    'Type a variable such as @VarUserName into a text block. Inserting from this list works in Code only.',
 };

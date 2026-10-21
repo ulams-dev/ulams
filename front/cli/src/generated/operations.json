@@ -445,6 +445,42 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/course-as-code/courses/{course}/blueprint",
+  "summary": "Export a course as a Blueprint v3 document (current version, drift, applied version)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/sessions/{session}/apply",
+  "summary": "Apply the current version to the course (no AI needed)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/sessions/{session}/imports",
+  "summary": "Import a Blueprint v3 document as a proposed version of kind import",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/sessions/{session}/publish",
+  "summary": "Publish the applied course (no AI needed)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/versions/{version}/approve",
+  "summary": "Approve a proposed import (people and CLI tokens; never agents or MCP clients)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-as-code/versions/{version}/diff",
+  "summary": "Element-aware diff of a version against its parent or ?against=",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/course-builder/fragments/{fragment}",
   "summary": "One source fragment (citation popover)",
   "tag": "Admin Course Builder"
@@ -2654,13 +2690,19 @@
  {
   "method": "GET",
   "path": "/api/auth/social/{provider}/callback",
-  "summary": "Redirect after sucessfull login",
+  "summary": "Redirect after successful login",
   "tag": "Auth"
  },
  {
   "method": "POST",
   "path": "/api/auth/social/complete/{token}",
   "summary": "Complete the missing data from socials",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/social/exchange",
+  "summary": "Exchange a one-time social login code for a token",
   "tag": "Auth"
  },
  {
@@ -2806,6 +2848,12 @@
   "path": "/api/cmi5/player/{cmi5AuId}",
   "summary": "Launch a cmi5 AU",
   "tag": "cmi5"
+ },
+ {
+  "method": "POST",
+  "path": "/api/commerce/webhooks/{provider}",
+  "summary": "Receive a signed order event of the commerce provider",
+  "tag": "Commerce webhooks"
  },
  {
   "method": "GET",

@@ -727,7 +727,8 @@
                     "title": "Sklep Sylius w trybie headless",
                     "text": "Osobna usługa Sylius 2.x za jednym frontendem: katalog, koszyk i zamówienia tam, uprawnienia w LMS.",
                     "packages": [
-                      "commerce"
+                      "commerce",
+                      "entitlements"
                     ],
                     "status": "coming"
                   }

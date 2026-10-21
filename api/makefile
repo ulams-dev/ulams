@@ -177,3 +177,11 @@ dev-up:
 # apply code/config edits without restarting the container (opcache, framework caches, workers)
 dev-reload:
 	- docker compose exec api bash /var/www/html/dev-reload.sh
+
+# One-off: move the PostgreSQL 12 data of the developer stack (docker/postgres-data) to PostgreSQL 17
+# (docker/postgres17-data). The old directory is never modified; dumps stay in docker/pg-upgrade-dumps.
+pg-upgrade:
+	- docker compose stop postgres
+	POSTGRES_USER=$(or $(POSTGRES_USER),default) POSTGRES_PASSWORD=$(or $(POSTGRES_PASSWORD),secret) \
+		sh ../deploy/scripts/pg-major-upgrade.sh --old-data ./docker/postgres-data --new-data ./docker/postgres17-data \
+		--dump-dir ./docker/pg-upgrade-dumps

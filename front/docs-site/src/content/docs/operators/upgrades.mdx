@@ -87,6 +87,7 @@ docker compose exec api php artisan ulams:upgrade             # run it
 | `lti_keys` | each target, every upgrade | `ulams:lti:rotate-keys --init` (creates the LTI key set when missing) |
 | `cmi5_move_to_bucket` | each target, once | `cmi5:move-to-bucket` (when this release has the command) |
 | `meetings_purge_frames` | each target, once | `meetings:purge-frames`, preceded by a logged `--dry-run`: deletes the webcam frames the removed meeting capture stored under `consultation/{id}/{term}/{user}/` and `webinar/{id}/{term}/{user}/`; the `images` folders stay |
+| `disarm_legacy_social_passwords` | each target, once | `ulams:auth:disarm-legacy-social-passwords`: accounts that have a linked social login and a password that verifies against `1` (the old social login stored it) get a random unusable password and their tokens are revoked. Prints and logs counts only (`--dry-run` counts without changing); safe to run again |
 | `recreate_views` | each target, once | `ulams:db:recreate-views`: SQL views created before the package rename carry old class names |
 
 "Once" steps are recorded in the platform table `tenant_upgrade_steps` (`target` is `platform` or
@@ -127,11 +128,173 @@ Migrations are not guaranteed to be reversible. To go back, restore the backup t
 upgrade and start the previous image tag. Rolling back only the images over a migrated database
 is unsupported.
 
+## Upgrade PostgreSQL to a new major version
+
+ulams runs on PostgreSQL 17 in the development stack, in CI and in every install example. PostgreSQL
+12 reached end of life in November 2024; an install that still runs it (the older version of
+[Self-hosting](/operators/self-hosting/) listed it) should move. Nothing in ulams depends on the
+PostgreSQL version: there are no extensions, and the full-text columns are rebuilt by the restore.
+
+Both paths below use the scripts in `deploy/scripts/`. They talk to the servers through
+`docker exec` and need only Docker and a POSIX shell. A nightly job upgrades a seeded PostgreSQL 12
+cluster (the platform database plus two tenant databases with the H5P schema) with exactly these
+scripts, and a weekly run of the same job tests the logical-replication path.
+
+### Dump and restore (the default)
+
+Downtime lasts as long as the dump and restore take: plan for a backup plus a restore of every
+database. You need free disk for one more copy of the data; the old data directory stays as it is.
+
+<Steps>
+
+1. [Back up](/operators/backups/) everything, as for any upgrade, and stop the stack so nothing
+   writes (`docker compose stop`, leave nothing running against the old database).
+
+2. Upgrade the data. `--old-data` is the data directory or Docker volume of the old PostgreSQL,
+   `--new-data` an **empty** directory or volume for the new one; the user and password are those of
+   the cluster superuser (`POSTGRES_USER`, `POSTGRES_PASSWORD`).
+
+   ```bash
+   POSTGRES_USER=ulams POSTGRES_PASSWORD='...' \
+     sh deploy/scripts/pg-major-upgrade.sh \
+       --old-data ./postgres-data --new-data ./postgres17-data
+   ```
+
+   The development stack does the same with `make pg-upgrade` in `api/`
+   (`docker/postgres-data` to `docker/postgres17-data`). The script copies the old data to a scratch
+   volume and starts the old version there, dumps the roles and every database with the new
+   version's `pg_dump`, restores them into a new 17 cluster, refreshes the planner statistics and then
+   runs `deploy/scripts/pg-verify.sh`.
+
+   To dump from a server that is still running instead, give it with `--old-container <name>`; it is
+   only read.
+
+3. `pg-verify.sh` compares the old and the new server and exits non-zero on any difference. It
+   checks the list of databases and schemas (the `h5p` schema of every tenant), every table with its
+   exact row count, every sequence value and the number of indexes. Read its last line: it must say
+   the servers are identical. The new data directory is left cleanly shut down and the dumps stay in
+   `pg-upgrade-dumps-<timestamp>/` (delete them after you have a backup elsewhere; they contain the
+   same personal data as the database).
+
+4. Point the `postgres` service at the new data and the 17 image, start the stack and run the
+   release steps:
+
+   ```yaml
+   postgres:
+     image: postgres:17.11-alpine
+     volumes:
+       - ./postgres17-data:/var/lib/postgresql/data
+   ```
+
+   ```bash
+   docker compose up -d
+   docker compose exec api php artisan ulams:upgrade
+   ```
+
+5. Keep the old data directory until you are sure. Rolling back is starting the old image on the old
+   directory; anything written after the switch is lost.
+
+</Steps>
+
+<Aside type="note" title="Password hashes">
+  PostgreSQL 12 stores role passwords as MD5 hashes, and the 17 image only lets network clients in with
+  SCRAM. The restore carries the hashes over (the passwords themselves are unknown), so the script
+  switches the network lines of the new `pg_hba.conf` from `scram-sha-256` to `md5`, which accepts both,
+  and says which roles are affected. Re-set a role's password with `ALTER ROLE ... PASSWORD` to convert it
+  to SCRAM; once none are left you can put `scram-sha-256` back. Tenant roles are created by ulams with
+  SCRAM on 17 and need nothing.
+</Aside>
+
+<Aside type="note" title="Collation">
+  The official PostgreSQL 12 image is Debian-based and the 17 image used here is Alpine, whose C
+  library sorts text differently from glibc. Restoring rebuilds every index, so nothing is corrupted,
+  but a query with `ORDER BY` on a name column can return rows in a different order than before.
+  `pg-verify.sh` sorts with `LC_ALL=C` for exactly this reason. If you need the old order, run 17 on
+  a Debian image (`postgres:17.11`) instead; the scripts do not care.
+</Aside>
+
+A VPS installation made with `deploy/vps-cloudflare` already runs 17. An install that ran 12 by hand
+restores its backup into a fresh 17 volume with the same script (`--old-container` against the old
+server, or the backup files with `pg_restore`, as in [Backups](/operators/backups/)).
+
+### Upgrade PostgreSQL with logical replication
+
+For databases too large for the dump window. The new server follows the old one while the platform
+keeps running, and the switch itself takes the time to copy the sequences and restart the stack.
+`deploy/scripts/pg-logical-upgrade.sh` does the repetitive part for every database: the platform
+database and each tenant database `ulams_<slug>`, one publication and one subscription per database.
+
+<Steps>
+
+1. Prepare the old server (needs one restart, so do it before the window). In `postgresql.conf`, or as
+   `-c` options of the container:
+
+   ```text
+   wal_level = logical
+   max_replication_slots = <databases + 4>
+   max_wal_senders = <databases + 4>
+   ```
+
+   The databases are the platform database plus one per tenant (`ulams:tenant:list`).
+
+2. Start the new server next to it on the same Docker network, with **no** database of its own and
+   room for one apply worker plus table-sync workers per database:
+
+   ```bash
+   docker run -d --name pg17 --network <network of the old server> \
+     -e POSTGRES_USER=ulams -e POSTGRES_PASSWORD='...' -e POSTGRES_DB=postgres \
+     -v ./postgres17-data:/var/lib/postgresql/data postgres:17.11-alpine \
+     -c max_logical_replication_workers=<2 x databases + 2> -c max_worker_processes=<2 x databases + 8>
+   ```
+
+3. Print the plan for your cluster, then start. The script restores the roles, sets `REPLICA IDENTITY
+   FULL` on every table without a primary key (it lists them), creates `PUBLICATION ulams_upgrade FOR
+   ALL TABLES` on the old server, restores the schema of each database with `pg_dump --schema-only`
+   and creates one subscription per database on the new server:
+
+   ```bash
+   export POSTGRES_USER=ulams POSTGRES_PASSWORD='...'
+   sh deploy/scripts/pg-logical-upgrade.sh plan  --old <old container> --new pg17
+   sh deploy/scripts/pg-logical-upgrade.sh start --old <old container> --new pg17
+   ```
+
+   If the old server is not a container on that network, run the steps from the plan by hand with
+   `psql`; the script only needs `docker exec` on both servers and a network path from the new server
+   to the old one (`--old-host`).
+
+4. Wait for the initial copy. `status` exits 0 only when every table of every database is in sync:
+
+   ```bash
+   until sh deploy/scripts/pg-logical-upgrade.sh status --old <old container> --new pg17; do sleep 30; done
+   ```
+
+5. Maintenance window. Stop everything that writes (`docker compose stop api h5p queue`, the scheduler
+   and Horizon included), then:
+
+   ```bash
+   sh deploy/scripts/pg-logical-upgrade.sh finish --old <old container> --new pg17
+   ```
+
+   `finish` waits for the last changes, copies every sequence value (logical replication does not carry
+   sequences, so skipping this makes the first insert fail on a duplicate key), drops the
+   subscriptions and publications and runs `pg-verify.sh`.
+
+6. Switch `DB_HOST` (and the compose `postgres` service) to the new server, start the stack and run
+   `docker compose exec api php artisan ulams:upgrade`. Keep the old server until you are sure.
+
+</Steps>
+
+Limits to know: logical replication copies rows, not schema changes, so do not deploy a release or run
+`migrate` between step 3 and the switch; large objects are not replicated (ulams stores files in the
+bucket, not as large objects); a table without a primary key is slower to replicate. Every slot holds
+WAL on the old server until it is consumed or dropped: if you abandon the upgrade, run
+`DROP SUBSCRIPTION` on the new server and `DROP PUBLICATION ulams_upgrade` on the old one for each
+database, or the old disk fills up.
+
 ## Infrastructure upgrades
 
-- **PostgreSQL major versions**: dump and restore every database (see
-  [Backups](/operators/backups/)) or use `pg_upgrade`; a new major version cannot start on the old
-  data directory.
+- **PostgreSQL major versions**: a new major version cannot start on the old data directory. Use
+  the tested path in the next section (dump and restore, or logical replication for large installs).
 - **Valkey**: drain the queues first (`DISABLE_QUEUE`, `DISABLE_HORIZON` or simply wait), then
   upgrade.
 - **Caddy**: compatible within version 2; validate the Caddyfile with the new image

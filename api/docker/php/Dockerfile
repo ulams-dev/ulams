@@ -6,6 +6,8 @@
 ARG PHP_IMAGE=php:8.4-fpm-alpine3.24
 
 FROM ${PHP_IMAGE}
+# Minimum PHP version install.sh accepts; empty uses the default in install.sh (see docker/php/README.md).
+ARG MIN_PHP_VERSION
 COPY --from=mlocati/php-extension-installer:2.12.0 /usr/bin/install-php-extensions /usr/local/bin/
 COPY --from=composer:2.10 /usr/bin/composer /usr/local/bin/composer
 COPY install.sh NOTICE /usr/local/src/ulams-php/

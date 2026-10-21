@@ -28,7 +28,7 @@ env:
     living=living-course,learner-insights,tutor,knowledge-export
     tasks-topics=tasks,topic-types,topic-type-layout,topic-type-project,categories,tags,stationary-events
     gift-reports=topic-type-gift,reports,dictionaries
-    commerce=cart,commerce,vouchers,payments,invoices,consultations,consultation-access,webinar,jitsi,assign-without-account
+    commerce=cart,commerce,entitlements,vouchers,payments,invoices,consultations,consultation-access,webinar,jitsi,assign-without-account
     platform=Integrations,auth,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,ai,webhooks
     content=compliance,templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
 
@@ -69,6 +69,13 @@ jobs:
       # The table in docs/decisions/README.md is generated from the ADR files (scripts/adr-index.mjs).
       - name: ADR index is up to date
         run: node scripts/adr-index.mjs --check
+      # Hostnames come from configuration (ULAMS_DOCS_URL, the tenant host pattern): no new hard-coded
+      # `ulams.app` host in source files. Legitimate ones are listed in scripts/hosts-allowed.txt.
+      - name: No hard-coded ulams.app hosts
+        run: node scripts/check-hosts.mjs
+      # PostgreSQL has one tag in api/docker-compose.yml, every workflow, the CLI and the examples.
+      - name: Pinned images agree
+        run: node scripts/check-pinned-images.mjs
       - name: Every API package has a README.md
         run: |
           missing=0
@@ -235,6 +242,45 @@ jobs:
           path: front/web/test-results
           retention-days: 7
 
+  # The admin in a real browser without a backend: the built admin is served statically and every API call is
+  # answered by a deterministic in-browser mock (admin/src/e2e/mocked/mockApi.ts). Covers the pdfme certificate
+  # designer (open, edit, preview, save, reopen), the legacy ReportBro banner and axe (WCAG 2.2 AA).
+  # The other admin specs in src/e2e need a live API and stay out of CI.
+  admin-a11y:
+    name: Admin browser tests (Playwright, axe)
+    needs: changes
+    if: needs.changes.outputs.js == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HUSKY: "0"
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - run: corepack enable
+      - run: corepack yarn install --frozen-lockfile
+      - name: Install Chromium
+        run: corepack yarn playwright install --with-deps chromium
+      - name: Build the admin
+        working-directory: admin
+        env:
+          REACT_APP_API_URL: http://api.mock
+        run: corepack yarn build
+      - name: Playwright (mocked API)
+        working-directory: admin
+        run: corepack yarn playwright:mock
+      - name: Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: admin-a11y-playwright
+          path: admin/test-results
+          retention-days: 7
+
   # The interactive content packages (demo-content) in a real browser, on throwaway servers: each package
   # loads in the opaque sandbox, steps advance, no request leaves the origin, keyboard, WebGL fallback, axe.
   demo-content:
@@ -280,9 +326,9 @@ jobs:
       run:
         working-directory: api
     services:
-      # Same major as api/docker-compose.yml; move together when Postgres is upgraded.
+      # Same tag as api/docker-compose.yml and the other workflows: scripts/check-pinned-images.mjs fails when they differ.
       postgres:
-        image: postgres:12
+        image: postgres:17.11-alpine
         env:
           # Matches the <env> defaults in api/phpunit.xml (DB default/default/secret on 127.0.0.1).
           POSTGRES_DB: default
@@ -452,7 +498,7 @@ jobs:
         working-directory: api
     services:
       postgres:
-        image: postgres:12
+        image: postgres:17.11-alpine
         env:
           POSTGRES_DB: default
           POSTGRES_USER: default
@@ -544,6 +590,11 @@ jobs:
           test "$(docker run --rm smoke-api php -r 'echo ini_get("session.upload_progress.enabled");')" = "0"
           docker run --rm smoke-api php-fpm -tt 2>&1 | grep -F 'php_admin_value[session.upload_progress.enabled] = 0'
           docker run --rm smoke-api php-fpm -t
+      # The written GPL source offer (api/docker/php/NOTICE) names this package list.
+      - name: Alpine package list for the GPL source offer
+        run: |
+          docker run --rm smoke-api sh -c 'test -s /usr/share/doc/ulams/apk-packages.txt && grep -E "^ffmpeg-[0-9]" /usr/share/doc/ulams/apk-packages.txt'
+          docker run --rm smoke-api grep -F 'apk-packages.txt' /usr/local/share/doc/ulams-php/NOTICE
 
   # The static images (admin, legacy front) run as non-root on nginx-unprivileged (ADR 0056):
   # build them, start them with settings in the environment and check what they serve.
@@ -611,6 +662,10 @@ jobs:
             docker pull "$src" && docker tag "$src" "$img"
           done
       - run: deploy/vps-cloudflare/scripts/validate.sh
+      - name: MyDevil PHP version check
+        run: |
+          sh deploy/mydevil/test/check-host-version.sh
+          docker run --rm -v "$PWD/deploy/mydevil:/mnt" koalaman/shellcheck:stable -e SC3045,SC2016 bin/check-host.sh test/check-host-version.sh
 
   # The PHP client in sdk-php/ is generated from front/cli/spec/openapi.json (openapi-generator, pinned image):
   # regenerate and fail on any difference, then run its tests against canned answers.

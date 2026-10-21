@@ -80,6 +80,36 @@ with a live preview next to it. No setup is needed beyond the MJML service above
 - The preview is not the saved e-mail: save the template to store it. If the MJML service is down
   the editor shows an error and keeps the last good preview.
 
+### Visual mode (beta)
+
+Above the code editor a switch chooses between **Code** and **Visual (beta)**. Code is always the
+view the page opens in. Visual mode is a drag-and-drop editor (GrapesJS with the `grapesjs-mjml`
+plugin) that reads and writes the same MJML, so the stored template, the renderer and the preview
+do not change.
+
+- **Nothing is lost silently.** Before Visual mode opens, the editor loads the template, exports it
+  again and compares both as trees. Self-closing head tags (`<mj-font ... />`) are normalised first,
+  and the `<tbody>` and trailing `;` that the browser adds inside `mj-raw` are ignored. If anything
+  else differs (for example the rows of an `mj-table`, which the editor cannot represent), the
+  template stays in Code view and a banner lists the lines that would be removed or changed. The
+  only way on is **Convert and review**: it shows a diff, and the template text is replaced only
+  after you confirm. Cancel leaves the text byte for byte as it was. Plain HTML templates (no
+  `<mjml>` root) always stay in Code view.
+- **Edits are written to the form** about 300 ms after you stop, and only when the content really
+  changed, so opening Visual mode and leaving it does not rewrite a hand-written template.
+- **Not yet fully keyboard operable.** Blocks and panel buttons of the editor cannot be reached with
+  the keyboard alone, which is why the mode carries the beta label and Code stays the default. The
+  keyboard alternatives are planned (milestone M5 of the visual editor plan).
+- **Variables.** In Visual mode type the variable (`@VarUserName`) into a text block; the insert
+  list works in Code view only for now.
+- **Offline and CSP.** The editor is a separate script loaded when you open Visual mode (about 680
+  KB gzip; the build fails above 700 KB), is served by the admin itself and fetches nothing from a CDN.
+  The blocks offered have no remote images. It needs no change of the admin Content-Security-Policy.
+
+To turn Visual mode off for a tenant, create the public boolean setting `templates.email.visual_editor`
+(Settings, group global) and set it to `false`; the switch disappears and only Code view remains.
+Without the setting, or with `true`, Visual mode is on.
+
 ### API
 
 The editor uses two admin endpoints that work on a draft that is not saved yet. Both need the `template_update`

@@ -28,4 +28,31 @@ export default {
   'templates.send_test_hint': 'Wysyłany tylko na Twój adres, z bieżącą, niezapisaną treścią.',
   'templates.test_sent': 'Testowy e-mail wysłano na adres {recipient}.',
   'templates.test_failed': 'Nie udało się wysłać testowego e-maila.',
+  'templates.editor_mode': 'Tryb edycji',
+  'templates.editor_mode_code': 'Kod',
+  'templates.editor_mode_visual': 'Wizualny',
+  'templates.editor_beta': 'Beta',
+  'templates.visual_beta_notice':
+    'Tryb wizualny jest w wersji beta i nie można jeszcze w pełni obsługiwać go klawiaturą. Do edycji samą klawiaturą użyj trybu Kod.',
+  'templates.visual_checking': 'Sprawdzanie, czy edytor wizualny odwzoruje ten szablon...',
+  'templates.visual_loading': 'Ładowanie edytora wizualnego...',
+  'templates.visual_load_failed':
+    'Nie udało się załadować edytora wizualnego. Możesz dalej edytować w trybie Kod.',
+  'templates.visual_blocked': 'Ten szablon pozostaje w trybie Kod',
+  'templates.visual_blocked_html':
+    'To nie jest dokument MJML (brak elementu głównego <mjml>), więc edytor wizualny nie może go otworzyć.',
+  'templates.visual_blocked_lossy':
+    'Edytor wizualny usunąłby lub zmienił poniższy kod. Szablon nie został zmieniony.',
+  'templates.visual_lost': 'Zostałoby usunięte lub zmienione',
+  'templates.visual_added': 'Zostałoby dodane',
+  'templates.visual_more': '...i jeszcze {count}',
+  'templates.visual_convert': 'Konwertuj i sprawdź',
+  'templates.visual_diff_title': 'Sprawdź konwersję',
+  'templates.visual_diff_hint':
+    'Wiersze zaczynające się od - zostaną usunięte, a zaczynające się od + dodane. Po potwierdzeniu tekst szablonu zostanie zastąpiony wynikiem i otworzy się w trybie Wizualnym. Po anulowaniu nic się nie zmieni.',
+  'templates.visual_diff_confirm': 'Zastąp i otwórz tryb Wizualny',
+  'templates.visual_diff_cancel': 'Zachowaj mój MJML',
+  'templates.visual_canvas': 'Wizualny edytor e-maili',
+  'templates.visual_variables_hint':
+    'Wpisz zmienną, na przykład @VarUserName, w bloku tekstowym. Wstawianie z tej listy działa tylko w trybie Kod.',
 };

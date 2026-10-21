@@ -9703,6 +9703,298 @@
     ]
    }
   },
+  "/api/admin/course-as-code/courses/{course}/blueprint": {
+   "get": {
+    "description": "Course-as-code API (ADR 0160, prefix `/api/admin/course-as-code`, `auth:api`, permission\n`course_builder_use`). It works with AI off: there is no AI gate on this route group. A push is\nalways a proposed version; a person approves it (agent tokens and MCP clients never can).",
+    "operationId": "admin.course-as-code.courses.by-course.blueprint.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the blueprint with versionId, appliedVersionId and drift"
+     },
+     "403": {
+      "description": "another author's course"
+     },
+     "404": {
+      "description": "unknown course"
+     },
+     "409": {
+      "description": "NOT_ADOPTED (no builder session) or NO_BLUEPRINT"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Export a course as a Blueprint v3 document (current version, drift, applied version)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/sessions/{session}/apply": {
+   "post": {
+    "operationId": "admin.course-as-code.sessions.by-session.apply.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "apply run"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Apply the current version to the course (no AI needed)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/sessions/{session}/imports": {
+   "post": {
+    "operationId": "admin.course-as-code.sessions.by-session.imports.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "baseVersionId": {
+          "type": "string"
+         },
+         "document": {
+          "type": "object"
+         },
+         "message": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "document",
+         "baseVersionId"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "unchanged: the document equals the current version, no version is created"
+     },
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "proposed version, element diff and warnings"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown session"
+     },
+     "409": {
+      "description": "BASE_OUTDATED (with the remote diff) or NO_BLUEPRINT"
+     },
+     "413": {
+      "description": "document too large"
+     },
+     "422": {
+      "description": "INVALID_BLUEPRINT, BASE_UNKNOWN or a missing field"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Import a Blueprint v3 document as a proposed version of kind import",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/sessions/{session}/publish": {
+   "post": {
+    "operationId": "admin.course-as-code.sessions.by-session.publish.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "published"
+     },
+     "409": {
+      "description": "blocking items or unacknowledged warnings"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Publish the applied course (no AI needed)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/versions/{version}/approve": {
+   "post": {
+    "operationId": "admin.course-as-code.versions.by-version.approve.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "version",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "approved; apply it next"
+     },
+     "403": {
+      "description": "APPROVAL_REQUIRES_HUMAN"
+     },
+     "409": {
+      "description": "not proposed, or STALE_PROPOSAL (the course changed after the import was proposed)"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Approve a proposed import (people and CLI tokens; never agents or MCP clients)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/versions/{version}/diff": {
+   "get": {
+    "operationId": "admin.course-as-code.versions.by-version.diff.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "version",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "against",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "changes"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Element-aware diff of a version against its parent or ?against=",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
   "/api/admin/course-builder/fragments/{fragment}": {
    "get": {
     "operationId": "admin.course-builder.fragments.by-fragment.get",
@@ -28961,8 +29253,74 @@
     ]
    }
   },
+  "/api/auth/social/exchange": {
+   "post": {
+    "description": "Redeems the `code` of a social login redirect together with the secret `verifier` whose S256 challenge started the login. The code works once, within 60 seconds, on the tenant that issued it. Call it from the front end's server, never from a page that may be logged. Returns the access token (`complete=true`) or, when the sign-up needs an e-mail address, `pre_user_token` for POST /api/auth/social/complete/{token} (`complete=false`).",
+    "operationId": "auth.social.exchange.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "code": {
+          "type": "string"
+         },
+         "verifier": {
+          "description": "43 to 128 characters of [A-Za-z0-9._~-]",
+          "type": "string"
+         }
+        },
+        "required": [
+         "code",
+         "verifier"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "successful operation"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The code is invalid, expired, already used or does not match the verifier"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Validation error"
+     }
+    },
+    "summary": "Exchange a one-time social login code for a token",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
   "/api/auth/social/{provider}": {
    "get": {
+    "description": "Starts a login with Google or Facebook. `return_url` must be an origin of the tenant's own apps (otherwise 422). `challenge` is the S256 challenge of a random verifier that the caller keeps secret (base64url of its SHA-256, 43 characters). After the provider's consent the browser is sent to `return_url` with a one-time `code` (60 seconds, single use) to redeem at POST /api/auth/social/exchange together with the verifier; failures arrive as `error` (provider_denied, provider_failed, link_required, email_unverified, account_unavailable).",
     "operationId": "auth.social.by-provider.get",
     "parameters": [
      {
@@ -28985,6 +29343,15 @@
        "example": "https://ulams.app/auth/return",
        "type": "string"
       }
+     },
+     {
+      "in": "query",
+      "name": "challenge",
+      "required": true,
+      "schema": {
+       "example": "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM",
+       "type": "string"
+      }
      }
     ],
     "responses": {
@@ -28992,7 +29359,17 @@
       "content": {
        "application/json": {}
       },
-      "description": "successful operation"
+      "description": "Redirect to the provider"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Unknown provider, return URL not allowed or challenge missing"
      }
     },
     "summary": "Redirect to social login",
@@ -29003,6 +29380,7 @@
   },
   "/api/auth/social/{provider}/callback": {
    "get": {
+    "description": "The provider's callback. Checks the signed, single-use state and sends the browser to the return URL with a one-time `code` (and `complete=false` when the provider gave no e-mail address and the sign-up must be completed) or an `error` reason. An access token is never put in a URL.",
     "operationId": "auth.social.by-provider.callback.get",
     "parameters": [
      {
@@ -29016,6 +29394,14 @@
        ],
        "type": "string"
       }
+     },
+     {
+      "in": "query",
+      "name": "state",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
      }
     ],
     "responses": {
@@ -29023,10 +29409,20 @@
       "content": {
        "application/json": {}
       },
-      "description": "successful operation"
+      "description": "Redirect to the return URL with a code or an error"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The state is missing, forged, expired or already used"
      }
     },
-    "summary": "Redirect after sucessfull login",
+    "summary": "Redirect after successful login",
     "tags": [
      "Auth"
     ]
@@ -30431,6 +30827,60 @@
     "summary": "Launch a cmi5 AU",
     "tags": [
      "cmi5"
+    ]
+   }
+  },
+  "/api/commerce/webhooks/{provider}": {
+   "post": {
+    "description": "Inbound order events of a commerce provider (ADR 0130). Public route, authenticated by the signature with the\ntenant's own secret, never by a session: the body is verified (HMAC over `<t>.<raw body>`, 300 s tolerance,\nthe secret being rotated out also accepted), its event id must equal the `Ulams-Event-Id` header, and its channel\nmust be this tenant's channel. A valid event is stored once per event id and queued; a duplicate answers 200\nwith no work. The payload is untrusted: only the envelope is read, and the job re-reads the order from the provider.",
+    "operationId": "commerce.webhooks.by-provider.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "duplicate delivery, nothing to do"
+     },
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the event is stored and queued"
+     },
+     "400": {
+      "description": "invalid or expired signature, malformed event or another tenant's channel"
+     },
+     "404": {
+      "description": "unknown provider or webhooks not configured"
+     },
+     "413": {
+      "description": "body too large"
+     },
+     "429": {
+      "description": "rate limit"
+     }
+    },
+    "summary": "Receive a signed order event of the commerce provider",
+    "tags": [
+     "Commerce webhooks"
     ]
    }
   },
@@ -40536,6 +40986,10 @@
    "name": "cmi5"
   },
   {
+   "description": "Commerce webhooks",
+   "name": "Commerce webhooks"
+  },
+  {
    "description": "Compliance",
    "name": "Compliance"
   },
@@ -40582,6 +41036,10 @@
   {
    "description": "Course Access",
    "name": "Course Access"
+  },
+  {
+   "description": "Admin Course-as-code",
+   "name": "Admin Course-as-code"
   },
   {
    "description": "Admin Course Builder",

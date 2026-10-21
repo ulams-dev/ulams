@@ -670,6 +670,7 @@ export default {
     'Click a variable to add a field for it; it is filled in when the PDF is issued. Variables can also be typed into read-only text, e.g. “Issued by @VarAppName”.',
   'pdf_editor.variable_used': 'Used in the template',
   'pdf_editor.variable_add': 'Add a field',
+  'pdf_editor.variable_add_aria': 'Add a field for {variable}',
   'pdf_editor.preview_failed': 'Preview failed',
   generated_pdfs: 'Generated PDFs',
   download_all: 'Download all',
