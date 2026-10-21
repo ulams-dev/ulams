@@ -119,5 +119,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0105](0105-stream-tutor-answers-over-the-sse-event-log.md) | Stream tutor answers over the SSE event log | Accepted |
 | [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted |
 | [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Accepted |
+| [0120](0120-identity-package-and-sso-libraries.md) | An identity package with onelogin/php-saml, an in-house OIDC client and an in-house SCIM server | Proposed |
+| [0121](0121-sso-login-handoff-account-linking-and-scim-tokens.md) | SSO login handoff by one-time code, strict account linking and SCIM tokens on service users | Proposed |
 
 <!-- END GENERATED: adr-index -->
