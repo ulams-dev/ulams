@@ -235,6 +235,23 @@ const PENDING_ROW: JsonSchema = obj({ title: LESSON_TITLE, href: href("Lesson li
 const titles = (items: unknown, key = "title"): string[] =>
   Array.isArray(items) ? items.map((i) => (i && typeof i === "object" ? String((i as Record<string, unknown>)[key] ?? "") : "")) : [];
 
+const LOCALE = oneOf(["en", "pl", "zh"], "Interface language of the fixed strings; filled by the app, authors and models leave it out");
+const REMEDIATION_TITLE = text("Heading of the block", { maxLength: 120 });
+const REMEDIATION_MARKDOWN = text("Markdown, at most 1 800 characters; raw HTML is escaped", { maxLength: 1800 });
+const CITATION = obj({ label: text("Name of the cited source section", { maxLength: 200 }), href: href("Lesson the source belongs to; leave out when there is none") }, ["label"]);
+const PRACTICE = obj(
+  {
+    stem: text("The question", { maxLength: 400 }),
+    options: list(obj({ text: text("Answer option", { maxLength: 200 }), correct: bool("Whether this option is right", false) }, ["text", "correct"]), "2 to 5 answer options; exactly one is correct", {
+      minItems: 2,
+      maxItems: 5,
+      default: undefined,
+    }),
+    explanation: text("Why the right option is right; shown only after the learner checks an answer", { maxLength: 400 }),
+  },
+  ["stem", "options", "explanation"]
+);
+
 export const registry = {
   Page: {
     description:
@@ -1439,13 +1456,14 @@ export const registry = {
     children: false,
     props: obj(
       {
+        title: text("Optional heading shown above the text (as a third-level heading)", { maxLength: 120 }),
         markdown: text("Markdown source", { maxLength: 60000 }),
         dropCap: bool("Editorial drop cap on the first paragraph", false),
         size: oneOf(["sm", "md", "lg"], "Text size", "md"),
       },
       ["markdown"]
     ),
-    fallback: (p) => String(p.markdown ?? ""),
+    fallback: (p) => join(p.title, p.markdown),
   },
   Callout: {
     description: "Highlighted note inside a lesson: a tip, a warning or a key idea.",
@@ -1848,6 +1866,101 @@ export const registry = {
       );
     },
   },
+  WorkedExample: {
+    description:
+      "A worked example inside extra help: a title and the steps as Markdown (at most 1 800 characters). Static; it is one of the blocks generated for a learner who struggled with a part of the course, and every block cites its source fragments.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj({ title: REMEDIATION_TITLE, markdown: REMEDIATION_MARKDOWN }, ["title", "markdown"]),
+    fallback: (p) => join(p.title, p.markdown),
+  },
+  PracticeQuestion: {
+    description:
+      "One multiple-choice practice question with exactly one right option. The learner picks an option and presses Check; the result is stated in words and the explanation appears only after that first attempt. Nothing is recorded or sent. Used in extra help; the plain-text fallback leaves out the answer.",
+    category: "learning",
+    interactive: true,
+    children: false,
+    props: obj({ title: REMEDIATION_TITLE, markdown: REMEDIATION_MARKDOWN, practice: PRACTICE, locale: LOCALE }, ["title", "markdown", "practice"]),
+    // The fallback never includes the right option or the explanation: text channels cannot hold them back.
+    fallback: (p) => {
+      const practice = (p.practice ?? {}) as { stem?: unknown; options?: unknown };
+      const options = Array.isArray(practice.options) ? practice.options.map((o) => `- ${String((o as { text?: unknown }).text ?? "")}`) : [];
+      return join(p.title, p.markdown, practice.stem, options);
+    },
+  },
+  ElaborativeQuestion: {
+    description:
+      "An open question that asks the learner to explain an idea in their own words, with an optional notes field. What the learner types stays on their device; nothing is sent. Used in extra help.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj({ title: REMEDIATION_TITLE, markdown: REMEDIATION_MARKDOWN, locale: LOCALE }, ["title", "markdown"]),
+    fallback: (p) => join(p.title, p.markdown),
+  },
+  CitationList: {
+    description:
+      "The sources a block is based on: a visible heading and a list of source names, each a link only when the API gives a lesson to open. Filled by the app next to generated blocks; authors do not place it.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        items: list(CITATION, "1 to 12 sources", { minItems: 1, maxItems: 12, default: undefined }),
+        label: text("Heading of the list; the interface word for \"Sources\" when left out", { maxLength: 60 }),
+        locale: LOCALE,
+      },
+      ["items"]
+    ),
+    fallback: (p) => join(p.label ?? "Sources", Array.isArray(p.items) ? p.items.map((i) => `- ${String((i as { label?: unknown }).label ?? "")}`) : []),
+  },
+  AiLabel: {
+    description:
+      "A short label that says content was written or assisted by AI, with an icon and the words (never colour alone). Filled by the app next to generated content; authors do not place it.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj({ text: text("The label text", { maxLength: 120 }), tone: oneOf(["generated", "assisted"], "generated = written by AI; assisted = written by the author with AI help", "generated") }, ["text"]),
+    fallback: (p) => join(p.text),
+  },
+  WhyThis: {
+    description:
+      "A collapsed 'Why am I seeing this?' disclosure listing the plain-text reasons something was shown to the learner. Filled by the app; authors do not place it.",
+    category: "learning",
+    interactive: false,
+    children: false,
+    props: obj(
+      {
+        summary: text("Text of the disclosure; the interface wording of 'Why am I seeing this?' when left out", { maxLength: 80 }),
+        reasons: list(text("One reason in plain text", { maxLength: 300 }), "1 to 6 reasons", { minItems: 1, maxItems: 6, default: undefined }),
+        locale: LOCALE,
+      },
+      ["reasons"]
+    ),
+    fallback: (p) => join(p.summary ?? "Why am I seeing this?", Array.isArray(p.reasons) ? p.reasons.map((r) => `- ${String(r)}`) : []),
+  },
+  SupportCard: {
+    description:
+      "The 'Extra help for you' card on a lesson page: a labelled region with a short summary, the generated blocks as children, the reasons it is shown, and 'This helped' / 'Not helpful' / 'Hide' controls. Status changes are announced politely. Filled by the app from the learner's own support items; authors and models do not place it.",
+    category: "learning",
+    interactive: true,
+    children: true,
+    props: obj(
+      {
+        assignmentId: text("Id of the learner's assignment (26-character ULID); without it the controls are not shown", { maxLength: 26 }),
+        status: oneOf(["generating", "ready", "failed"], "generating = still being prepared; ready = the blocks are the children; failed = nothing to show", "ready"),
+        summary: text("One or two sentences on what the help covers", { maxLength: 300 }),
+        reasons: list(text("One reason in plain text", { maxLength: 300 }), "Why this help is shown", { maxItems: 6 }),
+        aiLabel: text("The AI label shown in the heading row", { maxLength: 120 }),
+        feedback: oneOf(["helpful", "not_helpful"], "The learner's earlier answer, if any"),
+        position: int("Number of this card when the lesson has several (1, 2, …), so each region has its own name", { minimum: 1, maximum: 20 }),
+        total: int("How many cards the lesson has", { minimum: 1, maximum: 20 }),
+        locale: LOCALE,
+      },
+      []
+    ),
+    fallback: (p) => join(p.summary, Array.isArray(p.reasons) ? p.reasons.map((r) => `- ${String(r)}`) : []),
+  },
 } as const satisfies Record<string, ComponentSpec>;
 
 // Every section accepts an optional anchor id (for in-page links such as "#pricing").
@@ -1875,6 +1988,13 @@ export const LEARNER_LAYOUT_COMPONENTS = [
   "CodeBlock",
   "PracticeActivity",
 ] as const satisfies ReadonlyArray<ComponentName>;
+
+/**
+ * The blocks a stored remediation (Learner Insights) may contain. `RemediationGenerator` validates each
+ * block's props against `catalogue/remediation-manifest.json` before it stores them, so a block the
+ * learner page could not render never reaches a learner.
+ */
+export const REMEDIATION_COMPONENTS = ["Prose", "WorkedExample", "PracticeQuestion", "ElaborativeQuestion"] as const satisfies ReadonlyArray<ComponentName>;
 
 export const componentNames = Object.keys(registry) as ComponentName[];
 
@@ -1936,6 +2056,27 @@ export function pageManifest(): {
     catalogId: "https://ulams.dev/catalogue/page/v1",
     components: Object.fromEntries(
       Object.entries(registry).map(([name, spec]) => [name, { description: spec.description, children: spec.children, props: closed(spec.props) }])
+    ),
+  };
+}
+
+/**
+ * The remediation blocks as a manifest for the API (description + closed props JSON Schema), written to
+ * catalogue/remediation-manifest.json and its API copy by `yarn workspace @ulams/ui remediation-manifest`.
+ * A generated block is short, so `Prose.markdown` is limited to the 1 800 characters of the generation schema.
+ */
+export function remediationManifest(): {
+  catalogId: string;
+  components: Record<string, { description: string; interactive: boolean; props: JsonSchema }>;
+} {
+  return {
+    catalogId: "https://ulams.dev/catalogue/remediation/v1",
+    components: Object.fromEntries(
+      REMEDIATION_COMPONENTS.map((name) => {
+        const props = closed(registry[name].props);
+        if (name === "Prose" && props.properties?.markdown) props.properties = { ...props.properties, markdown: { ...props.properties.markdown, maxLength: 1800 } };
+        return [name, { description: registry[name].description, interactive: registry[name].interactive, props }];
+      })
     ),
   };
 }

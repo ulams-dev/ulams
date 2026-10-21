@@ -161,16 +161,15 @@ test("keyboard: the skills, download and verify links are reachable with a visib
   }
 });
 
-test.describe("Polish interface", () => {
-  test.use({ locale: "pl-PL", extraHTTPHeaders: { "Accept-Language": "pl-PL,pl;q=0.9" } });
-  test("the training page follows Accept-Language with Polish plurals and dates", async ({ page }) => {
-    await page.goto(`${host("coffee")}/account/training`);
-    await expect(page.locator("html")).toHaveAttribute("lang", "pl");
-    await expect(page.getByText("Po terminie o 3 dni")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Szkolenia obowiązkowe" })).toBeVisible();
-    await expect(page.getByText(/^Odblokuje się po: /)).toBeVisible();
-    await expect(page.getByRole("link", { name: /^Pobierz PDF: Espresso basics/ })).toBeVisible();
-  });
+test("the account pages follow the tenant default language, with Polish plurals and dates", async ({ page }) => {
+  await page.goto(`${host("polski")}/account/training`);
+  await expect(page.locator("html")).toHaveAttribute("lang", "pl");
+  await expect(page.getByText("Po terminie o 3 dni")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Szkolenia obowiązkowe" })).toBeVisible();
+  await expect(page.getByText(/^Odblokuje się po: /)).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Pobierz PDF: Espresso basics/ })).toBeVisible();
+  const violations = await scan(page);
+  expect(violations, violations.join("\n")).toEqual([]);
 });
 
 test("the team view lists reports with overdue first and filters by status", async ({ page }) => {

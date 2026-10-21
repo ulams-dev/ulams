@@ -409,19 +409,6 @@ export function trainingLocale(lang: string | null | undefined): TrainingLocale 
 
 export const trainingStrings = (lang: string | null | undefined): TrainingStrings => BY_LOCALE[trainingLocale(lang)];
 
-/**
- * The language of an account page from the browser's `Accept-Language` (first supported entry wins),
- * `en` when none matches. Used until a tenant default language exists.
- */
-export function acceptedLocale(header: string | null | undefined): TrainingLocale {
-  for (const part of (header ?? "").split(",")) {
-    const code = trainingLocale(part.split(";")[0]?.trim());
-    const tag = (part.split(";")[0] ?? "").trim().toLowerCase();
-    if (code !== "en" || tag.startsWith("en")) return code;
-  }
-  return "en";
-}
-
 export const fill = (template: string, values: Record<string, string | number>): string =>
   template.replace(/\{(\w+)\}/g, (_, key: string) => String(values[key] ?? ""));
 

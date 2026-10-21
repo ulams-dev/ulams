@@ -1,6 +1,7 @@
 ---
 /** My skills: confirmed competencies grouped by area, with when they were earned and when they lapse. */
-import { acceptedLocale, trainingStrings } from "@ulams/ui/training-strings";
+import { trainingStrings } from "@ulams/ui/training-strings";
+import { accountLocale } from "../../lib/locale.ts";
 import TrainingShell from "../../components/TrainingShell.astro";
 import { getSettings, getSiteModel } from "../../lib/data.ts";
 import { themeFor } from "../../lib/theme.ts";
@@ -11,8 +12,6 @@ if (!tenant) return Astro.redirect("/");
 const token = Astro.locals.token;
 if (!token) return Astro.redirect("/login?next=/account/skills");
 
-const locale = acceptedLocale(Astro.request.headers.get("accept-language"));
-const t = trainingStrings(locale);
 const [skills, team, settings, site] = await Promise.all([
   loadSkills(tenant, token),
   loadTeam(tenant, token),
@@ -20,6 +19,8 @@ const [skills, team, settings, site] = await Promise.all([
   getSiteModel(tenant).catch(() => null),
 ]);
 const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const locale = accountLocale(settings);
+const t = trainingStrings(locale);
 Astro.response.headers.set("Cache-Control", "private, no-store");
 const groups = skills ? skillGroups(skills, locale) : null;
 ---

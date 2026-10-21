@@ -2,7 +2,8 @@
 /** Course finish: completion, the issued certificate (a labelled preview only while unfinished) and what next. */
 import Icon from "@ulams/ui/components/Icon.astro";
 import { completionPercent, flattenTopics } from "@ulams/sdk";
-import { formatDate, trainingLocale, trainingStrings } from "@ulams/ui/training-strings";
+import { formatDate, trainingStrings } from "@ulams/ui/training-strings";
+import { learnerLocale } from "../../../lib/locale.ts";
 import { certificateRow, loadCourseCertificate, siteOrigin } from "../../../lib/training.ts";
 import Base from "../../../layouts/Base.astro";
 import { apiFor, getProgram, getSettings } from "../../../lib/data.ts";
@@ -27,7 +28,7 @@ const topics = flattenTopics(course);
 const remaining = topics.filter((t) => !progress.some((p) => p.topic_id === t.id && p.status === 1));
 const name = me ? [me.first_name, me.last_name].filter(Boolean).join(" ") : "Demo student";
 const finished = remaining.length === 0;
-const locale = trainingLocale(course.language);
+const locale = learnerLocale(course.language, typeof settings?.global?.language === "string" ? settings.global.language : null);
 const t = trainingStrings(locale);
 const today = formatDate(locale, new Date().toISOString());
 // the real certificate, once the course is finished (never a mock for a finished course)
@@ -41,7 +42,7 @@ const headline = finished
   : { coffee: "The last page, almost.", oncall: "Almost there: a few items left.", nightsky: "So close to the stars!", gravity: "Almost in orbit", poland: "Nearly measured", ulam: "One more problem to go", platform: "Almost there" }[theme];
 ---
 
-<Base theme={theme} accent={settings?.theme?.accent} title={`Finish — ${course.title}`} lang={locale} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+<Base theme={theme} accent={settings?.theme?.accent} title={`Finish — ${course.title}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
   <main id="main" class="u-container u-finish">
     <div class="u-finish__confetti" aria-hidden="true">
       {Array.from({ length: 24 }, (_, i) => <i style={`--x:${(i * 37) % 100}%;--d:${(i % 7) * 0.15}s;--r:${(i * 47) % 360}deg`} />)}
@@ -55,7 +56,7 @@ const headline = finished
 
     {
       row && issued ? (
-        <section class="u-finish__issued" aria-labelledby="issued-title">
+        <section class="u-finish__issued" aria-labelledby="issued-title" lang={locale}>
           <figure class="u-cert" aria-labelledby="issued-title">
             <p class="u-cert__org">{company}</p>
             <p class="u-cert__label" id="issued-title">{t.finishCertificate}</p>
@@ -82,7 +83,7 @@ const headline = finished
           {t.finishNotIssued} <a href="/account/training#certificates">{t.accountTrainingLink}</a>
         </p>
       ) : (
-        <figure class="u-cert" aria-label={t.finishPreview}>
+        <figure class="u-cert" aria-label={t.finishPreview} lang={locale}>
           <p class="u-cert__org">{company}</p>
           <p class="u-cert__label">{t.finishPreview}</p>
           <p class="u-cert__name">{name}</p>

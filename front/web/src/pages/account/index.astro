@@ -26,7 +26,8 @@ import {
   summariseScopes,
 } from "../../lib/tokens.ts";
 import type { CreatedToken } from "../../lib/tokens.ts";
-import { acceptedLocale, plural, trainingStrings } from "@ulams/ui/training-strings";
+import { plural, trainingStrings } from "@ulams/ui/training-strings";
+import { accountLocale } from "../../lib/locale.ts";
 import { accountSummary, loadTeam, loadTraining } from "../../lib/training.ts";
 import "../../styles/training.css";
 
@@ -67,7 +68,7 @@ const [me, progress, settings, site, tokenList, training, team] = await Promise.
   loadTeam(tenant, token),
 ]);
 // "My training": counts that link to the training, skills and team pages (the team link only for managers)
-const trLocale = acceptedLocale(Astro.request.headers.get("accept-language"));
+const trLocale = accountLocale(settings);
 const tr = trainingStrings(trLocale);
 const summary = accountSummary(training, new Date());
 const trainingLinks = [

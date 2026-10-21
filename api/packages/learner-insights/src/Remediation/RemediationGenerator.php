@@ -27,7 +27,7 @@ class RemediationGenerator
 {
     private const COMPONENTS = ['explanation' => 'Prose', 'worked_example' => 'WorkedExample', 'practice' => 'PracticeQuestion', 'elaboration' => 'ElaborativeQuestion'];
 
-    public function __construct(private readonly LlmClient $llm, private readonly PromptRegistry $prompts, private readonly SchemaRegistry $schemas)
+    public function __construct(private readonly LlmClient $llm, private readonly PromptRegistry $prompts, private readonly SchemaRegistry $schemas, private readonly RemediationManifest $manifest = new RemediationManifest())
     {
     }
 
@@ -59,6 +59,12 @@ class RemediationGenerator
                 $result = $this->llm->generate($this->request($remediation, $element, $fragments->all(), $corrections));
                 $calls = array_merge($calls, $result->callIds);
                 $output = $result->data;
+                // a block the learner page could not render (props outside the catalogue) fails the remediation
+                if ($this->manifest->validate($this->blocks($output)) !== []) {
+                    $this->fail($remediation, ['invalid_block'], $calls);
+
+                    return;
+                }
                 $check = $this->ground($remediation, $output['blocks'], $fragments->all());
                 $calls = array_merge($calls, $check['callIds']);
                 if ($check['unsupported'] === []) {
@@ -197,16 +203,26 @@ class RemediationGenerator
         return ['unsupported' => array_map(fn ($u) => ['block' => $u['blockIndex'], 'claim' => $u['claim'], 'reason' => $u['reason']], $result->data['unsupported'] ?? []), 'callIds' => $result->callIds];
     }
 
-    /** @param string[] $calls */
-    private function store(Remediation $r, array $output, array $calls): void
+    /**
+     * The blocks as they are stored and rendered: a catalogue component, its props and the fragments it cites.
+     *
+     * @param array<string,mixed> $output
+     * @return array<int,array{component:string,props:array<string,mixed>,citations:array<int,string>}>
+     */
+    private function blocks(array $output): array
     {
-        $blocks = array_map(fn (array $b) => [
+        return array_map(fn (array $b) => [
             'component' => self::COMPONENTS[$b['kind']],
             'props' => array_filter(['title' => $b['title'], 'markdown' => $b['markdown'], 'practice' => $b['practice'] ?? null], fn ($v) => $v !== null),
             'citations' => $b['citations'],
         ], $output['blocks']);
+    }
+
+    /** @param string[] $calls */
+    private function store(Remediation $r, array $output, array $calls): void
+    {
         $r->forceFill([
-            'document' => ['summary' => $output['summary'], 'blocks' => $blocks],
+            'document' => ['summary' => $output['summary'], 'blocks' => $this->blocks($output)],
             'citations' => array_values(array_unique(array_merge(...array_column($output['blocks'], 'citations')))),
             'status' => Remediation::READY, 'ai_call_ids' => $calls, 'generated_at' => CarbonImmutable::now(),
         ])->save();

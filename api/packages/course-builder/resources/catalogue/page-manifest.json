@@ -5562,6 +5562,11 @@
       "props": {
         "type": "object",
         "properties": {
+          "title": {
+            "type": "string",
+            "description": "Optional heading shown above the text (as a third-level heading)",
+            "maxLength": 120
+          },
           "markdown": {
             "type": "string",
             "description": "Markdown source",
@@ -6916,6 +6921,373 @@
             "description": "Lessons whose source changed and whose update is under review",
             "default": [],
             "maxItems": 60
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "WorkedExample": {
+      "description": "A worked example inside extra help: a title and the steps as Markdown (at most 1 800 characters). Static; it is one of the blocks generated for a learner who struggled with a part of the course, and every block cites its source fragments.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Heading of the block",
+            "maxLength": 120
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Markdown, at most 1 800 characters; raw HTML is escaped",
+            "maxLength": 1800
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "markdown"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "PracticeQuestion": {
+      "description": "One multiple-choice practice question with exactly one right option. The learner picks an option and presses Check; the result is stated in words and the explanation appears only after that first attempt. Nothing is recorded or sent. Used in extra help; the plain-text fallback leaves out the answer.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Heading of the block",
+            "maxLength": 120
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Markdown, at most 1 800 characters; raw HTML is escaped",
+            "maxLength": 1800
+          },
+          "practice": {
+            "type": "object",
+            "properties": {
+              "stem": {
+                "type": "string",
+                "description": "The question",
+                "maxLength": 400
+              },
+              "options": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "description": "Answer option",
+                      "maxLength": 200
+                    },
+                    "correct": {
+                      "type": "boolean",
+                      "description": "Whether this option is right",
+                      "default": false
+                    }
+                  },
+                  "required": [
+                    "text",
+                    "correct"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "2 to 5 answer options; exactly one is correct",
+                "maxItems": 5,
+                "minItems": 2
+              },
+              "explanation": {
+                "type": "string",
+                "description": "Why the right option is right; shown only after the learner checks an answer",
+                "maxLength": 400
+              }
+            },
+            "required": [
+              "stem",
+              "options",
+              "explanation"
+            ],
+            "additionalProperties": false
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "markdown",
+          "practice"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "ElaborativeQuestion": {
+      "description": "An open question that asks the learner to explain an idea in their own words, with an optional notes field. What the learner types stays on their device; nothing is sent. Used in extra help.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Heading of the block",
+            "maxLength": 120
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Markdown, at most 1 800 characters; raw HTML is escaped",
+            "maxLength": 1800
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "markdown"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "CitationList": {
+      "description": "The sources a block is based on: a visible heading and a list of source names, each a link only when the API gives a lesson to open. Filled by the app next to generated blocks; authors do not place it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "description": "Name of the cited source section",
+                  "maxLength": 200
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Lesson the source belongs to; leave out when there is none",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "1 to 12 sources",
+            "maxItems": 12,
+            "minItems": 1
+          },
+          "label": {
+            "type": "string",
+            "description": "Heading of the list; the interface word for \"Sources\" when left out",
+            "maxLength": 60
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "AiLabel": {
+      "description": "A short label that says content was written or assisted by AI, with an icon and the words (never colour alone). Filled by the app next to generated content; authors do not place it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The label text",
+            "maxLength": 120
+          },
+          "tone": {
+            "type": "string",
+            "enum": [
+              "generated",
+              "assisted"
+            ],
+            "description": "generated = written by AI; assisted = written by the author with AI help",
+            "default": "generated"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "WhyThis": {
+      "description": "A collapsed 'Why am I seeing this?' disclosure listing the plain-text reasons something was shown to the learner. Filled by the app; authors do not place it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "summary": {
+            "type": "string",
+            "description": "Text of the disclosure; the interface wording of 'Why am I seeing this?' when left out",
+            "maxLength": 80
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "One reason in plain text",
+              "maxLength": 300
+            },
+            "description": "1 to 6 reasons",
+            "maxItems": 6,
+            "minItems": 1
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "reasons"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "SupportCard": {
+      "description": "The 'Extra help for you' card on a lesson page: a labelled region with a short summary, the generated blocks as children, the reasons it is shown, and 'This helped' / 'Not helpful' / 'Hide' controls. Status changes are announced politely. Filled by the app from the learner's own support items; authors and models do not place it.",
+      "children": true,
+      "props": {
+        "type": "object",
+        "properties": {
+          "assignmentId": {
+            "type": "string",
+            "description": "Id of the learner's assignment (26-character ULID); without it the controls are not shown",
+            "maxLength": 26
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "generating",
+              "ready",
+              "failed"
+            ],
+            "description": "generating = still being prepared; ready = the blocks are the children; failed = nothing to show",
+            "default": "ready"
+          },
+          "summary": {
+            "type": "string",
+            "description": "One or two sentences on what the help covers",
+            "maxLength": 300
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "One reason in plain text",
+              "maxLength": 300
+            },
+            "description": "Why this help is shown",
+            "default": [],
+            "maxItems": 6
+          },
+          "aiLabel": {
+            "type": "string",
+            "description": "The AI label shown in the heading row",
+            "maxLength": 120
+          },
+          "feedback": {
+            "type": "string",
+            "enum": [
+              "helpful",
+              "not_helpful"
+            ],
+            "description": "The learner's earlier answer, if any"
+          },
+          "position": {
+            "type": "integer",
+            "description": "Number of this card when the lesson has several (1, 2, …), so each region has its own name",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "total": {
+            "type": "integer",
+            "description": "How many cards the lesson has",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
           },
           "id": {
             "type": "string",

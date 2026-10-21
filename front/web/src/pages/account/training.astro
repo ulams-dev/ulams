@@ -1,6 +1,7 @@
 ---
 /** My training: required training, learning paths and certificates (plan phase-5-learner-ui, section 3.7). */
-import { acceptedLocale, trainingStrings } from "@ulams/ui/training-strings";
+import { trainingStrings } from "@ulams/ui/training-strings";
+import { accountLocale } from "../../lib/locale.ts";
 import TrainingShell from "../../components/TrainingShell.astro";
 import { getAllProgress, getSettings, getSiteModel } from "../../lib/data.ts";
 import { themeFor } from "../../lib/theme.ts";
@@ -11,8 +12,6 @@ if (!tenant) return Astro.redirect("/");
 const token = Astro.locals.token;
 if (!token) return Astro.redirect("/login?next=/account/training");
 
-const locale = acceptedLocale(Astro.request.headers.get("accept-language"));
-const t = trainingStrings(locale);
 const now = new Date();
 const [data, progress, team, settings, site] = await Promise.all([
   loadTraining(tenant, token),
@@ -22,6 +21,8 @@ const [data, progress, team, settings, site] = await Promise.all([
   getSiteModel(tenant).catch(() => null),
 ]);
 const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const locale = accountLocale(settings);
+const t = trainingStrings(locale);
 Astro.response.headers.set("Cache-Control", "private, no-store");
 
 const percent = new Map((progress ?? []).map((entry) => [entry.course.id, completion(entry)]));

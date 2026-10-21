@@ -1,0 +1,40 @@
+---
+import { pageLocale, uiStrings } from "../lib/i18n.ts";
+
+interface Props {
+  summary?: string;
+  reasons: string[];
+  locale?: string;
+  id?: string;
+}
+const { summary, reasons, locale, id } = Astro.props;
+const t = uiStrings(locale ?? pageLocale(Astro));
+---
+
+<details class="u-why" id={id}>
+  <summary>{summary ?? t.supportWhy}</summary>
+  <ul>
+    {reasons.map((reason) => <li>{reason}</li>)}
+  </ul>
+</details>
+
+<style>
+  .u-why {
+    font-size: 0.9375rem;
+  }
+  .u-why summary {
+    cursor: pointer;
+    min-height: 24px;
+    font-weight: 600;
+    color: var(--ulams-color-primary-on-light);
+  }
+  .u-why summary:focus-visible {
+    outline: 2px solid var(--ulams-color-primary);
+    outline-offset: 3px;
+  }
+  .u-why ul {
+    margin-top: 0.4em;
+    padding-left: 1.3em;
+    overflow-wrap: anywhere;
+  }
+</style>

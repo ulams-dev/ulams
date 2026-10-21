@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { acceptedLocale, fill, formatDate, plural, trainingLocale, trainingStrings, type TrainingLocale } from "../src/lib/training-strings.ts";
+import { fill, formatDate, plural, trainingLocale, trainingStrings, type TrainingLocale } from "../src/lib/training-strings.ts";
 
 const locales: TrainingLocale[] = ["en", "pl", "zh"];
 
@@ -26,15 +26,11 @@ describe("training strings", () => {
     }
   });
 
-  it("picks the locale from a language tag and from Accept-Language", () => {
+  it("picks the locale from a language tag", () => {
     expect(trainingLocale("pl-PL")).toBe("pl");
     expect(trainingLocale("zh_Hans")).toBe("zh");
     expect(trainingLocale("de")).toBe("en");
     expect(trainingLocale(null)).toBe("en");
-    expect(acceptedLocale("de-DE,pl;q=0.8,en;q=0.5")).toBe("pl");
-    expect(acceptedLocale("en-GB,pl;q=0.5")).toBe("en");
-    expect(acceptedLocale("fr")).toBe("en");
-    expect(acceptedLocale(undefined)).toBe("en");
   });
 
   it("uses the three Polish plural forms and the single Chinese form", () => {
