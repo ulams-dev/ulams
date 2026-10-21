@@ -7,6 +7,20 @@ set -eux
 
 SRC_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+# pecl.php.net and the Alpine mirrors fail now and then ("does not have REST xml available"); a failed
+# download should not fail the whole image publish, so network steps are retried.
+retry() {
+    n=1
+    until "$@"; do
+        if [ "$n" -ge 4 ]; then
+            return 1
+        fi
+        n=$((n + 1))
+        echo "retrying ($n/4): $*" >&2
+        sleep $((n * 10))
+    done
+}
+
 # Runtime tools used by the app and by the container scripts:
 # - bash: init.sh, queue.sh, scheduler.sh, broadcast.sh, domains.sh
 # - supervisor: runs php-fpm, Horizon, queue workers and the scheduler
@@ -14,7 +28,7 @@ SRC_DIR="$(cd "$(dirname "$0")" && pwd)"
 # - jpegoptim, optipng, pngquant, gifsicle: spatie/image-optimizer in packages/images
 # - unzip: composer dist installs
 # - git: the `git-cli` Living Course connector (read-only shallow clones of repositories on any server)
-apk add --no-cache \
+retry apk add --no-cache \
     bash \
     ffmpeg \
     git \
@@ -30,7 +44,7 @@ apk add --no-cache \
 # posix, sodium, tokenizer, xml*, zlib, ...). install-php-extensions adds the
 # runtime libraries and removes the build dependencies afterwards.
 # gd is built with freetype, jpeg, png, webp, avif and xpm support.
-install-php-extensions \
+retry install-php-extensions \
     apcu \
     bcmath \
     exif \
