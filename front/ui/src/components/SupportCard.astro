@@ -20,7 +20,7 @@ const headingId = `u-support-${key}-title`;
 const ready = status === "ready";
 ---
 
-<section class="u-support" id={id} aria-labelledby={headingId} data-status={status} role="region">
+<section class="u-support" id={id} aria-labelledby={headingId} data-status={status} role="region" lang={locale && locale !== "en" ? locale : undefined}>
   <header class="u-support__head">
     <h2 class="u-support__title" id={headingId}>{t.supportTitle}</h2>
     {ready && aiLabel && <AiLabel text={aiLabel} />}

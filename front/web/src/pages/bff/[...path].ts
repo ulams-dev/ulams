@@ -25,6 +25,8 @@ export const ALL: APIRoute = async ({ params, request, locals, cookies, url }) =
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
         "Current-timezone": request.headers.get("current-timezone") ?? "UTC",
+        // the API picks the language from X-Locale (the translations package), not Accept-Language
+        ...(request.headers.get("x-locale") ? { "X-Locale": request.headers.get("x-locale")! } : {}),
       },
       body,
       signal: AbortSignal.timeout(20_000),

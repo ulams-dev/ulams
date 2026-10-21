@@ -138,6 +138,7 @@ describe("the Extra help card renders accessibly", () => {
     const root = await mountDoc(card({}, BLOCKS));
     const region = root.querySelector<HTMLElement>("section[role=region]")!;
     expect(region.querySelector(`#${region.getAttribute("aria-labelledby")}`)?.textContent).toBe("Extra help for you");
+    expect(region.hasAttribute("lang")).toBe(false);
     expect(region.querySelector("h2")).not.toBeNull();
     expect(region.textContent).toContain("AI-generated, based on this course's sources");
     expect(region.querySelectorAll("h3").length).toBe(4);
@@ -172,6 +173,8 @@ describe("the Extra help card renders accessibly", () => {
   it("follows the locale prop in Polish and Chinese", async () => {
     const pl = await mountDoc(card({ locale: "pl" }, [BLOCKS[3]!, BLOCKS[4]!].map((b) => ({ ...b, props: { ...b.props, locale: "pl" } }))));
     expect(pl.textContent).toContain(uiStrings("pl").supportTitle);
+    // the card marks its own language: the lesson chrome around it is still English
+    expect(pl.querySelector("section[role=region]")?.getAttribute("lang")).toBe("pl");
     expect(pl.textContent).toContain(uiStrings("pl").supportWhy);
     expect(pl.textContent).toContain(uiStrings("pl").supportThoughts);
     expect(pl.querySelector("button[data-check]")?.textContent?.trim()).toBe(uiStrings("pl").supportCheck);
