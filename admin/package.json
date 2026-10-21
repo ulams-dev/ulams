@@ -22,6 +22,7 @@
     "playwright": "PORT=8000 playwright install && playwright test",
     "playwright:debug": "PORT=8000 playwright install && playwright test --debug",
     "playwright:headed": "PORT=8000 playwright install && playwright test --headed --project=chromium",
+    "playwright:mock": "playwright test -c playwright.mock.config.ts",
     "playwright:local": "PORT=8000 playwright test",
     "prettier": "prettier -c --write \"**/**.{js,jsx,tsx,ts,less,md,json}\"",
     "preview": "npm run build && node scripts/max.cjs preview --port 8000",
@@ -159,6 +160,7 @@
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^3.4.0",
+    "@axe-core/playwright": "4.13.0",
     "@playwright/test": "^1.63.0",
     "@testing-library/react": "^13.4.0",
     "@types/classnames": "^2.3.1",
