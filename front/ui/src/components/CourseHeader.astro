@@ -1,6 +1,8 @@
 ---
 import Icon from "./Icon.astro";
 import Img from "./Img.astro";
+import { pageLocale } from "../lib/i18n.ts";
+import { playerStrings } from "../lib/player-strings.ts";
 
 interface Person {
   name: string;
@@ -24,6 +26,7 @@ interface Props {
   id?: string;
 }
 const { variant = "editorial", eyebrow, title, subtitle, summary, facts = [], image, tutors = [], primaryCta, secondaryCta, progress, progressNote } = Astro.props;
+const t = playerStrings(pageLocale(Astro));
 ---
 
 <header class={`u-course-head u-course-head--${variant}`}>
@@ -48,7 +51,7 @@ const { variant = "editorial", eyebrow, title, subtitle, summary, facts = [], im
       {
         typeof progress === "number" && (
           <Fragment>
-          <div class="u-course-head__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={progress} aria-label="Your progress" style={`--progress:${progress}%`} data-course-progress>
+          <div class="u-course-head__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={progress} aria-label={t.yourProgress} style={`--progress:${progress}%`} data-course-progress>
             <span class="u-course-head__track" />
             <span data-progress-label>{progress}%</span>
           </div>
@@ -75,7 +78,7 @@ const { variant = "editorial", eyebrow, title, subtitle, summary, facts = [], im
       </div>
       {
         tutors.length > 0 && (
-          <ul class="u-course-head__tutors" role="list" aria-label="Tutors">
+          <ul class="u-course-head__tutors" role="list" aria-label={t.tutors}>
             {tutors.map((t) => (
               <li>
                 {t.image && (

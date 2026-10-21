@@ -1,6 +1,7 @@
 ---
 import Icon from "./Icon.astro";
 import { pendingNoticeText } from "../lib/notices.ts";
+import { pageLocale } from "../lib/i18n.ts";
 
 interface Props {
   since?: string;
@@ -11,7 +12,7 @@ const { since, id } = Astro.props;
 
 <p class="u-pending" id={id} role="note" data-notice="pending">
   <Icon name="clock" />
-  <span>{pendingNoticeText(since)}</span>
+  <span>{pendingNoticeText(since, pageLocale(Astro))}</span>
 </p>
 
 <style>

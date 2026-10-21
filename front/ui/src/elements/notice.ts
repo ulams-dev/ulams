@@ -1,4 +1,6 @@
 import { createLivingLearnerClient } from "@ulams/sdk";
+import { playerStrings } from "../lib/player-strings.ts";
+import { elementLang } from "./lang.ts";
 
 /**
  * <ulams-notice notice-id="7">
@@ -29,13 +31,13 @@ class UlamsNotice extends HTMLElement {
       await living.dismiss(noticeId);
       button.hidden = true;
       if (status) {
-        status.textContent = "Marked as reviewed. This notice will not show again.";
+        status.textContent = this.dataset.doneText ?? playerStrings(elementLang(this)).noticeReviewedDone;
         status.focus();
       }
     } catch {
       button.disabled = false;
       button.removeAttribute("aria-busy");
-      if (status) status.textContent = "Could not save that. Try again.";
+      if (status) status.textContent = this.dataset.failedText ?? playerStrings(elementLang(this)).noticeReviewedFailed;
     }
   }
 }
