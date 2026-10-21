@@ -31,7 +31,7 @@ export async function stackPlan(input:StackInput) {
   const directory = installDirectory(input.directory), prior = await readConfig(directory);
   const { configure } = await import("./config.ts");
   const config = configure(input,prior);
-  return { directory,target:config.target,mode:config.mode,project:config.name,urls:urls(config), note:"Generate private credentials once, render configuration, launch services, provision the academy and wait for readiness. No existing data is removed." };
+  return { directory,target:config.target,mode:config.mode,project:config.name,academy:{slug:config.tenant,name:input.academy_name ?? "Your academy",theme:input.theme ?? "coffee",demoStudents:input.users ?? 1},urls:urls(config), note:"Generate private credentials once, render configuration, launch services, provision the academy and wait for readiness. No existing data is removed." };
 }
 export async function stackRender(ctx:Ctx,input:StackInput) {
   const directory=installDirectory(input.directory);
@@ -92,7 +92,7 @@ export async function stackUp(ctx:Ctx,input:StackInput) {
     const exec = (args:string[]) => c.target === "docker" ? runProcess("docker",[...composeArgs(directory,c),"exec","-T","api",...args],opts) : runProcess("kubectl",[...kubectlArgs(c),"exec","statefulset/application","-c","api","--",...args],opts);
     ctx.io.stderr("Preparing the initial academy through ULAMS tenant provisioning…");
     await exec(["php","-r",bootstrapCode]);
-    await exec(["php","artisan","ulams:tenant:create",c.tenant,"--name=Your academy","--theme=coffee","--users=1","--demo=off","--no-interaction"]);
+    await exec(["php","artisan","ulams:tenant:create",c.tenant,`--name=${input.academy_name ?? "Your academy"}`,`--theme=${input.theme ?? "coffee"}`,`--users=${input.users ?? 1}`,"--demo=off","--no-interaction"]);
     await exec(["php","artisan","ulams:h5p:export-config","--no-interaction"]);
     await exec(["php","artisan","health:check"]);
     let caFile: string | undefined;

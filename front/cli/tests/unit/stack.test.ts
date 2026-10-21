@@ -93,6 +93,15 @@ describe("self-contained stack generator",()=>{
     const result=await runCli(["stack","up","--directory",directory,"--dry-run","--json"]);
     try{expect(result.code).toBe(0);expect(result.json()).toMatchObject({data:{dryRun:true,target:"docker"}});await expect(stat(directory)).rejects.toThrow();}finally{result.cleanup();}
   });
+  it("dry run shows the academy that will be seeded",async()=>{
+    const directory=join(tmpdir(),`ulams-seed-plan-${Date.now()}`);
+    const result=await runCli(["stack","up","--directory",directory,"--dry-run","--academy-name","Latte Lab","--theme","nightsky","--users","4","--json"]);
+    try{expect(result.code).toBe(0);expect(result.json()).toMatchObject({data:{academy:{slug:"academy",name:"Latte Lab",theme:"nightsky",demoStudents:4}}});}finally{result.cleanup();}
+    const defaults=await runCli(["stack","up","--directory",directory,"--dry-run","--json"]);
+    try{expect(defaults.json()).toMatchObject({data:{academy:{name:"Your academy",theme:"coffee",demoStudents:1}}});}finally{defaults.cleanup();}
+    const bad=await runCli(["stack","up","--directory",directory,"--dry-run","--users","99","--json"]);
+    try{expect(bad.code).not.toBe(0);}finally{bad.cleanup();}
+  });
   it("purge needs explicit confirmation and dry-run explains data deletion",async()=>{
     const result=await runCli(["stack","down","--purge","--json"]);
     try{expect(result.code).toBe(11);expect(result.json()).toMatchObject({error:{code:"CONFIRMATION_REQUIRED"}});}finally{result.cleanup();}
