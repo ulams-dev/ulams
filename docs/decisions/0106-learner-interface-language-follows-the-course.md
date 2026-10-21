@@ -1,6 +1,6 @@
 # 0106. The learner interface language follows the course language
 
-- Status: Proposed
+- Status: Accepted (2026-10-21)
 - Date: 2026-10-21
 - Plan: `docs/plans/phase-5-learner-ui.md` 3.10 (open question O6)
 

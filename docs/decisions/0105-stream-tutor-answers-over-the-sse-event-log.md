@@ -1,6 +1,6 @@
 # 0105. Stream tutor answers over the SSE event log
 
-- Status: Proposed
+- Status: Accepted (2026-10-21)
 - Date: 2026-10-21
 - Plan: `docs/plans/phase-5-learner-ui.md` 3.6 (milestone M-UI6, open question O4)
 - TODO: Phase 4.1 "(new) Streaming tutor answers (LLM client streaming over the SSE event log)"
