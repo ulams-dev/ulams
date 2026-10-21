@@ -34,6 +34,9 @@ class UlamsReflection extends HTMLElement {
       if (count) count.textContent = fill(this.dataset.counterText ?? "{n} of {max} characters", { n: text.value.length, max });
     };
     text.addEventListener("input", updateCount);
+    // a tall box that is only partly in view is not scrolled by the browser; keep it clear of the sticky footer
+    // (its scroll-margin) so a keyboard user never types behind it (WCAG 2.4.11)
+    text.addEventListener("focus", () => text.scrollIntoView?.({ block: "nearest" }));
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       void this.submit(assignmentId, form, text, min, updateCount);

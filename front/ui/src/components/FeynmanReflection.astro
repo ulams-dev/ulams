@@ -137,6 +137,12 @@ const heading = prompt ?? t.reflectPrompt;
     font: inherit;
     resize: vertical;
   }
+  /* a focused control is never hidden behind the sticky lesson footer (WCAG 2.4.11) */
+  .u-fr__text,
+  .u-fr :global(button),
+  .u-fr__result {
+    scroll-margin-bottom: 96px;
+  }
   .u-fr__text:focus-visible,
   .u-fr__result:focus-visible {
     outline: 2px solid var(--ulams-color-primary);
