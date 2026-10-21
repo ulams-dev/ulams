@@ -9,6 +9,7 @@ import Render from "@ulams/ui/Render.astro";
 import Icon from "@ulams/ui/components/Icon.astro";
 import Prose from "@ulams/ui/components/Prose.astro";
 import { formatLabel, formatMinutes } from "@ulams/ui/format";
+import { playerStrings, themeKey } from "@ulams/ui/player-strings";
 import { completionPercent, flattenTopics, topicNeighbours, type Course, type PublicSettings, type Tenant, type TopicProgress } from "@ulams/sdk";
 import Base from "../layouts/Base.astro";
 import LessonView from "./LessonView.astro";
@@ -19,7 +20,7 @@ import { completionMode, formatOf, topicDoc, topicMinutes } from "../lib/page-do
 import { NO_NOTICES, topicNoticeDocs } from "../lib/notices.ts";
 import { getPresentation, profileOf } from "../lib/presentation.ts";
 import { getSupport, supportCardId, supportDocs, supportIsLong } from "../lib/support.ts";
-import { learnerLocale } from "../lib/locale.ts";
+import { contentLang, learnerPageLocale } from "../lib/locale.ts";
 import { showAiAssistedLabel } from "../lib/ai-label.ts";
 import AiLabel from "@ulams/ui/components/AiLabel.astro";
 import { uiStrings } from "@ulams/ui/i18n";
@@ -82,7 +83,12 @@ const scormUuid = (topic.topicable as { uuid?: string } | undefined)?.uuid;
 const tracked = Boolean(token) && !preview;
 // Living Course: "updated since you completed it", the quiz re-attempt notice and the opt-in marker.
 // and the learner's own "Extra help for you" (Learner Insights). Both are fetched together and neither is fatal.
-const locale = learnerLocale(course.language);
+const locale = learnerPageLocale(course.language, settings);
+// the catalogue components read the page language from here (pageLocale in @ulams/ui/i18n)
+Astro.locals.uiLocale = locale;
+const t = playerStrings(locale);
+// course content in a language the interface does not have (a German course) says so with `lang`
+const cLang = contentLang(course.language, locale);
 // The lesson view (Learner Insights presentation profile) comes with them; without it the default view shows.
 const [notices, supportItems, presentationState] = await Promise.all([
   access && tracked ? getLearnerNotices(tenant, token!, courseId) : NO_NOTICES,
@@ -124,7 +130,7 @@ const lti = topic.topicable_type.endsWith("\\LtiLink") && access && tracked ? aw
 const doc = custom ? null : topicDoc({ tenant, theme, course, lesson, topic, access, nextHref, packageAvailable, contentOriginSrc, cmi5Src, liascript, interactive, lti, preview: Boolean(preview), presentation, locale });
 const format = formatOf(topic);
 const minutes = topicMinutes(topic);
-const lessonNoun = { coffee: "Chapter", oncall: "Module", nightsky: "Mission", gravity: "Module", poland: "Chapter", ulam: "Notebook", platform: "Lesson" }[theme];
+const lessonNoun = t.lessonNoun[themeKey(theme)];
 // Progress tracking (ping, mark complete) lives in <ulams-progress>; the preview uses a plain bar.
 const Bar = preview ? "div" : "ulams-progress";
 const barAttrs = preview ? {} : { "course-id": courseId, "topic-id": topicId, complete: completionMode(topic), status: done ? "1" : "0" };
@@ -135,18 +141,18 @@ const tutorOn = access && tracked;
 ---
 
 
-<Base theme={theme} accent={settings?.theme?.accent} title={`${topic.title} — ${course.title}`} demo={preview ? null : { adminUrl: tenant.adminUrl, slug: tenant.slug }} bodyClass="u-player-body" noindex={Boolean(preview)} baseTarget={preview?.framed ? "_top" : undefined}>
+<Base theme={theme} accent={settings?.theme?.accent} title={`${topic.title} — ${course.title}`} demo={preview ? null : { adminUrl: tenant.adminUrl, slug: tenant.slug }} bodyClass="u-player-body" lang={locale} noindex={Boolean(preview)} baseTarget={preview?.framed ? "_top" : undefined}>
   {preview && preview.banner !== false && <PreviewBanner published={isPublished(course)} studioHref={studioHref(preview.sessionId)} publicHref={`/courses/${courseId}`} />}
   <div class:list={["u-player", { "u-player--immersive": immersive, "u-player--linear": linear }]} data-density={presentation.density === "compact" ? "compact" : undefined}>
     <header class="u-player__top">
       <a class="u-player__back" href={backHref}>
         <Icon name="back" />
-        <span class="u-player__course">{course.title}</span>
+        <span class="u-player__course" lang={cLang}>{course.title}</span>
       </a>
       <div
         class="u-player__progress"
         role="progressbar"
-        aria-label="Course progress"
+        aria-label={t.courseProgress}
         aria-valuemin="0"
         aria-valuemax="100"
         aria-valuenow={percent}
@@ -157,13 +163,13 @@ const tutorOn = access && tracked;
         <span data-progress-label>{percent}%</span>
       </div>
       {presentationState && <LessonView part="control" state={presentationState} courseId={courseId} locale={locale} next={Astro.url.pathname} />}
-      <a class="u-player__home" href="/" aria-label="Home"><Icon name="book" /></a>
+      <a class="u-player__home" href="/" aria-label={t.home}><Icon name="book" /></a>
     </header>
 
     <details class="u-player__tree" data-tree>
-      <summary><Icon name="menu" /> Program <span>{nav.index + 1} / {nav.total}</span></summary>
-      <nav aria-label="Course program" tabindex="0">
-        <ol class="u-tree" role="list">
+      <summary><Icon name="menu" /> {t.program} <span>{nav.index + 1} / {nav.total}</span></summary>
+      <nav aria-label={t.programNav} tabindex="0">
+        <ol class="u-tree" role="list" lang={cLang}>
           {
             lessons.map((l, li) => {
               const parts = splitLessonTitle(l.title);
@@ -191,7 +197,7 @@ const tutorOn = access && tracked;
                                 {status === "locked" ? <Icon name="lock" /> : <Icon name="check" />}
                               </span>
                               <span class="u-tree__name">{t.title}</span>
-                              {f && <span class="u-tree__fmt"><Icon name={f} label={formatLabel(f)} /></span>}
+                              {f && <span class="u-tree__fmt"><Icon name={f} label={formatLabel(f, locale)} /></span>}
                             </a>
                           </li>
                         );
@@ -212,25 +218,25 @@ const tutorOn = access && tracked;
             <slot name="content" />
           ) : (
             <>
-        <div class="u-player__lead">
+        <div class="u-player__lead" lang={cLang}>
         <p class="u-player__kicker">
           {lessonParts.kicker ? (/^([IVXLC]+|\d+)$/.test(lessonParts.kicker) ? `${lessonNoun} ${lessonParts.kicker}` : lessonParts.kicker) : lessonNoun} · {lessonParts.title}
         </p>
         <h1 class="u-player__title">{topic.title}</h1>
         <p class="u-player__meta">
-          {format && <span class="u-tag"><Icon name={format} /> {formatLabel(format)}</span>}
-          {minutes > 0 && <span><Icon name="clock" /> {formatMinutes(minutes)}</span>}
-          {topic.preview && <span class="u-tag">Free preview</span>}
-          {done && <span class="u-player__done"><Icon name="check" /> Completed</span>}
+          {format && <span class="u-tag"><Icon name={format} /> {formatLabel(format, locale)}</span>}
+          {minutes > 0 && <span><Icon name="clock" /> {formatMinutes(minutes, locale)}</span>}
+          {topic.preview && <span class="u-tag">{t.freePreview}</span>}
+          {done && <span class="u-player__done"><Icon name="check" /> {t.completed}</span>}
         </p>
-        {jumpLink && <p class="u-player__jump"><a href={jumpLink} lang={locale === "en" ? undefined : locale}>{jumpText}</a></p>}
+        {jumpLink && <p class="u-player__jump"><a href={jumpLink}>{jumpText}</a></p>}
         {topic.introduction && <div class="u-player__intro"><Prose markdown={topic.introduction} size="lg" /></div>}
         </div>
         {presentationState && <LessonView part="notice" state={presentationState} courseId={courseId} locale={locale} next={Astro.url.pathname} saved={lessonViewSaved} />}
         {
           !access && (
             <p class="u-player__notice" role="note">
-              Preview mode: this demo account has no access to the full course, so only free topics open.
+              {t.previewMode}
             </p>
           )
         }
@@ -239,8 +245,8 @@ const tutorOn = access && tracked;
         {doc && <Render doc={doc} />}
         {
           resources.length > 0 && (
-            <section class="u-player__resources" aria-label="Downloads">
-              <h2>Downloads</h2>
+            <section class="u-player__resources" aria-label={t.downloads}>
+              <h2>{t.downloads}</h2>
               <ul role="list">
                 {resources.map((r) => (
                   <li>
@@ -264,8 +270,8 @@ const tutorOn = access && tracked;
     <Bar class="u-player__bar" {...barAttrs}>
       {
         prevHref ? (
-          <a class="u-btn u-btn--ghost u-btn--sm" href={prevHref} rel="prev" data-key-prev aria-keyshortcuts="k" aria-label="Previous topic">
-            <Icon name="back" /> <span class="u-player__label">Previous</span>
+          <a class="u-btn u-btn--ghost u-btn--sm" href={prevHref} rel="prev" data-key-prev aria-keyshortcuts="k" aria-label={t.previousTopic}>
+            <Icon name="back" /> <span class="u-player__label">{t.previous}</span>
           </a>
         ) : (
           <span />
@@ -274,15 +280,15 @@ const tutorOn = access && tracked;
       {tutorOn && <ulams-tutor class="u-player__tutor" course-id={courseId} topic-id={topicId} />}
       {
         access && !preview ? (
-          <button class="u-btn u-btn--sm u-player__complete" type="button" data-complete aria-pressed={done ? "true" : "false"} data-done-label="Completed" data-todo-label="Mark as complete">
-            <Icon name="check" /> <span data-label>{done ? "Completed" : "Mark as complete"}</span>
+          <button class="u-btn u-btn--sm u-player__complete" type="button" data-complete aria-pressed={done ? "true" : "false"} data-done-label={t.completed} data-todo-label={t.markComplete}>
+            <Icon name="check" /> <span data-label>{done ? t.completed : t.markComplete}</span>
           </button>
         ) : (
           <span />
         )
       }
-      <a class="u-btn u-btn--sm" href={nextHref} rel="next" data-key-next aria-keyshortcuts="j" aria-label={nav.next ? "Next topic" : "Finish the course"}>
-        <span class="u-player__label">{nav.next ? "Next" : "Finish"}</span> <Icon name="arrow" />
+      <a class="u-btn u-btn--sm" href={nextHref} rel="next" data-key-next aria-keyshortcuts="j" aria-label={nav.next ? t.nextTopic : t.finishCourse}>
+        <span class="u-player__label">{nav.next ? t.next : t.finish}</span> <Icon name="arrow" />
       </a>
       <p class="u-visually-hidden" aria-live="polite" data-live></p>
     </Bar>

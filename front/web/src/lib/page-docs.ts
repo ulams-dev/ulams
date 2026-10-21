@@ -5,6 +5,7 @@
  */
 import { durationToMinutes, topicKind, type Course, type Lesson, type Presentation, type Tenant, type Topic } from "@ulams/sdk";
 import type { UiLocale } from "@ulams/ui/i18n";
+import { fill, plural, playerStrings } from "@ulams/ui/player-strings";
 import type { UiNode } from "@ulams/ui/render-core";
 import { LEARNER_LAYOUT_COMPONENTS, registry, type ComponentName, type ThemeName } from "@ulams/ui/registry";
 import { stripLeadingTitle } from "@ulams/ui/markdown";
@@ -35,38 +36,53 @@ export const HERO_VARIANT: Record<ThemeName, "editorial" | "console" | "adventur
 
 const LESSON_NOUN: Record<ThemeName, string> = { coffee: "Chapter", oncall: "Module", nightsky: "Mission", gravity: "Module", poland: "Chapter", ulam: "Notebook", platform: "Lesson" };
 
-export function courseHeaderDoc(theme: ThemeName, course: CourseModel, progress: number | undefined, resumeHref: string, progressNote?: string): UiNode {
+/** Level, length and topic count of the course header, in the language (the English facts come from the model). */
+function courseFacts(course: CourseModel, locale: UiLocale): CourseModel["facts"] {
+  if (locale === "en") return course.facts;
+  const t = playerStrings(locale);
+  const facts: CourseModel["facts"] = [];
+  if (course.level) facts.push({ label: t.factLevel, value: course.level });
+  if (course.hours) facts.push({ label: t.factLength, value: plural(locale, t.hoursValue, course.hours), note: t.selfPaced });
+  else if (course.durationLabel) facts.push({ label: t.factLength, value: course.durationLabel });
+  facts.push({ label: t.factTopics, value: String(course.topicCount), note: plural(locale, t.inLessons, course.lessonCount) });
+  return facts;
+}
+
+export function courseHeaderDoc(theme: ThemeName, course: CourseModel, progress: number | undefined, resumeHref: string, progressNote?: string, locale: UiLocale = "en"): UiNode {
+  const t = playerStrings(locale);
   return {
     component: "CourseHeader",
     props: {
       variant: HERO_VARIANT[theme],
-      eyebrow: course.level ? `${course.level} · ${course.lessonCount} ${LESSON_NOUN[theme].toLowerCase()}s` : undefined,
+      eyebrow: course.level ? `${course.level} · ${locale === "en" ? `${course.lessonCount} ${LESSON_NOUN[theme].toLowerCase()}s` : plural(locale, t.eyebrowLessons, course.lessonCount)}` : undefined,
       title: course.title,
       subtitle: course.subtitle,
       summary: course.summary,
       facts: [
-        ...course.facts,
-        ...(course.language ? [{ label: "Language", value: course.language.toUpperCase() }] : []),
+        ...courseFacts(course, locale),
+        ...(course.language ? [{ label: t.factLanguage, value: course.language.toUpperCase() }] : []),
       ].slice(0, 6),
       image: course.image,
       tutors: course.tutors.slice(0, 4),
-      primaryCta: { label: progress ? "Continue learning" : "Start learning", href: resumeHref },
-      secondaryCta: course.previewHref !== course.learnHref ? { label: "Free preview", href: course.previewHref } : undefined,
+      primaryCta: { label: progress ? t.continueLearning : t.startLearning, href: resumeHref },
+      secondaryCta: course.previewHref !== course.learnHref ? { label: t.freePreview, href: course.previewHref } : undefined,
       progress,
       progressNote: progressNote || undefined,
     },
   };
 }
 
-export function syllabusDoc(theme: ThemeName, course: CourseModel): UiNode {
+export function syllabusDoc(theme: ThemeName, course: CourseModel, locale: UiLocale = "en"): UiNode {
+  const t = playerStrings(locale);
+  const titles = t.syllabusTitle as Record<string, string>;
   return {
     component: "Syllabus",
     props: {
       variant: SYLLABUS_VARIANT[theme],
-      eyebrow: "Program",
-      title: { nightsky: "Your mission map", gravity: "Your flight plan", poland: "Contents", ulam: "The notebooks" }[theme as string] ?? "What you will do",
+      eyebrow: t.syllabusEyebrow,
+      title: titles[theme] ?? t.syllabusTitleDefault,
       lessons: course.lessons,
-      totalLabel: course.lessonsLabel,
+      totalLabel: locale === "en" ? course.lessonsLabel : [plural(locale, t.lessonsCount, course.lessonCount), plural(locale, t.topicsCount, course.topicCount), course.minutes ? fill(t.materialHours, { n: Math.round(course.minutes / 60) }) : ""].filter(Boolean).join(" · "),
     },
   };
 }
@@ -75,22 +91,24 @@ export function descriptionDoc(theme: ThemeName, course: CourseModel): UiNode | 
   return course.description ? { component: "Prose", props: { markdown: course.description, dropCap: theme === "coffee" } } : null;
 }
 
-export function purchaseDoc(course: CourseModel, site: SiteModel, resumeHref: string): UiNode {
+export function purchaseDoc(course: CourseModel, site: SiteModel, resumeHref: string, locale: UiLocale = "en"): UiNode {
   const plan = site.plans[0];
+  const t = playerStrings(locale);
+  const formats = course.formats.slice(0, 5).map((f) => (t.formats as Record<string, string>)[f] ?? f);
   return {
     component: "PurchaseCard",
     props: {
-      title: "Demo access",
+      title: t.demoAccess,
       price: course.price ?? plan?.price,
-      priceNote: course.price ? "list price" : plan?.period,
+      priceNote: course.price ? t.listPrice : plan?.period,
       items: [
-        `${course.lessonCount} lessons, ${course.topicCount} topics`,
-        ...(course.formats.length ? [`Formats: ${course.formats.slice(0, 5).join(", ")}`] : []),
-        "Progress saved as you go",
-        "Every lesson open in this demo",
+        locale === "en" ? `${course.lessonCount} lessons, ${course.topicCount} topics` : `${plural(locale, t.lessonsCount, course.lessonCount)}, ${plural(locale, t.topicsCount, course.topicCount)}`,
+        ...(course.formats.length ? [fill(t.formatsList, { list: locale === "en" ? course.formats.slice(0, 5).join(", ") : formats.join(", ") })] : []),
+        t.progressSaved,
+        t.everyLessonOpen,
       ],
-      cta: { label: "Open the course", href: resumeHref },
-      note: "Payments run through the shop service in production; this demo opens the course directly.",
+      cta: { label: t.openCourse, href: resumeHref },
+      note: t.paymentsNote,
     },
   };
 }
@@ -154,6 +172,7 @@ export function layoutNodes(topicable: unknown): UiNode[] | null {
 /** Body of the lesson player for one topic. */
 export function topicDoc({ tenant, theme, course, topic, access, nextHref, packageAvailable = true, contentOriginSrc = null, cmi5Src = null, liascript = null, interactive = null, lti = null, preview = false, presentation = DEFAULT_PRESENTATION, locale = "en" }: TopicDocInput): UiNode {
   const kind = topicKind(topic.topicable_type);
+  const s = playerStrings(locale);
   const t = (topic.topicable ?? {}) as Record<string, unknown>;
   const children: UiNode[] = [];
   const description = str(topic.description);
@@ -163,11 +182,9 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
       component: "ActivityCard",
       props: {
         kind: "locked",
-        title: access ? "This topic could not be loaded" : "Locked in this demo account",
-        text: access
-          ? "The API returned the topic without its content. Try again in a moment."
-          : "The demo student has no access to this course yet, so only the free preview topics open. Turn on demo mode for the tenant (or grant the student access in the admin) to open every topic.",
-        cta: { label: "Back to the course", href: `/courses/${course.id}` },
+        title: access ? s.topicNotLoadedTitle : s.topicLockedTitle,
+        text: access ? s.topicNotLoadedText : s.topicLockedText,
+        cta: { label: s.backToCourse, href: `/courses/${course.id}` },
       },
     });
     return { component: "Stack", props: { gap: "lg" }, children };
@@ -178,11 +195,8 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
       component: "Callout",
       props: {
         tone: "key",
-        title: kind === "quiz" ? "Quiz: not run in preview" : "Not launched in preview",
-        text:
-          kind === "quiz"
-            ? "Learners answer this quiz and see their score here. The preview does not start attempts, so nothing is saved."
-            : "Learners open this activity here and it reports their progress. The preview does not launch it, so nothing is recorded.",
+        title: kind === "quiz" ? s.previewQuizTitle : s.previewOtherTitle,
+        text: kind === "quiz" ? s.previewQuizText : s.previewOtherText,
       },
     });
     if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
@@ -251,9 +265,9 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
               component: "ActivityCard",
               props: {
                 kind: "tracked",
-                title: `${topic.title} (SCORM package)`,
-                text: "The package is uploaded, but this API does not serve its files yet (tenant storage is not published under /storage). The player opens here as soon as the files load.",
-                cta: { label: "Try the player in a new tab", href: src },
+                title: fill(s.scormTitle, { title: topic.title }),
+                text: s.scormText,
+                cta: { label: s.scormTry, href: src },
               },
             }
       );
@@ -268,9 +282,9 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
           lti && "url" in lti
             ? {
                 component: "ActivityCard",
-                props: { kind: "tracked", title: topic.title, text: `Opens in ${lti.tool || "the tool"} in a new window; your result comes back here.`, cta: { label: "Open the activity", href: lti.url } },
+                props: { kind: "tracked", title: topic.title, text: fill(s.ltiOpens, { tool: lti.tool || s.ltiToolFallback }), cta: { label: s.ltiOpen, href: lti.url } },
               }
-            : { component: "Callout", props: { tone: "warning", title: topic.title, text: lti && "error" in lti ? lti.error : "This activity opens once you are enrolled." } }
+            : { component: "Callout", props: { tone: "warning", title: topic.title, text: lti && "error" in lti ? lti.error : s.ltiNeedsEnrolment } }
         );
       }
       if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
@@ -281,7 +295,7 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
           ? { component: "LiaScriptLesson", props: { src: liascript.url, title: topic.title, ...(liascript.sections ? { sections: liascript.sections } : {}) } }
           : {
               component: "Callout",
-              props: { tone: "warning", title: topic.title, text: liascript && "error" in liascript ? liascript.error : "This course opens once you are enrolled." },
+              props: { tone: "warning", title: topic.title, text: liascript && "error" in liascript ? liascript.error : s.liaNeedsEnrolment },
             }
       );
       if (description) children.push({ component: "Prose", props: { markdown: description, size: "sm" } });
@@ -289,7 +303,7 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
     case "interactive": {
       children.push(
         !interactive && preview
-          ? { component: "Callout", props: { tone: "key", title: "Not launched in preview", text: "Learners open this interactive here and it reports their progress. This preview does not launch it, so nothing is recorded." } }
+          ? { component: "Callout", props: { tone: "key", title: s.previewOtherTitle, text: s.previewInteractiveText } }
           : interactiveNode(interactive, { title: topic.title, course, topicId: topic.id, preview })
       );
       // the topic's own text still shows when the package cannot be played
@@ -329,8 +343,8 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
         component: "ActivityCard",
         props: {
           kind: "project",
-          title: "Hand in your work",
-          text: "In the full app you upload your files here and your tutor replies in a feedback thread. File upload is not part of this demo yet.",
+          title: s.projectTitle,
+          text: s.projectText,
         },
       });
       break;
@@ -343,15 +357,15 @@ export function topicDoc({ tenant, theme, course, topic, access, nextHref, packa
               props: {
                 kind: "tracked",
                 title: topic.title,
-                text: str(topic.introduction) ?? "A tracked activity that reports your progress back. It opens here once you are enrolled and the tenant has a content origin.",
-                steps: description ? undefined : ["Open the activity", "Complete it", "Your progress is saved"],
+                text: str(topic.introduction) ?? s.cmi5Text,
+                steps: description ? undefined : [s.cmi5Step1, s.cmi5Step2, s.cmi5Step3],
               },
             }
       );
       if (description) children.push({ component: "Prose", props: { markdown: description } });
       break;
     default:
-      children.push({ component: "Callout", props: { tone: "warning", title: "Unsupported topic type", text: topic.topicable_type } });
+      children.push({ component: "Callout", props: { tone: "warning", title: s.unsupportedTopic, text: topic.topicable_type } });
   }
   return { component: "Stack", props: { gap: "lg" }, children };
 }
