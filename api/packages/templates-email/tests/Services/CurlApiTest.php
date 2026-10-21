@@ -41,6 +41,26 @@ class CurlApiTest extends TestCase
         $this->assertSame(0, $options[CURLOPT_MAXREDIRS]);
     }
 
+    public function testRenderWithErrorsReturnsTheMjmlErrorList(): void
+    {
+        $api = new CurlApi('http://mjml:15500/v1', $this->curl(200, [
+            'html' => '<p>ok</p>',
+            'errors' => [['line' => 3, 'message' => 'Attribute foo is illegal', 'tagName' => 'mj-text']],
+        ]));
+
+        $this->assertSame(
+            ['html' => '<p>ok</p>', 'errors' => ['line 3: Attribute foo is illegal (mj-text)']],
+            $api->renderWithErrors('<mjml></mjml>')
+        );
+    }
+
+    public function testRenderWithErrorsHasAnEmptyListWhenThereAreNoErrors(): void
+    {
+        $api = new CurlApi('http://mjml:15500/v1', $this->curl(200, ['html' => '<p>ok</p>']));
+
+        $this->assertSame(['html' => '<p>ok</p>', 'errors' => []], $api->renderWithErrors('<mjml></mjml>'));
+    }
+
     public function testTimeoutsAreConfigurable(): void
     {
         $captured = null;

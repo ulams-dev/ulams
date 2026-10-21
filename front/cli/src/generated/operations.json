@@ -2058,6 +2058,18 @@
   "tag": "Templates"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/templates/email/render",
+  "summary": "Render an unsaved e-mail template draft with sample data",
+  "tag": "Templates"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/templates/email/test-send",
+  "summary": "Send an unsaved e-mail template draft to the signed-in admin",
+  "tag": "Templates"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/templates/variables",
   "summary": "Dictionary list of available template variables",

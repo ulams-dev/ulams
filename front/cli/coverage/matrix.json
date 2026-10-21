@@ -1,5 +1,5 @@
 {
- "summary": "586/660 covered, 74 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "588/662 covered, 74 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -2021,6 +2021,18 @@
    "key": "GET /api/admin/templates/assigned",
    "summary": "Get Template assigned to the model",
    "command": "templates.assigned",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/templates/email/render",
+   "summary": "Render an unsaved e-mail template draft with sample data",
+   "command": "templates.email-render",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/templates/email/test-send",
+   "summary": "Send an unsaved e-mail template draft to the signed-in admin",
+   "command": "templates.email-test-send",
    "status": "covered"
   },
   {

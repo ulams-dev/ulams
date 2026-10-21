@@ -37,6 +37,22 @@ final class CurlApi implements ApiInterface
         return $data['html'] ?? '';
     }
 
+    /**
+     * Like getHtml(), but also returns the MJML validation errors (soft validation) as short single-line
+     * strings, so an author can see why a draft may look wrong.
+     *
+     * @return array{html: string, errors: string[]}
+     */
+    public function renderWithErrors(string $mjml): array
+    {
+        $data = $this->getResult($mjml);
+
+        return [
+            'html' => $data['html'] ?? '',
+            'errors' => $this->describeErrors($data['errors'] ?? []),
+        ];
+    }
+
     public function getMjmlVersion(): string
     {
         $data = $this->getResult('<mjml></mjml>');

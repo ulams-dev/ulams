@@ -36,6 +36,17 @@ Each notification is created as a class describing available variables that can 
     - register to MJML API and configure api id & secret in this package config file
     - calls to the MJML HTTP service (`MJML_API_URL`) use a connect timeout of `MJML_CONNECT_TIMEOUT` (5 s) and a total timeout of `MJML_TIMEOUT` (20 s), do not follow redirects, and log or raise the error list the service returns
 
+### Draft preview and test send
+
+`POST /api/admin/templates/email/render` renders an unsaved draft (`event`, `title`, `content`, optional
+`sample_overrides`) with the `mockedVariables()` of the event's variable class and returns
+`{title, html, errors, missing_variables, warnings}`. `POST /api/admin/templates/email/test-send` does the same and
+sends the e-mail (subject prefixed `[Test]`) only to the signed-in user. Both need `template_update`, are throttled
+(30 and 5 per minute per user) and store nothing. `errors` are the MJML errors of the render service; `warnings` come
+from `Ulams\TemplatesEmail\Accessibility\EmailA11yChecker` (missing image alt, no `lang`, no `<title>`, links without
+text, layout tables without `role="presentation"`, low contrast of inline colours) and never fail the request.
+Content is treated as MJML when it contains a `<mjml>` element, with or without attributes (`<mjml lang="en">`).
+
 ### Variable values are escaped
 
 Variable values are HTML-escaped when they are put into the `contentHtml` section, so a user named

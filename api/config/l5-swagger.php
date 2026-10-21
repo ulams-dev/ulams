@@ -64,6 +64,7 @@ return [
                     base_path('packages/stationary-events/src'),
                     base_path('packages/reports/src'),
                     base_path('packages/templates/src'),
+                    base_path('packages/templates-email/src'),
                     base_path('packages/templates-pdf/src'),
                     base_path('packages/assign-without-account/src'),
                     base_path('packages/translations/src'),

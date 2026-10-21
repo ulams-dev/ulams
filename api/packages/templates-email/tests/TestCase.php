@@ -46,6 +46,7 @@ class TestCase extends CoreTestCase
             MjmlServiceContract::class,
             Mockery::mock(MjmlService::class, function (MockInterface $mock) {
                 $mock->shouldReceive('render')->andReturnArg(0);
+                $mock->shouldReceive('renderWithErrors')->andReturnUsing(fn (string $mjml) => ['html' => $mjml, 'errors' => []]);
             })
         );
         $this->seed(TemplatesEmailSeeder::class);

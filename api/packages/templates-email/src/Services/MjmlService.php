@@ -18,6 +18,16 @@ class MjmlService implements MjmlServiceContract
         return $this->renderer()->render($mjml);
     }
 
+    public function renderWithErrors(string $mjml): array
+    {
+        $renderer = $this->renderer();
+        if ($renderer instanceof CurlRenderer) {
+            return $renderer->renderWithErrors($mjml);
+        }
+
+        return ['html' => $renderer->render($mjml), 'errors' => []];
+    }
+
     /**
      * The MJML HTTP service (MJML_API_URL) wins; a local mjml binary (MJML_BINARY_PATH) is used only when the
      * file is executable; otherwise the text of the template is sent without layout and a warning is logged once.

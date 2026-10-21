@@ -8069,6 +8069,46 @@ export interface paths {
         patch: operations["tasks.notes.by-id.patch"];
         trace?: never;
     };
+    "/api/admin/templates/email/render": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Render an unsaved e-mail template draft with sample data
+         * @description Nothing is stored and nothing is sent. Returns the rendered HTML with the sample values of the event, the MJML errors reported by the renderer and accessibility warnings (warnings never fail the request). Throttled to 30 requests per minute per user.
+         */
+        post: operations["templates.email.render"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/templates/email/test-send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Send an unsaved e-mail template draft to the signed-in admin
+         * @description Renders the draft like the render endpoint and sends it, with the subject prefixed by [Test], only to the e-mail address of the authenticated user. There is no recipient field. Throttled to 5 requests per minute per user.
+         */
+        post: operations["templates.email.test-send"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/certificates/verify/{certificateId}": {
         parameters: {
             query?: never;
@@ -9033,6 +9073,26 @@ export interface paths {
          * @description Get public translations
          */
         get: operations["translations.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/tutor/runs/{run}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * AG-UI event stream (SSE) of one streamed tutor answer
+         * @description Text events are a draft; the `CUSTOM` event `tutor.final` carries the validated answer with its citations and always replaces it. During an open quiz attempt only `tutor.final` is sent. The stream ends after `RUN_FINISHED` or `RUN_ERROR`, or after 25 seconds (reconnect with `Last-Event-ID`).
+         */
+        get: operations["tutor.runs.by-run.events.get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -11352,6 +11412,26 @@ export interface components {
             first_name: string;
             /** @description last_name */
             last_name: string;
+        };
+        EmailTemplateDraft: {
+            /** @description subject with the sample values */
+            title?: string;
+            /** @description rendered e-mail HTML with the sample values */
+            html?: string;
+            /** @description MJML errors reported by the renderer */
+            errors?: string[];
+            /** @description variables required by the event that the draft does not use */
+            missing_variables?: string[];
+            /** @description accessibility warnings of the generated e-mail */
+            warnings?: {
+                code?: string;
+                message?: string;
+                count?: number;
+            }[];
+            /** @description only in the test-send response */
+            sent?: boolean;
+            /** @description only in the test-send response: the address of the signed-in admin */
+            recipient?: string;
         };
         FabricPDF: {
             /** @description template id */
@@ -30687,6 +30767,150 @@ export interface operations {
             };
         };
     };
+    "templates.email.render": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description event full classname, as listed by GET /api/admin/templates/events */
+                    event: string;
+                    /** @description subject */
+                    title: string;
+                    /** @description MJML (or HTML) source, up to 512 KiB */
+                    content: string;
+                    /** @description variable name to sample value, for this preview only */
+                    sample_overrides?: {
+                        [key: string]: string;
+                    };
+                };
+            };
+        };
+        responses: {
+            /** @description rendered draft */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["EmailTemplateDraft"];
+                    };
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description user doesn't have required access rights */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description the MJML renderer is unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "templates.email.test-send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    event: string;
+                    title: string;
+                    content: string;
+                    sample_overrides?: {
+                        [key: string]: string;
+                    };
+                };
+            };
+        };
+        responses: {
+            /** @description the draft was sent to the signed-in admin */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["EmailTemplateDraft"];
+                    };
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description user doesn't have required access rights */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description the MJML renderer is unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "certificates.verify.by-certificateid.get": {
         parameters: {
             query?: never;
@@ -32884,6 +33108,36 @@ export interface operations {
             };
         };
     };
+    "tutor.runs.by-run.events.get": {
+        parameters: {
+            query?: {
+                /** @description resume after this event id (or Last-Event-ID header) */
+                after?: number;
+            };
+            header?: never;
+            path: {
+                run: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description text/event-stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown run, or a run of another learner */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "tutor.courses.by-course.status.get": {
         parameters: {
             query?: never;
@@ -32895,7 +33149,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description `enabled` (tutor on for the tenant), `aiEnabled` (AI on), `remaining` and `dailyLimit` questions, `attemptActive` (a quiz attempt is open: the tutor explains concepts only) */
+            /** @description `enabled` (tutor on for the tenant), `aiEnabled` (AI on), `remaining` and `dailyLimit` questions, `attemptActive` (a quiz attempt is open: the tutor explains concepts only), `streaming` (the operator allows streamed answers) */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -32936,12 +33190,23 @@ export interface operations {
                     conversationId?: string | null;
                     /** @description The topic the learner has open: its content is added to the search */
                     topicId?: number | null;
+                    /** @description Queue the answer and return 202 with a run id; read it at `GET /api/tutor/runs/{run}/events`. Ignored (the answer comes back in the response) when the operator switched streaming off */
+                    stream?: boolean;
                 };
             };
         };
         responses: {
             /** @description `answer`, `citations` (label, topic, source fragments), `refusal` (none, out_of_scope, attempt_active, unsafe), `inScope`, `remaining` questions today */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description `stream: true`: the question is stored and the answer is queued; `conversationId`, `runId`, `questionId` */
+            202: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -32958,6 +33223,13 @@ export interface operations {
             };
             /** @description Unknown course or conversation */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The conversation already has an answer running */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -33052,6 +33324,13 @@ export interface operations {
             };
             /** @description Not the learner's conversation */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description An answer is still being written */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

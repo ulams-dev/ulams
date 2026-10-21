@@ -63,6 +63,44 @@ The renderer is chosen in this order:
 
 If the HTML of a template looks unstyled, check the log for that warning first.
 
+## Previewing and test-sending a draft
+
+Two admin endpoints work on a draft that is not saved yet. Both need the `template_update`
+permission, read only the current tenant's settings and write nothing.
+
+| Endpoint | Does | Limit |
+|---|---|---|
+| `POST /api/admin/templates/email/render` | Renders `{event, title, content}` with the sample values of the event and returns the HTML | 30 per minute per user |
+| `POST /api/admin/templates/email/test-send` | Same, then sends the e-mail with the subject prefixed `[Test]` | 5 per minute per user |
+
+The test e-mail goes only to the address of the signed-in admin; the request has no recipient
+field and anything extra in the body is ignored. Optional `sample_overrides` (variable name to
+text, up to 500 characters, limited to the variables of the event) change a sample value for that
+request only. The body of `content` is limited to 512 KiB.
+
+The response data has:
+
+- `html` and `title`: the e-mail with the sample values (values are HTML-escaped, as on send).
+- `errors`: the MJML errors the rendering service reported (soft validation: the HTML is still
+  returned), as short lines such as `line 3: Attribute foo is illegal (mj-text)`.
+- `missing_variables`: variables the event requires that the draft does not use.
+- `warnings`: accessibility warnings of the generated e-mail, each `{code, message, count}`. They
+  never fail the request. Codes: `image-missing-alt`, `missing-lang` (set `lang` on `<mjml>`),
+  `missing-title` (add `<mj-title>`), `link-without-text`, `layout-table-without-role` and
+  `low-contrast` (inline colours below 4.5:1, 3:1 for large text; white is assumed when no
+  background colour is set).
+
+If the rendering service is down or times out the endpoints answer `503`.
+
+```bash
+curl -s -X POST "$API/api/admin/templates/email/render" \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"event":"Ulams\\Templates\\Events\\ManuallyTriggeredEvent","title":"Hello @VarUserName",
+       "content":"<mjml><mj-body><mj-section><mj-column><mj-text>Hi @VarUserName</mj-text></mj-column></mj-section></mj-body></mjml>"}'
+```
+
+With the development stack the test e-mail arrives in MailHog on port 8025.
+
 ## Queues and the scheduler
 
 Template e-mails are sent by an event listener (`packages/templates`) in the process that raised

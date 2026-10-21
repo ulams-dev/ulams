@@ -95,6 +95,12 @@ class TemplatesApi
         'templatesDelete' => [
             'application/json',
         ],
+        'templatesEmailRender' => [
+            'application/json',
+        ],
+        'templatesEmailTestSend' => [
+            'application/json',
+        ],
         'templatesPreview' => [
             'application/json',
         ],
@@ -2733,6 +2739,628 @@ class TemplatesApi
         $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
             'DELETE',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation templatesEmailRender
+     *
+     * Render an unsaved e-mail template draft with sample data
+     *
+     * @param  \Ulams\Sdk\Model\TemplatesEmailRenderRequest $templates_email_render_request templates_email_render_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['templatesEmailRender'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\TemplatesEmailRender200Response
+     */
+    public function templatesEmailRender($templates_email_render_request, string $contentType = self::contentTypes['templatesEmailRender'][0])
+    {
+        list($response) = $this->templatesEmailRenderWithHttpInfo($templates_email_render_request, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation templatesEmailRenderWithHttpInfo
+     *
+     * Render an unsaved e-mail template draft with sample data
+     *
+     * @param  \Ulams\Sdk\Model\TemplatesEmailRenderRequest $templates_email_render_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['templatesEmailRender'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\TemplatesEmailRender200Response, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function templatesEmailRenderWithHttpInfo($templates_email_render_request, string $contentType = self::contentTypes['templatesEmailRender'][0])
+    {
+        $request = $this->templatesEmailRenderRequest($templates_email_render_request, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\TemplatesEmailRender200Response' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\TemplatesEmailRender200Response' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\TemplatesEmailRender200Response', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\TemplatesEmailRender200Response';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\TemplatesEmailRender200Response',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation templatesEmailRenderAsync
+     *
+     * Render an unsaved e-mail template draft with sample data
+     *
+     * @param  \Ulams\Sdk\Model\TemplatesEmailRenderRequest $templates_email_render_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['templatesEmailRender'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function templatesEmailRenderAsync($templates_email_render_request, string $contentType = self::contentTypes['templatesEmailRender'][0])
+    {
+        return $this->templatesEmailRenderAsyncWithHttpInfo($templates_email_render_request, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation templatesEmailRenderAsyncWithHttpInfo
+     *
+     * Render an unsaved e-mail template draft with sample data
+     *
+     * @param  \Ulams\Sdk\Model\TemplatesEmailRenderRequest $templates_email_render_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['templatesEmailRender'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function templatesEmailRenderAsyncWithHttpInfo($templates_email_render_request, string $contentType = self::contentTypes['templatesEmailRender'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\TemplatesEmailRender200Response';
+        $request = $this->templatesEmailRenderRequest($templates_email_render_request, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'templatesEmailRender'
+     *
+     * @param  \Ulams\Sdk\Model\TemplatesEmailRenderRequest $templates_email_render_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['templatesEmailRender'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function templatesEmailRenderRequest($templates_email_render_request, string $contentType = self::contentTypes['templatesEmailRender'][0])
+    {
+
+        // verify the required parameter 'templates_email_render_request' is set
+        if ($templates_email_render_request === null || (is_array($templates_email_render_request) && count($templates_email_render_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $templates_email_render_request when calling templatesEmailRender'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/templates/email/render';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($templates_email_render_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($templates_email_render_request));
+            } else {
+                $httpBody = $templates_email_render_request;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation templatesEmailTestSend
+     *
+     * Send an unsaved e-mail template draft to the signed-in admin
+     *
+     * @param  \Ulams\Sdk\Model\TemplatesEmailTestSendRequest $templates_email_test_send_request templates_email_test_send_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['templatesEmailTestSend'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\TemplatesEmailRender200Response
+     */
+    public function templatesEmailTestSend($templates_email_test_send_request, string $contentType = self::contentTypes['templatesEmailTestSend'][0])
+    {
+        list($response) = $this->templatesEmailTestSendWithHttpInfo($templates_email_test_send_request, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation templatesEmailTestSendWithHttpInfo
+     *
+     * Send an unsaved e-mail template draft to the signed-in admin
+     *
+     * @param  \Ulams\Sdk\Model\TemplatesEmailTestSendRequest $templates_email_test_send_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['templatesEmailTestSend'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\TemplatesEmailRender200Response, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function templatesEmailTestSendWithHttpInfo($templates_email_test_send_request, string $contentType = self::contentTypes['templatesEmailTestSend'][0])
+    {
+        $request = $this->templatesEmailTestSendRequest($templates_email_test_send_request, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\TemplatesEmailRender200Response' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\TemplatesEmailRender200Response' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\TemplatesEmailRender200Response', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\TemplatesEmailRender200Response';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\TemplatesEmailRender200Response',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation templatesEmailTestSendAsync
+     *
+     * Send an unsaved e-mail template draft to the signed-in admin
+     *
+     * @param  \Ulams\Sdk\Model\TemplatesEmailTestSendRequest $templates_email_test_send_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['templatesEmailTestSend'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function templatesEmailTestSendAsync($templates_email_test_send_request, string $contentType = self::contentTypes['templatesEmailTestSend'][0])
+    {
+        return $this->templatesEmailTestSendAsyncWithHttpInfo($templates_email_test_send_request, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation templatesEmailTestSendAsyncWithHttpInfo
+     *
+     * Send an unsaved e-mail template draft to the signed-in admin
+     *
+     * @param  \Ulams\Sdk\Model\TemplatesEmailTestSendRequest $templates_email_test_send_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['templatesEmailTestSend'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function templatesEmailTestSendAsyncWithHttpInfo($templates_email_test_send_request, string $contentType = self::contentTypes['templatesEmailTestSend'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\TemplatesEmailRender200Response';
+        $request = $this->templatesEmailTestSendRequest($templates_email_test_send_request, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'templatesEmailTestSend'
+     *
+     * @param  \Ulams\Sdk\Model\TemplatesEmailTestSendRequest $templates_email_test_send_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['templatesEmailTestSend'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function templatesEmailTestSendRequest($templates_email_test_send_request, string $contentType = self::contentTypes['templatesEmailTestSend'][0])
+    {
+
+        // verify the required parameter 'templates_email_test_send_request' is set
+        if ($templates_email_test_send_request === null || (is_array($templates_email_test_send_request) && count($templates_email_test_send_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $templates_email_test_send_request when calling templatesEmailTestSend'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/templates/email/test-send';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($templates_email_test_send_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($templates_email_test_send_request));
+            } else {
+                $httpBody = $templates_email_test_send_request;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
