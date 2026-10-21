@@ -24,7 +24,8 @@ FROM nginxinc/nginx-unprivileged:1.29-alpine@sha256:0c79d56aee561a1d81c63f00eee5
 # Settings are read at start from the environment (names starting with REACT_APP_) and written to
 # /runtime-config.json, which the app loads before it boots (ADR 0056). Examples:
 #   REACT_APP_API_URL            fixed API URL (single tenant); empty: derived from the host
-#   REACT_APP_TENANT_API_HOST_PATTERN, REACT_APP_STUDIO_URL, REACT_APP_SENTRYDSN, REACT_APP_YBUG
+#   REACT_APP_TENANT_API_HOST_PATTERN, REACT_APP_STUDIO_URL, REACT_APP_SENTRYDSN, REACT_APP_YBUG,
+#   REACT_APP_ULAMS_DOCS_URL     base URL of the documentation (ULAMS_DOCS_URL); empty: ulams-dev.github.io/ulams
 ARG ADMIN_VERSION="dev-main"
 USER root
 COPY admin/nginx.conf /etc/nginx/conf.d/default.conf

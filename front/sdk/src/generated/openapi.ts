@@ -550,7 +550,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Redirect to social login */
+        /**
+         * Redirect to social login
+         * @description Starts a login with Google or Facebook. `return_url` must be an origin of the tenant's own apps (otherwise 422). `challenge` is the S256 challenge of a random verifier that the caller keeps secret (base64url of its SHA-256, 43 characters). After the provider's consent the browser is sent to `return_url` with a one-time `code` (60 seconds, single use) to redeem at POST /api/auth/social/exchange together with the verifier; failures arrive as `error` (provider_denied, provider_failed, link_required, email_unverified, account_unavailable).
+         */
         get: operations["auth.social.by-provider.get"];
         put?: never;
         post?: never;
@@ -567,10 +570,33 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Redirect after sucessfull login */
+        /**
+         * Redirect after successful login
+         * @description The provider's callback. Checks the signed, single-use state and sends the browser to the return URL with a one-time `code` (and `complete=false` when the provider gave no e-mail address and the sign-up must be completed) or an `error` reason. An access token is never put in a URL.
+         */
         get: operations["auth.social.by-provider.callback.get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/social/exchange": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Exchange a one-time social login code for a token
+         * @description Redeems the `code` of a social login redirect together with the secret `verifier` whose S256 challenge started the login. The code works once, within 60 seconds, on the tenant that issued it. Call it from the front end's server, never from a page that may be logged. Returns the access token (`complete=true`) or, when the sign-up needs an e-mail address, `pre_user_token` for POST /api/auth/social/complete/{token} (`complete=false`).
+         */
+        post: operations["auth.social.exchange.post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1895,6 +1921,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/commerce/webhooks/{provider}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Receive a signed order event of the commerce provider
+         * @description Inbound order events of a commerce provider (ADR 0130). Public route, authenticated by the signature with the
+         *     tenant's own secret, never by a session: the body is verified (HMAC over `<t>.<raw body>`, 300 s tolerance,
+         *     the secret being rotated out also accepted), its event id must equal the `Ulams-Event-Id` header, and its channel
+         *     must be this tenant's channel. A valid event is stored once per event id and queued; a duplicate answers 200
+         *     with no work. The payload is untrusted: only the envelope is read, and the job re-reads the order from the provider.
+         */
+        post: operations["commerce.webhooks.by-provider.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/compliance/assignments": {
         parameters: {
             query?: never;
@@ -3071,6 +3121,113 @@ export interface paths {
          * @description Delete Course Access Enquiry
          */
         delete: operations["course-access-enquiries.by-id.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/courses/{course}/blueprint": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export a course as a Blueprint v3 document (current version, drift, applied version)
+         * @description Course-as-code API (ADR 0160, prefix `/api/admin/course-as-code`, `auth:api`, permission
+         *     `course_builder_use`). It works with AI off: there is no AI gate on this route group. A push is
+         *     always a proposed version; a person approves it (agent tokens and MCP clients never can).
+         */
+        get: operations["admin.course-as-code.courses.by-course.blueprint.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/sessions/{session}/imports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import a Blueprint v3 document as a proposed version of kind import */
+        post: operations["admin.course-as-code.sessions.by-session.imports.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/versions/{version}/diff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Element-aware diff of a version against its parent or ?against= */
+        get: operations["admin.course-as-code.versions.by-version.diff.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/versions/{version}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve a proposed import (people and CLI tokens; never agents or MCP clients) */
+        post: operations["admin.course-as-code.versions.by-version.approve.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/sessions/{session}/apply": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Apply the current version to the course (no AI needed) */
+        post: operations["admin.course-as-code.sessions.by-session.apply.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/sessions/{session}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Publish the applied course (no AI needed) */
+        post: operations["admin.course-as-code.sessions.by-session.publish.post"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -8103,6 +8260,26 @@ export interface paths {
          * @description Renders the draft like the render endpoint and sends it, with the subject prefixed by [Test], only to the e-mail address of the authenticated user. There is no recipient field. Throttled to 5 requests per minute per user.
          */
         post: operations["templates.email.test-send"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/templates/email/images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload an image for an e-mail template
+         * @description Stores a PNG, JPEG, GIF or WebP image (up to 2 MB by default) in the storage of the current tenant and returns its public URL, which e-mail clients fetch remotely. The type is sniffed from the content; SVG and every other type is refused. The stored name is random. Throttled to 30 requests per minute per user.
+         */
+        post: operations["templates.email.images"];
         delete?: never;
         options?: never;
         head?: never;
@@ -13411,8 +13588,9 @@ export interface operations {
     };
     "auth.social.by-provider.get": {
         parameters: {
-            query?: {
+            query: {
                 return_url?: string;
+                challenge: string;
             };
             header?: never;
             path: {
@@ -13422,20 +13600,31 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description successful operation */
+            /** @description Redirect to the provider */
             302: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description Unknown provider, return URL not allowed or challenge missing */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
     };
     "auth.social.by-provider.callback.get": {
         parameters: {
-            query?: never;
+            query: {
+                state: string;
+            };
             header?: never;
             path: {
                 provider: "facebook" | "google";
@@ -13444,13 +13633,68 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description successful operation */
+            /** @description Redirect to the return URL with a code or an error */
             302: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+            /** @description The state is missing, forged, expired or already used */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "auth.social.exchange.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    code: string;
+                    /** @description 43 to 128 characters of [A-Za-z0-9._~-] */
+                    verifier: string;
+                };
+            };
+        };
+        responses: {
+            /** @description successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description The code is invalid, expired, already used or does not match the verifier */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description Validation error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
                 };
             };
         };
@@ -16604,6 +16848,65 @@ export interface operations {
             };
         };
     };
+    "commerce.webhooks.by-provider.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description duplicate delivery, nothing to do */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description the event is stored and queued */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description invalid or expired signature, malformed event or another tenant's channel */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown provider or webhooks not configured */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description body too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description rate limit */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "admin.compliance.assignments.get": {
         parameters: {
             query?: {
@@ -19079,6 +19382,234 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ApiEnvelope"];
                 };
+            };
+        };
+    };
+    "admin.course-as-code.courses.by-course.blueprint.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the blueprint with versionId, appliedVersionId and drift */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description another author's course */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown course */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description NOT_ADOPTED (no builder session) or NO_BLUEPRINT */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.sessions.by-session.imports.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    document: Record<string, never>;
+                    baseVersionId: string;
+                    message?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description unchanged: the document equals the current version, no version is created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description proposed version, element diff and warnings */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown session */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description BASE_OUTDATED (with the remote diff) or NO_BLUEPRINT */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description document too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description INVALID_BLUEPRINT, BASE_UNKNOWN or a missing field */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.versions.by-version.diff.get": {
+        parameters: {
+            query?: {
+                against?: string;
+            };
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description changes */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.course-as-code.versions.by-version.approve.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description approved; apply it next */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description APPROVAL_REQUIRES_HUMAN */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not proposed, or STALE_PROPOSAL (the course changed after the import was proposed) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.sessions.by-session.apply.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description apply run */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+        };
+    };
+    "admin.course-as-code.sessions.by-session.publish.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description published */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description blocking items or unacknowledged warnings */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -30904,6 +31435,78 @@ export interface operations {
             };
             /** @description the MJML renderer is unavailable */
             503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "templates.email.images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description PNG, JPEG, GIF or WebP file
+                     */
+                    image: string;
+                };
+            };
+        };
+        responses: {
+            /** @description the stored image */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            /** @description public URL to put in mj-image src */
+                            url?: string;
+                            /** @description path in the tenant storage */
+                            name?: string;
+                            mime?: string;
+                            /** @description bytes */
+                            size?: number;
+                            width?: number;
+                            height?: number;
+                        };
+                    };
+                };
+            };
+            /** @description endpoint requires authentication */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description user doesn't have required access rights */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not an accepted image, or too large */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };

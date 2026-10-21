@@ -10,6 +10,7 @@ import consultations from './en-US/consultations';
 import courses from './en-US/courses';
 import events from './en-US/events';
 import fabric from './en-US/fabric';
+import insights from './en-US/insights';
 import notifications from './en-US/notifications';
 import templates from './en-US/templates';
 import vouchers from './en-US/vouchers';
@@ -159,6 +160,7 @@ export default {
   ...fabric,
   ...vouchers,
   ...courses,
+  ...insights,
   ...events,
   branding: 'Branding',
   product_details: 'Product details',
@@ -670,6 +672,7 @@ export default {
     'Click a variable to add a field for it; it is filled in when the PDF is issued. Variables can also be typed into read-only text, e.g. “Issued by @VarAppName”.',
   'pdf_editor.variable_used': 'Used in the template',
   'pdf_editor.variable_add': 'Add a field',
+  'pdf_editor.variable_add_aria': 'Add a field for {variable}',
   'pdf_editor.preview_failed': 'Preview failed',
   generated_pdfs: 'Generated PDFs',
   download_all: 'Download all',
@@ -932,6 +935,12 @@ export default {
   'ConsultationsAccess.meetingType.pencil-spaces': 'Pencil spaces',
   'ConsultationsAccess.meetingLink': 'Meeting link',
   'Settings.package': 'Package {package}',
+  'Settings.defaultLanguage': 'Default language',
+  'Settings.defaultLanguage.help':
+    'Account pages and courses without a language use this language.',
+  'Settings.defaultLanguage.en': 'English',
+  'Settings.defaultLanguage.pl': 'Polish (polski)',
+  'Settings.defaultLanguage.zh': 'Chinese (中文)',
   consultation_term_date: 'Consultation term',
   meeting_link: 'Meeting link',
   logs: 'Logs',

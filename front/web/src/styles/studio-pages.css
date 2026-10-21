@@ -1068,3 +1068,67 @@
     border-top: 1px solid var(--ulams-studio-line);
   }
 }
+/* course insights page */
+.st-ins-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 12px 24px;
+  margin-bottom: 8px;
+}
+.st-ins-lang {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 0.9rem;
+}
+.st-ins-lang a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+.st-ins-lang a[aria-current="true"] {
+  font-weight: 700;
+  text-decoration: none;
+}
+.st-ins-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  margin: 16px 0;
+}
+.st-ins-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.st-ins-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.st-ins-section p,
+.st-ins-privacy p {
+  margin: 0;
+}
+.st-ins-privacy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--ulams-studio-sunken);
+}
+.st-ins-activity {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.st-ins-activity:empty {
+  display: none;
+}
+@media (max-width: 720px) {
+  .st-page {
+    padding: 20px 16px;
+  }
+}

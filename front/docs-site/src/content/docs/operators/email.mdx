@@ -80,15 +80,65 @@ with a live preview next to it. No setup is needed beyond the MJML service above
 - The preview is not the saved e-mail: save the template to store it. If the MJML service is down
   the editor shows an error and keeps the last good preview.
 
+### Visual mode (beta)
+
+Above the code editor a switch chooses between **Code** and **Visual (beta)**. Code is always the
+view the page opens in. Visual mode is a drag-and-drop editor (GrapesJS with the `grapesjs-mjml`
+plugin) that reads and writes the same MJML, so the stored template, the renderer and the preview
+do not change.
+
+- **Nothing is lost silently.** Before Visual mode opens, the editor loads the template, exports it
+  again and compares both as trees. Self-closing head tags (`<mj-font ... />`) are normalised first,
+  and the `<tbody>` and trailing `;` that the browser adds inside `mj-raw` are ignored. If anything
+  else differs (for example the rows of an `mj-table`, which the editor cannot represent), the
+  template stays in Code view and a banner lists the lines that would be removed or changed. The
+  only way on is **Convert and review**: it shows a diff, and the template text is replaced only
+  after you confirm. Cancel leaves the text byte for byte as it was. Plain HTML templates (no
+  `<mjml>` root) always stay in Code view.
+- **Edits are written to the form** about 300 ms after you stop, and only when the content really
+  changed, so opening Visual mode and leaving it does not rewrite a hand-written template.
+- **Not yet fully keyboard operable.** Blocks and panel buttons of the editor cannot be reached with
+  the keyboard alone, which is why the mode carries the beta label and Code stays the default. The
+  keyboard alternatives are planned (milestone M5 of the visual editor plan).
+- **Variables are chips.** A registered variable (`@VarUserName` or `${VarUserName}`) inside a text
+  block is shown as a chip that cannot be edited letter by letter: it is deleted or moved as one
+  piece. Select a text block and choose a variable in the list below the editor to add a chip at the
+  caret (while you edit the text) or at the end of the block. The stored MJML keeps the plain token,
+  so Code view, the server and the preview read the same text as before. Buttons and images have a
+  "Link from a variable" field next to their link field. A token you type yourself that is not in the
+  list stays plain text. The list also shows the required variables the content does not use yet,
+  updated as you type, with the same rule as the server (`@Var` or `${Var}` form).
+- **Shared headers and footers are locked.** A global setting (`@GlobalSettings…`, for example a
+  shared footer) that stands on its own in the layout is shown as a locked block: it cannot be
+  edited, moved, copied or removed inside the template, and it is never expanded into it, so a change
+  in Settings reaches every template that uses it. The editor lists these parts with an **Edit in
+  Settings** link. To remove one from a template, switch to Code view.
+- **Images.** The image block's **Choose or upload an image** button (or a double click on the image)
+  opens a dialog that uploads the file with `POST /api/admin/templates/email/images` to the storage of
+  the current tenant, then asks for the alternative text, which is required; an image that is only
+  decoration is marked explicitly and is written as `alt=""`. Accepted: PNG, JPEG, GIF and WebP up to
+  2 MB (`TEMPLATES_EMAIL_IMAGE_MAX_KB`). **SVG is refused**: it can carry scripts and most mail clients
+  do not draw it. The type is checked on the content, not on the file name, and the stored name is
+  random. Mail clients fetch the image from its public URL, so the storage of the tenant has to be
+  reachable from the internet.
+- **Offline and CSP.** The editor is a separate script loaded when you open Visual mode (about 680
+  KB gzip; the build fails above 700 KB), is served by the admin itself and fetches nothing from a CDN.
+  The blocks offered have no remote images. It needs no change of the admin Content-Security-Policy.
+
+To turn Visual mode off for a tenant, create the public boolean setting `templates.email.visual_editor`
+(Settings, group global) and set it to `false`; the switch disappears and only Code view remains.
+Without the setting, or with `true`, Visual mode is on.
+
 ### API
 
-The editor uses two admin endpoints that work on a draft that is not saved yet. Both need the `template_update`
-permission, read only the current tenant's settings and write nothing.
+The editor uses admin endpoints that work on a draft that is not saved yet. All need the `template_update`
+permission and work on the current tenant only. The first two write nothing; the third stores an image.
 
 | Endpoint | Does | Limit |
 |---|---|---|
 | `POST /api/admin/templates/email/render` | Renders `{event, title, content}` with the sample values of the event and returns the HTML | 30 per minute per user |
 | `POST /api/admin/templates/email/test-send` | Same, then sends the e-mail with the subject prefixed `[Test]` | 5 per minute per user |
+| `POST /api/admin/templates/email/images` | Stores one image (multipart field `image`) in the tenant storage and returns its public `url`, `name`, `mime`, `size`, `width` and `height`; `422` for SVG, other types, files that are not images and files over the size limit | 30 per minute per user |
 
 The test e-mail goes only to the address of the signed-in admin; the request has no recipient
 field and anything extra in the body is ignored. Optional `sample_overrides` (variable name to

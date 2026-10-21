@@ -1,6 +1,8 @@
 ---
 import Icon from "./Icon.astro";
-import { COURSE_UPDATES_TITLE, EXTENDED_LABEL, formatNoticeDate, pendingNoticeText, RETIRED_TEXT } from "../lib/notices.ts";
+import { formatNoticeDate, pendingNoticeText } from "../lib/notices.ts";
+import { pageLocale } from "../lib/i18n.ts";
+import { fill, playerStrings } from "../lib/player-strings.ts";
 
 interface Props {
   title?: string;
@@ -10,7 +12,9 @@ interface Props {
   pending?: Array<{ title: string; href: string; since?: string }>;
   id?: string;
 }
-const { title = COURSE_UPDATES_TITLE, updated = [], retired = [], extended = [], pending = [], id } = Astro.props;
+const loc = pageLocale(Astro) ?? "en";
+const t = playerStrings(loc);
+const { title = t.courseUpdatesTitle, updated = [], retired = [], extended = [], pending = [], id } = Astro.props;
 const empty = updated.length + retired.length + extended.length + pending.length === 0;
 const headingId = `u-updates-${id ?? "course"}-title`;
 ---
@@ -23,32 +27,32 @@ const headingId = `u-updates-${id ?? "course"}-title`;
       </h2>
       <ul class="u-updates__list" role="list">
         {updated.map((row) => {
-          const date = formatNoticeDate(row.date);
+          const date = formatNoticeDate(row.date, loc);
           return (
             <li>
-              <span class="u-updates__kind">Updated since you completed it{date ? `, ${date}` : ""}</span>
+              <span class="u-updates__kind">{date ? fill(t.updatedSinceDone, { date }) : t.noticeUpdatedAfterDonePlain.replace(/\.$/, "")}</span>
               <a href={row.href}>{row.title}</a>
             </li>
           );
         })}
         {extended.map((row) => (
           <li>
-            <span class="u-updates__kind">{EXTENDED_LABEL}</span>
+            <span class="u-updates__kind">{t.extended}</span>
             <a href={row.href}>{row.title}</a>
           </li>
         ))}
         {retired.map((row) => {
-          const date = formatNoticeDate(row.date);
+          const date = formatNoticeDate(row.date, loc);
           return (
             <li>
-              <span class="u-updates__kind">{RETIRED_TEXT}{date ? ` (${date})` : ""}</span>
+              <span class="u-updates__kind">{t.retired}{date ? ` (${date})` : ""}</span>
               <span class="u-updates__name">{row.title}</span>
             </li>
           );
         })}
         {pending.map((row) => (
           <li>
-            <span class="u-updates__kind">{pendingNoticeText(row.since)}</span>
+            <span class="u-updates__kind">{pendingNoticeText(row.since, loc)}</span>
             <a href={row.href}>{row.title}</a>
           </li>
         ))}

@@ -129,6 +129,58 @@ final class Checks
     }
 
     /**
+     * Document-level rules the JSON Schema cannot express: element ids are unique, `key` slugs are unique
+     * among siblings, lessons use a content type this server can apply, and an asset-backed lesson names
+     * its file. The lesson-level shape itself is the schema's job.
+     *
+     * @return string[]
+     */
+    public static function structure(array $doc, ?\Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry $types = null): array
+    {
+        $types ??= app(\Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry::class);
+        $errors = [];
+        $seen = [];
+        $walk = function (mixed $node) use (&$walk, &$seen, &$errors): void {
+            if (!is_array($node)) {
+                return;
+            }
+            if (isset($node['id']) && is_string($node['id'])) {
+                if (!Blueprint::isId($node['id'])) {
+                    $errors[] = "id {$node['id']}: element ids are 26 lowercase letters and digits";
+                } elseif (isset($seen[$node['id']])) {
+                    $errors[] = "id {$node['id']}: used by more than one element";
+                }
+                $seen[$node['id']] = true;
+            }
+            foreach ($node as $key => $child) {
+                if ($key !== 'data') { // H5P parameters are the library's own fields
+                    $walk($child);
+                }
+            }
+        };
+        $walk(['course' => $doc['course'] ?? [], 'modules' => $doc['modules'] ?? [], 'finalTest' => $doc['finalTest'] ?? null]);
+
+        $keys = [];
+        foreach ($doc['modules'] ?? [] as $m => $module) {
+            if (isset($module['key'])) {
+                isset($keys['modules'][$module['key']]) ? $errors[] = "Module " . ($m + 1) . ": key {$module['key']} is used by another module" : $keys['modules'][$module['key']] = true;
+            }
+            foreach ($module['lessons'] ?? [] as $l => $lesson) {
+                $where = 'Lesson ' . ($m + 1) . '.' . ($l + 1);
+                if (isset($lesson['key'])) {
+                    isset($keys[$module['id']][$lesson['key']]) ? $errors[] = "{$where}: key {$lesson['key']} is used by another lesson of the module" : $keys[$module['id']][$lesson['key']] = true;
+                }
+                $type = (string) ($lesson['contentType'] ?? 'richtext');
+                if (!$types->has($type)) {
+                    $errors[] = "{$where}: the content type {$type} cannot be applied by this server yet";
+                }
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
      * Whole-document check run before an apply.
      *
      * @param array<string,bool> $known
@@ -147,7 +199,10 @@ final class Checks
             $objectiveIds = array_column($lesson['objectives'] ?? [], 'id');
             foreach ($lesson['blocks'] ?? [] as $b => $block) {
                 $w = "{$where} block " . ($b + 1);
-                $errors = [...$errors, ...self::citations($block['citations'] ?? [], $known, $w), ...self::markup((string) $block['markdown'], $w)];
+                $errors = [...$errors, ...self::citations($block['citations'] ?? [], $known, $w, Blueprint::minCitations($block)), ...self::markup((string) $block['markdown'], $w)];
+                if (Blueprint::minCitations($block) === 0 && ($block['citations'] ?? []) === []) {
+                    $errors[] = "warning: {$w}: written by the author, no sources, so Living Course cannot keep it up to date";
+                }
                 foreach ($block['objectiveIds'] ?? [] as $oid) {
                     if (!in_array($oid, $objectiveIds, true)) {
                         $errors[] = "{$w}: refers to an objective of another lesson";
@@ -156,7 +211,7 @@ final class Checks
             }
             foreach ($lesson['quiz']['questions'] ?? [] as $q => $question) {
                 $w = "{$where} Q" . ($q + 1);
-                $errors = [...$errors, ...self::citations($question['citations'] ?? [], $known, $w), ...self::questionShape($question, $w)];
+                $errors = [...$errors, ...self::citations($question['citations'] ?? [], $known, $w, Blueprint::minCitations($question)), ...self::questionShape($question, $w)];
             }
             $errors = [...$errors, ...$types->forLesson($lesson)->check($lesson, $where, $known)];
             foreach ($lesson['flags'] ?? [] as $flag) {
@@ -168,9 +223,9 @@ final class Checks
         }
         foreach ($doc['finalTest']['questions'] ?? [] as $q => $question) {
             $w = 'Final test Q' . ($q + 1);
-            $errors = [...$errors, ...self::citations($question['citations'] ?? [], $known, $w), ...self::questionShape($question, $w)];
+            $errors = [...$errors, ...self::citations($question['citations'] ?? [], $known, $w, Blueprint::minCitations($question)), ...self::questionShape($question, $w)];
         }
 
-        return $errors;
+        return [...$errors, ...self::structure($doc)];
     }
 }

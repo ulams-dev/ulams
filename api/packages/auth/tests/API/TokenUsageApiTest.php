@@ -35,6 +35,8 @@ class TokenUsageApiTest extends TestCase
 
     public function testEveryRequestWithAScopedTokenIsCountedPerDay(): void
     {
+        // Midday: the per-day bucket must not depend on a request crossing midnight.
+        $this->travelTo(now()->setTime(12, 0));
         $user = $this->makeStudent();
         [$secret, $id] = $this->mint($user, ['learner:read', 'tokens:read']);
 

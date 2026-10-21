@@ -8,6 +8,8 @@ import {
   parseTenantHostPattern,
   resolveApiUrl,
   tenantFromHost,
+  DEFAULT_DOCS_URL,
+  docsUrl,
 } from "../src/lib/tenant/resolveApiUrl.ts";
 
 describe("parseTenantHostPattern", () => {
@@ -104,5 +106,17 @@ describe("resolveApiUrl", () => {
 
   it("returns null when nothing is configured", () => {
     assert.equal(resolveApiUrl({ hostname: "localhost" }), null);
+  });
+});
+
+describe("docsUrl", () => {
+  it("defaults to the published docs", () => {
+    assert.equal(docsUrl(undefined, "admin/"), `${DEFAULT_DOCS_URL}admin/`);
+    assert.equal(docsUrl("", ""), DEFAULT_DOCS_URL);
+  });
+
+  it("uses the configured base and joins slashes once", () => {
+    assert.equal(docsUrl("https://docs.example.org", "/admin/"), "https://docs.example.org/admin/");
+    assert.equal(docsUrl(" https://docs.example.org/guide/ ", "admin/"), "https://docs.example.org/guide/admin/");
   });
 });

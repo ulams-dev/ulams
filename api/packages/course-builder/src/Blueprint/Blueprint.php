@@ -5,14 +5,19 @@ namespace Ulams\CourseBuilder\Blueprint;
 use Illuminate\Support\Str;
 
 /**
- * Helpers over a Course Blueprint document (a plain array, schema v2; v1 documents read as v2 with
+ * Helpers over a Course Blueprint document (a plain array, schema v3; v1 and v2 documents read as v3 with
  * only the version number changed). Element ids are ULIDs assigned here, never by the model.
  */
 final class Blueprint
 {
-    public const SCHEMA_VERSION = 2;
+    public const SCHEMA_VERSION = 3;
 
-    /** v1 → v2 changes no data: v2 only allows more lesson content types and the optional selfChecks and interaction. */
+    /**
+     * v1 → v2 → v3 change no data. v2 only allows more lesson content types and the optional selfChecks and
+     * interaction; v3 adds optional fields (origin, key, asset, meta) and relaxes the citation rule for
+     * `origin: author`. Every older document is a valid v3 document once the number is bumped, so the
+     * upgrade is lossless and happens when a document is written, never in bulk.
+     */
     public static function upgrade(array $doc): array
     {
         if ((int) ($doc['schemaVersion'] ?? 1) < self::SCHEMA_VERSION) {
@@ -20,6 +25,12 @@ final class Blueprint
         }
 
         return $doc;
+    }
+
+    /** The citations an element needs: none for `origin: author`, one otherwise (absent origin means ai). */
+    public static function minCitations(array $element): int
+    {
+        return ($element['origin'] ?? 'ai') === 'author' ? 0 : 1;
     }
 
     public static function newId(): string

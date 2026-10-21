@@ -1,11 +1,35 @@
 import AutoCompleteArea from '@/components/AutoCompleteArea';
 import { renderEmailDraft, testSendEmailDraft } from '@/services/ulams/templates';
-import { Alert, Button, Col, Row, Spin } from 'antd';
-import React, { useCallback, useRef, useState } from 'react';
-import { FormattedMessage, useIntl } from 'umi';
+import { Alert, Button, Col, Radio, Row, Spin, Tag } from 'antd';
+import React, { Suspense, useCallback, useRef, useState } from 'react';
+import { FormattedMessage, Link, useIntl } from 'umi';
 import { insertAtSelection, requestErrorMessage, type DraftRequest } from './draft';
+import ImagePicker from './ImagePicker';
 import './index.css';
+import { analyseMjml, type Analysis } from './roundTrip';
 import { useDraftPreview } from './useDraftPreview';
+import type { VisualEditorHandle } from './visual/handle';
+import { lockedParts, missingRequired } from './visual/variables';
+import { BlockedBanner, ConvertDialog, type VisualBlock } from './VisualNotice';
+
+/** Where the shared parts (`@GlobalSettings…`) are edited. */
+export const SETTINGS_PATH = '/configuration/settings';
+
+// The editor (GrapesJS and the MJML plugin) is a separate chunk, fetched only when the author asks
+// for Visual mode. Nothing of it is imported statically.
+const VisualEditor = React.lazy(() => import('./VisualEditor'));
+
+type Mode = 'code' | 'visual';
+
+/** Loads the editor chunk and runs the representability check of plan 4.6. */
+export const defaultAnalyse = async (
+  content: string,
+  locale?: string,
+  variables: string[] = [],
+): Promise<Analysis> => {
+  const engine = await import('./visual/engine');
+  return analyseMjml(content, (source) => engine.exportOnce(source, locale, { variables }));
+};
 
 export type EmailTemplateEditorProps = {
   value?: string;
@@ -20,6 +44,12 @@ export type EmailTemplateEditorProps = {
   /** Replaceable for tests. */
   render?: DraftRequest;
   testSend?: DraftRequest;
+  /** Operator switch `templates.email.visual_editor`, on by default (plan Q7). */
+  visualEnabled?: boolean;
+  /** Editor language, for example `pl-PL`. */
+  locale?: string;
+  /** Replaceable for tests. */
+  analyse?: (content: string, locale?: string, variables?: string[]) => Promise<Analysis>;
 };
 
 const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
@@ -32,13 +62,82 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
   error = [],
   render = renderEmailDraft as DraftRequest,
   testSend = testSendEmailDraft as DraftRequest,
+  visualEnabled = true,
+  locale,
+  analyse = defaultAnalyse,
 }) => {
   const intl = useIntl();
   const textarea = useRef<HTMLTextAreaElement | null>(null);
+  const visual = useRef<VisualEditorHandle | null>(null);
+  const [variableStatus, setVariableStatus] = useState('');
+  const [chooser, setChooser] = useState<
+    ((image?: { url: string; alt: string }) => void) | undefined
+  >();
   const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState<
     { type: 'success' | 'error'; message: string } | undefined
   >();
+
+  // Code is the default view for everybody: the visual mode is beta and not yet keyboard operable.
+  const [requestedMode, setRequestedMode] = useState<Mode>('code');
+  const [checking, setChecking] = useState(false);
+  const [block, setBlock] = useState<VisualBlock | undefined>();
+  const [reviewing, setReviewing] = useState(false);
+  const [visualSource, setVisualSource] = useState('');
+  const mode: Mode = visualEnabled ? requestedMode : 'code';
+
+  const openVisual = useCallback(
+    async (content: string) => {
+      setBlock(undefined);
+      setChecking(true);
+      try {
+        const analysis = await analyse(content, locale, variables);
+        if (analysis.kind === 'representable') {
+          setVisualSource(analysis.source);
+          setRequestedMode('visual');
+        } else if (analysis.kind === 'html') {
+          setBlock({ kind: 'html' });
+        } else {
+          setBlock({
+            kind: 'lossy',
+            lost: analysis.lost,
+            added: analysis.added,
+            diff: analysis.diff,
+            exported: analysis.exported,
+          });
+        }
+      } catch (e) {
+        setBlock({
+          kind: 'error',
+          message: requestErrorMessage(
+            e,
+            intl.formatMessage({ id: 'templates.visual_load_failed' }),
+          ),
+        });
+      } finally {
+        setChecking(false);
+      }
+    },
+    [analyse, locale, variables, intl],
+  );
+
+  const onModeChange = (next: Mode) => {
+    if (next === 'code') {
+      setRequestedMode('code');
+    } else {
+      openVisual(value);
+    }
+  };
+
+  // The only way to open a template the editor cannot represent: after the diff, on confirmation.
+  const confirmConversion = () => {
+    if (block?.kind !== 'lossy') return;
+    onChange(block.exported);
+    setVisualSource(block.exported);
+    setBlock(undefined);
+    setReviewing(false);
+    setRequestedMode('visual');
+  };
 
   const preview = useDraftPreview(
     { event, title, content: value },
@@ -48,8 +147,31 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
   const draft = preview.status === 'idle' ? undefined : preview.draft;
   const loading = preview.status === 'loading';
 
+  const pickImage = useCallback(
+    () =>
+      new Promise<{ url: string; alt: string } | undefined>((resolve) => {
+        setChooser(() => resolve);
+      }),
+    [],
+  );
+
   const insertVariable = useCallback(
     (token: string) => {
+      if (mode === 'visual') {
+        const result = visual.current?.insertVariable(token) ?? 'no-target';
+        setVariableStatus(
+          intl.formatMessage(
+            {
+              id:
+                result === 'inserted'
+                  ? 'templates.visual_inserted'
+                  : 'templates.visual_select_text',
+            },
+            { token },
+          ),
+        );
+        return;
+      }
       const area = textarea.current;
       const { value: next, caret } = insertAtSelection(
         value,
@@ -66,7 +188,7 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
         }
       }, 0);
     },
-    [value, onChange],
+    [value, onChange, mode, intl],
   );
 
   const onTestSend = useCallback(() => {
@@ -92,38 +214,120 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
   }, [event, title, value, testSend, intl]);
 
   const canRender = !!event && !!value;
+  const requiredMissing = missingRequired(value, requiredVariables);
+  const shared = mode === 'visual' ? lockedParts(value) : [];
 
   return (
     <div className="email-template-editor">
+      {visualEnabled && (
+        <div className="email-template-editor__modes">
+          <Radio.Group
+            optionType="button"
+            buttonStyle="solid"
+            value={mode}
+            disabled={checking}
+            onChange={(e) => onModeChange(e.target.value as Mode)}
+            aria-label={intl.formatMessage({ id: 'templates.editor_mode' })}
+          >
+            <Radio.Button value="code">
+              <FormattedMessage id="templates.editor_mode_code" />
+            </Radio.Button>
+            <Radio.Button value="visual" aria-describedby="email-editor-beta">
+              <FormattedMessage id="templates.editor_mode_visual" />{' '}
+              <Tag color="orange" className="email-template-editor__beta">
+                <FormattedMessage id="templates.editor_beta" />
+              </Tag>
+            </Radio.Button>
+          </Radio.Group>
+          <span id="email-editor-beta" className="email-template-editor__hint">
+            <FormattedMessage id="templates.visual_beta_notice" />
+          </span>
+          <div aria-live="polite">
+            {checking && (
+              <span>
+                <Spin size="small" /> <FormattedMessage id="templates.visual_checking" />
+              </span>
+            )}
+          </div>
+          {block && <BlockedBanner block={block} onConvert={() => setReviewing(true)} />}
+          <ConvertDialog
+            diff={reviewing && block?.kind === 'lossy' ? block.diff : undefined}
+            title={intl.formatMessage({ id: 'templates.visual_diff_title' })}
+            confirmText={intl.formatMessage({ id: 'templates.visual_diff_confirm' })}
+            cancelText={intl.formatMessage({ id: 'templates.visual_diff_cancel' })}
+            hint={<FormattedMessage id="templates.visual_diff_hint" />}
+            onConfirm={confirmConversion}
+            onCancel={() => setReviewing(false)}
+          />
+        </div>
+      )}
       <Row gutter={[16, 16]}>
-        <Col xs={24} xl={12}>
-          <section aria-labelledby="email-editor-code">
-            <h3 id="email-editor-code">
-              <FormattedMessage id="templates.editor_code" />
-            </h3>
-            <AutoCompleteArea
-              requiredVariables={requiredVariables}
-              variables={variables}
-              value={value}
-              onChange={onChange}
-              error={error}
-              textareaRef={(el) => {
-                textarea.current = el;
-              }}
-              aria-label={intl.formatMessage({ id: 'templates.editor_code' })}
-              styles={{ width: '100%', height: '50vh', fontFamily: 'monospace' }}
-            />
-            <p className="email-template-editor__hint">
-              <FormattedMessage id="code.snippet" />
-            </p>
-          </section>
+        <Col xs={24} xl={mode === 'visual' ? 24 : 12}>
+          {mode === 'visual' ? (
+            <section aria-labelledby="email-editor-visual">
+              <h3 id="email-editor-visual">
+                <FormattedMessage id="templates.editor_mode_visual" />
+              </h3>
+              <Suspense
+                fallback={
+                  <span>
+                    <Spin size="small" /> <FormattedMessage id="templates.visual_loading" />
+                  </span>
+                }
+              >
+                <VisualEditor
+                  ref={visual}
+                  variables={variables}
+                  pickImage={pickImage}
+                  initial={visualSource}
+                  onChange={onChange}
+                  locale={locale}
+                  label={intl.formatMessage({ id: 'templates.visual_canvas' })}
+                />
+              </Suspense>
+            </section>
+          ) : (
+            <section aria-labelledby="email-editor-code">
+              <h3 id="email-editor-code">
+                <FormattedMessage id="templates.editor_code" />
+              </h3>
+              <AutoCompleteArea
+                requiredVariables={requiredVariables}
+                variables={variables}
+                value={value}
+                onChange={onChange}
+                error={error}
+                textareaRef={(el) => {
+                  textarea.current = el;
+                }}
+                aria-label={intl.formatMessage({ id: 'templates.editor_code' })}
+                styles={{ width: '100%', height: '50vh', fontFamily: 'monospace' }}
+              />
+              <p className="email-template-editor__hint">
+                <FormattedMessage id="code.snippet" />
+              </p>
+            </section>
+          )}
           <section aria-labelledby="email-editor-variables">
             <h3 id="email-editor-variables">
               <FormattedMessage id="templates.editor_variables" />
             </h3>
             <p className="email-template-editor__hint">
-              <FormattedMessage id="templates.editor_variables_hint" />
+              <FormattedMessage
+                id={
+                  mode === 'visual'
+                    ? 'templates.visual_variables_hint'
+                    : 'templates.editor_variables_hint'
+                }
+              />
             </p>
+            <div
+              aria-live="polite"
+              data-testid="variable-status"
+              className="email-template-editor__hint"
+            >
+              {variableStatus}
+            </div>
             <ul className="email-template-editor__variables">
               {variables.map((token) => {
                 const required = requiredVariables.includes(token);
@@ -149,9 +353,39 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
                 );
               })}
             </ul>
+            <div aria-live="polite" data-testid="required-missing">
+              {requiredMissing.length > 0 && (
+                <Alert
+                  type="warning"
+                  showIcon
+                  message={<FormattedMessage id="templates.required_missing" />}
+                  description={requiredMissing.join(', ')}
+                />
+              )}
+            </div>
           </section>
+          {mode === 'visual' && shared.length > 0 && (
+            <section aria-labelledby="email-editor-shared">
+              <h3 id="email-editor-shared">
+                <FormattedMessage id="templates.shared_parts" />
+              </h3>
+              <p className="email-template-editor__hint">
+                <FormattedMessage id="templates.shared_parts_hint" />
+              </p>
+              <ul data-testid="shared-parts">
+                {shared.map((token) => (
+                  <li key={token}>
+                    <code>{token}</code>{' '}
+                    <Link to={SETTINGS_PATH}>
+                      <FormattedMessage id="templates.shared_parts_edit" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
         </Col>
-        <Col xs={24} xl={12}>
+        <Col xs={24} xl={mode === 'visual' ? 24 : 12}>
           <section aria-labelledby="email-editor-preview">
             <h3 id="email-editor-preview">
               <FormattedMessage id="templates.editor_preview" />
@@ -244,6 +478,13 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
           </section>
         </Col>
       </Row>
+      <ImagePicker
+        open={!!chooser}
+        onDone={(image) => {
+          chooser?.(image);
+          setChooser(undefined);
+        }}
+      />
     </div>
   );
 };

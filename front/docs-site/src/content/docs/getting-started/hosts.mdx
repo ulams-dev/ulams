@@ -75,7 +75,7 @@ These services are on the `ulams` Docker network and publish no port to the host
 | `api` | `api:9000` (FastCGI) | Laravel API, reached through Caddy |
 | `h5p` | `h5p:8080` | H5P service, reached through Caddy at `/h5p` |
 | `pdf` | `pdf:3000` | PDF renderer; only the API calls it, with an internal token |
-| `postgres` | `postgres:5432` | PostgreSQL 12; one database per tenant |
+| `postgres` | `postgres:5432` | PostgreSQL 17; one database per tenant |
 | `redis` | `redis:6379` | Valkey (Redis protocol), password `ulams` |
 | `minio` | `minio:9000`, `minio:9001` | S3 API and console, published through Caddy as above |
 | `mjml` | not on the `ulams` network | E-mail template renderer; not wired to the API yet |

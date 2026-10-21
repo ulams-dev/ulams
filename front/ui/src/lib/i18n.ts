@@ -577,8 +577,12 @@ export const fill = (template: string, values: Record<string, string | number>):
   template.replace(/\{(\w+)\}/g, (_, key: string) => String(values[key] ?? ""));
 
 /**
- * The language of the page being rendered: Astro's i18n routing (`Astro.currentLocale`), or the language
- * prefix of the path when the renderer has no routing configured (the container API of the tests).
+ * The language of the page being rendered: the `uiLocale` a learner page sets on `Astro.locals` (those pages are not
+ * path-routed: the language comes from the course or the tenant default, ADR 0106; Astro's `currentLocale` is
+ * then only the default locale), else Astro's i18n routing (`Astro.currentLocale`, the landing pages), else the
+ * language prefix of the path when the renderer has no routing configured (the container API of the tests).
  */
-export const pageLocale = (astro: { currentLocale?: string; url?: URL }): string | undefined =>
-  astro.currentLocale ?? /^\/(pl|zh)(?:\/|$)/.exec(astro.url?.pathname ?? "")?.[1];
+export const pageLocale = (astro: { currentLocale?: string; url?: URL; locals?: unknown }): string | undefined => {
+  const fromPage = (astro.locals as { uiLocale?: unknown } | undefined)?.uiLocale;
+  return (typeof fromPage === "string" ? fromPage : undefined) ?? astro.currentLocale ?? /^\/(pl|zh)(?:\/|$)/.exec(astro.url?.pathname ?? "")?.[1];
+};

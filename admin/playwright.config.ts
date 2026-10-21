@@ -4,7 +4,7 @@ import { devices } from '@playwright/test';
 
 const config: PlaywrightTestConfig = {
   timeout: 60000,
-  testIgnore: ['src/**/*.test.{js,jsx,ts,tsx}'],
+  testIgnore: ['src/**/*.test.{js,jsx,ts,tsx}', 'src/e2e/mocked/**'],
   //testMatch: ['src/**/.*(test|spec).(js|ts|mjs)'],
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Ulams\CourseBuilder\Http\Controllers\CourseAsCodeController;
 use Ulams\CourseBuilder\Http\Controllers\CourseBuilderController;
 use Ulams\CourseBuilder\Http\Controllers\EventStreamController;
 use Ulams\CourseBuilder\Http\Middleware\EnsureAiEnabled;
@@ -44,4 +45,18 @@ Route::group([
     Route::get('sessions/{session}/publish-check', [CourseBuilderController::class, 'publishCheck']);
     Route::post('sessions/{session}/publish', [CourseBuilderController::class, 'publish']);
     Route::get('sessions/{session}/usage', [CourseBuilderController::class, 'usage']);
+});
+
+// Course-as-code (ADR 0160): export a course as a blueprint, import one as a proposed version. No AI gate: it works
+// on installations without an AI provider. Diff, apply and publish reuse the builder's controller methods.
+Route::group([
+    'prefix' => 'api/admin/course-as-code',
+    'middleware' => ['auth:api'],
+], function () {
+    Route::get('courses/{course}/blueprint', [CourseAsCodeController::class, 'export']);
+    Route::post('sessions/{session}/imports', [CourseAsCodeController::class, 'import']);
+    Route::get('versions/{version}/diff', [CourseBuilderController::class, 'diff']);
+    Route::post('versions/{version}/approve', [CourseAsCodeController::class, 'approve']);
+    Route::post('sessions/{session}/apply', [CourseBuilderController::class, 'apply']);
+    Route::post('sessions/{session}/publish', [CourseBuilderController::class, 'publish']);
 });

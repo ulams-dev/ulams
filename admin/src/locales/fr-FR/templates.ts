@@ -29,4 +29,54 @@ export default {
     'Envoyé uniquement à votre adresse, avec le contenu actuel non enregistré.',
   'templates.test_sent': 'E-mail de test envoyé à {recipient}.',
   'templates.test_failed': 'L’e-mail de test n’a pas pu être envoyé.',
+  'templates.editor_mode': 'Mode d’édition',
+  'templates.editor_mode_code': 'Code',
+  'templates.editor_mode_visual': 'Visuel',
+  'templates.editor_beta': 'Bêta',
+  'templates.visual_beta_notice':
+    'Le mode visuel est en bêta et ne peut pas encore être utilisé entièrement au clavier. Utilisez Code pour une édition au clavier seul.',
+  'templates.visual_checking': 'Vérification que l’éditeur visuel peut représenter ce modèle...',
+  'templates.visual_loading': 'Chargement de l’éditeur visuel...',
+  'templates.visual_load_failed':
+    'L’éditeur visuel n’a pas pu être chargé. Vous pouvez continuer dans Code.',
+  'templates.visual_blocked': 'Ce modèle reste dans Code',
+  'templates.visual_blocked_html':
+    'Ce n’est pas un document MJML (pas d’élément racine <mjml>), l’éditeur visuel ne peut pas l’ouvrir.',
+  'templates.visual_blocked_lossy':
+    'L’éditeur visuel supprimerait ou modifierait le code ci-dessous. Votre modèle n’a pas été modifié.',
+  'templates.visual_lost': 'Serait supprimé ou modifié',
+  'templates.visual_added': 'Serait ajouté',
+  'templates.visual_more': '...et {count} de plus',
+  'templates.visual_convert': 'Convertir et vérifier',
+  'templates.visual_diff_title': 'Vérifier la conversion',
+  'templates.visual_diff_hint':
+    'Les lignes commençant par - sont supprimées et celles commençant par + sont ajoutées. Si vous confirmez, le texte du modèle est remplacé par le résultat et s’ouvre en Visuel. Si vous annulez, rien ne change.',
+  'templates.visual_diff_confirm': 'Remplacer et ouvrir Visuel',
+  'templates.visual_diff_cancel': 'Conserver mon MJML',
+  'templates.visual_canvas': 'Éditeur d’e-mails visuel',
+  'templates.visual_variables_hint':
+    'Sélectionnez un bloc de texte dans l’e-mail, puis choisissez une variable pour l’ajouter sous forme de pastille. Pendant la modification du texte, la pastille est placée au curseur ; sinon, à la fin du bloc.',
+  'templates.visual_inserted': '{token} inséré.',
+  'templates.visual_select_text':
+    'Sélectionnez d’abord un bloc de texte dans l’e-mail, puis choisissez à nouveau {token}.',
+  'templates.required_missing': 'Variables obligatoires pas encore utilisées',
+  'templates.shared_parts': 'Parties partagées',
+  'templates.shared_parts_hint':
+    'Ces parties viennent des Paramètres et sont verrouillées dans l’éditeur. Modifiez-les dans les Paramètres : tous les modèles qui les utilisent sont mis à jour.',
+  'templates.shared_parts_edit': 'Modifier dans les Paramètres',
+  'templates.image_title': 'Insérer une image',
+  'templates.image_hint':
+    'PNG, JPEG, GIF ou WebP jusqu’à 2 Mo. L’image est stockée avec votre académie et l’e-mail la charge depuis là. Le SVG n’est pas pris en charge dans les e-mails.',
+  'templates.image_file': 'Fichier image',
+  'templates.image_wrong_type':
+    'Choisissez une image PNG, JPEG, GIF ou WebP. Le SVG et les autres fichiers ne sont pas acceptés.',
+  'templates.image_too_large': 'L’image dépasse 2 Mo.',
+  'templates.image_failed': 'L’image n’a pas pu être téléversée.',
+  'templates.image_uploading': 'Téléversement de l’image...',
+  'templates.image_alt': 'Texte alternatif',
+  'templates.image_alt_hint':
+    'Décrivez l’image pour les personnes qui ne la voient pas. Obligatoire, sauf si l’image est purement décorative.',
+  'templates.image_decorative': 'Cette image est décorative (sans texte alternatif)',
+  'templates.image_insert': 'Insérer l’image',
+  'templates.image_cancel': 'Annuler',
 };

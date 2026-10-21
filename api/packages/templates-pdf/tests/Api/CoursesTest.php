@@ -53,6 +53,8 @@ class CoursesTest extends TestCase
 
     public function testUserFinishedCourseNotification(): void
     {
+        // The annual certificate number carries the year: do not run across New Year's Eve.
+        $this->travelTo(now()->setMonth(6)->setDay(15)->setTime(12, 0));
         Notification::fake();
         Event::fake([
             CourseFinished::class,

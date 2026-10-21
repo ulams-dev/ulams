@@ -1,6 +1,5 @@
 # Cart
 
-
 ## Purpose
 
 This package lets you manage user Shopping Cart, and defines what is a buyable Product (and what are Productables, that is sellable things), that can be then added to the Cart.
@@ -60,8 +59,6 @@ All the endpoints are defined in [![swagger](https://img.shields.io/badge/docume
 
 Run `./vendor/bin/phpunit` to run tests. See [tests](tests) directory as it's a quite good starting point for understanding how this package works.
 Especially pay attention to [tests/Mocks](tests/Mocks) directory, as it represents core concepts of Productable and use of Productable Trait & Interface.
-
-Test details [![codecov](https://codecov.io/gh/Ulams/cart/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/cart) [![phpunit](https://github.com/EscolaLMS/cart/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/cart/actions/workflows/test.yml)
 
 ## Events
 

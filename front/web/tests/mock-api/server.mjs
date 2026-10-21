@@ -9,6 +9,7 @@
 import { createServer } from "node:http";
 import { Buffer } from "node:buffer";
 import { clearTimeout, setTimeout } from "node:timers";
+import { createHash, randomBytes } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
@@ -17,12 +18,22 @@ const coffee = fixture("coffee");
 // Two tenants share the content: "coffee" has the light theme, "nightsky" the dark one. The web server reaches
 // the API through ULAMS_API_INTERNAL_ORIGIN and names the tenant in X-Ulams-Api-Host.
 // "polski" is the coffee academy with Polish as the tenant default language (account pages follow it, ADR 0106)
+const nightskySettings = fixture("nightsky").settings;
 const settingsByTenant = {
   coffee: coffee.settings,
   nightsky: fixture("nightsky").settings,
+  // "zhongwen" is the same academy with Chinese as the tenant default (P5R-1)
+  zhongwen: { ...coffee.settings, global: { ...coffee.settings.global, language: "zh" } },
+  // and the dark academy (nightsky theme) in Polish and Chinese
+  nocpl: { ...nightskySettings, global: { ...nightskySettings.global, language: "pl" } },
+  noczh: { ...nightskySettings, global: { ...nightskySettings.global, language: "zh" } },
   polski: { ...coffee.settings, global: { ...coffee.settings.global, language: "pl", accessibilityEmail: "dostepnosc@coffee.test", accessibilityUpdated: "2026-10-01", accessibilityNotes: "Nagrania z kursu o kawie nie mają jeszcze napisów.\n\nPracujemy nad tym." } },
 };
 const program = fixture("coffee-program");
+// On these tenants the course has no language of its own, so the learner pages follow the tenant default
+// language (ADR 0106); on the others the course says "en" and the pages stay English.
+const LANGUAGELESS = new Set(["polski", "zhongwen", "nocpl", "noczh"]);
+const courseFor = (tenant, course) => (LANGUAGELESS.has(tenant) ? { ...course, language: null } : course);
 
 const QUIZ_TOPIC_ID = 900;
 const quizTopic = {
@@ -258,7 +269,77 @@ const verifyRecord = { certificate_id: CERT_ID, status: "valid", title: "Espress
 // the smallest valid one-page PDF
 const PDF = Buffer.from("%PDF-1.1\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 100]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n");
 
+/**
+ * Learner Insights analytics for the studio Insights page (/studio/courses/:id/insights). The course id picks the
+ * state: 1 full data (a withheld section, a rate without enough cases), 2 a group below the minimum, 3 no activity
+ * in the period, 4 individual data not allowed, 5 fails once and then works, 6 not allowed at all, 999 unknown.
+ * The `polski` tenant has the module switched off.
+ */
+const INSIGHTS_MIN = 10;
+const insightsTitles = { 1: "Coffee brewing basics", 2: "Cupping for beginners", 3: "Roasting 101", 4: "Espresso machines", 5: "Latte art", 6: "Barista secrets" };
+const insightsFails = new Map();
+const insightsSummary = (id, days) =>
+  id === 2
+    ? { courseId: 2, periodDays: days, minGroupSize: INSIGHTS_MIN, enrolled: 6, smallGroup: true }
+    : {
+        courseId: id,
+        periodDays: days,
+        minGroupSize: INSIGHTS_MIN,
+        enrolled: 48,
+        smallGroup: false,
+        learners: { enrolled: 48, active: id === 3 ? 0 : 31, completed: id === 3 ? 0 : 12, completionRate: id === 3 ? 0 : 0.25 },
+        quiz: id === 3 ? { attempts: 0, averageScore: null, passRate: null } : { attempts: 57, averageScore: 0.68, passRate: 0.61 },
+        statuses: { on_track: 36, struggling: 8, at_risk: 4 },
+        nudges: { sent: 9, suppressed: 3, opened: 5, recoveryRate: null },
+        remediation: { shown: 22, helpful: 14, notHelpful: 3, recoveryRate: 0.64 },
+      };
+const insightsElements = (id, days) => ({
+  courseId: id,
+  periodDays: days,
+  minGroupSize: INSIGHTS_MIN,
+  elements:
+    id === 3
+      ? []
+      : [
+          { elementKey: "question:3", label: "2.3 Question 3: Which ratio suits a V60?", hidden: false, activeLearners: 29, struggleRate: 0.41, remediationRate: 0.34, recoveryRate: 0.58, topReasons: [{ rule: "failed_attempts", count: 12 }, { rule: "slow_element", count: 4 }] },
+          { elementKey: "topic:12", label: "3.1 Grinding for espresso", hidden: false, activeLearners: 18, struggleRate: 0.17, remediationRate: 0.06, recoveryRate: null, topReasons: [{ rule: "repetition", count: 3 }] },
+          { elementKey: "topic:14", label: "4.2 Milk texture", hidden: false, activeLearners: 12, struggleRate: 0, remediationRate: 0, recoveryRate: null, topReasons: [] },
+          { elementKey: "topic:15", label: "4.3 Pouring a rosetta", hidden: true, reason: "not_enough_learners" },
+        ],
+});
+const insightsLearners = [
+  { userId: 21, name: "Ada Lovelace", status: "struggling", since: isoDay(-3), reasons: ["3 failed attempts on 2.3 Question 3"] },
+  { userId: 22, name: "Grace Hopper", status: "at_risk", since: isoDay(-9), reasons: ["9 days without activity in this course"] },
+];
+const insightsTimeline = [
+  { at: isoDay(-1), type: "quiz.answer", element: "2.3 Question 3", value: 0, data: { question_id: 3, correct: false }, source: "gift" },
+  { at: isoDay(-2), type: "topic.opened", element: "2.3 Water and ratio", value: null, data: { revisit: true }, source: "progress" },
+];
+const insightsId = (match) => Number(match[1]);
+const insightsGate = (id, tenant, what) => {
+  if (id === 6) return { __status: 403, message: "This action is unauthorized." };
+  if (id === 5 && what === "summary") {
+    const key = `${tenant}:5`;
+    if (!insightsFails.get(key)) {
+      insightsFails.set(key, true);
+      return { __status: 500, message: "Insights are temporarily unavailable." };
+    }
+  }
+  return null;
+};
+const insightsRoutes = [
+  // test control: course 5 fails its next summary request again (every tenant has its own state)
+  ["POST", /^\/__mock\/insights\/reset$/, ({ tenant }) => (insightsFails.delete(`${tenant}:5`), { reset: true })],
+  ["GET", /^\/api\/learner-insights\/me$/, ({ tenant }) => ({ enabled: tenant !== "polski", settings: { enabled: true, help: true, nudges: true, consent: null }, requiresConsent: false, courses: [], retention: { signalsDays: 180, historyDays: 365 } })],
+  ["GET", /^\/api\/admin\/courses\/(\d+)$/, ({ match }) => (insightsTitles[match[1]] ? { id: Number(match[1]), title: insightsTitles[match[1]] } : { __status: 404, message: "Not found" })],
+  ["GET", /^\/api\/admin\/learner-insights\/courses\/(\d+)\/summary$/, ({ match, query, tenant }) => insightsGate(insightsId(match), tenant, "summary") ?? insightsSummary(insightsId(match), Number(query.get("period") ?? 30))],
+  ["GET", /^\/api\/admin\/learner-insights\/courses\/(\d+)\/elements$/, ({ match, query, tenant }) => insightsGate(insightsId(match), tenant, "elements") ?? insightsElements(insightsId(match), Number(query.get("period") ?? 30))],
+  ["GET", /^\/api\/admin\/learner-insights\/courses\/(\d+)\/learners$/, ({ match }) => (insightsId(match) === 4 ? { __status: 403, message: "This action is unauthorized." } : insightsLearners)],
+  ["GET", /^\/api\/admin\/learner-insights\/learners\/(\d+)\/courses\/(\d+)\/timeline$/, ({ match }) => (Number(match[2]) === 4 ? { __status: 403, message: "This action is unauthorized." } : insightsTimeline)],
+];
+
 const routes = [
+  ...insightsRoutes,
   ["GET", /^\/api\/compliance\/my-assignments$/, () => assignments],
   ["GET", /^\/api\/compliance\/my-paths$/, () => myPaths],
   ["GET", /^\/api\/compliance\/my-skills$/, () => mySkills],
@@ -327,9 +408,9 @@ const routes = [
   ["GET", /^\/api\/config$/, () => ({ ai: { label_generated_courses: true } })],
   ["GET", /^\/api\/config$/, () => ({ ai: { label_generated_courses: true } })],
   ["GET", /^\/api\/settings$/, () => coffee.settings],
-  ["GET", /^\/api\/courses$/, () => [coffee.course]],
-  ["GET", /^\/api\/courses\/1$/, () => program],
-  ["GET", /^\/api\/courses\/1\/program$/, () => program],
+  ["GET", /^\/api\/courses$/, ({ tenant }) => [courseFor(tenant, coffee.course)]],
+  ["GET", /^\/api\/courses\/1$/, ({ tenant }) => courseFor(tenant, program)],
+  ["GET", /^\/api\/courses\/1\/program$/, ({ tenant }) => courseFor(tenant, program)],
   ["GET", /^\/api\/courses\/my$/, () => ({ ids: [1] })],
   ["GET", /^\/api\/courses\/progress$/, () => [{ course: { id: 1, title: program.title, summary: program.summary, image_url: null }, progress: progressRows }]],
   ["GET", /^\/api\/courses\/progress\/1$/, () => progressRows],
@@ -349,6 +430,49 @@ const routes = [
   ["POST", /^\/api\/quiz-attempts\/1\/end$/, () => attempt(true)],
 ];
 
+/**
+ * Social login of the real API (ADR 0121), minus the provider: the start endpoint answers with the
+ * redirect back to `return_url` carrying a one-time code bound to the S256 challenge; the exchange
+ * checks verifier, single use and the 60 second lifetime. The tests never get a token in a URL.
+ */
+const socialCodes = new Map();
+const challengeFor = (verifier) => createHash("sha256").update(verifier).digest("base64url");
+
+function socialStart(url, res) {
+  const returnUrl = url.searchParams.get("return_url") ?? "";
+  const challenge = url.searchParams.get("challenge") ?? "";
+  const allowed = /^http:\/\/[a-z]+\.app\.localhost:\d+\//.test(returnUrl);
+  if (!allowed || !/^[A-Za-z0-9_-]{43}$/.test(challenge)) {
+    res.statusCode = 422;
+    res.end(JSON.stringify({ message: "The return URL is not allowed for this site or the challenge is missing." }));
+    return;
+  }
+  const code = randomBytes(32).toString("base64url");
+  socialCodes.set(code, { challenge, expires: Date.now() + 60_000, used: false });
+  res.statusCode = 302;
+  res.setHeader("Location", `${returnUrl}?code=${code}&complete=true`);
+  res.end();
+}
+
+function socialExchange(body, res) {
+  let input = {};
+  try {
+    input = JSON.parse(body || "{}");
+  } catch {
+    // answered below as an invalid code
+  }
+  const row = socialCodes.get(input.code);
+  const verifier = typeof input.verifier === "string" ? input.verifier : "";
+  const ok = row && !row.used && row.expires > Date.now() && challengeFor(verifier) === row.challenge;
+  if (row) row.used = true;
+  if (!ok) {
+    res.statusCode = 400;
+    res.end(JSON.stringify({ success: false, message: "The login code is invalid or has expired. Start again." }));
+    return;
+  }
+  res.end(JSON.stringify({ success: true, message: "Login successful", data: { complete: true, token: `social-token-${input.code.slice(0, 8)}`, expires_at: new Date(Date.now() + 86_400_000).toISOString() } }));
+}
+
 const server = createServer((req, res) => {
   const url = new URL(req.url ?? "/", "http://mock");
   const path = url.pathname;
@@ -367,6 +491,17 @@ const server = createServer((req, res) => {
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", 'attachment; filename="espresso-basics-9.pdf"');
     res.end(PDF);
+    return;
+  }
+  if (req.method === "GET" && path === "/api/auth/social/google") {
+    req.resume();
+    socialStart(url, res);
+    return;
+  }
+  if (req.method === "POST" && path === "/api/auth/social/exchange") {
+    const body = [];
+    req.on("data", (chunk) => body.push(chunk));
+    req.on("end", () => socialExchange(Buffer.concat(body).toString("utf8"), res));
     return;
   }
   const run = /^\/api\/tutor\/runs\/([0-9a-z]{26})\/events$/.exec(path);
@@ -418,7 +553,7 @@ function respond(req, res, path, route, rawBody) {
     }
   })();
   const match = route[1].exec(path);
-  const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body, status: (code) => (res.statusCode = code) });
+  const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body, query: new URL(req.url ?? "/", "http://mock").searchParams, status: (code) => (res.statusCode = code) });
   if (data && typeof data === "object" && "__status" in data) {
     res.statusCode = data.__status;
     res.end(JSON.stringify({ success: false, message: data.message }));

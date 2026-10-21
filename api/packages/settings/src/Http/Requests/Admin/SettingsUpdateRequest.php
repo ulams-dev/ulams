@@ -4,6 +4,7 @@ namespace Ulams\Settings\Http\Requests\Admin;
 
 use Ulams\Settings\Models\Setting;
 use Ulams\Settings\Enums\SettingTypes;
+use Ulams\Settings\Support\DefaultLanguage;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -34,6 +35,9 @@ class SettingsUpdateRequest extends FormRequest
         $validator->sometimes('value', ['boolean'], fn($input) => $input->type === SettingTypes::BOOLEAN);
         $validator->sometimes('value', ['array'], fn($input) => $input->type === SettingTypes::ARRAY);
         $validator->sometimes('value', ['string'], fn($input) => !in_array($input->type, [SettingTypes::NUMBER, SettingTypes::BOOLEAN, SettingTypes::ARRAY]));
+        // the setting being changed: the group and key of the request, else those of the stored row
+        $stored = Setting::query()->find($this->route('setting'));
+        DefaultLanguage::validate($validator, $this->input('group', $stored?->group), $this->input('key', $stored?->key));
     }
 
     protected function passedValidation(): void

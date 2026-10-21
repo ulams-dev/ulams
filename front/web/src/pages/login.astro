@@ -4,16 +4,28 @@ import { ApiError } from "@ulams/sdk";
 import { apiFor, getSettings } from "../lib/data.ts";
 import { demoToken, setSessionCookie } from "../lib/session.ts";
 import { themeFor } from "../lib/theme.ts";
+import { config } from "../lib/config.ts";
+import { enabledProviders, errorMessage } from "../lib/social-login.ts";
+import { accountStrings, fill } from "@ulams/ui/account-strings";
+import { accountLocale } from "../lib/locale.ts";
 
 const tenant = Astro.locals.tenant;
 if (!tenant) return Astro.redirect("/tenants");
 const settings = await getSettings(tenant).catch(() => null);
 const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const locale = accountLocale(settings);
+const a = accountStrings(locale);
+Astro.locals.uiLocale = locale;
 const next = Astro.url.searchParams.get("next");
 const safeNext = next && next.startsWith("/") && !next.startsWith("//") ? next : "/";
 const secure = Astro.locals.secure;
 
-let error: string | null = null;
+const providers = enabledProviders(config.socialLogin);
+const PROVIDER_LABELS = { google: "Google", facebook: "Facebook" } as const;
+// a social login that failed comes back here with a reason, never with a token
+const socialError = Astro.url.searchParams.has("error") ? errorMessage(Astro.url.searchParams.get("error"), locale) : null;
+
+let error: string | null = socialError;
 if (Astro.request.method === "POST") {
   const form = await Astro.request.formData();
   try {
@@ -27,26 +39,35 @@ if (Astro.request.method === "POST") {
     }
     return Astro.redirect(safeNext, 303);
   } catch (e) {
-    error = e instanceof ApiError && e.status === 422 ? "Wrong e-mail or password." : "Login failed. Try again.";
+    error = e instanceof ApiError && e.status === 422 ? a.wrongCredentials : a.loginFailed;
   }
 }
 ---
 
-<Base theme={theme} accent={settings?.theme?.accent} title="Sign in" demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+<Base theme={theme} accent={settings?.theme?.accent} title={a.signIn} lang={locale} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
   <main id="main" class="u-container u-login">
-    <a class="u-login__back" href="/">← {settings?.global?.companyName ?? "Home"}</a>
-    <h1>Sign in</h1>
+    <a class="u-login__back" href="/">← {settings?.global?.companyName ?? a.homeFallback}</a>
+    <h1>{a.signIn}</h1>
     <form method="post" class="u-card">
       {error && <p class="u-login__error" role="alert">{error}</p>}
-      <label for="email">E-mail</label>
+      <label for="email">{a.email}</label>
       <input id="email" name="email" type="email" autocomplete="username" required />
-      <label for="password">Password</label>
+      <label for="password">{a.password}</label>
       <input id="password" name="password" type="password" autocomplete="current-password" required />
-      <button class="u-btn" type="submit">Sign in</button>
+      <button class="u-btn" type="submit">{a.signIn}</button>
     </form>
+    {providers.length > 0 && (
+      <nav class="u-login__social" aria-label={a.otherWays}>
+        {providers.map((provider) => (
+          <a class="u-btn u-btn--ghost" href={`/auth/social/${provider}?next=${encodeURIComponent(safeNext)}`}>
+            {fill(a.continueWith, { provider: PROVIDER_LABELS[provider] })}
+          </a>
+        ))}
+      </nav>
+    )}
     <form method="post">
       <input type="hidden" name="demo" value="1" />
-      <button class="u-btn u-btn--ghost u-login__demo" type="submit">Continue as the demo student</button>
+      <button class="u-btn u-btn--ghost u-login__demo" type="submit">{a.continueDemo}</button>
     </form>
   </main>
 </Base>
@@ -82,6 +103,15 @@ if (Astro.request.method === "POST") {
   .u-login__back {
     text-decoration: none;
     font-size: 0.875rem;
+  }
+  .u-login__social {
+    display: grid;
+    gap: 10px;
+  }
+  .u-login__social a {
+    text-align: center;
+    text-decoration: none;
+    min-height: 48px;
   }
   .u-login__demo {
     width: 100%;

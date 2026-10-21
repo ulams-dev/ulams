@@ -7,11 +7,11 @@ You can add a user without an account to the main content modules:
 * Consultations
 * In-person events
 
-![image](https://github.com/EscolaLMS/Assign-Without-Account/assets/108077902/959379d7-e929-4e83-92ba-d85fb65930b7)
+![image](docs/img/admin-01.png)
 
 Inviting a user to participate in the content or event involves adding their email in the user registration element for users without an account. When creating modules, you will find the attribute **"Users Attached without Account Email"** in the attributes section. The function works the same way in each of the mentioned modules.
 
-![image](https://github.com/EscolaLMS/Assign-Without-Account/assets/108077902/9010eb02-0fd1-438b-9c0d-092cb55043e3)
+![image](docs/img/admin-02.png)
 
 After adding the email of a user who does not have an account on the platform, they will gain access to the course. Additionally, they will need to create an account by clicking on the link provided before they can access the lessons. To add a user, follow these steps:
 
@@ -19,11 +19,11 @@ After adding the email of a user who does not have an account on the platform, t
 * In the newly appeared window, enter the email address.
 * Confirm by clicking the blue "OK" button.
 
-![image](https://github.com/EscolaLMS/Assign-Without-Account/assets/108077902/74407d7c-a931-4cc0-8c51-37841d25e399)
+![image](docs/img/admin-03.png)
 
 The added person will appear on the list for granting access to the course for users who are already registered in the system.
 
-![image](https://github.com/EscolaLMS/Assign-Without-Account/assets/108077902/0de988ca-72b1-4f9b-b34b-e0f52ac33f78)
+![image](docs/img/admin-04.png)
 
 1. Now you can use the search filter to find the user added to the list in case the list is very long.
 2. The status indicates that an email invitation has been sent to access the shared item, which will be available for viewing after creating an account on the platform using the email to which the invitation was sent.

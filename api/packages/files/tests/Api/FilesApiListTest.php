@@ -35,14 +35,14 @@ class FilesApiListTest extends TestCase
         $response->assertJsonFragment(['data' => [
             [
                 'name' => $file1->getClientOriginalName(),
-                'created_at' => date(DATE_RFC3339, $file1->getCTime()),
+                'created_at' => $this->storedAt($directory.'/'.$file1->getClientOriginalName()),
                 'mime' => $file1->getMimeType(),
                 'url' => $path.'/'.$file1->getClientOriginalName(),
                 'isDir' => false
             ],
             [
                 'name' => $file2->getClientOriginalName(),
-                'created_at' => date(DATE_RFC3339, $file2->getCTime()),
+                'created_at' => $this->storedAt($directory.'/'.$file2->getClientOriginalName()),
                 'mime' => $file2->getMimeType(),
                 'url' => $path.'/'.$file2->getClientOriginalName(),
                 'isDir' => false
@@ -73,14 +73,14 @@ class FilesApiListTest extends TestCase
         $response->assertJsonFragment(['data' => [
             [
                 'name' => $file1->getClientOriginalName(),
-                'created_at' => date(DATE_RFC3339, $file1->getCTime()),
+                'created_at' => $this->storedAt($directory.'/'.$file1->getClientOriginalName()),
                 'mime' => $file1->getMimeType(),
                 'url' => $path.'/'.$file1->getClientOriginalName(),
                 'isDir' => false
             ],
             [
                 'name' => $file2->getClientOriginalName(),
-                'created_at' => date(DATE_RFC3339, $file2->getCTime()),
+                'created_at' => $this->storedAt($directory.'/'.$file2->getClientOriginalName()),
                 'mime' => $file2->getMimeType(),
                 'url' => $path.'/'.$file2->getClientOriginalName(),
                 'isDir' => false
@@ -108,14 +108,14 @@ class FilesApiListTest extends TestCase
         $response->assertJsonFragment(['data' => [
             [
                 'name' => 'directory',
-                'created_at' => date(DATE_RFC3339, $file->getCTime()),
+                'created_at' => $this->storedAt('/directory'),
                 'mime' => 'directory',
                 'url' => $this->storagePath.'/directory',
                 'isDir' => true
             ],
             [
                 'name' => $fileName,
-                'created_at' => date(DATE_RFC3339, $file->getCTime()),
+                'created_at' => $this->storedAt('/'.$fileName),
                 'mime' => $file->getMimeType(),
                 'url' => $this->storagePath.'/'.$file->getClientOriginalName(),
                 'isDir' => false
