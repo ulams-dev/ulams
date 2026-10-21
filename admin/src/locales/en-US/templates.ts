@@ -54,5 +54,28 @@ export default {
   'templates.visual_diff_cancel': 'Keep my MJML',
   'templates.visual_canvas': 'Visual e-mail editor',
   'templates.visual_variables_hint':
-    'Type a variable such as @VarUserName into a text block. Inserting from this list works in Code only.',
+    'Select a text block in the e-mail, then choose a variable to add it as a chip. While you edit the text, the chip goes at the caret; otherwise at the end of the block.',
+  'templates.visual_inserted': 'Inserted {token}.',
+  'templates.visual_select_text':
+    'Select a text block in the e-mail first, then choose {token} again.',
+  'templates.required_missing': 'Required variables not used yet',
+  'templates.shared_parts': 'Shared parts',
+  'templates.shared_parts_hint':
+    'These parts come from Settings and are shown locked in the editor. Change them in Settings and every template that uses them is updated.',
+  'templates.shared_parts_edit': 'Edit in Settings',
+  'templates.image_title': 'Insert an image',
+  'templates.image_hint':
+    'PNG, JPEG, GIF or WebP up to 2 MB. The image is stored with your academy and the e-mail loads it from there. SVG is not supported in e-mails.',
+  'templates.image_file': 'Image file',
+  'templates.image_wrong_type':
+    'Choose a PNG, JPEG, GIF or WebP image. SVG and other files are not accepted.',
+  'templates.image_too_large': 'The image is larger than 2 MB.',
+  'templates.image_failed': 'The image could not be uploaded.',
+  'templates.image_uploading': 'Uploading the image...',
+  'templates.image_alt': 'Alternative text',
+  'templates.image_alt_hint':
+    'Describe the image for people who cannot see it. Required, unless the image is only decoration.',
+  'templates.image_decorative': 'This image is decorative (no alternative text)',
+  'templates.image_insert': 'Insert image',
+  'templates.image_cancel': 'Cancel',
 };

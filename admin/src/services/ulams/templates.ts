@@ -93,6 +93,26 @@ export async function testSendEmailDraft(body: EmailDraftBody, options?: AxiosRe
   );
 }
 
+export type EmailImage = {
+  url: string;
+  name: string;
+  mime: string;
+  size: number;
+  width: number;
+  height: number;
+};
+
+/** Uploads an image of an e-mail template to the storage of the current tenant. */
+export async function uploadEmailImage(file: File, options?: AxiosRequestConfig) {
+  const data = new FormData();
+  data.append('image', file);
+  return request<API.DefaultResponse<EmailImage>>(`/api/admin/templates/email/images`, {
+    method: 'POST',
+    data,
+    ...(options || {}),
+  });
+}
+
 /// api/admin/events/trigger-manually/{id}
 
 export async function triggerManualEvent(

@@ -22,11 +22,13 @@ jest.mock('umi', () => ({
         messages[d.id] ?? d.id,
       ),
   }),
+  Link: ({ children }: { children: unknown }) => children,
   request: jest.fn(),
 }));
 jest.mock('@/services/ulams/templates', () => ({
   renderEmailDraft: jest.fn(),
   testSendEmailDraft: jest.fn(),
+  uploadEmailImage: jest.fn(),
 }));
 jest.mock('@webscopeio/react-textarea-autocomplete', () => {
   const R = require('react');

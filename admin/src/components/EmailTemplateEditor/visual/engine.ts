@@ -1,7 +1,9 @@
 import grapesjs, { type Editor, type EditorConfig } from 'grapesjs';
 import mjmlPlugin from 'grapesjs-mjml';
 import 'grapesjs/dist/css/grapes.min.css';
-import { editorLocale, editorMessages } from './locales';
+import { editorLocale, editorMessages, partialMessage } from './locales';
+import { format, ulamsPlugin, type ImagePick } from './ulams';
+import { fromVisual, toVisual } from './variables';
 
 /**
  * The only module that imports GrapesJS. It is loaded with `import()` from the e-mail template
@@ -30,22 +32,34 @@ export const BLOCKS = [
 
 export const EMPTY_TEMPLATE = '<mjml><mj-body></mj-body></mjml>';
 
+export type VisualOptions = {
+  /** Registered variables (`@VarUserName`): they open as chips. */
+  variables?: string[];
+  pickImage?: () => Promise<ImagePick | undefined>;
+};
+
 export const buildConfig = (
   mjml: string,
   adminLocale: string | undefined,
   extra: Partial<EditorConfig> = {},
+  options: VisualOptions = {},
 ): EditorConfig => ({
   fromElement: false,
   storageManager: false,
   // GrapesJS loads Font Awesome 4.7 from cdnjs by default; the editor must work offline.
   cssIcons: '',
-  components: mjml,
+  // Chips and locked shared parts are a decoration of the stored text, undone by exportMjml.
+  components: toVisual(mjml, options.variables ?? [], (token) =>
+    format(partialMessage(adminLocale), { token }),
+  ),
   plugins: [
     (editor: Editor) =>
       mjmlPlugin(editor, {
         blocks: BLOCKS,
         imagePlaceholderSrc: IMAGE_PLACEHOLDER,
       }),
+    (editor: Editor) =>
+      ulamsPlugin(editor, { variables: options.variables ?? [], pickImage: options.pickImage }),
   ],
   i18n: {
     // Without this the locale falls back to `en` whatever is configured.
@@ -75,22 +89,34 @@ export const createEditor = (
   container: HTMLElement,
   mjml: string,
   adminLocale: string | undefined,
+  options: VisualOptions = {},
 ): Editor => {
-  const editor = grapesjs.init({ ...buildConfig(mjml, adminLocale), container, height: '70vh' });
+  const editor = grapesjs.init({
+    ...buildConfig(mjml, adminLocale, {}, options),
+    container,
+    height: '70vh',
+  });
   removeImportButton(editor);
   return editor;
 };
 
 /** MJML text of the editor, as the plugin exports it. */
-export const exportMjml = (editor: Editor): string => editor.getHtml();
+export const exportMjml = (editor: Editor): string => fromVisual(editor.getHtml());
 
 /**
  * Loads `mjml` into a throwaway headless editor (no canvas, no panels), exports it and destroys it:
  * the check of plan 4.6. Components are parsed by the same model code as in the visible editor,
  * which is where the markup is lost or moved.
  */
-export const exportOnce = async (mjml: string, adminLocale?: string): Promise<string> => {
-  const editor = grapesjs.init({ ...buildConfig(mjml, adminLocale), headless: true });
+export const exportOnce = async (
+  mjml: string,
+  adminLocale?: string,
+  options: VisualOptions = {},
+): Promise<string> => {
+  const editor = grapesjs.init({
+    ...buildConfig(mjml, adminLocale, {}, options),
+    headless: true,
+  });
   try {
     return exportMjml(editor);
   } finally {

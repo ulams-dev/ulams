@@ -1,12 +1,14 @@
 /**
  * @jest-environment jsdom
  */
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals';
 import { readFileSync } from 'fs';
+import grapesjs, { type Component } from 'grapesjs';
 import { join } from 'path';
 import { analyseMjml, parseMarkup, treeLines } from '../roundTrip';
-import { buildConfig, exportOnce } from './engine';
+import { buildConfig, exportMjml, exportOnce } from './engine';
 import { editorLocale, editorMessages, zhPlugin } from './locales';
+import { applyImage, insertVariable } from './ulams';
 
 const fixture = (name: string) =>
   readFileSync(join(__dirname, '..', '__fixtures__', `${name}.mjml`), 'utf8');
@@ -97,5 +99,167 @@ describe('locales', () => {
     expect(Object.keys(zh)).toEqual(Object.keys(pl));
     expect(JSON.stringify(zhPlugin)).toMatch(/撤销/);
     expect(JSON.stringify(editorMessages.zh['grapesjs-mjml'])).not.toMatch(/Undo|Redo|Import/);
+  });
+});
+
+const VARIABLES = [
+  '@VarUserName',
+  '@VarActionLink',
+  '@VarActionLinkExpiration',
+  '@VarAcademyUrl',
+  '@GlobalSettingsMailFooterMjml',
+];
+const analyseWithVariables = (name: string) =>
+  analyseMjml(fixture(name), (source) => exportOnce(source, 'en-US', { variables: VARIABLES }));
+
+describe('chips and locked parts on the spike fixtures (M4)', () => {
+  it.each([
+    '1-reset-password',
+    '2-training-due-soon',
+    '3b-branded-explicit-close',
+    '3-branded-handwritten',
+  ])('does not change the stored MJML of %s when the variables open as chips', async (name) => {
+    const withChips = await analyseWithVariables(name);
+    const without = await analyse(name);
+    expect(withChips.kind).toBe('representable');
+    expect(without.kind).toBe('representable');
+    if (withChips.kind === 'representable' && without.kind === 'representable') {
+      expect(treeLines(parseMarkup(withChips.exported))).toEqual(
+        treeLines(parseMarkup(withChips.source)),
+      );
+      // the decoration is invisible in the stored text
+      expect(withChips.exported).not.toMatch(/ulams-|data-ulams/);
+    }
+  });
+
+  const load = (mjml: string, variables = VARIABLES) =>
+    grapesjs.init({ ...buildConfig(mjml, 'en-US', {}, { variables }), headless: true });
+  const all = (editor: ReturnType<typeof load>) => {
+    const found: Component[] = [];
+    const walk = (c: Component) => {
+      found.push(c);
+      c.components().forEach(walk);
+    };
+    walk(editor.getWrapper() as Component);
+    return found;
+  };
+
+  it('opens variables of a text block as non-editable chips and exports the plain token', () => {
+    const editor = load(fixture('3b-branded-explicit-close'));
+    const chips = all(editor).filter((c) => c.get('type') === 'ulams-variable');
+    expect(chips.map((c) => c.getAttributes()['data-ulams-variable'])).toEqual(['${VarUserName}']);
+    expect(chips[0].get('editable')).toBe(false);
+    const out = exportMjml(editor);
+    expect(out).toContain('Cześć ${VarUserName}!');
+    expect(out).not.toContain('ulams-chip');
+    editor.destroy();
+  });
+
+  it('opens the shared footer as a locked block that cannot be moved, removed, copied or edited', () => {
+    const editor = load(fixture('3b-branded-explicit-close'));
+    const parts = all(editor).filter((c) => c.get('type') === 'ulams-partial');
+    expect(parts).toHaveLength(1);
+    const [part] = parts;
+    expect(part.getAttributes()['data-ulams-partial']).toBe('@GlobalSettingsMailFooterMjml');
+    ['removable', 'draggable', 'copyable', 'droppable', 'editable'].forEach((flag) =>
+      expect(part.get(flag)).toBe(false),
+    );
+    // the label inside cannot be selected or edited either
+    const inside: Component[] = [];
+    part.onAll((child: Component) => child !== part && inside.push(child));
+    expect(inside.length).toBeGreaterThan(0);
+    inside.forEach((child) => {
+      expect(child.get('editable')).toBe(false);
+      expect(child.get('selectable')).toBe(false);
+    });
+    // and it exports as the plain token of the stored template, not expanded
+    expect(exportMjml(editor)).toContain('@GlobalSettingsMailFooterMjml</mj-body>');
+    editor.destroy();
+  });
+
+  it('keeps the shared footer when everything else is edited', () => {
+    const editor = load(fixture('3b-branded-explicit-close'));
+    const text = all(editor).find((c) => c.get('type') === 'mj-text') as Component;
+    text.components('<p>Changed</p>');
+    const out = exportMjml(editor);
+    expect(out).toContain('Changed');
+    expect(out).toContain('@GlobalSettingsMailFooterMjml');
+    editor.destroy();
+  });
+
+  it('inserts a chip into the selected text block, nowhere else', () => {
+    const editor = load(fixture('1-reset-password'));
+    const nodes = all(editor);
+    expect(insertVariable(editor, '@VarUserName')).toBe('no-target');
+    editor.select(nodes.find((c) => c.get('type') === 'mj-button'));
+    expect(insertVariable(editor, '@VarUserName')).toBe('no-target');
+    editor.select(nodes.find((c) => c.get('type') === 'mj-text'));
+    expect(insertVariable(editor, '@VarUserName')).toBe('inserted');
+    const out = exportMjml(editor);
+    expect(out).toContain('@VarUserName</mj-text>');
+    expect(out).not.toContain('data-ulams');
+    expect(all(editor).some((c) => c.get('type') === 'ulams-variable')).toBe(true);
+    editor.destroy();
+  });
+
+  it('writes a variable into the link of a button or an image from the link picker', () => {
+    const editor = load(fixture('1-reset-password'));
+    const button = all(editor).find((c) => c.get('type') === 'mj-button') as Component;
+    const traits = button.getTraits().map((t) => t.getName());
+    expect(traits).toContain('ulams-href-variable');
+    button.set('ulams-href-variable' as never, '@VarAcademyUrl' as never);
+    expect(exportMjml(editor)).toMatch(/<mj-button[^>]*href="@VarAcademyUrl"/);
+    expect(button.get('ulams-href-variable' as never)).toBe('');
+    editor.destroy();
+  });
+
+  it('puts an uploaded image into mj-image with its alt text, empty for a decorative image', () => {
+    const editor = load(
+      '<mjml><mj-body><mj-section><mj-column><mj-image src="https://e.test/a.png" alt="old"></mj-image></mj-column></mj-section></mj-body></mjml>',
+    );
+    const image = all(editor).find((c) => c.get('type') === 'mj-image') as Component;
+    applyImage(image, { url: 'https://cdn.test/email-images/x.png', alt: 'Academy logo' });
+    let out = exportMjml(editor);
+    expect(out).toContain('src="https://cdn.test/email-images/x.png"');
+    expect(out).toContain('alt="Academy logo"');
+    applyImage(image, { url: 'https://cdn.test/email-images/y.png', alt: '' });
+    out = exportMjml(editor);
+    expect(out).toContain('src="https://cdn.test/email-images/y.png"');
+    expect(out).toMatch(/alt=""/);
+    editor.destroy();
+  });
+
+  it('opens the image dialog for the selected image and applies the result', async () => {
+    const pickImage = jest.fn(async () => ({
+      url: 'https://cdn.test/email-images/z.png',
+      alt: 'Z',
+    }));
+    const editor = grapesjs.init({
+      ...buildConfig(
+        '<mjml><mj-body><mj-section><mj-column><mj-image src="https://e.test/a.png"></mj-image></mj-column></mj-section></mj-body></mjml>',
+        'en-US',
+        {},
+        { variables: [], pickImage },
+      ),
+      headless: true,
+    });
+    const image = all(editor).find((c) => c.get('type') === 'mj-image') as Component;
+    editor.select(image);
+    editor.runCommand('open-assets', { target: image });
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(pickImage).toHaveBeenCalledTimes(1);
+    expect(exportMjml(editor)).toContain('src="https://cdn.test/email-images/z.png"');
+    editor.destroy();
+  });
+});
+
+describe('strings of the additions', () => {
+  it('exist in English, Polish, Chinese and French with the same keys', () => {
+    const keys = Object.keys((editorMessages.en as { ulams: object }).ulams).sort();
+    ['pl', 'zh', 'fr'].forEach((locale) =>
+      expect(Object.keys((editorMessages[locale] as { ulams: object }).ulams).sort()).toEqual(keys),
+    );
+    expect(JSON.stringify(editorMessages.zh)).toMatch(/共享部分/);
   });
 });

@@ -55,5 +55,28 @@ export default {
   'templates.visual_diff_cancel': 'Conserver mon MJML',
   'templates.visual_canvas': 'Éditeur d’e-mails visuel',
   'templates.visual_variables_hint':
-    'Saisissez une variable comme @VarUserName dans un bloc de texte. L’insertion depuis cette liste ne fonctionne que dans Code.',
+    'Sélectionnez un bloc de texte dans l’e-mail, puis choisissez une variable pour l’ajouter sous forme de pastille. Pendant la modification du texte, la pastille est placée au curseur ; sinon, à la fin du bloc.',
+  'templates.visual_inserted': '{token} inséré.',
+  'templates.visual_select_text':
+    'Sélectionnez d’abord un bloc de texte dans l’e-mail, puis choisissez à nouveau {token}.',
+  'templates.required_missing': 'Variables obligatoires pas encore utilisées',
+  'templates.shared_parts': 'Parties partagées',
+  'templates.shared_parts_hint':
+    'Ces parties viennent des Paramètres et sont verrouillées dans l’éditeur. Modifiez-les dans les Paramètres : tous les modèles qui les utilisent sont mis à jour.',
+  'templates.shared_parts_edit': 'Modifier dans les Paramètres',
+  'templates.image_title': 'Insérer une image',
+  'templates.image_hint':
+    'PNG, JPEG, GIF ou WebP jusqu’à 2 Mo. L’image est stockée avec votre académie et l’e-mail la charge depuis là. Le SVG n’est pas pris en charge dans les e-mails.',
+  'templates.image_file': 'Fichier image',
+  'templates.image_wrong_type':
+    'Choisissez une image PNG, JPEG, GIF ou WebP. Le SVG et les autres fichiers ne sont pas acceptés.',
+  'templates.image_too_large': 'L’image dépasse 2 Mo.',
+  'templates.image_failed': 'L’image n’a pas pu être téléversée.',
+  'templates.image_uploading': 'Téléversement de l’image...',
+  'templates.image_alt': 'Texte alternatif',
+  'templates.image_alt_hint':
+    'Décrivez l’image pour les personnes qui ne la voient pas. Obligatoire, sauf si l’image est purement décorative.',
+  'templates.image_decorative': 'Cette image est décorative (sans texte alternatif)',
+  'templates.image_insert': 'Insérer l’image',
+  'templates.image_cancel': 'Annuler',
 };
