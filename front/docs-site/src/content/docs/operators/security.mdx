@@ -53,6 +53,15 @@ The image build also refuses a PHP older than 8.4.27 (`MIN_PHP_VERSION` build ar
 minimum", rebuild with `docker build --pull`; the official PHP image can lag a security release by a day or
 two. Check a running container with `docker exec <api container> php -v`.
 
+### Is my PHP current?
+
+The `PHP freshness` workflow (`.github/workflows/php-freshness.yml`) runs daily in the ulams repository. It
+compares the latest PHP 8.4 release on php.net with the official `php:8.4-fpm-alpine` image and with our
+published `ghcr.io/ulams-dev/php:8.4`, and opens (or updates) one GitHub issue labelled `security` when either
+is behind; it closes the issue when both are current. It reports through the issue and does not fail the run.
+Check your own container with `docker exec <api container> php -v`, and a MyDevil host with
+`deploy/mydevil/bin/check-host.sh`. Dependabot also watches the `php` base image in the Dockerfiles.
+
 ## SVG, HTML and other active files
 
 - In buckets, `ActiveContentSafeS3Adapter` sets `Content-Type` from the file extension (an HTML

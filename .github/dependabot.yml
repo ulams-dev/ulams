@@ -63,6 +63,9 @@ updates:
     commit-message:
       prefix: "build(deps)"
 
+  # Covers the FROM lines of api/docker/php/Dockerfile, api/Dockerfile and api/Dockerfile.develop (the
+  # php:8.4-fpm-alpine base). Nothing is ignored for php, so patch updates arrive too; the PHP freshness
+  # workflow (.github/workflows/php-freshness.yml) reports a PHP security release the same day.
   - package-ecosystem: docker
     directories:
       - /api
