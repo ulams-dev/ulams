@@ -35,6 +35,25 @@ Alternatively, replace `ulams` in a command below with:
 npx --yes --package=https://github.com/ulams-dev/ulams/releases/download/cli-v0.2.0/ulams-0.2.0.tgz ulams
 ```
 
+## Quick start with create-ulams
+
+`create-ulams` is a short front door to the same launcher: it checks Node, Docker Compose and the target directory,
+then runs `ulams stack up` with your options.
+
+```bash
+npx create-ulams my-academy
+npx create-ulams my-academy --users 10 --theme nightsky --academy-name "Night School"
+npx create-ulams my-academy --dry-run
+```
+
+The directory must be new or empty (`--force` resumes a stack started there). It becomes the install directory:
+`npx ulams stack status --directory my-academy`, `... stack down --directory my-academy`. The seed data is the
+academy with its name and theme, an admin and `--users` demo students (default 3 in development). `--mode production
+--domain ...` passes through to the production launch, which keeps its own defaults. `create-ulams` needs the
+`ulams` CLI: it uses the `ulams` package it depends on, `ulams` on your PATH, or `--cli /path/to/ulams.mjs`
+(also `ULAMS_CLI`). The npm packages are not published yet, so until then install the CLI from the release below and
+pass its path, or run both from the repository (`front/create-ulams`, `front/cli`).
+
 ## Local development: Phase 2 trial
 
 ```bash
@@ -52,7 +71,7 @@ Development uses the deterministic fake AI provider for the Phase 2 course creat
 
 Credentials are in `./ulams-stack/credentials.json`, permission `600`. Sign in to the academy with `admin@academy.ulams.localhost` and `TENANT_INITIAL_PASSWORD`. The platform administrator uses `admin@ulams.localhost` and the separate `PLATFORM_ADMIN_PASSWORD`. No password is printed in terminal output.
 
-Browsers resolve `*.localhost` locally; the CLI does too. For clients that do not, map the hostnames to loopback. Use `--http-port` if port 8480 is occupied.
+Browsers resolve `*.localhost` locally; the CLI does too. For clients that do not, map the hostnames to loopback. Use `--http-port` if port 8480 is occupied. `--academy-name`, `--theme` and `--users` set the display name, theme preset and number of demo students of the first academy.
 
 ## Docker production on a server
 

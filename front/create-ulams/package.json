@@ -1,0 +1,33 @@
+{
+  "name": "create-ulams",
+  "version": "0.1.0",
+  "description": "npx create-ulams: set up a local ulams academy (Docker Compose stack with demo students) in one command.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "bin": {
+    "create-ulams": "bin/create-ulams.mjs"
+  },
+  "files": [
+    "bin",
+    "src",
+    "LICENSE"
+  ],
+  "keywords": [
+    "ulams",
+    "lms",
+    "create",
+    "scaffold"
+  ],
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "ulams": "0.2.0"
+  },
+  "devDependencies": {
+    "vitest": "3.2.4"
+  }
+}

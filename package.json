@@ -13,6 +13,7 @@
       "front/sdk",
       "front/interactive-bridge",
       "front/cli",
+      "front/create-ulams",
       "front/ui",
       "front/web",
       "front/docs-site",

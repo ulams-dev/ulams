@@ -831,7 +831,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
       feature-catalogue PR, #242; questionnaire and question endpoints have response bodies too)
 - [x] (new) Feature index on the platform landing (`FeatureIndex`, 14 collapsed groups, 101 features including MCP, teacher and sales analytics, 54 H5P content types, EN/PL/ZH,
       `ItemList` JSON-LD) with a drift test against `api/packages` (merged in the feature-catalogue PR, #242)
-- [ ] `npx create-ulams` / `docker compose up` with seed data (partial: `ulams` CLI one-command Docker and Kubernetes stack installation, #249; `create-ulams` planned in `docs/plans/phase-7.md`, in progress, not merged)
+- [ ] `npx create-ulams` / `docker compose up` with seed data (partial: `front/create-ulams` and the `--academy-name/--theme/--users` seed options of `ulams stack up` are in the create-ulams PR, pending merge; publishing to npm waits for #77; seed data is the academy name, theme and demo students, no sample course) (partial: `ulams` CLI one-command Docker and Kubernetes stack installation, #249; `create-ulams` planned in `docs/plans/phase-7.md`, in progress, not merged)
 - [ ] Docs site with runnable examples; free cloud sandbox tenant (partial: Starlight site in `front/docs-site` on branch `docs/starlight-site`; runnable examples and the sandbox tenant pending)
 
 ### 7.4 Plugin system
