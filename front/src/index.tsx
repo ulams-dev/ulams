@@ -12,6 +12,7 @@ declare global {
   interface Window {
     VITE_APP_API_URL: string;
     VITE_APP_URL: string;
+    VITE_APP_ULAMS_DOCS_URL?: string;
     VITE_APP_FIREBASE_VAPID_KEY: string;
     VITE_APP_FIREBASE_APIKEY: string;
     VITE_APP_FIREBASE_AUTHDOMAIN: string;
