@@ -34,6 +34,7 @@ Each notification is created as a class describing available variables that can 
 2. To render MJML you need to either:
     - install `mjml` npm package and configure path to executable binary in this package config `binary_path` key
     - register to MJML API and configure api id & secret in this package config file
+    - calls to the MJML HTTP service (`MJML_API_URL`) use a connect timeout of `MJML_CONNECT_TIMEOUT` (5 s) and a total timeout of `MJML_TIMEOUT` (20 s), do not follow redirects, and log or raise the error list the service returns
 
 ### Variable values are escaped
 
