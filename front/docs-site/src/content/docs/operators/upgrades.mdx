@@ -87,6 +87,7 @@ docker compose exec api php artisan ulams:upgrade             # run it
 | `lti_keys` | each target, every upgrade | `ulams:lti:rotate-keys --init` (creates the LTI key set when missing) |
 | `cmi5_move_to_bucket` | each target, once | `cmi5:move-to-bucket` (when this release has the command) |
 | `meetings_purge_frames` | each target, once | `meetings:purge-frames`, preceded by a logged `--dry-run`: deletes the webcam frames the removed meeting capture stored under `consultation/{id}/{term}/{user}/` and `webinar/{id}/{term}/{user}/`; the `images` folders stay |
+| `disarm_legacy_social_passwords` | each target, once | `ulams:auth:disarm-legacy-social-passwords`: accounts that have a linked social login and a password that verifies against `1` (the old social login stored it) get a random unusable password and their tokens are revoked. Prints and logs counts only (`--dry-run` counts without changing); safe to run again |
 | `recreate_views` | each target, once | `ulams:db:recreate-views`: SQL views created before the package rename carry old class names |
 
 "Once" steps are recorded in the platform table `tenant_upgrade_steps` (`target` is `platform` or

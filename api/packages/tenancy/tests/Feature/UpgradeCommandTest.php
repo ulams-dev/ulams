@@ -74,6 +74,18 @@ class UpgradeCommandTest extends TestCase
         $this->assertSame([], $this->ran('ulams:tenant:sync-env'));
     }
 
+    public function testTheLegacySocialPasswordStepRunsOncePerTargetWhenTheCommandExists(): void
+    {
+        UpgradeSteps::flush();
+        DefaultUpgradeSteps::register();
+
+        $step = collect(UpgradeSteps::all())->firstWhere('name', 'disarm_legacy_social_passwords');
+        $this->assertNotNull($step);
+        $this->assertTrue($step->once, 'recorded per target, so a second upgrade skips it');
+        $this->assertSame(UpgradeSteps::BOTH, $step->scope, 'the platform database and every tenant database');
+        $this->assertSame('ulams:auth:disarm-legacy-social-passwords', $step->requiresCommand);
+    }
+
     public function testAStepRunsOnceAndAgainWithForceStep(): void
     {
         $count = 0;

@@ -58,6 +58,14 @@ A local account whose e-mail address was never confirmed, claimed through a trus
 loses its password and tokens first: someone who registered an address they do not own cannot keep the
 account.
 
+## Accounts created by the old social login
+
+Versions before this hardening stored the password `1` on accounts created through a provider. The
+upgrade step `disarm_legacy_social_passwords` (run by `ulams:upgrade` on every tenant, once) replaces
+it with an unusable random password and revokes the tokens of those accounts; it logs how many it
+changed and never the users. The owners keep signing in with the provider or use "forgot password".
+To preview: `php artisan ulams:auth:disarm-legacy-social-passwords --dry-run --domain=<tenant host>`.
+
 ## Troubleshooting
 
 | What the user sees | Cause |
