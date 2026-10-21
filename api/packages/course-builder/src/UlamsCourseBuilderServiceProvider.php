@@ -41,16 +41,19 @@ use Ulams\CourseBuilder\Publish\PublishCheck;
 use Ulams\CourseBuilder\Site\NewSite;
 use Ulams\CourseBuilder\Transfer\SessionArchive;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
+use Ulams\CourseBuilder\Services\AiAssistedTopics;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\VersionService;
 use Ulams\CourseBuilder\Ui\Surfaces;
 use Ulams\CourseBuilder\Ui\UiCatalogue;
 use Ulams\Commerce\UlamsCommerceServiceProvider;
+use Ulams\Courses\Http\Resources\TopicResource;
 use Ulams\Courses\UlamsCourseServiceProvider;
 use Ulams\H5P\UlamsH5PServiceProvider;
 use Ulams\Interactive\UlamsInteractiveServiceProvider;
 use Ulams\LiaScript\UlamsLiaScriptServiceProvider;
 use Ulams\Pages\UlamsPagesServiceProvider;
+use Ulams\Settings\Facades\AdministrableConfig;
 use Ulams\Settings\UlamsSettingsServiceProvider;
 use Ulams\TopicTypeGift\UlamsTopicTypeGiftServiceProvider;
 use Ulams\TopicTypes\UlamsTopicTypesServiceProvider;
@@ -94,6 +97,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         SessionArchive::class => SessionArchive::class,
         LandingValidator::class => LandingValidator::class,
         RunService::class => RunService::class,
+        AiAssistedTopics::class => AiAssistedTopics::class,
         RemovalPolicy::class => DeleteEverything::class,
         FragmentArchive::class => NoFragmentArchive::class,
     ];
@@ -119,6 +123,10 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         if (config('filesystems.disks.course_builder_private') === null) {
             config(['filesystems.disks.course_builder_private' => ['driver' => 'local', 'root' => config('course_builder.private_root'), 'visibility' => 'private', 'throw' => true]]);
         }
+
+        // AI content labelling (4.3): public tenant switch, and `ai_assisted` on every topic of a program response
+        AdministrableConfig::registerConfig('ai.label_generated_courses', ['boolean'], true, false);
+        TopicResource::extend('course-builder.ai_assisted', fn ($topic) => ['ai_assisted' => app(AiAssistedTopics::class)->is($topic)]);
 
         $this->app->make(PromptRegistry::class)->addPath(Llm::PROMPTS, __DIR__ . '/../resources/prompts');
         SyntheticResponders::register($this->app->make(FakeResponders::class));

@@ -298,6 +298,18 @@ test.describe("explain it in your own words", () => {
   });
 });
 
+test.describe("AI-assisted lesson label", () => {
+  test("a topic built with AI assistance says so in the lesson footer; others do not; axe clean", async ({ page }, info) => {
+    const slug = tenantOf(info.project.name);
+    await page.goto(`${host(slug)}/learn/${COURSE}/8`, { waitUntil: "load" });
+    await expect(page.getByText("Created with AI assistance and reviewed by the author")).toBeVisible();
+    const violations = await scan(page);
+    expect(violations, violations.join("\n")).toEqual([]);
+    await page.goto(`${host(slug)}/learn/${COURSE}/2`, { waitUntil: "load" });
+    await expect(page.getByText("Created with AI assistance and reviewed by the author")).toHaveCount(0);
+  });
+});
+
 test("axe: platform landing", async ({ page }) => {
   await page.goto(host(""), { waitUntil: "load" });
   await revealAll(page);

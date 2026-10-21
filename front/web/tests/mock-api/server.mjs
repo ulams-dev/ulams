@@ -50,6 +50,8 @@ const attempt = (ended = false) => ({
 });
 
 const topics = program.lessons.flatMap((l) => l.topics);
+// AI content labelling: the roast-curve lesson was applied from a builder session
+for (const t of topics) if (t.id === 8) t.ai_assisted = true;
 const progressRows = topics.map((t, i) => ({ id: i + 1, topic_id: t.id, status: i < 2 ? 1 : 0, seconds: i < 2 ? 120 : 0 }));
 const me = { id: 7, first_name: "Demo", last_name: "Student", email: "student@coffee.example", roles: ["student"] };
 
@@ -171,6 +173,8 @@ const routes = [
     { id: "01JMOCKMSG2", role: "tutor", text: tutorAnswer.answer, citations: tutorAnswer.citations, refusal: "none", at: tutorEarlier.lastMessageAt },
   ] })],
   ["DELETE", /^\/api\/tutor\/conversations\/01JMOCKEARLIER0000000000A$/, () => ({ deleted: true })],
+  ["GET", /^\/api\/config$/, () => ({ ai: { label_generated_courses: true } })],
+  ["GET", /^\/api\/config$/, () => ({ ai: { label_generated_courses: true } })],
   ["GET", /^\/api\/settings$/, () => coffee.settings],
   ["GET", /^\/api\/courses$/, () => [coffee.course]],
   ["GET", /^\/api\/courses\/1$/, () => program],

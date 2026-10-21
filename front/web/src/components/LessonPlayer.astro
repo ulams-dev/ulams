@@ -12,12 +12,14 @@ import { formatLabel, formatMinutes } from "@ulams/ui/format";
 import { completionPercent, flattenTopics, topicNeighbours, type Course, type PublicSettings, type Tenant, type TopicProgress } from "@ulams/sdk";
 import Base from "../layouts/Base.astro";
 import PreviewBanner from "./PreviewBanner.astro";
-import { apiFor, cmi5Launch, getLearnerNotices, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../lib/data.ts";
+import { apiFor, cmi5Launch, getLearnerNotices, getPublicConfig, liascriptLaunch, ltiLaunch, scormAvailable, scormLaunch } from "../lib/data.ts";
 import { interactiveLaunch, interactivePreview, isImmersive } from "../lib/interactive.ts";
 import { completionMode, formatOf, topicDoc, topicMinutes } from "../lib/page-docs.ts";
 import { NO_NOTICES, topicNoticeDocs } from "../lib/notices.ts";
 import { getSupport, supportCardId, supportDocs, supportIsLong } from "../lib/support.ts";
 import { learnerLocale } from "../lib/locale.ts";
+import { showAiAssistedLabel } from "../lib/ai-label.ts";
+import AiLabel from "@ulams/ui/components/AiLabel.astro";
 import { uiStrings } from "@ulams/ui/i18n";
 import { PREVIEW_LINKS, isPublished, previewCourseHref, studioHref } from "../lib/preview.ts";
 import { themeFor } from "../lib/theme.ts";
@@ -88,6 +90,8 @@ const supportNodes = supportDocs(supportItems, locale);
 const readySupport = supportNodes.find((n) => n.props?.status === "ready");
 const jumpLink = readySupport && supportIsLong(supportNodes) ? `#${supportCardId({ assignmentId: String(readySupport.props?.assignmentId) })}` : null;
 const jumpText = uiStrings(locale).supportJump;
+// the tenant switch is read only for a topic the API marks, so ordinary lessons cost no extra call
+const aiAssisted = topic.ai_assisted === true && showAiAssistedLabel(topic, await getPublicConfig(tenant).catch(() => null));
 // SCORM: the player on the tenant content origin (tracks through a SCO-scoped token), else the legacy API player.
 const contentOriginSrc = scormUuid && access && tracked ? await scormLaunch(tenant, token!, scormUuid) : null;
 const packageAvailable = scormUuid && !contentOriginSrc ? await scormAvailable(tenant, scormUuid) : true;
@@ -243,6 +247,7 @@ const tutorOn = access && tracked;
             </>
           )
         }
+        {aiAssisted && <footer class="u-player__ai"><AiLabel text={uiStrings(locale).aiAssistedLabel} tone="assisted" /></footer>}
         <div data-end-of-content aria-hidden="true"></div>
       </div>
     </main>
@@ -566,6 +571,9 @@ const tutorOn = access && tracked;
   }
   .u-player__intro {
     color: var(--ulams-color-muted);
+  }
+  .u-player__ai {
+    margin-top: 24px;
   }
   .u-player__notice {
     padding: 12px 16px;
