@@ -2065,6 +2065,59 @@
     },
     "type": "object"
    },
+   "EmailTemplateDraft": {
+    "properties": {
+     "errors": {
+      "description": "MJML errors reported by the renderer",
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "html": {
+      "description": "rendered e-mail HTML with the sample values",
+      "type": "string"
+     },
+     "missing_variables": {
+      "description": "variables required by the event that the draft does not use",
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "recipient": {
+      "description": "only in the test-send response: the address of the signed-in admin",
+      "type": "string"
+     },
+     "sent": {
+      "description": "only in the test-send response",
+      "type": "boolean"
+     },
+     "title": {
+      "description": "subject with the sample values",
+      "type": "string"
+     },
+     "warnings": {
+      "description": "accessibility warnings of the generated e-mail",
+      "items": {
+       "properties": {
+        "code": {
+         "type": "string"
+        },
+        "count": {
+         "type": "integer"
+        },
+        "message": {
+         "type": "string"
+        }
+       },
+       "type": "object"
+      },
+      "type": "array"
+     }
+    },
+    "type": "object"
+   },
    "ExamplePluginGreetingResource": {
     "properties": {
      "greeting": {
@@ -23394,6 +23447,180 @@
     ]
    }
   },
+  "/api/admin/templates/email/render": {
+   "post": {
+    "description": "Nothing is stored and nothing is sent. Returns the rendered HTML with the sample values of the event, the MJML errors reported by the renderer and accessibility warnings (warnings never fail the request). Throttled to 30 requests per minute per user.",
+    "operationId": "templates.email.render",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "content": {
+          "description": "MJML (or HTML) source, up to 512 KiB",
+          "type": "string"
+         },
+         "event": {
+          "description": "event full classname, as listed by GET /api/admin/templates/events",
+          "type": "string"
+         },
+         "sample_overrides": {
+          "additionalProperties": {
+           "type": "string"
+          },
+          "description": "variable name to sample value, for this preview only",
+          "type": "object"
+         },
+         "title": {
+          "description": "subject",
+          "type": "string"
+         }
+        },
+        "required": [
+         "event",
+         "title",
+         "content"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/EmailTemplateDraft"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "rendered draft"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "user doesn't have required access rights"
+     },
+     "422": {
+      "description": "validation error"
+     },
+     "429": {
+      "description": "too many requests"
+     },
+     "503": {
+      "description": "the MJML renderer is unavailable"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Render an unsaved e-mail template draft with sample data",
+    "tags": [
+     "Templates"
+    ]
+   }
+  },
+  "/api/admin/templates/email/test-send": {
+   "post": {
+    "description": "Renders the draft like the render endpoint and sends it, with the subject prefixed by [Test], only to the e-mail address of the authenticated user. There is no recipient field. Throttled to 5 requests per minute per user.",
+    "operationId": "templates.email.test-send",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "content": {
+          "type": "string"
+         },
+         "event": {
+          "type": "string"
+         },
+         "sample_overrides": {
+          "additionalProperties": {
+           "type": "string"
+          },
+          "type": "object"
+         },
+         "title": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "event",
+         "title",
+         "content"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/EmailTemplateDraft"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "the draft was sent to the signed-in admin"
+     },
+     "401": {
+      "description": "endpoint requires authentication"
+     },
+     "403": {
+      "description": "user doesn't have required access rights"
+     },
+     "422": {
+      "description": "validation error"
+     },
+     "429": {
+      "description": "too many requests"
+     },
+     "503": {
+      "description": "the MJML renderer is unavailable"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Send an unsaved e-mail template draft to the signed-in admin",
+    "tags": [
+     "Templates"
+    ]
+   }
+  },
   "/api/admin/templates/variables": {
    "get": {
     "operationId": "templates.variables",
@@ -40565,16 +40792,16 @@
    "name": "Tasks Notes"
   },
   {
+   "description": "Templates",
+   "name": "Templates"
+  },
+  {
    "description": "Template PDFs",
    "name": "Template PDFs"
   },
   {
    "description": "Admin Template PDFs",
    "name": "Admin Template PDFs"
-  },
-  {
-   "description": "Templates",
-   "name": "Templates"
   },
   {
    "description": "Platform",
