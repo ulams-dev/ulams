@@ -15,6 +15,7 @@ use Ulams\Templates\Repository\Contracts\TemplateRepositoryContract;
 use Ulams\Templates\Services\Contracts\TemplateServiceContract;
 use Ulams\Templates\Services\Contracts\TemplateVariablesServiceContract;
 use Exception;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -132,13 +133,26 @@ class TemplateService implements TemplateServiceContract
             /** @var TemplateSection $section */
             // JSON sections (pdfme PDF templates): escape values so quotes or
             // newlines in a course title cannot break the JSON.
-            $isJson = is_string($channelClass) && method_exists($channelClass, 'section')
-                && $channelClass::section($section->key)?->getType()->value === TemplateSectionTypeEnum::SECTION_FABRIC;
+            $sectionType = is_string($channelClass) && method_exists($channelClass, 'section')
+                ? $channelClass::section($section->key)?->getType()->value
+                : null;
+            $isJson = $sectionType === TemplateSectionTypeEnum::SECTION_FABRIC;
+            // HTML and MJML sections: values are escaped for an HTML context, so a user named
+            // "<script>" cannot inject markup. A value that is intentionally HTML (a link or a button
+            // block) is passed as an Illuminate\Contracts\Support\Htmlable (e.g. HtmlString) and kept
+            // as is. Text sections (subject, SMS) never see escaped values.
+            $isMarkup = in_array($sectionType, [TemplateSectionTypeEnum::SECTION_HTML, TemplateSectionTypeEnum::SECTION_MJML], true);
             $allVariables = [];
             foreach ($variables as $key => $variable) {
-                $value = $isJson && (is_scalar($variable) || $variable === null)
-                    ? substr((string) json_encode((string) $variable, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 1, -1)
-                    : $variable;
+                if ($isJson && (is_scalar($variable) || $variable === null)) {
+                    $value = substr((string) json_encode((string) $variable, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 1, -1);
+                } elseif ($isMarkup && $variable instanceof Htmlable) {
+                    $value = $variable->toHtml();
+                } elseif ($isMarkup && (is_scalar($variable) || $variable === null || $variable instanceof \Stringable)) {
+                    $value = e((string) $variable);
+                } else {
+                    $value = $variable;
+                }
                 foreach (TemplateVariablesService::convertVarNameToAllFormats($key) as $nKey) {
                     $allVariables[$nKey] = $value;
                 }

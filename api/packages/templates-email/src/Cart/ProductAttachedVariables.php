@@ -7,6 +7,7 @@ use Ulams\Cart\Models\ProductProductable;
 use Ulams\Cart\Services\Contracts\ProductServiceContract;
 use Ulams\Core\Models\User;
 use Ulams\Templates\Events\EventWrapper;
+use Illuminate\Support\HtmlString;
 
 class ProductAttachedVariables extends CartVariables
 {
@@ -35,7 +36,7 @@ class ProductAttachedVariables extends CartVariables
         return array_merge(parent::variablesFromEvent($event), [
             self::VAR_USER_NAME    => $event->getUser()->name,
             self::VAR_PRODUCT_NAME => $event->getProduct()->name,
-            self::VAR_PRODUCTABLES => view('templates-email::productables', ['productables' => $productables])->render(),
+            self::VAR_PRODUCTABLES => new HtmlString(view('templates-email::productables', ['productables' => $productables])->render()),
         ]);
     }
 

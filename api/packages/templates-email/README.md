@@ -35,6 +35,15 @@ Each notification is created as a class describing available variables that can 
     - install `mjml` npm package and configure path to executable binary in this package config `binary_path` key
     - register to MJML API and configure api id & secret in this package config file
 
+### Variable values are escaped
+
+Variable values are HTML-escaped when they are put into the `contentHtml` section, so a user named
+`<script>` cannot inject markup. The subject (a text section) receives the raw value. A variable that
+is intentionally HTML (a link or button block, a table) must be returned from
+`variablesFromEvent()` as an `Illuminate\Support\HtmlString` (any `Htmlable`); it is inserted as is,
+so build it from escaped parts (Blade `{{ }}` or `e()`). Markdown global settings are marked this way
+by `SettingsVariables::getHtmlSettingsValues()`.
+
 ## Tests
 
 Run `./vendor/bin/phpunit --filter 'Ulams\\TemplatesEmail\\Tests'` to run tests. See [tests](https://github.com/EscolaLMS/Templates-Email/tree/main/tests) folder as it contains a basic implementation of Variable (or Template description) class with minimal customisation - a quite good starting point for creating your own.

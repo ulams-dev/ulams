@@ -16,14 +16,14 @@ abstract class EmailVariables extends AbstractTemplateVariableClass implements T
 
     public static function mockedVariables(?User $user = null): array
     {
-        return array_merge(SettingsVariables::getSettingsValues(), [
+        return array_merge(SettingsVariables::getHtmlSettingsValues(), [
             self::VAR_APP_NAME => config('app.name')
         ]);
     }
 
     public static function variablesFromEvent(EventWrapper $event): array
     {
-        return array_merge(SettingsVariables::getSettingsValues(), [
+        return array_merge(SettingsVariables::getHtmlSettingsValues(), [
             self::VAR_APP_NAME => config('app.name')
         ]);
     }
