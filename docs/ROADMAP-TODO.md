@@ -823,6 +823,8 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] (new) Endpoints to import a blueprint as a builder version and export a course as a blueprint (for M5)
 
 ### 7.2 Code exercises
+- [ ] (new) Plan `docs/plans/phase-7-agents-extensions.md` for 7.2, 7.4, 7.5 and the 7.3 docs/sandbox item
+      (milestones AX-1…AX-11; ADRs 0170–0172 Proposed)
 - [ ] WebContainers/Sandpack (JS/TS), Pyodide (Python), optional server sandbox
 - [ ] Autograding with author tests → attempts and learner signals
 - [ ] AI hints without revealing solutions

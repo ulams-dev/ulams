@@ -53,6 +53,22 @@ The package list lives in `install.sh` only. When you change the upstream pins (
 `php`, `mlocati/php-extension-installer` or `composer` images), change them in all three
 Dockerfiles.
 
+## Minimum PHP version
+
+`install.sh` stops the build when the base image has a PHP below the minimum, which is **8.4.27**
+(the release that fixes the two critical unauthenticated RCE bugs of
+[php.net advisory 2026-10-21-5](https://www.php.net/archive/2026.php#2026-10-21-5)). The check runs in all
+three Dockerfiles, because they all run `install.sh`, so a stale `php` base or build cache cannot ship.
+The default lives in `install.sh` only; override it with the `MIN_PHP_VERSION` build arg:
+
+```sh
+docker build --pull --build-arg MIN_PHP_VERSION=8.4.28 api/docker/php   # fails while the image is older
+```
+
+When the build fails, pull a newer base (`--pull`); if the official image is not updated yet, wait for it.
+Raise the default in `install.sh` when a new security release is out. The `PHP freshness` workflow reports when
+the official image or our published image is behind the latest release.
+
 ## Building and publishing the base on its own
 
 ```sh
