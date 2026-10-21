@@ -1,10 +1,6 @@
 # Image processing module
 
 [![swagger](https://img.shields.io/badge/documentation-swagger-green)](https://ulams.github.io/Images/)
-[![codecov](https://codecov.io/gh/Ulams/Images/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Images)
-[![phpunit](https://github.com/EscolaLMS/Images/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Courses/actions/workflows/test.yml)
-[![Maintainability](https://api.codeclimate.com/v1/badges/7dfeae0462e3599797bf/maintainability)](https://codeclimate.com/github/Ulams/Images/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/7dfeae0462e3599797bf/test_coverage)](https://codeclimate.com/github/Ulams/Images/test_coverage)
 
 ## What does it do
 
@@ -124,9 +120,6 @@ There is API endpoints documentation [![swagger](https://img.shields.io/badge/do
 
 Run `./vendor/bin/phpunit` to run tests.
 
-Test details
-[![codecov](https://codecov.io/gh/Ulams/Images/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Images)
-[![phpunit](https://github.com/EscolaLMS/Images/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Courses/actions/workflows/test.yml)
 
 ## Events
 

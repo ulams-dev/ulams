@@ -2,7 +2,6 @@
 
 Package for generate pdf invoice from order
 
-
 ## What does it do
 
 Renders a PDF invoice for a cart order (`GET /api/order-invoices/{id}`). The invoice model
@@ -111,15 +110,11 @@ return [
 
 ## Example or Tutorial
 
-
 ## Endpoints
-
 
 ## Tests
 
 Run `./vendor/bin/phpunit` to run tests. See [tests](https://github.com/EscolaLMS/Invoices/tree/main/tests) folder as it's quite good staring point as documentation appendix.
-
-Test details [![codecov](https://codecov.io/gh/Ulams/Invoices/branch/main/graph/badge.svg?token=O91FHNKI6R)](https://codecov.io/gh/Ulams/Invoices) [![Tests PHPUnit in environments](https://github.com/EscolaLMS/Invoices/actions/workflows/test.yml/badge.svg)](https://github.com/EscolaLMS/Invoices/actions/workflows/test.yml)
 
 ## Events
 

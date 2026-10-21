@@ -1,6 +1,5 @@
 # Stationary Events
 
-
 ## What does it do
 
 This package is used to manage stationary events.
@@ -39,15 +38,12 @@ All the endpoints are defined in [![swagger](https://img.shields.io/badge/docume
 
 Run `./vendor/bin/phpunit` to run tests.
 
-Test details [![codecov](https://codecov.io/gh/Ulams/Stationary-Events/branch/main/graph/badge.svg?token=NRAN4R8AGZ)](https://codecov.io/gh/Ulams/Stationary-Events)
-
 ## Events
 
 1. `StationaryEventAssigned` - event dispatched after assigning user to stationary event
 2. `StationaryEventUnassigned` - event dispatched after detaching user form stationary event
 3. `StationaryEventAuthorAssigned` - event dispatched after assigning author to stationary event
 4. `StationaryEventAuthorUnassigned` - event dispatched after detaching author from stationary event
-
 
 ## How to use this on frontend
 
