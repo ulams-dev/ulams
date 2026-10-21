@@ -1,0 +1,68 @@
+---
+/** My team: a manager's read-only view of the required training of their direct reports, overdue first. */
+import { acceptedLocale, trainingStrings } from "@ulams/ui/training-strings";
+import TrainingShell from "../../components/TrainingShell.astro";
+import { getSettings, getSiteModel } from "../../lib/data.ts";
+import { themeFor } from "../../lib/theme.ts";
+import { TEAM_FILTERS, assignmentRows, loadTeam, teamFilter } from "../../lib/training.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/");
+const token = Astro.locals.token;
+if (!token) return Astro.redirect("/login?next=/account/team");
+
+const locale = acceptedLocale(Astro.request.headers.get("accept-language"));
+const t = trainingStrings(locale);
+const filter = teamFilter(Astro.url.searchParams.get("status"));
+const [everyone, filtered, settings, site] = await Promise.all([
+  loadTeam(tenant, token),
+  filter ? loadTeam(tenant, token, filter) : null,
+  getSettings(tenant).catch(() => null),
+  getSiteModel(tenant).catch(() => null),
+]);
+// Not a manager (no reports, nothing to show): the page does not exist for them.
+if (everyone !== null && everyone.length === 0) return Astro.rewrite("/404");
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+Astro.response.headers.set("Cache-Control", "private, no-store");
+const list = filter ? filtered : everyone;
+const rows = list ? assignmentRows(list, locale, new Date()) : null;
+const label: Record<string, string> = { all: t.filterAll, overdue: t.filterOverdue, assigned: t.statusAssigned, completed: t.statusCompleted, cancelled: t.statusCancelled };
+---
+
+<TrainingShell theme={theme} accent={settings?.theme?.accent} title={t.teamTitle} heading={t.teamTitle} lead={t.teamLead} locale={locale} current="team" showTeam={true} site={site} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  <form method="get" action="/account/team" class="u-tr__filter" aria-label={t.filterLabel}>
+    <label>
+      {t.filterLabel}
+      <select name="status">
+        {TEAM_FILTERS.map((f) => <option value={f} selected={(filter ?? "all") === f}>{label[f]}</option>)}
+      </select>
+    </label>
+    <button class="u-btn u-btn--sm" type="submit">{t.filterApply}</button>
+  </form>
+  {
+    rows === null ? (
+      <p class="u-tr__error" role="alert">{t.loadFailed} <a href={`/account/team${filter ? `?status=${filter}` : ""}`}>{t.retry}</a></p>
+    ) : rows.length === 0 ? (
+      <p class="u-tr__empty">{t.teamEmpty}</p>
+    ) : (
+      <div class="u-tr__table-wrap">
+        <table class="u-tr__table">
+          <caption>{t.teamOverdueFirst}</caption>
+          <thead>
+            <tr><th scope="col">{t.learner}</th><th scope="col">{t.course}</th><th scope="col">{t.status}</th><th scope="col">{t.due}</th></tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr>
+                <th scope="row" data-label={t.learner}>{r.who}</th>
+                <td data-label={t.course}>{r.title}</td>
+                <td data-label={t.status}><strong>{r.statusText}</strong></td>
+                <td data-label={t.due}>{r.dueText}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+</TrainingShell>

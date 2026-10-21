@@ -91,6 +91,7 @@ export interface TrainingStrings {
   teamEmpty: string;
   filterLabel: string;
   filterAll: string;
+  filterOverdue: string;
   filterApply: string;
   learner: string;
   course: string;
@@ -186,6 +187,7 @@ const en: TrainingStrings = {
   teamEmpty: "No training matches. People who report to you appear here once they have required training.",
   filterLabel: "Show",
   filterAll: "All",
+  filterOverdue: "Overdue",
   filterApply: "Apply",
   learner: "Learner",
   course: "Course",
@@ -196,7 +198,7 @@ const en: TrainingStrings = {
   finishIssuedTo: "Issued to",
   finishPreview: "Certificate preview",
   finishPreviewNote: "Preview: finish every topic to receive it",
-  finishNotIssued: "Your certificate is being prepared. Reload this page in a moment.",
+  finishNotIssued: "If this course issues a certificate, it appears under My training as soon as it is ready.",
   breadcrumbHome: "My learning",
   badgeLoading: "Checking the certificate…",
   badgeFailed: "The certificate could not be checked right now.",
@@ -278,6 +280,7 @@ const pl: TrainingStrings = {
   teamEmpty: "Brak pasujących szkoleń. Osoby, które Ci podlegają, pojawią się tutaj, gdy będą miały szkolenia obowiązkowe.",
   filterLabel: "Pokaż",
   filterAll: "Wszystkie",
+  filterOverdue: "Po terminie",
   filterApply: "Zastosuj",
   learner: "Uczestnik",
   course: "Kurs",
@@ -288,7 +291,7 @@ const pl: TrainingStrings = {
   finishIssuedTo: "Wydany dla",
   finishPreview: "Podgląd certyfikatu",
   finishPreviewNote: "Podgląd: ukończ wszystkie tematy, aby go otrzymać",
-  finishNotIssued: "Twój certyfikat jest przygotowywany. Odśwież stronę za chwilę.",
+  finishNotIssued: "Jeśli ten kurs wydaje certyfikat, pojawi się w sekcji Moje szkolenia, gdy tylko będzie gotowy.",
   breadcrumbHome: "Moja nauka",
   badgeLoading: "Sprawdzanie certyfikatu…",
   badgeFailed: "Nie udało się teraz sprawdzić certyfikatu.",
@@ -370,6 +373,7 @@ const zh: TrainingStrings = {
   teamEmpty: "没有符合条件的培训。向你汇报的人员有必修培训后会显示在这里。",
   filterLabel: "显示",
   filterAll: "全部",
+  filterOverdue: "已逾期",
   filterApply: "应用",
   learner: "学员",
   course: "课程",
@@ -380,7 +384,7 @@ const zh: TrainingStrings = {
   finishIssuedTo: "颁发给",
   finishPreview: "证书预览",
   finishPreviewNote: "预览：完成所有主题后即可获得",
-  finishNotIssued: "你的证书正在准备中，请稍后刷新此页面。",
+  finishNotIssued: "如果此课程颁发证书，证书准备好后会立即出现在“我的培训”中。",
   breadcrumbHome: "我的学习",
   badgeLoading: "正在核验证书…",
   badgeFailed: "暂时无法核验证书。",

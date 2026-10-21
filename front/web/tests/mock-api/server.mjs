@@ -7,6 +7,7 @@
  * shapes the learner pages read.
  */
 import { createServer } from "node:http";
+import { Buffer } from "node:buffer";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
@@ -66,7 +67,51 @@ const tutorAnswer = {
 };
 const tutorEarlier = { id: "01JMOCKEARLIER0000000000A", lastMessageAt: "2026-10-20T09:30:00+00:00", expiresAt: "2027-01-18T09:30:00+00:00" };
 
+// A second course the learner has finished, with its issued certificate (finish page, certificates list).
+const doneProgram = { ...program, id: 2, title: "Espresso basics", summary: "Pull a balanced shot." };
+const doneRows = topics.map((t, i) => ({ id: 100 + i, topic_id: t.id, status: 1, seconds: 60 }));
+const CERT_ID = "b3f1c2d4-1111-4222-8333-444455556666";
+const isoDay = (offset) => new Date(Date.now() + offset * 86_400_000).toISOString();
+
+// My training: one overdue (course 1), one due soon, one completed with a certificate; a path with a locked step; skills.
+const assignments = [
+  { id: 1, user: null, course: { id: 1, title: program.title }, source: "manual", status: "overdue", assigned_at: isoDay(-40), due_at: isoDay(-3), completed_at: null, escalation_level: 1, certificate: null },
+  { id: 2, user: null, course: { id: 3, title: "Food safety" }, source: "rule", status: "assigned", assigned_at: isoDay(-5), due_at: isoDay(6), completed_at: null, escalation_level: 0, certificate: null },
+  { id: 3, user: null, course: { id: 2, title: "Espresso basics" }, source: "manual", status: "completed", assigned_at: isoDay(-90), due_at: isoDay(-60), completed_at: isoDay(-70), escalation_level: 0, certificate: { id: 9, certificate_id: CERT_ID, status: "valid", expires_at: isoDay(300) } },
+];
+const myPaths = [
+  { path_id: 1, title: "Barista onboarding", source: "rule", enrolled_at: isoDay(-30), due_at: null, completed_at: null, steps: [
+    { course_id: 2, title: "Espresso basics", status: "done", waiting_for: [] },
+    { course_id: 1, title: program.title, status: "available", waiting_for: [] },
+    { course_id: 3, title: "Food safety", status: "locked", waiting_for: [1] },
+  ] },
+];
+const mySkills = [
+  { competency_id: 1, name: "Espresso extraction", code: "BAR-1", area: "Barista", courses: [{ course_id: 2, title: "Espresso basics" }], earned_at: isoDay(-70), expires_at: isoDay(300) },
+  { competency_id: 2, name: "Cupping", code: "BAR-2", area: "Barista", courses: [{ course_id: 1, title: program.title }], earned_at: isoDay(-20), expires_at: null },
+  { competency_id: 3, name: "Allergen handling", code: null, area: null, courses: [{ course_id: 2, title: "Espresso basics" }], earned_at: null, expires_at: null },
+];
+const teamRows = [
+  { ...assignments[1], id: 11, user: { id: 21, name: "Ada Lovelace", email: "ada@coffee.example" }, status: "assigned" },
+  { ...assignments[0], id: 12, user: { id: 22, name: "Grace Hopper", email: "grace@coffee.example" } },
+];
+const certificates = [
+  { id: 9, title: "Espresso basics", certificate_id: CERT_ID, assignable_type: "Ulams\\Courses\\Models\\Course", assignable_id: 2, status: "valid", expires_at: isoDay(300), revoked_at: null, course_version: 2, created_at: isoDay(-70) },
+  { id: 8, title: "Latte art", certificate_id: "c3f1c2d4-1111-4222-8333-444455556666", assignable_type: "Ulams\\Courses\\Models\\Course", assignable_id: 4, status: "revoked", expires_at: null, revoked_at: isoDay(-10), course_version: 1, created_at: isoDay(-120) },
+];
+const verifyRecord = { certificate_id: CERT_ID, status: "valid", title: "Espresso basics", course_title: "Espresso basics", holder_name: "Demo Student", issued_at: isoDay(-70), expires_at: isoDay(300), revoked_at: null, issuer: "Coffee Atlas" };
+// the smallest valid one-page PDF
+const PDF = Buffer.from("%PDF-1.1\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 100]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n");
+
 const routes = [
+  ["GET", /^\/api\/compliance\/my-assignments$/, () => assignments],
+  ["GET", /^\/api\/compliance\/my-paths$/, () => myPaths],
+  ["GET", /^\/api\/compliance\/my-skills$/, () => mySkills],
+  ["GET", /^\/api\/compliance\/team\/assignments$/, () => teamRows],
+  ["GET", /^\/api\/pdfs$/, () => certificates],
+  ["GET", /^\/api\/certificates\/verify\/b3f1c2d4-1111-4222-8333-444455556666$/, () => verifyRecord],
+  ["GET", /^\/api\/courses\/2\/program$/, () => doneProgram],
+  ["GET", /^\/api\/courses\/progress\/2$/, () => doneRows],
   ["GET", /^\/api\/tutor\/courses\/1\/status$/, () => tutorStatus],
   ["GET", /^\/api\/tutor\/courses\/1\/conversations$/, () => [tutorEarlier]],
   ["POST", /^\/api\/tutor\/courses\/1\/messages$/, () => tutorAnswer],
@@ -102,6 +147,12 @@ const server = createServer((req, res) => {
   const path = new URL(req.url ?? "/", "http://mock").pathname;
   const route = routes.find(([method, pattern]) => method === req.method && pattern.test(path));
   req.resume();
+  if (req.method === "GET" && /^\/api\/pdfs\/generate\/9$/.test(path)) {
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", 'attachment; filename="espresso-basics-9.pdf"');
+    res.end(PDF);
+    return;
+  }
   res.setHeader("Content-Type", "application/json");
   if (!route) {
     res.statusCode = 404;

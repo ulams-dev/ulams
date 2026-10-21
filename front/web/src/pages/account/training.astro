@@ -1,0 +1,159 @@
+---
+/** My training: required training, learning paths and certificates (plan phase-5-learner-ui, section 3.7). */
+import { acceptedLocale, trainingStrings } from "@ulams/ui/training-strings";
+import TrainingShell from "../../components/TrainingShell.astro";
+import { getAllProgress, getSettings, getSiteModel } from "../../lib/data.ts";
+import { themeFor } from "../../lib/theme.ts";
+import { assignmentRows, certificateRow, completion, loadTeam, loadTraining, pathRows, siteOrigin } from "../../lib/training.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/");
+const token = Astro.locals.token;
+if (!token) return Astro.redirect("/login?next=/account/training");
+
+const locale = acceptedLocale(Astro.request.headers.get("accept-language"));
+const t = trainingStrings(locale);
+const now = new Date();
+const [data, progress, team, settings, site] = await Promise.all([
+  loadTraining(tenant, token),
+  getAllProgress(tenant, token).catch(() => null),
+  loadTeam(tenant, token),
+  getSettings(tenant).catch(() => null),
+  getSiteModel(tenant).catch(() => null),
+]);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+Astro.response.headers.set("Cache-Control", "private, no-store");
+
+const percent = new Map((progress ?? []).map((entry) => [entry.course.id, completion(entry)]));
+const required = data.assignments ? assignmentRows(data.assignments, locale, now, percent) : null;
+const paths = data.paths ? pathRows(data.paths, locale) : null;
+const origin = siteOrigin(Astro.request.headers, Astro.locals.secure, Astro.url.origin);
+const certificates = data.certificates ? data.certificates.map((c) => certificateRow(c, locale, now, { webOrigin: origin, apiUrl: tenant.apiUrl })) : null;
+---
+
+<TrainingShell theme={theme} accent={settings?.theme?.accent} title={t.trainingTitle} heading={t.trainingTitle} lead={t.trainingLead} locale={locale} current="training" showTeam={(team?.length ?? 0) > 0} site={site} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  <section class="u-tr__block" aria-labelledby="required-title">
+    <h2 id="required-title" class="u-h2">{t.requiredHeading}</h2>
+    {
+      required === null ? (
+        <p class="u-tr__error" role="alert">{t.loadFailed} <a href="/account/training">{t.retry}</a></p>
+      ) : required.length === 0 ? (
+        <p class="u-tr__empty">{t.requiredEmpty}</p>
+      ) : (
+        <ul class="u-tr__list" role="list" aria-label={t.requiredHeading}>
+          {required.map((r) => (
+            <li class={`u-tr__row u-card u-tr__row--${r.tone}`}>
+              <div class="u-tr__head">
+                <h3>{r.title}</h3>
+                <span class="u-tr__status">{r.statusText}</span>
+              </div>
+              <p class="u-tr__meta">
+                <span>{r.dueText}</span>
+                {r.completedText && <span>{r.completedText}</span>}
+              </p>
+              {(r.action || r.certificate) && (
+                <p class="u-tr__actions">
+                  {r.action && <a class="u-btn u-btn--sm" href={r.action.href} aria-label={`${r.action.label}: ${r.title}`}>{r.action.label}</a>}
+                  {r.certificate && <a href={r.certificate.href}>{r.certificate.label}<span class="u-visually-hidden">: {r.title}</span></a>}
+                </p>
+              )}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+
+  <section class="u-tr__block" aria-labelledby="paths-title">
+    <h2 id="paths-title" class="u-h2">{t.pathsHeading}</h2>
+    {
+      paths === null ? (
+        <p class="u-tr__error" role="alert">{t.loadFailed} <a href="/account/training">{t.retry}</a></p>
+      ) : paths.length === 0 ? (
+        <p class="u-tr__empty">{t.pathsEmpty}</p>
+      ) : (
+        <ul class="u-tr__list" role="list" aria-label={t.pathsHeading}>
+          {paths.map((p) => (
+            <li class={`u-tr__row u-card u-tr__row--${p.completed ? "ok" : "none"}`}>
+              <div class="u-tr__head">
+                <h3>{p.title}</h3>
+                <span class="u-tr__status">{p.completed ? t.pathCompleted : p.progress}</span>
+              </div>
+              <ol class="u-tr__steps" aria-label={p.title}>
+                {p.steps.map((s) => (
+                  <li class={`u-tr__step u-tr__step--${s.status}`}>
+                    {s.href ? <a href={s.href}>{s.title}</a> : <span>{s.title}</span>}
+                    <span class="u-tr__step-state">{s.statusText}</span>
+                    {s.unlocks && <span>{s.unlocks}</span>}
+                  </li>
+                ))}
+              </ol>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+
+  <section class="u-tr__block" id="certificates" aria-labelledby="certificates-title">
+    <h2 id="certificates-title" class="u-h2">{t.certificatesHeading}</h2>
+    <p id="badge-live" class="u-tr__notice" role="status" hidden></p>
+    {
+      certificates === null ? (
+        <p class="u-tr__error" role="alert">{t.loadFailed} <a href="/account/training#certificates">{t.retry}</a></p>
+      ) : certificates.length === 0 ? (
+        <p class="u-tr__empty">{t.certificatesEmpty}</p>
+      ) : (
+        <ul class="u-tr__list" role="list" aria-label={t.certificatesHeading}>
+          {certificates.map((c) => (
+            <li class={`u-tr__row u-card u-tr__row--${c.tone}`}>
+              <div class="u-tr__head">
+                <h3>{c.title}</h3>
+                <span class="u-tr__status">{c.statusText}</span>
+              </div>
+              <dl class="u-tr__facts">
+                <div><dt>{t.issued}</dt><dd>{c.issued}</dd></div>
+                <div><dt>{t.validUntil}</dt><dd>{c.validUntil}</dd></div>
+                {c.version && <div><dt>{t.courseVersion}</dt><dd>{c.version}</dd></div>}
+              </dl>
+              <p class="u-tr__actions">
+                <a class="u-btn u-btn--sm" href={c.downloadHref} download aria-label={t.downloadLabel.replace("{title}", c.title)}>{t.download}</a>
+                {c.verifyHref && <a href={c.verifyHref}>{t.verify}<span class="u-visually-hidden">: {c.title}</span></a>}
+                {c.badgeCode && (
+                  <button type="button" class="u-tr__linkbtn" data-copy-badge={`badge-${c.id}`} hidden>{t.copyBadge}<span class="u-visually-hidden">: {c.title}</span></button>
+                )}
+              </p>
+              {c.badgeCode && (
+                <details class="u-tr__code">
+                  <summary>{t.badgeCodeLabel}</summary>
+                  <textarea id={`badge-${c.id}`} readonly rows="4" aria-label={`${t.badgeCodeLabel}: ${c.title}`} spellcheck="false">{c.badgeCode}</textarea>
+                </details>
+              )}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <script is:inline define:vars={{ copied: t.badgeCopied, failed: t.badgeCopyFailed }}>
+      document.querySelectorAll("[data-copy-badge]").forEach((button) => {
+        button.hidden = false;
+        button.addEventListener("click", async () => {
+          const box = document.getElementById(button.getAttribute("data-copy-badge"));
+          const live = document.getElementById("badge-live");
+          if (!box || !live) return;
+          let ok = false;
+          try {
+            await navigator.clipboard.writeText(box.value);
+            ok = true;
+          } catch {
+            box.closest("details").open = true;
+            box.focus();
+            box.select();
+          }
+          live.textContent = ok ? copied : failed;
+          live.hidden = false;
+        });
+      });
+    </script>
+  </section>
+</TrainingShell>

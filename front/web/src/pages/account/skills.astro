@@ -1,0 +1,61 @@
+---
+/** My skills: confirmed competencies grouped by area, with when they were earned and when they lapse. */
+import { acceptedLocale, trainingStrings } from "@ulams/ui/training-strings";
+import TrainingShell from "../../components/TrainingShell.astro";
+import { getSettings, getSiteModel } from "../../lib/data.ts";
+import { themeFor } from "../../lib/theme.ts";
+import { loadSkills, loadTeam, skillGroups } from "../../lib/training.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/");
+const token = Astro.locals.token;
+if (!token) return Astro.redirect("/login?next=/account/skills");
+
+const locale = acceptedLocale(Astro.request.headers.get("accept-language"));
+const t = trainingStrings(locale);
+const [skills, team, settings, site] = await Promise.all([
+  loadSkills(tenant, token),
+  loadTeam(tenant, token),
+  getSettings(tenant).catch(() => null),
+  getSiteModel(tenant).catch(() => null),
+]);
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+Astro.response.headers.set("Cache-Control", "private, no-store");
+const groups = skills ? skillGroups(skills, locale) : null;
+---
+
+<TrainingShell theme={theme} accent={settings?.theme?.accent} title={t.skillsTitle} heading={t.skillsTitle} lead={t.skillsLead} locale={locale} current="skills" showTeam={(team?.length ?? 0) > 0} site={site} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  {
+    groups === null ? (
+      <p class="u-tr__error" role="alert">{t.loadFailed} <a href="/account/skills">{t.retry}</a></p>
+    ) : groups.length === 0 ? (
+      <p class="u-tr__empty">{t.skillsEmpty} <a href="/">{t.skillsBrowse}</a></p>
+    ) : (
+      groups.map((g, i) => (
+        <section class="u-tr__block" aria-labelledby={`area-${i}`}>
+          <h2 id={`area-${i}`} class="u-tr__area">{g.area ?? t.skillsOther}</h2>
+          <ul class="u-tr__list" role="list">
+            {g.skills.map((s) => (
+              <li class={`u-tr__row u-tr__skill u-card u-tr__row--${s.lapsing ? "warn" : "ok"}`}>
+                <div class="u-tr__head">
+                  <h3>{s.name}</h3>
+                  {s.code && <span class="u-tr__meta">{s.code}</span>}
+                </div>
+                <p class="u-tr__meta">
+                  {s.earned && <span>{s.earned}</span>}
+                  <span>{s.lapses}</span>
+                </p>
+                <div>
+                  <p class="u-tr__meta">{t.provenBy}</p>
+                  <ul>
+                    {s.courses.map((c) => <li><a href={`/courses/${c.id}`}>{c.title}</a></li>)}
+                  </ul>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    )
+  }
+</TrainingShell>

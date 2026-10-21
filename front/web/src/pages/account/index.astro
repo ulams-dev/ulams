@@ -26,6 +26,9 @@ import {
   summariseScopes,
 } from "../../lib/tokens.ts";
 import type { CreatedToken } from "../../lib/tokens.ts";
+import { acceptedLocale, plural, trainingStrings } from "@ulams/ui/training-strings";
+import { accountSummary, loadTeam, loadTraining } from "../../lib/training.ts";
+import "../../styles/training.css";
 
 const tenant = Astro.locals.tenant;
 if (!tenant) return Astro.redirect("/");
@@ -54,13 +57,26 @@ if (posted) {
 if (created) Astro.response.headers.set("Cache-Control", "private, no-store");
 const tokenNotice = Astro.url.searchParams.get("tokens");
 
-const [me, progress, settings, site, tokenList] = await Promise.all([
+const [me, progress, settings, site, tokenList, training, team] = await Promise.all([
   getProfile(tenant, token).catch(() => null),
   getAllProgress(tenant, token).catch(() => null as CourseProgressSummary[] | null),
   getSettings(tenant).catch(() => null),
   getSiteModel(tenant).catch(() => null),
   listTokens(tenant, token),
+  loadTraining(tenant, token),
+  loadTeam(tenant, token),
 ]);
+// "My training": counts that link to the training, skills and team pages (the team link only for managers)
+const trLocale = acceptedLocale(Astro.request.headers.get("accept-language"));
+const tr = trainingStrings(trLocale);
+const summary = accountSummary(training, new Date());
+const trainingLinks = [
+  ...(summary.overdue > 0 ? [{ href: "/account/training", text: plural(trLocale, tr.summaryOverdue, summary.overdue) }] : []),
+  ...(summary.dueThisMonth > 0 || summary.overdue === 0 ? [{ href: "/account/training", text: summary.dueThisMonth > 0 ? plural(trLocale, tr.summaryDue, summary.dueThisMonth) : tr.summaryNothingDue }] : []),
+  ...(summary.certificates !== null ? [{ href: "/account/training#certificates", text: plural(trLocale, tr.summaryCertificates, summary.certificates) }] : []),
+  ...(summary.skills !== null ? [{ href: "/account/skills", text: plural(trLocale, tr.summarySkills, summary.skills) }] : []),
+  ...((team?.length ?? 0) > 0 ? [{ href: "/account/team", text: tr.accountTeamLink }] : []),
+];
 const tokens = tokenList.ok ? sortTokens(tokenList.tokens) : [];
 const theme = themeFor(settings?.theme?.theme, tenant.slug);
 const chrome = chromeFor(theme);
@@ -108,6 +124,13 @@ const courses = (progress ?? []).map((entry) => {
       <form method="post" action="/logout" class="u-account__logout">
         <button class="u-btn u-btn--ghost u-btn--sm" type="submit">Log out</button>
       </form>
+    </section>
+
+    <section aria-labelledby="training-title" class="u-tr__block">
+      <h2 id="training-title" class="u-h2">{tr.trainingTitle}</h2>
+      <ul class="u-tr__summary" role="list">
+        {trainingLinks.map((l) => <li><a href={l.href}>{l.text}</a></li>)}
+      </ul>
     </section>
 
     <section aria-labelledby="courses-title" class="u-account__courses">
