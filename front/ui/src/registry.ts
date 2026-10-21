@@ -1961,6 +1961,23 @@ export const registry = {
     ),
     fallback: (p) => join(p.summary, Array.isArray(p.reasons) ? p.reasons.map((r) => `- ${String(r)}`) : []),
   },
+  FeynmanReflection: {
+    description:
+      "A box where the learner writes an explanation in their own words and asks for AI feedback: what they got right, what is missing, a follow-up question and the course sources. The text is sent once to the AI provider and is not stored. Filled by the app inside the extra-help card; authors and models do not place it.",
+    category: "learning",
+    interactive: true,
+    children: false,
+    props: obj(
+      {
+        assignmentId: text("Id of the learner's assignment (26-character ULID); without it the box is not shown", { maxLength: 26 }),
+        prompt: text("The prompt above the box; the interface wording of 'Explain it in your own words' when left out", { maxLength: 120 }),
+        maxLength: int("Longest explanation in characters", { minimum: 10, maximum: 2000, default: 2000 }),
+        locale: LOCALE,
+      },
+      ["assignmentId"]
+    ),
+    fallback: (p) => join(p.prompt ?? "Explain it in your own words"),
+  },
 } as const satisfies Record<string, ComponentSpec>;
 
 // Every section accepts an optional anchor id (for in-page links such as "#pricing").

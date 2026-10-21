@@ -101,6 +101,24 @@ export interface UiStrings {
   supportThoughts: string;
   /** Added to the card heading when a lesson has several cards; `{n}` and `{total}` are replaced. */
   supportPosition: string;
+  /** Feynman reflection ("explain it in your own words") and the AI-assisted lesson label. */
+  reflectPrompt: string;
+  reflectCounter: string;
+  reflectPrivacy: string;
+  reflectSubmit: string;
+  reflectBusy: string;
+  reflectTooShort: string;
+  reflectRight: string;
+  reflectMissing: string;
+  reflectFollowUp: string;
+  reflectLeft: string;
+  reflectAgain: string;
+  reflectLimit: string;
+  reflectOff: string;
+  reflectError: string;
+  reflectNoScript: string;
+  aiFeedbackLabel: string;
+  aiAssistedLabel: string;
 }
 
 const en: UiStrings = {
@@ -198,6 +216,23 @@ const en: UiStrings = {
   supportNoScript: "Checking an answer needs JavaScript.",
   supportThoughts: "Your thoughts (stay on this device)",
   supportPosition: "{n} of {total}",
+  reflectPrompt: "Explain it in your own words",
+  reflectCounter: "{n} of {max} characters",
+  reflectPrivacy: "Your text is sent to the AI provider to give feedback. Don't include personal details.",
+  reflectSubmit: "Get feedback",
+  reflectBusy: "Getting feedback…",
+  reflectTooShort: "Write at least 10 characters first.",
+  reflectRight: "What you got right",
+  reflectMissing: "What is missing",
+  reflectFollowUp: "A question to think about next",
+  reflectLeft: "{n} left today",
+  reflectAgain: "Explain it again",
+  reflectLimit: "You have used all of today's feedback requests. Your text is still here; try again tomorrow.",
+  reflectOff: "AI feedback is not available right now. Your text is still here; try again later.",
+  reflectError: "We could not get feedback. Your text is still here; try again.",
+  reflectNoScript: "Getting feedback needs JavaScript.",
+  aiFeedbackLabel: "AI feedback, based on this course's sources",
+  aiAssistedLabel: "Created with AI assistance and reviewed by the author",
 };
 
 const pl: UiStrings = {
@@ -295,6 +330,23 @@ const pl: UiStrings = {
   supportNoScript: "Sprawdzanie odpowiedzi wymaga JavaScriptu.",
   supportThoughts: "Twoje przemyślenia (zostają na tym urządzeniu)",
   supportPosition: "{n} z {total}",
+  reflectPrompt: "Wyjaśnij to własnymi słowami",
+  reflectCounter: "{n} z {max} znaków",
+  reflectPrivacy: "Twój tekst trafia do dostawcy AI, aby uzyskać informację zwrotną. Nie podawaj danych osobowych.",
+  reflectSubmit: "Uzyskaj informację zwrotną",
+  reflectBusy: "Przygotowuję informację zwrotną…",
+  reflectTooShort: "Najpierw napisz co najmniej 10 znaków.",
+  reflectRight: "Co Ci się udało",
+  reflectMissing: "Czego brakuje",
+  reflectFollowUp: "Pytanie do przemyślenia",
+  reflectLeft: "Pozostało dziś: {n}",
+  reflectAgain: "Wyjaśnij jeszcze raz",
+  reflectLimit: "Wykorzystano dzisiejszy limit próśb o informację zwrotną. Twój tekst nadal tu jest; spróbuj jutro.",
+  reflectOff: "Informacja zwrotna od AI jest teraz niedostępna. Twój tekst nadal tu jest; spróbuj później.",
+  reflectError: "Nie udało się uzyskać informacji zwrotnej. Twój tekst nadal tu jest; spróbuj ponownie.",
+  reflectNoScript: "Informacja zwrotna wymaga włączonego JavaScriptu.",
+  aiFeedbackLabel: "Informacja zwrotna od AI, oparta na źródłach tego kursu",
+  aiAssistedLabel: "Powstało z pomocą AI i zostało sprawdzone przez autora",
 };
 
 const zh: UiStrings = {
@@ -392,6 +444,23 @@ const zh: UiStrings = {
   supportNoScript: "检查答案需要启用 JavaScript。",
   supportThoughts: "你的想法（仅保存在此设备上）",
   supportPosition: "第 {n} 项，共 {total} 项",
+  reflectPrompt: "用你自己的话解释",
+  reflectCounter: "{n} / {max} 个字符",
+  reflectPrivacy: "你的文字会发送给 AI 服务商以获取反馈。请勿包含个人信息。",
+  reflectSubmit: "获取反馈",
+  reflectBusy: "正在获取反馈…",
+  reflectTooShort: "请先写至少 10 个字符。",
+  reflectRight: "你做对的地方",
+  reflectMissing: "还缺少什么",
+  reflectFollowUp: "接下来可以思考的问题",
+  reflectLeft: "今天还剩 {n} 次",
+  reflectAgain: "再解释一次",
+  reflectLimit: "今天的反馈次数已用完。你的文字仍保留在这里，请明天再试。",
+  reflectOff: "AI 反馈暂时不可用。你的文字仍保留在这里，请稍后再试。",
+  reflectError: "无法获取反馈。你的文字仍保留在这里，请重试。",
+  reflectNoScript: "获取反馈需要启用 JavaScript。",
+  aiFeedbackLabel: "AI 反馈，基于本课程的来源",
+  aiAssistedLabel: "由 AI 辅助创建，并经作者审核",
 };
 
 const TABLE: Record<UiLocale, UiStrings> = { en, pl, zh };

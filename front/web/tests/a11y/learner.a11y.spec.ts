@@ -207,6 +207,97 @@ test.describe("extra help for you", () => {
   });
 });
 
+/**
+ * "Explain it in your own words" (M-UI2). The mock API answers five reflections a day per tenant and refuses the
+ * sixth with 429; a text containing "AI-OFF" gets 503. Topic 6 has one ready card; topic 8 was built with AI assistance.
+ */
+test.describe("explain it in your own words", () => {
+  const EXPLANATION = "Cooler air at altitude slows the ripening, so the cherry builds more sugar.";
+  const box = (page: Page) => page.getByRole("textbox", { name: "Explain it in your own words" });
+
+  test("the box is labelled, says where the text goes, counts characters; axe clean", async ({ page }, info) => {
+    const slug = tenantOf(info.project.name);
+    await resetHelp(page, slug);
+    await page.goto(`${host(slug)}/learn/${COURSE}/${HELP.feedback}`, { waitUntil: "load" });
+    await expect(page.getByRole("heading", { level: 3, name: "Explain it in your own words" })).toBeVisible();
+    await expect(page.getByText("Your text is sent to the AI provider to give feedback. Don't include personal details.")).toBeVisible();
+    await expect(page.getByText("0 of 2000 characters")).toBeVisible();
+    await box(page).fill("Cooler air");
+    await expect(page.getByText("10 of 2000 characters")).toBeVisible();
+    const violations = await scan(page);
+    expect(violations, violations.join("\n")).toEqual([]);
+  });
+
+  test("feedback shows what was right, what is missing, a follow-up and sources, and empties the box; axe clean", async ({ page }, info) => {
+    const slug = tenantOf(info.project.name);
+    await resetHelp(page, slug);
+    await page.goto(`${host(slug)}/learn/${COURSE}/${HELP.feedback}`, { waitUntil: "load" });
+    await box(page).fill(EXPLANATION);
+    await page.getByRole("button", { name: "Get feedback" }).click();
+    const result = page.getByRole("group", { name: "AI feedback, based on this course's sources" });
+    await expect(result).toBeVisible();
+    await expect(result).toBeFocused();
+    await expect(result.getByRole("heading", { level: 4, name: "What you got right" })).toBeVisible();
+    await expect(result.getByText("You linked altitude to a slower, sweeter ripening of the cherry.")).toBeVisible();
+    await expect(result.getByRole("heading", { level: 4, name: "What is missing" })).toBeVisible();
+    await expect(result.getByRole("heading", { level: 4, name: "A question to think about next" })).toBeVisible();
+    await expect(result.getByRole("heading", { level: 4, name: "Sources" })).toBeVisible();
+    await expect(result.getByText("4 left today")).toBeVisible();
+    const done = await scan(page);
+    expect(done, done.join("\n")).toEqual([]);
+    await result.getByRole("button", { name: "Explain it again" }).click();
+    await expect(box(page)).toBeFocused();
+    await expect(box(page)).toHaveValue("");
+  });
+
+  test("the sixth try of the day says the limit is reached and keeps the text; axe clean", async ({ page }, info) => {
+    const slug = tenantOf(info.project.name);
+    await resetHelp(page, slug);
+    await page.goto(`${host(slug)}/learn/${COURSE}/${HELP.feedback}`, { waitUntil: "load" });
+    for (let i = 0; i < 5; i++) {
+      await box(page).fill(`${EXPLANATION} Try ${i + 1}.`);
+      await page.getByRole("button", { name: "Get feedback" }).click();
+      await page.getByRole("button", { name: "Explain it again" }).click();
+    }
+    await box(page).fill(`${EXPLANATION} Try 6.`);
+    await page.getByRole("button", { name: "Get feedback" }).click();
+    const limit = "You have used all of today's feedback requests. Your text is still here; try again tomorrow.";
+    await expect(page.getByRole("status").filter({ hasText: limit })).toBeVisible();
+    await expect(box(page)).toHaveValue(`${EXPLANATION} Try 6.`);
+    const violations = await scan(page);
+    expect(violations, violations.join("\n")).toEqual([]);
+  });
+
+  test("AI off and a too-short text are said in words; axe clean", async ({ page }, info) => {
+    const slug = tenantOf(info.project.name);
+    await resetHelp(page, slug);
+    await page.goto(`${host(slug)}/learn/${COURSE}/${HELP.feedback}`, { waitUntil: "load" });
+    await box(page).fill("short");
+    await page.getByRole("button", { name: "Get feedback" }).click();
+    await expect(page.getByRole("status").filter({ hasText: "Write at least 10 characters first." })).toBeVisible();
+    await box(page).fill("An explanation with AI-OFF inside it.");
+    await page.getByRole("button", { name: "Get feedback" }).click();
+    await expect(page.getByRole("status").filter({ hasText: "AI feedback is not available right now." })).toBeVisible();
+    const violations = await scan(page);
+    expect(violations, violations.join("\n")).toEqual([]);
+  });
+
+  test("the keyboard reaches the box and the button in order, and Enter in the box adds a line", async ({ page }, info) => {
+    const slug = tenantOf(info.project.name);
+    await resetHelp(page, slug);
+    await page.goto(`${host(slug)}/learn/${COURSE}/${HELP.feedback}`, { waitUntil: "load" });
+    await box(page).focus();
+    await page.keyboard.type("Line one");
+    await page.keyboard.press("Enter");
+    await page.keyboard.type("Line two is here");
+    await expect(box(page)).toHaveValue("Line one\nLine two is here");
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Get feedback" })).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page.getByRole("group", { name: "AI feedback, based on this course's sources" })).toBeVisible();
+  });
+});
+
 test("axe: platform landing", async ({ page }) => {
   await page.goto(host(""), { waitUntil: "load" });
   await revealAll(page);

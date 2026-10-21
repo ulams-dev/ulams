@@ -106,6 +106,9 @@ const supportOf = (tenant) => {
   if (!supportState.has(tenant)) supportState.set(tenant, supportSeed());
   return supportState.get(tenant);
 };
+// Feynman reflection: five answers a day per tenant, the sixth is refused (429); text containing "AI-OFF" gets 503
+const REFLECTIONS_PER_DAY = 5;
+const reflectionCount = new Map();
 const findAssignment = (tenant, id) => Object.values(supportOf(tenant)).flat().find((i) => i.assignmentId === id);
 
 // Course tutor: on, 29 of 30 questions left, one earlier conversation; every question gets the same cited answer.
@@ -131,6 +134,24 @@ const routes = [
       const found = findAssignment(tenant, match[1]);
       if (found) found.feedback = body?.helpful ? "helpful" : "not_helpful";
       return { feedback: found?.feedback ?? null };
+    },
+  ],
+  [
+    "POST",
+    /^\/api\/learner-insights\/assignments\/([0-9A-Za-z]{26})\/reflection$/,
+    ({ tenant, body }) => {
+      if (String(body?.text ?? "").length < 10) return { __status: 422, message: "The text must be at least 10 characters." };
+      if (String(body?.text).includes("AI-OFF")) return { __status: 503, message: "AI is disabled" };
+      const used = reflectionCount.get(tenant) ?? 0;
+      if (used >= REFLECTIONS_PER_DAY) return { __status: 429, message: "Daily limit reached" };
+      reflectionCount.set(tenant, used + 1);
+      return {
+        correct: "You linked altitude to a slower, sweeter ripening of the cherry.",
+        missing: "You did not say why cooler air matters for the sugars.",
+        followUp: "How would a lower farm change the cup?",
+        citations: [{ fragmentId: "frg_bbbbbbbbbbbb", label: FRAGMENTS[1]?.label ?? "Species and altitude" }],
+        remaining: REFLECTIONS_PER_DAY - used - 1,
+      };
     },
   ],
   [
@@ -181,6 +202,7 @@ const server = createServer((req, res) => {
   if (req.method === "POST" && path === "/__mock/reset") {
     req.resume();
     supportState.delete(url.searchParams.get("tenant") ?? "");
+    reflectionCount.delete(url.searchParams.get("tenant") ?? "");
     res.end(JSON.stringify({ reset: true }));
     return;
   }
@@ -206,6 +228,11 @@ function respond(req, res, path, route, rawBody) {
   })();
   const match = route[1].exec(path);
   const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body });
+  if (data && typeof data === "object" && "__status" in data) {
+    res.statusCode = data.__status;
+    res.end(JSON.stringify({ success: false, message: data.message }));
+    return;
+  }
   res.end(JSON.stringify({ success: true, data, meta: { current_page: 1, last_page: 1, per_page: 24, total: 1 } }));
 }
 

@@ -1,0 +1,181 @@
+---
+import AiLabel from "./AiLabel.astro";
+import { fill, pageLocale, uiStrings } from "../lib/i18n.ts";
+
+interface Props {
+  assignmentId?: string;
+  prompt?: string;
+  maxLength?: number;
+  locale?: string;
+  id?: string;
+}
+const { assignmentId, prompt, maxLength = 2000, locale, id } = Astro.props;
+const t = uiStrings(locale ?? pageLocale(Astro));
+const key = id ?? assignmentId ?? "reflect";
+const base = `u-fr-${key}`;
+const heading = prompt ?? t.reflectPrompt;
+---
+
+{
+  assignmentId && (
+    <section class="u-fr" id={id} aria-labelledby={`${base}-title`}>
+      <h3 class="u-fr__title" id={`${base}-title`}>
+        {heading}
+      </h3>
+      <ulams-reflection
+        assignment-id={assignmentId}
+        data-max={maxLength}
+        data-min="10"
+        data-counter-text={t.reflectCounter}
+        data-busy-text={t.reflectBusy}
+        data-short-text={t.reflectTooShort}
+        data-left-text={t.reflectLeft}
+        data-limit-text={t.reflectLimit}
+        data-off-text={t.reflectOff}
+        data-error-text={t.reflectError}
+      >
+        <p class="u-fr__nojs" data-nojs>
+          {t.reflectNoScript}
+        </p>
+        <form class="u-fr__form" data-form hidden novalidate>
+          <label class="u-fr__label" for={`${base}-text`}>
+            {heading}
+          </label>
+          <p class="u-fr__privacy" id={`${base}-privacy`}>
+            {t.reflectPrivacy}
+          </p>
+          <textarea
+            class="u-fr__text"
+            id={`${base}-text`}
+            data-text
+            rows="6"
+            maxlength={maxLength}
+            autocomplete="off"
+            spellcheck="true"
+            aria-describedby={`${base}-privacy ${base}-count`}
+          />
+          <p class="u-fr__count" id={`${base}-count`} data-count>
+            {fill(t.reflectCounter, { n: 0, max: maxLength })}
+          </p>
+          <div class="u-fr__actions">
+            <button class="u-btn u-btn--sm" type="submit" data-submit>
+              {t.reflectSubmit}
+            </button>
+          </div>
+        </form>
+        <p class="u-fr__status" role="status" aria-live="polite" data-status />
+        <div class="u-fr__result" data-result tabindex="-1" role="group" aria-label={t.aiFeedbackLabel} hidden>
+          <AiLabel text={t.aiFeedbackLabel} />
+          <h4 class="u-fr__h">{t.reflectRight}</h4>
+          <p data-correct />
+          <h4 class="u-fr__h">{t.reflectMissing}</h4>
+          <p data-missing />
+          <h4 class="u-fr__h">{t.reflectFollowUp}</h4>
+          <p data-follow-up />
+          <div class="u-fr__sources" data-sources hidden>
+            <h4 class="u-fr__h">{t.supportSources}</h4>
+            <ul data-source-list />
+          </div>
+          <p class="u-fr__left" data-left />
+          <button class="u-btn u-btn--ghost u-btn--sm" type="button" data-again>
+            {t.reflectAgain}
+          </button>
+        </div>
+      </ulams-reflection>
+    </section>
+  )
+}
+
+<script>
+  import "../elements/reflection.ts";
+</script>
+
+<style>
+  .u-fr {
+    display: grid;
+    gap: 0.7em;
+    padding: 14px 16px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    border-left: 4px solid var(--ulams-color-accent, var(--ulams-color-primary));
+    background: var(--ulams-color-card-bg);
+  }
+  .u-fr__title {
+    font-size: 1.1rem;
+    line-height: 1.3;
+    color: var(--ulams-color-header);
+  }
+  ulams-reflection {
+    display: grid;
+    gap: 0.7em;
+  }
+  .u-fr__form {
+    display: grid;
+    gap: 0.5em;
+  }
+  .u-fr__form[hidden],
+  .u-fr__result[hidden],
+  .u-fr__sources[hidden] {
+    display: none;
+  }
+  .u-fr__label {
+    font-weight: 600;
+  }
+  .u-fr__privacy {
+    max-width: 70ch;
+    font-size: 0.9rem;
+    color: var(--ulams-color-muted, inherit);
+  }
+  .u-fr__text {
+    width: 100%;
+    max-width: 70ch;
+    padding: 10px 12px;
+    border-radius: var(--ulams-radius);
+    border: 1px solid var(--ulams-color-border);
+    background: var(--ulams-color-bg, #fff);
+    color: inherit;
+    font: inherit;
+    resize: vertical;
+  }
+  .u-fr__text:focus-visible,
+  .u-fr__result:focus-visible {
+    outline: 2px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+  .u-fr__count {
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted, inherit);
+  }
+  .u-fr__actions :global(.u-btn),
+  .u-fr__result :global(.u-btn) {
+    min-height: 44px;
+  }
+  .u-fr__status {
+    font-weight: 600;
+  }
+  .u-fr__status:empty {
+    display: none;
+  }
+  .u-fr__result {
+    display: grid;
+    gap: 0.5em;
+    justify-items: start;
+    max-width: 70ch;
+    overflow-wrap: anywhere;
+  }
+  .u-fr__h {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--ulams-color-header);
+  }
+  .u-fr__sources {
+    font-size: 0.875rem;
+  }
+  .u-fr__sources ul {
+    padding-left: 1.2em;
+  }
+  .u-fr__left {
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted, inherit);
+  }
+</style>
