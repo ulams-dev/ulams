@@ -1,5 +1,5 @@
 {
- "summary": "585/658 covered, 73 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "586/659 covered, 73 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -3905,6 +3905,12 @@
    "key": "POST /api/tutor/courses/{course}/messages",
    "summary": "Ask the course tutor a question; it answers only from the course, with citations",
    "command": "my.tutor-courses-messages",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/tutor/courses/{course}/status",
+   "summary": "Whether the course tutor is available to the learner, how many questions are left today and whether a quiz attempt is open",
+   "command": "my.tutor-courses-status",
    "status": "covered"
   },
   {

@@ -108,6 +108,20 @@ const supportOf = (tenant) => {
 };
 const findAssignment = (tenant, id) => Object.values(supportOf(tenant)).flat().find((i) => i.assignmentId === id);
 
+// Course tutor: on, 29 of 30 questions left, one earlier conversation; every question gets the same cited answer.
+const tutorStatus = { enabled: true, aiEnabled: true, remaining: 29, dailyLimit: 30, attemptActive: false };
+const tutorAnswer = {
+  conversationId: "01JMOCKCONVERSATION00000A",
+  messageId: "01JMOCKMESSAGE000000000A",
+  answer: "Robusta is *Coffea canephora*. It grows at lower altitudes than Arabica and has more caffeine.\n\n- Hardier plant\n- Stronger, more bitter cup",
+  citations: [{ chunkId: "c1", label: "Species and altitude", topicId: 3, fragmentIds: [] }],
+  refusal: "none",
+  inScope: true,
+  remaining: 28,
+  label: "AI tutor · answers only from this course",
+};
+const tutorEarlier = { id: "01JMOCKEARLIER0000000000A", lastMessageAt: "2026-10-20T09:30:00+00:00", expiresAt: "2027-01-18T09:30:00+00:00" };
+
 const routes = [
   ["GET", /^\/api\/learner-insights\/courses\/1\/topics\/(\d+)\/support$/, ({ tenant, match }) => ({ enabled: true, items: (supportOf(tenant)[match[1]] ?? []).filter((i) => !i.hidden) })],
   [
@@ -128,6 +142,14 @@ const routes = [
       return { hidden: true };
     },
   ],
+  ["GET", /^\/api\/tutor\/courses\/1\/status$/, () => tutorStatus],
+  ["GET", /^\/api\/tutor\/courses\/1\/conversations$/, () => [tutorEarlier]],
+  ["POST", /^\/api\/tutor\/courses\/1\/messages$/, () => tutorAnswer],
+  ["GET", /^\/api\/tutor\/conversations\/01JMOCKEARLIER0000000000A$/, () => ({ id: tutorEarlier.id, courseId: 1, expiresAt: tutorEarlier.expiresAt, messages: [
+    { id: "01JMOCKMSG1", role: "learner", text: "Which species is Robusta?", citations: [], refusal: null, at: tutorEarlier.lastMessageAt },
+    { id: "01JMOCKMSG2", role: "tutor", text: tutorAnswer.answer, citations: tutorAnswer.citations, refusal: "none", at: tutorEarlier.lastMessageAt },
+  ] })],
+  ["DELETE", /^\/api\/tutor\/conversations\/01JMOCKEARLIER0000000000A$/, () => ({ deleted: true })],
   ["GET", /^\/api\/settings$/, () => coffee.settings],
   ["GET", /^\/api\/courses$/, () => [coffee.course]],
   ["GET", /^\/api\/courses\/1$/, () => program],

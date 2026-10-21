@@ -6,18 +6,36 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Ulams\Ai\Contracts\LlmClient;
 use Ulams\Courses\Models\Course;
 use Ulams\Tutor\Http\Controllers\Swagger\TutorSwagger;
 use Ulams\Tutor\Http\Requests\AskRequest;
 use Ulams\Tutor\Models\Conversation;
+use Ulams\Tutor\Services\AttemptGuard;
 use Ulams\Tutor\Services\TutorException;
 use Ulams\Tutor\Services\TutorService;
 
 /** The learner's tutor. Conversations are owned by the learner: another learner's id is a 404. */
 class TutorController extends Controller implements TutorSwagger
 {
-    public function __construct(private readonly TutorService $tutor)
+    public function __construct(private readonly TutorService $tutor, private readonly LlmClient $llm, private readonly AttemptGuard $guard)
     {
+    }
+
+    public function status(Request $request, int $course): JsonResponse
+    {
+        $model = Course::query()->findOrFail($course);
+        $user = $request->user();
+        abort_unless(Gate::forUser($user)->allows('attend', $model), 403);
+
+        return response()->json(['data' => [
+            'enabled' => (bool) config('tutor.enabled'),
+            'aiEnabled' => $this->llm->enabled(),
+            'remaining' => $this->tutor->remaining((int) $user->getKey()),
+            'dailyLimit' => (int) config('tutor.limits.daily_questions'),
+            'attemptActive' => $this->guard->check((int) $user->getKey(), $course)['active'],
+        ]]);
     }
 
     public function ask(AskRequest $request, int $course): JsonResponse

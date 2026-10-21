@@ -17,7 +17,9 @@ async function tabStops(page: Page, max: number) {
   for (let i = 0; i < max; i++) {
     await page.keyboard.press("Tab");
     const stop = await page.evaluate(() => {
-      const el = document.activeElement as HTMLElement | null;
+      // a stop inside a shadow root (the tutor launcher) is judged on the element itself, not on its host
+      let el = document.activeElement as HTMLElement | null;
+      while (el?.shadowRoot?.activeElement) el = el.shadowRoot.activeElement as HTMLElement;
       if (!el || el === document.body) return null;
       const box = el.getBoundingClientRect();
       const style = getComputedStyle(el);

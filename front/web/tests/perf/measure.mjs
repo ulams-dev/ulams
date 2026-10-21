@@ -5,6 +5,9 @@
  *   yarn workspace @ulams/web build && yarn workspace @ulams/web start &
  *   yarn workspace @ulams/web perf
  */
+import { readdirSync, readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { gzipSync } from "node:zlib";
 import { chromium } from "@playwright/test";
 
 const port = process.env.WEB_BASE_PORT ?? "4321";
@@ -97,3 +100,16 @@ for (const [name, url] of pages) {
 }
 console.table(rows);
 await browser.close();
+
+// The tutor panel script loads only when the launcher is first used: its budget is 20 KB gzipped (docs/plans/phase-5-learner-ui.md, M-UI3).
+const PANEL_BUDGET_KB = 20;
+const astroDir = fileURLToPath(new URL("../../dist/client/_astro/", import.meta.url));
+const panel = readdirSync(astroDir).find((f) => /^tutor-panel\..+\.js$/.test(f));
+if (!panel) {
+  console.error("tutor panel chunk not found in dist/client/_astro (build first)");
+  process.exitCode = 1;
+} else {
+  const kb = gzipSync(readFileSync(astroDir + panel)).length / 1024;
+  console.log(`tutor panel chunk ${panel}: ${kb.toFixed(1)} KB gzipped (budget ${PANEL_BUDGET_KB} KB)`);
+  if (kb > PANEL_BUDGET_KB) process.exitCode = 1;
+}

@@ -3907,6 +3907,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/tutor/courses/{course}/status",
+  "summary": "Whether the course tutor is available to the learner, how many questions are left today and whether a quiz attempt is open",
+  "tag": "Tutor"
+ },
+ {
+  "method": "GET",
   "path": "/api/tutors",
   "summary": "",
   "tag": "Courses"
