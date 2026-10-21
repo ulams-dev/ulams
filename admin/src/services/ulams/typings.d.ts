@@ -794,6 +794,16 @@ declare namespace API {
 
   type TemplateVariables = Record<string, Record<string, TemplateChannelVariable>>;
 
+  type EmailTemplateDraft = {
+    title: string;
+    html: string;
+    errors: string[];
+    missing_variables: string[];
+    warnings: { code: string; message: string; count?: number }[];
+    sent?: boolean;
+    recipient?: string;
+  };
+
   type File = {
     name: string;
     created_at: string;

@@ -1,0 +1,20 @@
+export default {
+  'templates.editor_code': '模板代码 (MJML)',
+  'templates.editor_variables': '变量',
+  'templates.editor_variables_hint':
+    '将光标放在代码中，然后选择变量即可插入。标有 * 的变量为必填。',
+  'templates.insert': '插入 {token}',
+  'templates.insert_required': '插入 {token}（必填）',
+  'templates.editor_preview': '使用示例数据预览',
+  'templates.preview_frame': '使用示例数据的邮件预览',
+  'templates.preview_updating': '正在更新预览...',
+  'templates.preview_empty': '输入模板代码以查看预览。',
+  'templates.preview_failed': '无法生成预览。',
+  'templates.mjml_errors': 'MJML 错误',
+  'templates.missing_variables': '模板中缺少的必填变量',
+  'templates.a11y_warnings': '无障碍警告',
+  'templates.send_test': '发送测试邮件',
+  'templates.send_test_hint': '仅发送到您自己的邮箱，内容为当前未保存的内容。',
+  'templates.test_sent': '测试邮件已发送至 {recipient}。',
+  'templates.test_failed': '无法发送测试邮件。',
+};

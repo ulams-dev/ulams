@@ -26,7 +26,9 @@ const AutoCompleteArea: React.FC<{
   value: string;
   error: string[];
   styles?: React.CSSProperties;
-}> = ({ requiredVariables, variables, onChange, value, error, styles }) => {
+  textareaRef?: (textarea: HTMLTextAreaElement | null) => void;
+  'aria-label'?: string;
+}> = ({ requiredVariables, variables, onChange, value, error, styles, textareaRef, ...rest }) => {
   const varsObject = variables.map((v: string) => ({
     name: v.substring(1),
     required: requiredVariables.includes(v),
@@ -36,6 +38,8 @@ const AutoCompleteArea: React.FC<{
     <React.Fragment>
       <ReactTextareaAutocomplete
         style={styles}
+        innerRef={textareaRef}
+        aria-label={rest['aria-label']}
         className={`ant-input pro-field pro-field-lg rta__textarea_wide ${error.length && 'error'}`}
         onChange={(e) => onChange(e.target.value)}
         loadingComponent={() => <FormattedMessage id="loading" />}
