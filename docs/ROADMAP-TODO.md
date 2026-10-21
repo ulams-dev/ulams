@@ -817,7 +817,7 @@ M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments
 - [ ] AI hints without revealing solutions
 
 ### 7.3 API, SDK, webhooks
-- [ ] Complete published OpenAPI; TS SDK first, PHP second (partial: response schemas and operationIds for the 60 CLI operations, #299; plan in `docs/plans/phase-7.md`, #300; complete coverage and the PHP SDK in progress, not merged)
+- [ ] Complete published OpenAPI; TS SDK first, PHP second (partial: response schemas and operationIds for the 60 CLI operations, #299; plan in `docs/plans/phase-7.md`, #300; in the openapi-php-sdk PR, pending merge: readable unique operationIds and a typed 2xx response for every operation with a CI gate, a valid spec, and the generated PHP SDK in `sdk-php/`; the data of about 400 operations is still the generic envelope or a free-form object, to be replaced with precise schemas; no spec changelog yet)
 - [x] Stripe-style webhooks (signed, retries, replay, delivery log, test sends, versioned events) (`api/packages/webhooks`, #261; no admin screen yet, API, CLI and docs only)
 - [ ] Scoped API keys with rate limits and usage stats (partial: token usage stats done in #261; per-token rate limits not verified)
 - [x] (new) S1 scoped personal access tokens (`area:read|write`, presets, fail-closed route map), agent audit

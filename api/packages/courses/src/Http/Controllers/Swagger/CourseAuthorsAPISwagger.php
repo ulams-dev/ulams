@@ -11,7 +11,7 @@ interface CourseAuthorsAPISwagger
     /**
      * @OA\Get(
      *      tags={"Courses"},
-     *      path="/api/tutors",
+     *      path="/api/tutors", operationId="tutors.get",
      *      description="Get Tutors",
      *      security={
      *          {"passport": {}},
@@ -19,9 +19,7 @@ interface CourseAuthorsAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -37,7 +35,7 @@ interface CourseAuthorsAPISwagger
     /**
      * @OA\Get(
      *      tags={"Courses"},
-     *      path="/api/tutors/{id}",
+     *      path="/api/tutors/{id}", operationId="tutors.by-id.get",
      *      description="Get tutor course/author ID ",
      *      security={
      *          {"passport": {}},
@@ -53,9 +51,7 @@ interface CourseAuthorsAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -71,7 +67,7 @@ interface CourseAuthorsAPISwagger
     /**
      * @OA\Get(
      *      tags={"Admin Courses"},
-     *      path="/api/admin/courses/users/assignable",
+     *      path="/api/admin/courses/users/assignable", operationId="admin.courses.users.assignable.get",
      *      description="Get users assignable to course",
      *      security={
      *          {"passport": {}},
@@ -87,9 +83,7 @@ interface CourseAuthorsAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,

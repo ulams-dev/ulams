@@ -12,7 +12,7 @@ interface CourseExportImportAPISwagger
     /**
      * @OA\Get(
      *      tags={"Admin Courses"},
-     *      path="/api/admin/courses/{id}/export",
+     *      path="/api/admin/courses/{id}/export", operationId="admin.courses.by-id.export.get",
      *      description="Exports course to ZIP package ",
      *      security={
      *          {"passport": {}},
@@ -28,9 +28,7 @@ interface CourseExportImportAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -46,7 +44,7 @@ interface CourseExportImportAPISwagger
     /**
      * @OA\Post(
      *      tags={"Admin Courses"},
-     *      path="/api/admin/courses/zip/import",
+     *      path="/api/admin/courses/zip/import", operationId="admin.courses.zip.import.post",
      *      description="Imports course from ZIP package ",
      *      security={
      *          {"passport": {}},
@@ -98,7 +96,7 @@ interface CourseExportImportAPISwagger
     /**
      * @OA\Get(
      *      tags={"Admin Courses"},
-     *      path="/api/admin/courses/{id}/clone",
+     *      path="/api/admin/courses/{id}/clone", operationId="admin.courses.by-id.clone.get",
      *      description="Course cloning",
      *      security={
      *          {"passport": {}},
@@ -114,9 +112,7 @@ interface CourseExportImportAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,

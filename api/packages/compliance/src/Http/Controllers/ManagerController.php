@@ -14,12 +14,12 @@ use Ulams\Core\Models\User;
  * Who escalations of a user's overdue training go to. Permission `compliance_manage`. Until an HRIS
  * import exists (Phase 6.3) the links are maintained here.
  *
- * @OA\Get(path="/api/admin/compliance/managers", summary="List manager links", tags={"Compliance"}, security={{"passport": {}}},
- *     @OA\Response(response=200, description="user_id and manager_id pairs"), @OA\Response(response=403, description="Forbidden"))
- * @OA\Put(path="/api/admin/compliance/managers/{user}", summary="Set or clear the manager of a user", tags={"Compliance"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/compliance/managers", operationId="admin.compliance.managers.get", summary="List manager links", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="user_id and manager_id pairs", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"))
+ * @OA\Put(path="/api/admin/compliance/managers/{user}", operationId="admin.compliance.managers.by-user.put", summary="Set or clear the manager of a user", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="user", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\RequestBody(required=true, @OA\MediaType(mediaType="application/json", @OA\Schema(type="object", @OA\Property(property="manager_id", type="integer", nullable=true)))),
- *     @OA\Response(response=200, description="the link, or null when cleared"), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=422, description="Validation error"))
+ *     @OA\Response(response=200, description="the link, or null when cleared", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=422, description="Validation error"))
  */
 class ManagerController extends ComplianceController
 {

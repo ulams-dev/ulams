@@ -55,7 +55,7 @@ interface Cmi5ControllerSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/cmi5/player/{cmi5AuId}",
+     *     path="/api/cmi5/player/{cmi5AuId}", operationId="cmi5.player.by-cmi5auid.get",
      *     summary="Launch a cmi5 AU",
      *     description="Needs `cmi5_read` (students have it). Returns the player page, or with `format=json` the launch URL on the tenant content origin. The URL carries a one-time launch token, never the learner's access token (ADR 0046).",
      *     tags={"cmi5"},

@@ -10,7 +10,7 @@ interface PagesApiContract
 {
     /**
      * @OA\Get(
-     *     path="/api/pages",
+     *     path="/api/pages", operationId="pages.get",
      *     summary="Lists available pages",
      *     tags={"Pages"},
      *     @OA\Response(
@@ -45,7 +45,7 @@ interface PagesApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/pages/{slug}",
+     *     path="/api/pages/{slug}", operationId="pages.by-slug.get",
      *     summary="Read a page identified by a given slug identifier",
      *     tags={"Pages"},
      *     @OA\Parameter(

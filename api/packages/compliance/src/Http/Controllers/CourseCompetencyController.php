@@ -16,21 +16,21 @@ use Ulams\Courses\Models\Course;
  * nothing (no skill profile, no rule) until confirmed. Allowed for `compliance_manage`, or for
  * `compliance_competencies` on a course the user authors.
  *
- * @OA\Get(path="/api/admin/compliance/courses/{course}/competencies", summary="Competency tags of a course (confirmed and suggested)", tags={"Compliance"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/compliance/courses/{course}/competencies", operationId="admin.compliance.courses.by-course.competencies.get", summary="Competency tags of a course (confirmed and suggested)", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="tags with status, source, rationale and the lessons they point at"), @OA\Response(response=403, description="Forbidden"))
- * @OA\Put(path="/api/admin/compliance/courses/{course}/competencies/{competency}", summary="Tag a course with a competency (confirmed by the author), or confirm a suggestion", tags={"Compliance"}, security={{"passport": {}}},
- *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Parameter(name="competency", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="the confirmed tag"), @OA\Response(response=404, description="Unknown course or competency"))
- * @OA\Delete(path="/api/admin/compliance/courses/{course}/competencies/{competency}", summary="Remove a tag or reject a suggestion", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="tags with status, source, rationale and the lessons they point at", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"))
+ * @OA\Put(path="/api/admin/compliance/courses/{course}/competencies/{competency}", operationId="admin.compliance.courses.by-course.competencies.by-competency.put", summary="Tag a course with a competency (confirmed by the author), or confirm a suggestion", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\Parameter(name="competency", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="removed"), @OA\Response(response=403, description="Forbidden"))
- * @OA\Post(path="/api/admin/compliance/courses/{course}/competencies/suggest", summary="Ask the AI which competencies the course teaches", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="the confirmed tag", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="Unknown course or competency"))
+ * @OA\Delete(path="/api/admin/compliance/courses/{course}/competencies/{competency}", operationId="admin.compliance.courses.by-course.competencies.by-competency.delete", summary="Remove a tag or reject a suggestion", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
+ *     @OA\Parameter(name="competency", in="path", required=true, @OA\Schema(type="integer")),
+ *     @OA\Response(response=200, description="removed", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"))
+ * @OA\Post(path="/api/admin/compliance/courses/{course}/competencies/suggest", operationId="admin.compliance.courses.by-course.competencies.suggest.post", summary="Ask the AI which competencies the course teaches", tags={"Compliance"}, security={{"passport": {}}},
  *     description="One AI call (logged with model, tokens and cost). Replaces the pending suggestions; confirmed tags are untouched. Needs a competency framework and at least one lesson.",
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="the new suggestions, for the author to confirm"), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=503, description="AI is not configured or the call failed"))
+ *     @OA\Response(response=200, description="the new suggestions, for the author to confirm", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=503, description="AI is not configured or the call failed"))
  */
 class CourseCompetencyController extends ComplianceController
 {

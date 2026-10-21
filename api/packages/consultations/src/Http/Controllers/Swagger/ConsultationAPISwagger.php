@@ -15,7 +15,7 @@ interface ConsultationAPISwagger
 {
     /**
      * @OA\Post(
-     *      path="/api/consultations/report-term/{orderItemId}",
+     *      path="/api/consultations/report-term/{orderItemId}", operationId="consultations.report-term.by-orderitemid.post",
      *      security={
      *          {"passport": {}},
      *      },
@@ -46,9 +46,7 @@ interface ConsultationAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -78,7 +76,7 @@ interface ConsultationAPISwagger
      *      security={
      *          {"passport": {}},
      *      },
-     *      path="/api/consultations/approve-term/{consultationTermId}",
+     *      path="/api/consultations/approve-term/{consultationTermId}", operationId="consultations.approve-term.by-consultationtermid.get",
      *      description="Approve reported term with consultation author",
      *      @OA\Parameter(
      *          name="consultationTermId",
@@ -108,9 +106,7 @@ interface ConsultationAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -142,7 +138,7 @@ interface ConsultationAPISwagger
     /**
      * @OA\Get(
      *      tags={"Consultations"},
-     *      path="/api/consultations/reject-term/{consultationTermId}",
+     *      path="/api/consultations/reject-term/{consultationTermId}", operationId="consultations.reject-term.by-consultationtermid.get",
      *      security={
      *          {"passport": {}},
      *      },
@@ -175,9 +171,7 @@ interface ConsultationAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -209,7 +203,7 @@ interface ConsultationAPISwagger
     /**
      * @OA\Get(
      *      tags={"Consultations"},
-     *      path="/api/consultations/generate-jitsi/{consultationTermId}",
+     *      path="/api/consultations/generate-jitsi/{consultationTermId}", operationId="consultations.generate-jitsi.by-consultationtermid.get",
      *      security={
      *          {"passport": {}},
      *      },
@@ -234,9 +228,7 @@ interface ConsultationAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -266,7 +258,7 @@ interface ConsultationAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/consultations",
+     *      path="/api/consultations", operationId="consultations.get",
      *      summary="Get a listing of the Consultations.",
      *      tags={"Consultations"},
      *      description="Get all Consultations",
@@ -338,9 +330,7 @@ interface ConsultationAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -364,7 +354,7 @@ interface ConsultationAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/consultations/me",
+     *      path="/api/consultations/me", operationId="consultations.me.get",
      *      security={
      *          {"passport": {}},
      *      },
@@ -452,9 +442,7 @@ interface ConsultationAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -479,7 +467,7 @@ interface ConsultationAPISwagger
     /**
      * @OA\Get(
      *      tags={"Consultations"},
-     *      path="/api/consultations/proposed-terms/{orderItemId}",
+     *      path="/api/consultations/proposed-terms/{orderItemId}", operationId="consultations.proposed-terms.by-orderitemid.get",
      *      security={
      *          {"passport": {}},
      *      },
@@ -495,9 +483,7 @@ interface ConsultationAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -527,7 +513,7 @@ interface ConsultationAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/consultations/{id}",
+     *      path="/api/consultations/{id}", operationId="consultations.by-id.get",
      *      summary="Display the specified Consultation",
      *      tags={"Consultations"},
      *      description="Get Consultation",
@@ -543,9 +529,7 @@ interface ConsultationAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -568,7 +552,7 @@ interface ConsultationAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/consultations/my-schedule",
+     *      path="/api/consultations/my-schedule", operationId="consultations.my-schedule.get",
      *      tags={"Consultations"},
      *      description="Get Consultation schedule for tutor",
      *      security={
@@ -589,9 +573,7 @@ interface ConsultationAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -615,7 +597,7 @@ interface ConsultationAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/consultations/finish-term/{consultationTermId}",
+     *      path="/api/consultations/finish-term/{consultationTermId}", operationId="consultations.finish-term.by-consultationtermid.post",
      *      security={
      *          {"passport": {}},
      *      },
@@ -651,9 +633,7 @@ interface ConsultationAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

@@ -17,7 +17,7 @@ interface AuthSwagger
 {
     /**
      * @OA\Post(
-     *     path="/api/auth/password/forgot",
+     *     path="/api/auth/password/forgot", operationId="auth.password.forgot.post",
      *     summary="Password forget call",
      *     tags={"Auth"},
      *     @OA\RequestBody(
@@ -37,9 +37,7 @@ interface AuthSwagger
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      * )
      */
@@ -47,7 +45,7 @@ interface AuthSwagger
 
     /**
      * @OA\Post(
-     *     path="/api/auth/password/reset",
+     *     path="/api/auth/password/reset", operationId="auth.password.reset.post",
      *     summary="Password reset",
      *     tags={"Auth"},
      *     @OA\RequestBody(
@@ -72,9 +70,7 @@ interface AuthSwagger
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")
      *     )
      * )
      */
@@ -82,7 +78,7 @@ interface AuthSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/auth/refresh",
+     *     path="/api/auth/refresh", operationId="auth.refresh.get",
      *     summary="Refresh access token",
      *     tags={"Auth"},
      *     security={
@@ -91,9 +87,7 @@ interface AuthSwagger
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      * )
      */
@@ -101,7 +95,7 @@ interface AuthSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/auth/social/{provider}",
+     *     path="/api/auth/social/{provider}", operationId="auth.social.by-provider.get",
      *     summary="Redirect to social login",
      *     tags={"Auth"},
      *     @OA\Parameter(
@@ -135,7 +129,7 @@ interface AuthSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/auth/social/{provider}/callback",
+     *     path="/api/auth/social/{provider}/callback", operationId="auth.social.by-provider.callback.get",
      *     summary="Redirect after sucessfull login",
      *     tags={"Auth"},
      *     @OA\Parameter(
@@ -160,7 +154,7 @@ interface AuthSwagger
 
     /**
      * @OA\Post(
-     *     path="/api/auth/social/complete/{token}",
+     *     path="/api/auth/social/complete/{token}", operationId="auth.social.complete.by-token.post",
      *     summary="Complete the missing data from socials",
      *     tags={"Auth"},
      *     @OA\Parameter(
@@ -188,9 +182,7 @@ interface AuthSwagger
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      * )
      */
@@ -198,7 +190,7 @@ interface AuthSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/auth/email/verify/{id}/{hash}",
+     *     path="/api/auth/email/verify/{id}/{hash}", operationId="auth.email.verify.by-id.by-hash.get",
      *     summary="Email verification",
      *     tags={"Auth"},
      *     @OA\Parameter(
@@ -230,7 +222,7 @@ interface AuthSwagger
 
     /**
      * @OA\Post(
-     *     path="/api/auth/email/resend",
+     *     path="/api/auth/email/resend", operationId="auth.email.resend.post",
      *     summary="Resend email verification",
      *     tags={"Auth"},
      *     @OA\RequestBody(
@@ -250,9 +242,7 @@ interface AuthSwagger
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")
      *     )
      * )
      */
@@ -260,7 +250,7 @@ interface AuthSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/auth/registerable-groups/",
+     *     path="/api/auth/registerable-groups/", operationId="auth.registerable-groups.get",
      *     summary="List registerable groups",
      *     description="",
      *     tags={"Auth"},

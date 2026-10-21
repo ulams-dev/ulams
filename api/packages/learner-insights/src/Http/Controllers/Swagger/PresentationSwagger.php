@@ -9,12 +9,12 @@ interface PresentationSwagger
 {
     /**
      * @OA\Get(
-     *   path="/api/learner-insights/courses/{course}/presentation",
+     *   path="/api/learner-insights/courses/{course}/presentation", operationId="learner-insights.courses.by-course.presentation.get",
      *   summary="How the course is presented to the learner (density, steps, navigation, hints) and why",
      *   tags={"Learner insights"},
      *   security={{"passport": {}}},
      *   @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
-     *   @OA\Response(response=200, description="`adaptive` (the tenant switch), `profile` (what to show), `derived` (what the rules chose), `overrides` (the learner's choices), `why`"),
+     *   @OA\Response(response=200, description="`adaptive` (the tenant switch), `profile` (what to show), `derived` (what the rules chose), `overrides` (the learner's choices), `why`", @OA\JsonContent(ref="#/components/schemas/ApiJson")),
      *   @OA\Response(response=403, description="The learner may not attend the course")
      * )
      */
@@ -22,7 +22,7 @@ interface PresentationSwagger
 
     /**
      * @OA\Put(
-     *   path="/api/learner-insights/courses/{course}/presentation",
+     *   path="/api/learner-insights/courses/{course}/presentation", operationId="learner-insights.courses.by-course.presentation.put",
      *   summary="Override how the course is presented (for example show the whole lesson); null removes an override",
      *   tags={"Learner insights"},
      *   security={{"passport": {}}},
@@ -33,7 +33,7 @@ interface PresentationSwagger
      *     @OA\Property(property="navigation", type="string", enum={"linear", "overview"}, nullable=true),
      *     @OA\Property(property="hints", type="integer", enum={0, 1, 2, 3}, nullable=true)
      *   )),
-     *   @OA\Response(response=200, description="The profile after the change"),
+     *   @OA\Response(response=200, description="The profile after the change", @OA\JsonContent(ref="#/components/schemas/ApiJson")),
      *   @OA\Response(response=403, description="The learner may not attend the course"),
      *   @OA\Response(response=422, description="Invalid option")
      * )

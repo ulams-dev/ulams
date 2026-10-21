@@ -13,7 +13,7 @@ interface PagesAdminApiContract
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/pages",
+     *     path="/api/admin/pages", operationId="admin.pages.get",
      *     summary="Lists available pages",
      *     tags={"Pages"},
      *     security={
@@ -174,7 +174,7 @@ interface PagesAdminApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/admin/pages/{id}",
+     *     path="/api/admin/pages/{id}", operationId="admin.pages.by-id.get",
      *     summary="Read a page identified by a given id identifier",
      *     tags={"Pages"},
      *     security={

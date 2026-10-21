@@ -12,19 +12,19 @@ use Ulams\Compliance\Services\CompetencyService;
  * The competency framework: a tree of competencies (areas and skills). Reading needs `compliance_manage` or
  * `compliance_competencies` (authors pick from it); changing it needs `compliance_manage`.
  *
- * @OA\Get(path="/api/admin/compliance/competencies", summary="The competency framework as a tree", tags={"Compliance"}, security={{"passport": {}}},
- *     @OA\Response(response=200, description="competencies with nested children"), @OA\Response(response=403, description="Forbidden"))
- * @OA\Post(path="/api/admin/compliance/competencies", summary="Add a competency", tags={"Compliance"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/compliance/competencies", operationId="admin.compliance.competencies.get", summary="The competency framework as a tree", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="competencies with nested children", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"))
+ * @OA\Post(path="/api/admin/compliance/competencies", operationId="admin.compliance.competencies.post", summary="Add a competency", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\RequestBody(required=true, @OA\MediaType(mediaType="application/json", @OA\Schema(type="object", required={"name"},
  *         @OA\Property(property="name", type="string"), @OA\Property(property="code", type="string", nullable=true),
  *         @OA\Property(property="description", type="string", nullable=true), @OA\Property(property="parent_id", type="integer", nullable=true)))),
- *     @OA\Response(response=201, description="the competency"), @OA\Response(response=422, description="Validation error"))
- * @OA\Put(path="/api/admin/compliance/competencies/{id}", summary="Rename or move a competency", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=201, description="the competency", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=422, description="Validation error"))
+ * @OA\Put(path="/api/admin/compliance/competencies/{id}", operationId="admin.compliance.competencies.by-id.put", summary="Rename or move a competency", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="the competency"), @OA\Response(response=422, description="Moving it under itself or its descendants"))
- * @OA\Delete(path="/api/admin/compliance/competencies/{id}", summary="Delete a competency (its sub-competencies move up, course tags go)", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="the competency", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=422, description="Moving it under itself or its descendants"))
+ * @OA\Delete(path="/api/admin/compliance/competencies/{id}", operationId="admin.compliance.competencies.by-id.delete", summary="Delete a competency (its sub-competencies move up, course tags go)", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="deleted"), @OA\Response(response=404, description="Unknown competency"))
+ *     @OA\Response(response=200, description="deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="Unknown competency"))
  */
 class CompetencyController extends ComplianceController
 {

@@ -27,7 +27,7 @@ interface UserSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/users",
+     *     path="/api/admin/users", operationId="admin.users.get",
      *     summary="Get users",
      *     description="",
      *     tags={"Admin Users"},
@@ -138,7 +138,7 @@ interface UserSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/users/{id}",
+     *     path="/api/admin/users/{id}", operationId="admin.users.by-id.get",
      *     summary="Get user",
      *     description="",
      *     tags={"Admin Users"},
@@ -165,7 +165,7 @@ interface UserSwagger
 
     /**
      * @OA\Patch(
-     *     path="/api/admin/user/{id}",
+     *     path="/api/admin/user/{id}", operationId="admin.user.by-id.patch",
      *     summary="Partial Update User (will only change sent fields)",
      *     description="",
      *     tags={"Admin Users"},
@@ -203,7 +203,7 @@ interface UserSwagger
 
     /**
      * @OA\Put(
-     *     path="/api/admin/user/{id}",
+     *     path="/api/admin/user/{id}", operationId="admin.user.by-id.put",
      *     summary="Update/Replace user data (will overwrite unset fields with nulls)",
      *     description="",
      *     tags={"Admin Users"},
@@ -241,7 +241,7 @@ interface UserSwagger
 
     /**
      * @OA\Post(
-     *     path="/api/admin/users",
+     *     path="/api/admin/users", operationId="admin.users.post",
      *     summary="Create user",
      *     description="",
      *     tags={"Admin Users"},
@@ -294,7 +294,7 @@ interface UserSwagger
     /**
      * @OA\Post(
      *      tags={"Admin Users"},
-     *      path="/api/admin/users/{id}/avatar",
+     *      path="/api/admin/users/{id}/avatar", operationId="admin.users.by-id.avatar.post",
      *      description="Upload avatar",
      *      security={
      *          {"passport": {}},
@@ -318,9 +318,7 @@ interface UserSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -336,7 +334,7 @@ interface UserSwagger
     /**
      * @OA\Delete(
      *      tags={"Admin Users"},
-     *      path="/api/admin/users/{id}/avatar",
+     *      path="/api/admin/users/{id}/avatar", operationId="admin.users.by-id.avatar.delete",
      *      description="Delete avatar",
      *      security={
      *          {"passport": {}},
@@ -353,9 +351,7 @@ interface UserSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,

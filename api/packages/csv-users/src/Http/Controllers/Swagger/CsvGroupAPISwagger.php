@@ -10,7 +10,7 @@ interface CsvGroupAPISwagger
     /**
      * @OA\Get(
      *      tags={"Admin CSV"},
-     *      path="/api/admin/csv/groups/group_id",
+     *      path="/api/admin/csv/groups/group_id", operationId="admin.csv.groups.group-id.get",
      *      description="Exports users to csv",
      *      security={
      *          {"passport": {}},
@@ -27,9 +27,7 @@ interface CsvGroupAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/csv",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiJson"),
      *      ),
      *      @OA\Response(
      *          response=422,

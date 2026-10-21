@@ -125,11 +125,53 @@ operation: `@OA\Response(response=200, description="...", @OA\JsonContent(ref="#
 and `operationId="<noun>.<verb>"`. Regenerate the document and run the refresh commands of the CLI (`sync-spec`,
 `generate`, `coverage`) and the SDK. Non-JSON answers (a file, Markdown) keep their own media type and no envelope.
 
+## Operation ids and the quality gate
+
+Every operation has a readable, unique `operationId`. The ones above are curated; the rest are derived from the
+route, in the annotation, so they stay put when code moves: the path without `api`, a path parameter as `by-<name>`,
+then the HTTP method (`GET /api/admin/courses/{id}/access` is `admin.courses.by-id.access.get`). Choose a better name
+when you add an operation; the id must be lowercase dotted words and unique.
+
+`yarn workspace ulams spec-quality` (a CI step, `front/cli/scripts/spec-quality.mjs`) fails when an operation has no
+readable unique id, or no typed 2xx response. A 204 needs none. Operations whose answer is not JSON (redirects, file
+downloads, HTML pages, event streams) are listed with a reason in `front/cli/spec/untyped-responses.yaml`; the check also
+fails on an entry that is no longer needed.
+
+Two schemas cover the operations that have no resource schema yet: `ApiEnvelope` (`success`, `message`, `data` of any
+shape, `meta` for a page) for the endpoints that answer the usual envelope, and `ApiJson` (a free-form object) for the
+ones that build their answer by hand. Both are placeholders for a precise schema: replace them with a `<Name>Response`
+as described above when you touch the endpoint.
+
+## PHP SDK
+
+`sdk-php/` is a Composer package (`ulams/sdk`, PHP 8.1+, Guzzle) generated from `front/cli/spec/openapi.json` by
+openapi-generator (pinned Docker image, `sdk-php/generate.sh`). `lib/` is generated and never edited by hand; `src/` is a
+thin wrapper:
+
+```php
+use Ulams\Sdk\Api\AdminKnowledgeApi;
+use Ulams\Sdk\Client;
+use Ulams\Sdk\Pagination;
+
+$ulams = Client::make('https://academy.example.com', getenv('ULAMS_TOKEN'));
+$exports = $ulams->api(AdminKnowledgeApi::class)->knowledgeExportsList();
+
+foreach (Pagination::items(fn (int $page) => $ulams->api(Api\AdminCoursesApi::class)->adminCoursesGet(page: $page)) as $course) {
+    echo $course['title'], "\n";
+}
+```
+
+The client sends the bearer token, an `Idempotency-Key` on every request that changes data and an `X-Request-Id` on all of them.
+Method names are the operation ids in camel case (`knowledge.exports.list` is `knowledgeExportsList`). CI regenerates the
+package and fails on any difference, so run `sdk-php/generate.sh` after changing the API and commit the result. The
+tests run the generated classes against canned answers (`composer test` in `sdk-php/`). The package is not published to
+Packagist yet.
+
 ## Limits of the current document
 
-The annotations describe request bodies and paths well but almost no response bodies, so most
-responses come out as `unknown` in `openapi.ts`. The response types in `front/sdk/src/types.ts`
-are written by hand from real API responses; replacing them with generated ones depends on the
-roadmap item "OpenAPI spec complete and published". The endpoint list is on
+Every operation has a typed answer now, but many of them are only the envelope with a free-form `data`, so those
+fields are `unknown` in `openapi.ts` and `mixed` in the PHP client. The response types in `front/sdk/src/types.ts`
+are written by hand from real API responses; replacing them with generated ones follows as the placeholder schemas are
+replaced with precise ones. The endpoint list is on
 [API endpoints](/reference/api-endpoints/), the reference on [API reference](/developers/api-reference/)
 and usage examples of the client on [SDK usage](/developers/sdk/).

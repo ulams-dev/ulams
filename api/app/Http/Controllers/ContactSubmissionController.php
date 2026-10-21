@@ -13,7 +13,7 @@ class ContactSubmissionController
     /**
      * @OA\Post(
      *   path="/api/contact",
-     *   operationId="submitPublicContactMessage",
+     *   operationId="contact.create",
      *   tags={"Contact"},
      *   summary="Send a message to the ULAMS team",
      *   @OA\RequestBody(required=true, @OA\JsonContent(
@@ -24,7 +24,7 @@ class ContactSubmissionController
      *     @OA\Property(property="message", type="string", maxLength=6000),
      *     @OA\Property(property="website", type="string", description="Spam honeypot; leave empty")
      *   )),
-     *   @OA\Response(response=202, description="Message delivered to the private contact inbox"),
+     *   @OA\Response(response=202, description="Message delivered to the private contact inbox", @OA\JsonContent(ref="#/components/schemas/ApiJson")),
      *   @OA\Response(response=422, description="Input validation failed"),
      *   @OA\Response(response=429, description="Rate limit exceeded"),
      *   @OA\Response(response=503, description="Message delivery is temporarily unavailable")

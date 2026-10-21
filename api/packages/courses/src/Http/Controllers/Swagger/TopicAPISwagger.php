@@ -15,7 +15,7 @@ interface TopicAPISwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/topics",
+     *      path="/api/admin/topics", operationId="admin.topics.get",
      *      summary="Get a listing of the Topics.",
      *      tags={"Admin Courses"},
      *      description="Get all Topics",
@@ -25,9 +25,7 @@ interface TopicAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -55,7 +53,7 @@ interface TopicAPISwagger
      * @return JsonResponse
      *
      * @OA\Post(
-     *      path="/api/admin/topics",
+     *      path="/api/admin/topics", operationId="admin.topics.post",
      *      summary="Store a newly created Topic in storage",
      *      tags={"Admin Courses"},
      *     security={
@@ -73,9 +71,7 @@ interface TopicAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -99,7 +95,7 @@ interface TopicAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/topics/{id}",
+     *      path="/api/admin/topics/{id}", operationId="admin.topics.by-id.get",
      *      summary="Display the specified Topic",
      *      tags={"Admin Courses"},
      *      description="Get Topic",
@@ -118,9 +114,7 @@ interface TopicAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -144,7 +138,7 @@ interface TopicAPISwagger
 
     /**
      * @OA\Put(
-     *      path="/api/admin/topics/{id}",
+     *      path="/api/admin/topics/{id}", operationId="admin.topics.by-id.put",
      *      summary="Update the specified Topic in storage",
      *      tags={"Admin Courses"},
      *      description="Update Topic",
@@ -171,9 +165,7 @@ interface TopicAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -197,7 +189,7 @@ interface TopicAPISwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/topics/{id}",
+     *      path="/api/admin/topics/{id}", operationId="admin.topics.by-id.delete",
      *      summary="Remove the specified Topic from storage",
      *      tags={"Admin Courses"},
      *      description="Delete Topic",
@@ -216,9 +208,7 @@ interface TopicAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -244,7 +234,7 @@ interface TopicAPISwagger
      * @return JsonResponse
      *
      * @OA\Get(
-     *      path="/api/admin/topics/types",
+     *      path="/api/admin/topics/types", operationId="admin.topics.types.get",
      *      summary="Get a listing of the Availabe Topic Content Types Classes.",
      *      tags={"Admin Courses"},
      *      description="Get all Topic Contents",
@@ -254,9 +244,7 @@ interface TopicAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -283,7 +271,7 @@ interface TopicAPISwagger
      * @return JsonResponse
      *
      * @OA\Post(
-     *      path="/api/admin/topics/{id}/clone",
+     *      path="/api/admin/topics/{id}/clone", operationId="admin.topics.by-id.clone.post",
      *      summary="Clone topic",
      *      tags={"Admin Courses"},
      *     security={
@@ -302,9 +290,7 @@ interface TopicAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="Topic cloned successfully",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

@@ -15,7 +15,7 @@ interface CartSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/cart",
+     *      path="/api/cart", operationId="cart.get",
      *      description="Get cart details",
      *      tags={"Cart"},
      *      security={
@@ -24,9 +24,7 @@ interface CartSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -42,7 +40,7 @@ interface CartSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/cart/products",
+     *      path="/api/cart/products", operationId="cart.products.post",
      *      description="Add product to cart and/or set product quantity",
      *      tags={"Cart"},
      *      security={
@@ -69,9 +67,7 @@ interface CartSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -86,7 +82,7 @@ interface CartSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/cart/missing",
+     *      path="/api/cart/missing", operationId="cart.missing.post",
      *      description="Add missing products to Cart",
      *      tags={"Cart"},
      *      security={
@@ -110,9 +106,7 @@ interface CartSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -127,7 +121,7 @@ interface CartSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/cart/add",
+     *      path="/api/cart/add", operationId="cart.add.post",
      *      description="Add productable to cart",
      *      tags={"Cart"},
      *      security={
@@ -154,9 +148,7 @@ interface CartSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,
@@ -171,7 +163,7 @@ interface CartSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/cart/products/{id}",
+     *      path="/api/cart/products/{id}", operationId="cart.products.by-id.delete",
      *      description="Remove product from cart",
      *      tags={"Cart"},
      *      security={
@@ -189,9 +181,7 @@ interface CartSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *      ),
      *      @OA\Response(
      *          response=422,

@@ -13,7 +13,7 @@ interface LessonAPISwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/lessons",
+     *      path="/api/admin/lessons", operationId="admin.lessons.get",
      *      summary="Get a listing of the Lessons.",
      *      tags={"Admin Courses"},
      *      description="Get all Lessons",
@@ -23,9 +23,7 @@ interface LessonAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -50,7 +48,7 @@ interface LessonAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/lessons",
+     *      path="/api/admin/lessons", operationId="admin.lessons.post",
      *      summary="Store a newly created Lesson in storage",
      *      tags={"Admin Courses"},
      *      description="Store Lesson",
@@ -68,9 +66,7 @@ interface LessonAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -94,7 +90,7 @@ interface LessonAPISwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/lessons/{id}",
+     *      path="/api/admin/lessons/{id}", operationId="admin.lessons.by-id.get",
      *      summary="Display the specified Lesson",
      *      tags={"Admin Courses"},
      *      description="Get Lesson",
@@ -113,9 +109,7 @@ interface LessonAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -139,7 +133,7 @@ interface LessonAPISwagger
 
     /**
      * @OA\Put(
-     *      path="/api/admin/lessons/{id}",
+     *      path="/api/admin/lessons/{id}", operationId="admin.lessons.by-id.put",
      *      summary="Update the specified Lesson in storage",
      *      tags={"Admin Courses"},
      *      description="Update Lesson",
@@ -165,9 +159,7 @@ interface LessonAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -191,7 +183,7 @@ interface LessonAPISwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/lessons/{id}",
+     *      path="/api/admin/lessons/{id}", operationId="admin.lessons.by-id.delete",
      *      summary="Remove the specified Lesson from storage",
      *      tags={"Admin Courses"},
      *      description="Delete Lesson",
@@ -210,9 +202,7 @@ interface LessonAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -236,7 +226,7 @@ interface LessonAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/lessons/{id}/clone",
+     *      path="/api/admin/lessons/{id}/clone", operationId="admin.lessons.by-id.clone.post",
      *      summary="Clone Lesson",
      *      tags={"Admin Courses"},
      *      description="Clone Lesson with topics",
@@ -255,9 +245,7 @@ interface LessonAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

@@ -13,7 +13,7 @@ interface PaymentsSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/payments",
+     *      path="/api/admin/payments", operationId="admin.payments.get",
      *      summary="Search payments",
      *      tags={"Admin Payments"},
      *      description="Get filtered and paginated Payments",
@@ -127,9 +127,7 @@ interface PaymentsSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -153,7 +151,7 @@ interface PaymentsSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/payments/{id}",
+     *      path="/api/admin/payments/{id}", operationId="admin.payments.by-id.get",
      *      summary="Display the specified Payment",
      *      tags={"Admin Payments"},
      *      description="Get Payment",
@@ -172,9 +170,7 @@ interface PaymentsSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -197,7 +193,7 @@ interface PaymentsSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/payments/export",
+     *      path="/api/admin/payments/export", operationId="admin.payments.export.get",
      *      summary="Export payments to file",
      *      tags={"Admin Payments"},
      *      description="Export filtered Payments",

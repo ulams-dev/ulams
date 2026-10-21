@@ -13,7 +13,7 @@ interface NotificationsApiSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/notifications/all",
+     *      path="/api/admin/notifications/all", operationId="admin.notifications.all.get",
      *      summary="Get notifications",
      *      tags={"Notifications Admin"},
      *      security={
@@ -86,9 +86,7 @@ interface NotificationsApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -222,7 +220,7 @@ interface NotificationsApiSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/notifications",
+     *      path="/api/admin/notifications", operationId="admin.notifications.get",
      *      summary="Get list of events for which notifications exist",
      *      tags={"Notifications Admin"},
      *      security={
@@ -232,9 +230,7 @@ interface NotificationsApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -259,7 +255,7 @@ interface NotificationsApiSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/notifications/events",
+     *      path="/api/admin/notifications/events", operationId="admin.notifications.events.get",
      *      summary="Get list of events for which notifications exist",
      *      tags={"Notifications Admin"},
      *      security={
@@ -269,9 +265,7 @@ interface NotificationsApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -337,7 +331,7 @@ interface NotificationsApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/notifications/{notification}/read",
+     *      path="/api/notifications/{notification}/read", operationId="notifications.by-notification.read.post",
      *      summary="Mark notification as read",
      *      tags={"Notifications"},
      *      security={
@@ -354,9 +348,7 @@ interface NotificationsApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -410,7 +402,7 @@ interface NotificationsApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/notifications/read-all",
+     *      path="/api/admin/notifications/read-all", operationId="admin.notifications.read-all.post",
      *      summary="Mark all notifications as read",
      *      tags={"Notifications Admin"},
      *      security={
@@ -420,9 +412,7 @@ interface NotificationsApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

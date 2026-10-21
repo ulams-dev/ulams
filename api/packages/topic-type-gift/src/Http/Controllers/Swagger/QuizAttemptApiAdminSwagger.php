@@ -13,7 +13,7 @@ interface QuizAttemptApiAdminSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/quiz-attempts",
+     *      path="/api/admin/quiz-attempts", operationId="admin.quiz-attempts.get",
      *      summary="Get all quiz attempts",
      *      tags={"Admin Gift Quiz Attempt"},
      *      security={
@@ -88,7 +88,7 @@ interface QuizAttemptApiAdminSwagger
 
     /**
      * @OA\Get(
-     *     path="/api/admin/quiz-attempts/{id}",
+     *     path="/api/admin/quiz-attempts/{id}", operationId="admin.quiz-attempts.by-id.get",
      *     summary="Get quiz attempt by id",
      *      tags={"Admin Gift Quiz Attempt"},
      *     security={
@@ -130,7 +130,7 @@ interface QuizAttemptApiAdminSwagger
 
     /**
      * @OA\Patch(
-     *      path="/api/admin/quiz-attempts/{id}/feedback",
+     *      path="/api/admin/quiz-attempts/{id}/feedback", operationId="admin.quiz-attempts.by-id.feedback.patch",
      *      summary="Add, edit or remove tutor feedback for a quiz attempt",
      *      tags={"Admin Gift Quiz Attempt"},
      *      description="Sets the tutor feedback (light rich text or video link) on a quiz attempt. Sending null or an empty string removes it.",
@@ -180,7 +180,7 @@ interface QuizAttemptApiAdminSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/quiz-attempts/export",
+     *      path="/api/admin/quiz-attempts/export", operationId="admin.quiz-attempts.export.get",
      *      summary="Export course quiz results to an XLSX or XLS file",
      *      tags={"Admin Gift Quiz Attempt"},
      *      description="Exports all attempts of all students. Without topic_gift_quiz_id every quiz of the course is exported to a separate worksheet; with it a single worksheet is exported. The format query parameter selects the spreadsheet format (xlsx or xls), defaulting to xlsx.",

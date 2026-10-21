@@ -18,12 +18,12 @@ use Ulams\LivingCourse\Models\Proposal;
  * Learner side (ADR 0033): the caller's own notices about updated courses, and the opt-in "an
  * update is under review" marker. Notices never change progress.
  *
- * @OA\Get(path="/api/living-course/courses/{course}/notices", summary="The caller's open update notices for a course", tags={"Living Course learner"}, security={{"passport": {}}},
- *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="notices"), @OA\Response(response=401, description="not signed in"))
- * @OA\Post(path="/api/living-course/notices/{notice}/dismiss", summary="Mark a notice as reviewed", tags={"Living Course learner"}, security={{"passport": {}}},
- *     @OA\Parameter(name="notice", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="dismissed"), @OA\Response(response=404, description="not the caller's notice"))
- * @OA\Get(path="/api/living-course/courses/{course}/freshness", summary="Topics with an update under review (only when the course shows it)", tags={"Living Course learner"}, security={{"passport": {}}},
- *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="topics"), @OA\Response(response=404, description="unknown course"))
+ * @OA\Get(path="/api/living-course/courses/{course}/notices", operationId="living-course.courses.by-course.notices.get", summary="The caller's open update notices for a course", tags={"Living Course learner"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="notices", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=401, description="not signed in"))
+ * @OA\Post(path="/api/living-course/notices/{notice}/dismiss", operationId="living-course.notices.by-notice.dismiss.post", summary="Mark a notice as reviewed", tags={"Living Course learner"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="notice", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="dismissed", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="not the caller's notice"))
+ * @OA\Get(path="/api/living-course/courses/{course}/freshness", operationId="living-course.courses.by-course.freshness.get", summary="Topics with an update under review (only when the course shows it)", tags={"Living Course learner"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="topics", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="unknown course"))
  */
 class NoticesController extends Controller
 {

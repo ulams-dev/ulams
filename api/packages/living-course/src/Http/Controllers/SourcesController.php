@@ -19,22 +19,22 @@ use Ulams\Uploads\Exceptions\UploadRejected;
 /**
  * Sources of a builder session with their sync state, and their revisions.
  *
- * @OA\Get(path="/api/admin/living-course/sessions/{session}/sources", summary="Sources of a session with connection, sync state and revisions", tags={"Admin Living Course"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/living-course/sessions/{session}/sources", operationId="admin.living-course.sessions.by-session.sources.get", summary="Sources of a session with connection, sync state and revisions", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
- *     @OA\Response(response=200, description="sources"), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown session"))
- * @OA\Get(path="/api/admin/living-course/sources/{source}/revisions", summary="Revisions of a source, newest first", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="sources", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown session"))
+ * @OA\Get(path="/api/admin/living-course/sources/{source}/revisions", operationId="admin.living-course.sources.by-source.revisions.get", summary="Revisions of a source, newest first", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="source", in="path", required=true, @OA\Schema(type="string")),
- *     @OA\Response(response=200, description="revisions"), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown source"))
- * @OA\Post(path="/api/admin/living-course/sources/{source}/revisions", summary="Upload a new version of a source (MD, PDF or DOCX): creates a revision and its fragment diff", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="revisions", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown source"))
+ * @OA\Post(path="/api/admin/living-course/sources/{source}/revisions", operationId="admin.living-course.sources.by-source.revisions.post", summary="Upload a new version of a source (MD, PDF or DOCX): creates a revision and its fragment diff", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="source", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(@OA\MediaType(mediaType="multipart/form-data", @OA\Schema(@OA\Property(property="file", type="string", format="binary")))),
- *     @OA\Response(response=201, description="the new revision"), @OA\Response(response=200, description="the file is the latest revision already (unchanged: true)"), @OA\Response(response=422, description="rejected upload"))
- * @OA\Get(path="/api/admin/living-course/revisions/{revision}/changes", summary="Fragment changes of a revision against the synced revision it was compared with (or ?against=<revision id>)", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Response(response=201, description="the new revision", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=200, description="the file is the latest revision already (unchanged: true)", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=422, description="rejected upload"))
+ * @OA\Get(path="/api/admin/living-course/revisions/{revision}/changes", operationId="admin.living-course.revisions.by-revision.changes.get", summary="Fragment changes of a revision against the synced revision it was compared with (or ?against=<revision id>)", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="revision", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="against", in="query", @OA\Schema(type="string")),
- *     @OA\Response(response=200, description="counts and changes with old and new text and word diffs"), @OA\Response(response=404, description="unknown revision"))
- * @OA\Get(path="/api/admin/living-course/revisions/{revision}", summary="One revision", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="counts and changes with old and new text and word diffs", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="unknown revision"))
+ * @OA\Get(path="/api/admin/living-course/revisions/{revision}", operationId="admin.living-course.revisions.by-revision.get", summary="One revision", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="revision", in="path", required=true, @OA\Schema(type="string")),
- *     @OA\Response(response=200, description="revision"), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown revision"))
+ *     @OA\Response(response=200, description="revision", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown revision"))
  */
 class SourcesController extends Controller
 {

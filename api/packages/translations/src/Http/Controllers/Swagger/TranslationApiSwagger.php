@@ -9,7 +9,7 @@ interface TranslationApiSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/translations",
+     *      path="/api/translations", operationId="translations.get",
      *      summary="Get a list of public translations",
      *      tags={"Translations"},
      *      description="Get public translations",
@@ -67,9 +67,7 @@ interface TranslationApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

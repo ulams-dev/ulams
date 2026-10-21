@@ -14,9 +14,9 @@ use Ulams\Compliance\Services\RuleEngine;
  * `compliance_manage`. Attributes: `group` (group names), a user column or a custom user field (model-fields).
  * Rules run when a user is saved and in the daily `compliance:process`.
  *
- * @OA\Get(path="/api/admin/compliance/rules", summary="List enrolment rules", tags={"Compliance"}, security={{"passport": {}}},
- *     @OA\Response(response=200, description="rules"), @OA\Response(response=403, description="Forbidden"))
- * @OA\Post(path="/api/admin/compliance/rules", summary="Create an enrolment rule", tags={"Compliance"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/compliance/rules", operationId="admin.compliance.rules.get", summary="List enrolment rules", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="rules", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"))
+ * @OA\Post(path="/api/admin/compliance/rules", operationId="admin.compliance.rules.post", summary="Create an enrolment rule", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\RequestBody(required=true, @OA\MediaType(mediaType="application/json", @OA\Schema(type="object", required={"name","path_id","conditions"},
  *         @OA\Property(property="name", type="string"), @OA\Property(property="path_id", type="integer"), @OA\Property(property="active", type="boolean"),
  *         @OA\Property(property="due_days", type="integer", nullable=true),
@@ -24,17 +24,17 @@ use Ulams\Compliance\Services\RuleEngine;
  *             @OA\Property(property="attribute", type="string", example="department"),
  *             @OA\Property(property="operator", type="string", enum={"equals","not_equals","in","contains","starts_with","ends_with","exists"}),
  *             @OA\Property(property="value", type="array", @OA\Items(type="string"))))))),
- *     @OA\Response(response=201, description="the rule"), @OA\Response(response=422, description="Validation error"))
- * @OA\Put(path="/api/admin/compliance/rules/{id}", summary="Update an enrolment rule", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=201, description="the rule", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=422, description="Validation error"))
+ * @OA\Put(path="/api/admin/compliance/rules/{id}", operationId="admin.compliance.rules.by-id.put", summary="Update an enrolment rule", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="the rule"), @OA\Response(response=404, description="Unknown rule"))
- * @OA\Delete(path="/api/admin/compliance/rules/{id}", summary="Delete an enrolment rule (existing enrolments stay)", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="the rule", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="Unknown rule"))
+ * @OA\Delete(path="/api/admin/compliance/rules/{id}", operationId="admin.compliance.rules.by-id.delete", summary="Delete an enrolment rule (existing enrolments stay)", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="deleted"), @OA\Response(response=404, description="Unknown rule"))
- * @OA\Post(path="/api/admin/compliance/rules/{id}/evaluate", summary="Preview or run a rule now", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="Unknown rule"))
+ * @OA\Post(path="/api/admin/compliance/rules/{id}/evaluate", operationId="admin.compliance.rules.by-id.evaluate.post", summary="Preview or run a rule now", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\RequestBody(@OA\MediaType(mediaType="application/json", @OA\Schema(type="object", @OA\Property(property="dry_run", type="boolean", default=true)))),
- *     @OA\Response(response=200, description="count and a sample of the users that match and are not enrolled yet; enrolled count when dry_run is false"))
+ *     @OA\Response(response=200, description="count and a sample of the users that match and are not enrolled yet; enrolled count when dry_run is false", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
  */
 class RuleController extends ComplianceController
 {

@@ -12,7 +12,7 @@ interface ProjectSolutionApiSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/topic-project-solutions",
+     *      path="/api/topic-project-solutions", operationId="topic-project-solutions.get",
      *      summary="Get a listing of the project solutions",
      *      tags={"Project Solution"},
      *      description="Get all my project solutions",
@@ -78,9 +78,7 @@ interface ProjectSolutionApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -104,7 +102,7 @@ interface ProjectSolutionApiSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/topic-project-solutions/{id}",
+     *      path="/api/topic-project-solutions/{id}", operationId="topic-project-solutions.by-id.get",
      *      summary="Get a single project solution",
      *      tags={"Project Solution"},
      *      description="Get my single project solution (with tutor feedback) by id",
@@ -144,7 +142,7 @@ interface ProjectSolutionApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/topic-project-solutions",
+     *      path="/api/topic-project-solutions", operationId="topic-project-solutions.post",
      *      summary="Store a newly Project Solution",
      *      tags={"Project Solution"},
      *      description="Project Solution",
@@ -186,7 +184,7 @@ interface ProjectSolutionApiSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/topic-project-solutions/{id}",
+     *      path="/api/topic-project-solutions/{id}", operationId="topic-project-solutions.by-id.delete",
      *      summary="Remove the specified Project Solution",
      *      tags={"Project Solution"},
      *      description="Delete Project Solution",
@@ -205,9 +203,7 @@ interface ProjectSolutionApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

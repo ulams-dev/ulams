@@ -16,11 +16,11 @@ use Ulams\LivingCourse\Oauth\OAuthService;
  * expiring state of the start. The tokens never reach the browser: it only gets a one-time grant id that
  * the connect request redeems.
  *
- * @OA\Post(path="/api/admin/living-course/oauth/{provider}/start", summary="The vendor sign-in address for Connect your account (provider google or notion); the session must be one the caller may change", tags={"Admin Living Course"}, security={{"passport": {}}},
+ * @OA\Post(path="/api/admin/living-course/oauth/{provider}/start", operationId="admin.living-course.oauth.by-provider.start.post", summary="The vendor sign-in address for Connect your account (provider google or notion); the session must be one the caller may change", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="provider", in="path", required=true, @OA\Schema(type="string", enum={"google","notion"})),
  *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="sessionId", type="string"))),
- *     @OA\Response(response=200, description="url to send the browser to"), @OA\Response(response=403, description="another author's session"), @OA\Response(response=422, description="sign-in not set up on this installation"))
- * @OA\Get(path="/api/living-course/oauth/{provider}/callback", summary="The vendor's redirect after the sign-in: redirects to the studio with a one-time grant, or answers with it", tags={"Living Course"},
+ *     @OA\Response(response=200, description="url to send the browser to", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="another author's session"), @OA\Response(response=422, description="sign-in not set up on this installation"))
+ * @OA\Get(path="/api/living-course/oauth/{provider}/callback", operationId="living-course.oauth.by-provider.callback.get", summary="The vendor's redirect after the sign-in: redirects to the studio with a one-time grant, or answers with it", tags={"Living Course"},
  *     @OA\Parameter(name="provider", in="path", required=true, @OA\Schema(type="string", enum={"google","notion"})),
  *     @OA\Parameter(name="code", in="query", @OA\Schema(type="string")), @OA\Parameter(name="state", in="query", @OA\Schema(type="string")),
  *     @OA\Response(response=200, description="grant (when no return address is configured)"), @OA\Response(response=302, description="redirect to the studio"), @OA\Response(response=422, description="sign-in refused or expired"))

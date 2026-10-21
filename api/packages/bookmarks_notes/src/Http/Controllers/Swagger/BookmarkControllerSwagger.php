@@ -13,7 +13,7 @@ interface BookmarkControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/bookmarks",
+     *      path="/api/bookmarks", operationId="bookmarks.post",
      *      summary="Store a newly created bookmark",
      *      tags={"Bookmarks"},
      *      description="Store Bookmark",
@@ -56,7 +56,7 @@ interface BookmarkControllerSwagger
 
     /**
      * @OA\Patch(
-     *      path="/api/bookmarks/{id}",
+     *      path="/api/bookmarks/{id}", operationId="bookmarks.by-id.patch",
      *      summary="Update bookmark",
      *      tags={"Bookmarks"},
      *      description="Store Bookmark",
@@ -107,7 +107,7 @@ interface BookmarkControllerSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/bookmarks/{id}",
+     *      path="/api/bookmarks/{id}", operationId="bookmarks.by-id.delete",
      *      summary="Remove the specified bookmark",
      *      tags={"Bookmarks"},
      *      description="Delete Bookmarks",
@@ -126,9 +126,7 @@ interface BookmarkControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -151,7 +149,7 @@ interface BookmarkControllerSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/bookmarks",
+     *      path="/api/bookmarks", operationId="bookmarks.get",
      *      summary="Get a listing of the bookmarks",
      *      tags={"Bookmarks"},
      *      description="Get all bookmarks",
@@ -233,9 +231,7 @@ interface BookmarkControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

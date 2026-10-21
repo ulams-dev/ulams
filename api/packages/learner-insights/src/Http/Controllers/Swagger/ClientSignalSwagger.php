@@ -10,7 +10,7 @@ interface ClientSignalSwagger
 {
     /**
      * @OA\Post(
-     *   path="/api/learner-insights/signals",
+     *   path="/api/learner-insights/signals", operationId="learner-insights.signals.post",
      *   summary="Record a media signal (replay, seek back) from the player",
      *   tags={"Learner insights"},
      *   security={{"passport": {}}},
@@ -22,7 +22,7 @@ interface ClientSignalSwagger
      *     @OA\Property(property="media", type="string", enum={"video", "audio"}),
      *     @OA\Property(property="ref", type="string", format="uuid", description="Client generated id, used to drop duplicates")
      *   )),
-     *   @OA\Response(response=202, description="Accepted (nothing is stored when the module is off or the learner opted out)"),
+     *   @OA\Response(response=202, description="Accepted (nothing is stored when the module is off or the learner opted out)", @OA\JsonContent(ref="#/components/schemas/ApiJson")),
      *   @OA\Response(response=403, description="The learner may not attend the course of the topic"),
      *   @OA\Response(response=404, description="Unknown topic"),
      *   @OA\Response(response=429, description="Too many signals")

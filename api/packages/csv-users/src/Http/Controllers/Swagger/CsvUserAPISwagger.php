@@ -10,7 +10,7 @@ interface CsvUserAPISwagger
     /**
      * @OA\Get(
      *      tags={"Admin CSV"},
-     *      path="/api/admin/csv/users",
+     *      path="/api/admin/csv/users", operationId="admin.csv.users.get",
      *      description="Exports users to csv",
      *      security={
      *          {"passport": {}},

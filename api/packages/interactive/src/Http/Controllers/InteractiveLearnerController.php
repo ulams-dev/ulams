@@ -16,21 +16,21 @@ use Ulams\Interactive\Services\InteractiveProgressService;
  * Learners play an Interactive topic from the tenant content origin (ADR 0086). The frame never gets a
  * token: the lesson page forwards the bridge's events through the front BFF with the learner's session.
  *
- * @OA\Post(path="/api/interactive/launches/{topic}", summary="Start an Interactive topic", tags={"Interactive"}, security={{"passport": {}}},
+ * @OA\Post(path="/api/interactive/launches/{topic}", operationId="interactive.launches.by-topic.post", summary="Start an Interactive topic", tags={"Interactive"}, security={{"passport": {}}},
  *     @OA\Parameter(name="topic", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="{url, version, manifest, topic}; url is the entry file on the content origin"),
+ *     @OA\Response(response=200, description="{url, version, manifest, topic}; url is the entry file on the content origin", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
  *     @OA\Response(response=401, description="endpoint requires authentication"), @OA\Response(response=403, description="no access to the course"),
  *     @OA\Response(response=404, description="not an Interactive topic, or the type is switched off"), @OA\Response(response=503, description="no content origin"))
- * @OA\Get(path="/api/interactive/showcase", summary="The interactive shown on a landing page", tags={"Interactive"},
+ * @OA\Get(path="/api/interactive/showcase", operationId="interactive.showcase.get", summary="The interactive shown on a landing page", tags={"Interactive"},
  *     description="Public, throttled. The first Interactive topic of the first published public course that has one, in the shape of a launch ({url, version, manifest, topic}). Nothing is tracked.",
- *     @OA\Response(response=200, description="{url, version, manifest, topic}"),
+ *     @OA\Response(response=200, description="{url, version, manifest, topic}", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
  *     @OA\Response(response=404, description="no public interactive, or the type is switched off"), @OA\Response(response=429, description="too many requests"),
  *     @OA\Response(response=503, description="no content origin"))
- * @OA\Post(path="/api/interactive/topics/{topic}/events", summary="Progress events from the lesson page", tags={"Interactive"}, security={{"passport": {}}},
+ * @OA\Post(path="/api/interactive/topics/{topic}/events", operationId="interactive.topics.by-topic.events.post", summary="Progress events from the lesson page", tags={"Interactive"}, security={{"passport": {}}},
  *     description="A batch of at most 40 bridge events (stepChanged, progress, complete, score, event) for the logged-in learner. Completion follows the topic's completion rule.",
  *     @OA\Parameter(name="topic", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\RequestBody(@OA\JsonContent(required={"events"}, @OA\Property(property="events", type="array", @OA\Items(type="object")))),
- *     @OA\Response(response=200, description="{status, progress}; status 1 means the topic is complete"),
+ *     @OA\Response(response=200, description="{status, progress}; status 1 means the topic is complete", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
  *     @OA\Response(response=401, description="endpoint requires authentication"), @OA\Response(response=403, description="no access to the course"),
  *     @OA\Response(response=404, description="not an Interactive topic"), @OA\Response(response=422, description="invalid batch"), @OA\Response(response=429, description="too many requests"))
  */

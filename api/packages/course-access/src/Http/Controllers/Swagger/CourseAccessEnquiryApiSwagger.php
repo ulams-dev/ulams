@@ -11,7 +11,7 @@ interface CourseAccessEnquiryApiSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/course-access-enquiries",
+     *     path="/api/course-access-enquiries", operationId="course-access-enquiries.get",
      *     summary="Get my course access enquiries",
      *     description="",
      *     tags={"Course Access"},
@@ -80,7 +80,7 @@ interface CourseAccessEnquiryApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/course-access-enquiries",
+     *      path="/api/course-access-enquiries", operationId="course-access-enquiries.post",
      *      summary="Store a newly Course Access Enqiury",
      *      tags={"Course Access"},
      *      description="Store Course Access Enqiury",
@@ -122,7 +122,7 @@ interface CourseAccessEnquiryApiSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/course-access-enquiries/{id}",
+     *      path="/api/course-access-enquiries/{id}", operationId="course-access-enquiries.by-id.delete",
      *      summary="Remove the specified Course Access Enquiry",
      *      tags={"Course Access"},
      *      description="Delete Course Access Enquiry",
@@ -141,9 +141,7 @@ interface CourseAccessEnquiryApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

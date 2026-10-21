@@ -16,30 +16,30 @@ use Ulams\Core\Models\User;
  * Learning paths: ordered courses with prerequisites. Admin endpoints need `compliance_manage`;
  * `my-paths` is the learner's own view.
  *
- * @OA\Get(path="/api/admin/compliance/paths", summary="List learning paths with their steps", tags={"Compliance"}, security={{"passport": {}}},
- *     @OA\Response(response=200, description="paths with steps (course_id, position, prerequisites)"), @OA\Response(response=403, description="Forbidden"))
- * @OA\Post(path="/api/admin/compliance/paths", summary="Create a learning path", tags={"Compliance"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/compliance/paths", operationId="admin.compliance.paths.get", summary="List learning paths with their steps", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="paths with steps (course_id, position, prerequisites)", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"))
+ * @OA\Post(path="/api/admin/compliance/paths", operationId="admin.compliance.paths.post", summary="Create a learning path", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\RequestBody(required=true, @OA\MediaType(mediaType="application/json", @OA\Schema(type="object", required={"title"},
  *         @OA\Property(property="title", type="string"), @OA\Property(property="description", type="string", nullable=true),
  *         @OA\Property(property="steps", type="array", description="Ordered; prerequisites are course ids of this path", @OA\Items(type="object",
  *             @OA\Property(property="course_id", type="integer"), @OA\Property(property="prerequisites", type="array", @OA\Items(type="integer"))))))),
- *     @OA\Response(response=201, description="the path"), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=422, description="Unknown course, foreign prerequisite or a cycle"))
- * @OA\Get(path="/api/admin/compliance/paths/{id}", summary="Show a learning path", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=201, description="the path", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=422, description="Unknown course, foreign prerequisite or a cycle"))
+ * @OA\Get(path="/api/admin/compliance/paths/{id}", operationId="admin.compliance.paths.by-id.get", summary="Show a learning path", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="the path with enrolment counts"), @OA\Response(response=404, description="Unknown path"))
- * @OA\Put(path="/api/admin/compliance/paths/{id}", summary="Update a learning path (steps are replaced when sent)", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="the path with enrolment counts", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="Unknown path"))
+ * @OA\Put(path="/api/admin/compliance/paths/{id}", operationId="admin.compliance.paths.by-id.put", summary="Update a learning path (steps are replaced when sent)", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="the path"), @OA\Response(response=422, description="Validation error"))
- * @OA\Delete(path="/api/admin/compliance/paths/{id}", summary="Delete a learning path (its assignments stay)", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="the path", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=422, description="Validation error"))
+ * @OA\Delete(path="/api/admin/compliance/paths/{id}", operationId="admin.compliance.paths.by-id.delete", summary="Delete a learning path (its assignments stay)", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="deleted"), @OA\Response(response=404, description="Unknown path"))
- * @OA\Post(path="/api/admin/compliance/paths/{id}/enrollments", summary="Enrol users in a learning path", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="Unknown path"))
+ * @OA\Post(path="/api/admin/compliance/paths/{id}/enrollments", operationId="admin.compliance.paths.by-id.enrollments.post", summary="Enrol users in a learning path", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\RequestBody(required=true, @OA\MediaType(mediaType="application/json", @OA\Schema(type="object", required={"user_ids"},
  *         @OA\Property(property="user_ids", type="array", @OA\Items(type="integer")), @OA\Property(property="due_at", type="string", format="date-time", nullable=true)))),
- *     @OA\Response(response=201, description="enrolments (a user already in the path keeps theirs)"), @OA\Response(response=403, description="Forbidden"))
- * @OA\Get(path="/api/compliance/my-paths", summary="My learning paths", tags={"Compliance"}, security={{"passport": {}}},
- *     @OA\Response(response=200, description="each enrolment with the path steps and their status (done, available, locked)"))
+ *     @OA\Response(response=201, description="enrolments (a user already in the path keeps theirs)", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"))
+ * @OA\Get(path="/api/compliance/my-paths", operationId="compliance.my-paths.get", summary="My learning paths", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="each enrolment with the path steps and their status (done, available, locked)", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
  */
 class PathController extends ComplianceController
 {

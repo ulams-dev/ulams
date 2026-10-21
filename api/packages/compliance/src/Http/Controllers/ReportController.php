@@ -13,7 +13,7 @@ use Ulams\Compliance\Services\ComplianceReportService;
  * training and its outcome), `certificates` (every certificate with the course version it attests) and `audit`
  * (hash-chained Living Course audit entries, when that package is installed).
  *
- * @OA\Get(path="/api/admin/compliance/report", summary="Compliance report", tags={"Compliance"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/compliance/report", operationId="admin.compliance.report.get", summary="Compliance report", tags={"Compliance"}, security={{"passport": {}}},
  *     @OA\Parameter(name="dataset", in="query", required=true, @OA\Schema(type="string", enum={"assignments","certificates","audit"})),
  *     @OA\Parameter(name="course_id", in="query", @OA\Schema(type="integer")),
  *     @OA\Parameter(name="user_id", in="query", @OA\Schema(type="integer")),
@@ -21,8 +21,8 @@ use Ulams\Compliance\Services\ComplianceReportService;
  *     @OA\Parameter(name="from", in="query", description="assigned or issued on or after this date", @OA\Schema(type="string", format="date")),
  *     @OA\Parameter(name="to", in="query", description="assigned or issued on or before this date", @OA\Schema(type="string", format="date")),
  *     @OA\Parameter(name="per_page", in="query", @OA\Schema(type="integer", default=50)),
- *     @OA\Response(response=200, description="columns and rows of the dataset, with pagination meta"), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=422, description="Unknown dataset"))
- * @OA\Get(path="/api/admin/compliance/report/export", summary="Audit export of a compliance dataset", tags={"Compliance"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="columns and rows of the dataset, with pagination meta", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=422, description="Unknown dataset"))
+ * @OA\Get(path="/api/admin/compliance/report/export", operationId="admin.compliance.report.export.get", summary="Audit export of a compliance dataset", tags={"Compliance"}, security={{"passport": {}}},
  *     description="Streams every matching row as CSV (default) or JSON lines. The export itself is recorded (who, dataset, filters, row count).",
  *     @OA\Parameter(name="dataset", in="query", required=true, @OA\Schema(type="string", enum={"assignments","certificates","audit"})),
  *     @OA\Parameter(name="format", in="query", @OA\Schema(type="string", enum={"csv","jsonl"}, default="csv")),

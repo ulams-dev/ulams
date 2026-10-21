@@ -11,7 +11,7 @@ interface CourseAccessEnquiryApiAdminSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/course-access-enquiries",
+     *     path="/api/admin/course-access-enquiries", operationId="admin.course-access-enquiries.get",
      *     summary="Get all course access enquiries",
      *     tags={"Admin Course Access"},
      *     security={
@@ -103,7 +103,7 @@ interface CourseAccessEnquiryApiAdminSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/course-access-enquiries/{id}",
+     *      path="/api/admin/course-access-enquiries/{id}", operationId="admin.course-access-enquiries.by-id.delete",
      *      summary="Remove the specified Course Access Enquiry",
      *      tags={"Admin Course Access"},
      *      description="Delete Course Access Enquiry",
@@ -122,9 +122,7 @@ interface CourseAccessEnquiryApiAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -147,7 +145,7 @@ interface CourseAccessEnquiryApiAdminSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/course-access-enquiries/approve/{id}",
+     *      path="/api/admin/course-access-enquiries/approve/{id}", operationId="admin.course-access-enquiries.approve.by-id.post",
      *      summary="Approve the specified Course Access Enquiry",
      *      tags={"Admin Course Access"},
      *      description="Approve Course Access Enquiry",
@@ -166,9 +164,7 @@ interface CourseAccessEnquiryApiAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

@@ -17,13 +17,13 @@ use Ulams\LivingCourse\Support\Presenter;
 /**
  * Settings of a source connection and disconnecting it (history is kept).
  *
- * @OA\Put(path="/api/admin/living-course/connections/{connection}", summary="Change a connection: schedule, automatic analysis, learner notice settings, paused", tags={"Admin Living Course"}, security={{"passport": {}}},
+ * @OA\Put(path="/api/admin/living-course/connections/{connection}", operationId="admin.living-course.connections.by-connection.put", summary="Change a connection: schedule, automatic analysis, learner notice settings, paused", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="connection", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(@OA\JsonContent(type="object")),
- *     @OA\Response(response=200, description="connection"), @OA\Response(response=403, description="not allowed"), @OA\Response(response=404, description="unknown"), @OA\Response(response=422, description="invalid"))
- * @OA\Delete(path="/api/admin/living-course/connections/{connection}", summary="Disconnect a source (revisions and the audit trail are kept)", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="connection", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="not allowed"), @OA\Response(response=404, description="unknown"), @OA\Response(response=422, description="invalid"))
+ * @OA\Delete(path="/api/admin/living-course/connections/{connection}", operationId="admin.living-course.connections.by-connection.delete", summary="Disconnect a source (revisions and the audit trail are kept)", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="connection", in="path", required=true, @OA\Schema(type="string")),
- *     @OA\Response(response=200, description="disconnected"), @OA\Response(response=403, description="not allowed"), @OA\Response(response=404, description="unknown"))
+ *     @OA\Response(response=200, description="disconnected", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="not allowed"), @OA\Response(response=404, description="unknown"))
  */
 class ConnectionsController extends Controller
 {

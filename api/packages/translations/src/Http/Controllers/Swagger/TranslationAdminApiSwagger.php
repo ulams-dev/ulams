@@ -14,7 +14,7 @@ interface TranslationAdminApiSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/translations",
+     *      path="/api/admin/translations", operationId="admin.translations.get",
      *      summary="Get a list of translations stored in the database",
      *      tags={"Admin Translations"},
      *      description="Get translations",
@@ -86,9 +86,7 @@ interface TranslationAdminApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -111,7 +109,7 @@ interface TranslationAdminApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/translations",
+     *      path="/api/admin/translations", operationId="admin.translations.post",
      *      summary="Store a newly created translation",
      *      tags={"Admin Translations"},
      *      description="Store translation",
@@ -128,9 +126,7 @@ interface TranslationAdminApiSwagger
      *      @OA\Response(
      *          response=201,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -150,7 +146,7 @@ interface TranslationAdminApiSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/translations/{id}",
+     *      path="/api/admin/translations/{id}", operationId="admin.translations.by-id.get",
      *      summary="Display the specified translation",
      *      tags={"Admin Translations"},
      *      description="Get translation",
@@ -169,9 +165,7 @@ interface TranslationAdminApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -190,7 +184,7 @@ interface TranslationAdminApiSwagger
 
     /**
      * @OA\Put(
-     *      path="/api/admin/translations/{id}",
+     *      path="/api/admin/translations/{id}", operationId="admin.translations.by-id.put",
      *      summary="Update the specified translation",
      *      tags={"Admin Translations"},
      *      description="Update translation",
@@ -216,9 +210,7 @@ interface TranslationAdminApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -237,7 +229,7 @@ interface TranslationAdminApiSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/translations/{id}",
+     *      path="/api/admin/translations/{id}", operationId="admin.translations.by-id.delete",
      *      summary="Remove the specified translation",
      *      tags={"Admin Translations"},
      *      description="Delete transalation",
@@ -256,9 +248,7 @@ interface TranslationAdminApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -281,7 +271,7 @@ interface TranslationAdminApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/translations/retrieve",
+     *      path="/api/admin/translations/retrieve", operationId="admin.translations.retrieve.post",
      *      summary="Retrieve translation",
      *      tags={"Admin Translations"},
      *      description="Retrieve translation",
@@ -298,9 +288,7 @@ interface TranslationAdminApiSwagger
      *      @OA\Response(
      *          response=201,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

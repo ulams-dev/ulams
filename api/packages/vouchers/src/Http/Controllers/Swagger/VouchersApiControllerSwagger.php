@@ -10,7 +10,7 @@ interface VouchersApiControllerSwagger
 {
     /**
      * @OA\Post(
-     *      path="/api/cart/voucher",
+     *      path="/api/cart/voucher", operationId="cart.voucher.post",
      *      summary="Add Voucher Code to your Cart",
      *      tags={"Cart", "Vouchers"},
      *      description="Add Voucher Code to your Cart",
@@ -43,9 +43,7 @@ interface VouchersApiControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -64,7 +62,7 @@ interface VouchersApiControllerSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/cart/voucher",
+     *      path="/api/cart/voucher", operationId="cart.voucher.delete",
      *      summary="Remove Voucher from your Cart",
      *      tags={"Cart", "Vouchers"},
      *      description="Remove Voucher from your Cart",
@@ -74,9 +72,7 @@ interface VouchersApiControllerSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

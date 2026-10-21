@@ -13,7 +13,7 @@ interface ConsultationAccessEnquiryApiSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/consultation-access-enquiries",
+     *      path="/api/consultation-access-enquiries", operationId="consultation-access-enquiries.get",
      *     summary="Get my consultation access enquiries",
      *     tags={"Consultation Access"},
      *      security={
@@ -124,7 +124,7 @@ interface ConsultationAccessEnquiryApiSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/consultation-access-enquiries/{id}",
+     *      path="/api/consultation-access-enquiries/{id}", operationId="consultation-access-enquiries.by-id.get",
      *     summary="Get my consultation access enquiry by id",
      *     tags={"Consultation Access"},
      *      security={
@@ -166,7 +166,7 @@ interface ConsultationAccessEnquiryApiSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/consultation-access-enquiries/{id}/join",
+     *      path="/api/consultation-access-enquiries/{id}/join", operationId="consultation-access-enquiries.by-id.join.get",
      *     summary="Get url to consultation by enquiry id",
      *     tags={"Consultation Access"},
      *      security={
@@ -208,7 +208,7 @@ interface ConsultationAccessEnquiryApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/consultation-access-enquiries",
+     *      path="/api/consultation-access-enquiries", operationId="consultation-access-enquiries.post",
      *      summary="Store a newly Consultation Access Enqiury",
      *      tags={"Consultation Access"},
      *      description="Store Consultation Access Enqiury",
@@ -250,7 +250,7 @@ interface ConsultationAccessEnquiryApiSwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/consultation-access-enquiries/{id}",
+     *      path="/api/consultation-access-enquiries/{id}", operationId="consultation-access-enquiries.by-id.delete",
      *      summary="Remove the specified Consultation Access Enquiry",
      *      tags={"Consultation Access"},
      *      description="Delete Consultation Access Enquiry",
@@ -269,9 +269,7 @@ interface ConsultationAccessEnquiryApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -294,7 +292,7 @@ interface ConsultationAccessEnquiryApiSwagger
 
     /**
      * @OA\Patch(
-     *      path="/api/consultation-access-enquiries/{id}",
+     *      path="/api/consultation-access-enquiries/{id}", operationId="consultation-access-enquiries.by-id.patch",
      *      summary="Update Consultation Access Enqiury",
      *      tags={"Consultation Access"},
      *      description="Update Consultation Access Enqiury",

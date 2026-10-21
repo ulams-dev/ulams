@@ -9,7 +9,7 @@ interface VideoControllerSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/video/states",
+     *     path="/api/admin/video/states", operationId="admin.video.states.get",
      *     summary="List of processed videos",
      *     tags={"Video"},
      *     security={

@@ -17,7 +17,7 @@ interface TemplatesAdminApiContract
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/templates",
+     *     path="/api/admin/templates", operationId="admin.templates.get",
      *     summary="Lists available templates",
      *     tags={"Templates"},
      *     security={
@@ -208,7 +208,7 @@ interface TemplatesAdminApiContract
 
     /**
      * @OA\Get(
-     *     path="/api/admin/templates/{id}",
+     *     path="/api/admin/templates/{id}", operationId="admin.templates.by-id.get",
      *     summary="Read a template identified by a given id identifier",
      *     tags={"Templates"},
      *     security={

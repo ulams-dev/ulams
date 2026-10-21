@@ -12,7 +12,7 @@ interface TopicResourcesAPISwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/topics/{topic_id}/resources/",
+     *      path="/api/admin/topics/{topic_id}/resources/", operationId="admin.topics.by-topic-id.resources.get",
      *      summary="Get list of resources",
      *      tags={"Admin Courses"},
      *      description="Get list of resources",
@@ -31,9 +31,7 @@ interface TopicResourcesAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -57,7 +55,7 @@ interface TopicResourcesAPISwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/topics/{topic_id}/resources/",
+     *      path="/api/admin/topics/{topic_id}/resources/", operationId="admin.topics.by-topic-id.resources.post",
      *      summary="Post new resource",
      *      tags={"Admin Courses"},
      *      description="Post new resource",
@@ -90,9 +88,7 @@ interface TopicResourcesAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -115,7 +111,7 @@ interface TopicResourcesAPISwagger
 
     /**
      * @OA\Delete(
-     *      path="/api/admin/topics/{topic_id}/resources/{resource_id}",
+     *      path="/api/admin/topics/{topic_id}/resources/{resource_id}", operationId="admin.topics.by-topic-id.resources.by-resource-id.delete",
      *      summary="Delete resource",
      *      tags={"Admin Courses"},
      *      description="Delete resource",
@@ -143,9 +139,7 @@ interface TopicResourcesAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -165,7 +159,7 @@ interface TopicResourcesAPISwagger
 
     /**
      * @OA\Patch(
-     *      path="/api/admin/topics/{topic_id}/resources/{resource_id}",
+     *      path="/api/admin/topics/{topic_id}/resources/{resource_id}", operationId="admin.topics.by-topic-id.resources.by-resource-id.patch",
      *      summary="Rename resource",
      *      tags={"Admin Courses"},
      *      description="Rename resource",
@@ -202,9 +196,7 @@ interface TopicResourcesAPISwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

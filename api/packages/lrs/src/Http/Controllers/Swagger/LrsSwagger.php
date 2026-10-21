@@ -9,7 +9,7 @@ interface LrsSwagger
 {
     /**
      * @OA\Post(
-     *     path="/api/cmi5/fetch",
+     *     path="/api/cmi5/fetch", operationId="cmi5.fetch.post",
      *     summary="cmi5 token fetch",
      *     tags={"cmi5"},
      *     description="Exchanges the one-time token of a cmi5 launch URL for an LRS-only session token (`auth-token`). Repeat calls within the session return the same token. Public: the one-time token is the credential.",
@@ -17,14 +17,13 @@ interface LrsSwagger
      *          name="token",
      *          description="one-time launch token",
      *          required=true,
-     *          in="query"
+     *          in="query",
+     *          @OA\Schema(type="string")
      *      ),
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiJson"),
      *      ),
      *     @OA\Response(
      *          response=401,
@@ -36,7 +35,7 @@ interface LrsSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/cmi5/courses/{id}",
+     *      path="/api/cmi5/courses/{id}", operationId="cmi5.courses.by-id.get",
      *      summary="Get Course cmi5 launch params",
      *      tags={"cmi5"},
      *      description="Course cmi5 launch params",
@@ -55,9 +54,7 @@ interface LrsSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

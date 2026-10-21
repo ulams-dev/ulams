@@ -9,7 +9,7 @@ interface CertificateVerificationControllerSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/certificates/verify/{certificateId}",
+     *      path="/api/certificates/verify/{certificateId}", operationId="certificates.verify.by-certificateid.get",
      *      summary="Verify a certificate",
      *      tags={"Template PDFs"},
      *      description="Public and throttled. Returns the status (valid, expired or revoked), the course, the holder name (masked per tenant setting), issue and expiry dates. Unknown ids answer 404.",
@@ -53,7 +53,7 @@ interface CertificateVerificationControllerSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/pdfs/{id}/revoke",
+     *      path="/api/admin/pdfs/{id}/revoke", operationId="admin.pdfs.by-id.revoke.post",
      *      summary="Revoke a certificate",
      *      tags={"Template PDFs"},
      *      description="Marks the certificate revoked. It stays verifiable and shows as revoked. Needs the fabricjs_pdf_revoke permission.",
@@ -78,7 +78,7 @@ interface CertificateVerificationControllerSwagger
      *              ),
      *          ),
      *      ),
-     *      @OA\Response(response=200, description="successful operation", @OA\MediaType(mediaType="application/json")),
+     *      @OA\Response(response=200, description="successful operation", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
      *      @OA\Response(response=401, description="Unauthenticated"),
      *      @OA\Response(response=403, description="Forbidden"),
      *      @OA\Response(response=404, description="unknown PDF"),

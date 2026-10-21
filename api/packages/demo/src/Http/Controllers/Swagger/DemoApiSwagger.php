@@ -10,7 +10,7 @@ interface DemoApiSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/demo",
+     *      path="/api/demo", operationId="demo.get",
      *      summary="Demo mode status and the accounts used for the automatic login",
      *      description="Exists only on a tenant with DEMO_MODE=true; 404 everywhere else.",
      *      tags={"Demo"},
@@ -47,7 +47,7 @@ interface DemoApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/demo/login",
+     *      path="/api/demo/login", operationId="demo.login.post",
      *      summary="Log in as the demo student or admin without a password",
      *      description="Issues a regular Passport token for the seeded account of that role, with the same response body as /api/auth/login. The demo student is given access to every published course. Exists only on a tenant with DEMO_MODE=true.",
      *      tags={"Demo"},

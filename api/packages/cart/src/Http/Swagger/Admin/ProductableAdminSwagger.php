@@ -13,7 +13,7 @@ interface ProductableAdminSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/admin/productables/",
+     *      path="/api/admin/productables/", operationId="admin.productables.get",
      *      description="Get list of all productables",
      *      tags={"Admin Product"},
      *      security={
@@ -22,9 +22,7 @@ interface ProductableAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -54,7 +52,7 @@ interface ProductableAdminSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/productables/attach",
+     *      path="/api/admin/productables/attach", operationId="admin.productables.attach.post",
      *      description="Attach productable to user",
      *      tags={"Admin Products"},
      *      security={
@@ -85,9 +83,7 @@ interface ProductableAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -113,7 +109,7 @@ interface ProductableAdminSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/productables/detach",
+     *      path="/api/admin/productables/detach", operationId="admin.productables.detach.post",
      *      description="Detach product from user",
      *      tags={"Admin Product"},
      *      security={
@@ -144,9 +140,7 @@ interface ProductableAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -172,7 +166,7 @@ interface ProductableAdminSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/productables/registered",
+     *      path="/api/admin/productables/registered", operationId="admin.productables.registered.get",
      *      description="List of registered Productable types",
      *      tags={"Admin Product"},
      *      security={
@@ -181,9 +175,7 @@ interface ProductableAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -213,7 +205,7 @@ interface ProductableAdminSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/admin/productables/product",
+     *      path="/api/admin/productables/product", operationId="admin.productables.product.get",
      *      description="Get single product for this productable (if it exists)",
      *      tags={"Admin Product"},
      *      security={
@@ -240,9 +232,7 @@ interface ProductableAdminSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

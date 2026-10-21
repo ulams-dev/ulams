@@ -11,7 +11,7 @@ interface ConsultationAccessEnquiryAdminApiSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/consultation-access-enquiries",
+     *     path="/api/admin/consultation-access-enquiries", operationId="admin.consultation-access-enquiries.get",
      *     summary="Get all consultation access enquiries",
      *     tags={"Admin Consultation Access"},
      *      security={
@@ -117,7 +117,7 @@ interface ConsultationAccessEnquiryAdminApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/consultation-access-enquiries/approve/{proposedTermId}",
+     *      path="/api/admin/consultation-access-enquiries/approve/{proposedTermId}", operationId="admin.consultation-access-enquiries.approve.by-proposedtermid.post",
      *      summary="Approve the specified consultation access enquiry by proposed term id",
      *      tags={"Admin Consultation Access"},
      *      security={
@@ -142,9 +142,7 @@ interface ConsultationAccessEnquiryAdminApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -163,7 +161,7 @@ interface ConsultationAccessEnquiryAdminApiSwagger
 
     /**
      * @OA\Post(
-     *      path="/api/admin/consultation-access-enquiries/disapprove/{id}",
+     *      path="/api/admin/consultation-access-enquiries/disapprove/{id}", operationId="admin.consultation-access-enquiries.disapprove.by-id.post",
      *      summary="Disapprove the specified consultation access enquiry by id",
      *      tags={"Admin Consultation Access"},
      *      security={
@@ -188,9 +186,7 @@ interface ConsultationAccessEnquiryAdminApiSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

@@ -10,7 +10,7 @@ interface OrderSwagger
 {
     /**
      * @OA\Get(
-     *      path="/api/orders",
+     *      path="/api/orders", operationId="orders.get",
      *      description="Search orders",
      *      tags={"Orders"},
      *      security={
@@ -93,9 +93,7 @@ interface OrderSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(
@@ -126,7 +124,7 @@ interface OrderSwagger
 
     /**
      * @OA\Get(
-     *      path="/api/orders/{id}",
+     *      path="/api/orders/{id}", operationId="orders.by-id.get",
      *      summary="Display the specified Order",
      *      tags={"Orders"},
      *      description="Get Order",
@@ -145,9 +143,7 @@ interface OrderSwagger
      *      @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json"
-     *          ),
+     *          @OA\JsonContent(ref="#/components/schemas/ApiEnvelope"),
      *          @OA\Schema(
      *              type="object",
      *              @OA\Property(

@@ -1,0 +1,10 @@
+# Files the generator must not write: they are maintained by hand (see generate.sh).
+README.md
+composer.json
+phpunit.xml.dist
+.gitignore
+.travis.yml
+git_push.sh
+.php-cs-fixer.dist.php
+docs/**
+test/**

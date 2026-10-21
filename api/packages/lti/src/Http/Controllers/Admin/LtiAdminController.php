@@ -21,26 +21,26 @@ use Ulams\Lti\Support\Lti;
  * Registrations (permission `lti_manage`): tools we launch and platforms that launch us, plus
  * the URLs and key set to give to the other side.
  *
- * @OA\Get(path="/api/admin/lti/endpoints", summary="Our LTI endpoints and issuer, to register us elsewhere", tags={"Admin LTI"}, security={{"passport": {}}},
- *     @OA\Response(response=200, description="issuer, JWKS URL, platform and tool endpoints"), @OA\Response(response=403, description="lti_manage required"))
- * @OA\Get(path="/api/admin/lti/tools", summary="List registered tools", tags={"Admin LTI"}, security={{"passport": {}}}, @OA\Response(response=200, description="tools"))
- * @OA\Post(path="/api/admin/lti/tools", summary="Register a tool (we issue client_id and deployment_id)", tags={"Admin LTI"}, security={{"passport": {}}}, @OA\Response(response=201, description="tool"))
- * @OA\Get(path="/api/admin/lti/tools/{tool}", summary="Show a tool", tags={"Admin LTI"}, security={{"passport": {}}},
- *     @OA\Parameter(name="tool", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="tool"))
- * @OA\Put(path="/api/admin/lti/tools/{tool}", summary="Update a tool", tags={"Admin LTI"}, security={{"passport": {}}},
- *     @OA\Parameter(name="tool", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="tool"))
- * @OA\Delete(path="/api/admin/lti/tools/{tool}", summary="Delete a tool without topics", tags={"Admin LTI"}, security={{"passport": {}}},
- *     @OA\Parameter(name="tool", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="deleted"), @OA\Response(response=409, description="used by topics"))
- * @OA\Post(path="/api/admin/lti/tools/{tool}/deep-link", summary="Start deep linking into a lesson", tags={"Admin LTI"}, security={{"passport": {}}},
- *     @OA\Parameter(name="tool", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="{url} to open in a window"))
- * @OA\Get(path="/api/admin/lti/platforms", summary="List platforms that may launch us", tags={"Admin LTI"}, security={{"passport": {}}}, @OA\Response(response=200, description="platforms"))
- * @OA\Post(path="/api/admin/lti/platforms", summary="Register a platform", tags={"Admin LTI"}, security={{"passport": {}}}, @OA\Response(response=201, description="platform"))
- * @OA\Get(path="/api/admin/lti/platforms/{platform}", summary="Show a platform", tags={"Admin LTI"}, security={{"passport": {}}},
- *     @OA\Parameter(name="platform", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="platform"))
- * @OA\Put(path="/api/admin/lti/platforms/{platform}", summary="Update a platform", tags={"Admin LTI"}, security={{"passport": {}}},
- *     @OA\Parameter(name="platform", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="platform"))
- * @OA\Delete(path="/api/admin/lti/platforms/{platform}", summary="Delete a platform", tags={"Admin LTI"}, security={{"passport": {}}},
- *     @OA\Parameter(name="platform", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="deleted"))
+ * @OA\Get(path="/api/admin/lti/endpoints", operationId="admin.lti.endpoints.get", summary="Our LTI endpoints and issuer, to register us elsewhere", tags={"Admin LTI"}, security={{"passport": {}}},
+ *     @OA\Response(response=200, description="issuer, JWKS URL, platform and tool endpoints", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="lti_manage required"))
+ * @OA\Get(path="/api/admin/lti/tools", operationId="admin.lti.tools.get", summary="List registered tools", tags={"Admin LTI"}, security={{"passport": {}}}, @OA\Response(response=200, description="tools", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Post(path="/api/admin/lti/tools", operationId="admin.lti.tools.post", summary="Register a tool (we issue client_id and deployment_id)", tags={"Admin LTI"}, security={{"passport": {}}}, @OA\Response(response=201, description="tool", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Get(path="/api/admin/lti/tools/{tool}", operationId="admin.lti.tools.by-tool.get", summary="Show a tool", tags={"Admin LTI"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="tool", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="tool", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Put(path="/api/admin/lti/tools/{tool}", operationId="admin.lti.tools.by-tool.put", summary="Update a tool", tags={"Admin LTI"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="tool", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="tool", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Delete(path="/api/admin/lti/tools/{tool}", operationId="admin.lti.tools.by-tool.delete", summary="Delete a tool without topics", tags={"Admin LTI"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="tool", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=409, description="used by topics"))
+ * @OA\Post(path="/api/admin/lti/tools/{tool}/deep-link", operationId="admin.lti.tools.by-tool.deep-link.post", summary="Start deep linking into a lesson", tags={"Admin LTI"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="tool", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="{url} to open in a window", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Get(path="/api/admin/lti/platforms", operationId="admin.lti.platforms.get", summary="List platforms that may launch us", tags={"Admin LTI"}, security={{"passport": {}}}, @OA\Response(response=200, description="platforms", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Post(path="/api/admin/lti/platforms", operationId="admin.lti.platforms.post", summary="Register a platform", tags={"Admin LTI"}, security={{"passport": {}}}, @OA\Response(response=201, description="platform", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Get(path="/api/admin/lti/platforms/{platform}", operationId="admin.lti.platforms.by-platform.get", summary="Show a platform", tags={"Admin LTI"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="platform", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="platform", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Put(path="/api/admin/lti/platforms/{platform}", operationId="admin.lti.platforms.by-platform.put", summary="Update a platform", tags={"Admin LTI"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="platform", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="platform", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Delete(path="/api/admin/lti/platforms/{platform}", operationId="admin.lti.platforms.by-platform.delete", summary="Delete a platform", tags={"Admin LTI"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="platform", in="path", required=true, @OA\Schema(type="integer")), @OA\Response(response=200, description="deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
  */
 class LtiAdminController extends Controller
 {

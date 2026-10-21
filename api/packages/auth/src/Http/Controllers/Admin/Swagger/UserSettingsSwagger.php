@@ -10,7 +10,7 @@ interface UserSettingsSwagger
 {
     /**
      * @OA\Get(
-     *     path="/api/admin/users/{id}/settings",
+     *     path="/api/admin/users/{id}/settings", operationId="admin.users.by-id.settings.get",
      *     summary="Get user settings",
      *     description="",
      *     tags={"Admin User Settings"},
@@ -42,7 +42,7 @@ interface UserSettingsSwagger
 
     /**
      * @OA\Patch(
-     *     path="/api/admin/users/{id}/settings",
+     *     path="/api/admin/users/{id}/settings", operationId="admin.users.by-id.settings.patch",
      *     summary="Update user setting(s) without changing other settings",
      *     tags={"Admin User Settings"},
      *     security={
@@ -57,7 +57,7 @@ interface UserSettingsSwagger
      *              format="int64",
      *          ),
      *     ),
-     *     @OA\RequestBody(
+     *     @OA\RequestBody(required=true, @OA\JsonContent(
      *         @OA\Property(
      *              property="settings",
      *              type="array",
@@ -75,13 +75,11 @@ interface UserSettingsSwagger
      *                  )
      *              )
      *         )
-     *     ),
+     *     )),
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/ApiJson")
      *     )
      * )
      */
@@ -89,7 +87,7 @@ interface UserSettingsSwagger
 
     /**
      * @OA\Put(
-     *     path="/api/admin/users/{id}/settings",
+     *     path="/api/admin/users/{id}/settings", operationId="admin.users.by-id.settings.put",
      *     summary="Set user setting (removes settings not sent)",
      *     tags={"Admin User Settings"},
      *     security={
@@ -104,7 +102,7 @@ interface UserSettingsSwagger
      *              format="int64",
      *          ),
      *     ),
-     *     @OA\RequestBody(
+     *     @OA\RequestBody(required=true, @OA\JsonContent(
      *         @OA\Property(
      *              property="settings",
      *              type="array",
@@ -122,13 +120,11 @@ interface UserSettingsSwagger
      *                  )
      *              )
      *         )
-     *     ),
+     *     )),
      *     @OA\Response(
      *          response=200,
      *          description="successful operation",
-     *          @OA\MediaType(
-     *              mediaType="application/json",
-     *          )
+     *          @OA\JsonContent(ref="#/components/schemas/ApiJson")
      *     )
      * )
      */
