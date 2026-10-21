@@ -17,7 +17,7 @@ COPY front/src/lib/ front/src/lib/
 COPY front/ui/src/schema.ts front/ui/src/schema.ts
 COPY front/ui/catalogue/learner-layout-manifest.json front/ui/catalogue/learner-layout-manifest.json
 COPY admin/ admin/
-RUN cd admin && yarn build && find dist -name '*.map' -delete
+RUN cd admin && n=1; until yarn build; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): yarn build" >&2; sleep 5; done && find dist -name '*.map' -delete
 
 # Non-root static server (uid 101, port 8080). The tag is pinned by digest; bump both together.
 FROM nginxinc/nginx-unprivileged:1.29-alpine@sha256:0c79d56aee561a1d81c63f00eee5fb5fe29279560cdc55e91425133104c7fbe6 AS httpd
