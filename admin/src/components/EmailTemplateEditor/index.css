@@ -53,10 +53,6 @@
   margin-bottom: 12px;
 }
 
-.email-template-editor__beta {
-  margin-inline-end: 0;
-}
-
 .email-template-editor__visual {
   min-height: 70vh;
   border: 1px solid #d9d9d9;
@@ -81,4 +77,143 @@
 .email-template-editor__diff-add {
   color: #135200;
   background: #f6ffed;
+}
+
+/* Keyboard and screen reader tools (plan 4.8, M5) */
+.email-template-editor__kb {
+  margin-bottom: 12px;
+  padding: 8px 12px 12px;
+  border: 1px solid #d9d9d9;
+}
+
+.email-template-editor__kb h4,
+.email-template-editor__kb h5 {
+  margin: 4px 0 8px;
+  font-size: 15px;
+}
+
+.email-template-editor__keys {
+  margin-bottom: 8px;
+}
+
+.email-template-editor__keys summary {
+  cursor: pointer;
+}
+
+.email-template-editor__announce {
+  min-height: 24px;
+  margin-bottom: 8px;
+  color: #262626;
+}
+
+.email-template-editor__kb-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .email-template-editor__kb-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.email-template-editor__kb-add,
+.email-template-editor__kb-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.email-template-editor__kb select,
+.email-template-editor__kb input[type='text'] {
+  min-height: 32px;
+  padding: 2px 8px;
+  color: #262626;
+  background: #fff;
+  border: 1px solid #595959;
+  border-radius: 4px;
+}
+
+.email-template-editor__kb-button {
+  min-height: 32px;
+  padding: 2px 12px;
+  color: #262626;
+  background: #fff;
+  border: 1px solid #595959;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.email-template-editor__kb-button:disabled {
+  color: #595959;
+  background: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.email-template-editor__kb-tree {
+  max-height: 320px;
+  overflow: auto;
+  border: 1px solid #d9d9d9;
+}
+
+.email-template-editor__kb-item {
+  color: #262626;
+  cursor: pointer;
+  padding-block: 4px;
+  padding-inline-end: 8px;
+}
+
+.email-template-editor__kb-item.is-selected {
+  color: #003a8c;
+  font-weight: 600;
+  background: #e6f4ff;
+}
+
+.email-template-editor__kb-excerpt {
+  color: #434343;
+  font-weight: 400;
+}
+
+.email-template-editor__kb-props fieldset {
+  margin: 0 0 8px;
+  padding: 4px 8px 8px;
+  border: 1px solid #d9d9d9;
+}
+
+.email-template-editor__kb-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+/* Visible focus on every control of the panel (WCAG 2.4.7, 2.4.11) */
+.email-template-editor__kb :focus-visible {
+  outline: 3px solid #0958d9;
+  outline-offset: 2px;
+}
+
+/* No motion for people who ask for none (WCAG 2.3.3): the panel, the antd controls and GrapesJS */
+@media (prefers-reduced-motion: reduce) {
+  .email-template-editor *,
+  .email-template-editor *::before,
+  .email-template-editor *::after,
+  .ant-modal-root *,
+  .ant-modal-root *::before,
+  .ant-modal-root *::after {
+    transition-delay: 0s !important;
+    transition-duration: 0s !important;
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Placeholder of the GrapesJS style manager: its default grey on the dark panel is below 4.5:1 */
+.email-template-editor .gjs-sm-header {
+  color: #f0f0f0;
 }

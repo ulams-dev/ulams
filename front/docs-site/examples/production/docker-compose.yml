@@ -293,10 +293,11 @@ services:
       timeout: 5s
       retries: 10
 
-  # MJML rendering for e-mail templates (internal only)
+  # MJML rendering for e-mail templates (internal only): the ulams MJML service (MJML 4.x,
+  # POST /v1/render). The image has its own health check.
   mjml:
     <<: *service
-    image: danihodovic/mjml-server:latest
+    image: ghcr.io/ulams-dev/mjml:${ULAMS_VERSION:-latest}
 
   # Optional bundled object store: `docker compose --profile minio up -d`. MinIO is AGPL-3.0
   # and this image line is no longer maintained upstream; prefer an external S3-compatible

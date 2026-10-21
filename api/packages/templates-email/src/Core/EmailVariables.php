@@ -54,6 +54,37 @@ abstract class EmailVariables extends AbstractTemplateVariableClass implements T
             MJML_TEMPLATE
         );
 
-        return str_replace('@VarTemplateContent', $content, $template);
+        return self::withLanguage(str_replace('@VarTemplateContent', $content, $template));
+    }
+
+    /** Languages written right to left: they get `dir="rtl"` on the generated default templates. */
+    private const RTL_LANGUAGES = ['ar', 'fa', 'he', 'ur'];
+
+    /**
+     * Gives an `<mjml>` root without `lang` the language of the application and its text direction,
+     * so the e-mail is announced in the right voice by screen readers (WCAG 3.1.1). A root that
+     * already sets `lang` (a template an operator wrote or configured) is left alone.
+     */
+    public static function withLanguage(string $mjml, ?string $locale = null): string
+    {
+        $language = strtolower(substr((string) ($locale ?? app()->getLocale()), 0, 2));
+        if (!preg_match('/^[a-z]{2}$/', $language)) {
+            return $mjml;
+        }
+        $direction = in_array($language, self::RTL_LANGUAGES, true) ? 'rtl' : 'ltr';
+
+        return preg_replace_callback(
+            '/<mjml(\s[^>]*)?>/i',
+            static function (array $match) use ($language, $direction): string {
+                $attributes = $match[1] ?? '';
+                if (preg_match('/\slang\s*=/i', $attributes)) {
+                    return $match[0];
+                }
+
+                return '<mjml' . $attributes . ' lang="' . $language . '" dir="' . $direction . '">';
+            },
+            $mjml,
+            1
+        ) ?? $mjml;
     }
 }

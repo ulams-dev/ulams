@@ -147,13 +147,13 @@ describe('EmailTemplateEditor visual mode', () => {
     jest.clearAllMocks();
   });
 
-  it('opens in Code view and labels the visual mode as beta', () => {
+  it('opens in Code view and carries no beta label', () => {
     const { analyse } = setup(representable());
     expect(screen.getByRole('radio', { name: /templates.editor_mode_code/ })).toBeChecked();
     expect(screen.getByRole('textbox', { name: 'templates.editor_code' })).toBeInTheDocument();
     expect(screen.queryByTestId('visual-editor')).toBeNull();
-    expect(screen.getByText('templates.editor_beta')).toBeInTheDocument();
-    expect(screen.getByText('templates.visual_beta_notice')).toBeInTheDocument();
+    expect(screen.queryByText('templates.editor_beta')).toBeNull();
+    expect(screen.getByText('templates.visual_keyboard_hint')).toBeInTheDocument();
     expect(analyse).not.toHaveBeenCalled();
   });
 
@@ -329,9 +329,12 @@ describe('the editor is not part of the main bundle', () => {
       )
       .map((file) => file.slice(__dirname.length + 1))
       .sort();
+    // KeyboardPanel and visual/keyboard only import GrapesJS types and sit in the same lazy chunk
     expect(importers).toEqual([
+      'KeyboardPanel.tsx',
       'VisualEditor.tsx',
       'visual/engine.ts',
+      'visual/keyboard.ts',
       'visual/locales.ts',
       'visual/ulams.ts',
     ]);

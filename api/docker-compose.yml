@@ -265,8 +265,12 @@ services:
     command: "valkey-server --requirepass ${REDIS_PASSWORD:-ulams}"
 
   mjml:
-    # same pinned image as deploy/vps-cloudflare/compose.yml; HTTP API on port 15500, internal only
-    image: danihodovic/mjml-server:4.15.3
+    # the ulams MJML service (deploy/stack/mjml, MJML 4.x), the same image the production examples
+    # pull as ghcr.io/ulams-dev/mjml; HTTP API on port 15500, internal only
+    build:
+      context: ..
+      dockerfile: deploy/stack/mjml/Dockerfile
+    image: ulams/mjml:dev
     networks:
       - ulams
     restart: unless-stopped
