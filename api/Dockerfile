@@ -29,6 +29,8 @@ RUN \
 RUN n=1; until composer install --no-scripts --no-dev --no-interaction --classmap-authoritative; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): composer install --no-scripts --no-dev --no-interaction --classmap-authoritative" >&2; sleep 5; done
 # LiaScript player (BSD-3-Clause), pinned version and checksum, not kept in git
 RUN sh packages/liascript/bin/fetch-player.sh
+# esbuild.wasm (MIT) of the code exercises runner (ADR 0170), pinned version and checksum, not kept in git
+RUN sh packages/code-exercises/bin/fetch-esbuild.sh
 # The package manifest is built at start from this vendor/ (php-profile.sh), never copied in
 RUN rm -f bootstrap/cache/*.php
 # init.sh builds the config/route/event/view caches per domain at start (php-profile.sh)

@@ -112,6 +112,9 @@ return [
     ['api/admin/cmi5*', 'courses'],
     ['api/admin/liascript*', 'courses'],
     ['api/admin/interactive*', 'courses'],
+    // every learner's attempts at a code exercise are a report; the preview is course content (ADR 0170)
+    ['api/admin/code-exercises/topics/*/attempts', 'reports'],
+    ['api/admin/code-exercises*', 'courses'],
     ['api/admin/h5p*', 'courses'],
     ['api/admin/adapt*', 'courses'],
     ['api/admin/gift-*', 'courses'],
@@ -225,6 +228,7 @@ return [
     ['api/cmi5/*', 'learner'],
     ['api/liascript/*', 'learner'],
     ['api/interactive/*', 'learner'],
+    ['api/code-exercises/*', 'learner'],
     ['api/lti/*', 'learner'],
     ['api/pencil-spaces/*', 'learner'],
     ['api/core/packages', 'learner'],
