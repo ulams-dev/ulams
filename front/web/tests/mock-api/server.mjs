@@ -19,7 +19,7 @@ const coffee = fixture("coffee");
 const settingsByTenant = {
   coffee: coffee.settings,
   nightsky: fixture("nightsky").settings,
-  polski: { ...coffee.settings, global: { ...coffee.settings.global, language: "pl" } },
+  polski: { ...coffee.settings, global: { ...coffee.settings.global, language: "pl", accessibilityEmail: "dostepnosc@coffee.test", accessibilityUpdated: "2026-10-01", accessibilityNotes: "Nagrania z kursu o kawie nie mają jeszcze napisów.\n\nPracujemy nad tym." } },
 };
 const program = fixture("coffee-program");
 
