@@ -12,6 +12,7 @@ use Ulams\CourseBuilder\Jobs\StepJob;
 use Ulams\Tenancy\Jobs\DeleteTenantJob;
 use Ulams\Tenancy\Jobs\ProvisionTenantJob;
 use Ulams\CoursesImportExport\Jobs\CloneCourse;
+use Ulams\LearnerInsights\Jobs\BackfillJob;
 use Ulams\LearnerInsights\Jobs\GenerateRemediationJob;
 use Ulams\LivingCourse\Jobs\AnalyseGroupJob;
 use Ulams\LivingCourse\Jobs\CheckSourceJob;
@@ -37,6 +38,7 @@ class QueueRetryAfterConfigTest extends TestCase
         AnalyseGroupJob::class => ['packages/living-course/config/living_course.php', 'queue_connection', 'queue'],
         CheckSourceJob::class => ['packages/living-course/config/living_course.php', 'queue_connection', 'queue'],
         ProgressRulesJob::class => ['packages/living-course/config/living_course.php', 'queue_connection', 'queue'],
+        BackfillJob::class => ['packages/learner-insights/config/learner_insights.php', 'ai_queue_connection', 'ai_queue'],
         GenerateRemediationJob::class => ['packages/learner-insights/config/learner_insights.php', 'ai_queue_connection', 'ai_queue'],
         BuildAdaptSource::class => ['packages/adapt/src/config.php', 'queue_connection', 'queue'],
         ProcessVideo::class => ['packages/video/src/config.php', 'queue_connection', 'queue'],

@@ -23,6 +23,12 @@ return [
     // Where the continue link of a nudge points (the learner frontend); falls back to the Course Builder front url
     'front_url' => env('LEARNER_INSIGHTS_FRONT_URL'),
 
+    // Aggregates shown to authors and admins are withheld for groups smaller than this (enforced on the server)
+    'min_group_size' => (int) env('LEARNER_INSIGHTS_MIN_GROUP_SIZE', 10),
+
+    // Whether the authors of a course may see individual learners' statuses (admins with the permission always may)
+    'instructors_see_individuals' => (bool) env('LEARNER_INSIGHTS_INSTRUCTORS_SEE_INDIVIDUALS', false),
+
     // Nudges (plan 7.1): in-app and e-mail through the notifications package, rate limited
     'nudges' => [
         'enabled' => (bool) env('LEARNER_INSIGHTS_NUDGES_ENABLED', true),
