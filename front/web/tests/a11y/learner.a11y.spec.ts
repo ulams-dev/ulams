@@ -264,6 +264,8 @@ test.describe("explain it in your own words", () => {
     const limit = "You have used all of today's feedback requests. Your text is still here; try again tomorrow.";
     await expect(page.getByRole("status").filter({ hasText: limit })).toBeVisible();
     await expect(box(page)).toHaveValue(`${EXPLANATION} Try 6.`);
+    // the sticky footer may sit over controls below the viewport edge; axe judges the page as scrolled
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
     const violations = await scan(page);
     expect(violations, violations.join("\n")).toEqual([]);
   });
@@ -278,6 +280,7 @@ test.describe("explain it in your own words", () => {
     await box(page).fill("An explanation with AI-OFF inside it.");
     await page.getByRole("button", { name: "Get feedback" }).click();
     await expect(page.getByRole("status").filter({ hasText: "AI feedback is not available right now." })).toBeVisible();
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
     const violations = await scan(page);
     expect(violations, violations.join("\n")).toEqual([]);
   });
