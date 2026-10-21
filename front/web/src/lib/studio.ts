@@ -1,6 +1,6 @@
 import { tenantFetch } from "./api-transport.ts";
 import type { AstroCookies } from "astro";
-import { ApiError, createCourseBuilderClient, createLivingCourseClient, type Tenant } from "@ulams/sdk";
+import { ApiError, createCourseBuilderClient, createLivingCourseClient, createRest, type Tenant } from "@ulams/sdk";
 import { apiFor } from "./data.ts";
 import { AUTHOR_BASE, cookieName, sessionCookieOptions } from "./cookies.ts";
 import { config } from "./config.ts";
@@ -56,4 +56,21 @@ export function livingCourseFor(tenant: Tenant, token: string) {
   return createLivingCourseClient({ baseUrl: tenant.apiUrl, fetch: tenantFetch(tenant), token, timeoutMs: 20_000 });
 }
 
-export { STUDIO_RULES, LIVING_COURSE_RULES, LIVING_COURSE_PREFIX, isStudioCall, isLivingCourseCall } from "./studio-rules.ts";
+/**
+ * Title of a course for the Insights page header: `null` when the course is unknown (the page is a 404), the
+ * course id's fallback is the caller's. A 403 (an author who cannot read the course record) is not an error
+ * here: the page still works from the analytics API, which has its own authorisation.
+ */
+export async function courseTitleFor(tenant: Tenant, token: string, courseId: number): Promise<{ found: boolean; title: string | null }> {
+  const rest = createRest({ baseUrl: tenant.apiUrl, fetch: tenantFetch(tenant), token, timeoutMs: 20_000 });
+  try {
+    const course = await rest.data<{ title?: string | null }>(`/api/admin/courses/${courseId}`);
+    return { found: true, title: course?.title?.trim() || null };
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) return { found: false, title: null };
+    if (error instanceof ApiError) return { found: true, title: null };
+    throw error;
+  }
+}
+
+export { STUDIO_RULES, LIVING_COURSE_RULES, LIVING_COURSE_PREFIX, INSIGHTS_RULES, INSIGHTS_PREFIX, isStudioCall, isLivingCourseCall, isInsightsCall, insightsTarget } from "./studio-rules.ts";

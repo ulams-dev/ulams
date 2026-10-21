@@ -1,0 +1,99 @@
+---
+title: See where learners struggle
+description: Open the Insights page of any course to see progress, completion, quiz results, who needs support and the sections that confuse people, with groups under 10 learners hidden.
+sidebar:
+  order: 41
+modules:
+  - learner-insights
+learnerRoutes:
+  - /studio/courses/[courseId]/insights
+---
+
+The **Insights** page shows how learners are doing in one of your courses: where they progress, where they get
+stuck and whether the extra help worked. It works for **any course you author**, whether or not you built it with
+the Course Builder, and every figure is an aggregate. You see people by name only if an administrator gave you the
+permission (see [Individual learners](#individual-learners)).
+
+## Before you start
+
+- An administrator has to switch **Learner Insights** on for the academy
+  ([settings](/admin/learner-insights/)). It is off by default and records nothing while it is off. When it is off
+  the page says so and shows nothing.
+- You need to be an **author of the course**, or hold the Learner Insights permission. Anyone else gets a message
+  that explains this.
+- Figures start to appear once learners have used the course. A new course shows an empty state.
+
+## Open the page
+
+- In the studio, open the course and choose **Insights** in the left rail. From the Course Builder this is the
+  **Insights** item of a session that has a course.
+- In the admin, open the course and choose the **Insights** tab. It shows a short summary (completion, who needs
+  support and the five sections that confuse people most) and **Open full insights** takes you to this page.
+- The address is `/studio/courses/<course id>/insights`.
+
+Use **Period** to switch between the last 7, 30 and 90 days. The page reads the same in English, Polish and
+Simplified Chinese: it follows your browser language, or add `?lang=pl` or `?lang=zh` to the address, or use the
+language links at the top.
+
+## What you see
+
+| Section | What it tells you |
+|---|---|
+| Progress and completion | How many learners are enrolled, how many were active in the period, how many finished and the completion rate. |
+| Quiz performance | Finished attempts, the pass rate and the average score of all quizzes of the course together. |
+| Who needs support | How many learners are on track, struggling or at risk of dropping out. |
+| Sections that confuse people | Every section ranked by the share of its active learners who struggled, with the share who got extra help, the share who recovered afterwards and the main reasons. |
+| Personal help and nudges | How much extra help was shown and rated, how many reminders were sent and opened, and how many learners recovered afterwards. |
+| Learners who are struggling or at risk | Individual data, only for people who are allowed to see it. |
+
+Every rate is written as a number, for example "41%". The small bar next to it is only a picture of the same number,
+so nothing depends on colour. A rate that says **Not enough data** has too few cases behind it to be meaningful.
+
+## The reasons
+
+A section's reasons say what kind of difficulty learners had there. They come from fixed rules, never from
+anything a learner typed:
+
+- **Repeated failed attempts**: several wrong answers on a quiz question.
+- **Takes much longer than most**: a lesson that takes learners far longer than the median.
+- **Left open while working elsewhere**: a lesson learners open and then drop.
+- **Replays or revisits**: learners go back to a video or lesson several times.
+- **Inactive for days** and **Several hard parts** describe a learner rather than a section.
+
+Use them to decide what to improve: a question with repeated failures may need a clearer stem, a slow lesson may be
+too long.
+
+## Privacy: small groups are hidden
+
+Groups smaller than **10 learners** are hidden. This is decided by the server, not by the page: the figures are never
+sent, so there is nothing to find in the page source. In practice:
+
+- A course with fewer than 10 enrolled learners shows only an explanation.
+- A section with fewer than 10 active learners in the period shows **Hidden: fewer than 10 learners** and no figures.
+- A recovery rate appears once at least 10 cases are closed.
+
+An administrator can change the minimum (`LEARNER_INSIGHTS_MIN_GROUP_SIZE`). The page always states the number in
+use.
+
+## Individual learners
+
+The list of learners who are struggling or at risk, with the reasons and since when, is shown only to:
+
+- people with the permission `learner_insights_view_individuals` (administrators by default), and
+- authors of the course, when the academy turned on `learner_insights.instructors_see_individuals` (off by default).
+
+Everyone else sees a sentence explaining why the list is hidden; the aggregates stay. **Show activity** next to a
+learner opens that learner's recorded activity (what they opened, answered and finished, newest first). That view is
+for administrators only. Use this to reach out and help, not to rank people. Learners can switch recording off
+in their own settings, and then nothing about them appears here.
+
+## Good to know
+
+- Insights show what happened, not why a learner did something. A struggling learner is not a failing learner, and
+  a status never changes grades, access or certificates.
+- Nothing on this page, and none of the data behind it, is ever sent to an AI provider.
+- The page is built for keyboards and screen readers: tables have captions and headers, wide tables scroll
+  sideways and take the keyboard focus, and changes are announced.
+
+See also: [Learner Insights settings](/admin/learner-insights/) for administrators, and
+[Reports and analytics](/admin/reports-and-analytics/).
