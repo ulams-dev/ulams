@@ -78,6 +78,12 @@ conversations of the course (they can reopen or delete them; they are removed au
 the retention period) and shows how many questions are left today. While a quiz attempt is open it
 says so and explains concepts only.
 
+When the tenant allows streaming (`streaming` in the status call), the answer appears while it is
+written. The text is a draft: it is marked busy and is not read out by screen readers, and the checked
+answer with its citations replaces it and is announced once. With reduced motion the draft grows by
+sentence. A reload mid-answer picks the answer up again, and without streaming the same panel uses the plain
+request. See [Course tutor settings](/admin/tutor/#streamed-answers).
+
 ```html
 <script type="module">
   import "@ulams/ui/elements/tutor.ts"; // through your bundler

@@ -19,6 +19,12 @@ Records: ADR 0060 (proposed), ADR 0061 (privacy); plan `docs/plans/phase-4.md` s
   attempt open (`AttemptGuard`), the mode is `attempt_active` and an answer that contains a correct option
   (`Support/Leak`, 80 % of the words of a longer option, the phrase of a short one) is replaced by a standard
   refusal and flagged. `ai_calls.user_id` is null; the subject is the conversation.
+- Streamed answers (ADR 0105): `POST messages` with `stream: true` stores the question, writes `RUN_STARTED` to
+  `tutor_events` and queues `AnswerJob` (202 with a run id; 409 while the conversation has an answer running).
+  The job reuses `TutorService::answer()` with `LlmClient::stream()` and appends grouped text events and a
+  `tutor.final` event with the checked answer and citations; nothing streams during an open quiz attempt.
+  `GET /api/tutor/runs/{run}/events` tails the log with the SSE loop in `core` (`Ulams\Core\Http\Sse\EventStream`).
+  Events are pruned a day after the run ends or with their conversation. `tutor.stream.enabled` switches it off.
 - Conversations belong to the learner (list, show, delete) and are deleted after 90 days
   (`tutor:prune`) or with the account. Analytics for authors and admins are counts only, for groups of
   at least `learner_insights.min_group_size` learners.
