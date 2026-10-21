@@ -59,11 +59,11 @@ const heading = position && total && total > 1 ? `${t.supportTitle} (${fill(t.su
             </div>
             <div class="u-support__confirm" role="group" aria-labelledby={`${headingId}-ask`} data-confirm hidden>
               <p id={`${headingId}-ask`}>{t.supportHideAsk}</p>
-              <button class="u-btn u-btn--sm" type="button" data-hide-yes>
-                {t.supportHideYes}
-              </button>
               <button class="u-btn u-btn--ghost u-btn--sm" type="button" data-hide-no>
                 {t.supportHideNo}
+              </button>
+              <button class="u-btn u-btn--sm" type="button" data-hide-yes>
+                {t.supportHideYes}
               </button>
             </div>
             <p class="u-support__status" role="status" aria-live="polite" data-status-text />
