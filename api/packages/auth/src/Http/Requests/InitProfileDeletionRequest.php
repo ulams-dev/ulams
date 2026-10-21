@@ -4,6 +4,7 @@ namespace Ulams\Auth\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Ulams\Auth\Rules\AllowedReturnUrl;
 
 class InitProfileDeletionRequest extends FormRequest
 {
@@ -15,7 +16,7 @@ class InitProfileDeletionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'return_url' => ['required', 'string'],
+            'return_url' => ['required', 'string', 'max:2048', new AllowedReturnUrl()],
         ];
     }
 

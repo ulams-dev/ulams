@@ -4,6 +4,7 @@ namespace Ulams\Auth\Http\Requests;
 
 use Ulams\Auth\Models\Group;
 use Ulams\Auth\Models\User;
+use Ulams\Auth\Rules\AllowedReturnUrl;
 use Ulams\Auth\Rules\NoHtmlTags;
 use Ulams\ModelFields\Facades\ModelFields;
 use Illuminate\Validation\Rule;
@@ -52,7 +53,7 @@ class RegisterRequest extends ExtendableRequest
                 'string',
             ],
             'roles' => ['prohibited'],
-            'return_url' => ['required', 'url'],
+            'return_url' => ['required', 'url', 'max:2048', new AllowedReturnUrl()],
         ];
 
         return array_merge($rules, ModelFields::getFieldsMetadataRules(User::class));

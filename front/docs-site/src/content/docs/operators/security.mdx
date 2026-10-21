@@ -53,6 +53,15 @@ Sign-in with Google and Facebook is hardened (ADR 0121, [operator guide](/operat
   reset them yourself) after upgrading.
 - deactivating or deleting a user revokes all of their tokens.
 
+## Links in e-mails
+
+Every link the API builds from a `return_url` sent by the caller (password reset, e-mail
+verification, account deletion, accounts created by an admin or imported from CSV) must point at the
+tenant's own front end, admin or one of `TRUSTED_ORIGINS`, by exact scheme, host and port. Any
+other URL is refused with `422` before an e-mail is sent, so a stranger cannot have a reset or
+verification token sent to another site. A front end on another origin (a staging copy, a second
+site) must be listed in `TRUSTED_ORIGINS` of that tenant.
+
 ## PHP upload progress is disabled
 
 The PHP images set `session.upload_progress.enabled = 0` in the ini files (`api/docker/conf/php/`) and
