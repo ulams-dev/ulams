@@ -49,6 +49,8 @@ export function supportDocs(items: SupportItem[], locale: UiLocale): UiNode[] {
       if (sources.length > 0) children.push({ component: "CitationList", id: `${id}-s${i}`, props: { items: sources.slice(0, 12), locale } });
     });
     if (children.length === 0) continue;
+    // "Explain it in your own words": one box at the end of each ready card (the API answers 503 when AI is off)
+    children.push({ component: "FeynmanReflection", id: `${id}-reflect`, props: { assignmentId: item.assignmentId, locale } });
     nodes.push({
       component: "SupportCard",
       id,
@@ -75,4 +77,4 @@ export function supportDocs(items: SupportItem[], locale: UiLocale): UiNode[] {
 }
 
 /** A card long enough that the lesson header offers a link to it. */
-export const supportIsLong = (nodes: UiNode[]): boolean => nodes.some((n) => (n.children?.length ?? 0) > 3);
+export const supportIsLong = (nodes: UiNode[]): boolean => nodes.some((n) => (n.children?.filter((c) => c.component !== "FeynmanReflection").length ?? 0) > 3);

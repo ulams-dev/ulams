@@ -40,6 +40,13 @@ const others = DEMO_TENANTS.filter((t) => t.slug !== slug)
 </details>
 
 <style>
+  /* the pill is fixed at the bottom: room under the last line of the page keeps the footer links focusable above it (WCAG 2.4.11) */
+  :global(body:has(.u-demo):not(.u-player-body)) {
+    padding-block-end: 72px;
+  }
+  :global(body:has(.u-demo):not(.u-player-body) :is(a, button, input, select, summary, textarea)) {
+    scroll-margin-block-end: 88px;
+  }
   .u-demo {
     position: fixed;
     left: 16px;

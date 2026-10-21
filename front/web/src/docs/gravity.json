@@ -242,6 +242,10 @@
           {
             "label": "Simulation source",
             "href": "https://github.com/qunabu/Gravity"
+          },
+          {
+            "label": "Accessibility",
+            "href": "/accessibility"
           }
         ],
         "note": "Simulation: MIT, by Mateusz Wojczal, source on GitHub (qunabu/Gravity). Orbital elements after JPL (E. M. Standish). Earth map: Solar System Scope, CC BY 4.0."

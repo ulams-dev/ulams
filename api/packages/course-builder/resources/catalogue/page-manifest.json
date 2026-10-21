@@ -7382,6 +7382,50 @@
         "required": [],
         "additionalProperties": false
       }
+    },
+    "FeynmanReflection": {
+      "description": "A box where the learner writes an explanation in their own words and asks for AI feedback: what they got right, what is missing, a follow-up question and the course sources. The text is sent once to the AI provider and is not stored. Filled by the app inside the extra-help card; authors and models do not place it.",
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "assignmentId": {
+            "type": "string",
+            "description": "Id of the learner's assignment (26-character ULID); without it the box is not shown",
+            "maxLength": 26
+          },
+          "prompt": {
+            "type": "string",
+            "description": "The prompt above the box; the interface wording of 'Explain it in your own words' when left out",
+            "maxLength": 120
+          },
+          "maxLength": {
+            "type": "integer",
+            "description": "Longest explanation in characters",
+            "minimum": 10,
+            "maximum": 2000,
+            "default": 2000
+          },
+          "locale": {
+            "type": "string",
+            "enum": [
+              "en",
+              "pl",
+              "zh"
+            ],
+            "description": "Interface language of the fixed strings; filled by the app, authors and models leave it out"
+          },
+          "id": {
+            "type": "string",
+            "description": "Anchor id for in-page links (letters, digits, dashes)",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "assignmentId"
+        ],
+        "additionalProperties": false
+      }
     }
   }
 }
