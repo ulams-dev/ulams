@@ -119,5 +119,8 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0105](0105-stream-tutor-answers-over-the-sse-event-log.md) | Stream tutor answers over the SSE event log | Accepted |
 | [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted |
 | [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Accepted |
+| [0130](0130-entitlements-are-the-access-source-of-truth.md) | Entitlements are the access source of truth, fed by verified Sylius order events | Proposed |
+| [0131](0131-sylius-service-and-bridge-bundle.md) | One Sylius 2.3 service with a channel per tenant and a ulams bridge bundle | Proposed |
+| [0132](0132-commerce-identity-lms-issued-shop-tokens.md) | Single login for commerce: LMS-issued shop tokens trusted by Sylius | Proposed |
 
 <!-- END GENERATED: adr-index -->
