@@ -98,6 +98,11 @@ export interface UiStrings {
   supportCorrect: string;
   supportNotQuite: string;
   supportNoScript: string;
+  /** Lesson shown in parts (adaptive lesson view). `{n}` and `{total}` are replaced. */
+  partsGroup: string;
+  partsStatus: string;
+  partsPrevious: string;
+  partsNext: string;
   supportThoughts: string;
   /** Added to the card heading when a lesson has several cards; `{n}` and `{total}` are replaced. */
   supportPosition: string;
@@ -196,6 +201,10 @@ const en: UiStrings = {
   supportCorrect: "Correct",
   supportNotQuite: "Not quite",
   supportNoScript: "Checking an answer needs JavaScript.",
+  partsGroup: "Lesson in parts",
+  partsStatus: "Part {n} of {total}",
+  partsPrevious: "Previous part",
+  partsNext: "Next part",
   supportThoughts: "Your thoughts (stay on this device)",
   supportPosition: "{n} of {total}",
 };
@@ -293,6 +302,10 @@ const pl: UiStrings = {
   supportCorrect: "Dobrze",
   supportNotQuite: "Jeszcze nie",
   supportNoScript: "Sprawdzanie odpowiedzi wymaga JavaScriptu.",
+  partsGroup: "Lekcja w częściach",
+  partsStatus: "Część {n} z {total}",
+  partsPrevious: "Poprzednia część",
+  partsNext: "Następna część",
   supportThoughts: "Twoje przemyślenia (zostają na tym urządzeniu)",
   supportPosition: "{n} z {total}",
 };
@@ -390,6 +403,10 @@ const zh: UiStrings = {
   supportCorrect: "正确",
   supportNotQuite: "不太对",
   supportNoScript: "检查答案需要启用 JavaScript。",
+  partsGroup: "分段课程",
+  partsStatus: "第 {n} 部分，共 {total} 部分",
+  partsPrevious: "上一部分",
+  partsNext: "下一部分",
   supportThoughts: "你的想法（仅保存在此设备上）",
   supportPosition: "第 {n} 项，共 {total} 项",
 };
