@@ -24,8 +24,8 @@
         "build:embed": "node scripts/build-embed.mjs"
     },
     "dependencies": {
-        "@aws-sdk/client-s3": "3.1147.0",
-        "@aws-sdk/lib-storage": "3.1147.0",
+        "@aws-sdk/client-s3": "3.1152.0",
+        "@aws-sdk/lib-storage": "3.1152.0",
         "@lumieducation/h5p-express": "10.0.5",
         "@lumieducation/h5p-redis-lock": "10.0.4",
         "@lumieducation/h5p-server": "10.0.4",
@@ -33,8 +33,8 @@
         "cors": "2.8.6",
         "express": "5.2.1",
         "express-fileupload": "1.5.2",
-        "i18next": "26.4.2",
-        "i18next-fs-backend": "2.6.8",
+        "i18next": "26.5.2",
+        "i18next-fs-backend": "2.6.9",
         "i18next-http-middleware": "3.9.9",
         "jose": "6.2.12",
         "pg": "8.23.1",
@@ -56,7 +56,7 @@
         "supertest": "7.3.1",
         "tsx": "4.23.15",
         "typescript": "5.9.3",
-        "typescript-eslint": "8.71.1",
+        "typescript-eslint": "8.71.2",
         "vite": "8.3.3",
         "vitest": "5.0.3"
     }
