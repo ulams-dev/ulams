@@ -23,6 +23,10 @@ on:
         description: Upgrade a seeded PostgreSQL 12 cluster to 17 (dump and restore, plus logical replication)
         type: boolean
         default: true
+      tenancy:
+        description: Two real tenants over HTTP through Caddy (data and tokens do not cross)
+        type: boolean
+        default: true
       saltire:
         description: LTI 1.3 against saLTIre (needs an operator, see the job)
         type: boolean
@@ -526,3 +530,60 @@ jobs:
         run: |
           docker ps -a
           for c in pg12 pg17 old12 new17; do docker logs --tail 80 "$c" 2>&1 || true; done
+
+  # TD-3 (docs/plans/tech-debt-and-quality-bar.md, ADR 0190): the opt-in two-tenant test brings up the
+  # development compose stack (Caddy, the API, PostgreSQL, Valkey, MinIO), provisions two real tenants
+  # with `ulams:tenant:create` (database, bucket, env file, Passport keys) and talks to them over HTTP
+  # by Host header. It also covers the cross-tenant builder check of docs/plans/leftovers-0-2.md L2-04.
+  # The in-process walk over every route (api/tests/Integrations/TenantIsolationCoverageTest.php) runs
+  # on every pull request; this one needs the live stack, hence nightly.
+  tenancy:
+    name: Two real tenants over HTTP
+    if: >-
+      (github.event_name == 'schedule' && vars.NIGHTLY_CONFORMANCE == 'true') ||
+      (github.event_name == 'workflow_dispatch' && inputs.tenancy)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # api/ is bind-mounted into the container, which hides the image's own vendor/ (installed
+      # without dev packages): install it here, with PHPUnit.
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: apcu, bcmath, exif, gd, intl, pcntl, pdo_pgsql, redis, zip
+          ini-values: memory_limit=2G
+          coverage: none
+          tools: composer:v2
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Start the stack
+        run: docker compose up -d --build api caddy postgres redis minio
+
+      - name: Wait for the API to finish its start-up (migrations, keys, permissions)
+        run: docker compose exec -T api ./wait.sh
+
+      - name: Tenant isolation over HTTP
+        run: |
+          docker compose exec -T -e TENANCY_INTEGRATION=1 api \
+            vendor/bin/phpunit packages/tenancy/tests/Integration
+
+      - name: Logs
+        if: failure()
+        run: |
+          docker compose ps
+          docker compose logs --tail 200 api caddy
+
+      - name: Tear down
+        if: always()
+        run: docker compose down -v
