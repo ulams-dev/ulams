@@ -1,7 +1,7 @@
 # SCORM playback regression tests (unblocks scorm-again 3)
 
-Status: Proposed (2026-10-22). Open questions in section 9 have recommended defaults that are used unless the owner
-says otherwise. ADR 0197 (Proposed) records the decision.
+Status: Proposed (2026-10-22). The owner approved the recommended defaults of section 9 on 2026-10-23
+(own MIT fixtures; scorm-again 3 keeps the 2.6 behaviour). Progress: SC-1 in review. ADR 0197 (Proposed) records the decision.
 
 ## 1. Goal
 

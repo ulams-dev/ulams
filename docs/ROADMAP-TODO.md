@@ -375,6 +375,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       runtime and tracking traces captured on 2.6.x; then `scorm-again` 3 with every changed default set to the 2.6
       behaviour, AICC removed and the Dependabot ignore rule #431 dropped (closed PR #232 explains why)
       (plan `docs/plans/scorm-playback-tests.md` SC-1 to SC-4; ADR 0197 Proposed)
+      (partial: SC-1 done, fixture packages, trace normaliser and parser tests; SC-2 to SC-4 pending)
 - [x] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
       packages and players to a per-tenant content origin (M1.1) (SCORM and cmi5 done, `<slug>.content.localhost`,
       `api/docs/content-origin.md`; run `ulams:tenant:sync-env` so existing tenants get `CONTENT_ORIGIN`)
