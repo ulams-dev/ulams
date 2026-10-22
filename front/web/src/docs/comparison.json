@@ -424,7 +424,7 @@
                     "title": "Course variants by level and role",
                     "text": "The AI Course Builder asks which levels and roles to cover and drafts several variants of one course from the same sources, each reviewed as a diff against the base. Learners start in the variant that fits them; experts skip the basics.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming",
+                    "status": "available",
                     "packages": [
                       "course-variants"
                     ]

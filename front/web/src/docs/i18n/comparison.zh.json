@@ -423,7 +423,7 @@
                     "title": "按水平和角色划分的课程变体",
                     "text": "AI 课程生成器会询问需要覆盖哪些水平和角色，并基于同一组来源为一门课程起草多个变体，每个变体都以相对基础版本的差异形式供你审阅。学习者从适合自己的变体开始，专家可以跳过基础内容。",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming",
+                    "status": "available",
                     "packages": [
                       "course-variants"
                     ]
