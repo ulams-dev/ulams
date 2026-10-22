@@ -40,7 +40,10 @@
 # cookies. Arguments: <API host> <API origin> <frame ancestors>
 (content_origin) {
 	header {
-		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'; report-uri {args[1]}/api/csp-report; report-to csp-endpoint"
+		# `?`: only when the API did not set one. The API sets the CSP of interactive packages itself,
+		# per version (ADR 0086), and of the code exercises runner under /runtime/ (ADR 0170); every
+		# other package type gets this one.
+		?Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' {args[1]}; frame-ancestors 'self' {args[2]}; form-action 'none'; base-uri 'self'; object-src 'none'; report-uri {args[1]}/api/csp-report; report-to csp-endpoint"
 		Reporting-Endpoints `csp-endpoint="{args[1]}/api/csp-report"`
 		>X-Content-Type-Options nosniff
 		# Own browsing-context group (no window.opener link to the app); public package files
@@ -56,7 +59,7 @@
 
 	@package {
 		method GET HEAD
-		path /scorm/* /cmi5/* /adapt/* /liascript/* /runtime/*
+		path /scorm/* /cmi5/* /adapt/* /liascript/* /interactive/* /runtime/*
 	}
 	handle @package {
 		request_header -Cookie
