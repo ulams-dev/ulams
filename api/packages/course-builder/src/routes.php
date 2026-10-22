@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Ulams\CourseBuilder\Http\Controllers\CompareController;
 use Ulams\CourseBuilder\Http\Controllers\CourseAsCodeController;
 use Ulams\CourseBuilder\Http\Controllers\CourseBuilderController;
 use Ulams\CourseBuilder\Http\Controllers\EventStreamController;
@@ -70,12 +71,13 @@ Route::group([
     Route::post('sessions/{session}/publish', [CourseBuilderController::class, 'publish']);
 });
 
-// Course versions (ADR 0192): the releases of a course, keyed by the LMS course id. No AI gate: it works on
-// installations without an AI provider. Read-only; a release is written by the apply step.
+// Course versions (ADR 0192): the releases of a course and the comparison of any two of its versions, keyed by
+// the LMS course id. No AI gate: it works on installations without an AI provider. Read-only; a release is written by the apply step.
 Route::group([
     'prefix' => 'api/admin/course-versions',
     'middleware' => ['auth:api'],
 ], function () {
     Route::get('courses/{course}/releases', [ReleaseController::class, 'index'])->whereNumber('course');
     Route::get('releases/{release}', [ReleaseController::class, 'show']);
+    Route::get('courses/{course}/compare', [CompareController::class, 'show'])->whereNumber('course');
 });

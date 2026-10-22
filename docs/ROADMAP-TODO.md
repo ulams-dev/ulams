@@ -642,22 +642,39 @@ ADR 0192 Accepted). Builds on the builder version history (ADR 0010, `course_bui
 `BlueprintDiff` (the API already accepts `?against=<version>`), the CAC-4 three-way merge (`ElementMerge`) and Blueprint v3.
 Shown as "Coming" on the Comparison page and in the docs (`creators/course-versions-and-variants`).
 
-- [ ] (new) Course releases: every approved change that reaches learners (author edit, chat edit, accepted Living Course
+- [x] (new) Course releases: every approved change that reaches learners (author edit, chat edit, accepted Living Course
       update, course-as-code import, insights proposal) is recorded as a numbered release with its trigger, source
       revisions, approver and date; releases are listed per course in the studio and through the API
-      (partial, CV-1: `course_builder_releases`, a release written by every apply (generation, author and chat edit, undo,
+      (CV-1: `course_builder_releases`, a release written by every apply (generation, author and chat edit, undo,
       restore, accepted source update, insights improvement, import) in the transaction that sets `applied_version_id`,
       `GET api/admin/course-versions/courses/{course}/releases` and `releases/{release}`, studio page
-      `/studio/courses/:id/versions`, `ulams course releases`, `course-builder:backfill-releases`; tick when CV-1 is merged)
+      `/studio/courses/:id/versions`, `ulams course releases`, `course-builder:backfill-releases`; CV-1, merged in #397; releases of
+      variant courses followed in CV-2, see the variant item below)
 - [ ] (new) Compare any two versions or releases in the studio: structure tree with added, removed, moved and changed
       modules, lessons and elements; word-level text diff; citations added, removed or moved to a new source revision; quiz
       changes (stem, options, correct answer, explanation) with their effect on learner progress (ADR 0033 rules)
 - [ ] (new) Semantic diff on top of `BlueprintDiff`: move and reorder detection, citation set diff with fragment text, quiz
       answer key change flag, per-release change summary counts; one diff payload shared by the studio, the CLI
       (`ulams course diff --from --to`) and the MCP tool
+      (partial, CV-2: `SemanticDiff` (moved and reordered by longest common subsequence, citations added, removed and
+      repointed through the source history of Living Course, quiz answer key and wording changes with the ADR 0033
+      consequence, line diff for fields over 20 000 characters, summary with a plain text and the learner impact by the
+      minor and major rule) and `VersionComparer` (passages per source revision, cached per pair for 24 hours);
+      `GET api/admin/course-versions/courses/{course}/compare?from=&to=` between any two versions or releases of one session,
+      a variant included, without the AI gate; CLI `ulams course compare` and `ulams course diff --from --to`, MCP tool
+      `course_compare`; open: the studio screen that reads it (CV-3), the release list `summary` still counts from
+      `BlueprintDiff` (no moves yet), `GET courses/{course}/versions` for the "all versions" toggle (CV-3), a TypeScript SDK
+      client for compare (CV-3, with the screen); tick when the studio screen is merged)
+- [ ] (new) Variant apply writes a release: CV-4 set a variant's `applied_version_id` directly and recorded no release, so
+      variant courses had no timeline; `ReleaseRecorder::appliedVariant` now writes the release in the same transaction
+      (numbers per variant, trigger derived like the base), `course-builder:backfill-releases` covers variants applied
+      earlier, and the release list answers for a variant course id
+      (partial, CV-2: done and tested; tick when the CV-2 PR is merged)
 - [ ] (new) Releases and compare for courses not built with the Course Builder once they are adopted (depends on CAC-5)
 - [ ] (new) Tenant isolation suite for the release and compare endpoints (ADR 0190 route coverage), WCAG 2.2 AA for the
       compare screen (colour is never the only signal of added or removed)
+      (partial: route coverage walks both route groups, `ReleaseApiTest` and `CompareApiTest` cover other authors, students,
+      guests, a token of another tenant, unknown ids and a pair from two sessions; open: WCAG 2.2 AA for the compare screen, CV-3)
 
 ---
 
@@ -733,7 +750,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       (partial: built in CV-4, PR #396: each variant outline is reviewed with the builder's outline diff against the base outline and each
       generated variant with a new `VariantReview` card (lessons kept, rewritten, added, skipped; word-level text changes) built on the existing
       `BlueprintDiff`, approved one by one, applied as its own course through the domain services, grouped as a family hidden from the catalogue
-      and published with the base; open: the 3.1 compare screen (CV-2, CV-3), Living Course patches for variants and rebase on a newer base (CV-5))
+      and published with the base; open: the 3.1 compare screen (CV-3; the compare API, CLI and MCP tool shipped in CV-2), Living Course patches for variants and rebase on a newer base (CV-5))
 - [ ] (new) Learner routing: self-declared role and level at enrolment, an optional cited placement check, assignment by an
       admin or an enrolment rule (6.2), and an adaptive hint from Learner Insights to switch variant that the learner confirms
       (never a silent switch); progress carries over for elements that are identical in both variants

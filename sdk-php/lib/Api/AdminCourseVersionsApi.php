@@ -71,6 +71,9 @@ class AdminCourseVersionsApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
+        'adminCourseVersionsCoursesByCourseCompareGet' => [
+            'application/json',
+        ],
         'adminCourseVersionsCoursesByCourseReleasesGet' => [
             'application/json',
         ],
@@ -123,6 +126,360 @@ class AdminCourseVersionsApi
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * Operation adminCourseVersionsCoursesByCourseCompareGet
+     *
+     * Semantic diff of two versions or releases of a course: moved elements, citations, quiz answer keys and a summary
+     *
+     * @param  int $course course (required)
+     * @param  string $from Version id or release id (the older side) (required)
+     * @param  string $to Version id or release id (the newer side) (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseVersionsCoursesByCourseCompareGet'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\ApiEnvelope
+     */
+    public function adminCourseVersionsCoursesByCourseCompareGet($course, $from, $to, string $contentType = self::contentTypes['adminCourseVersionsCoursesByCourseCompareGet'][0])
+    {
+        list($response) = $this->adminCourseVersionsCoursesByCourseCompareGetWithHttpInfo($course, $from, $to, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation adminCourseVersionsCoursesByCourseCompareGetWithHttpInfo
+     *
+     * Semantic diff of two versions or releases of a course: moved elements, citations, quiz answer keys and a summary
+     *
+     * @param  int $course (required)
+     * @param  string $from Version id or release id (the older side) (required)
+     * @param  string $to Version id or release id (the newer side) (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseVersionsCoursesByCourseCompareGet'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function adminCourseVersionsCoursesByCourseCompareGetWithHttpInfo($course, $from, $to, string $contentType = self::contentTypes['adminCourseVersionsCoursesByCourseCompareGet'][0])
+    {
+        $request = $this->adminCourseVersionsCoursesByCourseCompareGetRequest($course, $from, $to, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation adminCourseVersionsCoursesByCourseCompareGetAsync
+     *
+     * Semantic diff of two versions or releases of a course: moved elements, citations, quiz answer keys and a summary
+     *
+     * @param  int $course (required)
+     * @param  string $from Version id or release id (the older side) (required)
+     * @param  string $to Version id or release id (the newer side) (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseVersionsCoursesByCourseCompareGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminCourseVersionsCoursesByCourseCompareGetAsync($course, $from, $to, string $contentType = self::contentTypes['adminCourseVersionsCoursesByCourseCompareGet'][0])
+    {
+        return $this->adminCourseVersionsCoursesByCourseCompareGetAsyncWithHttpInfo($course, $from, $to, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation adminCourseVersionsCoursesByCourseCompareGetAsyncWithHttpInfo
+     *
+     * Semantic diff of two versions or releases of a course: moved elements, citations, quiz answer keys and a summary
+     *
+     * @param  int $course (required)
+     * @param  string $from Version id or release id (the older side) (required)
+     * @param  string $to Version id or release id (the newer side) (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseVersionsCoursesByCourseCompareGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminCourseVersionsCoursesByCourseCompareGetAsyncWithHttpInfo($course, $from, $to, string $contentType = self::contentTypes['adminCourseVersionsCoursesByCourseCompareGet'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+        $request = $this->adminCourseVersionsCoursesByCourseCompareGetRequest($course, $from, $to, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'adminCourseVersionsCoursesByCourseCompareGet'
+     *
+     * @param  int $course (required)
+     * @param  string $from Version id or release id (the older side) (required)
+     * @param  string $to Version id or release id (the newer side) (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseVersionsCoursesByCourseCompareGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function adminCourseVersionsCoursesByCourseCompareGetRequest($course, $from, $to, string $contentType = self::contentTypes['adminCourseVersionsCoursesByCourseCompareGet'][0])
+    {
+
+        // verify the required parameter 'course' is set
+        if ($course === null || (is_array($course) && count($course) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $course when calling adminCourseVersionsCoursesByCourseCompareGet'
+            );
+        }
+
+        // verify the required parameter 'from' is set
+        if ($from === null || (is_array($from) && count($from) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $from when calling adminCourseVersionsCoursesByCourseCompareGet'
+            );
+        }
+
+        // verify the required parameter 'to' is set
+        if ($to === null || (is_array($to) && count($to) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $to when calling adminCourseVersionsCoursesByCourseCompareGet'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/course-versions/courses/{course}/compare';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $from,
+            'from', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            true // required
+        ) ?? []);
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $to,
+            'to', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            true // required
+        ) ?? []);
+
+
+        // path params
+        if ($course !== null) {
+            $resourcePath = str_replace(
+                '{' . 'course' . '}',
+                ObjectSerializer::toPathValue($course),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'GET',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
     }
 
     /**

@@ -415,7 +415,10 @@
                     "title": "Wersje kursu z wizualnym porównaniem",
                     "text": "Każda zmiana autora i każda zaakceptowana aktualizacja źródła tworzy kolejną, numerowaną wersję kursu. Wybierz dowolne dwie i porównaj je: dodane, usunięte i przeniesione lekcje, zmiany w tekście co do słowa, zmienione cytowania i pytania quizu, których poprawna odpowiedź jest teraz inna.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming"
+                    "status": "coming",
+                    "packages": [
+                      "authoring-metrics"
+                    ]
                   },
                   {
                     "title": "Warianty kursu według poziomu i roli",

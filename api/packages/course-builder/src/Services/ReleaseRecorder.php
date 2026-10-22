@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Ulams\CourseBuilder\Blueprint\BlueprintDiff;
 use Ulams\CourseBuilder\Models\Release;
 use Ulams\CourseBuilder\Models\Session;
+use Ulams\CourseBuilder\Models\Variant;
 use Ulams\CourseBuilder\Models\Version;
 
 /**
@@ -40,6 +41,30 @@ final class ReleaseRecorder
         });
     }
 
+    /**
+     * The same for a variant (ADR 0192): the variant's own course, its own `applied_version_id` and its own release
+     * numbers, in the transaction that moves the variant to the version. The caller passes the variant attributes
+     * that belong to the apply (such as the status). Applying the version that is already the variant's latest release
+     * for the same course changes nothing for learners and writes nothing.
+     *
+     * @param array<string,mixed> $variantAttributes
+     * @param string|null $trigger one of Release::TRIGGERS; null derives it from the version
+     */
+    public function appliedVariant(Variant $variant, Version $version, int $courseId, array $variantAttributes = [], ?string $trigger = null): ?Release
+    {
+        return DB::transaction(function () use ($variant, $version, $courseId, $variantAttributes, $trigger) {
+            Session::query()->whereKey($variant->session_id)->lockForUpdate()->first(['id']);
+            $variant->forceFill(['course_id' => $courseId, 'applied_version_id' => $version->id] + $variantAttributes)->save();
+
+            $previous = $this->latest($variant->session_id, $variant->id);
+            if ($previous !== null && $previous->version_id === $version->id && $previous->course_id === $courseId) {
+                return null;
+            }
+
+            return $this->write($variant->session, $version, $courseId, $previous, $trigger ?? $this->triggerFor($version, $previous), null, $variant->id);
+        });
+    }
+
     public function latest(string $sessionId, ?string $variantId = null): ?Release
     {
         return Release::query()->where('session_id', $sessionId)->where('variant_id', $variantId)->orderByDesc('number')->first();
@@ -62,14 +87,30 @@ final class ReleaseRecorder
         return DB::transaction(fn () => $this->write($session, $version, (int) $session->course_id, null, 'generate', $version->decided_at ?? $session->updated_at ?? now()));
     }
 
-    private function write(Session $session, Version $version, int $courseId, ?Release $previous, string $trigger, mixed $releasedAt = null): Release
+    /**
+     * One release for a variant that was applied before its releases were recorded (CV-4 wrote none). Idempotent.
+     */
+    public function backfillVariant(Variant $variant): ?Release
+    {
+        if ($variant->course_id === null || $variant->applied_version_id === null || $this->latest($variant->session_id, $variant->id) !== null) {
+            return null;
+        }
+        $version = Version::query()->where('session_id', $variant->session_id)->find($variant->applied_version_id);
+        if ($version === null) {
+            return null;
+        }
+
+        return DB::transaction(fn () => $this->write($variant->session, $version, (int) $variant->course_id, null, 'generate', $version->decided_at ?? $variant->updated_at ?? now(), $variant->id));
+    }
+
+    private function write(Session $session, Version $version, int $courseId, ?Release $previous, string $trigger, mixed $releasedAt = null, ?string $variantId = null): Release
     {
         $before = $previous !== null ? Version::query()->find($previous->version_id) : null;
 
         return Release::query()->create([
             'session_id' => $session->id,
-            'variant_id' => null,
-            'number' => (int) Release::query()->where('session_id', $session->id)->whereNull('variant_id')->max('number') + 1,
+            'variant_id' => $variantId,
+            'number' => (int) Release::query()->where('session_id', $session->id)->when($variantId === null, fn ($q) => $q->whereNull('variant_id'), fn ($q) => $q->where('variant_id', $variantId))->max('number') + 1,
             'version_id' => $version->id,
             'previous_release_id' => $previous?->id,
             'course_id' => $courseId,
@@ -86,7 +127,7 @@ final class ReleaseRecorder
     {
         if ($previous !== null) {
             $was = Version::query()->find($previous->version_id);
-            $again = Release::query()->where('session_id', $previous->session_id)->where('version_id', $version->id)->exists();
+            $again = Release::query()->where('session_id', $previous->session_id)->where('variant_id', $previous->variant_id)->where('version_id', $version->id)->exists();
             if ($again || ($was !== null && $version->number < $was->number)) {
                 return 'restore';
             }

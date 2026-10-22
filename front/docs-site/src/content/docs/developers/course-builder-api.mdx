@@ -1,6 +1,6 @@
 ---
 title: Course Builder API
-description: Every endpoint under /api/admin/course-builder, the AI-free course-as-code endpoints (export and import a blueprint) and course releases (the versions learners got), the run and AG-UI event model, how to read the event stream with curl, the actions you can send to a run, and what happens at the cost limits.
+description: Every endpoint under /api/admin/course-builder, the AI-free course-as-code endpoints (export and import a blueprint) course releases (the versions learners got) and the comparison of any two versions, the run and AG-UI event model, how to read the event stream with curl, the actions you can send to a run, and what happens at the cost limits.
 sidebar:
   order: 83
 modules:
@@ -169,13 +169,14 @@ and administrators can read them (403 for anyone else, 404 for a course that was
 |---|---|
 | `GET courses/{course}/releases?page=&perPage=` | The releases of the course, newest first: `sessionId`, `courseId`, `releases[]`, `total`, `page`, `perPage` (25 by default, at most 100) |
 | `GET releases/{release}` | One release with the Blueprint v3 `document` of its version and the labels of the sources it cites |
+| `GET courses/{course}/compare?from=&to=` | The semantic diff of any two versions or releases of the course (see [Compare two versions](#compare-two-versions-or-releases)) |
 
 Each release has `id`, `number` (1, 2, 3, per course), `trigger`, `versionId` and `versionNumber`, `previousReleaseId`, `courseId`,
 `approvedBy` (`{id, name}`, or `null`), `sourceRevisions` (`{sourceId: revisionId}`), `releasedAt` and a `summary`.
 
 `trigger` is one of `generate` (the first generation and later generation runs), `author` (an edit in the studio), `chat` (a change
 from the element chat), `update` (an accepted source update), `insights` (an improvement from learner insights), `import` (a
-course-as-code push), `restore` (an undo, redo or restore re-applied an earlier version) and `rebase` (reserved for course variants).
+course-as-code push), `restore` (an undo, redo or restore re-applied an earlier version) and `rebase` (reserved for rebasing a course variant). A variant has its own releases: ask for the course id of the variant and the list holds only its releases, with `variantId` set.
 
 `summary` counts what changed since the previous release from the element diff: `first` (the first release counts every element as
 added), `counts`, `lessons` and `questions` (each `{added, changed, removed}`), `citationsChanged` (elements whose citations changed)
@@ -186,6 +187,42 @@ nothing. A failed or partial apply writes nothing. Courses that were applied bef
 ```bash
 ulams course releases 12
 ulams course releases 12 --json --fields data.releases
+```
+
+### Compare two versions or releases
+
+`GET /api/admin/course-versions/courses/{course}/compare?from=<id>&to=<id>` returns the **semantic diff** of two versions of the
+course. `from` and `to` are version ids (`GET course-builder/sessions/{session}/versions`) or release ids (the list above) of the
+same builder session; a release stands for its version. Any two will do: two releases, a release and a proposal that was never
+applied, or the base course and one of its variants (use the course id of either). The call needs no AI, makes no model call and
+is read-only (`builder:read`). A pair that names something of another session is `404`, a missing `from` or `to` is `422`.
+
+The payload has `diffVersion` (always `1`; the shape only grows), `courseId`, `sessionId`, `from` and `to` (`versionId`,
+`versionNumber`, `kind`, `status`, `variantId`, `releaseId`, `releaseNumber`) and four parts:
+
+| Field | Content |
+|---|---|
+| `changes[]` | One entry per element that differs, matched by its stable id: `id`, `type` (course, objective, module, lesson, block, quiz, question, option, interaction), `label`, `kind` (`added`, `removed`, `changed`, `moved`, `reordered`), `description` (one sentence), `fields[]` (`field`, `label`, `before`, `after`), `moved` (`from` and `to` parent) or `null`, `reordered` (`parentId`, `from` and `to` position) or `null`, and `citations` |
+| `citations` (inside a change) | `added`, `removed` and `repointed` (`{from, to}`: a citation whose fragment became another fragment in a newer source revision, matched through Living Course's fragment changes). The order of citations is not a change |
+| `quiz[]` | One entry per question that exists on both sides and changed: `stem`, `type`, `explanation`, `options` (`added`, `removed`, `reworded`, `keyChanged`), `answerKeyChanged` (the set of correct options differs), `wording` (stem, explanation or option text edited), `correctBefore`, `correctAfter` and, for a changed answer key, the `consequence` for learners (a re-attempt notice and one extra attempt; past scores never change) |
+| `summary` | `first`, `counts` (`added`, `changed`, `removed`, `moved`, `reordered`), `types` (the same counts per element type), `citations`, `quiz`, `learnerImpact` and a plain `text` ("1 lesson moved; 1 citation repointed; 1 answer key changed.") with its `lines` |
+| `fragments` | For every citation that changed, the passage (`label`, `text` cut at 600 characters, `sourceRevision`) as it was in the source revision of the side it belongs to |
+
+A field longer than 20 000 characters is not sent whole: its `before` and `after` are `null`, `truncated` is `true` and `lineDiff`
+holds the removed and added lines (at most 200 each, `omitted` counts the rest). Text is otherwise sent whole; the studio marks
+the words that differ.
+
+`summary.learnerImpact` follows the rules for updating a live course: completion is never revoked
+(`lessonsKeepingCompletion`), a **major** change to a lesson (an element removed, or a text less than 85 % alike) shows learners an
+"Updated" notice (`lessonsWithUpdatedNotice`), minor edits and citation changes are silent (`lessonsChangedSilently`), and every
+changed answer key gives a re-attempt notice (`reattemptNotices`).
+
+The payload is cached per pair of versions for 24 hours (versions never change, so it never goes stale).
+
+```bash
+ulams course releases 12 --fields data.releases.id,data.releases.number --json
+ulams course compare 12 --from 01jb0000000000000000000001 --to 01jb0000000000000000000003
+ulams course diff --course 12 --from 01jb0000000000000000000001 --to 01jb0000000000000000000003 --json
 ```
 
 ## Sending a message or an action

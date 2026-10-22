@@ -6,12 +6,14 @@ use Ulams\Ai\Models\AiCall;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\CourseBuilder\Models\EntityMapEntry;
+use Ulams\CourseBuilder\Models\Release;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Step;
 use Ulams\CourseBuilder\Models\Variant;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Pipeline\Llm;
+use Ulams\CourseBuilder\Services\ReleaseRecorder;
 use Ulams\CourseBuilder\Tests\TestCase;
 use Ulams\Courses\Models\Course;
 use Ulams\CourseVariants\Services\Contracts\CourseVariantServiceContract;
@@ -261,6 +263,67 @@ class VariantsTest extends TestCase
         $row = collect($this->actingAs($author, 'api')->getJson(self::P . "/sessions/{$session->id}/variants")->assertOk()->json('data.variants'))->firstWhere('key', 'expert');
         $this->assertSame($expert->course_id, $row['courseId']);
         $this->assertSame($family['groupId'], $row['family']['groupId']);
+    }
+
+    /** The gap CV-4 left: a variant's apply set `applied_version_id` directly and wrote no release (ADR 0192, CV-2). */
+    public function testApprovingAVariantWritesItsOwnReleaseAndLeavesTheBaseReleasesAlone(): void
+    {
+        $author = $this->author();
+        $session = $this->withVariantOutlines($author);
+        $expert = $this->variant($session, 'expert');
+        $this->approveVariantOutline($author, $session, $expert);
+        $version = $expert->refresh()->current_version_id;
+        $baseReleases = Release::query()->where('session_id', $session->id)->whereNull('variant_id')->count();
+        $this->assertSame(1, $baseReleases);
+        $this->assertSame(0, Release::query()->where('variant_id', $expert->id)->count(), 'nothing is released before the author approves');
+
+        $this->action($author, $session, 'approve_variant', "variant-{$version}", ['versionId' => $version])->assertStatus(202);
+
+        $expert->refresh();
+        $releases = Release::query()->where('variant_id', $expert->id)->get();
+        $this->assertCount(1, $releases);
+        $release = $releases[0];
+        $this->assertSame([1, 'generate', $version, (int) $expert->course_id, null], [$release->number, $release->trigger, $release->version_id, $release->course_id, $release->previous_release_id]);
+        $this->assertSame($session->id, $release->session_id);
+        $this->assertSame($author->getKey(), $release->approved_by);
+        $this->assertTrue($release->summary['first']);
+        $this->assertSame($version, $expert->applied_version_id);
+        $this->assertSame(Variant::APPROVED, $expert->status);
+        $this->assertSame($baseReleases, Release::query()->where('session_id', $session->id)->whereNull('variant_id')->count(), 'the base keeps its own numbering');
+
+        // the course-versions API lists the variant course's releases, not the base's
+        $list = $this->actingAs($author, 'api')->getJson("/api/admin/course-versions/courses/{$expert->course_id}/releases")->assertOk();
+        $this->assertSame([$release->id], array_column($list->json('data.releases'), 'id'));
+        $list->assertJsonPath('data.variantId', $expert->id)->assertJsonPath('data.releases.0.variantId', $expert->id);
+        $base = $this->actingAs($author, 'api')->getJson("/api/admin/course-versions/courses/{$session->course_id}/releases")->assertOk();
+        $this->assertNotContains($release->id, array_column($base->json('data.releases'), 'id'));
+
+        // applying the version that is already live writes nothing; a later version is the next number of this variant only
+        $recorder = app(ReleaseRecorder::class);
+        $this->assertNull($recorder->appliedVariant($expert, Version::query()->findOrFail($version), (int) $expert->course_id));
+        $second = Version::query()->findOrFail($session->applied_version_id);
+        $next = $recorder->appliedVariant($expert, $second, (int) $expert->course_id, [], 'author');
+        $this->assertSame([2, $release->id, 'author'], [$next->number, $next->previous_release_id, $next->trigger]);
+        $this->assertSame($baseReleases, Release::query()->where('session_id', $session->id)->whereNull('variant_id')->count());
+    }
+
+    public function testBackfillGivesAnAlreadyAppliedVariantItsFirstRelease(): void
+    {
+        $author = $this->author();
+        $session = $this->withVariantOutlines($author, ['level:expert']);
+        $expert = $this->variant($session, 'expert');
+        $this->approveVariantOutline($author, $session, $expert);
+        $version = $expert->refresh()->current_version_id;
+        $this->action($author, $session, 'approve_variant', "variant-{$version}", ['versionId' => $version])->assertStatus(202);
+        Release::query()->where('variant_id', $expert->id)->delete();
+
+        $this->artisan('course-builder:backfill-releases', ['--dry-run' => true])->expectsOutput('Would record 1 release(s).')->assertSuccessful();
+        $this->artisan('course-builder:backfill-releases')->expectsOutput('Recorded 1 release(s).')->assertSuccessful();
+        $this->artisan('course-builder:backfill-releases')->expectsOutput('Recorded 0 release(s).')->assertSuccessful();
+
+        $release = Release::query()->where('variant_id', $expert->id)->sole();
+        $this->assertSame([1, 'generate', $version], [$release->number, $release->trigger, $release->version_id]);
+        $this->assertSame(1, Release::query()->where('session_id', $session->id)->whereNull('variant_id')->count());
     }
 
     public function testPublishingTheBasePublishesTheFamilyButNotAnUnapprovedVariant(): void
