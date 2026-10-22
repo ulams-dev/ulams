@@ -880,6 +880,11 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       modules, 56 questions, final test) and the two poland courses (EN and PL, nine chapters each), fact-checked
       (`demo-content/*/FACTCHECK.md`), heroes playing the real scene and map; the landing hero of the Ulam course plays
       the spiral; open owner questions: #205 FACTCHECK reading, #209 the café photo, #210 Problem 77(a))
+- [ ] (new, 2026-10-22) Home page "how it works" story for L&D teams: six captioned steps and a loop (sources, cited draft
+      with the one measured run and the Chapman range shown apart, author review, Living Course, learners with variants
+      available in the builder and routing coming, evidence) with "why it matters" lines, playing on scroll, static without JS or
+      with reduced motion; it replaces the hero's privacy-policy lifecycle and sits before the two home blocks of #410
+      (faster courses, full analytics), which keep their links and Umami events (partial: PR #424 open, stacked on #414)
 - [x] (new) Six demos on the platform landing with one-click learner and admin login; `make demo-seed-tenants`
       seeds all six, `make demo-reset-all` resets them; README and docs site updated (M10; the phone layout of the lesson
       player no longer overflows with a long course title or a long source URL)

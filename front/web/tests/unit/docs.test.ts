@@ -7,6 +7,7 @@ import { completionMode, topicDoc } from "../../src/lib/page-docs.ts";
 import { flattenTopics } from "@ulams/sdk";
 import { COFFEE_PROGRAM, raw } from "./fixtures.ts";
 import type { InteractiveLaunch } from "../../src/lib/interactive.ts";
+import { homeStory } from "../../src/lib/home-story.ts";
 
 const SHOWCASE: InteractiveLaunch = {
   url: "http://gravity.content.localhost/interactive/k/v1/index.html",
@@ -56,8 +57,8 @@ describe("platform landing", () => {
     const json = JSON.stringify(landingDocs.platform, (key, value) =>
       key === "diff" || ["LivingCourseStory", "BuilderStory"].includes(value?.component) ? undefined : value
     );
-    // webhooks shipped; the stories still carry the unbuilt policy-owner and renewal steps as coming
-    expect(JSON.stringify(landingDocs.platform)).toContain('"status":"coming"');
+    // the roadmap status of the home page now lives in the "how it works" story (lib/home-story.ts): learner routing is coming
+    expect(homeStory("en").learners.status.some((s) => s.state === "coming")).toBe(true);
     expect(json).not.toMatch(/\b\d{2,}[,.]?\d*\s*(%|\+|customers|learners|users)/i);
   });
 });

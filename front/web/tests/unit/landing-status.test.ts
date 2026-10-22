@@ -20,9 +20,19 @@ describe("parseLandingStatus", () => {
 
 describe("platform landing in actual mode", () => {
   const actual = applyLandingStatus(doc, "actual");
-  it("keeps every roadmap label", () => {
-    expect(json(actual)).toContain('"status":"coming"');
-        expect(json(actual)).not.toContain('"final"');
+  it("leaves the platform document as it is", () => {
+    expect(json(actual)).toBe(json(doc));
+    expect(json(actual)).not.toContain('"final"');
+  });
+  it("keeps every roadmap label and drops the final-mode overrides", () => {
+    const sample: UiNode = { component: "Page", children: [{ component: "Hero", props: { title: "T", note: "on the roadmap", items: [{ status: "coming" }] }, final: { note: null } } as UiNode] };
+    const kept = json(applyLandingStatus(sample, "actual"));
+    expect(kept).toContain('"status":"coming"');
+    expect(kept).toContain("on the roadmap");
+    expect(kept).not.toContain('"final"');
+    const lifted = json(applyLandingStatus(sample, "final"));
+    expect(lifted).not.toContain('"status":"coming"');
+    expect(lifted).not.toContain("on the roadmap");
   });
 });
 
@@ -36,12 +46,10 @@ describe("platform landing in final mode", () => {
     expect(text).not.toContain('"final"');
   });
   it("does not change the source document", () => {
-    expect(json(doc)).toContain('"status":"coming"');
+    applyLandingStatus(doc, "final");
     expect(json(doc)).toBe(sourceBefore);
   });
   it("applies the text overrides", () => {
-    expect(json(final)).toContain("Illustrative policy lifecycle. Authors approve source updates before publication.");
-    expect(json(final)).toContain("Example · policy lifecycle");
     expect(json(final)).not.toMatch(/on the roadmap/i);
     expect(json(final)).toContain("Helm chart coming soon.");
   });
