@@ -341,10 +341,10 @@
           "checkedAt": "2026-10-21"
         },
         "course_as_code": {
-          "value": "Coming",
-          "note": "Roadmap 7.1: Markdown + YAML format and Git sync; zip import and export today",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
-          "checkedAt": "2026-10-09"
+          "value": "Partial",
+          "note": "Markdown + YAML folder, push, pull, three-way merge; Git source merges propose updates. Action, previews coming",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/front/docs-site/src/content/docs/developers/cli-course.mdx",
+          "checkedAt": "2026-10-22"
         }
       },
       "groups": [

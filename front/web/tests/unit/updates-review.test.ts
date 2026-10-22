@@ -162,6 +162,34 @@ describe("update review: ready", () => {
     expect(root.querySelector("[data-learner-impact]")).not.toBeNull();
   });
 
+  it("names the merged pull request a Git source change came from, as plain text with a safe link", async () => {
+    const change = { commit: "abcdef1234567", subject: "Rename the <b>--namespace</b> flag", url: "https://github.com/acme/docs/commit/abcdef1", pullRequest: 123, pullRequestUrl: "https://github.com/acme/docs/pull/123", source: "webhook" as const };
+    stub(detail(item3(), { change }));
+    const root = mount();
+    await ready(root);
+    const line = root.querySelector("[data-git-change]")!;
+    expect(line.textContent).toBe("From PR #123: Rename the <b>--namespace</b> flag");
+    expect(line.querySelector("b")).toBeNull();
+    expect(line.querySelector("a")).toMatchObject({ href: "https://github.com/acme/docs/pull/123", rel: "noopener noreferrer" });
+    const result = await axe.run(root, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+    expect(result.violations).toEqual([]);
+  });
+
+  it("falls back to the commit, and never links a URL that is not https", async () => {
+    stub(detail(item3(), { change: { commit: "abcdef1234567", subject: null, url: "javascript:alert(1)", pullRequest: null, pullRequestUrl: null, source: "ci" } }));
+    const root = mount();
+    await ready(root);
+    expect(root.querySelector("[data-git-change]")?.textContent).toBe("From commit abcdef1");
+    expect(root.querySelector("[data-git-change] a")).toBeNull();
+  });
+
+  it("shows no Git line for an upload", async () => {
+    stub(detail(item3()));
+    const root = mount();
+    await ready(root);
+    expect(root.querySelector("[data-git-change]")).toBeNull();
+  });
+
   it("is accessible", async () => {
     stub(detail(item3()));
     const root = mount();
