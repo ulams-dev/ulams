@@ -767,11 +767,15 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 - [ ] (new) Learner routing: self-declared role and level at enrolment, an optional cited placement check, assignment by an
       admin or an enrolment rule (6.2), and an adaptive hint from Learner Insights to switch variant that the learner confirms
       (never a silent switch); progress carries over for elements that are identical in both variants
+      (partial: learner screens built in CV-5 part 2 (waiting to merge): the version picker on the course page (radio group, works without
+      JavaScript, read-only for visitors, locked and "assigned by your organisation" states), the dismissible hint to switch, the advisory placement
+      check with its result page, "Continue" following the learner's version, EN, PL and ZH, axe and keyboard specs; open: certificates that name the
+      variant and Living Course for variants (CV-5 part 3), and carrying the choice from the course page into enrolment or purchase)
 - [ ] (new) One entitlement for the course covers all its variants (ADR 0130); certificates name the variant completed
 - [ ] (new) Tenant isolation suite for the variant and routing endpoints; WCAG 2.2 AA for the variant picker and placement
       check; evals for variant grounding and level fit through the eval command only
       (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #396; open: the routing endpoints,
-      the picker and the placement check (CV-5) and the evals)
+      the picker and the placement check (CV-5) and the evals; the axe and keyboard checks of the picker, the hint and the placement check are in CV-5 part 2, waiting to merge)
 
 ---
 
