@@ -1,6 +1,6 @@
 # Plan: course versions with a visual diff, and course variants by level and role
 
-Status: approved by the owner on 2026-10-22 with the recommended defaults for Q1 to Q11; ADR 0192 is Accepted. Milestones CV-1, CV-2 and CV-4 are merged; CV-3 (the studio compare screen, the version list API and the SDK client) is implemented in PR #425; CV-5 and CV-6 are not.
+Status: approved by the owner on 2026-10-22 with the recommended defaults for Q1 to Q11; ADR 0192 is Accepted. Milestones CV-1, CV-2 and CV-4 are merged; CV-3 (the studio compare screen, the version list API and the SDK client) is implemented in PR #425; CV-5 is being built in three parts (1: API, routing, entitlement and progress; 2: learner screens; 3: Living Course and certificates) and part 1 is implemented; CV-6 is not.
 TODO items: Phase 3.1 and Phase 4.4 in `docs/ROADMAP-TODO.md` (all marked `(new)`). The spec
 (`docs/ROADMAP-PROMPT.md`) does not mention either feature yet; it needs a matching paragraph in Phases 3 and 4
 once the owner approves.
@@ -322,6 +322,16 @@ implementing PRs (not in this docs PR).
 Built in CV-2: `course diff` already existed (folder against base, server or one version), so `--from` and `--to` are two new flags of
 that command, and `ulams course compare <course> --from --to` is the standalone form that the MCP tool runs (`course_compare`, read-only,
 toolset `builder`). `GET courses/{course}/versions` (the "all versions" list) is left for CV-3, which needs it for the screen.
+
+Built in CV-5 part 1 (differences from the table above, decided while building): the family is `course_variant_groups` with `pinned_course_id`, `lock_assigned`, `placement_enabled`,
+`hints_enabled` and the default course's picker label, level and role; there is no `family:<group_id>` source key, because an entitlement is per course: the learner gets one derived
+entitlement per variant they use, source type `family`, key `family:<group>:user:<user>:course:<course>`, ended and moved with the entitlements it derives from (an event on every `course_user`
+projection keeps it in step). Assignment rules live in `course_variant_rules` and reuse the compliance rule engine's conditions, because the compliance rules are tied to a learning path;
+they route only learners who already have access. The placement questions are not generated: they are chosen from the cited quiz questions the family's courses already have (a question
+of the base counts for the base level, one a variant added or changed for that variant's level), so nothing new needs author review and no model is called. Admin endpoints are under
+`api/admin/course-variant-groups/{group}` (`assignments`, `rules`, `placement`, settings) and the hint is dismissed with `POST api/courses/{course}/variant/hints/{hint}/dismiss`.
+`PUT api/courses/{course}/variant` carries the source (`self`, `placement` with `attempt_id`, `hint` with `hint_id`). Completion carry-over pairs topics by element id, content and parent
+(not their order, which moves when a variant skips a lesson) and never pairs quiz topics.
 
 ## 13. Tenant isolation, security and privacy
 
