@@ -616,6 +616,10 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
       author reviews as a diff; no quiz is generated with it yet)
 - [x] (new) Generic Git (`git` CLI) connector for hosts without a supported API (sandboxed, https only, off by default)
 - [x] (new) Google Drive and Notion connector plugins (designed in `docs/plans/phase-3.md` 6.6) (OAuth through a one-time grant, polling change detection; off by default, scripted-server tests only, live Drive/Notion runs tracked in #285 and #266)
+- [ ] (new) Studio: connect Notion with a pasted integration token (gap found while recording the Notion case study: the Studio's
+      Notion form offered only the OAuth sign-in, disabled without a Notion OAuth client, although the connector accepts a
+      token; masked field, sent once with the connect request, never stored in the browser or logged; implemented in the
+      PR that adds this line, tick when merged)
 
 ### 3.1 Course versions with a visual diff (new)
 

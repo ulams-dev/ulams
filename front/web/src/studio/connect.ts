@@ -9,7 +9,7 @@ import { h, uid } from "@ulams/ui/builder/dom.ts";
 import { announce, livingClient, message, studioClient } from "./common.ts";
 import { copyField, secretReveal, webhookHints } from "./connection.ts";
 import {
-  ACCOUNT_SOURCES, HOSTS, MAX_URLS, SCHEDULES, accountFormProblem, accountPayload, gitFormProblem, gitPayload, urlFormProblem, urlPayload,
+  ACCOUNT_SOURCES, HOSTS, MAX_URLS, SCHEDULES, accountFormProblem, accountPayload, gitFormProblem, gitPayload, urlFormProblem, urlPayload, usesToken,
   type AccountForm, type GitForm, type UrlForm,
 } from "./connect-model.ts";
 
@@ -68,6 +68,7 @@ export function mountConnect(root: HTMLElement, deps: ConnectDeps = {}): void {
   const lc = livingClient();
   const navigate = deps.navigate ?? ((url: string) => window.location.assign(url));
   let busy = false;
+  let notionSignIn = true;
 
   /* ------------------------------------------------------------ repository */
   const host = control("select", "host");
@@ -121,11 +122,14 @@ export function mountConnect(root: HTMLElement, deps: ConnectDeps = {}): void {
   accountSource.append(...ACCOUNT_SOURCES.map((o) => h("option", { value: o.value }, o.label)));
   const accountAddress = control("input", "account_address", { type: "text", autocomplete: "off", spellcheck: "false", required: true }, true);
   const accountChildren = control("input", "account_children", { type: "checkbox" });
+  // a masked field: the value is sent once with the connect request and is kept nowhere in the browser
+  const accountToken = control("input", "account_token", { type: "password", autocomplete: "off", spellcheck: "false" }, true);
   const accountSchedule = scheduleSelect();
   const accountStatus = h("p", { class: "cb-muted", role: "status", "data-status": "" });
   const accountError = h("p", { class: "cb-error", role: "alert", "data-error": "" });
   const accountSubmit = h("button", { type: "submit", class: "cb-btn cb-btn-primary" }, "Sign in and connect") as HTMLButtonElement;
   const childrenField = field("Also read the pages under it", accountChildren, "Up to three levels and 100 pages.");
+  const tokenField = field("Integration token (optional)", accountToken, "Instead of signing in, paste the token of a Notion integration that has the page shared with it. It is stored encrypted for the checks and never shown again.");
   const addressField = field("Address", accountAddress, ACCOUNT_SOURCES[0]!.hint);
   const accountForm = h("form", { class: "st-connect-form cb-card", "aria-labelledby": "st-connect-account-title", "data-account-form": "", novalidate: true, hidden: true },
     h("h2", { id: "st-connect-account-title", class: "st-drop-title" }, "Connect Google Drive or Notion"),
@@ -133,11 +137,14 @@ export function mountConnect(root: HTMLElement, deps: ConnectDeps = {}): void {
     field("What to connect", accountSource),
     addressField,
     childrenField,
+    tokenField,
     field("Check for changes", accountSchedule, "These sources have no webhook: they are checked on this schedule."),
     h("div", { class: "cb-actions" }, accountSubmit), accountStatus, accountError);
   const syncAccountFields = () => {
     const spec = ACCOUNT_SOURCES.find((s) => s.value === accountSource.value) ?? ACCOUNT_SOURCES[0]!;
     childrenField.hidden = spec.value !== "notion";
+    tokenField.hidden = spec.value !== "notion";
+    if (spec.value !== "notion") accountToken.value = "";
     const hint = addressField.querySelector(".cb-small");
     if (hint) hint.textContent = spec.hint;
   };
@@ -224,11 +231,23 @@ export function mountConnect(root: HTMLElement, deps: ConnectDeps = {}): void {
     event.preventDefault();
     if (busy) return;
     accountError.textContent = "";
-    const values: AccountForm = { source: accountSource.value, address: accountAddress.value, children: accountChildren.checked, schedule: accountSchedule.value };
+    const values: AccountForm = { source: accountSource.value, address: accountAddress.value, children: accountChildren.checked, schedule: accountSchedule.value, token: accountToken.value };
     const problem = accountFormProblem(values);
     if (problem) {
       accountError.textContent = problem;
       accountAddress.focus();
+      return;
+    }
+    if (usesToken(values)) {
+      // a pasted token connects at once, without the sign-in; the field is emptied before the request leaves
+      const payload = accountPayload(values);
+      accountToken.value = "";
+      void run("account", payload, CHECKING_ACCOUNT, accountError);
+      return;
+    }
+    if (values.source === "notion" && !notionSignIn) {
+      accountError.textContent = "Signing in with Notion is not set up here. Paste an integration token instead.";
+      accountToken.focus();
       return;
     }
     const provider = (ACCOUNT_SOURCES.find((s) => s.value === values.source) ?? ACCOUNT_SOURCES[0]!).provider;
@@ -238,7 +257,7 @@ export function mountConnect(root: HTMLElement, deps: ConnectDeps = {}): void {
       try {
         sessionId = (await cb.sessions.create()).session.id;
         const { url } = await lc.oauth.start(provider, sessionId);
-        remember({ sessionId, values });
+        remember({ sessionId, values: { ...values, token: undefined } });
         navigate(url);
       } catch (e) {
         setBusy(false, "account", "");
@@ -270,10 +289,14 @@ export function mountConnect(root: HTMLElement, deps: ConnectDeps = {}): void {
     for (const option of [...accountSource.options]) if (!offered.some((c) => c.key === option.value)) option.remove();
     accountForm.hidden = false;
     syncAccountFields();
-    const notReady = offered.filter((c) => c.oauth && !c.oauth.configured).map((c) => c.label);
-    if (notReady.length === offered.length) {
+    const notReady = offered.filter((c) => c.oauth && !c.oauth.configured);
+    notionSignIn = !notReady.some((c) => c.key === "notion");
+    // Notion can still be connected with a pasted token, so only a Drive-only offer is blocked
+    if (notReady.length === offered.length && !offered.some((c) => c.key === "notion")) {
       accountSubmit.disabled = true;
-      accountStatus.textContent = `Signing in with ${notReady.join(" or ")} is not set up on this installation. Ask an admin to add the OAuth client.`;
+      accountStatus.textContent = `Signing in with ${notReady.map((c) => c.label).join(" or ")} is not set up on this installation. Ask an admin to add the OAuth client.`;
+    } else if (!notionSignIn) {
+      accountStatus.textContent = "Signing in with Notion is not set up on this installation. Paste an integration token instead.";
     }
   }).catch(() => undefined);
 
