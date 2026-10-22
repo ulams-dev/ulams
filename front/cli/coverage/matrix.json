@@ -1474,7 +1474,7 @@
   {
    "key": "POST /api/admin/living-course/sessions/{session}/sources/connect",
    "summary": "Add a source through a connector (Git repository, web pages, plugins); validates and fetches revision 1",
-   "command": "living.sources.connect",
+   "command": "course.sources-connect",
    "status": "covered"
   },
   {
