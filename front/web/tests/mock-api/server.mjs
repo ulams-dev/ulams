@@ -777,6 +777,34 @@ function socialExchange(body, res, tokenPrefix = "social-token") {
   res.end(JSON.stringify({ success: true, message: "Login successful", data: { complete: true, token: `${tokenPrefix}-${input.code.slice(0, 8)}`, expires_at: new Date(Date.now() + 86_400_000).toISOString() } }));
 }
 
+// Entry points (ADR 0195): the platform's public lookup, `GET /api/platform/entry-points/resolve`. Hosts are example.test
+// names (the browser maps them to the web server). `entryOutage` makes the platform answer 503, `disabled` hides an entry.
+const entryPoints = [
+  { tenant: "coffee", host: "sales.coffee.example.test", kind: "department", key: "sales", label: "Sales academy", target: { group_id: 7 }, theme: { preset: "nightsky", accent: "#c2552d" }, seo: { canonical: "tenant", index: false }, locale: null },
+  { tenant: "coffee", host: "kubernetes.coffee.example.test", kind: "course", key: "kubernetes", label: "Kubernetes in a day", target: { course_id: 1 }, theme: { accent: "#0b6e4f" }, seo: { canonical: "tenant", index: true }, locale: null },
+  { tenant: "coffee", host: "managers.coffee.example.test", kind: "role", key: "managers", label: "Managers", target: { role: "manager" }, theme: {}, seo: { canonical: "tenant", index: false }, locale: "pl" },
+];
+const entryState = { outage: false, disabled: new Set(), lookups: [] };
+
+function resolveEntry(url, res) {
+  entryState.lookups.push(url.search);
+  if (entryState.outage) {
+    res.statusCode = 503;
+    res.end(JSON.stringify({ success: false, message: "The platform is busy." }));
+    return;
+  }
+  const host = url.searchParams.get("host");
+  const tenant = url.searchParams.get("tenant");
+  const key = url.searchParams.get("key");
+  const found = entryPoints.find((e) => !entryState.disabled.has(e.key) && (host ? e.host === host.toLowerCase() : tenant && key ? e.tenant === tenant && e.key === key : false));
+  if (!found) {
+    res.statusCode = 404;
+    res.end(JSON.stringify({ success: false, message: "Not found." }));
+    return;
+  }
+  res.end(JSON.stringify({ success: true, message: "Entry point", data: found }));
+}
+
 const server = createServer((req, res) => {
   const url = new URL(req.url ?? "/", "http://mock");
   const path = url.pathname;
@@ -786,6 +814,20 @@ const server = createServer((req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
     res.end(path.endsWith(".png") ? LOGO_PNG : LOGO_SVG);
+    return;
+  }
+  if (req.method === "GET" && path === "/api/platform/entry-points/resolve") {
+    req.resume();
+    resolveEntry(url, res);
+    return;
+  }
+  // test control of the entry point lookup: ?outage=1|0, ?disable=<key>, ?enable=<key>; GET reads the lookups seen
+  if (path === "/__mock/entry-points") {
+    req.resume();
+    if (url.searchParams.has("outage")) entryState.outage = url.searchParams.get("outage") === "1";
+    if (url.searchParams.has("disable")) entryState.disabled.add(url.searchParams.get("disable"));
+    if (url.searchParams.has("enable")) entryState.disabled.delete(url.searchParams.get("enable"));
+    res.end(JSON.stringify({ outage: entryState.outage, disabled: [...entryState.disabled], lookups: entryState.lookups }));
     return;
   }
   // test control: forget what a tenant changed (the suite calls this before a journey that changes state)
