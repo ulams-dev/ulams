@@ -131,6 +131,7 @@ jobs:
 
       - name: Tenant isolation against SeaweedFS
         working-directory: api
+        env:
           S3_COMPAT: "1"
           S3_COMPAT_FLAVOR: seaweedfs
           S3_COMPAT_ENDPOINT: http://127.0.0.1:8333
