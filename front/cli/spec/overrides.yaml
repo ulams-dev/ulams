@@ -25,6 +25,7 @@ operations:
 
   # --- authoring metrics (time, cost and element counts of how a course was produced, ADR 0194)
   "GET /api/admin/authoring-metrics/courses": { id: authoring-metrics.list, summary: "Authoring metric snapshots of courses built with the Course Builder" }
+  "GET /api/admin/authoring-metrics/courses/export": { id: authoring-metrics.export, output: file, summary: "Download the authoring metric as CSV or JSON lines (use --out)" }
   "GET /api/admin/authoring-metrics/courses/{course}": { id: authoring-metrics.get, summary: "Authoring metric of one course: time per stage, cost and the split of AI elements" }
   # --- compliance (certificates, required training, reports)
   "GET /api/admin/compliance/managers": { id: compliance.managers-list }

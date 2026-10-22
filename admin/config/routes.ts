@@ -513,6 +513,13 @@
         access: 'reportListPermission',
         component: './Reports',
       },
+      {
+        name: 'authoring',
+        icon: 'experiment',
+        path: '/analytics/authoring',
+        access: 'authoringMetricsPermission',
+        component: './AuthoringMetrics',
+      },
     ],
   },
   {

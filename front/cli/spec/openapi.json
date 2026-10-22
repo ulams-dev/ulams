@@ -6804,6 +6804,80 @@
     ]
    }
   },
+  "/api/admin/authoring-metrics/courses/export": {
+   "get": {
+    "description": "Download the snapshots as CSV or JSON lines, one row per course, with the same filters as the list. Every row carries method_version so the file says which definitions produced the numbers. Needs authoring_metrics_read.",
+    "operationId": "admin.authoring-metrics.courses.export",
+    "parameters": [
+     {
+      "description": "csv (default) or jsonl",
+      "in": "query",
+      "name": "format",
+      "schema": {
+       "enum": [
+        "csv",
+        "jsonl"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "description": "Courses created on or after this date (YYYY-MM-DD)",
+      "in": "query",
+      "name": "from",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Courses created on or before this date (YYYY-MM-DD)",
+      "in": "query",
+      "name": "to",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Only these courses",
+      "in": "query",
+      "name": "course_id[]",
+      "schema": {
+       "items": {
+        "type": "integer"
+       },
+       "type": "array"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "text/csv": {
+        "schema": {
+         "format": "binary",
+         "type": "string"
+        }
+       }
+      },
+      "description": "The file"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Export the authoring metric",
+    "tags": [
+     "Authoring metrics"
+    ]
+   }
+  },
   "/api/admin/authoring-metrics/courses/{course}": {
    "get": {
     "description": "The snapshot of one course with the time of every pipeline stage (outline, lessons, quizzes, apply and the rest, each marked exact, coarse or incomplete) and the split of its AI elements. Needs authoring_metrics_read, or being the author of the course's builder session. 404 when the course was not built with the Course Builder.",

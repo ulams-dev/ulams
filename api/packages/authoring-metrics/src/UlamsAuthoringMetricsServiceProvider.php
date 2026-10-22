@@ -58,6 +58,7 @@ class UlamsAuthoringMetricsServiceProvider extends ServiceProvider
 
         Route::group(['prefix' => 'api/admin/authoring-metrics', 'middleware' => ['auth:api'], 'where' => ['course' => '[0-9]+']], function () {
             Route::get('courses', [CourseMetricsController::class, 'index']);
+            Route::get('courses/export', [CourseMetricsController::class, 'export']);
             Route::get('courses/{course}', [CourseMetricsController::class, 'show']);
         });
 

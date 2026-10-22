@@ -6,6 +6,7 @@ import courses from './pl-PL/courses';
 import events from './pl-PL/events';
 import fabric from './pl-PL/fabric';
 import globalHeader from './pl-PL/globalHeader';
+import authoringMetrics from './pl-PL/authoringMetrics';
 import insights from './pl-PL/insights';
 import menu from './pl-PL/menu';
 import notifications from './pl-PL/notifications';
@@ -116,6 +117,7 @@ export default {
   ...codeExercises,
   ...courses,
   ...insights,
+  ...authoringMetrics,
   ...events,
   ...bulkNotifications,
   branding: 'Branding',

@@ -1,6 +1,7 @@
 import codeExercises from './zh-CN/codeExercises';
 import component from './zh-CN/component';
 import globalHeader from './zh-CN/globalHeader';
+import authoringMetrics from './zh-CN/authoringMetrics';
 import insights from './zh-CN/insights';
 import menu from './zh-CN/menu';
 import pages from './zh-CN/pages';
@@ -20,6 +21,7 @@ export default {
   'app.welcome.link.block-list': '基于 block 开发，快速构建标准页面',
   ...pages,
   ...insights,
+  ...authoringMetrics,
   ...globalHeader,
   ...menu,
   ...settingDrawer,

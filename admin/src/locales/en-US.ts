@@ -12,6 +12,7 @@ import consultations from './en-US/consultations';
 import courses from './en-US/courses';
 import events from './en-US/events';
 import fabric from './en-US/fabric';
+import authoringMetrics from './en-US/authoringMetrics';
 import insights from './en-US/insights';
 import notifications from './en-US/notifications';
 import templates from './en-US/templates';
@@ -165,6 +166,7 @@ export default {
   ...codeExercises,
   ...courses,
   ...insights,
+  ...authoringMetrics,
   ...events,
   branding: 'Branding',
   product_details: 'Product details',

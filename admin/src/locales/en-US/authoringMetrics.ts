@@ -1,0 +1,42 @@
+export default {
+  'menu.Analytics.authoring': 'Authoring',
+  authoring_metrics_title: 'Authoring metrics',
+  authoring_metrics_intro:
+    'How long each course built with the Course Builder took to produce, what the model calls cost, and how much of what the AI wrote was kept as it was.',
+  authoring_metrics_own_figures:
+    "These are this academy's own measurements. They are not compared with another academy or with any industry figure.",
+  authoring_metrics_filters: 'Filter and export',
+  authoring_metrics_from: 'Courses created from',
+  authoring_metrics_to: 'Courses created until',
+  authoring_metrics_export_csv: 'Download CSV',
+  authoring_metrics_export_jsonl: 'Download JSON lines',
+  authoring_metrics_downloaded: 'Downloaded {name}',
+  authoring_metrics_export_failed: 'The file could not be downloaded.',
+  authoring_metrics_loading: 'Loading the figures…',
+  authoring_metrics_forbidden:
+    'You need the permission to read authoring metrics. Authors can see the figures of their own courses in the studio.',
+  authoring_metrics_error: 'The figures could not be loaded.',
+  authoring_metrics_retry: 'Try again',
+  authoring_metrics_empty: 'No course built with the Course Builder has figures in this period yet.',
+  authoring_metrics_scroll: 'Authoring metrics by course (scrolls sideways on small screens)',
+  authoring_metrics_caption: 'Authoring metrics, one row per course',
+  authoring_metrics_course_fallback: 'Course {id}',
+  authoring_metrics_col_course: 'Course',
+  authoring_metrics_col_generation: 'Generation and AI edit time',
+  authoring_metrics_col_interview: 'Interview time',
+  authoring_metrics_col_author: 'Author time',
+  authoring_metrics_col_build: 'Build cost',
+  authoring_metrics_col_maintenance: 'Maintenance cost',
+  authoring_metrics_col_content: 'Content',
+  authoring_metrics_col_elements: 'What the AI wrote',
+  authoring_metrics_not_recorded: 'Not recorded',
+  authoring_metrics_content: 'Lessons: {lessons}, questions: {questions}',
+  authoring_metrics_no_ai_elements: 'Nothing yet',
+  authoring_metrics_split:
+    'Kept: {kept} ({share}), revised on request: {revised}, edited: {edited}, unknown: {unknown}',
+  authoring_metrics_note:
+    'Times are wall-clock. Cost includes failed calls and leaves out tutoring and personal help for learners. Author time is only recorded when review time is turned on.',
+  authoring_metrics_duration_seconds: '{s} s',
+  authoring_metrics_duration_minutes: '{m} min {s} s',
+  authoring_metrics_duration_hours: '{h} h {m} min',
+};

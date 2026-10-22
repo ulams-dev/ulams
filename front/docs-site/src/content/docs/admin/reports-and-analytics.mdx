@@ -33,6 +33,17 @@ seeder gives to the `admin` role. Which events produce notifications is describe
 [Notifications](/admin/notifications/) and
 [Events and notifications](/reference/events-and-notifications/).
 
+## Authoring (`/analytics/authoring`)
+
+One row per course built with the Course Builder: generation and AI edit time, interview time, author time, build and
+maintenance cost, the lessons and questions produced, and what became of the AI's elements (kept, revised on request,
+edited, unknown). Filter by the date the courses were created, and **Download CSV** or **Download JSON lines** for the
+same rows with every column and the `method_version` of the definitions. The menu entry and the page need the permission
+`authoring_metrics_read`, which the seeder gives to the `admin` role. Author time reads "Not recorded" until review time is
+recorded, never zero, and nothing is compared with another academy or an industry figure. The definitions, the API and the
+cost rules are in [Authoring metrics](/operators/authoring-metrics/); authors see the same figures per course in the
+studio ([How a course was produced](/creators/course-production/)).
+
 ## Reports (`/analytics/reports`)
 
 <Screenshot name="admin-analytics-reports" alt="Four pie charts: money spent, popularity and time spent per course, and tutor popularity" />
