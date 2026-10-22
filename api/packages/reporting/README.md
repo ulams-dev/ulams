@@ -1,8 +1,9 @@
 # reporting: datasets for the report builder
 
 The foundation of the report builder (ADR 0194, plan `docs/plans/authoring-metric-and-report-builder.md`). This
-release has the **dataset registry** (RB-1) and the **report definition, query compiler and preview with small-group
-suppression** (RB-2); saved reports, the admin screen, schedules for saved reports and the OData feed follow in RB-3 to RB-7.
+release has the **dataset registry** (RB-1), the **report definition, query compiler and preview with small-group
+suppression** (RB-2) and **saved reports shared with roles** (RB-3); the admin screen, schedules for saved reports and
+the OData feed follow in RB-4 to RB-7.
 
 - `Contracts\ReportDataset`: a set of rows a report can be built on: `key()`, `label()`, `columns()` (typed
   `Support\Column` with filter operators, `groupable`, `aggregatable`, `personal`), `dateColumns()`, `permission()`,
@@ -27,6 +28,15 @@ suppression** (RB-2); saved reports, the admin screen, schedules for saved repor
   `baseQuery()`, suppression, typed values, and the record of row-level personal columns in `compliance_exports`.
 - `POST /api/admin/reporting/query` previews a definition (500 rows and the total). A POST that only reads: token
   `reports:read` is enough.
+
+- `saved_reports` (ulid, name, owner, definition, `visibility` private|roles, `shared_roles`, `last_run_at`, soft deletes) and
+  `Services\SavedReports`, the one place that decides who sees and changes a report: the owner and `reporting_manage`
+  see a private report, role holders see a shared one. A saved report always runs with the permissions of the runner.
+  `GET|POST /api/admin/reporting/saved`, `GET|PUT|DELETE .../saved/{id}`, `GET .../saved/{id}/run?format=json|csv|jsonl`.
+  A report whose dataset or column is gone shows `needs_repair` and answers 409 when run.
+- `Export\ReportExporter` streams CSV (BOM, formula-neutralised) or JSON lines up to `reporting.export_rows` and records
+  the export in `compliance_exports` with `saved_report_id` and `channel` (columns added by a `compliance` migration).
+- Permissions: `reporting_read` (admin, tutor), `reporting_create` and `reporting_manage` (admin), `reporting_ai_usage` (admin).
 
 Column names the compiler will accept come from the registry only; there is no path from user input to SQL.
 `Tests\Concerns\AssertsDatasetContract` is the check every dataset must pass (the base query selects the declared
