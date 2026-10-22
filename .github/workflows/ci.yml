@@ -383,10 +383,20 @@ jobs:
 
       # ffprobe reads the length of audio/video topics (topic-types, php-ffmpeg) and ffmpeg
       # transcodes in packages/video; both are in our PHP image (api/docker/php/install.sh).
+      # The Ubuntu mirrors are sometimes very slow or fail (apt exit 100; one shard sat 26 minutes here and hit the
+      # 30 minute job limit, which cancelled the whole job): bound every apt call, retry, and cap the step.
       - name: Install ffmpeg
+        timeout-minutes: 10
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends ffmpeg
+          apt_opts="-o Acquire::Retries=3 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 -o Dpkg::Use-Pty=0"
+          for attempt in 1 2 3; do
+            if timeout 180 sudo apt-get update -qq $apt_opts &&
+               timeout 360 sudo apt-get install -y -qq --no-install-recommends $apt_opts ffmpeg; then
+              break
+            fi
+            if [ "$attempt" = 3 ]; then echo "::error::apt could not install ffmpeg after 3 attempts"; exit 1; fi
+            echo "apt attempt $attempt failed, retrying"; sleep 15
+          done
           ffprobe -version | head -1
 
       - uses: shivammathur/setup-php@v2
