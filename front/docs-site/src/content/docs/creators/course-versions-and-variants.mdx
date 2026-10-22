@@ -18,8 +18,7 @@ per audience from the same sources, each variant reviewed as a diff against the 
 created as its own course and grouped with the base as a family); numbered course releases and a screen that compares
 any two versions, a variant included; and the **routing of learners between variants through the API**: the learner's own choice, an assignment by an
 administrator or a rule, the optional placement check, hints to switch, one entitlement for the whole family, progress carried over between variants and
-mandatory training that accepts any variant. **Coming:** the learner screens for all of this (the picker on the course page and the placement check), and variant-aware Living Course updates and
-certificates that name the variant. Progress is tracked in the [roadmap](/roadmap/)
+mandatory training that accepts any variant. **Also built:** a source update reaches every variant as its own reviewable proposal (one analysis for all, shared elements take the base's patch at no cost) and certificates name the variant. **Coming:** the learner screens for the routing, a tabbed review of the variants' proposals, and rebasing a variant on a newer base. Progress is tracked in the [roadmap](/roadmap/)
 (Phase 3.1 and Phase 4.4); the design is in `docs/plans/course-versions-and-variants.md` and ADR 0192.
 </Aside>
 
@@ -159,11 +158,20 @@ Learners are routed to a variant by their own choice, by an administrator or by 
   refund or an expiry ends all of them, and the learner's progress is kept.
 - **Mandatory training.** An obligation on the course is fulfilled by finishing any variant, unless an administrator **pins** one; then the learner is given the pinned variant and only it counts.
 
+### Source updates and certificates
+
+- **Living Course reaches every variant.** When a source changes, you get a proposal for the base course and one for each variant, grouped. A variant element that
+  is the same as the base's is not analysed again: it takes the base's patch, so the same source change is analysed once and costs nothing extra for the variants
+  that inherit it. Only elements a variant changed are analysed for it, with its audience in mind. Review each proposal as usual, accept a shared patch in all variants
+  at once with **accept in group** (`POST .../items/{item}/accept-in-group`), and apply each on its own: applying a variant's proposal updates that variant's course, writes that variant's release and
+  tells that variant's learners, and leaves the other courses alone.
+- **Certificates name the variant.** Each variant course has its own certificate template (its title already carries the variant), a template can print the variant with
+  `@VarCourseVariant`, and the public verification record of a certificate shows it.
+
 ### What is not built yet
 
-- **The learner screens.** The picker on the course page, the placement check and the "assigned by your organisation" notice in the learner interface are planned.
-- **Living Course for variants.** When a source changes, Living Course still proposes the update for the base course only. Proposing the matching patch for every variant
-  that inherits the changed element, rebasing a variant on a newer base, and certificates that name the variant are planned.
+- **A tabbed review of the group in the studio.** The API has it (`siblings`, `accept-in-group`); the studio's update screen shows one proposal at a time for now.
+- **Rebasing a variant on a newer base**, and improvements from learner insights for a variant (they propose for the base course).
 - **Chat edits on a variant.** The element chat edits the base course.
 
 ## Decisions behind it

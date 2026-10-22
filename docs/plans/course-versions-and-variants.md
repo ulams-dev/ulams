@@ -1,6 +1,6 @@
 # Plan: course versions with a visual diff, and course variants by level and role
 
-Status: approved by the owner on 2026-10-22 with the recommended defaults for Q1 to Q11; ADR 0192 is Accepted. Milestones CV-1, CV-2 and CV-4 are merged; CV-3 (the studio compare screen, the version list API and the SDK client) is implemented in PR #425; CV-5 is being built in three parts (1: API, routing, entitlement and progress; 2: learner screens; 3: Living Course and certificates) and part 1 is implemented; CV-6 is not.
+Status: approved by the owner on 2026-10-22 with the recommended defaults for Q1 to Q11; ADR 0192 is Accepted. Milestones CV-1, CV-2 and CV-4 are merged; CV-3 (the studio compare screen, the version list API and the SDK client) is implemented in PR #425; CV-5 is being built in three parts (1: API, routing, entitlement and progress; 2: learner screens; 3: Living Course and certificates) and parts 1 and 3 are implemented; CV-6 is not.
 TODO items: Phase 3.1 and Phase 4.4 in `docs/ROADMAP-TODO.md` (all marked `(new)`). The spec
 (`docs/ROADMAP-PROMPT.md`) does not mention either feature yet; it needs a matching paragraph in Phases 3 and 4
 once the owner approves.
@@ -332,6 +332,8 @@ of the base counts for the base level, one a variant added or changed for that v
 `api/admin/course-variant-groups/{group}` (`assignments`, `rules`, `placement`, settings) and the hint is dismissed with `POST api/courses/{course}/variant/hints/{hint}/dismiss`.
 `PUT api/courses/{course}/variant` carries the source (`self`, `placement` with `attempt_id`, `hint` with `hint_id`). Completion carry-over pairs topics by element id, content and parent
 (not their order, which moves when a variant skips a lesson) and never pairs quiz topics.
+
+Built in CV-5 part 3: the proposal group is `living_course_proposals.proposal_group` with `variant_id`; a variant element counts as inheriting when it is word for word the base's (fingerprint of the element), and the base patch is copied once the base analysis settles (also when some groups failed), so the shared patches cost nothing. Divergent elements use the same `update` task with the audience as data, not a separate `variant_patch` task. New sections of the source ("uncovered") are for the base only. Staleness marks stay per session (the base's). `POST proposals/{p}/items/{i}/accept-in-group` is the "accept in all variants"; a tabbed review screen in the studio and insights proposals per variant are not built. The certificate shows the variant through `@VarCourseVariant` and `course_variant` on the verification record.
 
 ## 13. Tenant isolation, security and privacy
 
