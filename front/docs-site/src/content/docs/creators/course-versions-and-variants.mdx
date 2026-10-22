@@ -1,0 +1,100 @@
+---
+title: Course versions and variants
+description: Planned. Numbered course versions you can compare side by side after an edit or a source update, and variants of one course for different levels and roles, drafted together by the Course Builder from the same cited sources.
+sidebar:
+  order: 42
+coming: true
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+<Aside type="caution" title="Planned, not built yet">
+Nothing on this page is in the code yet. It describes the planned behaviour so you can comment on it
+before it is built. The design is in `docs/plans/course-versions-and-variants.md` and ADR 0192, both
+waiting for approval; progress is tracked in the [roadmap](/roadmap/) (Phase 3.1 and Phase 4.4).
+Details can still change.
+</Aside>
+
+Two related features answer two questions authors ask about AI-built courses: **"what exactly changed
+since last time?"** and **"why does everybody get the same course?"**
+
+## What you can do today
+
+These parts already work and the planned features build on them:
+
+- The [Course Builder](/creators/course-builder/) keeps every version of a course. **Version history**
+  lists them, **Undo**, **Redo** and **Restore** move between them, and every AI change is shown as a diff
+  you approve or reject.
+- [Living Course](/creators/course-builder/#10-keep-the-course-in-sync-with-its-sources) proposes cited
+  updates when a source changes, reviewed as one diff.
+- Course-as-code (`ulams course diff`, `pull`, `push`) compares a course folder with the server, element by
+  element ([worked example](/creators/git-sync-worked-example/)).
+- The interview asks for one audience and one level per course.
+
+What is missing: a list of the versions learners actually got, a way to compare **any two** of them on one
+screen, and more than one audience per course.
+
+## Course versions with a visual diff
+
+### The problem
+
+A course changes for many reasons: you edit a lesson, the assistant rewrites a paragraph, a source update
+is accepted, a colleague pushes from Git. Each change is reviewed on its own, but later nobody can answer
+"what did learners see in March, and what is different now?" without reading both versions.
+
+### Planned behaviour
+
+- **A version for every change that reaches learners.** When an approved change is applied (your edit, a
+  chat edit, an accepted Living Course update, a course-as-code push or an improvement from learner
+  insights), the course gets a new numbered version. Each version records what triggered it, which source
+  revisions it was written from, who approved it and when.
+- **A version list per course** in the studio, newest first, with a one-line summary of each version
+  ("3 lessons changed, 1 quiz answer changed, 5 citations updated").
+- **Compare any two versions.** Pick two versions (not only neighbours) and the studio shows:
+  - the course tree with modules, lessons and elements marked as added, removed, moved or changed;
+  - word-level changes inside text, side by side or inline;
+  - citations that were added, removed or now point to a newer revision of the source, with the passage
+    text;
+  - quiz changes: question, options, explanation and the correct answer, with a warning when a changed
+    answer means learners will be asked to re-attempt (the existing progress rules decide that, past scores
+    never change).
+- **The same comparison everywhere.** The studio, the `ulams` CLI and the MCP server use one diff, so an
+  agent and an author see the same changes.
+- **Accessible by design.** Added and removed content is marked with text and icons as well as colour, and
+  the comparison works with the keyboard and a screen reader.
+
+## Course variants by level and role
+
+### The problem
+
+Today every learner gets the same course regardless of their level and role. The expert wades through the
+basics, and the beginner gets lost in the middle. Building separate courses by hand means separate sources,
+separate citations and separate updates that drift apart.
+
+### Planned behaviour
+
+- **The interview asks who the course is for.** When you build a course, the assistant asks which levels
+  (for example beginner, intermediate, expert) and which roles (for example developer, support, manager)
+  to cover. "One course for everyone" stays the default.
+- **Several variants drafted at once.** After you approve the base outline, the builder drafts one variant
+  per audience. A variant skips, condenses or deepens lessons and may add material, but only from the same
+  sources: every generated element still cites its source passages. The cost estimate is shown before you
+  start, and the number of variants per course is capped.
+- **Review each variant as a diff against the base.** You see exactly how the expert variant differs from
+  the base course, using the same comparison screen as for versions, and approve variants one by one.
+- **One source of truth.** A variant is a branch of one course, not a copy. When a source changes, Living
+  Course proposes the update for the base and for every variant that uses the changed part, so variants do
+  not drift apart.
+- **Learners start in the right variant.** A learner can choose their role and level when they enrol, take
+  a short placement check built from the course's cited objectives, or be assigned by an admin or an
+  enrolment rule. If the learner insights suggest the variant is too easy or too hard, the learner gets a
+  hint to switch; nothing switches without their confirmation, and completed lessons that are identical in
+  both variants stay completed.
+- **One purchase, all variants.** Access to the course covers all its variants; the certificate names the
+  variant the learner completed.
+
+## Questions still open
+
+The plan lists open questions with recommended defaults, for example whether a variant is its own LMS
+course or part of one course, whether learners may switch variants freely, and the default cap on the
+number of variants. They are listed in section 18 of the plan.
