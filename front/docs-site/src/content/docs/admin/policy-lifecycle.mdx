@@ -1,0 +1,86 @@
+---
+title: Policy lifecycle
+description: Turn a policy document into one cited course per department, approve the first version, and follow who is assigned, who finished and which policy version their certificate certifies.
+sidebar:
+  order: 11
+modules:
+  - policy-lifecycle
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+The policy lifecycle module starts from a policy document (Markdown, PDF or DOCX) and a list of departments. It prepares one
+[Course Builder](/admin/course-builder/) course for each department, every lesson and quiz question citing the policy text, and
+gives the policy owner a dashboard of who is trained. Everything is available through the API (`/api/admin/policies`) and the CLI
+(`ulams policies`); the studio screens come with the next milestone.
+
+<Aside type="note">
+AI proposes, the owner approves. The module prepares each department's course up to the outline review. The owner approves the
+outline, the generated lessons and the apply in the Studio, publishes the course, and then approves the policy version. No AI
+decides who must take a course or whether anyone completed it. Uploaded policy text is treated as untrusted input: instructions
+inside it never change the brief, the output schema or what is published.
+</Aside>
+
+## Permissions
+
+| Permission | Allows |
+|---|---|
+| `policy_manage` | Every policy of the tenant: create, generate, approve, read the dashboard. The `admin` role has it. |
+| `policy_owner` | The policies the user owns. Give it to the people who own policies (HR, compliance, a team lead). |
+
+An admin can act for an absent owner; the audit records that the approver was not the owner. Both permissions also need the Course
+Builder permission (`course_builder_use`) for the owner to review the courses in the Studio.
+
+## From document to courses
+
+1. **Create the policy.** `POST /api/admin/policies` (multipart) with `title`, `file`, the shared `brief` (`totalMinutes`,
+   `lessonMinutes`, `language`, `tone`) and `departments`. Each department has a `label`, an optional `group_id` (the audience; a
+   new group is created when omitted), `seniority` (`junior`, `mid`, `senior`, `mixed`), `priorExperience` (`none`, `some`,
+   `expert`) and optionally its own `totalMinutes`. The file is stored privately as version 1, a draft. Nothing is generated yet.
+2. **Look at the estimate.** `GET /api/admin/policies/{policy}` returns an estimate of the generation cost per department, from the
+   builder's per-lesson figure. It is an estimate, not a quote.
+3. **Generate.** `POST /api/admin/policies/{policy}/variants/generate` starts one builder session per department, each with its own
+   copy of the policy file as the source. Departments run one after the other. The module answers the builder's interview from the
+   policy and department brief (seniority sets the level, prior experience is stated in the target group, a final test is always
+   included) and stops at the outline review.
+4. **Review in the Studio.** Approve the outline, let the lessons generate, approve the apply and publish the course, exactly as for
+   any generated course. Each department's session is in the owner's list of builder sessions, titled `<policy> / <department>`.
+5. **Approve the version.** `POST /api/admin/policies/{policy}/versions/1/approve` works once every department course is applied and
+   published; the answer lists what is still missing otherwise.
+
+On approval each department's course becomes mandatory (`default_due_days` is the policy's major due days, 30 by default), a
+one-course learning path is created, and an enrolment rule `group equals <audience group>` enrols the group's members now and
+everyone who joins the group later. Reminders, escalation, certificates and the [compliance](/admin/compliance/) reports apply
+unchanged.
+
+## The owner dashboard
+
+`GET /api/admin/policies/{policy}/dashboard` returns, per department, the stage of the generation (`waiting`, `ingesting`,
+`outline_review`, `generating`, `apply_review`, `applied`, `failed`) and the counts assigned, completed, pending and overdue; and a
+page of people with the course version they took, the policy version their certificate certifies, and the certificate with its
+verification path. Filters: `variant` (department), `status`, `per_page`.
+
+`GET /api/admin/policies/{policy}/dashboard/export` streams the same people as CSV. Each export is recorded in `compliance_exports`
+with who exported it. Scoped tokens use the `reports` area for both dashboard routes and the `builder` area for the rest.
+
+<Aside type="note">
+The dashboard counts assignments of the department courses whatever created them (the enrolment rule or a manual assignment). It
+does not use the shared reporting dataset registry yet; the export endpoint is its own until that registry is part of the product.
+</Aside>
+
+## Audit
+
+Every state change (`policy.created`, `policy.variants.requested`, `policy.version.approved`) is written to the Living Course audit
+chain, so the existing audit export and verification cover it.
+
+## Install
+
+Run the migrations and the permission seeder after an upgrade, once per tenant:
+
+```bash
+php artisan migrate --force
+php artisan db:seed --class="Ulams\\PolicyLifecycle\\Database\\Seeders\\PolicyPermissionSeeder" --force
+```
+
+The module needs a configured `AI_DRIVER` and a queue worker for the builder queue, like the Course Builder. Without AI, creating a
+policy and reading its dashboard still work; generating is refused with a clear message.

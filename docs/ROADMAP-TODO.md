@@ -992,9 +992,11 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
         installation. Ticked because the goal holds; raise if you would rather have it left open.
 - [ ] (new) Policy lifecycle delivery: link the uploaded policy version and cited fragments to all departmental
       course variants; use departments, duration, seniority and experience from the course brief;
-      apply an uploaded style guide and provision distinct branded department domains (Coming).
+      apply an uploaded style guide and provision distinct branded department domains (Coming)
+      (partial: P6R-8 done, see the note below; style guide and branded domains pending).
 - [ ] (new) Policy owner dashboard: show assigned people by department, completed and pending training,
-      course version and issued PDF certificate; support the branded tenant learning application (Coming).
+      course version and issued PDF certificate; support the branded tenant learning application (Coming)
+      (partial: API and CSV export done in P6R-8; Studio screen and branded application pending).
 - [ ] (new) On an approved policy change, update affected course variants, invalidate superseded certificates,
       notify learners and policy owners with a source diff, assign a new exam for a minor change or a new
       course for a major change, and issue a replacement PDF certificate after completion (Coming).
@@ -1003,6 +1005,18 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       replacement certificate), P6R-10 (studio UI) and P6R-12 (demo); ADR 0140 Proposed. The branded department domains move to
       `academy-entry-points.md` (EP-1 to EP-4, ADR 0195 amends 0141) and the style guide to `style-guide-course-design.md`
       (SG-1 to SG-4, ADR 0196). These labels live in the hero story of the unmerged `feat/landing-admin-panel` branch, not on `main`
+      Note 2026-10-23 (P6R-8): package `api/packages/policy-lifecycle` (ADR 0140, now Accepted): `POST /api/admin/policies` stores the
+      policy file as version 1 and one variant per department (audience group, seniority, prior experience, duration);
+      `variants/generate` starts one Course Builder session per department, each with its own copy of the policy file as source, answers the
+      interview from the policy and department brief and stops at the outline review (AI proposes, the owner approves in the Studio);
+      `versions/1/approve` needs every department course applied and published, then makes the courses mandatory and enrols each
+      department's group through a rule on a one-course path; certificates are linked to the policy version in `policy_certificates`;
+      `GET /dashboard` and `/dashboard/export` give per-department counts and per-person course version, policy version and certificate.
+      Every step is in the Living Course audit chain. Differences from the plan: departments are sessions with their own source copy (a source
+      belongs to one session), so `policy_variants.source_id` replaces `policies.source_id`; the policy brief lives on the policy and its
+      departments because brief schema v3 was taken by course variants (ADR 0192), so no interview change; the export is its own endpoint
+      because the shared reporting dataset registry (`policy_training` dataset) is not merged. Not done: policy changes (P6R-9), Studio UI
+      (P6R-10), exam-only course per department (P6R-9), style guide tokens (SG), department hosts (EP-1 to EP-4), demo (P6R-12).
 - [ ] (new) Branded entry points inside one academy: per-department, per-course and per-role hosts with their own theme,
       catalogue focus and SEO settings, resolved to the tenant by the front; access never depends on the host; per-host
       `__Host-` sessions with a one-time hand-off code between hosts; entry hosts join the trusted origins and return URLs;
