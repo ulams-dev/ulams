@@ -458,6 +458,13 @@
   color: var(--ulams-studio-muted);
 }
 .st-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--ulams-studio-ink);
+}
 /* interactive preview: the course in a frame, the element chat on the right */
 .st-pv {
   display: grid;
@@ -483,8 +490,6 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 16px;
-  margin-bottom: 16px;
-  border-left: 4px solid var(--ulams-studio-ink);
 }
 .st-banner[hidden] {
   display: none;
@@ -987,7 +992,6 @@
 .cb-apply .cb-table th,
 .cb-apply .cb-table td {
   overflow-wrap: anywhere;
-}
 }
 .st-pv-bar h1 {
   margin: 0;
