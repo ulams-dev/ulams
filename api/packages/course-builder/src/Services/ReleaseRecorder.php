@@ -3,7 +3,7 @@
 namespace Ulams\CourseBuilder\Services;
 
 use Illuminate\Support\Facades\DB;
-use Ulams\CourseBuilder\Blueprint\BlueprintDiff;
+use Ulams\CourseBuilder\Blueprint\SemanticDiff;
 use Ulams\CourseBuilder\Models\Release;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Variant;
@@ -145,38 +145,31 @@ final class ReleaseRecorder
 
     /**
      * Counts of what changed between two blueprint documents, for the release list. An empty `$from` is the first
-     * release: everything is added.
+     * release: everything is added. It reads the semantic diff (ADR 0192, CV-2), so an element that moved to another
+     * parent or to another place among its siblings is counted too (`moved`, `lessonsMoved`) and an answer key is the set
+     * of correct options of a question.
      *
-     * @return array{first:bool,counts:array{added:int,changed:int,removed:int},lessons:array{added:int,changed:int,removed:int},questions:array{added:int,changed:int,removed:int},citationsChanged:int,answerKeysChanged:int}
+     * @return array{first:bool,counts:array{added:int,changed:int,removed:int},lessons:array{added:int,changed:int,removed:int},questions:array{added:int,changed:int,removed:int},moved:int,lessonsMoved:int,citationsChanged:int,answerKeysChanged:int}
      */
     public static function summary(array $from, array $to): array
     {
-        $changes = BlueprintDiff::compare($from, $to);
-        $byType = fn (string $type) => BlueprintDiff::counts(array_values(array_filter($changes, fn ($c) => $c['type'] === $type)));
-        $citations = 0;
-        $questions = [];
-        foreach ($changes as $c) {
-            if ($c['kind'] !== 'changed') {
-                continue;
-            }
-            foreach ($c['fields'] as $field) {
-                if ($field['field'] === 'citations') {
-                    $citations++;
-                }
-                // the correct flag lives on the option; the question it belongs to is its last ancestor
-                if ($c['type'] === 'option' && $field['field'] === 'correct' && $c['ancestors'] !== []) {
-                    $questions[end($c['ancestors'])] = true;
-                }
-            }
-        }
+        $diff = SemanticDiff::compare($from, $to);
+        $summary = $diff['summary'];
+        $kinds = fn (array $c) => ['added' => $c['added'], 'changed' => $c['changed'], 'removed' => $c['removed']];
+        $moves = fn (array $c) => $c['moved'] + $c['reordered'];
+        $blank = ['added' => 0, 'changed' => 0, 'removed' => 0, 'moved' => 0, 'reordered' => 0];
+        $lessons = $summary['types']['lesson'] ?? $blank;
+        $questions = $summary['types']['question'] ?? $blank;
 
         return [
-            'first' => $from === [],
-            'counts' => BlueprintDiff::counts($changes),
-            'lessons' => $byType('lesson'),
-            'questions' => $byType('question'),
-            'citationsChanged' => $citations,
-            'answerKeysChanged' => count($questions),
+            'first' => $summary['first'],
+            'counts' => $kinds($summary['counts']),
+            'lessons' => $kinds($lessons),
+            'questions' => $kinds($questions),
+            'moved' => $moves($summary['counts']),
+            'lessonsMoved' => $moves($lessons),
+            'citationsChanged' => count(array_filter($diff['changes'], fn ($c) => $c['citations'] !== null)),
+            'answerKeysChanged' => $summary['quiz']['answerKeysChanged'],
         ];
     }
 }

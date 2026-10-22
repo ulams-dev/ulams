@@ -429,9 +429,8 @@
                   },
                   {
                     "title": "Course versions with a visual diff",
-                    "text": "A studio screen to pick any two versions or releases and compare them side by side: lessons added, removed or moved, word-level text changes, changed citations and quiz answers. The releases list and the compare API, command and agent tool already exist.",
+                    "text": "A studio screen compares any two versions or releases, or the base course with a variant: the changed elements as a tree, word-level text changes, the passages behind changed citations and the effect on quiz answers. Each change is marked by a word and a symbol, not by colour alone.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming",
                     "packages": [
                       "authoring-metrics"
                     ]

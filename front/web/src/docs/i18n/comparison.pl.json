@@ -429,9 +429,8 @@
                   },
                   {
                     "title": "Wersje kursu z wizualnym porównaniem",
-                    "text": "Ekran w Studio, na którym wybierzesz dowolne dwie wersje lub wydania i porównasz je obok siebie: dodane, usunięte i przeniesione lekcje, zmiany w tekście co do słowa, zmienione cytowania i odpowiedzi w quizach. Lista wydań oraz API, polecenie i narzędzie agenta do porównywania już istnieją.",
+                    "text": "Ekran w Studio porównuje dowolne dwie wersje lub wydania albo kurs bazowy z wariantem: zmienione elementy jako drzewo, zmiany w tekście co do słowa, fragmenty stojące za zmienionymi cytowaniami i wpływ na odpowiedzi w quizach. Każda zmiana jest oznaczona słowem i symbolem, nie tylko kolorem.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming",
                     "packages": [
                       "authoring-metrics"
                     ]

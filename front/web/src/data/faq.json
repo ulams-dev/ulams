@@ -75,7 +75,7 @@
         },
         {
           "q": "Can I see what changed between two versions of a course?",
-          "a": "Partly. Every apply is recorded as a numbered release, listed in the studio, and you can compare any two versions or releases through the API, the command line or an AI agent. The studio screen that shows the comparison side by side is not built yet."
+          "a": "Yes. Every apply is recorded as a numbered release, listed in the studio. On the compare screen you pick any two versions or releases, or a base course and a variant, and see the changed elements, word-level text changes, changed citations with their passages and the effect on quiz answers. The same comparison is available through the API, the command line and an AI agent. It covers courses made with the Course Builder."
         },
         {
           "q": "How were the numbers on this site measured?",

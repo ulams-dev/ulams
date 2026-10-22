@@ -75,7 +75,7 @@
         },
         {
           "q": "Czy mogę zobaczyć, co zmieniło się między dwiema wersjami kursu?",
-          "a": "Częściowo. Każde zastosowanie zmiany jest zapisywane jako numerowane wydanie widoczne w Studio, a dowolne dwie wersje lub wydania porównasz przez API, wiersz poleceń albo agenta AI. Ekran w Studio pokazujący porównanie obok siebie nie jest jeszcze gotowy."
+          "a": "Tak. Każde zastosowanie zmiany jest zapisywane jako numerowane wydanie widoczne w Studio. Na ekranie porównania wybierasz dowolne dwie wersje lub wydania albo kurs bazowy i wariant i widzisz zmienione elementy, zmiany w tekście co do słowa, zmienione cytowania z ich fragmentami i wpływ na odpowiedzi w quizach. To samo porównanie jest dostępne przez API, wiersz poleceń i agenta AI. Obejmuje kursy stworzone w Course Builder."
         },
         {
           "q": "Jak zmierzono liczby na tej stronie?",

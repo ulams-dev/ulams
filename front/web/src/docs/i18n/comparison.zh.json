@@ -428,9 +428,8 @@
                   },
                   {
                     "title": "带可视化对比的课程版本",
-                    "text": "在 Studio 中选取任意两个版本或发布记录并排对比的界面：新增、删除或移动的课时，逐词的文本变化，以及变更的引用和测验答案。发布记录列表以及用于对比的 API、命令和智能体工具已经可用。",
+                    "text": "Studio 中的界面可以对比任意两个版本或发布记录，或对比基础课程与变体：以树形显示变更的元素、逐词的文本变化、变更引用背后的段落，以及对测验答案的影响。每处变化都用文字和符号标记，而不只靠颜色。",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming",
                     "packages": [
                       "authoring-metrics"
                     ]
