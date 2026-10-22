@@ -3,7 +3,6 @@ import { validateDocument } from "@ulams/ui/render-core";
 import type { UiNode } from "@ulams/ui/render-core";
 import { BRANDON_HALL_SOURCE, CHAPMAN_SOURCE, IMPACT_PAGES, impactCopy, impactPage } from "../../src/lib/impact-pages.ts";
 import { applyLandingStatus } from "../../src/lib/landing-status.ts";
-import { landingDocFor } from "../../src/lib/docs.ts";
 import { LOCALES, publicPagePath } from "../../src/i18n/locales.ts";
 
 const ofType = (node: UiNode, name: string): UiNode[] => [
@@ -89,47 +88,4 @@ describe("content cost and reporting pages", () => {
     }
     expect(JSON.stringify(impactCopy("reporting", "en"))).not.toContain("small minority");
   });
-});
-
-describe("home call-to-action bands", () => {
-  const text = (b: { props?: Record<string, unknown> }) => JSON.stringify(b.props);
-  for (const locale of LOCALES) {
-    it(`${locale}: two separate, high bands that link to the two pages`, () => {
-      const doc = landingDocFor("platform", locale)!;
-      const bands = ofType(doc, "CtaBand");
-      const cost = bands.find((b) => b.props!.id === "cost-cta")!;
-      const reporting = bands.find((b) => b.props!.id === "reporting-cta")!;
-      expect((cost.props!.cta as { href: string }).href).toBe(publicPagePath(locale, "content-cost"));
-      expect((reporting.props!.cta as { href: string }).href).toBe(publicPagePath(locale, "reporting"));
-      const main = doc.children!.find((n) => n.component === "Main")!;
-      const order = main.children!.map((n) => String(n.props?.id ?? n.component));
-      expect(Math.abs(order.indexOf("cost-cta") - order.indexOf("reporting-cta"))).toBeGreaterThan(1);
-      expect(order.indexOf("cost-cta")).toBeLessThan(order.indexOf("agents"));
-      expect(order.indexOf("reporting-cta")).toBeLessThan(order.indexOf("agents"));
-    });
-
-    it(`${locale}: the speed block states one measured run and no speed-up ratio`, () => {
-      const cost = ofType(landingDocFor("platform", locale)!, "CtaBand").find((b) => b.props!.id === "cost-cta")!;
-      const json = text(cost);
-      for (const figure of ["13", "18", "35", "27", "24", "57", "23", "49", "716"]) expect(json).toContain(figure);
-      expect(json).toContain("7:44");
-      expect(json).toMatch(/7 (min|分) ?44/);
-      expect(json).toMatch(/0[.,]28/);
-      expect(json).toContain(CHAPMAN_SOURCE);
-      const stats = cost.props!.stats as Array<{ kind?: string }>;
-      expect(stats.filter((s) => s.kind === "benchmark")).toHaveLength(1);
-      expect(stats).toHaveLength(5);
-      expect(json).not.toMatch(/\d\s*(x|×|times|razy)\b/i);
-    });
-
-    it(`${locale}: the analytics block lists the six shipped features`, () => {
-      const reporting = ofType(landingDocFor("platform", locale)!, "CtaBand").find((b) => b.props!.id === "reporting-cta")!;
-      expect(reporting.props!.variant).toBe("feature");
-      expect((reporting.props!.chips as unknown[]).length).toBe(6);
-      expect((reporting.props!.bullets as unknown[]).length).toBe(4);
-      expect((reporting.props!.panel as { label: string }).label.length).toBeGreaterThan(0);
-      expect(text(reporting)).toMatch(/xAPI/);
-      expect(text(reporting)).toMatch(/JSON/);
-    });
-  }
 });

@@ -205,17 +205,15 @@ test("the FAQ page lists every question once, in every language, with one FAQPag
   expect(axe.violations.map((v) => v.id)).toEqual([]);
 });
 
-test("the content-cost and reporting pages and their home call-to-action bands", async ({ page }) => {
+test("the content-cost and reporting pages and the home story links to them", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const [prefix, lang] of [["", "en"], ["/pl", "pl"], ["/zh", "zh-Hans"]] as const) {
     await page.goto(`${base}${prefix}/`);
-    for (const [id, slug, event] of [["cost-cta", "content-cost", "cost_page_open"], ["reporting-cta", "reporting", "reporting_page_open"]] as const) {
-      const band = page.locator(`section#${id}`);
-      await expect(band.locator("h2")).toHaveCount(1);
-      await expect(band).toHaveClass(/u-cta--feature/);
-      if (id === "cost-cta") await expect(band.locator(".u-cta__stats li")).toHaveCount(4);
-      else await expect(band.locator(".u-cta__chips li")).toHaveCount(6);
-      const link = band.locator("a.u-btn").first();
+    for (const [id, slug, event] of [["how-draft", "content-cost", "cost_page_open"], ["how-evidence", "reporting", "reporting_page_open"]] as const) {
+      const step = page.locator(`#how-it-works li#${id}`);
+      await expect(step.locator("h3")).toHaveCount(1);
+      if (id === "how-draft") await expect(step.locator(".hs-run dd")).toHaveCount(6);
+      const link = step.locator("a.hs-cta");
       await expect(link).toHaveAttribute("href", `${prefix}/${slug}/`);
       await expect(link).toHaveAttribute("data-umami-event", event);
       await link.click();

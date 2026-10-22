@@ -1,6 +1,6 @@
 ---
 /** Platform product landing in Simplified Chinese. Only on a platform host; tenant sites have no language prefix. */
-import Render from "@ulams/ui/Render.astro";
+import HomeBody from "../../components/diagrams/HomeBody.astro";
 import Base from "../../layouts/Base.astro";
 import { platformPage } from "../../lib/platform-page.ts";
 
@@ -10,5 +10,5 @@ if (!page) return Astro.rewrite("/404");
 ---
 
 <Base theme="platform" title={page.meta.title} description={page.meta.description} lang={page.meta.lang} canonical={page.canonical} alternates={page.alternates} ogLocale={page.ogLocale} jsonLd={page.jsonLd}>
-  <Render doc={page.doc} data={page.data} />
+  <HomeBody doc={page.doc} data={page.data} locale="zh" />
 </Base>

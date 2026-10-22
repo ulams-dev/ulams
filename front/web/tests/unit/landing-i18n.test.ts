@@ -99,8 +99,8 @@ describe("translated landing documents keep the English structure", () => {
       expect(text).toContain(helmNotice);
       expect(text.replace(helmNotice, "")).not.toMatch(lang === "pl" ? /Wkrótce|w planach|mapie drogowej/i : /即将推出|路线图/);
     });
-    it(`${lang}: the actual display mode keeps the roadmap labels`, () => {
-      expect(JSON.stringify(applyLandingStatus(doc, "actual"))).toContain('"status":"coming"');
+    it(`${lang}: the actual display mode leaves the document as it is`, () => {
+      expect(JSON.stringify(applyLandingStatus(doc, "actual"))).toBe(JSON.stringify(doc));
     });
   }
 

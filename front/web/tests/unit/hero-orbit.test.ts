@@ -5,6 +5,7 @@ import { landingDocs } from "../../src/lib/docs.ts";
 import { applyLandingStatus } from "../../src/lib/landing-status.ts";
 import { comparisonModel } from "../../src/lib/comparison.ts";
 import { workflowsModel } from "../../src/lib/workflows.ts";
+import { planHomeBody } from "../../src/lib/home-story.ts";
 
 const platform = landingDocs.platform!;
 const hero = (doc: UiNode): UiNode =>
@@ -37,16 +38,12 @@ describe("platform product hero", () => {
     ).toEqual([]);
   });
 
-  it("puts one policy lifecycle in the hero and marks unbuilt compliance features honestly", () => {
+  it("carries no animation of its own: the how-it-works story follows it", () => {
     expect(hero(platform).props).not.toHaveProperty("capabilities");
-    expect(hero(platform).props!.diff).toMatchObject({
-      title: "Privacy policy · v1 → v2",
-      journey: [
-        { status: "available" }, { status: "available" }, { status: "coming" }, { status: "available" },
-        { status: "coming" }, { status: "available" }, { status: "coming" },
-      ],
-      visual: { chapters: ["Source", "Brief", "Teams", "Learning", "Oversight", "Change", "Renewal"] },
-    });
+    expect(hero(platform).props).not.toHaveProperty("diff");
+    expect(hero(platform)).not.toHaveProperty("final");
+    const plan = planHomeBody(platform)!;
+    expect(plan.main.map((p) => (p.kind === "story" ? "story" : p.node.component)).slice(0, 2)).toEqual(["Hero", "story"]);
     expect(hero(platform).props!.primaryCta).toMatchObject({ href: "#demos" });
     expect(hero(platform).props!.secondaryCta).toMatchObject({ href: "#self-host" });
   });

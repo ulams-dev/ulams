@@ -1,0 +1,38 @@
+---
+/**
+ * Body of the platform home page in one language: the page document rendered as usual, with the "how it works" story
+ * right after the hero (lib/home-story.ts). The main landmark is the one `Main` would render.
+ */
+import Render from "@ulams/ui/Render.astro";
+import { uiStrings } from "@ulams/ui/i18n";
+import type { UiNode } from "@ulams/ui/render-core";
+import { LOCALE_META, type Locale } from "../../i18n/locales.ts";
+import { homeStory, planHomeBody } from "../../lib/home-story.ts";
+import HomeStory from "./HomeStory.astro";
+
+interface Props {
+  doc: UiNode;
+  data?: unknown;
+  locale: Locale;
+}
+
+const { doc, data, locale } = Astro.props;
+const plan = planHomeBody(doc);
+const strings = uiStrings(LOCALE_META[locale].lang);
+const status = { available: strings.available, coming: strings.coming };
+const copy = homeStory(locale);
+---
+
+{
+  plan ? (
+    <>
+      {plan.before.map((node) => <Render doc={node} data={data} />)}
+      <main id="main" tabindex="-1" class="dg-main">
+        {plan.main.map((part) => (part.kind === "node" ? <Render doc={part.node} data={data} /> : <HomeStory copy={copy} status={status} />))}
+      </main>
+      {plan.after.map((node) => <Render doc={node} data={data} />)}
+    </>
+  ) : (
+    <Render doc={doc} data={data} />
+  )
+}
