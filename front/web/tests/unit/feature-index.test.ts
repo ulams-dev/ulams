@@ -11,11 +11,20 @@ const index = (doc: UiNode): Index => doc.children!.find((n) => n.component === 
 const en = index(comparisonDocFor("en")!);
 
 describe("comparison stakeholder feature catalogue", () => {
-  it("restores all 104 descriptions and 54 H5P content types", () => {
+  it("restores all 111 descriptions and 54 H5P content types", () => {
     const items = en.groups.flatMap((g) => g.items);
-    expect(items).toHaveLength(104);
+    expect(items).toHaveLength(111);
     expect(items.every((item) => item.text.length > 0)).toBe(true);
     expect(en.groups.find((g) => g.id === "h5p")!.tags).toHaveLength(54);
+  });
+  it("marks only what is not built as coming: learner routing and Git-driven updates", () => {
+    const items = en.groups.flatMap((g) => g.items as Array<{ title: string; status?: string }>);
+    const status = (title: string) => items.find((item) => item.title === title)?.status;
+    for (const title of ["Course releases and compare", "Course versions with a visual diff", "Course variants by level and role", "Course as code", "Git, Google Drive and Notion sources", "OpenID Connect and SAML 2.0 sign-in", "Per-tenant storage keys"]) {
+      expect(items.some((item) => item.title === title), title).toBe(true);
+      expect(status(title), title).toBeUndefined();
+    }
+    for (const title of ["Learners routed to a variant", "Git-driven course updates"]) expect(status(title), title).toBe("coming");
   });
   it("assigns every category to one of six stakeholders", () => {
     expect(en.audiences.map((a) => a.id)).toEqual(["learner", "author", "owner", "sales", "admin", "engineering"]);

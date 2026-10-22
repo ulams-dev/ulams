@@ -43,7 +43,7 @@
       "items": [
         {
           "q": "Z jakich materiałów mogę stworzyć kurs?",
-          "a": "Course Builder przyjmuje dokumenty Markdown, PDF i DOCX. Najlepiej sprawdzają się materiały z czytelną strukturą i tekstem — zeskanowany PDF bez warstwy tekstowej wymaga wcześniejszego rozpoznania tekstu. Domyślny limit pliku wynosi 20 MB, a dokumentu PDF — 300 stron."
+          "a": "Course Builder przyjmuje dokumenty Markdown, PDF i DOCX. Najlepiej sprawdzają się materiały z czytelną strukturą i tekstem — zeskanowany PDF bez warstwy tekstowej wymaga wcześniejszego rozpoznania tekstu. Domyślny limit pliku wynosi 20 MB, a dokumentu PDF — 300 stron. Możesz też połączyć repozytorium Git, plik lub folder na Dysku Google albo stronę Notion; konektory Dysku i Notion są wyłączone, dopóki administrator ich nie włączy."
         },
         {
           "q": "Co oznaczają odwołania do źródeł w wygenerowanym kursie?",
@@ -55,7 +55,7 @@
         },
         {
           "q": "Co się dzieje, gdy moja dokumentacja się zmieni?",
-          "a": "Living Course porównuje wersje źródeł i wskazuje powiązane elementy kursu, które mogą wymagać aktualizacji. Możesz przesłać nową wersję dokumentu lub skonfigurować połączenie z repozytorium Git albo stroną internetową. Zmiany w kursie wymagają decyzji autora — wykrycie nowej wersji źródła nie nadpisuje automatycznie opublikowanej treści."
+          "a": "Living Course porównuje wersje źródeł i wskazuje powiązane elementy kursu, które mogą wymagać aktualizacji. Możesz przesłać nową wersję dokumentu lub połączyć repozytorium Git, plik na Dysku Google, stronę Notion albo stronę internetową. Zmiany w kursie wymagają decyzji autora — wykrycie nowej wersji źródła nie nadpisuje automatycznie opublikowanej treści. Learner Insights potrafi też zamienić sekcję, z którą wielu uczących się ma trudność, w propozycję poprawki, którą przeglądasz tak samo."
         },
         {
           "q": "Czy moje dokumenty trafiają do zewnętrznego dostawcy AI?",
@@ -64,6 +64,22 @@
         {
           "q": "Czy mogę korzystać z ULAMS bez AI?",
           "a": "Tak. AI jest opcjonalne. Możesz ręcznie tworzyć kursy, dodawać materiały, zarządzać uczestnikami i dostępem oraz śledzić postępy. Wyłączenie AI nie wyłącza pozostałych funkcji LMS i nie wymaga posiadania klucza do usługi modelu."
+        },
+        {
+          "q": "Jak sprawdzić, co zmieniło AI?",
+          "a": "Każda zmiana AI, niezależnie od tego, czy pochodzi z generowania, edycji w czacie, aktualizacji źródła czy propozycji z danych o uczących się, trafia do Ciebie jako różnica: co zostaje usunięte, co dodane i jaki fragment za tym stoi. Akceptujesz całość, akceptujesz element po elemencie albo odrzucasz, a dziennik audytu zapisuje, kto co zatwierdził i kiedy. Nic nie trafia do uczących się bez zatwierdzenia, a historia wersji pozwala wrócić do wcześniejszej wersji."
+        },
+        {
+          "q": "Czy jeden kurs może mieć wersje dla różnych poziomów i ról?",
+          "a": "Tak, w Course Builder. Wywiad może poprosić o wersję dla początkujących, średnio zaawansowanych lub ekspertów oraz o role, które podasz. Każda wersja powstaje z tych samych źródeł, jest sprawdzana jako różnica względem kursu bazowego i zatwierdzana osobno jako własny, nieopublikowany kurs. Kierowanie każdego uczącego się do właściwej wersji nie jest jeszcze gotowe: dziś administrator zapisuje uczących się do wariantu ręcznie."
+        },
+        {
+          "q": "Czy mogę zobaczyć, co zmieniło się między dwiema wersjami kursu?",
+          "a": "Tak. Każde zastosowanie zmiany jest zapisywane jako numerowane wydanie widoczne w Studio. Na ekranie porównania wybierasz dowolne dwie wersje lub wydania albo kurs bazowy i wariant i widzisz zmienione elementy, zmiany w tekście co do słowa, zmienione cytowania z ich fragmentami i wpływ na odpowiedzi w quizach. To samo porównanie jest dostępne przez API, wiersz poleceń i agenta AI. Obejmuje kursy stworzone w Course Builder."
+        },
+        {
+          "q": "Jak zmierzono liczby na tej stronie?",
+          "a": "Pochodzą z pojedynczych przebiegów prawdziwego Studio z prawdziwym modelem, a każdy jest oznaczony jako jeden przebieg. Publiczne repozytorium dokumentacji z 13 fragmentami dało 6 lekcji i 18 pytań quizowych w 7 min 44 s generowania, za 0,28 USD. Strona Notion z 6 fragmentami: konspekt 27 s, lekcje, quizy i sprawdzenia 4 min 58 s, zastosowanie 1 s, za 0,1973 USD. Czasy i koszty skopiowano z zapisów samego Studio. Przegląd autora dochodzi na wierzch, jeden przebieg na małym źródle nic nie mówi o dużych, a żadnego współczynnika przyspieszenia nie podajemy."
         }
       ]
     },
@@ -124,6 +140,10 @@
         {
           "q": "Jak zaktualizować ULAMS do nowej wersji?",
           "a": "Najpierw zrób kopię zapasową bazy danych i plików, a potem wykonaj kroki aktualizacji opisane w dokumentacji dla Twojego wdrożenia. Aktualizacja uruchamia migracje bazy danych platformy i każdej akademii. Przed aktualizacją produkcji sprawdź w opisie wydania zmiany, które wymagają konfiguracji."
+        },
+        {
+          "q": "Gdzie są przechowywane pliki kursów, gdy hostuję samodzielnie?",
+          "a": "W magazynie zgodnym z S3, z jednym bucketem na akademię. Dołączony magazyn SeaweedFS daje każdej akademii własny klucz ograniczony do jej bucketu, więc klucz jednej akademii nie może wyświetlać, zapisywać ani usuwać plików innej; plik, którego dokładna nazwa jest znana, pozostaje dostępny do odczytu, tak jak zakłada polityka publicznego odczytu. Zewnętrzna usługa S3, taka jak AWS S3 lub Cloudflare R2, działa z jednym wspólnym kluczem, ale projekt nie testuje kont u dostawców. Obrazy zmienia wbudowana usługa albo, jako wybór wdrożenia, Cloudflare Image Transformations. Skrypt przenosi istniejącą instalację z MinIO."
         }
       ]
     },
@@ -142,6 +162,10 @@
         {
           "q": "Czy mogę rozbudować ULAMS o własne funkcje?",
           "a": "Tak. Platforma ma modularną architekturę i udostępnia kod źródłowy. Możesz tworzyć własne moduły API, typy treści, komponenty interfejsu i integracje. Dokumentacja zawiera przewodniki oraz przykładowy moduł rozszerzenia."
+        },
+        {
+          "q": "Czy mogę trzymać kurs w Git i edytować go jak kod?",
+          "a": "Częściowo. Wiersz poleceń zapisuje kurs jako folder plików Markdown i YAML, a potem pokazuje stan i różnice, pobiera, wysyła, stosuje zmiany i publikuje. Gdy zmienił się zarówno folder, jak i serwer, scala element po elemencie, a konflikty zapisuje w plikach, które rozwiązujesz. Jeszcze niegotowe: GitHub Action, akademia podglądowa dla każdego pull requesta, scalenie w Git uruchamiające propozycję Living Course oraz kursy, które nie powstały w Course Builder."
         }
       ]
     },
@@ -151,15 +175,19 @@
       "items": [
         {
           "q": "Czy mogę prowadzić kilka akademii na jednej instalacji?",
-          "a": "Tak. ULAMS obsługuje wiele akademii, czyli tenantów. Każda może mieć własne adresy, bazę danych, zasoby plikowe, konta i motyw. Pozwala to prowadzić osobne środowiska dla klientów, marek lub działów. Ich tworzenie i utrzymanie wymaga konfiguracji przez operatora platformy."
+          "a": "Tak. ULAMS obsługuje wiele akademii, czyli tenantów. Każda może mieć własne adresy, bazę danych, zasoby plikowe, konta i motyw. Pozwala to prowadzić osobne środowiska dla klientów, marek lub działów. Ich tworzenie i utrzymanie wymaga konfiguracji przez operatora platformy. Dziś każda akademia ma własną subdomenę; subdomena lub punkt wejścia dla każdego kursu lub roli w jednej akademii nie jest gotowy."
         },
         {
           "q": "Czy mogę dostosować wygląd akademii do swojej marki?",
-          "a": "Tak. Akademia może mieć własną nazwę, motyw, kolor akcentu i domenę. Jeśli potrzebujesz dalej idących zmian, możesz rozbudować dostarczony frontend lub stworzyć własny interfejs korzystający z API ULAMS."
+          "a": "Tak. Akademia może mieć własną nazwę, motyw, kolor akcentu, logo i domenę. Ekran motywu w panelu administratora sprawdza kontrast koloru akcentu względem WCAG 2.2 AA i nie zapisze koloru, który go nie spełnia. Jeśli potrzebujesz dalej idących zmian, możesz rozbudować dostarczony frontend lub stworzyć własny interfejs korzystający z API ULAMS."
         },
         {
           "q": "Czy mogę sprzedawać dostęp do kursów?",
-          "a": "Platforma zawiera moduły cen, płatności, koszyka i kuponów. Uruchomienie sprzedaży wymaga konfiguracji obsługiwanej bramki płatniczej i sprawdzenia całego procesu: od zakupu do przyznania dostępu. Dostępność poszczególnych scenariuszy sprzedaży zależy od używanej wersji i interfejsu."
+          "a": "Platforma zawiera moduły cen, płatności, koszyka i kuponów, a każde przyznanie dostępu jest zapisywane jako uprawnienie wraz ze źródłem. Uruchomienie sprzedaży wymaga konfiguracji obsługiwanej bramki płatniczej i sprawdzenia całego procesu: od zakupu do przyznania dostępu. Dostępność poszczególnych scenariuszy sprzedaży zależy od używanej wersji i interfejsu."
+        },
+        {
+          "q": "Czy ULAMS obsługuje jednokrotne logowanie (SSO)?",
+          "a": "Uczący się mogą logować się przez Google lub Facebooka, a każda akademia może połączyć własnego dostawcę tożsamości przez OpenID Connect lub SAML 2.0. Dostawców konfiguruje się przez API lub wiersz poleceń. Nie ma jeszcze ekranu w panelu administratora, logowanie SAML musi zaczynać się w ULAMS, a nie u dostawcy, grupy i role nie są mapowane, a provisioning SCIM nie jest gotowy. SAML przetestowano z Keycloak; Entra ID i Okta są opisane w dokumentacji, ale projekt ich nie uruchamiał."
         }
       ]
     },

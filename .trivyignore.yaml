@@ -17,356 +17,182 @@ misconfigurations:
 
 vulnerabilities:
   - id: CVE-2017-20165
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in debug (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2021-23568
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in extend2 (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): debug 0.7.4 is required by streamroller 0.4 (umi dev tooling); dev-only, never shipped."
+    expired_at: 2027-04-30
   - id: CVE-2022-21680
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in marked (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): marked 0.6.2 is pinned exactly by umi-core 1.9.10 (umi-serve dev server); dev-only, no release of umi-core accepts a newer marked."
+    expired_at: 2027-04-30
   - id: CVE-2022-21681
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in marked (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2022-24999
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in qs (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): marked 0.6.2 is pinned exactly by umi-core 1.9.10 (umi-serve dev server); dev-only, no release of umi-core accepts a newer marked."
+    expired_at: 2027-04-30
   - id: CVE-2024-21538
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in cross-spawn (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): cross-spawn 5.1.0 is required by execa 0.7 (yeoman tooling inside @ant-design/pro-cli); dev-only, runs on the developer machine with trusted arguments."
+    expired_at: 2027-04-30
   - id: CVE-2024-4367
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in pdfjs-dist (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2024-45296
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in path-to-regexp (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2024-52798
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in path-to-regexp (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pdfjs-dist 3.11.174 is pinned by react-pdf 8; moving react-pdf to 9+ changes the admin PDF viewer API and is tracked separately. Fix is 4.2.67+."
+    expired_at: 2027-04-30
   - id: CVE-2025-27152
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in axios (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
   - id: CVE-2025-47935
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in multer (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
   - id: CVE-2025-47944
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in multer (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
   - id: CVE-2025-48997
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in multer (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2025-59343
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in tar-fs (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2025-64756
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in glob (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
   - id: CVE-2025-71329
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in image-size (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): image-size 1.2.1 is required by @lumieducation/h5p-server 10.0.4; the fix is 2.0.3 (major) and h5p-server has no release that accepts it yet. Tracked with the H5P upgrade."
+    expired_at: 2027-04-30
   - id: CVE-2025-71330
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in image-size (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): image-size 1.2.1 is required by @lumieducation/h5p-server 10.0.4; the fix is 2.0.3 (major) and h5p-server has no release that accepts it yet. Tracked with the H5P upgrade."
+    expired_at: 2027-04-30
   - id: CVE-2025-7338
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in multer (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2025-7783
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in form-data (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-101916
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @grpc/grpc-js (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-102276
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in brace-expansion (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-102278
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in brace-expansion (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-111758
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in markdown-it (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-111759
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in markdown-it (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-112942
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in vite (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-12143
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in form-data (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-12151
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in undici (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-13149
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in brace-expansion (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-13676
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in fast-uri (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-14257
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in brace-expansion (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-1526
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in undici (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-1528
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in undici (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-16221
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in fast-uri (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-16633
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in pdfjs-dist (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-18446
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in fast-uri (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-19534
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in undici (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-22029
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @remix-run/router (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-2229
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in undici (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
   - id: CVE-2026-2359
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in multer (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
   - id: CVE-2026-23745
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in tar (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
   - id: CVE-2026-23950
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in tar (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
   - id: CVE-2026-24842
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in tar (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
   - id: CVE-2026-25639
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in axios (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
   - id: CVE-2026-26960
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in tar (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-26996
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in minimatch (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
   - id: CVE-2026-27212
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in swiper (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-27606
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in rollup (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-27903
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in minimatch (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-27904
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in minimatch (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-29074
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in svgo (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): swiper 11.2.8 is a direct front dependency; the fix is swiper 12 whose slider API changed. Planned with the front UI refresh."
+    expired_at: 2027-04-30
   - id: CVE-2026-29786
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in tar (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
   - id: CVE-2026-31802
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in tar (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-32141
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in flatted (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
   - id: CVE-2026-3304
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in multer (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-33228
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in flatted (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-33671
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in picomatch (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
   - id: CVE-2026-34601
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
   - id: CVE-2026-3520
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in multer (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
   - id: CVE-2026-41672
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
   - id: CVE-2026-41673
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
   - id: CVE-2026-41674
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
   - id: CVE-2026-41675
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
   - id: CVE-2026-42033
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in axios (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
   - id: CVE-2026-42035
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in axios (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
   - id: CVE-2026-42043
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in axios (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
   - id: CVE-2026-42089
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in yeoman-environment (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): yeoman-environment 3.19.3 is required by @ant-design/pro-cli; the fix is 6.x (major, ESM-only). Dev-only scaffolding CLI, never shipped."
+    expired_at: 2027-04-30
   - id: CVE-2026-44486
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in axios (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
   - id: CVE-2026-44487
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in axios (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
   - id: CVE-2026-44492
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in axios (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
   - id: CVE-2026-44495
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in axios (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
   - id: CVE-2026-44496
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in axios (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): axios 0.21 (react-tiny-oembed) and 0.27 (@umijs/plugins) are pinned by their dependents; the fix needs 0.30+ or 1.x. Both copies sit under admin-side packages (an oEmbed widget and the umi plugin set), not in the API or the SDK."
+    expired_at: 2027-04-30
   - id: CVE-2026-44705
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in tmp (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-44728
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @babel/plugin-transform-modules-systemjs (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tmp 0.0.33 is required by external-editor (inquirer in yeoman); fix is tmp 0.2.x. Dev-only CLI."
+    expired_at: 2027-04-30
   - id: CVE-2026-45623
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in postcss (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-46625
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in js-cookie (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-4800
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in lodash-es (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-48068
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @grpc/grpc-js (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-48069
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @grpc/grpc-js (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-4867
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in path-to-regexp (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-48779
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in ws (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-48801
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in linkify-it (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): postcss 7 is required by autoprefixer 9, postcss-less, postcss-sass and similar legacy plugins of the umi/ant-design build chain; fix is postcss 8. Build-time only, input is our own CSS."
+    expired_at: 2027-04-30
   - id: CVE-2026-48815
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in sigstore (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-4926
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in path-to-regexp (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): sigstore 1.9.0 is required by pacote 15 (yeoman-generator 5); fix is 4.x. Dev-only CLI."
+    expired_at: 2027-04-30
   - id: CVE-2026-5079
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in multer (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-59869
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in js-yaml (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
   - id: CVE-2026-59873
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in tar (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
   - id: CVE-2026-59874
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in tar (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-59887
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in linkify-it (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-6321
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in fast-uri (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-6322
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in fast-uri (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-69152
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in brace-expansion (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
   - id: CVE-2026-69192
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in ip-address (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-73088
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in browserslist (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-73089
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in browserslist (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): ip-address 9 is required by socks (via the npm/yeoman toolchain); fix is 10.x. Dev-only, not in any runtime image."
+    expired_at: 2027-04-30
   - id: CVE-2026-73566
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in tar (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): tar 6.2.1 is required by @capacitor/cli, @mapbox/node-pre-gyp and cacache (install-time tooling); fix is tar 7 (major, ESM-only API). Used only to unpack trusted npm tarballs on the developer machine or in CI."
+    expired_at: 2027-04-30
   - id: CVE-2026-73646
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in postcss (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-73650
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in svgo (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-75975
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in fast-uri (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-76172
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in fast-uri (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): postcss 7 is required by autoprefixer 9, postcss-less, postcss-sass and similar legacy plugins of the umi/ant-design build chain; fix is postcss 8. Build-time only, input is our own CSS."
+    expired_at: 2027-04-30
   - id: CVE-2026-77078
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in multer (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
   - id: CVE-2026-82333
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in multer (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): multer 1.4.4 is required by umi-mock 2.1.5 (admin dev mock server); fix is multer 2.x. Dev-only, never shipped or exposed."
+    expired_at: 2027-04-30
   - id: CVE-2026-83605
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
   - id: CVE-2026-83607
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
   - id: CVE-2026-83608
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
   - id: CVE-2026-83613
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
   - id: CVE-2026-83614
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
   - id: CVE-2026-83615
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
   - id: CVE-2026-83616
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
   - id: CVE-2026-83619
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-84292
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in fast-uri (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-84370
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in svgo (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-84375
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in js-yaml (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-87776
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in compression (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pinned to 0.7.x by mergexml and @trapezedev/project (@capacitor tooling); the fix needs 0.8.12+ and those packages are unmaintained. Only reachable through the Capacitor/Android tooling and mergexml, not through the API or the learner frontends."
+    expired_at: 2027-04-30
   - id: CVE-2026-9496
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in pacote (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: GHSA-5p4m-2wfm-xmqj
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in js-yaml (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): pacote 12 (yeoman-environment 3 via @npmcli/arborist) and 15 (yeoman-generator 5) are required by @ant-design/pro-cli scaffolding; fix is pacote 21. Dev-only CLI."
+    expired_at: 2027-04-30
   - id: GHSA-f88m-g3jw-g9cj
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in sharp (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): sharp 0.32.6 (@capacitor/assets) and 0.34.5 (Astro 7 image service, exact-pinned by front/web and front/docs-site) need 0.35; sharp 0.35 is held back until Astro supports it. Processes images we author at build time."
+    expired_at: 2027-04-30
   - id: GHSA-rgj7-g3m4-5g8c
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in sharp (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): sharp 0.32.6 (@capacitor/assets) and 0.34.5 (Astro 7 image service, exact-pinned by front/web and front/docs-site) need 0.35; sharp 0.35 is held back until Astro supports it. Processes images we author at build time."
+    expired_at: 2027-04-30
   - id: GHSA-wq5f-xc86-pv6w
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in sharp (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
+    statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): sharp 0.32.6 (@capacitor/assets) and 0.34.5 (Astro 7 image service, exact-pinned by front/web and front/docs-site) need 0.35; sharp 0.35 is held back until Astro supports it. Processes images we author at build time."
+    expired_at: 2027-04-30

@@ -187,9 +187,9 @@
       "cells": {
         "self_hosting": {
           "value": "Yes",
-          "note": "Docker Compose; the API, admin, frontend and H5P service run on your servers",
+          "note": "Docker Compose; API, admin, frontend, H5P and SeaweedFS storage (one S3 key per tenant) on your servers",
           "source": "https://github.com/ulams-dev/ulams/blob/main/README.md",
-          "checkedAt": "2026-10-09"
+          "checkedAt": "2026-10-22"
         },
         "licence": {
           "value": "MIT",
@@ -223,9 +223,9 @@
         },
         "source_sync": {
           "value": "Yes",
-          "note": "Living Course: sources stay connected, updates arrive as reviewable cited diffs",
+          "note": "Living Course: upload, URL, Git, Drive and Notion sources (Drive, Notion off by default); cited diffs to review",
           "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/living-course/src/UlamsLivingCourseServiceProvider.php",
-          "checkedAt": "2026-10-21"
+          "checkedAt": "2026-10-22"
         },
         "adaptive_paths": {
           "value": "Partial",
@@ -252,16 +252,16 @@
           "checkedAt": "2026-10-09"
         },
         "lti13": {
-          "value": "Partial",
-          "note": "Platform and tool built; interoperability round trips in testing",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
-          "checkedAt": "2026-10-09"
+          "value": "Yes",
+          "note": "Platform and tool with deep linking, grades and member lists; Moodle 5.0 round trips run nightly",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/lti/src/routes.php",
+          "checkedAt": "2026-10-22"
         },
         "commerce": {
           "value": "Partial",
-          "note": "Course sales with Stripe or Przelewy24 today; Sylius shop coming",
+          "note": "Stripe or Przelewy24 sales and LMS-owned entitlements today; Sylius shop planned (plan CM-3 onwards)",
           "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
-          "checkedAt": "2026-10-09"
+          "checkedAt": "2026-10-22"
         },
         "generative_ui": {
           "value": "Partial",
@@ -281,16 +281,16 @@
           "checkedAt": "2026-10-09"
         },
         "sso": {
-          "value": "Partial",
-          "note": "Google and Facebook sign-in built; SAML 2.0 and OIDC per tenant are roadmap",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/auth/src/Enums/SocialiteProvidersEnum.php",
-          "checkedAt": "2026-10-09"
+          "value": "Yes",
+          "note": "SAML 2.0 and OpenID Connect sign-in per tenant; group and role mapping from the IdP is next",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/identity/src/routes.php",
+          "checkedAt": "2026-10-22"
         },
         "scim": {
           "value": "Coming",
-          "note": "SCIM 2.0 is a Phase 6 roadmap item",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/ROADMAP-TODO.md",
-          "checkedAt": "2026-10-09"
+          "note": "SCIM 2.0 Users and Groups are planned (identity plan ID-4, ID-5)",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-6-identity.md",
+          "checkedAt": "2026-10-22"
         },
         "authoring_tool": {
           "value": "Yes",
@@ -324,9 +324,9 @@
         },
         "cli": {
           "value": "Yes",
-          "note": "Agent-first CLI (ulams): courses, builder and Living Course as commands, declarative apply, JSON output",
+          "note": "Agent-first CLI (ulams): courses, builder, Living Course and course folders as commands, declarative apply, JSON output",
           "source": "https://github.com/ulams-dev/ulams/blob/main/front/cli/src/commands/index.ts",
-          "checkedAt": "2026-10-09"
+          "checkedAt": "2026-10-22"
         },
         "mcp": {
           "value": "Yes",
@@ -342,8 +342,8 @@
         },
         "course_as_code": {
           "value": "Partial",
-          "note": "Markdown + YAML folder, push, pull, three-way merge; Git source merges propose updates. Action, previews coming",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/front/docs-site/src/content/docs/developers/cli-course.mdx",
+          "note": "Markdown + YAML folders, offline validation, push and pull with a three-way merge; GitHub Action next",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-7-course-as-code.md",
           "checkedAt": "2026-10-22"
         }
       },

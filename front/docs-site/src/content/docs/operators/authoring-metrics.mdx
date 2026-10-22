@@ -9,8 +9,9 @@ modules:
 
 Authoring cost is what a course really costs to produce. The Course Builder already records what the model
 cost; the **authoring metrics** module adds how long each stage of a build took, so a course can state its own
-time to produce. This page covers what is recorded today (stage times and element provenance). Cost per course,
-the counts of accepted and edited AI elements and review time follow in later releases (ADR 0194).
+time to produce. This page covers what is recorded today: stage times, element provenance and the per-course snapshot
+with its API. Exports, the studio and admin screens, review time and the hours-per-learner-hour figure follow in later
+releases (ADR 0194).
 
 ## What is recorded
 
@@ -65,6 +66,46 @@ author (flag set, or the text no longer matches the hash), written by the author
 unknown (produced before this release: never guessed). Nothing here is shown yet; the counts arrive with the per-course
 metric. A change to only `ai_hash` or `edited_by_author` is never a difference in a version comparison, a merge or an
 import.
+
+## The per-course snapshot
+
+For every course built with the Course Builder the table `authoring_course_metrics` keeps one row, recomputed from what
+was recorded; every figure has a definition and a `method_version` (now 1), so an export can say which definitions
+produced a number.
+
+| Figure | Definition |
+|---|---|
+| Generation time | wall time of the stages of runs `outline`, `generate`, `apply` and `sync` |
+| AI edit time | wall time of runs `patch` (element chat edits) |
+| Interview time | wall time of runs `interview`: the author answering questions, kept on its own line |
+| Model time | summed latency of the model calls, for comparison: parallel lessons overlap, so it is longer than the wall time |
+| Author time | `null` (not recorded). It is never shown as zero; recording review time is a separate, opt-in step |
+| Cost | the model calls of the course in micro USD at the price the call was made at, split into **build** (the builder session, its element chat edits and its variants) and **maintenance** (Living Course proposals from sources and from learner insights). Failed calls are included because they were paid for; their number is kept. Tutor answers and learner remediation are not authoring and are not counted |
+| Counts | lessons, quiz questions (and final test), blocks and blocks with at least one citation, from the applied blueprint; `learner_minutes_estimate` is the sum of the declared lesson minutes |
+| AI elements | modules, lessons, blocks and questions the AI wrote, split into accepted unchanged, revised by the AI on request, edited by the author and unknown (written before provenance was recorded); author-written elements are counted apart |
+
+The snapshot is recomputed after every apply, element chat edit and sync run, when a course is published, when a
+Living Course proposal is applied and nightly (03:20) for courses whose builder session changed in the last two days.
+`php artisan authoring-metrics:recompute [--course=ID]` rebuilds it by hand; `ulams:upgrade` runs it once per tenant. The
+result is the same for the same recorded history.
+
+Another package that makes model calls about a course adds its own subject type by implementing
+`Ulams\AuthoringMetrics\Contracts\SubjectCourseResolver` and registering it with `SubjectResolvers`; the `ai` package
+never learns about courses. Living Course does this for its proposals.
+
+## API
+
+Both need a token or session with the permission **`authoring_metrics_read`** (given to the admin role by the permission
+seeder, which `ulams:upgrade` runs), except that the author of a course's builder session may read that one course.
+Scoped personal access tokens reach them through the `builder` area.
+
+| Request | Returns |
+|---|---|
+| `GET /api/admin/authoring-metrics/courses?from=&to=&course_id[]=` | the snapshots, optionally of courses created in a date range or of the listed courses |
+| `GET /api/admin/authoring-metrics/courses/{course}` | one snapshot with the time of every pipeline stage (and whether each is `exact`, `coarse` or `incomplete`) and the element split. `404` when the course was not built with the Course Builder |
+
+From the CLI: `ulams authoring-metrics list` and `ulams authoring-metrics get <course>`. The figures are the tenant's
+own measurements; no industry figure appears anywhere.
 
 ## Failure behaviour
 

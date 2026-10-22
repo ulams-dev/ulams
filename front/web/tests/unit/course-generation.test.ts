@@ -45,6 +45,20 @@ describe("course generation pages", () => {
     });
   }
 
+  it("shows the measured runs as one run each, in every language", () => {
+    for (const locale of LOCALES) {
+      const copy = generationCopy(locale);
+      const text = (value: unknown) => JSON.stringify(value);
+      expect(text(copy.cases["docs-repo"].facts)).toMatch(/7\D+44/);
+      expect(text(copy.cases["docs-repo"].facts)).toContain("0.28".replace(".", locale === "pl" ? "," : "."));
+      expect(text(copy.cases["notion-page"].facts)).toMatch(/4\D+58/);
+      expect(text(copy.cases["notion-page"].facts)).toContain(locale === "pl" ? "0,1973" : "0.1973");
+      expect(text(copy.overview.cards[2])).toMatch(/7\D+44/);
+      expect(text(copy.overview.cards[3])).toContain(locale === "pl" ? "0,1973" : "0.1973");
+      expect(copy.overview.note.length).toBeGreaterThan(60);
+    }
+  });
+
   it("points at the public sources", () => {
     expect(SOURCE_LINKS["microdosing-study"]).toBe("https://www.nature.com/articles/s41598-021-01811-4.pdf");
     expect(SOURCE_LINKS["stablecoin-report"]).toBe("https://home.treasury.gov/system/files/136/StableCoinReport_Nov1_508.pdf");

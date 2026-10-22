@@ -1,6 +1,6 @@
 ---
 title: What's new
-description: What each phase of the ulams roadmap has delivered so far (Phases 0 to 4 and 6, and the CLI, MCP server, API and webhook work of Phase 7), with links to the page that documents each feature.
+description: What each phase of the ulams roadmap has delivered so far (Phases 0 to 4 and 6, and the CLI, MCP server, API, webhook and course-as-code work of Phase 7), with links to the page that documents each feature.
 sidebar:
   order: 5
 ---
@@ -11,8 +11,8 @@ A factual summary of what has been built, by roadmap phase. The tracker ([roadma
 and the [decisions](/decisions/) record why. Items that are only partly done are marked as such there; this page lists what works.
 
 <Aside type="note">
-Phases 4 (personalisation), 5 (UX), 6 (market modules) and 8 (self-hosting) have no finished items yet and are not
-listed here. Features that exist only in the plan are marked "Coming" on their pages.
+Phase 5 (UX) and Phase 8 (self-hosting) are listed only where a feature has shipped; most of their items are not finished.
+Features that exist only in the plan are marked "Coming" on their pages.
 </Aside>
 
 ## Phase 0: foundation
@@ -69,6 +69,16 @@ listed here. Features that exist only in the plan are marked "Coming" on their p
 - Impact analysis through citations, update proposals reviewed as one diff, progress rules that keep completion on a minor
   edit, staleness signals, learner notices and an audit trail: [Living Course (admin)](/admin/living-course/),
   [Living Course (developers)](/developers/living-course/).
+- Connectors for Google Drive files and Notion pages, off until an administrator turns them on. In the studio Notion also connects
+  with a pasted integration token: [Course Builder](/creators/course-builder/).
+- **Releases and compare**: every apply to a course is recorded as a numbered release (what started it, who approved it, the source
+  revisions), listed in the studio and through the API. Any two versions or releases can be compared on the studio's compare screen, through the API,
+  `ulams course compare` and the MCP server.
+- **Variants by level and role** in the Course Builder: drafted from the same sources, reviewed as a diff against the base and approved
+  into their own courses. Learners are not routed to a variant yet. See
+  [Course versions and variants](/creators/course-versions-and-variants/).
+- **Improvement proposals from learner insights**: a section many learners struggle with can become a cited update proposal that the
+  author reviews like any source update ([See where learners struggle](/creators/course-insights/)).
 - Inbound webhooks and their signatures: [Webhooks](/developers/webhooks/).
 
 ## Phase 4: Learner Insights and the course tutor (API)
@@ -91,7 +101,12 @@ listed here. Features that exist only in the plan are marked "Coming" on their p
   [Certificates](/admin/certificates/).
 - **Learning paths** with prerequisites, attribute enrolment rules, a compliance report and audit export, dashboard
   numbers and scheduled e-mail reports, a competency framework with author-confirmed AI tags and skill profiles.
-- There is no admin screen for these yet. Sylius commerce, SAML/OIDC and SCIM are not built.
+- **Single sign-on per tenant**: OpenID Connect and SAML 2.0, with encrypted provider secrets and an audit trail, set up through the API or
+  the CLI: [Single sign-on](/operators/single-sign-on/), [SAML 2.0](/operators/single-sign-on-saml/). No admin screen, group mapping or
+  sign-in started at the provider yet.
+- **Entitlements**: every access grant (purchase, administrator, LTI, compliance) is recorded with its source; an access backfill with a parity
+  report and a shadow mode for Wellms purchases prepare the move to the Sylius shop: [Entitlements and order events](/developers/entitlements-and-order-events/).
+- There is no admin screen for the compliance modules yet. The Sylius shop and SCIM are not built.
 
 ## Phase 7: CLI, MCP server and API
 
@@ -100,6 +115,9 @@ listed here. Features that exist only in the plan are marked "Coming" on their p
   topic type, declarative `apply`, and `ulams tenants` for platform hosts: [The CLI](/developers/cli/),
   [CLI reference](/reference/cli/), [Course-as-code examples](/developers/cli/#declarative-apply).
 - **Course builder and Living Course commands** with NDJSON events: [Build courses from the command line](/developers/cli-builder/).
+- **Course as code**: a course as a folder of Markdown and YAML, with `ulams course validate`, `fmt`, `init`, `status`, `diff`, `pull`, `push`,
+  `apply` and `publish`, and a three-way merge that writes conflicts to files you resolve: [Course as code](/developers/cli-course/),
+  [Folder format](/developers/course-folder-format/). A GitHub Action, preview academies and adopting hand-made courses are not built yet.
 - **MCP server** `ulams mcp` over stdio and Streamable HTTP, with toolsets, read-only mode and confirmation tokens for
   destructive tools: [ulams for AI agents](/developers/agents/), [Claude Code](/developers/claude-code/).
 - **Scoped API tokens** (`ulams_pat_`), the agent audit log, idempotency keys, request ids, device login in the RFC 8628
@@ -111,3 +129,13 @@ listed here. Features that exist only in the plan are marked "Coming" on their p
 - **Outgoing webhooks**: signed and versioned deliveries with retries, replay, a delivery log and test sends, managed
   through the API and CLI (no admin screen yet): [Outgoing webhooks](/developers/outgoing-webhooks/). Scoped tokens
   also take a per-token rate limit and report usage.
+
+## Themes, storage and images
+
+- **Themes**: one list of theme presets for the site, the admin and the API; an admin theme screen with a WCAG 2.2 AA contrast report that
+  blocks an accent colour that fails, and a tenant logo: [Theme and logo](/operators/theme/).
+- **Storage**: the bundled SeaweedFS store replaces MinIO and gives every tenant its own S3 key limited to its bucket, with a script that moves
+  an existing MinIO installation over: [Object storage](/operators/storage/). External S3 services work with one shared key and are not tested by the project.
+- **Images**: the learner site builds image URLs through one builder. A setting chooses the image service per deployment: Astro's own,
+  none, or Cloudflare Image Transformations. The MyDevil guide describes the Cloudflare mode: [Install on MyDevil](/operators/install-mydevil/),
+  [ADR 0193](/decisions/0193-image-service-as-a-deployment-choice/).
