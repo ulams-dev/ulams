@@ -64,6 +64,12 @@ async function started(ctx: Ctx, data: { operation: Operation; tenant?: unknown 
   return { data: { operation, tenant: operation.kind === "delete" ? null : tenant } };
 }
 
+/** The request body: `ttlDays` is `ttl_days` on the wire. */
+function tenantBody(i: { ttlDays?: number | undefined } & Record<string, unknown>): Record<string, unknown> {
+  const { ttlDays, ...rest } = i;
+  return { ...rest, ...(ttlDays !== undefined ? { ttl_days: ttlDays } : {}) };
+}
+
 const slugInput = z.string().describe("Tenant slug (from `ulams tenants list`).");
 
 export const tenantCommands: AnyCommand[] = [
@@ -115,13 +121,37 @@ export const tenantCommands: AnyCommand[] = [
       accent: z.string().optional().describe("Accent colour, e.g. #C2552D."),
       users: z.number().int().min(0).max(50).optional().describe("Number of demo students (default 5)."),
       demo: z.boolean().optional().describe("Demo mode: login without a password, hourly reset."),
+      ttlDays: z.number().int().min(1).max(30).optional().describe("Make it a throwaway preview academy that `ulams:tenant:reap` deletes after this many days (needs --group)."),
+      group: z.string().regex(/^[a-z0-9][a-z0-9-]{0,39}$/, "Lowercase letters, digits and dashes.").optional().describe("With --ttl-days: the repository the preview belongs to (at most 5 live previews per group)."),
     }),
     output: z.unknown(),
-    examples: [{ title: "A demo tenant", argv: 'tenants create acme --name "Acme Academy" --theme coffee --accent "#C2552D" --users 3 --demo --json' }],
-    plan: async (_ctx, i) => planOf("POST", `${P}/tenants`, i),
+    examples: [
+      { title: "A demo tenant", argv: 'tenants create acme --name "Acme Academy" --theme coffee --accent "#C2552D" --users 3 --demo --json' },
+      { title: "A preview academy for a pull request", argv: "tenants create pr7acme --demo --ttl-days 7 --group acme-course --json" },
+    ],
+    plan: async (_ctx, i) => planOf("POST", `${P}/tenants`, tenantBody(i)),
     async run(ctx, i) {
-      const res = await platform<{ operation: Operation; tenant: unknown }>(ctx, "POST", `${P}/tenants`, { body: i });
+      const res = await platform<{ operation: Operation; tenant: unknown }>(ctx, "POST", `${P}/tenants`, { body: tenantBody(i) });
       return started(ctx, res.data);
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "tenants.token",
+    summary: "A one-day administrator token (builder:read, builder:write) for a preview academy",
+    description:
+      "Only preview academies (created with --ttl-days) hand out a token; any other tenant answers a conflict (exit 6). The token is shown once and is the one `ulams course preview` uses to push a course folder into the preview. Treat it as a secret.",
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: [`POST ${P}/tenants/{slug}/token`],
+    positionals: ["slug"],
+    input: z.object({ slug: slugInput }),
+    output: z.unknown(),
+    examples: [{ title: "Token for a preview", argv: "tenants token pr7acme --json" }],
+    plan: async (_ctx, i) => planOf("POST", `${P}/tenants/${i.slug}/token`),
+    async run(ctx, i) {
+      return { data: (await platform(ctx, "POST", `${P}/tenants/{slug}/token`, { params: { slug: i.slug } })).data };
     },
   }),
   defineCommand({

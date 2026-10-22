@@ -6,12 +6,13 @@
 // Everything with side effects goes through the injected `io` (exec, files, env), so the unit tests run it without Docker,
 // git, gh or a network. The access token travels only in the environment of the child process, never in an argument or a log.
 import { appendFileSync, readFileSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const COMMANDS = ["validate", "diff", "preview", "push", "pull-pr"];
+export const COMMANDS = ["validate", "diff", "preview", "preview-cleanup", "push", "pull-pr"];
 export const COMMENT_MARKER = "<!-- ulams-course-action -->";
 export const SYNC_BRANCH = "ulams/sync";
 const IMAGE = "ghcr.io/ulams-dev/ulams-cli";
@@ -37,16 +38,30 @@ export function parseInputs(env) {
   };
 }
 
+/**
+ * The preview academy of a pull request: `pr`, six hex characters of the repository and the number (a slug is letters and digits,
+ * at most 30), and the group that caps the previews per repository.
+ */
+export function previewTarget(repository, prNumber) {
+  const hash = createHash("sha1").update(String(repository).toLowerCase()).digest("hex").slice(0, 6);
+  const group = String(repository).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "course";
+  return { slug: `pr${hash}${prNumber}`.slice(0, 30), group };
+}
+
 /** The `ulams` arguments of a command. */
 export function ulamsArgs(inputs, ctx = {}) {
   const message = inputs.message || ctx.message || "Update from a course repository";
   switch (inputs.command) {
+    case "preview-cleanup":
+      return ["tenants", "delete", ctx.preview?.slug ?? "", "--yes", "--json"];
     case "validate":
       return ["course", "validate", inputs.path, "--format", "sarif", ...(inputs.strict ? ["--strict"] : [])];
     case "diff":
       return ["course", "diff", inputs.path, "--remote", "--json"];
     case "preview":
-      return ["course", "push", inputs.path, "--message", message, "--json"];
+      return ctx.preview
+        ? ["course", "preview", inputs.path, "--tenant", ctx.preview.slug, "--group", ctx.preview.group, "--message", message, "--json"]
+        : ["course", "push", inputs.path, "--message", message, "--json"];
     case "push":
       return ["course", "push", inputs.path, "--message", message, "--json", ...(inputs.apply ? ["--apply"] : [])];
     case "pull-pr":
@@ -60,7 +75,7 @@ export function ulamsArgs(inputs, ctx = {}) {
 export function cliCommand(inputs, env, workspace) {
   if (env.ULAMS_CLI_BIN) return { cmd: env.ULAMS_CLI_BIN, prefix: [] };
   if (!/^[A-Za-z0-9_.-]+$/.test(inputs.version)) throw new Error("cli-version is not a valid image tag");
-  const pass = ["ULAMS_URL", "ULAMS_TOKEN", "ULAMS_COMMIT", "ULAMS_CHANGE_URL", "ULAMS_OUTPUT"].flatMap((n) => ["-e", n]);
+  const pass = ["ULAMS_URL", "ULAMS_TOKEN", "ULAMS_COMMIT", "ULAMS_CHANGE_URL", "ULAMS_OUTPUT", "ULAMS_PREVIEW_URL", "ULAMS_PREVIEW_TOKEN"].flatMap((n) => ["-e", n]);
   return { cmd: "docker", prefix: ["run", "--rm", "-v", `${workspace}:/work`, "-w", "/work", ...pass, `${IMAGE}:${inputs.version}`] };
 }
 
@@ -88,6 +103,18 @@ export function previewComment(result, studio) {
   if (result?.ok === false) {
     const e = result.error ?? {};
     return lines(COMMENT_MARKER, `**ulams: the course could not be proposed** (${e.code ?? "error"})`, "", String(e.message ?? "").slice(0, 600), e.hint ? `\n${String(e.hint).slice(0, 400)}` : null);
+  }
+  if (data.tenant) {
+    return lines(
+      COMMENT_MARKER,
+      `**ulams: preview academy ${data.created ? "created" : "updated"}**${data.versionNumber ? ` (version ${data.versionNumber})` : ""}`,
+      "",
+      `- Learner view: ${data.urls?.front ?? "?"}`,
+      `- Studio and admin: ${data.urls?.admin ?? "?"}`,
+      data.expiresAt ? `- Deleted after ${data.expiresAt}, or when this pull request is closed` : null,
+      "",
+      "The preview has no sources: citations are dropped and every element reads as written by the author. Your real academy is unchanged."
+    );
   }
   if (data.pushed === false) return lines(COMMENT_MARKER, "**ulams: nothing to propose.** The course folder equals the version on the server.");
   const v = data.version ?? {};
@@ -118,6 +145,8 @@ export function syncBody(result, studio) {
   );
 }
 
+const report0 = (env, append, text) => env.GITHUB_STEP_SUMMARY && append(env.GITHUB_STEP_SUMMARY, `${text}\n`);
+
 const parseJson = (text) => {
   try {
     return JSON.parse(text);
@@ -138,6 +167,22 @@ export function run(io) {
   const cli = cliCommand(inputs, env, workspace);
   const childEnv = { ULAMS_URL: env.ULAMS_URL ?? "", ULAMS_TOKEN: env.ULAMS_TOKEN ?? "", ULAMS_COMMIT: ctx.commit, ULAMS_CHANGE_URL: ctx.changeUrl };
   if (inputs.command !== "validate") childEnv.ULAMS_OUTPUT = "json";
+  // a preview academy needs a preview platform and a pull request to name it after
+  const previewPlatform = Boolean(env.ULAMS_PREVIEW_URL && env.ULAMS_PREVIEW_TOKEN);
+  if (inputs.command === "preview" && previewPlatform && ctx.prNumber) ctx.preview = previewTarget(env.GITHUB_REPOSITORY ?? "", ctx.prNumber);
+  if (inputs.command === "preview-cleanup") {
+    if (!previewPlatform || !ctx.prNumber) {
+      report0(env, io.append, "### ulams preview cleanup\nNo preview platform or no pull request: nothing to delete.");
+      return { exitCode: 0, outputs: { "exit-code": "0" } };
+    }
+    ctx.preview = previewTarget(env.GITHUB_REPOSITORY ?? "", ctx.prNumber);
+    // the platform is the target of this one command: its address and token stand in for the academy's
+    childEnv.ULAMS_URL = env.ULAMS_PREVIEW_URL;
+    childEnv.ULAMS_TOKEN = env.ULAMS_PREVIEW_TOKEN;
+  } else if (previewPlatform) {
+    childEnv.ULAMS_PREVIEW_URL = env.ULAMS_PREVIEW_URL;
+    childEnv.ULAMS_PREVIEW_TOKEN = env.ULAMS_PREVIEW_TOKEN;
+  }
   if (!childEnv.ULAMS_URL || !childEnv.ULAMS_TOKEN) {
     if (inputs.command !== "validate") throw new Error("Set the secrets ULAMS_URL and ULAMS_TOKEN (url and token inputs) for this command.");
     delete childEnv.ULAMS_URL;
@@ -145,6 +190,12 @@ export function run(io) {
   }
   const ulams = exec(cli.cmd, [...cli.prefix, ...ulamsArgs(inputs, ctx)], { env: childEnv });
   const outputs = { "exit-code": String(ulams.status) };
+  if (inputs.command === "preview-cleanup") {
+    // an academy that is already gone (never created, or reaped) is a clean result
+    const gone = ulams.status === 0 || ulams.status === 5;
+    report0(env, io.append, `### ulams preview cleanup\n${gone ? `The preview academy ${ctx.preview.slug} is gone.` : `Could not delete ${ctx.preview.slug} (exit ${ulams.status}); the reaper deletes it when it expires.`}`);
+    return { exitCode: gone ? 0 : ulams.status, outputs };
+  }
   const summary = env.GITHUB_STEP_SUMMARY;
   const report = (text) => summary && append(summary, `${text}\n`);
 
