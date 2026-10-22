@@ -167,7 +167,7 @@ const COST: Record<Locale, CostDiagrams> = {
     audiences: {
       title: "One source, many audiences",
       lede: "Variants of one course by level and by role, each reviewed as a diff against the base course.",
-      badge: "Coming",
+      badge: "Available in the Course Builder",
       source: "One source",
       base: "Base course",
       baseText: "Shared sources, passages and citations",
@@ -175,7 +175,7 @@ const COST: Record<Locale, CostDiagrams> = {
       levels: ["Beginner", "Intermediate", "Expert"],
       rolesTitle: "By role",
       roles: ["A role you name", "Another role"],
-      variantNote: "Each variant is reviewed as a diff against the base",
+      variantNote: "Each variant is reviewed as a diff against the base. Routing each learner to a variant is coming.",
     },
   },
   pl: {
@@ -241,7 +241,7 @@ const COST: Record<Locale, CostDiagrams> = {
     audiences: {
       title: "Jedno źródło, wielu odbiorców",
       lede: "Warianty jednego kursu według poziomu i roli, każdy oceniany jako diff względem kursu bazowego.",
-      badge: "Wkrótce",
+      badge: "Dostępne w Course Builder",
       source: "Jedno źródło",
       base: "Kurs bazowy",
       baseText: "Wspólne źródła, fragmenty i cytaty",
@@ -249,7 +249,7 @@ const COST: Record<Locale, CostDiagrams> = {
       levels: ["Początkujący", "Średniozaawansowany", "Ekspert"],
       rolesTitle: "Według roli",
       roles: ["Rola, którą nazwiesz", "Kolejna rola"],
-      variantNote: "Każdy wariant oceniany jako diff względem bazy",
+      variantNote: "Każdy wariant oceniany jako diff względem bazy. Kierowanie uczących się do wariantu jest w przygotowaniu.",
     },
   },
   zh: {
@@ -315,7 +315,7 @@ const COST: Record<Locale, CostDiagrams> = {
     audiences: {
       title: "一份资料,多类学员",
       lede: "同一门课程按级别和角色生成的版本,每个版本都以与基础课程的差异形式审阅。",
-      badge: "即将推出",
+      badge: "课程生成器中已可用",
       source: "一份资料",
       base: "基础课程",
       baseText: "共享资料、片段和出处",
@@ -323,7 +323,7 @@ const COST: Record<Locale, CostDiagrams> = {
       levels: ["初学者", "中级", "专家"],
       rolesTitle: "按角色",
       roles: ["你命名的角色", "另一个角色"],
-      variantNote: "每个版本都以与基础课程的差异形式审阅",
+      variantNote: "每个版本都以与基础课程的差异形式审阅。把学员引导到某个版本尚未提供。",
     },
   },
 };

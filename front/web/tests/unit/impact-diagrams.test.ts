@@ -91,7 +91,7 @@ describe("impact-page diagrams: copy", () => {
       const coming = impactCopy("reporting", locale).coming.map((i) => i.title);
       const flow = reportingDiagrams(locale).flow.columns.flatMap((c) => c.coming ?? []);
       expect(flow).toEqual([coming[0], coming[1]]);
-      expect(costDiagrams(locale).audiences.badge).toBe(["Coming", "Wkrótce", "即将推出"][LOCALES.indexOf(locale)]);
+      expect(costDiagrams(locale).audiences.badge).toBe(["Available in the Course Builder", "Dostępne w Course Builder", "课程生成器中已可用"][LOCALES.indexOf(locale)]);
     }
   });
 });

@@ -91,7 +91,7 @@ describe("impact-page diagrams: rendered markup", () => {
     expect(cost.querySelector("#dg-pipeline .dg__badge--run")!.textContent).toBe("One measured run");
     expect(cost.querySelector("#dg-benchmark .dg__badge--outside")!.textContent).toContain("2010");
     expect(cost.querySelector("#dg-living-loop .u-status--available")).not.toBeNull();
-    expect(cost.querySelector("#dg-audiences .u-status--coming")!.textContent).toBe("Coming");
+    expect(cost.querySelector("#dg-audiences .u-status--available")!.textContent).toBe("Available in the Course Builder");
     expect(cost.querySelector("#dg-pipeline")!.textContent).toContain("6 min 57 s");
     expect(cost.querySelector("#dg-pipeline")!.textContent).toContain("USD 0.28");
     // nothing of ULAMS is drawn on the benchmark scale
