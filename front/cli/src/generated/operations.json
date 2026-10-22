@@ -649,8 +649,32 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/course-builder/sessions/{session}/variants",
+  "summary": "Course variants by level and role: status, own course, drift from the base, estimate and cap",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/sessions/{session}/variants",
+  "summary": "Create variants from the interview answer (or add some later); start=true drafts their outlines in one run",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/course-builder/sessions/{session}/versions",
   "summary": "Blueprint version history",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/course-builder/variants/{variant}",
+  "summary": "Retire a variant (its course, if it has one, is kept)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/course-builder/variants/{variant}",
+  "summary": "Rename, reorder or retire a variant",
   "tag": "Admin Course Builder"
  },
  {

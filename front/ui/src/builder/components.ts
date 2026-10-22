@@ -133,7 +133,9 @@ function answerLabel(p: Props): string {
 const ChoiceChips: Renderer = (p, ctx, id) => {
   const selected = new Set<string>((p.value ?? p.defaultValue ?? []).map(String));
   const group = h("div", { class: "cb-chips", role: "group", "aria-label": String(p.label) });
-  const custom = p.allowCustom ? h("input", { type: "text", class: "cb-input", "aria-label": "Or type your own answer", placeholder: "Or type your own answer", maxlength: 120 }) : null;
+  const roles = p.questionKey === "audiences";
+  const hint = roles ? "Or type roles, separated by commas (for example developer, support)" : "Or type your own answer";
+  const custom = p.allowCustom ? h("input", { type: "text", class: "cb-input", "aria-label": hint, placeholder: hint, maxlength: 120 }) : null;
   for (const option of p.options as Props[]) {
     const button = h("button", { type: "button", class: "cb-chip", "aria-pressed": selected.has(option.value) ? "true" : "false", "data-value": option.value }, String(option.label));
     button.addEventListener("click", () => {
@@ -149,6 +151,8 @@ const ChoiceChips: Renderer = (p, ctx, id) => {
   }
   return questionShell(p, id, [group, ...(custom ? [custom] : [])], ctx, () => {
     const typed = custom?.value.trim();
+    // roles typed next to the chosen levels give a version for every combination
+    if (typed && roles) return [...selected, ...typed.split(",").map((t) => t.trim()).filter(Boolean)];
     if (typed) return p.multiple ? [typed] : typed;
     const values = [...selected];
     return p.multiple ? values : values[0];
@@ -742,6 +746,38 @@ const ApplySummary: Renderer = (p, ctx, id) => {
     actions);
 };
 
+const VariantReview: Renderer = (p, ctx, id) => {
+  const sum = p.summary as Props;
+  const headId = uid("variant-review");
+  const counts: Array<[string, number]> = [["kept", sum.kept], ["rewritten", sum.changed], ["added", sum.added], ["skipped", sum.removed]];
+  const rows = h("ul", { class: "cb-changes" }, (p.changes as Props[]).map((c) =>
+    h("li", { class: `cb-change cb-change-${c.kind}` },
+      h("p", { class: "cb-change-label" }, changeBadge(c.kind), String(c.label)),
+      c.kind === "changed"
+        ? h("p", { class: "cb-change-text" }, wordDiff(String(c.before ?? ""), String(c.after ?? "")))
+        : h("p", { class: "cb-change-text" }, c.kind === "added" ? h("ins", {}, sr("added: "), String(c.after ?? "")) : h("del", {}, sr("removed: "), String(c.before ?? ""))))));
+  const actions = h("div", { class: "cb-actions" });
+  if (p.status === "proposed") {
+    const approve = h("button", { type: "button", class: "cb-btn cb-btn-primary" }, icon("check"), `Create the ${p.label} course`);
+    const reject = h("button", { type: "button", class: "cb-btn" }, "Reject this variant");
+    approve.addEventListener("click", () => act(ctx, id, "approve_variant", { versionId: p.versionId }));
+    reject.addEventListener("click", () => act(ctx, id, "reject_variant", { versionId: p.versionId }));
+    actions.append(approve, reject, h("p", { class: "cb-muted cb-small" }, "It becomes its own unpublished course, grouped with the base course. Publishing the base course publishes the family."));
+  } else {
+    actions.append(h("p", { class: `cb-decision cb-decision-${p.status}`, role: "status" },
+      icon(p.status === "rejected" ? "minus" : p.status === "applying" ? "clock" : "check"),
+      { applying: "Creating the course…", approved: "Created as its own course, grouped with the base course", rejected: "Rejected; nothing was created" }[String(p.status)] ?? String(p.status)));
+  }
+  return h("section", { class: "cb-card cb-variant-review", "aria-labelledby": headId, "data-variant-key": p.variantKey },
+    h("header", {},
+      h("h3", { id: headId, class: "cb-serif cb-h2" }, `Variant for ${p.label}`),
+      h("p", { class: "cb-muted" }, `Compared with the base course${p.baseNumber ? ` (version ${p.baseNumber})` : ""}. ${sum.lessons} lessons, ${sum.citations} source passages cited${p.costMicroUsd ? `, ${usd(p.costMicroUsd)} to generate` : ""}.`)),
+    h("ul", { class: "cb-tags", "aria-label": "Lessons compared with the base course" }, counts.map(([label, n]) => h("li", { class: "cb-tag" }, `${n} ${label}`))),
+    p.changes.length ? rows : h("p", { class: "cb-muted" }, "No differences from the base course."),
+    p.truncated ? h("p", { class: "cb-muted cb-small" }, `${p.truncated} more changes are not listed here.`) : null,
+    actions);
+};
+
 const VersionList: Renderer = (p, ctx) =>
   h("ol", { class: "cb-versions", reversed: true, "aria-label": "Version history" }, [...(p.versions as Props[])].reverse().map((v) => {
     const restore = v.id !== p.currentVersionId && v.status === "approved" && v.kind !== "outline" ? h("button", { type: "button", class: "cb-link" }, `Restore v${v.number}`) : null;
@@ -1308,6 +1344,7 @@ export const builderComponents: Record<string, Renderer> = {
   VariantComparison,
   OutlineEditor,
   ApplySummary,
+  VariantReview,
   VersionList,
   SourcesPanel,
   PublishSummary,

@@ -87,11 +87,12 @@ final class PromptContext
 
     /**
      * The brief fields that shape the writing. Price, theme and site do not, so they stay out of the
-     * prompt (and the cache key): changing them never invalidates generated content.
+     * prompt (and the cache key): changing them never invalidates generated content. The audiences of the
+     * variants (ADR 0192) do not shape the base course either: a variant call gets its own audience as task input.
      */
     public static function contentBrief(array $brief): array
     {
-        $drop = ['pricing', 'theme', 'site'];
+        $drop = ['pricing', 'theme', 'site', 'audiences'];
         $brief = array_diff_key($brief, array_flip($drop));
         if (is_array($brief['decidedBy'] ?? null)) {
             $brief['decidedBy'] = array_diff_key($brief['decidedBy'], array_flip($drop));

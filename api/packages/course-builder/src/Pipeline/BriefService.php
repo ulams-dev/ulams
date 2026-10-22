@@ -3,12 +3,13 @@
 namespace Ulams\CourseBuilder\Pipeline;
 
 use InvalidArgumentException;
+use Illuminate\Support\Str;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\Settings\Support\ThemePresets;
 
 /**
- * The Course Brief: interview answers, schema-validated (`course-brief/v2`; v1 documents are read as v2), each field marked as
+ * The Course Brief: interview answers, schema-validated (`course-brief/v3`; v1 and v2 documents are read as v3), each field marked as
  * decided by the author or by default. Interview question keys map onto brief fields here.
  */
 final class BriefService
@@ -17,7 +18,10 @@ final class BriefService
     public const KEYS = ['audience', 'level', 'duration', 'tone', 'assessments', 'language'];
 
     /** Questions code adds after the model's: fixed options, no model call. */
-    public const EXTRA_KEYS = ['pricing', 'theme'];
+    public const EXTRA_KEYS = ['audiences', 'pricing', 'theme'];
+
+    /** The brief's level names (beginner, intermediate, advanced) against the audiences' (beginner, intermediate, expert). */
+    private const LEVEL_OF_BRIEF = ['beginner' => 'beginner', 'intermediate' => 'intermediate', 'advanced' => 'expert'];
 
     public function __construct(private readonly SchemaRegistry $schemas)
     {
@@ -97,6 +101,10 @@ final class BriefService
                 $brief['language'] = strtolower(substr((string) (is_array($value) ? ($value[0] ?? '') : $value), 0, 2));
                 $fields = ['language'];
                 break;
+            case 'audiences':
+                $brief['audiences'] = self::audiences($value, $brief);
+                $fields = ['audiences'];
+                break;
             case 'pricing':
                 $brief['pricing'] = self::pricing($value);
                 $fields = ['pricing'];
@@ -125,6 +133,68 @@ final class BriefService
         $parts = explode('|', (string) (is_array($value) ? ($value[0] ?? '') : $value));
 
         return [(int) $parts[0], isset($parts[1]) && (int) $parts[1] > 0 ? (int) $parts[1] : $lessonDefault];
+    }
+
+    /** The most variants one course may have besides its base (`COURSE_BUILDER_MAX_VARIANTS`, 0 switches variants off). */
+    public static function maxVariants(): int
+    {
+        return max(0, (int) config('course_builder.variants.max', 6));
+    }
+
+    /**
+     * The audiences of the interview answer. The value is a list of chips: `single` ("one course for everyone"),
+     * `level:beginner|intermediate|expert` and anything else as a role. Levels only or roles only give one variant per
+     * chip; both give every level for every role. The course the author approves first stays the base (for the level
+     * answered in the interview), so once that level is answered a cell that is just the base level is refused. More cells than the cap are refused.
+     *
+     * @return array<int,array{key:string,label:string,level:?string,role:?string}>
+     *
+     * @throws InvalidArgumentException
+     */
+    public static function audiences(mixed $value, array $brief = []): array
+    {
+        $chips = is_array($value) ? $value : array_filter(array_map('trim', explode(',', (string) $value)));
+        $levels = [];
+        $roles = [];
+        foreach ($chips as $chip) {
+            $chip = trim((string) $chip);
+            if ($chip === '' || $chip === 'single') {
+                continue;
+            }
+            if (str_starts_with($chip, 'level:')) {
+                $level = substr($chip, 6);
+                if (!in_array($level, \Ulams\CourseBuilder\Models\Variant::LEVELS, true)) {
+                    throw new InvalidArgumentException('A level is beginner, intermediate or expert.');
+                }
+                $levels[$level] = $level;
+                continue;
+            }
+            $role = mb_substr($chip, 0, 64);
+            if (preg_match('/[<>{}]/u', $role) === 1) {
+                throw new InvalidArgumentException('A role is plain text.');
+            }
+            $roles[mb_strtolower($role)] ??= $role;
+        }
+        $cells = [];
+        $base = self::LEVEL_OF_BRIEF[$brief['level'] ?? 'beginner'] ?? 'beginner';
+        foreach ($levels !== [] ? array_values($levels) : [null] as $level) {
+            foreach ($roles !== [] ? array_values($roles) : [null] as $role) {
+                if ($level === null && $role === null) {
+                    continue;
+                }
+                if ($role === null && $level === $base && isset($brief['decidedBy']['level'])) {
+                    throw new InvalidArgumentException(sprintf('The course you are building already is for %s learners. Pick the other levels, or add a role.', $level));
+                }
+                $label = implode(', ', array_filter([$level !== null ? ucfirst($level) : null, $role]));
+                $cells[] = ['key' => Str::slug($label) ?: 'audience-' . (count($cells) + 1), 'label' => $label, 'level' => $level, 'role' => $role];
+            }
+        }
+        $max = self::maxVariants();
+        if (count($cells) > $max) {
+            throw new InvalidArgumentException(sprintf('That is %d variants and the limit is %d. Remove %d, or ask an admin to raise COURSE_BUILDER_MAX_VARIANTS.', count($cells), $max, count($cells) - $max));
+        }
+
+        return $cells;
     }
 
     /**
@@ -193,7 +263,7 @@ final class BriefService
 
     public function assertValid(array $brief): void
     {
-        $errors = $this->schemas->validate('course-brief/v2', $brief);
+        $errors = $this->schemas->validate('course-brief/v3', $brief);
         if ($errors !== []) {
             throw new InvalidArgumentException('Invalid brief: ' . implode('; ', array_slice($errors, 0, 5)));
         }
@@ -225,6 +295,7 @@ final class BriefService
             ['key' => 'tone', 'label' => 'Tone', 'value' => ucfirst((string) ($brief['tone'] ?? ''))],
             ['key' => 'assessments', 'label' => 'Assessments', 'value' => $assess ? implode(', ', $assess) : 'None'],
             ['key' => 'language', 'label' => 'Language', 'value' => strtoupper((string) ($brief['language'] ?? ''))],
+            ...(!empty($brief['audiences']) ? [['key' => 'audiences', 'label' => 'Variants', 'value' => implode('; ', array_column($brief['audiences'], 'label'))]] : []),
             ['key' => 'pricing', 'label' => 'Price', 'value' => self::priceLabel($brief['pricing'] ?? ['mode' => 'free'])],
             ...(isset($brief['site']) ? [['key' => 'site', 'label' => 'Site', 'value' => ($brief['site']['mode'] ?? 'current') === 'new' ? 'New site: ' . ($brief['site']['slug'] ?? '') : 'This site']] : []),
             ...(isset($brief['theme']) ? [['key' => 'theme', 'label' => 'Theme', 'value' => ucfirst($brief['theme']['preset']) . (isset($brief['theme']['accent']) ? ' · ' . $brief['theme']['accent'] : '')]] : []),

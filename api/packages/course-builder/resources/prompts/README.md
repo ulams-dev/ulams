@@ -16,6 +16,8 @@ output limit in `packages/ai/config/ai.php`), the output `schema` and a one-line
 | `interaction_h5p` | default | built from the installed H5P libraries (`ContentTypes\H5pLibraries::outputSchema`) | `Pipeline\GenerationService` |
 | `interaction_interactive` | light | `outputs/interaction_interactive.json` | `Pipeline\GenerationService` |
 | `price` | light | `outputs/price.json` (only for a paid course without an amount) | `Pipeline\PriceService` |
+| `variant_outline` | light | `outputs/variant_outline.json` (the plan per lesson for one audience) | `Pipeline\VariantOutlineService` |
+| `variant_lesson` | default | `outputs/variant_lesson.json` (a lesson condensed, deepened or added for one audience) | `Pipeline\GenerationService` |
 | `patch` | default | built per element type in `Pipeline\PatchSchemas` | `Pipeline\PatchService` |
 
 ## Rules

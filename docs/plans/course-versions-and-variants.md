@@ -1,6 +1,6 @@
 # Plan: course versions with a visual diff, and course variants by level and role
 
-Status: draft, waiting for owner approval. ADR 0192 is Proposed with this plan. Nothing here is implemented.
+Status: approved by the owner on 2026-10-22 with the recommended defaults for Q1 to Q11; ADR 0192 is Accepted. Milestone CV-4 (variants in the builder) is implemented in PR #396; the rest is not.
 TODO items: Phase 3.1 and Phase 4.4 in `docs/ROADMAP-TODO.md` (all marked `(new)`). The spec
 (`docs/ROADMAP-PROMPT.md`) does not mention either feature yet; it needs a matching paragraph in Phases 3 and 4
 once the owner approves.

@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $element_id
  * @property array|null $ai_call_ids
  * @property string|null $variant_group set on the proposals made together by "give me options" (L2-13)
+ * @property string|null $variant_id the variant branch this version belongs to; null for the base (ADR 0192)
  * @property array|null $source_revisions {sourceId: revisionId} this version was written from
  */
 class Version extends Model

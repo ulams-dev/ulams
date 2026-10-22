@@ -2396,6 +2396,173 @@
         "additionalProperties": false
       }
     },
+    "VariantReview": {
+      "description": "A variant of the course for one audience (a level, a role or both), reviewed as a diff against the base course: how many lessons are kept, changed, added and removed, and the changed text with word-level marks. Approve to create its own course in the academy, or reject; nothing is created before the author approves.",
+      "modelSelectable": false,
+      "children": false,
+      "props": {
+        "type": "object",
+        "properties": {
+          "versionId": {
+            "type": "string",
+            "description": "Proposed variant version",
+            "maxLength": 32
+          },
+          "variantKey": {
+            "type": "string",
+            "description": "Variant key",
+            "maxLength": 64
+          },
+          "label": {
+            "type": "string",
+            "description": "Audience shown to learners, e.g. Expert, developer",
+            "maxLength": 120
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "beginner",
+              "intermediate",
+              "expert"
+            ],
+            "description": "Level of the audience"
+          },
+          "role": {
+            "type": "string",
+            "description": "Role of the audience",
+            "maxLength": 64
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "applying",
+              "approved",
+              "rejected"
+            ],
+            "description": "Decision state"
+          },
+          "baseNumber": {
+            "type": "integer",
+            "description": "Number of the base version it is compared with",
+            "minimum": 0
+          },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "lessons": {
+                "type": "integer",
+                "description": "Lessons in the variant",
+                "minimum": 0
+              },
+              "kept": {
+                "type": "integer",
+                "description": "Lessons kept as in the base",
+                "minimum": 0
+              },
+              "changed": {
+                "type": "integer",
+                "description": "Lessons rewritten for this audience",
+                "minimum": 0
+              },
+              "added": {
+                "type": "integer",
+                "description": "Lessons only this variant has",
+                "minimum": 0
+              },
+              "removed": {
+                "type": "integer",
+                "description": "Base lessons this variant skips",
+                "minimum": 0
+              },
+              "citations": {
+                "type": "integer",
+                "description": "Source passages the variant cites",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "lessons",
+              "kept",
+              "changed",
+              "added",
+              "removed",
+              "citations"
+            ],
+            "additionalProperties": false
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description": "Field path",
+                  "maxLength": 200
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Readable field name",
+                  "maxLength": 200
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "added",
+                    "removed",
+                    "changed"
+                  ],
+                  "description": "Change"
+                },
+                "before": {
+                  "type": "string",
+                  "description": "Text in the base course",
+                  "maxLength": 20000
+                },
+                "after": {
+                  "type": "string",
+                  "description": "Text in the variant",
+                  "maxLength": 20000
+                }
+              },
+              "required": [
+                "path",
+                "label",
+                "kind"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Changes against the base course",
+            "maxItems": 150
+          },
+          "truncated": {
+            "type": "integer",
+            "description": "Further changes not listed",
+            "minimum": 0
+          },
+          "costMicroUsd": {
+            "type": "integer",
+            "description": "What generating the variant cost, in micro-dollars",
+            "minimum": 0
+          },
+          "courseId": {
+            "type": "integer",
+            "description": "Course id once applied",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "versionId",
+          "variantKey",
+          "label",
+          "status",
+          "summary",
+          "changes"
+        ],
+        "additionalProperties": false
+      }
+    },
     "VersionList": {
       "description": "Blueprint version history with origin and status; restore any version.",
       "modelSelectable": false,

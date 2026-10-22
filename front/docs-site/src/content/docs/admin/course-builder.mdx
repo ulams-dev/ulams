@@ -62,6 +62,9 @@ Sessions are visible to their author and to admins; only the author can act on a
 | `COURSE_BUILDER_CONCURRENT_RUNS` | 2 | AI runs at once per author |
 | `COURSE_BUILDER_SESSIONS_PER_DAY` | 10 | New sessions per author per day |
 | `COURSE_BUILDER_LESSON_CONCURRENCY` | 4 | Lessons generated at once per run |
+| `COURSE_BUILDER_MAX_VARIANTS` | 6 | Variants of one course by level and role, besides its base; `0` removes the question from the interview. See [course variants](/creators/course-versions-and-variants/) |
+| `COURSE_BUILDER_VARIANT_LESSON_USD` | 0.06 | Cost of one lesson assumed in the estimate shown before variants are drafted, until the session has lessons of its own |
+| `AI_TASK_VARIANT_OUTLINE_PROFILE`, `AI_TASK_VARIANT_LESSON_PROFILE` | `light`, `default` | The profile of the two tasks of course variants: the plan per lesson, and a lesson condensed, deepened or added for one audience |
 | `AI_LIMIT_TENANT_MONTHLY_USD` | 50 | AI spend per tenant per month (all tasks); `0` turns the cap off |
 | `COURSE_BUILDER_EVAL_MONTHLY_USD` | 20 | Spend cap of the eval command |
 | `COURSE_BUILDER_DOCX_UNCOMPRESSED_MB` | 100 | Largest unpacked size of a DOCX (zip-bomb guard) |

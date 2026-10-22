@@ -1,18 +1,21 @@
 ---
 title: Course versions and variants
-description: Planned. Numbered course versions you can compare side by side after an edit or a source update, and variants of one course for different levels and roles, drafted together by the Course Builder from the same cited sources.
+description: Variants of one course for different levels and roles, drafted together by the Course Builder from the same cited sources and reviewed as a diff against the base course. Numbered course versions you can compare side by side are coming.
 sidebar:
   order: 42
-coming: true
+modules:
+  - course-variants
 ---
 
 import { Aside } from "@astrojs/starlight/components";
 
-<Aside type="caution" title="Planned, not built yet">
-Nothing on this page is in the code yet. It describes the planned behaviour so you can comment on it
-before it is built. The design is in `docs/plans/course-versions-and-variants.md` and ADR 0192, both
-waiting for approval; progress is tracked in the [roadmap](/roadmap/) (Phase 3.1 and Phase 4.4).
-Details can still change.
+<Aside type="note" title="What is built and what is coming">
+**Built:** course variants in the Course Builder: the interview question, one outline and one generation run
+per audience from the same sources, each variant reviewed as a diff against the base, each approved variant
+created as its own course and grouped with the base as a family. **Coming:** learners choosing or being routed
+to a variant, one purchase for the whole family, variant-aware Living Course updates and certificates, and
+the numbered course versions with a visual comparison. Progress is tracked in the [roadmap](/roadmap/)
+(Phase 3.1 and Phase 4.4); the design is in `docs/plans/course-versions-and-variants.md` and ADR 0192.
 </Aside>
 
 Two related features answer two questions authors ask about AI-built courses: **"what exactly changed
@@ -29,12 +32,16 @@ These parts already work and the planned features build on them:
   updates when a source changes, reviewed as one diff.
 - Course-as-code (`ulams course diff`, `pull`, `push`) compares a course folder with the server, element by
   element ([worked example](/creators/git-sync-worked-example/)).
-- The interview asks for one audience and one level per course.
+- The interview can ask for **extra versions of the course by level and role** (below).
 
-What is missing: a list of the versions learners actually got, a way to compare **any two** of them on one
-screen, and more than one audience per course.
+What is still missing: a list of the versions learners actually got, and a way to compare **any two** of them on one
+screen.
 
 ## Course versions with a visual diff
+
+<Aside type="caution" title="Coming">
+Nothing in this section is built yet. It describes the planned behaviour so you can comment on it before it is built.
+</Aside>
 
 ### The problem
 
@@ -65,36 +72,71 @@ is accepted, a colleague pushes from Git. Each change is reviewed on its own, bu
 
 ## Course variants by level and role
 
-### The problem
+Every learner used to get the same course: the expert waded through the basics and the beginner got lost in the
+middle. Building separate courses by hand means separate sources, separate citations and separate updates that
+drift apart. A **variant** is a branch of one course instead of a copy: it shares the sources and the citations of
+the base course and becomes its own course in your academy once you approve it.
 
-Today every learner gets the same course regardless of their level and role. The expert wades through the
-basics, and the beginner gets lost in the middle. Building separate courses by hand means separate sources,
-separate citations and separate updates that drift apart.
+### Ask for variants in the interview
 
-### Planned behaviour
+The interview has a card **Who is this course for?** with chips: **One course for everyone** (the default; nothing
+extra is drafted and nothing extra costs), **Beginner version**, **Intermediate version** and **Expert version**.
+Type roles in the box, separated by commas (for example `developer, support`), to add roles. Levels only give one
+variant per level, roles only one per role, and both together give every level for every role. The card states what each
+extra version costs about before you choose, and **Decide for me** keeps one course for everyone.
 
-- **The interview asks who the course is for.** When you build a course, the assistant asks which levels
-  (for example beginner, intermediate, expert) and which roles (for example developer, support, manager)
-  to cover. "One course for everyone" stays the default.
-- **Several variants drafted at once.** After you approve the base outline, the builder drafts one variant
-  per audience. A variant skips, condenses or deepens lessons and may add material, but only from the same
-  sources: every generated element still cites its source passages. The cost estimate is shown before you
-  start, and the number of variants per course is capped.
-- **Review each variant as a diff against the base.** You see exactly how the expert variant differs from
-  the base course, using the same comparison screen as for versions, and approve variants one by one.
-- **One source of truth.** A variant is a branch of one course, not a copy. When a source changes, Living
-  Course proposes the update for the base and for every variant that uses the changed part, so variants do
-  not drift apart.
-- **Learners start in the right variant.** A learner can choose their role and level when they enrol, take
-  a short placement check built from the course's cited objectives, or be assigned by an admin or an
-  enrolment rule. If the learner insights suggest the variant is too easy or too hard, the learner gets a
-  hint to switch; nothing switches without their confirmation, and completed lessons that are identical in
-  both variants stay completed.
-- **One purchase, all variants.** Access to the course covers all its variants; the certificate names the
-  variant the learner completed.
+The course you approve first is the **base**, for the audience and level you answered in the interview. Each audience you add
+is an extra variant, up to **6** per course (`COURSE_BUILDER_MAX_VARIANTS`, set by the operator; `0` removes the card). More are refused with the number
+to remove.
 
-## Questions still open
+### What happens next
 
-The plan lists open questions with recommended defaults, for example whether a variant is its own LMS
-course or part of one course, whether learners may switch variants freely, and the default cap on the
-number of variants. They are listed in section 18 of the plan.
+1. **The base first.** You review the outline, approve it, review the lessons and apply the base course as usual. A variant is
+   drafted from the approved base, so nothing is drafted before that.
+2. **One outline per audience.** After the first apply the builder drafts a plan for each variant from the base course, the
+   audience and an index of the source (not the whole source again): for every lesson it keeps, condenses, deepens or skips it, and it may
+   add lessons the audience needs when the source supports them. You review each as the same outline comparison as for the base, against the
+   base outline, with the reason for every change. **Request changes** with a comment drafts it again; approve it to start writing.
+3. **Only what changed is written.** Kept lessons are copied with their text, quiz and citations and cost no model call. Condensed, deepened and added lessons are written
+   again for the audience, and the final test is written again when any lesson changed. Every block still cites the source passages it rests on,
+   passes the same grounding check and quiz support check as the base, and a lesson that fails can be retried on its own. Each model call is logged with the variant
+   it belongs to, so cost per variant is visible, and the session budget stops all variants together.
+4. **Review as a diff against the base.** Each finished variant shows how many lessons are kept, rewritten, added and skipped, and every changed
+   text with word-level marks. Added and removed content is marked with text and icons, not only colour.
+5. **Approve one by one.** Approving a variant creates it as its **own unpublished course** (its title carries the audience), through the same domain
+   services as the base. A variant you have not approved is never created. Rejecting one creates nothing.
+6. **A family in the catalogue.** The variant courses are grouped with the base course as a family and hidden from the public catalogue, so the family shows
+   once, as the base course. Publishing the base course publishes the approved variants with it.
+
+You can also add a variant later: the studio and the API accept a level and a role for a course that is already applied, and **Retire** removes
+a variant from the cap (its course is kept).
+
+### From the command line and the API
+
+```
+ulams course variants list <session> --json
+ulams course variants add <session> --level expert --role developer --start --json
+ulams course variants update <variant> --label "Expert, developer"
+ulams course variants retire <variant> --yes
+```
+
+The endpoints are in the [Course Builder API](/developers/course-builder-api/) (`sessions/{session}/variants`, `variants/{variant}`). Review a variant with
+`GET versions/{version}/diff?against=<base version>`: it is the same element diff the builder uses everywhere.
+
+### What is not built yet
+
+- **Learners choosing a variant.** A variant course is hidden from the catalogue and reachable by an administrator (or by enrolling learners in it by hand).
+  The picker on the course page, the optional placement check, assignment by an admin or an enrolment rule, the adaptive hint to switch, and carrying completed
+  lessons over when a learner switches are planned.
+- **One purchase, all variants.** A variant has no product of its own: the plan is one entitlement for the family. Until then a paid base course sells the base only.
+- **Living Course for variants.** When a source changes, Living Course still proposes the update for the base course only. Proposing the matching patch for every variant
+  that inherits the changed element, rebasing a variant on a newer base, and certificates that name the variant are planned.
+- **Chat edits on a variant.** The element chat edits the base course.
+
+## Decisions behind it
+
+The plan's open questions were settled with the recommended defaults. A variant is its own LMS course, so progress, completion, quizzes,
+H5P and SCORM work exactly as in any course. The cap is 6 variants per course and the operator can change it. The base course is itself
+an audience learners can pick. Mandatory training will accept any variant unless an administrator pins one, and a learner may change
+a variant an administrator assigned unless the course locks it; both belong to the learner-routing milestone. The decision record is ADR 0192
+and the full list is section 18 of the plan.

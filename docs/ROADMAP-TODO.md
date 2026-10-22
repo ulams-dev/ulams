@@ -11,6 +11,13 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (new, 2026-10-22) Course versions and variants: the plan is approved with the recommended defaults. The LMS-side family lives in a
+      new `course-variants` package (Q1); the cap is 6 variants per course, `COURSE_BUILDER_MAX_VARIANTS` (Q2); mandatory training accepts any
+      variant unless an admin pins one (Q3); a learner may change a variant assigned by an admin or a rule, with a per-course lock (Q4); the base is
+      itself a variant learners can pick (Q5); the variant list is public like the course page (Q6); undo and redo that re-apply create a release,
+      trigger `restore` (Q7); placement is off by default (Q8); at most one hint to switch per course and learner per week (Q9); no versions for
+      hand-made courses before CAC-5 (Q10); the landing keeps "Coming" for unbuilt features (Q11). ADR 0192.
+
 - [x] (new) Umami integration on the owned landing, documentation and six demos: automatic pageviews,
       demo_open versus demos_scroll, exact CSP origins and per-browser exclusion
       (ADR 0101 Proposed; requested by owner 2026-10-12). Documentation published through PR #247 and GitHub Pages run 38295754529.
@@ -685,24 +692,34 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 ### 4.4 Course variants by level and role (new)
 
 Requested by the owner on 2026-10-22: today every learner gets the same course regardless of level and role, so the expert
-wades through basics and the beginner gets lost in the middle. Plan: `docs/plans/course-versions-and-variants.md` (draft,
-waiting for approval; ADR 0192 Accepted). Variants are branches of one course: shared sources, fragments and citations,
-each variant reviewed as a diff against the base. Shown as "Coming" on the Comparison page and in the docs
-(`creators/course-versions-and-variants`). Related: the Phase 6.1 policy lifecycle items (departmental course variants).
+wades through basics and the beginner gets lost in the middle. Plan: `docs/plans/course-versions-and-variants.md` (approved
+2026-10-22; ADR 0192 Accepted). Variants are branches of one course: shared sources, fragments and citations,
+each variant reviewed as a diff against the base. Shown as "Coming" on the Comparison page until the whole item set below
+is done; the docs page (`creators/course-versions-and-variants`) says which parts are built (CV-4: drafting, review and apply in the
+builder). Related: the Phase 6.1 policy lifecycle items (departmental course variants).
 
 - [ ] (new) Course Builder interview asks which audiences to cover: levels (beginner, intermediate, expert) and roles
       (free text or presets), with "one course for everyone" as the default and the cost estimate shown before generation
+      (partial: built in milestone CV-4, PR #396, waiting to merge: chips for the levels, roles typed next to them, the grid of levels
+      times roles, the cap, Course Brief v3 `audiences`, the estimate in the card and in `GET sessions/{session}/variants`; the grid cannot yet be trimmed
+      cell by cell: an unwanted variant is rejected at its outline or retired)
 - [ ] (new) Generate several variants of one course at once from the approved base outline: each variant skips, condenses
       or deepens lessons and adds only content grounded in the same sources; every generated element cites fragments; each
       LLM call is logged with the variant it belongs to; a hard cap on the number of variants per course
 - [ ] (new) Author reviews each variant as a diff against the base (reusing the 3.1 compare screen) and approves variants
       one by one; a Living Course update to the base proposes matching patches for every variant that inherits the element
+      (partial: built in CV-4, PR #396: each variant outline is reviewed with the builder's outline diff against the base outline and each
+      generated variant with a new `VariantReview` card (lessons kept, rewritten, added, skipped; word-level text changes) built on the existing
+      `BlueprintDiff`, approved one by one, applied as its own course through the domain services, grouped as a family hidden from the catalogue
+      and published with the base; open: the 3.1 compare screen (CV-2, CV-3), Living Course patches for variants and rebase on a newer base (CV-5))
 - [ ] (new) Learner routing: self-declared role and level at enrolment, an optional cited placement check, assignment by an
       admin or an enrolment rule (6.2), and an adaptive hint from Learner Insights to switch variant that the learner confirms
       (never a silent switch); progress carries over for elements that are identical in both variants
 - [ ] (new) One entitlement for the course covers all its variants (ADR 0130); certificates name the variant completed
 - [ ] (new) Tenant isolation suite for the variant and routing endpoints; WCAG 2.2 AA for the variant picker and placement
       check; evals for variant grounding and level fit through the eval command only
+      (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #396; open: the routing endpoints,
+      the picker and the placement check (CV-5) and the evals)
 
 ---
 
