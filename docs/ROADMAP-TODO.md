@@ -695,7 +695,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 
 - [ ] (new) Course Builder interview asks which audiences to cover: levels (beginner, intermediate, expert) and roles
       (free text or presets), with "one course for everyone" as the default and the cost estimate shown before generation
-      (partial: built in milestone CV-4, PR #PRNUM, waiting to merge: chips for the levels, roles typed next to them, the grid of levels
+      (partial: built in milestone CV-4, PR #396, waiting to merge: chips for the levels, roles typed next to them, the grid of levels
       times roles, the cap, Course Brief v3 `audiences`, the estimate in the card and in `GET sessions/{session}/variants`; the grid cannot yet be trimmed
       cell by cell: an unwanted variant is rejected at its outline or retired)
 - [ ] (new) Generate several variants of one course at once from the approved base outline: each variant skips, condenses
@@ -703,7 +703,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       LLM call is logged with the variant it belongs to; a hard cap on the number of variants per course
 - [ ] (new) Author reviews each variant as a diff against the base (reusing the 3.1 compare screen) and approves variants
       one by one; a Living Course update to the base proposes matching patches for every variant that inherits the element
-      (partial: built in CV-4, PR #PRNUM: each variant outline is reviewed with the builder's outline diff against the base outline and each
+      (partial: built in CV-4, PR #396: each variant outline is reviewed with the builder's outline diff against the base outline and each
       generated variant with a new `VariantReview` card (lessons kept, rewritten, added, skipped; word-level text changes) built on the existing
       `BlueprintDiff`, approved one by one, applied as its own course through the domain services, grouped as a family hidden from the catalogue
       and published with the base; open: the 3.1 compare screen (CV-2, CV-3), Living Course patches for variants and rebase on a newer base (CV-5))
@@ -713,7 +713,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 - [ ] (new) One entitlement for the course covers all its variants (ADR 0130); certificates name the variant completed
 - [ ] (new) Tenant isolation suite for the variant and routing endpoints; WCAG 2.2 AA for the variant picker and placement
       check; evals for variant grounding and level fit through the eval command only
-      (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #PRNUM; open: the routing endpoints,
+      (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #396; open: the routing endpoints,
       the picker and the placement check (CV-5) and the evals)
 
 ---
