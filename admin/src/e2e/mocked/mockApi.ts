@@ -69,6 +69,35 @@ const b64 = (value: object) => Buffer.from(JSON.stringify(value)).toString('base
 const TOKEN = `${b64({ alg: 'none', typ: 'JWT' })}.${b64({ sub: '1', exp: 4102444800 })}.mock`;
 
 const PERMISSIONS = ['access dashboard', 'template_list', 'template_read', 'template_update'];
+const SETTINGS_PERMISSIONS = [
+  'settings_list',
+  'settings_read',
+  'settings_create',
+  'settings_update',
+  'settings_delete',
+];
+
+/** A stored setting row, as GET /api/admin/settings returns it. */
+export type MockSetting = {
+  id: number;
+  group: string;
+  key: string;
+  value: string;
+  type: string;
+  data: unknown;
+};
+
+/** What the Theme screen reads and writes: the `theme` settings group, the logo endpoint and the company name. */
+export type MockTheme = {
+  theme?: string;
+  accent?: string;
+  logoAlt?: string;
+  /** Public URL of the stored logo. */
+  logo?: string;
+  company?: string;
+  /** When set, POST /api/admin/theme/logo is refused with 422 and this reason. */
+  logoRefusal?: string;
+};
 
 // A minimal valid one-page PDF, returned by the preview endpoint.
 const PDF = Buffer.from(
@@ -98,6 +127,14 @@ export type MockApi = {
   testSends: Record<string, any>[];
   /** Bodies of every POST /api/admin/templates (a template created, for example a translation), in order. */
   creates: Record<string, any>[];
+  /** Writes to the theme settings (POST, PUT, DELETE /api/admin/settings), in order. */
+  themeWrites: { method: string; key: string; value?: string }[];
+  /** Logo uploads (POST /api/admin/theme/logo): file name, type, size and alt text, in order. */
+  logoUploads: { name: string; type: string; size: number; alt: string | null }[];
+  /** Number of DELETE /api/admin/theme/logo calls. */
+  logoRemovals: () => number;
+  /** The theme settings as stored now. */
+  theme: () => Record<string, string>;
 };
 
 /** A template of the same event in another language, as the list endpoint returns it. */
@@ -115,6 +152,8 @@ export async function mockApi(
     templateLocale?: string | null;
     /** Other templates of the event (e-mail only), one per language. */
     siblings?: MockSibling[];
+    /** Serve the Theme settings screen (adds the settings permissions) with this stored theme. */
+    theme?: MockTheme;
   } = {},
 ): Promise<MockApi> {
   const email = options.kind === 'email';
@@ -123,6 +162,22 @@ export async function mockApi(
     ? String(options.template ?? EMAIL_TEMPLATE)
     : JSON.stringify(options.template ?? SAMPLE_TEMPLATE);
   let uploads = 0;
+  let logoRemovals = 0;
+  let nextSettingId = 500;
+  const themeRows: MockSetting[] = [];
+  const addThemeRow = (key: string, value: string | undefined, type = 'text') => {
+    if (value !== undefined) {
+      themeRows.push({ id: nextSettingId++, group: 'theme', key, value, type, data: value });
+    }
+  };
+  addThemeRow('theme', options.theme?.theme);
+  addThemeRow('accent', options.theme?.accent);
+  addThemeRow('logoAlt', options.theme?.logoAlt);
+  addThemeRow('logo', options.theme?.logo ? 'theme/logo-1.png' : undefined, 'image');
+  if (options.theme?.logo) {
+    themeRows[themeRows.length - 1]!.data = options.theme.logo;
+  }
+  const company = options.theme?.company ?? 'Acme Coffee';
   const state: MockApi = {
     content: () => content,
     saves: [],
@@ -131,7 +186,12 @@ export async function mockApi(
     uploads: () => uploads,
     testSends: [],
     creates: [],
+    themeWrites: [],
+    logoUploads: [],
+    logoRemovals: () => logoRemovals,
+    theme: () => Object.fromEntries(themeRows.map((r) => [r.key, r.value])),
   };
+
   const siblings = options.siblings ?? [];
   const created = new Map<number, Record<string, any>>();
 
@@ -217,7 +277,7 @@ export async function mockApi(
             first_name: 'Ada',
             last_name: 'Admin',
             roles: ['admin'],
-            permissions: PERMISSIONS,
+            permissions: options.theme ? [...PERMISSIONS, ...SETTINGS_PERMISSIONS] : PERMISSIONS,
           }),
         );
       }
@@ -228,7 +288,14 @@ export async function mockApi(
         return json(ok({}));
       }
       if (path === '/api/settings') {
-        return json(ok({}));
+        return json(ok(options.theme ? { global: { companyName: company } } : {}));
+      }
+      if (path === '/api/admin/settings' && options.theme) {
+        const rows = url.searchParams.get('group') === 'theme' ? themeRows : [];
+        return json(ok(rows));
+      }
+      if (path.startsWith('/storage/theme/')) {
+        return route.fulfill({ status: 200, contentType: 'image/png', headers: cors, body: PNG });
       }
       if (path === '/api/core/packages') {
         return json(ok({ 'templates-pdf': '1.0.0', 'templates-email': '1.0.0' }));
@@ -380,6 +447,80 @@ export async function mockApi(
           height: 1,
         }),
       );
+    }
+
+    if (options.theme && path.startsWith('/api/admin/settings')) {
+      const settingId = Number(path.split('/')[4]);
+      if (method === 'POST' && path === '/api/admin/settings') {
+        const body = request.postDataJSON();
+        state.themeWrites.push({ method, key: body.key, value: body.value });
+        themeRows.push({
+          id: nextSettingId++,
+          group: body.group,
+          key: body.key,
+          value: body.value,
+          type: body.type,
+          data: body.value,
+        });
+        return json(ok(themeRows[themeRows.length - 1]));
+      }
+      const row = themeRows.find((r) => r.id === settingId);
+      if (method === 'PUT' && row) {
+        const body = request.postDataJSON();
+        state.themeWrites.push({ method, key: row.key, value: body.value });
+        row.value = body.value;
+        row.data = body.value;
+        return json(ok(row));
+      }
+      if (method === 'DELETE' && row) {
+        state.themeWrites.push({ method, key: row.key });
+        themeRows.splice(themeRows.indexOf(row), 1);
+        return json(ok({}));
+      }
+    }
+
+    if (options.theme && path === '/api/admin/theme/logo') {
+      if (method === 'DELETE') {
+        logoRemovals += 1;
+        for (const key of ['logo', 'logoAlt']) {
+          const at = themeRows.findIndex((r) => r.key === key);
+          if (at >= 0) themeRows.splice(at, 1);
+        }
+        return json(ok({}));
+      }
+      if (method === 'POST') {
+        if (options.theme.logoRefusal) {
+          return json(
+            {
+              success: false,
+              message: 'The given data was invalid.',
+              errors: { logo: [options.theme.logoRefusal] },
+            },
+            422,
+          );
+        }
+        // multipart body: the file name, type and alt text are read from the raw text
+        const raw = request.postDataBuffer()?.toString('latin1') ?? '';
+        const name = /name="logo"; filename="([^"]*)"/.exec(raw)?.[1] ?? '';
+        const type = /name="logo"[^]*?Content-Type: ([^\r\n]*)/.exec(raw)?.[1] ?? '';
+        const alt = /name="alt"\r\n\r\n([^\r]*)/.exec(raw)?.[1] ?? null;
+        state.logoUploads.push({ name, type, size: request.postDataBuffer()?.length ?? 0, alt });
+        for (const key of ['logo', 'logoAlt']) {
+          const at = themeRows.findIndex((r) => r.key === key);
+          if (at >= 0) themeRows.splice(at, 1);
+        }
+        const logoUrl = `${API_ORIGIN}/storage/theme/logo-${state.logoUploads.length}.png`;
+        themeRows.push({
+          id: nextSettingId++,
+          group: 'theme',
+          key: 'logo',
+          value: 'theme/logo-new.png',
+          type: 'image',
+          data: logoUrl,
+        });
+        if (alt) addThemeRow('logoAlt', alt);
+        return json(ok({ url: logoUrl, mime: type, alt }));
+      }
     }
 
     if (method === 'POST' && path === '/api/admin/pdfs/preview') {

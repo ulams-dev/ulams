@@ -25192,6 +25192,101 @@
     ]
    }
   },
+  "/api/admin/theme/logo": {
+   "delete": {
+    "description": "Removes theme.logo and theme.logoAlt and deletes the stored file; the learner site falls back to the company name as text. Needs settings_update.",
+    "operationId": "admin.theme.logo.destroy",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "removed (also when there was no logo)"
+     },
+     "401": {
+      "description": "not signed in"
+     },
+     "403": {
+      "description": "missing permission"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Remove the tenant logo",
+    "tags": [
+     "Admin Settings"
+    ]
+   },
+   "post": {
+    "description": "Stores a PNG or SVG logo (at most 200 KB; a PNG at most 4096 px a side) in the storage of the current tenant and saves it as the public setting theme.logo, with an optional text alternative as theme.logoAlt. The type is taken from the content. An SVG is checked against an allow-list and stored in its re-serialised form; one with a script, style sheet, event attribute, DOCTYPE, foreignObject or a reference to another address is refused with the reason. The stored name is random and the previous logo file is removed. Needs settings_update. Throttled to 20 requests per minute per user.",
+    "operationId": "admin.theme.logo.store",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "properties": {
+         "alt": {
+          "description": "Text alternative of the logo; the company name when empty",
+          "maxLength": 120,
+          "type": "string"
+         },
+         "logo": {
+          "description": "PNG or SVG file, at most 200 KB",
+          "format": "binary",
+          "type": "string"
+         }
+        },
+        "required": [
+         "logo"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the stored logo"
+     },
+     "401": {
+      "description": "not signed in"
+     },
+     "403": {
+      "description": "missing permission"
+     },
+     "422": {
+      "description": "not an accepted logo, or too large"
+     },
+     "429": {
+      "description": "too many requests"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Upload the tenant logo",
+    "tags": [
+     "Admin Settings"
+    ]
+   }
+  },
   "/api/admin/tokens": {
    "get": {
     "operationId": "admin.tokens.get",

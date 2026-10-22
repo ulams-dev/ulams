@@ -5,6 +5,7 @@ namespace Ulams\CourseBuilder\Pipeline;
 use InvalidArgumentException;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
 use Ulams\CourseBuilder\Models\Session;
+use Ulams\Settings\Support\ThemePresets;
 
 /**
  * The Course Brief: interview answers, schema-validated (`course-brief/v2`; v1 documents are read as v2), each field marked as
@@ -17,8 +18,6 @@ final class BriefService
 
     /** Questions code adds after the model's: fixed options, no model call. */
     public const EXTRA_KEYS = ['pricing', 'theme'];
-
-    public const THEMES = ['coffee', 'oncall', 'nightsky', 'gravity', 'poland', 'ulam'];
 
     public function __construct(private readonly SchemaRegistry $schemas)
     {
@@ -159,8 +158,8 @@ final class BriefService
     public static function theme(mixed $value): array
     {
         $preset = is_array($value) ? (string) ($value['preset'] ?? '') : (string) $value;
-        if (!in_array($preset, self::THEMES, true)) {
-            throw new InvalidArgumentException('Theme is one of: ' . implode(', ', self::THEMES) . '.');
+        if (!in_array($preset, ThemePresets::names(), true)) {
+            throw new InvalidArgumentException('Theme is one of: ' . implode(', ', ThemePresets::names()) . '.');
         }
         $theme = ['preset' => $preset];
         $accent = is_array($value) ? trim((string) ($value['accent'] ?? '')) : '';

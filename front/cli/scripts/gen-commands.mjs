@@ -16,7 +16,7 @@ const AREAS = [
   [/^\/api\/admin\/(courses|lessons|topics|categories|tags|file|scorm|cmi5|liascript|interactive|h5p|adapt|gift-|topic-project|video|youtube|images|dictionar|csv\/groups)/, "courses"],
   [/^\/api\/admin\/(users|user-groups|user|roles|permissions|csv\/users|user-submissions)/, "users"],
   [/^\/api\/admin\/(course-access-enquiries|consultation-access)/, "enrolments"],
-  [/^\/api\/admin\/(settings|config|pages|templates|translations|notifications|bulk-notifications|model-fields|mattermost|mailerlite|events)/, "settings"],
+  [/^\/api\/admin\/(settings|config|pages|templates|translations|notifications|bulk-notifications|model-fields|mattermost|mailerlite|events|theme)/, "settings"],
   [/^\/api\/admin\/(webinars|stationary-events|consultations|jitsi|pencil)/, "events"],
   [/^\/api\/admin\/(pdfs|compliance)/, "certificates"],
   [/^\/api\/admin\/(orders|products|productables|vouchers|payments|invoices)/, "commerce"],

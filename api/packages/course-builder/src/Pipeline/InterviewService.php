@@ -7,6 +7,7 @@ use Ulams\CourseBuilder\Apply\SiteTheme;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
+use Ulams\Settings\Support\ThemePresets;
 use Ulams\CourseBuilder\Ui\Surfaces;
 use Ulams\CourseBuilder\Ui\UiCatalogue;
 
@@ -80,7 +81,7 @@ final class InterviewService
                 'label' => 'Which look should the site have?',
                 'why' => 'The theme sets colours and type for the course page and lessons. You can change it later in Settings.',
                 'component' => 'ThemePicker',
-                'options' => array_map(fn ($t) => ['value' => $t, 'label' => ucfirst($t)], BriefService::THEMES),
+                'options' => array_map(fn ($t) => ['value' => $t, 'label' => ucfirst($t)], ThemePresets::names()),
                 'default' => ['preset' => $this->theme->current() ?? 'coffee'],
                 'answered' => false,
             ];

@@ -5,6 +5,7 @@ namespace Ulams\Settings\Http\Requests\Admin;
 use Ulams\Settings\Models\Setting;
 use Ulams\Settings\Enums\SettingTypes;
 use Ulams\Settings\Support\DefaultLanguage;
+use Ulams\Settings\Support\ThemeSettings;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -38,6 +39,7 @@ class SettingsUpdateRequest extends FormRequest
         // the setting being changed: the group and key of the request, else those of the stored row
         $stored = Setting::query()->find($this->route('setting'));
         DefaultLanguage::validate($validator, $this->input('group', $stored?->group), $this->input('key', $stored?->key));
+        ThemeSettings::validate($validator, $this->input('group', $stored?->group), $this->input('key', $stored?->key));
     }
 
     protected function passedValidation(): void

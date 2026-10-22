@@ -482,6 +482,10 @@
             "area": "settings"
         },
         {
+            "pattern": "api/admin/theme*",
+            "area": "settings"
+        },
+        {
             "pattern": "api/admin/config*",
             "area": "settings"
         },

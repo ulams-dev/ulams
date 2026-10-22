@@ -26,3 +26,13 @@ design tool. A runtime CSS-in-JS library makes all of these harder and adds bund
 - Good: themes work in any framework and in web components; design tokens map directly to variables.
 - Good: no runtime style injection; smaller bundles.
 - Bad: a large one-time conversion of the component library and the front application.
+
+## Amendment (2026-10, Phase 5 remaining, P5R-2)
+
+- The tenant presets are one list, `front/ui/src/theme/presets.ts`, written to `front/ui/catalogue/themes.json` and to the
+  API's copy `api/packages/settings/resources/themes.json` by `yarn workspace @ulams/ui theme-manifest` (`yarn test` fails
+  when either is stale). The learner site, the admin Theme screen, the course builder and the settings validation read it;
+  a new preset is one CSS file plus one entry.
+- A tenant sets its look in the public settings `theme.theme`, `theme.accent`, `theme.logo` and `theme.logoAlt`. The admin
+  screen refuses an accent that fails WCAG 2.2 AA on the chosen preset (4.5:1 as text, 3:1 as a border or icon). The logo
+  is a PNG or an allow-list sanitised SVG of at most 200 KB, stored in the tenant's storage.

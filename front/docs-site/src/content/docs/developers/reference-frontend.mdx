@@ -29,6 +29,7 @@ learnerRoutes:
   - /zh/faq
   - /robots.txt
   - /sitemap.xml
+  - /site.webmanifest
   - /llms.txt
   - /llms/courses/[id].md
 ---
@@ -63,6 +64,7 @@ What learners see is described in [Learners](/learners/); this page covers the c
     - course-generation/ (index, microdosing-study, stablecoin-report), also under pl/ and zh/
     - blog/ and pl/blog/ the blog: index and one page per post
     - sitemap.xml.ts and robots.txt.ts (platform-host only)
+    - site.webmanifest.ts the web app manifest: the product's on the platform host, the tenant's name, colour and logo on a tenant host
     - llms.txt.ts and llms/courses/[id].md.ts the academy's index and public course pages as Markdown for agents
     - courses/[id].astro
     - learn/[courseId]/ lesson player and finish page
@@ -77,6 +79,44 @@ What learners see is described in [Learners](/learners/); this page covers the c
   - layouts/Base.astro
 
 </FileTree>
+
+### Why a new app
+
+ADR 0008 chose a new Astro app over evolving the legacy React front. The audit behind it, in short:
+
+| | Legacy React frontends (the upstream Wellms apps and `front/src`) | `front/web` |
+|---|---|---|
+| Rendering | Client-rendered single-page app: several hundred KB of JavaScript, nothing is painted before the settings and courses have loaded, so a course page has no server-rendered text for search engines | Server-rendered HTML on every request; zero client JavaScript by default (2.8 KB gzip on landing and course pages, 10 to 13 KB on a lesson) |
+| Styling | CSS-in-JS in the upstream apps (the legacy front now refuses it in CI) | CSS custom properties, one stylesheet per theme (ADR 0004) |
+| Tenant theming | Baked in at build time: a new look is a new build | Read per request from the tenant's settings (`theme.theme`, `theme.accent`, `theme.logo`) and rendered as CSS variables |
+| Measured | Slow and janky on the demos (the reason for the rewrite) | LCP 55 to 126 ms cold on the demo academies, CLS at most 0.04, TTFB under 20 ms, against a budget of 1 s, 30 KB and 0.05 (production build, local API; `docs/plans/phase-5-reference-frontend.md`) |
+
+The legacy front stays in the repository for the screens the new app does not have yet; the numbers are
+measured again with `yarn workspace @ulams/web perf`.
+
+### Theme, logo, manifest and structured data
+
+The tenant's look is three public settings, all written from **Settings, Theme** in the admin (see
+[Theme and logo](/operators/theme/)):
+
+- `theme.theme`: one of the presets of the shared list, `front/ui/catalogue/themes.json` (generated from
+  `front/ui/src/theme/presets.ts`; the API reads its copy `api/packages/settings/resources/themes.json`). A new
+  preset is one CSS file in `front/ui/src/styles/themes/`, one entry in `presets.ts`, one stylesheet import in
+  `layouts/Base.astro` and `yarn workspace @ulams/ui theme-manifest`; `yarn test` fails when the manifest or its API
+  copy is stale.
+- `theme.accent`: rendered by `lib/accent.ts` with at least 5:1 contrast on the preset background.
+- `theme.logo` and `theme.logoAlt`: the middleware reads them from the cached public settings into
+  `Astro.locals.tenantLogo`, and the catalogue's site header shows the logo (alt text: the one the admin wrote, else the
+  company name) instead of the mark and the name. Only an `http(s)` address is accepted.
+
+`/site.webmanifest` is a route: on a tenant host it answers with the company name, the `theme_color` of the preset and
+the logo as the first icon (the platform icons follow, so the app stays installable); the platform host keeps the
+product's manifest.
+
+Every course page carries schema.org `Course` structured data (JSON-LD) built from what the API returned: the tenant as
+`provider`, the course language as `inLanguage`, a `hasCourseInstance` that is online and self-paced (with the
+workload when the course has a duration), and `offers` only when the course has a price above zero. A free course
+has no offer. The author preview (`noindex`) carries none.
 
 ### Public product pages
 

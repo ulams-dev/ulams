@@ -5,6 +5,7 @@ namespace Ulams\CourseBuilder\Apply;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\Settings\Services\Contracts\SettingsServiceContract;
+use Ulams\Settings\Support\ThemePresets;
 
 /**
  * The theme step of an apply: writes `theme.theme` and `theme.accent` through the settings service,
@@ -37,7 +38,7 @@ final class SiteTheme
             return null;
         }
 
-        return in_array($value, ['coffee', 'oncall', 'nightsky', 'gravity', 'poland', 'ulam'], true) ? $value : null;
+        return ThemePresets::has($value) ? $value : null;
     }
 
     /**

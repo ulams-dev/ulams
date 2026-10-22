@@ -14,6 +14,8 @@ import { readSession } from "../../lib/session.ts";
 import LessonView from "../../components/LessonView.astro";
 import { getPresentation } from "../../lib/presentation.ts";
 import { contentLang, learnerPageLocale } from "../../lib/locale.ts";
+import { courseJsonLd } from "../../lib/course-jsonld.ts";
+import { publicOrigin } from "../../i18n/locales.ts";
 import { accountStrings } from "@ulams/ui/account-strings";
 import { playerStrings } from "@ulams/ui/player-strings";
 
@@ -68,12 +70,13 @@ const description = descriptionDoc(theme, course!);
 
 // A course built with the course builder publishes its own landing page (an active page course-<id>);
 // it replaces the page built from API data when it is valid, and any problem falls back to that page.
+const jsonLd = course ? courseJsonLd({ course, tenantName: site.tenant.name, origin: publicOrigin(Astro.request.headers, Astro.url), language: cLang ?? locale }) : undefined;
 const landing = await getCoursePage(tenant, id);
 const landingData = { site: { theme, brand: settings?.global?.companyName ?? course!.title }, course: { startHref: resumeHref } };
 const generated = landing && validateDocument(landing, landingData).length === 0 ? landing : null;
 ---
 
-<Base theme={theme} accent={settings?.theme?.accent} lang={locale} title={`${course!.title} — ${site.tenant.name}`} description={course!.summary?.slice(0, 160)} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+<Base theme={theme} accent={settings?.theme?.accent} lang={locale} title={`${course!.title} — ${site.tenant.name}`} description={course!.summary?.slice(0, 160)} jsonLd={jsonLd} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
   {chrome.header && <Render doc={withSessionLink(chrome.header, Boolean(token), accountStrings(locale).myLearning)} data={site} />}
   <main id="main" tabindex="-1">
     {generated ? (

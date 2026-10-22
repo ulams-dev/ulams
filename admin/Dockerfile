@@ -1,4 +1,4 @@
-# Build from the repository root (one root yarn.lock; admin also compiles front/src/lib, front/ui/src/schema.ts and the learner layout manifest):
+# Build from the repository root (one root yarn.lock; admin also compiles front/src/lib, front/ui/src/schema.ts, front/ui/src/theme and the learner layout manifest):
 #   docker build -f admin/Dockerfile -t abc . && docker run -p 8080:8080 --env REACT_APP_TENANT_API_HOST_PATTERN="{slug}.admin.ulams.app=>https://{slug}.api.ulams.app" abc
 ARG NODE_VERSION=22.12.0
 # The static build is the same for every platform: run it natively, only the server stage is per-arch.
@@ -16,6 +16,8 @@ COPY front/src/lib/ front/src/lib/
 # the Layout topic editor checks documents with the catalogue's schema checker and manifest
 COPY front/ui/src/schema.ts front/ui/src/schema.ts
 COPY front/ui/catalogue/learner-layout-manifest.json front/ui/catalogue/learner-layout-manifest.json
+# the Theme settings screen shares the preset list, the contrast report and the brand importer with the sites
+COPY front/ui/src/theme/ front/ui/src/theme/
 COPY admin/ admin/
 RUN cd admin && n=1; until yarn build; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): yarn build" >&2; sleep 5; done && find dist -name '*.map' -delete
 

@@ -8,6 +8,7 @@ use Ulams\CourseBuilder\Pipeline\BriefService;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
 use Ulams\CourseBuilder\Tests\TestCase;
 use Ulams\Settings\Models\Setting;
+use Ulams\Settings\Support\ThemePresets;
 
 /** Course Brief v2: price, theme and site, the editable brief and the theme step of the apply. */
 class BriefV2Test extends TestCase
@@ -69,8 +70,33 @@ class BriefV2Test extends TestCase
         $admin = $this->siteAdmin();
         $session = $this->toOutline($admin);
         $this->assertSame(['mode' => 'free'], $session->brief['pricing']);
-        $this->assertArrayHasKey($session->brief['theme']['preset'], array_flip(BriefService::THEMES));
+        $this->assertArrayHasKey($session->brief['theme']['preset'], array_flip(ThemePresets::names()));
         $this->assertSame('default', $session->brief['decidedBy']['pricing']);
+    }
+
+    public function testTheBriefSchemaAndTheInterviewOfferTheSharedPresetList(): void
+    {
+        // the schema is a JSON file and cannot read the manifest: this keeps its enum equal to it
+        $schema = json_decode(file_get_contents(__DIR__ . '/../../resources/schemas/course-brief/v2.json'), true);
+        $this->assertSame(ThemePresets::names(), $schema['properties']['theme']['properties']['preset']['enum']);
+
+        $site = new \Ulams\CourseBuilder\Apply\SiteTheme(app(\Ulams\Settings\Services\Contracts\SettingsServiceContract::class));
+        foreach (ThemePresets::names() as $name) {
+            Setting::query()->updateOrCreate(['group' => 'theme', 'key' => 'theme'], ['value' => $name, 'type' => 'text', 'public' => true, 'enumerable' => true]);
+            $this->assertSame($name, $site->current());
+        }
+        Setting::query()->where(['group' => 'theme', 'key' => 'theme'])->update(['value' => 'platform']);
+        $this->assertNull($site->current(), 'the product site\'s own theme is not a tenant preset');
+    }
+
+    public function testAccentAdjustmentUsesThePresetBackgroundOfTheSharedList(): void
+    {
+        foreach (ThemePresets::all() as $name => $preset) {
+            $adjusted = \Ulams\CourseBuilder\Publish\AccentContrast::adjust($preset['bg'], $name);
+            $this->assertTrue($adjusted['adjusted'], "an accent equal to the $name background is not readable on it");
+            $this->assertSame(['value' => $preset['primary'], 'adjusted' => false], \Ulams\CourseBuilder\Publish\AccentContrast::adjust($preset['primary'], $name), $name);
+        }
+        $this->assertNull(\Ulams\CourseBuilder\Publish\AccentContrast::adjust('#ff0000', 'platform'));
     }
 
     public function testPutBriefReplacesPriceAndDoesNotMarkStagesStale(): void

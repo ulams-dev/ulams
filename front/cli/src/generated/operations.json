@@ -2172,6 +2172,18 @@
   "tag": "Templates"
  },
  {
+  "method": "DELETE",
+  "path": "/api/admin/theme/logo",
+  "summary": "Remove the tenant logo",
+  "tag": "Admin Settings"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/theme/logo",
+  "summary": "Upload the tenant logo",
+  "tag": "Admin Settings"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/tokens",
   "summary": "Every user's scoped API tokens",

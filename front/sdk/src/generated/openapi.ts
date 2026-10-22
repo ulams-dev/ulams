@@ -168,6 +168,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/theme/logo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Upload the tenant logo
+         * @description Stores a PNG or SVG logo (at most 200 KB; a PNG at most 4096 px a side) in the storage of the current tenant and saves it as the public setting theme.logo, with an optional text alternative as theme.logoAlt. The type is taken from the content. An SVG is checked against an allow-list and stored in its re-serialised form; one with a script, style sheet, event attribute, DOCTYPE, foreignObject or a reference to another address is refused with the reason. The stored name is random and the previous logo file is removed. Needs settings_update. Throttled to 20 requests per minute per user.
+         */
+        post: operations["admin.theme.logo.store"];
+        /**
+         * Remove the tenant logo
+         * @description Removes theme.logo and theme.logoAlt and deletes the stored file; the learner site falls back to the company name as text. Needs settings_update.
+         */
+        delete: operations["admin.theme.logo.destroy"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/tokens": {
         parameters: {
             query?: never;
@@ -12881,6 +12905,100 @@ export interface operations {
             };
             /** @description Server-side error */
             500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.theme.logo.store": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": {
+                    /**
+                     * Format: binary
+                     * @description PNG or SVG file, at most 200 KB
+                     */
+                    logo: string;
+                    /** @description Text alternative of the logo; the company name when empty */
+                    alt?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description the stored logo */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description missing permission */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description not an accepted logo, or too large */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description too many requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.theme.logo.destroy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description removed (also when there was no logo) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description not signed in */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description missing permission */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };

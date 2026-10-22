@@ -6,6 +6,7 @@ import pages from './en-US/pages';
 import pwa from './en-US/pwa';
 import settingDrawer from './en-US/settingDrawer';
 import settings from './en-US/settings';
+import theme from './en-US/theme';
 
 import consultations from './en-US/consultations';
 import courses from './en-US/courses';
@@ -54,6 +55,7 @@ export default {
   ...menu,
   ...settingDrawer,
   ...settings,
+  ...theme,
   ...pwa,
   ...component,
   ...pages,

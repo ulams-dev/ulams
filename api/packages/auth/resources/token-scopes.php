@@ -146,6 +146,8 @@ return [
 
     // ---- settings ------------------------------------------------------------------------------
     ['api/admin/settings*', 'settings'],
+    // the tenant logo upload (writes the theme settings)
+    ['api/admin/theme*', 'settings'],
     ['api/admin/config*', 'settings'],
 ['api/admin/csp-reports*', 'settings'],
     ['api/admin/pages*', 'settings'],
