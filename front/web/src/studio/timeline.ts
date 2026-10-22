@@ -23,7 +23,7 @@ export interface TimelineOptions {
   onCustom?: (name: string, value: Record<string, unknown>) => void;
 }
 
-const ACTIONABLE = new Set(["interview", "outline", "apply", "patch", "variants"]);
+const ACTIONABLE = new Set(["interview", "outline", "apply", "patch", "variants", "variant_outline", "variant"]);
 
 export class Timeline {
   state = {} as BuilderState;
@@ -188,4 +188,7 @@ const SURFACE_LABEL: Record<string, string> = {
   progress: "Generation progress",
   apply: "Apply to your academy",
   patch: "Proposed change",
+  variant_outline: "Proposed outline of a variant",
+  variant_progress: "Variant generation progress",
+  variant: "Variant for review",
 };

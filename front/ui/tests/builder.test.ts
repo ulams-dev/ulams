@@ -104,6 +104,22 @@ describe("interactions round-trip as A2UI actions", () => {
     expect(c.actions).toEqual([{ name: "answer", surfaceId: "s1", sourceComponentId: "root", context: { key: "assessments", value: ["quiz", "final"] } }]);
   });
 
+  it("the audiences question sends the chosen levels with the typed roles", () => {
+    const c = ctx();
+    const base = builderFixtures.ChoiceChips!;
+    const main = mount(
+      single("ChoiceChips", { ...base, questionKey: "audiences", label: "Who is this course for?", options: [{ value: "single", label: "One course for everyone" }, { value: "level:expert", label: "Expert version" }], multiple: true, allowCustom: true, defaultValue: ["single"] }),
+      c
+    );
+    (main.querySelector('[data-value="single"]') as HTMLButtonElement).click();
+    (main.querySelector('[data-value="level:expert"]') as HTMLButtonElement).click();
+    const typed = main.querySelector("input.cb-input") as HTMLInputElement;
+    expect(typed.placeholder).toContain("roles");
+    typed.value = "developer, support";
+    main.querySelector("form")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(c.actions[0]!.context).toEqual({ key: "audiences", value: ["level:expert", "developer", "support"] });
+  });
+
   it("Decide for me sends the question key", () => {
     const c = ctx();
     const main = mount(single("SingleChoice"), c);
@@ -161,6 +177,26 @@ describe("interactions round-trip as A2UI actions", () => {
     expect(c.actions[1]).toMatchObject({ name: "reject_variants", context: { group: "01aaaaaaaaaaaaaaaaaaaaaaaa" } });
     const decided = mount(single("VariantComparison", { ...builderFixtures.VariantComparison!, status: "chosen" }), ctx());
     expect(decided.querySelector("button.cb-btn-primary")).toBeNull();
+  });
+
+  it("variant review shows what differs from the base course and decides", () => {
+    const c = ctx();
+    const main = mount(single("VariantReview"), c);
+    expect(main.querySelector("section")!.getAttribute("aria-labelledby")).toBeTruthy();
+    expect(main.textContent).toContain("Variant for Expert");
+    expect(main.textContent).toContain("1 kept");
+    expect(main.textContent).toContain("1 skipped");
+    expect(main.textContent).toContain("added: Going further");
+    expect(main.textContent).toContain("removed: What coffee is");
+    [...main.querySelectorAll("button")].find((b) => b.textContent?.includes("Create the Expert course"))!.click();
+    [...main.querySelectorAll("button")].find((b) => b.textContent === "Reject this variant")!.click();
+    expect(c.actions.map((a) => [a.name, a.context])).toEqual([
+      ["approve_variant", { versionId: "01var1" }],
+      ["reject_variant", { versionId: "01var1" }],
+    ]);
+    const decided = mount(single("VariantReview", { ...builderFixtures.VariantReview!, status: "approved" }), ctx());
+    expect(decided.querySelector("button")).toBeNull();
+    expect(decided.textContent).toContain("Created as its own course");
   });
 
   describe("outline editor", () => {

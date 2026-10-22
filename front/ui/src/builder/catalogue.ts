@@ -544,6 +544,53 @@ export const builderCatalogue = {
     ),
     fallback: (p) => `Apply version: ${s((p.create as Record<string, unknown> | undefined)?.topics)} topics to create.`,
   },
+  VariantReview: {
+    description:
+      "A variant of the course for one audience (a level, a role or both), reviewed as a diff against the base course: how many lessons are kept, changed, added and removed, and the changed text with word-level marks. Approve to create its own course in the academy, or reject; nothing is created before the author approves.",
+    modelSelectable: false,
+    children: false,
+    props: obj(
+      {
+        versionId: str("Proposed variant version", 32),
+        variantKey: str("Variant key", 64),
+        label: str("Audience shown to learners, e.g. Expert, developer", 120),
+        level: oneOf(["beginner", "intermediate", "expert"], "Level of the audience"),
+        role: str("Role of the audience", 64),
+        status: oneOf(["proposed", "applying", "approved", "rejected"], "Decision state"),
+        baseNumber: int("Number of the base version it is compared with"),
+        summary: obj(
+          {
+            lessons: int("Lessons in the variant"),
+            kept: int("Lessons kept as in the base"),
+            changed: int("Lessons rewritten for this audience"),
+            added: int("Lessons only this variant has"),
+            removed: int("Base lessons this variant skips"),
+            citations: int("Source passages the variant cites"),
+          },
+          ["lessons", "kept", "changed", "added", "removed", "citations"]
+        ),
+        changes: list(
+          obj(
+            {
+              path: str("Field path", 200),
+              label: str("Readable field name", 200),
+              kind: oneOf(["added", "removed", "changed"], "Change"),
+              before: str("Text in the base course", 20000),
+              after: str("Text in the variant", 20000),
+            },
+            ["path", "label", "kind"]
+          ),
+          "Changes against the base course",
+          150
+        ),
+        truncated: int("Further changes not listed"),
+        costMicroUsd: int("What generating the variant cost, in micro-dollars"),
+        courseId: int("Course id once applied"),
+      },
+      ["versionId", "variantKey", "label", "status", "summary", "changes"]
+    ),
+    fallback: (p) => `Variant ${s(p.label)}: ${arr(p.changes).length} changes against the base course.`,
+  },
   VersionList: {
     description: "Blueprint version history with origin and status; restore any version.",
     modelSelectable: false,
