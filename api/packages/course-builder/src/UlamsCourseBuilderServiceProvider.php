@@ -21,6 +21,7 @@ use Ulams\CourseBuilder\Contracts\FragmentArchive;
 use Ulams\CourseBuilder\Contracts\RemovalPolicy;
 use Ulams\CourseBuilder\Ingestion\NoFragmentArchive;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
+use Ulams\CourseBuilder\Console\BackfillReleasesCommand;
 use Ulams\CourseBuilder\Console\EvalCommand;
 use Ulams\CourseBuilder\Console\PruneEventsCommand;
 use Ulams\CourseBuilder\Console\SessionExportCommand;
@@ -43,6 +44,7 @@ use Ulams\CourseBuilder\Transfer\SessionArchive;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
 use Ulams\CourseBuilder\Pipeline\VariantOutlineService;
 use Ulams\CourseBuilder\Services\AiAssistedTopics;
+use Ulams\CourseBuilder\Services\ReleaseRecorder;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\VariantService;
 use Ulams\CourseBuilder\Services\VersionService;
@@ -78,6 +80,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         BriefService::class => BriefService::class,
         Llm::class => Llm::class,
         VersionService::class => VersionService::class,
+        ReleaseRecorder::class => ReleaseRecorder::class,
         SourceIngestor::class => SourceIngestor::class,
         InterviewService::class => InterviewService::class,
         OutlineService::class => OutlineService::class,
@@ -140,7 +143,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         SyntheticResponders::register($this->app->make(FakeResponders::class));
 
         if ($this->app->runningInConsole()) {
-            $this->commands([EvalCommand::class, PruneEventsCommand::class, SessionExportCommand::class, SessionImportCommand::class]);
+            $this->commands([BackfillReleasesCommand::class, EvalCommand::class, PruneEventsCommand::class, SessionExportCommand::class, SessionImportCommand::class]);
         }
     }
 }

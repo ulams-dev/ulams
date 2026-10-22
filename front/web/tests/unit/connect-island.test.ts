@@ -176,6 +176,61 @@ describe("connect forms island", () => {
       expect(root.querySelector<HTMLButtonElement>("[data-account-form] button[type=submit]")!.disabled).toBe(true);
     });
 
+    describe("Notion with a pasted integration token", () => {
+      const notionConnectors = (configured: boolean) => [{ key: "notion", label: "Notion", configSchema: {}, secretFields: ["token"], webhooks: false, oauth: { provider: "notion", configured } }];
+      const notionAddress = "https://www.notion.so/Handbook-0123456789abcdef0123456789abcdef";
+      const TOKEN = "ntn_test_integration_token_value";
+      const notionResult = () => new Response(JSON.stringify({ success: true, data: { connection: { id: "c4", connector: "notion", config: { pageId: "x" }, webhookUrl: null }, source: { id: "src4", name: "Handbook" }, webhookSecret: null } }), { status: 201 });
+
+      it("offers a masked token field for Notion and keeps the button usable without the sign-in", async () => {
+        stubApi(() => notionResult(), notionConnectors(false));
+        const { root } = await mount();
+        await vi.waitFor(() => expect(root.querySelector("[data-account-form] [role=status]")?.textContent).toMatch(/Paste an integration token/));
+        const token = root.querySelector<HTMLInputElement>("[name=account_token]")!;
+        expect(token.type).toBe("password");
+        expect(token.autocomplete).toBe("off");
+        expect(root.querySelector(`label[for="${token.id}"]`)?.textContent).toBe("Integration token (optional)");
+        expect(token.closest<HTMLElement>(".st-field")!.hidden).toBe(false);
+        expect(root.querySelector<HTMLButtonElement>("[data-account-form] button[type=submit]")!.disabled).toBe(false);
+      });
+
+      it("connects with the token, without the sign-in, and keeps the token nowhere", async () => {
+        const calls = stubApi(() => notionResult(), notionConnectors(false));
+        const { root, navigate } = await mount();
+        await vi.waitFor(() => expect(root.querySelector<HTMLElement>("[data-account-form]")!.hidden).toBe(false));
+        type(root, "[name=account_address]", notionAddress);
+        type(root, "[name=account_token]", `  ${TOKEN}  `);
+        submit(root, "[data-account-form]");
+        await vi.waitFor(() => expect(navigate).toHaveBeenCalledWith(`/studio/s/${SESSION}`));
+        expect(calls.find((c) => c.url.endsWith("/sources/connect"))!.body).toEqual({ connector: "notion", config: { pageId: notionAddress }, secrets: { token: TOKEN }, schedule: "daily" });
+        expect(calls.some((c) => c.url.includes("/oauth/"))).toBe(false);
+        expect(root.querySelector<HTMLInputElement>("[name=account_token]")!.value).toBe("");
+        expect(window.sessionStorage.length).toBe(0);
+        expect(document.body.innerHTML).not.toContain(TOKEN);
+        expect(JSON.stringify(window.localStorage)).not.toContain(TOKEN);
+      });
+
+      it("asks for a token when the sign-in is not set up and none was pasted", async () => {
+        const calls = stubApi(() => notionResult(), notionConnectors(false));
+        const { root } = await mount();
+        await vi.waitFor(() => expect(root.querySelector<HTMLElement>("[data-account-form]")!.hidden).toBe(false));
+        type(root, "[name=account_address]", notionAddress);
+        submit(root, "[data-account-form]");
+        expect(root.querySelector("[data-account-form] [role=alert]")?.textContent).toMatch(/Paste an integration token/);
+        expect(calls.filter((c) => c.method === "POST")).toHaveLength(0);
+      });
+
+      it("hides the token field for Google Drive", async () => {
+        stubApi(() => notionResult(), [...accountConnectors(), ...notionConnectors(true)]);
+        const { root } = await mount();
+        await vi.waitFor(() => expect(root.querySelector<HTMLElement>("[data-account-form]")!.hidden).toBe(false));
+        const source = root.querySelector<HTMLSelectElement>("[name=account_source]")!;
+        source.value = "google-drive";
+        source.dispatchEvent(new Event("change"));
+        expect(root.querySelector<HTMLInputElement>("[name=account_token]")!.closest<HTMLElement>(".st-field")!.hidden).toBe(true);
+      });
+    });
+
     it("sends the browser to the sign-in and remembers the form without any token", async () => {
       const calls = stubApi(() => driveResult(), accountConnectors());
       const { root, navigate } = await mount();

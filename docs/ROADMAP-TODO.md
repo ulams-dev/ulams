@@ -108,7 +108,7 @@ small commits → tests → summary.
       self-hosters and other clients, stop PHP resizing on the hosted demos and the landing, and make the image service a deployment
       choice. Plan `docs/plans/images-cloudflare.md` and ADR 0193 were accepted by the owner on 2026-10-22 with the recommended defaults (plan section 14)
 
-- [ ] (new) Approve `docs/plans/authoring-metric-and-report-builder.md` and ADR 0194 (Proposed 2026-10-22): authoring time and cost
+- [x] (new) Decision 2026-10-22: the owner approved `docs/plans/authoring-metric-and-report-builder.md` and accepted ADR 0194 with the recommended defaults (originally proposed 2026-10-22): authoring time and cost
       metric, report builder with saved reports and an OData BI feed, Notion integration token. Open questions Q1 to Q13 in plan
       section 11 have recommended defaults (review time off by default and anonymous, registry in a new `reporting` package, OData
       v4 subset, viewer's permissions for shared reports)
@@ -525,7 +525,7 @@ approved apply through domain services → element chat edits. Designs:
       opt-in anonymous author review time, counts (lessons, questions, cited blocks, AI elements accepted unchanged,
       edited, revised on request, author-written), shown in the studio and admin analytics, exportable, over the
       API, CLI and MCP, and an "hours per learner hour" figure from the tenant's own data with no benchmark claims
-      (plan `docs/plans/authoring-metric-and-report-builder.md` AM-1 to AM-6; ADR 0194 Proposed; market research:
+      (plan `docs/plans/authoring-metric-and-report-builder.md` AM-1 to AM-6; ADR 0194 Accepted 2026-10-22; market research:
       authoring cost is the core pain) (partial: AM-1 done: `authoring_stage_timings` records wall time per pipeline stage,
       kept beyond the 30-day event retention, with the idempotent `authoring-metrics:backfill`; AM-2 to AM-6 pending)
 - [ ] (new) Element provenance for direct author edits: the outline editor tags edited elements, AI output carries a
@@ -630,7 +630,7 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
       author reviews as a diff; no quiz is generated with it yet)
 - [x] (new) Generic Git (`git` CLI) connector for hosts without a supported API (sandboxed, https only, off by default)
 - [x] (new) Google Drive and Notion connector plugins (designed in `docs/plans/phase-3.md` 6.6) (OAuth through a one-time grant, polling change detection; off by default, scripted-server tests only, live Drive/Notion runs tracked in #285 and #266)
-- [ ] (new) Notion source: a "paste an integration token" method in the studio's Notion form (the connector already
+- [ ] (new) Notion source (partial: the masked field and the connect with a pasted token are in the studio form, the API verifies the page on connect; last-four display and the plan's other points pending): a "paste an integration token" method in the studio's Notion form (the connector already
       accepts `secrets.token`; the form offers only OAuth, which blocked the Notion case study in #408): masked input,
       verified against Notion before saving, encrypted at rest, shown only as the last four characters, never in logs,
       events, audit entries or responses (plan `docs/plans/authoring-metric-and-report-builder.md` NT-1)
@@ -645,6 +645,10 @@ Shown as "Coming" on the Comparison page and in the docs (`creators/course-versi
 - [ ] (new) Course releases: every approved change that reaches learners (author edit, chat edit, accepted Living Course
       update, course-as-code import, insights proposal) is recorded as a numbered release with its trigger, source
       revisions, approver and date; releases are listed per course in the studio and through the API
+      (partial, CV-1: `course_builder_releases`, a release written by every apply (generation, author and chat edit, undo,
+      restore, accepted source update, insights improvement, import) in the transaction that sets `applied_version_id`,
+      `GET api/admin/course-versions/courses/{course}/releases` and `releases/{release}`, studio page
+      `/studio/courses/:id/versions`, `ulams course releases`, `course-builder:backfill-releases`; tick when CV-1 is merged)
 - [ ] (new) Compare any two versions or releases in the studio: structure tree with added, removed, moved and changed
       modules, lessons and elements; word-level text diff; citations added, removed or moved to a new source revision; quiz
       changes (stem, options, correct answer, explanation) with their effect on learner progress (ADR 0033 rules)
@@ -1005,7 +1009,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       save, share with tenant roles (run with the viewer's own permissions), schedule by e-mail through the existing
       schedules, export CSV, JSON lines or XLSX; small-group suppression as in Learner Insights; datasets from a
       registry in a new `reporting` package (takes over the registry of `phase-6-remaining.md` P6R-3 and the reports
-      screen of P6R-4) (plan `docs/plans/authoring-metric-and-report-builder.md` RB-1 to RB-5, RB-7; ADR 0194 Proposed;
+      screen of P6R-4) (plan `docs/plans/authoring-metric-and-report-builder.md` RB-1 to RB-5, RB-7; ADR 0194 Accepted 2026-10-22;
       market research: poor reporting is the top switch reason)
 - [ ] (new) BI connector: read-only OData v4 feed per saved report for Excel, Power BI and Tableau, with a `reports:read`
       token that can be limited to one report; CSV and JSON lines URLs with recipes for Looker Studio, Metabase and

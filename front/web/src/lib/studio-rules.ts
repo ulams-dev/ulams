@@ -99,3 +99,26 @@ export function insightsTarget(path: string): string {
   const rest = path.slice(INSIGHTS_PREFIX.length);
   return rest === "/me" ? "/api/learner-insights/me" : `/api/admin/learner-insights${rest}`;
 }
+
+/**
+ * Course versions (/api/admin/course-versions, ADR 0192): the releases of a course. The browser reaches them as
+ * /studio/api/course-versions/…; the BFF forwards the part after the prefix. Read-only: a release is written by the
+ * apply step, never from the browser. The API checks authorship; this list keeps the BFF from being an open proxy.
+ */
+export const COURSE_VERSIONS_PREFIX = "/course-versions";
+export const COURSE_VERSIONS_RULES: Array<{ method: string; pattern: RegExp }> = [
+  { method: "GET", pattern: /^\/courses\/\d{1,10}\/releases$/ },
+  { method: "GET", pattern: new RegExp(`^/releases/${ID}$`) },
+];
+
+/** `path` is relative to the BFF root, e.g. `/course-versions/courses/3/releases`. */
+export function isCourseVersionsCall(method: string, path: string): boolean {
+  if (!path.startsWith(`${COURSE_VERSIONS_PREFIX}/`)) return false;
+  const rest = path.slice(COURSE_VERSIONS_PREFIX.length);
+  return COURSE_VERSIONS_RULES.some((r) => r.method === method.toUpperCase() && r.pattern.test(rest));
+}
+
+/** The API path of an allowed course-versions call (`path` as for `isCourseVersionsCall`). */
+export function courseVersionsTarget(path: string): string {
+  return `/api/admin/course-versions${path.slice(COURSE_VERSIONS_PREFIX.length)}`;
+}

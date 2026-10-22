@@ -10,6 +10,7 @@ export * from "./living-course.ts";
 export * from "./living-learner.ts";
 export * from "./insights.ts";
 export * from "./insights-admin.ts";
+export * from "./course-versions.ts";
 export * from "./tutor.ts";
 export * from "./rest.ts";
 export * from "./compliance.ts";
