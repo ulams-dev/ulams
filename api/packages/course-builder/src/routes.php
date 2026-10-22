@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Ulams\CourseBuilder\Http\Controllers\CourseAsCodeController;
 use Ulams\CourseBuilder\Http\Controllers\CourseBuilderController;
 use Ulams\CourseBuilder\Http\Controllers\EventStreamController;
+use Ulams\CourseBuilder\Http\Controllers\ReleaseController;
 use Ulams\CourseBuilder\Http\Middleware\EnsureAiEnabled;
 
 Route::group([
@@ -61,4 +62,14 @@ Route::group([
     Route::post('versions/{version}/approve', [CourseAsCodeController::class, 'approve']);
     Route::post('sessions/{session}/apply', [CourseBuilderController::class, 'apply']);
     Route::post('sessions/{session}/publish', [CourseBuilderController::class, 'publish']);
+});
+
+// Course versions (ADR 0192): the releases of a course, keyed by the LMS course id. No AI gate: it works on
+// installations without an AI provider. Read-only; a release is written by the apply step.
+Route::group([
+    'prefix' => 'api/admin/course-versions',
+    'middleware' => ['auth:api'],
+], function () {
+    Route::get('courses/{course}/releases', [ReleaseController::class, 'index'])->whereNumber('course');
+    Route::get('releases/{release}', [ReleaseController::class, 'show']);
 });
