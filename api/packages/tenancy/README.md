@@ -96,3 +96,7 @@ The end-to-end isolation test provisions two real tenants and is opt-in:
 ```bash
 docker compose exec -T -e TENANCY_INTEGRATION=1 api vendor/bin/phpunit packages/tenancy/tests/Integration
 ```
+
+The nightly workflow (`.github/workflows/nightly-conformance.yml`, job `tenancy`) runs it against the compose stack.
+Every route is also probed in-process on each pull request: `api/tests/Integrations/TenantIsolationCoverageTest.php`
+(ADR 0190).
