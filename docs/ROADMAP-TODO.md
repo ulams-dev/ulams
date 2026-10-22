@@ -706,6 +706,8 @@ versions as available; only "Learners routed to a variant" (CV-5) stays "Coming"
       (CV-2, merged in #418)
 - [ ] (new) Releases and compare for courses not built with the Course Builder once they are adopted (depends on CAC-5)
 - [x] (new) Tenant isolation suite for the release and compare endpoints (ADR 0190 route coverage), WCAG 2.2 AA for the
+      Note 2026-10-22 (branch phase-7/adopt-courses): the adoption half is built: `ulams course adopt` and `POST course-as-code/courses/{course}/adopt` give a hand-made course a session, an approved version, a first release and an entity map (an apply right after writes nothing), so releases and compare work for it; videos, files, SCORM and cmi5 topics are left out until asset upload exists. Tick when merged
+- [ ] (new) Tenant isolation suite for the release and compare endpoints (ADR 0190 route coverage), WCAG 2.2 AA for the
       compare screen (colour is never the only signal of added or removed)
       (partial: route coverage walks both route groups, `ReleaseApiTest`, `CompareApiTest` and `VersionListApiTest` cover other authors, students,
       guests, a token of another tenant, unknown ids and a pair from two sessions; CV-3: axe and keyboard Playwright specs for the compare screen and the
@@ -1149,6 +1151,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 - [x] (new) OpenAPI covers the course builder and Living Course; SDK types and CLI spec regenerated (504 of 547 operations covered, 0 missing)
 - [x] (new) "My tokens" on the web account page (create, list, revoke; axe)
 - [ ] (new) M5 course-as-code: Blueprint v2, Markdown + directives format, sync base and conflict diffs
+      Note 2026-10-22 (branch phase-7/adopt-courses): CAC-5 first part: adoption of hand-made courses (rich text, quizzes, H5P, LiaScript, embedded pages); open: asset download and upload and the scorm, cmi5, video and file content types
       Note 2026-10-22 (partial): CAC-1 is merged (#359): Blueprint v3 schema with the citation rule for author blocks, the version diff now shows self-check and
       interaction changes, an `import` version kind that a person approves (agent tokens and MCP clients never approve; CI tokens only with the tenant setting
       `course_as_code.ci_may_approve`, off by default), and the export and import endpoints; ADR 0160 Accepted. Open: CAC-2 to CAC-8 (folder format, pull and push,

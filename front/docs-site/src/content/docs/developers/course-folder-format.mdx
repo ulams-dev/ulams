@@ -125,6 +125,7 @@ kubectl version --client
 | `origin` | `author` for a lesson you wrote yourself. Absent means `ai`. |
 | `status`, `flags` | `generated` (default), `planned` or `failed`; free-text flags. |
 | `asset` | For `scorm`, `cmi5` and `file` lessons: a path under `assets/`, or `path`, `sha256`, `bytes` and `mediaType`. A bare path is enough; `fmt` expands it from the file. |
+| `assetRef` | `{entityType: topic, entityId}`: the lesson stands for an existing topic of the course (set when a hand-made course is adopted; an H5P, LiaScript or embedded-page lesson with no blocks). The apply follows its title, module and position and never rewrites its content. Leave it as it is |
 | `video`, `embed` | `video: {provider: youtube, url: ...}` or `embed: {url: ..., title: ...}`. |
 | `selfChecks`, `interaction` | LiaScript self-check questions and the H5P or interactive element that follows the text. Same shape as in the blueprint. |
 

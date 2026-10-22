@@ -40,10 +40,11 @@ approve only when the tenant allows it. The rules are in the
 
 | Command | What it does |
 |---|---|
-| `course init [dir] --from-course <id> [--ci github]` | Writes the course's current version as a folder (the folder must be empty; a README and dot files may be there) and records `.ulams/base.json`. A course that was not made with the builder is refused (`NOT_ADOPTED`). `--ci github` also writes the CI workflow (see [GitHub Action and Docker image](#github-action-and-docker-image)). |
+| `course init [dir] --from-course <id> [--ci github]` | Writes the course's current version as a folder (the folder must be empty; a README and dot files may be there) and records `.ulams/base.json`. A course that was made by hand is refused (`NOT_ADOPTED`) until `course adopt` has read it into a blueprint. `--ci github` also writes the CI workflow (see [GitHub Action and Docker image](#github-action-and-docker-image)). |
 | `course status` | One request plus the folder: local edits since the base, whether the server moved on (*behind*), a proposal waiting for approval, whether the current version is applied, drift (elements edited in the LMS since the last apply), open conflicts, and the next command to run. Always exits 0. |
 | `course diff` | Folder against its base: elements added, changed or removed, **offline**. `--remote` compares with the server's current version, field by field (what a push would change). `--version <id>` shows what a version on the server changes against its parent (or `--against <id>`). `--exit-code` exits 13 when there are differences. `--from <id> --to <id>` compares any two versions or releases instead (see `course compare` below). |
 | `course push [--message] [--approve] [--apply] [--allow-pending]` | Validates the folder, sends it as a proposed version based on the base, prints the diff. `--approve` approves it; `--apply` approves and applies it and waits for the apply (`--no-wait` returns at once with the run handle). A folder equal to its base sends nothing. While an open Living Course update proposal changes the same elements the push stops with `SYNC_CONFLICT` (`PROPOSAL_PENDING`); `--allow-pending` stores the push anyway. |
+| `course adopt <course>` | Reads a course that was made by hand into a first blueprint, approved version, builder session and entity map, so `init`, `pull`, `push`, releases and compare work for it (see [Adopting a hand-made course](#adopting-a-hand-made-course)). Nothing in the course changes. |
 | `course preview [dir] [--tenant <slug>] [--ttl-days] [--group]` | Without `--tenant`, a push that never approves. With it, builds the folder into a throwaway **preview academy** (see [Preview academies](#preview-academies)). |
 | `course sources-connect [dir] [--host] [--branch] [--paths] [--token]` | Lets Living Course watch the `sources/` folder of the repository the course folder lives in (see [Git merges and Living Course](#git-merges-and-living-course)). |
 | `course apply [session] [--approve] [--version <id>]` | Applies the current version (an unpublished draft). When the folder holds a proposal nobody approved, refuses with `CONFIRMATION_REQUIRED` (exit 11) unless `--approve`. Pass a session id to run it outside a folder. |
@@ -185,6 +186,29 @@ ulams living connections check <connection> --commit "$GITHUB_SHA"   # records t
 
 The loop does not run twice: an applied update proposal is pulled into Git as a pull request; merging it pushes a document equal to the
 current version, which the server answers with `unchanged` (no version, no new proposal). A sync pull request never touches `sources/`.
+
+### Adopting a hand-made course
+
+```bash
+ulams course adopt 12                              # a course somebody wrote in the admin
+ulams course init ./my-course --from-course 12     # now it is a folder
+```
+
+Adoption reads the live course and writes what the blueprint can hold. **Nothing in the course changes**: an apply right after adoption writes
+nothing (the entity map holds the fingerprint of every element, and a test replays it against the query log). Afterwards the course is exported,
+pushed, pulled, released and compared like one made with the builder, and works with AI switched off.
+
+| Topic in the course | In the blueprint |
+|---|---|
+| Rich text | A lesson. HTML becomes Markdown, split at top-level headings into blocks, every block `origin: author` with no citations; scripts, event handlers, `javascript:` links and remote images never reach a block. A lesson holds at most 60 blocks of 20 000 characters |
+| Quiz (GIFT) | The quiz of the lesson before it. Single, multiple, true/false and short answer; a matching, numeric or unreadable question is left out |
+| H5P, LiaScript, embedded page | A lesson that **stands for** the topic (`assetRef`). An apply follows its title, module and position and never rewrites its content; an embedded page keeps its address |
+| Video, audio, PDF, image, SCORM, cmi5 | Left out: their files must travel with the course (asset download and upload), which is not built yet |
+| Inactive topics, a quiz with no lesson before it, topics beyond 30 per module | Left out |
+
+Everything left out is listed with its reason (`skipped` in `--json`), is never mapped, and is never changed by an apply. Each lesson gets one
+objective ("Work through the lesson") because the blueprint requires one; edit it in the folder. Sub-lessons become modules named
+`Parent › Child`. Running `course adopt` again returns the existing session. You need the right to change the course.
 
 ### Preview academies
 
@@ -336,6 +360,6 @@ ulams course fmt && git add -A courses/
 
 ## Not there yet
 
-Adopting a course that was not made with the builder, downloading assets (`pull --assets`), and SCORM, video and file lessons are later
+Downloading and uploading assets (`pull --assets`), and SCORM, cmi5, video, audio, PDF and image lessons (the topics adoption leaves out) are later
 milestones of the
 [course-as-code plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-7-course-as-code.md).

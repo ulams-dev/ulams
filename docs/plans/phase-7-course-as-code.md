@@ -498,6 +498,32 @@ What the implementation (`front/cli/src/course/merge.ts`, `conflicts.ts`, `sync-
   passes `overwrite` only when every drifted element is one the absorption took its edits from; anything else stays refused.
 - **Still open:** a run endpoint in the `course-as-code` group (CAC-3's candidate), field-level merge (default 4), merging inside Markdown text.
 
+### 7.8 As built in CAC-5, first part: adoption of hand-made courses
+
+What shipped (`api/packages/course-builder/src/CourseAsCode/CourseAdopter.php`, `ContentTypes/ReferencedTopics.php`, `EmbedType.php`,
+`front/cli/src/commands/course-sync.ts`; reference: `developers/cli-course`, `developers/course-builder-api`), and where it differs from 7.3:
+
+- **Adoption is its own command and endpoint**: `ulams course adopt <course>` and `POST course-as-code/courses/{course}/adopt` (`course.adopt`). `init
+  --from-course` stays a read command: on a hand-made course it stops with `NOT_ADOPTED` and says to adopt first. Adoption is idempotent and needs the
+  right to change the course (`CoursesPolicy::update`).
+- **What it reads**: rich text (HTML to Markdown with `league/html-to-markdown`, scripts, handlers, `javascript:` links and remote images removed, split
+  at top-level headings, `origin: author`, no citations), quizzes (as the quiz of the lesson before; single, multiple, true/false, short answer through
+  the existing `GiftReader`; matching and unreadable questions are left out), and H5P, LiaScript and oEmbed topics.
+- **Lessons that stand for a topic.** Instead of the plan's `contentType: "external"` (which would have needed a new schema value in four places), a lesson
+  with `assetRef: {entityType: topic, entityId}` is a reference whatever its `contentType` says (`h5p`, `liascript`, `embed`). `ReferencedTopics` makes
+  the applier follow its title, module and position and never rewrite the content; `Checks::blueprint` skips the type's own check for it. An embedded
+  page also keeps its address in `embed`.
+- **Zero writes on the first apply** is a test: the entity map holds the fingerprint `BlueprintApplier::desired()` computes for each element, the plan
+  is empty, `drift()` is empty, and the query log of an apply holds no write to an LMS table.
+- **Left out and listed** (`skipped[]`, never mapped, never touched by an apply): video, audio, PDF, image, SCORM and cmi5 topics (they need their files
+  to travel with the course), inactive topics, a quiz with no lesson before it, unreadable questions, topics beyond 30 per module. Each lesson gets one
+  fabricated objective because the blueprint requires one. Sub-lessons become modules named `Parent › Child`.
+- **New content type `embed`** (create an oEmbed topic from `embed: {url, title}`; https only). It is not offered by the outline picker or the studio
+  format list.
+- **Not built (CAC-5, second part):** the content types `scorm`, `cmi5`, `video` and `file` with asset upload (`POST sessions/{s}/assets`, content
+  addressed, through the `files`, `scorm`, `cmi5` and `video` services), `pull --assets` and asset upload on push. Until then those topics cannot be
+  adopted or created from Git.
+
 ## 8. GitHub Action, Docker image and preview academies
 
 ### 8.1 Image `ghcr.io/ulams-dev/ulams-cli`
