@@ -309,6 +309,17 @@ application with its own processes, so it suits one to three tenants (see the re
 not scale to a wildcard of tenants: use Cloudflare Workers beyond that. Passenger stops an app after 24 h
 without requests and starts it on the next, so the first request after a quiet day is slow.
 
+**Images** (ADR 0193). Sharp has no FreeBSD binary, so the `astro` image mode cannot run here. Behind the proxied
+Cloudflare zone build and run the fronts and the landing export with `ULAMS_IMAGE_SERVICE=cloudflare`: images
+become same-host `/cdn-cgi/image/<options>/<storage URL>` URLs resized and converted to AVIF/WebP at Cloudflare's edge
+(Images Free plan: 5,000 unique transformations a month, `onerror=redirect` falls back to the original). `noop` keeps
+the originals. Before switching a host run `sh bin/check-images.sh <host> [source-image-url]`: it expects a 200
+`image/avif` or `image/webp` with `cf-resized`, and a redirect for a missing source with `onerror=redirect`
+(`sh test/check-images.sh` tests the script offline; CI runs it). The static landing export
+(`cloudflare/landing-static.mjs`) refuses to run unless `ULAMS_IMAGE_SERVICE` is `cloudflare` or `noop` and
+`ULAMS_ADMIN_URL` is set, for staging `ULAMS_ADMIN_URL='https://{slug}-admin.ulams.app'` (the default points at
+localhost). Rollback: rebuild with `ULAMS_IMAGE_SERVICE=noop`.
+
 ### Resource plan (MD2: 4 GB, 70 processes)
 
 The two hard limits are **70 processes** (every `sh`, `flock`, `php`, `node`, `screen` and SSH session

@@ -168,4 +168,98 @@ describe("versions island", () => {
     expect(root.textContent).toContain(trigger);
     expect(await violations(root)).toEqual([]);
   });
+
+  describe("comparing", () => {
+    const versionsOf = (rows: Array<Record<string, unknown>>, variants: unknown[] = []) => ({
+      sessionId: "01s0000000000000000000abcd", variantId: null, courseId: 5, baseCourseId: 5, versions: rows, variants, total: rows.length, page: 1, perPage: 200,
+    });
+    const version = (number: number, over: Record<string, unknown> = {}) => ({
+      id: `01v${String(number).padStart(23, "0")}`, number, kind: "author", origin: "author", status: "approved", reason: null, variantId: null, releaseId: null, releaseNumber: null,
+      createdAt: "2026-10-20T09:00:00+00:00", decidedAt: null, ...over,
+    });
+
+    it("links every release but the first to a comparison with the previous release", async () => {
+      stubApi(() => ok(pageOf([release(2, "chat", { previousReleaseId: release(1, "generate").id }), release(1, "generate")])));
+      const root = await mount();
+      await vi.waitFor(() => expect(root.querySelector("table")).not.toBeNull(), { timeout: 4000 });
+
+      const links = [...root.querySelectorAll<HTMLAnchorElement>("a.st-ver-link")].filter((a) => a.href.includes("from="));
+      expect(links).toHaveLength(1);
+      expect(links[0]!.getAttribute("href")).toBe(`/studio/courses/5/compare?from=${release(1, "generate").id}&to=${release(2, "chat").id}&lang=en`);
+      expect(links[0]!.getAttribute("aria-label")).toBe("Compare release 2 with the previous release");
+      expect(root.querySelectorAll("tbody tr")[1]!.textContent).toContain("First release");
+      expect(root.querySelector('a[href="/studio/courses/5/compare?lang=en"]')!.textContent).toBe("Open the compare screen");
+      expect(await violations(root)).toEqual([]);
+    });
+
+    it("ticks two versions, refuses a third, and sends them to the compare page older first", async () => {
+      stubApi(() => ok(pageOf([release(3, "chat"), release(2, "restore"), release(1, "generate")])));
+      const root = await mount();
+      await vi.waitFor(() => expect(root.querySelector("table")).not.toBeNull(), { timeout: 4000 });
+      const boxes = () => [...root.querySelectorAll<HTMLInputElement>("input[data-pick]")];
+      const go = root.querySelector<HTMLButtonElement>("[data-compare-selected]")!;
+      expect(go.disabled).toBe(true);
+      expect(root.querySelector("[data-pick-count]")!.textContent).toBe("Selected for comparison: 0 of 2");
+      expect(boxes()[0]!.getAttribute("aria-label")).toBe("Select release 3 to compare");
+
+      boxes()[0]!.click(); // release 3, version 4
+      boxes()[2]!.click(); // release 1, version 2
+      expect(go.disabled).toBe(false);
+      expect(boxes()[1]!.disabled).toBe(true);
+      expect(root.querySelector("[data-pick-count]")!.textContent).toContain("Two are selected. Clear one to choose another.");
+      expect(await violations(root)).toEqual([]);
+
+      // a plain GET form to the compare page: older version as `from`, newer as `to`, whichever was ticked first
+      const form = root.querySelector<HTMLFormElement>("[data-compare-form]")!;
+      expect(form.getAttribute("action")).toBe("/studio/courses/5/compare");
+      expect(form.method).toBe("get");
+      expect(Object.fromEntries(new FormData(form).entries())).toEqual({ from: release(1, "generate").versionId, to: release(3, "chat").versionId, lang: "en" });
+
+      root.querySelector<HTMLButtonElement>("[data-clear-picks]")!.click();
+      expect(boxes().every((b) => !b.checked && !b.disabled)).toBe(true);
+      expect(go.disabled).toBe(true);
+    });
+
+    it("shows every version on request, with the state, the release and the branch of variants, and keeps the selection in step", async () => {
+      const all = versionsOf(
+        [version(7, { status: "proposed" }), version(6, { releaseId: release(3, "chat").id, releaseNumber: 3 }), version(5, { status: "rejected" }), version(4, { variantId: "01w00000000000000000000009", status: "approved" })],
+        [{ id: "01w00000000000000000000009", key: "expert", label: "Expert", level: "expert", role: null, status: "approved", courseId: 9 }]
+      );
+      const calls = stubApi((url) => (url.includes("/versions") ? ok(all) : ok(pageOf([release(3, "chat")]))));
+      const root = await mount();
+      await vi.waitFor(() => expect(root.querySelector("table")).not.toBeNull(), { timeout: 4000 });
+      expect(root.querySelector("[data-all-versions]")).toBeNull();
+
+      root.querySelector<HTMLInputElement>("[data-show-all]")!.click();
+      await vi.waitFor(() => expect(root.querySelector("[data-all-versions] table")).not.toBeNull(), { timeout: 4000 });
+
+      expect(calls.at(-1)).toBe("/studio/api/course-versions/courses/5/versions?branch=all&perPage=200");
+      const rows = [...root.querySelectorAll("[data-all-versions] tbody tr")];
+      expect(rows).toHaveLength(4);
+      expect(rows[0]!.textContent).toContain("Proposed, not applied");
+      expect(rows[0]!.textContent).toContain("Never released");
+      expect(rows[1]!.textContent).toContain("Release 3");
+      expect(rows[2]!.textContent).toContain("Rejected");
+      expect(rows[3]!.textContent).toContain("Expert");
+      expect(rows[0]!.textContent).toContain("Base course");
+      expect(document.activeElement).toBe(root.querySelector("[data-show-all]"));
+      expect(await violations(root)).toEqual([]);
+
+      // version 6 is in both tables: ticking it in one ticks it in the other
+      root.querySelector<HTMLInputElement>(`[data-all-versions] input[data-pick="${version(6).id}"]`)!.click();
+      expect(root.querySelector<HTMLInputElement>(`input[data-pick="${release(3, "chat").versionId}"]`)).not.toBeNull();
+    });
+
+    it("says so when the full list cannot be loaded and keeps the releases", async () => {
+      stubApi((url) => (url.includes("/versions") ? { status: 500, body: { message: "down" } } : ok(pageOf([release(1, "generate")]))));
+      const root = await mount();
+      await vi.waitFor(() => expect(root.querySelector("table")).not.toBeNull(), { timeout: 4000 });
+
+      root.querySelector<HTMLInputElement>("[data-show-all]")!.click();
+      await vi.waitFor(() => expect(root.querySelector('[data-state="all-error"]')).not.toBeNull(), { timeout: 4000 });
+
+      expect(root.querySelector('[data-state="all-error"] [role="alert"]')!.textContent).toBe("All versions could not be loaded.");
+      expect(root.querySelector("tbody tr")).not.toBeNull();
+    });
+  });
 });

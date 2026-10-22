@@ -17,6 +17,14 @@ class BlueprintV3Test extends TestCase
         return $this->toApplied($this->author())->currentVersion->document;
     }
 
+    /** Documents written before ADR 0194 (AM-2) carry neither `ai_hash` nor `edited_by_author`. */
+    private function withoutProvenance(array $node): array
+    {
+        unset($node['ai_hash'], $node['edited_by_author']);
+
+        return array_map(fn ($v) => is_array($v) ? $this->withoutProvenance($v) : $v, $node);
+    }
+
     private function schema(): SchemaRegistry
     {
         return app(SchemaRegistry::class);
@@ -27,12 +35,13 @@ class BlueprintV3Test extends TestCase
     {
         $doc['schemaVersion'] = 2;
 
-        return $doc;
+        return $this->withoutProvenance($doc);
     }
 
     /** A v1 document: rich text lessons only, no self-checks or interactions. */
     private function asV1(array $doc): array
     {
+        $doc = $this->withoutProvenance($doc);
         $doc['schemaVersion'] = 1;
         foreach ($doc['modules'] as $m => $module) {
             foreach ($module['lessons'] as $l => $lesson) {

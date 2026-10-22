@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-/** The merged policy lifecycle and the separate agent-interface showcase. */
+/** The how-it-works story under the hero and the separate agent-interface showcase. */
 const port = process.env.WEB_BASE_PORT ?? "4321";
 const url = `http://app.localhost:${port}/`;
 
@@ -9,13 +9,11 @@ async function open(page: Page) {
   await expect(page.locator("#agents")).toHaveCount(1);
 }
 
-test("the policy lifecycle appears once at the top and uses a neutral example caption", async ({ page }) => {
+test("the how-it-works story appears once, right after the hero, with no tabbed policy lifecycle", async ({ page }) => {
   await open(page);
-  await expect(page.locator(".u-hero ulams-policy-story")).toHaveCount(1);
-  await expect(page.locator(".u-lc, #builder")).toHaveCount(0);
-  await page.locator(".ps-navigation button").last().click();
-  await expect(page.locator(".policy-story .u-status")).toHaveCount(0);
-  await expect(page.locator(".policy-story figcaption")).toContainText("Illustrative policy lifecycle");
+  await expect(page.locator("#how-it-works")).toHaveCount(1);
+  await expect(page.locator("ulams-policy-story, .u-lc, #builder")).toHaveCount(0);
+  await expect(page.locator("#how-it-works .hs-visual__tag").first()).toBeVisible();
 });
 
 test("workflow tabs: roving tabindex, aria wiring, arrow keys, transcripts", async ({ page }) => {
@@ -57,21 +55,6 @@ test("tabs auto-advance slowly and Pause stops them", async ({ page }) => {
   await expect(page.locator('#agents [role="tab"]').first()).toHaveAttribute("aria-selected", "true");
 });
 
-test("policy playback advances, pauses and replays without losing chapter selection", async ({ page }) => {
-  await page.clock.install();
-  await open(page);
-  const story = page.locator("ulams-policy-story");
-  await story.scrollIntoViewIfNeeded();
-  await page.waitForFunction(() => customElements.get("ulams-policy-story"));
-  await page.clock.fastForward(11000);
-  await expect(story.locator('[role="tab"]').nth(1)).toHaveAttribute("aria-selected", "true");
-  await story.locator("[data-play]").click();
-  await page.clock.fastForward(12000);
-  await expect(story.locator('[role="tab"]').nth(1)).toHaveAttribute("aria-selected", "true");
-  await story.locator("[data-replay]").click();
-  await expect(story.locator('[role="tab"]').first()).toHaveAttribute("aria-selected", "true");
-});
-
 test("no layout shift while the stories play", async ({ page }) => {
   await page.addInitScript(() => {
     (window as unknown as { __cls: number }).__cls = 0;
@@ -85,7 +68,7 @@ test("no layout shift while the stories play", async ({ page }) => {
     await document.fonts.ready;
     (window as unknown as { __cls: number }).__cls = 0;
   });
-  for (const id of ["living-course", "agents"]) {
+  for (const id of ["how-sources", "how-draft", "how-evidence", "agents"]) {
     await page.locator(`#${id}`).scrollIntoViewIfNeeded();
     await page.waitForTimeout(2500);
   }
@@ -96,13 +79,11 @@ test("no layout shift while the stories play", async ({ page }) => {
 test.describe("reduced motion", () => {
   test.use({ contextOptions: { reducedMotion: "reduce" } });
 
-  test("the policy stays still, while agent examples show their complete transcript", async ({ page }) => {
+  test("the story stays still and complete, while agent examples show their complete transcript", async ({ page }) => {
     await open(page);
-    const story = page.locator("ulams-policy-story");
-    await expect(story.locator("[data-play]")).toHaveAttribute("aria-pressed", "true");
-    await expect(story.locator('[role="tab"]').first()).toHaveAttribute("aria-selected", "true");
-    await story.locator('[role="tab"]').last().click();
-    await expect(story.locator(".ps-panel:visible")).toContainText("New certificate");
+    await expect(page.locator("html.js-dg")).toHaveCount(0);
+    await expect(page.locator("#how-it-works [data-dg-control]:visible")).toHaveCount(0);
+    await expect(page.locator("#how-evidence")).toContainText("Mandatory training overdue");
     await page.locator("#agents").scrollIntoViewIfNeeded();
     await expect(page.locator("#agents ulams-story").first()).toHaveAttribute("data-static", "");
     await expect(page.locator("#agents [data-pause]")).toBeHidden();
@@ -167,21 +148,3 @@ test("documentation and GitHub links open in a new tab and say so", async ({ pag
   await expect(page.locator('a[href^="/"][target="_blank"]')).toHaveCount(0);
 });
 
-test("phones pin the chapter list in two rows under the site header", async ({ page }, info) => {
-  test.skip(info.project.name !== "phone", "wider screens keep the chapter stepper");
-  await open(page);
-  const story = page.locator("ulams-policy-story");
-  const nav = story.locator(".ps-navigation");
-  await expect(story.locator(".ps-panel:visible")).toHaveCount(1);
-  const rows = await nav.locator("button").evaluateAll((els) => new Set(els.map((el) => Math.round(el.getBoundingClientRect().top))).size);
-  expect(rows).toBe(2);
-  const clipped = await nav.locator("button > span:last-of-type").evaluateAll((els) => els.filter((el) => el.scrollWidth > el.clientWidth + 1).map((el) => el.textContent));
-  expect(clipped).toEqual([]);
-  await story.locator(".ps-panel:visible").scrollIntoViewIfNeeded();
-  const stuck = await nav.evaluate((el) => getComputedStyle(el.parentElement!).position);
-  expect(stuck).toBe("sticky");
-  const before = await nav.boundingBox();
-  await page.mouse.wheel(0, 500);
-  const after = await nav.boundingBox();
-  expect(Math.abs(after!.y - before!.y)).toBeLessThan(2);
-});

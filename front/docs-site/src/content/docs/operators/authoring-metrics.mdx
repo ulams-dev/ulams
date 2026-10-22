@@ -9,8 +9,8 @@ modules:
 
 Authoring cost is what a course really costs to produce. The Course Builder already records what the model
 cost; the **authoring metrics** module adds how long each stage of a build took, so a course can state its own
-time to produce. This page covers what is recorded today (stage times). Cost per course, counts of accepted and
-edited AI elements and review time follow in later releases (ADR 0194).
+time to produce. This page covers what is recorded today (stage times and element provenance). Cost per course,
+the counts of accepted and edited AI elements and review time follow in later releases (ADR 0194).
 
 ## What is recorded
 
@@ -47,6 +47,24 @@ docker compose exec api php artisan authoring-metrics:backfill --domain=academy.
 one build. It is safe to run again: a stage already recorded is never written twice. `ulams:upgrade` runs it once for
 every tenant ([upgrades](/operators/upgrades/)), so after an upgrade you normally do nothing. Run it soon after the
 upgrade: every day later, one more day of events is lost to the 30-day pruning and falls back to `coarse`.
+
+## Who wrote each element
+
+So that a later report can tell an AI element accepted as it was from one a person changed, the Course Blueprint
+(schema v3, both fields optional, older documents stay valid) records two things per module, lesson, lesson block and
+quiz question:
+
+| Field | Meaning |
+|---|---|
+| `ai_hash` | sha256 of the normalised content (no ids, trimmed text, Unix line ends) when the AI produced or last revised the element. Set when an outline or the lessons and quizzes are generated, and again when an element chat edit is approved. A lesson's hash covers the lesson itself, not its blocks and quiz, which have their own |
+| `edited_by_author` | `true` once a person changed the element directly: rename, add or change the format in the outline editor, a text change absorbed from the LMS, a text change in an import. Moving or removing a lesson is not an edit of its text. An AI revision on request clears it and stores a fresh hash |
+
+An element reads as one of: accepted unchanged (hash matches, never edited), revised by the AI on request (an element
+chat edit produced the text; the version history records those as kind `patch` with the element id), edited by the
+author (flag set, or the text no longer matches the hash), written by the author (`origin: author` from the start), or
+unknown (produced before this release: never guessed). Nothing here is shown yet; the counts arrive with the per-course
+metric. A change to only `ai_hash` or `edited_by_author` is never a difference in a version comparison, a merge or an
+import.
 
 ## Failure behaviour
 

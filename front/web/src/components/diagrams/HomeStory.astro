@@ -1,0 +1,253 @@
+---
+/**
+ * How ULAMS works, told on the home page in six steps and a loop (lib/home-story.ts). Every caption is real text and
+ * always visible; each step's picture is an example with a text alternative. The server markup is the final state:
+ * without JS or with reduced motion nothing is hidden. Otherwise each step plays once when it scrolls into view
+ * (diagrams.ts, opacity and transform only), and one button replays the whole story. Nothing loops.
+ */
+import "./diagrams.css";
+import "./home-story.css";
+import Icon from "@ulams/ui/components/Icon.astro";
+import { STEP_KEYS, STORY_ID, type HomeStoryCopy } from "../../lib/home-story.ts";
+
+interface Props {
+  copy: HomeStoryCopy;
+  /** Status labels of the UI catalogue in the page language. */
+  status: { available: string; coming: string };
+}
+
+const { copy, status } = Astro.props;
+const { sources, draft, review, living, learners, evidence } = copy;
+const steps = STEP_KEYS.map((key) => copy[key]);
+const SOURCE_ICONS = ["pdf", "book", "layers", "code", "download"];
+const ROW_ICONS = { ok: "check", muted: "sync", warn: "users", bad: "calendar" } as const;
+const titleId = `${STORY_ID}-title`;
+---
+
+<section class="hs" id={STORY_ID} aria-labelledby={titleId} data-dg-group>
+  <div class="u-container">
+    <header class="hs__head" tabindex="-1" data-dg-start>
+      <p class="u-eyebrow">{copy.eyebrow}</p>
+      <h2 class="hs__title" id={titleId}>{copy.title}</h2>
+      <p class="hs__lede">{copy.lede}</p>
+      <nav class="hs-rail" aria-label={copy.stepsLabel}>
+        <ol role="list">
+          {
+            steps.map((step, i) => (
+              <li>
+                <a href={`#${step.id}`}>
+                  <span class="hs-rail__num" aria-hidden="true">{i + 1}</span>
+                  <span>{step.label}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+        <span class="hs-rail__again" aria-hidden="true"><Icon name="sync" /></span>
+      </nav>
+    </header>
+
+    <ol class="hs__steps" role="list">
+      {/* 1. Sources */}
+      <li class="hs-step dg" id={sources.id} data-dg>
+        <span class="hs-step__spine" aria-hidden="true"></span>
+        <div class="hs-step__copy">
+          <p class="hs-step__label"><span class="hs-step__num" aria-hidden="true">1</span>{sources.label}</p>
+          <h3 class="hs-step__title">{sources.title}</h3>
+          <p class="hs-step__text">{sources.text}</p>
+          <div class="hs-why"><p class="hs-why__label">{copy.whyLabel}</p><p>{sources.why}</p></div>
+        </div>
+        <div class="hs-visual" role="img" aria-label={sources.alt}>
+          <span class="hs-visual__tag">{copy.example}</span>
+          <div class="hs-src">
+            <ul class="hs-src__items">
+              {sources.items.map((item, i) => (
+                <li data-dg-step style={`--dg-i:${i}`}><Icon name={SOURCE_ICONS[i] ?? "book"} /><span>{item}</span></li>
+              ))}
+            </ul>
+            <span class="hs-src__flow" data-dg-grow="x" style="--dg-i:5"><i></i></span>
+            <div class="hs-src__out">
+              <div class="hs-src__passages">
+                {[0, 1, 2, 3, 4, 5].map((n) => <span data-dg-pop style={`--dg-i:${6 + n * 0.5}`}><b>§</b><i></i></span>)}
+              </div>
+              <p class="hs-src__label" data-dg-step style="--dg-i:9"><Icon name="quote" />{sources.passages}</p>
+            </div>
+          </div>
+        </div>
+      </li>
+
+      {/* 2. Cited draft, with the one measured run (the block after the story sells it, with the benchmark) */}
+      <li class="hs-step dg" id={draft.id} data-dg>
+        <span class="hs-step__spine" aria-hidden="true"></span>
+        <div class="hs-step__copy">
+          <p class="hs-step__label"><span class="hs-step__num" aria-hidden="true">2</span>{draft.label}</p>
+          <h3 class="hs-step__title">{draft.title}</h3>
+          <p class="hs-step__text">{draft.text}</p>
+          <div class="hs-run">
+            <p class="dg__badge dg__badge--run">{draft.run.badge}</p>
+            <dl class="hs-run__facts">
+              {draft.run.facts.map((fact) => (
+                <div>
+                  <dt>{fact.label}</dt>
+                  <dd>{fact.value}</dd>
+                </div>
+              ))}
+            </dl>
+            <p class="hs-run__note">{draft.run.note}</p>
+          </div>
+          <div class="hs-why">
+            <p class="hs-why__label">{copy.whyLabel}</p>
+            <p>{draft.why}</p>
+          </div>
+        </div>
+        <div class="hs-visual" role="img" aria-label={draft.alt}>
+          <span class="hs-visual__tag">{copy.example}</span>
+          <div class="hs-cite">
+            <div class="hs-cite__passage" data-dg-step style="--dg-i:0">
+              <span class="hs-cite__doc"><Icon name="pdf" />{draft.block.chip}</span>
+              <span class="hs-lines"><i></i><i class="is-cited"></i><i></i></span>
+            </div>
+            <span class="hs-cite__link" data-dg-grow="x" style="--dg-i:3"><i></i></span>
+            <div class="hs-cite__block" data-dg-step style="--dg-i:1">
+              <span class="hs-cite__lesson"><Icon name="book" />{draft.block.lesson}</span>
+              <span class="hs-lines hs-lines--short"><i></i><i></i></span>
+              <span class="hs-cite__line" data-dg-step style="--dg-i:2">{draft.block.line}</span>
+              <span class="hs-chip" data-dg-pop style="--dg-i:4"><Icon name="quote" />{draft.block.chip}</span>
+            </div>
+          </div>
+        </div>
+      </li>
+
+      {/* 3. Review */}
+      <li class="hs-step dg" id={review.id} data-dg>
+        <span class="hs-step__spine" aria-hidden="true"></span>
+        <div class="hs-step__copy">
+          <p class="hs-step__label"><span class="hs-step__num" aria-hidden="true">3</span>{review.label}</p>
+          <h3 class="hs-step__title">{review.title}</h3>
+          <p class="hs-step__text">{review.text}</p>
+          <div class="hs-why"><p class="hs-why__label">{copy.whyLabel}</p><p>{review.why}</p></div>
+        </div>
+        <div class="hs-visual" role="img" aria-label={review.alt}>
+          <span class="hs-visual__tag">{copy.example}</span>
+          <div class="hs-diff">
+            <p class="hs-diff__title"><Icon name="sparkle" />{review.card.title}</p>
+            <p class="hs-diff__row hs-diff__row--del" data-dg-step style="--dg-i:0"><b>−</b><s>{review.card.removed}</s></p>
+            <p class="hs-diff__row hs-diff__row--add" data-dg-step style="--dg-i:1"><b>+</b><span>{review.card.added}</span></p>
+            <span class="hs-diff__actions" data-dg-step style="--dg-i:2">
+              <span class="hs-diff__btn">{review.card.reject}</span>
+              <span class="hs-diff__btn hs-diff__btn--accept"><Icon name="check" />{review.card.accept}</span>
+            </span>
+            <p class="hs-diff__done" data-dg-pop style="--dg-i:4"><Icon name="shield" />{review.card.approved}</p>
+          </div>
+        </div>
+      </li>
+
+      {/* 4. Living Course */}
+      <li class="hs-step dg" id={living.id} data-dg>
+        <span class="hs-step__spine" aria-hidden="true"></span>
+        <div class="hs-step__copy">
+          <p class="hs-step__label"><span class="hs-step__num" aria-hidden="true">4</span>{living.label} <span class="u-status u-status--available">{status.available}</span></p>
+          <h3 class="hs-step__title">{living.title}</h3>
+          <p class="hs-step__text">{living.text}</p>
+          <div class="hs-why"><p class="hs-why__label">{copy.whyLabel}</p><p>{living.why}</p></div>
+        </div>
+        <div class="hs-visual" role="img" aria-label={living.alt}>
+          <span class="hs-visual__tag">{copy.example}</span>
+          <div class="hs-live">
+            <div class="hs-live__doc" data-dg-step style="--dg-i:0">
+              <span class="hs-live__name"><Icon name="pdf" />{living.card.doc}</span>
+              <span class="hs-live__section">{living.card.section}</span>
+              <span class="hs-live__line">{living.card.line} <s>{living.card.before}</s> <ins data-dg-pop style="--dg-i:1">{living.card.after}</ins></span>
+            </div>
+            <span class="hs-live__flow" data-dg-grow="y" style="--dg-i:2"><i></i></span>
+            <ul class="hs-live__flags">
+              {living.card.flagged.map((item, i) => (
+                <li data-dg-step style={`--dg-i:${3 + i}`}><Icon name={i === 0 ? "book" : "quiz"} /><span>{item}</span><em><b aria-hidden="true">!</b>{living.card.flag}</em></li>
+              ))}
+            </ul>
+            <p class="hs-live__proposal" data-dg-pop style="--dg-i:5.5"><Icon name="clock" /><span><b>{living.card.proposal}</b>{living.card.waiting}</span></p>
+          </div>
+        </div>
+      </li>
+
+      {/* 5. Learners: variants in the builder are available, routing is coming */}
+      <li class="hs-step dg" id={learners.id} data-dg>
+        <span class="hs-step__spine" aria-hidden="true"></span>
+        <div class="hs-step__copy">
+          <p class="hs-step__label"><span class="hs-step__num" aria-hidden="true">5</span>{learners.label}</p>
+          <h3 class="hs-step__title">{learners.title}</h3>
+          <p class="hs-step__text">{learners.text}</p>
+          <ul class="hs-status" role="list">
+            {learners.status.map((item) => (
+              <li>
+                <span class={`u-status u-status--${item.state}`}>{item.state === "coming" ? status.coming : status.available}</span>
+                <span>{item.label}</span>
+              </li>
+            ))}
+          </ul>
+          <div class="hs-why"><p class="hs-why__label">{copy.whyLabel}</p><p>{learners.why}</p></div>
+        </div>
+        <div class="hs-visual" role="img" aria-label={learners.alt}>
+          <span class="hs-visual__tag">{copy.example}</span>
+          <div class="hs-tree">
+            <span class="hs-tree__base" data-dg-step style="--dg-i:0"><Icon name="book" />{learners.card.base}</span>
+            <span class="hs-tree__branch" data-dg-grow="y" style="--dg-i:1"><i></i></span>
+            <ul class="hs-tree__variants">
+              {learners.card.variants.map((variant, i) => (
+                <li data-dg-step style={`--dg-i:${2 + i * 0.6}`}>{variant}</li>
+              ))}
+            </ul>
+            <span class="hs-tree__route" data-dg-step style="--dg-i:4.5"><span>{learners.card.routing}</span><span class="hs-tree__soon">{status.coming}</span></span>
+            <span class="hs-tree__people" data-dg-step style="--dg-i:5.5"><Icon name="users" />{learners.card.learners}</span>
+          </div>
+        </div>
+      </li>
+
+      {/* 6. Evidence */}
+      <li class="hs-step dg" id={evidence.id} data-dg>
+        <span class="hs-step__spine" aria-hidden="true"></span>
+        <div class="hs-step__copy">
+          <p class="hs-step__label"><span class="hs-step__num" aria-hidden="true">6</span>{evidence.label}</p>
+          <h3 class="hs-step__title">{evidence.title}</h3>
+          <p class="hs-step__text">{evidence.text}</p>
+          <div class="hs-why"><p class="hs-why__label">{copy.whyLabel}</p><p>{evidence.why}</p></div>
+        </div>
+        <div class="hs-visual" role="img" aria-label={evidence.alt}>
+          <span class="hs-visual__tag hs-visual__tag--illustration">{evidence.badge}</span>
+          <div class="hs-dash">
+            <p class="hs-dash__title"><Icon name="chart" />{evidence.card.title}</p>
+            <ul class="hs-dash__rows">
+              {evidence.card.rows.map((row, i) => (
+                <li class={`is-${row.tone}`} data-dg-step style={`--dg-i:${i * 0.7}`}>
+                  <span class="hs-dash__label"><Icon name={ROW_ICONS[row.tone]} />{row.label}</span>
+                  <span class="hs-dash__track"><i data-dg-grow="x" style={`width:${row.level}%;--dg-i:${1 + i * 0.7}`}></i></span>
+                </li>
+              ))}
+            </ul>
+            <span class="hs-chip hs-chip--export" data-dg-pop style="--dg-i:4.5"><Icon name="download" />{evidence.card.export}</span>
+          </div>
+        </div>
+      </li>
+    </ol>
+
+    <div class="hs-again dg" data-dg>
+      <span class="hs-again__icon" data-dg-pop style="--dg-i:0" aria-hidden="true"><Icon name="sync" /></span>
+      <div>
+        <h3 class="hs-again__title">{copy.again.title}</h3>
+        <p>{copy.again.text}</p>
+      </div>
+    </div>
+
+    <div class="dg__controls hs__controls">
+      <button type="button" class="dg__control" data-dg-control="replay-group" hidden>
+        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8a5 5 0 1 0 1.6-3.7M3 2.5v2.8h2.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+        <span>{copy.replay}</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { initDiagrams } from "./diagrams.ts";
+  initDiagrams();
+</script>

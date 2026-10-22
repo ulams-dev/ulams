@@ -5,6 +5,7 @@ namespace Ulams\CourseBuilder\Pipeline;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
+use Ulams\CourseBuilder\Blueprint\Provenance;
 use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\CourseBuilder\Events\ElementPatched;
 use Ulams\CourseBuilder\Events\EventLog;
@@ -143,8 +144,8 @@ final class PatchService
         return match ($type) {
             'course' => ['title' => $node['title'], 'subtitle' => $node['subtitle'] ?? '', 'description' => $node['description'] ?? ''],
             'module' => ['title' => $node['title'], 'summary' => $node['summary'] ?? ''],
-            'lesson' => ['title' => $node['title'], 'summary' => $node['summary'] ?? '', 'minutes' => $node['minutes'], 'objectives' => array_map(fn ($o) => ['id' => $o['id'], 'text' => $o['text']], $node['objectives']), 'blocks' => $node['blocks']],
-            'block', 'question' => $node,
+            'lesson' => ['title' => $node['title'], 'summary' => $node['summary'] ?? '', 'minutes' => $node['minutes'], 'objectives' => array_map(fn ($o) => ['id' => $o['id'], 'text' => $o['text']], $node['objectives']), 'blocks' => array_map(fn (array $b) => Provenance::withoutBookkeeping($b), $node['blocks'])],
+            'block', 'question' => Provenance::withoutBookkeeping($node),
         };
     }
 
@@ -216,6 +217,13 @@ final class PatchService
         // ADR 0160: an element the AI changed is the AI's from now on and must cite (blocks and questions are rebuilt without `origin`)
         if (($merged['origin'] ?? null) === 'author') {
             $merged['origin'] = 'ai';
+        }
+        // ADR 0194: the AI revised it on request, so its hash is the new text and an earlier author edit no longer applies
+        if (in_array($type, ['module', 'lesson', 'block', 'question'], true)) {
+            $merged = Provenance::stampElement($merged);
+            if ($type === 'lesson') {
+                $merged['blocks'] = array_map(fn (array $b) => Provenance::stampElement($b), $merged['blocks'] ?? []);
+            }
         }
 
         return $merged;
