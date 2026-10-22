@@ -27,6 +27,8 @@ const pages = [
   "/course-generation/", "/pl/course-generation/", "/zh/course-generation/",
   "/course-generation/microdosing-study/", "/pl/course-generation/microdosing-study/", "/zh/course-generation/microdosing-study/",
   "/course-generation/stablecoin-report/", "/pl/course-generation/stablecoin-report/", "/zh/course-generation/stablecoin-report/",
+  "/course-generation/docs-repo/", "/pl/course-generation/docs-repo/", "/zh/course-generation/docs-repo/",
+  "/course-generation/notion-page/", "/pl/course-generation/notion-page/", "/zh/course-generation/notion-page/",
   ...blogPages,
 ];
 const get = (path) => new Promise((done, reject) => {

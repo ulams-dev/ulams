@@ -1,0 +1,111 @@
+{
+  "slug": "docs-repo-to-course",
+  "date": "2026-10-22",
+  "series": false,
+  "en": {
+    "title": "A docs repository became a course, then followed it",
+    "description": "A public GitHub docs repo, a real model, the real Studio: 6 lessons and 18 questions for $0.28, then a commit to the docs came back as a diff to review.",
+    "tags": [
+      "Course generation",
+      "Living Course"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 1280,
+      "height": 716,
+      "caption": "In the clip: connecting the repository, the interview and generation in the Studio of a local academy. Sped up 80 times. The real generation took 6 min 57 s."
+    },
+    "imagesHeading": "In pictures",
+    "images": [
+      {
+        "name": "connect",
+        "width": 1440,
+        "height": 900,
+        "alt": "1. Connect a public GitHub repository in the Studio: owner/name, default branch, no token.",
+        "caption": "1. Connect a public GitHub repository in the Studio: owner/name, default branch, no token."
+      },
+      {
+        "name": "apply",
+        "width": 1440,
+        "height": 900,
+        "alt": "2. Apply summary: one course, three lessons, 12 topics, 18 quiz questions, and three grounding warnings listed before anything is written.",
+        "caption": "2. Apply summary: one course, three lessons, 12 topics, 18 quiz questions, and three grounding warnings listed before anything is written."
+      },
+      {
+        "name": "impact",
+        "width": 1440,
+        "height": 900,
+        "alt": "3. A commit changes the docs. The Studio lists the impact: 12 elements in 3 lessons, 2 quiz answers to check, 1 uncovered section.",
+        "caption": "3. A commit changes the docs. The Studio lists the impact: 12 elements in 3 lessons, 2 quiz answers to check, 1 uncovered section."
+      },
+      {
+        "name": "diff",
+        "width": 1440,
+        "height": 900,
+        "alt": "4. One proposed change as a diff: 10 becomes 15 in a learning objective, with the passage it rests on. Nothing changes until the author accepts.",
+        "caption": "4. One proposed change as a diff: 10 becomes 15 in a learning objective, with the passage it rests on. Nothing changes until the author accepts."
+      },
+      {
+        "name": "phone",
+        "width": 780,
+        "height": 1688,
+        "alt": "5. The published lesson on a phone, with its cited sources under the text.",
+        "caption": "5. The published lesson on a phone, with its cited sources under the text."
+      }
+    ]
+  },
+  "pl": {
+    "title": "Repozytorium z dokumentacją stało się kursem, a potem go śledziło",
+    "description": "Publiczne repozytorium GitHub z dokumentacją, prawdziwy model, prawdziwe Studio: 6 lekcji i 18 pytań za 0,28 USD, a potem commit w dokumentacji wrócił jako diff do przejrzenia.",
+    "tags": [
+      "Generowanie kursów",
+      "Living Course"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 1280,
+      "height": 716,
+      "caption": "W filmie: połączenie repozytorium, wywiad i generowanie w Studio lokalnej akademii. Przyspieszone 80 razy. Prawdziwe generowanie trwało 6 min 57 s."
+    },
+    "imagesHeading": "Na obrazkach",
+    "images": [
+      {
+        "name": "connect",
+        "width": 1440,
+        "height": 900,
+        "alt": "1. Połącz publiczne repozytorium GitHub w Studio: owner/name, domyślna gałąź, bez tokenu.",
+        "caption": "1. Połącz publiczne repozytorium GitHub w Studio: owner/name, domyślna gałąź, bez tokenu."
+      },
+      {
+        "name": "apply",
+        "width": 1440,
+        "height": 900,
+        "alt": "2. Podsumowanie zastosowania: jeden kurs, trzy lekcje, 12 tematów, 18 pytań i trzy ostrzeżenia o oparciu wypisane, zanim cokolwiek zostanie zapisane.",
+        "caption": "2. Podsumowanie zastosowania: jeden kurs, trzy lekcje, 12 tematów, 18 pytań i trzy ostrzeżenia o oparciu wypisane, zanim cokolwiek zostanie zapisane."
+      },
+      {
+        "name": "impact",
+        "width": 1440,
+        "height": 900,
+        "alt": "3. Commit zmienia dokumentację. Studio wypisuje skutki: 12 elementów w 3 lekcjach, 2 odpowiedzi do sprawdzenia, 1 sekcja bez pokrycia.",
+        "caption": "3. Commit zmienia dokumentację. Studio wypisuje skutki: 12 elementów w 3 lekcjach, 2 odpowiedzi do sprawdzenia, 1 sekcja bez pokrycia."
+      },
+      {
+        "name": "diff",
+        "width": 1440,
+        "height": 900,
+        "alt": "4. Jedna proponowana zmiana jako diff: w celu nauczania 10 zmienia się na 15, z fragmentem, na którym się opiera. Nic się nie zmienia, dopóki autor nie zaakceptuje.",
+        "caption": "4. Jedna proponowana zmiana jako diff: w celu nauczania 10 zmienia się na 15, z fragmentem, na którym się opiera. Nic się nie zmienia, dopóki autor nie zaakceptuje."
+      },
+      {
+        "name": "phone",
+        "width": 780,
+        "height": 1688,
+        "alt": "5. Opublikowana lekcja na telefonie, z cytowanymi źródłami pod tekstem.",
+        "caption": "5. Opublikowana lekcja na telefonie, z cytowanymi źródłami pod tekstem."
+      }
+    ]
+  }
+}

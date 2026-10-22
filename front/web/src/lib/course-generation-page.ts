@@ -19,6 +19,21 @@ function chrome(locale: Locale) {
   return { header, footer };
 }
 
+const CASE_PAGE: Record<CaseId, PublicPage> = {
+  "microdosing-study": "case-microdosing",
+  "stablecoin-report": "case-stablecoins",
+  "docs-repo": "case-docs-repo",
+  "notion-page": "case-notion",
+};
+
+/** Screencasts of each case, in the order they are shown. */
+const CASE_VIDEOS: Record<CaseId, { build: string; publish: string; sync?: string }> = {
+  "microdosing-study": { build: "/course-generation/microdosing-build.mp4", publish: "/course-generation/microdosing-publish.mp4" },
+  "stablecoin-report": { build: "/course-generation/stablecoin-build.mp4", publish: "/course-generation/stablecoin-publish.mp4" },
+  "docs-repo": { build: "/course-generation/pigeon-build.mp4", publish: "/course-generation/pigeon-publish.mp4", sync: "/course-generation/pigeon-living.mp4" },
+  "notion-page": { build: "/course-generation/notion-build.mp4", publish: "/course-generation/notion-publish.mp4" },
+};
+
 function video(src: string, poster: string, title: string): UiNode {
   return { component: "VideoPlayer", props: { src, poster, width: 960, height: 540, title } };
 }
@@ -120,9 +135,9 @@ export function generationPage(locale: Locale, request: Request, url: URL) {
         items: copy.cards.map((card, index) => ({
           title: card.title,
           text: card.text,
-          theme: index === 0 ? "gravity" : "nightsky",
+          theme: ["gravity", "nightsky", "oncall", "coffee"][index] ?? "platform",
           facts: card.facts,
-          primary: { label: card.cta, href: publicPagePath(locale, CASE_IDS[index] === "microdosing-study" ? "case-microdosing" : "case-stablecoins") },
+          primary: { label: card.cta, href: publicPagePath(locale, CASE_PAGE[CASE_IDS[index]!]) },
         })),
       },
     },
@@ -141,17 +156,13 @@ export function generationPage(locale: Locale, request: Request, url: URL) {
   return envelope(locale, request, url, "generation", doc, copy.description);
 }
 
-const CASE_PAGE: Record<CaseId, PublicPage> = {
-  "microdosing-study": "case-microdosing",
-  "stablecoin-report": "case-stablecoins",
-};
-
 export function caseStudyPage(locale: Locale, caseId: CaseId, request: Request, url: URL) {
   const copy = generationCopy(locale).cases[caseId];
-  const other = caseId === "microdosing-study" ? "case-stablecoins" : "case-microdosing";
+  const next = CASE_IDS[(CASE_IDS.indexOf(caseId) + 1) % CASE_IDS.length]!;
   const poster = `/course-generation/${SHOTS[caseId].folder}/02-studio.png`;
-  const buildSrc = caseId === "microdosing-study" ? "/course-generation/microdosing-build.mp4" : "/course-generation/stablecoin-build.mp4";
-  const publishSrc = caseId === "microdosing-study" ? "/course-generation/microdosing-publish.mp4" : "/course-generation/stablecoin-publish.mp4";
+  const videos = CASE_VIDEOS[caseId];
+  const course = COURSE_LINKS[caseId];
+  const source = SOURCE_LINKS[caseId];
   const doc = pageShell(locale, CASE_PAGE[caseId], copy.title, copy.description, [
     {
       component: "Hero",
@@ -162,8 +173,8 @@ export function caseStudyPage(locale: Locale, caseId: CaseId, request: Request, 
         subtitle: copy.subtitle,
         body: copy.body,
         facts: copy.facts,
-        primaryCta: { label: copy.preview, href: COURSE_LINKS[caseId] },
-        secondaryCta: { label: copy.source, href: SOURCE_LINKS[caseId] },
+        primaryCta: { label: copy.preview, href: course ?? source },
+        secondaryCta: { label: copy.source, href: source },
       },
     },
     {
@@ -172,8 +183,8 @@ export function caseStudyPage(locale: Locale, caseId: CaseId, request: Request, 
         id: "open-course",
         title: copy.sourceTitle,
         text: copy.sourceText,
-        cta: { label: copy.preview, href: COURSE_LINKS[caseId] },
-        secondary: { label: copy.source, href: SOURCE_LINKS[caseId] },
+        cta: { label: copy.preview, href: course ?? source },
+        secondary: { label: copy.source, href: source },
       },
     },
     contained([{ component: "Callout", props: { tone: "warning", title: copy.boundaryTitle, text: copy.boundary } }]),
@@ -181,9 +192,12 @@ export function caseStudyPage(locale: Locale, caseId: CaseId, request: Request, 
     frames(caseId, copy),
     contained([
       { component: "Prose", props: { markdown: `## ${copy.buildHeading}\n\n${copy.buildText}` } },
-      video(buildSrc, poster, copy.buildVideo),
+      video(videos.build, poster, copy.buildVideo),
       { component: "Prose", props: { markdown: `## ${copy.publishHeading}\n\n${copy.publishText}` } },
-      video(publishSrc, poster, copy.publishVideo),
+      video(videos.publish, poster, copy.publishVideo),
+      ...(videos.sync && copy.syncHeading && copy.syncText && copy.syncVideo
+        ? [{ component: "Prose", props: { markdown: `## ${copy.syncHeading}\n\n${copy.syncText}` } } as UiNode, video(videos.sync, poster, copy.syncVideo)]
+        : []),
     ]),
     {
       component: "CtaBand",
@@ -191,7 +205,7 @@ export function caseStudyPage(locale: Locale, caseId: CaseId, request: Request, 
         id: "next-case",
         title: copy.other,
         text: copy.subtitle,
-        cta: { label: copy.other, href: publicPagePath(locale, other) },
+        cta: { label: copy.other, href: publicPagePath(locale, CASE_PAGE[next]) },
         secondary: { label: copy.back, href: publicPagePath(locale, "generation") },
       },
     },

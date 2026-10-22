@@ -1,0 +1,97 @@
+{
+  "slug": "notion-page-to-course",
+  "date": "2026-10-22",
+  "series": false,
+  "en": {
+    "title": "A Notion page became a course in 5 minutes of generation",
+    "description": "One Notion page of onboarding notes, a real model, the real Studio: 6 lessons and 18 questions for $0.20, and the one workaround I needed.",
+    "tags": [
+      "Course generation",
+      "Notion"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 1280,
+      "height": 716,
+      "caption": "In the clip: the interview and the generation in the Studio of a local academy. Sped up 40 times. The real generation took 4 min 58 s."
+    },
+    "imagesHeading": "In pictures",
+    "images": [
+      {
+        "name": "form",
+        "width": 1440,
+        "height": 900,
+        "alt": "1. The Studio's Notion form offers only a sign-in. Here it is disabled, so the token went in through the API.",
+        "caption": "1. The Studio's Notion form offers only a sign-in. Here it is disabled, so the token went in through the API."
+      },
+      {
+        "name": "apply",
+        "width": 1440,
+        "height": 900,
+        "alt": "2. Apply summary: one course, 12 topics, 18 quiz questions, and one grounding warning listed before anything is written.",
+        "caption": "2. Apply summary: one course, 12 topics, 18 quiz questions, and one grounding warning listed before anything is written."
+      },
+      {
+        "name": "lesson",
+        "width": 1440,
+        "height": 900,
+        "alt": "3. A published lesson in the learner player, with the cited section of the Notion page under the text.",
+        "caption": "3. A published lesson in the learner player, with the cited section of the Notion page under the text."
+      },
+      {
+        "name": "phone",
+        "width": 780,
+        "height": 1688,
+        "alt": "4. The same lesson on a phone.",
+        "caption": "4. The same lesson on a phone."
+      }
+    ]
+  },
+  "pl": {
+    "title": "Strona Notion stała się kursem w 5 minut generowania",
+    "description": "Jedna strona Notion z notatkami wdrożeniowymi, prawdziwy model, prawdziwe Studio: 6 lekcji i 18 pytań za 0,20 USD oraz jedno obejście, którego potrzebowałem.",
+    "tags": [
+      "Generowanie kursów",
+      "Notion"
+    ],
+    "video": {
+      "file": "clip.mp4",
+      "poster": "poster.jpg",
+      "width": 1280,
+      "height": 716,
+      "caption": "W filmie: wywiad i generowanie w Studio lokalnej akademii. Przyspieszone 40 razy. Prawdziwe generowanie trwało 4 min 58 s."
+    },
+    "imagesHeading": "Na obrazkach",
+    "images": [
+      {
+        "name": "form",
+        "width": 1440,
+        "height": 900,
+        "alt": "1. Formularz Notion w Studio oferuje tylko logowanie. Tu jest wyłączony, więc token wszedł przez API.",
+        "caption": "1. Formularz Notion w Studio oferuje tylko logowanie. Tu jest wyłączony, więc token wszedł przez API."
+      },
+      {
+        "name": "apply",
+        "width": 1440,
+        "height": 900,
+        "alt": "2. Podsumowanie zastosowania: jeden kurs, 12 tematów, 18 pytań i jedno ostrzeżenie o oparciu wypisane, zanim cokolwiek zostanie zapisane.",
+        "caption": "2. Podsumowanie zastosowania: jeden kurs, 12 tematów, 18 pytań i jedno ostrzeżenie o oparciu wypisane, zanim cokolwiek zostanie zapisane."
+      },
+      {
+        "name": "lesson",
+        "width": 1440,
+        "height": 900,
+        "alt": "3. Opublikowana lekcja w odtwarzaczu uczącego się, z cytowaną sekcją strony Notion pod tekstem.",
+        "caption": "3. Opublikowana lekcja w odtwarzaczu uczącego się, z cytowaną sekcją strony Notion pod tekstem."
+      },
+      {
+        "name": "phone",
+        "width": 780,
+        "height": 1688,
+        "alt": "4. Ta sama lekcja na telefonie.",
+        "caption": "4. Ta sama lekcja na telefonie."
+      }
+    ]
+  }
+}

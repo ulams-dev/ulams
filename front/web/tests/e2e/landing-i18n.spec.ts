@@ -181,6 +181,8 @@ test("platform robots and sitemap list only the localized public page URLs", asy
     `${base}/course-generation/`, `${base}/pl/course-generation/`, `${base}/zh/course-generation/`,
     `${base}/course-generation/microdosing-study/`, `${base}/pl/course-generation/microdosing-study/`, `${base}/zh/course-generation/microdosing-study/`,
     `${base}/course-generation/stablecoin-report/`, `${base}/pl/course-generation/stablecoin-report/`, `${base}/zh/course-generation/stablecoin-report/`,
+    `${base}/course-generation/docs-repo/`, `${base}/pl/course-generation/docs-repo/`, `${base}/zh/course-generation/docs-repo/`,
+    `${base}/course-generation/notion-page/`, `${base}/pl/course-generation/notion-page/`, `${base}/zh/course-generation/notion-page/`,
     `${base}/content-cost/`, `${base}/pl/content-cost/`, `${base}/zh/content-cost/`,
     `${base}/reporting/`, `${base}/pl/reporting/`, `${base}/zh/reporting/`,
   ]);
