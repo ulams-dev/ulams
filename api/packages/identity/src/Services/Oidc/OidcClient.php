@@ -271,7 +271,7 @@ class OidcClient
             throw new OidcException(OidcException::BAD_ALGORITHM);
         }
         try {
-            $key = JWK::parseKey($jwk, $alg);
+            $key = JWK::parseKey($this->padEcCoordinates($jwk), $alg);
         } catch (Throwable) {
             throw new OidcException(OidcException::JWKS_FAILED);
         }
@@ -280,6 +280,33 @@ class OidcClient
         }
 
         return $key;
+    }
+
+    /**
+     * RFC 7518 6.2.1.2 makes EC coordinates as wide as the curve, but some providers strip leading zero bytes (about one
+     * key in 128). firebase/php-jwt builds the key from the raw bytes and would reject such a key, and with it every
+     * token the provider signs, so the coordinates are left-padded to the curve size first.
+     *
+     * @param array<string,mixed> $jwk
+     * @return array<string,mixed>
+     */
+    private function padEcCoordinates(array $jwk): array
+    {
+        $size = ['P-256' => 32, 'P-384' => 48][$jwk['crv'] ?? ''] ?? null;
+        if (($jwk['kty'] ?? null) !== 'EC' || $size === null) {
+            return $jwk;
+        }
+        foreach (['x', 'y'] as $axis) {
+            if (!isset($jwk[$axis]) || !is_string($jwk[$axis])) {
+                continue;
+            }
+            $bytes = JWT::urlsafeB64Decode($jwk[$axis]);
+            if (strlen($bytes) < $size) {
+                $jwk[$axis] = rtrim(strtr(base64_encode(str_pad($bytes, $size, "\0", STR_PAD_LEFT)), '+/', '-_'), '=');
+            }
+        }
+
+        return $jwk;
     }
 
     /**
