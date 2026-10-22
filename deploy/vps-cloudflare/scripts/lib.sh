@@ -5,7 +5,7 @@
 ULAMS_DEPLOY_DIR="${ULAMS_DEPLOY_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 ULAMS_ENV_FILE="${ULAMS_ENV_FILE:-$ULAMS_DEPLOY_DIR/.env}"
 ULAMS_PROJECT="${ULAMS_PROJECT:-ulams}"
-# LOCAL=1 (install.sh --local): plain HTTP on 127.0.0.1, MinIO instead of R2, nothing on the host changed
+# LOCAL=1 (install.sh --local): plain HTTP on 127.0.0.1, SeaweedFS instead of R2, nothing on the host changed
 ULAMS_LOCAL="${ULAMS_LOCAL:-0}"
 
 ulams_log() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }

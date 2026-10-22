@@ -6,3 +6,4 @@
 /postgres-backups
 /pgadmin
 /minio_storage
+/seaweedfs_data

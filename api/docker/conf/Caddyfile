@@ -68,7 +68,11 @@ http://storage.localhost {
     header >X-Content-Type-Options nosniff
     @svg path *.svg *.svgz
     header @svg Content-Security-Policy "script-src 'none'; sandbox"
-    reverse_proxy minio:9000
+    # Browsers only read here (uploads go through the API). The S3 port also serves the IAM API and every
+    # write, signed with the store's keys; none of that is reachable from outside (ADR 0041).
+    @writes not method GET HEAD OPTIONS
+    respond @writes 405
+    reverse_proxy storage:8333
 }
 
 # Tenant content origins: <slug>.content.localhost -> tenant API <slug>.localhost
@@ -79,10 +83,6 @@ http://*.content.localhost {
 # Platform content origin -> platform API
 http://content.localhost {
     import content_origin api.localhost http://api.localhost "http://app.localhost http://app.localhost:4321 http://admin.localhost http://localhost:3000 http://localhost:4321 http://localhost:8000"
-}
-
-http://minio.localhost {
-    reverse_proxy minio:9001
 }
 
 http://ws.localhost {

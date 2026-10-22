@@ -22,7 +22,7 @@ export function environments(c: StackConfig): Record<string, Record<string, stri
     LARAVEL_INITIAL_USER_EMAIL: c.adminEmail, LARAVEL_INITIAL_USER_PASSWORD: secret("PLATFORM_ADMIN_PASSWORD"),
     LARAVEL_TENANCY_PLATFORM_HOSTS: `api.${c.domain},api,caddy,localhost,127.0.0.1`, LARAVEL_TENANCY_SCHEME: scheme,
     LARAVEL_TENANCY_API_HOST: api, LARAVEL_TENANCY_FRONT_HOST: front, LARAVEL_TENANCY_ADMIN_HOST: admin, LARAVEL_TENANCY_CONTENT_HOST: content, LARAVEL_TENANCY_EMAIL_DOMAIN: `{slug}.${c.domain}`,
-    LARAVEL_TENANCY_PORT: String(port), LARAVEL_TENANCY_STORAGE_PUBLIC_URL: u.storage, LARAVEL_TENANCY_S3_PUBLIC_READ_POLICY: "true", LARAVEL_TENANCY_PLATFORM_API: "true", LARAVEL_TENANT_DEMO_PASSWORD: secret("TENANT_INITIAL_PASSWORD"),
+    LARAVEL_TENANCY_PORT: String(port), LARAVEL_TENANCY_STORAGE_PUBLIC_URL: u.storage, LARAVEL_TENANCY_S3_PUBLIC_READ_POLICY: "true", LARAVEL_TENANCY_S3_IDENTITY_DRIVER: "seaweedfs", LARAVEL_TENANCY_PLATFORM_API: "true", LARAVEL_TENANT_DEMO_PASSWORD: secret("TENANT_INITIAL_PASSWORD"),
     LARAVEL_AI_DRIVER: c.mode === "development" ? "fake" : "disabled", ULAMS_WORKERS_MODE: "lean", WORKERS_LEAN_INTERVAL: "3", WORKERS_LEAN_HEAVY_INTERVAL: "3", DISABLE_HORIZON: "true", ULAMS_OPTIMIZE: c.mode === "development" ? "false" : "true",
   };
   return {
@@ -63,6 +63,8 @@ export function caddyfile(c: StackConfig): string {
   header X-Content-Type-Options nosniff
   @active path *.svg *.svgz *.html *.htm *.xhtml *.xml
   header @active Content-Security-Policy "script-src 'none'; sandbox"
+  @writes not method GET HEAD OPTIONS
+  respond @writes 405
   reverse_proxy object-store:8333
  }
  @platform_front host ${host}
@@ -143,7 +145,7 @@ export function compose(c: StackConfig) {
   const services: Record<string,unknown> = {
     postgres: { ...common, image: INFRA_IMAGES.postgres, environment: refs(env.postgres!), volumes: ["postgres_data:/var/lib/postgresql/data", "./init.sql:/docker-entrypoint-initdb.d/10-ulams.sql:ro"], healthcheck: shellHealth('pg_isready -U "$$POSTGRES_USER" -d postgres') },
     valkey: { ...common, image: INFRA_IMAGES.valkey, environment: refs(env.valkey!), command: ["sh","-c",'exec valkey-server --requirepass "$$VALKEY_PASSWORD" --appendonly yes --maxmemory 128mb --maxmemory-policy noeviction'], volumes: ["valkey_data:/data"], healthcheck: shellHealth('valkey-cli -a "$$VALKEY_PASSWORD" --no-auth-warning ping | grep -q PONG') },
-    "object-store": { ...common, image: INFRA_IMAGES.storage, command: ["mini", "-dir=/data"], environment: refs(env["object-store"]!), volumes: ["object_data:/data"], healthcheck: shellHealth("wget -q -O /dev/null http://127.0.0.1:8333/healthz") },
+    "object-store": { ...common, image: INFRA_IMAGES.storage, command: ["mini", "-dir=/data", "-s3.iam.readOnly=false"], environment: refs(env["object-store"]!), volumes: ["object_data:/data"], healthcheck: shellHealth("wget -q -O /dev/null http://127.0.0.1:8333/healthz") },
     mjml: { ...common, image: image("mjml") },
     pdf: { ...common, image: image("pdf"), environment: refs(env.pdf!) },
     api: { ...common, image: image("api"), environment: refs(env.api!), volumes: ["api_storage:/var/www/html/storage", "h5p_config:/var/www/html/storage/h5p-service"], depends_on: { ...healthy("postgres"), ...healthy("valkey"), ...healthy("object-store"), pdf: { condition: "service_started" }, mjml: { condition: "service_started" } }, healthcheck: shellHealth("test -f /var/www/html/inited && php artisan health:check") },

@@ -67,10 +67,12 @@ services:
       - LARAVEL_AWS_SECRET_ACCESS_KEY=minio_secretpassword
       - LARAVEL_AWS_DEFAULT_REGION=us-east-1
       - LARAVEL_AWS_BUCKET=ulams
-      # Intenal Docker address
-      - LARAVEL_AWS_ENDPOINT="http://minio:9000"
+      # Internal Docker address of the object store (SeaweedFS, service `storage`; ADR 0041). The admin key
+      # above creates buckets and per-tenant identities; every tenant then gets its own key limited to its bucket.
+      - LARAVEL_AWS_ENDPOINT="http://storage:8333"
       - LARAVEL_AWS_URL="http://storage.localhost/ulams"
       - LARAVEL_AWS_USE_PATH_STYLE_ENDPOINT=true
+      - LARAVEL_TENANCY_S3_IDENTITY_DRIVER=seaweedfs
       - LARAVEL_INITIAL_USER_PASSWORD=secret
       # H5P service (api/h5p), server-to-server; same token as H5P_INTERNAL_TOKEN of the h5p service
       - LARAVEL_H5P_SERVICE_URL=http://h5p:8080
@@ -111,7 +113,7 @@ services:
     depends_on:
       - postgres
       - redis
-      - minio
+      - storage
     environment:
       PORT: 8080
       LOG_LEVEL: info
@@ -137,7 +139,7 @@ services:
       REDIS_PASSWORD: ulams
       REDIS_DB: 0
       REDIS_KEY_PREFIX: "h5p:"
-      S3_ENDPOINT: http://minio:9000
+      S3_ENDPOINT: http://storage:8333
       S3_REGION: us-east-1
       S3_KEY: admin
       S3_SECRET: minio_secretpassword
@@ -277,26 +279,31 @@ services:
     # ports:
     #   - 15500:15500
 
-  minio:
-    # bitnami/* images were removed from Docker Hub; the same image lives under bitnamilegacy/*
-    image: bitnamilegacy/minio:latest
+  # Object store: SeaweedFS (Apache-2.0), one container (`weed mini`: master, volume, filer and S3 gateway).
+  # Replaces the unmaintained bitnamilegacy/minio image (ADR 0041); the `minio` alias keeps old env files and
+  # scripts that name that host working for one release. The S3 port is reached at http://storage.localhost
+  # through Caddy (reads only); the IAM API that makes per-tenant identities is on the same port, so nothing
+  # but the API containers may reach it. Data moves from an old MinIO with `make storage-migrate`.
+  storage:
+    image: chrislusf/seaweedfs:4.37
+    command:
+      - mini
+      - -dir=/data
+      # the API creates one identity per tenant through the embedded IAM API (SeaweedFsIdentityProvisioner)
+      - -s3.iam.readOnly=false
+      # the platform bucket, publicly readable once `ulams:tenant:ensure-buckets` ran (init.sh)
+      - -bucket=${STORAGE_DEFAULT_BUCKET:-ulams}
     networks:
-      - ulams
+      ulams:
+        aliases:
+          - minio
     # ports:
-    #   - "9000:9000"
-    #   - "9001:9001"
+    #   - "8333:8333"
     volumes:
-      - ./docker/minio_storage:/bitnami/minio/data
-      - ./docker/conf/minio:/docker-entrypoint-initdb.d
+      - ./docker/seaweedfs_data:/data
     environment:
-      # "<bucket>:download" makes the platform bucket publicly readable (files are served by URL)
-      MINIO_DEFAULT_BUCKETS: "${MINIO_DEFAULT_BUCKETS:-ulams:download}"
-      MINIO_ROOT_USER: "${MINIO_ROOT_USER:-admin}"
-      MINIO_ROOT_PASSWORD: "${MINIO_ROOT_PASSWORD:-minio_secretpassword}"
-      # AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}:admin
-      # AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}:minio_secretpassword
-      # AWS_BUCKET: ${AWS_BUCKET}:ulams"
-      # AWS_ENDPOINT: ${AWS_ENDPOINT}
+      AWS_ACCESS_KEY_ID: "${STORAGE_ROOT_USER:-${MINIO_ROOT_USER:-admin}}"
+      AWS_SECRET_ACCESS_KEY: "${STORAGE_ROOT_PASSWORD:-${MINIO_ROOT_PASSWORD:-minio_secretpassword}}"
 
   # Optional virus scanning of uploads (packages/uploads, UPLOADS_SCANNER=clamd).
   # ClamAV is GPL-2.0 and runs as a separate process. Start with: docker compose --profile av up -d clamav

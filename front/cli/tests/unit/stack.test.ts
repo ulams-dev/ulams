@@ -20,6 +20,16 @@ describe("self-contained stack generator",()=>{
     expect(Object.keys(services)).toHaveLength(10);
     expect(caddyfile(c)).toContain("/interactive/*");
   });
+  it("runs SeaweedFS with per-tenant identities and keeps writes and the IAM API off the public storage host",()=>{
+    const c=configure(input()),services=compose(c).services;
+    expect(services["object-store"]).toMatchObject({command:["mini","-dir=/data","-s3.iam.readOnly=false"]});
+    expect(services.api).toMatchObject({environment:{LARAVEL_TENANCY_S3_IDENTITY_DRIVER:"seaweedfs"}});
+    const proxy=caddyfile(c),storage=proxy.slice(proxy.indexOf("handle @storage"),proxy.indexOf("reverse_proxy object-store:8333"));
+    expect(storage).toContain("@writes not method GET HEAD OPTIONS");expect(storage).toContain("respond @writes 405");
+    const k=kubernetes(configure(input({target:"kubernetes"})),createSecrets()).public;
+    const store=k.find(d=>d.kind === "StatefulSet" && (d.metadata as {name:string}).name === "object-store") as unknown as {spec:{template:{spec:{containers:Array<{args:string[]}>}}}};
+    expect(store.spec.template.spec.containers[0]!.args).toContain("-s3.iam.readOnly=false");
+  });
   it("uses reachable NodePort numbers in generated public URLs",()=>{
     const dev=configure(input({target:"kubernetes",gateway:"NodePort"}));
     expect(dev.httpPort).toBe(30480);
