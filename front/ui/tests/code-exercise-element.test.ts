@@ -57,6 +57,8 @@ const flush = async () => {
 };
 /** Hashing the files is asynchronous work outside the microtask queue: wait until the report call has had its time. */
 const settle = () => new Promise((r) => setTimeout(r, 80));
+/** Wait for the attempt report itself (a run of a test must not leave one in flight: it would land on the next test's fetch stub). */
+const reported = (times = 1) => vi.waitFor(() => expect(fetch).toHaveBeenCalledTimes(times), { timeout: 5000 });
 const el = (root: HTMLElement) => root.querySelector("ulams-code-exercise") as HTMLElement;
 const passed = { kind: "result", result: { runId: 1, status: "passed", tests: [{ name: "adds", status: "pass" }], passed: 1, total: 1, durationMs: 3 } };
 const failed = { kind: "result", result: { runId: 1, status: "failed", tests: [{ name: "adds", status: "fail", message: "Expected 3, received 0" }, { name: "other", status: "pass" }], passed: 1, total: 2, durationMs: 3, output: "hello", truncated: true } };
@@ -145,6 +147,7 @@ describe("<ulams-code-exercise>", () => {
     run.click();
     await flush();
     expect(state.runs).toEqual([[{ path: "sum.js", content: "export const sum = (a, b) => a + b;" }, { path: "lib/util.js", content: FILES[1]!.content }]]);
+    await reported();
   });
 
   it("shows the result of each test and a summary, then reports the attempt with the learner's session and announces completion", async () => {
@@ -155,7 +158,8 @@ describe("<ulams-code-exercise>", () => {
     state.outcome = async () => failed;
     root.querySelector<HTMLButtonElement>("[data-run]")!.click();
     await flush();
-    await settle();
+    await reported();
+    await vi.waitFor(() => expect(completed).toHaveBeenCalledOnce());
     expect(root.querySelector("[data-summary]")?.textContent).toBe("1 of 2 tests passed.");
     const lines = [...root.querySelectorAll("[data-results] li")].map((li) => li.textContent);
     expect(lines[0]).toContain("Failed");
@@ -184,8 +188,8 @@ describe("<ulams-code-exercise>", () => {
     (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValueOnce(new Response("{}", { status: 500 }));
     root.querySelector<HTMLButtonElement>("[data-run]")!.click();
     await flush();
-    await settle();
-    expect(root.querySelector("[data-saved]")?.textContent).toContain("could not be saved");
+    await reported();
+    await vi.waitFor(() => expect(root.querySelector("[data-saved]")?.textContent).toContain("could not be saved"));
 
     (fetch as unknown as ReturnType<typeof vi.fn>).mockClear();
     const preview = await mount(lesson({ topicId: undefined }));
@@ -240,10 +244,10 @@ describe("<ulams-code-exercise>", () => {
     const editor = root.querySelector("textarea")!;
     editor.dispatchEvent(new win.KeyboardEvent("keydown", { key: "Enter", ctrlKey: true, bubbles: true, cancelable: true }));
     await flush();
-    await settle();
+    await reported(1);
     editor.dispatchEvent(new win.KeyboardEvent("keydown", { key: "Enter", metaKey: true, bubbles: true, cancelable: true }));
     await flush();
-    await settle();
+    await reported(2);
     editor.dispatchEvent(new win.KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }));
     await flush();
     await settle();
