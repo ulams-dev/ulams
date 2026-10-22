@@ -615,6 +615,10 @@ Shown as "Coming" on the Comparison page and in the docs (`creators/course-versi
 - [ ] (new) Course releases: every approved change that reaches learners (author edit, chat edit, accepted Living Course
       update, course-as-code import, insights proposal) is recorded as a numbered release with its trigger, source
       revisions, approver and date; releases are listed per course in the studio and through the API
+      (partial, CV-1: `course_builder_releases`, a release written by every apply (generation, author and chat edit, undo,
+      restore, accepted source update, insights improvement, import) in the transaction that sets `applied_version_id`,
+      `GET api/admin/course-versions/courses/{course}/releases` and `releases/{release}`, studio page
+      `/studio/courses/:id/versions`, `ulams course releases`, `course-builder:backfill-releases`; tick when CV-1 is merged)
 - [ ] (new) Compare any two versions or releases in the studio: structure tree with added, removed, moved and changed
       modules, lessons and elements; word-level text diff; citations added, removed or moved to a new source revision; quiz
       changes (stem, options, correct answer, explanation) with their effect on learner progress (ADR 0033 rules)

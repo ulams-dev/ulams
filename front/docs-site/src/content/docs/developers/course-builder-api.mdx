@@ -1,6 +1,6 @@
 ---
 title: Course Builder API
-description: Every endpoint under /api/admin/course-builder and the AI-free course-as-code endpoints (export and import a blueprint), the run and AG-UI event model, how to read the event stream with curl, the actions you can send to a run, and what happens at the cost limits.
+description: Every endpoint under /api/admin/course-builder, the AI-free course-as-code endpoints (export and import a blueprint) and course releases (the versions learners got), the run and AG-UI event model, how to read the event stream with curl, the actions you can send to a run, and what happens at the cost limits.
 sidebar:
   order: 83
 modules:
@@ -138,6 +138,38 @@ ulams course export 12 --out blueprint.json
 $EDITOR blueprint.json
 ulams course import --file blueprint.json --message "Fix the install step" --json
 ulams course diff --version <version> && ulams course approve <version> && ulams course apply <session>
+```
+
+## Course releases (work with AI off)
+
+A **release** is a version of a course that learners actually got. The apply step writes one every time a change reaches the LMS
+course: the first generation, an author or chat edit, an accepted source update, an improvement from learner insights, a
+course-as-code push, an undo, a redo or a restore. Proposals, rejections and versions that were never applied are not releases, so
+the list reads as the timeline of the course. These endpoints are in their own route group, `/api/admin/course-versions`, are
+keyed by the LMS course id, **do not answer 503 while AI is off**, and are read-only (`builder:read`). Only the course's author
+and administrators can read them (403 for anyone else, 404 for a course that was not made with the builder).
+
+| Method and path | Purpose |
+|---|---|
+| `GET courses/{course}/releases?page=&perPage=` | The releases of the course, newest first: `sessionId`, `courseId`, `releases[]`, `total`, `page`, `perPage` (25 by default, at most 100) |
+| `GET releases/{release}` | One release with the Blueprint v3 `document` of its version and the labels of the sources it cites |
+
+Each release has `id`, `number` (1, 2, 3, per course), `trigger`, `versionId` and `versionNumber`, `previousReleaseId`, `courseId`,
+`approvedBy` (`{id, name}`, or `null`), `sourceRevisions` (`{sourceId: revisionId}`), `releasedAt` and a `summary`.
+
+`trigger` is one of `generate` (the first generation and later generation runs), `author` (an edit in the studio), `chat` (a change
+from the element chat), `update` (an accepted source update), `insights` (an improvement from learner insights), `import` (a
+course-as-code push), `restore` (an undo, redo or restore re-applied an earlier version) and `rebase` (reserved for course variants).
+
+`summary` counts what changed since the previous release from the element diff: `first` (the first release counts every element as
+added), `counts`, `lessons` and `questions` (each `{added, changed, removed}`), `citationsChanged` (elements whose citations changed)
+and `answerKeysChanged` (quiz questions whose correct answer changed). Applying the version that is already the latest release writes
+nothing. A failed or partial apply writes nothing. Courses that were applied before releases existed get their first release from
+`php artisan course-builder:backfill-releases` (run it per tenant; it is safe to repeat).
+
+```bash
+ulams course releases 12
+ulams course releases 12 --json --fields data.releases
 ```
 
 ## Sending a message or an action
