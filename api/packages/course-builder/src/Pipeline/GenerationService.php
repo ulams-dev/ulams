@@ -20,6 +20,7 @@ use Ulams\CourseBuilder\Models\Fragment;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Step;
+use Ulams\CourseBuilder\Models\Variant;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Services\VersionService;
 use Ulams\CourseBuilder\Ui\Surfaces;
@@ -31,6 +32,10 @@ use Ulams\CourseBuilder\Ui\Surfaces;
  * test, metadata; then the content version is assembled and
  * the apply proposal shown. Every unit is a step keyed by element id: a `done` step is skipped on
  * resume, a failed step can be retried alone, and the rest of the course stays usable.
+ *
+ * A run with `input.variantId` writes a variant of the approved course (ADR 0192): the outline it starts from already
+ * holds the lessons that are kept unchanged (with their text), so only the lessons without text get steps; the model
+ * calls are logged against the variant and the result is a proposed version of the variant branch.
  */
 final class GenerationService
 {
@@ -52,11 +57,20 @@ final class GenerationService
     public function start(Session $session, Run $run): void
     {
         $outline = $this->outline($run);
-        $session->status = Session::GENERATING;
-        $session->save();
+        $variant = $this->variant($run);
+        if ($variant === null) {
+            $session->status = Session::GENERATING;
+            $session->save();
+        }
         $run->forceFill(['status' => 'running', 'stage' => 'lessons', 'started_at' => now()])->save();
         $this->events->runStarted($run);
-        $this->events->text($session, $run, sprintf('Writing %d lessons from your source. Every block will cite the section it comes from.', Blueprint::stats($outline)['lessons']));
+        if ($variant !== null) {
+            $this->events->custom($session, $run, 'variant_run', ['variantId' => $variant->id, 'variantKey' => $variant->key, 'label' => $variant->label]);
+        }
+        $todo = count($this->toWrite($outline));
+        $this->events->text($session, $run, $variant === null
+            ? sprintf('Writing %d lessons from your source. Every block will cite the section it comes from.', Blueprint::stats($outline)['lessons'])
+            : sprintf('Writing %d %s for %s. The other lessons are kept from the base course. Every block will cite the section it comes from.', $todo, $todo === 1 ? 'lesson' : 'lessons', $variant->label));
         $this->openStage($run, 'lessons', $outline, $session->brief);
     }
 
@@ -65,22 +79,43 @@ final class GenerationService
         return Version::query()->findOrFail($run->input['outlineVersionId'])->document;
     }
 
+    /** The variant a run writes, or null for the base course. */
+    public function variant(Run $run): ?Variant
+    {
+        return isset($run->input['variantId']) ? Variant::query()->where('session_id', $run->session_id)->find($run->input['variantId']) : null;
+    }
+
+    /**
+     * The lessons that still need their text: every lesson of a base outline, and in a variant outline only the
+     * condensed, deepened and added ones (the kept lessons arrive with their text).
+     *
+     * @return array<int,array{module:array,moduleIndex:int,lesson:array,lessonIndex:int,number:string}>
+     */
+    private function toWrite(array $outline): array
+    {
+        return array_values(array_filter(iterator_to_array(Blueprint::lessons($outline), false), fn ($i) => empty($i['lesson']['blocks'])));
+    }
+
     /** The step keys of a stage, in dispatch order. */
     private function stageKeys(string $stage, array $outline, array $brief): array
     {
+        $todo = $this->toWrite($outline);
+
         return match ($stage) {
-            'lessons' => array_map(fn ($i) => 'lesson:' . $i['lesson']['id'], iterator_to_array(Blueprint::lessons($outline), false)),
-            'grounding' => array_map(fn ($i) => 'grounding:' . $i['lesson']['id'], iterator_to_array(Blueprint::lessons($outline), false)),
+            'lessons' => array_map(fn ($i) => 'lesson:' . $i['lesson']['id'], $todo),
+            'grounding' => array_map(fn ($i) => 'grounding:' . $i['lesson']['id'], $todo),
             'interactions' => array_values(array_filter(array_map(function ($i) {
                 $follow = $this->types->forLesson($i['lesson'], true)->followUp();
 
                 return $follow === ContentType::FOLLOW_SELF_CHECKS ? 'selfcheck:' . $i['lesson']['id'] : ($follow === ContentType::FOLLOW_INTERACTION ? 'interaction:' . $i['lesson']['id'] : null);
-            }, iterator_to_array(Blueprint::lessons($outline), false)))),
+            }, $todo))),
             'quizzes' => [
-                ...(!empty($brief['assessments']['perLessonQuiz']) ? array_map(fn ($i) => 'quiz:' . $i['lesson']['id'], iterator_to_array(Blueprint::lessons($outline), false)) : []),
-                ...(!empty($brief['assessments']['finalTest']) ? ['final_test'] : []),
+                ...(!empty($brief['assessments']['perLessonQuiz']) ? array_map(fn ($i) => 'quiz:' . $i['lesson']['id'], $todo) : []),
+                // a variant whose lessons did not change keeps the final test of the base course
+                ...(!empty($brief['assessments']['finalTest']) && empty($outline['finalTest']) ? ['final_test'] : []),
             ],
-            'metadata' => ['metadata'],
+            // a variant starts from a course that already has its title, description, FAQ and search texts
+            'metadata' => isset($outline['course']['seo']) ? [] : ['metadata'],
         };
     }
 
@@ -265,7 +300,11 @@ final class GenerationService
         if ($feedback !== []) {
             $input['grounding_feedback'] = $feedback;
         }
-        $result = $this->llm->generate($session, $run, 'lesson', [
+        $variant = $this->variant($run);
+        if ($variant !== null) {
+            $input['variant'] = $this->variantInput($session, $variant, $lesson['id']);
+        }
+        $result = $this->llm->generate($session, $run, $variant !== null ? 'variant_lesson' : 'lesson', [
             $this->context->sourceBlock($session),
             $this->context->contextBlock($session, $outline),
             $this->context->instruction('Write the lesson described in task_input.', $input),
@@ -288,7 +327,7 @@ final class GenerationService
             }
 
             return $errors;
-        });
+        }, $variant !== null ? $this->llm->schema('outputs/variant_lesson') : null);
 
         $blocks = array_map(fn ($b) => [
             'id' => Blueprint::newId(),
@@ -299,6 +338,26 @@ final class GenerationService
         ], $result->data['blocks']);
 
         return ['data' => ['blocks' => $blocks], 'cost' => $result->costMicroUsd];
+    }
+
+    /**
+     * What the variant lesson call is told besides the lesson: the mode (condense, deepen or add), the audience (author
+     * text, passed as data) and, for condense and deepen, the text of the base lesson.
+     *
+     * @return array<string,mixed>
+     */
+    private function variantInput(Session $session, Variant $variant, string $lessonId): array
+    {
+        $mode = $variant->plan['lessons'][$lessonId]['action'] ?? 'add';
+        $input = ['mode' => in_array($mode, ['condense', 'deepen'], true) ? $mode : 'add', 'audience' => VariantOutlineService::audience($variant),
+            'reason' => (string) ($variant->plan['lessons'][$lessonId]['reason'] ?? $variant->plan['added'][$lessonId]['reason'] ?? '')];
+        $base = $variant->based_on_version_id !== null ? Version::query()->find($variant->based_on_version_id) : null;
+        $found = $base !== null && $input['mode'] !== 'add' ? Blueprint::find($base->document, $lessonId) : null;
+        if ($found !== null) {
+            $input['baseBlocks'] = array_map(fn ($b) => ['markdown' => $b['markdown'], 'citations' => $b['citations']], $found['node']['blocks'] ?? []);
+        }
+
+        return $input;
     }
 
     /** One grounding pass; unsupported claims trigger one regeneration and a second check. */
@@ -548,15 +607,22 @@ final class GenerationService
         return Step::query()->where('run_id', $run->id)->where('key', "lesson:{$lessonId}")->first()?->output['blocks'] ?? [];
     }
 
-    /** Builds the content version from the outline and the step outputs and proposes the apply. */
+    /**
+     * Builds the content version from the outline and the step outputs and proposes the apply (for a variant: proposes
+     * the variant for review as a diff against the base). Lessons without steps keep what the outline holds.
+     */
     public function assemble(Run $run): Version
     {
         $session = $run->session;
+        $variant = $this->variant($run);
         $outlineVersion = Version::query()->findOrFail($run->input['outlineVersionId']);
         $doc = $outlineVersion->document;
         $steps = Step::query()->where('run_id', $run->id)->get()->keyBy('key');
         foreach ($doc['modules'] as $m => $module) {
             foreach ($module['lessons'] as $l => $lesson) {
+                if (!isset($steps["lesson:{$lesson['id']}"])) {
+                    continue; // kept from the base course
+                }
                 $blocks = $this->lessonBlocks($run, $lesson['id']);
                 $doc['modules'][$m]['lessons'][$l]['blocks'] = $blocks;
                 $doc['modules'][$m]['lessons'][$l]['status'] = $blocks === [] ? 'failed' : 'generated';
@@ -574,7 +640,9 @@ final class GenerationService
             }
         }
         $final = $steps['final_test'] ?? null;
-        $doc['finalTest'] = $final?->output ? ['id' => Blueprint::newId(), 'passScore' => (int) ($session->brief['assessments']['passScore'] ?? 70), 'questions' => $final->output['questions']] : null;
+        if ($final !== null || empty($doc['finalTest'])) {
+            $doc['finalTest'] = $final?->output ? ['id' => Blueprint::newId(), 'passScore' => (int) ($session->brief['assessments']['passScore'] ?? 70), 'questions' => $final->output['questions']] : null;
+        }
         $meta = $steps['metadata']->output ?? null;
         if ($meta) {
             $doc['course']['title'] = $meta['title'];
@@ -583,8 +651,12 @@ final class GenerationService
             $doc['course']['seo'] = ['title' => mb_substr($meta['seoTitle'], 0, 70), 'description' => mb_substr($meta['seoDescription'], 0, 160)];
             $doc['course']['faq'] = array_map(fn ($f) => ['question' => $f['question'], 'answer' => $f['answer'], 'citations' => array_values(array_unique($f['citations']))], $meta['faq']);
         }
-        $suggestion = $this->prices->suggest($session, $run, $outlineVersion->document);
+        $suggestion = $variant === null ? $this->prices->suggest($session, $run, $outlineVersion->document) : null;
         $doc['pages'] = ['landing' => LandingDocument::landing($doc, $session->brief), 'header' => LandingDocument::header($doc, $session->brief)];
+
+        if ($variant !== null) {
+            return $this->assembleVariant($run, $session, $variant, $outlineVersion, $doc);
+        }
 
         $version = $this->versions->create($session, $doc, 'content', 'ai', Version::PROPOSED, $outlineVersion, 'Generated lessons, quizzes and metadata');
         $session->current_version_id = $version->id;
@@ -607,6 +679,21 @@ final class GenerationService
         }
         $this->surfaces->apply($session, $run, $version, $this->applier->plan($session, $doc));
         $this->events->runFinished($run, ['versionId' => $version->id]);
+
+        return $version;
+    }
+
+    /** The variant is proposed as a version of its own branch and reviewed as a diff against the base; the session is untouched. */
+    private function assembleVariant(Run $run, Session $session, Variant $variant, Version $outlineVersion, array $doc): Version
+    {
+        $version = $this->versions->create($session, $doc, 'content', 'ai', Version::PROPOSED, $outlineVersion, "Generated {$variant->label}", null, [], null, null, $variant->id);
+        $variant->forceFill(['current_version_id' => $version->id])->save();
+        $run->forceFill(['status' => 'finished', 'stage' => 'done', 'finished_at' => now()])->save();
+        $this->publishProgress($run);
+        $this->events->stepFinished($run, 'assemble');
+        $this->events->text($session, $run, sprintf('%s is drafted. Review how it differs from the base course and approve it to create its own course in your academy. Nothing is written to the LMS before that.', $variant->label));
+        $this->surfaces->variantReview($session, $run, $variant, $version, Version::query()->find($variant->based_on_version_id));
+        $this->events->runFinished($run, ['versionId' => $version->id, 'variantId' => $variant->id]);
 
         return $version;
     }
@@ -637,6 +724,9 @@ final class GenerationService
         $lessons = [];
         foreach (Blueprint::lessons($outline) as $item) {
             $id = $item['lesson']['id'];
+            if (!isset($steps["lesson:{$id}"])) {
+                continue; // a lesson of a variant that is kept from the base course
+            }
             $parts = array_filter([$steps["lesson:{$id}"] ?? null, $steps["grounding:{$id}"] ?? null, $steps["selfcheck:{$id}"] ?? null, $steps["interaction:{$id}"] ?? null, $steps["quiz:{$id}"] ?? null]);
             $failed = collect($parts)->first(fn (Step $s) => $s->status === 'failed');
             $blocks = $this->lessonBlocksFrom($steps, $id);

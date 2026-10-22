@@ -16,6 +16,7 @@ use Ulams\CourseBuilder\Exceptions\BuilderException;
 use Ulams\CourseBuilder\Models\EntityMapEntry;
 use Ulams\CourseBuilder\Models\Fragment;
 use Ulams\CourseBuilder\Models\Session;
+use Ulams\CourseBuilder\Models\Variant;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\Courses\Enum\CourseStatusEnum;
 use Ulams\Courses\Http\Requests\CreateTopicAPIRequest;
@@ -41,6 +42,9 @@ use Ulams\TopicTypes\Models\TopicContent\RichText;
  * The entity map holds a fingerprint of each element as applied, so a re-apply creates new elements,
  * updates changed ones, deletes removed ones and leaves the rest untouched. Everything runs in one
  * transaction as the author; the course is created unpublished.
+ *
+ * A variant (ADR 0192) is applied the same way to its own course: its entity map is its own branch (`variant_id`), the
+ * theme and the commerce step belong to the base course, and the family registration is a separate step.
  */
 final class BlueprintApplier
 {
@@ -124,10 +128,21 @@ final class BlueprintApplier
     }
 
     /** @return array<string,array{type:string,element:string,fingerprint:string,data:array,parent:?string,order:int}> */
-    private function map(Session $session): array
+    private function map(Session $session, ?Variant $variant = null): array
     {
-        return EntityMapEntry::query()->where('session_id', $session->id)->get()
+        return EntityMapEntry::branch($session->id, $variant?->id)->get()
             ->mapWithKeys(fn (EntityMapEntry $e) => ["{$e->entity_type}:{$e->element_id}" => $e])->all();
+    }
+
+    /** The brief as it applies to a branch: a variant course is for its own level. @return array<string,mixed> */
+    private function briefFor(Session $session, ?Variant $variant): array
+    {
+        $brief = (array) $session->brief;
+        if ($variant !== null && $variant->level !== null) {
+            $brief['level'] = $variant->level === 'expert' ? 'advanced' : $variant->level;
+        }
+
+        return $brief;
     }
 
     /**
@@ -135,10 +150,11 @@ final class BlueprintApplier
      *
      * @return array<string,mixed>
      */
-    public function plan(Session $session, array $doc): array
+    public function plan(Session $session, array $doc, ?Variant $variant = null): array
     {
-        $desired = $this->desired($doc, (array) $session->brief);
-        $map = $this->map($session);
+        $desired = $this->desired($doc, $this->briefFor($session, $variant));
+        $map = $this->map($session, $variant);
+        $courseId = $variant !== null ? $variant->course_id : $session->course_id;
         $zero = ['courses' => 0, 'lessons' => 0, 'topics' => 0, 'questions' => 0, 'pages' => 0];
         $create = $update = $delete = $zero;
         $bucket = fn (string $type) => match ($type) {
@@ -171,17 +187,17 @@ final class BlueprintApplier
                 $warnings[] = 'Lesson ' . $item['number'] . ': ' . $this->types->for($wanted)->label() . ' is not available on this installation right now.';
             }
         }
-        foreach ($this->drift($session, $doc) as $title) {
+        foreach ($this->drift($session, $doc, $variant) as $title) {
             $warnings[] = "Edited in the admin after the last apply: {$title}. The apply stops until you confirm overwriting it.";
         }
 
         return [
-            'firstApply' => $session->course_id === null,
+            'firstApply' => $courseId === null,
             'create' => $create,
             'update' => $update,
             'delete' => $delete,
             'warnings' => array_slice(array_map(fn ($w) => mb_substr($w, 0, 500), $warnings), 0, 40),
-        ] + ($session->course_id ? ['courseId' => (int) $session->course_id] : []);
+        ] + ($courseId ? ['courseId' => (int) $courseId] : []);
     }
 
     /**
@@ -190,11 +206,11 @@ final class BlueprintApplier
      *
      * @return array<string,string> "type:element id" => title or type
      */
-    public function drift(Session $session, array $doc): array
+    public function drift(Session $session, array $doc, ?Variant $variant = null): array
     {
-        $desired = $this->desired($doc, (array) $session->brief);
+        $desired = $this->desired($doc, $this->briefFor($session, $variant));
         $drift = [];
-        foreach ($this->map($session) as $key => $entry) {
+        foreach ($this->map($session, $variant) as $key => $entry) {
             if (!isset($desired[$key]) || $entry->fingerprint === $desired[$key]['fingerprint']) {
                 continue;
             }
@@ -210,7 +226,7 @@ final class BlueprintApplier
             if ($updated !== null && $entry->entity_type === 'gift_question') {
                 // admins change scores and categories all the time: only an edit of the question text is drift
                 $applied = $entry->applied_version_id ? \Ulams\CourseBuilder\Models\Version::query()->find($entry->applied_version_id) : null;
-                $was = $applied !== null ? ($this->desired($applied->document, (array) $session->brief)[$key]['data']['value'] ?? null) : null;
+                $was = $applied !== null ? ($this->desired($applied->document, $this->briefFor($session, $variant))[$key]['data']['value'] ?? null) : null;
                 $now = \Ulams\TopicTypeGift\Models\GiftQuestion::query()->whereKey($entry->entity_id)->value('value');
                 if ($was === null || $now === $was) {
                     continue;
@@ -228,9 +244,9 @@ final class BlueprintApplier
      * Applies a version as the author. Returns the course id. Stops (409) when an element to change
      * was edited in the admin after the last apply, unless the author confirmed with `$overwrite`.
      */
-    public function apply(Session $session, Version $version, Authenticatable $author, bool $overwrite = false, ?string $proposalId = null): int
+    public function apply(Session $session, Version $version, Authenticatable $author, bool $overwrite = false, ?string $proposalId = null, ?Variant $variant = null): int
     {
-        if (!$overwrite && ($drift = $this->drift($session, $version->document)) !== []) {
+        if (!$overwrite && ($drift = $this->drift($session, $version->document, $variant)) !== []) {
             throw new BuilderException(sprintf(
                 'The course was edited in the admin after the last apply (%s). Applying now would overwrite those edits; confirm to overwrite, or copy the edits into the blueprint first.',
                 implode(', ', array_slice(array_values($drift), 0, 5)),
@@ -239,7 +255,7 @@ final class BlueprintApplier
         $previous = Auth::user();
         Auth::setUser($author);
         try {
-            return DB::transaction(fn () => $this->applyAs($session, $version, $author, $proposalId));
+            return DB::transaction(fn () => $this->applyAs($session, $version, $author, $proposalId, $variant));
         } finally {
             if ($previous !== null) {
                 Auth::setUser($previous);
@@ -249,23 +265,23 @@ final class BlueprintApplier
         }
     }
 
-    private function applyAs(Session $session, Version $version, Authenticatable $author, ?string $proposalId = null): int
+    private function applyAs(Session $session, Version $version, Authenticatable $author, ?string $proposalId = null, ?Variant $variant = null): int
     {
         $doc = $version->document;
-        $desired = $this->desired($doc, (array) $session->brief);
-        $map = $this->map($session);
+        $desired = $this->desired($doc, $this->briefFor($session, $variant));
+        $map = $this->map($session, $variant);
         $ids = [];
         foreach ($map as $key => $entry) {
             $ids[$key] = $entry->entity_id;
         }
-        $remember = function (array $item, int $entityId) use ($session, $version, &$ids, &$map, $proposalId) {
+        $remember = function (array $item, int $entityId) use ($session, $version, &$ids, &$map, $proposalId, $variant) {
             $attributes = ['entity_id' => $entityId, 'fingerprint' => $item['fingerprint'], 'applied_version_id' => $version->id, 'retired_at' => null];
             if ($proposalId !== null && !isset($map["{$item['type']}:{$item['element']}"])) {
                 // entities created by a source update: the completion guard tells them from the original course
                 $attributes['added_by_proposal_id'] = $proposalId;
             }
-            EntityMapEntry::query()->updateOrCreate(
-                ['session_id' => $session->id, 'element_id' => $item['element'], 'entity_type' => $item['type']],
+            EntityMapEntry::withoutGlobalScope('base')->updateOrCreate(
+                ['session_id' => $session->id, 'variant_id' => $variant?->id ?? '', 'element_id' => $item['element'], 'entity_type' => $item['type']],
                 $attributes,
             );
             $ids["{$item['type']}:{$item['element']}"] = $entityId;
@@ -328,12 +344,14 @@ final class BlueprintApplier
 
         $courseId = (int) $ids["course:{$doc['course']['id']}"];
         $this->sort($desired, $ids);
-        $themeResult = $this->theme->apply($session, $author);
-        $commerceResult = $this->commerce->apply($session, $courseId);
-        $session->putState('applyNotes', array_values(array_filter([$themeResult['note'], $commerceResult['note']])));
-        $session->save();
+        if ($variant === null) {
+            $themeResult = $this->theme->apply($session, $author);
+            $commerceResult = $this->commerce->apply($session, $courseId);
+            $session->putState('applyNotes', array_values(array_filter([$themeResult['note'], $commerceResult['note']])));
+            $session->save();
+        }
         // everything above was written by this apply: later edits in the admin are newer than this mark
-        EntityMapEntry::query()->where('session_id', $session->id)->update(['updated_at' => now()]);
+        EntityMapEntry::branch($session->id, $variant?->id)->update(['updated_at' => now()]);
 
         return $courseId;
     }
@@ -444,6 +462,30 @@ final class BlueprintApplier
             if ($landing !== null) {
                 $this->pages->update((int) $landing->entity_id, ['active' => true]);
             }
+            // publishing the base publishes its family: the variants that were applied and not retired (ADR 0192)
+            foreach (Variant::query()->where('session_id', $session->id)->where('status', Variant::APPROVED)->whereNotNull('course_id')->get() as $variant) {
+                $this->courses->update(['status' => CourseStatusEnum::PUBLISHED], (int) $variant->course_id);
+                $page = EntityMapEntry::branch($session->id, $variant->id)->where('entity_type', 'page')->first();
+                if ($page !== null) {
+                    $this->pages->update((int) $page->entity_id, ['active' => true]);
+                }
+            }
+        } finally {
+            $previous !== null ? Auth::setUser($previous) : Auth::forgetUser();
+        }
+    }
+
+    /**
+     * Groups an applied variant course with the base course as a family (hidden from the catalogue, shown once as the
+     * default course). The family lives in the course-variants package; this is the only place the builder calls it.
+     */
+    public function registerFamily(Session $session, Variant $variant, Authenticatable $author): void
+    {
+        $previous = Auth::user();
+        Auth::setUser($author);
+        try {
+            app(\Ulams\CourseVariants\Services\Contracts\CourseVariantServiceContract::class)
+                ->addMember((int) $session->course_id, (int) $variant->course_id, $variant->key, $variant->label, $variant->level, $variant->role, (int) $variant->position);
         } finally {
             $previous !== null ? Auth::setUser($previous) : Auth::forgetUser();
         }

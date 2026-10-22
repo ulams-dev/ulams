@@ -49,6 +49,7 @@ export function fakeBuilder(options: FakeBuilderOptions = {}) {
     uploads: [] as string[],
     brief: { audience: "", level: "beginner", totalMinutes: 60, lessonMinutes: 10, tone: "friendly", language: "en" } as Record<string, unknown>,
     posts: [] as Array<{ path: string; body: unknown }>,
+    variants: [] as Array<{ id: string; key: string; label: string; level: string | null; role: string | null; status: string; position: number }>,
   };
   const append = (payload: Record<string, unknown>) => db.events.push({ id: db.events.length + 1, payload });
 
@@ -180,6 +181,19 @@ export function fakeBuilder(options: FakeBuilderOptions = {}) {
       return ok(snapshot(), 201);
     }
     if (m === "GET" && path === "/sessions") return ok(db.session ? [{ ...db.session }] : []);
+    if ((r = path.match(/^\/variants\/([^/]+)$/))) {
+      const variant = db.variants.find((v) => v.id === r![1]);
+      if (!variant) return fail("Variant not found.", 404);
+      if (m === "PATCH") {
+        if (typeof body.label === "string") variant.label = body.label;
+        if (typeof body.position === "number") variant.position = body.position;
+        return ok(variant);
+      }
+      if (m === "DELETE") {
+        variant.status = "retired";
+        return ok({ id: variant.id, status: variant.status });
+      }
+    }
     if (!db.session) return fail("Session not found.", 404);
     if ((r = path.match(/^\/sessions\/([^/]+)(\/.*)?$/)) && r[1] !== db.session.id) return fail("Session not found.", 404);
     const sub = r?.[2] ?? "";
@@ -215,6 +229,18 @@ export function fakeBuilder(options: FakeBuilderOptions = {}) {
         return ok({ currentVersionId: db.session.currentVersionId, appliedVersionId: db.session.appliedVersionId, versions: db.versions.map(({ document: _d, ...v }) => ({ ...v, origin: "ai", createdAt: "2026-10-09T10:00:00+00:00" })) });
       }
       if (m === "GET" && sub === "/usage") return ok({ total: { usedMicroUsd: 1234 }, byTask: [] });
+      if (m === "GET" && sub === "/variants") {
+        return ok({ variants: db.variants, cap: 6, active: db.variants.filter((v) => v.status !== "retired").length, base: { versionId: db.session.appliedVersionId, courseId: db.session.courseId, ready: db.session.appliedVersionId !== null }, estimate: { variants: 1, lessons: 3, perLessonMicroUsd: 60000, estimateMicroUsd: 195000, basis: "An average lesson" } });
+      }
+      if (m === "POST" && sub === "/variants") {
+        if (db.session.appliedVersionId === null && body.start) return fail("Approve and apply the base course first: a variant is drafted from it.", 409);
+        for (const a of (body.audiences ?? []) as Array<{ level?: string; role?: string; label?: string }>) {
+          const label = a.label ?? [a.level ? a.level[0]!.toUpperCase() + a.level.slice(1) : null, a.role].filter(Boolean).join(", ");
+          if (db.variants.filter((v) => v.status !== "retired").length >= 6) return fail("A course can have 6 variants besides its base.", 422);
+          db.variants.push({ id: id("var"), key: label.toLowerCase().replace(/[^a-z0-9]+/g, "-"), label, level: a.level ?? null, role: a.role ?? null, status: "draft", position: db.variants.length + 1 });
+        }
+        return ok({ variants: db.variants, runId: body.start ? "run-variants" : null }, 201);
+      }
       if (m === "POST" && sub === "/apply") return ok({ runId: startApply().id }, 202);
       if (m === "POST" && sub === "/publish") {
         if (db.session.courseId === null) return fail("Apply the course before publishing it.", 409);

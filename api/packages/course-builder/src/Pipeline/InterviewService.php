@@ -7,6 +7,7 @@ use Ulams\CourseBuilder\Apply\SiteTheme;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
+use Ulams\CourseBuilder\Services\VariantService;
 use Ulams\Settings\Support\ThemePresets;
 use Ulams\CourseBuilder\Ui\Surfaces;
 use Ulams\CourseBuilder\Ui\UiCatalogue;
@@ -29,6 +30,7 @@ final class InterviewService
         private readonly UiCatalogue $catalogue,
         private readonly EventLog $events,
         private readonly SiteTheme $theme,
+        private readonly VariantService $variants,
     ) {
     }
 
@@ -59,14 +61,36 @@ final class InterviewService
     }
 
     /**
-     * The questions code asks itself, with fixed options: pricing always, theme only when the author
+     * The questions code asks itself, with fixed options: the audiences (unless the operator switched variants off with
+     * COURSE_BUILDER_MAX_VARIANTS=0), pricing always, theme only when the author
      * may change the site theme or chose a new site (otherwise the apply would skip it anyway).
      *
      * @return array<int,array<string,mixed>>
      */
     private function fixedQuestions(Session $session): array
     {
-        $questions = [[
+        $questions = [];
+        if (BriefService::maxVariants() > 0) {
+            $questions[] = [
+                'key' => 'audiences',
+                'label' => 'Who is this course for?',
+                'why' => sprintf(
+                    'The course you approve first is the base, for the audience and level you answered above. Every other audience you add here (levels, roles or both; up to %d) gets its own version of the course, drafted from the same sources with every block cited, and you review each as a list of changes against the base. %s',
+                    BriefService::maxVariants(),
+                    $this->variants->estimateLine($session, 1),
+                ),
+                'component' => 'ChoiceChips',
+                'options' => [
+                    ['value' => 'single', 'label' => 'One course for everyone'],
+                    ['value' => 'level:beginner', 'label' => 'Beginner version'],
+                    ['value' => 'level:intermediate', 'label' => 'Intermediate version'],
+                    ['value' => 'level:expert', 'label' => 'Expert version'],
+                ],
+                'default' => ['single'],
+                'answered' => false,
+            ];
+        }
+        $questions[] = [
             'key' => 'pricing',
             'label' => 'Will the course be free or paid?',
             'why' => 'Free courses open as soon as you publish. For a paid course you confirm the price in the publish summary before anyone can buy it.',
@@ -74,7 +98,7 @@ final class InterviewService
             'options' => [['value' => 'free', 'label' => 'Free'], ['value' => 'paid', 'label' => 'Paid']],
             'default' => ['mode' => 'free'],
             'answered' => false,
-        ]];
+        ];
         if ($this->theme->authorMayChange($session->author, (array) $session->brief)) {
             $questions[] = [
                 'key' => 'theme',
@@ -236,13 +260,13 @@ final class InterviewService
         }
         $answered = $q['answered'] ? self::answerValue($q['key'], $brief) : null;
         if ($component === 'ChoiceChips' || $q['key'] === 'assessments') {
-            $multiple = $q['key'] === 'assessments';
-            $default = $multiple ? array_values(array_filter(array_map('trim', explode(',', (string) $q['default'])))) : [(string) $q['default']];
+            $multiple = in_array($q['key'], ['assessments', 'audiences'], true);
+            $default = is_array($q['default']) ? array_map('strval', $q['default']) : ($multiple ? array_values(array_filter(array_map('trim', explode(',', (string) $q['default'])))) : [(string) $q['default']]);
 
             return ['ChoiceChips', $base + [
                 'options' => $options,
                 'multiple' => $multiple,
-                'allowCustom' => $q['key'] === 'audience',
+                'allowCustom' => in_array($q['key'], ['audience', 'audiences'], true),
                 'defaultValue' => $default,
             ] + ($answered !== null ? ['value' => array_map(fn ($v) => mb_substr((string) $v, 0, 120), (array) $answered)] : [])];
         }
@@ -267,6 +291,11 @@ final class InterviewService
             'assessments' => array_values(array_filter([
                 !empty($brief['assessments']['perLessonQuiz']) ? 'quiz' : null,
                 !empty($brief['assessments']['finalTest']) ? 'final' : null,
+            ])),
+            // the chips that gave the variants: their levels, then their roles (a role is any chip that is not a level)
+            'audiences' => ($brief['audiences'] ?? []) === [] ? ['single'] : array_values(array_unique([
+                ...array_map(fn ($l) => "level:{$l}", array_filter(array_column($brief['audiences'], 'level'))),
+                ...array_filter(array_column($brief['audiences'], 'role')),
             ])),
             'pricing', 'theme' => $brief[$key] ?? null,
             default => $brief[$key] ?? null,

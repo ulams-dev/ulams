@@ -21,6 +21,7 @@ use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Source;
 use Ulams\CourseBuilder\Models\Step;
+use Ulams\CourseBuilder\Models\Variant;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Pipeline\BriefService;
 use Ulams\CourseBuilder\Pipeline\GenerationService;
@@ -34,6 +35,7 @@ use Ulams\CourseBuilder\Sources\CitationIndex;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\RunStatus;
 use Ulams\CourseBuilder\Services\SessionState;
+use Ulams\CourseBuilder\Services\VariantService;
 use Ulams\CourseBuilder\Services\VersionService;
 use Ulams\CourseBuilder\Ui\Surfaces;
 use Ulams\Uploads\Exceptions\UploadRejected;
@@ -100,6 +102,16 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  * @OA\Post(path="/api/admin/course-builder/sessions/{session}/new-site", operationId="admin.course-builder.sessions.by-session.new-site.post", summary="Create a new site and move the session there (platform operators; TENANCY_NEW_SITES)", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\RequestBody(@OA\JsonContent(type="object")), @OA\Response(response=202, description="queued", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="not allowed"))
  * @OA\Post(path="/api/admin/course-builder/sessions/{session}/publish", operationId="admin.course-builder.sessions.by-session.publish.post", summary="Publish the applied course (409 while blocking items or unacknowledged warnings remain; body acknowledgedWarnings)", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="published", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
  * @OA\Get(path="/api/admin/course-builder/sessions/{session}/usage", operationId="admin.course-builder.sessions.by-session.usage.get", summary="AI calls of the session by task and model", tags={"Admin Course Builder"}, security={{"passport": {}}}, @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="usage", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Get(path="/api/admin/course-builder/sessions/{session}/variants", operationId="admin.course-builder.sessions.by-session.variants.get", summary="Course variants by level and role: status, own course, drift from the base, estimate and cap", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="variants, cap, base and estimate", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown"))
+ * @OA\Post(path="/api/admin/course-builder/sessions/{session}/variants", operationId="admin.course-builder.sessions.by-session.variants.post", summary="Create variants from the interview answer (or add some later); start=true drafts their outlines in one run", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="audiences", type="array", @OA\Items(type="object")), @OA\Property(property="start", type="boolean"))),
+ *     @OA\Response(response=201, description="the variants created and the run, when started", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=409, description="the base course is not applied yet"), @OA\Response(response=422, description="not valid, or over COURSE_BUILDER_MAX_VARIANTS"))
+ * @OA\Patch(path="/api/admin/course-builder/variants/{variant}", operationId="admin.course-builder.variants.by-variant.patch", summary="Rename, reorder or retire a variant", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="variant", in="path", required=true, @OA\Schema(type="string")), @OA\RequestBody(@OA\JsonContent(type="object")), @OA\Response(response=200, description="the variant", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
+ * @OA\Delete(path="/api/admin/course-builder/variants/{variant}", operationId="admin.course-builder.variants.by-variant.delete", summary="Retire a variant (its course, if it has one, is kept)", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="variant", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="retired", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
  */
 class CourseBuilderController extends Controller
 {
@@ -117,6 +129,7 @@ class CourseBuilderController extends Controller
         private readonly Surfaces $surfaces,
         private readonly CitationIndex $citations,
         private readonly OutlineEditor $outlineEditor,
+        private readonly VariantService $variantService,
     ) {
     }
 
@@ -347,7 +360,7 @@ class CourseBuilderController extends Controller
 
         return self::ok([
             'id' => $v->id, 'number' => $v->number, 'kind' => $v->kind, 'origin' => $v->origin, 'status' => $v->status, 'reason' => $v->reason,
-            'parentId' => $v->parent_id, 'elementId' => $v->element_id, 'document' => $v->document, 'fragments' => Surfaces::labels($v->document),
+            'parentId' => $v->parent_id, 'variantId' => $v->variant_id, 'elementId' => $v->element_id, 'document' => $v->document, 'fragments' => Surfaces::labels($v->document),
             'createdAt' => $v->created_at?->toIso8601String(),
         ]);
     }
@@ -367,10 +380,11 @@ class CourseBuilderController extends Controller
         if ($v->status !== Version::PROPOSED) {
             return self::fail('This version is not waiting for a decision.', 409);
         }
-        $surface = match ($v->kind) {
-            'outline' => ['approve_outline', "outline-{$v->id}"],
-            'patch' => ['approve_patch', "patch-{$v->id}"],
-            'content' => ['approve_apply', "apply-{$v->id}"],
+        $surface = match (true) {
+            $v->kind === 'outline' => ['approve_outline', "outline-{$v->id}"],
+            $v->kind === 'patch' => ['approve_patch', "patch-{$v->id}"],
+            $v->kind === 'content' && $v->variant_id !== null => ['approve_variant', "variant-{$v->id}"],
+            $v->kind === 'content' => ['approve_apply', "apply-{$v->id}"],
             default => null,
         };
         if ($surface === null) {
@@ -383,8 +397,12 @@ class CourseBuilderController extends Controller
     public function reject(Request $request, string $version): JsonResponse
     {
         [$s, $v] = $this->versionFor($request, $version, 'update');
-        if ($v->status !== Version::PROPOSED || !in_array($v->kind, ['outline', 'patch'], true)) {
+        $variantContent = $v->kind === 'content' && $v->variant_id !== null;
+        if ($v->status !== Version::PROPOSED || (!in_array($v->kind, ['outline', 'patch'], true) && !$variantContent)) {
             return self::fail('This version is not waiting for a decision.', 409);
+        }
+        if ($variantContent) {
+            return $this->decide($request, $s, 'reject_variant', "variant-{$v->id}", ['versionId' => $v->id]);
         }
 
         return $this->decide($request, $s, $v->kind === 'outline' ? 'reject_outline' : 'reject_patch', "{$v->kind}-{$v->id}", ['versionId' => $v->id, 'comment' => (string) $request->input('comment', '')]);
@@ -498,6 +516,80 @@ class CourseBuilderController extends Controller
         }
 
         return self::ok(['runId' => $run->id], 202);
+    }
+
+    private function variantFor(Request $request, string $variant, string $ability = 'view'): array
+    {
+        $v = preg_match('/^[0-9a-z]{26}$/i', $variant) ? Variant::query()->find(strtolower($variant)) : null;
+        if ($v === null) {
+            throw new NotFoundHttpException('Variant not found.');
+        }
+
+        return [$this->sessionFor($request, $v->session_id, $ability), $v];
+    }
+
+    public function variantsIndex(Request $request, string $session): JsonResponse
+    {
+        $s = $this->sessionFor($request, $session);
+        $variants = $this->variantService->all($s);
+        $waiting = count(array_filter($variants, fn (Variant $v) => $v->status === Variant::DRAFT && $v->current_version_id === null));
+
+        return self::ok([
+            'variants' => array_map(fn (Variant $v) => $this->variantService->describe($v, $s), $variants),
+            'cap' => BriefService::maxVariants(),
+            'active' => $this->variantService->active($s),
+            'base' => ['versionId' => $s->applied_version_id, 'courseId' => $s->course_id, 'ready' => $s->applied_version_id !== null],
+            'estimate' => $this->variantService->estimate($s, max(1, $waiting)),
+        ]);
+    }
+
+    public function variantsStore(Request $request, string $session): JsonResponse
+    {
+        $s = $this->sessionFor($request, $session, 'update');
+        $data = $request->validate([
+            'audiences' => ['nullable', 'array', 'max:24'],
+            'audiences.*.level' => ['nullable', 'string', 'in:' . implode(',', Variant::LEVELS)],
+            'audiences.*.role' => ['nullable', 'string', 'max:64'],
+            'audiences.*.label' => ['nullable', 'string', 'max:120'],
+            'audiences.*.notes' => ['nullable', 'string', 'max:600'],
+            'start' => ['nullable', 'boolean'],
+        ]);
+        try {
+            if ($request->boolean('start')) {
+                $result = $this->runs->variantRun($s, array_values((array) ($data['audiences'] ?? [])), (int) $request->user()->getKey());
+                $made = $this->variantService->all($s);
+            } else {
+                $made = $this->variantService->create($s, array_values((array) ($data['audiences'] ?? $s->brief['audiences'] ?? [])));
+                $result = ['run' => null];
+            }
+        } catch (BuilderException $e) {
+            return self::fail($e->getMessage(), $e->status);
+        } catch (InvalidArgumentException $e) {
+            return self::fail($e->getMessage(), 422);
+        }
+
+        return self::ok(['variants' => array_map(fn (Variant $v) => $this->variantService->describe($v, $s), $made), 'runId' => $result['run']?->id], 201);
+    }
+
+    public function variantUpdate(Request $request, string $variant): JsonResponse
+    {
+        [$s, $v] = $this->variantFor($request, $variant, 'update');
+        $data = $request->validate([
+            'label' => ['nullable', 'string', 'min:1', 'max:120'],
+            'position' => ['nullable', 'integer', 'min:0', 'max:1000'],
+            'notes' => ['nullable', 'string', 'max:600'],
+            'status' => ['nullable', 'in:retired'],
+        ]);
+
+        return self::ok($this->variantService->describe($this->variantService->update($v, $data), $s));
+    }
+
+    public function variantDestroy(Request $request, string $variant): JsonResponse
+    {
+        [, $v] = $this->variantFor($request, $variant, 'update');
+        $this->variantService->retire($v);
+
+        return self::ok(['id' => $v->id, 'status' => $v->status]);
     }
 
     public function apply(Request $request, string $session): JsonResponse

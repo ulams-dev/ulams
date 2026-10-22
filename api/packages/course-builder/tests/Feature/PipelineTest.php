@@ -26,7 +26,7 @@ class PipelineTest extends TestCase
         $session = $this->uploaded($author);
 
         $this->assertSame(Session::INTERVIEWING, $session->status);
-        $this->assertCount(7, $session->stateValue('interview.questions'));
+        $this->assertCount(8, $session->stateValue('interview.questions'));
         $this->assertSame('PriceInput', collect($session->stateValue('interview.questions'))->firstWhere('key', 'pricing')['component']);
         $source = $session->sources()->first();
         $this->assertSame('ready', $source->status);

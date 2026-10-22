@@ -232,6 +232,7 @@ return [
         Ulams\CodeExercises\UlamsCodeExercisesServiceProvider::class,
         Ulams\Ai\UlamsAiServiceProvider::class,
         Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider::class,
+        Ulams\CourseVariants\UlamsCourseVariantsServiceProvider::class,
         Ulams\LivingCourse\UlamsLivingCourseServiceProvider::class,
         Ulams\LearnerInsights\UlamsLearnerInsightsServiceProvider::class,
         Ulams\Tutor\UlamsTutorServiceProvider::class,

@@ -822,6 +822,86 @@ export const builderCommands: AnyCommand[] = [
     },
   }),
 
+  /* ---- course variants by level and role (ADR 0192) */
+  defineCommand({
+    ...common,
+    id: "course.variants.list",
+    summary: "Variants of a course by level and role: status, own course, drift from the base, the cap and the cost estimate",
+    description:
+      "A variant is a branch of one builder session: it shares the sources and citations, is drafted from the approved base course and, once approved, becomes its own course grouped with the base. `data.cap` is COURSE_BUILDER_MAX_VARIANTS, `data.estimate` the cost of drafting the variants that are still waiting, in micro-USD (1,000,000 = 1 USD). `data.base.ready` is false until the base course is applied.",
+    kind: "read",
+    scopes: READ,
+    endpoints: ["GET /api/admin/course-builder/sessions/{session}/variants"],
+    positionals: ["session"],
+    input: z.object({ session }),
+    output: z.unknown(),
+    examples: [{ title: "List the variants", argv: "course variants list <session> --json" }],
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "GET", "/sessions/{session}/variants", { params: { session: i.session } }) };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "course.variants.add",
+    summary: "Add a variant for a level, a role or both; --start drafts the outlines of the waiting variants",
+    description:
+      "The base course must be applied first (409 otherwise). Without --start the variant is only created; with --start the builder drafts one outline per waiting variant from the same sources (one cheap model call each, logged against the variant) and you review each as a diff against the base in the studio or with `builder outline show`. More variants than COURSE_BUILDER_MAX_VARIANTS are refused (422).",
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: ["POST /api/admin/course-builder/sessions/{session}/variants"],
+    positionals: ["session"],
+    input: z.object({
+      session,
+      level: z.enum(["beginner", "intermediate", "expert"]).optional().describe("Level of the audience."),
+      role: z.string().max(64).optional().describe("Role of the audience, e.g. developer."),
+      label: z.string().max(120).optional().describe("Name learners see (default: the level and the role)."),
+      notes: z.string().max(600).optional().describe("What this audience already knows or needs, as plain text."),
+      start: z.boolean().default(false).describe("Draft the outlines of the waiting variants now."),
+    }),
+    output: z.unknown(),
+    examples: [{ title: "An expert version for developers", argv: "course variants add <session> --level expert --role developer --start --json" }],
+    plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/sessions/${i.session}/variants`, variantBody(i)),
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "POST", "/sessions/{session}/variants", { params: { session: i.session }, body: variantBody(i) }) };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "course.variants.update",
+    summary: "Rename or reorder a variant",
+    kind: "write",
+    idempotent: true,
+    scopes: WRITE,
+    endpoints: ["PATCH /api/admin/course-builder/variants/{variant}"],
+    positionals: ["variant"],
+    input: z.object({ variant: z.string().describe("Variant id (from `course variants list`)."), label: z.string().min(1).max(120).optional(), position: z.number().int().min(0).max(1000).optional(), notes: z.string().max(600).optional() }),
+    output: z.unknown(),
+    examples: [{ title: "Rename", argv: 'course variants update <variant> --label "Expert, developer" --json' }],
+    plan: async (_ctx, i) => planOf("PATCH", `/api/admin/course-builder/variants/${i.variant}`, variantChanges(i)),
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "PATCH", "/variants/{variant}", { params: { variant: i.variant }, body: variantChanges(i) }) };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "course.variants.retire",
+    summary: "Retire a variant (its course, if it has one, is kept)",
+    description: "A retired variant no longer counts against the cap and is not offered; learners already in its course keep their progress.",
+    kind: "destructive",
+    idempotent: true,
+    scopes: WRITE,
+    endpoints: ["DELETE /api/admin/course-builder/variants/{variant}"],
+    positionals: ["variant"],
+    input: z.object({ variant: z.string().describe("Variant id (from `course variants list`).") }),
+    output: z.unknown(),
+    examples: [{ title: "Retire", argv: "course variants retire <variant> --yes --json" }],
+    plan: async (_ctx, i) => planOf("DELETE", `/api/admin/course-builder/variants/${i.variant}`),
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "DELETE", "/variants/{variant}", { params: { variant: i.variant } }) };
+    },
+  }),
+
   /* ---- element chat and patches */
   defineCommand({
     ...common,
@@ -856,13 +936,13 @@ export const builderCommands: AnyCommand[] = [
     ...common,
     ...wait,
     id: "builder.patches.approve",
-    summary: "Approve a proposed patch; an applied course is updated",
+    summary: "Approve a proposed version: a patch (an applied course is updated), or a variant's outline or generated course (see `course variants list`)",
     kind: "write",
     idempotent: false,
     scopes: WRITE,
     endpoints: ["POST /api/admin/course-builder/versions/{version}/approve"],
     positionals: ["version"],
-    input: z.object({ version: z.string().describe("Patch version id (from `builder chat`).") }),
+    input: z.object({ version: z.string().describe("Version id: a patch (from `builder chat`) or a variant version (`currentVersionId` of `course variants list`).") }),
     output: z.unknown(),
     examples: [{ title: "Approve", argv: "builder patches approve <version> --json" }],
     plan: async (_ctx, i) => planOf("POST", `/api/admin/course-builder/versions/${i.version}/approve`, { edits: [] }),
@@ -1158,6 +1238,19 @@ export const builderCommands: AnyCommand[] = [
 ];
 
 /* ------------------------------------------------------------------ small helpers */
+
+function variantBody(i: { level?: string; role?: string; label?: string; notes?: string; start?: boolean }): Record<string, unknown> {
+  const audience: Record<string, unknown> = {};
+  for (const key of ["level", "role", "label", "notes"] as const) if (i[key] !== undefined) audience[key] = i[key];
+  return { audiences: [audience], ...(i.start ? { start: true } : {}) };
+}
+
+function variantChanges(i: { label?: string; position?: number; notes?: string }): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const key of ["label", "position", "notes"] as const) if (i[key] !== undefined) out[key] = i[key];
+  return out;
+}
+
 
 function briefBody(i: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = { ...((i.brief as Record<string, unknown> | undefined) ?? {}) };

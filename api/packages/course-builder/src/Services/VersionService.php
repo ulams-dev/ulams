@@ -30,10 +30,11 @@ final class VersionService
         array $callIds = [],
         ?int $decidedBy = null,
         ?array $sourceRevisions = null,
+        ?string $variantId = null,
     ): Version {
         $document = Blueprint::upgrade($document);
 
-        return DB::transaction(function () use ($session, $document, $kind, $origin, $status, $parent, $reason, $elementId, $callIds, $decidedBy, $sourceRevisions) {
+        return DB::transaction(function () use ($session, $document, $kind, $origin, $status, $parent, $reason, $elementId, $callIds, $decidedBy, $sourceRevisions, $variantId) {
             Session::query()->whereKey($session->id)->lockForUpdate()->first(['id']);
             $number = (int) Version::query()->where('session_id', $session->id)->max('number') + 1;
             $diff = null;
@@ -58,6 +59,7 @@ final class VersionService
                 'decided_at' => $status === Version::APPROVED ? now() : null,
                 'ai_call_ids' => $callIds ?: null,
                 'source_revisions' => $sourceRevisions ?: null,
+                'variant_id' => $variantId,
             ]);
         });
     }
@@ -68,9 +70,10 @@ final class VersionService
             throw new InvalidArgumentException('Only a proposed version can be approved.');
         }
         $version->forceFill(['status' => Version::APPROVED, 'decided_by' => $userId, 'decided_at' => now()])->save();
-        // other open proposals for the same element (or the same stage) are now stale
+        // other open proposals for the same element (or the same stage) of the same branch are now stale
         Version::query()->where('session_id', $version->session_id)->where('status', Version::PROPOSED)
             ->where('id', '!=', $version->id)->where('kind', $version->kind)
+            ->when($version->variant_id === null, fn ($q) => $q->whereNull('variant_id'), fn ($q) => $q->where('variant_id', $version->variant_id))
             ->update(['status' => Version::SUPERSEDED]);
 
         return $version;
@@ -146,10 +149,10 @@ final class VersionService
         return $version;
     }
 
-    /** @return array<int,array<string,mixed>> history rows for the VersionList */
+    /** @return array<int,array<string,mixed>> history rows of the base branch for the VersionList (variants have their own) */
     public function history(Session $session): array
     {
-        return $session->versions()->get()->map(fn (Version $v) => array_filter([
+        return $session->versions()->whereNull('variant_id')->get()->map(fn (Version $v) => array_filter([
             'id' => $v->id,
             'number' => $v->number,
             'kind' => $v->kind,

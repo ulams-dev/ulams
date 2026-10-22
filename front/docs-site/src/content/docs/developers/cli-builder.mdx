@@ -119,6 +119,20 @@ ulams builder variants <session> <element> --instruction "Harder distractors" --
 Each outline edit is saved as an approved author version and re-applied; `builder variants` makes proposed versions that share a group,
 which you approve one of (`builder patches approve`) or reject.
 
+Note the two meanings of "variants": `builder variants` is a few alternatives for one element. [Course variants](/creators/course-versions-and-variants/)
+are whole versions of the course for a level and a role, drafted from the same sources:
+
+```bash
+ulams course variants list <session> --json                                      # status, own course, cap, cost estimate
+ulams course variants add <session> --level expert --role developer --start      # --start drafts the outlines (the base must be applied)
+ulams course variants update <variant> --label "Expert, developer"
+ulams course variants retire <variant> --yes                                     # its course is kept; it stops counting against the cap
+```
+
+`course variants list` gives each variant's `currentVersionId`, its kind (`outline`, then `content`) and status. Approve a proposed variant outline (it starts writing
+the lessons that changed) or a generated variant (it creates the variant's own course) with `ulams builder patches approve <version>`, or in the studio; reject with
+`builder patches reject <version>`. Review one with `GET versions/{version}/diff?against=<base version>`.
+
 `ulams builder citations <session>` is the sources panel as data: per source its sections with the elements that cite them
 (`data.sources[].sections[].citedBy`), how many sections nothing cites (`data.sources[].uncovered`) and, per element, the
 fragments it cites (`data.elements`). Use it to find what the course leaves out.

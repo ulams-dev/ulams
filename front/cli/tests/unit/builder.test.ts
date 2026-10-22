@@ -303,3 +303,50 @@ describe("builder publish-check and new-site", () => {
     for (const r of [sent, dry]) r.cleanup();
   });
 });
+
+describe("course variants", () => {
+  it("adds a variant for a level and a role, lists it, renames it and retires it", async () => {
+    const { fake, run } = setup();
+    fake.db.session = { id: "ses0001".padEnd(26, "0"), title: "Coffee", status: "applied", courseId: 77, currentVersionId: "ver1", appliedVersionId: "ver1" };
+    const session = fake.db.session.id;
+
+    const add = await run(["course", "variants", "add", session, "--level", "expert", "--role", "developer", "--json"]);
+    expect(add.code).toBe(0);
+    expect(fake.db.posts.at(-1)).toEqual({ path: `POST /sessions/${session}/variants`, body: { audiences: [{ level: "expert", role: "developer" }] } });
+    add.cleanup();
+
+    const list = await run(["course", "variants", "list", session, "--json"]);
+    expect(list.code).toBe(0);
+    expect(data(list)).toMatchObject({ cap: 6, active: 1, base: { ready: true, courseId: 77 }, variants: [{ key: "expert-developer", label: "Expert, developer", status: "draft" }] });
+    list.cleanup();
+
+    const id = fake.db.variants[0]!.id;
+    const rename = await run(["course", "variants", "update", id, "--label", "Expert dev", "--json"]);
+    expect(data(rename)).toMatchObject({ label: "Expert dev" });
+    rename.cleanup();
+
+    const retire = await run(["course", "variants", "retire", id, "--yes", "--json"]);
+    expect(data(retire)).toEqual({ id, status: "retired" });
+    retire.cleanup();
+  });
+
+  it("--start asks the builder to draft the outlines, and the server's refusal is shown", async () => {
+    const { fake, run } = setup();
+    fake.db.session = { id: "ses0001".padEnd(26, "0"), title: "Coffee", status: "apply_review", courseId: null, currentVersionId: "ver1", appliedVersionId: null };
+    const r = await run(["course", "variants", "add", fake.db.session.id, "--level", "beginner", "--start", "--json"]);
+    expect(r.code).not.toBe(0);
+    expect(JSON.stringify(r.json())).toContain("Approve and apply the base course first");
+    expect(fake.db.variants).toHaveLength(0);
+    r.cleanup();
+  });
+
+  it("--dry-run prints the request and sends nothing", async () => {
+    const { fake, run } = setup();
+    fake.db.session = { id: "ses0001".padEnd(26, "0"), title: "Coffee", status: "applied", courseId: 77, currentVersionId: "ver1", appliedVersionId: "ver1" };
+    const r = await run(["course", "variants", "add", fake.db.session.id, "--role", "support", "--start", "--dry-run", "--json"]);
+    expect(r.code).toBe(0);
+    expect(JSON.stringify(r.json())).toContain("/variants");
+    expect(fake.db.variants).toHaveLength(0);
+    r.cleanup();
+  });
+});

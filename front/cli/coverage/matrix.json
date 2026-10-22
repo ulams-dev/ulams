@@ -1,5 +1,5 @@
 {
- "summary": "612/701 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "616/705 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -650,9 +650,33 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/course-builder/sessions/{session}/variants",
+   "summary": "Course variants by level and role: status, own course, drift from the base, estimate and cap",
+   "command": "course.variants.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/sessions/{session}/variants",
+   "summary": "Create variants from the interview answer (or add some later); start=true drafts their outlines in one run",
+   "command": "course.variants.add",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/course-builder/sessions/{session}/versions",
    "summary": "Blueprint version history",
    "command": "builder.chat",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/course-builder/variants/{variant}",
+   "summary": "Rename, reorder or retire a variant",
+   "command": "course.variants.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/course-builder/variants/{variant}",
+   "summary": "Retire a variant (its course, if it has one, is kept)",
+   "command": "course.variants.retire",
    "status": "covered"
   },
   {

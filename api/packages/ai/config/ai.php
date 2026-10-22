@@ -62,6 +62,9 @@ return [
         'competency_tags' => ['profile' => env('AI_TASK_COMPETENCY_TAGS_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 4000],
         // Living Course: a grounded rewrite of an element learners struggle with, from aggregated evidence only (ADR 0181)
         'insights_improve' => ['profile' => env('AI_TASK_INSIGHTS_IMPROVE_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
+        // Course variants (ADR 0192): the plan per lesson for one audience (light), and a lesson condensed, deepened or added for it
+        'variant_outline' => ['profile' => env('AI_TASK_VARIANT_OUTLINE_PROFILE', 'light'), 'effort' => 'medium', 'max_tokens' => 8000],
+        'variant_lesson' => ['profile' => env('AI_TASK_VARIANT_LESSON_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 32000],
         'new_lesson' => ['profile' => env('AI_TASK_NEW_LESSON_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
     ],
     'task_defaults' => ['profile' => 'default', 'effort' => 'medium', 'max_tokens' => 8000],
