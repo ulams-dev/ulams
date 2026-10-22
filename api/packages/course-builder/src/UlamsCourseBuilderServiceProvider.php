@@ -118,6 +118,10 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/course_builder.php', 'course_builder');
         $this->mergeConfigFrom(__DIR__ . '/../config/course_as_code.php', 'course_as_code');
+        $this->app->register(UlamsCourseVariantsServiceProvider::class);
+        // what the course-variants package asks the builder for (bound after its provider registered, so ours wins)
+        $this->app->bind(\Ulams\CourseVariants\Contracts\TopicCorrespondence::class, \Ulams\CourseBuilder\Services\BuilderTopicCorrespondence::class);
+        $this->app->bind(\Ulams\CourseVariants\Contracts\PlacementSource::class, \Ulams\CourseBuilder\Services\BuilderPlacementSource::class);
         foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class, UlamsSettingsServiceProvider::class, UlamsCommerceServiceProvider::class, UlamsLiaScriptServiceProvider::class, UlamsH5PServiceProvider::class, UlamsInteractiveServiceProvider::class, UlamsCourseVariantsServiceProvider::class] as $provider) {
             $this->app->register($provider);
         }
