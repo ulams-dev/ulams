@@ -116,7 +116,8 @@ const sentence = (message: string): string => {
 const rejectEmpty = (o: Obj): Obj => Object.fromEntries(Object.entries(o).filter(([, v]) => v !== undefined));
 
 /** Errors after which the assembled document would mislead the Blueprint check. */
-const STRUCTURAL = /^(YAML_SYNTAX|SCHEMA_INVALID|FIELD_REQUIRED|UNKNOWN_FIELD|FRONT_MATTER_|DIRECTIVE_|FOLDER_NOT_COURSE|ID_INVALID)/;
+/** Problems of the files themselves (as opposed to what the content says): the document cannot be trusted to hold what the files hold. */
+export const STRUCTURAL = /^(YAML_SYNTAX|SCHEMA_INVALID|FIELD_REQUIRED|UNKNOWN_FIELD|FRONT_MATTER_|DIRECTIVE_|FOLDER_NOT_COURSE|ID_INVALID)/;
 
 export function loadCourse(files: Files, assets: AssetLookup): Loaded {
   const sink = new Sink();

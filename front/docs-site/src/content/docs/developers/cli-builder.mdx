@@ -156,14 +156,15 @@ with the event in `error.details`. For agents, `builder events list` returns a b
 `ulams course …` moves a course between the academy and a file, without the AI pipeline and **without needing AI to be enabled**
 (the commands above exit 12 when it is off; these do not). `course export <course> --out blueprint.json` writes the current
 Blueprint v3 document with its version ids, `course import --file blueprint.json` stores your edit as a proposed version and prints the
-element diff, `course diff <version>` shows it again, `course approve <version>` makes it the current version and `course apply
-<session>` and `course publish <session>` put it in front of learners. A push is always a proposal: **only a person can approve**
+element diff, `course diff --version <version>` shows it again, `course approve <version>` makes it the current version and
+`course apply <session>` and `course publish <session>` put it in front of learners. A push is always a proposal: **only a person can approve**
 (a login or a CLI token you created; agent tokens and MCP clients get `APPROVAL_REQUIRES_HUMAN`). The endpoints, the error codes and
 the rule for text you wrote yourself (`origin: author`, which may have no citations) are in the
-[Course Builder API](/developers/course-builder-api/#course-as-code-endpoints-work-with-ai-off). These commands are the thin
-first layer. The [course folder format](/developers/course-folder-format/) (Markdown lessons with block directives, YAML
-files) is checked offline with [`course validate` and `course fmt`](/developers/cli-course/); `course push` and `course pull`
-will move that folder to and from an academy.
+[Course Builder API](/developers/course-builder-api/#course-as-code-endpoints-work-with-ai-off). These commands work on one JSON
+document. For a course you keep in Git, the [course folder format](/developers/course-folder-format/) (Markdown lessons with block
+directives, YAML files) is checked offline with `course validate` and `course fmt`, and `course init`, `pull`, `push`, `diff`,
+`status`, `apply` and `publish` move that folder to and from an academy: see
+[Course folders from the command line](/developers/cli-course/).
 
 ## Living Course
 

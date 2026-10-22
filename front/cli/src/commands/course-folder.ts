@@ -8,6 +8,7 @@ import type { Issue } from "../course/types.ts";
 import { validateFiles } from "../course/validate.ts";
 import { CliError } from "../errors.ts";
 import type { AnyCommand, Ctx, Result } from "../registry/types.ts";
+import { out, wantsJson } from "./course-io.ts";
 import { defineCommand } from "./define.ts";
 
 /* Course-as-code, the offline half (ADR 0160): `course validate` and `course fmt` work on a folder of Markdown and
@@ -20,10 +21,8 @@ type Format = "text" | "json" | "sarif";
 
 function formatOf(ctx: Ctx, explicit: Format | undefined): Format {
   if (explicit) return explicit;
-  return ctx.flags.json || ctx.flags.output === "json" || ctx.flags.output === "ndjson" || ctx.flags.output === "yaml" || ctx.env.ULAMS_OUTPUT === "json" ? "json" : "text";
+  return wantsJson(ctx) ? "json" : "text";
 }
-
-const out = (ctx: Ctx, text: string) => (ctx.io.stdout ? ctx.io.stdout(text) : void process.stdout.write(`${text}\n`));
 
 function fileCount(files: Map<string, string>): number {
   return [...files.keys()].filter((p) => /\.(md|yaml)$/.test(p)).length;

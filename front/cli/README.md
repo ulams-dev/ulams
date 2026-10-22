@@ -45,6 +45,17 @@ ulams course validate --format sarif --out ulams.sarif
 ulams course fmt --check                               # exit 13 when files would change
 ```
 
+`course init`, `pull`, `push`, `diff`, `status`, `apply` and `publish` sync a folder with a course on an academy. A push is always a proposed
+version: nothing reaches learners until a person approves and applies it, and agent tokens can only propose
+([guide](https://ulams-dev.github.io/ulams/developers/cli-course/)).
+
+```bash
+ulams course init ./kubernetes-101 --from-course 12
+ulams course diff                                      # what changed since the last pull (offline)
+ulams course push --message "Fix the install step"     # proposes a version
+ulams course apply --approve && ulams course publish   # a person approves, applies, publishes
+```
+
 ## Development and verification
 
 ```bash

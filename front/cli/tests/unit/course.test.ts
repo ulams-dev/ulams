@@ -126,7 +126,7 @@ describe("course diff, approve, apply, publish", () => {
       [`POST ${P}/sessions/${SESSION}/apply`]: ok({ runId: "run1" }, 202),
       [`POST ${P}/sessions/${SESSION}/publish`]: ok({ courseId: 12, published: true }),
     };
-    const diff = await runCli(["course", "diff", "v2", "--against", VERSION, "--json"], { env, routes });
+    const diff = await runCli(["course", "diff", "--version", "v2", "--against", VERSION, "--json"], { env, routes });
     expect(diff.code).toBe(0);
     expect(diff.requests[0]?.query).toEqual({ against: VERSION });
     const approve = await runCli(["course", "approve", "v2", "--json"], { env, routes });
