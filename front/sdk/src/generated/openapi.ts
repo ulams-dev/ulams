@@ -11711,6 +11711,8 @@ export interface components {
                 message?: string;
                 count?: number;
             }[];
+            /** @description the language the draft was rendered in, as requested */
+            locale?: string | null;
             /** @description only in the test-send response */
             sent?: boolean;
             /** @description only in the test-send response: the address of the signed-in admin */
@@ -11741,6 +11743,8 @@ export interface components {
             event?: string;
             /** @description channel full classname */
             channel?: string;
+            /** @description language code the template is written for (en, pl, zh); null for a template of no particular language, the last fallback */
+            locale?: string | null;
             /** @description this template is default template for given channel and event pair */
             default?: boolean;
         };
@@ -31680,6 +31684,8 @@ export interface operations {
                     title: string;
                     /** @description MJML (or HTML) source, up to 512 KiB */
                     content: string;
+                    /** @description language code (en, pl, zh) the draft is written for; sample values are rendered in it */
+                    locale?: string | null;
                     /** @description variable name to sample value, for this preview only */
                     sample_overrides?: {
                         [key: string]: string;
@@ -31751,6 +31757,8 @@ export interface operations {
                     event: string;
                     title: string;
                     content: string;
+                    /** @description language code (en, pl, zh) the draft is written for */
+                    locale?: string | null;
                     sample_overrides?: {
                         [key: string]: string;
                     };
@@ -32263,6 +32271,8 @@ export interface operations {
                 channel?: string;
                 /** @description Event class for filtering */
                 event?: string;
+                /** @description Language code (en, pl, zh) the template is written for */
+                locale?: string;
             };
             header?: never;
             path?: never;

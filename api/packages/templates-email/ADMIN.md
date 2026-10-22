@@ -47,3 +47,14 @@ Images are uploaded to the tenant storage and need alternative text (or an expli
 parts (`@GlobalSettings...`) are locked: edit them in *Settings*. The default templates carry the `lang`
 and `dir` of the application language on `<mjml>`, so they do not trigger the `missing-lang` warning.
 Details and the key map: the *E-mail* page of the operator documentation, section *Visual mode*.
+
+## Languages
+
+A template can be written for one language (*Language* field of the form, `en`, `pl` or `zh`). The *Languages*
+panel on the template page lists the languages of the event, marks the missing ones as *Missing translation* and
+creates a translation as a copy of the template you already have. An e-mail is sent with the default template of
+the language of the course, else of the academy's default language (`global.language`), else English, else the
+template without a language (the ones that existed before). New tenants are seeded with English, Polish and
+Chinese defaults (`ulams_templates_email.seed_locales`); existing tenants keep what they have. Details: the
+*E-mail* page of the operator documentation, section *Templates per language*.
+

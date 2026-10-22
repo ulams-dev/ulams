@@ -1,3 +1,5 @@
+import { TranslationTags } from '@/components/TemplateLanguages';
+import { TEMPLATE_LANGUAGES, languageName } from '@/components/TemplateLanguages/languages';
 import { DATETIME_FORMAT } from '@/consts/dates';
 import { deleteTemplate, templates } from '@/services/ulams/templates';
 import { DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
@@ -5,7 +7,7 @@ import type { ActionType, ProColumns } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import { Button, Popconfirm, Tag, Tooltip, message } from 'antd';
 import { format } from 'date-fns';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormattedMessage, Link, useIntl } from 'umi';
 import type { channelType } from '..';
 
@@ -16,6 +18,22 @@ const TableList: React.FC<{ templateType: string; channel: channelType }> = ({
   const actionRef = useRef<ActionType>();
   const intl = useIntl();
   const [loading, setLoading] = useState(false);
+  // Every e-mail template, to show which languages each event still misses
+  const [all, setAll] = useState<API.Template[]>([]);
+  const withLanguages = templateType === 'email';
+
+  const loadAll = useCallback(() => {
+    if (!withLanguages) {
+      return;
+    }
+    templates({ channel, per_page: 500 } as API.TemplatesParams).then((response) => {
+      if (response.success) {
+        setAll(response.data);
+      }
+    });
+  }, [channel, withLanguages]);
+
+  useEffect(loadAll, [loadAll]);
 
   const columns: ProColumns<API.TemplateListItem>[] = [
     {
@@ -46,6 +64,33 @@ const TableList: React.FC<{ templateType: string; channel: channelType }> = ({
       sorter: false,
       render: (_, record) => <FormattedMessage id={record.event} defaultMessage={record.event} />,
     },
+    ...(withLanguages
+      ? ([
+          {
+            title: <FormattedMessage id="templates.lang_field" />,
+            dataIndex: 'locale',
+            hideInSearch: false,
+            valueType: 'select',
+            valueEnum: Object.fromEntries(
+              TEMPLATE_LANGUAGES.map((language) => [language, { text: languageName(language) }]),
+            ),
+            render: (_: React.ReactNode, record: API.TemplateListItem) =>
+              record.locale ? (
+                <span lang={record.locale}>{languageName(record.locale)}</span>
+              ) : (
+                <FormattedMessage id="templates.lang_none" />
+              ),
+          },
+          {
+            title: <FormattedMessage id="templates.lang_translations" />,
+            dataIndex: 'translations',
+            hideInSearch: true,
+            render: (_: React.ReactNode, record: API.TemplateListItem) => (
+              <TranslationTags templates={all} event={record.event} />
+            ),
+          },
+        ] as ProColumns<API.TemplateListItem>[])
+      : []),
     {
       title: <FormattedMessage id="templates.is_default" />,
       dataIndex: 'default',
@@ -79,6 +124,7 @@ const TableList: React.FC<{ templateType: string; channel: channelType }> = ({
         hide();
         setLoading(false);
         actionRef.current?.reload();
+        loadAll();
         return true;
       } catch (error) {
         hide();
@@ -109,7 +155,7 @@ const TableList: React.FC<{ templateType: string; channel: channelType }> = ({
           </Button>
         </Link>,
       ]}
-      request={({ pageSize, current, name }, sort) => {
+      request={({ pageSize, current, name, locale }, sort) => {
         setLoading(true);
         const sortArr = sort && Object.entries(sort)[0];
         return templates({
@@ -117,6 +163,7 @@ const TableList: React.FC<{ templateType: string; channel: channelType }> = ({
           page: current,
           channel,
           name: name || undefined,
+          locale: locale || undefined,
           order_by: sortArr && sortArr[0],
           order: sortArr ? (sortArr[1] === 'ascend' ? 'ASC' : 'DESC') : undefined,
         }).then((response) => {

@@ -2078,6 +2078,11 @@
       "description": "rendered e-mail HTML with the sample values",
       "type": "string"
      },
+     "locale": {
+      "description": "the language the draft was rendered in, as requested",
+      "nullable": true,
+      "type": "string"
+     },
      "missing_variables": {
       "description": "variables required by the event that the draft does not use",
       "items": {
@@ -4587,6 +4592,11 @@
      "id": {
       "description": "template id",
       "type": "integer"
+     },
+     "locale": {
+      "description": "language code the template is written for (en, pl, zh); null for a template of no particular language, the last fallback",
+      "nullable": true,
+      "type": "string"
      },
      "name": {
       "description": "template name",
@@ -23705,6 +23715,15 @@
       "schema": {
        "type": "string"
       }
+     },
+     {
+      "description": "Language code (en, pl, zh) the template is written for",
+      "in": "query",
+      "name": "locale",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
      }
     ],
     "responses": {
@@ -24022,6 +24041,11 @@
           "description": "event full classname, as listed by GET /api/admin/templates/events",
           "type": "string"
          },
+         "locale": {
+          "description": "language code (en, pl, zh) the draft is written for; sample values are rendered in it",
+          "nullable": true,
+          "type": "string"
+         },
          "sample_overrides": {
           "additionalProperties": {
            "type": "string"
@@ -24107,6 +24131,11 @@
           "type": "string"
          },
          "event": {
+          "type": "string"
+         },
+         "locale": {
+          "description": "language code (en, pl, zh) the draft is written for",
+          "nullable": true,
           "type": "string"
          },
          "sample_overrides": {

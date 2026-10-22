@@ -220,4 +220,33 @@ describe('EmailTemplateEditor', () => {
     expect(screen.getByRole('button', { name: /templates.send_test$/ })).toBeDisabled();
     expect(screen.queryByTitle('templates.preview_frame')).toBeNull();
   });
+
+  it('renders and test-sends in the language the template is written for', async () => {
+    const { renderFn, testSend } = setup({ templateLocale: 'pl' });
+    await flush();
+    expect(renderFn).toHaveBeenCalledWith({
+      event: EVENT,
+      title: 'Subject',
+      content: '<mjml><mj-body></mj-body></mjml>',
+      locale: 'pl',
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /templates.send_test$/ }));
+    });
+    expect(testSend).toHaveBeenCalledWith({
+      event: EVENT,
+      title: 'Subject',
+      content: '<mjml><mj-body></mj-body></mjml>',
+      locale: 'pl',
+    });
+  });
+
+  it('sends no language for a template without one', async () => {
+    const { renderFn } = setup();
+    await flush();
+    expect(renderFn).toHaveBeenCalledTimes(1);
+    expect(renderFn).not.toHaveBeenCalledWith(
+      expect.objectContaining({ locale: expect.anything() }),
+    );
+  });
 });

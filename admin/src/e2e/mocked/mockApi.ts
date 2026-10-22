@@ -94,7 +94,14 @@ export type MockApi = {
   renders: Record<string, any>[];
   /** Number of images uploaded through POST /api/admin/templates/email/images. */
   uploads: () => number;
+  /** Bodies of every POST /api/admin/templates/email/test-send, in order. */
+  testSends: Record<string, any>[];
+  /** Bodies of every POST /api/admin/templates (a template created, for example a translation), in order. */
+  creates: Record<string, any>[];
 };
+
+/** A template of the same event in another language, as the list endpoint returns it. */
+export type MockSibling = { id: number; locale: string | null; name: string; content?: string };
 
 export async function mockApi(
   page: Page,
@@ -102,7 +109,12 @@ export async function mockApi(
     template?: unknown;
     templateId?: number;
     kind?: 'pdf' | 'email';
+    /** Language of the admin interface, for example `pl-PL`. */
     locale?: string;
+    /** Language the e-mail template itself is written for (`en`, `pl`, `zh`); none by default. */
+    templateLocale?: string | null;
+    /** Other templates of the event (e-mail only), one per language. */
+    siblings?: MockSibling[];
   } = {},
 ): Promise<MockApi> {
   const email = options.kind === 'email';
@@ -117,7 +129,11 @@ export async function mockApi(
     previews: [],
     renders: [],
     uploads: () => uploads,
+    testSends: [],
+    creates: [],
   };
+  const siblings = options.siblings ?? [];
+  const created = new Map<number, Record<string, any>>();
 
   // The API origin comes from /runtime-config.json (scripts/serve-dist.cjs), like in the Docker image.
   await page.addInitScript(
@@ -137,6 +153,7 @@ export async function mockApi(
           event: EMAIL_EVENT,
           channel: EMAIL_CHANNEL,
           default: true,
+          locale: options.templateLocale ?? null,
           sections: [
             { key: 'title', content: 'Reset your password' },
             { key: 'content', content },
@@ -151,6 +168,20 @@ export async function mockApi(
           default: true,
           sections: [{ key: 'content', content }],
         };
+
+  const sibling = (item: MockSibling) => ({
+    id: item.id,
+    name: item.name,
+    type: 'email',
+    event: EMAIL_EVENT,
+    channel: EMAIL_CHANNEL,
+    default: true,
+    locale: item.locale,
+    sections: [
+      { key: 'title', content: `Reset your password (${item.locale ?? 'none'})` },
+      { key: 'content', content: item.content ?? EMAIL_TEMPLATE },
+    ],
+  });
 
   const handler = async (route: Route) => {
     const request = route.request();
@@ -258,6 +289,22 @@ export async function mockApi(
       if (path === `/api/admin/templates/${id}`) {
         return json(ok(template()));
       }
+      if (path === '/api/admin/templates' && email) {
+        const rows = [template(), ...siblings.map(sibling), ...created.values()];
+        return json(
+          ok(rows, { meta: { total: rows.length, current_page: 1, per_page: 100, last_page: 1 } }),
+        );
+      }
+      const other = /^\/api\/admin\/templates\/(\d+)$/.exec(path);
+      if (other && email) {
+        const found =
+          siblings.find((item) => item.id === Number(other[1])) &&
+          sibling(siblings.find((item) => item.id === Number(other[1])) as MockSibling);
+        const made = created.get(Number(other[1]));
+        if (found || made) {
+          return json(ok(found ?? made));
+        }
+      }
       if (path === '/api/pdfs/fonts') {
         // no font files: the designer falls back to its bundled default font
         return json(ok([]));
@@ -294,6 +341,31 @@ export async function mockApi(
           warnings: [],
         }),
       );
+    }
+
+    if (method === 'POST' && path === '/api/admin/templates/email/test-send') {
+      const body = request.postDataJSON();
+      state.testSends.push(body);
+      return json(
+        ok({
+          title: `[Test] ${body.title}`,
+          html: '<p>sent</p>',
+          errors: [],
+          missing_variables: [],
+          warnings: [],
+          sent: true,
+          recipient: 'admin@example.test',
+          locale: body.locale ?? null,
+        }),
+      );
+    }
+
+    if (method === 'POST' && path === '/api/admin/templates' && email) {
+      const body = request.postDataJSON();
+      state.creates.push(body);
+      const next = { ...body, id: 100 + state.creates.length, type: 'email' };
+      created.set(next.id, next);
+      return json(ok(next, { message: 'Template created' }), 201);
     }
 
     if (method === 'POST' && path === '/api/admin/templates/email/images') {

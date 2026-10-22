@@ -114,6 +114,7 @@ class TemplatesListTest extends TestCase
                 array_merge(
                     $template->toArray(),
                     [
+                        'locale' => null,
                         'is_assignable' => true,
                         'assignable_class' => User::class,
                         'variable_class' => TestVariablesWithAssignableClass::class,

@@ -3,6 +3,7 @@
 namespace Ulams\TemplatesEmail\Services;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Ulams\Core\Models\User;
 use Ulams\Templates\Core\SettingsVariables;
@@ -30,9 +31,23 @@ class EmailDraftRenderer
 
     /**
      * @param array<string, string> $sampleOverrides variable name => sample value (plain text, escaped like any value)
-     * @return array{title: string, html: string, errors: string[], missing_variables: string[], warnings: array}
+     * @param string|null $locale language the draft is written for: the sample values and `lang` are rendered in it
+     * @return array{title: string, html: string, errors: string[], missing_variables: string[], warnings: array, locale: string|null}
      */
-    public function render(User $user, string $event, string $title, string $content, array $sampleOverrides = []): array
+    public function render(User $user, string $event, string $title, string $content, array $sampleOverrides = [], ?string $locale = null): array
+    {
+        $previous = App::getLocale();
+        if ($locale !== null) {
+            App::setLocale($locale);
+        }
+        try {
+            return $this->renderDraft($user, $event, $title, $content, $sampleOverrides, $locale);
+        } finally {
+            App::setLocale($previous);
+        }
+    }
+
+    private function renderDraft(User $user, string $event, string $title, string $content, array $sampleOverrides, ?string $locale): array
     {
         $variableClass = FacadesTemplate::getVariableClassName($event, EmailChannel::class);
 
@@ -67,6 +82,7 @@ class EmailDraftRenderer
             'errors' => $errors,
             'missing_variables' => $missing,
             'warnings' => $this->a11y->check($sections['contentHtml']),
+            'locale' => $locale,
         ];
     }
 

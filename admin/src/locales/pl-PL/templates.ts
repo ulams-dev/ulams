@@ -168,4 +168,31 @@ export default {
   'templates.kb_edit_done': 'Zakończono edycję tekstu.',
   'templates.visual_keyboard_hint':
     'Tryb wizualny działa z klawiatury: zamiast przeciągania użyj struktury i narzędzi nad kanwą.',
+  'templates.lang_title': 'Języki',
+  'templates.lang_hint':
+    'Wiadomość e-mail jest wysyłana w języku kursu, potem w domyślnym języku akademii, a na końcu po angielsku. Szablon bez języka jest ostatnim wyjściem awaryjnym.',
+  'templates.lang_field': 'Język',
+  'templates.lang_field_tooltip':
+    'Język, w którym napisano ten szablon. Wybierz „Bez języka” dla szablonu używanego, gdy dany język nie ma własnego szablonu.',
+  'templates.lang_none': 'Bez języka (awaryjny)',
+  'templates.lang_present': 'Ma szablon',
+  'templates.lang_missing': 'Brak tłumaczenia',
+  'templates.lang_current': 'Ten szablon',
+  'templates.lang_edit': 'Edytuj',
+  'templates.lang_edit_in': 'Edytuj szablon: {language}',
+  'templates.lang_create': 'Utwórz tłumaczenie',
+  'templates.lang_create_in': 'Utwórz tłumaczenie: {language}',
+  'templates.lang_missing_summary':
+    'Brakujące tłumaczenia: {languages}. Wiadomości w tych językach używają szablonu awaryjnego.',
+  'templates.lang_complete': 'Każdy język ma szablon.',
+  'templates.lang_universal':
+    'Istnieje też szablon bez języka. Jest używany, gdy język nie ma własnego szablonu.',
+  'templates.lang_copy_label': 'Kopiuj treść z',
+  'templates.lang_copy_placeholder': 'Wybierz szablon',
+  'templates.lang_copy_button': 'Kopiuj treść',
+  'templates.lang_copy_confirm':
+    'Zastąpić treść w tym formularzu treścią wybranego szablonu? Niezapisane zmiany zostaną utracone.',
+  'templates.lang_copied': 'Skopiowano treść z „{name}”. Przetłumacz ją i zapisz.',
+  'templates.lang_translations': 'Tłumaczenia',
+  'templates.send_test_in': 'Przykładowe wartości i wiadomość testowa używają języka: {language}.',
 };

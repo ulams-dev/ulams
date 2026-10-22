@@ -189,6 +189,7 @@ export const TemplateFields: React.FC<FormWysiwygProps> = ({ name, field, variab
                     title={form.getFieldValue('title')}
                     visualEnabled={visualEnabled}
                     locale={getLocale()}
+                    templateLocale={form.getFieldValue('locale') || undefined}
                   />
                 );
               }}

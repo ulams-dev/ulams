@@ -291,6 +291,16 @@ Of the generated e-mails:
   learner UI; users have no own locale today). The editor gets a language selector and "copy from
   EN" action.
 
+  **As shipped (M6).** Migration `2026_10_26_000001_add_locale_to_templates_table.php` (nullable
+  `locale`, string 10, indexed). Order when sending: the template assigned to the item (an explicit
+  choice), then the default template of the course language, the tenant default language
+  (`global.language`), English, and last the template with no locale. The language is the `language`
+  of the first model the event carries (a course). Seeding (`ulams_templates_email.seed_locales`,
+  `en`, `pl`, `zh`) writes one default per language for an event that has no default at all; events
+  that already have one are not touched, so an upgrade changes nothing that is sent. The editor shows
+  a languages panel with a missing-translation indicator, create-as-copy and copy-from, and the draft
+  endpoints take `locale`.
+
 ### 4.10 Self-hosting and offline
 
 - All editor code, CSS, fonts and icons come from npm into the admin build. No CDN, no remote

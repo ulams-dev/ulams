@@ -16,6 +16,8 @@ interface TemplateRepositoryContract extends BaseRepositoryContract
     public function updateWithSections(array $attributes, array $sections, int $id): Template;
 
     public function findTemplateDefault(string $event, string $channel): ?Template;
+    /** The default template written for exactly this language (`null`: the one without a language). */
+    public function findTemplateDefaultForLocale(string $event, string $channel, ?string $locale): ?Template;
     public function findTemplateAssigned(string $event, string $channel, string $assigned_class, int $assigned_value): ?Template;
     public function findAllTemplatesAssigned(string $assignable_class, int $assignable_id): Collection;
 }

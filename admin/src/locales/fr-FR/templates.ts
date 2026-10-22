@@ -170,4 +170,31 @@ export default {
   'templates.kb_edit_done': 'Saisie du texte terminée.',
   'templates.visual_keyboard_hint':
     'Le mode visuel fonctionne au clavier : utilisez la structure et les outils au-dessus du canevas à la place du glisser-déposer.',
+  'templates.lang_title': 'Langues',
+  'templates.lang_hint':
+    "Un e-mail est envoyé dans la langue du cours, puis dans la langue par défaut de l'académie, puis en anglais. Un modèle sans langue est le dernier recours.",
+  'templates.lang_field': 'Langue',
+  'templates.lang_field_tooltip':
+    "La langue dans laquelle ce modèle est rédigé. Choisissez « Sans langue » pour un modèle utilisé quand une langue n'a pas de modèle propre.",
+  'templates.lang_none': 'Sans langue (secours)',
+  'templates.lang_present': 'A un modèle',
+  'templates.lang_missing': 'Traduction manquante',
+  'templates.lang_current': 'Ce modèle',
+  'templates.lang_edit': 'Modifier',
+  'templates.lang_edit_in': 'Modifier le modèle : {language}',
+  'templates.lang_create': 'Créer la traduction',
+  'templates.lang_create_in': 'Créer la traduction : {language}',
+  'templates.lang_missing_summary':
+    'Traductions manquantes : {languages}. Les e-mails dans ces langues utilisent le modèle de secours.',
+  'templates.lang_complete': 'Chaque langue a un modèle.',
+  'templates.lang_universal':
+    "Il existe aussi un modèle sans langue. Il est utilisé quand une langue n'a pas de modèle propre.",
+  'templates.lang_copy_label': 'Copier le contenu de',
+  'templates.lang_copy_placeholder': 'Choisir un modèle',
+  'templates.lang_copy_button': 'Copier le contenu',
+  'templates.lang_copy_confirm':
+    'Remplacer le contenu de ce formulaire par celui du modèle choisi ? Les modifications non enregistrées seront perdues.',
+  'templates.lang_copied': 'Contenu copié depuis « {name} ». Traduisez-le, puis enregistrez.',
+  'templates.lang_translations': 'Traductions',
+  'templates.send_test_in': "Les valeurs d'exemple et l'e-mail de test utilisent : {language}.",
 };

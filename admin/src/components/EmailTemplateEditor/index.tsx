@@ -3,6 +3,7 @@ import { renderEmailDraft, testSendEmailDraft } from '@/services/ulams/templates
 import { Alert, Button, Col, Radio, Row, Spin } from 'antd';
 import React, { Suspense, useCallback, useRef, useState } from 'react';
 import { FormattedMessage, Link, useIntl } from 'umi';
+import { languageName } from '../TemplateLanguages/languages';
 import { insertAtSelection, requestErrorMessage, type DraftRequest } from './draft';
 import ImagePicker from './ImagePicker';
 import './index.css';
@@ -48,6 +49,8 @@ export type EmailTemplateEditorProps = {
   visualEnabled?: boolean;
   /** Editor language, for example `pl-PL`. */
   locale?: string;
+  /** Language the template is written for (`en`, `pl`, `zh`): sample values and test sends use it. */
+  templateLocale?: string;
   /** Replaceable for tests. */
   analyse?: (content: string, locale?: string, variables?: string[]) => Promise<Analysis>;
 };
@@ -64,6 +67,7 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
   testSend = testSendEmailDraft as DraftRequest,
   visualEnabled = true,
   locale,
+  templateLocale,
   analyse = defaultAnalyse,
 }) => {
   const intl = useIntl();
@@ -140,7 +144,7 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
   };
 
   const preview = useDraftPreview(
-    { event, title, content: value },
+    { event, title, content: value, ...(templateLocale ? { locale: templateLocale } : {}) },
     render,
     intl.formatMessage({ id: 'templates.preview_failed' }),
   );
@@ -194,7 +198,12 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
   const onTestSend = useCallback(() => {
     setSending(true);
     setSendResult(undefined);
-    testSend({ event, title, content: value })
+    testSend({
+      event,
+      title,
+      content: value,
+      ...(templateLocale ? { locale: templateLocale } : {}),
+    })
       .then((response) =>
         setSendResult({
           type: 'success',
@@ -211,7 +220,7 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
         }),
       )
       .finally(() => setSending(false));
-  }, [event, title, value, testSend, intl]);
+  }, [event, title, value, templateLocale, testSend, intl]);
 
   const canRender = !!event && !!value;
   const requiredMissing = missingRequired(value, requiredVariables);
@@ -393,6 +402,15 @@ const EmailTemplateEditor: React.FC<EmailTemplateEditorProps> = ({
               </Button>
               <span className="email-template-editor__hint">
                 <FormattedMessage id="templates.send_test_hint" />
+                {templateLocale && (
+                  <>
+                    {' '}
+                    <FormattedMessage
+                      id="templates.send_test_in"
+                      values={{ language: languageName(templateLocale) }}
+                    />
+                  </>
+                )}
               </span>
             </div>
             <div aria-live="polite" className="email-template-editor__status">

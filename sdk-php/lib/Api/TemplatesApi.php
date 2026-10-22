@@ -483,15 +483,16 @@ class TemplatesApi
      *
      * @param  string $channel Channel class for filtering (optional)
      * @param  string $event Event class for filtering (optional)
+     * @param  string $locale Language code (en, pl, zh) the template is written for (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminTemplatesGet'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return array<string,\Ulams\Sdk\Model\Template>
      */
-    public function adminTemplatesGet($channel = null, $event = null, string $contentType = self::contentTypes['adminTemplatesGet'][0])
+    public function adminTemplatesGet($channel = null, $event = null, $locale = null, string $contentType = self::contentTypes['adminTemplatesGet'][0])
     {
-        list($response) = $this->adminTemplatesGetWithHttpInfo($channel, $event, $contentType);
+        list($response) = $this->adminTemplatesGetWithHttpInfo($channel, $event, $locale, $contentType);
         return $response;
     }
 
@@ -502,15 +503,16 @@ class TemplatesApi
      *
      * @param  string $channel Channel class for filtering (optional)
      * @param  string $event Event class for filtering (optional)
+     * @param  string $locale Language code (en, pl, zh) the template is written for (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminTemplatesGet'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return array of array<string,\Ulams\Sdk\Model\Template>, HTTP status code, HTTP response headers (array of strings)
      */
-    public function adminTemplatesGetWithHttpInfo($channel = null, $event = null, string $contentType = self::contentTypes['adminTemplatesGet'][0])
+    public function adminTemplatesGetWithHttpInfo($channel = null, $event = null, $locale = null, string $contentType = self::contentTypes['adminTemplatesGet'][0])
     {
-        $request = $this->adminTemplatesGetRequest($channel, $event, $contentType);
+        $request = $this->adminTemplatesGetRequest($channel, $event, $locale, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -628,14 +630,15 @@ class TemplatesApi
      *
      * @param  string $channel Channel class for filtering (optional)
      * @param  string $event Event class for filtering (optional)
+     * @param  string $locale Language code (en, pl, zh) the template is written for (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminTemplatesGet'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function adminTemplatesGetAsync($channel = null, $event = null, string $contentType = self::contentTypes['adminTemplatesGet'][0])
+    public function adminTemplatesGetAsync($channel = null, $event = null, $locale = null, string $contentType = self::contentTypes['adminTemplatesGet'][0])
     {
-        return $this->adminTemplatesGetAsyncWithHttpInfo($channel, $event, $contentType)
+        return $this->adminTemplatesGetAsyncWithHttpInfo($channel, $event, $locale, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -650,15 +653,16 @@ class TemplatesApi
      *
      * @param  string $channel Channel class for filtering (optional)
      * @param  string $event Event class for filtering (optional)
+     * @param  string $locale Language code (en, pl, zh) the template is written for (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminTemplatesGet'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function adminTemplatesGetAsyncWithHttpInfo($channel = null, $event = null, string $contentType = self::contentTypes['adminTemplatesGet'][0])
+    public function adminTemplatesGetAsyncWithHttpInfo($channel = null, $event = null, $locale = null, string $contentType = self::contentTypes['adminTemplatesGet'][0])
     {
         $returnType = 'array<string,\Ulams\Sdk\Model\Template>';
-        $request = $this->adminTemplatesGetRequest($channel, $event, $contentType);
+        $request = $this->adminTemplatesGetRequest($channel, $event, $locale, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -701,13 +705,15 @@ class TemplatesApi
      *
      * @param  string $channel Channel class for filtering (optional)
      * @param  string $event Event class for filtering (optional)
+     * @param  string $locale Language code (en, pl, zh) the template is written for (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminTemplatesGet'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function adminTemplatesGetRequest($channel = null, $event = null, string $contentType = self::contentTypes['adminTemplatesGet'][0])
+    public function adminTemplatesGetRequest($channel = null, $event = null, $locale = null, string $contentType = self::contentTypes['adminTemplatesGet'][0])
     {
+
 
 
 
@@ -732,6 +738,15 @@ class TemplatesApi
         $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
             $event,
             'event', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            false // required
+        ) ?? []);
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $locale,
+            'locale', // param base name
             'string', // openApiType
             'form', // style
             true, // explode
