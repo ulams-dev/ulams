@@ -1,5 +1,6 @@
 import { readFolder } from "../../src/course/disk.ts";
-import { compareDocuments, countChanges, documentHash } from "../../src/course/sync.ts";
+import { mergeDocuments } from "../../src/course/merge.ts";
+import { compareDocuments, countChanges, documentHash, flatten } from "../../src/course/sync.ts";
 import type { Obj } from "../../src/course/types.ts";
 import { validateFiles } from "../../src/course/validate.ts";
 import type { Handler, RecordedRequest, Reply } from "../helpers.ts";
@@ -7,7 +8,8 @@ import { example } from "./helpers.ts";
 
 /**
  * An in-memory course-as-code server with the rules of api/packages/course-builder (CourseAsCodeController,
- * CourseImporter): a push is based on the current version or refused with BASE_OUTDATED, an import is always a
+ * CourseImporter): a push that is behind is merged element by element (disjoint changes become one proposed version on
+ * top of the current one, overlapping changes are refused with BASE_OUTDATED and the conflicts), an import is always a
  * proposed version, approving needs a person and a current parent (STALE_PROPOSAL), apply finishes after a few polls
  * of the export, publish needs an applied course. It keeps what learners would see (`live`) so tests can assert it.
  */
@@ -75,6 +77,11 @@ export function fakeCourseAsCode(options: FakeOptions = {}) {
     applying: null as null | { ticks: number; versionId: string },
     calls: [] as string[],
     drift: [] as Array<{ element: string; title: string }>,
+    /** Edits an admin made in the LMS after the last apply, as the export lists them. */
+    edits: { absorbable: [] as Array<{ element: string; title: string; fields: string[] }>, unmapped: [] as Array<{ element: string; title: string; reason: string }> },
+    /** What `POST sessions/{s}/drift` reads back: the document with the admin's edits in it. */
+    absorb: null as null | { document: Obj; absorbed: Array<{ key: string; element: string; title: string; fields: string[] }>; unmapped: Array<{ key: string; element: string; title: string; reason: string }> },
+    applyCalls: [] as Array<{ overwrite: boolean }>,
   };
   const current = () => versions.find((v) => v.id === db.currentVersionId) as Version;
 
@@ -109,7 +116,25 @@ export function fakeCourseAsCode(options: FakeOptions = {}) {
         db.applying = null;
       }
       const v = current();
-      return ok({ courseId, sessionId, versionId: v.id, versionNumber: v.number, kind: v.kind, status: v.status, appliedVersionId: db.appliedVersionId, schemaVersion: 3, document: v.document, drift: db.drift });
+      return ok({ courseId, sessionId, versionId: v.id, versionNumber: v.number, kind: v.kind, status: v.status, appliedVersionId: db.appliedVersionId, schemaVersion: 3, document: v.document, drift: db.drift, edits: db.edits });
+    }
+    if (req.method === "GET" && (m = path.match(/^\/versions\/([^/]+)$/))) {
+      const v = versions.find((x) => x.id === m?.[1]);
+      if (!v) return fail(404, "Version not found.");
+      return ok({ id: v.id, number: v.number, kind: v.kind, status: v.status, parentId: v.parentId, document: v.document });
+    }
+    if (req.method === "POST" && (m = path.match(/^\/sessions\/([^/]+)\/drift$/))) {
+      if (m[1] !== sessionId) return fail(404, "Session not found.");
+      const a = db.absorb;
+      const empty = { unchanged: true, version: null, counts: { added: 0, changed: 0, removed: 0 }, changes: [], absorbed: [], unmapped: a?.unmapped ?? [], dryRun: Boolean(body.dryRun) };
+      if (!a || a.absorbed.length === 0) return ok(empty);
+      const cur = current();
+      const changes = compareDocuments(cur.document, a.document);
+      const listing = { unchanged: false, counts: countChanges(changes), changes, absorbed: a.absorbed, unmapped: a.unmapped, dryRun: Boolean(body.dryRun) };
+      if (body.dryRun) return ok({ ...listing, version: null });
+      const v: Version = { id: vid(versions.length + 1), number: versions.length + 1, kind: "author", status: "proposed", parentId: cur.id, document: a.document };
+      versions.push(v);
+      return ok({ ...listing, version: { id: v.id, number: v.number, kind: v.kind, status: v.status, parentId: v.parentId } }, 201);
     }
     if (req.method === "POST" && (m = path.match(/^\/sessions\/([^/]+)\/imports$/))) {
       if (m[1] !== sessionId) return fail(404, "Session not found.");
@@ -117,21 +142,29 @@ export function fakeCourseAsCode(options: FakeOptions = {}) {
       const base = versions.find((v) => v.id === body.baseVersionId);
       if (!base) return fail(422, "baseVersionId is not a version of this course.", "BASE_UNKNOWN");
       const cur = current();
+      let document = { ...(body.document as Obj), sources: cur.document.sources ?? [] };
+      let merged: unknown = null;
       if (base.id !== cur.id) {
-        return fail(409, "The course changed on the server since your base version; pull first.", "BASE_OUTDATED", {
-          currentVersionId: cur.id,
-          currentVersionNumber: cur.number,
-          remote: compareDocuments(base.document, cur.document),
-        });
+        const merge = mergeDocuments(base.document, document, cur.document);
+        if (merge.conflicts.length > 0) {
+          const labels = new Map([...flatten(base.document), ...flatten(cur.document), ...flatten(document)].map(([id, e]) => [id, e.label]));
+          return fail(409, "Your folder and the server changed the same elements since your base version; pull and resolve the conflicts first.", "BASE_OUTDATED", {
+            currentVersionId: cur.id,
+            currentVersionNumber: cur.number,
+            remote: compareDocuments(base.document, cur.document),
+            conflicts: merge.conflicts.map((c) => ({ elementId: c.id, type: c.type, label: labels.get(c.id) ?? c.id, kind: c.kind, field: c.fields[0]?.field ?? null, fields: c.fields, held: c.held.length })),
+          });
+        }
+        document = { ...merge.doc, sources: cur.document.sources ?? [] };
+        merged = { baseVersionId: base.id, baseVersionNumber: base.number, currentVersionId: cur.id, currentVersionNumber: cur.number, fromPush: merge.fromOurs, fromServer: merge.fromTheirs, notes: merge.notes };
       }
-      const document = { ...(body.document as Obj), sources: cur.document.sources ?? [] };
       if (documentHash(document) === documentHash(cur.document)) {
-        return ok({ unchanged: true, version: null, counts: { added: 0, changed: 0, removed: 0 }, changes: [], warnings: [], handEdited: [] });
+        return ok({ unchanged: true, version: null, counts: { added: 0, changed: 0, removed: 0 }, changes: [], warnings: [], handEdited: [], merged });
       }
       const changes = compareDocuments(cur.document, document);
       const v: Version = { id: vid(versions.length + 1), number: versions.length + 1, kind: "import", status: "proposed", parentId: cur.id, document };
       versions.push(v);
-      return ok({ unchanged: false, version: { id: v.id, number: v.number, kind: v.kind, status: v.status, parentId: v.parentId }, counts: countChanges(changes), changes, warnings: [], handEdited: [] }, 201);
+      return ok({ unchanged: false, version: { id: v.id, number: v.number, kind: v.kind, status: v.status, parentId: v.parentId }, counts: countChanges(changes), changes, warnings: [], handEdited: [], merged }, 201);
     }
     if (req.method === "GET" && (m = path.match(/^\/versions\/([^/]+)\/diff$/))) {
       const v = versions.find((x) => x.id === m?.[1]);
@@ -151,6 +184,7 @@ export function fakeCourseAsCode(options: FakeOptions = {}) {
     }
     if (req.method === "POST" && (m = path.match(/^\/sessions\/([^/]+)\/apply$/))) {
       if (m[1] !== sessionId) return fail(404, "Session not found.");
+      db.applyCalls.push({ overwrite: body.overwrite === true });
       db.applying = { ticks: options.applyTicks ?? 2, versionId: db.currentVersionId };
       return ok({ runId: "0run0000".padEnd(26, "0") }, 202);
     }
