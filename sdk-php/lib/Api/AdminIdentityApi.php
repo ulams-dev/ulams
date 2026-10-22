@@ -89,6 +89,12 @@ class AdminIdentityApi
         'identityProvidersList' => [
             'application/json',
         ],
+        'identityProvidersMetadataRefresh' => [
+            'application/json',
+        ],
+        'identityProvidersSpkeysRotate' => [
+            'application/json',
+        ],
         'identityProvidersUpdate' => [
             'application/json',
         ],
@@ -793,7 +799,7 @@ class AdminIdentityApi
     /**
      * Operation identityProvidersCreate
      *
-     * Add an OpenID Connect identity provider
+     * Add an OpenID Connect or SAML identity provider
      *
      * @param  \Ulams\Sdk\Model\IdentityProviderInput $identity_provider_input identity_provider_input (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersCreate'] to see the possible values for this operation
@@ -811,7 +817,7 @@ class AdminIdentityApi
     /**
      * Operation identityProvidersCreateWithHttpInfo
      *
-     * Add an OpenID Connect identity provider
+     * Add an OpenID Connect or SAML identity provider
      *
      * @param  \Ulams\Sdk\Model\IdentityProviderInput $identity_provider_input (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersCreate'] to see the possible values for this operation
@@ -936,7 +942,7 @@ class AdminIdentityApi
     /**
      * Operation identityProvidersCreateAsync
      *
-     * Add an OpenID Connect identity provider
+     * Add an OpenID Connect or SAML identity provider
      *
      * @param  \Ulams\Sdk\Model\IdentityProviderInput $identity_provider_input (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersCreate'] to see the possible values for this operation
@@ -957,7 +963,7 @@ class AdminIdentityApi
     /**
      * Operation identityProvidersCreateAsyncWithHttpInfo
      *
-     * Add an OpenID Connect identity provider
+     * Add an OpenID Connect or SAML identity provider
      *
      * @param  \Ulams\Sdk\Model\IdentityProviderInput $identity_provider_input (required)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersCreate'] to see the possible values for this operation
@@ -2011,6 +2017,662 @@ class AdminIdentityApi
         $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
             'GET',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation identityProvidersMetadataRefresh
+     *
+     * Fetch the SAML identity provider metadata again
+     *
+     * @param  string $provider provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersMetadataRefreshRequest $identity_providers_metadata_refresh_request identity_providers_metadata_refresh_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersMetadataRefresh'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\IdentityProvidersMetadataRefresh200Response
+     */
+    public function identityProvidersMetadataRefresh($provider, $identity_providers_metadata_refresh_request = null, string $contentType = self::contentTypes['identityProvidersMetadataRefresh'][0])
+    {
+        list($response) = $this->identityProvidersMetadataRefreshWithHttpInfo($provider, $identity_providers_metadata_refresh_request, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation identityProvidersMetadataRefreshWithHttpInfo
+     *
+     * Fetch the SAML identity provider metadata again
+     *
+     * @param  string $provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersMetadataRefreshRequest $identity_providers_metadata_refresh_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersMetadataRefresh'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\IdentityProvidersMetadataRefresh200Response, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function identityProvidersMetadataRefreshWithHttpInfo($provider, $identity_providers_metadata_refresh_request = null, string $contentType = self::contentTypes['identityProvidersMetadataRefresh'][0])
+    {
+        $request = $this->identityProvidersMetadataRefreshRequest($provider, $identity_providers_metadata_refresh_request, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\IdentityProvidersMetadataRefresh200Response' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\IdentityProvidersMetadataRefresh200Response' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\IdentityProvidersMetadataRefresh200Response', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\IdentityProvidersMetadataRefresh200Response';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\IdentityProvidersMetadataRefresh200Response',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation identityProvidersMetadataRefreshAsync
+     *
+     * Fetch the SAML identity provider metadata again
+     *
+     * @param  string $provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersMetadataRefreshRequest $identity_providers_metadata_refresh_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersMetadataRefresh'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identityProvidersMetadataRefreshAsync($provider, $identity_providers_metadata_refresh_request = null, string $contentType = self::contentTypes['identityProvidersMetadataRefresh'][0])
+    {
+        return $this->identityProvidersMetadataRefreshAsyncWithHttpInfo($provider, $identity_providers_metadata_refresh_request, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation identityProvidersMetadataRefreshAsyncWithHttpInfo
+     *
+     * Fetch the SAML identity provider metadata again
+     *
+     * @param  string $provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersMetadataRefreshRequest $identity_providers_metadata_refresh_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersMetadataRefresh'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identityProvidersMetadataRefreshAsyncWithHttpInfo($provider, $identity_providers_metadata_refresh_request = null, string $contentType = self::contentTypes['identityProvidersMetadataRefresh'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\IdentityProvidersMetadataRefresh200Response';
+        $request = $this->identityProvidersMetadataRefreshRequest($provider, $identity_providers_metadata_refresh_request, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'identityProvidersMetadataRefresh'
+     *
+     * @param  string $provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersMetadataRefreshRequest $identity_providers_metadata_refresh_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersMetadataRefresh'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function identityProvidersMetadataRefreshRequest($provider, $identity_providers_metadata_refresh_request = null, string $contentType = self::contentTypes['identityProvidersMetadataRefresh'][0])
+    {
+
+        // verify the required parameter 'provider' is set
+        if ($provider === null || (is_array($provider) && count($provider) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $provider when calling identityProvidersMetadataRefresh'
+            );
+        }
+
+
+
+        $resourcePath = '/api/admin/identity/providers/{provider}/metadata/refresh';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($provider !== null) {
+            $resourcePath = str_replace(
+                '{' . 'provider' . '}',
+                ObjectSerializer::toPathValue($provider),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($identity_providers_metadata_refresh_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($identity_providers_metadata_refresh_request));
+            } else {
+                $httpBody = $identity_providers_metadata_refresh_request;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation identityProvidersSpkeysRotate
+     *
+     * Prepare or activate the next SAML service provider key pair
+     *
+     * @param  string $provider provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersSpkeysRotateRequest $identity_providers_spkeys_rotate_request identity_providers_spkeys_rotate_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersSpkeysRotate'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\IdentityProvidersSpkeysRotate200Response
+     */
+    public function identityProvidersSpkeysRotate($provider, $identity_providers_spkeys_rotate_request, string $contentType = self::contentTypes['identityProvidersSpkeysRotate'][0])
+    {
+        list($response) = $this->identityProvidersSpkeysRotateWithHttpInfo($provider, $identity_providers_spkeys_rotate_request, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation identityProvidersSpkeysRotateWithHttpInfo
+     *
+     * Prepare or activate the next SAML service provider key pair
+     *
+     * @param  string $provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersSpkeysRotateRequest $identity_providers_spkeys_rotate_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersSpkeysRotate'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\IdentityProvidersSpkeysRotate200Response, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function identityProvidersSpkeysRotateWithHttpInfo($provider, $identity_providers_spkeys_rotate_request, string $contentType = self::contentTypes['identityProvidersSpkeysRotate'][0])
+    {
+        $request = $this->identityProvidersSpkeysRotateRequest($provider, $identity_providers_spkeys_rotate_request, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\IdentityProvidersSpkeysRotate200Response' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\IdentityProvidersSpkeysRotate200Response' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\IdentityProvidersSpkeysRotate200Response', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\IdentityProvidersSpkeysRotate200Response';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\IdentityProvidersSpkeysRotate200Response',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation identityProvidersSpkeysRotateAsync
+     *
+     * Prepare or activate the next SAML service provider key pair
+     *
+     * @param  string $provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersSpkeysRotateRequest $identity_providers_spkeys_rotate_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersSpkeysRotate'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identityProvidersSpkeysRotateAsync($provider, $identity_providers_spkeys_rotate_request, string $contentType = self::contentTypes['identityProvidersSpkeysRotate'][0])
+    {
+        return $this->identityProvidersSpkeysRotateAsyncWithHttpInfo($provider, $identity_providers_spkeys_rotate_request, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation identityProvidersSpkeysRotateAsyncWithHttpInfo
+     *
+     * Prepare or activate the next SAML service provider key pair
+     *
+     * @param  string $provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersSpkeysRotateRequest $identity_providers_spkeys_rotate_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersSpkeysRotate'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identityProvidersSpkeysRotateAsyncWithHttpInfo($provider, $identity_providers_spkeys_rotate_request, string $contentType = self::contentTypes['identityProvidersSpkeysRotate'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\IdentityProvidersSpkeysRotate200Response';
+        $request = $this->identityProvidersSpkeysRotateRequest($provider, $identity_providers_spkeys_rotate_request, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'identityProvidersSpkeysRotate'
+     *
+     * @param  string $provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersSpkeysRotateRequest $identity_providers_spkeys_rotate_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersSpkeysRotate'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function identityProvidersSpkeysRotateRequest($provider, $identity_providers_spkeys_rotate_request, string $contentType = self::contentTypes['identityProvidersSpkeysRotate'][0])
+    {
+
+        // verify the required parameter 'provider' is set
+        if ($provider === null || (is_array($provider) && count($provider) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $provider when calling identityProvidersSpkeysRotate'
+            );
+        }
+
+        // verify the required parameter 'identity_providers_spkeys_rotate_request' is set
+        if ($identity_providers_spkeys_rotate_request === null || (is_array($identity_providers_spkeys_rotate_request) && count($identity_providers_spkeys_rotate_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $identity_providers_spkeys_rotate_request when calling identityProvidersSpkeysRotate'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/identity/providers/{provider}/sp-keys/rotate';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($provider !== null) {
+            $resourcePath = str_replace(
+                '{' . 'provider' . '}',
+                ObjectSerializer::toPathValue($provider),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($identity_providers_spkeys_rotate_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($identity_providers_spkeys_rotate_request));
+            } else {
+                $httpBody = $identity_providers_spkeys_rotate_request;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody

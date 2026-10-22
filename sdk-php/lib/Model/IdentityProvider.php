@@ -67,10 +67,12 @@ class IdentityProvider implements ModelInterface, ArrayAccess, \JsonSerializable
         'jit_enabled' => 'bool',
         'last_error' => 'string',
         'last_login_at' => '\DateTime',
+        'metadata_refreshed_at' => '\DateTime',
         'name' => 'string',
         'oidc' => '\Ulams\Sdk\Model\IdentityProviderOidc',
         'protocol' => 'string',
         'redirect_uri' => 'string',
+        'saml' => '\Ulams\Sdk\Model\IdentityProviderSaml',
         'slug' => 'string',
         'trust_email' => 'bool',
         'updated_at' => '\DateTime'
@@ -94,10 +96,12 @@ class IdentityProvider implements ModelInterface, ArrayAccess, \JsonSerializable
         'jit_enabled' => null,
         'last_error' => null,
         'last_login_at' => 'date-time',
+        'metadata_refreshed_at' => 'date-time',
         'name' => null,
         'oidc' => null,
         'protocol' => null,
         'redirect_uri' => 'uri',
+        'saml' => null,
         'slug' => null,
         'trust_email' => null,
         'updated_at' => 'date-time'
@@ -119,10 +123,12 @@ class IdentityProvider implements ModelInterface, ArrayAccess, \JsonSerializable
         'jit_enabled' => false,
         'last_error' => true,
         'last_login_at' => true,
+        'metadata_refreshed_at' => true,
         'name' => false,
-        'oidc' => false,
+        'oidc' => true,
         'protocol' => false,
         'redirect_uri' => false,
+        'saml' => true,
         'slug' => false,
         'trust_email' => false,
         'updated_at' => false
@@ -224,10 +230,12 @@ class IdentityProvider implements ModelInterface, ArrayAccess, \JsonSerializable
         'jit_enabled' => 'jit_enabled',
         'last_error' => 'last_error',
         'last_login_at' => 'last_login_at',
+        'metadata_refreshed_at' => 'metadata_refreshed_at',
         'name' => 'name',
         'oidc' => 'oidc',
         'protocol' => 'protocol',
         'redirect_uri' => 'redirect_uri',
+        'saml' => 'saml',
         'slug' => 'slug',
         'trust_email' => 'trust_email',
         'updated_at' => 'updated_at'
@@ -249,10 +257,12 @@ class IdentityProvider implements ModelInterface, ArrayAccess, \JsonSerializable
         'jit_enabled' => 'setJitEnabled',
         'last_error' => 'setLastError',
         'last_login_at' => 'setLastLoginAt',
+        'metadata_refreshed_at' => 'setMetadataRefreshedAt',
         'name' => 'setName',
         'oidc' => 'setOidc',
         'protocol' => 'setProtocol',
         'redirect_uri' => 'setRedirectUri',
+        'saml' => 'setSaml',
         'slug' => 'setSlug',
         'trust_email' => 'setTrustEmail',
         'updated_at' => 'setUpdatedAt'
@@ -274,10 +284,12 @@ class IdentityProvider implements ModelInterface, ArrayAccess, \JsonSerializable
         'jit_enabled' => 'getJitEnabled',
         'last_error' => 'getLastError',
         'last_login_at' => 'getLastLoginAt',
+        'metadata_refreshed_at' => 'getMetadataRefreshedAt',
         'name' => 'getName',
         'oidc' => 'getOidc',
         'protocol' => 'getProtocol',
         'redirect_uri' => 'getRedirectUri',
+        'saml' => 'getSaml',
         'slug' => 'getSlug',
         'trust_email' => 'getTrustEmail',
         'updated_at' => 'getUpdatedAt'
@@ -327,6 +339,7 @@ class IdentityProvider implements ModelInterface, ArrayAccess, \JsonSerializable
     public const DEFAULT_ROLE_STUDENT = 'student';
     public const DEFAULT_ROLE_TUTOR = 'tutor';
     public const PROTOCOL_OIDC = 'oidc';
+    public const PROTOCOL_SAML = 'saml';
 
     /**
      * Gets allowable values of the enum
@@ -350,6 +363,7 @@ class IdentityProvider implements ModelInterface, ArrayAccess, \JsonSerializable
     {
         return [
             self::PROTOCOL_OIDC,
+            self::PROTOCOL_SAML,
         ];
     }
 
@@ -378,10 +392,12 @@ class IdentityProvider implements ModelInterface, ArrayAccess, \JsonSerializable
         $this->setIfExists('jit_enabled', $data ?? [], null);
         $this->setIfExists('last_error', $data ?? [], null);
         $this->setIfExists('last_login_at', $data ?? [], null);
+        $this->setIfExists('metadata_refreshed_at', $data ?? [], null);
         $this->setIfExists('name', $data ?? [], null);
         $this->setIfExists('oidc', $data ?? [], null);
         $this->setIfExists('protocol', $data ?? [], null);
         $this->setIfExists('redirect_uri', $data ?? [], null);
+        $this->setIfExists('saml', $data ?? [], null);
         $this->setIfExists('slug', $data ?? [], null);
         $this->setIfExists('trust_email', $data ?? [], null);
         $this->setIfExists('updated_at', $data ?? [], null);
@@ -749,6 +765,40 @@ class IdentityProvider implements ModelInterface, ArrayAccess, \JsonSerializable
     }
 
     /**
+     * Gets metadata_refreshed_at
+     *
+     * @return \DateTime|null
+     */
+    public function getMetadataRefreshedAt()
+    {
+        return $this->container['metadata_refreshed_at'];
+    }
+
+    /**
+     * Sets metadata_refreshed_at
+     *
+     * @param \DateTime|null $metadata_refreshed_at metadata_refreshed_at
+     *
+     * @return self
+     */
+    public function setMetadataRefreshedAt($metadata_refreshed_at)
+    {
+        if (is_null($metadata_refreshed_at)) {
+            array_push($this->openAPINullablesSetToNull, 'metadata_refreshed_at');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('metadata_refreshed_at', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['metadata_refreshed_at'] = $metadata_refreshed_at;
+
+        return $this;
+    }
+
+    /**
      * Gets name
      *
      * @return string|null
@@ -795,7 +845,14 @@ class IdentityProvider implements ModelInterface, ArrayAccess, \JsonSerializable
     public function setOidc($oidc)
     {
         if (is_null($oidc)) {
-            throw new \InvalidArgumentException('non-nullable oidc cannot be null');
+            array_push($this->openAPINullablesSetToNull, 'oidc');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('oidc', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
         $this->container['oidc'] = $oidc;
 
@@ -862,6 +919,40 @@ class IdentityProvider implements ModelInterface, ArrayAccess, \JsonSerializable
             throw new \InvalidArgumentException('non-nullable redirect_uri cannot be null');
         }
         $this->container['redirect_uri'] = $redirect_uri;
+
+        return $this;
+    }
+
+    /**
+     * Gets saml
+     *
+     * @return \Ulams\Sdk\Model\IdentityProviderSaml|null
+     */
+    public function getSaml()
+    {
+        return $this->container['saml'];
+    }
+
+    /**
+     * Sets saml
+     *
+     * @param \Ulams\Sdk\Model\IdentityProviderSaml|null $saml saml
+     *
+     * @return self
+     */
+    public function setSaml($saml)
+    {
+        if (is_null($saml)) {
+            array_push($this->openAPINullablesSetToNull, 'saml');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('saml', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['saml'] = $saml;
 
         return $this;
     }
