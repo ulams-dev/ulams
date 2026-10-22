@@ -65,6 +65,21 @@
     "body-parser": "^1.20.3",
     "node-fetch": "^2.6.7",
     "internal-slot": "^1.1.0",
-    "**/enzyme/cheerio": "1.0.0-rc.12"
+    "**/enzyme/cheerio": "1.0.0-rc.12",
+    "**/umi-serve/express": "4.22.3",
+    "**/@lumieducation/h5p-express/express": "4.22.3",
+    "**/@firebase/firestore/@grpc/grpc-js": "1.13.6",
+    "**/@firebase/auth/undici": "6.28.1",
+    "**/@firebase/auth-compat/undici": "6.28.1",
+    "**/umi-core/extend2": "1.0.1",
+    "**/umi-mock/path-to-regexp": "1.9.0",
+    "**/@ant-design/pro-layout/path-to-regexp": "8.4.0",
+    "**/replace/minimatch": "3.1.4",
+    "**/request/form-data": "2.5.6",
+    "**/@umijs/bundler-vite/vite": "7.3.7",
+    "**/@firebase/firestore/undici": "6.28.1",
+    "**/@firebase/functions/undici": "6.28.1",
+    "**/@firebase/storage/undici": "6.28.1",
+    "**/@umijs/preset-umi/path-to-regexp": "1.9.0"
   }
 }
