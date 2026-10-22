@@ -53,7 +53,7 @@ const COST_EN: ImpactCopy = {
   primary: "What ULAMS does today",
   secondary: "Explore the demos",
   problemTitle: "The benchmark",
-  problem: "Chapman Alliance development ratios run from **49 to 716 hours of work for every 1 hour of finished e-learning**, depending on interactivity. Typical mid values per level are **79 hours** for passive content, **184 hours** for limited interaction and **490 hours** for moderate participation. Source: [Chapman Alliance figures, as reported by eLearning Industry](" + CHAPMAN_SOURCE + "). Maintenance, updating content once it goes stale, is a hidden multiplier on top. The study dates from 2010; treat it as an order of magnitude, not a quote for your project.",
+  problem: "Chapman Alliance development ratios run from **49 to 716 hours of work for every 1 hour of finished e-learning**, depending on interactivity. Source: [Chapman Alliance figures, as reported by eLearning Industry](" + CHAPMAN_SOURCE + "). Industry observers also note that keeping content up to date adds effort after launch. The study dates from 2010; treat it as an order of magnitude, not a quote for your project.",
   todayTitle: "What ULAMS does today",
   todayIntro: "All of this is in the product now.",
   today: [
@@ -89,7 +89,7 @@ const COST_PL: ImpactCopy = {
   primary: "Co ULAMS robi dziś",
   secondary: "Zobacz demo",
   problemTitle: "Punkt odniesienia",
-  problem: "Wskaźniki Chapman Alliance wahają się od **49 do 716 godzin pracy na 1 godzinę gotowego e-learningu**, zależnie od interaktywności. Typowe wartości środkowe na poziom to **79 godzin** dla treści pasywnych, **184 godziny** dla ograniczonej interakcji i **490 godzin** dla umiarkowanego zaangażowania. Źródło: [dane Chapman Alliance w opisie eLearning Industry](" + CHAPMAN_SOURCE + "). Utrzymanie, czyli aktualizacja nieaktualnych treści, to ukryty mnożnik ponad to. Badanie pochodzi z 2010 roku; traktuj je jako rząd wielkości, a nie wycenę Twojego projektu.",
+  problem: "Wskaźniki Chapman Alliance wahają się od **49 do 716 godzin pracy na 1 godzinę gotowego e-learningu**, zależnie od interaktywności. Źródło: [dane Chapman Alliance w opisie eLearning Industry](" + CHAPMAN_SOURCE + "). Obserwatorzy branży zauważają też, że utrzymywanie treści w aktualności wymaga dodatkowej pracy po premierze kursu. Badanie pochodzi z 2010 roku; traktuj je jako rząd wielkości, a nie wycenę Twojego projektu.",
   todayTitle: "Co ULAMS robi dziś",
   todayIntro: "Wszystko to jest już w produkcie.",
   today: [
@@ -125,7 +125,7 @@ const COST_ZH: ImpactCopy = {
   primary: "ULAMS 现在能做什么",
   secondary: "查看演示",
   problemTitle: "行业基准",
-  problem: "Chapman Alliance 的开发比例为每 1 小时成品在线课程需要 **49 至 716 小时**工作量,取决于交互程度。各级别的典型中间值为:被动内容 **79 小时**,有限交互 **184 小时**,中等参与 **490 小时**。来源:[eLearning Industry 转述的 Chapman Alliance 数据](" + CHAPMAN_SOURCE + ")。维护,即更新过时内容,是在此之上隐藏的倍增因素。该研究发表于 2010 年,请当作数量级参考,而不是你项目的报价。",
+  problem: "Chapman Alliance 的开发比例为每 1 小时成品在线课程需要 **49 至 716 小时**工作量,取决于交互程度。来源:[eLearning Industry 转述的 Chapman Alliance 数据](" + CHAPMAN_SOURCE + ")。业内人士还指出,课程上线后保持内容更新需要额外投入。该研究发表于 2010 年,请当作数量级参考,而不是你项目的报价。",
   todayTitle: "ULAMS 现在能做什么",
   todayIntro: "以下功能均已在产品中提供。",
   today: [
@@ -161,7 +161,7 @@ const REPORTING_EN: ImpactCopy = {
   primary: "What ULAMS has today",
   secondary: "Explore the demos",
   problemTitle: "Why it matters",
-  problem: "Brandon Hall Group research repeatedly finds that only a small minority of organisations are very satisfied with their LMS, that a third to almost half are actively looking to replace it, and that poor reporting has been among the most cited reasons to switch. Source: [Training Magazine on Brandon Hall LMS surveys](" + BRANDON_HALL_SOURCE + ").",
+  problem: "In Brandon Hall Group's 2013 survey, reported by Training magazine, **45.5% of 457 respondents** gave their LMS high marks for value, **47.7%** were looking to move to a new provider, and poor reporting was among the top reasons. In its 2012 survey, reporting ranked number one. Source: [Training magazine on the Brandon Hall Group LMS surveys](" + BRANDON_HALL_SOURCE + ").",
   todayTitle: "What ULAMS has today",
   todayIntro: "Shipped and documented.",
   today: [
@@ -198,7 +198,7 @@ const REPORTING_PL: ImpactCopy = {
   primary: "Co ULAMS ma dziś",
   secondary: "Zobacz demo",
   problemTitle: "Dlaczego to ważne",
-  problem: "Badania Brandon Hall Group wielokrotnie pokazują, że tylko niewielka mniejszość organizacji jest bardzo zadowolona ze swojego LMS, że od jednej trzeciej do prawie połowy aktywnie szuka zamiennika, a słabe raportowanie należy do najczęściej wskazywanych powodów zmiany. Źródło: [Training Magazine o badaniach LMS Brandon Hall](" + BRANDON_HALL_SOURCE + ").",
+  problem: "W badaniu Brandon Hall Group z 2013 roku, opisanym przez magazyn Training, **45,5% z 457 respondentów** wysoko oceniło wartość swojego LMS, **47,7%** szukało nowego dostawcy, a słabe raportowanie należało do głównych powodów. W badaniu z 2012 roku raportowanie zajęło pierwsze miejsce. Źródło: [magazyn Training o badaniach LMS Brandon Hall Group](" + BRANDON_HALL_SOURCE + ").",
   todayTitle: "Co ULAMS ma dziś",
   todayIntro: "Dostępne i opisane w dokumentacji.",
   today: [
@@ -235,7 +235,7 @@ const REPORTING_ZH: ImpactCopy = {
   primary: "ULAMS 现在有什么",
   secondary: "查看演示",
   problemTitle: "为什么重要",
-  problem: "Brandon Hall Group 的研究反复发现:只有少数组织对其 LMS 非常满意,三分之一到近一半的组织正在积极寻找替代方案,而报表不足一直是最常被提及的更换原因之一。来源:[Training Magazine 关于 Brandon Hall LMS 调查的报道](" + BRANDON_HALL_SOURCE + ")。",
+  problem: "在 Brandon Hall Group 2013 年的调查中(由 Training 杂志报道),457 名受访者里有 **45.5%** 对其 LMS 的价值给予高分,**47.7%** 正在寻找新的供应商,报表不足是主要原因之一。在 2012 年的调查中,报表问题排名第一。来源:[Training 杂志关于 Brandon Hall Group LMS 调查的报道](" + BRANDON_HALL_SOURCE + ")。",
   todayTitle: "ULAMS 现在有什么",
   todayIntro: "已发布并有文档说明。",
   today: [
