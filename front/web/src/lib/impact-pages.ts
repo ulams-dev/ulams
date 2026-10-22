@@ -1,7 +1,7 @@
 /**
  * The two economic pages of the public product site: what it costs to create content, and reporting.
  * Shared by the English, Polish and Chinese routes. Only shipped features are shown as available; the
- * rest carries the catalogue's "coming" status. No ULAMS savings are claimed anywhere on these pages.
+ * rest carries the catalogue's "coming" status. No ULAMS savings or speed-up ratios are claimed; the cost page shows one measured run, labelled as such.
  */
 import type { UiNode } from "@ulams/ui/render-core";
 import { comparisonDocFor, withLanguages } from "./docs.ts";
@@ -27,6 +27,8 @@ export interface ImpactCopy {
   problemTitle: string;
   /** Markdown; the cost page links its source here. */
   problem: string;
+  /** Optional Markdown section after the benchmark (the cost page's measured run). */
+  run?: string;
   todayTitle: string;
   todayIntro: string;
   today: Item[];
@@ -54,6 +56,15 @@ const COST_EN: ImpactCopy = {
   secondary: "Explore the demos",
   problemTitle: "The benchmark",
   problem: "Chapman Alliance development ratios run from **49 to 716 hours of work for every 1 hour of finished e-learning**, depending on interactivity. Source: [Chapman Alliance figures, as reported by eLearning Industry](" + CHAPMAN_SOURCE + "). Industry observers also note that keeping content up to date adds effort after launch. The study dates from 2010; treat it as an order of magnitude, not a quote for your project.",
+  run: `## One measured run
+
+This is a single run we measured, not an average and not a promise. From a public documentation repository (13 passages), ULAMS generated a 6-lesson course with 18 quiz questions. Every one of its 35 content blocks cites the source.
+
+- Generation time: about 7.5 minutes in total. Outline 24 s, lessons, quizzes and checks 6 min 57 s, apply 23 s.
+- Model cost: USD 0.28 across 27 model calls.
+- The result is a draft. The author reviews and approves it before publishing, and that time is not counted above.
+
+We set no hours-saved figure and no "times faster" ratio against the benchmark above: the two measure different things.`,
   todayTitle: "What ULAMS does today",
   todayIntro: "All of this is in the product now.",
   today: [
@@ -71,7 +82,7 @@ const COST_EN: ImpactCopy = {
     { icon: "chart", title: "Time and cost to create a course", text: "A measured metric of authoring time and AI cost per course, so the saving can be shown with your own data." },
   ],
   boundaryTitle: "No invented numbers",
-  boundary: "ULAMS does not publish hours saved or testimonials yet. The metric above is how we plan to measure it, with your data, and not before it exists.",
+  boundary: "We publish what we measured and nothing else. The run above is one run, with no averages. There is no hours-saved claim, no \"times faster\" ratio and no testimonials yet. The metric below is how we plan to measure it with your data.",
   ctaTitle: "See how a course is built from a source",
   ctaText: "Read how the builder, the citations and the approval step work.",
   cta: "Course Builder guide",
@@ -90,6 +101,15 @@ const COST_PL: ImpactCopy = {
   secondary: "Zobacz demo",
   problemTitle: "Punkt odniesienia",
   problem: "Wskaźniki Chapman Alliance wahają się od **49 do 716 godzin pracy na 1 godzinę gotowego e-learningu**, zależnie od interaktywności. Źródło: [dane Chapman Alliance w opisie eLearning Industry](" + CHAPMAN_SOURCE + "). Obserwatorzy branży zauważają też, że utrzymywanie treści w aktualności wymaga dodatkowej pracy po premierze kursu. Badanie pochodzi z 2010 roku; traktuj je jako rząd wielkości, a nie wycenę Twojego projektu.",
+  run: `## Jeden zmierzony przebieg
+
+To pojedynczy zmierzony przebieg, a nie średnia ani obietnica. Z publicznego repozytorium dokumentacji (13 fragmentów) ULAMS wygenerował kurs z 6 lekcjami i 18 pytaniami quizowymi. Każdy z 35 bloków treści cytuje źródło.
+
+- Czas generowania: łącznie około 7,5 minuty. Konspekt 24 s, lekcje, quizy i kontrole 6 min 57 s, zastosowanie 23 s.
+- Koszt modelu: 0,28 USD przy 27 wywołaniach modelu.
+- Wynik to szkic. Autor przegląda go i zatwierdza przed publikacją, a tego czasu powyżej nie liczymy.
+
+Nie podajemy zaoszczędzonych godzin ani przelicznika „razy szybciej” względem powyższego punktu odniesienia: to mierzy co innego.`,
   todayTitle: "Co ULAMS robi dziś",
   todayIntro: "Wszystko to jest już w produkcie.",
   today: [
@@ -107,7 +127,7 @@ const COST_PL: ImpactCopy = {
     { icon: "chart", title: "Czas i koszt stworzenia kursu", text: "Mierzony wskaźnik czasu autora i kosztu AI na kurs, żeby oszczędność pokazać na Twoich danych." },
   ],
   boundaryTitle: "Bez wymyślonych liczb",
-  boundary: "ULAMS nie publikuje jeszcze zaoszczędzonych godzin ani opinii klientów. Powyższy wskaźnik to sposób, w jaki to zmierzymy na Twoich danych, i nie wcześniej niż będzie istniał.",
+  boundary: "Publikujemy to, co zmierzyliśmy, i nic ponad to. Powyższy przebieg to jeden przebieg, bez średnich. Nie ma deklaracji zaoszczędzonych godzin, przelicznika „razy szybciej” ani opinii klientów. Wskaźnik poniżej to sposób, w jaki zmierzymy to na Twoich danych.",
   ctaTitle: "Zobacz, jak kurs powstaje ze źródła",
   ctaText: "Przeczytaj, jak działają kreator, cytaty i zatwierdzanie.",
   cta: "Przewodnik po kreatorze kursów",
@@ -126,6 +146,15 @@ const COST_ZH: ImpactCopy = {
   secondary: "查看演示",
   problemTitle: "行业基准",
   problem: "Chapman Alliance 的开发比例为每 1 小时成品在线课程需要 **49 至 716 小时**工作量,取决于交互程度。来源:[eLearning Industry 转述的 Chapman Alliance 数据](" + CHAPMAN_SOURCE + ")。业内人士还指出,课程上线后保持内容更新需要额外投入。该研究发表于 2010 年,请当作数量级参考,而不是你项目的报价。",
+  run: `## 一次实测
+
+这是我们实测的一次运行,不是平均值,也不是承诺。ULAMS 从一个公开文档仓库(13 个片段)生成了含 6 个课时和 18 道测验题的课程。35 个内容块中的每一个都标注了资料出处。
+
+- 生成时间:总计约 7.5 分钟。大纲 24 秒,课时、测验与检查 6 分 57 秒,应用 23 秒。
+- 模型成本:27 次模型调用,共 0.28 美元。
+- 结果是草稿。发布前由作者审阅并批准,这段时间不计入上述数字。
+
+我们不提供节省工时的数字,也不与上面的基准给出“快多少倍”的比例:两者度量的对象不同。`,
   todayTitle: "ULAMS 现在能做什么",
   todayIntro: "以下功能均已在产品中提供。",
   today: [
@@ -143,7 +172,7 @@ const COST_ZH: ImpactCopy = {
     { icon: "chart", title: "制作课程的时间与成本", text: "按课程度量作者耗时和 AI 成本,让节省的效果用你自己的数据说话。" },
   ],
   boundaryTitle: "不编造数字",
-  boundary: "ULAMS 目前不发布节省工时数据或客户评价。上面的指标是我们计划用你的数据来衡量的方式,在它存在之前不会宣称结果。",
+  boundary: "我们只发布实测到的数据,仅此而已。上面是一次运行,没有平均值。没有节省工时的说法,没有“快多少倍”的比例,也暂无客户评价。下面的指标是我们计划用你的数据来衡量的方式。",
   ctaTitle: "看看课程如何从资料生成",
   ctaText: "了解生成器、出处标注和批准步骤如何运作。",
   cta: "课程生成器指南",
@@ -298,6 +327,7 @@ export function impactPage(page: ImpactPage, locale: Locale, request: Request, u
         children: [
           { component: "Hero", props: { variant: "product", eyebrow: copy.eyebrow, title: copy.heading, subtitle: copy.subtitle, body: copy.body, primaryCta: { label: copy.primary, href: "#today" }, secondaryCta: { label: copy.secondary, href: "/#demos" } } },
           { component: "Stack", props: { gap: "lg" }, children: [{ component: "Prose", props: { markdown: `## ${copy.problemTitle}\n\n${copy.problem}` } }] },
+          ...(copy.run ? [{ component: "Stack", props: { gap: "lg" }, children: [{ component: "Prose", props: { markdown: copy.run } }] }] : []),
           list("today", copy.todayTitle, copy.todayIntro, copy.today, "available"),
           list("coming", copy.comingTitle, copy.comingIntro, copy.coming, "coming"),
           { component: "Stack", props: { gap: "lg" }, children: [{ component: "Callout", props: { tone: "key", title: copy.boundaryTitle, text: copy.boundary } }] },

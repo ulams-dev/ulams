@@ -65,6 +65,18 @@ describe("content cost and reporting pages", () => {
     expect(new URL(CHAPMAN_SOURCE).hostname).toBe("elearningindustry.com");
   });
 
+  it("the cost page shows one labelled measured run with every figure and no ratio, in every language", () => {
+    for (const locale of LOCALES) {
+      const run = impactCopy("content-cost", locale).run!;
+      for (const figure of ["13", "6", "18", "35", "24", "57", "23", "27"]) expect(run).toContain(figure);
+      expect(run).toMatch(/7[.,]5/);
+      expect(run).toMatch(/0[.,]28/);
+      expect(run).not.toMatch(/\d\s*(x|×|times|razy)\b/i);
+      expect(JSON.stringify(render("content-cost", locale)!.doc)).toContain(run.split("\n")[0]!.slice(0, 12));
+      expect(impactCopy("reporting", locale).run).toBeUndefined();
+    }
+  });
+
   it("cites the LMS satisfaction research to Training Magazine and states no 9%", () => {
     for (const locale of LOCALES) {
       const copy = impactCopy("reporting", locale);
