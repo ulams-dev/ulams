@@ -212,6 +212,9 @@ test("the content-cost and reporting pages and their home call-to-action bands",
     for (const [id, slug, event] of [["cost-cta", "content-cost", "cost_page_open"], ["reporting-cta", "reporting", "reporting_page_open"]] as const) {
       const band = page.locator(`section#${id}`);
       await expect(band.locator("h2")).toHaveCount(1);
+      await expect(band).toHaveClass(/u-cta--feature/);
+      if (id === "cost-cta") await expect(band.locator(".u-cta__stats li")).toHaveCount(4);
+      else await expect(band.locator(".u-cta__chips li")).toHaveCount(6);
       const link = band.locator("a.u-btn").first();
       await expect(link).toHaveAttribute("href", `${prefix}/${slug}/`);
       await expect(link).toHaveAttribute("data-umami-event", event);

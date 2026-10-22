@@ -3029,9 +3029,10 @@
             "enum": [
               "banner",
               "newsletter",
-              "terminal"
+              "terminal",
+              "feature"
             ],
-            "description": "Style; terminal shows `code` lines in a terminal window",
+            "description": "Style; terminal shows `code` lines in a terminal window; feature shows big `stats`, outcome `bullets`, a schematic `panel` and `chips`",
             "default": "banner"
           },
           "eyebrow": {
@@ -3085,6 +3086,133 @@
             "type": "string",
             "description": "Short closing note",
             "maxLength": 200
+          },
+          "stats": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "description": "Big figure",
+                  "maxLength": 24
+                },
+                "label": {
+                  "type": "string",
+                  "description": "What it is",
+                  "maxLength": 80
+                },
+                "note": {
+                  "type": "string",
+                  "description": "Small note or source",
+                  "maxLength": 80
+                },
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "own",
+                    "benchmark"
+                  ],
+                  "description": "Our own measurement or a third-party benchmark",
+                  "default": "own"
+                },
+                "href": {
+                  "type": "string",
+                  "format": "href",
+                  "description": "Source of a benchmark",
+                  "maxLength": 2048
+                }
+              },
+              "required": [
+                "value",
+                "label"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Feature variant: big figures (a benchmark one is shown apart)",
+            "default": [],
+            "maxItems": 6
+          },
+          "statsLabel": {
+            "type": "string",
+            "description": "Feature variant: label above the figures",
+            "maxLength": 100
+          },
+          "chips": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "Capability",
+              "maxLength": 60
+            },
+            "description": "Feature variant: capability chips",
+            "default": [],
+            "maxItems": 8
+          },
+          "panel": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Panel title",
+                "maxLength": 60
+              },
+              "label": {
+                "type": "string",
+                "description": "Label that says the panel is an illustration",
+                "maxLength": 40
+              },
+              "alt": {
+                "type": "string",
+                "description": "Text alternative for the whole panel",
+                "maxLength": 300
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Row label",
+                      "maxLength": 60
+                    },
+                    "level": {
+                      "type": "number",
+                      "minimum": 0,
+                      "maximum": 100,
+                      "description": "Bar length in percent (drawn without a number)"
+                    },
+                    "tone": {
+                      "type": "string",
+                      "enum": [
+                        "ok",
+                        "warn",
+                        "muted"
+                      ],
+                      "description": "Bar colour",
+                      "default": "ok"
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "level"
+                  ],
+                  "additionalProperties": false
+                },
+                "description": "Bars",
+                "default": [],
+                "maxItems": 6
+              }
+            },
+            "required": [
+              "title",
+              "label",
+              "alt",
+              "rows"
+            ],
+            "description": "Feature variant: schematic illustration of the product",
+            "additionalProperties": false
           },
           "code": {
             "type": "array",
