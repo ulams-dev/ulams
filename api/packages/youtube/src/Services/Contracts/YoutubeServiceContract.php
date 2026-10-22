@@ -20,7 +20,7 @@ interface YoutubeServiceContract
 
     public function getYtLiveStream(YTBroadcastDto $YTBroadcastDto): Collection;
 
-    public function generateYTAuthUrl(string $email): string;
+    public function generateYTAuthUrl(string $email, ?string $state = null): string;
 
     public function dispatchYtError(): void;
     public function isConfigured(): bool;

@@ -92,13 +92,13 @@ class YoutubeService implements YoutubeServiceContract
         return $this->liveStreamServiceContract->getListLiveStream($token, $YTBroadcastDto);
     }
 
-    public function generateYTAuthUrl(string $email): string
+    public function generateYTAuthUrl(string $email, ?string $state = null): string
     {
         AdministrableConfig::setConfig([
             'services.youtube.email' => $email,
         ]);
         AdministrableConfig::storeConfig();
-        return $this->authenticateServiceContract->getLoginUrl($email);
+        return $this->authenticateServiceContract->getLoginUrl($email, $state);
     }
 
     public function dispatchYtError(): void

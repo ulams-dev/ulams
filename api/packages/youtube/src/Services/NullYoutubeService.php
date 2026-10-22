@@ -40,7 +40,7 @@ class NullYoutubeService implements YoutubeServiceContract
         return new Collection([]);
     }
 
-    public function generateYTAuthUrl(string $email): string
+    public function generateYTAuthUrl(string $email, ?string $state = null): string
     {
         return '';
     }

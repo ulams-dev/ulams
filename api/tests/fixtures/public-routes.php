@@ -83,6 +83,8 @@ return [
     ['method' => 'POST', 'uri' => 'api/auth/social/complete/{token}', 'kind' => 'open', 'reason' => 'Completes a social registration with a one-time token.'],
     ['method' => 'GET', 'uri' => 'api/auth/email/verify/{id}/{hash}', 'kind' => 'open', 'reason' => 'E-mail verification link: the hash of the address is the credential.'],
     ['method' => 'GET', 'uri' => 'api/profile/delete/{userId}/{token}', 'kind' => 'open', 'reason' => 'Account deletion confirmation link: the emailed token is the credential. Answers 500 to a malformed token (not an isolation matter).'],
+    ['method' => 'GET', 'uri' => 'api/refresh-token', 'kind' => 'own-credentials', 'covered_by' => 'api/packages/youtube/tests/Services/YoutubeServiceTest.php',
+        'reason' => 'Google OAuth redirect target of the YouTube connection (a browser redirect carries no bearer token): the signed, single-use state issued to an administrator by api/admin/g-token/generate is the credential; answers 400 without it.'],
 
     // Public catalogue, read from the tenant database chosen by host --------------------------------
     ['method' => 'GET', 'uri' => 'api/products', 'kind' => 'open', 'reason' => 'Public product catalogue.'],
@@ -164,8 +166,4 @@ return [
         'reason' => 'Provider redirect: the single-use state is the credential; an invalid, expired or foreign state answers 400.'],
     ['method' => 'POST', 'uri' => 'api/identity/sso/exchange', 'kind' => 'own-credentials', 'optional' => true, 'covered_by' => 'api/packages/identity/tests/Feature/IsolationTest.php',
         'reason' => 'Redeems the one-time code with the PKCE verifier (400 without them); codes are per tenant.'],
-
-    // Known gaps ------------------------------------------------------------------------------------
-    ['method' => 'GET', 'uri' => 'api/refresh-token', 'kind' => 'known-gap',
-        'reason' => 'KNOWN GAP (security issue ulams-dev/ulams#370): Google OAuth redirect that stores a YouTube refresh token in the tenant configuration without authentication or a state check. Owner: live-streaming (packages/youtube).'],
 ];
