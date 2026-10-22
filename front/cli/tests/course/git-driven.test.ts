@@ -430,3 +430,52 @@ describe("course preview", () => {
     expect(pushed.data()).toMatchObject({ pushed: true, approved: false, applied: false, version: { status: "proposed" } });
   });
 });
+
+describe("course adopt", () => {
+  const skipped = [{ topicId: 77, title: "Screencast", type: "Video", reason: "This kind of topic needs its file to travel with the course (asset download), which is not built yet; the topic stays as it is and is never changed by an apply." }];
+
+  it("refuses init for a hand-made course and points at adopt, then adopt makes init work", async () => {
+    const fake = fakeCourseAsCode({ handMade: { skipped } });
+    const dir = join(tmp(), "course");
+
+    const refused = await cli(["course", "init", dir, "--from-course", "12", "--json"], fake.routes);
+    expect(refused.code).toBe(6);
+    expect(refused.error()).toMatchObject({ code: "CONFLICT", details: { code: "NOT_ADOPTED" }, hint: expect.stringContaining("ulams course adopt") });
+    expect(fs.existsSync(dir)).toBe(false);
+
+    const adopted = await cli(["course", "adopt", "12", "--json"], fake.routes);
+    expect(adopted.code, adopted.stdout + adopted.stderr).toBe(0);
+    expect(adopted.data()).toMatchObject({ created: true, courseId: 12, skipped: [{ topicId: 77, type: "Video" }] });
+
+    const init = await cli(["course", "init", dir, "--from-course", "12", "--json"], fake.routes);
+    expect(init.code, init.stdout + init.stderr).toBe(0);
+    expect(fs.existsSync(join(dir, "ulams.yaml"))).toBe(true);
+  });
+
+  it("says what was left out and why, in text, and is idempotent", async () => {
+    const fake = fakeCourseAsCode({ handMade: { skipped } });
+    const first = await cli(["course", "adopt", "12"], fake.routes);
+    expect(first.code).toBe(0);
+    expect(first.stdout).toContain("Adopted course 12");
+    expect(first.stdout).toContain("1 topic was left out and stay as they are");
+    expect(first.stdout).toContain("Screencast (Video)");
+    expect(first.stdout).toContain("ulams course init ./my-course --from-course 12");
+
+    const again = await cli(["course", "adopt", "12"], fake.routes);
+    expect(again.stdout).toContain("was adopted before");
+    expect(fake.db.adoptCalls).toBe(2);
+  });
+
+  it("--dry-run sends nothing, a bad id is refused before any request and an unknown course is exit 5", async () => {
+    const fake = fakeCourseAsCode({ handMade: {} });
+    const dry = await cli(["course", "adopt", "12", "--dry-run", "--json"], fake.routes);
+    expect(dry.code, dry.stdout + dry.stderr).toBe(0);
+    expect(dry.requests).toHaveLength(0);
+    expect(JSON.stringify(dry.body())).toContain("/adopt");
+    const bad = await cli(["course", "adopt", "abc", "--json"], fake.routes);
+    expect(bad.code).toBe(2);
+    expect(bad.requests).toHaveLength(0);
+    const unknown = await cli(["course", "adopt", "99", "--json"], fake.routes);
+    expect(unknown.code).toBe(5);
+  });
+});

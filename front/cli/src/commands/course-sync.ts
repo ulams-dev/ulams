@@ -170,7 +170,7 @@ function translate(e: unknown): unknown {
     case "NOT_ADOPTED":
       return new CliError("CONFLICT", e.message, {
         ...keep,
-        hint: "Only courses made with the course builder can be synced for now; adopting a hand-made course arrives in a later milestone.",
+        hint: "This course was made by hand, so it has no blueprint yet. `ulams course adopt <course>` reads it into one (rich text, quizzes, H5P, LiaScript and embedded pages; nothing in the course changes), then run `ulams course init` again.",
         details: { code },
       });
     case "NO_BLUEPRINT":
@@ -318,7 +318,7 @@ const init = defineCommand({
   id: "course.init",
   summary: "Create a course folder from a course made with the builder (Markdown and YAML, bound to the course)",
   description:
-    "Reads the course's current version from the server and writes it as a course folder (ulams.yaml, course.yaml, modules/...), then records where it stands in .ulams/base.json (commit it). The folder must be empty (a README, a LICENSE and dot files may be there). Only courses made with the course builder have a blueprint (a hand-made one is refused with NOT_ADOPTED). Works with AI switched off. With --dry-run it lists the files and writes nothing.",
+    "Reads the course's current version from the server and writes it as a course folder (ulams.yaml, course.yaml, modules/...), then records where it stands in .ulams/base.json (commit it). The folder must be empty (a README, a LICENSE and dot files may be there). A course made by hand has no blueprint until `ulams course adopt <course>` has read it into one (until then it is refused with NOT_ADOPTED). Works with AI switched off. With --dry-run it lists the files and writes nothing.",
   kind: "read",
   scopes: READ,
   endpoints: ["GET /api/admin/course-as-code/courses/{course}/blueprint"],
@@ -381,6 +381,46 @@ function ciWorkflow(root: string): { file: string; text: string } {
   const path = relative(top, real).split(sep).join("/");
   return { file: join(top, WORKFLOW_FILE), text: githubWorkflow({ path: path === "" ? "." : path, branch: gitOrigin(realpathSync(existing))?.branch ?? "main" }) };
 }
+
+/* ---------------------------------------------------------------- adopt */
+
+interface AdoptResponse {
+  created: boolean;
+  courseId: number;
+  sessionId: string;
+  versionId: string;
+  versionNumber: number;
+  skipped: Array<{ topicId: number; title: string; type: string; reason: string }>;
+}
+
+const adopt = defineCommand({
+  ...builderCommand,
+  id: "course.adopt",
+  summary: "Read a course that was made by hand into a blueprint, so it can be pulled into a folder, edited in Git and pushed back",
+  description:
+    "Creates a first blueprint, an approved version, a builder session and an entity map from the live course. Nothing in the course changes: an apply right after adoption writes nothing, and the course then behaves like one made with the builder (`course init --from-course`, pull, push, releases, compare). Rich text topics become lessons (HTML becomes Markdown, split at top-level headings, written by the author, no citations), a quiz becomes the quiz of the lesson before it (only the shapes the blueprint holds: single, multiple, true/false, short answer), and H5P, LiaScript and embedded-page topics become lessons that stand for the existing topic (an apply follows their title and position, never their content). Video, audio, PDF, image, SCORM and cmi5 topics need their files to travel with the course (asset download, not built yet): they, inactive topics and unreadable questions are left out, listed with the reason, never mapped and never changed by an apply. Running it again returns the existing session. Works with AI switched off.",
+  kind: "write",
+  idempotent: true,
+  scopes: WRITE,
+  endpoints: ["POST /api/admin/course-as-code/courses/{course}/adopt"],
+  positionals: ["course"],
+  input: z.object({ course: z.string().regex(/^\d+$/, "A numeric course id.").describe("Course id on the server.") }),
+  output: z.unknown(),
+  examples: [
+    { title: "Adopt a hand-made course", argv: "course adopt 12" },
+    { title: "See what it would send", argv: "course adopt 12 --dry-run --json" },
+  ],
+  plan: async (_ctx, i) => planOf("POST", `/courses/${i.course}/adopt`),
+  async run(ctx, i) {
+    const res = await server(() => call<AdoptResponse>(ctx, "POST", "/courses/{course}/adopt", { params: { course: i.course } }));
+    const lines = [
+      res.created ? `Adopted course ${res.courseId}: version ${res.versionNumber} of session ${res.sessionId}. The course itself was not changed.` : `Course ${res.courseId} was adopted before: session ${res.sessionId}, version ${res.versionNumber}.`,
+      ...(res.skipped.length > 0 ? [`${res.skipped.length} topic${res.skipped.length === 1 ? " was" : "s were"} left out and stay as they are:`, ...res.skipped.slice(0, 8).map((s) => `  - ${s.title || s.type} (${s.type}): ${s.reason}`), ...(res.skipped.length > 8 ? [`  ... and ${res.skipped.length - 8} more (see --json)`] : [])] : []),
+      `Next: \`ulams course init ./my-course --from-course ${res.courseId}\`.`,
+    ];
+    return present(ctx, res, lines);
+  },
+});
 
 /* ---------------------------------------------------------------- sources-connect */
 
@@ -1273,4 +1313,4 @@ const absorbDrift = defineCommand({
   },
 });
 
-export const courseSyncCommands: AnyCommand[] = [init, sourcesConnect, preview, pull, diff, status, push, apply, publish, resolveCmd, absorbDrift];
+export const courseSyncCommands: AnyCommand[] = [init, adopt, sourcesConnect, preview, pull, diff, status, push, apply, publish, resolveCmd, absorbDrift];

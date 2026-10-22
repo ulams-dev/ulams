@@ -474,6 +474,12 @@
   "tag": "Admin Course-as-code"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/courses/{course}/adopt",
+  "summary": "Adopt a course made by hand: a first blueprint, version, session and entity map from the live course (idempotent)",
+  "tag": "Admin Course-as-code"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/course-as-code/courses/{course}/blueprint",
   "summary": "Export a course as a Blueprint v3 document (current version, drift, applied version)",
