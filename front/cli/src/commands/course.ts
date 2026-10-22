@@ -1,33 +1,19 @@
 import { z } from "zod";
 import { CliError } from "../errors.ts";
-import type { AnyCommand, Ctx, Plan } from "../registry/types.ts";
-import { runHandle } from "./builder-lib.ts";
+import type { AnyCommand, Ctx } from "../registry/types.ts";
+import { call, planOf } from "./course-io.ts";
 import { defineCommand } from "./define.ts";
 
-/* Course-as-code, server side of it (ADR 0160): export a course as a Blueprint v3 document, push an edited
- * document as a proposed `import` version, review it, approve it, apply it. These work with AI switched off.
- * Thin on purpose: `course pull` and `course push` (folder format, base snapshot) replace the file handling later. */
+/* Course-as-code, the document-level commands (ADR 0160): export a course as a Blueprint v3 document, import an edited
+ * document as a proposed `import` version, approve it. They work with AI switched off and with plain JSON files; the
+ * folder workflow (init, pull, push, diff, status, apply, publish) is in course-sync.ts. */
 
-const COURSE_AS_CODE = "/api/admin/course-as-code";
 const common = { audience: ["author" as const], mcp: { toolset: "builder" } };
 const READ = ["builder:read"];
 const WRITE = ["builder:write"];
 
 const session = z.string().describe("Builder session id (data.sessionId of `course export`).");
 const version = z.string().describe("Version id (data.version.id of `course import`).");
-
-async function call<T>(ctx: Ctx, method: "GET" | "POST", path: string, o: { params?: Record<string, string | number>; query?: Record<string, string | undefined>; body?: unknown } = {}): Promise<T> {
-  const res = await ctx.client.call<T>(method, `${COURSE_AS_CODE}${path}`, {
-    ...(o.params ? { params: o.params } : {}),
-    ...(o.query ? { query: o.query } : {}),
-    ...(o.body !== undefined ? { body: o.body } : {}),
-    idempotent: method === "GET",
-    signal: ctx.signal,
-  });
-  return res.data;
-}
-
-const planOf = (method: string, path: string, body?: unknown): Plan => ({ request: { method, path: `${COURSE_AS_CODE}${path}`, ...(body !== undefined ? { body } : {}) } });
 
 interface ExportPayload {
   courseId: number | null;
@@ -128,22 +114,6 @@ export const courseCommands: AnyCommand[] = [
   }),
   defineCommand({
     ...common,
-    id: "course.diff",
-    summary: "Show what a version changes, element by element",
-    description: "Against its parent by default, or against another version of the same course with --against.",
-    kind: "read",
-    scopes: READ,
-    endpoints: ["GET /api/admin/course-as-code/versions/{version}/diff"],
-    positionals: ["version"],
-    input: z.object({ version, against: z.string().optional().describe("Another version id to compare with.") }),
-    output: z.unknown(),
-    examples: [{ title: "Review an import", argv: "course diff <version> --json" }],
-    async run(ctx, i) {
-      return { data: await call(ctx, "GET", "/versions/{version}/diff", { params: { version: i.version }, query: { against: i.against } }) };
-    },
-  }),
-  defineCommand({
-    ...common,
     id: "course.approve",
     summary: "Approve a proposed import so it becomes the course's current version",
     description:
@@ -159,44 +129,6 @@ export const courseCommands: AnyCommand[] = [
     plan: async (_ctx, i) => planOf("POST", `/versions/${i.version}/approve`),
     async run(ctx, i) {
       return { data: await call(ctx, "POST", "/versions/{version}/approve", { params: { version: i.version } }) };
-    },
-  }),
-  defineCommand({
-    ...common,
-    id: "course.apply",
-    summary: "Apply the current version to the course (an unpublished draft)",
-    description: "Writes the course through the course services. Returns the run id; follow it with `ulams operations wait <meta.operation>`.",
-    kind: "write",
-    idempotent: false,
-    scopes: WRITE,
-    longRunning: { kind: "builder-run" },
-    endpoints: ["POST /api/admin/course-as-code/sessions/{session}/apply"],
-    positionals: ["session"],
-    input: z.object({ session, overwrite: z.boolean().optional().describe("Overwrite edits an admin made in the course since the last apply.") }),
-    output: z.unknown(),
-    examples: [{ title: "Apply", argv: "course apply <session> --json" }],
-    plan: async (_ctx, i) => planOf("POST", `/sessions/${i.session}/apply`, i.overwrite ? { overwrite: true } : {}),
-    async run(ctx, i) {
-      const res = await call<{ runId: string | null }>(ctx, "POST", "/sessions/{session}/apply", { params: { session: i.session }, body: i.overwrite ? { overwrite: true } : {} });
-      return { data: res, ...(res.runId ? { meta: { operation: runHandle(res.runId) } } : {}) };
-    },
-  }),
-  defineCommand({
-    ...common,
-    id: "course.publish",
-    summary: "Publish the applied course so learners can enrol",
-    description: "Refused while publish checks block it or warnings are not acknowledged (--acknowledge-warnings).",
-    kind: "write",
-    idempotent: true,
-    scopes: WRITE,
-    endpoints: ["POST /api/admin/course-as-code/sessions/{session}/publish"],
-    positionals: ["session"],
-    input: z.object({ session, acknowledgeWarnings: z.boolean().optional().describe("Acknowledge the publish warnings after reviewing them.") }),
-    output: z.unknown(),
-    examples: [{ title: "Publish", argv: "course publish <session> --json" }],
-    plan: async (_ctx, i) => planOf("POST", `/sessions/${i.session}/publish`, { acknowledgedWarnings: Boolean(i.acknowledgeWarnings) }),
-    async run(ctx, i) {
-      return { data: await call(ctx, "POST", "/sessions/{session}/publish", { params: { session: i.session }, body: { acknowledgedWarnings: Boolean(i.acknowledgeWarnings) } }) };
     },
   }),
 ];

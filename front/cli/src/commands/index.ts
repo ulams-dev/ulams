@@ -9,6 +9,7 @@ import { applyCommands } from "./apply.ts";
 import { builderCommands } from "./builder.ts";
 import { courseCommands } from "./course.ts";
 import { courseFolderCommands } from "./course-folder.ts";
+import { courseSyncCommands } from "./course-sync.ts";
 import { livingCommands } from "./living.ts";
 import { curatedCommands } from "./curated.ts";
 import { mcp } from "./mcp.ts";
@@ -40,6 +41,7 @@ export const handWritten: AnyCommand[] = [
   ...builderCommands,
   ...courseCommands,
   ...courseFolderCommands,
+  ...courseSyncCommands,
   ...livingCommands,
   ...tenantCommands,
 ];
