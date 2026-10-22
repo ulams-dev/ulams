@@ -96,6 +96,11 @@ small commits → tests → summary.
       recommended defaults for Q1 to Q11, approved the matching spec sections (ROADMAP-PROMPT 3.1 and 4.4), and accepted that variant
       courses stay unlisted and unsold on their own until CV-5 routing exists
 
+- [ ] (new) Decision 2026-10-22: the owner asked to replace the PHP image resize with Cloudflare Image Transformations (enabled and
+      verified on the `ulams.app` zone), then narrowed it the same day: keep `api/packages/images` and `/api/images/img` for
+      self-hosters and other clients, stop PHP resizing on the hosted demos and the landing, and make the image service a deployment
+      choice. Plan `docs/plans/images-cloudflare.md` and ADR 0193 were accepted by the owner on 2026-10-22 with the recommended defaults (plan section 14)
+
 - [ ] (new) Organic marketing campaign (`docs/plans/organic-marketing.md`, draft): analytics, SEO, Hacker News, Product Hunt,
       Reddit, directories, LinkedIn and e-learning communities. Waiting for approval; nothing is published before the owner
       opens the publishing gate (decisions 1-8 of its section 12)
@@ -1092,6 +1097,10 @@ each variant reviewed as a diff against the base. Shown as "Coming" on the Compa
       Prepared and validated locally with the published images and MinIO; nothing is deployed
 - [ ] (new) First production deployment on the VPS and Cloudflare (owner publishes later, issue #24): staging
       install, restore drill, R2 custom domains, tunnel, then the launch switches (landing `actual`, CSP enforce)
+- [ ] (new) Image service as a deployment choice (`cloudflare | astro | noop | php`): one URL builder and presets in `@ulams/sdk`,
+      the hosted demo academies and the `ulams.app` landing on Cloudflare Image Transformations with `onerror=redirect` and a `noop`
+      kill switch, admin and imports on demo deployments without `/api/images/img`, the PHP images API kept as an optional legacy API
+      (plan `docs/plans/images-cloudflare.md`, milestones IMG-1 to IMG-7; ADR 0193 Accepted 2026-10-22; IMG-1 starts first)
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
 - [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI
