@@ -20,8 +20,12 @@ interface Props {
 }
 
 const { src, alt, width, height, sizes = "100vw", priority = false, class: className, fit = "cover" } = Astro.props;
+// With the noop image service (hosts without sharp) every width resolves to the same file, so a srcset would only
+// repeat one URL five times: send a plain src instead.
+const noopService = (process.env.ULAMS_IMAGE_SERVICE ?? import.meta.env.ULAMS_IMAGE_SERVICE) === "noop";
 const widths = [360, 640, 960, 1280, 1600].filter((w) => w <= width * 1.01);
 if (widths.length === 0 || widths[widths.length - 1]! < width) widths.push(width);
+const responsive = noopService ? {} : { widths, sizes, format: "webp" as const, quality: 78 };
 ---
 
 <Image
@@ -29,10 +33,7 @@ if (widths.length === 0 || widths[widths.length - 1]! < width) widths.push(width
   alt={alt}
   width={width}
   height={height}
-  widths={widths}
-  sizes={sizes}
-  format="webp"
-  quality={78}
+  {...responsive}
   loading={priority ? "eager" : "lazy"}
   fetchpriority={priority ? "high" : "auto"}
   decoding={priority ? "sync" : "async"}
