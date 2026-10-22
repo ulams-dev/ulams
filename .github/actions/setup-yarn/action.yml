@@ -1,0 +1,41 @@
+name: Set up Yarn
+description: >
+  Enables Corepack with a cached, retried yarn download and runs a retried
+  `yarn install --frozen-lockfile`, so a registry.npmjs.org outage (HTTP 503) does not fail
+  the job. Call actions/checkout and actions/setup-node first.
+inputs:
+  install:
+    description: Run the frozen-lockfile install after preparing Yarn.
+    default: "true"
+runs:
+  using: composite
+  steps:
+    - name: Resolve the pinned Yarn version
+      id: pm
+      shell: bash
+      run: |
+        version="$(node -p "require('./package.json').packageManager.replace(/^yarn@/, '').split('+')[0]")"
+        echo "version=${version}" >> "$GITHUB_OUTPUT"
+        echo "COREPACK_HOME=${HOME}/.cache/node/corepack" >> "$GITHUB_ENV"
+        echo "HUSKY=0" >> "$GITHUB_ENV"
+        echo "COREPACK_ENABLE_DOWNLOAD_PROMPT=0" >> "$GITHUB_ENV"
+
+    - name: Cache Corepack
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/node/corepack
+        key: corepack-${{ runner.os }}-yarn-${{ steps.pm.outputs.version }}
+
+    - name: Enable Corepack
+      shell: bash
+      run: |
+        corepack enable
+        "${{ github.action_path }}/retry.sh" "corepack prepare yarn@${{ steps.pm.outputs.version }}" \
+          corepack prepare "yarn@${{ steps.pm.outputs.version }}" --activate
+
+    - name: Install dependencies
+      if: inputs.install == 'true'
+      shell: bash
+      run: |
+        "${{ github.action_path }}/retry.sh" "yarn install" \
+          corepack yarn install --frozen-lockfile --network-timeout 100000
