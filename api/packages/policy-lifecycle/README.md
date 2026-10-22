@@ -19,7 +19,7 @@ policy version is an explicit owner action. No AI decides who must take a course
 - Approval enrols each department's group through a compliance rule (`group equals <name>`) on a one-course path, so
   reminders, escalation, certificates and the compliance reports apply unchanged.
 - Every state change is written to the Living Course audit chain (`policy.*` actions).
-- Policy changes (new versions, rollouts, revoking and reassigning) are the next milestone (P6R-9).
+- Policy changes (P6R-9): a new file is a new revision of each department's source; Living Course proposes the updates, the owner reviews and approves, all department courses are updated, then certificates linked to the previous version are revoked and those people get the exam course (minor) or the course (major) through compliance (`policy_change` source). The class is suggested from the proposals. Tables `policy_rollouts`, `policy_reassignments`. E-mails, in-app notices and webhooks `policy.change.approved`, `policy.retraining.assigned`.
 
 Install: registered in `api/config/app.php`; run the migrations and `PolicyPermissionSeeder` (part of `PermissionsSeeder`).
 Tests: `php artisan test --testsuite policy-lifecycle`.

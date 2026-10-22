@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $id
  * @property string $policy_id
  * @property int $number
- * @property string $status draft | in_review | approved | rejected | superseded
+ * @property string $status draft | in_review | applying | approved | rejected | superseded
  * @property string $change_class initial | minor | major
  * @property string|null $summary
  * @property string $file_name
@@ -23,6 +23,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $approved_by
  * @property \Illuminate\Support\Carbon|null $approved_at
  * @property \Illuminate\Support\Carbon|null $effective_at
+ * @property string|null $suggested_class what the proposals suggested
+ * @property string|null $class_reason why the owner chose another class
+ * @property int|null $rejected_by
+ * @property string|null $reject_reason
+ * @property \Illuminate\Support\Carbon|null $rolled_out_at
  */
 class PolicyVersion extends Model
 {
@@ -30,6 +35,8 @@ class PolicyVersion extends Model
 
     public const DRAFT = 'draft';
     public const IN_REVIEW = 'in_review';
+    /** Approved by the owner; the department courses are being updated and the rollout has not run yet. */
+    public const APPLYING = 'applying';
     public const APPROVED = 'approved';
     public const REJECTED = 'rejected';
     public const SUPERSEDED = 'superseded';
@@ -49,6 +56,8 @@ class PolicyVersion extends Model
         'approved_by' => 'integer',
         'approved_at' => 'datetime',
         'effective_at' => 'datetime',
+        'rolled_out_at' => 'datetime',
+        'rejected_by' => 'integer',
     ];
 
     public function policy(): BelongsTo

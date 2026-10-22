@@ -112,4 +112,30 @@ class TestCase extends LivingCourseTestCase
 
         return $policy->refresh();
     }
+
+    /** Uploads a changed policy file as the next version and returns the response. */
+    protected function submitChange($user, string $policyId, string $fixture = 'remote-work-policy.v2.md')
+    {
+        return $this->actingAs($user, 'api')->post("/api/admin/policies/{$policyId}/versions", ['file' => $this->policyFile($fixture)], ['Accept' => 'application/json']);
+    }
+
+    /**
+     * Accepts every item of every department's proposal of the version, as the owner does in the Studio. Items the model
+     * could not propose a change for (kind `manual`, here the final-test questions) are the owner's to edit by hand; the
+     * helper settles them as "kept as they are" so the version can be approved.
+     */
+    protected function acceptAllProposals($user, \Ulams\PolicyLifecycle\Models\PolicyVersion $version): void
+    {
+        foreach (\Ulams\PolicyLifecycle\Models\PolicyRollout::query()->where('policy_version_id', $version->id)->whereNotNull('proposal_id')->get() as $rollout) {
+            $this->actingAs($user, 'api')->postJson("/api/admin/living-course/proposals/{$rollout->proposal_id}/accept-all")->assertOk();
+            foreach (\Ulams\LivingCourse\Models\ProposalItem::query()->where('proposal_id', $rollout->proposal_id)->where('status', 'pending')->get() as $item) {
+                $this->actingAs($user, 'api')->postJson("/api/admin/living-course/proposals/{$rollout->proposal_id}/items/{$item->id}/reject")->assertOk();
+            }
+        }
+    }
+
+    protected function approveVersion($user, string $policyId, int $number, array $body = [])
+    {
+        return $this->actingAs($user, 'api')->postJson("/api/admin/policies/{$policyId}/versions/{$number}/approve", $body);
+    }
 }
