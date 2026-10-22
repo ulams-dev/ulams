@@ -13,6 +13,7 @@ use Ulams\Courses\Events\TopicProgressUpdated;
 use Ulams\Courses\Models\CourseProgress;
 use Ulams\Courses\Models\H5PUserProgress;
 use Ulams\Courses\Models\Topic;
+use Ulams\LearnerInsights\Services\ChosenOptions;
 use Ulams\LearnerInsights\Services\Eligibility;
 use Ulams\LearnerInsights\Services\SignalRecorder;
 use Ulams\LearnerInsights\Signals\SignalData;
@@ -31,7 +32,7 @@ use Ulams\TopicTypes\Models\TopicContent\ScormSco;
  */
 class RecordSignals
 {
-    public function __construct(private readonly SignalRecorder $recorder, private readonly Eligibility $eligibility)
+    public function __construct(private readonly SignalRecorder $recorder, private readonly Eligibility $eligibility, private readonly ChosenOptions $chosen)
     {
     }
 
@@ -100,7 +101,7 @@ class RecordSignals
                 continue;
             }
             $ratio = max(0.0, min(1.0, (float) $answer->score / $max));
-            $this->push(new SignalData($user, SignalType::QUIZ_ANSWER, 'gift', 'gift_answer:' . $answer->getKey(), $now, null, $topicId, (int) $answer->topic_gift_question_id, round($ratio, 4), ['question_id' => (int) $answer->topic_gift_question_id, 'correct' => $ratio >= 1.0]));
+            $this->push(new SignalData($user, SignalType::QUIZ_ANSWER, 'gift', 'gift_answer:' . $answer->getKey(), $now, null, $topicId, (int) $answer->topic_gift_question_id, round($ratio, 4), ['question_id' => (int) $answer->topic_gift_question_id, 'correct' => $ratio >= 1.0, 'chosen' => $this->chosen->forAnswer((int) $answer->topic_gift_question_id, (array) $answer->answer)]));
         }
     }
 

@@ -1098,6 +1098,12 @@
   "tag": "Learner insights admin"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/learner-insights/courses/{course}/elements/{elementKey}/improve",
+  "summary": "Propose an improvement for an element learners struggle with: the estimate and the aggregated evidence first, then (confirmEstimate) a Living Course proposal of kind insights",
+  "tag": "Learner insights admin"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/learner-insights/courses/{course}/learners",
   "summary": "Learners who are struggling or at risk, with the reasons (individual data)",

@@ -10,10 +10,12 @@ use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Exceptions\BuilderException;
 use Ulams\CourseBuilder\Jobs\RunJob;
+use Ulams\CourseBuilder\Models\Fragment;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Services\VersionService;
+use Ulams\LivingCourse\Analysis\Evidence;
 use Ulams\LivingCourse\Diff\ImpactAnalyzer;
 use Ulams\LivingCourse\Events\ProposalApplied;
 use Ulams\LivingCourse\Exceptions\ProposalException;
@@ -125,10 +127,14 @@ final class ApplyService
         $userId = (int) $run->user_id;
         $current = $preview['current'];
         $doc = $preview['document'];
-        $to = Revision::query()->findOrFail($proposal->to_revision_id);
-        $from = Revision::query()->findOrFail($proposal->from_revision_id);
+        $insights = $proposal->isInsights();
+        // an improvement from learner insights has no source revision: it reads the live fragments and promotes nothing (ADR 0181)
+        $to = $insights ? null : Revision::query()->findOrFail($proposal->to_revision_id);
+        $from = $insights ? null : Revision::query()->findOrFail($proposal->from_revision_id);
 
-        $known = array_fill_keys(RevisionFragment::query()->whereIn('revision_id', Revision::query()->where('source_id', $proposal->source_id)->select('id'))->distinct()->pluck('fragment_id')->all(), true);
+        $known = $insights
+            ? array_fill_keys(Fragment::query()->whereIn('source_id', $session->sources()->select('id'))->pluck('id')->all(), true)
+            : array_fill_keys(RevisionFragment::query()->whereIn('revision_id', Revision::query()->where('source_id', $proposal->source_id)->select('id'))->distinct()->pluck('fragment_id')->all(), true);
         $errors = array_values(array_filter(Checks::blueprint($doc, $known), fn ($e) => !str_starts_with($e, 'warning: ')));
         if ($errors !== []) {
             throw new BuilderException('The updated course would not pass its checks: ' . implode('; ', array_slice($errors, 0, 3)), 422);
@@ -138,16 +144,22 @@ final class ApplyService
         $applied = $items->where('status', 'accepted')->whereIn('kind', ['update', 'remove', 'citation_remap', 'new_lesson']);
         $callIds = array_values(array_unique(array_merge(...$applied->map(fn ($i) => (array) $i->ai_call_ids)->all() ?: [[]])));
 
-        DB::transaction(function () use ($proposal, $session, $current, $doc, $to, $from, $author, $userId, $callIds, $items, $applied, $run) {
-            $reason = sprintf('Source update r%d → r%d: %d change%s', $from->number, $to->number, $applied->count(), $applied->count() === 1 ? '' : 's');
-            $version = $this->versions->create($session, $doc, 'update', 'ai', Version::APPROVED, $current, $reason, null, $callIds, $userId, [$proposal->source_id => $to->id]);
+        DB::transaction(function () use ($proposal, $session, $current, $doc, $to, $from, $author, $userId, $callIds, $items, $applied, $run, $insights) {
+            $reason = $insights
+                ? 'Improvement from learner insights: ' . mb_substr((string) ($proposal->counts['targetLabel'] ?? $applied->first()?->label ?? 'course element'), 0, 160)
+                : sprintf('Source update r%d → r%d: %d change%s', $from->number, $to->number, $applied->count(), $applied->count() === 1 ? '' : 's');
+            $version = $this->versions->create($session, $doc, 'update', 'ai', Version::APPROVED, $current, $reason, null, $callIds, $userId, $insights ? $current->source_revisions : [$proposal->source_id => $to->id]);
             $this->versions->setCurrent($session, $version);
-            // the new text becomes the live fragments first: lesson sources and labels are rendered from them
-            $this->revisions->promote($to->refresh(), $userId);
+            if (!$insights) {
+                // the new text becomes the live fragments first: lesson sources and labels are rendered from them
+                $this->revisions->promote($to->refresh(), $userId);
+            }
             $courseId = $this->applier->apply($session, $version, $author, (bool) ($run->input['overwrite'] ?? false), $proposal->id);
             $session->forceFill(['course_id' => $courseId, 'applied_version_id' => $version->id])->save();
             $this->staleness->set($session, $applied->pluck('element_id')->all(), 'in_sync');
-            $this->staleness->settleOpen($session, 'dismissed');
+            if (!$insights) {
+                $this->staleness->settleOpen($session, 'dismissed');
+            }
             $counts = (array) $proposal->counts;
             $counts['applied'] = $applied->count();
             $counts['rejected'] = $items->where('status', 'rejected')->count();
@@ -155,9 +167,10 @@ final class ApplyService
             $proposal->forceFill(['status' => 'applied', 'result_version_id' => $version->id, 'applied_at' => now(), 'counts' => $counts, 'error' => null])->save();
             $this->audit->record('proposal.applied', [
                 'session_id' => $session->id, 'subject_type' => 'proposal', 'subject_id' => $proposal->id, 'source_id' => $proposal->source_id,
-                'revision_id' => $to->id, 'origin_ref' => $to->origin_ref, 'actor_id' => $userId, 'version_from' => $current->number, 'version_to' => $version->number,
+                'revision_id' => $to?->id, 'origin_ref' => $to?->origin_ref, 'actor_id' => $userId, 'version_from' => $current->number, 'version_to' => $version->number,
                 'ai_call_ids' => $callIds,
-                'data' => ['number' => $proposal->number, 'from' => $from->number, 'to' => $to->number, 'applied' => $counts['applied'], 'rejected' => $counts['rejected'], 'undecided' => $counts['undecided'],
+                'data' => ($insights ? ['kind' => $proposal->kind, 'evidence' => Evidence::summary((array) $proposal->evidence)] : ['from' => $from->number, 'to' => $to->number])
+                    + ['number' => $proposal->number, 'applied' => $counts['applied'], 'rejected' => $counts['rejected'], 'undecided' => $counts['undecided'],
                     'items' => $applied->map(fn ($i) => ['element' => $i->element_id, 'kind' => $i->kind, 'class' => $i->change_class, 'before' => Blueprint::fingerprint($i->before), 'after' => $i->after !== null ? Blueprint::fingerprint($i->after) : null])->values()->all()],
             ]);
             $this->events->text($session, $run, 'The update is applied to the course. Learners keep their progress; see the notices for what they will be told.');
@@ -174,10 +187,13 @@ final class ApplyService
     public function build(Proposal $proposal, array $doc, iterable $accepted): array
     {
         $remap = [];
-        foreach (FragmentChange::query()->where('to_revision_id', $proposal->to_revision_id)->where('kind', 'moved')->get() as $c) {
-            $remap[$c->old_fragment_id] = $c->new_fragment_id;
+        $removedFragments = [];
+        if (!$proposal->isInsights()) {
+            foreach (FragmentChange::query()->where('to_revision_id', $proposal->to_revision_id)->where('kind', 'moved')->get() as $c) {
+                $remap[$c->old_fragment_id] = $c->new_fragment_id;
+            }
+            $removedFragments = FragmentChange::query()->where('to_revision_id', $proposal->to_revision_id)->where('kind', 'removed')->pluck('old_fragment_id')->all();
         }
-        $removedFragments = FragmentChange::query()->where('to_revision_id', $proposal->to_revision_id)->where('kind', 'removed')->pluck('old_fragment_id')->all();
         $removals = [];
         $lessons = [];
         foreach ($accepted as $item) {
@@ -203,7 +219,7 @@ final class ApplyService
             $doc = ProposalService::remapCitations($doc, $remap);
         }
         $doc = $this->dropRemovedCitations($doc, $removedFragments);
-        $to = Revision::query()->find($proposal->to_revision_id);
+        $to = $proposal->to_revision_id !== null ? Revision::query()->find($proposal->to_revision_id) : null;
         foreach ($doc['sources'] ?? [] as $n => $source) {
             if (($source['id'] ?? null) === $proposal->source_id && $to !== null) {
                 $doc['sources'][$n]['fragmentCount'] = $to->fragment_count;

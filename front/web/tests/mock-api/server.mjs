@@ -288,6 +288,12 @@ const PDF = Buffer.from("%PDF-1.1\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2
  * The `polski` tenant has the module switched off.
  */
 const INSIGHTS_MIN = 10;
+// element keys of "Propose an improvement" (Course Builder element ids): the first succeeds, the others are refused
+const IMPROVE_QUESTION = "01arz3ndektsv4rrffq69g5fav";
+const IMPROVE_LIMIT = "01arz3ndektsv4rrffq69g5fa2";
+const IMPROVE_OFF = "01arz3ndektsv4rrffq69g5fa3";
+const IMPROVE_SESSION = `01s${"0".repeat(22)}1`;
+const IMPROVE_PROPOSAL = `01p${"0".repeat(22)}1`;
 const insightsTitles = { 1: "Coffee brewing basics", 2: "Cupping for beginners", 3: "Roasting 101", 4: "Espresso machines", 5: "Latte art", 6: "Barista secrets" };
 const insightsFails = new Map();
 const insightsSummary = (id, days) =>
@@ -317,6 +323,10 @@ const insightsElements = (id, days) => ({
           { elementKey: "topic:12", label: "3.1 Grinding for espresso", hidden: false, activeLearners: 18, struggleRate: 0.17, remediationRate: 0.06, recoveryRate: null, topReasons: [{ rule: "repetition", count: 3 }] },
           { elementKey: "topic:14", label: "4.2 Milk texture", hidden: false, activeLearners: 12, struggleRate: 0, remediationRate: 0, recoveryRate: null, topReasons: [] },
           { elementKey: "topic:15", label: "4.3 Pouring a rosetta", hidden: true, reason: "not_enough_learners" },
+          // Course Builder elements: "Propose an improvement" works for them (the last two end in a refusal, see improveRoutes)
+          { elementKey: IMPROVE_QUESTION, label: "2.1 Question 1: Which statement matches the source?", hidden: false, activeLearners: 42, struggleRate: 0.38, remediationRate: 0.2, recoveryRate: null, topReasons: [{ rule: "failed_attempts", count: 16 }], improvable: true },
+          { elementKey: IMPROVE_LIMIT, label: "2.2 Question 2: Why does grind size matter?", hidden: false, activeLearners: 24, struggleRate: 0.22, remediationRate: 0.1, recoveryRate: null, topReasons: [{ rule: "failed_attempts", count: 5 }], improvable: true },
+          { elementKey: IMPROVE_OFF, label: "2.4 Question 4: Which temperature?", hidden: false, activeLearners: 15, struggleRate: 0.2, remediationRate: 0, recoveryRate: null, topReasons: [], improvable: true },
         ],
 });
 const insightsLearners = [
@@ -350,6 +360,80 @@ const insightsRoutes = [
   ["GET", /^\/api\/admin\/learner-insights\/learners\/(\d+)\/courses\/(\d+)\/timeline$/, ({ match }) => (Number(match[2]) === 4 ? { __status: 403, message: "This action is unauthorized." } : insightsTimeline)],
 ];
 
+/**
+ * "Propose an improvement" (ADR 0181) and the review of the proposal it creates, per tenant: the estimate and the
+ * aggregated evidence first, then a proposal of kind `insights` (no source revision) that the studio review screen
+ * opens on the Course Builder session and the Living Course proposal routes below.
+ */
+const improveEvidence = { periodDays: 30, learners: 42, minGroupSize: 10, struggleRate: 0.38, remediationRate: 0.2, recoveryRate: null, helpfulShare: 0.75, topReasons: [{ rule: "failed_attempts", count: 16 }, { rule: "slow_element", count: 4 }], wrongOptions: [{ optionId: "opt-b", label: "Brew with boiling water.", share: 0.38 }, { optionId: "other", label: "", share: 0.12 }], tutorOutOfScope: 3 };
+const improveProposals = new Map();
+const improveItem = (status) => ({
+  id: `01i${"0".repeat(22)}1`, groupKey: "lesson:l1", elementId: IMPROVE_QUESTION, type: "question", label: "Lesson 2.1 › Q1", kind: "update", reason: "Adds what the source says right here, as many learners get stuck on this.", severity: "major",
+  before: { id: IMPROVE_QUESTION, type: "single", stem: "Which statement matches what the source says?", explanation: "Because.", options: [{ id: "opt-a", text: "Brewing coffee is extraction.", correct: true }, { id: "opt-b", text: "Brew with boiling water.", correct: false }] },
+  after: { id: IMPROVE_QUESTION, type: "single", stem: "Which statement matches what the source says about extraction?", explanation: "The source states: brewing coffee is extraction, hot water dissolving compounds from the ground coffee.", options: [{ id: "opt-a", text: "Brewing coffee is extraction.", correct: true }, { id: "opt-b", text: "Brew with boiling water.", correct: false }] },
+  changeClass: "minor", answerStatus: "unchanged", answerCheck: false, status, flags: {}, regenerations: 0, fragments: [{ fragmentId: "frg_aaaaaaaaaaa2", label: "§1.1 What extraction means" }], changeIds: [], decidedAt: null,
+});
+const improveDetail = (state) => {
+  const items = [improveItem(state.item)];
+  const decisions = {};
+  for (const i of items) decisions[i.status] = (decisions[i.status] ?? 0) + 1;
+  return {
+    id: IMPROVE_PROPOSAL, number: 3, sessionId: IMPROVE_SESSION, sourceId: null, kind: "insights", status: state.status, trigger: "insights",
+    counts: { items: 1, elements: 1, remaps: 0, uncovered: 0, major: 1, answerChecks: 0, groups: 1, targetElementId: IMPROVE_QUESTION, targetLabel: "Lesson 2.1 › Q1" }, evidence: improveEvidence,
+    fromRevision: null, toRevision: null, runId: null, baseVersionId: "v1", resultVersionId: state.status === "applied" ? "v2" : null, estimatedCostMicroUsd: 120000, costMicroUsd: 98000,
+    decisions, learnerNote: null, error: null, createdAt: isoDay(0), decidedAt: null, appliedAt: state.status === "applied" ? isoDay(0) : null,
+    learnerImpact: { learners: { topic_updated: 0, question_reattempt: 0, topic_retired: 0, course_extended: 0 }, note: "" }, steps: [],
+    groups: [{ key: "lesson:l1", label: "Lesson 2.1: What extraction means", items }], items,
+  };
+};
+const improveSummary = (state) => {
+  const { groups: _g, items: _i, steps: _s, learnerImpact: _l, ...rest } = improveDetail(state);
+  return rest;
+};
+const improveOf = (tenant) => improveProposals.get(tenant);
+const improveRoutes = [
+  ["POST", /^\/__mock\/improve\/reset$/, ({ tenant }) => (improveProposals.delete(tenant), { reset: true })],
+  ["POST", /^\/api\/admin\/learner-insights\/courses\/(\d+)\/elements\/([^/]+)\/improve$/, ({ match, body, tenant }) => {
+    const key = decodeURIComponent(match[2]);
+    if (key === IMPROVE_OFF) return { __status: 503, code: "ai_disabled", message: "AI is disabled on this installation." };
+    if (key === IMPROVE_LIMIT && body?.confirmEstimate) return { __status: 429, code: "daily_limit", message: "This course already has 3 improvement proposals from learner insights today." };
+    if (key !== IMPROVE_QUESTION && key !== IMPROVE_LIMIT) return { __status: 404, code: "not_builder_element", message: "This part of the course was not built with the Course Builder." };
+    const existing = improveOf(tenant);
+    if (existing && key === IMPROVE_QUESTION) return { state: "kept_existing", proposal: improveSummary(existing) };
+    if (!body?.confirmEstimate) return { state: "estimate", estimateMicroUsd: 120000, estimateUsd: 0.12, label: "Lesson 2.1 › Q1", elements: 1, evidence: improveEvidence };
+    const state = { status: "ready", item: "pending" };
+    improveProposals.set(tenant, state);
+    return { state: "started", runId: null, estimateMicroUsd: 120000, message: null, proposal: improveSummary(state) };
+  }],
+  ["GET", new RegExp(`^/api/admin/course-builder/sessions/${IMPROVE_SESSION}$`), () => ({
+    session: { id: IMPROVE_SESSION, title: "Coffee brewing basics", status: "applied", courseId: 1, currentVersionId: "v1", appliedVersionId: "v1" },
+    brief: null, briefRows: [], cost: { usedMicroUsd: 0, budgetMicroUsd: 5000000, inputTokens: 0, outputTokens: 0, cacheReadTokens: 0, cacheWriteTokens: 0, calls: 0 }, sources: [],
+    aiEnabled: true, profiles: { default: "default", light: "light" }, budgetReached: false, activeRunId: null, canUndo: false, canRedo: false, links: {},
+  })],
+  ["GET", new RegExp(`^/api/admin/living-course/sessions/${IMPROVE_SESSION}/proposals$`), ({ tenant }) => (improveOf(tenant) ? [improveSummary(improveOf(tenant))] : [])],
+  ["GET", new RegExp(`^/api/admin/living-course/sessions/${IMPROVE_SESSION}/sources$`), () => []],
+  ["GET", new RegExp(`^/api/admin/living-course/proposals/${IMPROVE_PROPOSAL}$`), ({ tenant }) => (improveOf(tenant) ? improveDetail(improveOf(tenant)) : { __status: 404, message: "Proposal not found." })],
+  ["POST", new RegExp(`^/api/admin/living-course/proposals/${IMPROVE_PROPOSAL}/items/[0-9a-z]{26}/(accept|reject|reset)$`), ({ tenant, match }) => {
+    const state = improveOf(tenant);
+    if (!state) return { __status: 404, message: "Proposal not found." };
+    state.item = { accept: "accepted", reject: "rejected", reset: "pending" }[match[1]];
+    return { item: improveItem(state.item), proposal: improveSummary(state) };
+  }],
+  ["POST", new RegExp(`^/api/admin/living-course/proposals/${IMPROVE_PROPOSAL}/apply$`), ({ tenant }) => {
+    const state = improveOf(tenant);
+    if (!state) return { __status: 404, message: "Proposal not found." };
+    state.status = "applied";
+    return { runId: "run1", proposal: improveSummary(state) };
+  }],
+  ["POST", new RegExp(`^/api/admin/living-course/proposals/${IMPROVE_PROPOSAL}/reject$`), ({ tenant }) => {
+    const state = improveOf(tenant);
+    if (!state) return { __status: 404, message: "Proposal not found." };
+    state.status = "rejected";
+    state.item = "rejected";
+    return improveSummary(state);
+  }],
+];
+
 // Code exercises (ADR 0170): launches, and the attempts the lesson page reports, kept per tenant and topic
 const codeAttempts = new Map();
 const attemptsOf = (tenant, topic) => codeAttempts.get(`${tenant}:${topic}`) ?? [];
@@ -358,6 +442,7 @@ const RUNNER_URL = `http://127.0.0.1:${process.env.MOCK_API_PORT ?? 4390}/runtim
 
 const routes = [
   ...insightsRoutes,
+  ...improveRoutes,
   ["POST", /^\/api\/code-exercises\/launches\/(\d+)$/, ({ tenant, match }) => {
     const topic = CODE_TOPICS.get(Number(match[1]));
     return topic ? launchOf(topic, RUNNER_URL, attemptsOf(tenant, topic.id)) : { __status: 404, message: "Not a code exercise" };
@@ -666,7 +751,7 @@ function respond(req, res, path, route, rawBody) {
   const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body, query: new URL(req.url ?? "/", "http://mock").searchParams, status: (code) => (res.statusCode = code) });
   if (data && typeof data === "object" && "__status" in data) {
     res.statusCode = data.__status;
-    res.end(JSON.stringify({ success: false, message: data.message }));
+    res.end(JSON.stringify({ success: false, message: data.message, ...(data.code ? { code: data.code } : {}) }));
     return;
   }
   res.end(JSON.stringify({ success: true, data, meta: { current_page: 1, last_page: 1, per_page: 24, total: 1 } }));

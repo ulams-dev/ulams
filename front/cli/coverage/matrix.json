@@ -1,5 +1,5 @@
 {
- "summary": "606/689 covered, 83 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "606/690 covered, 84 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1096,6 +1096,12 @@
   {
    "key": "GET /api/admin/learner-insights/courses/{course}/elements",
    "summary": "The sections that confuse people: per element struggle rate, remediation and recovery, with the top reasons",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/admin/learner-insights/courses/{course}/elements/{elementKey}/improve",
+   "summary": "Propose an improvement for an element learners struggle with: the estimate and the aggregated evidence first, then (confirmEstimate) a Living Course proposal of kind insights",
    "command": "",
    "status": "excluded: not-for-cli"
   },

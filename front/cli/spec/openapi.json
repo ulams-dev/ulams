@@ -15714,7 +15714,7 @@
         }
        }
       },
-      "description": "Elements; those with fewer active learners than the minimum group are returned as `hidden`"
+      "description": "Elements; those with fewer active learners than the minimum group are returned as `hidden`; `improvable` says whether a proposal can be made for the element"
      },
      "403": {
       "description": "Needs learner_insights_view or authorship of the course"
@@ -15729,6 +15729,99 @@
      }
     ],
     "summary": "The sections that confuse people: per element struggle rate, remediation and recovery, with the top reasons",
+    "tags": [
+     "Learner insights admin"
+    ]
+   }
+  },
+  "/api/admin/learner-insights/courses/{course}/elements/{elementKey}/improve": {
+   "post": {
+    "operationId": "admin.learner-insights.courses.by-course.elements.by-element-key.improve.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "description": "The element key of the insights table (a Course Builder element id)",
+      "in": "path",
+      "name": "elementKey",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "confirmEstimate": {
+          "type": "boolean"
+         },
+         "period": {
+          "default": 30,
+          "enum": [
+           7,
+           30,
+           90
+          ],
+          "type": "integer"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiJson"
+        }
+       }
+      },
+      "description": "Without confirmEstimate: `estimateUsd` and the `evidence` that would be sent (aggregates only); or the open proposal of the element (`kept_existing`)"
+     },
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiJson"
+        }
+       }
+      },
+      "description": "The proposal was created and its analysis started; review it as a Living Course proposal"
+     },
+     "403": {
+      "description": "Needs authorship of the course or learner_insights_view, and authorship of its builder session or living_course_review"
+     },
+     "404": {
+      "description": "Unknown course, or the element was not built with the Course Builder"
+     },
+     "422": {
+      "description": "Group below the minimum size, nothing to cite, element not improvable, or the budget blocks the analysis"
+     },
+     "429": {
+      "description": "The daily limit of improvement proposals of the course is reached"
+     },
+     "503": {
+      "description": "AI is disabled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Propose an improvement for an element learners struggle with: the estimate and the aggregated evidence first, then (confirmEstimate) a Living Course proposal of kind insights",
     "tags": [
      "Learner insights admin"
     ]

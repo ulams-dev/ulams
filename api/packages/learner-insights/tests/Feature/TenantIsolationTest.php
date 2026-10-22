@@ -53,6 +53,7 @@ class TenantIsolationTest extends TestCase
             ['GET', 'api/admin/learner-insights/courses/{course}/summary', [], true, 200],
             ['GET', 'api/admin/learner-insights/courses/{course}/elements', [], true, 200],
             ['GET', 'api/admin/learner-insights/courses/{course}/learners', [], true, 200],
+            ['POST', 'api/admin/learner-insights/courses/{course}/elements/{elementKey}/improve', [], true, 404],
             ['GET', 'api/admin/learner-insights/learners/{user}/courses/{course}/timeline', [], true, 200],
             ['POST', 'api/admin/learner-insights/backfill', [], true, 202],
         ];
@@ -72,7 +73,7 @@ class TenantIsolationTest extends TestCase
         [$course, $topic] = $this->courseWithTopic();
         $learner = $this->learner($course);
         $user = $asAdmin ? $this->admin() : $learner;
-        $uri = '/' . strtr($uri, ['{course}' => $course->getKey(), '{topic}' => $topic->getKey(), '{user}' => $learner->getKey(), '{assignment}' => self::ULID]);
+        $uri = '/' . strtr($uri, ['{course}' => $course->getKey(), '{topic}' => $topic->getKey(), '{user}' => $learner->getKey(), '{assignment}' => self::ULID, '{elementKey}' => self::ULID]);
         $body = json_decode(strtr(json_encode($body), ['"{topic}"' => (string) $topic->getKey()]), true);
 
         $tokenA = $user->createToken('test')->accessToken;

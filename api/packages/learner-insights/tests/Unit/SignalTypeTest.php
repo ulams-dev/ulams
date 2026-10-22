@@ -43,4 +43,15 @@ class SignalTypeTest extends TestCase
         $this->assertSame(['attempt_no' => 3, 'passed' => false, 'verified' => false], $clean);
         $this->assertContains('code', SignalType::SOURCES);
     }
+
+    public function testChosenOptionsAreAShortListOfContentIdsAndNothingElse(): void
+    {
+        $clean = SignalType::cleanData(SignalType::QUIZ_ANSWER, ['question_id' => 7, 'correct' => false, 'chosen' => ['01hzx0000000000000000000a1', 'b2', 'with space', str_repeat('x', 41), 7, ['nested']]]);
+        $this->assertSame(['question_id' => 7, 'correct' => false, 'chosen' => ['01hzx0000000000000000000a1', 'b2']], $clean);
+
+        $many = SignalType::cleanData(SignalType::QUIZ_ANSWER, ['chosen' => ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']]);
+        $this->assertCount(6, $many['chosen']);
+        $this->assertSame([], SignalType::cleanData(SignalType::QUIZ_ANSWER, ['chosen' => 'free text from a learner']), 'a string is not a list of ids');
+        $this->assertSame([], SignalType::cleanData(SignalType::TOPIC_OPENED, ['chosen' => ['a1']]), 'other signal types do not take it');
+    }
 }

@@ -23,12 +23,13 @@ A signal has a type, a time, a course element and at most a few numbers or yes/n
 
 ## What can reach an AI provider
 
-AI is used only for the extra help ("remediation") and, when the learner submits their own explanation, for feedback on it. Scoring, statuses and nudges use no AI.
+AI is used for the extra help ("remediation"), for feedback on a learner's own explanation when the learner submits one, and, when an author asks for it, to propose an improvement of a section from aggregated results. Scoring, statuses and nudges use no AI.
 
 | Task | Sent to the provider | Never sent |
 |---|---|---|
 | Extra help | The course element, the source passages it cites, the lesson objectives, a generic sentence that learners find the part hard | The learner's identity, e-mail, other courses, signals, history, scores |
 | Feedback on the learner's own explanation | The text the learner chose to submit, the source passages of the element | Identity, history. The text is not stored by ulams |
+| Improvement proposed to an author (task `insights_improve`) | The course element, the source passages it cites, the lesson objectives and aggregated numbers for a group of at least the minimum group size: rates, the most common rule names, the share of the group per wrong answer option | Any user id, name, e-mail, row or free text of a learner; groups below the minimum; the learner list |
 
 Every call is logged with the model, tokens and cost in `ai_calls`, without a user id. The provider and model are configured per installation and per tenant (`AI_DRIVER`, task profiles); no model name is hard-coded. Check your provider's commercial terms for the retention and training terms that apply to your account before you enable AI: ulams does not train models and sends no customer content anywhere else. A self-hosted model can be used through the same driver interface.
 

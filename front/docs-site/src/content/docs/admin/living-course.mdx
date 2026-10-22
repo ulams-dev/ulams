@@ -34,7 +34,8 @@ The requirements of the Course Builder apply: a configured `AI_DRIVER`, a queue 
 | `LIVING_COURSE_WEBHOOK_DEBOUNCE_SECONDS` | `600` | Pushes within this window collapse into one check. |
 | `LIVING_COURSE_AUTO_ANALYSE_USD` | `0.50` | Estimated cost below which analysis starts by itself; above it the author confirms. |
 | `LIVING_COURSE_PROPOSAL_COST_USD` | `2` | Hard cap of one update proposal. |
-| `LIVING_COURSE_SOURCE_MONTHLY_USD` | `10` | Hard cap per source and month. |
+| `LIVING_COURSE_SOURCE_MONTHLY_USD` | `10` | Hard cap per source and month. Improvements proposed from learner insights count against the course (its builder session) instead. |
+| `LIVING_COURSE_INSIGHTS_PROPOSALS_PER_DAY` | `3` | Improvement proposals from learner insights per course and day (the course author's "Propose an improvement" on the Insights page). |
 | `LIVING_COURSE_MAX_GROUPS` | `40` | Most analysis groups of one proposal. |
 | `LIVING_COURSE_MAX_FRAGMENTS` | `4000` | Most fragments per revision before a check fails with a readable message. |
 | `LIVING_COURSE_ALLOWED_HOSTS` | empty | Allow-list of hosts (comma separated) the connectors may reach. Empty means any public host; once set, only these. |
@@ -46,6 +47,7 @@ The requirements of the Course Builder apply: a configured `AI_DRIVER`, a queue 
 | `LIVING_COURSE_GIT_TIMEOUT` | `120` | Seconds one `git` command of the `git-cli` connector may run. |
 | `LIVING_COURSE_GIT_CLONE_MB` | `200` | A `git-cli` clone larger than this is stopped. |
 | `AI_TASK_UPDATE_PROFILE` | the default profile | Model profile of the analysis (`update` task); the model name lives in `config/ai.php`. |
+| `AI_TASK_INSIGHTS_IMPROVE_PROFILE` | the default profile | Model profile of improvements proposed from learner insights (`insights_improve` task). |
 | `AI_TASK_NEW_LESSON_PROFILE` | the default profile | Model profile of suggested lessons for new source sections (`new_lesson` task). |
 
 Not configurable by environment variable (set in `api/packages/living-course/config/living_course.php`): at most 48 checks per connection and day, 5 update proposals per source and day, 3 regenerations per item, 3000 output tokens per analysis group, 3 failed checks before a connection shows **Error**, and a weekly digest of learner notices.

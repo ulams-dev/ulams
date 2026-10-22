@@ -34,6 +34,7 @@ final class ProposalService
         private readonly LlmClient $llm,
         private readonly AnalysisService $analysis,
         private readonly Notifier $notifier,
+        private readonly InsightsProposalService $insights,
     ) {
     }
 
@@ -97,6 +98,18 @@ final class ProposalService
         $this->notifier->proposalReady($proposal);
 
         return ['proposal' => $proposal, 'state' => 'created'];
+    }
+
+    /**
+     * The entry point for improvement proposals from learner insights (ADR 0181): a proposal of kind `insights`
+     * for one element, from aggregated evidence only. See `InsightsProposalService`.
+     *
+     * @param array<string,mixed> $evidence
+     * @return array{proposal:Proposal,state:string} state: created | kept_existing
+     */
+    public function createFromInsights(Session $session, string $elementId, array $evidence, int $userId): array
+    {
+        return $this->insights->create($session, $elementId, $evidence, $userId);
     }
 
     /** A card in the session thread: the source changed, here is what is affected. */

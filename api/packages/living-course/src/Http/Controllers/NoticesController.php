@@ -75,7 +75,7 @@ class NoticesController extends Controller
         }
         $after = (int) config('living_course.learner_notice_after_days', 3);
         $pending = ElementStatus::query()->where('session_id', $session->id)->whereIn('status', ['pending', 'source_removed'])->where('since', '<=', now()->subDays($after))->get();
-        $proposal = Proposal::query()->where('session_id', $session->id)->whereIn('status', Proposal::OPEN)->latest('created_at')->first();
+        $proposal = Proposal::query()->where('session_id', $session->id)->where('kind', Proposal::KIND_SOURCE)->whereIn('status', Proposal::OPEN)->latest('created_at')->first();
         if ($pending->isEmpty() || $proposal === null) {
             return self::ok(['topics' => []]);
         }

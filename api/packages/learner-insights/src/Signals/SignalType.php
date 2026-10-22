@@ -43,7 +43,7 @@ final class SignalType
         self::TOPIC_COMPLETED => [],
         self::QUIZ_ATTEMPT_STARTED => ['attempt_no'],
         self::QUIZ_ATTEMPT_FINISHED => ['attempt_no', 'passed'],
-        self::QUIZ_ANSWER => ['question_id', 'correct'],
+        self::QUIZ_ANSWER => ['question_id', 'correct', 'chosen'],
         self::SCORM_STATUS => ['lesson_status', 'completion_status'],
         self::XAPI_RESULT => ['verb', 'success', 'completion'],
         self::H5P_RESULT => ['verb'],
@@ -75,7 +75,7 @@ final class SignalType
      * Keeps only the whitelisted keys with scalar values (strings cut to 80 characters); null when
      * the result would still exceed the size cap.
      *
-     * @return array<string,scalar|null>
+     * @return array<string,scalar|string[]|null>
      */
     public static function cleanData(string $type, array $data): array
     {
@@ -85,6 +85,14 @@ final class SignalType
                 continue;
             }
             $value = $data[$key];
+            if ($key === 'chosen') {
+                // option ids of the course content (ADR 0181): a short list of short ids, nothing else
+                $ids = is_array($value) ? array_values(array_filter($value, fn ($v) => is_string($v) && preg_match('/^[A-Za-z0-9_-]{1,40}$/', $v))) : [];
+                if ($ids !== []) {
+                    $clean[$key] = array_slice($ids, 0, 6);
+                }
+                continue;
+            }
             if (is_string($value)) {
                 $value = mb_substr($value, 0, 80);
             } elseif (!is_scalar($value) && $value !== null) {

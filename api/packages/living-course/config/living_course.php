@@ -47,6 +47,18 @@ return [
         'proposals_per_source_per_day' => 5,
         'regenerations_per_item' => 3,
         'output_tokens_per_group' => 3000,
+        // improvement proposals from learner insights (ADR 0181): per builder session (one course) and day
+        'insights_proposals_per_session_per_day' => (int) env('LIVING_COURSE_INSIGHTS_PROPOSALS_PER_DAY', 3),
+    ],
+
+    // Improvement proposals from learner insights (ADR 0181)
+    'insights' => [
+        // evidence from fewer learners is refused here as well, whatever the caller passes
+        'min_learners' => 10,
+        // text blocks of a lesson that one proposal may rewrite
+        'max_blocks_per_lesson' => 4,
+        // source passages sent with the element
+        'max_fragments' => 12,
     ],
 
     // Learner-facing behaviour (ADR 0033)

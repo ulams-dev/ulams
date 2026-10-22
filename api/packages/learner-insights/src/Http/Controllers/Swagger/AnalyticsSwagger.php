@@ -31,7 +31,7 @@ interface AnalyticsSwagger
      *   @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
      *   @OA\Parameter(name="period", in="query", required=false, @OA\Schema(type="integer", enum={7, 30, 90}, default=30)),
      *   @OA\Parameter(name="sort", in="query", required=false, @OA\Schema(type="string", enum={"struggle", "active", "recovery"})),
-     *   @OA\Response(response=200, description="Elements; those with fewer active learners than the minimum group are returned as `hidden`", @OA\JsonContent(ref="#/components/schemas/ApiJson")),
+     *   @OA\Response(response=200, description="Elements; those with fewer active learners than the minimum group are returned as `hidden`; `improvable` says whether a proposal can be made for the element", @OA\JsonContent(ref="#/components/schemas/ApiJson")),
      *   @OA\Response(response=403, description="Needs learner_insights_view or authorship of the course"),
      *   @OA\Response(response=404, description="Unknown course")
      * )

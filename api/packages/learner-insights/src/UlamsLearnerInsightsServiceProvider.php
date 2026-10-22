@@ -13,6 +13,7 @@ use Ulams\Ai\Prompts\PromptRegistry;
 use Ulams\Auth\Events\AccountDeleted;
 use Ulams\Auth\Events\Login;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
+use Ulams\LivingCourse\UlamsLivingCourseServiceProvider;
 use Ulams\Courses\Events\CourseFinished;
 use Ulams\Courses\Events\CourseStarted;
 use Ulams\Courses\Events\TopicFinished;
@@ -59,6 +60,8 @@ class UlamsLearnerInsightsServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/learner_insights.php', 'learner_insights');
         $this->app->register(UlamsCourseBuilderServiceProvider::class);
+        // "Propose an improvement" creates Living Course proposals (ADR 0181)
+        $this->app->register(UlamsLivingCourseServiceProvider::class);
         // AI tasks of this package (the profile of a task is never a model id, ADR 0013)
         $tasks = (array) config('ai.tasks', []);
         $tasks['remediation'] ??= ['profile' => env('AI_TASK_REMEDIATION_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 6000];
