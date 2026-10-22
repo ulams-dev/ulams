@@ -5,6 +5,7 @@ namespace Ulams\LearnerInsights\Console;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Ulams\LearnerInsights\Services\ChosenOptions;
 use Ulams\LearnerInsights\Services\SignalRecorder;
 use Ulams\LearnerInsights\Signals\SignalData;
 use Ulams\LearnerInsights\Signals\SignalType;
@@ -25,7 +26,7 @@ class BackfillCommand extends Command
 
     private int $seen = 0;
 
-    public function handle(SignalRecorder $recorder): int
+    public function handle(SignalRecorder $recorder, ChosenOptions $chosen): int
     {
         if (!config('learner_insights.enabled')) {
             $this->warn('Learner insights is disabled for this tenant (learner_insights.enabled); nothing is recorded.');
@@ -98,7 +99,7 @@ class BackfillCommand extends Command
             $morph = (new \Ulams\TopicTypeGift\Models\GiftQuiz())->getMorphClass();
             $topicOf = fn ($quizId) => DB::table('topics')->where('topicable_type', $morph)->where('topicable_id', $quizId)->value('id');
             $q = DB::table('topic_gift_quiz_attempts')->orderBy('id');
-            $q->chunkById($chunk, function ($rows) use ($emit, $topicOf, $course) {
+            $q->chunkById($chunk, function ($rows) use ($emit, $topicOf, $course, $chosen) {
                 foreach ($rows as $row) {
                     $topicId = $topicOf($row->topic_gift_quiz_id);
                     if ($course && (!$topicId || (int) DB::table('topics')->join('lessons', 'lessons.id', '=', 'topics.lesson_id')->where('topics.id', $topicId)->value('lessons.course_id') !== $course)) {
@@ -111,7 +112,7 @@ class BackfillCommand extends Command
                             continue;
                         }
                         $ratio = max(0.0, min(1.0, (float) $answer->score / $max));
-                        $emit(new SignalData((int) $row->user_id, SignalType::QUIZ_ANSWER, 'backfill', 'gift_answer:' . $answer->id, CarbonImmutable::parse($answer->updated_at ?? $answer->created_at), null, $topicId, (int) $answer->topic_gift_question_id, round($ratio, 4), ['question_id' => (int) $answer->topic_gift_question_id, 'correct' => $ratio >= 1.0]));
+                        $emit(new SignalData((int) $row->user_id, SignalType::QUIZ_ANSWER, 'backfill', 'gift_answer:' . $answer->id, CarbonImmutable::parse($answer->updated_at ?? $answer->created_at), null, $topicId, (int) $answer->topic_gift_question_id, round($ratio, 4), ['question_id' => (int) $answer->topic_gift_question_id, 'correct' => $ratio >= 1.0, 'chosen' => $chosen->forAnswer((int) $answer->topic_gift_question_id, (array) json_decode((string) $answer->answer, true))]));
                     }
                 }
             });
