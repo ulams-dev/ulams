@@ -566,7 +566,8 @@ jobs:
     timeout-minutes: 30
     permissions:
       contents: read
-      packages: read
+      # Pushing the signature and the attestation is a write to the package.
+      packages: write
       # Keyless signing: the job asks GitHub for an OIDC token, Sigstore turns it into a short-lived certificate.
       id-token: write
     strategy:
@@ -601,14 +602,32 @@ jobs:
           digest="$(docker buildx imagetools inspect "$IMAGE_PREFIX/${{ matrix.image }}:$tag" --format '{{ json .Manifest }}' | jq -r .digest)"
           echo "$IMAGE_PREFIX/${{ matrix.image }}:$tag is $digest"
           echo "ref=$IMAGE_PREFIX/${{ matrix.image }}@$digest" >> "$GITHUB_OUTPUT"
-      - name: Scan, sign and verify
+      - name: Scan
+        env:
+          REF: ${{ steps.ref.outputs.ref }}
+        run: sh .github/scripts/supply-chain.sh scan "$REF"
+      # Signing needs each package to grant this repository Write access (package settings > Manage Actions
+      # access) and the repository variable SIGN_IMAGES=true; until then the job scans and reports only.
+      - name: Signing is switched off
+        if: vars.SIGN_IMAGES != 'true'
+        run: |
+          {
+            echo "### Signing skipped for ${{ matrix.image }}"
+            echo
+            echo "Images are scanned but not signed. To enable signing: for each of the eight ghcr.io/ulams-dev packages open"
+            echo "Package settings > Manage Actions access, add ulams-dev/ulams with Write, then set the repository"
+            echo "variable SIGN_IMAGES to true (Settings > Secrets and variables > Actions > Variables)."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::notice::signing skipped: SIGN_IMAGES is not 'true' (see the job summary)"
+      - name: Sign and verify
+        if: vars.SIGN_IMAGES == 'true'
         env:
           REF: ${{ steps.ref.outputs.ref }}
         run: |
-          sh .github/scripts/supply-chain.sh scan "$REF"
           sh .github/scripts/supply-chain.sh sign "$REF"
           sh .github/scripts/supply-chain.sh verify "$REF"
       - name: SBOM attestation
+        if: vars.SIGN_IMAGES == 'true'
         continue-on-error: true
         env:
           REF: ${{ steps.ref.outputs.ref }}

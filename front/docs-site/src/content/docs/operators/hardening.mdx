@@ -38,6 +38,16 @@ Find the digest of a tag you pulled with
 covers every tag of that digest, and the index also lists the BuildKit SBOM and provenance
 attestations, so those are covered too.
 
+<Aside type="caution" title="Signing is switched off until the owner enables it">
+  The publish workflow signs only when the repository variable `SIGN_IMAGES` is `true`; until then it
+  scans and reports and the images are unsigned. To enable it: for each of the eight packages
+  (`php`, `api`, `h5p`, `pdf`, `admin`, `front`, `mjml`, `web`) open the package on
+  `github.com/orgs/ulams-dev/packages`, then Package settings > Manage Actions access > Add repository,
+  choose `ulams-dev/ulams` with the Write role; then set the repository variable `SIGN_IMAGES` to `true`
+  (Settings > Secrets and variables > Actions > Variables). The `Release assets` workflow skips signature
+  verification while the variable is not `true`.
+</Aside>
+
 A tag that does not verify, or an image from before signing was introduced, must not be treated as
 released. The `latest` image of each name is also checked every night and a failure shows up as a
 warning in the `Nightly security scan` run.
