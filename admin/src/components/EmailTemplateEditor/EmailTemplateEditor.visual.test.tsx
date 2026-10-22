@@ -97,7 +97,7 @@ const setup = (
   analysis: Analysis | Error,
   props: Partial<React.ComponentProps<typeof EmailTemplateEditor>> = {},
 ) => {
-  const analyse = jest.fn(async () => {
+  const analyse = jest.fn<(...args: any[]) => Promise<typeof analysis>>(async () => {
     if (analysis instanceof Error) throw analysis;
     return analysis;
   });

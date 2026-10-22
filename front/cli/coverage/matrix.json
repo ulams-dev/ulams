@@ -1,5 +1,5 @@
 {
- "summary": "619/708 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "620/709 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -731,6 +731,12 @@
    "key": "GET /api/admin/course-versions/courses/{course}/releases",
    "summary": "Releases of a course (what learners got), newest first, with a summary of what changed",
    "command": "course-versions.courses-releases",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-versions/courses/{course}/versions",
+   "summary": "All versions of a course's branch (proposals, rejected and undone ones too), newest first, with the session's variants",
+   "command": "course-versions.courses-versions",
    "status": "covered"
   },
   {

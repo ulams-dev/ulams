@@ -6,6 +6,7 @@ use Ulams\CourseBuilder\Http\Controllers\CourseAsCodeController;
 use Ulams\CourseBuilder\Http\Controllers\CourseBuilderController;
 use Ulams\CourseBuilder\Http\Controllers\EventStreamController;
 use Ulams\CourseBuilder\Http\Controllers\ReleaseController;
+use Ulams\CourseBuilder\Http\Controllers\VersionListController;
 use Ulams\CourseBuilder\Http\Middleware\EnsureAiEnabled;
 
 Route::group([
@@ -79,5 +80,6 @@ Route::group([
 ], function () {
     Route::get('courses/{course}/releases', [ReleaseController::class, 'index'])->whereNumber('course');
     Route::get('releases/{release}', [ReleaseController::class, 'show']);
+    Route::get('courses/{course}/versions', [VersionListController::class, 'index'])->whereNumber('course');
     Route::get('courses/{course}/compare', [CompareController::class, 'show'])->whereNumber('course');
 });

@@ -71,10 +71,10 @@ class AuthoringMetricsApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
-        'adminAuthoringMetricsCoursesIndex' => [
+        'adminAuthoringMetricsCoursesByIdGet' => [
             'application/json',
         ],
-        'adminAuthoringMetricsCoursesShow' => [
+        'adminAuthoringMetricsCoursesList' => [
             'application/json',
         ],
     ];
@@ -126,42 +126,38 @@ class AuthoringMetricsApi
     }
 
     /**
-     * Operation adminAuthoringMetricsCoursesIndex
+     * Operation adminAuthoringMetricsCoursesByIdGet
      *
-     * Authoring metric of courses
+     * Authoring metric of one course
      *
-     * @param  \DateTime $from Courses created on or after this date (YYYY-MM-DD) (optional)
-     * @param  \DateTime $to Courses created on or before this date (YYYY-MM-DD) (optional)
-     * @param  int[] $course_id Only these courses (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesIndex'] to see the possible values for this operation
+     * @param  int $course course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesByIdGet'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return \Ulams\Sdk\Model\ApiEnvelope
      */
-    public function adminAuthoringMetricsCoursesIndex($from = null, $to = null, $course_id = null, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesIndex'][0])
+    public function adminAuthoringMetricsCoursesByIdGet($course, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesByIdGet'][0])
     {
-        list($response) = $this->adminAuthoringMetricsCoursesIndexWithHttpInfo($from, $to, $course_id, $contentType);
+        list($response) = $this->adminAuthoringMetricsCoursesByIdGetWithHttpInfo($course, $contentType);
         return $response;
     }
 
     /**
-     * Operation adminAuthoringMetricsCoursesIndexWithHttpInfo
+     * Operation adminAuthoringMetricsCoursesByIdGetWithHttpInfo
      *
-     * Authoring metric of courses
+     * Authoring metric of one course
      *
-     * @param  \DateTime $from Courses created on or after this date (YYYY-MM-DD) (optional)
-     * @param  \DateTime $to Courses created on or before this date (YYYY-MM-DD) (optional)
-     * @param  int[] $course_id Only these courses (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesIndex'] to see the possible values for this operation
+     * @param  int $course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesByIdGet'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return array of \Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
      */
-    public function adminAuthoringMetricsCoursesIndexWithHttpInfo($from = null, $to = null, $course_id = null, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesIndex'][0])
+    public function adminAuthoringMetricsCoursesByIdGetWithHttpInfo($course, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesByIdGet'][0])
     {
-        $request = $this->adminAuthoringMetricsCoursesIndexRequest($from, $to, $course_id, $contentType);
+        $request = $this->adminAuthoringMetricsCoursesByIdGetRequest($course, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -273,21 +269,19 @@ class AuthoringMetricsApi
     }
 
     /**
-     * Operation adminAuthoringMetricsCoursesIndexAsync
+     * Operation adminAuthoringMetricsCoursesByIdGetAsync
      *
-     * Authoring metric of courses
+     * Authoring metric of one course
      *
-     * @param  \DateTime $from Courses created on or after this date (YYYY-MM-DD) (optional)
-     * @param  \DateTime $to Courses created on or before this date (YYYY-MM-DD) (optional)
-     * @param  int[] $course_id Only these courses (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesIndex'] to see the possible values for this operation
+     * @param  int $course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesByIdGet'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function adminAuthoringMetricsCoursesIndexAsync($from = null, $to = null, $course_id = null, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesIndex'][0])
+    public function adminAuthoringMetricsCoursesByIdGetAsync($course, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesByIdGet'][0])
     {
-        return $this->adminAuthoringMetricsCoursesIndexAsyncWithHttpInfo($from, $to, $course_id, $contentType)
+        return $this->adminAuthoringMetricsCoursesByIdGetAsyncWithHttpInfo($course, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -296,22 +290,20 @@ class AuthoringMetricsApi
     }
 
     /**
-     * Operation adminAuthoringMetricsCoursesIndexAsyncWithHttpInfo
+     * Operation adminAuthoringMetricsCoursesByIdGetAsyncWithHttpInfo
      *
-     * Authoring metric of courses
+     * Authoring metric of one course
      *
-     * @param  \DateTime $from Courses created on or after this date (YYYY-MM-DD) (optional)
-     * @param  \DateTime $to Courses created on or before this date (YYYY-MM-DD) (optional)
-     * @param  int[] $course_id Only these courses (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesIndex'] to see the possible values for this operation
+     * @param  int $course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesByIdGet'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function adminAuthoringMetricsCoursesIndexAsyncWithHttpInfo($from = null, $to = null, $course_id = null, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesIndex'][0])
+    public function adminAuthoringMetricsCoursesByIdGetAsyncWithHttpInfo($course, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesByIdGet'][0])
     {
         $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
-        $request = $this->adminAuthoringMetricsCoursesIndexRequest($from, $to, $course_id, $contentType);
+        $request = $this->adminAuthoringMetricsCoursesByIdGetRequest($course, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -350,59 +342,42 @@ class AuthoringMetricsApi
     }
 
     /**
-     * Create request for operation 'adminAuthoringMetricsCoursesIndex'
+     * Create request for operation 'adminAuthoringMetricsCoursesByIdGet'
      *
-     * @param  \DateTime $from Courses created on or after this date (YYYY-MM-DD) (optional)
-     * @param  \DateTime $to Courses created on or before this date (YYYY-MM-DD) (optional)
-     * @param  int[] $course_id Only these courses (optional)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesIndex'] to see the possible values for this operation
+     * @param  int $course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesByIdGet'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function adminAuthoringMetricsCoursesIndexRequest($from = null, $to = null, $course_id = null, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesIndex'][0])
+    public function adminAuthoringMetricsCoursesByIdGetRequest($course, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesByIdGet'][0])
     {
 
+        // verify the required parameter 'course' is set
+        if ($course === null || (is_array($course) && count($course) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $course when calling adminAuthoringMetricsCoursesByIdGet'
+            );
+        }
 
 
-
-
-        $resourcePath = '/api/admin/authoring-metrics/courses';
+        $resourcePath = '/api/admin/authoring-metrics/courses/{course}';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $from,
-            'from', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $to,
-            'to', // param base name
-            'string', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
-        // query params
-        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
-            $course_id,
-            'course_id[]', // param base name
-            'array', // openApiType
-            'form', // style
-            true, // explode
-            false // required
-        ) ?? []);
 
 
+        // path params
+        if ($course !== null) {
+            $resourcePath = str_replace(
+                '{' . 'course' . '}',
+                ObjectSerializer::toPathValue($course),
+                $resourcePath
+            );
+        }
 
 
         $headers = $this->headerSelector->selectHeaders(
@@ -463,38 +438,42 @@ class AuthoringMetricsApi
     }
 
     /**
-     * Operation adminAuthoringMetricsCoursesShow
+     * Operation adminAuthoringMetricsCoursesList
      *
-     * Authoring metric of one course
+     * Authoring metric of courses
      *
-     * @param  int $course course (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesShow'] to see the possible values for this operation
+     * @param  \DateTime $from Courses created on or after this date (YYYY-MM-DD) (optional)
+     * @param  \DateTime $to Courses created on or before this date (YYYY-MM-DD) (optional)
+     * @param  int[] $course_id Only these courses (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesList'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return \Ulams\Sdk\Model\ApiEnvelope
      */
-    public function adminAuthoringMetricsCoursesShow($course, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesShow'][0])
+    public function adminAuthoringMetricsCoursesList($from = null, $to = null, $course_id = null, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesList'][0])
     {
-        list($response) = $this->adminAuthoringMetricsCoursesShowWithHttpInfo($course, $contentType);
+        list($response) = $this->adminAuthoringMetricsCoursesListWithHttpInfo($from, $to, $course_id, $contentType);
         return $response;
     }
 
     /**
-     * Operation adminAuthoringMetricsCoursesShowWithHttpInfo
+     * Operation adminAuthoringMetricsCoursesListWithHttpInfo
      *
-     * Authoring metric of one course
+     * Authoring metric of courses
      *
-     * @param  int $course (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesShow'] to see the possible values for this operation
+     * @param  \DateTime $from Courses created on or after this date (YYYY-MM-DD) (optional)
+     * @param  \DateTime $to Courses created on or before this date (YYYY-MM-DD) (optional)
+     * @param  int[] $course_id Only these courses (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesList'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return array of \Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
      */
-    public function adminAuthoringMetricsCoursesShowWithHttpInfo($course, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesShow'][0])
+    public function adminAuthoringMetricsCoursesListWithHttpInfo($from = null, $to = null, $course_id = null, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesList'][0])
     {
-        $request = $this->adminAuthoringMetricsCoursesShowRequest($course, $contentType);
+        $request = $this->adminAuthoringMetricsCoursesListRequest($from, $to, $course_id, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -606,19 +585,21 @@ class AuthoringMetricsApi
     }
 
     /**
-     * Operation adminAuthoringMetricsCoursesShowAsync
+     * Operation adminAuthoringMetricsCoursesListAsync
      *
-     * Authoring metric of one course
+     * Authoring metric of courses
      *
-     * @param  int $course (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesShow'] to see the possible values for this operation
+     * @param  \DateTime $from Courses created on or after this date (YYYY-MM-DD) (optional)
+     * @param  \DateTime $to Courses created on or before this date (YYYY-MM-DD) (optional)
+     * @param  int[] $course_id Only these courses (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesList'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function adminAuthoringMetricsCoursesShowAsync($course, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesShow'][0])
+    public function adminAuthoringMetricsCoursesListAsync($from = null, $to = null, $course_id = null, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesList'][0])
     {
-        return $this->adminAuthoringMetricsCoursesShowAsyncWithHttpInfo($course, $contentType)
+        return $this->adminAuthoringMetricsCoursesListAsyncWithHttpInfo($from, $to, $course_id, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -627,20 +608,22 @@ class AuthoringMetricsApi
     }
 
     /**
-     * Operation adminAuthoringMetricsCoursesShowAsyncWithHttpInfo
+     * Operation adminAuthoringMetricsCoursesListAsyncWithHttpInfo
      *
-     * Authoring metric of one course
+     * Authoring metric of courses
      *
-     * @param  int $course (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesShow'] to see the possible values for this operation
+     * @param  \DateTime $from Courses created on or after this date (YYYY-MM-DD) (optional)
+     * @param  \DateTime $to Courses created on or before this date (YYYY-MM-DD) (optional)
+     * @param  int[] $course_id Only these courses (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesList'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function adminAuthoringMetricsCoursesShowAsyncWithHttpInfo($course, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesShow'][0])
+    public function adminAuthoringMetricsCoursesListAsyncWithHttpInfo($from = null, $to = null, $course_id = null, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesList'][0])
     {
         $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
-        $request = $this->adminAuthoringMetricsCoursesShowRequest($course, $contentType);
+        $request = $this->adminAuthoringMetricsCoursesListRequest($from, $to, $course_id, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -679,42 +662,59 @@ class AuthoringMetricsApi
     }
 
     /**
-     * Create request for operation 'adminAuthoringMetricsCoursesShow'
+     * Create request for operation 'adminAuthoringMetricsCoursesList'
      *
-     * @param  int $course (required)
-     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesShow'] to see the possible values for this operation
+     * @param  \DateTime $from Courses created on or after this date (YYYY-MM-DD) (optional)
+     * @param  \DateTime $to Courses created on or before this date (YYYY-MM-DD) (optional)
+     * @param  int[] $course_id Only these courses (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminAuthoringMetricsCoursesList'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function adminAuthoringMetricsCoursesShowRequest($course, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesShow'][0])
+    public function adminAuthoringMetricsCoursesListRequest($from = null, $to = null, $course_id = null, string $contentType = self::contentTypes['adminAuthoringMetricsCoursesList'][0])
     {
 
-        // verify the required parameter 'course' is set
-        if ($course === null || (is_array($course) && count($course) === 0)) {
-            throw new \InvalidArgumentException(
-                'Missing the required parameter $course when calling adminAuthoringMetricsCoursesShow'
-            );
-        }
 
 
-        $resourcePath = '/api/admin/authoring-metrics/courses/{course}';
+
+
+        $resourcePath = '/api/admin/authoring-metrics/courses';
         $formParams = [];
         $queryParams = [];
         $headerParams = [];
         $httpBody = '';
         $multipart = false;
 
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $from,
+            'from', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            false // required
+        ) ?? []);
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $to,
+            'to', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            false // required
+        ) ?? []);
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $course_id,
+            'course_id[]', // param base name
+            'array', // openApiType
+            'form', // style
+            true, // explode
+            false // required
+        ) ?? []);
 
 
-        // path params
-        if ($course !== null) {
-            $resourcePath = str_replace(
-                '{' . 'course' . '}',
-                ObjectSerializer::toPathValue($course),
-                $resourcePath
-            );
-        }
 
 
         $headers = $this->headerSelector->selectHeaders(

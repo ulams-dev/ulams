@@ -15,14 +15,14 @@ use Ulams\AuthoringMetrics\Services\CourseMetrics;
  * How long a course took to produce and what it cost, from recorded runs and calls (ADR 0194, plan
  * docs/plans/authoring-metric-and-report-builder.md). The figures are the tenant's own measurements.
  *
- * @OA\Get(path="/api/admin/authoring-metrics/courses", operationId="admin.authoringMetrics.courses.index", summary="Authoring metric of courses", tags={"Authoring metrics"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/authoring-metrics/courses", operationId="admin.authoring-metrics.courses.list", summary="Authoring metric of courses", tags={"Authoring metrics"}, security={{"passport": {}}},
  *     description="One snapshot per course built with the Course Builder: generation, AI edit, interview and model time in seconds, build and maintenance cost in micro USD, the number of model calls and failed calls, element counts and how many AI elements were accepted unchanged, revised on request or edited by an author. Author time is null until review time is recorded. Needs the permission authoring_metrics_read.",
  *     @OA\Parameter(name="from", in="query", description="Courses created on or after this date (YYYY-MM-DD)", @OA\Schema(type="string", format="date")),
  *     @OA\Parameter(name="to", in="query", description="Courses created on or before this date (YYYY-MM-DD)", @OA\Schema(type="string", format="date")),
  *     @OA\Parameter(name="course_id[]", in="query", description="Only these courses", @OA\Schema(type="array", @OA\Items(type="integer"))),
  *     @OA\Response(response=200, description="List of course snapshots", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"))
  *
- * @OA\Get(path="/api/admin/authoring-metrics/courses/{course}", operationId="admin.authoringMetrics.courses.show", summary="Authoring metric of one course", tags={"Authoring metrics"}, security={{"passport": {}}},
+ * @OA\Get(path="/api/admin/authoring-metrics/courses/{course}", operationId="admin.authoring-metrics.courses.by-id.get", summary="Authoring metric of one course", tags={"Authoring metrics"}, security={{"passport": {}}},
  *     description="The snapshot of one course with the time of every pipeline stage (outline, lessons, quizzes, apply and the rest, each marked exact, coarse or incomplete) and the split of its AI elements. Needs authoring_metrics_read, or being the author of the course's builder session. 404 when the course was not built with the Course Builder.",
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\Response(response=200, description="Snapshot, stages and elements", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=404, description="Not built with the Course Builder"))

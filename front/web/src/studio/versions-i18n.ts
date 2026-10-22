@@ -45,6 +45,37 @@ export interface VersionsStrings {
   pageStatus: string;
   announcePage: string;
   triggers: Record<string, string>;
+  movedElements: string;
+  openCompare: string;
+  selectHint: string;
+  colSelect: string;
+  colActions: string;
+  selectRelease: string;
+  selectVersion: string;
+  selectedStatus: string;
+  limitReached: string;
+  compareSelected: string;
+  clearSelection: string;
+  compareWithPrevious: string;
+  compareWithPreviousLabel: string;
+  firstReleaseAction: string;
+  showAll: string;
+  loadingAll: string;
+  errorAll: string;
+  allVersionsTitle: string;
+  allCaption: string;
+  allScrollLabel: string;
+  colVersionNo: string;
+  colKind: string;
+  colState: string;
+  colCreated: string;
+  colBranch: string;
+  colReleasedAs: string;
+  neverReleased: string;
+  releaseNumber: string;
+  baseCourse: string;
+  statuses: Record<string, string>;
+  kinds: Record<string, string>;
 }
 
 const en: VersionsStrings = {
@@ -94,6 +125,37 @@ const en: VersionsStrings = {
     restore: "Earlier version restored",
     rebase: "Variant rebased on the base course",
   },
+  movedElements: "Elements moved: {n}",
+  openCompare: "Open the compare screen",
+  selectHint: "Tick two releases or versions, then compare them.",
+  colSelect: "Compare",
+  colActions: "Compare with previous",
+  selectRelease: "Select release {n} to compare",
+  selectVersion: "Select version {n} to compare",
+  selectedStatus: "Selected for comparison: {n} of 2",
+  limitReached: "Two are selected. Clear one to choose another.",
+  compareSelected: "Compare the two selected",
+  clearSelection: "Clear the selection",
+  compareWithPrevious: "Compare with previous",
+  compareWithPreviousLabel: "Compare release {n} with the previous release",
+  firstReleaseAction: "First release",
+  showAll: "Show all versions, including proposals, rejected and replaced ones",
+  loadingAll: "Loading all versions…",
+  errorAll: "All versions could not be loaded.",
+  allVersionsTitle: "All versions, newest first",
+  allCaption: "All versions of this course, newest first",
+  allScrollLabel: "All versions (scrolls sideways on small screens)",
+  colVersionNo: "Version",
+  colKind: "Made by",
+  colState: "State",
+  colCreated: "Created",
+  colBranch: "Branch",
+  colReleasedAs: "Released as",
+  neverReleased: "Never released",
+  releaseNumber: "Release {n}",
+  baseCourse: "Base course",
+  statuses: { proposed: "Proposed, not applied", approved: "Approved", rejected: "Rejected", superseded: "Replaced by a newer version" },
+  kinds: { outline: "Generated outline", content: "Generated lessons", patch: "Element chat", author: "Author edit", restore: "Restored version", update: "Source update", import: "Course folder push" },
 };
 
 const pl: VersionsStrings = {
@@ -143,6 +205,37 @@ const pl: VersionsStrings = {
     restore: "Przywrócono wcześniejszą wersję",
     rebase: "Wariant przeniesiony na kurs bazowy",
   },
+  movedElements: "Przeniesione elementy: {n}",
+  openCompare: "Otwórz porównanie wersji",
+  selectHint: "Zaznacz dwa wydania lub dwie wersje, a potem je porównaj.",
+  colSelect: "Porównaj",
+  colActions: "Porównaj z poprzednim",
+  selectRelease: "Wybierz wydanie {n} do porównania",
+  selectVersion: "Wybierz wersję {n} do porównania",
+  selectedStatus: "Wybrane do porównania: {n} z 2",
+  limitReached: "Wybrano dwie pozycje. Odznacz jedną, aby wybrać inną.",
+  compareSelected: "Porównaj wybrane dwie",
+  clearSelection: "Wyczyść wybór",
+  compareWithPrevious: "Porównaj z poprzednim",
+  compareWithPreviousLabel: "Porównaj wydanie {n} z poprzednim wydaniem",
+  firstReleaseAction: "Pierwsze wydanie",
+  showAll: "Pokaż wszystkie wersje, także propozycje, odrzucone i zastąpione",
+  loadingAll: "Wczytuję wszystkie wersje…",
+  errorAll: "Nie udało się wczytać wszystkich wersji.",
+  allVersionsTitle: "Wszystkie wersje, od najnowszej",
+  allCaption: "Wszystkie wersje tego kursu, od najnowszej",
+  allScrollLabel: "Wszystkie wersje (przewijane w bok na małych ekranach)",
+  colVersionNo: "Wersja",
+  colKind: "Czym powstała",
+  colState: "Stan",
+  colCreated: "Utworzona",
+  colBranch: "Gałąź",
+  colReleasedAs: "Wydana jako",
+  neverReleased: "Bez wydania",
+  releaseNumber: "Wydanie {n}",
+  baseCourse: "Kurs bazowy",
+  statuses: { proposed: "Propozycja, niezastosowana", approved: "Zatwierdzona", rejected: "Odrzucona", superseded: "Zastąpiona nowszą wersją" },
+  kinds: { outline: "Wygenerowany plan", content: "Wygenerowane lekcje", patch: "Czat elementu", author: "Edycja autora", restore: "Przywrócona wersja", update: "Aktualizacja źródła", import: "Wysłano z folderu kursu" },
 };
 
 const zh: VersionsStrings = {
@@ -192,6 +285,37 @@ const zh: VersionsStrings = {
     restore: "恢复了早期版本",
     rebase: "变体已基于基础课程重新对齐",
   },
+  movedElements: "移动的元素：{n}",
+  openCompare: "打开对比页面",
+  selectHint: "勾选两个发布版本或版本，然后进行对比。",
+  colSelect: "对比",
+  colActions: "与上一个对比",
+  selectRelease: "选择发布版本 {n} 进行对比",
+  selectVersion: "选择版本 {n} 进行对比",
+  selectedStatus: "已选择对比：{n} / 2",
+  limitReached: "已选择两个。请取消一个再选择其他的。",
+  compareSelected: "对比所选的两个",
+  clearSelection: "清除选择",
+  compareWithPrevious: "与上一个对比",
+  compareWithPreviousLabel: "将发布版本 {n} 与上一个发布版本对比",
+  firstReleaseAction: "首个发布版本",
+  showAll: "显示所有版本，包括建议、已拒绝和已被取代的版本",
+  loadingAll: "正在加载所有版本…",
+  errorAll: "无法加载所有版本。",
+  allVersionsTitle: "所有版本，最新的在前",
+  allCaption: "此课程的所有版本，最新的在前",
+  allScrollLabel: "所有版本（小屏幕上可横向滚动）",
+  colVersionNo: "版本",
+  colKind: "产生方式",
+  colState: "状态",
+  colCreated: "创建时间",
+  colBranch: "分支",
+  colReleasedAs: "发布为",
+  neverReleased: "未发布",
+  releaseNumber: "发布版本 {n}",
+  baseCourse: "基础课程",
+  statuses: { proposed: "建议，尚未应用", approved: "已批准", rejected: "已拒绝", superseded: "已被较新版本取代" },
+  kinds: { outline: "生成的大纲", content: "生成的课时", patch: "元素对话", author: "作者编辑", restore: "恢复的版本", update: "资料更新", import: "课程文件夹推送" },
 };
 
 export const VERSIONS_STRINGS: Record<VersionsLocale, VersionsStrings> = { en, pl, zh };

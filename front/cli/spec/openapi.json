@@ -6746,7 +6746,7 @@
   "/api/admin/authoring-metrics/courses": {
    "get": {
     "description": "One snapshot per course built with the Course Builder: generation, AI edit, interview and model time in seconds, build and maintenance cost in micro USD, the number of model calls and failed calls, element counts and how many AI elements were accepted unchanged, revised on request or edited by an author. Author time is null until review time is recorded. Needs the permission authoring_metrics_read.",
-    "operationId": "admin.authoringMetrics.courses.index",
+    "operationId": "admin.authoring-metrics.courses.list",
     "parameters": [
      {
       "description": "Courses created on or after this date (YYYY-MM-DD)",
@@ -6807,7 +6807,7 @@
   "/api/admin/authoring-metrics/courses/{course}": {
    "get": {
     "description": "The snapshot of one course with the time of every pipeline stage (outline, lessons, quizzes, apply and the rest, each marked exact, coarse or incomplete) and the split of its AI elements. Needs authoring_metrics_read, or being the author of the course's builder session. 404 when the course was not built with the Course Builder.",
-    "operationId": "admin.authoringMetrics.courses.show",
+    "operationId": "admin.authoring-metrics.courses.by-id.get",
     "parameters": [
      {
       "in": "path",
@@ -12370,6 +12370,76 @@
      }
     ],
     "summary": "Releases of a course (what learners got), newest first, with a summary of what changed",
+    "tags": [
+     "Admin Course Versions"
+    ]
+   }
+  },
+  "/api/admin/course-versions/courses/{course}/versions": {
+   "get": {
+    "description": "Every version of a course's branch, not only the ones learners got (ADR 0192, CV-3): proposals, rejected and undone\nversions as well, newest first, for the \"show all versions\" toggle and the pickers of the compare screen. Keyed by the\nLMS course id like the release list. `branch=all` lists the versions of every branch of the session (the base and its\nvariants), so a variant can be picked against the base. The variants of the session come with it. No AI gate and no\nmodel call; read-only; visible to the session author and to tenant admins (the session policy). The documents are not\npart of the list: the compare endpoint reads them.",
+    "operationId": "admin.course-versions.courses.by-course.versions.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "description": "`all` lists the versions of every branch of the session",
+      "in": "query",
+      "name": "branch",
+      "schema": {
+       "enum": [
+        "own",
+        "all"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "page",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "perPage",
+      "schema": {
+       "maximum": 200,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "versions, variants, total, page, perPage, sessionId, variantId, courseId, baseCourseId"
+     },
+     "403": {
+      "description": "another author's course"
+     },
+     "404": {
+      "description": "the course was not made with the Course Builder"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "All versions of a course's branch (proposals, rejected and undone ones too), newest first, with the session's variants",
     "tags": [
      "Admin Course Versions"
     ]
