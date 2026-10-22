@@ -55,9 +55,10 @@ Every extension follows the project's non-negotiables (`CLAUDE.md`):
     installable without forking core (roadmap 7.4).
   </Card>
   <Card title="Complete OpenAPI and a PHP SDK">
-    <Badge text="Coming" variant="caution" /> Typed response schemas exist for the 60 operations the CLI uses; the rest of the
-    OpenAPI document and a PHP SDK after the TypeScript one are still to come (roadmap 7.3).
-    `@ulams/sdk` exists today in `front/sdk` as a fetch-only client.
+    <Badge text="Coming" variant="caution" /> Every operation has a readable operationId and a typed 2xx response,
+    and a generated PHP client lives in `sdk-php/` next to the TypeScript `@ulams/sdk` in `front/sdk`. Still to come
+    (roadmap 7.3): precise schemas for about 400 operations that return a generic envelope, a spec changelog and
+    publishing `ulams/sdk` on Packagist.
   </Card>
   <Card title="Webhooks admin screen">
     <Badge text="Coming" variant="caution" /> Webhook endpoints are managed through the API and CLI; a screen under **Settings** is

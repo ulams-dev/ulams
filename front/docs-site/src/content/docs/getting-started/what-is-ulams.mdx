@@ -57,8 +57,9 @@ has its API at `coffee.localhost`, its learner site at `coffee.app.localhost` an
 
 - Courses made of lessons and topics, with many topic types: rich text, video, audio, image, PDF,
   embeds, H5P, SCORM, cmi5, GIFT quizzes, projects, LiaScript and LTI external tools.
-- LTI 1.3 on both sides: ulams can launch external tools, and other LMSs can launch ulams courses
-  (round trips against real LMSs are still being verified).
+- LTI 1.3 on both sides: ulams can launch external tools (deep linking, grade services, member
+  lists), and other LMSs can launch ulams courses; round trips with Moodle 5.0 in both directions run in
+  the nightly conformance job ([LTI tools](/extending/lti-tools/)).
 - Certificates and PDF templates rendered by the pdfme-based `api/pdf` service.
 - Webinars, in-person events, consultations, payments, cart and vouchers inherited from Wellms.
 - Demo mode for throwaway tenants: password-less login and an hourly reset
@@ -74,27 +75,37 @@ has its API at `coffee.localhost`, its learner site at `coffee.app.localhost` an
   and enrolment rules, reports and audit export, a dashboard, scheduled reports and a competency
   framework with skill profiles. API only, no admin screen yet: [Compliance](/admin/compliance/).
 - **Learner Insights and the course tutor** (`learner-insights`, `tutor` packages): explainable
-  risk signals, nudges, personal remediations, author analytics and an adaptive interface
-  profile, and a tutor that answers only from the course. API only for now, plus the learner's
-  [personalisation and privacy page](/learners/personalisation/): [Learner Insights](/admin/learner-insights/),
-  [Course tutor](/admin/tutor/).
+  risk signals, nudges, personal remediations, a per-course analytics page in the studio and on the admin
+  course form, an adaptive interface profile, and a tutor panel in the lesson that answers only from the
+  course, with streamed answers (off by default per academy). See the learner's
+  [personalisation and privacy page](/learners/personalisation/), [Learner Insights](/admin/learner-insights/)
+  and [Course tutor](/admin/tutor/).
+- **Course versions and variants**: every applied change is a numbered version you can compare with any
+  other, and the Course Builder drafts variants of one course by level and role, each reviewed as a diff
+  against the base ([Course versions and variants](/creators/course-versions-and-variants/)).
+- **Identity**: OpenID Connect and SAML 2.0 sign-in per tenant ([single sign-on](/operators/single-sign-on/), [SAML 2.0](/operators/single-sign-on-saml/)).
+- **Course-as-code**: courses as Markdown and YAML folders, validated offline and synced with
+  `ulams course pull` and `push` with a three-way merge ([course folder format](/developers/course-folder-format/)).
 - **Developer surface**: the `ulams` CLI, the MCP server, scoped tokens with per-token rate
   limits and signed outgoing webhooks with retries and replay. See
   [What's new](/getting-started/whats-new/).
 
 ## What is planned <Badge text="Coming" variant="caution" />
 
-- **The interfaces for the modules above.** An admin screen for compliance, a studio Insights
-  page and author analytics dashboard, learner components for remediation and an adaptive
-  layout, and the tutor panel with streaming answers.
-- **Course versions and variants, the rest.** Numbered course versions you can compare side by side,
-  and learners choosing or being routed to a variant (variants themselves are drafted and reviewed in
-  the Course Builder today). See [Course versions and variants](/creators/course-versions-and-variants/).
+- **Admin screens for compliance and reporting**: the compliance dashboard, a report builder with
+  saved reports and a read-only OData feed for BI tools, and an authoring time and cost metric per course.
+- **Learner routing to a course variant**: learners choosing their level and role, a cited placement
+  check, assignment by an admin or a rule, with progress carried over
+  ([Course versions and variants](/creators/course-versions-and-variants/)).
+- **Policy lifecycle**: one policy turned into cited courses per department, an owner dashboard,
+  branded department and course entry points, and renewal when the policy changes.
 - **Commerce through Sylius** as a separate headless service, with the LMS keeping control of
-  who has access.
-- **Identity**: SAML 2.0 and OIDC per tenant, and SCIM provisioning.
-- **Course-as-code with Git sync, a PHP SDK, knowledge export for company RAG, a plugin
-  manifest and `create-ulams`.**
+  who has access (the LMS-side entitlements already exist).
+- **Identity**: group and role mapping from the identity provider, SCIM provisioning and HRIS import.
+- **Git-driven course updates**: a GitHub Action and the `ulams-cli` image, a preview academy per pull
+  request, and a merge that becomes a Living Course update proposal.
+- **A plugin manifest**, the npm release of the CLI, and the `simulation` component with
+  AI-composed learner layouts.
 - **Self-hosting variants**: a Helm chart and the remaining deployment options (Phase 8).
 
 <Aside type="note">

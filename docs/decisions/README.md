@@ -144,5 +144,8 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0192](0192-course-releases-and-variants-as-branches-of-one-builder-session.md) | Course releases are recorded applies, and course variants are branches of one builder session applied as separate LMS courses | Accepted |
 | [0193](0193-image-service-as-a-deployment-choice.md) | The image service is a deployment choice behind one URL builder; the hosted demos and the landing use Cloudflare Image Transformations, and the PHP images API stays as an optional legacy API | Accepted (2026-10-22, owner accepted the 12 recommended defaults) |
 | [0194](0194-authoring-metrics-and-report-builder-with-odata-feed.md) | Authoring metrics come from recorded runs and opt-in anonymous review minutes; reports are saved definitions over one dataset registry, exposed to BI tools as a read-only OData feed | Accepted (2026-10-22, owner accepted the plan's recommended defaults for Q1 to Q13) |
+| [0195](0195-academy-entry-points-as-front-hosts.md) | Academy entry points: branded front hosts that target a department, a course or a role inside one tenant | Proposed |
+| [0196](0196-style-profile-shapes-generated-course-design.md) | A cited, author-approved style profile shapes the theme and the generated course design | Proposed |
+| [0197](0197-scorm-playback-regression-harness.md) | SCORM playback is pinned by a browser regression harness with original fixture packages and golden runtime traces | Proposed |
 
 <!-- END GENERATED: adr-index -->
