@@ -25,7 +25,7 @@ env:
   # Grouped by package area and balanced on local run times (~100-130 s of tests per shard).
   PHPUNIT_SHARDS: |
     learning=courses,course-access,courses-import-export,scorm,cmi5,h5p,lrs,bookmarks_notes,video,uploads,lti,liascript,interactive,code-exercises,adapt,course-builder,course-variants
-    living=living-course,learner-insights,tutor,knowledge-export
+    living=living-course,authoring-metrics,learner-insights,tutor,knowledge-export
     tasks-topics=tasks,topic-types,topic-type-layout,topic-type-project,categories,tags,stationary-events
     gift-reports=topic-type-gift,reports,dictionaries
     commerce=cart,commerce,entitlements,vouchers,payments,invoices,consultations,consultation-access,webinar,youtube,jitsi,assign-without-account
@@ -138,7 +138,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: yarn
@@ -220,7 +220,7 @@ jobs:
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: yarn
@@ -234,7 +234,7 @@ jobs:
         run: corepack yarn workspace @ulams/web test:a11y
       - name: Playwright report
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: web-a11y-playwright
           path: front/web/test-results
@@ -257,7 +257,7 @@ jobs:
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: yarn
@@ -275,7 +275,7 @@ jobs:
         run: corepack yarn playwright:mock
       - name: Playwright report
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: admin-a11y-playwright
           path: admin/test-results
@@ -294,7 +294,7 @@ jobs:
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: yarn
@@ -306,7 +306,7 @@ jobs:
         run: corepack yarn workspace @ulams/demo-content test:e2e
       - name: Playwright report
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: demo-content-playwright
           path: demo-content/test-results
@@ -474,7 +474,7 @@ jobs:
 
       - name: Upload JUnit report
         if: failure()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: phpunit-${{ matrix.shard }}
           path: |

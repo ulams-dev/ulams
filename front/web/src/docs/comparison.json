@@ -415,7 +415,10 @@
                     "title": "Course versions with a visual diff",
                     "text": "Every author edit and every accepted source update becomes a numbered course version. Pick any two and compare them: lessons added, removed or moved, word-level text changes, citations that changed and quiz answers that now differ.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming"
+                    "status": "coming",
+                    "packages": [
+                      "authoring-metrics"
+                    ]
                   },
                   {
                     "title": "Course variants by level and role",

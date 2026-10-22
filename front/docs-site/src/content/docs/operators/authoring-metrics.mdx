@@ -1,0 +1,54 @@
+---
+title: Authoring metrics
+description: How the platform records the time every Course Builder stage takes, how long the figures are kept, and how to rebuild them for builds that ran before they were recorded.
+sidebar:
+  order: 42
+modules:
+  - authoring-metrics
+---
+
+Authoring cost is what a course really costs to produce. The Course Builder already records what the model
+cost; the **authoring metrics** module adds how long each stage of a build took, so a course can state its own
+time to produce. This page covers what is recorded today (stage times). Cost per course, counts of accepted and
+edited AI elements and review time follow in later releases (ADR 0194).
+
+## What is recorded
+
+For every Course Builder run, one row per pipeline stage in the tenant database table `authoring_stage_timings`:
+
+| Column | Meaning |
+|---|---|
+| `session_id`, `run_id`, `run_kind` | the build session and run (`outline`, `generate`, `apply`, `ingest`, `patch`, `sync`, …) |
+| `stage` | `lessons`, `grounding`, `interactions`, `quizzes`, `metadata`, `apply`, `ingest`, `variant:<key>`; the outline run has no steps and is one row named `outline` |
+| `started_at`, `finished_at`, `seconds` | wall time to the millisecond. Lessons are written in parallel, so a stage is the time the author waited, not the sum of model calls |
+| `quality` | `exact` (both ends recorded), `coarse` (whole run only, from the run row), `incomplete` (the run failed or was cancelled, or crashed mid-stage; the stage is closed at the end of the run) |
+
+A stage that is retried keeps one row per attempt. Nothing about the content, the source or the author is stored.
+
+## How long it is kept
+
+The AG-UI events the figures come from are deleted after 30 days (`course-builder:prune-events`,
+`COURSE_BUILDER_EVENTS_RETENTION_DAYS`). The timing rows are not: they stay as long as the build session.
+
+## Builds from before this release
+
+`php artisan authoring-metrics:backfill` fills in earlier runs of the current tenant:
+
+- runs whose events still exist (up to 30 days) are replayed and come out `exact`;
+- older runs keep only their own start and finish and become one `coarse` row for the whole run;
+- running or unfinished runs and runs without recorded times are skipped.
+
+```bash
+docker compose exec api php artisan authoring-metrics:backfill --dry-run --domain=academy.example.com
+docker compose exec api php artisan authoring-metrics:backfill --domain=academy.example.com
+```
+
+`--dry-run` does the work and rolls it back, so its counts are what a real run writes. `--session=<id>` limits it to
+one build. It is safe to run again: a stage already recorded is never written twice. `ulams:upgrade` runs it once for
+every tenant ([upgrades](/operators/upgrades/)), so after an upgrade you normally do nothing. Run it soon after the
+upgrade: every day later, one more day of events is lost to the 30-day pruning and falls back to `coarse`.
+
+## Failure behaviour
+
+Recording never stops a build. If the database write fails, a warning (`authoring-metrics: stage timing not
+recorded`) goes to the log and the build continues.

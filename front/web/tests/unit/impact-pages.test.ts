@@ -65,6 +65,19 @@ describe("content cost and reporting pages", () => {
     expect(new URL(CHAPMAN_SOURCE).hostname).toBe("elearningindustry.com");
   });
 
+  it("the cost page shows one labelled measured run with every figure and no ratio, in every language", () => {
+    for (const locale of LOCALES) {
+      const run = impactCopy("content-cost", locale).run!;
+      for (const figure of ["13", "6", "18", "35", "24", "57", "23", "27"]) expect(run).toContain(figure);
+      expect(run).toMatch(/7 (min|分) ?44/);
+      expect(run).not.toMatch(/7[.,]5/);
+      expect(run).toMatch(/0[.,]28/);
+      expect(run).not.toMatch(/\d\s*(x|×|times|razy)\b/i);
+      expect(JSON.stringify(render("content-cost", locale)!.doc)).toContain(run.split("\n")[0]!.slice(0, 12));
+      expect(impactCopy("reporting", locale).run).toBeUndefined();
+    }
+  });
+
   it("cites the LMS satisfaction research to Training Magazine and states no 9%", () => {
     for (const locale of LOCALES) {
       const copy = impactCopy("reporting", locale);
@@ -79,8 +92,9 @@ describe("content cost and reporting pages", () => {
 });
 
 describe("home call-to-action bands", () => {
+  const text = (b: { props?: Record<string, unknown> }) => JSON.stringify(b.props);
   for (const locale of LOCALES) {
-    it(`${locale}: two separate bands that link to the two pages`, () => {
+    it(`${locale}: two separate, high bands that link to the two pages`, () => {
       const doc = landingDocFor("platform", locale)!;
       const bands = ofType(doc, "CtaBand");
       const cost = bands.find((b) => b.props!.id === "cost-cta")!;
@@ -90,6 +104,32 @@ describe("home call-to-action bands", () => {
       const main = doc.children!.find((n) => n.component === "Main")!;
       const order = main.children!.map((n) => String(n.props?.id ?? n.component));
       expect(Math.abs(order.indexOf("cost-cta") - order.indexOf("reporting-cta"))).toBeGreaterThan(1);
+      expect(order.indexOf("cost-cta")).toBeLessThan(order.indexOf("agents"));
+      expect(order.indexOf("reporting-cta")).toBeLessThan(order.indexOf("agents"));
+    });
+
+    it(`${locale}: the speed block states one measured run and no speed-up ratio`, () => {
+      const cost = ofType(landingDocFor("platform", locale)!, "CtaBand").find((b) => b.props!.id === "cost-cta")!;
+      const json = text(cost);
+      for (const figure of ["13", "18", "35", "27", "24", "57", "23", "49", "716"]) expect(json).toContain(figure);
+      expect(json).toContain("7:44");
+      expect(json).toMatch(/7 (min|分) ?44/);
+      expect(json).toMatch(/0[.,]28/);
+      expect(json).toContain(CHAPMAN_SOURCE);
+      const stats = cost.props!.stats as Array<{ kind?: string }>;
+      expect(stats.filter((s) => s.kind === "benchmark")).toHaveLength(1);
+      expect(stats).toHaveLength(5);
+      expect(json).not.toMatch(/\d\s*(x|×|times|razy)\b/i);
+    });
+
+    it(`${locale}: the analytics block lists the six shipped features`, () => {
+      const reporting = ofType(landingDocFor("platform", locale)!, "CtaBand").find((b) => b.props!.id === "reporting-cta")!;
+      expect(reporting.props!.variant).toBe("feature");
+      expect((reporting.props!.chips as unknown[]).length).toBe(6);
+      expect((reporting.props!.bullets as unknown[]).length).toBe(4);
+      expect((reporting.props!.panel as { label: string }).label.length).toBeGreaterThan(0);
+      expect(text(reporting)).toMatch(/xAPI/);
+      expect(text(reporting)).toMatch(/JSON/);
     });
   }
 });

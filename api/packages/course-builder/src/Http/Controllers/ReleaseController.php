@@ -6,9 +6,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Ulams\CourseBuilder\Http\Controllers\Concerns\ResolvesCourseBranch;
 use Ulams\CourseBuilder\Http\Controllers\Concerns\ResolvesSessions;
 use Ulams\CourseBuilder\Models\Release;
-use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Ui\Surfaces;
 
@@ -26,6 +26,7 @@ use Ulams\CourseBuilder\Ui\Surfaces;
  */
 class ReleaseController extends Controller
 {
+    use ResolvesCourseBranch;
     use ResolvesSessions;
 
     private static function ok(mixed $data): JsonResponse
@@ -36,19 +37,17 @@ class ReleaseController extends Controller
     public function index(Request $request, string $course): JsonResponse
     {
         $this->assertCanUse($request);
-        $session = Session::query()->where('course_id', (int) $course)->orderByDesc('updated_at')->first();
-        if ($session === null) {
-            throw new NotFoundHttpException('This course was not made with the Course Builder, so it has no releases. Adopt the course to track its versions.');
-        }
+        [$session, $variant] = $this->branchOf((int) $course);
         $this->sessionFor($request, $session->id);
 
         $perPage = min(100, max(1, (int) $request->query('perPage', 25)));
-        $page = Release::query()->where('session_id', $session->id)->whereNull('variant_id')->orderByDesc('number')->paginate($perPage);
+        $page = Release::query()->where('session_id', $session->id)->when($variant === null, fn ($q) => $q->whereNull('variant_id'), fn ($q) => $q->where('variant_id', $variant->id))->orderByDesc('number')->paginate($perPage);
         $versions = Version::query()->whereIn('id', $page->getCollection()->pluck('version_id'))->get(['id', 'number', 'reason'])->keyBy('id');
         $names = $this->names($page->getCollection()->pluck('approved_by')->filter()->unique()->values()->all());
 
         return self::ok([
             'sessionId' => $session->id,
+            'variantId' => $variant?->id,
             'courseId' => (int) $course,
             'releases' => $page->getCollection()->map(fn (Release $r) => self::present($r, $versions[$r->version_id] ?? null, $names))->all(),
             'total' => $page->total(),
@@ -83,6 +82,7 @@ class ReleaseController extends Controller
             'versionId' => $r->version_id,
             'versionNumber' => $version?->number,
             'reason' => $version?->reason ? mb_substr($version->reason, 0, 1000) : null,
+            'variantId' => $r->variant_id,
             'previousReleaseId' => $r->previous_release_id,
             'courseId' => $r->course_id,
             'approvedBy' => $r->approved_by !== null ? ['id' => $r->approved_by, 'name' => $names[$r->approved_by] ?? '#' . $r->approved_by] : null,

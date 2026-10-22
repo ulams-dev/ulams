@@ -709,6 +709,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/course-versions/courses/{course}/compare",
+  "summary": "Semantic diff of two versions or releases of a course: moved elements, citations, quiz answer keys and a summary",
+  "tag": "Admin Course Versions"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/course-versions/courses/{course}/releases",
   "summary": "Releases of a course (what learners got), newest first, with a summary of what changed",
   "tag": "Admin Course Versions"

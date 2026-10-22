@@ -290,7 +290,8 @@ final class RunService
         $variant->forceFill(['current_version_id' => $version->id])->save();
         $first = $variant->course_id === null;
         $courseId = $this->applier->apply($session, $version, $author, (bool) ($run->input['overwrite'] ?? false), null, $variant);
-        $variant->forceFill(['course_id' => $courseId, 'applied_version_id' => $version->id, 'status' => Variant::APPROVED])->save();
+        // like the base: the release of the variant's own course is written in the transaction that sets its applied version
+        $this->releases->appliedVariant($variant, $version, $courseId, ['status' => Variant::APPROVED]);
         $this->applier->registerFamily($session, $variant, $author);
         $this->surfaces->variantReview($session, $run, $variant, $version, Version::query()->find($variant->based_on_version_id), 'approved');
         $this->events->stepFinished($run, 'apply');
