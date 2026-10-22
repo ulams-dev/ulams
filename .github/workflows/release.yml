@@ -80,7 +80,12 @@ jobs:
           restore-keys: trivy-db-
       - name: Collect the assets
         if: steps.tag.outputs.skip == 'false'
-        run: sh .github/scripts/release-assets.sh "${{ steps.tag.outputs.tag }}" release-assets
+        env:
+          # Unsigned images (SIGN_IMAGES not 'true') cannot be verified: collect the SBOMs anyway.
+          SKIP_VERIFY: ${{ vars.SIGN_IMAGES == 'true' && '0' || '1' }}
+        run: |
+          [ "$SKIP_VERIFY" = 1 ] && echo "::notice::signature verification skipped: SIGN_IMAGES is not 'true', the images of this release are not signed"
+          sh .github/scripts/release-assets.sh "${{ steps.tag.outputs.tag }}" release-assets
       - name: Sign the checksums
         if: steps.tag.outputs.skip == 'false'
         working-directory: release-assets
