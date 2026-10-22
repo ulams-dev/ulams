@@ -15,6 +15,7 @@ Route::group([
     Route::post('tenants', [PlatformTenantController::class, 'store']);
     Route::get('tenants/{slug}', [PlatformTenantController::class, 'show'])->where('slug', '[a-z0-9]{2,30}');
     Route::patch('tenants/{slug}/env', [PlatformTenantController::class, 'env'])->where('slug', '[a-z0-9]{2,30}');
+    Route::post('tenants/{slug}/token', [PlatformTenantController::class, 'token'])->where('slug', '[a-z0-9]{2,30}');
     Route::delete('tenants/{slug}', [PlatformTenantController::class, 'destroy'])->where('slug', '[a-z0-9]{2,30}');
     Route::get('operations', [PlatformOperationController::class, 'index']);
     Route::get('operations/{id}', [PlatformOperationController::class, 'show'])->where('id', '[0-9a-z]{26}');

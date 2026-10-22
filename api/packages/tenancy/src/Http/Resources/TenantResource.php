@@ -26,6 +26,8 @@ class TenantResource extends JsonResource
             'accent' => $t->accent,
             'demo' => (bool) $t->demo,
             'status' => $t->status,
+            'expires_at' => $t->expires_at?->toIso8601String(),
+            'preview_group' => $t->preview_group,
             'urls' => ['api' => $t->apiUrl(), 'front' => $t->frontUrl(), 'admin' => $t->adminUrl()],
             'steps' => (object) ($t->steps ?? []),
             'env_override_keys' => array_keys((array) ($t->env_overrides ?? [])),
