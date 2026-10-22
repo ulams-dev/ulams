@@ -18,11 +18,12 @@ class TrainingDueSoonVariables extends ComplianceVariables
                 'user_name' => self::VAR_USER_NAME,
                 'due_date' => self::VAR_DUE_DATE,
                 'days_left' => self::VAR_DAYS_LEFT,
+                'path_context' => self::VAR_PATH_CONTEXT,
         ];
 
         return [
             'title' => __('Training due soon: :course', $values),
-            'content' => self::wrapWithMjml(__('<h1>Hello :user_name!</h1><p>The course ":course" is due on :due_date, in :days_left days.</p>', $values)),
+            'content' => self::wrapWithMjml(__('<h1>Hello :user_name!</h1><p>The course ":course" is due on :due_date, in :days_left days. :path_context</p>', $values)),
         ];
     }
 }

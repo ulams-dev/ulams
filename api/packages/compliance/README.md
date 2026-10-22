@@ -20,7 +20,13 @@ and `templates-pdf` through their services and events and changes none of them.
   through `NotificationLog::once()` (`compliance_notification_log`, unique per kind, subject, offset and
   recipient), so reruns send nothing twice.
 - **Events** (templated through `templates-email`): `TrainingAssigned`, `TrainingDueSoon`, `TrainingOverdue`,
-  `TrainingEscalated` (recipient: the manager), `CertificateExpiringSoon`, `CertificateExpired`.
+  `TrainingEscalated` (recipient: the manager), `TrainingCompleted` (the learner) and `TrainingCompletedForManager`
+  (when the course is mandatory and a manager is linked; both fired by `CompletionService` through
+  `NotificationLog::once`), `CertificateExpiringSoon`, `CertificateExpired`. The step events carry the learning path
+  (`@VarPathTitle`, `@VarStepNumber`, `@VarStepCount`, `@VarNextStep`, `@VarPathContext`, built by `PathContext`).
+  Templates are chosen per language (course, tenant default, English); Polish texts live in `api/resources/lang/pl.json`.
+  Webhook events: `training.assigned`, `training.completed`, `training.overdue`, `path.completed`, `certificate.revoked`
+  (see the `webhooks` package).
 
 ## Learning paths and enrolment rules (Phase 6.2)
 
@@ -38,6 +44,8 @@ and `templates-pdf` through their services and events and changes none of them.
   it or was removed by hand. `POST /rules/{id}/evaluate` previews (default) or runs a rule now.
 - **Events** `PathEnrolled` and `PathCompleted` (e-mail templates registered); due, reminder and escalation
   notices come from the step assignments.
+  `tests/Feature/PathLifecycleNotificationTest.php` walks one learner through a three-step path with a frozen clock
+  and asserts every e-mail and in-app notice is sent exactly once, and nothing on a rerun.
 
 ## Report and audit export
 
