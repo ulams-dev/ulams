@@ -12,14 +12,16 @@ import {
   INSIGHTS_PERIODS,
   type CourseElements,
   type CourseInsightsFull,
+  type ImproveResult,
   type InsightsAnalyticsClient,
   type InsightsPeriod,
   type StrugglingLearner,
 } from "@ulams/sdk";
-import { dataTable, figureList, rateBar } from "@ulams/ui/builder/insights-view.ts";
+import { dataTable, evidenceCard, figureList, rateBar } from "@ulams/ui/builder/insights-view.ts";
 import { h, uid } from "@ulams/ui/builder/dom.ts";
 import { announce } from "./common.ts";
 import { fill, type InsightsLocale } from "./insights-i18n.ts";
+import { costText, evidenceCardOptions, improveErrorText, improveStrings, proposalStateText, reviewHref } from "./improve-model.ts";
 import {
   elementRows,
   formatterFor,
@@ -44,10 +46,12 @@ export function mountInsights(root: HTMLElement): void {
   const adminUrl = root.dataset.adminUrl ?? "";
   const f: Formatter = formatterFor(locale);
   const t = f.t;
+  const im = improveStrings(locale);
   const api: InsightsAnalyticsClient = insightsClient();
 
   let period: InsightsPeriod = 30;
   let requestId = 0;
+  let improveRequest = 0;
 
   const selectId = uid("ins-period");
   const select = h("select", { id: selectId, class: "cb-select", name: "period" },
@@ -95,6 +99,7 @@ export function mountInsights(root: HTMLElement): void {
   function elementsSection(data: CourseElements): HTMLElement {
     const rows = elementRows(f, data);
     if (rows.length === 0) return section(t.elementsTitle, note(t.elementsIntro), note(t.elementsEmpty));
+    const panel = h("div", { class: "st-improve", id: uid("ins-improve"), "data-improve": "" });
     const table = dataTable({
       caption: t.elementsCaption,
       scrollLabel: t.elementsScroll,
@@ -105,14 +110,103 @@ export function mountInsights(root: HTMLElement): void {
         { label: t.colHelped },
         { label: t.colRecovered },
         { label: t.colReasons },
+        { label: im.colAction },
       ],
-      rows: rows.map((r) =>
-        r.withheld
-          ? { id: r.key, withheld: true, cells: [r.label, h("span", {}, fill(t.withheldRow, { n: data.minGroupSize })), "", "", "", ""] }
-          : { id: r.key, cells: [r.label, r.active!, rateBar(r.struggle!.rate, r.struggle!.text), rateBar(r.helped!.rate, r.helped!.text), rateBar(r.recovered!.rate, r.recovered!.text), r.reasons!] }
-      ),
+      rows: rows.map((r) => {
+        if (r.withheld) return { id: r.key, withheld: true, cells: [r.label, h("span", {}, fill(t.withheldRow, { n: data.minGroupSize })), "", "", "", "", ""] };
+        let action: Node | string = "";
+        if (r.improvable) {
+          const button = h("button", { type: "button", class: "cb-btn cb-btn-small", "data-improve-button": "", "aria-controls": panel.id, "aria-expanded": "false" }, im.button, h("span", { class: "cb-sr" }, ` – ${r.label}`));
+          button.addEventListener("click", () => void openImprove(panel, r.key, r.label, data.minGroupSize, button));
+          action = button;
+        }
+        return { id: r.key, cells: [r.label, r.active!, rateBar(r.struggle!.rate, r.struggle!.text), rateBar(r.helped!.rate, r.helped!.text), rateBar(r.recovered!.rate, r.recovered!.text), r.reasons!, action] };
+      }),
     });
-    return section(t.elementsTitle, note(t.elementsIntro), table);
+    return section(t.elementsTitle, note(t.elementsIntro), table, panel);
+  }
+
+  /** "Propose an improvement": the estimate and the evidence first, the proposal only after a confirmation. */
+  async function openImprove(panel: HTMLElement, key: string, label: string, minGroup: number, trigger: HTMLElement): Promise<void> {
+    const mine = ++improveRequest;
+    const id = uid("ins-h");
+    const heading = h("h3", { id, class: "cb-h3", tabindex: "-1" }, fill(im.panelTitle, { label }));
+    const content = h("div", { class: "st-improve-body", lang: im.htmlLang !== t.htmlLang ? im.htmlLang : undefined }, status(im.checking));
+    document.querySelectorAll("[data-studio-insights] [data-improve-button]").forEach((b) => b.setAttribute("aria-expanded", "false"));
+    trigger.setAttribute("aria-expanded", "true");
+    panel.replaceChildren(heading, content);
+    panel.setAttribute("aria-busy", "true");
+    heading.focus();
+
+    const close = (): void => {
+      improveRequest++;
+      panel.replaceChildren();
+      trigger.setAttribute("aria-expanded", "false");
+      trigger.focus();
+    };
+    const closeButton = (text: string): HTMLElement => {
+      const button = h("button", { type: "button", class: "cb-btn cb-btn-small" }, text);
+      button.addEventListener("click", close);
+      return button;
+    };
+    const failure = (error: unknown): HTMLElement => {
+      const text = improveErrorText(im, error, minGroup);
+      announce(text);
+      return h("div", { class: "st-improve-result" }, status(text, "alert"), h("div", { class: "cb-actions" }, closeButton(im.close)));
+    };
+    const finished = (result: ImproveResult): HTMLElement => {
+      if (result.state === "estimate") throw new Error("unexpected estimate");
+      const existing = result.state === "kept_existing";
+      const proposal = result.proposal;
+      const text = existing ? fill(im.existing, { number: proposal.number }) : `${fill(im.created, { number: proposal.number, status: proposalStateText(im, proposal.status) })}`;
+      announce(text);
+      const message = h("p", { class: "cb-muted", role: "status", tabindex: "-1", "data-improve-result": "" }, text);
+      queueMicrotask(() => message.focus());
+      return h("div", { class: "st-improve-result" }, message,
+        h("div", { class: "cb-actions" }, h("a", { class: "cb-btn cb-btn-primary cb-btn-small", href: reviewHref(proposal.sessionId, proposal.id, locale) }, existing ? im.existingReview : im.createdReview), closeButton(im.close)));
+    };
+
+    try {
+      const first = await api.improve(courseId, key, { period });
+      if (mine !== improveRequest) return;
+      if (first.state !== "estimate") {
+        content.replaceChildren(finished(first));
+        return;
+      }
+      const confirm = h("button", { type: "button", class: "cb-btn cb-btn-primary cb-btn-small" }, im.confirm);
+      const cancel = closeButton(im.cancel);
+      const result = h("div", { "data-improve-result-slot": "" });
+      confirm.addEventListener("click", async () => {
+        confirm.setAttribute("disabled", "");
+        cancel.setAttribute("disabled", "");
+        panel.setAttribute("aria-busy", "true");
+        result.replaceChildren(status(im.creating));
+        try {
+          const done = await api.improve(courseId, key, { confirmEstimate: true, period });
+          if (mine !== improveRequest) return;
+          content.replaceChildren(finished(done));
+        } catch (error) {
+          if (mine !== improveRequest) return;
+          confirm.removeAttribute("disabled");
+          cancel.removeAttribute("disabled");
+          result.replaceChildren(status(improveErrorText(im, error, minGroup), "alert"));
+          announce(improveErrorText(im, error, minGroup));
+        } finally {
+          panel.setAttribute("aria-busy", "false");
+        }
+      });
+      content.replaceChildren(
+        evidenceCard(evidenceCardOptions(f, im, first.evidence, { sent: true, level: 4 })),
+        h("p", {}, fill(im.estimate, { cost: costText(first.estimateUsd) })),
+        h("div", { class: "cb-actions" }, confirm, cancel),
+        result
+      );
+    } catch (error) {
+      if (mine !== improveRequest) return;
+      content.replaceChildren(failure(error));
+    } finally {
+      panel.setAttribute("aria-busy", "false");
+    }
   }
 
   /** The list of learners and the activity panel; both are individual data. */

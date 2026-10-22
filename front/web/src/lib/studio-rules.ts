@@ -76,13 +76,15 @@ export function isLivingCourseCall(method: string, path: string): boolean {
  * /studio/api/learner-insights/…; the BFF forwards the part after the prefix. `GET /me` is the author's own
  * learner endpoint (/api/learner-insights/me): it only tells whether the module is on for the academy. The
  * API checks authorship and the permissions (individual data has its own); this list keeps the BFF from
- * being an open proxy. Everything here is read-only.
+ * being an open proxy. Everything is read-only except "Propose an improvement" (ADR 0181), which creates a proposal
+ * the author reviews; the element key is a Course Builder element id or an encoded `topic:`/`question:` key.
  */
 export const INSIGHTS_PREFIX = "/learner-insights";
 export const INSIGHTS_RULES: Array<{ method: string; pattern: RegExp }> = [
   { method: "GET", pattern: /^\/me$/ },
   { method: "GET", pattern: /^\/courses\/\d{1,10}\/(summary|elements|learners)$/ },
   { method: "GET", pattern: /^\/learners\/\d{1,10}\/courses\/\d{1,10}\/timeline$/ },
+  { method: "POST", pattern: /^\/courses\/\d{1,10}\/elements\/(?:[0-9A-Za-z]{26}|(?:topic|question)(?::|%3A)\d{1,10})\/improve$/ },
 ];
 
 /** `path` is relative to the BFF root, e.g. `/learner-insights/courses/3/summary`. */

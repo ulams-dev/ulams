@@ -2,7 +2,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import axe from "axe-core";
 import type { ProposalDetail, ProposalItem, ProposalSummary } from "@ulams/sdk";
-import { detail, item, question } from "./updates-fixtures.ts";
+import { detail, insightsDetail, item, question } from "./updates-fixtures.ts";
 
 const S = "01m4fj5zsgfxhzh3cantwevncw";
 const P = "01m4fj5zsgfxhzh3cantwevnaa";
@@ -121,8 +121,8 @@ function stub(initial: ProposalDetail, over: Partial<Server> = {}): Server {
   return server;
 }
 
-function mount(pollMs = 20): HTMLElement {
-  document.body.innerHTML = `<main><div data-studio-review data-session="${S}" data-proposal="${P}"></div></main><div data-announcer></div>`;
+function mount(pollMs = 20, locale = "en"): HTMLElement {
+  document.body.innerHTML = `<main><div data-studio-review data-session="${S}" data-proposal="${P}" data-locale="${locale}"></div></main><div data-announcer></div>`;
   const root = document.querySelector<HTMLElement>("[data-studio-review]")!;
   mountReview(root, { pollMs });
   return root;
@@ -562,5 +562,91 @@ describe("update review: learners", () => {
     await wait(() => expect(root.querySelector("[data-learner-switches]")).not.toBeNull());
     const result = await axe.run(root, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
     expect(result.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.html).join(" | ")}`)).toEqual([]);
+  });
+});
+
+describe("update review: improvement from learner insights", () => {
+  const improvement = () => [item({ id: "i2", elementId: "q1", type: "question", label: "Lesson 1.1 › Q1", changeClass: "major", reason: "38 % of 42 learners struggled here in the last 30 days.", fragments: [{ fragmentId: "frg_aaaaaaaaaaa2", label: "§3.2 Ratios" }] })];
+
+  it("shows the evidence card instead of the source changes and never asks for revisions", async () => {
+    const s = stub(insightsDetail(improvement()));
+    const root = mount();
+    await ready(root);
+
+    const header = root.querySelector("[data-header]")!;
+    expect(header.querySelector("h2")!.textContent).toBe("Improvement from learner insights");
+    expect(header.textContent).toContain("Proposal 1 · Lesson 1.1 › Q1");
+    const card = header.querySelector("[data-evidence]")!;
+    expect(card.querySelector("h3")!.textContent).toBe("Why this was proposed");
+    expect(card.textContent).toContain("Results of 42 learners in the last 30 days");
+    expect(card.textContent).toContain("38%");
+    expect(card.textContent).toContain("1:17");
+    expect(card.textContent).not.toContain("What the AI receives");
+    expect(root.querySelector('[data-component="ImpactSummary"]')).toBeNull();
+    expect(root.querySelector<HTMLElement>("[data-source-changes]")!.hidden).toBe(true);
+    expect(s.calls.some((c) => c.path.startsWith("/revisions"))).toBe(false);
+    expect(root.querySelectorAll("[data-update-item]")).toHaveLength(1);
+    expect(root.querySelector("[data-group]")).not.toBeNull();
+    // the same decisions and apply bar as for a source update
+    button(root.querySelector<HTMLElement>('[data-update-item="i2"]')!, "Accept").click();
+    await wait(() => expect(root.querySelector("[data-apply-summary]")?.textContent).toBe("1 accepted · 0 undecided · 0 rejected"));
+    expect(button(root, "Apply 1 accepted change").disabled).toBe(false);
+  });
+
+  it("is accessible, with the evidence card in the heading order", async () => {
+    stub(insightsDetail(improvement()));
+    const root = mount();
+    await ready(root);
+
+    const result = await axe.run(root, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+    expect(result.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.html.slice(0, 120)).join(" | ")}`)).toEqual([]);
+    expect([...root.querySelectorAll("[data-evidence] h3, [data-evidence] h4")].map((h) => h.tagName)).toEqual(["H3", "H4", "H4"]);
+  });
+
+  it.each([
+    ["pl", "Poprawka na podstawie wyników kursantów", "Dlaczego to zaproponowano", "pl"],
+    ["zh", "来自学员洞察的改进建议", "提出此建议的原因", "zh-Hans"],
+  ])("speaks %s in the parts that belong to improvements", async (locale, heading, title, lang) => {
+    stub(insightsDetail(improvement()));
+    const root = mount(20, locale);
+    await ready(root);
+
+    expect(root.querySelector("[data-header] h2")!.textContent).toBe(heading);
+    expect(root.querySelector("[data-header] h2")!.getAttribute("lang")).toBe(lang);
+    expect(root.querySelector("[data-evidence] h3")!.textContent).toBe(title);
+    expect(root.querySelector("[data-evidence]")!.getAttribute("lang")).toBe(lang);
+  });
+
+  it("does not talk about source revisions when rejecting or after applying", async () => {
+    stub(insightsDetail(improvement()));
+    const root = mount();
+    await ready(root);
+
+    button(root, "Reject all").click();
+    await wait(() => expect(root.querySelector(".st-confirm")).not.toBeNull());
+    expect(root.querySelector(".st-confirm")!.textContent).toContain("Reject the whole improvement?");
+    expect(root.querySelector(".st-confirm")!.textContent).toContain("keeps your course exactly as it is");
+    expect(root.querySelector(".st-confirm")!.textContent).not.toContain("revision");
+    expect(root.querySelector(".st-bulk")!.textContent).not.toContain("source revision");
+  });
+
+  it("shows what the AI could not ground, so the author edits it", async () => {
+    stub(insightsDetail([item({ id: "i2", kind: "manual", after: null, changeClass: null, reason: "The AI could not propose a grounded change; edit it yourself.", flags: { ungrounded: ["Possibly unsupported: pour at 99 degrees (the source says 96)"] } })]));
+    const root = mount();
+    await ready(root);
+
+    const host = root.querySelector('[data-update-item="i2"]')!;
+    expect(host.textContent).toContain("The AI could not propose a grounded change; edit it yourself.");
+    expect(host.textContent).toContain("pour at 99 degrees (the source says 96)");
+  });
+
+  it("says an applied improvement is applied, without a revision", async () => {
+    stub(insightsDetail(improvement(), { status: "applied" }));
+    const root = mount();
+    await wait(() => expect(root.querySelector("[data-done]")).not.toBeNull());
+
+    expect(root.querySelector("[data-done]")!.textContent).toContain("The improvement is applied");
+    expect(root.querySelector("[data-done]")!.textContent).toContain("Learners keep their progress");
+    expect(root.querySelector("[data-done]")!.textContent).not.toContain("revision");
   });
 });

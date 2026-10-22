@@ -3,6 +3,7 @@ import Studio from "../../../../../layouts/Studio.astro";
 import { ApiError, type BuilderState } from "@ulams/sdk";
 import { builderFor } from "../../../../../lib/studio.ts";
 import { STATUS_LABEL } from "../../../../../studio/labels.ts";
+import { pickInsightsLocale } from "../../../../../studio/insights-i18n.ts";
 
 const id = Astro.params.id ?? "";
 const proposal = Astro.params.proposal ?? "";
@@ -10,6 +11,7 @@ const tenant = Astro.locals.tenant;
 if (!tenant) return Astro.redirect("/tenants");
 if (!/^[0-9a-z]{26}$/.test(id) || !/^[0-9a-z]{26}$/.test(proposal)) return new Response("Not found", { status: 404 });
 
+const locale = pickInsightsLocale(Astro.url.searchParams.get("lang"), Astro.request.headers.get("accept-language"));
 let state: BuilderState;
 try {
   state = await builderFor(tenant, Astro.locals.authorToken!).sessions.get(id);
@@ -20,7 +22,7 @@ try {
 ---
 
 <Studio
-  title="Review a source update"
+  title="Review an update"
   crumb={state.session.title ?? "Updates"}
   status={STATUS_LABEL[state.session.status]}
   sessionId={id}
@@ -30,12 +32,12 @@ try {
 >
   <main id="main" class="st-page st-review" tabindex="-1">
     <p class="cb-small"><a href={`/studio/s/${id}/updates`}>All updates</a></p>
-    <h1 class="cb-serif cb-h2">Review a source update</h1>
+    <h1 class="cb-serif cb-h2">Review an update</h1>
     <p class="cb-muted">
-      The source of your course changed. Review what the AI proposes for each affected lesson. Nothing in the course changes until you
-      accept the changes you want and apply them.
+      Review what the AI proposes for each affected part of your course, after a source change or because learners struggle with it. Nothing
+      in the course changes until you accept the changes you want and apply them.
     </p>
-    <div data-studio-review data-session={id} data-proposal={proposal}>
+    <div data-studio-review data-session={id} data-proposal={proposal} data-locale={locale}>
       <p class="cb-muted" role="status">Loading the update…</p>
     </div>
     <noscript><p class="cb-error">The review needs JavaScript to load the proposed changes.</p></noscript>

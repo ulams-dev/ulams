@@ -1127,6 +1127,51 @@
 .st-ins-activity:empty {
   display: none;
 }
+/* "Propose an improvement": the side panel under the table and the evidence card (also on the review screen) */
+.st-improve {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid var(--ulams-studio-line);
+  padding-top: 12px;
+}
+.st-improve:empty {
+  display: none;
+}
+.st-improve p {
+  margin: 0;
+}
+.st-evidence {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.st-evidence p {
+  margin: 0;
+}
+.st-evidence h3,
+.st-evidence h4,
+.st-evidence h5 {
+  margin-top: 6px;
+}
+.st-evidence-reasons {
+  margin: 0;
+  padding-inline-start: 1.2em;
+}
+.st-evidence-reasons li + li {
+  margin-top: 2px;
+}
+.st-badge {
+  display: inline-block;
+  margin-inline-start: 6px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--ulams-studio-line);
+  background: var(--ulams-studio-sunken);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
 @media (max-width: 720px) {
   .st-page {
     padding: 20px 16px;

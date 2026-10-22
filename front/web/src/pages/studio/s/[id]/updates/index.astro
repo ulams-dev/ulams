@@ -4,8 +4,12 @@ import { ApiError, type BuilderState, type ProposalSummary } from "@ulams/sdk";
 import { builderFor, livingCourseFor } from "../../../../../lib/studio.ts";
 import { STATUS_LABEL } from "../../../../../studio/labels.ts";
 import { PROPOSAL_STATUS_LABEL, usdText } from "../../../../../studio/updates.ts";
+import { pickInsightsLocale } from "../../../../../studio/insights-i18n.ts";
+import { IMPROVE_STRINGS } from "../../../../../studio/improve-i18n.ts";
 
 const id = Astro.params.id ?? "";
+const locale = pickInsightsLocale(Astro.url.searchParams.get("lang"), Astro.request.headers.get("accept-language"));
+const im = IMPROVE_STRINGS[locale];
 const tenant = Astro.locals.tenant;
 if (!tenant) return Astro.redirect("/tenants");
 if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 });
@@ -41,12 +45,12 @@ const OPEN = ["analysing", "ready", "awaiting_analysis", "budget_blocked", "appl
 >
   <main id="main" class="st-page" tabindex="-1" data-studio-updates>
     <div class="st-toolbar">
-      <h1 class="cb-serif cb-h2" style="flex:1">Source updates</h1>
+      <h1 class="cb-serif cb-h2" style="flex:1" lang={im.htmlLang}>{im.listHeading}</h1>
       <a class="cb-btn cb-btn-small" href={`/studio/s/${id}/sources`}>Sources</a>
     </div>
     <p class="cb-muted">
-      When a source of your course changes, the affected lessons are listed here with proposed edits. Nothing changes in the course until you
-      approve it.
+      When a source of your course changes, or learners struggle with a part of it and you ask for an improvement, the affected parts are listed
+      here with proposed edits. Nothing changes in the course until you approve it.
     </p>
     {error && <p class="cb-error" role="alert">{error}</p>}
     {
@@ -64,7 +68,7 @@ const OPEN = ["analysing", "ready", "awaiting_analysis", "budget_blocked", "appl
       proposals.length > 0 && (
         <div class="st-table-wrap">
           <table class="cb-table st-updates" data-updates-table>
-            <caption class="cb-sr">Update proposals, newest first</caption>
+            <caption class="cb-sr">Updates and improvements, newest first</caption>
             <thead>
               <tr>
                 <th scope="col">Update</th>
@@ -81,13 +85,14 @@ const OPEN = ["analysing", "ready", "awaiting_analysis", "budget_blocked", "appl
               {proposals.map((p) => (
                 <tr>
                   <th scope="row">
-                    <a href={`/studio/s/${id}/updates/${p.id}`}>
-                      Update {p.number}
+                    <a href={`/studio/s/${id}/updates/${p.id}${p.kind === "insights" ? `?lang=${locale}` : ""}`}>
+                      {p.kind === "insights" ? "Improvement" : "Update"} {p.number}
                       <span class="cb-sr"> ({PROPOSAL_STATUS_LABEL[p.status] ?? p.status})</span>
                     </a>
                     {OPEN.includes(p.status) && <span class="cb-tag">Open</span>}
+                    {p.kind === "insights" && <span class="st-badge" lang={im.htmlLang}>{im.badge}</span>}
                   </th>
-                  <td>{p.fromRevision && p.toRevision ? `r${p.fromRevision.number} → r${p.toRevision.number}` : "–"}</td>
+                  <td>{p.fromRevision && p.toRevision ? `r${p.fromRevision.number} → r${p.toRevision.number}` : p.kind === "insights" ? "No source change" : "–"}</td>
                   <td>{PROPOSAL_STATUS_LABEL[p.status] ?? p.status}</td>
                   <td>{p.counts?.elements ?? 0}</td>
                   <td>{p.counts?.answerChecks ?? 0}</td>

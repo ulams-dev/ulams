@@ -71,3 +71,63 @@ export function dataTable(options: TableOptions): HTMLElement {
       h("thead", {}, head),
       h("tbody", {}, body)));
 }
+
+export interface EvidenceFigure {
+  label: string;
+  /** The value as text (`Not enough data` for a missing figure). */
+  value: string;
+  /** A rate (0 to 1) shown with a decorative bar next to the text; omit for counts. */
+  rate?: number | null;
+  note?: string;
+}
+
+export interface EvidenceCardOptions {
+  title: string;
+  /** What the numbers are and what they are not (groups, never a person). */
+  intro: string;
+  /** Accessible name of the figures. */
+  figuresLabel: string;
+  figures: EvidenceFigure[];
+  reasonsTitle: string;
+  reasons: string[];
+  noReasons: string;
+  /** Wrong answer options and their share of the group, for quiz questions. */
+  wrong?: { title: string; intro: string; table: TableOptions } | null;
+  /** What the model receives, when the card is shown before anything is sent. */
+  sent?: { title: string; text: string } | null;
+  /** Language of the card when it differs from the page around it. */
+  lang?: string;
+  /** Heading level of the card title (its sections are one level lower); 2 by default. */
+  level?: 2 | 3 | 4;
+}
+
+/**
+ * The "Why this was proposed" card (ADR 0181): aggregated evidence only. Every rate is written as text and the bar is
+ * decorative; the card is a labelled section with its own headings so it works on the Insights page and on the review
+ * screen. Text goes in through textContent.
+ */
+export function evidenceCard(o: EvidenceCardOptions): HTMLElement {
+  const id = uid("ev-h");
+  const title = `h${o.level ?? 2}` as "h2" | "h3" | "h4";
+  const sub = `h${(o.level ?? 2) + 1}` as "h3" | "h4" | "h5";
+  const figures = h("dl", { class: "cb-figures", "aria-label": o.figuresLabel },
+    o.figures.map((f) => h("div", { class: "cb-figure" },
+      h("dt", {}, f.label),
+      h("dd", {}, f.rate === undefined ? f.value : rateBar(f.rate, f.value), f.note ? h("span", { class: "cb-muted cb-small cb-figure-note" }, f.note) : null))));
+  const reasonsId = uid("ev-reasons");
+  const reasons = o.reasons.length > 0
+    ? h("ul", { class: "st-evidence-reasons", "aria-labelledby": reasonsId }, o.reasons.map((r) => h("li", {}, r)))
+    : h("p", { class: "cb-muted" }, o.noReasons);
+  const wrongId = uid("ev-wrong");
+  return h("section", { class: "cb-card st-evidence", "aria-labelledby": id, "data-evidence": "", lang: o.lang },
+    h(title, { id, class: "cb-h3" }, o.title),
+    h("p", { class: "cb-muted" }, o.intro),
+    figures,
+    h(sub, { id: reasonsId, class: "cb-h3" }, o.reasonsTitle),
+    reasons,
+    o.wrong ? h(sub, { id: wrongId, class: "cb-h3" }, o.wrong.title) : null,
+    o.wrong ? h("p", { class: "cb-muted cb-small" }, o.wrong.intro) : null,
+    o.wrong ? dataTable(o.wrong.table) : null,
+    o.sent ? h(sub, { class: "cb-h3" }, o.sent.title) : null,
+    o.sent ? h("p", { class: "cb-muted" }, o.sent.text) : null);
+}

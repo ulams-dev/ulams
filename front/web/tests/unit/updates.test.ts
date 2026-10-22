@@ -89,6 +89,13 @@ describe("catalogue props", () => {
     expect(props).toMatchObject({ answerChanged: true, answerCheck: true, flags: ["Possibly unsupported: filtered water"], signals: ["number"], sources: "Based on §3.2 Ratios", href: "/studio/s/s1/workspace", maxRegenerations: 3 });
   });
 
+  it("shows what an improvement from learner insights could not ground next to the claims the grounding check found", () => {
+    const row = item({ kind: "manual", after: null, flags: { grounding: ["Possibly unsupported: a"], ungrounded: ["Possibly unsupported: b"] } });
+    const props = itemProps(row, ctx);
+    expect(props.flags).toEqual(["Possibly unsupported: a", "Possibly unsupported: b"]);
+    expect(validate(builderCatalogue.UpdateItem.props, props).issues).toEqual([]);
+  });
+
   it("offers Suggest a lesson only where the caller allows it and the props still validate", () => {
     const uncovered = item({ kind: "uncovered", type: "section", before: null, after: null });
     const props = itemProps(uncovered, { ...ctx, canSuggest: true });

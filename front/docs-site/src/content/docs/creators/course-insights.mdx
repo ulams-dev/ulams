@@ -1,6 +1,6 @@
 ---
 title: See where learners struggle
-description: Open the Insights page of any course to see progress, completion, quiz results, who needs support and the sections that confuse people, with groups under 10 learners hidden.
+description: Open the Insights page of any course to see progress, completion, quiz results, who needs support and the sections that confuse people, with groups under 10 learners hidden, and ask for an AI-proposed improvement of a section learners struggle with.
 sidebar:
   order: 41
 modules:
@@ -63,6 +63,40 @@ anything a learner typed:
 Use them to decide what to improve: a question with repeated failures may need a clearer stem, a slow lesson may be
 too long.
 
+## Propose an improvement
+
+A row of **Sections that confuse people** has a **Propose an improvement** button when the section is a lesson or a
+quiz question that you built with the Course Builder. It asks the AI for a clearer version of that section, based on
+how learners did, and gives you the result as a normal proposal to review. Nothing in the course changes until you
+accept and apply it.
+
+1. Choose **Propose an improvement** on the row. A panel opens under the table with **Why this was proposed** (the
+   numbers the AI will see) and the **estimated cost**. Nothing has been sent or created yet.
+2. Check the numbers, then choose **Create the proposal**. The AI reads the section, the source passages it cites and
+   the numbers, and writes a new version. Choose **Cancel** to stop.
+3. Open **Review the proposal**. It is the same review screen as for a source update, with the evidence card at the top
+   instead of the source changes: you see the text before and after as a diff, the passages every changed block cites,
+   and you accept or reject each change before you apply anything. Applying creates a new course version; learners keep
+   their progress and are told about changed lessons the usual way.
+
+What the proposal is built from:
+
+- **Numbers about a group, never a person.** The share who struggled, were offered help, recovered after it and found
+  it useful, the most common reasons and, for a quiz question, the share of learners who picked each wrong answer.
+  Wrong answers chosen by fewer than 5 learners are grouped as "other". A section needs at least the minimum group size
+  of active learners (10 by default) before you can propose anything for it, and this is checked on the server.
+- **Citations.** Every changed block cites passages of your source material, the AI may only cite passages it was given,
+  and a check compares each new text with the passages it cites. If it cannot produce a grounded change, the item stays
+  as it was with the note "The AI could not propose a grounded change; edit it yourself". A section that cites no source
+  passage cannot be improved this way.
+- **No change of answers.** An improvement may clarify a question, its options and its explanation but never changes
+  which answer is correct.
+
+Who can propose: the author of the course and anyone with the permission `living_course_review`. A course can have at
+most **3** such proposals a day (`LIVING_COURSE_INSIGHTS_PROPOSALS_PER_DAY`); asking again for a section that already has
+an open proposal opens that one instead. The cost counts against the course's monthly AI budget. The button is hidden when AI is
+switched off.
+
 ## Privacy: small groups are hidden
 
 Groups smaller than **10 learners** are hidden. This is decided by the server, not by the page: the figures are never
@@ -91,7 +125,8 @@ in their own settings, and then nothing about them appears here.
 
 - Insights show what happened, not why a learner did something. A struggling learner is not a failing learner, and
   a status never changes grades, access or certificates.
-- Nothing on this page, and none of the data behind it, is ever sent to an AI provider.
+- Nothing on this page is sent to an AI provider on its own. Only when you ask for an improvement does the AI receive
+  the numbers of that one section (see above), never a learner's name, address, answers or history.
 - The page is built for keyboards and screen readers: tables have captions and headers, wide tables scroll
   sideways and take the keyboard focus, and changes are announced.
 

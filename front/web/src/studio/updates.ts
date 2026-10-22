@@ -127,7 +127,8 @@ export function sourcesText(item: ProposalItem): string | undefined {
 }
 
 export function itemProps(item: ProposalItem, ctx: ItemContext): Props {
-  const grounding = item.flags?.grounding ?? [];
+  // claims the passages do not support, and what the AI could not ground for an improvement (ADR 0181)
+  const grounding = [...(item.flags?.grounding ?? []), ...(item.flags?.ungrounded ?? [])];
   const fields = fieldsFor(item);
   return compact({
     itemId: item.id,

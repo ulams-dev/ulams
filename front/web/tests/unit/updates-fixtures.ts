@@ -17,8 +17,20 @@ export const question = (): ProposalItem =>
 
 export const detail = (items: ProposalItem[], over: Partial<ProposalDetail> = {}): ProposalDetail =>
   ({
-    id: "p1", number: 1, sessionId: "s", sourceId: "src", status: "ready", trigger: "manual", counts: { items: items.length, elements: 2, remaps: 1, uncovered: 0, major: 1, answerChecks: 1, groups: 1 },
+    id: "p1", number: 1, sessionId: "s", sourceId: "src", kind: "source", evidence: null, status: "ready", trigger: "manual", counts: { items: items.length, elements: 2, remaps: 1, uncovered: 0, major: 1, answerChecks: 1, groups: 1 },
     fromRevision: { id: "r1", number: 1 }, toRevision: { id: "r2", number: 2, detectedAt: null }, runId: "run1", baseVersionId: null, resultVersionId: null, estimatedCostMicroUsd: 420000, costMicroUsd: 130000,
     decisions: {}, learnerNote: null, learnerImpact: { learners: { topic_updated: 12, question_reattempt: 3, topic_retired: 0, course_extended: 0 }, note: "Section 3.2 changed the ratio." }, error: null, createdAt: null, decidedAt: null, appliedAt: null, steps: [],
     groups: [{ key: "lesson:l1", label: "Lesson 1.1: Ratios", items }], items, ...over,
   }) as ProposalDetail;
+
+/** An improvement from learner insights (ADR 0181): no revisions, aggregated evidence, a manual or grounded item. */
+export const insightsDetail = (items: ProposalItem[], over: Partial<ProposalDetail> = {}): ProposalDetail =>
+  detail(items, {
+    sourceId: null, kind: "insights", fromRevision: null, toRevision: null, trigger: "insights", learnerImpact: { learners: { topic_updated: 12, question_reattempt: 0, topic_retired: 0, course_extended: 0 }, note: "" },
+    counts: { items: items.length, elements: items.length, remaps: 0, uncovered: 0, major: items.length, answerChecks: 0, groups: 1, targetElementId: "q1", targetLabel: "Lesson 1.1 › Q1" },
+    evidence: {
+      periodDays: 30, learners: 42, minGroupSize: 10, struggleRate: 0.38, remediationRate: 0.2, recoveryRate: null, helpfulShare: null,
+      topReasons: [{ rule: "failed_attempts", count: 16 }], wrongOptions: [{ optionId: "o2", label: "1:17", share: 0.38 }], tutorOutOfScope: 0,
+    },
+    ...over,
+  });

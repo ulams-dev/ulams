@@ -105,6 +105,8 @@ export interface ElementRow {
   helped?: { rate: number; text: string };
   recovered?: { rate: number | null; text: string };
   reasons?: string;
+  /** "Propose an improvement" is offered (a Course Builder lesson, block or question; ADR 0181). */
+  improvable?: boolean;
 }
 
 export function elementRows(f: Formatter, data: CourseElements): ElementRow[] {
@@ -119,6 +121,7 @@ export function elementRows(f: Formatter, data: CourseElements): ElementRow[] {
       helped: { rate: e.remediationRate, text: f.percent(e.remediationRate) },
       recovered: { rate: e.recoveryRate, text: rateText(f, e.recoveryRate) },
       reasons: e.topReasons.length ? e.topReasons.map((r) => `${reasonName(f.t, r.rule)} (${f.number(r.count)})`).join("; ") : f.t.noReasons,
+      improvable: e.improvable === true,
     };
   });
 }

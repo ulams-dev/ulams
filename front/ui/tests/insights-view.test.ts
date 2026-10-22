@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import axe from "axe-core";
 import { describe, expect, it } from "vitest";
-import { dataTable, figureList, rateBar } from "../src/builder/insights-view.ts";
+import { dataTable, evidenceCard, figureList, rateBar, type EvidenceCardOptions } from "../src/builder/insights-view.ts";
 
 const violations = async (root: HTMLElement) =>
   (await axe.run(root, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } })).violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.html).join(" | ")}`);
@@ -74,3 +74,64 @@ describe("data table", () => {
     expect(await violations(host)).toEqual([]);
   });
 });
+
+describe("evidence card", () => {
+  const options = (over: Partial<EvidenceCardOptions> = {}): EvidenceCardOptions => ({
+    title: "Why this was proposed",
+    intro: "Results of 42 learners in the last 30 days, as numbers.",
+    figuresLabel: "Learner evidence in numbers",
+    figures: [{ label: "Struggled here", value: "38%", rate: 0.38 }, { label: "Recovered after help", value: "Not enough data", rate: null }, { label: "Tutor questions declined", value: "3" }],
+    reasonsTitle: "Most common reasons",
+    reasons: ["repeated failed attempts (16)"],
+    noReasons: "No single reason stands out.",
+    wrong: { title: "Wrong answers learners chose", intro: "Share of learners.", table: { caption: "Wrong answers", scrollLabel: "Wrong answers (scrolls sideways)", columns: [{ label: "Answer" }, { label: "Share", numeric: true }], rows: [{ id: "o2", cells: ["1:17 <b>", "38%"] }] } },
+    sent: { title: "What the AI receives", text: "The section and the numbers above." },
+    ...over,
+  });
+
+  it("is a labelled section with the title, numbers as text and decorative bars", () => {
+    const card = evidenceCard(options());
+    document.body.replaceChildren(card);
+
+    expect(card.tagName).toBe("SECTION");
+    expect(card.getAttribute("aria-labelledby")).toBe(card.querySelector("h2")!.id);
+    expect(card.querySelector("h2")!.textContent).toBe("Why this was proposed");
+    expect([...card.querySelectorAll("dt")].map((d) => d.textContent)).toEqual(["Struggled here", "Recovered after help", "Tutor questions declined"]);
+    expect(card.querySelector("dl")!.getAttribute("aria-label")).toBe("Learner evidence in numbers");
+    expect(card.querySelectorAll(".cb-rate")).toHaveLength(2);
+    expect(card.querySelectorAll(".cb-rate-bar")).toHaveLength(1);
+    expect(card.querySelectorAll("dd")[2]!.querySelector(".cb-rate")).toBeNull();
+    expect([...card.querySelectorAll("li")].map((li) => li.textContent)).toEqual(["repeated failed attempts (16)"]);
+    expect(card.textContent).toContain("What the AI receives");
+  });
+
+  it("puts text in as text and keeps the headings in order at any level", () => {
+    const card = evidenceCard(options({ level: 4, lang: "pl" }));
+    expect(card.querySelector("table")!.textContent).toContain("1:17 <b>");
+    expect(card.querySelector("table b")).toBeNull();
+    expect([...card.querySelectorAll("h2, h3, h4, h5")].map((h) => h.tagName)).toEqual(["H4", "H5", "H5", "H5"]);
+    expect(card.getAttribute("lang")).toBe("pl");
+  });
+
+  it("says when no reason stands out and leaves out what it was not given", () => {
+    const card = evidenceCard(options({ reasons: [], wrong: null, sent: null }));
+    expect(card.querySelector("ul")).toBeNull();
+    expect(card.textContent).toContain("No single reason stands out.");
+    expect(card.querySelector("table")).toBeNull();
+    expect(card.textContent).not.toContain("What the AI receives");
+  });
+
+  it("passes axe", async () => {
+    const card = evidenceCard(options());
+    document.body.replaceChildren(h1(), card);
+    expect(await violations(document.body)).toEqual([]);
+  });
+});
+
+function h1(): HTMLElement {
+  const el = document.createElement("main");
+  const heading = document.createElement("h1");
+  heading.textContent = "Course insights";
+  el.append(heading);
+  return el;
+}
