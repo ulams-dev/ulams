@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Scorm2004API, Scorm12API, AICC } from "scorm-again";
+import { Scorm2004API, Scorm12API } from "scorm-again";
+import { SCORM_AGAIN_LEGACY_SETTINGS } from "./settings";
 import "./style.css";
 
 export interface ScormSettings {
@@ -69,7 +70,10 @@ const ScormPreview: React.FC<ScormPreviewProps> = ({
 
   // SCORM initialization
   const initializeScorm12 = (settings: ScormSettings["data"]) => {
-    window.API = new Scorm12API(settings as any);
+    window.API = new Scorm12API({
+      ...SCORM_AGAIN_LEGACY_SETTINGS,
+      ...settings,
+    } as any);
 
     if (comunitate && onScormPost && onScormGet) {
       window.API.on("LMSSetValue.cmi.*", (CMIElement: string, value: any) => {
@@ -87,7 +91,10 @@ const ScormPreview: React.FC<ScormPreviewProps> = ({
     }
   };
   const initializeScorm2004 = (settings: ScormSettings["data"]) => {
-    window.API_1484_11 = new Scorm2004API(settings as any);
+    window.API_1484_11 = new Scorm2004API({
+      ...SCORM_AGAIN_LEGACY_SETTINGS,
+      ...settings,
+    } as any);
     if (comunitate && onScormPost && onScormGet) {
       window.API_1484_11.on(
         "SetValue.cmi.*",
@@ -105,9 +112,6 @@ const ScormPreview: React.FC<ScormPreviewProps> = ({
         onScormPost({ cmi: window.API_1484_11.cmi });
       });
     }
-  };
-  const initializeAICC = (settings: ScormSettings["data"]) => {
-    window.API = new AICC(settings as any);
   };
 
   // Load SCORM
@@ -140,9 +144,6 @@ const ScormPreview: React.FC<ScormPreviewProps> = ({
           switch (scormObj.version) {
             case "2004":
               initializeScorm2004(data);
-              break;
-            case "AICC":
-              initializeAICC(data);
               break;
             default:
               initializeScorm12(data);
