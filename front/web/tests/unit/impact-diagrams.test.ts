@@ -42,7 +42,12 @@ describe("impact-page diagrams: copy", () => {
       expect(pipe.timing.map((t) => t.seconds)).toEqual([...RUN_SECONDS]);
       const figures = strings(pipe).join(" ").match(/\d+(?:[.,]\d+)?/g)!;
       // every number on the diagram is one of the run's figures (passage 7 is the schematic example)
-      for (const n of figures) expect(["13", "24", "6", "57", "18", "35", "23", "27", "0.28", "0,28", "7"]).toContain(n);
+      for (const n of figures) expect(["13", "24", "6", "57", "18", "35", "23", "27", "0.28", "0,28", "7", "44"]).toContain(n);
+      // the stated total is the sum of the stage times, as in the page copy (7 min 44 s), never "7.5 minutes"
+      expect(RUN_SECONDS.reduce((a, b) => a + b, 0)).toBe(7 * 60 + 44);
+      expect(pipe.timingTitle).toMatch(/7\s*(min|分)\s*44/);
+      expect(run).toMatch(/7\s*(min|分)\s*44/);
+      expect(strings(pipe).join(" ")).not.toMatch(/7[.,]5/);
       for (const n of ["13", "24", "57", "18", "35", "23", "27"]) expect(run).toContain(n);
       expect(pipe.badge.length).toBeGreaterThan(0);
     }

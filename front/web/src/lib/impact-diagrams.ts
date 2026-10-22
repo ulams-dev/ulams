@@ -131,7 +131,7 @@ const COST: Record<Locale, CostDiagrams> = {
         { title: "Author review", detail: "Every change is a diff to accept or reject", metric: "Not timed" },
         { title: "Published", detail: "Only what the author approved reaches learners" },
       ],
-      timingTitle: "Time per stage in this run",
+      timingTitle: "Time per stage in this run, 7 min 44 s in total",
       timing: [
         { label: "Outline", seconds: RUN_SECONDS[0], value: "24 s" },
         { label: "Lessons, quizzes and checks", seconds: RUN_SECONDS[1], value: "6 min 57 s" },
@@ -205,7 +205,7 @@ const COST: Record<Locale, CostDiagrams> = {
         { title: "Przegląd autora", detail: "Każda zmiana to diff do przyjęcia lub odrzucenia", metric: "Bez pomiaru" },
         { title: "Publikacja", detail: "Do uczących się trafia tylko to, co autor zatwierdził" },
       ],
-      timingTitle: "Czas etapów w tym przebiegu",
+      timingTitle: "Czas etapów w tym przebiegu, łącznie 7 min 44 s",
       timing: [
         { label: "Konspekt", seconds: RUN_SECONDS[0], value: "24 s" },
         { label: "Lekcje, quizy i kontrole", seconds: RUN_SECONDS[1], value: "6 min 57 s" },
@@ -279,7 +279,7 @@ const COST: Record<Locale, CostDiagrams> = {
         { title: "作者审阅", detail: "每项改动都是可接受或拒绝的差异", metric: "未计时" },
         { title: "发布", detail: "只有作者批准的内容才会到达学员" },
       ],
-      timingTitle: "本次运行各阶段用时",
+      timingTitle: "本次运行各阶段用时,总计 7 分 44 秒",
       timing: [
         { label: "大纲", seconds: RUN_SECONDS[0], value: "24 秒" },
         { label: "课时、测验与检查", seconds: RUN_SECONDS[1], value: "6 分 57 秒" },
