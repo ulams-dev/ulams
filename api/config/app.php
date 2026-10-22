@@ -234,6 +234,7 @@ return [
         Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider::class,
         Ulams\CourseVariants\UlamsCourseVariantsServiceProvider::class,
         Ulams\LivingCourse\UlamsLivingCourseServiceProvider::class,
+        Ulams\PolicyLifecycle\UlamsPolicyLifecycleServiceProvider::class,
         Ulams\AuthoringMetrics\UlamsAuthoringMetricsServiceProvider::class,
         Ulams\LearnerInsights\UlamsLearnerInsightsServiceProvider::class,
         Ulams\Tutor\UlamsTutorServiceProvider::class,
