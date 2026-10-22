@@ -83,6 +83,7 @@ return [
     ['api/admin/course-builder*', 'builder'],
     ['api/admin/course-as-code*', 'builder'],
     ['api/admin/course-versions*', 'builder'],
+    ['api/admin/authoring-metrics*', 'builder'],
     ['api/admin/living-course*', 'living-course'],
     // the learner's own update notices; the webhook is verified by its signature, not a token
     ['api/living-course/courses/*/notices', 'learner'],

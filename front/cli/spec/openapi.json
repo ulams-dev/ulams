@@ -6743,6 +6743,110 @@
     ]
    }
   },
+  "/api/admin/authoring-metrics/courses": {
+   "get": {
+    "description": "One snapshot per course built with the Course Builder: generation, AI edit, interview and model time in seconds, build and maintenance cost in micro USD, the number of model calls and failed calls, element counts and how many AI elements were accepted unchanged, revised on request or edited by an author. Author time is null until review time is recorded. Needs the permission authoring_metrics_read.",
+    "operationId": "admin.authoringMetrics.courses.index",
+    "parameters": [
+     {
+      "description": "Courses created on or after this date (YYYY-MM-DD)",
+      "in": "query",
+      "name": "from",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Courses created on or before this date (YYYY-MM-DD)",
+      "in": "query",
+      "name": "to",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Only these courses",
+      "in": "query",
+      "name": "course_id[]",
+      "schema": {
+       "items": {
+        "type": "integer"
+       },
+       "type": "array"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "List of course snapshots"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Authoring metric of courses",
+    "tags": [
+     "Authoring metrics"
+    ]
+   }
+  },
+  "/api/admin/authoring-metrics/courses/{course}": {
+   "get": {
+    "description": "The snapshot of one course with the time of every pipeline stage (outline, lessons, quizzes, apply and the rest, each marked exact, coarse or incomplete) and the split of its AI elements. Needs authoring_metrics_read, or being the author of the course's builder session. 404 when the course was not built with the Course Builder.",
+    "operationId": "admin.authoringMetrics.courses.show",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Snapshot, stages and elements"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Not built with the Course Builder"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Authoring metric of one course",
+    "tags": [
+     "Authoring metrics"
+    ]
+   }
+  },
   "/api/admin/bookmarks": {
    "get": {
     "description": "Get all bookmarks",
@@ -43571,6 +43675,10 @@
   {
    "description": "Profile",
    "name": "Profile"
+  },
+  {
+   "description": "Authoring metrics",
+   "name": "Authoring metrics"
   },
   {
    "description": "Admin Bookmarks",

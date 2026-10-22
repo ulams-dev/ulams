@@ -23,6 +23,9 @@ operations:
   "POST /api/admin/consultation-access-enquiries/approve/{proposedTermId}": { id: consultations.access-enquiries-approve }
   "POST /api/admin/consultation-access-enquiries/disapprove/{id}": { id: consultations.access-enquiries-disapprove }
 
+  # --- authoring metrics (time, cost and element counts of how a course was produced, ADR 0194)
+  "GET /api/admin/authoring-metrics/courses": { id: authoring-metrics.list, summary: "Authoring metric snapshots of courses built with the Course Builder" }
+  "GET /api/admin/authoring-metrics/courses/{course}": { id: authoring-metrics.get, summary: "Authoring metric of one course: time per stage, cost and the split of AI elements" }
   # --- compliance (certificates, required training, reports)
   "GET /api/admin/compliance/managers": { id: compliance.managers-list }
   "PUT /api/admin/compliance/managers/{user}": { id: compliance.managers-set, summary: "Set or clear (manager_id null) the manager that overdue training escalates to" }

@@ -134,6 +134,7 @@
       "Ulams\\LivingCourse\\": "packages/living-course/src",
       "Ulams\\LivingCourse\\Database\\Seeders\\": "packages/living-course/database/seeders",
       "Ulams\\AuthoringMetrics\\": "packages/authoring-metrics/src",
+      "Ulams\\AuthoringMetrics\\Database\\Seeders\\": "packages/authoring-metrics/database/seeders",
       "Ulams\\LearnerInsights\\": "packages/learner-insights/src",
       "Ulams\\LearnerInsights\\Database\\Seeders\\": "packages/learner-insights/database/seeders",
       "Ulams\\Tutor\\": "packages/tutor/src",
