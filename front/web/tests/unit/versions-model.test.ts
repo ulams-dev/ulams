@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import type { CourseRelease, ReleaseSummary } from "@ulams/sdk";
+import type { CourseRelease, CourseVariantRef, CourseVersion, ReleaseSummary } from "@ulams/sdk";
 import { fill, VERSIONS_LOCALES, VERSIONS_STRINGS } from "../../src/studio/versions-i18n.ts";
-import { changePhrases, pagerFor, releaseRows, triggerName, versionsFormatterFor } from "../../src/studio/versions-model.ts";
+import { changePhrases, pagerFor, releaseRows, triggerName, versionRows, versionsFormatterFor } from "../../src/studio/versions-model.ts";
 
 const none = { added: 0, changed: 0, removed: 0 };
 const summary = (over: Partial<ReleaseSummary> = {}): ReleaseSummary => ({ first: false, counts: none, lessons: none, questions: none, citationsChanged: 0, answerKeysChanged: 0, ...over });
@@ -29,6 +29,8 @@ describe("versions strings", () => {
     const t = VERSIONS_STRINGS[locale];
     expect(Object.keys(t).sort()).toEqual(Object.keys(en).sort());
     expect(Object.keys(t.triggers).sort()).toEqual(Object.keys(en.triggers).sort());
+    expect(Object.keys(t.statuses).sort()).toEqual(Object.keys(en.statuses).sort());
+    expect(Object.keys(t.kinds).sort()).toEqual(Object.keys(en.kinds).sort());
     for (const [key, value] of Object.entries(t)) {
       if (typeof value === "string") {
         expect(value, key).not.toBe("");
@@ -44,6 +46,31 @@ describe("versions strings", () => {
 
 describe("versions model", () => {
   const f = versionsFormatterFor("en");
+
+  it("counts moved elements in the release phrases and keeps the ids a row needs for comparing", () => {
+    expect(changePhrases(f, summary({ moved: 2, lessonsMoved: 1 }))).toEqual(["Elements moved: 2"]);
+    expect(changePhrases(f, summary({ moved: 0 }))).toEqual(["No content change"]);
+    const [row] = releaseRows(f, [release({ previousReleaseId: "01r00000000000000000000000" })]);
+    expect(row).toMatchObject({ n: 3, versionId: "01v00000000000000000000003", versionNumber: 7, previousReleaseId: "01r00000000000000000000000" });
+  });
+
+  const version = (over: Partial<CourseVersion> = {}): CourseVersion => ({
+    id: "01v00000000000000000000009", number: 9, kind: "patch", origin: "ai", status: "proposed", reason: null, variantId: null, releaseId: null, releaseNumber: null, createdAt: "2026-10-22T10:30:00+00:00", decidedAt: null, ...over,
+  });
+  const expert: CourseVariantRef = { id: "01w00000000000000000000001", key: "expert", label: "Expert", level: "expert", role: null, status: "approved", courseId: 4 };
+
+  it("lists a version with its state and the release that made it live", () => {
+    const rows = versionRows(f, [version(), version({ id: "b", number: 8, status: "approved", kind: "content", releaseNumber: 2, releaseId: "r" })], []);
+    expect(rows[0]).toMatchObject({ n: 9, version: "9", kind: "Element chat", state: "Proposed, not applied", branch: null, released: "Never released" });
+    expect(rows[1]).toMatchObject({ kind: "Generated lessons", state: "Approved", released: "Release 2" });
+  });
+
+  it("names the branch only when the course has variants, and keeps an unknown kind or state visible", () => {
+    const rows = versionRows(f, [version({ variantId: expert.id }), version({ id: "c", kind: "odd", status: "weird" as CourseVersion["status"] })], [expert]);
+    expect(rows[0]!.branch).toBe("Expert");
+    expect(rows[1]).toMatchObject({ branch: "Base course", kind: "odd", state: "weird" });
+    expect(versionRows(versionsFormatterFor("pl"), [version({ status: "rejected" })], [])[0]!.state).toBe("Odrzucona");
+  });
 
   it("names a trigger, and keeps an unknown one visible", () => {
     expect(triggerName(f.t, "chat")).toBe("Changed in the element chat");

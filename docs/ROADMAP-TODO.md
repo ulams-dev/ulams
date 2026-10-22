@@ -655,6 +655,12 @@ Shown as "Coming" on the Comparison page and in the docs (`creators/course-versi
 - [ ] (new) Compare any two versions or releases in the studio: structure tree with added, removed, moved and changed
       modules, lessons and elements; word-level text diff; citations added, removed or moved to a new source revision; quiz
       changes (stem, options, correct answer, explanation) with their effect on learner progress (ADR 0033 rules)
+      (partial, CV-3: studio page `/studio/courses/:id/compare?from=&to=` with a summary, what learners would notice, the quiz impact and the
+      changed elements as a keyboard tree (badges as word plus symbol, filter chips by kind and type), a detail panel with word-level text inline or side
+      by side, a very long field as changed lines, the passages before and after for citations that changed and the quiz panel with the
+      answer key consequence, a pair picker, a swap link and a base-against-variant picker, EN, PL and ZH; the Versions page gets Compare with
+      previous, two tick boxes with Compare the two selected and Show all versions; done and tested, tick when the CV-3 PR is merged; open: the
+      `VersionCompare` component in `@ulams/ui` with a catalogue entry and a playground example (the screen is page code in `front/web` for now))
 - [ ] (new) Semantic diff on top of `BlueprintDiff`: move and reorder detection, citation set diff with fragment text, quiz
       answer key change flag, per-release change summary counts; one diff payload shared by the studio, the CLI
       (`ulams course diff --from --to`) and the MCP tool
@@ -664,19 +670,24 @@ Shown as "Coming" on the Comparison page and in the docs (`creators/course-versi
       minor and major rule) and `VersionComparer` (passages per source revision, cached per pair for 24 hours);
       `GET api/admin/course-versions/courses/{course}/compare?from=&to=` between any two versions or releases of one session,
       a variant included, without the AI gate; CLI `ulams course compare` and `ulams course diff --from --to`, MCP tool
-      `course_compare`; open: the studio screen that reads it (CV-3), the release list `summary` still counts from
-      `BlueprintDiff` (no moves yet), `GET courses/{course}/versions` for the "all versions" toggle (CV-3), a TypeScript SDK
-      client for compare (CV-3, with the screen); tick when the studio screen is merged)
-- [ ] (new) Variant apply writes a release: CV-4 set a variant's `applied_version_id` directly and recorded no release, so
+      `course_compare`;
+      CV-3: the release list `summary` is now computed by `SemanticDiff` (moves counted: `moved`, `lessonsMoved`), every compare change carries
+      `title` and `path` (its parents, for the tree), `GET courses/{course}/versions` lists every version of a branch (`branch=all` for the base and
+      its variants) with the session's variants, a hand-written TypeScript client (`createCourseVersionsClient`: `versions`, `compare`; the SDK
+      generate was not run), the BFF allow-list, the OpenAPI spec, the CLI coverage matrix and the PHP SDK; the studio screen reads it; tick when the
+      CV-3 PR is merged)
+- [x] (new) Variant apply writes a release: CV-4 set a variant's `applied_version_id` directly and recorded no release, so
       variant courses had no timeline; `ReleaseRecorder::appliedVariant` now writes the release in the same transaction
       (numbers per variant, trigger derived like the base), `course-builder:backfill-releases` covers variants applied
       earlier, and the release list answers for a variant course id
-      (partial, CV-2: done and tested; tick when the CV-2 PR is merged)
+      (CV-2, merged in #418)
 - [ ] (new) Releases and compare for courses not built with the Course Builder once they are adopted (depends on CAC-5)
 - [ ] (new) Tenant isolation suite for the release and compare endpoints (ADR 0190 route coverage), WCAG 2.2 AA for the
       compare screen (colour is never the only signal of added or removed)
-      (partial: route coverage walks both route groups, `ReleaseApiTest` and `CompareApiTest` cover other authors, students,
-      guests, a token of another tenant, unknown ids and a pair from two sessions; open: WCAG 2.2 AA for the compare screen, CV-3)
+      (partial: route coverage walks both route groups, `ReleaseApiTest`, `CompareApiTest` and `VersionListApiTest` cover other authors, students,
+      guests, a token of another tenant, unknown ids and a pair from two sessions; CV-3: axe and keyboard Playwright specs for the compare screen and the
+      new Versions page controls at desktop and 360 px with reduced motion, in EN, PL and ZH (`studio-compare.a11y.spec.ts`,
+      `studio-versions.a11y.spec.ts`); tick when the CV-3 PR is merged)
 
 ---
 
@@ -752,7 +763,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       (partial: built in CV-4, PR #396: each variant outline is reviewed with the builder's outline diff against the base outline and each
       generated variant with a new `VariantReview` card (lessons kept, rewritten, added, skipped; word-level text changes) built on the existing
       `BlueprintDiff`, approved one by one, applied as its own course through the domain services, grouped as a family hidden from the catalogue
-      and published with the base; open: the 3.1 compare screen (CV-3; the compare API, CLI and MCP tool shipped in CV-2), Living Course patches for variants and rebase on a newer base (CV-5))
+      and published with the base; the 3.1 compare screen shows a variant against its base (CV-3, waiting to merge); open: Living Course patches for variants and rebase on a newer base (CV-5))
 - [ ] (new) Learner routing: self-declared role and level at enrolment, an optional cited placement check, assignment by an
       admin or an enrolment rule (6.2), and an adaptive hint from Learner Insights to switch variant that the learner confirms
       (never a silent switch); progress carries over for elements that are identical in both variants

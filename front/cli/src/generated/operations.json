@@ -721,6 +721,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/course-versions/courses/{course}/versions",
+  "summary": "All versions of a course's branch (proposals, rejected and undone ones too), newest first, with the session's variants",
+  "tag": "Admin Course Versions"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/course-versions/releases/{release}",
   "summary": "One release with the blueprint document of its version",
   "tag": "Admin Course Versions"

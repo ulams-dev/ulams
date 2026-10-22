@@ -1,12 +1,13 @@
 ---
 title: Course versions and variants
-description: Variants of one course for different levels and roles, drafted together by the Course Builder from the same cited sources and reviewed as a diff against the base course. Numbered course versions you can compare side by side are coming.
+description: Variants of one course for different levels and roles, drafted together by the Course Builder from the same cited sources and reviewed as a diff against the base course. Numbered course versions with a comparison screen for any two of them.
 sidebar:
   order: 42
 modules:
   - course-variants
 learnerRoutes:
   - /studio/courses/[courseId]/versions
+  - /studio/courses/[courseId]/compare
 ---
 
 import { Aside } from "@astrojs/starlight/components";
@@ -14,9 +15,9 @@ import { Aside } from "@astrojs/starlight/components";
 <Aside type="note" title="What is built and what is coming">
 **Built:** course variants in the Course Builder: the interview question, one outline and one generation run
 per audience from the same sources, each variant reviewed as a diff against the base, each approved variant
-created as its own course and grouped with the base as a family. **Coming:** learners choosing or being routed
-to a variant, one purchase for the whole family, variant-aware Living Course updates and certificates, and
-the numbered course versions with a visual comparison. Progress is tracked in the [roadmap](/roadmap/)
+created as its own course and grouped with the base as a family; numbered course releases and a screen that compares
+any two versions, a variant included. **Coming:** learners choosing or being routed
+to a variant, one purchase for the whole family, and variant-aware Living Course updates and certificates. Progress is tracked in the [roadmap](/roadmap/)
 (Phase 3.1 and Phase 4.4); the design is in `docs/plans/course-versions-and-variants.md` and ADR 0192.
 </Aside>
 
@@ -29,9 +30,14 @@ These parts already work and the planned features build on them:
 
 - **Releases** list every version of a course that learners got, newest first, with what started it, who approved it and
   what changed. Open **Versions** in the studio (`/studio/courses/<id>/versions`), or run `ulams course releases <id>`.
-- **Compare** any two versions or releases from the command line, the API or an AI agent: `ulams course compare <id> --from <a> --to <b>`
-  lists what moved, which citations changed and which quiz answers changed, with a plain summary and what learners would notice. The studio
-  compare screen comes next.
+- **Compare** any two versions or releases on one screen. Open **Versions**, choose **Compare with previous** on a release, or tick
+  any two releases and choose **Compare the two selected**. Turn on **Show all versions** to also pick proposals, rejected or replaced
+  versions and the versions of a variant. The **Compare versions** screen (`/studio/courses/<id>/compare`) shows a summary, what learners would
+  notice, the quiz answers that changed and the changed elements as a tree (added, removed, changed, moved and reordered, each marked by a
+  word and a symbol), with the word-level text changes inline or side by side, the passages behind every citation that changed and the quiz
+  impact of the element you select. **Compare the base course with a variant** opens the latest version of each. It works with the keyboard and a screen reader, in
+  English, Polish and Chinese, and with AI switched off. The same comparison is available from the command line and for an AI agent:
+  `ulams course compare <id> --from <a> --to <b>`.
 - The [Course Builder](/creators/course-builder/) keeps every version of a course. **Version history**
   lists them, **Undo**, **Redo** and **Restore** move between them, and every AI change is shown as a diff
   you approve or reject.
@@ -41,13 +47,14 @@ These parts already work and the planned features build on them:
   element ([worked example](/creators/git-sync-worked-example/)).
 - The interview can ask for **extra versions of the course by level and role** (below).
 
-What is still missing: a way to compare **any two** versions on one screen in the studio (the compare API, the CLI and the agent tool
-exist already).
+What is still missing: the version list and the compare screen cover courses made with the Course Builder only; courses you built by hand get
+them once they are adopted.
 
 ## Course versions with a visual diff
 
-<Aside type="caution" title="Coming">
-Nothing in this section is built yet. It describes the planned behaviour so you can comment on it before it is built.
+<Aside type="note" title="Partly built">
+The version list, the comparison of any two versions and the compare screen are built (see above). The rest of this section describes the
+planned behaviour so you can comment on it before it is built.
 </Aside>
 
 ### The problem

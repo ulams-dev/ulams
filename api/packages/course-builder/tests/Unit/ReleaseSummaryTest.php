@@ -69,4 +69,30 @@ class ReleaseSummaryTest extends TestCase
 
         $this->assertSame(['added' => 0, 'changed' => 0, 'removed' => 0], $summary['counts']);
     }
+
+    public function testALessonMovedToAnotherModuleAndAReorderAreCounted(): void
+    {
+        $from = $this->doc();
+        $to = $from;
+        // lesson 2 moves into a new module; nothing else changes
+        $moved = array_pop($to['modules'][0]['lessons']);
+        $to['modules'][] = ['id' => 'mod_2', 'title' => 'Second', 'summary' => 's', 'lessons' => [$moved]];
+
+        $summary = ReleaseRecorder::summary($from, $to);
+
+        $this->assertSame(1, $summary['lessonsMoved']);
+        $this->assertSame(1, $summary['moved']);
+        $this->assertSame(['added' => 0, 'changed' => 0, 'removed' => 0], $summary['lessons'], 'a move is not a change');
+        $this->assertSame(1, $summary['counts']['added'], 'only the new module is added');
+
+        $reordered = $this->doc();
+        $reordered['modules'][0]['lessons'] = array_reverse($reordered['modules'][0]['lessons']);
+        $this->assertSame(1, ReleaseRecorder::summary($this->doc(), $reordered)['lessonsMoved'], 'one lesson is outside the common order');
+    }
+
+    public function testNothingMovedInAFirstReleaseOrAnIdenticalDocument(): void
+    {
+        $this->assertSame(0, ReleaseRecorder::summary([], $this->doc())['moved']);
+        $this->assertSame(0, ReleaseRecorder::summary($this->doc(), $this->doc())['lessonsMoved']);
+    }
 }
