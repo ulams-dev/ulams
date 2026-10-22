@@ -25,9 +25,18 @@ describe("listProviders", () => {
     expect(String(url)).toBe("http://coffee.localhost/api/identity/providers");
   });
 
+  it("lists SAML providers like OpenID Connect ones: the API start endpoint speaks the protocol", async () => {
+    const rows = [{ slug: "acme-saml", name: "Acme SAML", protocol: "saml" }, { slug: "acme-oidc", name: "Acme OIDC", protocol: "oidc" }];
+    expect(await listProviders(tenant, reply(200, { data: rows }))).toEqual([
+      { slug: "acme-saml", name: "Acme SAML" },
+      { slug: "acme-oidc", name: "Acme OIDC" },
+    ]);
+  });
+
   it("drops rows that are not what the API sends: other protocols, bad slugs, empty names", async () => {
     const rows = [
-      { slug: "saml", name: "SAML", protocol: "saml" },
+      { slug: "ldap", name: "LDAP", protocol: "ldap" },
+      { slug: "noproto", name: "No protocol" },
       { slug: "Bad Slug", name: "Bad", protocol: "oidc" },
       { slug: "ok", name: "  ", protocol: "oidc" },
       { slug: 5, name: "Num", protocol: "oidc" },

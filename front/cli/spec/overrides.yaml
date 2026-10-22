@@ -91,10 +91,12 @@ operations:
   # --- identity providers and their audit trail (6.3)
   "GET /api/identity/providers": { id: identity.providers-public, summary: "The identity providers a learner can sign in with (slug and name only)" }
   "GET /api/admin/identity/providers": { id: identity.providers-list }
-  "POST /api/admin/identity/providers": { id: identity.providers-create, summary: "Add an OpenID Connect identity provider (the client secret is stored encrypted and never shown again)" }
+  "POST /api/admin/identity/providers": { id: identity.providers-create, summary: "Add an OpenID Connect or SAML identity provider (secrets and keys are stored encrypted and never shown again)" }
   "GET /api/admin/identity/providers/{provider}": { id: identity.providers-get, positionals: [provider] }
   "PUT /api/admin/identity/providers/{provider}": { id: identity.providers-update, positionals: [provider], summary: "Change an identity provider (leave client_secret out to keep the stored one)" }
   "DELETE /api/admin/identity/providers/{provider}": { id: identity.providers-delete, positionals: [provider] }
+  "POST /api/admin/identity/providers/{provider}/metadata/refresh": { id: identity.providers-refresh-metadata, positionals: [provider], summary: "Fetch the SAML identity provider metadata again (accept_changes applies a new entity id and certificate set)" }
+  "POST /api/admin/identity/providers/{provider}/sp-keys/rotate": { id: identity.providers-rotate-sp-keys, positionals: [provider], summary: "Prepare or activate the next SAML service provider key pair (step prepare or promote)" }
   "GET /api/admin/identity/audit": { id: identity.audit-list }
   "GET /api/admin/identity/audit/verify": { id: identity.audit-verify, summary: "Recompute the hash chain of the identity audit trail" }
 

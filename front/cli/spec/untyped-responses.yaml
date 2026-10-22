@@ -19,6 +19,7 @@
 "GET /api/courses/{id}/preview/{topic_id}": html-page
 "GET /api/courses/{id}/scorm": html-page
 "GET /api/identity/oidc/{slug}/callback": redirect
+"GET /api/identity/saml/{slug}/slo": redirect
 "GET /api/identity/sso/{slug}/start": redirect
 "GET /api/images/img": redirect
 "GET /api/learner-insights/me/export": file-download
@@ -31,5 +32,7 @@
 "GET /api/scorm/show/{uuid}": html-page
 "GET /api/tutor/runs/{run}/events": event-stream
 "POST /api/admin/pdfs/preview": binary-pdf
+"POST /api/identity/saml/{slug}/acs": redirect
+"POST /api/identity/saml/{slug}/slo": redirect
 "POST /api/lti/platform/deep-links": html-page
 "POST /api/lti/tool/launch": html-page
