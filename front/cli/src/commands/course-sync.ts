@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { z } from "zod";
+import { compareCourse, diffLines } from "./course.ts";
 import { conflictFileName, parseElement, readConflict } from "../course/conflicts.ts";
 import { readFolder, type DiskFolder } from "../course/disk.ts";
 import { folderFromBlueprint } from "../course/from-blueprint.ts";
@@ -456,16 +457,19 @@ const pull = defineCommand({
 const diff = defineCommand({
   ...folderCommand,
   id: "course.diff",
-  summary: "Show what changed: the folder against its base (offline), against the server (--remote), or a version on the server (--version)",
+  summary: "Show what changed: the folder against its base (offline), against the server (--remote), a version on the server (--version), or any two versions or releases (--from, --to)",
   description:
-    "By default compares the folder with the version it is based on (.ulams/base.json): which elements were added, changed or removed, with no network. --remote fetches the server's current version and shows, field by field, what a push would change. --version <id> shows what a version on the server changes against its parent (or --against another version). --exit-code exits 13 (DIFF_FOUND) when there are differences, for CI.",
+    "By default compares the folder with the version it is based on (.ulams/base.json): which elements were added, changed or removed, with no network. --remote fetches the server's current version and shows, field by field, what a push would change. --version <id> shows what a version on the server changes against its parent (or --against another version). --from <id> --to <id> compares any two versions or releases of the course in full (moved elements, citations, quiz answer keys, a plain summary; the same as `course compare`); the course is the folder's, or pass --course <id>. --exit-code exits 13 (DIFF_FOUND) when there are differences, for CI.",
   kind: "read",
   anonymous: true,
   scopes: READ,
-  endpoints: ["GET /api/admin/course-as-code/versions/{version}/diff"],
+  endpoints: ["GET /api/admin/course-as-code/versions/{version}/diff", "GET /api/admin/course-versions/courses/{course}/compare"],
   positionals: ["dir"],
   input: z.object({
     dir: dirInput,
+    from: z.string().regex(/^[0-9a-z]{26}$/i, "A version id or release id.").optional().describe("With --to: the older side, a version id or a release id."),
+    to: z.string().regex(/^[0-9a-z]{26}$/i, "A version id or release id.").optional().describe("With --from: the newer side, a version id or a release id."),
+    course: z.string().regex(/^\d+$/, "A numeric course id.").optional().describe("With --from and --to: the course (default: the course of the folder)."),
     remote: z.boolean().optional().describe("Compare with the server's current version instead of the base."),
     version: z.string().optional().describe("Show what this version on the server changes against its parent."),
     against: z.string().optional().describe("With --version: another version id to compare with."),
@@ -477,9 +481,18 @@ const diff = defineCommand({
     { title: "What would a push change on the server", argv: "course diff --remote" },
     { title: "Fail CI when the folder drifted", argv: "course diff --exit-code --json" },
     { title: "Review a proposed version", argv: "course diff --version <version id>" },
+    { title: "What changed between two releases", argv: "course diff --course 12 --from 01jb0000000000000000000001 --to 01jb0000000000000000000002" },
   ],
   async run(ctx, i) {
     const exit = (n: number): { exitCode?: number } => (i.exitCode && n > 0 ? { exitCode: 13 } : {});
+    if (i.from || i.to) {
+      if (!i.from || !i.to) throw new CliError("INPUT_INVALID", "Pass both --from and --to (version ids or release ids).", { hint: "`ulams course releases <course>` lists release ids." });
+      if (i.version) throw new CliError("INPUT_INVALID", "Use either --version (one version against its parent) or --from and --to.");
+      requireAuth(ctx);
+      const courseId = i.course ?? String(needCourseId(readBase(openFolder(i.dir).root)));
+      const payload = await server(() => compareCourse(ctx, courseId, i.from as string, i.to as string));
+      return present(ctx, payload, diffLines(payload), exit(payload.changes.length));
+    }
     if (i.version) {
       requireAuth(ctx);
       const res = await server(() => call<{ against: string | null; changes: ChangeLike[] }>(ctx, "GET", "/versions/{version}/diff", { params: { version: i.version as string }, query: { against: i.against } }));

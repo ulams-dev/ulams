@@ -79,6 +79,74 @@ interface ReleasesPayload {
   perPage: number;
 }
 
+interface DiffChange {
+  id: string;
+  type: string;
+  label: string;
+  kind: "added" | "removed" | "changed" | "moved" | "reordered";
+  description: string;
+  citations: { added: string[]; removed: string[]; repointed: { from: string; to: string }[] } | null;
+}
+
+interface DiffQuiz {
+  questionId: string;
+  label: string;
+  answerKeyChanged: boolean;
+  wording: boolean;
+  correctBefore: string[];
+  correctAfter: string[];
+  consequence: string | null;
+}
+
+interface DiffSide {
+  versionId: string;
+  versionNumber: number;
+  releaseId: string | null;
+  releaseNumber: number | null;
+}
+
+export interface DiffPayload {
+  diffVersion: number;
+  courseId: number;
+  sessionId: string;
+  from: DiffSide;
+  to: DiffSide;
+  summary: { first: boolean; text: string; lines: string[]; counts: Record<string, number>; learnerImpact: Record<string, number> };
+  changes: DiffChange[];
+  quiz: DiffQuiz[];
+  fragments: Record<string, { label: string; text: string; sourceRevision: { id: string; number: number | null } | null }>;
+}
+
+const sideName = (s: DiffSide): string => (s.releaseNumber !== null ? `release #${s.releaseNumber}` : `version ${s.versionNumber}`);
+
+/** The compare payload as text: the summary, one line per changed element, then the answer-key changes and citation passages. */
+export function diffLines(p: DiffPayload): string[] {
+  const lines = [`${sideName(p.from)} -> ${sideName(p.to)}: ${p.summary.text}`];
+  if (p.changes.length === 0) return lines;
+  lines.push("");
+  const mark = { added: "+", removed: "-", changed: "~", moved: ">", reordered: "=" } as const;
+  for (const c of p.changes) {
+    if (c.type === "option" && c.kind === "changed") continue; // shown with its question below
+    lines.push(`${mark[c.kind]} ${c.description}`);
+  }
+  const keys = p.quiz.filter((q) => q.answerKeyChanged);
+  if (keys.length) {
+    lines.push("", "Answer keys changed:");
+    for (const q of keys) lines.push(`  ${q.label}: ${q.correctBefore.join(" / ") || "(none)"} -> ${q.correctAfter.join(" / ") || "(none)"}`, `    ${q.consequence ?? ""}`.trimEnd());
+  }
+  const repointed = p.changes.flatMap((c) => (c.citations?.repointed ?? []).map((r) => ({ label: c.label, ...r })));
+  if (repointed.length) {
+    lines.push("", "Citations repointed to a newer source revision:");
+    for (const r of repointed) lines.push(`  ${r.label}: ${p.fragments[r.from]?.label ?? r.from} -> ${p.fragments[r.to]?.label ?? r.to}`);
+  }
+  return lines;
+}
+
+/** The compare call shared by `course compare` and `course diff --from --to`. */
+export async function compareCourse(ctx: Ctx, course: string | number, from: string, to: string): Promise<DiffPayload> {
+  return callVersions<DiffPayload>(ctx, "/courses/{course}/compare", { params: { course }, query: { from, to } });
+}
+
 const plural = (n: number, one: string, many = `${one}s`): string => `${n} ${n === 1 ? one : many}`;
 
 /** One line for the release list: what changed in words, e.g. "2 lessons added, 1 element changed, 1 answer key changed". */
@@ -154,6 +222,33 @@ export const courseCommands: AnyCommand[] = [
       }
       if (wantsJson(ctx)) return { data: payload };
       out(ctx, [`Release #${payload.number} (${payload.trigger}), ${payload.releasedAt.slice(0, 16).replace("T", " ")}`, `Approved by: ${payload.approvedBy?.name ?? "-"}`, `Changes: ${releaseChanges(payload.summary)}`, "Use --json or --out <file> for the document."].join("\n"));
+      return { data: payload, handled: true };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "course.compare",
+    summary: "Compare any two versions or releases of a course: moved elements, citations, quiz answer keys and a plain summary",
+    description:
+      "The semantic diff of two versions or releases of one builder course (ids from `course releases`, or version ids from `course export`). It lists added, removed, changed, moved and reordered elements, the citations that changed (repointed ones when the source moved), quiz answer-key changes with what learners would get, and what learners would notice. Swap --from and --to for the reverse. A variant course can be compared with its base: pass a version of each. Works with AI switched off and makes no model call. Pass --json for the payload the studio and the MCP tool use (diffVersion 1). Same as `course diff <folder> --course <id> --from <a> --to <b>`. Visible to the course author and admins.",
+    kind: "read",
+    scopes: READ,
+    endpoints: ["GET /api/admin/course-versions/courses/{course}/compare"],
+    positionals: ["course"],
+    input: z.object({
+      course: z.string().regex(/^\d+$/, "A numeric course id.").describe("Course id."),
+      from: z.string().regex(/^[0-9a-z]{26}$/i, "A version id or release id.").describe("The older side: a version id or a release id."),
+      to: z.string().regex(/^[0-9a-z]{26}$/i, "A version id or release id.").describe("The newer side: a version id or a release id."),
+    }),
+    output: z.unknown(),
+    examples: [
+      { title: "What changed between two releases", argv: "course compare 12 --from 01jb0000000000000000000001 --to 01jb0000000000000000000002" },
+      { title: "For a script", argv: "course compare 12 --from 01jb0000000000000000000001 --to 01jb0000000000000000000002 --fields data.summary --json" },
+    ],
+    async run(ctx, i) {
+      const payload = await compareCourse(ctx, i.course, i.from, i.to);
+      if (wantsJson(ctx)) return { data: payload };
+      out(ctx, diffLines(payload).join("\n"));
       return { data: payload, handled: true };
     },
   }),

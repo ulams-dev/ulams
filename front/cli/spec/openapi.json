@@ -12149,6 +12149,70 @@
     ]
    }
   },
+  "/api/admin/course-versions/courses/{course}/compare": {
+   "get": {
+    "description": "Compare any two versions or releases of a course (ADR 0192, CV-2). Keyed by the LMS course id like the release list;\n`from` and `to` are version ids or release ids of the same builder session (a variant course can be compared with its\nbase this way). No AI gate: it works with AI switched off, and it makes no model call. Read-only; visible to the\nsession author and to tenant admins (the session policy). A pair that names something of another session is a 404.",
+    "operationId": "admin.course-versions.courses.by-course.compare.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "description": "Version id or release id (the older side)",
+      "in": "query",
+      "name": "from",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "Version id or release id (the newer side)",
+      "in": "query",
+      "name": "to",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "diffVersion, summary, changes, quiz, fragments, from, to, courseId, sessionId"
+     },
+     "403": {
+      "description": "another author's course"
+     },
+     "404": {
+      "description": "the course was not made with the Course Builder, or a version or release is not part of it"
+     },
+     "422": {
+      "description": "from or to is missing"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Semantic diff of two versions or releases of a course: moved elements, citations, quiz answer keys and a summary",
+    "tags": [
+     "Admin Course Versions"
+    ]
+   }
+  },
   "/api/admin/course-versions/courses/{course}/releases": {
    "get": {
     "description": "Course releases (ADR 0192): the versions of a course that learners actually got, newest first. Keyed by the LMS\ncourse id, like the Insights page. No AI gate: it works with AI switched off. Visible to the session author and to\ntenant admins (the session policy); read-only, a release is written by the apply step only.",
@@ -43613,16 +43677,16 @@
    "name": "Course Access"
   },
   {
+   "description": "Admin Course Versions",
+   "name": "Admin Course Versions"
+  },
+  {
    "description": "Admin Course-as-code",
    "name": "Admin Course-as-code"
   },
   {
    "description": "Admin Course Builder",
    "name": "Admin Course Builder"
-  },
-  {
-   "description": "Admin Course Versions",
-   "name": "Admin Course Versions"
   },
   {
    "description": "Admin CSV",

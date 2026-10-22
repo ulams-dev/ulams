@@ -29,6 +29,9 @@ These parts already work and the planned features build on them:
 
 - **Releases** list every version of a course that learners got, newest first, with what started it, who approved it and
   what changed. Open **Versions** in the studio (`/studio/courses/<id>/versions`), or run `ulams course releases <id>`.
+- **Compare** any two versions or releases from the command line, the API or an AI agent: `ulams course compare <id> --from <a> --to <b>`
+  lists what moved, which citations changed and which quiz answers changed, with a plain summary and what learners would notice. The studio
+  compare screen comes next.
 - The [Course Builder](/creators/course-builder/) keeps every version of a course. **Version history**
   lists them, **Undo**, **Redo** and **Restore** move between them, and every AI change is shown as a diff
   you approve or reject.
@@ -38,8 +41,8 @@ These parts already work and the planned features build on them:
   element ([worked example](/creators/git-sync-worked-example/)).
 - The interview can ask for **extra versions of the course by level and role** (below).
 
-What is still missing: a list of the versions learners actually got, and a way to compare **any two** of them on one
-screen.
+What is still missing: a way to compare **any two** versions on one screen in the studio (the compare API, the CLI and the agent tool
+exist already).
 
 ## Course versions with a visual diff
 
