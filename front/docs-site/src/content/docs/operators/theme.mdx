@@ -1,0 +1,91 @@
+---
+title: Theme and logo
+description: Choosing the look of an academy in the admin - the preset, an accent colour checked against WCAG 2.2 AA, the logo (PNG or SVG, at most 200 KB) with its alt text, and importing brand colours as a diff you approve.
+sidebar:
+  order: 15
+modules:
+  - settings
+  - web
+  - ui
+  - admin
+learnerRoutes:
+  - /site.webmanifest
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+**Settings, Theme** in the admin is the one place to choose how the learner site of an academy (tenant) looks.
+It writes three public settings through the settings service, so the preset and the accent can also be set with the
+settings API or `ulams theme set` (the API refuses a preset outside the list and an accent that is not a six digit
+hex colour; the contrast check is the screen's):
+
+| Setting | What it is |
+|---|---|
+| `theme.theme` | The preset: `coffee`, `oncall`, `nightsky`, `gravity`, `poland` or `ulam` |
+| `theme.accent` | An optional brand colour for links, buttons and highlights, a six digit hex colour |
+| `theme.logo`, `theme.logoAlt` | The logo file and its text alternative |
+
+The screen needs the `settings_update` permission (the admin role has it). Every change is a diff you save; nothing
+is applied behind your back.
+
+## Preset
+
+Each card shows the real tokens of the preset (page, card, text, muted text and the button colour), so you see what
+you choose without loading it. The list is the same everywhere it appears: this screen, the course builder's
+interview, the learner site and the API validation all read `front/ui/catalogue/themes.json`. The settings API refuses
+a preset that is not in it.
+
+## Accent colour and the contrast report
+
+An accent is optional; without one the preset's own colour is used. When you enter one, the report measures it on
+the **chosen preset's** backgrounds with the WCAG 2.2 formula:
+
+| Check | Needs | Criterion |
+|---|---|---|
+| Accent as text or a link on the page | 4.5:1 | 1.4.3 Contrast (Minimum) |
+| Accent as text or a link on a card | 4.5:1 | 1.4.3 |
+| Accent as a border, icon or focus ring | 3:1 | 1.4.11 Non-text Contrast |
+| Text on an accent button (black or white, whichever is better) | 4.5:1 | 1.4.3 |
+
+The preset's own body and secondary text are listed too, for reference. A failing check shows the two colours, the
+ratio you got and the ratio you need, and **the accent is not saved until every check passes**: the message says
+which one fails, for example "Accent #f5c06a as text on the page background is 1.7:1, below the 4.5:1 that WCAG 2.2
+AA (1.4.3) asks for". The button "Use #…, the nearest readable shade" moves your colour towards black (light presets) or
+white (dark presets) until it passes.
+
+<Aside>
+The learner site also adjusts a weak accent on its own, so a pale colour set through the API never makes text
+unreadable. The screen is stricter on purpose: it shows you the colour the page will really use before you save it.
+</Aside>
+
+## Logo
+
+Upload a **PNG or an SVG of at most 200 KB** (a PNG at most 4096 px a side). The file is checked on the server by what
+it contains, not by its name:
+
+- A PNG must decode as an image.
+- An SVG may contain shapes, gradients, clip paths, masks, `use` of an element inside the file, and text. It is
+  refused, with the reason, when it has a script, a style sheet, an event attribute (`onload`), a `foreignObject`,
+  an embedded `image`, an animation, a DOCTYPE or entity, or any reference (`href`, `url()`) to another address. The
+  file that is stored is the re-written, checked document, never the uploaded bytes.
+- The stored name is random, a replaced logo's file is deleted, and the file lives in the tenant's own storage.
+
+The **text alternative** is read by screen readers instead of the image and is the link text of the header's home
+link. Leave it empty to use the company name. Without a logo the header shows the company name as text, as before.
+
+The logo also becomes the first icon of the academy's web app manifest (`/site.webmanifest`), next to its name and
+the `theme_color` of the preset.
+
+## Import from brand colours
+
+Paste brand colours as JSON (`{"primary": "#c8102e", "background": "#fff"}`), CSS custom properties, a link with
+colour parameters, or plain hex codes, then **Propose a theme**. The importer picks the closest preset (light or
+dark, nearest hue) and the brand colour as the accent, and shows a before and after table with the contrast checks.
+If the brand colour is too weak for text on that preset, the proposal carries the nearest readable shade and says so.
+Nothing changes until you press **Approve and save**; **Discard** drops the proposal.
+
+## Structured data
+
+Every course page of the academy carries schema.org `Course` structured data (JSON-LD): the academy as the
+provider, the language of the course, an online self-paced course instance, and an offer with the price only when
+the course has one. See [Reference frontend](/developers/reference-frontend/#theme-logo-manifest-and-structured-data).

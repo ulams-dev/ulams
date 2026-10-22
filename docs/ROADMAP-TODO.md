@@ -650,11 +650,13 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 ## Phase 5: UX and reference frontend
 
 - [ ] Audit Wellms frontends; evolve or build new reference app (justify; SSR/SEO) (partial: new Astro
-      SSR app `front/web`, ADR 0008 Proposed; landing, course, lesson player, quiz, finish for the three
-      demo tenants; plan and numbers in `docs/plans/phase-5-reference-frontend.md`; uncommitted)
+      SSR app `front/web`, ADR 0008 Accepted 2026-10-09; landing, course, lesson player, quiz, finish for the demo
+      tenants; plan and numbers in `docs/plans/phase-5-reference-frontend.md`; on `main`; the audit is recorded in the docs
+      site, Developers, Reference frontend, "Why a new app"; Course JSON-LD on course pages; to tick with P5R-2)
 - [ ] Themeable from builder presets; per-tenant theme (partial: `--ulams-*` theme files per demo
       preset in `front/ui/src/styles/themes`, chosen from `theme.theme`; accent from `theme.accent`
-      applied server-side with AA contrast; builder presets not connected yet)
+      applied server-side with AA contrast; builder presets are connected (`SiteTheme` on apply); P5R-2 adds one shared preset
+      list, the admin Theme screen with the contrast report, the tenant logo and the per-tenant web manifest; to tick with it)
 - [x] (new) Brand import: built-in brand importer (no agent needed) that generates a tenant theme preset from a Figma
       file, a Stitch DESIGN.md or a brand guide (tokens, fonts, logo), proposed as a diff the admin approves (today an
       agent with the ulams CLI and the design tool's MCP does it: `ulams theme set`, `ulams settings set`)
@@ -706,14 +708,14 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
       (`phase-5-remaining.md`, #346); each is a plan, not implemented work, and the plan texts still say "draft" or "proposed" although the owner approved the batch in advance
 - [ ] (new) Reference frontend for the demos: UI catalogue `@ulams/ui` (JSON-schema registry, renderer
       with fallbacks, landing pages as A2UI-shaped documents), BFF with httpOnly session, demo auto-login,
-      SWR cache of public API data (partial: implemented and tested, uncommitted; Caddy already points
+      SWR cache of public API data (partial: on `main`, implemented and tested; Caddy already points
       `*.app.localhost` to :4321 in this checkout; API fixes remain listed in the plan; Batch 3 platform landing redesign
       shipped locally: cited course-draft hero, shorter navigation, demos ahead of comparison, and matching
       EN/PL/ZH layout; web/UI suites and desktop/phone axe pass; 2026-10-11 visual refinement adds a
       midnight/lilac/citrus direction from the owner's Dribbble references, with rebuilt docs and locale
       screenshots; production build passes and desktop/phone renders have no horizontal overflow)
 - [ ] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
-      account area; webinars/events/consultations pages (partial: implemented and tested, uncommitted;
+      account area; webinars/events/consultations pages (partial: on `main`, implemented and tested;
       see `docs/plans/phase-5-reference-frontend.md`, batch 2; Overview in EN/PL/ZH shows an animated privacy-policy
       lifecycle from source v1 through course, exam and certificate to source updates and recertification; one
       visual story at the top replaces the duplicate Living Course section, with document, academy, oversight,
