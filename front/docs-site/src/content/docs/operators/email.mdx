@@ -207,6 +207,57 @@ curl -s -X POST "$API/api/admin/templates/email/render" \
 
 With the development stack the test e-mail arrives in MailHog on port 8025.
 
+## Templates per language
+
+A template can be written for one language (`en`, `pl` or `zh`; the API accepts any two or three
+letter code). When an e-mail is sent, the template is chosen in this order, and the first default
+template found is used:
+
+1. the template **assigned** to the item the event is about, if there is one (an explicit choice,
+   the language does not override it);
+2. the default template written for the **language of the course** the event is about (the
+   course's `language`);
+3. the default template for the **default language of the academy** (the public setting
+   `global.language`, see [Settings](/admin/settings/));
+4. the default template for **English**;
+5. the template **without a language**, which is every template that existed before this feature.
+
+Events that are not about a course (an account, a payment) skip step 2. A course in a language
+that has no template, or a course with no language, therefore gets the academy's language, then
+English.
+
+A new tenant gets one default template per event in English, Polish and Chinese, each written in
+its language and with `lang` set on `<mjml>` (config `ulams_templates_email.seed_locales`, an empty
+list creates one template without a language, as before). Existing tenants are not touched: an
+event that already has a default template is left alone, so what you send does not change when you
+upgrade. Add a language to an existing tenant from the admin with **Create translation**, which
+starts as a copy of the template you already have. The Polish and Chinese texts come with the
+product and are waiting for a native review; edit them in the admin like any template.
+
+### Languages in the admin
+
+On the page of an e-mail template, the **Languages** panel lists English, Polski and 中文 for the
+event: which have a template (with **Edit**), and which are missing, marked **Missing translation**
+in words, not only by colour. **Create translation** opens a new template for that language that
+starts as a copy of the template without a language, or of the English one. **Copy content from**
+copies the content of any other template of the event into the form after a confirmation, to start
+a translation from it. The **Language** field of the form sets the language of the template; **No
+language** keeps it as the last fallback. **Send a test e-mail** and the preview use the language of
+the template for the sample values. The list of templates has a **Language** column and a
+**Translations** column that shows, for every event, which languages are still missing.
+
+### Languages API
+
+All fields are optional, so clients that do not know about languages keep working.
+
+- `GET /api/admin/templates` returns `locale` for every template (`null` without a language) and
+  accepts `locale=pl` as a filter.
+- `POST /api/admin/templates` and `PATCH /api/admin/templates/{id}` accept `locale`: a two or
+  three letter code (stored in lower case), `null` or an empty string for no language. An update
+  that does not mention `locale` keeps it.
+- `POST /api/admin/templates/email/render` and `.../test-send` accept `locale`: the sample values
+  are rendered in that language and the response echoes it. The test e-mail still goes only to you.
+
 ## Queues and the scheduler
 
 Template e-mails are sent by an event listener (`packages/templates`) in the process that raised

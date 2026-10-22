@@ -59,6 +59,7 @@ class TemplatesEmailTestSendRequest implements ModelInterface, ArrayAccess, \Jso
     protected static $openAPITypes = [
         'content' => 'string',
         'event' => 'string',
+        'locale' => 'string',
         'sample_overrides' => 'array<string,string>',
         'title' => 'string'
     ];
@@ -73,6 +74,7 @@ class TemplatesEmailTestSendRequest implements ModelInterface, ArrayAccess, \Jso
     protected static $openAPIFormats = [
         'content' => null,
         'event' => null,
+        'locale' => null,
         'sample_overrides' => null,
         'title' => null
     ];
@@ -85,6 +87,7 @@ class TemplatesEmailTestSendRequest implements ModelInterface, ArrayAccess, \Jso
     protected static array $openAPINullables = [
         'content' => false,
         'event' => false,
+        'locale' => true,
         'sample_overrides' => false,
         'title' => false
     ];
@@ -177,6 +180,7 @@ class TemplatesEmailTestSendRequest implements ModelInterface, ArrayAccess, \Jso
     protected static $attributeMap = [
         'content' => 'content',
         'event' => 'event',
+        'locale' => 'locale',
         'sample_overrides' => 'sample_overrides',
         'title' => 'title'
     ];
@@ -189,6 +193,7 @@ class TemplatesEmailTestSendRequest implements ModelInterface, ArrayAccess, \Jso
     protected static $setters = [
         'content' => 'setContent',
         'event' => 'setEvent',
+        'locale' => 'setLocale',
         'sample_overrides' => 'setSampleOverrides',
         'title' => 'setTitle'
     ];
@@ -201,6 +206,7 @@ class TemplatesEmailTestSendRequest implements ModelInterface, ArrayAccess, \Jso
     protected static $getters = [
         'content' => 'getContent',
         'event' => 'getEvent',
+        'locale' => 'getLocale',
         'sample_overrides' => 'getSampleOverrides',
         'title' => 'getTitle'
     ];
@@ -264,6 +270,7 @@ class TemplatesEmailTestSendRequest implements ModelInterface, ArrayAccess, \Jso
     {
         $this->setIfExists('content', $data ?? [], null);
         $this->setIfExists('event', $data ?? [], null);
+        $this->setIfExists('locale', $data ?? [], null);
         $this->setIfExists('sample_overrides', $data ?? [], null);
         $this->setIfExists('title', $data ?? [], null);
     }
@@ -369,6 +376,40 @@ class TemplatesEmailTestSendRequest implements ModelInterface, ArrayAccess, \Jso
             throw new \InvalidArgumentException('non-nullable event cannot be null');
         }
         $this->container['event'] = $event;
+
+        return $this;
+    }
+
+    /**
+     * Gets locale
+     *
+     * @return string|null
+     */
+    public function getLocale()
+    {
+        return $this->container['locale'];
+    }
+
+    /**
+     * Sets locale
+     *
+     * @param string|null $locale language code (en, pl, zh) the draft is written for
+     *
+     * @return self
+     */
+    public function setLocale($locale)
+    {
+        if (is_null($locale)) {
+            array_push($this->openAPINullablesSetToNull, 'locale');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('locale', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['locale'] = $locale;
 
         return $this;
     }

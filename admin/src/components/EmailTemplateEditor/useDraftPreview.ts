@@ -22,7 +22,7 @@ export const useDraftPreview = (
   const [state, setState] = useState<DraftPreviewState>({ status: 'idle' });
   const lastDraft = useRef<EmailDraft | undefined>(undefined);
   const counter = useRef(0);
-  const { event, title, content } = input;
+  const { event, title, content, locale } = input;
 
   useEffect(() => {
     if (!event || !content) {
@@ -34,7 +34,7 @@ export const useDraftPreview = (
     const current = ++counter.current;
     const timer = setTimeout(() => {
       setState({ status: 'loading', draft: lastDraft.current });
-      render({ event, title, content })
+      render(locale ? { event, title, content, locale } : { event, title, content })
         .then((response) => {
           if (current !== counter.current) return;
           lastDraft.current = response.data;
@@ -50,7 +50,7 @@ export const useDraftPreview = (
         });
     }, delay);
     return () => clearTimeout(timer);
-  }, [event, title, content, delay]);
+  }, [event, title, content, locale, delay]);
 
   return state;
 };

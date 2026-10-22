@@ -49,6 +49,8 @@ class TestCase extends CoreTestCase
                 $mock->shouldReceive('renderWithErrors')->andReturnUsing(fn (string $mjml) => ['html' => $mjml, 'errors' => []]);
             })
         );
+        // The suites below edit "the" default template of an event: one template without a language, as before M6
+        Config::set(UlamsTemplatesEmailServiceProvider::CONFIG_KEY . '.seed_locales', []);
         $this->seed(TemplatesEmailSeeder::class);
     }
 

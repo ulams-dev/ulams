@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static           array getRegisteredChannels()
  * @method static           array getRegisteredEventsWithTokens()
  * @method static            bool assertEventHandled(string $eventClass, string $channelClass, ?string $variableClass = null) 
- * @method static            void createDefaultTemplatesForChannel(string $channelClass)
+ * @method static            void createDefaultTemplatesForChannel(string $channelClass, array $locales = [])
  * @method static TemplatePreview sendPreview(\Ulams\Core\Models\User $user, \Ulams\Templates\Models\Template $template)
  * @method static   TemplateModel processTemplateAfterSaving(\Ulams\Templates\Models\Template $template)
  * @method static      Collection listAssignableTemplates(?string $assignableClass = null, ?string $eventClass = null, ?string $channelClass = null)

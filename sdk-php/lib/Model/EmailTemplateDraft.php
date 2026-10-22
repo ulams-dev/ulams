@@ -59,6 +59,7 @@ class EmailTemplateDraft implements ModelInterface, ArrayAccess, \JsonSerializab
     protected static $openAPITypes = [
         'errors' => 'string[]',
         'html' => 'string',
+        'locale' => 'string',
         'missing_variables' => 'string[]',
         'recipient' => 'string',
         'sent' => 'bool',
@@ -76,6 +77,7 @@ class EmailTemplateDraft implements ModelInterface, ArrayAccess, \JsonSerializab
     protected static $openAPIFormats = [
         'errors' => null,
         'html' => null,
+        'locale' => null,
         'missing_variables' => null,
         'recipient' => null,
         'sent' => null,
@@ -91,6 +93,7 @@ class EmailTemplateDraft implements ModelInterface, ArrayAccess, \JsonSerializab
     protected static array $openAPINullables = [
         'errors' => false,
         'html' => false,
+        'locale' => true,
         'missing_variables' => false,
         'recipient' => false,
         'sent' => false,
@@ -186,6 +189,7 @@ class EmailTemplateDraft implements ModelInterface, ArrayAccess, \JsonSerializab
     protected static $attributeMap = [
         'errors' => 'errors',
         'html' => 'html',
+        'locale' => 'locale',
         'missing_variables' => 'missing_variables',
         'recipient' => 'recipient',
         'sent' => 'sent',
@@ -201,6 +205,7 @@ class EmailTemplateDraft implements ModelInterface, ArrayAccess, \JsonSerializab
     protected static $setters = [
         'errors' => 'setErrors',
         'html' => 'setHtml',
+        'locale' => 'setLocale',
         'missing_variables' => 'setMissingVariables',
         'recipient' => 'setRecipient',
         'sent' => 'setSent',
@@ -216,6 +221,7 @@ class EmailTemplateDraft implements ModelInterface, ArrayAccess, \JsonSerializab
     protected static $getters = [
         'errors' => 'getErrors',
         'html' => 'getHtml',
+        'locale' => 'getLocale',
         'missing_variables' => 'getMissingVariables',
         'recipient' => 'getRecipient',
         'sent' => 'getSent',
@@ -282,6 +288,7 @@ class EmailTemplateDraft implements ModelInterface, ArrayAccess, \JsonSerializab
     {
         $this->setIfExists('errors', $data ?? [], null);
         $this->setIfExists('html', $data ?? [], null);
+        $this->setIfExists('locale', $data ?? [], null);
         $this->setIfExists('missing_variables', $data ?? [], null);
         $this->setIfExists('recipient', $data ?? [], null);
         $this->setIfExists('sent', $data ?? [], null);
@@ -381,6 +388,40 @@ class EmailTemplateDraft implements ModelInterface, ArrayAccess, \JsonSerializab
             throw new \InvalidArgumentException('non-nullable html cannot be null');
         }
         $this->container['html'] = $html;
+
+        return $this;
+    }
+
+    /**
+     * Gets locale
+     *
+     * @return string|null
+     */
+    public function getLocale()
+    {
+        return $this->container['locale'];
+    }
+
+    /**
+     * Sets locale
+     *
+     * @param string|null $locale the language the draft was rendered in, as requested
+     *
+     * @return self
+     */
+    public function setLocale($locale)
+    {
+        if (is_null($locale)) {
+            array_push($this->openAPINullablesSetToNull, 'locale');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('locale', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['locale'] = $locale;
 
         return $this;
     }

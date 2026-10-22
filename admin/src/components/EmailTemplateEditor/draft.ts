@@ -8,9 +8,11 @@ export type EmailDraft = {
   warnings: DraftWarning[];
   sent?: boolean;
   recipient?: string;
+  locale?: string | null;
 };
 
-export type DraftInput = { event: string; title: string; content: string };
+/** `locale`: the language the template is written for; the sample values are rendered in it. */
+export type DraftInput = { event: string; title: string; content: string; locale?: string };
 
 export type DraftApiResponse = { success?: boolean; message?: string; data: EmailDraft };
 

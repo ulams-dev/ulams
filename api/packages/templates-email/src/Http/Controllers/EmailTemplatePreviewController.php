@@ -39,6 +39,7 @@ class EmailTemplatePreviewController extends UlamsBaseController
      *             @OA\Property(property="event", type="string", description="event full classname, as listed by GET /api/admin/templates/events"),
      *             @OA\Property(property="title", type="string", description="subject"),
      *             @OA\Property(property="content", type="string", description="MJML (or HTML) source, up to 512 KiB"),
+     *             @OA\Property(property="locale", type="string", nullable=true, description="language code (en, pl, zh) the draft is written for; sample values are rendered in it"),
      *             @OA\Property(property="sample_overrides", type="object", description="variable name to sample value, for this preview only", additionalProperties=@OA\AdditionalProperties(type="string"))
      *         )
      *     ),
@@ -74,6 +75,7 @@ class EmailTemplatePreviewController extends UlamsBaseController
      *             @OA\Property(property="count", type="integer")
      *         )
      *     ),
+     *     @OA\Property(property="locale", type="string", nullable=true, description="the language the draft was rendered in, as requested"),
      *     @OA\Property(property="sent", type="boolean", description="only in the test-send response"),
      *     @OA\Property(property="recipient", type="string", description="only in the test-send response: the address of the signed-in admin")
      * )
@@ -104,6 +106,7 @@ class EmailTemplatePreviewController extends UlamsBaseController
      *             @OA\Property(property="event", type="string"),
      *             @OA\Property(property="title", type="string"),
      *             @OA\Property(property="content", type="string"),
+     *             @OA\Property(property="locale", type="string", nullable=true, description="language code (en, pl, zh) the draft is written for"),
      *             @OA\Property(property="sample_overrides", type="object", additionalProperties=@OA\AdditionalProperties(type="string"))
      *         )
      *     ),
@@ -213,7 +216,8 @@ class EmailTemplatePreviewController extends UlamsBaseController
                 $request->input('event'),
                 $request->input('title'),
                 $request->input('content'),
-                $request->sampleOverrides()
+                $request->sampleOverrides(),
+                $request->locale()
             );
         } catch (ApiException | CurlException | ProcessException $e) {
             // Timeouts, connection errors and non-200 answers of the MJML service (see CurlApi), or a failing binary.

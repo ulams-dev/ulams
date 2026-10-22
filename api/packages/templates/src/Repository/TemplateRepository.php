@@ -26,6 +26,7 @@ class TemplateRepository extends BaseRepository implements TemplateRepositoryCon
             'channel',
             'event',
             'default',
+            'locale',
         ];
     }
 
@@ -49,11 +50,24 @@ class TemplateRepository extends BaseRepository implements TemplateRepositoryCon
 
     public function findTemplateDefault(string $event, string $channel): ?Template
     {
+        // The template without a language first: it is what this lookup always returned.
         return $this->allQuery([
             'event' => $event,
             'channel' => $channel,
             'default' => true,
-        ])->first();
+        ])->orderByRaw('CASE WHEN locale IS NULL THEN 0 ELSE 1 END')->orderBy('id')->first();
+    }
+
+    public function findTemplateDefaultForLocale(string $event, string $channel, ?string $locale): ?Template
+    {
+        $query = $this->allQuery([
+            'event' => $event,
+            'channel' => $channel,
+            'default' => true,
+        ]);
+        $locale === null ? $query->whereNull('locale') : $query->where('locale', $locale);
+
+        return $query->orderBy('id')->first();
     }
 
     public function findTemplateAssigned(string $event, string $channel, string $assigned_class, int $assigned_value): ?Template

@@ -19,6 +19,15 @@ class TemplateUpdateRequest extends FormRequest
         return Gate::allows('update', Template::class);
     }
 
+    protected function prepareForValidation(): void
+    {
+        if (is_string($this->input('locale'))) {
+            // `PL`, ` pl ` and an empty string (no language) are accepted the way an operator types them
+            $locale = strtolower(trim($this->input('locale')));
+            $this->merge(['locale' => $locale === '' ? null : $locale]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -34,6 +43,7 @@ class TemplateUpdateRequest extends FormRequest
             'channel' => ['sometimes', 'string', Rule::in($channels)],
             'event' => ['sometimes', 'string', Rule::in($events)],
             'default' => ['sometimes', 'bool'],
+            'locale' => ['sometimes', 'nullable', 'string', 'regex:/^[a-z]{2,3}$/'],
             'sections' => ['sometimes', 'array', new TemplateValidContentRule($this->getTemplate())],
             'sections.*.key' => ['string'],
             'sections.*.content' => ['string'],

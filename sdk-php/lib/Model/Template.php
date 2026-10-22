@@ -61,6 +61,7 @@ class Template implements ModelInterface, ArrayAccess, \JsonSerializable
         'default' => 'bool',
         'event' => 'string',
         'id' => 'int',
+        'locale' => 'string',
         'name' => 'string'
     ];
 
@@ -76,6 +77,7 @@ class Template implements ModelInterface, ArrayAccess, \JsonSerializable
         'default' => null,
         'event' => null,
         'id' => null,
+        'locale' => null,
         'name' => null
     ];
 
@@ -89,6 +91,7 @@ class Template implements ModelInterface, ArrayAccess, \JsonSerializable
         'default' => false,
         'event' => false,
         'id' => false,
+        'locale' => true,
         'name' => false
     ];
 
@@ -182,6 +185,7 @@ class Template implements ModelInterface, ArrayAccess, \JsonSerializable
         'default' => 'default',
         'event' => 'event',
         'id' => 'id',
+        'locale' => 'locale',
         'name' => 'name'
     ];
 
@@ -195,6 +199,7 @@ class Template implements ModelInterface, ArrayAccess, \JsonSerializable
         'default' => 'setDefault',
         'event' => 'setEvent',
         'id' => 'setId',
+        'locale' => 'setLocale',
         'name' => 'setName'
     ];
 
@@ -208,6 +213,7 @@ class Template implements ModelInterface, ArrayAccess, \JsonSerializable
         'default' => 'getDefault',
         'event' => 'getEvent',
         'id' => 'getId',
+        'locale' => 'getLocale',
         'name' => 'getName'
     ];
 
@@ -272,6 +278,7 @@ class Template implements ModelInterface, ArrayAccess, \JsonSerializable
         $this->setIfExists('default', $data ?? [], null);
         $this->setIfExists('event', $data ?? [], null);
         $this->setIfExists('id', $data ?? [], null);
+        $this->setIfExists('locale', $data ?? [], null);
         $this->setIfExists('name', $data ?? [], null);
     }
 
@@ -421,6 +428,40 @@ class Template implements ModelInterface, ArrayAccess, \JsonSerializable
             throw new \InvalidArgumentException('non-nullable id cannot be null');
         }
         $this->container['id'] = $id;
+
+        return $this;
+    }
+
+    /**
+     * Gets locale
+     *
+     * @return string|null
+     */
+    public function getLocale()
+    {
+        return $this->container['locale'];
+    }
+
+    /**
+     * Sets locale
+     *
+     * @param string|null $locale language code the template is written for (en, pl, zh); null for a template of no particular language, the last fallback
+     *
+     * @return self
+     */
+    public function setLocale($locale)
+    {
+        if (is_null($locale)) {
+            array_push($this->openAPINullablesSetToNull, 'locale');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('locale', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['locale'] = $locale;
 
         return $this;
     }

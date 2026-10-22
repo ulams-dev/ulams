@@ -1,6 +1,8 @@
 <?php
 
 return [
+    // Languages the seeder writes the default e-mail templates in, one template per language and event
+    'seed_locales' => ['en', 'pl', 'zh'],
     'images' => [
         // Largest image an admin can upload from the visual e-mail editor, in KB
         'max_kb'    => (int) env('TEMPLATES_EMAIL_IMAGE_MAX_KB', 2048),

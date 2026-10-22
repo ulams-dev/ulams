@@ -763,6 +763,8 @@ declare namespace API {
     sections?: TemplateSections[];
     created_at?: Date;
     default?: boolean;
+    /** Language the template is written for (`en`, `pl`, `zh`); null for a template of no particular language. */
+    locale?: string | null;
   };
 
   type TemplateSections = {
@@ -1517,6 +1519,8 @@ declare namespace API {
     API.PageParams &
     API.PaginationParams & {
       name?: string;
+      event?: string;
+      locale?: string;
     };
 
   type SubjectGroups = {
