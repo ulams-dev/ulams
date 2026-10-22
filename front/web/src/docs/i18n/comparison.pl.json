@@ -412,6 +412,18 @@
                     ]
                   },
                   {
+                    "title": "Wersje kursu z wizualnym porównaniem",
+                    "text": "Każda zmiana autora i każda zaakceptowana aktualizacja źródła tworzy kolejną, numerowaną wersję kursu. Wybierz dowolne dwie i porównaj je: dodane, usunięte i przeniesione lekcje, zmiany w tekście co do słowa, zmienione cytowania i pytania quizu, których poprawna odpowiedź jest teraz inna.",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
+                    "status": "coming"
+                  },
+                  {
+                    "title": "Warianty kursu według poziomu i roli",
+                    "text": "Kreator kursów AI pyta, jakie poziomy i role ma objąć, i przygotowuje kilka wariantów jednego kursu z tych samych źródeł; każdy wariant sprawdzasz jako różnicę względem wersji bazowej. Uczący się zaczyna w wariancie dopasowanym do siebie, a ekspert pomija podstawy.",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
+                    "status": "coming"
+                  },
+                  {
                     "title": "Warstwa LLM niezależna od dostawcy",
                     "text": "Jedna warstwa dostępu do dużych modeli językowych dla wszystkich pakietów, ze sterownikiem Anthropic oraz sterownikami fake i disabled do testów.",
                     "packages": [

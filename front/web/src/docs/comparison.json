@@ -412,6 +412,18 @@
                     ]
                   },
                   {
+                    "title": "Course versions with a visual diff",
+                    "text": "Every author edit and every accepted source update becomes a numbered course version. Pick any two and compare them: lessons added, removed or moved, word-level text changes, citations that changed and quiz answers that now differ.",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
+                    "status": "coming"
+                  },
+                  {
+                    "title": "Course variants by level and role",
+                    "text": "The AI Course Builder asks which levels and roles to cover and drafts several variants of one course from the same sources, each reviewed as a diff against the base. Learners start in the variant that fits them; experts skip the basics.",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
+                    "status": "coming"
+                  },
+                  {
                     "title": "Provider-agnostic LLM layer",
                     "text": "One access layer to large language models for every package, with an Anthropic driver and fake and disabled drivers for tests.",
                     "packages": [

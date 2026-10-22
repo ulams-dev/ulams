@@ -411,6 +411,18 @@
                     ]
                   },
                   {
+                    "title": "带可视化对比的课程版本",
+                    "text": "作者的每次修改和每次被接受的来源更新都会生成一个带编号的课程版本。任选两个版本进行对比：新增、删除或移动的课时，逐词的文本变化，变更的引用，以及正确答案已经不同的测验题。",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
+                    "status": "coming"
+                  },
+                  {
+                    "title": "按水平和角色划分的课程变体",
+                    "text": "AI 课程生成器会询问需要覆盖哪些水平和角色，并基于同一组来源为一门课程起草多个变体，每个变体都以相对基础版本的差异形式供你审阅。学习者从适合自己的变体开始，专家可以跳过基础内容。",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
+                    "status": "coming"
+                  },
+                  {
                     "title": "与服务商无关的 LLM 层",
                     "text": "为所有软件包提供统一的大语言模型访问层，含 Anthropic 驱动，以及用于测试的 fake 和 disabled 驱动。",
                     "packages": [
