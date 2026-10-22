@@ -414,7 +414,10 @@
                     "title": "带可视化对比的课程版本",
                     "text": "作者的每次修改和每次被接受的来源更新都会生成一个带编号的课程版本。任选两个版本进行对比：新增、删除或移动的课时，逐词的文本变化，变更的引用，以及正确答案已经不同的测验题。",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming"
+                    "status": "coming",
+                    "packages": [
+                      "authoring-metrics"
+                    ]
                   },
                   {
                     "title": "按水平和角色划分的课程变体",
