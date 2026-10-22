@@ -119,7 +119,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0105](0105-stream-tutor-answers-over-the-sse-event-log.md) | Stream tutor answers over the SSE event log | Accepted |
 | [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted (2026-10-21), amended 2026-10-21 (P5R-1) |
 | [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Accepted |
-| [0108](0108-signed-images-and-cve-scanning.md) | Keyless-signed images, SBOM release assets and Trivy scanning with a patch policy | Proposed |
+| [0108](0108-signed-images-and-cve-scanning.md) | Keyless-signed images, SBOM release assets and Trivy scanning with a patch policy | Accepted |
 | [0109](0109-helm-chart-next-to-the-stack-launcher.md) | A Helm chart for production Kubernetes next to the stack launcher | Proposed |
 | [0120](0120-identity-package-and-sso-libraries.md) | An identity package with onelogin/php-saml, an in-house OIDC client and an in-house SCIM server | Accepted |
 | [0121](0121-sso-login-handoff-account-linking-and-scim-tokens.md) | SSO login handoff by one-time code, strict account linking and SCIM tokens on service users | Accepted |

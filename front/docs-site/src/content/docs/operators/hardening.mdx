@@ -1,0 +1,174 @@
+---
+title: Hardening and supply chain
+description: Verify the signature and SBOM of ulams images with cosign, pin by digest, how images are scanned for vulnerabilities, the patch policy and a hardening checklist for TLS, secrets, network exposure, least privilege and backups.
+sidebar:
+  order: 14
+modules:
+  - core
+  - tenancy
+---
+
+import { Aside, Steps } from "@astrojs/starlight/components";
+
+This page is the checklist for running ulams on infrastructure you are responsible for, and the
+description of what the project does so that you can trust the images it publishes. The
+application-level notes (uploads, headers, tenant isolation) are on [Security](/operators/security/).
+
+## Verify the images you run
+
+Every image the `Publish images` workflow pushes to `ghcr.io/ulams-dev/*` (`php`, `api`, `h5p`,
+`pdf`, `admin`, `front`, `mjml`, `web`) is signed with [cosign](https://docs.sigstore.dev/cosign/overview/)
+using **keyless** signing: there is no signing key to protect or rotate. GitHub gives the workflow run
+a short-lived identity token, Sigstore issues a certificate that names this repository's workflow, and
+the signature and certificate are recorded in the public Rekor transparency log. A valid signature
+therefore says: this exact image digest was built by `.github/workflows/publish.yml` in
+`ulams-dev/ulams`.
+
+Install cosign 2.x or 3.x, then verify by digest:
+
+```bash
+cosign verify ghcr.io/ulams-dev/api@sha256:<digest> \
+  --certificate-identity-regexp '^https://github.com/ulams-dev/ulams/.github/workflows/publish.yml@' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+```
+
+Find the digest of a tag you pulled with
+`docker buildx imagetools inspect ghcr.io/ulams-dev/api:sha-abc1234 --format '{{ json .Manifest }}'`
+(the `digest` field is the digest of the multi-arch index, which is what is signed). One signature
+covers every tag of that digest, and the index also lists the BuildKit SBOM and provenance
+attestations, so those are covered too.
+
+A tag that does not verify, or an image from before signing was introduced, must not be treated as
+released. The `latest` image of each name is also checked every night and a failure shows up as a
+warning in the `Nightly security scan` run.
+
+### SBOM and provenance
+
+- **Per image.** Each image carries an SPDX SBOM and a SLSA provenance attestation made by BuildKit.
+  The SBOM is also attached as a cosign attestation, so you can read it without BuildKit tooling:
+
+  ```bash
+  cosign verify-attestation ghcr.io/ulams-dev/api@sha256:<digest> --type spdxjson \
+    --certificate-identity-regexp '^https://github.com/ulams-dev/ulams/.github/workflows/publish.yml@' \
+    --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+    | jq -r '.payload | @base64d | fromjson | .predicate.packages[].name' | head
+  ```
+
+  The attestation is made for the `linux/amd64` SBOM. The SBOMs of both architectures are in the
+  image index: `docker buildx imagetools inspect ghcr.io/ulams-dev/api@sha256:<digest> --format '{{ json .SBOM }}'`.
+- **Per release.** When a `v*` tag is published, the `Release assets` workflow verifies the signature of
+  every image of that version and attaches to the GitHub release: `<image>-<version>.spdx.json` for each
+  image, `source-<version>.spdx.json` (the source tree, for people who build their own images),
+  `digests.txt` and `SHA256SUMS` with its Sigstore bundle `SHA256SUMS.sigstore.json`.
+
+  ```bash
+  cosign verify-blob --bundle SHA256SUMS.sigstore.json \
+    --certificate-identity-regexp '^https://github.com/ulams-dev/ulams/.github/workflows/release.yml@' \
+    --certificate-oidc-issuer https://token.actions.githubusercontent.com SHA256SUMS
+  sha256sum -c SHA256SUMS
+  ```
+
+<Aside type="note" title="Air-gapped installs">
+  Keyless verification looks up the Sigstore trust root and the Rekor log online. Inside an isolated network,
+  verify once on a connected machine and mirror the images by digest, or use a mirrored trust root
+  ([cosign documentation](https://docs.sigstore.dev/cosign/verifying/verify/)). Signing writes image names
+  and digests to the public Rekor log; both are public anyway.
+</Aside>
+
+### Pin by digest
+
+Tags such as `latest` move. In production set the tag in `.env` (or the `image:` field in your
+manifests) to `sha-<short>` or to a release version, and for the strictest setups to the digest
+(`ghcr.io/ulams-dev/api@sha256:...`). Roll all images of one commit together: they talk to each other
+through internal contracts (see [Upgrades](/operators/upgrades/#image-tags)).
+
+## How the project scans for vulnerabilities
+
+[Trivy](https://trivy.dev/) (Apache-2.0) is the one scanner, run from a version pinned by digest
+(`.github/scripts/trivy.sh`, so the same command works on your laptop with only Docker).
+
+| Where | What | Fails when |
+|---|---|---|
+| Every pull request (`security-scan` job in `ci.yml`) | `composer.lock`, `yarn.lock`, Dockerfiles, Compose and Kubernetes files | a fixable CRITICAL or HIGH vulnerability, or a CRITICAL or HIGH misconfiguration, that is not in `.trivyignore.yaml` |
+| Pull requests that change the PHP, admin or front image | the image CI builds | a fixable CRITICAL vulnerability |
+| Every publish (`Publish images`) | the pushed digest | a fixable CRITICAL vulnerability: the run fails and the image is **not signed**, so it does not verify |
+| Every night (`Nightly security scan`) | every `ghcr.io/ulams-dev/*:latest` | never; one GitHub issue per image, labelled `security`, lists fixable CRITICAL and HIGH findings and closes when they are fixed |
+
+Only vulnerabilities that have a fix available count (`--ignore-unfixed`), because those are the ones
+we can act on. Results are uploaded to GitHub code scanning (Security tab) where that is enabled.
+Accepted findings are listed in `.trivyignore.yaml` with a reason and an expiry date; CI fails on a
+missing reason, on an expired entry and on a date more than a year ahead, so nothing is ignored for ever.
+
+Run the same checks yourself:
+
+```bash
+sh .github/scripts/trivy.sh fs                                   # the repository, fixable critical and high
+SEVERITY=CRITICAL,HIGH sh .github/scripts/trivy.sh image ghcr.io/ulams-dev/api:latest
+```
+
+## Patch policy
+
+| Finding | Where | Target |
+|---|---|---|
+| CRITICAL with a fix available | in a published image | fixed image published within **2 days** |
+| HIGH with a fix available | in a published image | within **14 days** |
+| Lower severity, or no fix yet | any | with the next regular release; unfixable findings are tracked, not gated |
+
+The clock starts when the nightly scan opens the issue (or when we learn about the problem from an
+advisory, whichever is first). A fix is a rebuilt image (the publish workflow pulls fresh base layers
+on every run, so a rebuild picks up OS fixes), a dependency update, or a documented exception in
+`.trivyignore.yaml`. Vulnerabilities in ulams itself follow the disclosure process in `SECURITY.md`.
+The PHP runtime is also watched on its own, because a PHP release can be security-critical the day it
+appears (see [Is my PHP current?](/operators/security/#is-my-php-current)).
+
+For your own installation: update to the newest `sha-<short>` or release at least as often as the
+targets above, subscribe to the repository's security advisories (Watch, Custom, Security alerts) and
+re-scan what you run: `sh .github/scripts/trivy.sh image <your image>`.
+
+## Hardening checklist
+
+<Steps>
+
+1. **Run signed, pinned images.** Verify before the first deploy and on every upgrade (above), and pin
+   by `sha-<short>`, release version or digest.
+
+2. **TLS everywhere.** Terminate HTTPS at Caddy (automatic certificates) or at your ingress with
+   cert-manager; never expose the application, admin or API over plain HTTP. Set
+   `Strict-Transport-Security` once every host works over HTTPS ([Security headers](/operators/security-headers/)).
+   Certificates and DNS: [DNS and TLS](/operators/dns-and-tls/).
+
+3. **Secrets.** Never commit `.env` or the launcher's `credentials.json`; the `ulams` launcher writes
+   `credentials.json` with mode `0600` and refuses to render an install when it is wider. Use unique
+   generated values for database and Valkey passwords, internal tokens and S3 and SMTP credentials. On
+   Kubernetes use Secrets with encryption at rest enabled on the cluster. `APP_KEY` cannot be rotated
+   (losing it makes tenant data unrecoverable, see [Backups](/operators/backups/)); Passport key pairs
+   are per tenant and can be replaced, which signs everyone out. Keep an offline copy of `APP_KEY` in a
+   password manager.
+
+4. **Expose the gateway only.** Publish Caddy (80 and 443). PostgreSQL, Valkey, php-fpm, the H5P and
+   PDF services, MJML, S3 admin endpoints, Horizon and any metrics endpoint stay on the internal
+   network ([Network exposure](/operators/security/#network-exposure)). On Kubernetes add NetworkPolicies
+   that allow only the gateway to reach the services and the services to reach the database, cache and
+   storage. The Helm chart planned for a later milestone will ship them; until then write them for your
+   namespace.
+
+5. **Least privilege.** `admin`, `front`, `web`, `h5p`, `pdf` and `mjml` run as non-root users. The PHP
+   images (`php`, `api`) currently start supervisord as root; drop capabilities (`cap_drop: [ALL]`, add
+   back only what you need), set `no-new-privileges`, and use a read-only root filesystem where it works
+   (keep `storage/` and `bootstrap/cache` writable). Give every tenant its own database role and S3
+   identity ([Tenant isolation](/operators/security/#tenant-isolation)).
+
+6. **Backups you have restored.** Encrypt backups, keep a copy off-site and away from the credentials of
+   the server, and rehearse a restore on a scratch machine ([Backups](/operators/backups/)).
+
+7. **Scan uploads.** Turn on the ClamAV profile (`UPLOADS_SCANNER=clamd`) when authors or learners upload
+   files you do not control, and keep `UPLOADS_CLAMD_FAIL_CLOSED=true`
+   ([Uploaded content is untrusted](/operators/security/#uploaded-content-is-untrusted)).
+
+8. **PHP settings.** Keep `session.upload_progress.enabled = 0` (set in the images), keep PHP on the latest
+   8.4 release, and set `APP_ENV=production` and `APP_DEBUG=false`.
+
+9. **Stay current.** Watch the `security` label in the repository, update at least as often as the
+   [patch policy](#patch-policy) targets, and re-run the verification after every update.
+
+</Steps>
