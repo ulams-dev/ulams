@@ -1077,6 +1077,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       `BASE_OUTDATED` and `STALE_PROPOSAL` into the same error; the three-way merge, conflict files and `resolve` are CAC-4, and nothing watches a Git repository yet (CAC-6, CAC-7)
 - [ ] GitHub Action + Docker image; preview deployment per PR
 - [ ] Git merge triggers Living Course update proposal
+      Note 2026-10-22 (#437): partial. A merged pull request is recorded on the revision (commit, subject, PR number and link) and shown on the update review; `living connections check --commit`
+      for CI; `ulams course sources-connect` watches `sources/**` of the course repository; a push waits (`PROPOSAL_PENDING`) while an open proposal edits the same elements; the loop test
+      (applied update, export, push back) creates nothing. Open: the sync pull request flow of the Action, which closes the loop in Git
 - [ ] (new) CLI plan `docs/plans/cli.md`: agent-first `ulams` CLI and MCP server (approved 2026-10-22;
       ADRs 0072–0079)
 - [x] (new) M1 CLI core: `front/cli` workspace, command registry, output contract and exit codes, profiles,
