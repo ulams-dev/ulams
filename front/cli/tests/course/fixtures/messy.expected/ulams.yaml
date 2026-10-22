@@ -1,0 +1,8 @@
+format: 1
+blueprint: 3
+# the course this folder is bound to
+course:
+  id: 42
+  session: 01jb0000000000000000000001
+lint:
+  uncitedAuthorBlocks: warn

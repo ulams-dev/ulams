@@ -34,6 +34,17 @@ advanced configuration.
 See the [complete installation guide](https://ulams-dev.github.io/ulams/operators/one-command-stack/)
 and [command reference](https://ulams-dev.github.io/ulams/reference/cli/stack/).
 
+## Courses as Markdown and YAML
+
+`ulams course validate` and `ulams course fmt` check and format a [course folder](https://ulams-dev.github.io/ulams/developers/course-folder-format/)
+offline: no server, no login, no network. Errors come with file, line and column, as text, JSON or SARIF.
+
+```bash
+ulams course validate examples/kubernetes-101          # exit 7 on errors
+ulams course validate --format sarif --out ulams.sarif
+ulams course fmt --check                               # exit 13 when files would change
+```
+
 ## Development and verification
 
 ```bash

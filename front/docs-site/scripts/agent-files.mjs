@@ -3,7 +3,7 @@
 //   llms.txt            index of the guides in the llmstxt.org format, each entry linking its Markdown page
 //   llms-full.txt       the guides (not the generated reference) as one Markdown document
 //   <page>/index.md     the Markdown source of every page, MDX components flattened to plain Markdown
-//   schemas/**          the public JSON Schemas (course blueprint, webhook events, UI catalogue manifests)
+//   schemas/**          the public JSON Schemas (course blueprint, course folder files, webhook events, UI catalogue manifests)
 //   schemas/index.json  what is published, with the schema ids
 //
 //   node scripts/agent-files.mjs [--check]
@@ -44,6 +44,11 @@ const SCHEMAS = [
   { path: "course-blueprint/v1.json", from: "api/packages/course-builder/resources/schemas/course-blueprint/v1.json" },
   { path: "course-blueprint/v2.json", from: "api/packages/course-builder/resources/schemas/course-blueprint/v2.json" },
   { path: "course-blueprint/v3.json", from: "api/packages/course-builder/resources/schemas/course-blueprint/v3.json" },
+  { path: "course-folder/1/ulams.schema.json", from: "front/cli/schemas/course-folder/ulams.schema.json" },
+  { path: "course-folder/1/course.schema.json", from: "front/cli/schemas/course-folder/course.schema.json" },
+  { path: "course-folder/1/module.schema.json", from: "front/cli/schemas/course-folder/module.schema.json" },
+  { path: "course-folder/1/lesson-front-matter.schema.json", from: "front/cli/schemas/course-folder/lesson-front-matter.schema.json" },
+  { path: "course-folder/1/quiz.schema.json", from: "front/cli/schemas/course-folder/quiz.schema.json" },
   { path: "webhooks/2026-10-20/event.json", from: "api/packages/webhooks/resources/schemas/webhook-event-2026-10-20.json" },
   { path: "knowledge/1/chunk.json", from: "api/packages/knowledge-export/resources/schemas/knowledge-chunk-1.json" },
   { path: "knowledge/1/manifest.json", from: "api/packages/knowledge-export/resources/schemas/knowledge-manifest-1.json" },

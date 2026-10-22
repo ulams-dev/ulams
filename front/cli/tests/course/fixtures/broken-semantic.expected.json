@@ -1,0 +1,158 @@
+[
+  {
+    "code": "OBJECTIVE_UNKNOWN",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 12,
+    "column": 66,
+    "element": "01jb00000000000000000000b1",
+    "message": "The objective 01jb00000000000000000000o9 is not an objective of this lesson.",
+    "hint": "A lesson lists ids from course.yaml; a block lists ids of its own lesson."
+  },
+  {
+    "code": "MARKUP_HTML",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 19,
+    "column": 1,
+    "element": "01jb00000000000000000000b2",
+    "message": "The text contains HTML; use plain text or Markdown.",
+    "hint": "Use plain text or Markdown."
+  },
+  {
+    "code": "MARKUP_SCRIPT_LINK",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 23,
+    "column": 1,
+    "element": "01jb00000000000000000000b3",
+    "message": "The text contains a script link.",
+    "hint": "Use an https link."
+  },
+  {
+    "code": "MARKUP_REMOTE_IMAGE",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 27,
+    "column": 1,
+    "element": "01jb00000000000000000000b4",
+    "message": "The text has an image from outside the course; images are files under assets/.",
+    "hint": "Put the image in assets/ and reference it relatively."
+  },
+  {
+    "code": "IMAGE_MISSING",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 31,
+    "column": 1,
+    "element": "01jb00000000000000000000b5",
+    "message": "The image assets/missing.png does not exist.",
+    "hint": "Add the file under assets/ or fix the path."
+  },
+  {
+    "code": "IMAGE_OUTSIDE_ASSETS",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 33,
+    "column": 1,
+    "element": "01jb00000000000000000000b5",
+    "message": "The image ../../../elsewhere.png does not resolve to a file inside assets/.",
+    "hint": "Use `![alt](../../assets/name.png)` from a lesson file."
+  },
+  {
+    "code": "CITATION_MISSING",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 36,
+    "column": 1,
+    "element": "01jb00000000000000000000b6",
+    "message": "This block cites no source and is not marked origin=author.",
+    "hint": "Cite at least one fragment, or set origin: author if you wrote it yourself."
+  },
+  {
+    "code": "UNCITED_AUTHOR_BLOCK",
+    "severity": "warning",
+    "file": "modules/01-a/01-first.md",
+    "line": 40,
+    "column": 1,
+    "element": "01jb00000000000000000000b7",
+    "message": "This author-written block cites no source.",
+    "hint": "Living Course cannot keep an uncited block up to date. Add cite=\"frg_...\" when a source exists, or set lint.uncitedAuthorBlocks in ulams.yaml."
+  },
+  {
+    "code": "ID_DUPLICATE",
+    "severity": "error",
+    "file": "modules/01-a/01-first.md",
+    "line": 44,
+    "column": 14,
+    "element": "01jb00000000000000000000b2",
+    "message": "The id 01jb00000000000000000000b2 is already used at modules/01-a/01-first.md:16.",
+    "hint": "Give one of them a new id (delete the id and run `ulams course fmt`)."
+  },
+  {
+    "code": "QUESTION_SHAPE",
+    "severity": "error",
+    "file": "modules/01-a/01-first.quiz.yaml",
+    "line": 3,
+    "column": 5,
+    "element": "01jb00000000000000000000x1",
+    "message": "Quiz question 1: A single-choice question needs at least 3 options.",
+    "hint": "single: 3+ options, one correct. multiple: 3+, 2+ correct, one wrong. truefalse: True and False. short: every option is an accepted answer."
+  },
+  {
+    "code": "QUESTION_SHAPE",
+    "severity": "error",
+    "file": "modules/01-a/01-first.quiz.yaml",
+    "line": 3,
+    "column": 5,
+    "element": "01jb00000000000000000000x1",
+    "message": "Quiz question 1: A single-choice question needs exactly one correct option.",
+    "hint": "single: 3+ options, one correct. multiple: 3+, 2+ correct, one wrong. truefalse: True and False. short: every option is an accepted answer."
+  },
+  {
+    "code": "CITATION_MISSING",
+    "severity": "error",
+    "file": "modules/01-a/01-first.quiz.yaml",
+    "line": 11,
+    "column": 5,
+    "element": "01jb00000000000000000000x2",
+    "message": "Question 2 cites no source and is not marked origin: author.",
+    "hint": "Cite at least one fragment, or set origin: author if you wrote it yourself."
+  },
+  {
+    "code": "ASSET_MISSING",
+    "severity": "error",
+    "file": "modules/02-b/01-package.md",
+    "line": 11,
+    "column": 1,
+    "message": "The asset assets/packages/missing.zip does not exist.",
+    "hint": "Add the file under assets/ or fix asset.path."
+  },
+  {
+    "code": "BLUEPRINT_SCHEMA",
+    "severity": "error",
+    "file": "modules/02-b/02-file.md",
+    "line": 2,
+    "column": 1,
+    "message": "/modules/1/lessons/1: missing \"asset\"",
+    "hint": "See the message for the JSON path; the course folder maps to a Blueprint v3 document."
+  },
+  {
+    "code": "ASSET_HASH_MISMATCH",
+    "severity": "error",
+    "file": "modules/02-b/03-hash.md",
+    "line": 10,
+    "column": 1,
+    "message": "assets/notes.txt has sha256 49ff8a159c33... and 15 bytes, but the lesson says otherwise.",
+    "hint": "Run `ulams course fmt` to refresh them."
+  },
+  {
+    "code": "KEY_DUPLICATE",
+    "severity": "error",
+    "file": "modules/02-b/module.yaml",
+    "line": 3,
+    "column": 1,
+    "message": "The key \"same\" is already used by modules/01-a/module.yaml.",
+    "hint": "Keys are unique among the modules of a course and among the lessons of a module."
+  }
+]

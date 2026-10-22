@@ -1,0 +1,15 @@
+id: 01m5gj6q4bmq3qr1yh91gsa6b6
+title: Kubernetes 101
+subtitle: Run your first containers on a cluster
+language: en
+audience: Developers who know Docker and have never used Kubernetes.
+description: "A short, hands-on introduction: install kubectl, run pods, scale a deployment."
+objectives:
+  - id: 01m5gj6q4b6wk1fm0r4fz9b5d1
+    text: Explain what a pod and a deployment are
+  - id: 01m5gj6q4bymhzn94zy2rk030k
+    text: Run and inspect workloads with kubectl
+faq:
+  - question: Do I need a cloud account?
+    answer: No. A local cluster such as kind or minikube is enough.
+    origin: author

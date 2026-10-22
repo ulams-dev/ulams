@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/course-folder/1/course.schema.json",
+  "title": "course.yaml",
+  "description": "Course fields, learning objectives, FAQ and pages.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[0-9a-z]{26}$",
+      "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 200
+    },
+    "subtitle": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^[a-z]{2}$"
+    },
+    "audience": {
+      "type": "string",
+      "maxLength": 300
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 4000
+    },
+    "seo": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "maxLength": 70
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 160
+        }
+      },
+      "additionalProperties": false
+    },
+    "objectives": {
+      "default": [],
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-z]{26}$",
+            "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+          },
+          "text": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 400
+          },
+          "citations": {
+            "default": [],
+            "description": "Source fragments this element cites. Only elements with origin: author may leave it empty.",
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$"
+            }
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "faq": {
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "answer": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "origin": {
+            "type": "string",
+            "enum": [
+              "ai",
+              "author"
+            ],
+            "description": "Who wrote it. Absent means ai; only author elements may have no citations."
+          },
+          "citations": {
+            "default": [],
+            "description": "Source fragments this element cites. Only elements with origin: author may leave it empty.",
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$"
+            }
+          }
+        },
+        "required": [
+          "question",
+          "answer"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "pages": {
+      "type": "object",
+      "properties": {
+        "landing": {
+          "anyOf": [
+            {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "header": {
+          "anyOf": [
+            {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {}
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "sources": {
+      "description": "Source documents of the builder session; informational, written by pull.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "fragmentCount": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "fragmentCount"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "additionalProperties": false
+}

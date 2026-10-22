@@ -261,6 +261,31 @@ Issues: `{code, severity: error|warning|info, file, line, column, element?, mess
 issues inline on the PR. `--fix` adds missing ids (client-minted ULIDs, lowercase), wraps loose Markdown,
 renumbers prefixes and fills `asset.sha256`.
 
+### 5.5 As built in CAC-2
+
+What the implementation (`front/cli/src/course/`, reference: `developers/course-folder-format`) does differently from
+sections 5.1 to 5.4, and why:
+
+- **Lesson `objectives` are full objects** (`id`, `text`, `citations`), not ids that point into `course.yaml`. In Blueprint v3 a
+  lesson's objectives carry their own ids, and the server's `Checks::structure` rejects an id used by two elements, so a shared
+  id would fail on import. Blocks still name the lesson objectives they serve with `objectives="id,id"`.
+- **No `variant` attribute on `callout`.** The v3 block has no such field (`additionalProperties: false`), so it could not
+  round-trip. A variant is written in the Markdown.
+- **Front matter holds every lesson field the blueprint has** (`status`, `flags`, `origin`, `selfChecks`, `interaction`,
+  `assetRef`, `exercises`), with defaults omitted. `asset` also accepts the bare path (`asset: scorm/k8s-intro.zip`); `fmt` expands it
+  with `sha256`, `bytes` and `mediaType` from the file.
+- **`course.yaml` also carries `pages` and `sources`** (the latter is informational, written by `pull`), so the document is
+  rebuilt without a server. `ulams.yaml` has no course data of its own besides the binding and the lint level.
+- **Canonical form** (what `fmt` prints and `from-blueprint` writes): fixed key order per file, block style, defaults left out,
+  one directive form. `meta` is not stored; block text is normalised; an absent `interaction` equals `null`. These are the only
+  differences the round trip allows.
+- **`validate` runs the bundled v3 schema only when no file or grammar error is left**, so one mistake does not produce a second
+  report from the schema. The checks ported from `Checks.php` are `markup` and `questionShape` (shared fixtures
+  `api/packages/course-builder/tests/fixtures/checks/*.json`, run by PHPUnit and Vitest), objectives per lesson, id and key
+  uniqueness, images, assets and their hashes, and the citation rule. Checks that need fragments (`--online`, `quizSupport`)
+  come with the sync milestones.
+- **`fmt --check` exits 13** (`DIFF_FOUND`) when files would change; `validate` exits 7 on errors.
+
 ## 6. Citations for hand-written blocks (#78)
 
 **Recommended default (used until the owner says otherwise): yes, hand-written blocks may have no citations,

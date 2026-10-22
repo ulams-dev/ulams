@@ -8,6 +8,7 @@ import { logout, whoami } from "./core/session.ts";
 import { applyCommands } from "./apply.ts";
 import { builderCommands } from "./builder.ts";
 import { courseCommands } from "./course.ts";
+import { courseFolderCommands } from "./course-folder.ts";
 import { livingCommands } from "./living.ts";
 import { curatedCommands } from "./curated.ts";
 import { mcp } from "./mcp.ts";
@@ -38,6 +39,7 @@ export const handWritten: AnyCommand[] = [
   ...applyCommands,
   ...builderCommands,
   ...courseCommands,
+  ...courseFolderCommands,
   ...livingCommands,
   ...tenantCommands,
 ];

@@ -1,0 +1,14 @@
+id: 01m5gj6q4bfsqcmdfs77z1wmp3
+passScore: 70
+questions:
+  - id: 01m5gj6q4b50938313y52t887z
+    type: single
+    stem: What is the smallest deployable unit in Kubernetes?
+    options:
+      - { id: 01m5gj6q4bx873k69hev5vnk2s, text: A pod, correct: true }
+      - { id: 01m5gj6q4bqpr5p3xw29b3gn4y, text: A node }
+      - { id: 01m5gj6q4bx7ddvf55b62ja5de, text: A namespace }
+    explanation: Containers always run inside a pod.
+    origin: author
+    objectiveIds:
+      - 01m5gj6q4bs9symrqeg0f9bvsr

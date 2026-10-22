@@ -1,0 +1,21 @@
+{
+  "description": "Checks::questionShape (PHP) and questionShape() in front/cli/src/course/checks.ts must return the same messages. Run by PHPUnit (tests/Unit/ChecksFixturesTest.php) and Vitest (front/cli/tests/course/checks.test.ts).",
+  "check": "questionShape",
+  "cases": [
+    { "name": "single: valid", "where": "Lesson 1 Q1", "input": { "type": "single", "options": [{ "text": "A", "correct": true }, { "text": "B", "correct": false }, { "text": "C", "correct": false }] }, "expected": [] },
+    { "name": "single: two options, no correct one", "where": "Lesson 1 Q2", "input": { "type": "single", "options": [{ "text": "A", "correct": false }, { "text": "B", "correct": false }] }, "expected": ["Lesson 1 Q2: a single-choice question needs at least 3 options", "Lesson 1 Q2: a single-choice question needs exactly one correct option"] },
+    { "name": "single: repeated options (case and spaces ignored)", "where": "Lesson 1 Q3", "input": { "type": "single", "options": [{ "text": "Yes", "correct": true }, { "text": " yes ", "correct": false }, { "text": "No", "correct": false }] }, "expected": ["Lesson 1 Q3: options repeat"] },
+    { "name": "single: two correct options", "where": "Lesson 1 Q4", "input": { "type": "single", "options": [{ "text": "A", "correct": true }, { "text": "B", "correct": true }, { "text": "C", "correct": false }] }, "expected": ["Lesson 1 Q4: a single-choice question needs exactly one correct option"] },
+    { "name": "multiple: valid", "where": "Lesson 2 Q1", "input": { "type": "multiple", "options": [{ "text": "A", "correct": true }, { "text": "B", "correct": true }, { "text": "C", "correct": false }] }, "expected": [] },
+    { "name": "multiple: one correct option", "where": "Lesson 2 Q2", "input": { "type": "multiple", "options": [{ "text": "A", "correct": true }, { "text": "B", "correct": false }, { "text": "C", "correct": false }] }, "expected": ["Lesson 2 Q2: a multiple-answer question needs at least 2 correct options"] },
+    { "name": "multiple: every option correct", "where": "Lesson 2 Q3", "input": { "type": "multiple", "options": [{ "text": "A", "correct": true }, { "text": "B", "correct": true }, { "text": "C", "correct": true }] }, "expected": ["Lesson 2 Q3: at least one option must be wrong"] },
+    { "name": "multiple: two options", "where": "Lesson 2 Q4", "input": { "type": "multiple", "options": [{ "text": "A", "correct": true }, { "text": "B", "correct": true }] }, "expected": ["Lesson 2 Q4: a multiple-choice question needs at least 3 options", "Lesson 2 Q4: at least one option must be wrong"] },
+    { "name": "truefalse: valid", "where": "Lesson 3 Q1", "input": { "type": "truefalse", "options": [{ "text": "True", "correct": false }, { "text": "False", "correct": true }] }, "expected": [] },
+    { "name": "truefalse: wrong labels", "where": "Lesson 3 Q2", "input": { "type": "truefalse", "options": [{ "text": "Yes", "correct": true }, { "text": "No", "correct": false }] }, "expected": ["Lesson 3 Q2: true/false options must be exactly True and False"] },
+    { "name": "truefalse: three options and both correct", "where": "Lesson 3 Q3", "input": { "type": "truefalse", "options": [{ "text": "True", "correct": true }, { "text": "False", "correct": true }, { "text": "Maybe", "correct": false }] }, "expected": ["Lesson 3 Q3: true/false options must be exactly True and False", "Lesson 3 Q3: exactly one of True/False is correct"] },
+    { "name": "short: valid", "where": "Final Q1", "input": { "type": "short", "options": [{ "text": "kubectl", "correct": true }, { "text": "kubectl.exe", "correct": true }] }, "expected": [] },
+    { "name": "short: a wrong option", "where": "Final Q2", "input": { "type": "short", "options": [{ "text": "kubectl", "correct": true }, { "text": "kube", "correct": false }] }, "expected": ["Final Q2: every short-answer option is an accepted answer (correct: true)"] },
+    { "name": "short: no options", "where": "Final Q3", "input": { "type": "short", "options": [] }, "expected": ["Final Q3: every short-answer option is an accepted answer (correct: true)"] },
+    { "name": "unknown type", "where": "Final Q4", "input": { "type": "essay", "options": [] }, "expected": ["Final Q4: unknown question type"] }
+  ]
+}

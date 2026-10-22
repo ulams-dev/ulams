@@ -1,0 +1,24 @@
+id: 01m5gj6q4b0x9ravcdtdchx50m
+passScore: 70
+questions:
+  - id: 01m5gj6q4b94458t4er6260t48
+    type: truefalse
+    stem: A deployment replaces pods that fail.
+    options:
+      - { id: 01m5gj6q4b0ghgs0t18x1mjxpm, text: "True", correct: true }
+      - { id: 01m5gj6q4bmwf02xys11ty7662, text: "False" }
+    explanation: That is what the replica count is for.
+    origin: author
+    objectiveIds:
+      - 01m5gj6q4b3adbhmvpg70dtrgj
+  - id: 01m5gj6q4bd3qaxqdhe9e62qvy
+    type: multiple
+    stem: Which commands change the number of replicas?
+    options:
+      - { id: 01m5gj6q4bg1k3eg29thwfz558, text: kubectl scale deployment web --replicas=5, correct: true }
+      - { id: 01m5gj6q4b1brd41by3dsdzgjc, text: kubectl edit deployment web, correct: true }
+      - { id: 01m5gj6q4b28qk2mqtqtvr5yax, text: kubectl get pods }
+    explanation: Scale directly, or edit the spec.
+    origin: author
+    objectiveIds:
+      - 01m5gj6q4bcnyesnaz3fm18bzm

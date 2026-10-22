@@ -48,11 +48,12 @@ schema never changes in place: a change that breaks readers gets a new file.
 
 | Schema | Address under `/schemas/` | What it validates |
 |---|---|---|
-| Course blueprint v1 and v2 | `course-blueprint/v1.json`, `course-blueprint/v2.json` | One version of a course built by the [Course Builder](/developers/course-builder-api/): modules, lessons, elements with stable ids, citations |
+| Course blueprint v1, v2 and v3 | `course-blueprint/v1.json`, `course-blueprint/v2.json`, `course-blueprint/v3.json` | One version of a course built by the [Course Builder](/developers/course-builder-api/): modules, lessons, elements with stable ids, citations |
+| Course folder files | `course-folder/1/ulams.schema.json`, `course.schema.json`, `module.schema.json`, `lesson-front-matter.schema.json`, `quiz.schema.json` | The YAML files and lesson front matter of a [course in Git](/developers/course-folder-format/); point an editor at them with `# yaml-language-server: $schema=...` |
 | Webhook event | `webhooks/2026-10-20/event.json` | The body of every [outgoing webhook](/developers/outgoing-webhooks/) for endpoints pinned to that `api_version` |
 | UI catalogue | `ui-catalogue/builder-v1.json`, `page-v1.json`, `learner-layout-v1.json` | The components a model may use in generated pages and layouts, with the JSON Schema of each component's props ([generative UI](/developers/generative-ui/)) |
 
 The sources are the files in the repository (`api/packages/course-builder/resources/schemas/`,
-`api/packages/webhooks/resources/schemas/`, `front/ui/catalogue/`); tests validate real payloads against
+`api/packages/webhooks/resources/schemas/`, `front/cli/schemas/course-folder/`, `front/ui/catalogue/`); tests validate real payloads against
 them, so a schema that drifts from the code fails CI. Run `yarn workspace @ulams/docs agent-files:check` to
 check the conversion and the sources without a built site.
