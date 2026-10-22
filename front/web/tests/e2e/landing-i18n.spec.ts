@@ -181,8 +181,9 @@ test("platform robots and sitemap list only the localized public page URLs", asy
     `${base}/course-generation/`, `${base}/pl/course-generation/`, `${base}/zh/course-generation/`,
     `${base}/course-generation/microdosing-study/`, `${base}/pl/course-generation/microdosing-study/`, `${base}/zh/course-generation/microdosing-study/`,
     `${base}/course-generation/stablecoin-report/`, `${base}/pl/course-generation/stablecoin-report/`, `${base}/zh/course-generation/stablecoin-report/`,
+    `${base}/course-generation/docs-repo/`, `${base}/pl/course-generation/docs-repo/`, `${base}/zh/course-generation/docs-repo/`,
   ]);
-  expect(xml.match(/hreflang="x-default"/g)).toHaveLength(18);
+  expect(xml.match(/hreflang="x-default"/g)).toHaveLength(21);
 });
 
 test("the FAQ page lists every question once, in every language, with one FAQPage", async ({ page }) => {
