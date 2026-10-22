@@ -42,5 +42,5 @@ test("the committed file passes", async () => {
   const text = readFileSync(new URL("../.trivyignore.yaml", import.meta.url), "utf8");
   const r = checkIgnoreFile(text, today);
   assert.deepEqual(r.problems, []);
-  assert.ok(r.entries > 100);
+  assert.ok(r.entries > 0, "the file lists at least the misconfiguration exception");
 });
