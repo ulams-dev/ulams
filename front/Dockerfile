@@ -21,7 +21,7 @@ RUN echo $APP_VERSION >> front/dist/version.html
 # Non-root static server (uid 101, port 8080). The tag is pinned by digest (Dependabot's docker ecosystem bumps tag and
 # digest together, weekly); bump both together by hand otherwise. The upstream image lags Alpine security fixes, so the
 # stage also runs `apk upgrade` to pick up patched packages (curl, openssl, expat, ...) at every build.
-FROM nginxinc/nginx-unprivileged:1.30-alpine@sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03 AS httpd
+FROM nginxinc/nginx-unprivileged:1.31-alpine@sha256:b5047b9b76845eac124358373c6852377c52e4b05834a47647e955dd91cb8f1e AS httpd
 # Settings are read at start from the environment (names starting with VITE_APP_) and written to
 # /runtime-config.json, which index.html loads before the app boots (ADR 0056). Examples:
 #   VITE_APP_API_URL, VITE_APP_TENANT_API_HOST_PATTERN, VITE_APP_SENTRYDSN, VITE_APP_FIREBASE_*,
