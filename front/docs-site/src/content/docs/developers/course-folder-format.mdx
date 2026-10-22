@@ -1,0 +1,281 @@
+---
+title: Course folder format
+description: "The Markdown and YAML format of a course in Git: folder layout, lesson files with block directives, quiz files, ids and ordering, how it maps to Blueprint v3 and round-trips, the JSON Schemas for editors, and every validation issue code."
+sidebar:
+  order: 84
+modules:
+  - cli
+  - course-builder
+---
+
+A course can live in a folder of Markdown and YAML that you keep in Git, review in pull requests and check with
+[`ulams course validate`](/developers/cli-course/) before anything touches an academy. The folder is a lossless, readable
+spelling of a [Blueprint v3](/developers/course-builder-api/#course-as-code-endpoints-work-with-ai-off) document: the
+same course, element for element, with the same ids. Export a course, turn it into files, parse the files, and you get the
+same blueprint back. This page is the reference for the files; the commands are in
+[Validate and format a course folder](/developers/cli-course/). The decision behind it is
+[ADR 0160](/decisions/0160-course-as-code-sync-through-blueprint-v3-import-versions/).
+
+Everything here works offline. Nothing in this milestone talks to a server: `course push`, `course pull` and the preview
+academy build on the same files in later steps.
+
+## Layout
+
+```text
+kubernetes-101/
+  ulams.yaml                  format version, blueprint version, lint levels (no secrets)
+  course.yaml                 title, language, objectives, FAQ, pages
+  modules/
+    01-basics/
+      module.yaml             id, key, title, summary
+      01-install.md           a lesson: YAML front matter, then blocks
+      01-install.quiz.yaml    the lesson's quiz (optional)
+      02-pods.md
+  final-test.quiz.yaml        the final test (optional)
+  assets/                     images and packages the lessons use
+```
+
+A complete, valid course is in the repository: [`front/cli/examples/kubernetes-101`](https://github.com/ulams-dev/ulams/tree/main/front/cli/examples/kubernetes-101).
+
+- **Order comes from the numeric prefixes** of module folders and lesson files (`01-`, `02-`, ...). `ulams course fmt`
+  renumbers them without gaps and keeps the rest of the name. A lesson moved to another module keeps its id, so it is
+  a move, not a delete plus an add.
+- A quiz belongs to the lesson whose file name it shares: `01-install.md` pairs with `01-install.quiz.yaml`.
+- Folder and file names are for people. The identity of every element is its `id`.
+- `assets/` is not read as text. Files elsewhere (`sources/`, `.ulams/`, `.github/`) are left alone; files under `modules/`
+  that the format does not use are reported as `UNKNOWN_FILE`.
+
+## ulams.yaml
+
+```yaml
+format: 1                     # course folder format version
+blueprint: 3                  # Blueprint schema version the folder maps to
+profile: coffee               # optional default CLI profile; CI uses ULAMS_URL and ULAMS_TOKEN
+course:
+  id: 42                      # set by the first push
+  session: 01jb0000000000000000000001
+language: en                  # used when course.yaml has no language
+lint:
+  uncitedAuthorBlocks: warn   # warn | error | off
+```
+
+`lint.uncitedAuthorBlocks` sets how `UNCITED_AUTHOR_BLOCK` counts: a note for a team that writes without sources, an error
+for one that wants every block to cite a fragment. Never put a token in this file.
+
+## course.yaml
+
+```yaml
+id: 01jb00000000000000000000c1
+title: Kubernetes 101
+subtitle: Run your first containers on a cluster
+language: en
+audience: Developers who know Docker.
+description: A short, hands-on introduction.
+objectives:
+  - id: 01jb00000000000000000000o1
+    text: Explain what a pod and a deployment are
+faq:
+  - question: Do I need a cloud account?
+    answer: No.
+    origin: author
+```
+
+`seo`, `pages` (the landing and header documents) and `sources` (the source documents of a builder session, written by
+`pull`) are also accepted. Course price, tags, category and access are not part of the folder format; manage them with
+[`ulams apply`](/developers/cli/) manifests.
+
+## Lesson files
+
+```markdown
+---
+id: 01jb00000000000000000000l1
+key: install
+title: Install kubectl
+summary: Install and verify the command line tool.
+minutes: 10
+objectives:
+  - id: 01jb00000000000000000000o2
+    text: Install kubectl and check its version
+origin: author
+---
+
+:::paragraph{#01jb00000000000000000000b1 cite="frg_abcdefabcdef" objectives="01jb00000000000000000000o2"}
+kubectl is the command-line tool for Kubernetes clusters.
+:::
+
+:::code{#01jb00000000000000000000b2 origin=author}
+```bash
+kubectl version --client
+```
+:::
+```
+
+### Front matter
+
+| Field | Meaning |
+|---|---|
+| `id` | Element id. `ulams course fmt` mints it when missing. |
+| `key` | Optional slug, unique among the lessons of a module. |
+| `title`, `summary`, `minutes` | Required: title, optional summary, whole minutes (1 to 600). |
+| `objectives` | What the lesson teaches, as objects with `id`, `text` and optional `citations`. At least one, at most eight. Blocks and questions refer to these ids. |
+| `contentType` | `richtext` (default), `liascript`, `h5p`, `interactive`, `scorm`, `cmi5`, `video`, `file` or `embed`. |
+| `citations` | Source fragments (`frg_...`) the lesson cites. |
+| `origin` | `author` for a lesson you wrote yourself. Absent means `ai`. |
+| `status`, `flags` | `generated` (default), `planned` or `failed`; free-text flags. |
+| `asset` | For `scorm`, `cmi5` and `file` lessons: a path under `assets/`, or `path`, `sha256`, `bytes` and `mediaType`. A bare path is enough; `fmt` expands it from the file. |
+| `video`, `embed` | `video: {provider: youtube, url: ...}` or `embed: {url: ..., title: ...}`. |
+| `selfChecks`, `interaction` | LiaScript self-check questions and the H5P or interactive element that follows the text. Same shape as in the blueprint. |
+
+Unknown fields are errors. The exact rules are in the JSON Schema (below).
+
+### Blocks
+
+The body is a sequence of **block directives**. One directive is one block of the course (`paragraph`, `callout`, `steps`,
+`code`, `table` or `example`) with the Markdown between its fences stored verbatim.
+
+| Attribute | Meaning |
+|---|---|
+| `#id` | The block's id. `fmt` adds it when missing. |
+| `cite="frg_a,frg_b"` | Source fragments the block cites. |
+| `origin=author` | You wrote it. Only `author` blocks may have no citations; absent means `ai`. |
+| `objectives="id,id"` | Ids of objectives of this lesson the block serves. |
+
+Callout variants (info, warning, tip) are not a block field; write them in the Markdown (`> **Warning.** ...`). A longer
+fence (`::::`) lets the content hold `:::` lines. Fenced code inside a block is opaque, so a `:::` line in a code example does not
+end the block. Raw HTML, `javascript:` links and remote images are refused (the same rules as the server's `Checks::markup`);
+a local image is `![alt](../../assets/diagram.png)`, relative to the lesson file and inside `assets/`.
+
+**Plain Markdown outside any directive is allowed while you write.** `validate` reports it as a note (`LOOSE_MARKDOWN`), and
+`fmt` wraps each blank-line separated chunk in a `paragraph` block with `origin=author` and a new id.
+
+### Grammar
+
+```ebnf
+lesson       = front-matter , body ;
+front-matter = "---" , EOL , yaml , ( "---" | "..." ) , EOL ;
+body         = { block | loose | blank-line } ;
+
+block        = open-line , content , close-line ;
+open-line    = fence , kind , [ attributes ] , EOL ;
+close-line   = fence , EOL ;
+fence        = ":::" , { ":" } ;               (* the closing fence has exactly as many colons as the opening one *)
+kind         = "paragraph" | "callout" | "steps" | "code" | "table" | "example" ;
+attributes   = "{" , attribute , { " " , attribute } , "}" ;
+attribute    = "#" , id
+             | "cite=" , list
+             | "origin=" , ( "ai" | "author" )
+             | "objectives=" , list ;
+list         = '"' , item , { "," , item } , '"' | item ;
+item         = id | fragment-id ;
+id           = 26 * ( "0".."9" | "a".."z" ) ;
+fragment-id  = "frg_" , 12 * ( "a".."z" | "2".."7" ) ;
+
+content      = { line } ;                      (* Markdown, stored verbatim; see the rules below *)
+loose        = markdown-chunk ;                (* outside any block, split at blank lines *)
+```
+
+Block text is normalised: Windows line ends become LF, leading blank lines and trailing whitespace are dropped. Everything
+else is kept as written. The same grammar text lives next to the parser in `front/cli/src/course/GRAMMAR.md`.
+
+## Quiz files
+
+```yaml
+id: 01jb00000000000000000000q1
+passScore: 70
+questions:
+  - id: 01jb00000000000000000000x1
+    type: single            # single | multiple | truefalse | short
+    stem: Which command prints the client version?
+    options:
+      - { id: 01jb00000000000000000000y1, text: kubectl version --client, correct: true }
+      - { id: 01jb00000000000000000000y2, text: kubectl get version }
+      - { id: 01jb00000000000000000000y3, text: kube --v }
+    explanation: The --client flag skips the call to the server.
+    origin: author
+```
+
+`correct` defaults to `false`, `citations` and `objectiveIds` to empty lists. The shape rules per type are the server's: a
+single-choice question needs three or more options and exactly one correct one; a multiple-answer question three or
+more with at least two correct and at least one wrong; true/false has the options True and False with one correct; every
+short-answer option is an accepted answer.
+
+## Ids and citations
+
+- Element ids are lowercase ULIDs (26 characters of `0-9a-z`). The server mints them; `ulams course fmt` mints them for
+  new elements. An id that is all digits or looks like a number must be quoted in YAML (`fmt` does it for you).
+- Fragment ids are `frg_` and 12 characters of `a-z2-7`.
+- An element the AI wrote must cite at least one fragment (`CITATION_MISSING` otherwise). An element you wrote yourself
+  says `origin: author` and may have none; blocks in that state get the warning `UNCITED_AUTHOR_BLOCK`, because
+  [Living Course](/developers/living-course/) cannot keep an uncited block up to date.
+
+## The canonical form
+
+`ulams course fmt` rewrites every file the same way, and writing a blueprint as files produces the same text:
+
+- YAML keys in a fixed order per file (unknown keys keep their place after the known ones), block style, quotes only where
+  YAML needs them, defaults left out (`contentType: richtext`, `status: generated`, empty `citations`, `correct: false`);
+  YAML comments are kept.
+- Directives printed in one form: `:::kind{#id cite="..." origin=... objectives="..."}`.
+- Missing ids minted, loose Markdown wrapped, numeric prefixes renumbered, asset hashes filled.
+
+Formatting twice changes nothing the second time, and `blueprint -> files -> blueprint` is the identity once these
+differences are set aside: `meta` (room for tools, ignored by apply and never diffed) is not stored in the files, block
+text is normalised as above, and an absent `interaction` equals `interaction: null`.
+
+## JSON Schemas for editors
+
+The YAML files have JSON Schemas, generated from the CLI's own validators and published with the other
+[machine-readable files](/developers/machine-readable/): `ulams.schema.json`, `course.schema.json`, `module.schema.json`,
+`lesson-front-matter.schema.json` and `quiz.schema.json` under `https://ulams.dev/schemas/course-folder/1/`. With the
+YAML extension of VS Code, add a header to get completion and errors while you type:
+
+```yaml
+# yaml-language-server: $schema=https://ulams.dev/schemas/course-folder/1/course.schema.json
+```
+
+The committed copies are in `front/cli/schemas/course-folder/` (`yarn workspace ulams schemas` regenerates them). The
+assembled course is also checked against the Blueprint v3 schema (`course-blueprint/v3.json`) that the CLI bundles, for rules
+that need several files, such as "a SCORM lesson needs its asset".
+
+## Issue codes
+
+Every issue has a code, a severity, the file, the line and the column. `fixable` ones are repaired by `ulams course fmt`
+or `ulams course validate --fix`.
+
+| Code | Level | What it means | What to do |
+|---|---|---|---|
+| `FOLDER_NOT_COURSE` | error | The folder has no ulams.yaml or course.yaml | Run the command inside a course folder, or pass its path. |
+| `YAML_SYNTAX` | error | A YAML file or front matter is not valid YAML | Fix the YAML syntax at the reported position. |
+| `SCHEMA_INVALID` | error | A field has the wrong type or an out-of-range value | Check the field against the file schema (docs: course folder format). |
+| `FIELD_REQUIRED` | error | A required field is missing | Add the field. |
+| `UNKNOWN_FIELD` | error | A field the format does not define | Remove it or fix the spelling. |
+| `FRONT_MATTER_MISSING` | error | A lesson file has no YAML front matter | Start the file with a --- fenced block holding at least title and minutes. |
+| `FRONT_MATTER_UNCLOSED` | error | The front matter is never closed | Close it with a line holding only ---. |
+| `DIRECTIVE_UNCLOSED` | error | A directive is never closed | Add a line holding only the closing colons (same count as the opening line). |
+| `DIRECTIVE_STRAY_CLOSER` | error | A closing fence without an open directive | Remove it, or add the opening :::kind line. |
+| `DIRECTIVE_SYNTAX` | error | A line starting with ::: is not a valid directive line | Write `:::kind` or `:::kind{#id cite="frg_..."}`. |
+| `DIRECTIVE_NESTED` | error | A directive opens inside another directive | Close the first one, or give the outer directive a longer fence (::::). |
+| `DIRECTIVE_KIND_UNKNOWN` | error | Unknown block kind | Use paragraph, callout, steps, code, table or example. |
+| `DIRECTIVE_ATTR_UNKNOWN` | error | Unknown directive attribute | Use #id, cite, origin or objectives. |
+| `DIRECTIVE_ATTR_INVALID` | error | A directive attribute has an invalid value | Ids are 26 lowercase letters and digits; cite takes frg_ ids; origin is ai or author. |
+| `DIRECTIVE_EMPTY` | error | A directive has no content | Write the block's Markdown between the fences, or remove the directive. |
+| `LOOSE_MARKDOWN` | info, fixable | Markdown outside a directive | Run `ulams course fmt` to wrap it in author paragraphs. |
+| `ID_MISSING` | error, fixable | An element has no id | Run `ulams course fmt` to mint ids. |
+| `ID_INVALID` | error | An id is not 26 lowercase letters and digits | Use a lowercase ULID; quote it in YAML when it is all digits. |
+| `ID_DUPLICATE` | error | Two elements share an id | Give one of them a new id (delete the id and run `ulams course fmt`). |
+| `KEY_DUPLICATE` | error | Two siblings share a key | Keys are unique among the modules of a course and among the lessons of a module. |
+| `OBJECTIVE_UNKNOWN` | error | An objective id that does not exist where it is used | A lesson lists ids from course.yaml; a block lists ids of its own lesson. |
+| `CITATION_MISSING` | error | An AI-written element cites no source | Cite at least one fragment, or set origin: author if you wrote it yourself. |
+| `UNCITED_AUTHOR_BLOCK` | warning | An author-written block has no sources | Living Course cannot keep an uncited block up to date. Add cite="frg_..." when a source exists, or set lint.uncitedAuthorBlocks in ulams.yaml. |
+| `MARKUP_HTML` | error | Raw HTML outside code | Use plain text or Markdown. |
+| `MARKUP_SCRIPT_LINK` | error | A javascript:, data: or vbscript: link | Use an https link. |
+| `MARKUP_REMOTE_IMAGE` | error | An image from outside the course | Put the image in assets/ and reference it relatively. |
+| `IMAGE_OUTSIDE_ASSETS` | error | An image path that does not resolve inside assets/ | Use `![alt](../../assets/name.png)` from a lesson file. |
+| `IMAGE_MISSING` | error | An image file that does not exist | Add the file under assets/ or fix the path. |
+| `ASSET_MISSING` | error | A lesson asset that does not exist | Add the file under assets/ or fix asset.path. |
+| `ASSET_HASH_MISMATCH` | error, fixable | An asset's sha256 or size does not match the file | Run `ulams course fmt` to refresh them. |
+| `QUESTION_SHAPE` | error | A question breaks the rules of its type | single: 3+ options, one correct. multiple: 3+, 2+ correct, one wrong. truefalse: True and False. short: every option is an accepted answer. |
+| `QUIZ_ORPHAN` | error | A quiz file without a lesson file | Name it after its lesson: 01-install.md pairs with 01-install.quiz.yaml. |
+| `ORDER_PREFIX_MISSING` | warning, fixable | A module folder or lesson file without a numeric prefix | Run `ulams course fmt` to number them. |
+| `UNKNOWN_FILE` | warning | A file the format does not use | Lessons are .md, quizzes .quiz.yaml, modules module.yaml. |
+| `BLUEPRINT_SCHEMA` | error | The assembled course breaks the Blueprint v3 schema | See the message for the JSON path; the course folder maps to a Blueprint v3 document. |
