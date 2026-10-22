@@ -4,6 +4,7 @@ import globalHeader from './zh-CN/globalHeader';
 import insights from './zh-CN/insights';
 import menu from './zh-CN/menu';
 import pages from './zh-CN/pages';
+import reportBuilder from './zh-CN/reportBuilder';
 import pwa from './zh-CN/pwa';
 import settingDrawer from './zh-CN/settingDrawer';
 import settings from './zh-CN/settings';
@@ -26,6 +27,7 @@ export default {
   ...settings,
   ...theme,
   ...pwa,
+  ...reportBuilder,
   ...component,
   ...templates,
   ...codeExercises,

@@ -10,6 +10,7 @@ import insights from './pl-PL/insights';
 import menu from './pl-PL/menu';
 import notifications from './pl-PL/notifications';
 import pages from './pl-PL/pages';
+import reportBuilder from './pl-PL/reportBuilder';
 import pwa from './pl-PL/pwa';
 import settingDrawer from './pl-PL/settingDrawer';
 import settings from './pl-PL/settings';
@@ -106,6 +107,7 @@ export default {
   ...settings,
   ...theme,
   ...pwa,
+  ...reportBuilder,
   ...component,
   ...pages,
   ...notifications,
