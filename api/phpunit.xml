@@ -151,6 +151,9 @@
     <testsuite name="webhooks">
       <directory suffix="Test.php">./packages/webhooks/tests</directory>
     </testsuite>
+    <testsuite name="authoring-metrics">
+      <directory suffix="Test.php">./packages/authoring-metrics/tests</directory>
+    </testsuite>
     <testsuite name="learner-insights">
       <directory suffix="Test.php">./packages/learner-insights/tests</directory>
     </testsuite>
@@ -274,6 +277,7 @@
       <directory suffix=".php">./packages/knowledge-export/</directory>
       <directory suffix=".php">./packages/identity/</directory>
       <directory suffix=".php">./packages/webhooks/</directory>
+      <directory suffix=".php">./packages/authoring-metrics/</directory>
       <directory suffix=".php">./packages/learner-insights/</directory>
       <directory suffix=".php">./packages/tutor/</directory>
       <directory suffix=".php">./packages/vouchers/</directory>
