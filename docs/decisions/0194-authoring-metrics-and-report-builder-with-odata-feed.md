@@ -1,6 +1,6 @@
 # 0194. Authoring metrics come from recorded runs and opt-in anonymous review minutes; reports are saved definitions over one dataset registry, exposed to BI tools as a read-only OData feed
 
-- Status: Proposed
+- Status: Accepted (2026-10-22, owner accepted the plan's recommended defaults for Q1 to Q13)
 - Date: 2026-10-22
 - Plan: `docs/plans/authoring-metric-and-report-builder.md`; TODO Phase 2.6 "(new) Authoring time and cost metric
   per course", Phase 6.5 "(new) Report builder with saved reports" and "(new) BI connector"
