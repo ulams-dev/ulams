@@ -5,7 +5,7 @@ import { expect } from '@jest/globals';
 import { fireEvent, render } from '@testing-library/react';
 import ResponsiveImage from './index';
 
-const STORAGE = 'https://staging-storage.ulams.app';
+const STORAGE = 'https://storage.example.org';
 const setWindow = (settings: Record<string, string | undefined>) => {
   for (const [key, value] of Object.entries(settings)) {
     (window as unknown as Record<string, unknown>)[key] = value;

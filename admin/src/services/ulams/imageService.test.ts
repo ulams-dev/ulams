@@ -8,7 +8,7 @@ import { contentImageUrl, imageService, resolveImage } from './imageService';
 // files.ts imports the umi runtime, which cannot load under jest
 jest.mock('umi', () => ({ request: jest.fn() }));
 
-const STORAGE = 'https://staging-storage.ulams.app';
+const STORAGE = 'https://storage.example.org';
 
 const setWindow = (settings: Record<string, string | undefined>) => {
   for (const [key, value] of Object.entries(settings)) {
@@ -86,10 +86,10 @@ describe('cloudflare mode', () => {
   });
 
   it('honours a transform origin', () => {
-    setWindow({ REACT_APP_IMAGE_TRANSFORM_ORIGIN: 'https://ulams.app' });
+    setWindow({ REACT_APP_IMAGE_TRANSFORM_ORIGIN: 'https://images.example.org' });
     expect(
       resolveImage(image, { size: 240, preset: 'card' }).src.startsWith(
-        'https://ulams.app/cdn-cgi/image/',
+        'https://images.example.org/cdn-cgi/image/',
       ),
     ).toBe(true);
   });
