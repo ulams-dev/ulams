@@ -1,7 +1,7 @@
 name: Identity (Keycloak)
 
-# Single sign-on against a real Keycloak (docs/plans/phase-6-identity.md 4.14), too slow for every push, so it is
-# never part of the default pull request pipeline. It runs
+# Single sign-on (OpenID Connect and SAML 2.0) against a real Keycloak (docs/plans/phase-6-identity.md 4.14), too slow
+# for every push, so it is never part of the default pull request pipeline. It runs
 #   - on a pull request only when the PR carries the label "identity" (other pull request runs skip the job);
 #   - nightly and on a manual run of nightly-conformance.yml, which calls this workflow;
 #   - by hand (Actions -> Identity (Keycloak) -> Run workflow).
@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   keycloak:
-    name: OpenID Connect with Keycloak
+    name: OpenID Connect and SAML 2.0 with Keycloak
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'identity')
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -123,6 +123,13 @@ jobs:
         env:
           NODE_PATH: /tmp/pw/node_modules
         run: sh .github/conformance/keycloak/run-oidc.sh
+
+      # Same Keycloak, same API: Keycloak builds its client from ulams' SP metadata and verifies our signed requests;
+      # signed and encrypted assertions, a tampered and a replayed response, single logout, metadata refresh.
+      - name: Sign in through Keycloak with SAML (metadata import, signed and encrypted assertions, single logout, audit)
+        env:
+          NODE_PATH: /tmp/pw/node_modules
+        run: sh .github/conformance/keycloak/run-saml.sh
 
       - name: Logs
         if: failure()

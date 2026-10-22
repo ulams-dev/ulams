@@ -2428,6 +2428,39 @@
     },
     "type": "object"
    },
+   "IdentityMetadataRefresh": {
+    "properties": {
+     "added": {
+      "description": "SHA-256 fingerprints of certificates added",
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "reason": {
+      "nullable": true,
+      "type": "string"
+     },
+     "removed": {
+      "description": "SHA-256 fingerprints of certificates removed",
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "status": {
+      "description": "attention: a change needs an administrator (another entity id, certificates unrelated to the trusted ones)",
+      "enum": [
+       "unchanged",
+       "updated",
+       "attention",
+       "failed"
+      ],
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
    "IdentityProvider": {
     "properties": {
      "client_secret_hint": {
@@ -2476,11 +2509,18 @@
       "nullable": true,
       "type": "string"
      },
+     "metadata_refreshed_at": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     },
      "name": {
       "description": "Shown on the sign-in button",
       "type": "string"
      },
      "oidc": {
+      "description": "OpenID Connect providers only",
+      "nullable": true,
       "properties": {
        "client_id": {
         "type": "string"
@@ -2510,7 +2550,8 @@
      },
      "protocol": {
       "enum": [
-       "oidc"
+       "oidc",
+       "saml"
       ],
       "type": "string"
      },
@@ -2518,6 +2559,114 @@
       "description": "Register this redirect URI at the provider",
       "format": "uri",
       "type": "string"
+     },
+     "saml": {
+      "description": "SAML providers only. Private keys never leave the API",
+      "nullable": true,
+      "properties": {
+       "allow_sha1": {
+        "description": "Accept SHA-1 signatures (legacy). Weak: every such sign-in is audited",
+        "type": "boolean"
+       },
+       "attribute_map": {
+        "description": "Attribute names for email, first_name, last_name, name and subject",
+        "type": "object"
+       },
+       "entity_id": {
+        "description": "The identity provider's entity id",
+        "nullable": true,
+        "type": "string"
+       },
+       "idp_certificates": {
+        "description": "Signing certificates trusted for this provider",
+        "items": {
+         "properties": {
+          "added_at": {
+           "format": "date-time",
+           "type": "string"
+          },
+          "fingerprint": {
+           "description": "SHA-256 of the certificate",
+           "type": "string"
+          },
+          "not_after": {
+           "format": "date-time",
+           "nullable": true,
+           "type": "string"
+          },
+          "not_before": {
+           "format": "date-time",
+           "nullable": true,
+           "type": "string"
+          },
+          "source": {
+           "enum": [
+            "metadata",
+            "admin"
+           ],
+           "type": "string"
+          }
+         },
+         "type": "object"
+        },
+        "type": "array"
+       },
+       "metadata_url": {
+        "description": "Refreshed daily; new signing certificates are added automatically",
+        "format": "uri",
+        "nullable": true,
+        "type": "string"
+       },
+       "name_id_format": {
+        "nullable": true,
+        "type": "string"
+       },
+       "slo_url": {
+        "format": "uri",
+        "nullable": true,
+        "type": "string"
+       },
+       "sp": {
+        "description": "What to give the identity provider",
+        "properties": {
+         "acs_url": {
+          "format": "uri",
+          "type": "string"
+         },
+         "certificate_fingerprint": {
+          "nullable": true,
+          "type": "string"
+         },
+         "entity_id": {
+          "format": "uri",
+          "type": "string"
+         },
+         "metadata_url": {
+          "format": "uri",
+          "type": "string"
+         },
+         "next_certificate_fingerprint": {
+          "description": "A prepared key pair, already published in the metadata",
+          "nullable": true,
+          "type": "string"
+         },
+         "slo_url": {
+          "format": "uri",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       },
+       "sso_url": {
+        "format": "uri",
+        "nullable": true,
+        "type": "string"
+       },
+       "want_encrypted_assertions": {
+        "type": "boolean"
+       }
+      },
+      "type": "object"
      },
      "slug": {
       "description": "Used in the sign-in URLs; fixed after creation",
@@ -2585,6 +2734,75 @@
         "type": "string"
        },
        "userinfo": {
+        "type": "boolean"
+       }
+      },
+      "type": "object"
+     },
+     "protocol": {
+      "description": "Fixed at creation (default oidc); ignored on update",
+      "enum": [
+       "oidc",
+       "saml"
+      ],
+      "type": "string"
+     },
+     "saml": {
+      "description": "SAML providers: give metadata_url or metadata_xml (entity id, endpoints and certificates are read from it), or the fields by hand",
+      "properties": {
+       "allow_sha1": {
+        "type": "boolean"
+       },
+       "attribute_map": {
+        "properties": {
+         "email": {
+          "type": "string"
+         },
+         "first_name": {
+          "type": "string"
+         },
+         "last_name": {
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         },
+         "subject": {
+          "type": "string"
+         }
+        },
+        "type": "object"
+       },
+       "entity_id": {
+        "type": "string"
+       },
+       "idp_certificates": {
+        "description": "Replaces the trusted signing certificates (PEM or base64)",
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       "metadata_url": {
+        "format": "uri",
+        "type": "string"
+       },
+       "metadata_xml": {
+        "description": "Uploaded IdP metadata (at most 2 MB)",
+        "type": "string"
+       },
+       "name_id_format": {
+        "type": "string"
+       },
+       "slo_url": {
+        "format": "uri",
+        "type": "string"
+       },
+       "sso_url": {
+        "format": "uri",
+        "type": "string"
+       },
+       "want_encrypted_assertions": {
         "type": "boolean"
        }
       },
@@ -14938,7 +15156,7 @@
       "passport": []
      }
     ],
-    "summary": "Add an OpenID Connect identity provider",
+    "summary": "Add an OpenID Connect or SAML identity provider",
     "tags": [
      "Admin Identity"
     ]
@@ -15098,6 +15316,161 @@
      }
     ],
     "summary": "Change an identity provider (leave client_secret out to keep the stored one)",
+    "tags": [
+     "Admin Identity"
+    ]
+   }
+  },
+  "/api/admin/identity/providers/{provider}/metadata/refresh": {
+   "post": {
+    "operationId": "identity.providers.metadata.refresh",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "accept_changes": {
+          "description": "Apply a changed entity id and replace the trusted certificates with the ones in the metadata (an administrator's decision)",
+          "type": "boolean"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/IdentityMetadataRefresh"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Outcome"
+     },
+     "404": {
+      "description": "Not found"
+     },
+     "422": {
+      "description": "Not a SAML provider with a metadata URL"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Fetch the SAML identity provider metadata again",
+    "tags": [
+     "Admin Identity"
+    ]
+   }
+  },
+  "/api/admin/identity/providers/{provider}/sp-keys/rotate": {
+   "post": {
+    "operationId": "identity.providers.spkeys.rotate",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "step": {
+          "description": "prepare: generate the next pair and publish it in the SP metadata; promote: make it the current pair once the identity provider has imported it",
+          "enum": [
+           "prepare",
+           "promote"
+          ],
+          "type": "string"
+         }
+        },
+        "required": [
+         "step"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "fingerprint": {
+             "description": "SHA-256 of the certificate",
+             "type": "string"
+            },
+            "step": {
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Rotated"
+     },
+     "404": {
+      "description": "Not found"
+     },
+     "422": {
+      "description": "Not a SAML provider, or nothing prepared to promote"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Prepare or activate the next SAML service provider key pair",
     "tags": [
      "Admin Identity"
     ]
@@ -35081,7 +35454,7 @@
   },
   "/api/identity/providers": {
    "get": {
-    "description": "Sign-in through a tenant's identity provider (OpenID Connect). Public routes on the tenant API host: the\nprovider rows live in the tenant's own database, so another tenant's slug, state or code never resolves here.",
+    "description": "Sign-in through a tenant's identity provider (OpenID Connect and SAML 2.0; SAML endpoints are in {@see SamlController}). Public routes on the tenant API host: the\nprovider rows live in the tenant's own database, so another tenant's slug, state or code never resolves here.",
     "operationId": "identity.providers.public",
     "responses": {
      "200": {
@@ -35098,7 +35471,8 @@
              },
              "protocol": {
               "enum": [
-               "oidc"
+               "oidc",
+               "saml"
               ],
               "type": "string"
              },
@@ -35126,6 +35500,291 @@
      }
     },
     "summary": "Identity providers a learner can sign in with",
+    "tags": [
+     "Identity"
+    ]
+   }
+  },
+  "/api/identity/saml/{slug}/acs": {
+   "post": {
+    "operationId": "identity.saml.acs",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/x-www-form-urlencoded": {
+       "schema": {
+        "properties": {
+         "RelayState": {
+          "description": "The signed login state this service gave the identity provider in the AuthnRequest redirect",
+          "type": "string"
+         },
+         "SAMLResponse": {
+          "description": "Base64 SAML response, at most 256 KB",
+          "type": "string"
+         }
+        },
+        "required": [
+         "SAMLResponse",
+         "RelayState"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "302": {
+      "description": "Redirect to the return URL with ?code=... (success) or ?error=provider_failed|link_required|email_required|email_unverified|account_unavailable|signup_disabled"
+     },
+     "400": {
+      "description": "The state is invalid, expired or already used (nothing trusted says where to send the browser)"
+     },
+     "413": {
+      "description": "The body is too large"
+     }
+    },
+    "summary": "Assertion consumer service: the identity provider's browser POST (SAMLResponse and RelayState)",
+    "tags": [
+     "Identity"
+    ]
+   }
+  },
+  "/api/identity/saml/{slug}/logout": {
+   "post": {
+    "operationId": "identity.saml.logout",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "return_to": {
+          "description": "Where the browser lands after the identity provider logged it out; must be an origin of this academy",
+          "format": "uri",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "redirect_url": {
+             "format": "uri",
+             "nullable": true,
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The token is revoked. redirect_url is the signed LogoutRequest URL to send the browser to, or null when this login did not come from the provider or it has no single logout"
+     },
+     "404": {
+      "description": "Unknown provider or not a SAML provider"
+     },
+     "422": {
+      "description": "Return URL not allowed"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Sign out of this academy and, when the identity provider supports it, start single logout there",
+    "tags": [
+     "Identity"
+    ]
+   }
+  },
+  "/api/identity/saml/{slug}/metadata": {
+   "get": {
+    "description": "SAML 2.0 service provider endpoints of a tenant's identity provider (plan 4.2): the SP metadata an administrator\ngives the IdP, the assertion consumer service the browser posts the IdP's response to, single logout, and the\ncall that starts a logout from this side. Public routes on the tenant API host (the provider rows live in the\ntenant's own database), except the logout call, which needs the user's token.",
+    "operationId": "identity.saml.metadata",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/samlmetadata+xml": {
+        "schema": {
+         "type": "string"
+        }
+       }
+      },
+      "description": "SAML 2.0 metadata XML: entity id (this URL), assertion consumer service, single logout service and the certificates to import at the identity provider"
+     },
+     "404": {
+      "description": "Unknown provider or not a SAML provider"
+     }
+    },
+    "summary": "SAML service provider metadata of an identity provider",
+    "tags": [
+     "Identity"
+    ]
+   }
+  },
+  "/api/identity/saml/{slug}/slo": {
+   "get": {
+    "operationId": "identity.saml.slo",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "SAMLRequest",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "SAMLResponse",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "RelayState",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "SigAlg",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "Signature",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Logged out; the identity provider has no logout response endpoint"
+     },
+     "302": {
+      "description": "Redirect to the identity provider with our LogoutResponse, or to the return URL after a logout started here"
+     },
+     "400": {
+      "description": "The message is not valid: unsigned, wrong issuer or destination, expired, replayed or unknown"
+     },
+     "404": {
+      "description": "Unknown provider or not a SAML provider"
+     }
+    },
+    "summary": "Single logout service (redirect binding): a LogoutRequest from the identity provider or the LogoutResponse to ours",
+    "tags": [
+     "Identity"
+    ]
+   },
+   "post": {
+    "operationId": "identity.saml.slo.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/x-www-form-urlencoded": {
+       "schema": {
+        "properties": {
+         "RelayState": {
+          "type": "string"
+         },
+         "SAMLRequest": {
+          "type": "string"
+         },
+         "SAMLResponse": {
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Logged out"
+     },
+     "302": {
+      "description": "Redirect to the identity provider with our LogoutResponse, or to the return URL"
+     },
+     "400": {
+      "description": "The message is not valid"
+     },
+     "404": {
+      "description": "Unknown provider or not a SAML provider"
+     }
+    },
+    "summary": "Single logout service (POST binding with an enveloped XML signature)",
     "tags": [
      "Identity"
     ]
@@ -35232,7 +35891,7 @@
     ],
     "responses": {
      "302": {
-      "description": "Redirect to the provider's authorization endpoint"
+      "description": "Redirect to the provider's authorization endpoint (OpenID Connect) or single sign-on URL with a signed AuthnRequest (SAML)"
      },
      "404": {
       "description": "Unknown or disabled provider"
@@ -35244,7 +35903,7 @@
       "description": "The provider could not be reached or is misconfigured"
      }
     },
-    "summary": "Start a sign-in: redirects the browser to the provider",
+    "summary": "Start a sign-in (OpenID Connect or SAML): redirects the browser to the provider",
     "tags": [
      "Identity"
     ]

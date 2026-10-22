@@ -21,18 +21,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property array{issuer?:string,client_id?:string,scopes?:list<string>,token_auth?:string,userinfo?:bool}|null $oidc
  * @property string|null $oidc_client_secret encrypted at rest, never serialised
  * @property string|null $oidc_secret_hint
+ * @property array<string,mixed>|null $saml IdP entity id, endpoints, name id format, encryption and SHA-1 switches
+ * @property list<array{pem:string,fingerprint:string,not_before:?string,not_after:?string,added_at:string,source:string}>|null $saml_idp_certs
+ * @property string|null $saml_sp_key encrypted at rest, never serialised
+ * @property string|null $saml_sp_cert
+ * @property string|null $saml_sp_next_key encrypted at rest, never serialised
+ * @property string|null $saml_sp_next_cert
  */
 class IdentityProvider extends Model
 {
     use HasUuids;
 
     public const OIDC = 'oidc';
+    public const SAML = 'saml';
 
     protected $table = 'identity_providers';
 
     protected $guarded = [];
 
-    protected $hidden = ['oidc_client_secret'];
+    protected $hidden = ['oidc_client_secret', 'saml_sp_key', 'saml_sp_next_key'];
 
     protected $casts = [
         'enabled' => 'boolean',
@@ -41,6 +48,11 @@ class IdentityProvider extends Model
         'email_domains' => 'array',
         'oidc' => 'array',
         'oidc_client_secret' => 'encrypted',
+        'saml' => 'array',
+        'saml_idp_certs' => 'array',
+        'saml_sp_key' => 'encrypted',
+        'saml_sp_next_key' => 'encrypted',
+        'metadata_refreshed_at' => 'datetime',
         'last_login_at' => 'datetime',
     ];
 

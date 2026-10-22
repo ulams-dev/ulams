@@ -5,6 +5,7 @@ namespace Ulams\Identity\Tests\Feature;
 use Ulams\Identity\Models\IdentityAudit;
 use Ulams\Identity\Models\IdentityProvider;
 use Ulams\Identity\Tests\Support\RunsOidcLogin;
+use Ulams\Identity\Tests\Support\RunsSamlLogin;
 use Ulams\Identity\Tests\TestCase;
 
 /**
@@ -16,6 +17,7 @@ use Ulams\Identity\Tests\TestCase;
 class IsolationTest extends TestCase
 {
     use RunsOidcLogin;
+    use RunsSamlLogin;
 
     /** @return list<array{0:string,1:string}> */
     private function adminEndpoints(IdentityProvider $p): array
@@ -28,6 +30,8 @@ class IsolationTest extends TestCase
             ['GET', "$base/providers/{$p->id}"],
             ['PUT', "$base/providers/{$p->id}"],
             ['DELETE', "$base/providers/{$p->id}"],
+            ['POST', "$base/providers/{$p->id}/metadata/refresh"],
+            ['POST', "$base/providers/{$p->id}/sp-keys/rotate"],
             ['GET', "$base/audit"],
             ['GET', "$base/audit/verify"],
         ];
@@ -118,5 +122,77 @@ class IsolationTest extends TestCase
         $code = $this->returned($result['response'])['code'];
 
         $this->exchange($code, null, 'tenant-a.example.test')->assertOk();
+    }
+
+    // --- SAML ---------------------------------------------------------------------------------------------------
+
+    public function testSamlEndpointsOfAnotherTenantsProviderDoNotExist(): void
+    {
+        $this->samlProvider(['slug' => 'only-here']);
+
+        // tenant B has no such provider: its database never saw the slug
+        foreach (['GET' => ['metadata', 'slo?SAMLRequest=x'], 'POST' => ['acs']] as $method => $paths) {
+            foreach ($paths as $path) {
+                $uri = 'api/identity/saml/not-in-this-tenant/' . $path;
+                $response = $method === 'GET' ? $this->get($uri) : $this->post($uri, ['SAMLResponse' => 'x', 'RelayState' => 'x']);
+                $this->assertContains($response->getStatusCode(), [400, 404], $uri);
+            }
+        }
+        $this->get('api/identity/saml/not-in-this-tenant/metadata')->assertStatus(404);
+        $this->start('not-in-this-tenant')->assertStatus(404);
+    }
+
+    public function testASamlSignInStartedOnOneHostCannotFinishOnAnother(): void
+    {
+        $this->samlProvider();
+        $this->newVerifier();
+        $authn = $this->authnRequestOf($this->start('acme-saml', [], 'tenant-a.example.test'));
+        $this->assertStringContainsString('http://tenant-a.example.test/api/identity/saml/acme-saml/acs', $authn['xml']);
+        $saml = $this->responseFor($authn, [], 'acme-saml', 'tenant-a.example.test');
+
+        // the state is bound to the host it was started on
+        $this->postAcs($saml, $authn['relay'], 'acme-saml', 'tenant-b.example.test')->assertStatus(400);
+        $this->assertSame(0, \Ulams\Auth\Models\User::query()->where('email', 'ada@example.com')->count());
+        $this->assertSame(0, IdentityAudit::query()->where('action', 'sso.login')->count());
+    }
+
+    public function testAResponseMadeForOneTenantsServiceProviderFailsAtAnother(): void
+    {
+        $this->samlProvider();
+        $this->newVerifier();
+        // tenant B's own sign-in, answered with an assertion the IdP made for tenant A (audience, destination, recipient of A)
+        $authnB = $this->authnRequestOf($this->start('acme-saml', [], 'tenant-b.example.test'));
+        $forA = $this->samlIdp->response([
+            'acs' => $this->acsUrl('acme-saml', 'tenant-a.example.test'),
+            'sp' => $this->spEntityId('acme-saml', 'tenant-a.example.test'),
+            'request_id' => $authnB['id'],
+        ]);
+
+        $params = $this->returned($this->postAcs($forA, $authnB['relay'], 'acme-saml', 'tenant-b.example.test'));
+
+        $this->assertSame('provider_failed', $params['error'] ?? null);
+        $this->assertContains($this->lastFailure(), ['audience_mismatch', 'destination_mismatch']);
+        $this->assertArrayNotHasKey('code', $params);
+    }
+
+    public function testASamlMetadataDocumentNamesTheHostItWasFetchedFrom(): void
+    {
+        $this->samlProvider();
+
+        $a = $this->get('http://tenant-a.example.test/api/identity/saml/acme-saml/metadata')->assertOk()->getContent();
+        $b = $this->get('http://tenant-b.example.test/api/identity/saml/acme-saml/metadata')->assertOk()->getContent();
+
+        $this->assertStringContainsString('entityID="http://tenant-a.example.test/api/identity/saml/acme-saml/metadata"', $a);
+        $this->assertStringNotContainsString('tenant-b', $a);
+        $this->assertStringContainsString('entityID="http://tenant-b.example.test/api/identity/saml/acme-saml/metadata"', $b);
+    }
+
+    public function testASamlLogoutRequestForAnotherHostIsRefused(): void
+    {
+        $this->samlProvider();
+        $message = $this->samlIdp->logoutMessage(['destination' => 'http://tenant-a.example.test/api/identity/saml/acme-saml/slo', 'name_id' => 'user-1']);
+
+        $this->get('http://tenant-b.example.test/api/identity/saml/acme-saml/slo?' . $message['query'])->assertStatus(400);
+        $this->get('http://tenant-a.example.test/api/identity/saml/acme-saml/slo?' . $message['query'])->assertRedirect();
     }
 }

@@ -4938,7 +4938,7 @@ export interface paths {
          */
         get: operations["identity.providers.list"];
         put?: never;
-        /** Add an OpenID Connect identity provider */
+        /** Add an OpenID Connect or SAML identity provider */
         post: operations["identity.providers.create"];
         delete?: never;
         options?: never;
@@ -4965,6 +4965,115 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/identity/providers/{provider}/metadata/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Fetch the SAML identity provider metadata again */
+        post: operations["identity.providers.metadata.refresh"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/identity/providers/{provider}/sp-keys/rotate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Prepare or activate the next SAML service provider key pair */
+        post: operations["identity.providers.spkeys.rotate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/saml/{slug}/metadata": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * SAML service provider metadata of an identity provider
+         * @description SAML 2.0 service provider endpoints of a tenant's identity provider (plan 4.2): the SP metadata an administrator
+         *     gives the IdP, the assertion consumer service the browser posts the IdP's response to, single logout, and the
+         *     call that starts a logout from this side. Public routes on the tenant API host (the provider rows live in the
+         *     tenant's own database), except the logout call, which needs the user's token.
+         */
+        get: operations["identity.saml.metadata"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/saml/{slug}/acs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Assertion consumer service: the identity provider's browser POST (SAMLResponse and RelayState) */
+        post: operations["identity.saml.acs"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/saml/{slug}/slo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Single logout service (redirect binding): a LogoutRequest from the identity provider or the LogoutResponse to ours */
+        get: operations["identity.saml.slo"];
+        put?: never;
+        /** Single logout service (POST binding with an enveloped XML signature) */
+        post: operations["identity.saml.slo.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/saml/{slug}/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sign out of this academy and, when the identity provider supports it, start single logout there */
+        post: operations["identity.saml.logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/identity/providers": {
         parameters: {
             query?: never;
@@ -4974,7 +5083,7 @@ export interface paths {
         };
         /**
          * Identity providers a learner can sign in with
-         * @description Sign-in through a tenant's identity provider (OpenID Connect). Public routes on the tenant API host: the
+         * @description Sign-in through a tenant's identity provider (OpenID Connect and SAML 2.0; SAML endpoints are in {@see SamlController}). Public routes on the tenant API host: the
          *     provider rows live in the tenant's own database, so another tenant's slug, state or code never resolves here.
          */
         get: operations["identity.providers.public"];
@@ -4993,7 +5102,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Start a sign-in: redirects the browser to the provider */
+        /** Start a sign-in (OpenID Connect or SAML): redirects the browser to the provider */
         get: operations["identity.sso.start"];
         put?: never;
         post?: never;
@@ -11432,7 +11541,7 @@ export interface components {
             /** @description Shown on the sign-in button */
             name?: string;
             /** @enum {string} */
-            protocol?: "oidc";
+            protocol?: "oidc" | "saml";
             enabled?: boolean;
             /** @description Domains of the organisation */
             email_domains?: string[];
@@ -11442,6 +11551,7 @@ export interface components {
             jit_enabled?: boolean;
             /** @enum {string} */
             default_role?: "student" | "tutor";
+            /** @description OpenID Connect providers only */
             oidc?: {
                 /** Format: uri */
                 issuer?: string;
@@ -11450,7 +11560,56 @@ export interface components {
                 /** @enum {string} */
                 token_auth?: "client_secret_basic" | "client_secret_post";
                 userinfo?: boolean;
-            };
+            } | null;
+            /** @description SAML providers only. Private keys never leave the API */
+            saml?: {
+                /** @description The identity provider's entity id */
+                entity_id?: string | null;
+                /** Format: uri */
+                sso_url?: string | null;
+                /** Format: uri */
+                slo_url?: string | null;
+                /**
+                 * Format: uri
+                 * @description Refreshed daily; new signing certificates are added automatically
+                 */
+                metadata_url?: string | null;
+                name_id_format?: string | null;
+                want_encrypted_assertions?: boolean;
+                /** @description Accept SHA-1 signatures (legacy). Weak: every such sign-in is audited */
+                allow_sha1?: boolean;
+                /** @description Attribute names for email, first_name, last_name, name and subject */
+                attribute_map?: Record<string, never>;
+                /** @description Signing certificates trusted for this provider */
+                idp_certificates?: {
+                    /** @description SHA-256 of the certificate */
+                    fingerprint?: string;
+                    /** Format: date-time */
+                    not_before?: string | null;
+                    /** Format: date-time */
+                    not_after?: string | null;
+                    /** Format: date-time */
+                    added_at?: string;
+                    /** @enum {string} */
+                    source?: "metadata" | "admin";
+                }[];
+                /** @description What to give the identity provider */
+                sp?: {
+                    /** Format: uri */
+                    entity_id?: string;
+                    /** Format: uri */
+                    metadata_url?: string;
+                    /** Format: uri */
+                    acs_url?: string;
+                    /** Format: uri */
+                    slo_url?: string;
+                    certificate_fingerprint?: string | null;
+                    /** @description A prepared key pair, already published in the metadata */
+                    next_certificate_fingerprint?: string | null;
+                };
+            } | null;
+            /** Format: date-time */
+            metadata_refreshed_at?: string | null;
             client_secret_set?: boolean;
             client_secret_hint?: string | null;
             /**
@@ -11468,6 +11627,11 @@ export interface components {
             updated_at?: string;
         };
         IdentityProviderInput: {
+            /**
+             * @description Fixed at creation (default oidc); ignored on update
+             * @enum {string}
+             */
+            protocol?: "oidc" | "saml";
             /** @description Lowercase letters, digits and hyphens; required on create, ignored on update */
             slug?: string;
             name?: string;
@@ -11488,6 +11652,42 @@ export interface components {
             };
             /** @description Write-only; stored encrypted */
             client_secret?: string;
+            /** @description SAML providers: give metadata_url or metadata_xml (entity id, endpoints and certificates are read from it), or the fields by hand */
+            saml?: {
+                /** Format: uri */
+                metadata_url?: string;
+                /** @description Uploaded IdP metadata (at most 2 MB) */
+                metadata_xml?: string;
+                entity_id?: string;
+                /** Format: uri */
+                sso_url?: string;
+                /** Format: uri */
+                slo_url?: string;
+                name_id_format?: string;
+                want_encrypted_assertions?: boolean;
+                allow_sha1?: boolean;
+                /** @description Replaces the trusted signing certificates (PEM or base64) */
+                idp_certificates?: string[];
+                attribute_map?: {
+                    email?: string;
+                    first_name?: string;
+                    last_name?: string;
+                    name?: string;
+                    subject?: string;
+                };
+            };
+        };
+        IdentityMetadataRefresh: {
+            /**
+             * @description attention: a change needs an administrator (another entity id, certificates unrelated to the trusted ones)
+             * @enum {string}
+             */
+            status?: "unchanged" | "updated" | "attention" | "failed";
+            /** @description SHA-256 fingerprints of certificates added */
+            added?: string[];
+            /** @description SHA-256 fingerprints of certificates removed */
+            removed?: string[];
+            reason?: string | null;
         };
         TopicInteractive: {
             id?: number;
@@ -23924,6 +24124,328 @@ export interface operations {
             };
         };
     };
+    "identity.providers.metadata.refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /** @description Apply a changed entity id and replace the trusted certificates with the ones in the metadata (an administrator's decision) */
+                    accept_changes?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description Outcome */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["IdentityMetadataRefresh"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not a SAML provider with a metadata URL */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.spkeys.rotate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /**
+                     * @description prepare: generate the next pair and publish it in the SP metadata; promote: make it the current pair once the identity provider has imported it
+                     * @enum {string}
+                     */
+                    step: "prepare" | "promote";
+                };
+            };
+        };
+        responses: {
+            /** @description Rotated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            step?: string;
+                            /** @description SHA-256 of the certificate */
+                            fingerprint?: string;
+                        };
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not a SAML provider, or nothing prepared to promote */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.saml.metadata": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description SAML 2.0 metadata XML: entity id (this URL), assertion consumer service, single logout service and the certificates to import at the identity provider */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/samlmetadata+xml": string;
+                };
+            };
+            /** @description Unknown provider or not a SAML provider */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.saml.acs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/x-www-form-urlencoded": {
+                    /** @description Base64 SAML response, at most 256 KB */
+                    SAMLResponse: string;
+                    /** @description The signed login state this service gave the identity provider in the AuthnRequest redirect */
+                    RelayState: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Redirect to the return URL with ?code=... (success) or ?error=provider_failed|link_required|email_required|email_unverified|account_unavailable|signup_disabled */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The state is invalid, expired or already used (nothing trusted says where to send the browser) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The body is too large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.saml.slo": {
+        parameters: {
+            query?: {
+                SAMLRequest?: string;
+                SAMLResponse?: string;
+                RelayState?: string;
+                SigAlg?: string;
+                Signature?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Logged out; the identity provider has no logout response endpoint */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Redirect to the identity provider with our LogoutResponse, or to the return URL after a logout started here */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The message is not valid: unsigned, wrong issuer or destination, expired, replayed or unknown */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown provider or not a SAML provider */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.saml.slo.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/x-www-form-urlencoded": {
+                    SAMLRequest?: string;
+                    SAMLResponse?: string;
+                    RelayState?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Logged out */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Redirect to the identity provider with our LogoutResponse, or to the return URL */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The message is not valid */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown provider or not a SAML provider */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.saml.logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    /**
+                     * Format: uri
+                     * @description Where the browser lands after the identity provider logged it out; must be an origin of this academy
+                     */
+                    return_to?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description The token is revoked. redirect_url is the signed LogoutRequest URL to send the browser to, or null when this login did not come from the provider or it has no single logout */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            /** Format: uri */
+                            redirect_url?: string | null;
+                        };
+                    };
+                };
+            };
+            /** @description Unknown provider or not a SAML provider */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Return URL not allowed */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "identity.providers.public": {
         parameters: {
             query?: never;
@@ -23948,7 +24470,7 @@ export interface operations {
                             /** @example Acme staff */
                             name?: string;
                             /** @enum {string} */
-                            protocol?: "oidc";
+                            protocol?: "oidc" | "saml";
                         }[];
                     };
                 };
@@ -23971,7 +24493,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Redirect to the provider's authorization endpoint */
+            /** @description Redirect to the provider's authorization endpoint (OpenID Connect) or single sign-on URL with a signed AuthnRequest (SAML) */
             302: {
                 headers: {
                     [name: string]: unknown;

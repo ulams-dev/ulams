@@ -10,11 +10,13 @@ use Ulams\Auth\Exceptions\LoginHandoffException;
 use Ulams\Auth\Http\Resources\LoginResource;
 use Ulams\Core\Http\Controllers\UlamsBaseController;
 use Ulams\Identity\Exceptions\OidcException;
+use Ulams\Identity\Exceptions\SamlException;
 use Ulams\Identity\Models\IdentityProvider;
+use Ulams\Identity\Services\Saml\SamlContext;
 use Ulams\Identity\Services\SsoLoginService;
 
 /**
- * Sign-in through a tenant's identity provider (OpenID Connect). Public routes on the tenant API host: the
+ * Sign-in through a tenant's identity provider (OpenID Connect and SAML 2.0; SAML endpoints are in {@see SamlController}). Public routes on the tenant API host: the
  * provider rows live in the tenant's own database, so another tenant's slug, state or code never resolves here.
  *
  * @OA\Get(path="/api/identity/providers", operationId="identity.providers.public", summary="Identity providers a learner can sign in with", tags={"Identity"},
@@ -22,12 +24,12 @@ use Ulams\Identity\Services\SsoLoginService;
  *         @OA\Property(property="data", type="array", @OA\Items(type="object",
  *             @OA\Property(property="slug", type="string", example="acme-keycloak"),
  *             @OA\Property(property="name", type="string", example="Acme staff"),
- *             @OA\Property(property="protocol", type="string", enum={"oidc"}))))))
- * @OA\Get(path="/api/identity/sso/{slug}/start", operationId="identity.sso.start", summary="Start a sign-in: redirects the browser to the provider", tags={"Identity"},
+ *             @OA\Property(property="protocol", type="string", enum={"oidc","saml"}))))))
+ * @OA\Get(path="/api/identity/sso/{slug}/start", operationId="identity.sso.start", summary="Start a sign-in (OpenID Connect or SAML): redirects the browser to the provider", tags={"Identity"},
  *     @OA\Parameter(name="slug", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Parameter(name="challenge", in="query", required=true, description="base64url SHA-256 of a verifier only the caller's server knows (43 characters)", @OA\Schema(type="string")),
  *     @OA\Parameter(name="return_to", in="query", description="Where to send the browser afterwards; must be an origin of this academy (default: the learner app)", @OA\Schema(type="string", format="uri")),
- *     @OA\Response(response=302, description="Redirect to the provider's authorization endpoint"),
+ *     @OA\Response(response=302, description="Redirect to the provider's authorization endpoint (OpenID Connect) or single sign-on URL with a signed AuthnRequest (SAML)"),
  *     @OA\Response(response=404, description="Unknown or disabled provider"),
  *     @OA\Response(response=422, description="Return URL not allowed or challenge missing"),
  *     @OA\Response(response=502, description="The provider could not be reached or is misconfigured"))
@@ -54,7 +56,7 @@ class SsoController extends UlamsBaseController
 
     public function providers(): JsonResponse
     {
-        $rows = IdentityProvider::query()->where('enabled', true)->where('protocol', IdentityProvider::OIDC)->orderBy('name')->get(['slug', 'name', 'protocol']);
+        $rows = IdentityProvider::query()->where('enabled', true)->whereIn('protocol', [IdentityProvider::OIDC, IdentityProvider::SAML])->orderBy('name')->get(['slug', 'name', 'protocol']);
 
         return $this->sendResponse($rows->map(fn (IdentityProvider $p) => ['slug' => $p->slug, 'name' => $p->name, 'protocol' => $p->protocol])->all());
     }
@@ -66,19 +68,24 @@ class SsoController extends UlamsBaseController
             return $this->sendError(__('Unknown sign-in provider.'), 404);
         }
 
+        $returnTo = $request->query('return_to') !== null ? (string) $request->query('return_to') : null;
+        $challenge = $request->query('challenge') !== null ? (string) $request->query('challenge') : null;
+
         try {
-            $url = $this->sso->start(
-                $provider,
-                $request->getHost(),
-                $request->getSchemeAndHttpHost() . '/api/identity/oidc/' . $provider->slug . '/callback',
-                $request->query('return_to') !== null ? (string) $request->query('return_to') : null,
-                $request->query('challenge') !== null ? (string) $request->query('challenge') : null
-            );
+            $url = $provider->protocol === IdentityProvider::SAML
+                ? $this->sso->startSaml($provider, SamlContext::fromRequest($request), $returnTo, $challenge)
+                : $this->sso->start(
+                    $provider,
+                    $request->getHost(),
+                    $request->getSchemeAndHttpHost() . '/api/identity/oidc/' . $provider->slug . '/callback',
+                    $returnTo,
+                    $challenge
+                );
         } catch (InvalidReturnUrlException $e) {
             return $this->sendError($e->getMessage(), 422);
         } catch (\InvalidArgumentException $e) {
             return $this->sendError($e->getMessage(), 422);
-        } catch (OidcException $e) {
+        } catch (OidcException|SamlException $e) {
             report($e);
 
             return $this->sendError(__('The sign-in provider is not available. Try again later.'), 502);

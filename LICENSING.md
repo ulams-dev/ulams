@@ -61,6 +61,14 @@ that has no closer licence file. This page is an engineering summary, not legal 
 | `grapesjs-mjml` | BSD-3-Clause | `admin` | MJML plugin of the editor; its `mjml-browser` (MIT) is vendored in the bundle; the broken `@types/mjml-core@~4.18` range is pinned to 4.15.2 through `resolutions` (types only) |
 | A2UI v0.9 JSON Schemas | Apache-2.0 | `front/ui/vendor/a2ui/v0.9` | Unmodified copies of the A2UI message schemas, pinned at a commit (URL and SHA in the `NOTICE` there, with the `LICENSE` text and a README). Used only for dev-mode and test validation of `a2ui-surface` envelopes; not part of production bundles |
 
+## Identity (SAML) dependencies
+
+| Package | Licence | Where | Notes |
+|---|---|---|---|
+| `onelogin/php-saml` | MIT | `api/packages/identity` | SAML 2.0 service provider toolkit (ADR 0120): XML signature validation, AuthnRequest, metadata, encrypted assertions. 4.3.2, last release 2026-05; about 0.5 MB, pure PHP, no service to run. Used unmodified; every rule it leaves loose (Destination, Recipient, Audience, SHA-1, comments) is enforced in `Saml/SamlService.php` and tested |
+| `robrichards/xmlseclibs` | BSD-3-Clause | pulled in by `onelogin/php-saml` | XML signature and encryption primitives, 3.1.5 (the range `onelogin/php-saml` 4.x allows); keep its notice in distributed builds. It cannot open RSA-OAEP with a SHA-256 digest, see the operator guide |
+| Keycloak 26 | Apache-2.0 | `.github/conformance` | Test identity provider for the nightly and labelled CI run (OpenID Connect and SAML); a container image, never shipped |
+
 DOCX is read by a first-party converter (no PhpWord, which is LGPL-3.0-only; ADR 0026). No A2UI renderer or
 CopilotKit code is bundled: the studio renders its own catalogue (only the A2UI message schemas are
 vendored, see above).

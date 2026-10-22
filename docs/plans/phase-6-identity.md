@@ -599,3 +599,32 @@ Differences from the plan text, so later milestones start from what is in the co
 - The Keycloak run is `.github/workflows/identity-keycloak.yml` (pull requests labelled `identity`, a manual run, and
   called by `nightly-conformance.yml`, job `sso`), with `--profile sso` in `.github/conformance/compose.yml`.
 - A new token scope area `identity` (`api/admin/identity*`); `api/identity/*` is public.
+
+## 16. ID-2 as shipped
+
+Differences from the plan text, so later milestones start from what is in the code:
+
+- **IdP-initiated login is not implemented**, not even behind a switch: without a login started by this browser there is no state to bind the
+  one-time code to the front end's verifier, so an unsolicited response is refused (`in_response_to_mismatch`, or `400` without a state). Plan
+  4.2's `allow_idp_initiated` stays unbuilt until a design for a challenge-less hand-off exists. IdP-initiated *logout* is built.
+- **Single logout from this side** is `POST /api/identity/saml/{slug}/logout` (authenticated, returns `redirect_url`) instead of the
+  `GET /api/identity/sso/{slug}/logout` of plan 4.6: a GET after the local logout has no token to find the IdP session with, and a token
+  never goes into a URL. The pending LogoutRequest id and return URL are kept on the `identity_sessions` row, not in the cache (the cache is
+  per process in some deployments).
+- **`xmlseclibs` is 3.1.5, not 4.0.1** as section 5 says: `onelogin/php-saml` 4.3.2 requires `^3.1.5`. Consequence: RSA-OAEP key transport
+  with a SHA-256 digest (the default of Keycloak 26) cannot be decrypted; SHA-1 OAEP (`rsa-oaep-mgf1p`) with AES-CBC or AES-GCM works and is
+  tested against a real Keycloak. The SP metadata therefore publishes the certificate for encryption only when `want_encrypted_assertions`
+  is on, so no IdP starts encrypting by itself. ECDSA signatures are not supported by the library either; the allow-list is RSA-SHA256/384/512.
+- **The SP entity id is always the metadata URL** (question 4); the host-independent URN option is not built.
+- `rejectDeprecatedAlgorithm` does not exist in this version of the library: the algorithm allow-list and the SHA-1 policy (question 6) are
+  our own check on the XML (`Saml/SamlXml.php`) before the library validates the signature.
+- **Metadata refresh** (question 5): certificates are added; a certificate missing from the metadata is removed only while another trusted
+  one stays; a new entity id, or a certificate set unrelated to the trusted one, is never applied by the daily run. "Notify admins" is the audit
+  row, `last_error` on the provider, a failing exit code of `identity:refresh-metadata` and the event `SamlMetadataNeedsAttention`; there is no e-mail yet.
+  An administrator accepts with `POST .../metadata/refresh {"accept_changes": true}`.
+- `attribute_map` is the small SAML-only version (`email`, `first_name`, `last_name`, `name`, `subject`); the full map, group and role
+  mapping come with ID-3. SAML providers need `trust_email` to create or link accounts, because an assertion cannot say an address is verified.
+- New migration `add_saml_to_identity_providers` (also creates `saml_replays` and `identity_sessions`), new commands `identity:refresh-metadata`
+  and `identity:prune`, scheduled daily per tenant. `api/identity/saml/*/acs` and `*/slo` are in `origin_exempt`.
+- The Keycloak run is extended (`.github/conformance/keycloak/run-saml.cjs`, same workflow): Keycloak builds its client from our SP metadata
+  and verifies our signed requests; signed and encrypted assertions, a tampered and a replayed response, single logout and the metadata refresh.

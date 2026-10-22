@@ -30,6 +30,15 @@
       "lastName": "Builder",
       "enabled": true,
       "credentials": [{ "type": "password", "value": "bob-password-1", "temporary": false }]
+    },
+    {
+      "username": "sam",
+      "email": "sam@example.com",
+      "emailVerified": true,
+      "firstName": "Sam",
+      "lastName": "Smith",
+      "enabled": true,
+      "credentials": [{ "type": "password", "value": "sam-password-1", "temporary": false }]
     }
   ],
   "clients": [

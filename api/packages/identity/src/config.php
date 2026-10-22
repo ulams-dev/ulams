@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Identity (Phase 6.3): single sign-on per tenant. ID-1 ships OpenID Connect; see docs/plans/phase-6-identity.md.
+ * Identity (Phase 6.3): single sign-on per tenant. ID-1 ships OpenID Connect, ID-2 SAML 2.0; see docs/plans/phase-6-identity.md.
  */
 
 return [
@@ -20,6 +20,25 @@ return [
         // Outbound calls to the provider (discovery, JWKS, token, userinfo).
         'timeout' => 10,
         'max_response_bytes' => 1048576,
+    ],
+
+    'saml' => [
+        // An assertion older than this (from its IssueInstant) is refused even when its own validity window is longer.
+        'max_age' => (int) env('IDENTITY_SAML_MAX_AGE', 300),
+        // Allowed clock difference between this server and the IdP, in seconds (the library's ALLOWED_CLOCK_DRIFT is 180).
+        'clock_skew' => 180,
+        // Largest SAMLResponse / SAMLRequest / LogoutResponse body read (bytes, before base64 decoding).
+        'max_body_bytes' => 262144,
+        // Outbound calls to fetch IdP metadata, and the largest document accepted.
+        'timeout' => 10,
+        'metadata_max_bytes' => 2097152,
+        // SP key pairs generated per provider: RSA size and validity (plan 4.2).
+        'sp_key_bits' => 3072,
+        'sp_cert_years' => 5,
+        // Daily refresh of the metadata of providers that have a metadata URL (identity:refresh-metadata).
+        'metadata_refresh_at' => '03:30',
+        // Single logout: how long a LogoutRequest we sent waits for the IdP's answer.
+        'slo_ttl' => 600,
     ],
 
     // Development only: lets discovery, token and JWKS URLs be http:// and private addresses (Keycloak in compose).

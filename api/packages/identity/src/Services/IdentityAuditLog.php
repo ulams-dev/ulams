@@ -19,6 +19,9 @@ final class IdentityAuditLog
     public const ACTIONS = [
         'sso.login', 'sso.login_failed', 'sso.link',
         'provider.created', 'provider.updated', 'provider.deleted',
+        // SAML (ID-2): certificates, metadata refresh, SHA-1 opt-in, SP key rotation, single logout
+        'saml.certs_changed', 'saml.metadata_refreshed', 'saml.metadata_failed', 'saml.metadata_attention',
+        'saml.sha1_changed', 'saml.sha1_accepted', 'saml.sp_keys_rotated', 'saml.logout', 'saml.logout_failed',
     ];
 
     public const ACTORS = ['user', 'scim', 'hris', 'system', 'idp'];
