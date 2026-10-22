@@ -99,7 +99,7 @@ until their asset upload ships; the response says so.
 ulams course export 12 --out blueprint.json
 $EDITOR blueprint.json
 ulams course import --file blueprint.json --message "Fix the install step" --json
-ulams course diff <version> && ulams course approve <version> && ulams course apply <session>
+ulams course diff --version <version> && ulams course approve <version> && ulams course apply <session>
 ```
 
 ## Sending a message or an action

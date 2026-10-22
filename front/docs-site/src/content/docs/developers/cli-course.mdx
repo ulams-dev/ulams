@@ -1,15 +1,110 @@
 ---
-title: Validate and format a course folder
-description: "Check a course folder in Markdown and YAML offline with ulams course validate (errors by file, line and column, JSON, SARIF for GitHub code scanning) and format it with ulams course fmt: no server, no network, exit codes for CI."
+title: Course folders from the command line
+description: "Keep a course in Git and sync it with an academy: ulams course init, pull, push, diff, status, apply and publish (proposed versions, a person approves, base-version tracking, exit codes, JSON for agents), plus offline validate and fmt with SARIF for GitHub code scanning."
 sidebar:
   order: 85
 modules:
   - cli
 ---
 
-`ulams course validate` and `ulams course fmt` work on a [course folder](/developers/course-folder-format/) on disk. They need
-**no server, no login and no network**, so they run in an editor, a pre-commit hook and CI. The commands that talk to an academy
-(`course export`, `import`, `diff`, `approve`, `apply`, `publish`) are in [Build courses from the command line](/developers/cli-builder/#course-as-code-works-with-ai-off).
+A [course folder](/developers/course-folder-format/) is a course written as Markdown and YAML. This page covers every command that works
+on one: `course init`, `pull`, `push`, `diff`, `status`, `apply` and `publish` talk to an academy (they work with **AI switched
+off**), and `course validate` and `course fmt` need **no server, no login and no network**, so they run in an editor, a pre-commit hook
+and CI. The commands that work on one JSON document instead of a folder (`course export`, `import`, `approve`) are in
+[Build courses from the command line](/developers/cli-builder/#course-as-code-works-with-ai-off).
+
+## Sync a course with its folder
+
+The folder is bound to one course made with the course builder. `.ulams/base.json` records the version the folder was last in
+step with, so the commands know what **you** changed, what the **server** changed, and when a push would overwrite something.
+
+```bash
+ulams course init ./kubernetes-101 --from-course 12   # write the course as a folder, record the base
+cd kubernetes-101
+$EDITOR modules/01-basics/01-install.md
+ulams course status                                   # local edits, server version, proposal, applied?
+ulams course diff                                     # what you changed since the base (no network)
+ulams course push --message "Fix the install step"    # propose it: nothing changes for learners yet
+ulams course apply --approve                          # a person approves the proposal and applies it
+ulams course publish                                  # learners can enrol
+```
+
+**A push is always a proposal.** It becomes a version of kind `import` that waits for a decision. Nothing reaches learners until it is
+approved and applied. A person approves it in the studio (the version review shows the same element diff), or with `--approve` /
+`--apply` on the command line when logged in or using a CLI token they created. **Agent tokens and MCP clients can only propose**:
+approving is refused with `APPROVAL_REQUIRES_HUMAN` (exit 4), and the proposal stays for a person to approve. Tokens of kind `ci` may
+approve only when the tenant allows it. The rules are in the
+[Course Builder API](/developers/course-builder-api/#course-as-code-endpoints-work-with-ai-off).
+
+### The commands
+
+| Command | What it does |
+|---|---|
+| `course init [dir] --from-course <id>` | Writes the course's current version as a folder (the folder must be empty; a README and dot files may be there) and records `.ulams/base.json`. A course that was not made with the builder is refused (`NOT_ADOPTED`). |
+| `course status` | One request plus the folder: local edits since the base, whether the server moved on (*behind*), a proposal waiting for approval, whether the current version is applied, drift (elements edited in the LMS since the last apply), open conflicts, and the next command to run. Always exits 0. |
+| `course diff` | Folder against its base: elements added, changed or removed, **offline**. `--remote` compares with the server's current version, field by field (what a push would change). `--version <id>` shows what a version on the server changes against its parent (or `--against <id>`). `--exit-code` exits 13 when there are differences. |
+| `course push [--message] [--approve] [--apply]` | Validates the folder, sends it as a proposed version based on the base, prints the diff. `--approve` approves it; `--apply` approves and applies it and waits for the apply (`--no-wait` returns at once with the run handle). A folder equal to its base sends nothing. |
+| `course apply [session] [--approve] [--version <id>]` | Applies the current version (an unpublished draft). When the folder holds a proposal nobody approved, refuses with `CONFIRMATION_REQUIRED` (exit 11) unless `--approve`. Pass a session id to run it outside a folder. |
+| `course publish [session] [--acknowledge-warnings]` | Runs the publish check and publishes. Blocking items stop it (exit 6, `error.details.blocking`); warnings stop it until you pass `--acknowledge-warnings` (exit 11, `error.details.warnings`). The course must be applied first. |
+| `course pull` | Brings the folder up to date with the server (see below). |
+
+Every command that sends something has `--dry-run`: `push` validates the folder and prints the request and the diff, `apply` and
+`publish` print the request, `init` and `pull` list the files they would write. Nothing is sent or written.
+
+### Pull and the base
+
+`course pull` fetches the current version and compares three things: the base (what the folder was), the folder, and the server.
+
+| Folder | Server | `pull` does |
+|---|---|---|
+| unchanged | unchanged | nothing ("already up to date") |
+| unchanged | changed | rewrites the files to match and moves the base. Files you renamed keep their names (the number prefixes follow the new order), files of removed lessons are deleted, `assets/`, `sources/` and your own files are never touched. |
+| changed | unchanged | nothing; your edits stay (`diff` shows them) |
+| equal to the server | changed | moves the base only (for example the version you pushed was approved in the studio) |
+| changed | changed differently | **stops** with `SYNC_CONFLICT` (exit 6) and writes nothing |
+
+There is no merge yet: when both sides changed, save your edits aside (a Git branch), reset the folder (`git checkout -- .`),
+`course pull`, and make the edits again. `push` has the same rule from the other side: when the server's current version is not the
+one in `.ulams/base.json` the server answers `BASE_OUTDATED` with what changed, and the CLI turns it into `SYNC_CONFLICT`
+(exit 6, `error.details.remote` lists the changed elements) without changing a file. A three-way merge with conflict files is the next
+milestone of the [course-as-code plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-7-course-as-code.md).
+
+### State files
+
+| File | Commit it? | What it holds |
+|---|---|---|
+| `ulams.yaml` | yes | The binding: `course.id` and `course.session`. Never a token. |
+| `.ulams/base.json` | yes | The version the folder is based on and a SHA-256 per element (never a copy of the course text, so it is small and safe to review). `push` moves it when a version equal to the folder is approved, `pull` when the server moves. |
+| `.ulams/proposal.json` | no (ignored by `.ulams/.gitignore`) | The version your last push proposed and nobody approved yet, so `apply` knows what to approve. |
+
+Credentials come from `ulams login` or `ULAMS_URL` and `ULAMS_TOKEN` (in CI), never from the folder.
+
+### For agents and CI
+
+Add `--json` (or `ULAMS_OUTPUT=json`) for the usual envelope: `ok`, `data`, `error`, `warnings`. Without it a terminal gets text.
+
+```bash
+ulams course status --json | jq '.data.next'
+ulams course push --message "$GITHUB_SHA" --json   # data.version.id, data.counts, data.changes[]
+ulams course diff --exit-code --json               # exit 13 when the folder drifted from its base
+```
+
+| Exit | Code | When |
+|---|---|---|
+| 0 | | Done (also: nothing to push, already up to date) |
+| 2 | `INPUT_INVALID` | Not a course folder, no `.ulams/base.json`, a folder that is not empty for `init` |
+| 3 | `AUTH_REQUIRED`, `AUTH_EXPIRED` | Not logged in, or the token was rejected |
+| 4 | `FORBIDDEN`, `SCOPE_MISSING` | Not allowed; approving as an agent token or MCP client (`error.details.code` is `APPROVAL_REQUIRES_HUMAN`, and for `push` `error.details.proposed` names the version that was proposed) |
+| 5 | `NOT_FOUND` | Unknown course or version |
+| 6 | `SYNC_CONFLICT`, `CONFLICT` | The server moved on (`BASE_OUTDATED`), the proposal went stale (`STALE_PROPOSAL`), both sides changed on `pull`, blocking publish items, a course without a builder session |
+| 7 | `VALIDATION_FAILED` | The folder has errors (`error.details.issues` with file, line, column), or the server rejected the course (`error.details.errors`) |
+| 9 | `NETWORK`, `SERVER_ERROR` | The academy is unreachable or failed; nothing in the folder changed |
+| 10 | `TIMEOUT` | The apply is still running after `--timeout`; it continues on the server |
+| 11 | `CONFIRMATION_REQUIRED` | Applying an unapproved proposal without `--approve`; publish warnings not acknowledged |
+| 13 | `DIFF_FOUND` | `diff --exit-code` found differences |
+
+Apply finishes asynchronously on the server. The CLI waits by polling the course (`appliedVersionId`), so it also works with AI
+switched off; with `--no-wait` it returns the run handle (`meta.operation`).
 
 ## course validate
 
@@ -36,7 +131,8 @@ hint. The codes are listed in the [format reference](/developers/course-folder-f
 4. the deterministic checks the server runs (markup, question shape, objectives, id uniqueness, assets and their hashes, the
    citation rule).
 
-Checks that need a server (do the cited fragments exist?) are not part of this command.
+Checks that need a server (do the cited fragments exist?) are not part of this command; `course push` validates the folder first and the
+server then checks the citations.
 
 | Flag | Effect |
 |---|---|
@@ -90,8 +186,8 @@ Use `fmt --check` in CI to keep a folder formatted, and `fmt` in a pre-commit ho
 ulams course fmt && git add -A courses/
 ```
 
-## Where this fits
+## Not there yet
 
-A course in Git is checked with these two commands today; `course init`, `pull`, `push`, `diff` and `status` (the sync with an
-academy through proposed versions) follow in the next milestones of the
+Three-way merge and conflict files (`course resolve`), adopting a course that was not made with the builder, downloading assets
+(`pull --assets`), SCORM, video and file lessons, preview academies and the GitHub Action are later milestones of the
 [course-as-code plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-7-course-as-code.md).

@@ -13,11 +13,12 @@ A course can live in a folder of Markdown and YAML that you keep in Git, review 
 spelling of a [Blueprint v3](/developers/course-builder-api/#course-as-code-endpoints-work-with-ai-off) document: the
 same course, element for element, with the same ids. Export a course, turn it into files, parse the files, and you get the
 same blueprint back. This page is the reference for the files; the commands are in
-[Validate and format a course folder](/developers/cli-course/). The decision behind it is
+[Course folders from the command line](/developers/cli-course/). The decision behind it is
 [ADR 0160](/decisions/0160-course-as-code-sync-through-blueprint-v3-import-versions/).
 
-Everything here works offline. Nothing in this milestone talks to a server: `course push`, `course pull` and the preview
-academy build on the same files in later steps.
+`course validate` and `course fmt` work offline. `course init`, `pull`, `push`, `diff` and `status` move the same files to
+and from an academy (see [Course folders from the command line](/developers/cli-course/#sync-a-course-with-its-folder)),
+and keep where the folder stands in `.ulams/base.json`.
 
 ## Layout
 
@@ -52,7 +53,7 @@ format: 1                     # course folder format version
 blueprint: 3                  # Blueprint schema version the folder maps to
 profile: coffee               # optional default CLI profile; CI uses ULAMS_URL and ULAMS_TOKEN
 course:
-  id: 42                      # set by the first push
+  id: 42                      # written by `course init`
   session: 01jb0000000000000000000001
 language: en                  # used when course.yaml has no language
 lint:
@@ -81,7 +82,7 @@ faq:
 ```
 
 `seo`, `pages` (the landing and header documents) and `sources` (the source documents of a builder session, written by
-`pull`) are also accepted. Course price, tags, category and access are not part of the folder format; manage them with
+`init` and `pull`) are also accepted. Course price, tags, category and access are not part of the folder format; manage them with
 [`ulams apply`](/developers/cli/) manifests.
 
 ## Lesson files

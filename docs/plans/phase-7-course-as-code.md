@@ -427,6 +427,33 @@ Commands (all `kind: local` or `write` in the registry, exposed over MCP stdio o
 Error codes reused from cli.md 4.6: `VALIDATION_FAILED` (7), `SYNC_CONFLICT` (6), `DIFF_FOUND` (13),
 `FEATURE_DISABLED` (12, server without course-as-code, detected from `/api/meta.features.courseAsCode`).
 
+### 7.6 As built in CAC-3
+
+What the implementation (`front/cli/src/commands/course-sync.ts`, `src/course/sync*.ts`, reference: `developers/cli-course`) does
+differently from sections 7.4 and 7.5, and why:
+
+- **No API change.** Everything uses the CAC-1 endpoints. The apply run is followed by polling the export (`appliedVersionId` equals
+  the current version) because `GET course-builder/runs/{run}` sits behind the AI gate; a failed run shows as a timeout (exit 10),
+  not as the run's error. A run endpoint in the `course-as-code` group would fix that (CAC-4 candidate).
+- **`.ulams/base.json` also holds `labels`** (type and position label per element, no text) so a removed element can be named in `diff`,
+  and `assets` (path to sha256 of lesson assets). It is written from the folder form of the server document (written to files and read
+  back), so defaults the folder leaves out (a richtext lesson, empty citation lists, empty page slots) never show as changes.
+- **`.ulams/proposal.json`** (not committed, ignored by `.ulams/.gitignore`) remembers the version a push proposed, so `apply --approve`
+  knows what to approve without a version-list endpoint. `status` and `apply` compare it with the server's current version.
+- **No merge.** `pull` fast-forwards a clean folder, only moves the base when the folder already equals the server, and stops with
+  `SYNC_CONFLICT` (details `DIVERGED`) when both sides changed. `push` turns `BASE_OUTDATED` and `STALE_PROPOSAL` into `SYNC_CONFLICT`.
+  Conflict files, `resolve` and the three-way table of 7.5 are CAC-4.
+- **`pull` keeps the author's file names** (matched by element id; only the number prefix follows the new order) and never touches
+  `assets/`, `sources/` or files it does not manage. `pull --assets` and asset upload are CAC-5.
+- **`course diff`** takes the folder as its argument; what was `course diff <version>` is now `course diff --version <id> [--against <id>]`.
+  `--remote` compares field by field with the server's current version.
+- **`course apply` and `course publish`** take an optional session (as before) and otherwise read it from the folder. `apply` refuses an
+  unapproved proposal with `CONFIRMATION_REQUIRED` (exit 11) unless `--approve`; `publish` maps the server's 409 to `CONFLICT`
+  (blocking items) or `CONFIRMATION_REQUIRED` (warnings need `--acknowledge-warnings`). `init` needs `--from-course`: scaffolding an empty
+  course needs `course.create` (not built yet). `course export`, `import` and `approve` stay as the document-level commands.
+- **Errors keep their server code**: 403 and 422 responses now carry `error.details.code` (and `data`) so `APPROVAL_REQUIRES_HUMAN` and
+  `INVALID_BLUEPRINT` are machine-readable.
+
 ## 8. GitHub Action, Docker image and preview academies
 
 ### 8.1 Image `ghcr.io/ulams-dev/ulams-cli`
