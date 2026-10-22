@@ -581,8 +581,12 @@ jobs:
 
       - name: Install Composer dependencies
         # No scripts: package:discover boots Laravel against a database that only exists once the
-        # stack below is up; the container discovers the packages itself when it starts.
-        run: composer install --no-interaction --no-progress --prefer-dist --no-scripts
+        # stack below is up; the container discovers the packages itself when it starts. The
+        # post-root-package-install script is what created .env, which the tenant provisioning tests
+        # (artisan child processes with an empty environment) read: create it here.
+        run: |
+          [ -f .env ] || cp .env.example .env
+          composer install --no-interaction --no-progress --prefer-dist --no-scripts
 
       - name: Start the stack
         run: docker compose up -d --build api caddy postgres redis minio

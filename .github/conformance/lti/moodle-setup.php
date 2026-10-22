@@ -145,9 +145,6 @@ if ($command === 'setup') {
     ];
     $cm = create_module($moduleinfo);
 
-    // the web server processes keep their own caches (config, plugin lists): drop them
-    purge_all_caches();
-
     echo json_encode([
         'issuer' => $CFG->wwwroot,
         'client_id' => $clientid,
