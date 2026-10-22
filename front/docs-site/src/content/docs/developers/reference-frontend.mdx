@@ -499,5 +499,5 @@ including mobile navigation and locale routes. The English root uses Astro's int
 
 For the existing Cloudflare Pages landing, `deploy/mydevil/cloudflare/landing-static.mjs`
 exports all six Overview/Comparison URLs, client assets, robots.txt and the sitemap from
-the production SSR build. Build with `ULAMS_IMAGE_SERVICE=noop` and production host settings.
+the production SSR build. Build and run it with production host settings, `ULAMS_IMAGE_SERVICE=cloudflare` (or `noop`) and `ULAMS_ADMIN_URL='https://{slug}-admin.example.com'`; it refuses to start without them.
 Pass a new output directory; the exporter refuses to replace existing files.

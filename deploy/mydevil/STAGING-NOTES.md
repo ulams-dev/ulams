@@ -138,7 +138,7 @@ Keep APP_KEY in a password manager (ADR 0066). `AI_DRIVER=fake`, `ANTHROPIC_API_
 - `CACHE_DRIVER=database` cannot work: no migration creates the `cache` table. The template uses `file`.
 - `backup.sh` treated `.env.example` as a tenant.
 - `redis-start.sh` can listen on a reserved loopback port (`ULAMS_REDIS_PORT`).
-- Astro: the `/_image` endpoint needs `sharp`, which has no FreeBSD binary: `ULAMS_IMAGE_SERVICE=noop` at build time serves the original image.
+- Astro: the `/_image` endpoint needs `sharp`, which has no FreeBSD binary: `ULAMS_IMAGE_SERVICE=noop` at build time serves the original image (since IMG-6a the fronts use `cloudflare`, see "Images through Cloudflare" below).
 - H5P service: `@node-rs/crc32` has a FreeBSD binary (`@node-rs/crc32-freebsd-x64`, copied into `node_modules` on the server; the macOS one removed).
   The service calls the API for the user profile on `https://127.0.0.1` with the tenant `Host` header and `NODE_TLS_REJECT_UNAUTHORIZED=0` (loopback only).
 - `api/public/robots.txt` disallows everything (an API host is never meant to be indexed).
@@ -228,8 +228,8 @@ Rebuild and publish after a landing change (needs the staging env of the front i
 Cloudflare token stays in the root `.env` and is never printed):
 
 ```sh
-corepack yarn workspace @ulams/web build
-node deploy/mydevil/cloudflare/landing-static.mjs /tmp/landing-static staging.ulams.app
+ULAMS_IMAGE_SERVICE=cloudflare ULAMS_ADMIN_URL='https://{slug}-admin.ulams.app' corepack yarn workspace @ulams/web build
+ULAMS_IMAGE_SERVICE=cloudflare ULAMS_ADMIN_URL='https://{slug}-admin.ulams.app' node deploy/mydevil/cloudflare/landing-static.mjs /tmp/landing-static staging.ulams.app
 cd "$(mktemp -d)" && npx wrangler@4 pages deploy /tmp/landing-static --project-name ulams-landing --branch main
 ```
 
@@ -238,6 +238,24 @@ project was created with `wrangler pages project create ulams-landing --force` (
 otherwise delegates Pages commands to Workers); later commands do not need `--force`. The domain
 `staging.ulams.app` is attached to the project and the zone record is a proxied CNAME to
 `ulams-landing.pages.dev`. The MyDevil `staging` Passenger site is unused now and can be removed.
+
+## Images through Cloudflare (IMG-6a, ADR 0193)
+
+The demo fronts and the landing build with `ULAMS_IMAGE_SERVICE=cloudflare` instead of `noop`: an image is
+`https://<host>/cdn-cgi/image/width=<w>,quality=<q>,format=auto,fit=scale-down,onerror=redirect/https://storage.ulams.app/<slug>/<key>`.
+
+- Smoke first: `sh deploy/mydevil/bin/check-images.sh <host> [source-url]` (200, `image/avif` or `image/webp`, `cf-resized`; a missing source with
+  `onerror=redirect` answers 3xx). Run on 2026-10-22 against `coffee.ulams.app` (with a `storage.ulams.app` source, so the Worker-served source origin is
+  fine, no error 9524) and `ulams.app`: all passed.
+- The landing export needs `ULAMS_IMAGE_SERVICE=cloudflare` (or `noop`) and `ULAMS_ADMIN_URL='https://{slug}-admin.ulams.app'` in the shell; `landing-static.mjs`
+  stops with a message otherwise.
+- Front deploy as before (local build with the production env, rsync of `front/web/dist`, `front/ui`, `front/sdk`, `front/interactive-bridge` without `node_modules`,
+  then `tmp/restart.txt`), built with `ULAMS_IMAGE_SERVICE=cloudflare`. The mode is read at runtime from `process.env`, so each front's `public_nodejs/app.js` also lists
+  `ULAMS_IMAGE_SERVICE: 'cloudflare'` in its `defaults` (next to `ULAMS_STORAGE_ORIGINS`); a copied `app.js` for a new host needs the line. Rollback is `'noop'` there plus a restart.
+  Deployed 2026-10-22 on the eight Node sites (coffee, oncall, nightsky, gravity, poland, microdosing, stablecoins, ulam); the old `dist` is `front/web/dist-before-img6a-20261022`
+  and each `app.js` has a `.bak-img6a` copy. Verified: the coffee home page has `/cdn-cgi/image/width=96…1280` URLs (distinct widths per image, 14 of 14 return 200 `image/avif`).
+- Rollback: rebuild with `ULAMS_IMAGE_SERVICE=noop` and restart. No data change.
+- Free plan quota: 5,000 unique transformations a month; watch Images > Transformations > Analytics. Record the first count here after the first week.
 
 ## Admin deep links
 
