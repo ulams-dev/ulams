@@ -17,11 +17,12 @@ class TrainingOverdueVariables extends ComplianceVariables
                 'course' => self::VAR_COURSE_TITLE,
                 'user_name' => self::VAR_USER_NAME,
                 'due_date' => self::VAR_DUE_DATE,
+                'path_context' => self::VAR_PATH_CONTEXT,
         ];
 
         return [
             'title' => __('Overdue training: :course', $values),
-            'content' => self::wrapWithMjml(__('<h1>Hello :user_name!</h1><p>The course ":course" was due on :due_date and is not finished yet. Please complete it as soon as possible.</p>', $values)),
+            'content' => self::wrapWithMjml(__('<h1>Hello :user_name!</h1><p>The course ":course" was due on :due_date and is not finished yet. :path_context Please complete it as soon as possible.</p>', $values)),
         ];
     }
 }

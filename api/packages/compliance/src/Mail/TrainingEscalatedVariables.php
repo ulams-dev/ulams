@@ -18,11 +18,12 @@ class TrainingEscalatedVariables extends ComplianceVariables
                 'course' => self::VAR_COURSE_TITLE,
                 'user_name' => self::VAR_USER_NAME,
                 'due_date' => self::VAR_DUE_DATE,
+                'path_context' => self::VAR_PATH_CONTEXT,
         ];
 
         return [
             'title' => __('Overdue training of :learner_name: :course', $values),
-            'content' => self::wrapWithMjml(__('<h1>Hello :user_name!</h1><p>:learner_name has not completed the required course ":course", due on :due_date.</p>', $values)),
+            'content' => self::wrapWithMjml(__('<h1>Hello :user_name!</h1><p>:learner_name has not completed the required course ":course", due on :due_date. :path_context</p>', $values)),
         ];
     }
 }

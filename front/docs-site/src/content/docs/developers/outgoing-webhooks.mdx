@@ -31,7 +31,17 @@ database. The API that manages them is `api/admin/webhooks` and needs the `webho
 | `update_proposal.applied` | A proposal was reviewed and applied to the course (the "accepted" event) | `proposal_id`, `session_id`, `number`, `status`, `counts` |
 | `certificate.issued` | A course certificate PDF was generated | `user`, `certificate_id`, `course_id`, `issued_at` |
 | `knowledge.exported` | A [knowledge pack](/developers/knowledge-export/) was written. An automatic re-export that finds nothing new sends nothing | `export_id`, `scope`, `course_id`, `trigger`, `pack_hash`, `courses`, `chunks`, `uncited_chunks`, `finished_at` |
+| `training.assigned` | A learner was given a required course (by an admin, a rule, a learning path step or recertification). Once per assignment | `user`, `course`, `assignment_id`, `source`, `due_at`, `path`, `assigned_at` |
+| `training.completed` | A learner finished a required course. Once per assignment; a course already covered by a valid certificate sends nothing | `user`, `course`, `assignment_id`, `source`, `due_at`, `path`, `completed_at`, `certificate_id` |
+| `training.overdue` | A required course passed its due date unfinished. Once per assignment | `user`, `course`, `assignment_id`, `source`, `due_at`, `path` |
+| `path.completed` | A learner finished every course of a learning path. Once per enrolment | `user`, `path` (`id`, `title`, `steps`), `enrollment_id`, `completed_at` |
+| `certificate.revoked` | A course certificate was revoked | `user`, `certificate_id`, `course_id`, `revoked_at`, `reason` |
 | `webhook.test` | You pressed **test**. Never sent to subscribers | `message`, `test: true` |
+
+`path` in the training events is `{id, title, step, steps}` when the course is a step of a learning path the learner
+is enrolled in, otherwise `null`. `certificate_id` of `training.completed` is `null` when the certificate is created
+a moment after the course closes; the `certificate.issued` event follows with its id. `reason` of
+`certificate.revoked` is the text the admin entered, or `null`.
 
 Subscribe with exact types, or with `*` for every available event (including types added later). The
 list is also served by `GET /api/admin/webhooks/events`, with the status `available` (wired today) or

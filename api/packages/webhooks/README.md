@@ -9,7 +9,8 @@ queue, a delivery log with every attempt, test sends, replays and SSRF-safe targ
 - Endpoints: `api/admin/webhooks/*` (permission `webhook_manage`, token scope `webhooks:read|write`),
   documented in OpenAPI under the tag "Admin Webhooks".
 - Events wired today: `course.completed`, `enrolment.created`, `update_proposal.ready`,
-  `update_proposal.applied`, `certificate.issued`. Planned types are listed by `GET /api/admin/webhooks/events`.
+  `update_proposal.applied`, `certificate.issued`, `knowledge.exported`, `training.assigned`, `training.completed`,
+  `training.overdue`, `path.completed`, `certificate.revoked`. Planned types are listed by `GET /api/admin/webhooks/events`.
 
 ```
 domain event ─▶ EventCatalog (class → type, payload) ─▶ WebhookDispatcher

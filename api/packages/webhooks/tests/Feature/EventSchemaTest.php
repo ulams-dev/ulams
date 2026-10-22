@@ -4,8 +4,17 @@ namespace Ulams\Webhooks\Tests\Feature;
 
 use Opis\JsonSchema\Validator;
 use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Compliance\Events\PathCompleted;
+use Ulams\Compliance\Events\TrainingAssigned;
+use Ulams\Compliance\Events\TrainingCompleted;
+use Ulams\Compliance\Events\TrainingOverdue;
+use Ulams\Compliance\Models\Assignment;
+use Ulams\Compliance\Models\PathEnrollment;
+use Ulams\Compliance\Services\PathService;
 use Ulams\Courses\Events\CourseFinished;
 use Ulams\Courses\Models\Course;
+use Ulams\TemplatesPdf\Events\CertificateRevoked;
+use Ulams\TemplatesPdf\Models\FabricPDF;
 use Ulams\Webhooks\Services\EndpointService;
 use Ulams\Webhooks\Support\EventCatalog;
 use Ulams\Webhooks\Tests\TestCase;
@@ -56,6 +65,34 @@ class EventSchemaTest extends TestCase
         unset($broken['data']['object']['course']);
         $result = (new Validator())->validate(json_decode(json_encode($broken)), json_decode((string) file_get_contents(__DIR__ . '/../../resources/schemas/webhook-event-2026-10-20.json')));
         $this->assertFalse($result->isValid());
+    }
+
+    public function testTheTrainingEventsOfAPathStepMatchTheSchema(): void
+    {
+        $learner = $this->makeStudent();
+        $course = Course::factory()->create();
+        $path = app(PathService::class)->save(['title' => 'Onboarding', 'steps' => [['course_id' => $course->getKey()]]]);
+        $enrollment = PathEnrollment::query()->create(['user_id' => $learner->getKey(), 'path_id' => $path->getKey(), 'source' => 'rule', 'enrolled_at' => now(), 'completed_at' => now()]);
+        $assignment = new Assignment();
+        $assignment->forceFill(['id' => 9, 'user_id' => $learner->getKey(), 'course_id' => $course->getKey(), 'source' => 'recertification', 'status' => 'completed', 'assigned_at' => now(), 'due_at' => null, 'completed_at' => now(), 'certificate_id' => null]);
+        $certificate = FabricPDF::factory()->createOne(['user_id' => $learner->getKey(), 'assignable_type' => Course::class, 'assignable_id' => $course->getKey(), 'revoked_at' => now(), 'revoked_reason' => null]);
+        $this->endpoint(); // after the certificate: creating one is a certificate.issued event of its own
+        $this->receiver([]);
+
+        event(new TrainingAssigned($learner, $course, $assignment));
+        event(new TrainingCompleted($learner, $course, $assignment));
+        $assignment->due_at = now()->subDay();
+        event(new TrainingOverdue($learner, $course, $assignment));
+        event(new PathCompleted($learner, $enrollment));
+        event(new CertificateRevoked($certificate));
+
+        $this->assertSame(
+            ['training.assigned', 'training.completed', 'training.overdue', 'path.completed', 'certificate.revoked'],
+            array_map(fn ($request) => json_decode((string) $request->getBody(), true)['type'], $this->received),
+        );
+        foreach ($this->received as $request) {
+            $this->assertValid((string) $request->getBody());
+        }
     }
 
     public function testTheSchemaListsEveryEventType(): void

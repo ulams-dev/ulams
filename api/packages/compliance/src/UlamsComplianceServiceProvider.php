@@ -13,6 +13,8 @@ use Ulams\Compliance\Console\ProcessComplianceCommand;
 use Ulams\Compliance\Events\CertificateExpired;
 use Ulams\Compliance\Events\CertificateExpiringSoon;
 use Ulams\Compliance\Events\TrainingAssigned;
+use Ulams\Compliance\Events\TrainingCompleted;
+use Ulams\Compliance\Events\TrainingCompletedForManager;
 use Ulams\Compliance\Events\TrainingDueSoon;
 use Ulams\Compliance\Events\TrainingEscalated;
 use Ulams\Compliance\Events\TrainingOverdue;
@@ -37,6 +39,8 @@ use Ulams\Compliance\Mail\CertificateExpiringSoonVariables;
 use Ulams\Compliance\Mail\PathCompletedVariables;
 use Ulams\Compliance\Mail\PathEnrolledVariables;
 use Ulams\Compliance\Mail\TrainingAssignedVariables;
+use Ulams\Compliance\Mail\TrainingCompletedForManagerVariables;
+use Ulams\Compliance\Mail\TrainingCompletedVariables;
 use Ulams\Compliance\Mail\TrainingDueSoonVariables;
 use Ulams\Compliance\Mail\TrainingEscalatedVariables;
 use Ulams\Compliance\Mail\TrainingOverdueVariables;
@@ -129,6 +133,8 @@ class UlamsComplianceServiceProvider extends ServiceProvider
         }
         foreach ([
             TrainingAssigned::class => TrainingAssignedVariables::class,
+            TrainingCompleted::class => TrainingCompletedVariables::class,
+            TrainingCompletedForManager::class => TrainingCompletedForManagerVariables::class,
             TrainingDueSoon::class => TrainingDueSoonVariables::class,
             TrainingOverdue::class => TrainingOverdueVariables::class,
             TrainingEscalated::class => TrainingEscalatedVariables::class,

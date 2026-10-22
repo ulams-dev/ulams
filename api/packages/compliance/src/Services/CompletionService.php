@@ -5,6 +5,8 @@ namespace Ulams\Compliance\Services;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Ulams\Compliance\Enums\AssignmentStatus;
+use Ulams\Compliance\Events\TrainingCompleted;
+use Ulams\Compliance\Events\TrainingCompletedForManager;
 use Ulams\Compliance\Models\Assignment;
 use Ulams\Core\Models\User;
 use Ulams\Courses\Models\Course;
@@ -17,6 +19,10 @@ use Ulams\TemplatesPdf\Models\FabricPDF;
  */
 class CompletionService
 {
+    public function __construct(private NotificationLog $log, private CourseSettings $settings, private ManagerService $managers)
+    {
+    }
+
     public function courseFinished(User $user, Course $course): void
     {
         // CourseFinished is also fired when access is removed: only a really finished course counts.
@@ -26,7 +32,7 @@ class CompletionService
         }
 
         Assignment::query()->open()->where('user_id', $user->getKey())->where('course_id', $course->getKey())->get()
-            ->each(function (Assignment $assignment) {
+            ->each(function (Assignment $assignment) use ($user, $course) {
                 $certificate = FabricPDF::query()
                     ->where('user_id', $assignment->user_id)
                     ->where('assignable_type', Course::class)
@@ -39,7 +45,25 @@ class CompletionService
                     'completed_at' => now(),
                     'certificate_id' => $certificate?->getKey(),
                 ])->save();
+                $this->announce($assignment, $user, $course);
             });
+    }
+
+    /**
+     * The completion notices: the learner always, the learner's manager when the course is mandatory. Each goes through
+     * the notification log, so an assignment closes with at most one notice per recipient.
+     */
+    private function announce(Assignment $assignment, User $user, Course $course): void
+    {
+        $this->log->once('training_completed', 'assignment', $assignment->getKey(), 0, $user->getKey(), fn () => event(new TrainingCompleted($user, $course, $assignment)));
+
+        if (!$this->settings->for($course->getKey())->mandatory) {
+            return;
+        }
+        $manager = $this->managers->managerOf($user);
+        if ($manager) {
+            $this->log->once('training_completed_manager', 'assignment', $assignment->getKey(), 0, $manager->getKey(), fn () => event(new TrainingCompletedForManager($manager, $course, $assignment, $user)));
+        }
     }
 
     public function certificateIssued(FabricPDF $certificate): void

@@ -62,8 +62,32 @@ escalation waits and is sent after one is linked.
 3. Sends **training due soon**, **training overdue** and, to the manager, **training escalated**.
 
 Each notice is recorded once, so running the command again, or late, never repeats one. If several reminder
-days have passed, only the most urgent is sent. The six e-mails are editable under
+days have passed, only the most urgent is sent. The e-mails are editable under
 **Configuration → Templates** like any other e-mail template.
+
+Finishing a required course sends one more notice, **training completed**, to the learner, with a link to their
+training record (the certificate's verification page once it is linked to the assignment). When the course is marked
+mandatory and the learner has a manager, the manager gets **training completed (manager)** as well. Both are sent
+once per assignment. A course that was already covered by a valid certificate when it was assigned is completed
+without a notice, because nothing was finished.
+
+### Language and the learning-path sentence
+
+Every notice picks its template by language: the language of the course, then the academy's default language, then
+English, then a template without a language. The path notices (enrolled, completed) have no course, so they use the
+academy's default language. The default texts are written in English and Polish (other languages show the English text until they are
+translated); a template you have edited is never replaced.
+
+Notices about a course that is a step of the learner's learning path carry the path. The variables are
+`@VarPathTitle`, `@VarStepNumber`, `@VarStepCount`, `@VarNextStep` (the next course still to do, empty on the last
+step) and `@VarPathContext`, a ready sentence in the language of the course ("Step 2 of 4 of the learning path
+"Onboarding" is now open." on the e-mail of an unlocked step, "This course is step 2 of 4 of the learning path ..."
+on the others). Outside a path they are empty. They are available in the assigned, due soon, overdue, escalated and
+completed e-mails; the default texts of a new academy already contain `@VarPathContext`. Templates that were saved
+earlier keep their text: add `@VarPathContext` to them where you want it.
+
+The same events are available to other systems as [webhooks](/developers/outgoing-webhooks/): `training.assigned`,
+`training.completed`, `training.overdue`, `path.completed` and `certificate.revoked`.
 
 ## Learning paths
 
