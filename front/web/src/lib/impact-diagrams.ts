@@ -166,8 +166,8 @@ const COST: Record<Locale, CostDiagrams> = {
     },
     audiences: {
       title: "One source, many audiences",
-      lede: "Variants of one course by level and by role, each reviewed as a diff against the base course.",
-      badge: "Coming",
+      lede: "Variants of one course by level and by role, drafted in the builder and each reviewed as a diff against the base course. Routing each learner to a variant is coming.",
+      badge: "Available, routing coming",
       source: "One source",
       base: "Base course",
       baseText: "Shared sources, passages and citations",
@@ -240,8 +240,8 @@ const COST: Record<Locale, CostDiagrams> = {
     },
     audiences: {
       title: "Jedno źródło, wielu odbiorców",
-      lede: "Warianty jednego kursu według poziomu i roli, każdy oceniany jako diff względem kursu bazowego.",
-      badge: "Wkrótce",
+      lede: "Warianty jednego kursu według poziomu i roli, przygotowane w kreatorze i oceniane jako diff względem kursu bazowego. Kierowanie uczących się do wariantu jest w drodze.",
+      badge: "Dostępne, kierowanie wkrótce",
       source: "Jedno źródło",
       base: "Kurs bazowy",
       baseText: "Wspólne źródła, fragmenty i cytaty",
@@ -314,8 +314,8 @@ const COST: Record<Locale, CostDiagrams> = {
     },
     audiences: {
       title: "一份资料,多类学员",
-      lede: "同一门课程按级别和角色生成的版本,每个版本都以与基础课程的差异形式审阅。",
-      badge: "即将推出",
+      lede: "同一门课程按级别和角色生成的版本,在生成器中起草,每个版本都以与基础课程的差异形式审阅。将每位学员分配到合适版本的功能即将推出。",
+      badge: "已可用,分配即将推出",
       source: "一份资料",
       base: "基础课程",
       baseText: "共享资料、片段和出处",
