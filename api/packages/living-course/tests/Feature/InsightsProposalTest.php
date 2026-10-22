@@ -337,6 +337,7 @@ class InsightsProposalTest extends TestCase
         $this->assertSame($before, $version->parent_id);
         $this->assertSame('Improvement from learner insights: ' . $proposal->counts['targetLabel'], $version->reason);
         $this->assertSame($version->id, $session->refresh()->applied_version_id);
+        $this->assertSame('insights', \Ulams\CourseBuilder\Models\Release::query()->where('session_id', $session->id)->orderByDesc('number')->firstOrFail()->trigger);
         // the course shows the new text; the source revisions are exactly as they were
         $this->assertStringContainsString(substr($item->after['markdown'], -40), (string) Topic::query()->find(EntityMapEntry::query()->where('session_id', $session->id)->where('element_id', $lesson['id'])->where('entity_type', 'topic')->value('entity_id'))->topicable->value);
         $this->assertSame($revisions, Revision::query()->count());

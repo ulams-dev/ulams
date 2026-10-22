@@ -1177,3 +1177,26 @@
     padding: 20px 16px;
   }
 }
+
+/* course versions page (releases list) */
+.st-ver-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.st-ver-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.st-ver-changes {
+  margin: 0;
+  padding-left: 1.1em;
+}
+.st-ver-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}

@@ -48,6 +48,7 @@ approve only when the tenant allows it. The rules are in the
 | `course publish [session] [--acknowledge-warnings]` | Runs the publish check and publishes. Blocking items stop it (exit 6, `error.details.blocking`); warnings stop it until you pass `--acknowledge-warnings` (exit 11, `error.details.warnings`). The course must be applied first. |
 | `course pull` | Brings the folder up to date with the server, merging your edits with theirs (see below). |
 | `course resolve <element> --take local\|remote\|file` | Settles one conflict that `pull` left in `.ulams/conflicts/` (see [Conflicts](#conflicts-and-resolve)). |
+| `course releases <course> [--page] [--per-page]` | Lists the releases of a course, newest first: number, when it went live, what started it (`generate`, `author`, `chat`, `update`, `insights`, `import`, `restore`), who approved it and what changed since the previous release. Works with AI switched off and needs no folder. A course that was not made with the builder has no releases (`NOT_FOUND`). `--json` returns the API payload ([Course releases](/developers/course-builder-api/#course-releases-work-with-ai-off)). |
 | `course absorb-drift [--preview]` | Reads edits an admin made in the LMS after the last apply back into a proposed version (see [Edits made in the LMS](#edits-made-in-the-lms)). |
 
 Every command that sends something has `--dry-run`: `push` validates the folder and prints the request and the diff, `apply` and

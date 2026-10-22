@@ -21,3 +21,16 @@ export async function call<T>(ctx: Ctx, method: "GET" | "POST", path: string, o:
 }
 
 export const planOf = (method: string, path: string, body?: unknown): Plan => ({ request: { method, path: `${COURSE_AS_CODE}${path}`, ...(body !== undefined ? { body } : {}) } });
+
+/** Course versions (ADR 0192): releases per course, no AI gate. */
+export const COURSE_VERSIONS = "/api/admin/course-versions";
+
+export async function callVersions<T>(ctx: Ctx, path: string, o: { params?: Record<string, string | number>; query?: Record<string, string | number | undefined> } = {}): Promise<T> {
+  const res = await ctx.client.call<T>("GET", `${COURSE_VERSIONS}${path}`, {
+    ...(o.params ? { params: o.params } : {}),
+    ...(o.query ? { query: o.query as Record<string, string | undefined> } : {}),
+    idempotent: true,
+    signal: ctx.signal,
+  });
+  return res.data;
+}
