@@ -18,6 +18,7 @@
  * Run `yarn workspace @ulams/ui catalogue` to print this registry as JSON.
  */
 import type { JsonSchema } from "./schema.ts";
+import { TENANT_THEMES } from "./theme/presets.ts";
 import {
   COURSE_UPDATES_TITLE,
   extendedText,
@@ -44,7 +45,7 @@ export const FORMATS = [
 ] as const;
 export type Format = (typeof FORMATS)[number];
 
-export const THEMES = ["coffee", "oncall", "nightsky", "gravity", "poland", "ulam", "platform"] as const;
+export const THEMES = [...TENANT_THEMES, "platform"] as const;
 export type ThemeName = (typeof THEMES)[number];
 export { THEME_PRESETS, TENANT_THEMES } from "./theme/presets.ts";
 

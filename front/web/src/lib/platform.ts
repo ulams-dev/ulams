@@ -8,6 +8,7 @@ import { config } from "./config.ts";
 import { getSiteModel } from "./data.ts";
 import { tenantFrontUrl } from "./tenant.ts";
 import { THEME_COLOR } from "./theme.ts";
+import { TENANT_THEMES } from "@ulams/ui/theme/presets.ts";
 import { comparisonData, comparisonModel } from "./comparison.ts";
 import { applyComparisonStatus, type LandingStatus } from "./landing-status.ts";
 import { workflowsModel } from "./workflows.ts";
@@ -48,7 +49,7 @@ export async function platformModel(current: URL, status: LandingStatus = "actua
       ]);
       const style = copy?.style[slug] ? { ...STYLE[slug]!, ...copy.style[slug] } : STYLE[slug];
       const course = site?.course;
-      const theme = (["coffee", "oncall", "nightsky", "gravity", "poland", "ulam"].includes(slug) ? slug : "platform") as DemoCard["theme"];
+      const theme = ((TENANT_THEMES as readonly string[]).includes(slug) ? slug : "platform") as DemoCard["theme"];
       const facts: DemoCard["facts"] = [];
       if (style) facts.push({ label: copy?.facts.style ?? "Style", value: style.label });
       if (course) {
@@ -72,5 +73,5 @@ export async function platformModel(current: URL, status: LandingStatus = "actua
   return { demos: list, demoCount: list.length, comparison: comparisonModel(applyComparisonStatus(comparisonData, status), locale), workflows: workflowsModel(status, locale) };
 }
 
-export const PLATFORM_THEME_COLOR = "#fafaf9";
+export const PLATFORM_THEME_COLOR = THEME_COLOR.platform;
 export { THEME_COLOR };

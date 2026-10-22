@@ -29,11 +29,12 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint src tests",
-    "test": "node --experimental-strip-types --no-warnings scripts/builder-manifest.mjs --check && node --experimental-strip-types --no-warnings scripts/learner-manifest.mjs --check && node --experimental-strip-types --no-warnings scripts/page-manifest.mjs --check && node --experimental-strip-types --no-warnings scripts/remediation-manifest.mjs --check && vitest run",
+    "test": "node --experimental-strip-types --no-warnings scripts/builder-manifest.mjs --check && node --experimental-strip-types --no-warnings scripts/learner-manifest.mjs --check && node --experimental-strip-types --no-warnings scripts/page-manifest.mjs --check && node --experimental-strip-types --no-warnings scripts/remediation-manifest.mjs --check && node --experimental-strip-types --no-warnings scripts/theme-manifest.mjs --check && vitest run",
     "catalogue": "node --experimental-strip-types --no-warnings scripts/catalogue.mjs",
     "learner-manifest": "node --experimental-strip-types --no-warnings scripts/learner-manifest.mjs",
     "builder-manifest": "node --experimental-strip-types --no-warnings scripts/builder-manifest.mjs",
     "remediation-manifest": "node --experimental-strip-types --no-warnings scripts/remediation-manifest.mjs",
+    "theme-manifest": "node --experimental-strip-types --no-warnings scripts/theme-manifest.mjs",
     "page-manifest": "node --experimental-strip-types --no-warnings scripts/page-manifest.mjs"
   },
   "dependencies": {
