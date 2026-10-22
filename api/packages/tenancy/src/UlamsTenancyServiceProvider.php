@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Tenancy\Console\CreateTenantCommand;
 use Ulams\Tenancy\Console\DeleteTenantCommand;
+use Ulams\Tenancy\Console\EnsureTenantBucketsCommand;
 use Ulams\Tenancy\Console\ExportH5PServiceConfigCommand;
 use Ulams\Tenancy\Console\ListTenantsCommand;
 use Ulams\Tenancy\Console\ScheduleLoopCommand;
@@ -97,6 +98,7 @@ class UlamsTenancyServiceProvider extends ServiceProvider
                 ListTenantsCommand::class,
                 DeleteTenantCommand::class,
                 SyncTenantEnvCommand::class,
+                EnsureTenantBucketsCommand::class,
             SetTenantEnvCommand::class,
                 SeedTenantDemoCommand::class,
                 ExportH5PServiceConfigCommand::class,

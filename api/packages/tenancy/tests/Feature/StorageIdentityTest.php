@@ -232,4 +232,31 @@ class StorageIdentityTest extends TestCase
         $this->assertStringNotContainsString((string) $tenant->storage_secret, $resource);
         $this->assertStringNotContainsString((string) $tenant->storage_key, $resource);
     }
+
+    public function testEnsureBucketsCoversThePlatformBucketAndEveryTenant(): void
+    {
+        $this->create('acme');
+        $this->create('beta');
+        config(['filesystems.disks.s3.bucket' => 'ulams']);
+        $ensured = [];
+        $buckets = Mockery::mock(BucketProvisionerContract::class);
+        $buckets->shouldReceive('ensure')->andReturnUsing(function (string $bucket) use (&$ensured) {
+            $ensured[] = $bucket;
+        });
+        $this->app->instance(BucketProvisionerContract::class, $buckets);
+
+        $this->artisan('ulams:tenant:ensure-buckets')->expectsOutputToContain('ready ulams-acme')->assertExitCode(0);
+
+        $this->assertSame(['ulams', 'ulams-acme', 'ulams-beta'], $ensured);
+    }
+
+    public function testEnsureBucketsFailsWhenABucketCannotBeReached(): void
+    {
+        $this->create('acme');
+        $buckets = Mockery::mock(BucketProvisionerContract::class);
+        $buckets->shouldReceive('ensure')->andThrow(new \RuntimeException('store unreachable'));
+        $this->app->instance(BucketProvisionerContract::class, $buckets);
+
+        $this->artisan('ulams:tenant:ensure-buckets')->expectsOutputToContain('store unreachable')->assertExitCode(1);
+    }
 }

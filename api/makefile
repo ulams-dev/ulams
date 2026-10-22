@@ -185,3 +185,13 @@ pg-upgrade:
 	POSTGRES_USER=$(or $(POSTGRES_USER),default) POSTGRES_PASSWORD=$(or $(POSTGRES_PASSWORD),secret) \
 		sh ../deploy/scripts/pg-major-upgrade.sh --old-data ./docker/postgres-data --new-data ./docker/postgres17-data \
 		--dump-dir ./docker/pg-upgrade-dumps
+
+# One-off: copy the files of the old MinIO volume (docker/minio_storage) to SeaweedFS, check the copy, re-apply the
+# bucket policies and give every tenant its own S3 key (ADR 0041). The old directory is only read and stays.
+# Start the new store first: docker compose up -d storage api
+storage-migrate:
+	FROM_S3_KEY=$(or $(MINIO_ROOT_USER),admin) FROM_S3_SECRET=$(or $(MINIO_ROOT_PASSWORD),minio_secretpassword) \
+	TO_S3_KEY=$(or $(STORAGE_ROOT_USER),$(MINIO_ROOT_USER),admin) TO_S3_SECRET=$(or $(STORAGE_ROOT_PASSWORD),$(MINIO_ROOT_PASSWORD),minio_secretpassword) \
+		sh ../deploy/scripts/storage-migrate.sh --from-minio-dir ./docker/minio_storage --to-endpoint http://storage:8333 \
+		--network ulams --api-container $$(docker compose ps -q api)
+
