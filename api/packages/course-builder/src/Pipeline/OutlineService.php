@@ -4,6 +4,7 @@ namespace Ulams\CourseBuilder\Pipeline;
 
 use InvalidArgumentException;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
+use Ulams\CourseBuilder\Blueprint\Provenance;
 use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry;
 use Ulams\CourseBuilder\Events\EventLog;
@@ -48,6 +49,7 @@ final class OutlineService
         if (config('course_builder.auto_formats')) {
             $doc = $this->suggestFormats($doc);
         }
+        $doc = Provenance::stamp($doc); // ADR 0194: the hash of what the AI proposed
         $version = $this->versions->create($session, $doc, 'outline', 'ai', Version::PROPOSED, $previous, $comment ?? 'Proposed outline', null, $result->callIds);
         $session->current_version_id = $version->id;
         $session->status = Session::OUTLINE_REVIEW;

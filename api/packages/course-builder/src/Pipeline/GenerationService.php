@@ -8,6 +8,7 @@ use Ulams\Ai\Exceptions\LlmException;
 use Ulams\CourseBuilder\Apply\BlueprintApplier;
 use Ulams\CourseBuilder\Apply\LandingDocument;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
+use Ulams\CourseBuilder\Blueprint\Provenance;
 use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\CourseBuilder\ContentTypes\ContentType;
 use Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry;
@@ -651,6 +652,7 @@ final class GenerationService
             $doc['course']['seo'] = ['title' => mb_substr($meta['seoTitle'], 0, 70), 'description' => mb_substr($meta['seoDescription'], 0, 160)];
             $doc['course']['faq'] = array_map(fn ($f) => ['question' => $f['question'], 'answer' => $f['answer'], 'citations' => array_values(array_unique($f['citations']))], $meta['faq']);
         }
+        $doc = Provenance::stamp($doc); // ADR 0194: lessons, blocks and questions the AI just wrote
         $suggestion = $variant === null ? $this->prices->suggest($session, $run, $outlineVersion->document) : null;
         $doc['pages'] = ['landing' => LandingDocument::landing($doc, $session->brief), 'header' => LandingDocument::header($doc, $session->brief)];
 

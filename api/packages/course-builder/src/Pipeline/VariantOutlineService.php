@@ -5,6 +5,7 @@ namespace Ulams\CourseBuilder\Pipeline;
 use InvalidArgumentException;
 use Ulams\Ai\Dto\ContentBlock;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
+use Ulams\CourseBuilder\Blueprint\Provenance;
 use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Exceptions\BuilderException;
@@ -75,6 +76,7 @@ final class VariantOutlineService
             $old->forceFill(['status' => Version::SUPERSEDED])->save();
             $this->surfaces->close($session, "outline-{$old->id}");
         }
+        $doc = Provenance::stamp($doc);
         $version = $this->versions->create($session, $doc, 'outline', 'ai', Version::PROPOSED, $base, $comment ?? "Proposed outline for {$variant->label}", null, $result->callIds, null, null, $variant->id);
         $variant->forceFill(['plan' => $plan, 'current_version_id' => $version->id, 'based_on_version_id' => $base->id, 'status' => Variant::DRAFT])->save();
 
