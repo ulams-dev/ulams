@@ -1,5 +1,5 @@
 {
- "summary": "616/705 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "617/706 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -710,15 +710,21 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/course-versions/courses/{course}/compare",
+   "summary": "Semantic diff of two versions or releases of a course: moved elements, citations, quiz answer keys and a summary",
+   "command": "course-versions.courses-compare",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/course-versions/courses/{course}/releases",
    "summary": "Releases of a course (what learners got), newest first, with a summary of what changed",
-   "command": "course.releases",
+   "command": "course-versions.courses-releases",
    "status": "covered"
   },
   {
    "key": "GET /api/admin/course-versions/releases/{release}",
    "summary": "One release with the blueprint document of its version",
-   "command": "course.release",
+   "command": "course-versions.releases",
    "status": "covered"
   },
   {
