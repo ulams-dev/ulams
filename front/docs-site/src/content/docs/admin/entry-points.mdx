@@ -6,6 +6,9 @@ modules:
   - web
 learnerRoutes:
   - /go/[key]
+  - /handoff/begin
+  - /handoff/issue
+  - /handoff/complete
 sidebar:
   order: 41
 ---
@@ -22,8 +25,9 @@ learner to a group: enrolments, entitlements, groups and rules decide who can op
 
 <Aside type="note">
 Built so far: the table, the admin API, the `ulams entry-points` commands, the learner front serving an entry
-host in its own theme and the `/go/<key>` fallback. The sign-in hand-off between addresses, the department
-catalogue, the course and role behaviour and DNS verification are built in the next steps of the
+host in its own theme, the `/go/<key>` fallback, trusted origins and return URLs for entry hosts and the sign-in
+hand-off between addresses. The department catalogue, the course and role behaviour and DNS verification are built
+in the next steps of the
 [plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/academy-entry-points.md) and are marked
 <Badge text="Coming" variant="caution" /> below.
 </Aside>
@@ -54,6 +58,41 @@ host. Access is the same everywhere: the same API, the same academy, the same en
 session: the same theme and rules, on the academy's own host. `?next=/courses/1` chooses the page to land on (a path
 of this site only). `/go/main` goes back to the academy's own pages; `main` is not a usable key. The cookie holds the
 key, never a token, and an entry point that was disabled or deleted is dropped from it on the next page.
+
+## Signing in across addresses
+
+Each address has its own session, so signing in on `sales.academy.example.org` works directly (same API, same
+accounts), and a session on one address is never visible to another. Moving between addresses while signed in uses a
+one-time code, the way social login does:
+
+1. On the target address, `/handoff/begin?from=<source host>&next=/courses/1` keeps a secret verifier in a cookie of
+   that address and sends only its SHA-256 challenge to the source address.
+2. On the source address, `/handoff/issue` asks the API for a code with the learner's own token
+   (`POST /api/auth/handoff`) and sends the browser back to the target with the code.
+3. On the target address, `/handoff/complete?code=...` redeems the code with the verifier
+   (`POST /api/auth/handoff/exchange`), sets a session of its own and goes on to `next`.
+
+The code lives 60 seconds, works once, and is bound to the learner, to the target host and to the verifier of the
+browser that asked for it, so a code taken from a URL, a log or a Referer is useless to anybody else. The API only
+issues and redeems it for the academy's own address or one of its active entry points, and checks again when the
+code is redeemed, so an entry point disabled in between gets nothing. No access token is ever put in a URL, and
+these pages are never cached and send no Referer. A scoped token (agent, CI, CLI) cannot ask for a code. The
+switcher in the header that links to these pages comes with the department catalogue
+<Badge text="Coming" variant="caution" />.
+
+**Log out everywhere** (the account page, `POST /logout?everywhere=1`, `POST /api/auth/logout` with
+`everywhere: true`) ends every login session of the learner, one per address after a hand-off. Scoped tokens are
+not touched.
+
+## Trusted origins and return URLs
+
+An active entry point is trusted like the academy's own front: the origin check of the API (browser requests with an
+`Origin`), the return URLs of social, OpenID Connect and SAML logins, and the pages that may frame interactive
+content all follow the same list, compared by exact origin (scheme, host and port). Pending and disabled entry
+points are not in it, and a disabled or deleted one leaves it at once. Nothing is configured by hand: the platform
+copies the list into the academy's own database after every change (`ulams:entry-points:publish`), and a job
+(`ulams:entry-points:reconcile`, every five minutes) repairs an academy whose copy is out of date, for example after
+a restore. When the copy cannot be updated, the admin API answers 503 after saving; repeating the request refreshes it.
 
 ## Kinds
 

@@ -201,3 +201,14 @@ Recommended first: **EP-1**, then EP-2 and EP-3. EP-4 is what the policy lifecyc
   because axe found small accent text on dark presets at 4.2:1 (a fix for every academy, not only entry points).
 - **Not in EP-2:** `X-Ulams-Entry` on API presentation endpoints (nothing reads it before EP-4), the entry label in the header (EP-4),
   canonical URLs and sitemaps per host (EP-5).
+- **EP-3, trust and hand-off.** The tenant process cannot read the platform table, so the platform copies the active entry hosts into
+  the academy's own database (`tenant_entry_hosts`, written only by the hidden `ulams:entry-points:publish`, never by an API route)
+  after every change; a hash of what was published per academy (`tenant_entry_host_publications`) lets `ulams:entry-points:reconcile`
+  (scheduled every five minutes) repair a failed or lost publication. When a publication fails the change stays saved and the admin API
+  answers 503, a repeated request publishes again. `Ulams\Core\Support\EntryFronts` is the registry that the origin check, the return
+  URLs, `InteractiveCsp::frameAncestors()` and the hand-off read, so an entry host is trusted everywhere or nowhere.
+- **Hand-off** reuses `LoginHandoffService` (kind `handoff`); the verifier travels as in the social login suite. The target host proves
+  itself twice: the front checks that the other end is a host of the same academy (host rules, or an active entry point of the same
+  tenant), the API checks it again on issue and on redemption. `POST /api/auth/logout` takes `everywhere` and revokes the user's login
+  sessions only (tokens with an `api_token_meta` row stay).
+- **Not in EP-3:** the header switcher that links to `/handoff/begin` (EP-4, with the label).

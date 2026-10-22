@@ -1020,7 +1020,11 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       people), the front looks up a host no rule matches (SWR cache 60 s, misses 10 s, stale on failure, 503 instead of another academy),
       `Astro.locals.entry`, theme override (accent, logo text, language over the academy's; preset for the look only) with `noindex`
       for internal audiences, `/go/<key>` fallback on the academy's host. `accentCss` now also holds the accent to 4.5:1 on cards.
-      Open: EP-3 to EP-7.
+      EP-3 (PR open): active entry hosts are trusted origins, return URLs (social, OIDC, SAML) and frame ancestors of their own academy
+      through one registry (`EntryFronts`) fed by the academy's own copy of the list, which the platform publishes after every change
+      and a five-minute job repairs; session hand-off between hosts (`POST /api/auth/handoff` and `/exchange`, one-time code 60 s, single
+      use, bound to user, target host and S256 verifier, target checked again on redemption, never a scoped token), the three
+      `/handoff/*` pages of the front, log out everywhere. Open: EP-4 to EP-7 (the switcher that links to the hand-off comes with EP-4).
 - [x] Verification URL/QR, expiry, recertification, reminders (verification endpoint and page, QR, expiry, revocation, #273; recertification and reminders, #298)
 - [x] Mandatory training with due dates and manager escalation (`api/packages/compliance`, #298)
 - [x] Compliance reports and audit export (linked to Phase 3 audit trail) (#276)
