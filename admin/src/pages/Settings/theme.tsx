@@ -37,6 +37,30 @@ import { contrastReport, normaliseAccent } from '../../../../front/ui/src/theme/
  * is not saved, and the report says which check fails and by how much.
  */
 
+const CSS = `
+.theme-settings section{margin-bottom:24px}
+.theme-presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;width:100%}
+.theme-preset{display:flex;align-items:flex-start;margin:0;padding:8px;border:1px solid var(--ant-color-border,#d9d9d9);border-radius:8px}
+.theme-card{display:flex;flex-direction:column;gap:4px;padding:10px;border:1px solid;border-radius:6px;min-width:160px}
+.theme-card__panel{display:flex;gap:8px;align-items:center;padding:8px;border:1px solid;border-radius:4px;font-weight:600}
+.theme-card__button{padding:2px 10px;border-radius:4px}
+.theme-card__name{font-weight:600}
+.theme-card__mood{font-size:12px}
+.theme-hint{color:var(--ant-color-text-secondary,#595959);margin:4px 0 8px}
+.theme-fail{font-weight:600;color:var(--ant-color-error-text,#a8071a)}
+.theme-report{border-collapse:collapse;width:100%;max-width:960px}
+.theme-report th,.theme-report td{border-bottom:1px solid var(--ant-color-border-secondary,#e0e0e0);padding:6px 8px;text-align:left}
+.theme-report tr[data-pass="false"] td:last-child{font-weight:600;color:var(--ant-color-error-text,#a8071a)}
+.theme-chip{display:inline-flex;width:20px;height:20px;border:1px solid #767676;border-radius:4px;margin-right:8px;vertical-align:middle;align-items:center;justify-content:center}
+.theme-chip span{display:block;width:10px;height:10px}
+.theme-logo{min-height:48px;margin-bottom:8px}
+.theme-logo__img{max-height:56px;max-width:240px}
+.theme-diff{margin-top:12px;padding:12px;border:1px solid var(--ant-color-border,#d9d9d9);border-radius:6px;max-width:720px}
+.theme-diff table{border-collapse:collapse;width:100%}
+.theme-diff th,.theme-diff td{padding:4px 8px;text-align:left;border-bottom:1px solid var(--ant-color-border-secondary,#e0e0e0)}
+.theme-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+`;
+
 type Draft = { theme: TenantThemeName; accent: string; alt: string };
 
 const isPreset = (value: unknown): value is TenantThemeName =>
@@ -502,27 +526,3 @@ export default function ThemeSettings() {
     </ConfigProvider>
   );
 }
-
-const CSS = `
-.theme-settings section{margin-bottom:24px}
-.theme-presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;width:100%}
-.theme-preset{display:flex;align-items:flex-start;margin:0;padding:8px;border:1px solid var(--ant-color-border,#d9d9d9);border-radius:8px}
-.theme-card{display:flex;flex-direction:column;gap:4px;padding:10px;border:1px solid;border-radius:6px;min-width:160px}
-.theme-card__panel{display:flex;gap:8px;align-items:center;padding:8px;border:1px solid;border-radius:4px;font-weight:600}
-.theme-card__button{padding:2px 10px;border-radius:4px}
-.theme-card__name{font-weight:600}
-.theme-card__mood{font-size:12px}
-.theme-hint{color:var(--ant-color-text-secondary,#595959);margin:4px 0 8px}
-.theme-fail{font-weight:600;color:var(--ant-color-error-text,#a8071a)}
-.theme-report{border-collapse:collapse;width:100%;max-width:960px}
-.theme-report th,.theme-report td{border-bottom:1px solid var(--ant-color-border-secondary,#e0e0e0);padding:6px 8px;text-align:left}
-.theme-report tr[data-pass="false"] td:last-child{font-weight:600;color:var(--ant-color-error-text,#a8071a)}
-.theme-chip{display:inline-flex;width:20px;height:20px;border:1px solid #767676;border-radius:4px;margin-right:8px;vertical-align:middle;align-items:center;justify-content:center}
-.theme-chip span{display:block;width:10px;height:10px}
-.theme-logo{min-height:48px;margin-bottom:8px}
-.theme-logo__img{max-height:56px;max-width:240px}
-.theme-diff{margin-top:12px;padding:12px;border:1px solid var(--ant-color-border,#d9d9d9);border-radius:6px;max-width:720px}
-.theme-diff table{border-collapse:collapse;width:100%}
-.theme-diff th,.theme-diff td{padding:4px 8px;text-align:left;border-bottom:1px solid var(--ant-color-border-secondary,#e0e0e0)}
-.theme-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-`;

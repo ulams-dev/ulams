@@ -162,19 +162,6 @@ export async function mockApi(
     ? String(options.template ?? EMAIL_TEMPLATE)
     : JSON.stringify(options.template ?? SAMPLE_TEMPLATE);
   let uploads = 0;
-  const state: MockApi = {
-    content: () => content,
-    saves: [],
-    previews: [],
-    renders: [],
-    uploads: () => uploads,
-    testSends: [],
-    creates: [],
-    themeWrites: [],
-    logoUploads: [],
-    logoRemovals: () => logoRemovals,
-    theme: () => Object.fromEntries(themeRows.map((r) => [r.key, r.value])),
-  };
   let logoRemovals = 0;
   let nextSettingId = 500;
   const themeRows: MockSetting[] = [];
@@ -191,6 +178,20 @@ export async function mockApi(
     themeRows[themeRows.length - 1]!.data = options.theme.logo;
   }
   const company = options.theme?.company ?? 'Acme Coffee';
+  const state: MockApi = {
+    content: () => content,
+    saves: [],
+    previews: [],
+    renders: [],
+    uploads: () => uploads,
+    testSends: [],
+    creates: [],
+    themeWrites: [],
+    logoUploads: [],
+    logoRemovals: () => logoRemovals,
+    theme: () => Object.fromEntries(themeRows.map((r) => [r.key, r.value])),
+  };
+
   const siblings = options.siblings ?? [];
   const created = new Map<number, Record<string, any>>();
 
@@ -449,7 +450,7 @@ export async function mockApi(
     }
 
     if (options.theme && path.startsWith('/api/admin/settings')) {
-      const id = Number(path.split('/')[4]);
+      const settingId = Number(path.split('/')[4]);
       if (method === 'POST' && path === '/api/admin/settings') {
         const body = request.postDataJSON();
         state.themeWrites.push({ method, key: body.key, value: body.value });
@@ -463,7 +464,7 @@ export async function mockApi(
         });
         return json(ok(themeRows[themeRows.length - 1]));
       }
-      const row = themeRows.find((r) => r.id === id);
+      const row = themeRows.find((r) => r.id === settingId);
       if (method === 'PUT' && row) {
         const body = request.postDataJSON();
         state.themeWrites.push({ method, key: row.key, value: body.value });
@@ -508,17 +509,17 @@ export async function mockApi(
           const at = themeRows.findIndex((r) => r.key === key);
           if (at >= 0) themeRows.splice(at, 1);
         }
-        const url = `${API_ORIGIN}/storage/theme/logo-${state.logoUploads.length}.png`;
+        const logoUrl = `${API_ORIGIN}/storage/theme/logo-${state.logoUploads.length}.png`;
         themeRows.push({
           id: nextSettingId++,
           group: 'theme',
           key: 'logo',
           value: 'theme/logo-new.png',
           type: 'image',
-          data: url,
+          data: logoUrl,
         });
         if (alt) addThemeRow('logoAlt', alt);
-        return json(ok({ url, mime: type, alt }));
+        return json(ok({ url: logoUrl, mime: type, alt }));
       }
     }
 
