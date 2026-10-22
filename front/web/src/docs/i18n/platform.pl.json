@@ -237,12 +237,12 @@
             "variant": "feature",
             "eyebrow": "szybsze kursy",
             "title": "Kursy powstają znacznie szybciej: szkic z cytatami w kilka minut",
-            "text": "W naszym własnym zmierzonym przebiegu ULAMS zamienił publiczne repozytorium dokumentacji w szkic kursu z 6 lekcjami i 18 pytaniami quizowymi, z cytatem źródła przy każdym bloku, w około 7,5 minuty generowania.",
+            "text": "W naszym własnym zmierzonym przebiegu ULAMS zamienił publiczne repozytorium dokumentacji w szkic kursu z 6 lekcjami i 18 pytaniami quizowymi, z cytatem źródła przy każdym bloku, w 7 min 44 s generowania.",
             "statsLabel": "Jeden zmierzony przebieg · szkic do przeglądu przez autora",
             "stats": [
               {
-                "value": "7.5",
-                "label": "minuty generowania",
+                "value": "7:44",
+                "label": "minuty generowania (7 min 44 s)",
                 "note": "konspekt 24 s · lekcje, quizy, kontrole 6 min 57 s · zastosowanie 23 s"
               },
               {

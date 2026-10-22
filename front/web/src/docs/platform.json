@@ -237,12 +237,12 @@
             "variant": "feature",
             "eyebrow": "faster courses",
             "title": "Courses build much faster: a cited draft in minutes",
-            "text": "In our own measured run, ULAMS turned a public docs repository into a 6-lesson course draft with 18 quiz questions, every block citing its source, in about 7.5 minutes of generation.",
+            "text": "In our own measured run, ULAMS turned a public docs repository into a 6-lesson course draft with 18 quiz questions, every block citing its source, in 7 min 44 s of generation.",
             "statsLabel": "One measured run · draft for author review",
             "stats": [
               {
-                "value": "7.5",
-                "label": "minutes of generation",
+                "value": "7:44",
+                "label": "minutes of generation (7 min 44 s)",
                 "note": "outline 24 s · lessons, quizzes, checks 6 min 57 s · apply 23 s"
               },
               {

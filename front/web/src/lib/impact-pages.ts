@@ -50,19 +50,19 @@ interface Fact { label: string; value: string; note?: string }
 const FACTS: Record<ImpactPage, Record<Locale, Fact[]>> = {
   "content-cost": {
     en: [
-      { label: "One measured run", value: "7.5 min", note: "of generation" },
+      { label: "One measured run", value: "7 min 44 s", note: "of generation" },
       { label: "Result", value: "6 + 18", note: "lessons + quiz questions" },
       { label: "Model cost", value: "USD 0.28", note: "27 model calls" },
       { label: "Hand-built benchmark", value: "49–716 h", note: "per finished hour" },
     ],
     pl: [
-      { label: "Jeden zmierzony przebieg", value: "7,5 min", note: "generowania" },
+      { label: "Jeden zmierzony przebieg", value: "7 min 44 s", note: "generowania" },
       { label: "Wynik", value: "6 + 18", note: "lekcji + pytań quizowych" },
       { label: "Koszt modelu", value: "0,28 USD", note: "27 wywołań modelu" },
       { label: "Punkt odniesienia, ręcznie", value: "49–716 godz.", note: "na godzinę kursu" },
     ],
     zh: [
-      { label: "一次实测", value: "7.5 分钟", note: "生成时间" },
+      { label: "一次实测", value: "7 分 44 秒", note: "生成时间" },
       { label: "结果", value: "6 + 18", note: "课时 + 测验题" },
       { label: "模型成本", value: "0.28 美元", note: "27 次模型调用" },
       { label: "人工制作基准", value: "49–716 小时", note: "每 1 小时成品" },
@@ -105,7 +105,7 @@ const COST_EN: ImpactCopy = {
 
 This is a single run we measured, not an average and not a promise. From a public documentation repository (13 passages), ULAMS generated a 6-lesson course with 18 quiz questions. Every one of its 35 content blocks cites the source.
 
-- Generation time: about 7.5 minutes in total. Outline 24 s, lessons, quizzes and checks 6 min 57 s, apply 23 s.
+- Generation time: 7 min 44 s in total. Outline 24 s, lessons, quizzes and checks 6 min 57 s, apply 23 s.
 - Model cost: USD 0.28 across 27 model calls.
 - The result is a draft. The author reviews and approves it before publishing, and that time is not counted above.
 
@@ -150,7 +150,7 @@ const COST_PL: ImpactCopy = {
 
 To pojedynczy zmierzony przebieg, a nie średnia ani obietnica. Z publicznego repozytorium dokumentacji (13 fragmentów) ULAMS wygenerował kurs z 6 lekcjami i 18 pytaniami quizowymi. Każdy z 35 bloków treści cytuje źródło.
 
-- Czas generowania: łącznie około 7,5 minuty. Konspekt 24 s, lekcje, quizy i kontrole 6 min 57 s, zastosowanie 23 s.
+- Czas generowania: łącznie 7 min 44 s. Konspekt 24 s, lekcje, quizy i kontrole 6 min 57 s, zastosowanie 23 s.
 - Koszt modelu: 0,28 USD przy 27 wywołaniach modelu.
 - Wynik to szkic. Autor przegląda go i zatwierdza przed publikacją, a tego czasu powyżej nie liczymy.
 
@@ -195,7 +195,7 @@ const COST_ZH: ImpactCopy = {
 
 这是我们实测的一次运行,不是平均值,也不是承诺。ULAMS 从一个公开文档仓库(13 个片段)生成了含 6 个课时和 18 道测验题的课程。35 个内容块中的每一个都标注了资料出处。
 
-- 生成时间:总计约 7.5 分钟。大纲 24 秒,课时、测验与检查 6 分 57 秒,应用 23 秒。
+- 生成时间:总计 7 分 44 秒。大纲 24 秒,课时、测验与检查 6 分 57 秒,应用 23 秒。
 - 模型成本:27 次模型调用,共 0.28 美元。
 - 结果是草稿。发布前由作者审阅并批准,这段时间不计入上述数字。
 

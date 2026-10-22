@@ -69,7 +69,8 @@ describe("content cost and reporting pages", () => {
     for (const locale of LOCALES) {
       const run = impactCopy("content-cost", locale).run!;
       for (const figure of ["13", "6", "18", "35", "24", "57", "23", "27"]) expect(run).toContain(figure);
-      expect(run).toMatch(/7[.,]5/);
+      expect(run).toMatch(/7 (min|分) ?44/);
+      expect(run).not.toMatch(/7[.,]5/);
       expect(run).toMatch(/0[.,]28/);
       expect(run).not.toMatch(/\d\s*(x|×|times|razy)\b/i);
       expect(JSON.stringify(render("content-cost", locale)!.doc)).toContain(run.split("\n")[0]!.slice(0, 12));
@@ -111,7 +112,8 @@ describe("home call-to-action bands", () => {
       const cost = ofType(landingDocFor("platform", locale)!, "CtaBand").find((b) => b.props!.id === "cost-cta")!;
       const json = text(cost);
       for (const figure of ["13", "18", "35", "27", "24", "57", "23", "49", "716"]) expect(json).toContain(figure);
-      expect(json).toMatch(/7[.,]5/);
+      expect(json).toContain("7:44");
+      expect(json).toMatch(/7 (min|分) ?44/);
       expect(json).toMatch(/0[.,]28/);
       expect(json).toContain(CHAPMAN_SOURCE);
       const stats = cost.props!.stats as Array<{ kind?: string }>;
