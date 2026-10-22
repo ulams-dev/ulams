@@ -1,6 +1,6 @@
 ---
 /** The cost of creating content on the public product site (zh). */
-import Render from "@ulams/ui/Render.astro";
+import ImpactBody from "../../components/diagrams/ImpactBody.astro";
 import Base from "../../layouts/Base.astro";
 import { impactPage } from "../../lib/impact-pages.ts";
 
@@ -10,5 +10,5 @@ if (!page) return Astro.rewrite("/404");
 ---
 
 <Base theme="platform" title={page.meta.title} description={page.meta.description} lang={page.meta.lang} canonical={page.canonical} alternates={page.alternates} ogLocale={page.ogLocale} jsonLd={page.jsonLd}>
-  <Render doc={page.doc} data={page.data} />
+  <ImpactBody doc={page.doc} data={page.data} page="content-cost" locale="zh" />
 </Base>

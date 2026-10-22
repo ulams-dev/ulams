@@ -33,6 +33,7 @@ const PAGES = [
   "ui/src/components/CourseUpdates.astro",
   "ui/src/components/ReattemptNotice.astro",
   "ui/src/components/PendingUpdateNotice.astro",
+  ...["DiagramFrame", "ImpactBody", "BenchmarkRange", "CostPipeline", "LivingLoop", "AudienceFanout", "DashboardSketch", "ReportingFlow", "ReportingRoles"].map((name) => `web/src/components/diagrams/${name}.astro`),
 ];
 const ELEMENTS = ["ui/src/elements/quiz.ts", "ui/src/elements/progress.ts", "ui/src/elements/notice.ts", "ui/src/elements/video.ts", "ui/src/elements/h5p.ts"];
 

@@ -1,0 +1,46 @@
+---
+/** Content cost: one source fanning out into course variants by level and role. Planned, so it carries "Coming". */
+import DiagramFrame from "./DiagramFrame.astro";
+import type { AudiencesCopy, Controls } from "../../lib/impact-diagrams.ts";
+
+interface Props {
+  copy: AudiencesCopy;
+  controls: Controls;
+}
+const { copy, controls } = Astro.props;
+const groups = [
+  { title: copy.levelsTitle, items: copy.levels },
+  { title: copy.rolesTitle, items: copy.roles },
+];
+---
+
+<DiagramFrame id="dg-audiences" head={copy} tone="coming" control={{ kind: "replay", label: controls.replay }}>
+  <div class="dg-fan">
+    <div class="dg-fan__node dg-fan__node--source" data-dg-step style="--dg-i:0">
+      <h4>{copy.source}</h4>
+    </div>
+    <span class="dg-fan__arrow" aria-hidden="true"></span>
+    <div class="dg-fan__node dg-fan__node--base" data-dg-step style="--dg-i:1">
+      <h4>{copy.base}</h4>
+      <p>{copy.baseText}</p>
+    </div>
+    <span class="dg-fan__arrow dg-fan__arrow--planned" aria-hidden="true"></span>
+    <div class="dg-fan__groups">
+      {
+        groups.map((group, g) => (
+          <div class="dg-fan__group">
+            <h4 class="dg-sub">{group.title}</h4>
+            <ul role="list">
+              {group.items.map((item, i) => (
+                <li data-dg-step style={`--dg-i:${2 + g * 3 + i}`}>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  <p class="dg-note dg-fan__note">{copy.variantNote}</p>
+</DiagramFrame>

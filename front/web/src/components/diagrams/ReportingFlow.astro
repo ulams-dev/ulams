@@ -1,0 +1,37 @@
+---
+/** Reporting: where learner data goes, from activity to exports. Planned parts are dashed and carry "Coming". */
+import DiagramFrame from "./DiagramFrame.astro";
+import type { Controls, FlowCopy } from "../../lib/impact-diagrams.ts";
+
+interface Props {
+  copy: FlowCopy;
+  controls: Controls;
+  /** The catalogue's "coming" label in the page language. */
+  coming: string;
+}
+const { copy, controls, coming } = Astro.props;
+const HOME = 1;
+---
+
+<DiagramFrame id="dg-dataflow" head={copy} tone="available" control={{ kind: "replay", label: controls.replay }}>
+  <ol class="dg-flow" role="list">
+    {
+      copy.columns.map((column, i) => (
+        <li class:list={["dg-flow__col", { "dg-flow__col--home": i === HOME }]} data-dg-step style={`--dg-i:${i * 2}`}>
+          <h4 class="dg-flow__title">{column.title}</h4>
+          <ul class="dg-flow__items" role="list">
+            {column.items.map((item) => (
+              <li>{item}</li>
+            ))}
+            {column.coming?.map((item) => (
+              <li class="is-coming">
+                <span>{item}</span>
+                <span class="u-status u-status--coming">{coming}</span>
+              </li>
+            ))}
+          </ul>
+        </li>
+      ))
+    }
+  </ol>
+</DiagramFrame>
