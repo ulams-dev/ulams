@@ -107,6 +107,9 @@ class AdminLivingCourseApi
         'adminLivingCourseProposalsByProposalGet' => [
             'application/json',
         ],
+        'adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost' => [
+            'application/json',
+        ],
         'adminLivingCourseProposalsByProposalItemsByItemAcceptPost' => [
             'application/json',
         ],
@@ -3851,6 +3854,338 @@ class AdminLivingCourseApi
         $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
             'GET',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost
+     *
+     * Accept one item and the same patch in the other proposals of its group (the course&#39;s variants)
+     *
+     * @param  string $proposal proposal (required)
+     * @param  string $item item (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\ApiEnvelope
+     */
+    public function adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost($proposal, $item, string $contentType = self::contentTypes['adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost'][0])
+    {
+        list($response) = $this->adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPostWithHttpInfo($proposal, $item, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPostWithHttpInfo
+     *
+     * Accept one item and the same patch in the other proposals of its group (the course&#39;s variants)
+     *
+     * @param  string $proposal (required)
+     * @param  string $item (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPostWithHttpInfo($proposal, $item, string $contentType = self::contentTypes['adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost'][0])
+    {
+        $request = $this->adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPostRequest($proposal, $item, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPostAsync
+     *
+     * Accept one item and the same patch in the other proposals of its group (the course&#39;s variants)
+     *
+     * @param  string $proposal (required)
+     * @param  string $item (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPostAsync($proposal, $item, string $contentType = self::contentTypes['adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost'][0])
+    {
+        return $this->adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPostAsyncWithHttpInfo($proposal, $item, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPostAsyncWithHttpInfo
+     *
+     * Accept one item and the same patch in the other proposals of its group (the course&#39;s variants)
+     *
+     * @param  string $proposal (required)
+     * @param  string $item (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPostAsyncWithHttpInfo($proposal, $item, string $contentType = self::contentTypes['adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+        $request = $this->adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPostRequest($proposal, $item, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost'
+     *
+     * @param  string $proposal (required)
+     * @param  string $item (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPostRequest($proposal, $item, string $contentType = self::contentTypes['adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost'][0])
+    {
+
+        // verify the required parameter 'proposal' is set
+        if ($proposal === null || (is_array($proposal) && count($proposal) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $proposal when calling adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost'
+            );
+        }
+
+        // verify the required parameter 'item' is set
+        if ($item === null || (is_array($item) && count($item) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $item when calling adminLivingCourseProposalsByProposalItemsByItemAcceptInGroupPost'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/living-course/proposals/{proposal}/items/{item}/accept-in-group';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($proposal !== null) {
+            $resourcePath = str_replace(
+                '{' . 'proposal' . '}',
+                ObjectSerializer::toPathValue($proposal),
+                $resourcePath
+            );
+        }
+        // path params
+        if ($item !== null) {
+            $resourcePath = str_replace(
+                '{' . 'item' . '}',
+                ObjectSerializer::toPathValue($item),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody

@@ -1459,6 +1459,12 @@
  },
  {
   "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/items/{item}/accept-in-group",
+  "summary": "Accept one item and the same patch in the other proposals of its group (the course's variants)",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
   "path": "/api/admin/living-course/proposals/{proposal}/items/{item}/regenerate",
   "summary": "Ask for another version of one element ({comment}); one call, at most three per item",
   "tag": "Admin Living Course"

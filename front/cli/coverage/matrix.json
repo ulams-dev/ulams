@@ -1,5 +1,5 @@
 {
- "summary": "636/725 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "637/726 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1457,6 +1457,12 @@
    "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/accept",
    "summary": "Accept one item",
    "command": "living.proposals.accept",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/accept-in-group",
+   "summary": "Accept one item and the same patch in the other proposals of its group (the course's variants)",
+   "command": "living.proposals.accept-in-group",
    "status": "covered"
   },
   {
