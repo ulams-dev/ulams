@@ -92,6 +92,10 @@ small commits → tests → summary.
 
 ## Open decisions
 
+- [ ] (new) Course versions with a visual diff and course variants by level and role (`docs/plans/course-versions-and-variants.md`,
+      draft; ADR 0192 Proposed): approve the plan and its open questions (section 18); the spec (`docs/ROADMAP-PROMPT.md`) needs a
+      matching paragraph in Phases 3 and 4 once the owner approves
+
 - [ ] (new) Organic marketing campaign (`docs/plans/organic-marketing.md`, draft): analytics, SEO, Hacker News, Product Hunt,
       Reddit, directories, LinkedIn and e-learning communities. Waiting for approval; nothing is published before the owner
       opens the publishing gate (decisions 1-8 of its section 12)
@@ -601,6 +605,26 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
 - [x] (new) Generic Git (`git` CLI) connector for hosts without a supported API (sandboxed, https only, off by default)
 - [x] (new) Google Drive and Notion connector plugins (designed in `docs/plans/phase-3.md` 6.6) (OAuth through a one-time grant, polling change detection; off by default, scripted-server tests only, live Drive/Notion runs tracked in #285 and #266)
 
+### 3.1 Course versions with a visual diff (new)
+
+Requested by the owner on 2026-10-22. Plan: `docs/plans/course-versions-and-variants.md` (draft, waiting for approval;
+ADR 0192 Proposed). Builds on the builder version history (ADR 0010, `course_builder_versions`), the element-aware
+`BlueprintDiff` (the API already accepts `?against=<version>`), the CAC-4 three-way merge (`ElementMerge`) and Blueprint v3.
+Shown as "Coming" on the Comparison page and in the docs (`creators/course-versions-and-variants`).
+
+- [ ] (new) Course releases: every approved change that reaches learners (author edit, chat edit, accepted Living Course
+      update, course-as-code import, insights proposal) is recorded as a numbered release with its trigger, source
+      revisions, approver and date; releases are listed per course in the studio and through the API
+- [ ] (new) Compare any two versions or releases in the studio: structure tree with added, removed, moved and changed
+      modules, lessons and elements; word-level text diff; citations added, removed or moved to a new source revision; quiz
+      changes (stem, options, correct answer, explanation) with their effect on learner progress (ADR 0033 rules)
+- [ ] (new) Semantic diff on top of `BlueprintDiff`: move and reorder detection, citation set diff with fragment text, quiz
+      answer key change flag, per-release change summary counts; one diff payload shared by the studio, the CLI
+      (`ulams course diff --from --to`) and the MCP tool
+- [ ] (new) Releases and compare for courses not built with the Course Builder once they are adopted (depends on CAC-5)
+- [ ] (new) Tenant isolation suite for the release and compare endpoints (ADR 0190 route coverage), WCAG 2.2 AA for the
+      compare screen (colour is never the only signal of added or removed)
+
 ---
 
 ## Phase 4: Personalisation
@@ -651,6 +675,28 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 ### 4.3 Trust and transparency
 - [ ] Reasons for every recommendation · AI on/off and provider per tenant (partial: learner-side reasons on the Extra help card and on suggested lesson views, #315, #320; per-tenant provider choice not built)
 - [ ] AI content labelling · documented data flows, no training on customer content (partial: AI labels on remediations, reflection feedback, tutor answers and AI-assisted topics, #315, #319, #314; the data-flow documentation is open)
+
+### 4.4 Course variants by level and role (new)
+
+Requested by the owner on 2026-10-22: today every learner gets the same course regardless of level and role, so the expert
+wades through basics and the beginner gets lost in the middle. Plan: `docs/plans/course-versions-and-variants.md` (draft,
+waiting for approval; ADR 0192 Proposed). Variants are branches of one course: shared sources, fragments and citations,
+each variant reviewed as a diff against the base. Shown as "Coming" on the Comparison page and in the docs
+(`creators/course-versions-and-variants`). Related: the Phase 6.1 policy lifecycle items (departmental course variants).
+
+- [ ] (new) Course Builder interview asks which audiences to cover: levels (beginner, intermediate, expert) and roles
+      (free text or presets), with "one course for everyone" as the default and the cost estimate shown before generation
+- [ ] (new) Generate several variants of one course at once from the approved base outline: each variant skips, condenses
+      or deepens lessons and adds only content grounded in the same sources; every generated element cites fragments; each
+      LLM call is logged with the variant it belongs to; a hard cap on the number of variants per course
+- [ ] (new) Author reviews each variant as a diff against the base (reusing the 3.1 compare screen) and approves variants
+      one by one; a Living Course update to the base proposes matching patches for every variant that inherits the element
+- [ ] (new) Learner routing: self-declared role and level at enrolment, an optional cited placement check, assignment by an
+      admin or an enrolment rule (6.2), and an adaptive hint from Learner Insights to switch variant that the learner confirms
+      (never a silent switch); progress carries over for elements that are identical in both variants
+- [ ] (new) One entitlement for the course covers all its variants (ADR 0130); certificates name the variant completed
+- [ ] (new) Tenant isolation suite for the variant and routing endpoints; WCAG 2.2 AA for the variant picker and placement
+      check; evals for variant grounding and level fit through the eval command only
 
 ---
 
