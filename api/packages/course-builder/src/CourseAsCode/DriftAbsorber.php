@@ -260,6 +260,7 @@ final class DriftAbsorber
             }
             $block['markdown'] = $new;
             $block['origin'] = 'author';
+            $block['edited_by_author'] = true; // ADR 0194
             $changed = true;
         }
         unset($block);
@@ -332,6 +333,7 @@ final class DriftAbsorber
         }
         if ($changed) {
             $question['origin'] = 'author';
+            $question['edited_by_author'] = true; // ADR 0194
             $fields[] = 'question';
         }
     }

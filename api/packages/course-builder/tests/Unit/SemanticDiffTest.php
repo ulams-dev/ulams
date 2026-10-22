@@ -264,4 +264,23 @@ class SemanticDiffTest extends TestCase
         $this->assertTrue($diff['summary']['first']);
         $this->assertSame('2 lessons added (the first release).', $diff['summary']['text']);
     }
+
+    public function testEveryChangeCarriesItsPlaceInTheTreeWithTheTitlesOfItsUnchangedAncestors(): void
+    {
+        $from = $this->doc([$this->mod('m1', [$this->lesson('l1'), $this->lesson('l2')])]);
+        $to = $from;
+        $to['modules'][0]['lessons'][0]['blocks'][0]['markdown'] = 'changed text';
+        array_pop($to['modules'][0]['lessons']);
+
+        $by = $this->byId(SemanticDiff::compare($from, $to));
+
+        $this->assertNull($by['b_l1']['title'], 'a block has no title');
+        $this->assertSame([
+            ['id' => 'm1', 'type' => 'module', 'label' => 'Module 1', 'title' => 'Module m1'],
+            ['id' => 'l1', 'type' => 'lesson', 'label' => 'Lesson 1.1', 'title' => 'Lesson l1'],
+        ], $by['b_l1']['path']);
+        // a removed element keeps the place it had
+        $this->assertSame(['m1'], array_column($by['l2']['path'], 'id'));
+        $this->assertSame('Lesson l2', $by['l2']['title']);
+    }
 }

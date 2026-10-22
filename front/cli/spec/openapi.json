@@ -12271,6 +12271,76 @@
     ]
    }
   },
+  "/api/admin/course-versions/courses/{course}/versions": {
+   "get": {
+    "description": "Every version of a course's branch, not only the ones learners got (ADR 0192, CV-3): proposals, rejected and undone\nversions as well, newest first, for the \"show all versions\" toggle and the pickers of the compare screen. Keyed by the\nLMS course id like the release list. `branch=all` lists the versions of every branch of the session (the base and its\nvariants), so a variant can be picked against the base. The variants of the session come with it. No AI gate and no\nmodel call; read-only; visible to the session author and to tenant admins (the session policy). The documents are not\npart of the list: the compare endpoint reads them.",
+    "operationId": "admin.course-versions.courses.by-course.versions.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "description": "`all` lists the versions of every branch of the session",
+      "in": "query",
+      "name": "branch",
+      "schema": {
+       "enum": [
+        "own",
+        "all"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "page",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "perPage",
+      "schema": {
+       "maximum": 200,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "versions, variants, total, page, perPage, sessionId, variantId, courseId, baseCourseId"
+     },
+     "403": {
+      "description": "another author's course"
+     },
+     "404": {
+      "description": "the course was not made with the Course Builder"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "All versions of a course's branch (proposals, rejected and undone ones too), newest first, with the session's variants",
+    "tags": [
+     "Admin Course Versions"
+    ]
+   }
+  },
   "/api/admin/course-versions/releases/{release}": {
    "get": {
     "operationId": "admin.course-versions.releases.by-release.get",

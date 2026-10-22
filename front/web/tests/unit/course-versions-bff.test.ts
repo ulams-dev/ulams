@@ -6,6 +6,9 @@ describe("Course versions BFF allow-list", () => {
     ["GET", "/course-versions/courses/5/releases"],
     ["GET", "/course-versions/courses/1234567890/releases"],
     ["GET", "/course-versions/releases/01arz3ndektsv4rrffq69g5fav"],
+    ["GET", "/course-versions/courses/5/versions"],
+    ["GET", "/course-versions/courses/5/compare"],
+    ["GET", "/course-versions/courses/1234567890/compare"],
   ])("forwards %s %s", (method, path) => {
     expect(isCourseVersionsCall(method, path)).toBe(true);
     expect(isStudioCall(method, path)).toBe(false);
@@ -29,15 +32,25 @@ describe("Course versions BFF allow-list", () => {
     ["GET", "/course-versions/"],
     ["GET", "/course-versions"],
     ["GET", "/courses/5/releases"],
-    // later milestones (compare, variants) are not open yet
-    ["GET", "/course-versions/courses/5/compare"],
-    ["GET", "/course-versions/courses/5/versions"],
+    // compare and the version list are reads too
+    ["POST", "/course-versions/courses/5/compare"],
+    ["PUT", "/course-versions/courses/5/versions"],
+    ["DELETE", "/course-versions/courses/5/versions"],
+    ["GET", "/course-versions/courses/abc/compare"],
+    ["GET", "/course-versions/courses/12345678901/versions"],
+    ["GET", "/course-versions/courses/5/compare/x"],
+    ["GET", "/course-versions/courses/5/versions/x"],
+    ["GET", "/course-versions/courses/5/compare/../releases"],
+    // variants are not open yet
+    ["GET", "/course-versions/courses/5/variants"],
   ])("refuses %s %s", (method, path) => {
     expect(isCourseVersionsCall(method, path)).toBe(false);
   });
 
   it("maps the calls onto the API", () => {
     expect(courseVersionsTarget("/course-versions/courses/5/releases")).toBe("/api/admin/course-versions/courses/5/releases");
+    expect(courseVersionsTarget("/course-versions/courses/5/versions")).toBe("/api/admin/course-versions/courses/5/versions");
+    expect(courseVersionsTarget("/course-versions/courses/5/compare")).toBe("/api/admin/course-versions/courses/5/compare");
     expect(courseVersionsTarget("/course-versions/releases/01arz3ndektsv4rrffq69g5fav")).toBe("/api/admin/course-versions/releases/01arz3ndektsv4rrffq69g5fav");
   });
 });

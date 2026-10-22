@@ -1,5 +1,5 @@
 /**
- * Scroll-triggered animation of the impact-page diagrams. The markup is the final, static state: without JS, with
+ * Scroll-triggered animation of the impact-page diagrams and the home-page story. The markup is the final, static state: without JS, with
  * reduced motion or without IntersectionObserver nothing is hidden and nothing moves. Otherwise a diagram below the
  * fold is "armed" (its parts start hidden, opacity and transform only) and plays once it scrolls into view. A
  * looping diagram pauses off screen and has a pause button; the others have a replay button.
@@ -42,6 +42,30 @@ export function initDiagrams(): void {
       el.classList.add("is-armed");
       void el.offsetWidth;
       el.classList.add("is-played");
+    });
+  }
+
+  // A group of diagrams told as one story (the home page): one button re-arms every part and goes back to the start,
+  // so each part plays again as it scrolls into view.
+  for (const group of document.querySelectorAll<HTMLElement>("[data-dg-group]")) {
+    const button = group.querySelector<HTMLButtonElement>("[data-dg-control='replay-group']");
+    if (!button) continue;
+    button.hidden = false;
+    button.addEventListener("click", () => {
+      const parts = [...group.querySelectorAll<HTMLElement>("[data-dg]")];
+      for (const el of parts) {
+        el.classList.remove("is-played");
+        el.classList.add("is-armed");
+      }
+      void group.offsetWidth;
+      const start = group.querySelector<HTMLElement>("[data-dg-start]") ?? group;
+      start.scrollIntoView({ behavior: "smooth", block: "start" });
+      start.focus({ preventScroll: true });
+      // parts already on screen get no new intersection entry, so they play right away
+      for (const el of parts) {
+        const box = el.getBoundingClientRect();
+        if (box.top < window.innerHeight && box.bottom > 0) el.classList.add("is-played");
+      }
     });
   }
 }

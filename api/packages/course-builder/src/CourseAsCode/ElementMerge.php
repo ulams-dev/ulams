@@ -176,7 +176,8 @@ final class ElementMerge
         }
         $out = [];
         foreach ($value as $k => $v) {
-            if ($k === 'meta' || $v === null) {
+            // bookkeeping of ADR 0194: a hash or an edit flag alone never makes two sides differ
+            if ($k === 'meta' || $k === 'ai_hash' || $k === 'edited_by_author' || $v === null) {
                 continue;
             }
             if ($k === 'data') {

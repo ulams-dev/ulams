@@ -186,5 +186,5 @@ The runbook was run on a real account (2026-10-09; `deploy/mydevil/STAGING-NOTES
 - Database names are cut at 16 characters including the account prefix: use `TENANCY_DATABASE=<prefix>_u_{slug}`.
 - The cache is `CACHE_DRIVER=file` (there is no `cache` table).
 - The `/h5p/*` path of every API host is a Cloudflare Worker route to the H5P site (a MyDevil host is PHP or Node).
-- Sharp has no FreeBSD binary: build the Astro front with `ULAMS_IMAGE_SERVICE=noop` so `/_image` returns the original.
+- Sharp has no FreeBSD binary, so `ULAMS_IMAGE_SERVICE=astro` cannot work here. Behind a proxied Cloudflare zone use `ULAMS_IMAGE_SERVICE=cloudflare` (images become `/cdn-cgi/image/...` URLs; check each host first with `sh bin/check-images.sh <host>`), otherwise `noop` (originals).
 - The tenant bucket is created by hand in R2 when the server token is limited to the staging buckets.

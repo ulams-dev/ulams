@@ -169,6 +169,7 @@ and administrators can read them (403 for anyone else, 404 for a course that was
 |---|---|
 | `GET courses/{course}/releases?page=&perPage=` | The releases of the course, newest first: `sessionId`, `courseId`, `releases[]`, `total`, `page`, `perPage` (25 by default, at most 100) |
 | `GET releases/{release}` | One release with the Blueprint v3 `document` of its version and the labels of the sources it cites |
+| `GET courses/{course}/versions?branch=&page=&perPage=` | Every version of the course's branch, not only the released ones (see [All versions of a course](#all-versions-of-a-course)) |
 | `GET courses/{course}/compare?from=&to=` | The semantic diff of any two versions or releases of the course (see [Compare two versions](#compare-two-versions-or-releases)) |
 
 Each release has `id`, `number` (1, 2, 3, per course), `trigger`, `versionId` and `versionNumber`, `previousReleaseId`, `courseId`,
@@ -180,7 +181,7 @@ course-as-code push), `restore` (an undo, redo or restore re-applied an earlier 
 
 `summary` counts what changed since the previous release from the element diff: `first` (the first release counts every element as
 added), `counts`, `lessons` and `questions` (each `{added, changed, removed}`), `citationsChanged` (elements whose citations changed)
-and `answerKeysChanged` (quiz questions whose correct answer changed). Applying the version that is already the latest release writes
+`answerKeysChanged` (quiz questions whose correct answer changed) and `moved` and `lessonsMoved` (elements and lessons that moved to another parent or place; a release written before moves were counted has neither). Applying the version that is already the latest release writes
 nothing. A failed or partial apply writes nothing. Courses that were applied before releases existed get their first release from
 `php artisan course-builder:backfill-releases` (run it per tenant; it is safe to repeat).
 
@@ -188,6 +189,20 @@ nothing. A failed or partial apply writes nothing. Courses that were applied bef
 ulams course releases 12
 ulams course releases 12 --json --fields data.releases
 ```
+
+### All versions of a course
+
+`GET /api/admin/course-versions/courses/{course}/versions` lists every blueprint version of the course's branch, newest first, including
+proposals, rejected versions and versions that were replaced, which the release list leaves out. It returns `sessionId`, `variantId` (the branch the
+course id names, `null` for the base), `courseId`, `baseCourseId`, `versions[]`, `variants[]`, `total`, `page` and `perPage` (100 by default, at most 200).
+A version has `id`, `number`, `kind`, `origin`, `status` (`proposed`, `approved`, `rejected` or `superseded`), `reason`, `variantId`, `releaseId` and
+`releaseNumber` (the latest release that applied it, or `null`), `createdAt` and `decidedAt`; the documents are not part of the list. `?branch=all`
+lists the versions of every branch of the session, the base and its variants, so a variant version can be picked against a base version. `variants[]`
+(`id`, `key`, `label`, `level`, `role`, `status`, `courseId`) lists the variants of the session. The studio's **Show all versions** and the pair pickers of the compare
+screen read it. The same access rules as the release list apply.
+
+The TypeScript SDK has `createCourseVersionsClient({ baseUrl, prefix })` with `releases`, `release`, `versions` and `compare`, typed by the payloads
+described here.
 
 ### Compare two versions or releases
 
@@ -202,7 +217,7 @@ The payload has `diffVersion` (always `1`; the shape only grows), `courseId`, `s
 
 | Field | Content |
 |---|---|
-| `changes[]` | One entry per element that differs, matched by its stable id: `id`, `type` (course, objective, module, lesson, block, quiz, question, option, interaction), `label`, `kind` (`added`, `removed`, `changed`, `moved`, `reordered`), `description` (one sentence), `fields[]` (`field`, `label`, `before`, `after`), `moved` (`from` and `to` parent) or `null`, `reordered` (`parentId`, `from` and `to` position) or `null`, and `citations` |
+| `changes[]` | One entry per element that differs, matched by its stable id: `id`, `type` (course, objective, module, lesson, block, quiz, question, option, interaction), `label`, `title` (of a module or lesson), `path[]` (the parents, outermost first, each with `id`, `type`, `label` and `title`, so a view can draw the changes as a tree), `kind` (`added`, `removed`, `changed`, `moved`, `reordered`), `description` (one sentence), `fields[]` (`field`, `label`, `before`, `after`), `moved` (`from` and `to` parent) or `null`, `reordered` (`parentId`, `from` and `to` position) or `null`, and `citations` |
 | `citations` (inside a change) | `added`, `removed` and `repointed` (`{from, to}`: a citation whose fragment became another fragment in a newer source revision, matched through Living Course's fragment changes). The order of citations is not a change |
 | `quiz[]` | One entry per question that exists on both sides and changed: `stem`, `type`, `explanation`, `options` (`added`, `removed`, `reworded`, `keyChanged`), `answerKeyChanged` (the set of correct options differs), `wording` (stem, explanation or option text edited), `correctBefore`, `correctAfter` and, for a changed answer key, the `consequence` for learners (a re-attempt notice and one extra attempt; past scores never change) |
 | `summary` | `first`, `counts` (`added`, `changed`, `removed`, `moved`, `reordered`), `types` (the same counts per element type), `citations`, `quiz`, `learnerImpact` and a plain `text` ("1 lesson moved; 1 citation repointed; 1 answer key changed.") with its `lines` |

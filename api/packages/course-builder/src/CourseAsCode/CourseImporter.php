@@ -4,6 +4,7 @@ namespace Ulams\CourseBuilder\CourseAsCode;
 
 use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Blueprint\BlueprintDiff;
+use Ulams\CourseBuilder\Blueprint\Provenance;
 use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
 use Ulams\CourseBuilder\Events\EventLog;
@@ -97,6 +98,7 @@ final class CourseImporter
         }
 
         $changes = BlueprintDiff::compare($current->document, $document);
+        $document = Provenance::markEditedIds($document, self::textEditedAiElements($changes, BlueprintDiff::flatten($current->document)));
         $version = $this->versions->create($session, $document, 'import', 'author', Version::PROPOSED, $current, $message ?: ($merged !== null
             ? "Merged from a course repository (based on version {$base->number}, the server was at version {$current->number})"
             : 'Imported from a course repository'));
@@ -171,12 +173,32 @@ final class CourseImporter
             if (!is_array($node)) {
                 return $node;
             }
-            unset($node['meta']);
+            unset($node['meta'], $node['ai_hash'], $node['edited_by_author']);
 
             return array_map($strip, $node);
         };
 
         return Blueprint::fingerprint($strip($document));
+    }
+
+    /**
+     * Ids of AI elements whose text a person changed in this import (ADR 0194): they are flagged `edited_by_author`.
+     *
+     * @param array<string,array{fields:array<string,mixed>}> $before flattened current document
+     * @return string[]
+     */
+    private static function textEditedAiElements(array $changes, array $before): array
+    {
+        $text = ['title', 'summary', 'text', 'markdown', 'stem', 'explanation', 'caption', 'data'];
+        $ids = [];
+        foreach ($changes as $change) {
+            // an element that was already the author's own stays author-written
+            if ($change['kind'] === 'changed' && ($before[$change['id']]['fields']['origin'] ?? 'ai') === 'ai' && array_intersect($text, array_column($change['fields'], 'field')) !== []) {
+                $ids[] = $change['id'];
+            }
+        }
+
+        return $ids;
     }
 
     /**

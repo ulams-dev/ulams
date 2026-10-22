@@ -64,8 +64,10 @@ const flush = async () => {
 };
 
 const setup = (props: Partial<React.ComponentProps<typeof EmailTemplateEditor>> = {}) => {
-  const renderFn = jest.fn(async () => ({ data: draft() }));
-  const testSend = jest.fn(async () => ({
+  const renderFn = jest.fn<(...args: any[]) => Promise<{ data: EmailDraft }>>(async () => ({
+    data: draft(),
+  }));
+  const testSend = jest.fn<(...args: any[]) => Promise<{ data: EmailDraft }>>(async () => ({
     data: draft({ sent: true, recipient: 'me@example.test' }),
   }));
   const onChange = jest.fn();
@@ -165,7 +167,7 @@ describe('EmailTemplateEditor', () => {
 
   it('shows a request failure and keeps the last good preview', async () => {
     const renderFn = jest
-      .fn<any>()
+      .fn<(...args: any[]) => Promise<any>>()
       .mockResolvedValueOnce({ data: draft() })
       .mockRejectedValueOnce({ response: { data: { message: 'Renderer down' } } });
     const { rerender, onChange } = setup({ render: renderFn });
