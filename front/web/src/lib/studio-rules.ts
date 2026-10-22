@@ -101,13 +101,15 @@ export function insightsTarget(path: string): string {
 }
 
 /**
- * Course versions (/api/admin/course-versions, ADR 0192): the releases of a course. The browser reaches them as
+ * Course versions (/api/admin/course-versions, ADR 0192): the releases of a course, every version of its branch and the comparison of two of them. The browser reaches them as
  * /studio/api/course-versions/…; the BFF forwards the part after the prefix. Read-only: a release is written by the
  * apply step, never from the browser. The API checks authorship; this list keeps the BFF from being an open proxy.
  */
 export const COURSE_VERSIONS_PREFIX = "/course-versions";
 export const COURSE_VERSIONS_RULES: Array<{ method: string; pattern: RegExp }> = [
   { method: "GET", pattern: /^\/courses\/\d{1,10}\/releases$/ },
+  { method: "GET", pattern: /^\/courses\/\d{1,10}\/versions$/ },
+  { method: "GET", pattern: /^\/courses\/\d{1,10}\/compare$/ },
   { method: "GET", pattern: new RegExp(`^/releases/${ID}$`) },
 ];
 
