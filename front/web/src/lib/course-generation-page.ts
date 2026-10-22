@@ -23,6 +23,7 @@ const CASE_PAGE: Record<CaseId, PublicPage> = {
   "microdosing-study": "case-microdosing",
   "stablecoin-report": "case-stablecoins",
   "docs-repo": "case-docs-repo",
+  "notion-page": "case-notion",
 };
 
 /** Screencasts of each case, in the order they are shown. */
@@ -30,6 +31,7 @@ const CASE_VIDEOS: Record<CaseId, { build: string; publish: string; sync?: strin
   "microdosing-study": { build: "/course-generation/microdosing-build.mp4", publish: "/course-generation/microdosing-publish.mp4" },
   "stablecoin-report": { build: "/course-generation/stablecoin-build.mp4", publish: "/course-generation/stablecoin-publish.mp4" },
   "docs-repo": { build: "/course-generation/pigeon-build.mp4", publish: "/course-generation/pigeon-publish.mp4", sync: "/course-generation/pigeon-living.mp4" },
+  "notion-page": { build: "/course-generation/notion-build.mp4", publish: "/course-generation/notion-publish.mp4" },
 };
 
 function video(src: string, poster: string, title: string): UiNode {
@@ -133,7 +135,7 @@ export function generationPage(locale: Locale, request: Request, url: URL) {
         items: copy.cards.map((card, index) => ({
           title: card.title,
           text: card.text,
-          theme: ["gravity", "nightsky", "oncall"][index] ?? "platform",
+          theme: ["gravity", "nightsky", "oncall", "coffee"][index] ?? "platform",
           facts: card.facts,
           primary: { label: card.cta, href: publicPagePath(locale, CASE_PAGE[CASE_IDS[index]!]) },
         })),

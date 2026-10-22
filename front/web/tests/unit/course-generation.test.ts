@@ -22,9 +22,9 @@ describe("course generation pages", () => {
       const main = overview!.doc.children!.find((node) => node.component === "Main")!;
       const cards = main.children!.find((node) => node.component === "Showcase")!;
       const hrefs = (cards.props!.items as Array<{ primary: { href: string } }>).map((item) => item.primary.href);
-      expect(hrefs).toEqual([publicPagePath(locale, "case-microdosing"), publicPagePath(locale, "case-stablecoins"), publicPagePath(locale, "case-docs-repo")]);
+      expect(hrefs).toEqual([publicPagePath(locale, "case-microdosing"), publicPagePath(locale, "case-stablecoins"), publicPagePath(locale, "case-docs-repo"), publicPagePath(locale, "case-notion")]);
       for (const caseId of CASE_IDS) {
-        const pageName = ({ "microdosing-study": "case-microdosing", "stablecoin-report": "case-stablecoins", "docs-repo": "case-docs-repo" } as const)[caseId];
+        const pageName = ({ "microdosing-study": "case-microdosing", "stablecoin-report": "case-stablecoins", "docs-repo": "case-docs-repo", "notion-page": "case-notion" } as const)[caseId];
         const page = caseStudyPage(locale, caseId, requestFor(publicPagePath(locale, pageName)), new URL(`https://ulams.app${publicPagePath(locale, pageName)}`));
         expect(page).not.toBeNull();
         expect(validateDocument(page!.doc, page!.data)).toEqual([]);
@@ -49,6 +49,7 @@ describe("course generation pages", () => {
     expect(SOURCE_LINKS["microdosing-study"]).toBe("https://www.nature.com/articles/s41598-021-01811-4.pdf");
     expect(SOURCE_LINKS["stablecoin-report"]).toBe("https://home.treasury.gov/system/files/136/StableCoinReport_Nov1_508.pdf");
     expect(SOURCE_LINKS["docs-repo"]).toBe("https://github.com/ulams-dev/demo-docs");
+    expect(SOURCE_LINKS["notion-page"]).toBe("https://ulams-dev.github.io/ulams/creators/course-builder/");
   });
 
   it("keeps the same frames and the same number of captions in every language", () => {
