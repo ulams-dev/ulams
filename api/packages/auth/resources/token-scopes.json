@@ -172,6 +172,14 @@
             "area": "public"
         },
         {
+            "pattern": "api/auth/handoff/exchange",
+            "area": "public"
+        },
+        {
+            "pattern": "api/auth/handoff",
+            "area": "none"
+        },
+        {
             "pattern": "api/identity/*",
             "area": "public"
         },

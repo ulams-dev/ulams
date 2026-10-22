@@ -180,6 +180,36 @@ class TenantIsolationTest extends TestCase
         $this->request(self::A, 'DELETE', "/api/admin/entry-points/{$id}", $tokenA);
     }
 
+    public function testSessionHandoffAndEntryHostsDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $key = 'h' . bin2hex(random_bytes(3));
+        $host = self::A . '-' . $key . '.app.localhost';
+        $verifier = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+        $challenge = rtrim(strtr(base64_encode(hash('sha256', $verifier, true)), '+/', '-_'), '=');
+
+        $created = $this->request(self::A, 'POST', '/api/admin/entry-points', $tokenA, ['host' => $host, 'key' => $key, 'kind' => 'academy', 'label' => 'Probe']);
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['id'];
+
+        // A may hand a session to its own entry host; B knows nothing of it, and A's token is nothing at B
+        $issued = $this->request(self::A, 'POST', '/api/auth/handoff', $tokenA, ['host' => $host, 'challenge' => $challenge]);
+        $this->assertSame(200, $issued->getStatusCode(), (string) $issued->getBody());
+        $code = json_decode((string) $issued->getBody(), true)['data']['code'];
+        $this->assertSame(403, $this->request(self::B, 'POST', '/api/auth/handoff', $tokenB, ['host' => $host, 'challenge' => $challenge])->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'POST', '/api/auth/handoff', $tokenA, ['host' => $host, 'challenge' => $challenge])->getStatusCode());
+
+        // the code is A's: B's exchange does not know it, A's exchange takes it once
+        $this->assertSame(400, $this->request(self::B, 'POST', '/api/auth/handoff/exchange', null, ['code' => $code, 'verifier' => $verifier, 'host' => $host])->getStatusCode());
+        $this->assertSame(200, $this->request(self::A, 'POST', '/api/auth/handoff/exchange', null, ['code' => $code, 'verifier' => $verifier, 'host' => $host])->getStatusCode());
+        $this->assertSame(400, $this->request(self::A, 'POST', '/api/auth/handoff/exchange', null, ['code' => $code, 'verifier' => $verifier, 'host' => $host])->getStatusCode());
+
+        // deleting the entry point removes the host from A's trusted fronts at once
+        $this->request(self::A, 'DELETE', "/api/admin/entry-points/{$id}", $tokenA);
+        $this->assertSame(403, $this->request(self::A, 'POST', '/api/auth/handoff', $tokenA, ['host' => $host, 'challenge' => $challenge])->getStatusCode());
+    }
+
     public function testSamlProvidersAndTheirEndpointsDoNotCrossTenants(): void
     {
         $tokenA = $this->login(self::A);

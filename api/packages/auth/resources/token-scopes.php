@@ -44,6 +44,10 @@ return [
     ['api/auth/register*', 'public'],
     ['api/auth/password/*', 'public'],
     ['api/auth/social/*', 'public'],
+    // session hand-off between the hosts of the academy (ADR 0195): the code is redeemed with a verifier and mints a login
+    // token, so a scoped token must not ask for one; redeeming needs no token
+    ['api/auth/handoff/exchange', 'public'],
+    ['api/auth/handoff', 'none'],
     // single sign-on: providers list, start, callback, code exchange (an access token is the result, never the input)
     ['api/identity/*', 'public'],
     ['api/auth/email/*', 'public'],

@@ -118,6 +118,9 @@ class UlamsAuthServiceProvider extends ServiceProvider
         // social login (ADR 0121): the redirect and the callback share a bucket, the code exchange has its own
         RateLimiter::for('ulams-social-login', fn (Request $r) => Limit::perMinute(30)->by('social-login:' . $r->ip()));
         RateLimiter::for('ulams-social-exchange', fn (Request $r) => Limit::perMinute(30)->by('social-exchange:' . $r->ip()));
+        // session hand-off between the hosts of one academy (ADR 0195)
+        RateLimiter::for('ulams-handoff-issue', fn (Request $r) => Limit::perMinute(30)->by('handoff-issue:' . ($r->user('api')?->getAuthIdentifier() ?? $r->ip())));
+        RateLimiter::for('ulams-handoff-exchange', fn (Request $r) => Limit::perMinute(30)->by('handoff-exchange:' . $r->ip()));
         // device approval: 5 requests per minute per signed-in user (lookups and answers share the bucket)
         RateLimiter::for('ulams-device-approve', fn (Request $r) => Limit::perMinute((int) config(self::CONFIG_KEY . '.device_approve_per_minute', 5))
             ->by('device-approve:' . ($r->user('api')?->getAuthIdentifier() ?? $r->ip())));
