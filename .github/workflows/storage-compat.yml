@@ -45,6 +45,18 @@ jobs:
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'storage-compat'))
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      # the API test environment of ci.yml's PHPUnit job
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+      DB_DATABASE: default
+      DB_USERNAME: default
+      DB_PASSWORD: secret
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+      XDEBUG_MODE: "off"
     steps:
       - uses: actions/checkout@v7
 
@@ -108,11 +120,6 @@ jobs:
 
       - name: Prepare database and Passport
         working-directory: api
-        env:
-          DB_CONNECTION: pgsql
-          DB_HOST: 127.0.0.1
-          REDIS_HOST: 127.0.0.1
-          REDIS_PASSWORD: ""
         run: |
           php artisan migrate:fresh --force
           php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"
@@ -124,11 +131,6 @@ jobs:
 
       - name: Tenant isolation against SeaweedFS
         working-directory: api
-        env:
-          DB_CONNECTION: pgsql
-          DB_HOST: 127.0.0.1
-          REDIS_HOST: 127.0.0.1
-          REDIS_PASSWORD: ""
           S3_COMPAT: "1"
           S3_COMPAT_FLAVOR: seaweedfs
           S3_COMPAT_ENDPOINT: http://127.0.0.1:8333
