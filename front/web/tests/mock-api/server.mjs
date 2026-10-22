@@ -440,8 +440,57 @@ const attemptsOf = (tenant, topic) => codeAttempts.get(`${tenant}:${topic}`) ?? 
 const CODE_TOPICS = new Map(codeExerciseTopics.map((t) => [t.id, t]));
 const RUNNER_URL = `http://127.0.0.1:${process.env.MOCK_API_PORT ?? 4390}/runtime/code-runner/1/runner.html`;
 
+/**
+ * Course releases for the studio Versions page (/studio/courses/:id/versions, ADR 0192). The course id picks the state:
+ * 1 twenty-eight releases (two pages), 2 a course that was applied never (no release), 3 a course not made with the
+ * builder (404), 4 another author's course (403), 5 fails once and then works, 6 three releases.
+ */
+const versionsFails = new Map();
+const RELEASE_TRIGGERS = ["generate", "author", "chat", "update", "insights", "import", "restore"];
+const zero = { added: 0, changed: 0, removed: 0 };
+const releaseOf = (course, number) => ({
+  id: `01r${String(course).padStart(2, "0")}${String(number).padStart(21, "0")}`,
+  number,
+  trigger: RELEASE_TRIGGERS[(number - 1) % RELEASE_TRIGGERS.length],
+  versionId: `01v${String(course).padStart(2, "0")}${String(number).padStart(21, "0")}`,
+  versionNumber: number * 2,
+  reason: null,
+  previousReleaseId: number > 1 ? `01r${String(course).padStart(2, "0")}${String(number - 1).padStart(21, "0")}` : null,
+  courseId: course,
+  approvedBy: number % 5 === 0 ? null : { id: 7, name: "Demo Author" },
+  sourceRevisions: null,
+  summary: number === 1
+    ? { first: true, counts: { added: 24, changed: 0, removed: 0 }, lessons: { added: 6, changed: 0, removed: 0 }, questions: { added: 8, changed: 0, removed: 0 }, citationsChanged: 0, answerKeysChanged: 0 }
+    : { first: false, counts: { added: 0, changed: 2, removed: 0 }, lessons: { added: 0, changed: 1, removed: 0 }, questions: zero, citationsChanged: number % 3 === 0 ? 2 : 0, answerKeysChanged: number % 4 === 0 ? 1 : 0 },
+  releasedAt: isoDay(-(40 - number)),
+});
+const versionsCount = { 1: 28, 2: 0, 5: 3, 6: 3 };
+const courseReleases = (id, query) => {
+  if (id === 3) return { __status: 404, message: "This course was not made with the Course Builder, so it has no releases. Adopt the course to track its versions." };
+  if (id === 4) return { __status: 403, message: "This builder session belongs to another author." };
+  const total = versionsCount[id];
+  if (total === undefined) return { __status: 404, message: "Not found" };
+  const perPage = Math.min(100, Math.max(1, Number(query.get("perPage") ?? 25)));
+  const page = Math.max(1, Number(query.get("page") ?? 1));
+  const numbers = Array.from({ length: total }, (_, i) => total - i).slice((page - 1) * perPage, page * perPage);
+  return { sessionId: `01s${"0".repeat(22)}${id}`, courseId: id, releases: numbers.map((n) => releaseOf(id, n)), total, page, perPage };
+};
+const courseVersionsRoutes = [
+  // test control: course 5 fails its next request again (every tenant has its own state)
+  ["POST", /^\/__mock\/course-versions\/reset$/, ({ tenant }) => (versionsFails.delete(`${tenant}:5`), { reset: true })],
+  ["GET", /^\/api\/admin\/course-versions\/courses\/(\d+)\/releases$/, ({ match, query, tenant }) => {
+    const id = Number(match[1]);
+    if (id === 5 && !versionsFails.get(`${tenant}:5`)) {
+      versionsFails.set(`${tenant}:5`, true);
+      return { __status: 500, message: "Releases are temporarily unavailable." };
+    }
+    return courseReleases(id, query);
+  }],
+];
+
 const routes = [
   ...insightsRoutes,
+  ...courseVersionsRoutes,
   ...improveRoutes,
   ["POST", /^\/api\/code-exercises\/launches\/(\d+)$/, ({ tenant, match }) => {
     const topic = CODE_TOPICS.get(Number(match[1]));
