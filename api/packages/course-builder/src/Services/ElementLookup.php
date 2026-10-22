@@ -43,6 +43,22 @@ class ElementLookup
         return $this->forEntity('gift_question', $questionId);
     }
 
+    /** @var array<string,array|null> applied document by session id */
+    private array $documents = [];
+
+    /** The blueprint type of an element in the applied version (`lesson`, `block`, `question`, `quiz`, ...); null when unknown. */
+    public function typeOf(string $sessionId, string $elementId): ?string
+    {
+        if (!array_key_exists($sessionId, $this->documents)) {
+            $session = Session::query()->find($sessionId);
+            $version = $session?->applied_version_id ? Version::query()->find($session->applied_version_id) : null;
+            $this->documents[$sessionId] = $version?->document;
+        }
+        $doc = $this->documents[$sessionId];
+
+        return $doc === null ? null : (Blueprint::find($doc, $elementId)['type'] ?? null);
+    }
+
     /** Human label of an element in the applied version (for example "Lesson 2.3"); null when unknown. */
     public function label(string $sessionId, string $elementId): ?string
     {

@@ -5304,6 +5304,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/learner-insights/courses/{course}/elements/{elementKey}/improve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Propose an improvement for an element learners struggle with: the estimate and the aggregated evidence first, then (confirmEstimate) a Living Course proposal of kind insights */
+        post: operations["admin.learner-insights.courses.by-course.elements.by-element-key.improve.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/learner-insights/courses/{course}/learners": {
         parameters: {
             query?: never;
@@ -24758,6 +24775,85 @@ export interface operations {
             };
             /** @description Unknown course */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.learner-insights.courses.by-course.elements.by-element-key.improve.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course: number;
+                /** @description The element key of the insights table (a Course Builder element id) */
+                elementKey: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    confirmEstimate?: boolean;
+                    /**
+                     * @default 30
+                     * @enum {integer}
+                     */
+                    period?: 7 | 30 | 90;
+                };
+            };
+        };
+        responses: {
+            /** @description Without confirmEstimate: `estimateUsd` and the `evidence` that would be sent (aggregates only); or the open proposal of the element (`kept_existing`) */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description The proposal was created and its analysis started; review it as a Living Course proposal */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiJson"];
+                };
+            };
+            /** @description Needs authorship of the course or learner_insights_view, and authorship of its builder session or living_course_review */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown course, or the element was not built with the Course Builder */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Group below the minimum size, nothing to cite, element not improvable, or the budget blocks the analysis */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The daily limit of improvement proposals of the course is reached */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description AI is disabled */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };

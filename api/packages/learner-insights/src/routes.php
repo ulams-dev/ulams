@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Ulams\LearnerInsights\Http\Controllers\AnalyticsController;
 use Ulams\LearnerInsights\Http\Controllers\ClientSignalController;
+use Ulams\LearnerInsights\Http\Controllers\ImproveController;
 use Ulams\LearnerInsights\Http\Controllers\MeController;
 use Ulams\LearnerInsights\Http\Controllers\NudgeOpenedController;
 use Ulams\LearnerInsights\Http\Controllers\PresentationController;
@@ -39,6 +40,7 @@ Route::group([
     Route::get('courses/{course}/summary', [AnalyticsController::class, 'summary'])->whereNumber('course');
     Route::get('courses/{course}/elements', [AnalyticsController::class, 'elements'])->whereNumber('course');
     Route::get('courses/{course}/learners', [AnalyticsController::class, 'learners'])->whereNumber('course');
+    Route::post('courses/{course}/elements/{elementKey}/improve', [ImproveController::class, 'store'])->whereNumber('course')->where('elementKey', ImproveController::KEY);
     Route::get('learners/{user}/courses/{course}/timeline', [AnalyticsController::class, 'timeline'])->whereNumber(['user', 'course']);
     Route::post('backfill', [AnalyticsController::class, 'backfill']);
 });

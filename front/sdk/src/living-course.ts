@@ -5,6 +5,7 @@
  * (`/studio/api`) with `prefix: "/living-course"`, which adds the author's token.
  */
 import { ApiError, type ClientOptions } from "./client.ts";
+import type { InsightsEvidence } from "./insights-admin.ts";
 
 export type RevisionStatus = "fetched" | "ingested" | "unchanged" | "no_impact" | "failed";
 export type ConnectionStatus = string;
@@ -185,16 +186,26 @@ export interface ProposalCounts {
   source?: ChangeCounts | null;
   failedGroups?: string[];
   newerRevision?: number | null;
+  /** What an insights proposal is about: its element and the label shown to the author. */
+  targetElementId?: string;
+  targetLabel?: string;
 }
+
+/** A proposal follows a source change (`source`) or comes from what learners struggle with (`insights`, ADR 0181). */
+export type ProposalKind = "source" | "insights";
 
 export interface ProposalSummary {
   id: string;
   number: number;
   sessionId: string;
-  sourceId: string;
+  /** Null for an improvement from learner insights. */
+  sourceId: string | null;
+  kind: ProposalKind;
   status: ProposalStatus;
   trigger: string;
   counts: ProposalCounts | null;
+  /** The aggregated evidence of an `insights` proposal; null for a source update. */
+  evidence: InsightsEvidence | null;
   fromRevision: RevisionRef | null;
   toRevision: (RevisionRef & { detectedAt: string | null }) | null;
   /** Analysis run (kind `sync`); its steps are in `ProposalDetail.steps`. */
@@ -216,6 +227,8 @@ export type ElementNode = Record<string, unknown> & { id?: string };
 
 export interface ItemFlags {
   grounding?: string[];
+  /** An improvement from learner insights the AI could not ground in the source passages (the item stays manual). */
+  ungrounded?: string[];
   signals?: string[];
   checkAnswer?: boolean;
 }

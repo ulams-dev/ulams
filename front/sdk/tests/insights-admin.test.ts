@@ -55,6 +55,38 @@ describe("learner insights analytics client", () => {
   });
 });
 
+describe("propose an improvement", () => {
+  const evidence = { periodDays: 30, learners: 42, minGroupSize: 10, struggleRate: 0.38, remediationRate: 0.2, recoveryRate: null, helpfulShare: null, topReasons: [], wrongOptions: [], tutorOutOfScope: 0 };
+
+  it("only estimates without confirmEstimate and creates the proposal with it, encoding the element key", async () => {
+    const estimate = { state: "estimate", estimateMicroUsd: 120000, estimateUsd: 0.12, label: "Lesson 2.1 › Q1", elements: 1, evidence };
+    const started = { state: "started", runId: "r1", estimateMicroUsd: 120000, message: null, proposal: { id: "p1", kind: "insights" } };
+    const { fn, calls } = fakeFetch([{ body: { data: estimate } }, { status: 201, body: { data: started } }]);
+    const client = createInsightsAnalyticsClient({ baseUrl: "/studio/api", prefix: "/learner-insights", fetch: fn });
+
+    expect(await client.improve(3, "question:7", { period: 7 })).toEqual(estimate);
+    expect(await client.improve(3, "01arz3ndektsv4rrffq69g5fav", { confirmEstimate: true })).toEqual(started);
+
+    expect(calls.map((c) => [c.init.method, c.url])).toEqual([
+      ["POST", "/studio/api/learner-insights/courses/3/elements/question%3A7/improve"],
+      ["POST", "/studio/api/learner-insights/courses/3/elements/01arz3ndektsv4rrffq69g5fav/improve"],
+    ]);
+    expect(JSON.parse(String(calls[0]!.init.body))).toEqual({ period: 7 });
+    expect(JSON.parse(String(calls[1]!.init.body))).toEqual({ confirmEstimate: true });
+    expect((calls[0]!.init.headers as Record<string, string>)["Content-Type"]).toBe("application/json");
+  });
+
+  it("keeps the refusal code of the API on the error", async () => {
+    const { fn } = fakeFetch([{ status: 429, body: { success: false, code: "daily_limit", message: "Three improvement proposals today." } }]);
+    const client = createInsightsAnalyticsClient({ baseUrl: "/studio/api", prefix: "/learner-insights", fetch: fn });
+
+    const error = (await client.improve(3, "01arz3ndektsv4rrffq69g5fav", { confirmEstimate: true }).catch((e: unknown) => e)) as ApiError;
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error.status).toBe(429);
+    expect((error.body as { code: string }).code).toBe("daily_limit");
+  });
+});
+
 describe("learner insights module client", () => {
   it("tells whether the module is on for the academy", async () => {
     const { fn, calls } = fakeFetch([{ body: { data: { enabled: false } } }, { body: { data: { enabled: true } } }]);

@@ -9,6 +9,7 @@ use Ulams\CourseBuilder\Services\ElementLookup;
 use Ulams\LearnerInsights\Models\Intervention;
 use Ulams\LearnerInsights\Scoring\Reason;
 use Ulams\LearnerInsights\Signals\SignalType;
+use Ulams\LivingCourse\Services\InsightsProposalService;
 
 /**
  * Aggregates for authors and admins (plan section 10). Every figure is a count or a rate over groups
@@ -105,6 +106,8 @@ class Analytics
                 'remediationRate' => round(min(1, ((int) ($remediated[$row->element_id] ?? 0)) / (int) $row->learners), 4),
                 'recoveryRate' => $closed->count() >= $min ? round($recovered / $closed->count(), 4) : null,
                 'topReasons' => $this->topReasons($s),
+                // a Course Builder element of a kind "Propose an improvement" can rewrite (ADR 0181)
+                'improvable' => $row->element_id && $row->session_id && in_array($this->lookup->typeOf($row->session_id, $row->element_id), InsightsProposalService::TYPES, true),
             ];
         }
         usort($rows, fn ($a, $b) => ($a['hidden'] <=> $b['hidden']) ?: match ($sort) {
