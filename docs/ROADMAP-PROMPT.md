@@ -311,6 +311,15 @@ A course stays connected to its sources and evolves with them, without losing le
 - Tests: fixtures with a source v1 and v2 and expected impacted elements; regression test that
   learner progress survives an accepted update.
 
+### 3.1 Course versions with a visual diff
+- Every change that reaches learners (author edit, chat edit, accepted Living Course update, course-as-code
+  push, accepted insight proposal) is saved as a numbered release of the course, with who approved it, which
+  source revisions it was based on and a summary of what changed.
+- Any two releases can be compared visually in the studio: lessons and elements added, removed, moved or
+  edited, citations changed, quiz questions and answer keys changed, and what that means for learners'
+  progress. The same comparison is available in the CLI and over MCP.
+- Plan: `docs/plans/course-versions-and-variants.md`; ADR 0192.
+
 ---
 
 ## Phase 4: Personalisation (most-wanted AI capability)
@@ -373,6 +382,19 @@ A new, self-contained package that replaces any reliance on `escolalms/recommend
 - Per-tenant settings: AI features on/off, data retention, which model/provider is used.
 - Clear labelling of AI-generated content for learners.
 - Document data flows to the LLM provider; no training on customer content.
+
+### 4.4 Course variants by level and role
+- The main relevance problem of LMSs: everybody gets the same course whatever their level and role, so
+  the expert wades through the basics and the beginner gets lost in the middle.
+- When an author creates a course, the builder asks which levels and roles to cover and generates the
+  variants in one run from the same sources: each variant is cited like the base, reviewed as a diff
+  against the base, and applied as its own course; variants of one course form a family.
+- Learners reach the matching variant by choosing it, by an admin or rule assignment, or by an optional
+  placement check. Routing is chosen by the learner or decided by deterministic rules, never by AI alone
+  (EU AI Act: AI level placement is high-risk, so any placement stays advisory and opt-in).
+- One entitlement covers the family; certificates name the variant; Living Course updates reach every
+  variant as a reviewable diff.
+- Plan: `docs/plans/course-versions-and-variants.md`; ADR 0192.
 
 ---
 
