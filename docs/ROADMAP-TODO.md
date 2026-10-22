@@ -107,6 +107,7 @@ small commits → tests → summary.
 - [ ] Move certificates (6.1) earlier if compliance is the priority segment
 - [ ] Multitenancy for the POC: one deployment, tenant per subdomain with own theme?
 - [ ] Prototype the Sylius order → entitlement flow early (highest-risk commerce piece)
+      Note 2026-10-22: the LMS half is prototyped with a fake provider (CM-1, #356); the Sylius half is not started, so the risk this item names is still open
 - [x] Add the spec file to the repo as `docs/ROADMAP-PROMPT.md`
 - [x] (new) Approve the Phase 1 and Phase 2 plans (`docs/plans/phase-1.md`, `docs/plans/phase-2.md`)
       and ADRs 0009–0011 (LLM layer, Course Blueprint, AG-UI over SSE) (approved 2026-10-09; ADR 0008 and 0012 too)
@@ -194,7 +195,11 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
 - [x] (new) Fix the tenant video processing queue (jobs dispatched to a queue no tenant worker consumes)
 - [x] (new) `Relation::enforceMorphMap` for topic types so class renames never orphan data (enforced map, polymorphic columns store stable aliases, #278)
 - [x] (new) ADR for the tenancy package (docs/decisions/0007)
-- [ ] (new) Upgrade PostgreSQL 12 (EOL) to 16/17 with a tested dump/restore path
+- [x] (new) Upgrade PostgreSQL 12 (EOL) to 16/17 with a tested dump/restore path
+      Note 2026-10-22 (P8-1, #350): PostgreSQL 17 (`postgres:17.11-alpine`) in the developer stack and every CI container;
+      `deploy/scripts/pg-major-upgrade.sh` (dump and restore into an empty cluster), `pg-logical-upgrade.sh`, `pg-verify.sh`,
+      `make pg-upgrade`, a pinned-image check in CI and a nightly job in `nightly-conformance.yml` that upgrades a seeded
+      12 cluster; operator procedures in `operators/upgrades.mdx` and `backups.mdx`; ADR 0040 Accepted
 - [ ] (new) Drop Soketi until realtime is needed (broadcast driver is `log`); Laravel Reverb after 0.2
 
 - [x] (new) cmi5 for learners: give students the cmi5 launch permission and serve AU files from
@@ -233,6 +238,8 @@ open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41�
       offer (three years, on request, no source tarballs) is in `api/docker/php/NOTICE`; the image lists its exact Alpine packages
       in `/usr/share/doc/ulams/apk-packages.txt` and carries the label `org.ulams.alpine-release`; `publish.yml` prints the list
       in the run summary. Ready to tick once this merges and the next image publish shows the label and summary
+      Note 2026-10-22: #352 is merged; still `[ ]` because no completed `publish.yml` run since has been checked for the
+      label and the summary (the latest runs were in flux with the arm64 rebuild, #368)
 
 - [x] (new) Delete `front/src/style/` (deleted in `974776f0` with its exclusions; #44)
 - [x] (new) Cart on tenants crashes without a Stripe publishable key (`stripe.tsx` calls
@@ -611,11 +618,17 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 - [x] Nudges via `notifications`, rate-limited (M4.4, per learner and per course limits, #277)
 - [x] Recovery rate measurement (outcome tracker and `LearnerRecovered`, `learner-insights:cohort-stats`, M4.4, #277)
 - [ ] Author analytics; high-struggle elements → update proposals (partial: author and admin analytics API merged, #283; the Living Course proposal from insights, `ProposalService::createFromInsights`, is open)
-- [ ] (new) Per-course analytics dashboard for authors and admins: progress, completion, quiz performance, at-risk
+- [x] (new) Per-course analytics dashboard for authors and admins: progress, completion, quiz performance, at-risk
       learners and the sections that confuse people, per course (Phase 4, M4.6 author analytics; API merged, #283, studio Insights page not built; shown as "Coming" in the
       white-label section of the platform landing)
+      Note 2026-10-22 (LX-1, #362): built: studio page `/studio/courses/:id/insights` (keyed by course id, so courses without a builder session
+      have it too: progress and completion, quiz performance, who needs support, the sections that confuse people, withheld sections
+      counted) and a compact Insights tab on the admin course form; `createInsightsAnalyticsClient` in `@ulams/sdk`
 - [ ] Privacy: per-tenant toggle, retention, explanations, minimal data to LLM (partial: per-course toggle, retention pruning, privacy controls and the learner personalisation and privacy page merged, #277 and #289; minimal data to the LLM waits for remediations and the tutor)
-- [ ] Rule unit tests, synthetic learner journeys, tenant isolation (partial: rule unit tests and the journey scenario test merged, #277; a dedicated tenant isolation suite is not confirmed)
+      Note 2026-10-22 (LX-1, #362): remediations and the tutor have merged, and tests now read every request sent to the model for a
+      learner (remediation, reflection feedback, tutor) and fail on a user id, name, address, other course or signal type; still `[ ]`:
+      redaction of e-mail and phone numbers in learner text, evidence-only `insights_improve` and the per-tenant toggle (LX-10)
+- [x] Rule unit tests, synthetic learner journeys, tenant isolation (rule unit tests and the journey scenario test merged, #277; route-complete tenant isolation suites for `learner-insights` and `tutor`: every route listed with a valid request and checked with a token of another tenant, plus a companion test that reads the router and fails when a route is missing from the list, #362)
 - [x] (new) Streaming tutor answers (LLM client streaming over the SSE event log) (M-UI6, #322, ADR 0105: queued answer job, run event log, SSE with resume, never streamed during a quiz attempt, fallback to the plain request; time to first text on a real model is not measured yet, see the tutor panel item)
 - [ ] (new) Remediation holdout (20 % get no remediation) and the adaptive interface presentation profile, backend (M4.8 API, #288: holdout is a stable hash share, off by default pending #58; comparison in `OutcomeTracker::helpedVsHoldout()`; the experiments package and the A/B and delayed-retention measure are not built)
 - [ ] (new) Partition `learner_signals` by month when a tenant exceeds 50M rows
@@ -665,11 +678,32 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 - [x] (new) Learner views for required training, learning paths, certificates and skills: `/account/training`, `/account/skills`, a manager `/account/team`, certificate download through its own route and the account summary (M-UI5, #317; `docs/plans/phase-5-learner-ui.md`)
 - [x] (new) The finish page shows the issued certificate (with download and verify) instead of the mock preview (M-UI5, #317)
 - [x] (new) Per-tenant accessibility statement page `/accessibility` and European Accessibility Act documentation for operators and learners (M-UI8, #325)
-- [ ] (new) Translate the existing lesson player and account strings to Polish and Chinese (the new learner strings are in EN/PL/ZH with the learner locale of ADR 0106, #315; the older player, quiz and account strings are English only)
+- [x] (new) Translate the existing lesson player and account strings to Polish and Chinese (the new learner strings are in EN/PL/ZH with the learner locale of ADR 0106, #315; the older player, quiz and account strings are English only)
+      Note 2026-10-22 (P5R-1, #361): `front/ui/src/lib/player-strings.ts` and `account-strings.ts` hold the lesson player, quiz and account text in en, pl and zh (plurals through `Intl.PluralRules`); the native review stays the next item
 - [ ] (new) Native review of the Polish and Chinese learner strings (owner action, as for the landing, ADR 0096)
-- [ ] (new) Tenant default-language setting for the account pages (ADR 0106 leaves the account pages in English until it exists; a per-learner switch stays a later item, O6)
-- [ ] (new) Visual e-mail template editor on top of MJML (plan `docs/plans/email-visual-editor.md`, #323; MJML stays the stored format; ADR 0107 Accepted by the owner, but the ADR and the M0 spike results are still in the open PR #328, not on `main`; M0 spike done; open: M1 server draft render, test send and hardening, M2 code view and live preview, M3 visual mode, M4 variables, partials and images, M5 accessibility and i18n, M6 per-language templates (optional); related e-mail security fixes merged: variable escaping #329, no local files through `mj-include` #331, bounded MJML API calls #332)
+- [x] (new) Tenant default-language setting for the account pages (ADR 0106 leaves the account pages in English until it exists; a per-learner switch stays a later item, O6)
+      Note 2026-10-22 (P5R-1, #361): the public setting `global.language` accepts only `en`, `pl`, `zh` (`DefaultLanguage`, `DefaultLanguageTest`), is seeded for demo tenants and has a field in the admin Settings page; the course, lesson, finish, account and sign-in pages take the course language, else the tenant default, and set `<html lang>`; ADR 0106 amended; docs `contributing/translating.mdx`
+- [x] (new) Visual e-mail template editor on top of MJML (plan `docs/plans/email-visual-editor.md`, #323; MJML stays the stored format; ADR 0107 Accepted by the owner, but the ADR and the M0 spike results are still in the open PR #328, not on `main`; M0 spike done; open: M1 server draft render, test send and hardening, M2 code view and live preview, M3 visual mode, M4 variables, partials and images, M5 accessibility and i18n, M6 per-language templates (optional); related e-mail security fixes merged: variable escaping #329, no local files through `mj-include` #331, bounded MJML API calls #332)
+      Note 2026-10-22: the text above is stale (history). ADR 0107 (Accepted) and `docs/plans/email-visual-editor-spike.md` are on `main` (#328). All milestones are merged:
+      M1 server draft render, test send and hardening (#334), M2 code view with variables panel and live preview (#335), M3 visual mode with a representability check,
+      convert-with-diff and an operator switch (#340), M4 variable chips, locked shared parts and image upload to tenant storage (#363), M5 keyboard-operable editor
+      (structure tree, block actions, properties form) with axe, a reduced-motion and an air-gap guard in the mocked-API Playwright suite, default templates with `lang`
+      and `dir`, and the native MJML 4.18 image (#365), M6 templates per language with fallback and a languages panel (#369). Tested with Jest, the round-trip
+      fixtures and mocked-API Playwright specs; the editor chunk is a lazy 681 KB gzip of the 700 KB budget
 - [ ] (new) Critical PHP RCE response (plan `docs/plans/security-php-rce-2026-10.md`, #326): SEC1 done and merged (#330: upload progress off, `pull: true` on publish, full-version tag, image smoke probe); open: SEC2 rebuild of the base image with the version gate once the official `php:8.4-fpm-alpine` is 8.4.27, SEC3 `check-host.sh` version check and the staging recovery steps, SEC4 freshness workflow and Dependabot check
+      Note 2026-10-22: code for SEC2 to SEC4 is merged: SEC2 version gate (`install.sh` refuses a base image below PHP 8.4.27, #347; the three Dockerfiles run it), SEC3 `deploy/mydevil/bin/check-host.sh` prints `PHP_VERSION` and exits 1 below the fixed release of its branch (8.2.35, 8.3.36, 8.4.27, 8.5.12) with a CI test (#348), SEC4 daily `php-freshness.yml` that opens, updates or closes one security issue, plus a Dependabot entry (#349). Still `[ ]` because no publish run has been checked to show a patched `ghcr.io/ulams-dev/php:8.4` (8.4.27 or later) rolled out, and the MyDevil staging hosts are patched by the provider only (owner issue #327, open); `deploy/mydevil/README.md` says to keep a failing host offline behind Cloudflare and re-run the check after the provider confirms
+- [ ] (new) Build the arm64 images natively instead of under QEMU (`publish.yml`; #336 pinned the emulator, #368 builds each platform on its own runner and merges the digests)
+      (merged, not confirmed: the `publish.yml` runs after #368 had not completed when this was written; tick when a run publishes both platforms and the
+      supply-chain job verifies the merged digests)
+- [x] (new) Docker and CI robustness: retries for `npm ci`, `yarn install`, `yarn build` and `composer install` in the image builds (#307, #313, #321), the nightly
+      keeps PostgreSQL and Valkey alive across the Docker daemon restart (#306)
+- [x] (new) Deterministic tests: the clock-dependent tests (#364), `ConsultationChangeTermTest` and `BaseRepositoryTest::testPaginate` (#308), the lesson view and
+      nudge recovery tests (#324) and the work-once worker memory in the full suite (#301) no longer depend on the time of day or on memory
+- [x] (new) Plans for the remaining work of Phases 4 to 8 and the tech-debt batch, written ahead of implementation: Phase 8 self-hosting (`phase-8-self-hosting.md`, #337),
+      agent tools, extensions and code exercises (`phase-7-agents-extensions.md`, #338), course-as-code and the CLI release (`phase-7-course-as-code.md`, #339), identity
+      (`phase-6-identity.md`, #341), the Phase 6 remainder (`phase-6-remaining.md`, #342), the Sylius commerce block (`phase-6-commerce.md`, #343), tech debt and the quality bar
+      (`tech-debt-and-quality-bar.md`, #344), experiments, surveys and the insights studio (`phase-4-experiments-and-analytics.md`, #345) and the Phase 5 remainder
+      (`phase-5-remaining.md`, #346); each is a plan, not implemented work, and the plan texts still say "draft" or "proposed" although the owner approved the batch in advance
 - [ ] (new) Reference frontend for the demos: UI catalogue `@ulams/ui` (JSON-schema registry, renderer
       with fallbacks, landing pages as A2UI-shaped documents), BFF with httpOnly session, demo auto-login,
       SWR cache of public API data (partial: implemented and tested, uncommitted; Caddy already points
@@ -802,14 +836,37 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 
 ### 6.3 Identity and HR
 - [ ] SAML 2.0 and OIDC per tenant · SCIM 2.0 · HRIS import (CSV/API first)
+      Note 2026-10-22 (plan `docs/plans/phase-6-identity.md`, #341): partial. Done: OIDC login per tenant (ID-1, #371, see the new item below).
+      Open: SAML SP (ID-2), full attribute, group and role mapping, enforcement and the claim viewer (ID-3), SCIM Users and Groups
+      (ID-4, ID-5), HRIS CSV import (ID-6) and the later milestones of the plan; `POST /api/identity/discover` and a test-login endpoint come with ID-3
+- [x] (new) Social login hardening (ID-0, #353, #357): `return_url` must be an origin of the tenant's own apps; the access token is no longer in the
+      redirect URL (a one-time code, 60 s, single use, bound to the tenant host and an S256 challenge, redeemed at `POST /api/auth/social/exchange`);
+      signed, server-side, single-use OAuth state; accounts linked by e-mail only for a provider-verified address in a trusted domain and never for admins,
+      tutors or superadmins; unique `(provider, provider_id)`; every redirect URL that ends up in an e-mail link (forgot password, register, resend
+      verification, profile deletion, admin user creation, CSV imports) goes through `ReturnUrlPolicy`; `ulams:auth:disarm-legacy-social-passwords` and
+      the once-per-target upgrade step disarm the password `1` of accounts created by the old social login; every token is revoked when a user is deactivated
+      or deleted. Tests: `ReturnUrlValidationTest`, `DisarmLegacySocialPasswordsCommandTest`, the social login unit and node:test suites and a Playwright flow against the mock API in `front/web` (no token in any URL, replay, injected code, missing verifier);
+      ADRs 0120 and 0121 Accepted; docs `operators/social-login.mdx` and `operators/security.mdx`
+- [x] (new) OpenID Connect login per tenant (ID-1, #371): `api/packages/identity` with per-tenant identity providers (encrypted client secrets), authorization
+      code flow with PKCE, ID token validation on `firebase/php-jwt`, students created on first sign-in only for an address the provider vouches for (or a provider with `trust_email`), strict
+      account linking, a hash-chained identity audit trail, an admin API with the `identity` token scope, provider buttons and a callback page in `front/web` on
+      the one-time code flow; tests in `api/packages/identity/tests` (fake IdP, ID token validation, linking, isolation, audit) and a Keycloak run
+      (`.github/workflows/identity-keycloak.yml`, label or nightly gated). Open in the same plan: SAML, SCIM, HRIS (see the item above)
 
 ### 6.4 Commerce (Sylius) and extended enterprise
 - [ ] `CommerceProvider` interface (sync product, create checkout, handle order events) (partial: interface and the Wellms cart adapter shipped in `api/packages/commerce`, ADR 0049; the Sylius adapter is pending)
 - [ ] Sylius adapter as default implementation
 - [ ] Entitlements model in LMS (access, validity, source order or seat package)
+      Note 2026-10-22 (CM-1, #356): partial. `api/packages/entitlements` (ADR 0130) has the `entitlements` table (course subject, status, `valid_from`,
+      `valid_until`, unique `source_key`), `EntitlementService` as the only writer of purchased access (idempotent grant and revoke, through `CourseAccessService`),
+      covered by `EntitlementServiceTest`; open: seat pools and assignments (CM-9), the expiry job, the access backfill with its parity check and the
+      `CourseAccessService` decorator (CM-2); ADR 0130 is still Proposed
 - [ ] Catalogue sync: course/bundle/subscription/seat package → digital Sylius product
 - [ ] Order → entitlement via signed, idempotent webhooks + reconciliation job; never grant
       access from frontend redirect
+      Note 2026-10-22 (CM-1, #356): prototype only. `POST /api/commerce/webhooks/{provider}` (HMAC, timestamp, event id, tenant channel), `ApplyOrderEvent`,
+      `ulams:commerce:reconcile` and `OrderFlowTest`, `OrderWebhookTest`, `CommerceTenantIsolationTest` exist, but the only provider with these capabilities is the
+      test-only `FakeCommerceProvider`; there is no Sylius service or adapter yet (CM-3), so nothing has been proved against a real order
 - [ ] Single login: LMS as identity source; Sylius customer linked on first checkout
 - [ ] Tenant ↔ Sylius channel (catalogue, prices, currency, locale, tax zone), created at provisioning
 - [ ] Unified admin: prices, coupons, orders, refunds in LMS admin; native Sylius admin for
@@ -834,7 +891,12 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 
 ### 7.1 Course-as-code
 - [ ] Markdown + YAML/JSON format with JSON Schema
+      Note 2026-10-22 (CAC-1, #359): partial. Blueprint v3 is the JSON Schema (reads every v1 and v2 document unchanged; element `origin` ai or author, only author
+      elements may lack citations, lesson fields `key`, `meta`, `asset`, `video`, `embed`, reserved `exercises`); the Markdown + directives folder format and its file
+      schemas (CAC-2) are not built
 - [ ] CLI `ulams`: init, validate, preview, push, pull, diff, publish
+      Note 2026-10-22 (CAC-1, #359): partial. Thin `ulams course export|import|diff|approve|apply|publish` commands over the new endpoints exist; `init`, `validate`,
+      `preview`, folder `push` and `pull` wait for CAC-2 and CAC-3
 - [ ] Two-way Git sync with diff-based conflicts
 - [ ] GitHub Action + Docker image; preview deployment per PR
 - [ ] Git merge triggers Living Course update proposal
@@ -850,16 +912,31 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 - [x] (new) OpenAPI covers the course builder and Living Course; SDK types and CLI spec regenerated (504 of 547 operations covered, 0 missing)
 - [x] (new) "My tokens" on the web account page (create, list, revoke; axe)
 - [ ] (new) M5 course-as-code: Blueprint v2, Markdown + directives format, sync base and conflict diffs
+      Note 2026-10-22 (partial): CAC-1 is merged (#359): Blueprint v3 schema with the citation rule for author blocks, the version diff now shows self-check and
+      interaction changes, an `import` version kind that a person approves (agent tokens and MCP clients never approve; CI tokens only with the tenant setting
+      `course_as_code.ci_may_approve`, off by default), and the export and import endpoints; ADR 0160 Accepted. Open: CAC-2 to CAC-8 (folder format, pull and push,
+      three-way merge, adoption of hand-made courses, `ulams-cli` image and Action, preview academies, `cite=` resolution)
       (after Phase 3; citations for author blocks pending #78) (plan `docs/plans/phase-7-course-as-code.md`, draft, milestones
       CAC-1..8 and M6-a/b, ADRs 0160–0161 Proposed; note: the schema becomes Blueprint v3 because v2 is already the content-type schema)
 - [ ] (new) M6 CLI release: npm `ulams` (pending #77), bun-compiled binaries (signing pending #76), Docker image
-- [ ] (new) Endpoints to import a blueprint as a builder version and export a course as a blueprint (for M5)
+- [x] (new) Endpoints to import a blueprint as a builder version and export a course as a blueprint (for M5)
+      Note 2026-10-22 (CAC-1, #359): route group `api/admin/course-as-code` without the AI gate: export a course as a v3 document, import an edited one as a proposed
+      import version (validated, diffed, never applied by itself), diff, approve, apply and publish; a push must be based on the current version; builder token
+      scope; OpenAPI, SDK and PHP SDK regenerated; docs for the API and the citation rule for author blocks
 
 ### 7.2 Code exercises
-- [ ] (new) Plan `docs/plans/phase-7-agents-extensions.md` for 7.2, 7.4, 7.5 and the 7.3 docs/sandbox item
+- [x] (new) Plan `docs/plans/phase-7-agents-extensions.md` for 7.2, 7.4, 7.5 and the 7.3 docs/sandbox item
       (milestones AX-1…AX-11; ADRs 0170–0172 Proposed)
+      Note 2026-10-22: the plan is merged (#338); ADR 0170 is now Accepted (with AX-1, #366); 0171 and 0172 are still Proposed
 - [ ] WebContainers/Sandpack (JS/TS), Pyodide (Python), optional server sandbox
+      Note 2026-10-22 (AX-1, #366): partial, JavaScript and TypeScript only. A browser runner (`esbuild-wasm` bundling inside two nested sandboxed frames on the
+      content origin), four optional `ulams-ix` v1 messages (`loadExercise`, `run`, `reset`, `runResult`) and a `code-exercises` topic type with starter files and visible
+      tests, authoring in admin, the `create-code-exercise` CLI command and learner, author and operator docs; ADR 0170 Accepted. Not built: Pyodide (AX-2) and
+      the server sandbox (AX-4)
 - [ ] Autograding with author tests → attempts and learner signals
+      Note 2026-10-22 (AX-1, #366): partial. The learner runs the author's visible tests in the browser and a finished run becomes a `code.attempt_finished` signal
+      (attempt number and flags only, no code) that the failed-attempts rule counts. This is practice grading in the learner's browser, so it is not trusted for
+      certificates: verified grading with hidden tests on a server runner is AX-4
 - [ ] AI hints without revealing solutions
 
 ### 7.3 API, SDK, webhooks
@@ -935,6 +1012,12 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 - [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI
 - [ ] Health checks, Prometheus metrics, structured logs, zero-downtime guidance
 - [ ] SBOM, signed images, CVE scanning, hardening guide, ISO 27001 / GDPR audit docs
+      Note 2026-10-22 (P8-2, #367): partial. Merged: Trivy on pull requests, in CI images and nightly against the published images (opens or updates one `security`
+      issue; `.trivyignore.yaml` with a checked expiry), keyless cosign signing and verification of every digest and an SBOM attestation in `publish.yml`, SPDX SBOMs
+      attached to releases (`release.yml`), `operators/hardening.mdx`, the patch policy in `SECURITY.md` and `operators/security.mdx`, ADR 0108 Accepted. Open: the
+      signing and the code-scanning upload need repository settings only the owner can change (owner issue #354, open), and no completed publish run has been
+      checked yet for a verified signature (the `publish.yml` run on #367 failed and later runs were still running, #368); the ISO 27001 / GDPR audit documentation pack (P8-10)
+      is not written
 
 ---
 
@@ -946,12 +1029,15 @@ open Phase 0 and Phase 1 tech-debt items outside the Phase 8 self-hosting plan.
 - [ ] Mocked LLM in tests + eval command on golden fixtures (schema, citation coverage, quiz
       answers supported, duration, cost)
 - [ ] Tenant isolation tests for every endpoint
+      Note 2026-10-22: partial. Route-complete suites exist for `learner-insights` and `tutor` (#362, with a router-reading companion test) and `commerce` has
+      `CommerceTenantIsolationTest` (#356); the platform-wide route-walking test with a reviewed public-route list (TD-3, ADR 0190) is in the open PR #372, not on `main`
 - [ ] WCAG 2.2 AA checks for learner-facing UI
 - [ ] A/B experiment + delayed-retention metric for every feature claiming learning benefit
 - [ ] E2E: upload → interview → live course → chat edit → source change → accepted update →
       progress intact
 - [ ] Commerce E2E: buy → webhook → access granted; refund → access revoked; missed webhook
       repaired by reconciliation
+      Note 2026-10-22 (CM-1, #356): the three flows are covered in `OrderFlowTest` against the test-only fake provider; there is no real Sylius order, so the item stays open
 - [ ] Existing tests and linters green; H5P/SCORM unchanged; README per package
 
 ## Out of scope (for now)
