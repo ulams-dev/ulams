@@ -12,10 +12,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property string $id
  * @property int $number
+ * @property string $kind source | insights (ADR 0181)
+ * @property array|null $evidence aggregated learner evidence of an insights proposal
  * @property string $session_id
- * @property string $source_id
- * @property string $from_revision_id
- * @property string $to_revision_id
+ * @property string|null $source_id
+ * @property string|null $from_revision_id
+ * @property string|null $to_revision_id
  * @property string|null $base_version_id
  * @property string|null $result_version_id
  * @property string|null $run_id
@@ -34,6 +36,10 @@ class Proposal extends Model
     /** Statuses of a proposal that still waits for the author. */
     public const OPEN = ['analysing', 'ready', 'awaiting_analysis', 'budget_blocked', 'failed'];
 
+    public const KIND_SOURCE = 'source';
+
+    public const KIND_INSIGHTS = 'insights';
+
     public const SUBJECT_TYPE = 'living_course_proposal';
 
     protected $table = 'living_course_proposals';
@@ -42,6 +48,7 @@ class Proposal extends Model
 
     protected $casts = [
         'counts' => 'array',
+        'evidence' => 'array',
         'number' => 'integer',
         'estimated_cost_micro_usd' => 'integer',
         'cost_micro_usd' => 'integer',
@@ -62,6 +69,11 @@ class Proposal extends Model
     public function toRevision(): BelongsTo
     {
         return $this->belongsTo(Revision::class, 'to_revision_id');
+    }
+
+    public function isInsights(): bool
+    {
+        return $this->kind === self::KIND_INSIGHTS;
     }
 
     public function isOpen(): bool

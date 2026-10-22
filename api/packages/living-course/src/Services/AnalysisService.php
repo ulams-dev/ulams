@@ -23,6 +23,8 @@ use Ulams\CourseBuilder\Pipeline\Llm;
 use Ulams\CourseBuilder\Pipeline\PatchService;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
 use Ulams\CourseBuilder\Services\RunService;
+use Ulams\LivingCourse\Analysis\AnalysisRequest;
+use Ulams\LivingCourse\Analysis\ImproveRequest;
 use Ulams\LivingCourse\Analysis\UpdateRequest;
 use Ulams\LivingCourse\Analysis\UpdateValidator;
 use Ulams\LivingCourse\Jobs\AnalyseGroupJob;
@@ -57,9 +59,25 @@ final class AnalysisService
         return (array) json_decode((string) file_get_contents(__DIR__ . '/../../resources/schemas/outputs/update.json'), true);
     }
 
-    private function model(): string
+    /** The request builder of a proposal: source revisions for a source update, aggregated evidence for an insights proposal. */
+    public function requestFor(Proposal $proposal, Session $session): AnalysisRequest
     {
-        $profile = (string) config('ai.tasks.update.profile', 'default');
+        return $proposal->isInsights() ? ImproveRequest::forProposal($proposal, $session, $this->context) : new UpdateRequest($proposal, $session, $this->context);
+    }
+
+    private static function task(Proposal $proposal): string
+    {
+        return $proposal->isInsights() ? 'insights_improve' : 'update';
+    }
+
+    private static function promptName(Proposal $proposal): string
+    {
+        return $proposal->isInsights() ? 'update-improve' : 'update';
+    }
+
+    private function model(string $task = 'update'): string
+    {
+        $profile = (string) config("ai.tasks.{$task}.profile", 'default');
 
         return (string) config("ai.profiles.{$profile}.model", '');
     }
@@ -68,22 +86,46 @@ final class AnalysisService
     public function estimate(Proposal $proposal): int
     {
         $session = Session::query()->findOrFail($proposal->session_id);
-        $request = new UpdateRequest($proposal, $session, $this->context);
-        $costs = CostCalculator::fromConfig();
-        $system = Fragmenter::tokens($this->prompts->get('living-course', 'update')->text);
-        $output = (int) config('living_course.cost.output_tokens_per_group', 3000);
+        $request = $this->requestFor($proposal, $session);
         $total = 0;
         $first = true;
         foreach (array_slice($request->groupKeys(), 0, (int) config('living_course.cost.max_groups', 40)) as $key) {
-            $built = $request->build($key, $request->items($key));
-            $shared = Fragmenter::tokens($built['blocks'][0]->text) + Fragmenter::tokens($built['blocks'][1]->text);
-            $own = $system + Fragmenter::tokens($built['blocks'][2]->text);
-            $usage = $first ? new Usage($shared + $own, $output) : new Usage($own, $output, 0, 0, $shared);
-            $total += $costs->cost($this->model(), $usage);
+            $total += $this->groupCost($request->build($key, $request->items($key)), self::task($proposal), self::promptName($proposal), $first);
             $first = false;
         }
 
         return $total;
+    }
+
+    /**
+     * The estimate for one group that is not stored yet (the improve dialog asks before anything is created).
+     *
+     * @param \Ulams\LivingCourse\Models\ProposalItem[] $items
+     */
+    public function estimateRequest(AnalysisRequest $request, string $task, string $prompt, array $items, string $groupKey): int
+    {
+        return $this->groupCost($request->build($groupKey, $items), $task, $prompt, true);
+    }
+
+    /** @param array{blocks:ContentBlock[]} $built */
+    private function groupCost(array $built, string $task, string $prompt, bool $first): int
+    {
+        $costs = CostCalculator::fromConfig();
+        $system = Fragmenter::tokens($this->prompts->get('living-course', $prompt)->text);
+        $output = (int) config('living_course.cost.output_tokens_per_group', 3000);
+        $shared = 0;
+        $own = $system;
+        foreach ($built['blocks'] as $block) {
+            $tokens = Fragmenter::tokens($block->text);
+            if ($block->cache) {
+                $shared += $tokens;
+            } else {
+                $own += $tokens;
+            }
+        }
+        $usage = $first ? new Usage($shared + $own, $output) : new Usage($own, $output, 0, 0, $shared);
+
+        return $costs->cost($this->model($task), $usage);
     }
 
     /**
@@ -93,7 +135,7 @@ final class AnalysisService
      */
     public function begin(Proposal $proposal, bool $confirmed, ?int $userId): array
     {
-        $groups = (new UpdateRequest($proposal, Session::query()->findOrFail($proposal->session_id), $this->context))->groupKeys();
+        $groups = $this->requestFor($proposal, Session::query()->findOrFail($proposal->session_id))->groupKeys();
         if ($groups === []) {
             return ['state' => 'nothing_to_analyse', 'run' => null, 'estimateMicroUsd' => 0, 'message' => 'Nothing in this proposal needs an AI analysis.'];
         }
@@ -102,12 +144,13 @@ final class AnalysisService
 
         $cap = (int) round((float) config('living_course.cost.proposal_usd') * 1e6);
         $monthly = (int) round((float) config('living_course.cost.source_monthly_usd') * 1e6);
-        $spent = (int) Proposal::query()->where('source_id', $proposal->source_id)->where('id', '!=', $proposal->id)->where('created_at', '>=', now()->startOfMonth())->sum('cost_micro_usd');
+        // a source update counts against its source, an improvement from learner insights against the course (its session)
+        $spent = (int) Proposal::query()->where($proposal->isInsights() ? 'session_id' : 'source_id', $proposal->isInsights() ? $proposal->session_id : $proposal->source_id)->where('id', '!=', $proposal->id)->where('created_at', '>=', now()->startOfMonth())->sum('cost_micro_usd');
         if ($estimate + (int) $proposal->cost_micro_usd > $cap) {
             return $this->blocked($proposal, $estimate, sprintf('Analysing this proposal would cost about $%.2f, above the $%.2f limit per proposal. Update the changed elements by hand, or ask an admin to raise LIVING_COURSE_PROPOSAL_COST_USD.', $estimate / 1e6, $cap / 1e6));
         }
         if ($spent + $estimate > $monthly) {
-            return $this->blocked($proposal, $estimate, sprintf('This source has used $%.2f of its $%.2f monthly AI budget for updates. Try next month, update by hand, or ask an admin to raise LIVING_COURSE_SOURCE_MONTHLY_USD.', $spent / 1e6, $monthly / 1e6));
+            return $this->blocked($proposal, $estimate, sprintf('%s has used $%.2f of its $%.2f monthly AI budget for updates. Try next month, update by hand, or ask an admin to raise LIVING_COURSE_SOURCE_MONTHLY_USD.', $proposal->isInsights() ? 'This course' : 'This source', $spent / 1e6, $monthly / 1e6));
         }
         $auto = (int) round((float) config('living_course.cost.auto_analyse_usd') * 1e6);
         if (!$confirmed && $estimate > $auto) {
@@ -141,7 +184,7 @@ final class AnalysisService
         $proposal = Proposal::query()->findOrFail($run->input['proposalId']);
         $run->forceFill(['status' => 'running', 'stage' => 'groups', 'started_at' => now()])->save();
         $this->events->runStarted($run);
-        $request = new UpdateRequest($proposal, $session, $this->context);
+        $request = $this->requestFor($proposal, $session);
         $keys = $request->groupKeys();
         $max = (int) config('living_course.cost.max_groups', 40);
         foreach (array_slice($keys, 0, $max) as $key) {
@@ -253,7 +296,7 @@ final class AnalysisService
     /** @return array{items:int,cost:int} */
     private function analyseGroup(Proposal $proposal, Session $session, string $groupKey): array
     {
-        $request = new UpdateRequest($proposal, $session, $this->context);
+        $request = $this->requestFor($proposal, $session);
         $items = array_values(array_filter($request->items($groupKey), fn (ProposalItem $i) => $i->kind === 'manual'));
         if ($items === []) {
             return ['items' => 0, 'cost' => 0];
@@ -269,7 +312,7 @@ final class AnalysisService
      * @param ProposalItem[] $items
      * @return array{items:int,cost:int}
      */
-    public function analyseItems(Proposal $proposal, UpdateRequest $request, string $groupKey, array $items, ?string $authorRequest): array
+    public function analyseItems(Proposal $proposal, AnalysisRequest $request, string $groupKey, array $items, ?string $authorRequest): array
     {
         $cost = 0;
         $built = $request->build($groupKey, $items, $authorRequest);
@@ -291,9 +334,31 @@ final class AnalysisService
             $cost += $check['cost'];
             $callIds = [...$callIds, ...$check['callIds']];
         }
+        if ($proposal->isInsights() && $check['unsupported'] !== []) {
+            // an improvement is only proposed when every claim is grounded: after one regeneration the author edits it by hand
+            $this->leaveManual($items, $callIds, $check['unsupported']);
+
+            return ['items' => 0, 'cost' => $cost];
+        }
         $written = $this->store($proposal, $items, $result->data, $built, $callIds, $check['unsupported']);
 
         return ['items' => $written, 'cost' => $cost];
+    }
+
+    /**
+     * @param ProposalItem[] $items
+     * @param array<int,array{elementId:string,claim:string,reason:string}> $unsupported
+     * @param string[] $callIds
+     */
+    private function leaveManual(array $items, array $callIds, array $unsupported): void
+    {
+        foreach ($items as $item) {
+            $claims = array_values(array_map(fn ($u) => mb_substr('Possibly unsupported: ' . $u['claim'] . ' (' . $u['reason'] . ')', 0, 500), array_filter($unsupported, fn ($u) => $u['elementId'] === $item->element_id)));
+            $item->forceFill([
+                'kind' => 'manual', 'reason' => 'The AI could not propose a grounded change; edit it yourself.', 'after' => null, 'change_class' => null, 'answer_status' => null,
+                'flags' => ['ungrounded' => $claims], 'status' => 'pending', 'ai_call_ids' => array_values(array_unique([...((array) $item->ai_call_ids), ...$callIds])),
+            ])->save();
+        }
     }
 
     /** @param array{blocks:ContentBlock[],expected:array,known:array<string,string>,objectiveIds:string[]} $built */
@@ -301,14 +366,21 @@ final class AnalysisService
     {
         $userId = $proposal->decided_by ?? $proposal->created_by ?? Session::query()->whereKey($proposal->session_id)->value('author_id');
 
+        $insights = $proposal->isInsights();
+
         return $this->llm->generate(new LlmRequest(
-            task: 'update',
-            prompt: $this->prompts->get('living-course', 'update'),
+            task: self::task($proposal),
+            prompt: $this->prompts->get('living-course', self::promptName($proposal)),
             blocks: $built['blocks'],
             schema: $this->schema(),
             subject: $proposal->subject(),
-            userId: $userId !== null ? (int) $userId : null,
-            validator: fn (array $data) => UpdateValidator::validate($data, $built['expected'], $built['known'], $built['objectiveIds']),
+            // an improvement from learner insights is logged without a user: the evidence is about learners, and who asked
+            // for it is on the proposal and in the audit trail (ADR 0181, the minimisation test of learner-insights)
+            userId: $insights ? null : ($userId !== null ? (int) $userId : null),
+            validator: fn (array $data) => [
+                ...UpdateValidator::validate($data, $built['expected'], $built['known'], $built['objectiveIds']),
+                ...($insights ? UpdateValidator::improvement($data, $built['expected']) : []),
+            ],
             budget: ['cost_micro_usd' => (int) round((float) config('living_course.cost.proposal_usd') * 1e6)],
         ));
     }

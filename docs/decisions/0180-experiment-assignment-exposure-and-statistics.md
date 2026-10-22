@@ -1,6 +1,6 @@
 # 0180. Course experiments: salted assignment, exposure logging and fixed-horizon statistics with guard rails
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-21
 - Plan: `docs/plans/phase-4-experiments-and-analytics.md` (section 6)
 - Refines: ADR 0055 (course experiments, consent model confirmed in #58)

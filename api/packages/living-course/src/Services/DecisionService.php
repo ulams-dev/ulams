@@ -4,7 +4,6 @@ namespace Ulams\LivingCourse\Services;
 
 use Illuminate\Support\Facades\DB;
 use Ulams\CourseBuilder\Models\Session;
-use Ulams\LivingCourse\Analysis\UpdateRequest;
 use Ulams\LivingCourse\Exceptions\ProposalException;
 use Ulams\LivingCourse\Models\Proposal;
 use Ulams\LivingCourse\Models\ProposalItem;
@@ -82,6 +81,15 @@ final class DecisionService
             $proposal->forceFill(['status' => 'rejected', 'decided_by' => $userId, 'decided_at' => now()])->save();
             ProposalItem::query()->where('proposal_id', $proposal->id)->whereIn('status', ['pending', 'accepted', 'conflict', 'stale'])->where('kind', '!=', 'citation_remap')
                 ->update(['status' => 'rejected', 'decided_by' => $userId, 'decided_at' => now()]);
+            if ($proposal->isInsights()) {
+                // no source revision to acknowledge and no source staleness to settle
+                $this->audit->record('proposal.rejected', [
+                    'session_id' => $session->id, 'subject_type' => 'proposal', 'subject_id' => $proposal->id, 'actor_id' => $userId,
+                    'data' => ['number' => $proposal->number, 'kind' => $proposal->kind],
+                ]);
+
+                return;
+            }
             $this->staleness->settleOpen($session, 'dismissed');
             $this->revisions->promote(Revision::query()->findOrFail($proposal->to_revision_id), $userId);
             $this->audit->record('proposal.rejected', [
@@ -105,7 +113,7 @@ final class DecisionService
             throw new ProposalException('You asked for a new version of this element three times already. Edit it by hand in the workspace.', 422);
         }
         $session = Session::query()->findOrFail($proposal->session_id);
-        $request = new UpdateRequest($proposal, $session, $this->context);
+        $request = $this->analysis->requestFor($proposal, $session);
         $item->forceFill(['regenerations' => $item->regenerations + 1])->save();
         // analyseItems writes the new answer into the item; manual items become analysed items
         $this->analysis->analyseItems($proposal, $request, $item->group_key, [$item], mb_substr(trim($comment), 0, 1000) ?: 'Please try again.');

@@ -20,7 +20,7 @@ use Ulams\LivingCourse\Models\RevisionFragment;
  * inside `untrusted` wrappers, XML-escaped; commit messages, file names, headers and webhook
  * payloads never reach the model.
  */
-final class UpdateRequest
+final class UpdateRequest implements AnalysisRequest
 {
     /** @var array<string,RevisionFragment> */
     private array $oldFragments = [];

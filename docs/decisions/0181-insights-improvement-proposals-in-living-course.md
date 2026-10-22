@@ -1,6 +1,6 @@
 # 0181. Improvement proposals from learner insights are Living Course proposals of their own kind
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-10-21
 - Plan: `docs/plans/phase-4-experiments-and-analytics.md` (section 5)
 
@@ -36,3 +36,16 @@ the session's Living Course budget.
   guarantee; existing code that assumes a revision must check `kind`.
 - Option 2 was rejected because it records a false source update; option 3 because it bypasses the progress
   rules and the audit trail.
+
+## Implementation notes (LX-2)
+
+- `ProposalService::createFromInsights()` is the entry point; it delegates to `InsightsProposalService`, which refuses evidence
+  below the minimum group (never below 10), elements that are not a block, quiz question or lesson of the current approved
+  version, elements that cite no source passage, and a fourth proposal of a session in one day; an open proposal for the same
+  element is returned instead of a second one.
+- The model request is built by `ImproveRequest` from the live fragments the element and its lesson cite, never from a source
+  revision. The `ai_calls` row of an `insights_improve` call has no user (the evidence is about learners); who asked is on
+  the proposal (`created_by`) and in the audit trail. An improvement never changes which answer of a quiz question is correct,
+  and an item that is not grounded after one regeneration stays `manual`.
+- Apply branches on `kind`: no revision is promoted, source staleness is untouched, and learners are told by the usual
+  progress rules without the model's reasons.

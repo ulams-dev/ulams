@@ -149,6 +149,9 @@ class ProposalsController extends Controller
         if (!$p->isOpen()) {
             return self::fail('This proposal is already settled.', 409);
         }
+        if ($p->isInsights()) {
+            return self::fail('An improvement from learner insights has no source revision to start again from. Reject it and propose a new one from the Insights page.', 409);
+        }
         $connection = Connection::query()->where('source_id', $p->source_id)->firstOrFail();
         $latest = Revision::query()->findOrFail($connection->latest_revision_id);
         $p->forceFill(['status' => 'superseded'])->save();
@@ -284,6 +287,13 @@ class ProposalsController extends Controller
         foreach ([$p->from_revision_id, $p->to_revision_id] as $revisionId) {
             foreach (RevisionFragment::query()->where('revision_id', $revisionId)->get(['fragment_id', 'section', 'heading_path', 'file_path']) as $f) {
                 $labels[$f->fragment_id] ??= $f->label();
+            }
+        }
+        if ($p->isInsights()) {
+            // no revisions: the passages an improvement cites are the live fragments of the session's sources
+            $ids = ProposalItem::query()->where('proposal_id', $p->id)->pluck('fragment_ids')->flatten()->unique()->all();
+            foreach (\Ulams\CourseBuilder\Models\Fragment::query()->whereIn('id', $ids)->get() as $f) {
+                $labels[$f->id] = $f->label();
             }
         }
         $base = $p->base_version_id ? Version::query()->find($p->base_version_id) : null;

@@ -117,17 +117,19 @@ final class Presenter
     /** @return array<string,mixed> */
     public static function proposalSummary(Proposal $p): array
     {
-        $from = Revision::query()->find($p->from_revision_id);
-        $to = Revision::query()->find($p->to_revision_id);
+        $from = $p->from_revision_id !== null ? Revision::query()->find($p->from_revision_id) : null;
+        $to = $p->to_revision_id !== null ? Revision::query()->find($p->to_revision_id) : null;
 
         return [
             'id' => $p->id,
             'number' => $p->number,
             'sessionId' => $p->session_id,
             'sourceId' => $p->source_id,
+            'kind' => $p->kind,
             'status' => $p->status,
             'trigger' => $p->trigger,
             'counts' => $p->counts,
+            'evidence' => $p->evidence,
             'fromRevision' => $from ? ['id' => $from->id, 'number' => $from->number] : null,
             'toRevision' => $to ? ['id' => $to->id, 'number' => $to->number, 'detectedAt' => $to->detected_at?->toIso8601String()] : null,
             'runId' => $p->run_id,

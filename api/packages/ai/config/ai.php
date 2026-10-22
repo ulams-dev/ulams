@@ -60,6 +60,8 @@ return [
         // Living Course: a suggested lesson for new source sections that no lesson covers
         // Compliance: which competencies of the framework a course teaches; the author confirms every tag
         'competency_tags' => ['profile' => env('AI_TASK_COMPETENCY_TAGS_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 4000],
+        // Living Course: a grounded rewrite of an element learners struggle with, from aggregated evidence only (ADR 0181)
+        'insights_improve' => ['profile' => env('AI_TASK_INSIGHTS_IMPROVE_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
         'new_lesson' => ['profile' => env('AI_TASK_NEW_LESSON_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
     ],
     'task_defaults' => ['profile' => 'default', 'effort' => 'medium', 'max_tokens' => 8000],

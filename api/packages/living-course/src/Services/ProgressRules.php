@@ -117,6 +117,10 @@ final class ProgressRules
         if (trim((string) $proposal->learner_note) !== '') {
             return mb_substr(trim((string) $proposal->learner_note), 0, 500);
         }
+        if ($proposal->isInsights()) {
+            // an improvement, not a source change: the reasons of the AI are for the author, learners see the default notice
+            return '';
+        }
         $reasons = ProposalItem::query()->where('proposal_id', $proposal->id)->whereIn('status', ['accepted', 'pending'])->where('kind', 'update')->whereIn('change_class', ['major', 'answer_changed'])->orderBy('id')->pluck('reason')->unique()->take(4)->all();
 
         return mb_substr(implode(' ', $reasons), 0, 500);
