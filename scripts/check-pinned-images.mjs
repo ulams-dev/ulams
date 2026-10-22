@@ -14,8 +14,11 @@ import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-// Add Valkey and SeaweedFS here when their milestones land (P8-3, P8-5).
-export const FAMILIES = [{ name: "postgres", image: "postgres", majorPrefix: "17" }];
+// Add Valkey here when its milestone lands (P8-5). SeaweedFS: ADR 0041, docs/plans/phase-8-self-hosting.md 4.3.
+export const FAMILIES = [
+  { name: "postgres", image: "postgres", majorPrefix: "17" },
+  { name: "seaweedfs", image: "chrislusf/seaweedfs", majorPrefix: "4." },
+];
 
 export function findReferences(text, image) {
   const re = new RegExp(`(?:image:\\s*|["'\`])${image}:([\\w.-]+)`, "g");

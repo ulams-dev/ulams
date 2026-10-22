@@ -113,9 +113,9 @@ if [ -n "$php_image" ]; then
   # shellcheck disable=SC2086
   docker run --rm --network "$network" $mounts -w /var/www/html \
     -e S3_COMPAT=1 -e "S3_COMPAT_ENDPOINT=http://$container:$port" -e "S3_COMPAT_KEY=$key" -e "S3_COMPAT_SECRET=$secret" -e "S3_COMPAT_FLAVOR=$flavor" \
-    "$php_image" ./vendor/bin/phpunit --no-configuration --bootstrap vendor/autoload.php --display-skipped --do-not-cache-result "$@" tests/S3Compat
+    "$php_image" php -d memory_limit=512M ./vendor/bin/phpunit --no-configuration --bootstrap vendor/autoload.php --display-skipped --do-not-cache-result "$@" tests/S3Compat
 else
   cd "$api"
   S3_COMPAT=1 S3_COMPAT_ENDPOINT="http://127.0.0.1:$host_port" S3_COMPAT_KEY="$key" S3_COMPAT_SECRET="$secret" S3_COMPAT_FLAVOR="$flavor" \
-    ./vendor/bin/phpunit --no-configuration --bootstrap vendor/autoload.php --display-skipped --do-not-cache-result "$@" tests/S3Compat
+    php -d memory_limit=512M ./vendor/bin/phpunit --no-configuration --bootstrap vendor/autoload.php --display-skipped --do-not-cache-result "$@" tests/S3Compat
 fi

@@ -313,9 +313,9 @@ class S3CompatibilityTest extends TestCase
 
     /**
      * Known issue, recorded in ADR 0041: SeaweedFS 4.37 answers 500 to PutObjectAcl on a key with a "/"
-     * (it looks the entry up without its directory). Access does not depend on it, the bucket policy
-     * makes objects public; `ProcessVideo` tolerates the failure. When this passes on a newer tag the
-     * workaround can go.
+     * (it looks the entry up without its directory). Access does not depend on it: the bucket policy makes
+     * objects public, and Laravel's `setVisibility()` (the one caller, `ProcessVideo`) returns false on a
+     * refusal instead of throwing. When this passes on a newer tag the note can go.
      */
     public function testPutObjectAclOnANestedKey(): void
     {
