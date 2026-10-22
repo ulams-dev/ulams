@@ -89,6 +89,14 @@ has its API at `coffee.localhost`, its learner site at `coffee.app.localhost` an
 - **Developer surface**: the `ulams` CLI, the MCP server, scoped tokens with per-token rate
   limits and signed outgoing webhooks with retries and replay. See
   [What's new](/getting-started/whats-new/).
+- **Sources, versions and variants**: Living Course follows Git repositories, Google Drive files and Notion pages as well as
+  uploads and web pages (the Drive and Notion connectors are off until an administrator turns them on); every apply to a course is recorded as
+  a numbered release that you can compare on the studio's compare screen, through the API, the CLI or an agent; the Course Builder drafts variants of a course by level and role.
+  See [Course versions and variants](/creators/course-versions-and-variants/).
+- **Course as code**: a course as a folder of Markdown and YAML that the CLI pulls, pushes, diffs, merges and publishes
+  ([Course as code](/developers/cli-course/)).
+- **Sign-in and storage**: OpenID Connect and SAML 2.0 per tenant ([single sign-on](/operators/single-sign-on/), [SAML 2.0](/operators/single-sign-on-saml/)),
+  and bundled SeaweedFS storage with one S3 key per tenant ([storage](/operators/storage/)).
 
 ## What is planned <Badge text="Coming" variant="caution" />
 

@@ -190,6 +190,105 @@
           }
         },
         {
+          "component": "CtaBand",
+          "props": {
+            "id": "white-label",
+            "variant": "feature",
+            "eyebrow": "white label",
+            "title": "Your brand, your subdomain: a white-label academy for every audience",
+            "text": "Each academy is a tenant with its own subdomain, theme and data. Run one per client, department or audience, such as partners and employees, all on one ULAMS install.",
+            "bullets": [
+              {
+                "title": "A subdomain per academy",
+                "text": "Each tenant gets its own host, database, storage bucket, keys and Redis prefix, so a token from one academy is rejected by every other."
+              },
+              {
+                "title": "Your look",
+                "text": "Theme presets, an accent colour checked by a WCAG 2.2 AA contrast report that will not save a failing colour, and your logo with alt text."
+              },
+              {
+                "title": "Your identity on the web",
+                "text": "A web manifest with the academy's name, theme colour and logo, and schema.org Course data on course pages."
+              },
+              {
+                "title": "Your messages and certificates",
+                "text": "Each academy edits its own e-mail, SMS and PDF templates, certificates included, in its own database."
+              },
+              {
+                "title": "Sign-in per academy",
+                "text": "Each academy can connect its own identity provider through SAML 2.0 or OpenID Connect, next to Google and Facebook sign-in."
+              },
+              {
+                "title": "Storage per academy",
+                "text": "With the bundled SeaweedFS store each academy gets its own S3 key, limited to its bucket."
+              }
+            ],
+            "chips": [
+              "Theme presets",
+              "AA contrast report",
+              "Logo and web manifest",
+              "Brand import as a diff",
+              "E-mail, SMS and PDF templates",
+              "SAML 2.0 and OIDC",
+              "S3 key per academy",
+              "Course JSON-LD"
+            ],
+            "note": "One academy per subdomain today. A subdomain or entry point for each course or role inside one academy, with its own branding, is coming.",
+            "cta": {
+              "label": "Open a live demo",
+              "href": "#demos"
+            },
+            "secondary": {
+              "label": "How tenants work",
+              "href": "https://ulams-dev.github.io/ulams/developers/tenancy/"
+            }
+          }
+        },
+        {
+          "component": "FeatureList",
+          "props": {
+            "variant": "tiles",
+            "eyebrow": "policy to proof",
+            "title": "From one policy to certified, tracked training",
+            "intro": "The path of a policy that has to be taught, passed and renewed, with what ships today and what is still coming.",
+            "items": [
+              {
+                "icon": "book",
+                "title": "A short interview becomes the course brief",
+                "text": "The author answers questions about audience, duration, seniority and experience level, reviews the brief, and only then is the course drafted."
+              },
+              {
+                "icon": "layers",
+                "title": "Your style guide shapes the course design",
+                "text": "A brand import already turns a Figma file, a Stitch DESIGN.md or a brand guide into a theme you approve as a diff. Applying a style guide inside the course interview is coming.",
+                "status": "coming"
+              },
+              {
+                "icon": "users",
+                "title": "Separate courses and academies per department",
+                "text": "Separate academies per department work today. Creating them from one policy and keeping their courses linked is coming.",
+                "status": "coming"
+              },
+              {
+                "icon": "medal",
+                "title": "Lessons, a final test and a PDF certificate",
+                "text": "Learners work through lessons, take a final test and download a PDF certificate with a public verification page."
+              },
+              {
+                "icon": "chart",
+                "title": "Who completed required training",
+                "text": "Required training with due dates, manager escalation, completion reports and an audit export. A policy-owner dashboard screen is coming."
+              },
+              {
+                "icon": "sync",
+                "title": "Renewal when the policy changes",
+                "text": "Certificates can expire and be recertified. Replacing them automatically after an approved policy change, with a new exam or course, is coming.",
+                "status": "coming"
+              }
+            ]
+          }
+        },
+        {
           "component": "HeritageStory",
           "props": {
             "id": "product",
@@ -261,6 +360,10 @@
               {
                 "label": "LTI 1.3",
                 "note": "Platform + Tool"
+              },
+              {
+                "label": "SAML 2.0 / OIDC",
+                "note": "sign-in per tenant"
               },
               {
                 "label": "OpenAPI",
@@ -386,11 +489,11 @@
               },
               {
                 "q": "Does AI publish a course automatically?",
-                "a": "No. AI prepares a draft with source citations. The author reviews the outline and content, then approves publication. Production starts with AI disabled until you configure a provider."
+                "a": "No. AI prepares a draft with source citations, and every AI change reaches you as a reviewable diff. The author reviews the outline and content, then approves publication. Production starts with AI disabled until you configure a provider."
               },
               {
                 "q": "Can each academy use its own brand and domain?",
-                "a": "Yes. Each tenant has its own learning site, theme and isolated database. The initial academy is created by the stack launcher; additional tenants use the platform tenant workflow."
+                "a": "Yes. Each academy (tenant) has its own subdomain, learning site, theme, logo and isolated database, so you can run one per client, department or audience. The initial academy is created by the stack launcher; additional tenants use the platform tenant workflow. A subdomain for each course or role inside one academy is not built."
               },
               {
                 "q": "How do I stop it without losing courses?",

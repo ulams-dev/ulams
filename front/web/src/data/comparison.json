@@ -187,9 +187,9 @@
       "cells": {
         "self_hosting": {
           "value": "Yes",
-          "note": "Docker Compose; the API, admin, frontend and H5P service run on your servers",
+          "note": "Docker Compose; API, admin, frontend, H5P and SeaweedFS storage (one S3 key per tenant) on your servers",
           "source": "https://github.com/ulams-dev/ulams/blob/main/README.md",
-          "checkedAt": "2026-10-09"
+          "checkedAt": "2026-10-22"
         },
         "licence": {
           "value": "MIT",
@@ -223,9 +223,9 @@
         },
         "source_sync": {
           "value": "Yes",
-          "note": "Living Course: sources stay connected, updates arrive as reviewable cited diffs",
+          "note": "Living Course: upload, URL, Git, Drive and Notion sources (Drive, Notion off by default); cited diffs to review",
           "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/living-course/src/UlamsLivingCourseServiceProvider.php",
-          "checkedAt": "2026-10-21"
+          "checkedAt": "2026-10-22"
         },
         "adaptive_paths": {
           "value": "Partial",
@@ -324,9 +324,9 @@
         },
         "cli": {
           "value": "Yes",
-          "note": "Agent-first CLI (ulams): courses, builder and Living Course as commands, declarative apply, JSON output",
+          "note": "Agent-first CLI (ulams): courses, builder, Living Course and course folders as commands, declarative apply, JSON output",
           "source": "https://github.com/ulams-dev/ulams/blob/main/front/cli/src/commands/index.ts",
-          "checkedAt": "2026-10-09"
+          "checkedAt": "2026-10-22"
         },
         "mcp": {
           "value": "Yes",

@@ -193,7 +193,7 @@
                   },
                   {
                     "title": "Skalowanie obrazów na żądanie",
-                    "text": "Poproś o dowolną szerokość i wysokość albo nazwany rozmiar, np. miniaturę, i otrzymaj zbuforowaną, zoptymalizowaną kopię: jedno wywołanie z przekierowaniem lub zbiorcze żądanie JSON dla wielu obrazów. Limity rozmiaru i liczby żądań chronią serwer.",
+                    "text": "Poproś o dowolną szerokość i wysokość albo nazwany rozmiar, np. miniaturę, i otrzymaj zbuforowaną, zoptymalizowaną kopię: jedno wywołanie z przekierowaniem lub zbiorcze żądanie JSON dla wielu obrazów. Limity rozmiaru i liczby żądań chronią serwer. Wdrożenie może zamiast tego użyć Cloudflare Image Transformations.",
                     "packages": [
                       "images"
                     ]
@@ -404,10 +404,26 @@
                     ]
                   },
                   {
-                    "title": "Living Course",
-                    "text": "Obserwuje źródła kursu, znajduje lekcje i pytania quizowe, które cytują zmienione fragmenty, i proponuje aktualizacje z cytowaniami do przejrzenia jako jeden diff. Postępy uczących się zachowują jawne reguły.",
+                    "title": "Źródła: Git, Google Drive i Notion",
+                    "text": "Podłącz repozytorium Git, plik lub folder na Dysku Google albo stronę Notion obok plików i stron internetowych. Living Course sprawdza je pod kątem zmian i proponuje aktualizacje z cytowaniami. Konektory Dysku i Notion są domyślnie wyłączone, a Notion można połączyć też wklejonym tokenem integracji.",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-builder/",
                     "packages": [
                       "living-course"
+                    ]
+                  },
+                  {
+                    "title": "Living Course",
+                    "text": "Obserwuje źródła kursu, znajduje lekcje i pytania quizowe, które cytują zmienione fragmenty, i proponuje aktualizacje z cytowaniami do przejrzenia jako jeden diff. Postępy uczących się zachowują jawne reguły. Learner Insights proponuje też poprawkę dla sekcji, z którą wielu uczących się ma trudność.",
+                    "packages": [
+                      "living-course"
+                    ]
+                  },
+                  {
+                    "title": "Wydania kursu i porównywanie",
+                    "text": "Każde zastosowanie zmiany w kursie zapisuje się jako numerowane wydanie: co je wywołało, kto je zatwierdził i z jakich wersji źródeł powstało. Studio pokazuje listę wydań. Dowolne dwie wersje lub wydania porównasz przez API, wiersz poleceń albo agenta AI: przeniesione lekcje, zmienione cytowania i odpowiedzi w quizach.",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
+                    "packages": [
+                      "course-builder"
                     ]
                   },
                   {
@@ -748,7 +764,7 @@
                   },
                   {
                     "title": "Dostęp do kursów",
-                    "text": "Przyznawaj dostęp do kursu poszczególnym użytkownikom i grupom albo przypisuj osoby, które nie mają jeszcze konta.",
+                    "text": "Przyznawaj dostęp do kursu poszczególnym użytkownikom i grupom albo przypisuj osoby, które nie mają jeszcze konta. Każde przyznanie dostępu jest zapisywane jako uprawnienie ze swoim źródłem, na przykład zakupem, administratorem lub uruchomieniem LTI.",
                     "packages": [
                       "course-access",
                       "assign-without-account"
@@ -792,6 +808,14 @@
                       "auth",
                       "identity",
                       "permissions"
+                    ]
+                  },
+                  {
+                    "title": "Logowanie przez OpenID Connect i SAML 2.0",
+                    "text": "Każda akademia może połączyć własnego dostawcę tożsamości przez OpenID Connect lub SAML 2.0, obok logowania przez Google i Facebooka. Dostawców konfiguruje się przez API lub wiersz poleceń. Brak jeszcze ekranu administratora, logowanie SAML nie może zacząć się u dostawcy, a grupy i role nie są mapowane.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/single-sign-on/",
+                    "packages": [
+                      "identity"
                     ]
                   },
                   {
@@ -846,7 +870,7 @@
                   },
                   {
                     "title": "Motywy white-label",
-                    "text": "Każda akademia ma własny motyw i kolor akcentu, z dostępnym kontrastem sprawdzanym po stronie serwera.",
+                    "text": "Każda akademia ma własny motyw, kolor akcentu i logo. Ekran motywu w panelu administratora pokazuje raport kontrastu względem WCAG 2.2 AA i nie zapisze koloru akcentu, który go nie spełnia.",
                     "packages": [
                       "tenancy",
                       "settings"
@@ -887,6 +911,14 @@
                     "title": "Opcje samodzielnego hostingu",
                     "text": "Docker Compose, współdzielone konto MyDevil lub VPS za Cloudflare, każde z opisanym przewodnikiem.",
                     "href": "https://ulams-dev.github.io/ulams/operators/self-hosting/"
+                  },
+                  {
+                    "title": "Osobne klucze magazynu dla każdej akademii",
+                    "text": "Dołączony magazyn SeaweedFS daje każdej akademii własny klucz S3 ograniczony do jej bucketu, więc klucz innej akademii nie może wyświetlać, zapisywać ani usuwać jej plików. Zewnętrzna usługa S3 działa z jednym wspólnym kluczem, ale projekt jej nie testuje. Skrypt przenosi istniejącą instalację z MinIO.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/storage/",
+                    "packages": [
+                      "tenancy"
+                    ]
                   },
                   {
                     "title": "Wysoka dostępność",
@@ -1112,11 +1144,11 @@
               },
               {
                 "q": "Czy AI samo publikuje kurs?",
-                "a": "Nie. AI przygotowuje szkic z cytowanymi źródłami. Autor sprawdza konspekt i treść, a potem zatwierdza publikację. Produkcja startuje z wyłączonym AI do czasu skonfigurowania dostawcy."
+                "a": "Nie. AI przygotowuje szkic z cytowanymi źródłami, a każda zmiana AI trafia do Ciebie jako różnica do przejrzenia. Autor sprawdza konspekt i treść, a potem zatwierdza publikację. Produkcja startuje z wyłączonym AI do czasu skonfigurowania dostawcy."
               },
               {
                 "q": "Czy każda akademia może mieć własną markę i domenę?",
-                "a": "Tak. Każdy tenant ma własną witrynę, motyw i izolowaną bazę danych. CLI tworzy pierwszą akademię; kolejne powstają w procesie zarządzania tenantami."
+                "a": "Tak. Każda akademia (tenant) ma własną subdomenę, stronę nauki, motyw, logo i izolowaną bazę danych, więc możesz uruchomić po jednej dla klienta, działu lub grupy odbiorców. Pierwszą akademię tworzy launcher stosu; kolejne tenanty powstają w procesie tenantów platformy. Subdomena dla każdego kursu lub roli w jednej akademii nie jest gotowa."
               },
               {
                 "q": "Jak zatrzymać stos bez utraty kursów?",
