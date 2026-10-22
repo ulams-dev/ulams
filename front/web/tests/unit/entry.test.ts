@@ -148,7 +148,7 @@ describe("EntryResolver", () => {
 
     expect((await resolver.byKey("coffee", "sales"))?.host).toBe("sales.coffee.example.test");
     expect(calls).toEqual(["/api/platform/entry-points/resolve?tenant=coffee&key=sales"]);
-    for (const [tenant, key] of [["Coffee", "sales"], ["coffee", "Sales"], ["coffee", "a/b"], ["co ffee", "x"], ["coffee", ""]]) {
+    for (const [tenant, key] of [["Coffee", "sales"], ["coffee", "Sales"], ["coffee", "a/b"], ["co ffee", "x"], ["coffee", ""]] as Array<[string, string]>) {
       expect(await resolver.byKey(tenant, key)).toBeNull();
     }
     expect(calls).toHaveLength(1);

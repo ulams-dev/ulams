@@ -111,13 +111,14 @@ export async function exchangeCode(
   code: string,
   verifier: string,
   fetcher: typeof fetch = tenantFetch(tenant),
-  path = "/api/auth/social/exchange"
+  path = "/api/auth/social/exchange",
+  extra: Record<string, string> = {}
 ): Promise<Exchange> {
   try {
     const response = await fetcher(new URL(path, tenant.apiUrl), {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ code, verifier }),
+      body: JSON.stringify({ code, verifier, ...extra }),
       signal: AbortSignal.timeout(10_000),
     });
     if (!response.ok) return { ok: false };

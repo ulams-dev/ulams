@@ -17,6 +17,7 @@ import { authorCookieName, authorToken } from "./lib/studio.ts";
 import { PREVIEW_HEADERS, isPreviewPath } from "./lib/preview.ts";
 import { CLI_HEADERS, isCliPath } from "./lib/cli-authorize.ts";
 import { SOCIAL_HEADERS, isSocialPath } from "./lib/social-login.ts";
+import { HANDOFF_HEADERS, isHandoffPath } from "./lib/handoff.ts";
 
 let warmed = false;
 function warmOnce(): void {
@@ -154,6 +155,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (isSocialPath(url.pathname)) {
     // the callback URL carries a one-time code: never cached, never passed on in a Referer
     for (const [name, value] of Object.entries(SOCIAL_HEADERS)) response.headers.set(name, value);
+  }
+  if (isHandoffPath(url.pathname)) {
+    // the hand-off pages carry a one-time code: never cached, never passed on in a Referer
+    for (const [name, value] of Object.entries(HANDOFF_HEADERS)) response.headers.set(name, value);
   }
   if (!response.headers.has("Cache-Control") && (response.headers.get("content-type") ?? "").includes("text/html")) {
     response.headers.set("Cache-Control", "private, no-cache");

@@ -26,8 +26,11 @@ const asHost = (page: Page, host: string, path: string) =>
   page.request.get(`http://127.0.0.1:${web}${path}`, { headers: { Host: `${host}:${web}` }, maxRedirects: 0 });
 const theme = (page: Page) => page.locator("html").getAttribute("data-theme");
 
+/** The two Playwright projects run the same specs side by side: what a spec changes in the mock it changes under its own name. */
+const mine = () => test.info().project.name;
+
 test.afterEach(async () => {
-  await control("outage=0&enable=sales&enable=kubernetes&enable=managers");
+  await control(`recover=fresh-${mine()}.coffee.example.test&recover=sales-${mine()}.coffee.example.test&enable=managers-${mine()}`);
 });
 
 async function scan(page: Page) {
@@ -75,8 +78,8 @@ test("a host that is no entry point gets no entry point", async ({ page }) => {
 });
 
 test("when the platform cannot answer the host says so; it never shows another academy", async ({ page }) => {
-  await control("outage=1");
-  const response = await asHost(page, "fresh.coffee.example.test", "/");
+  await control(`outage=fresh-${mine()}.coffee.example.test`);
+  const response = await asHost(page, `fresh-${mine()}.coffee.example.test`, "/");
   expect(response.status()).toBe(503);
   expect(response.headers()["retry-after"]).toBe("5");
   expect(await response.text()).not.toContain("<html");
@@ -84,10 +87,10 @@ test("when the platform cannot answer the host says so; it never shows another a
   expect(response.headers()["set-cookie"]).toBeUndefined();
 
   // a host looked up before keeps serving from the last answer
-  await control("outage=0");
-  expect((await page.goto(`${sales}/`))?.status()).toBe(200);
-  await control("outage=1");
-  expect((await page.goto(`${sales}/courses/1`))?.status()).toBe(200);
+  const known = `http://sales-${mine()}.coffee.example.test:${web}`;
+  expect((await page.goto(`${known}/`))?.status()).toBe(200);
+  await control(`outage=sales-${mine()}.coffee.example.test`);
+  expect((await page.goto(`${known}/courses/1`))?.status()).toBe(200);
 });
 
 test("the academy's own pages are not looked up on the platform", async ({ page }) => {
@@ -153,16 +156,16 @@ test("/go/<key> refuses what is not an entry point of this academy and what is n
 });
 
 test("a /go cookie of an entry point that was disabled is dropped, not obeyed", async ({ page }) => {
-  // "managers" has not been looked up by any test yet, so the answer is the platform's current one
-  await control("disable=managers");
-  await page.context().addCookies([{ name: ENTRY, value: "managers", url: main }]);
+  // this key has not been looked up by any test yet, so the answer is the platform's current one
+  await control(`disable=managers-${mine()}`);
+  await page.context().addCookies([{ name: ENTRY, value: `managers-${mine()}`, url: main }]);
 
   const response = await page.goto(`${main}/`);
   expect(response?.status()).toBe(200);
   expect(await theme(page)).toBe("coffee");
   expect(response?.headers()["x-robots-tag"]).toBeUndefined();
   expect(await cookie(page, ENTRY)).toBeUndefined();
-  await control("enable=managers");
+  await control(`enable=managers-${mine()}`);
 });
 
 for (const [name, url] of [["a department host", `${sales}/`], ["its course page", `${sales}/courses/1`], ["a course host", `${course}/`]] as const) {

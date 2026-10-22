@@ -132,6 +132,7 @@ const courses = (progress ?? []).map((entry) => {
       </div>
       <form method="post" action="/logout" class="u-account__logout">
         <button class="u-btn u-btn--ghost u-btn--sm" type="submit">{a.logOut}</button>
+        <button class="u-btn u-btn--ghost u-btn--sm" type="submit" formaction="/logout?everywhere=1">{a.logOutEverywhere}</button>
       </form>
     </section>
 
