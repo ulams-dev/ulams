@@ -417,6 +417,21 @@ class ProfileApiTest extends TestCase
         Event::assertNotDispatched(AccountDeleted::class);
     }
 
+    public function testConfirmDeletionProfileWithATokenThatIsNotEncryptedAnswers401(): void
+    {
+        Event::fake([AccountDeleted::class]);
+
+        $user = $this->makeStudent();
+
+        $this
+            ->getJson('/api/profile/delete/' . $user->getKey() . '/not-a-token')
+            ->assertUnauthorized()
+            ->assertJsonFragment(['message' => 'Deletion token is invalid']);
+
+        $this->assertNotSoftDeleted($user);
+        Event::assertNotDispatched(AccountDeleted::class);
+    }
+
     public function testConfirmDeletionProfileInvalidToken(): void
     {
         Event::fake([AccountDeleted::class]);

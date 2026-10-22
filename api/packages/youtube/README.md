@@ -27,6 +27,7 @@ Go to Login Data and create Api key and OAuth 2.0 client IDs and enter data for 
 After entered data, you must generate refresh token. 
 If you generated refresh token with api from endpoints: 
   - `api/admin/g-token/generate POST {"email": "email"} AUTHORIZE` and opened generated url and follow the instructions
+  - The caller needs the `settings_config_update` permission. The returned url carries a signed `state` (bound to the tenant host, single use, valid for 10 minutes); `GET api/refresh-token` refuses any request without a valid state with 400 and stores nothing
   - After action upper yt generated refresh token for variable `services.youtube.refresh_token`
 Or you can generated refresh token manual and enter for variable `services.youtube.refresh_token`
   

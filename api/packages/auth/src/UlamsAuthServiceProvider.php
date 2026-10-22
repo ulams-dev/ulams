@@ -96,6 +96,9 @@ class UlamsAuthServiceProvider extends ServiceProvider
 
         // scoped personal access tokens (ADR 0074): Passport only keeps scopes it knows
         Passport::tokensCan(array_fill_keys(TokenScopes::passportScopes(), 'API token scope'));
+        // The API issues personal access tokens only and has no consent screen. Without a view Passport
+        // cannot resolve its authorization controller and `oauth/authorize` answers 500.
+        Passport::authorizationView(fn () => abort(404));
         $kernel = $this->app->make(Kernel::class);
         if (method_exists($kernel, 'prependMiddleware')) {
             $kernel->prependMiddleware(StripTokenPrefix::class);

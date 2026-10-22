@@ -190,6 +190,9 @@
     <testsuite name="webinar">
       <directory suffix="Test.php">./packages/webinar</directory>
     </testsuite>
+    <testsuite name="youtube">
+      <directory suffix="Test.php">./packages/youtube/tests</directory>
+    </testsuite>
     <testsuite name="cmi5">
       <directory suffix="Test.php">./packages/cmi5</directory>
     </testsuite>
