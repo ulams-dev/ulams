@@ -263,10 +263,25 @@ corepack yarn workspace front test                                   # includes 
 ./vendor/bin/phpunit --testsuite scorm --filter ScormPlaybackFixturesTest   # parser and upload
 ```
 
-The browser specs that play these packages through the legacy front's `<ScormPreview>` and the API
-content player, and the golden traces they compare with, follow in the next milestones of the
-plan. Edit a fixture, then rebuild the zips with `build.mjs`; the package README lists the query
-parameters of each SCO.
+The React player (`front/src/lib/scorm-player`, shared by the legacy front and the admin preview) is
+played in a real browser by `front/tests/scorm-playback/react-player.spec.ts`, once with the legacy
+front's service worker and once with the admin's. No API stack and no network are needed: a small
+server builds the harness page, serves each app's own service worker, the fixture zips and mock LMS
+endpoints. Each scenario's runtime calls, final CMI, commit object (status, score, total time),
+scorm-again settings and host requests are compared with a golden trace in
+`api/packages/scorm/tests/fixtures/playback/golden/react-player`.
+
+```bash
+corepack yarn playwright install chromium     # once
+corepack yarn workspace front test:scorm      # both apps against the golden traces
+UPDATE_GOLDEN=1 corepack yarn workspace front test:scorm   # rewrite them; explain the change in the PR
+```
+
+CI runs this as the **SCORM playback (Playwright)** job whenever the player, the service workers,
+the fixtures or the harness change. A changed golden trace is a behaviour change for learners and
+needs a reason in the pull request. The API content player and the `scorm-again` upgrade follow in
+the next milestones of the plan. After editing a fixture, rebuild the zips with `build.mjs`; the
+fixtures README lists the query parameters of each SCO.
 
 ## Performance
 

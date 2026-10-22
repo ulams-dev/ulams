@@ -1,7 +1,7 @@
 # SCORM playback regression tests (unblocks scorm-again 3)
 
 Status: Proposed (2026-10-22). The owner approved the recommended defaults of section 9 on 2026-10-23
-(own MIT fixtures; scorm-again 3 keeps the 2.6 behaviour). Progress: SC-1 in review. ADR 0197 (Proposed) records the decision.
+(own MIT fixtures; scorm-again 3 keeps the 2.6 behaviour). Progress: SC-1 (#448) and SC-2 in review. ADR 0197 (Proposed) records the decision.
 
 ## 1. Goal
 
@@ -52,6 +52,11 @@ examples) and two generic `scorm.zip` files.
 - **React player (per pull request, CI)**: a Playwright spec in `front` (legacy app) and one in `admin`, each
   mounting `<ScormPreview>` on a test page with the existing mocked API pattern (`admin/src/e2e/mocked`); the mock
   records every `track` request body.
+  *Implemented (SC-2):* one spec, `front/tests/scorm-playback/react-player.spec.ts`, runs as two Playwright projects
+  (legacy front and admin), each with its own service worker, against one set of golden traces. A small server
+  (`server.mjs`) builds the harness page with vite and mocks the three LMS endpoints, so the admin build is not
+  needed and the `@playwright/test` dev dependency is added to `front` (same range as `admin`). CI job
+  "SCORM playback (Playwright)", part of `ci-ok`.
 - **Content player (nightly)**: a job in `nightly-conformance.yml` that seeds a tenant, uploads the fixtures through
   `POST /api/admin/scorm/upload`, launches them in the reference front and reads the stored `ScoTracking` through an
   admin endpoint or a test-only artisan command.
