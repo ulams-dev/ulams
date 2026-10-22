@@ -5,10 +5,12 @@ namespace Ulams\Images\Http\Controllers;
 use Ulams\Images\Http\Controllers\Swagger\ImagesControllerSwagger;
 use Ulams\Images\Http\Requests\ImagesRenderRequest;
 use Ulams\Images\Services\Contracts\ImagesServiceContract;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Validator;
 
 /**
  * Class CourseController
@@ -26,6 +28,13 @@ class ImagesController extends Controller implements ImagesControllerSwagger
 
     public function image(Request $request): RedirectResponse
     {
+        $validator = Validator::make($request->all(), ['path' => ['required', 'string']]);
+        if ($validator->fails()) {
+            throw new HttpResponseException(
+                response()->json(['message' => $validator->errors()->first(), 'errors' => $validator->errors()], 422)
+            );
+        }
+
         $path = $request->get('path');
         $params = $request->except(['path']);
         $output = $this->imagesService->render($path, $params);
