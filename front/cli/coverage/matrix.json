@@ -1,5 +1,5 @@
 {
- "summary": "618/707 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "627/716 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1691,6 +1691,60 @@
    "key": "POST /api/admin/pdfs/{id}/revoke",
    "summary": "Revoke a certificate",
    "command": "pdfs.revoke",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies",
+   "summary": "List policies",
+   "command": "policies.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies",
+   "summary": "Create a policy from an uploaded document",
+   "command": "policies.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}",
+   "summary": "Show a policy",
+   "command": "policies.get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/dashboard",
+   "summary": "Policy owner dashboard",
+   "command": "policies.dashboard",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/dashboard/export",
+   "summary": "Export the people of the policy dashboard as CSV",
+   "command": "policies.dashboard-export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/variants",
+   "summary": "List the department variants of a policy",
+   "command": "policies.variants",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/variants/generate",
+   "summary": "Generate the department courses of a policy",
+   "command": "policies.variants-generate",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/versions",
+   "summary": "List the versions of a policy",
+   "command": "policies.versions",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/versions/{number}/approve",
+   "summary": "Approve a policy version",
+   "command": "policies.versions-approve",
    "status": "covered"
   },
   {

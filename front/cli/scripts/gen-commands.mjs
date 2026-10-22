@@ -23,6 +23,9 @@ const AREAS = [
   [/^\/api\/admin\/(reports|stats|questionnaire|question|quiz-|tasks)/, "reports"],
   [/^\/api\/admin\/lti/, "lti"],
   [/^\/api\/admin\/course-(builder|as-code)/, "builder"],
+  // policy lifecycle: the owner dashboard is a report, the rest prepares and approves training (token-scopes.php)
+  [/^\/api\/admin\/policies\/[^/]+\/dashboard/, "reports"],
+  [/^\/api\/admin\/policies/, "builder"],
   [/^\/api\/(auth\/tokens|admin\/(tokens|agent-audit))/, "tokens"],
   [/^\/api\/admin\/webhooks/, "webhooks"],
 ];

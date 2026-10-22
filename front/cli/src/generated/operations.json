@@ -1693,6 +1693,60 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/policies",
+  "summary": "List policies",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies",
+  "summary": "Create a policy from an uploaded document",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}",
+  "summary": "Show a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/dashboard",
+  "summary": "Policy owner dashboard",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/dashboard/export",
+  "summary": "Export the people of the policy dashboard as CSV",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/variants",
+  "summary": "List the department variants of a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/variants/generate",
+  "summary": "Generate the department courses of a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/versions",
+  "summary": "List the versions of a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/versions/{number}/approve",
+  "summary": "Approve a policy version",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/productables/",
   "summary": "",
   "tag": "Admin Product"

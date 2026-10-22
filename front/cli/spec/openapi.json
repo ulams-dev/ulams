@@ -20775,6 +20775,529 @@
     ]
    }
   },
+  "/api/admin/policies": {
+   "get": {
+    "description": "All policies for `policy_manage`, the caller's own for `policy_owner`.",
+    "operationId": "admin.policies.get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "policies with current and pending version and department count"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List policies",
+    "tags": [
+     "Policies"
+    ]
+   },
+   "post": {
+    "description": "Stores the policy file as version 1 (a draft) and one variant per department with its audience group. Nothing is generated until `variants/generate` is called. The policy file is treated as untrusted input.",
+    "operationId": "admin.policies.post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "properties": {
+         "brief": {
+          "description": "totalMinutes, lessonMinutes, language, tone",
+          "type": "object"
+         },
+         "departments": {
+          "description": "1 to 12 departments",
+          "items": {
+           "properties": {
+            "group_id": {
+             "description": "existing audience group; a new one is created when omitted",
+             "nullable": true,
+             "type": "integer"
+            },
+            "label": {
+             "type": "string"
+            },
+            "priorExperience": {
+             "enum": [
+              "none",
+              "some",
+              "expert"
+             ],
+             "type": "string"
+            },
+            "seniority": {
+             "enum": [
+              "junior",
+              "mid",
+              "senior",
+              "mixed"
+             ],
+             "type": "string"
+            },
+            "totalMinutes": {
+             "nullable": true,
+             "type": "integer"
+            }
+           },
+           "required": [
+            "label"
+           ],
+           "type": "object"
+          },
+          "type": "array"
+         },
+         "file": {
+          "description": "Markdown, PDF or DOCX",
+          "format": "binary",
+          "type": "string"
+         },
+         "major_due_days": {
+          "default": 30,
+          "type": "integer"
+         },
+         "minor_due_days": {
+          "default": 14,
+          "type": "integer"
+         },
+         "owner_user_id": {
+          "description": "only with policy_manage; default the caller",
+          "type": "integer"
+         },
+         "title": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "title",
+         "file",
+         "departments"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the policy with its versions and variants"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Validation error or rejected file"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create a policy from an uploaded document",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}": {
+   "get": {
+    "operationId": "admin.policies.by-id.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the policy with versions, variants and the generation cost estimate"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Show a policy",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/dashboard": {
+   "get": {
+    "description": "Per department: assigned, completed, pending and overdue; per person: the course version taken, the policy version their certificate certifies and the certificate. Counts assignments of the department courses whatever created them.",
+    "operationId": "admin.policies.by-id.dashboard.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "department (variant id)",
+      "in": "query",
+      "name": "variant",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "status",
+      "schema": {
+       "enum": [
+        "assigned",
+        "overdue",
+        "completed",
+        "cancelled"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "per_page",
+      "schema": {
+       "default": 25,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "departments and one page of people"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Policy owner dashboard",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/dashboard/export": {
+   "get": {
+    "description": "Every matching person as CSV (UTF-8, spreadsheet formulas neutralised). The export is recorded with who exported it, like the compliance exports.",
+    "operationId": "admin.policies.by-id.dashboard.export.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "variant",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "status",
+      "schema": {
+       "enum": [
+        "assigned",
+        "overdue",
+        "completed",
+        "cancelled"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "text/csv"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Export the people of the policy dashboard as CSV",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/variants": {
+   "get": {
+    "description": "Each variant carries its stage, read from the Course Builder session: waiting, ingesting, interview, outlining, outline_review, generating, apply_review, applying, applied or failed.",
+    "operationId": "admin.policies.by-id.variants.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "variants with department, group, session, course and stage"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List the department variants of a policy",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/variants/generate": {
+   "post": {
+    "description": "Starts one Course Builder session per department from the policy file, one after the other, up to the outline review. The owner then reviews, approves and applies each course in the Studio as for any generated course; every lesson and question cites the policy text. Uses AI; the call is refused when AI is switched off.",
+    "operationId": "admin.policies.by-id.variants.generate.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "variant_ids": {
+          "description": "only these departments (default: all that wait)",
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": false
+    },
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the variants requested now"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     },
+     "422": {
+      "description": "Nothing to generate"
+     },
+     "503": {
+      "description": "AI is disabled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Generate the department courses of a policy",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/versions": {
+   "get": {
+    "operationId": "admin.policies.by-id.versions.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "versions, oldest first"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List the versions of a policy",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/versions/{number}/approve": {
+   "post": {
+    "description": "Approves the first version once every department's course is applied and published in the Studio: the courses become mandatory for the department's group, the group is enrolled through a rule on a one-course path, and the version becomes the one learners are trained on. A decision of the owner (or of an admin acting for an absent owner, which the audit records); nothing approves itself.",
+    "operationId": "admin.policies.by-id.versions.by-number.approve.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "number",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the approved version"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy or version"
+     },
+     "409": {
+      "description": "The version is not waiting for approval"
+     },
+     "422": {
+      "description": "A department course is not published yet"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Approve a policy version",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
   "/api/admin/productables/": {
    "get": {
     "description": "Get list of all productables",
@@ -43901,6 +44424,10 @@
   {
    "description": "Admin Permissions",
    "name": "Admin Permissions"
+  },
+  {
+   "description": "Policies",
+   "name": "Policies"
   },
   {
    "description": "Question",
