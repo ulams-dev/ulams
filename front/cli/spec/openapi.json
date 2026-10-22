@@ -2312,7 +2312,7 @@
       "type": "string"
      },
      "key": {
-      "description": "Lower case letters, digits and hyphens, up to 40",
+      "description": "Lower case letters, digits and hyphens, up to 40; the key main is reserved (it leaves an entry point)",
       "example": "sales",
       "type": "string"
      },
@@ -2389,6 +2389,88 @@
      "kind",
      "label"
     ],
+    "type": "object"
+   },
+   "EntryPointResolution": {
+    "properties": {
+     "host": {
+      "type": "string"
+     },
+     "key": {
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "academy",
+       "department",
+       "course",
+       "role"
+      ],
+      "type": "string"
+     },
+     "label": {
+      "type": "string"
+     },
+     "locale": {
+      "nullable": true,
+      "type": "string"
+     },
+     "seo": {
+      "properties": {
+       "canonical": {
+        "enum": [
+         "tenant",
+         "self"
+        ],
+        "type": "string"
+       },
+       "description": {
+        "type": "string"
+       },
+       "index": {
+        "type": "boolean"
+       },
+       "title": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "target": {
+      "description": "Ids of a group, a course or a role key; never of people",
+      "properties": {
+       "course_id": {
+        "type": "integer"
+       },
+       "group_id": {
+        "type": "integer"
+       },
+       "role": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "tenant": {
+      "description": "Slug of the academy that serves the host",
+      "example": "coffee",
+      "type": "string"
+     },
+     "theme": {
+      "properties": {
+       "accent": {
+        "type": "string"
+       },
+       "logo_alt": {
+        "type": "string"
+       },
+       "preset": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     }
+    },
     "type": "object"
    },
    "EntryPointUpdate": {
@@ -40213,6 +40295,72 @@
     ]
    }
   },
+  "/api/platform/entry-points/resolve": {
+   "get": {
+    "operationId": "platform.entry-points.resolve.get",
+    "parameters": [
+     {
+      "description": "A front host, without port. Give host, or tenant and key",
+      "in": "query",
+      "name": "host",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "Academy slug, with key (the /go/{key} fallback on the main host)",
+      "in": "query",
+      "name": "tenant",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "key",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/EntryPointResolution"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "An active entry point"
+     },
+     "404": {
+      "description": "Unknown, pending, disabled or malformed; also on a tenant host"
+     },
+     "429": {
+      "description": "Too many lookups from this address"
+     }
+    },
+    "summary": "The academy and entry point that serve a host (public, platform hosts only)",
+    "tags": [
+     "Platform"
+    ]
+   }
+  },
   "/api/platform/operations": {
    "get": {
     "operationId": "platform.operations.get",
@@ -44969,12 +45117,12 @@
    "name": "Admin Template PDFs"
   },
   {
-   "description": "Admin Entry points",
-   "name": "Admin Entry points"
-  },
-  {
    "description": "Platform",
    "name": "Platform"
+  },
+  {
+   "description": "Admin Entry points",
+   "name": "Admin Entry points"
   },
   {
    "description": "Admin Gift Quiz Attempt",

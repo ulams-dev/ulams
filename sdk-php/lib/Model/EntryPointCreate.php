@@ -418,7 +418,7 @@ class EntryPointCreate implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets key
      *
-     * @param string $key Lower case letters, digits and hyphens, up to 40
+     * @param string $key Lower case letters, digits and hyphens, up to 40; the key main is reserved (it leaves an entry point)
      *
      * @return self
      */

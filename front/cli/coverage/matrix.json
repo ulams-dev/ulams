@@ -1,5 +1,5 @@
 {
- "summary": "628/717 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "628/718 covered, 90 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -3816,6 +3816,12 @@
    "summary": "Generate a direct login link",
    "command": "",
    "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/platform/entry-points/resolve",
+   "summary": "The academy and entry point that serve a host (public, platform hosts only)",
+   "command": "",
+   "status": "excluded: internal"
   },
   {
    "key": "GET /api/platform/operations",

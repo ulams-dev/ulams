@@ -47,6 +47,8 @@ content-runtime:
 internal:
   - "GET /api/health-check"
   - "GET /api/lti/jwks"
+  # the lookup the learner front makes for an unknown host (ADR 0195): the entry points are managed with `ulams entry-points`
+  - "GET /api/platform/entry-points/resolve"
 deprecated:
   - "GET /api/tags/uniqueTags"
 not-for-cli:

@@ -3817,6 +3817,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/platform/entry-points/resolve",
+  "summary": "The academy and entry point that serve a host (public, platform hosts only)",
+  "tag": "Platform"
+ },
+ {
+  "method": "GET",
   "path": "/api/platform/operations",
   "summary": "The latest tenant operations",
   "tag": "Platform"
