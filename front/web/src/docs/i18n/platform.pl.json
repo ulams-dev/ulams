@@ -231,6 +231,39 @@
           }
         },
         {
+          "component": "CtaBand",
+          "props": {
+            "id": "cost-cta",
+            "eyebrow": "szybsze kursy",
+            "title": "Kursy powstają znacznie szybciej",
+            "text": "Jeden zmierzony przebieg, nie średnia ani obietnica: z publicznego repozytorium dokumentacji (13 fragmentów) ULAMS wygenerował kurs z 6 lekcjami i 18 pytaniami quizowymi w około 7,5 minuty generowania, przy koszcie modelu 0,28 USD.",
+            "bullets": [
+              {
+                "title": "6 lekcji, 18 pytań quizowych",
+                "text": "Każdy z 35 bloków treści cytuje źródło. To szkic: autor przegląda go i zatwierdza przed publikacją."
+              },
+              {
+                "title": "Około 7,5 minuty generowania",
+                "text": "Konspekt 24 s, lekcje, quizy i kontrole 6 min 57 s, zastosowanie 23 s."
+              },
+              {
+                "title": "Koszt modelu: 0,28 USD",
+                "text": "27 wywołań modelu."
+              },
+              {
+                "title": "Ręcznie tworzony e-learning: 49 do 716 godzin pracy na godzinę gotowego kursu",
+                "text": "Wskaźniki Chapman Alliance w opisie eLearning Industry. To inne miary, więc nie podajemy przelicznika „razy szybciej”.",
+                "href": "https://elearningindustry.com/development-costs-for-your-online-learning-start-estimating"
+              }
+            ],
+            "note": "Jeden przebieg na jednym źródle, tylko czas generowania. Przegląd i zatwierdzenie przez autora dochodzą do tego.",
+            "cta": {
+              "label": "Zobacz, jak kursy powstają szybciej",
+              "href": "/pl/content-cost/"
+            }
+          }
+        },
+        {
           "component": "Showcase",
           "props": {
             "eyebrow": "demo na żywo",
@@ -240,6 +273,45 @@
               "$data": "/demos"
             },
             "note": "Dema resetują się co godzinę. Bez rejestracji: logujesz się automatycznie."
+          }
+        },
+        {
+          "component": "CtaBand",
+          "props": {
+            "id": "reporting-cta",
+            "eyebrow": "pełna analityka",
+            "title": "Pełna analityka w standardzie",
+            "text": "Sprawdzaj, jak działa każdy kurs, i dokumentuj zgodność z wymogami, a dane zostają w Twoim wdrożeniu.",
+            "bullets": [
+              {
+                "title": "Analityka każdego kursu",
+                "text": "Postępy, ukończenia, wyniki quizów, osoby zagrożone odpadnięciem i fragmenty, które mylą. Bardzo małe grupy są ukryte."
+              },
+              {
+                "title": "Raporty zgodności i eksport audytu",
+                "text": "Status obowiązkowych szkoleń i odporny na manipulacje ślad audytowy, z eksportem."
+              },
+              {
+                "title": "Eksport CSV i JSON lines",
+                "text": "Dowolny raport do własnych narzędzi."
+              },
+              {
+                "title": "Raporty e-mailem według harmonogramu",
+                "text": "Wysyłane codziennie, co tydzień lub co miesiąc."
+              },
+              {
+                "title": "Learner insights",
+                "text": "Gdzie uczący się mają trudności, przypisane do konkretnego elementu lekcji, z propozycją poprawki AI, którą oceniasz jako diff."
+              },
+              {
+                "title": "Własny magazyn xAPI (LRS)",
+                "text": "Wbudowany magazyn rekordów w Twoim wdrożeniu, więc zapisy zostają u Ciebie."
+              }
+            ],
+            "cta": {
+              "label": "Zobacz pełną analitykę",
+              "href": "/pl/reporting/"
+            }
           }
         },
         {
@@ -287,19 +359,6 @@
             },
             "tabs": {
               "$data": "/workflows/tabs"
-            }
-          }
-        },
-        {
-          "component": "CtaBand",
-          "props": {
-            "id": "cost-cta",
-            "eyebrow": "koszt treści",
-            "title": "Treści to najdroższa część e-learningu",
-            "text": "Wg benchmarków to od 49 do 716 godzin pracy na godzinę gotowego kursu. Zobacz, jak ULAMS obniża ten koszt i co jeszcze jest w drodze.",
-            "cta": {
-              "label": "Zobacz, jak obniżamy koszt treści",
-              "href": "/pl/content-cost/"
             }
           }
         },
@@ -353,19 +412,6 @@
                   "href": "https://github.com/EscolaLMS/headless-format"
                 }
               ]
-            }
-          }
-        },
-        {
-          "component": "CtaBand",
-          "props": {
-            "id": "reporting-cta",
-            "eyebrow": "raportowanie",
-            "title": "Przez raportowanie firmy zmieniają LMS",
-            "text": "Badania branżowe wskazują słabe raportowanie jako jeden z głównych powodów zmiany LMS. Zobacz analitykę, eksporty i raporty zgodności, które ULAMS już ma.",
-            "cta": {
-              "label": "Zobacz raportowanie",
-              "href": "/pl/reporting/"
             }
           }
         },

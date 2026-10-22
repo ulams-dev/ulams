@@ -231,6 +231,39 @@
           }
         },
         {
+          "component": "CtaBand",
+          "props": {
+            "id": "cost-cta",
+            "eyebrow": "faster courses",
+            "title": "Courses build much faster",
+            "text": "One measured run, not an average or a promise: from a public docs repository (13 passages) ULAMS generated a 6-lesson course with 18 quiz questions in about 7.5 minutes of generation, at a model cost of USD 0.28.",
+            "bullets": [
+              {
+                "title": "6 lessons, 18 quiz questions",
+                "text": "Every one of 35 content blocks cites the source. It is a draft: the author reviews and approves it before publishing."
+              },
+              {
+                "title": "About 7.5 minutes of generation",
+                "text": "Outline 24 s, lessons, quizzes and checks 6 min 57 s, apply 23 s."
+              },
+              {
+                "title": "USD 0.28 model cost",
+                "text": "27 model calls."
+              },
+              {
+                "title": "Hand-built e-learning: 49 to 716 hours of work per hour of finished course",
+                "text": "Chapman Alliance ratios, as reported by eLearning Industry. Different measures, so we give no \"times faster\" figure.",
+                "href": "https://elearningindustry.com/development-costs-for-your-online-learning-start-estimating"
+              }
+            ],
+            "note": "One run on one source, generation time only. Author review and approval come on top.",
+            "cta": {
+              "label": "See how courses are built faster",
+              "href": "/content-cost/"
+            }
+          }
+        },
+        {
           "component": "Showcase",
           "props": {
             "eyebrow": "live demos",
@@ -240,6 +273,45 @@
               "$data": "/demos"
             },
             "note": "Demos reset every hour. No sign-up: you are logged in automatically."
+          }
+        },
+        {
+          "component": "CtaBand",
+          "props": {
+            "id": "reporting-cta",
+            "eyebrow": "full analytics",
+            "title": "Full analytics, built in",
+            "text": "See how every course performs and document compliance, with the data kept in your own deployment.",
+            "bullets": [
+              {
+                "title": "Per-course analytics",
+                "text": "Progress, completion, quiz performance, at-risk learners and the sections that confuse people. Very small groups are hidden."
+              },
+              {
+                "title": "Compliance reports and audit export",
+                "text": "Mandatory-training status and a tamper-evident audit trail, exportable."
+              },
+              {
+                "title": "CSV and JSON-lines export",
+                "text": "Any report for your own tools."
+              },
+              {
+                "title": "Scheduled e-mail reports",
+                "text": "Sent daily, weekly or monthly."
+              },
+              {
+                "title": "Learner insights",
+                "text": "Where learners struggle, tied to the exact lesson element, with an AI-proposed improvement you review as a diff."
+              },
+              {
+                "title": "xAPI LRS owned by you",
+                "text": "A built-in learning record store in your own deployment, so the statements stay with you."
+              }
+            ],
+            "cta": {
+              "label": "See the full analytics",
+              "href": "/reporting/"
+            }
           }
         },
         {
@@ -287,19 +359,6 @@
             },
             "tabs": {
               "$data": "/workflows/tabs"
-            }
-          }
-        },
-        {
-          "component": "CtaBand",
-          "props": {
-            "id": "cost-cta",
-            "eyebrow": "content cost",
-            "title": "Content is the expensive part of e-learning",
-            "text": "Benchmarks put it at 49 to 716 working hours for every hour of finished course. See how ULAMS attacks that cost, and what is still coming.",
-            "cta": {
-              "label": "See how we cut content cost",
-              "href": "/content-cost/"
             }
           }
         },
@@ -353,19 +412,6 @@
                   "href": "https://github.com/EscolaLMS/headless-format"
                 }
               ]
-            }
-          }
-        },
-        {
-          "component": "CtaBand",
-          "props": {
-            "id": "reporting-cta",
-            "eyebrow": "reporting",
-            "title": "Reporting is why teams leave their LMS",
-            "text": "Industry research keeps ranking weak reporting among the top reasons to switch. See the analytics, exports and compliance reports ULAMS already ships.",
-            "cta": {
-              "label": "See the reporting",
-              "href": "/reporting/"
             }
           }
         },

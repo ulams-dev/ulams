@@ -231,6 +231,39 @@
           }
         },
         {
+          "component": "CtaBand",
+          "props": {
+            "id": "cost-cta",
+            "eyebrow": "更快成课",
+            "title": "课程生成快得多",
+            "text": "这是一次实测,不是平均值,也不是承诺:从一个公开文档仓库(13 个片段)出发,ULAMS 用约 7.5 分钟的生成时间产出了含 6 个课时和 18 道测验题的课程,模型成本为 0.28 美元。",
+            "bullets": [
+              {
+                "title": "6 个课时,18 道测验题",
+                "text": "35 个内容块中的每一个都标注了资料出处。这是草稿:发布前由作者审阅并批准。"
+              },
+              {
+                "title": "约 7.5 分钟生成时间",
+                "text": "大纲 24 秒,课时、测验与检查 6 分 57 秒,应用 23 秒。"
+              },
+              {
+                "title": "模型成本 0.28 美元",
+                "text": "27 次模型调用。"
+              },
+              {
+                "title": "人工制作的在线课程:每 1 小时成品需 49 至 716 小时工作量",
+                "text": "Chapman Alliance 的比例,由 eLearning Industry 转述。两者度量不同,因此我们不给出“快多少倍”的数字。",
+                "href": "https://elearningindustry.com/development-costs-for-your-online-learning-start-estimating"
+              }
+            ],
+            "note": "一次运行,一份资料,仅含生成时间。作者的审阅与批准另需时间。",
+            "cta": {
+              "label": "了解课程如何更快生成",
+              "href": "/zh/content-cost/"
+            }
+          }
+        },
+        {
           "component": "Showcase",
           "props": {
             "eyebrow": "在线演示",
@@ -240,6 +273,45 @@
               "$data": "/demos"
             },
             "note": "演示每小时重置一次，无需注册，系统会自动为你登录。"
+          }
+        },
+        {
+          "component": "CtaBand",
+          "props": {
+            "id": "reporting-cta",
+            "eyebrow": "完整分析",
+            "title": "内置完整分析",
+            "text": "查看每门课程的表现并记录合规情况,数据保留在你自己的部署中。",
+            "bullets": [
+              {
+                "title": "按课程的分析",
+                "text": "进度、完成率、测验表现、有掉队风险的学员以及令人困惑的章节。人数很少的分组不显示。"
+              },
+              {
+                "title": "合规报表与审计导出",
+                "text": "必修培训状态,以及防篡改的审计记录,可导出。"
+              },
+              {
+                "title": "CSV 与 JSON-lines 导出",
+                "text": "任意报表,供你自己的工具使用。"
+              },
+              {
+                "title": "定时邮件报表",
+                "text": "按日、周或月发送。"
+              },
+              {
+                "title": "学习洞察",
+                "text": "学员在哪里遇到困难,对应到具体的课时元素,并给出 AI 提出的改进建议,由你以差异形式审阅。"
+              },
+              {
+                "title": "由你自己持有的 xAPI LRS",
+                "text": "内置学习记录库运行在你自己的部署中,语句数据始终归你所有。"
+              }
+            ],
+            "cta": {
+              "label": "查看完整分析",
+              "href": "/zh/reporting/"
+            }
           }
         },
         {
@@ -287,19 +359,6 @@
             },
             "tabs": {
               "$data": "/workflows/tabs"
-            }
-          }
-        },
-        {
-          "component": "CtaBand",
-          "props": {
-            "id": "cost-cta",
-            "eyebrow": "内容成本",
-            "title": "内容制作是在线学习最贵的部分",
-            "text": "基准数据显示,每小时成品课程需要 49 至 716 小时工作量。看看 ULAMS 如何降低这项成本,以及接下来的计划。",
-            "cta": {
-              "label": "了解我们如何降低内容成本",
-              "href": "/zh/content-cost/"
             }
           }
         },
@@ -353,19 +412,6 @@
                   "href": "https://github.com/EscolaLMS/headless-format"
                 }
               ]
-            }
-          }
-        },
-        {
-          "component": "CtaBand",
-          "props": {
-            "id": "reporting-cta",
-            "eyebrow": "报表",
-            "title": "报表不足是团队更换 LMS 的首要原因",
-            "text": "行业调研显示,报表不足是更换 LMS 的主要原因之一。看看 ULAMS 已有的分析、导出与合规报表。",
-            "cta": {
-              "label": "查看报表功能",
-              "href": "/zh/reporting/"
             }
           }
         },
