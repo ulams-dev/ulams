@@ -24,6 +24,10 @@ interface Props {
 }
 const { brand, tagline, mark = "wordmark", links = [], cta, signIn, homeHref = "/", languages = [] } = Astro.props;
 const t = uiStrings(pageLocale(Astro));
+// The tenant's own logo (the settings `theme.logo`, set by the learner site's middleware), shown instead of the
+// mark and the name; its alt text is the one the admin chose, else the company name. The platform's lockup stays.
+const tenantLogo = (Astro.locals as { tenantLogo?: { src?: unknown; alt?: unknown } | null } | undefined)?.tenantLogo;
+const logo = mark !== "logo" && typeof tenantLogo?.src === "string" && /^https?:\/\//.test(tenantLogo.src) ? { src: tenantLogo.src, alt: typeof tenantLogo.alt === "string" && tenantLogo.alt.trim() ? tenantLogo.alt.trim() : brand } : null;
 const normalizedPath = (path: string) => {
   const clean = path.replace(/\/+$/, "") || "/";
   return clean === "/platform" ? "/" : clean;
@@ -41,15 +45,16 @@ const isCurrent = (href: string): boolean => {
 
 <header class={`u-header u-header--${mark}`}>
   <div class="u-container u-header__bar">
-    <a class="u-brand" href={homeHref} aria-label={fill(t.home, { brand })}>
-      {mark === "terminal" && <span class="u-brand__mark" aria-hidden="true"><Icon name="terminal" /></span>}
-      {mark === "rocket" && <span class="u-brand__mark" aria-hidden="true"><Icon name="rocket" /></span>}
-      {mark === "orbit" && <span class="u-brand__mark" aria-hidden="true"><Icon name="planet" /></span>}
-      {mark === "compass" && <span class="u-brand__mark" aria-hidden="true"><Icon name="compass" /></span>}
-      {mark === "sigma" && <span class="u-brand__mark" aria-hidden="true"><Icon name="sigma" /></span>}
+    <a class={logo ? "u-brand u-brand--logo" : "u-brand"} href={homeHref} aria-label={logo ? undefined : fill(t.home, { brand })}>
+      {logo && <img class="u-brand__img" src={logo.src} alt={logo.alt} height="40" decoding="async" />}
+      {!logo && mark === "terminal" && <span class="u-brand__mark" aria-hidden="true"><Icon name="terminal" /></span>}
+      {!logo && mark === "rocket" && <span class="u-brand__mark" aria-hidden="true"><Icon name="rocket" /></span>}
+      {!logo && mark === "orbit" && <span class="u-brand__mark" aria-hidden="true"><Icon name="planet" /></span>}
+      {!logo && mark === "compass" && <span class="u-brand__mark" aria-hidden="true"><Icon name="compass" /></span>}
+      {!logo && mark === "sigma" && <span class="u-brand__mark" aria-hidden="true"><Icon name="sigma" /></span>}
       {mark === "logo" && <Logo class="u-brand__logo" variant="horizontal" />}
       {
-        mark !== "logo" && (
+        mark !== "logo" && !logo && (
           <span class="u-brand__text">
             <span class="u-brand__name">{brand}</span>
             {tagline && <span class="u-brand__tagline">{tagline}</span>}
@@ -159,6 +164,13 @@ const isCurrent = (href: string): boolean => {
     text-decoration: none;
     margin-right: auto;
     min-width: 0;
+  }
+  .u-brand__img {
+    display: block;
+    height: 40px;
+    width: auto;
+    max-width: min(240px, 60vw);
+    object-fit: contain;
   }
   .u-brand__mark {
     display: grid;

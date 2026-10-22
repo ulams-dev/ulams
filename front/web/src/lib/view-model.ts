@@ -125,6 +125,9 @@ export interface CourseModel {
   tutors: PersonModel[];
   facts: Array<{ label: string; value: string; note?: string }>;
   price?: string;
+  /** Price in minor units and its currency, only when the course has a price above zero (for structured data). */
+  priceMinor?: number;
+  currency?: string;
   testimonials: Array<{ quote: string; author: string }>;
   faq: Array<{ q: string; a: string }>;
   /** String lists from the landing fields (e.g. for_parents) as `{title}` items. */
@@ -360,6 +363,7 @@ export function courseModel(course: Course, currency = "EUR", tutors: UserSummar
     tutors: people,
     facts,
     price,
+    ...(course.product && course.product.price > 0 ? { priceMinor: course.product.price, currency } : {}),
     testimonials: pairs<{ quote: string; author: string }>(landing.testimonials, ["quote", "author"]),
     faq: pairs<{ q: string; a: string }>(landing.faq, ["q", "a"]),
     lists: stringLists(landing),

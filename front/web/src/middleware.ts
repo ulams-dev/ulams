@@ -2,7 +2,8 @@ import { defineMiddleware } from "astro:middleware";
 import { umamiEnabled } from "@ulams/ui/analytics";
 import { config } from "./lib/config.ts";
 import { isPlatformHost, tenantForHost } from "./lib/tenant.ts";
-import { getFrameOrigins, warm } from "./lib/data.ts";
+import { getFrameOrigins, getSettings, warm } from "./lib/data.ts";
+import { tenantLogo } from "./lib/tenant-logo.ts";
 import { contentOriginFor, cspHeaders, wantsCsp } from "./lib/csp.ts";
 import { ensureSession, readSession } from "./lib/session.ts";
 import { H5P_ROUTE } from "./lib/h5p-proxy.ts";
@@ -77,6 +78,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // CSP: the tool origins are cached (5 min), asked for while the page renders
   const csp = wantsCsp(url.pathname, null) && !url.pathname.startsWith("/_") ? (locals.tenant ? getFrameOrigins(locals.tenant) : Promise.resolve([] as string[])) : null;
+
+  // The tenant's logo for the site header: cached public settings, never a reason to hold the page up
+  if (csp && locals.tenant) {
+    const tenant = locals.tenant;
+    locals.tenantLogo = await Promise.race([
+      getSettings(tenant).then((settings) => tenantLogo(settings)).catch(() => null),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 900)),
+    ]);
+  }
 
   const response = await next();
   if (csp && wantsCsp(url.pathname, response.headers.get("content-type"))) {

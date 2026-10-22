@@ -31,11 +31,21 @@ const settingsByTenant = {
   noczh: { ...nightskySettings, global: { ...nightskySettings.global, language: "zh" } },
   polski: { ...coffee.settings, global: { ...coffee.settings.global, language: "pl", accessibilityEmail: "dostepnosc@coffee.test", accessibilityUpdated: "2026-10-01", accessibilityNotes: "Nagrania z kursu o kawie nie mają jeszcze napisów.\n\nPracujemy nad tym." } },
 };
+// P5R-2: two academies with a logo, served by this mock (a PNG with alt text on the light theme, an SVG without alt on the dark one)
+const MOCK_ORIGIN = `http://127.0.0.1:${process.env.MOCK_API_PORT ?? 4390}`;
+const LOGO_PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAHgAAAAoCAIAAAC6iKlyAAAAZklEQVR4nO3QAQkAIADAMCOYxP4RjGULhTt4gLOx59KFxvODTwINuhVo0K1Ag24FGnQr0KBbgQbdCjToVqBBtwINuhVo0K1Ag24FGnQr0KBbgQbdCjToVqBBtwINuhVo0K1Ag251ABJ5MZ6sHCDnAAAAAElFTkSuQmCC", "base64");
+const LOGO_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" width="120" height="40"><rect width="120" height="40" rx="6" fill="#ffd23f"/><text x="10" y="26" font-family="sans-serif" font-size="16" fill="#13153a">Night Sky</text></svg>';
+settingsByTenant.brandl = { ...coffee.settings, theme: { ...coffee.settings.theme, logo: `${MOCK_ORIGIN}/storage/theme/logo.png`, logoAlt: "The Coffee Atlas, home" } };
+settingsByTenant.brandd = { ...nightskySettings, theme: { ...nightskySettings.theme, logo: `${MOCK_ORIGIN}/storage/theme/logo.svg` } };
 const program = fixture("coffee-program");
 // On these tenants the course has no language of its own, so the learner pages follow the tenant default
 // language (ADR 0106); on the others the course says "en" and the pages stay English.
 const LANGUAGELESS = new Set(["polski", "zhongwen", "nocpl", "noczh"]);
-const courseFor = (tenant, course) => (LANGUAGELESS.has(tenant) ? { ...course, language: null } : course);
+// "brandl" sells the course (price in minor units, as the real API returns it); every other mock academy gives it away
+const courseFor = (tenant, course) => {
+  const base = LANGUAGELESS.has(tenant) ? { ...course, language: null } : course;
+  return tenant === "brandl" ? { ...base, product: coffee.course.product } : base;
+};
 
 const QUIZ_TOPIC_ID = 900;
 const quizTopic = {
@@ -502,6 +512,13 @@ const server = createServer((req, res) => {
   const url = new URL(req.url ?? "/", "http://mock");
   const path = url.pathname;
   res.setHeader("Content-Type", "application/json");
+  if (req.method === "GET" && (path === "/storage/theme/logo.png" || path === "/storage/theme/logo.svg")) {
+    res.setHeader("Content-Type", path.endsWith(".png") ? "image/png" : "image/svg+xml");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+    res.end(path.endsWith(".png") ? LOGO_PNG : LOGO_SVG);
+    return;
+  }
   // test control: forget what a tenant changed (the suite calls this before a journey that changes state)
   if (req.method === "POST" && path === "/__mock/reset") {
     req.resume();

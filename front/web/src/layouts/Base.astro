@@ -38,7 +38,7 @@ interface Props {
   alternates?: Array<{ hreflang: string; href: string }>;
   /** Open Graph locale (en_US, pl_PL, zh_CN). */
   ogLocale?: string;
-  /** Page-specific, verified Schema.org objects rendered as JSON-LD. */
+  /** Page-specific, verified Schema.org objects rendered as JSON-LD (not on noindex pages: the author preview). */
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
   /** Default target of links (`_top` inside the studio's preview frame). */
   baseTarget?: string;
@@ -88,10 +88,10 @@ const serializedJsonLd = jsonLd ? JSON.stringify(Array.isArray(jsonLd) ? jsonLd 
           <meta name="twitter:title" content={title} />
           {description && <meta name="twitter:description" content={description} />}
           <meta name="twitter:image" content={shareImage} />
-          {serializedJsonLd && <script type="application/ld+json" set:html={serializedJsonLd}></script>}
         </>
       )
     }
+    {serializedJsonLd && !noindex && <script type="application/ld+json" set:html={serializedJsonLd}></script>}
     {
       theme === "platform" && <Font cssVariable="--font-playfair" preload={[{ weight: "500" }]} />
     }
