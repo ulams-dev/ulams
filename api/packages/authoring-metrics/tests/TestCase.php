@@ -3,6 +3,7 @@
 namespace Ulams\AuthoringMetrics\Tests;
 
 use Carbon\CarbonImmutable;
+use Ulams\AuthoringMetrics\Database\Seeders\AuthoringMetricsPermissionSeeder;
 use Ulams\AuthoringMetrics\UlamsAuthoringMetricsServiceProvider;
 use Ulams\CourseBuilder\Models\Event;
 use Ulams\CourseBuilder\Models\Run;
@@ -15,6 +16,7 @@ class TestCase extends BuilderTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->seed(AuthoringMetricsPermissionSeeder::class);
         // other suites commit runs; the backfill counts every run of the database, so start from none (rolled back with the test)
         Run::query()->delete();
         Event::query()->delete();

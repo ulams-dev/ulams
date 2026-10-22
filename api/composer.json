@@ -136,6 +136,7 @@
       "Ulams\\PolicyLifecycle\\": "packages/policy-lifecycle/src",
       "Ulams\\PolicyLifecycle\\Database\\Seeders\\": "packages/policy-lifecycle/database/seeders",
       "Ulams\\AuthoringMetrics\\": "packages/authoring-metrics/src",
+      "Ulams\\AuthoringMetrics\\Database\\Seeders\\": "packages/authoring-metrics/database/seeders",
       "Ulams\\LearnerInsights\\": "packages/learner-insights/src",
       "Ulams\\LearnerInsights\\Database\\Seeders\\": "packages/learner-insights/database/seeders",
       "Ulams\\Tutor\\": "packages/tutor/src",

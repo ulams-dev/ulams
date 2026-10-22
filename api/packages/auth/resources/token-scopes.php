@@ -83,6 +83,7 @@ return [
     ['api/admin/course-builder*', 'builder'],
     ['api/admin/course-as-code*', 'builder'],
     ['api/admin/course-versions*', 'builder'],
+    ['api/admin/authoring-metrics*', 'builder'],
     ['api/admin/living-course*', 'living-course'],
     // policy lifecycle (ADR 0140): the owner dashboard and its export are reports, everything else prepares and approves training
     ['api/admin/policies/*/dashboard*', 'reports'],

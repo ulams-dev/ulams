@@ -107,6 +107,10 @@ class UlamsLivingCourseServiceProvider extends ServiceProvider
             $this->commands([BackfillCommand::class, PollCommand::class, EvalCommand::class]);
         }
 
+        // the model calls of proposals are the maintenance cost of a course (authoring metric, ADR 0194); optional package
+        if (interface_exists(\Ulams\AuthoringMetrics\Contracts\SubjectCourseResolver::class)) {
+            $this->app->make(\Ulams\AuthoringMetrics\Services\SubjectResolvers::class)->register(new \Ulams\LivingCourse\Support\ProposalSubjectResolver());
+        }
         Event::listen(ProposalApplied::class, fn (ProposalApplied $e) => ProgressRulesJob::dispatchFor($e->proposal->id));
         Event::listen(QuizAttemptFinishedEvent::class, fn (QuizAttemptFinishedEvent $e) => $this->app->make(ProgressRules::class)->attemptFinished($e->getAttempt()));
 
