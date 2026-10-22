@@ -17,7 +17,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/', [PaymentsAdminController::class, 'search']);
     });
 
-    Route::prefix('payments')->group(function () {
+    Route::middleware('auth:api')->prefix('payments')->group(function () {
         Route::get('/{payment}', [PaymentsController::class, 'show']);
         Route::get('/', [PaymentsController::class, 'search']);
     });

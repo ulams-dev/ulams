@@ -29,7 +29,7 @@ class PdfTest extends TestCase
             ]
         );
 
-        $response =  $this->actingAs($this->user)
+        $response =  $this->actingAs($this->user, 'api')
             ->getJson('/api/pdfs/' . $pdf->id);
 
         $response->assertOk();
@@ -46,7 +46,7 @@ class PdfTest extends TestCase
             'message'
         ]);
 
-        $response =  $this->actingAs($this->user2)
+        $response =  $this->actingAs($this->user2, 'api')
             ->getJson('/api/pdfs/' . $pdf->id);
 
         $response->assertStatus(403);
@@ -64,7 +64,7 @@ class PdfTest extends TestCase
             ]
         );
 
-        $this->actingAs($this->user)
+        $this->actingAs($this->user, 'api')
             ->getJson('/api/pdfs/' . $pdf->id)
             ->assertOk()
             ->assertJsonStructure([
@@ -93,7 +93,7 @@ class PdfTest extends TestCase
             ]
         );
 
-        $response =  $this->actingAs($this->admin)
+        $response =  $this->actingAs($this->admin, 'api')
             ->getJson('/api/pdfs/' . $pdf->id);
 
         $response->assertOk();
@@ -107,7 +107,7 @@ class PdfTest extends TestCase
             ]
         );
 
-        $response =  $this->actingAs($this->user)
+        $response =  $this->actingAs($this->user, 'api')
             ->getJson('/api/pdfs');
 
         $response->assertOk();
@@ -129,7 +129,7 @@ class PdfTest extends TestCase
         $own = FabricPDF::factory()->createOne(['user_id' => $this->user->id, 'certificate_id' => 'd3f1c2d4-1111-4222-8333-444455556666']);
         $other = FabricPDF::factory()->createOne(['user_id' => $this->user2->id, 'certificate_id' => 'e3f1c2d4-1111-4222-8333-444455556666']);
 
-        $response = $this->actingAs($this->user)->getJson('/api/pdfs')->assertOk();
+        $response = $this->actingAs($this->user, 'api')->getJson('/api/pdfs')->assertOk();
 
         $rows = collect($response->json('data'));
         $this->assertSame('d3f1c2d4-1111-4222-8333-444455556666', $rows->firstWhere('id', $own->id)['certificate_id']);
@@ -152,7 +152,7 @@ class PdfTest extends TestCase
             ]
         );
 
-        $response =  $this->actingAs($this->user)
+        $response =  $this->actingAs($this->user, 'api')
             ->getJson('/api/pdfs?assignable_type=Ulams\Test\Models\Test&assignable_id=1');
 
         $response->assertOk();
@@ -226,13 +226,13 @@ class PdfTest extends TestCase
     {
         $response =  $this->getJson('/api/pdfs');
 
-        $response->assertStatus(403);
+        $response->assertUnauthorized();
     }
 
 
     public function testCannotFindMissing(): void
     {
-        $response = $this->actingAs($this->user2)
+        $response = $this->actingAs($this->user2, 'api')
             ->getJson('/api/pdfs/' . 9999999);
         $response->assertNotFound();
     }

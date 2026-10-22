@@ -9,9 +9,11 @@ Route::group(['prefix' => 'api/pdfs'], function () {
     Route::get('/fonts', [FabricPdfController::class, 'fonts']);
     Route::get('/fonts/{file}', [FabricPdfController::class, 'font']);
 
-    Route::get('/', [FabricPdfController::class, 'index']);
-    Route::get('/generate/{id}', [FabricPdfController::class, 'generate']);
-    Route::get('/{id}', [FabricPdfController::class, 'show']);
+    Route::middleware('auth:api')->group(function () {
+        Route::get('/', [FabricPdfController::class, 'index']);
+        Route::get('/generate/{id}', [FabricPdfController::class, 'generate']);
+        Route::get('/{id}', [FabricPdfController::class, 'show']);
+    });
 });
 
 // public: what the certificate QR code leads to

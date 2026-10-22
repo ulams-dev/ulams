@@ -18,7 +18,7 @@ class PaymentDetailsTest extends \Ulams\Payments\Tests\TestCase
 			'user_id' => $billable->getKey(),
 		]);
 
-		$response = $this->actingAs($billable)->json('GET', 'api/payments/' . $payment->getKey());
+		$response = $this->actingAs($billable, 'api')->json('GET', 'api/payments/' . $payment->getKey());
 		$response->assertOk();
 		$response->assertJsonFragment([
 			'id' => $payment->getKey()
@@ -33,7 +33,7 @@ class PaymentDetailsTest extends \Ulams\Payments\Tests\TestCase
 			'user_id' => $billable->getKey(),
 		]);
 
-		$response = $this->actingAs($billable2)->json('GET', 'api/payments/' . $payment->getKey());
+		$response = $this->actingAs($billable2, 'api')->json('GET', 'api/payments/' . $payment->getKey());
 		$response->assertForbidden();
 	}
 

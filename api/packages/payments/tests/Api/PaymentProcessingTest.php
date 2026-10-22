@@ -94,7 +94,7 @@ class PaymentProcessingTest extends TestCase
         $this->assertFalse($processor->isRedirect());
         $this->assertFalse($processor->isNew());
 
-        $response = $this->actingAs($billable)->json('GET', 'api/payments/');
+        $response = $this->actingAs($billable, 'api')->json('GET', 'api/payments/');
         $response->assertOk();
         $response->assertJsonFragment([
             'id' => $payment->getKey()
@@ -131,7 +131,7 @@ class PaymentProcessingTest extends TestCase
         $this->assertFalse($processor->isRedirect());
         $this->assertFalse($processor->isNew());
 
-        $response = $this->actingAs($billable)->json('GET', 'api/payments/');
+        $response = $this->actingAs($billable, 'api')->json('GET', 'api/payments/');
         $response->assertOk();
         $response->assertJsonFragment([
             'id' => $payment->getKey()
@@ -161,7 +161,7 @@ class PaymentProcessingTest extends TestCase
 
         $this->assertEquals(PaymentStatus::PAID(), $payment->status);
 
-        $response = $this->actingAs($billable)->json('GET', 'api/payments/');
+        $response = $this->actingAs($billable, 'api')->json('GET', 'api/payments/');
         $response->assertOk();
         $response->assertJsonFragment([
             'id' => $payment->getKey()
@@ -189,7 +189,7 @@ class PaymentProcessingTest extends TestCase
 
         $this->assertEquals(PaymentStatus::REQUIRES_REDIRECT(), $payment->status);
 
-        $response = $this->actingAs($billable)->json('GET', 'api/payments/');
+        $response = $this->actingAs($billable, 'api')->json('GET', 'api/payments/');
         $response->assertOk();
         $response->assertJsonFragment([
             'id' => $payment->getKey()
