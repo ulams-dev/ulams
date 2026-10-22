@@ -1,7 +1,7 @@
 # 0192. Course releases are recorded applies, and course variants are branches of one builder session applied as separate LMS courses
 
-- Status: Proposed
-- Date: 2026-10-22
+- Status: Accepted (2026-10-22)
+- Date: 2026-10-22 (accepted by the owner 2026-10-22, with the plan's recommended defaults for Q1 to Q11)
 - Plan: `docs/plans/course-versions-and-variants.md`; TODO Phase 3.1 and Phase 4.4 (new)
 
 ## Context and problem statement
