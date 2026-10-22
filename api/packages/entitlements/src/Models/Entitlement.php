@@ -34,8 +34,32 @@ class Entitlement extends Model
 
     public const SUBJECT_COURSE = 'course';
 
+    /** A paid line of a Sylius order (`sylius:<channel>:order_item:<id>`). */
     public const SOURCE_ORDER_ITEM = 'order_item';
+    /** A seat of a seat package (CM-9). Reserved: nothing writes it yet. */
+    public const SOURCE_SEAT = 'seat';
+    /** An admin attached the course (the default for anything that writes through `CourseAccessService`). */
+    public const SOURCE_ADMIN = 'admin';
+    /** A compliance assignment opened the course. */
+    public const SOURCE_COMPLIANCE = 'compliance';
+    /** An LTI launch enrolled the user. */
+    public const SOURCE_LTI = 'lti';
+    /** Access through a group (`course_group`). Reserved: group access stays outside `course_user` and is not recorded. */
+    public const SOURCE_GROUP_LEGACY = 'group_legacy';
+    /** A purchase through the Wellms cart (shadow listener and backfill). */
+    public const SOURCE_WELLMS_ORDER = 'wellms_order';
+    /** A `course_user` row that no known source explains (backfill, or adopted before a first purchase). */
     public const SOURCE_MIGRATION = 'migration';
+    /** A Wellms voucher that granted access. Reserved for the cutover (CM-10). */
+    public const SOURCE_VOUCHER_LEGACY = 'voucher_legacy';
+
+    public const SOURCE_TYPES = [
+        self::SOURCE_ORDER_ITEM, self::SOURCE_SEAT, self::SOURCE_ADMIN, self::SOURCE_COMPLIANCE, self::SOURCE_LTI,
+        self::SOURCE_GROUP_LEGACY, self::SOURCE_WELLMS_ORDER, self::SOURCE_MIGRATION, self::SOURCE_VOUCHER_LEGACY,
+    ];
+
+    /** Sources that are written by a person or a process through `CourseAccessService`, not by an order. */
+    public const MANUAL_SOURCES = [self::SOURCE_ADMIN, self::SOURCE_COMPLIANCE, self::SOURCE_LTI];
 
     protected $table = 'entitlements';
 

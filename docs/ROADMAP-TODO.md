@@ -861,6 +861,8 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
       `valid_until`, unique `source_key`), `EntitlementService` as the only writer of purchased access (idempotent grant and revoke, through `CourseAccessService`),
       covered by `EntitlementServiceTest`; open: seat pools and assignments (CM-9), the expiry job, the access backfill with its parity check and the
       `CourseAccessService` decorator (CM-2); ADR 0130 is still Proposed
+      Note 2026-10-22 (CM-2): all source types, the hourly expiry job, the `CourseAccessService` decorator (admin, `lti`, `compliance`), the backfill with
+      parity report and the `ProductBought` shadow listener are in; ADR 0130 is Accepted. Open here: seat pools (CM-9), the admin view of the parity report (CM-8)
 - [ ] Catalogue sync: course/bundle/subscription/seat package → digital Sylius product
 - [ ] Order → entitlement via signed, idempotent webhooks + reconciliation job; never grant
       access from frontend redirect
@@ -873,6 +875,8 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
       advanced settings
 - [ ] B2B seat packages (Sylius product + LMS seat pool), invoices from Sylius
 - [ ] Migration of orders, vouchers and access from Wellms packages with zero lost access
+      Note 2026-10-22 (CM-2): partial. The access part is in: `ulams:entitlements:backfill` (dry run, all-or-nothing, idempotent) and the nightly
+      `ulams:entitlements:parity`; orders and vouchers migrate in CM-10
 - [ ] EU VAT (OSS) for digital services: confirm Sylius handling, document options
 - [ ] Per-tenant branding, catalogue, sales pages
 - [ ] Partner/customer portals with scoped admins and reports

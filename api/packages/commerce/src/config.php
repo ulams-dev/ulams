@@ -37,4 +37,12 @@ return [
         /** An event that was stored but never applied for this long is queued again. */
         'stuck_after_minutes' => 5,
     ],
+
+    /**
+     * Shadow mode (ADR 0130): while the Wellms cart still sells, every purchase through it is also recorded as an
+     * entitlement. Off only for a tenant that never used the cart.
+     */
+    'shadow' => [
+        'wellms_entitlements' => (bool) env('COMMERCE_SHADOW_WELLMS', true),
+    ],
 ];

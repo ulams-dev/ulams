@@ -158,8 +158,8 @@ class OrderFlowTest extends OrderFlowTestCase
     {
         $user = $this->user();
         $course = $this->course();
-        // an admin attached the course before the purchase (no entitlement exists for it yet)
-        app(\Ulams\CourseAccess\Services\Contracts\CourseAccessServiceContract::class)->addAccessForUsers($course, [$user->getKey()]);
+        // legacy access written before entitlements existed (the undecorated service records nothing)
+        (new \Ulams\CourseAccess\Services\CourseAccessService())->addAccessForUsers($course, [$user->getKey()]);
         $this->sylius->placeOrder('77', $user->getKey(), ['991' => 'variant-course-1']);
         $this->deliver($this->sylius->pay('77'));
         $this->assertSame(2, Entitlement::query()->count(), 'the earlier access is recorded as a migration entitlement');

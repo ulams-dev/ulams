@@ -1,6 +1,6 @@
 # 0130. Entitlements are the access source of truth, fed by verified Sylius order events
 
-- Status: Proposed
+- Status: Accepted (2026-10-22, owner-approved defaults of the Phase 6.4 plan)
 - Date: 2026-10-21
 - Plan: `docs/plans/phase-6-commerce.md` (sections 5, 6, 7.1)
 - Amends: [0049](0049-commerce-provider-before-sylius.md) (interface v2)
@@ -43,3 +43,23 @@ Option 1.
 - Bad: a second store to keep in step with `course_user`; mitigated by the `CourseAccessService` decorator and a
   nightly parity check.
 - Bad: each event costs one Admin API call.
+
+## Implementation notes (CM-2)
+
+Decisions taken while completing the model; they refine the options above and change none of them.
+
+- `course_user` is a pure projection. A decorator on `CourseAccessServiceContract` (`EntitlementCourseAccess`) records
+  an entitlement for every access written through `CourseAccessService`: `admin` by default, `lti` and `compliance`
+  inside `AccessSourceContext::as()`. `EntitlementService` itself is built on the undecorated service.
+- An explicit removal (admin remove or set) revokes every entitlement of the user for the course (`admin_removed`):
+  an admin who removes a learner expects the access to be gone. Refunds, cancellations and expiry stay narrower: they
+  revoke or expire one source and never remove access another source still grants.
+- Expiry closes the entitlement but keeps the `course_user` row with the last end date, so progress survives and a
+  re-purchase restores access. Revocation without another source still removes the row (CM-1 behaviour).
+- Shadow mode: the Wellms cart keeps attaching courses itself (its own events, no change in behaviour). A listener on
+  `ProductBought` records a `wellms_order` entitlement without touching `course_user`; `ProductAttached` aligns its end
+  date with what the cart wrote. The cart leads and the entitlements follow until the CM-10 cutover.
+- The backfill is all-or-nothing and writes only `entitlements`; it never raises or lowers an end date. Parity compares
+  `course_user` with the entitlements in force by the same date rule as `Course::hasUser()` and is stored in
+  `entitlement_parity_reports` (kinds `check`, `backfill`, `dry_run`). Group access is not a `course_user` row and is not
+  compared or recorded; `seat`, `group_legacy` and `voucher_legacy` are reserved source types that nothing writes yet.
