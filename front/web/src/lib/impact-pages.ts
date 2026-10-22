@@ -45,6 +45,51 @@ export interface ImpactCopy {
   ctaHref: string;
 }
 
+interface Fact { label: string; value: string; note?: string }
+/** At-a-glance figures under the hero. The cost page's figures are the measured run, labelled as such. */
+const FACTS: Record<ImpactPage, Record<Locale, Fact[]>> = {
+  "content-cost": {
+    en: [
+      { label: "One measured run", value: "7.5 min", note: "of generation" },
+      { label: "Result", value: "6 + 18", note: "lessons + quiz questions" },
+      { label: "Model cost", value: "USD 0.28", note: "27 model calls" },
+      { label: "Hand-built benchmark", value: "49–716 h", note: "per finished hour" },
+    ],
+    pl: [
+      { label: "Jeden zmierzony przebieg", value: "7,5 min", note: "generowania" },
+      { label: "Wynik", value: "6 + 18", note: "lekcji + pytań quizowych" },
+      { label: "Koszt modelu", value: "0,28 USD", note: "27 wywołań modelu" },
+      { label: "Punkt odniesienia, ręcznie", value: "49–716 godz.", note: "na godzinę kursu" },
+    ],
+    zh: [
+      { label: "一次实测", value: "7.5 分钟", note: "生成时间" },
+      { label: "结果", value: "6 + 18", note: "课时 + 测验题" },
+      { label: "模型成本", value: "0.28 美元", note: "27 次模型调用" },
+      { label: "人工制作基准", value: "49–716 小时", note: "每 1 小时成品" },
+    ],
+  },
+  reporting: {
+    en: [
+      { label: "Who is stuck", value: "At-risk learners", note: "per course" },
+      { label: "Who finished", value: "Progress and completion" },
+      { label: "Compliance", value: "Status and audit trail" },
+      { label: "Export", value: "CSV · JSON lines" },
+    ],
+    pl: [
+      { label: "Kto utknął", value: "Zagrożeni uczestnicy", note: "w każdym kursie" },
+      { label: "Kto skończył", value: "Postępy i ukończenia" },
+      { label: "Zgodność", value: "Status i ślad audytowy" },
+      { label: "Eksport", value: "CSV · JSON lines" },
+    ],
+    zh: [
+      { label: "谁卡住了", value: "有掉队风险的学员", note: "按课程" },
+      { label: "谁学完了", value: "进度与完成率" },
+      { label: "合规", value: "状态与审计记录" },
+      { label: "导出", value: "CSV · JSON lines" },
+    ],
+  },
+};
+
 const COST_EN: ImpactCopy = {
   title: "ulams — The cost of creating e-learning content",
   description: "Creating content is the main cost of e-learning. What ULAMS already does to cut it, and what is still coming.",
@@ -325,7 +370,7 @@ export function impactPage(page: ImpactPage, locale: Locale, request: Request, u
       {
         component: "Main",
         children: [
-          { component: "Hero", props: { variant: "product", eyebrow: copy.eyebrow, title: copy.heading, subtitle: copy.subtitle, body: copy.body, primaryCta: { label: copy.primary, href: "#today" }, secondaryCta: { label: copy.secondary, href: "/#demos" } } },
+          { component: "Hero", props: { variant: "product", eyebrow: copy.eyebrow, title: copy.heading, subtitle: copy.subtitle, body: copy.body, primaryCta: { label: copy.primary, href: "#today" }, secondaryCta: { label: copy.secondary, href: "/#demos" }, facts: FACTS[page][locale] } },
           { component: "Stack", props: { gap: "lg" }, children: [{ component: "Prose", props: { markdown: `## ${copy.problemTitle}\n\n${copy.problem}` } }] },
           ...(copy.run ? [{ component: "Stack", props: { gap: "lg" }, children: [{ component: "Prose", props: { markdown: copy.run } }] }] : []),
           list("today", copy.todayTitle, copy.todayIntro, copy.today, "available"),

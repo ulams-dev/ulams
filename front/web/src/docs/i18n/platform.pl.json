@@ -234,31 +234,43 @@
           "component": "CtaBand",
           "props": {
             "id": "cost-cta",
+            "variant": "feature",
             "eyebrow": "szybsze kursy",
-            "title": "Kursy powstają znacznie szybciej",
-            "text": "Jeden zmierzony przebieg, nie średnia ani obietnica: z publicznego repozytorium dokumentacji (13 fragmentów) ULAMS wygenerował kurs z 6 lekcjami i 18 pytaniami quizowymi w około 7,5 minuty generowania, przy koszcie modelu 0,28 USD.",
-            "bullets": [
+            "title": "Kursy powstają znacznie szybciej: szkic z cytatami w kilka minut",
+            "text": "W naszym własnym zmierzonym przebiegu ULAMS zamienił publiczne repozytorium dokumentacji w szkic kursu z 6 lekcjami i 18 pytaniami quizowymi, z cytatem źródła przy każdym bloku, w około 7,5 minuty generowania.",
+            "statsLabel": "Jeden zmierzony przebieg · szkic do przeglądu przez autora",
+            "stats": [
               {
-                "title": "6 lekcji, 18 pytań quizowych",
-                "text": "Każdy z 35 bloków treści cytuje źródło. To szkic: autor przegląda go i zatwierdza przed publikacją."
+                "value": "7.5",
+                "label": "minuty generowania",
+                "note": "konspekt 24 s · lekcje, quizy, kontrole 6 min 57 s · zastosowanie 23 s"
               },
               {
-                "title": "Około 7,5 minuty generowania",
-                "text": "Konspekt 24 s, lekcje, quizy i kontrole 6 min 57 s, zastosowanie 23 s."
+                "value": "6 + 18",
+                "label": "lekcji + pytań quizowych",
+                "note": "z 13 fragmentów źródła"
               },
               {
-                "title": "Koszt modelu: 0,28 USD",
-                "text": "27 wywołań modelu."
+                "value": "USD 0.28",
+                "label": "koszt modelu",
+                "note": "27 wywołań modelu"
               },
               {
-                "title": "Ręcznie tworzony e-learning: 49 do 716 godzin pracy na godzinę gotowego kursu",
-                "text": "Wskaźniki Chapman Alliance w opisie eLearning Industry. To inne miary, więc nie podajemy przelicznika „razy szybciej”.",
+                "value": "35/35",
+                "label": "bloków treści cytuje źródło",
+                "note": "autor zatwierdza przed publikacją"
+              },
+              {
+                "value": "49–716",
+                "label": "godzin pracy na godzinę gotowego kursu, tworzonego ręcznie",
+                "note": "Chapman Alliance, za eLearning Industry",
+                "kind": "benchmark",
                 "href": "https://elearningindustry.com/development-costs-for-your-online-learning-start-estimating"
               }
             ],
-            "note": "Jeden przebieg na jednym źródle, tylko czas generowania. Przegląd i zatwierdzenie przez autora dochodzą do tego.",
+            "note": "Jeden przebieg na jednym źródle, tylko czas generowania; przegląd autora dochodzi do tego. To dwie różne miary, więc nie podajemy przelicznika przyspieszenia.",
             "cta": {
-              "label": "Zobacz, jak kursy powstają szybciej",
+              "label": "Zobacz szczegóły",
               "href": "/pl/content-cost/"
             }
           }
@@ -279,37 +291,65 @@
           "component": "CtaBand",
           "props": {
             "id": "reporting-cta",
+            "variant": "feature",
             "eyebrow": "pełna analityka",
-            "title": "Pełna analityka w standardzie",
-            "text": "Sprawdzaj, jak działa każdy kurs, i dokumentuj zgodność z wymogami, a dane zostają w Twoim wdrożeniu.",
+            "title": "Pełna analityka: kto utknął, kto skończył i co raportować",
+            "text": "Analityka każdego kursu, raporty zgodności i eksporty są wbudowane, a dane zostają w Twoim wdrożeniu.",
             "bullets": [
               {
-                "title": "Analityka każdego kursu",
-                "text": "Postępy, ukończenia, wyniki quizów, osoby zagrożone odpadnięciem i fragmenty, które mylą. Bardzo małe grupy są ukryte."
+                "title": "Kto utknął",
+                "text": "Uczestnicy zagrożeni odpadnięciem i fragmenty, które mylą."
               },
               {
-                "title": "Raporty zgodności i eksport audytu",
-                "text": "Status obowiązkowych szkoleń i odporny na manipulacje ślad audytowy, z eksportem."
+                "title": "Kto skończył",
+                "text": "Postępy, ukończenia i wyniki quizów, dla każdego kursu."
               },
               {
-                "title": "Eksport CSV i JSON lines",
-                "text": "Dowolny raport do własnych narzędzi."
+                "title": "Kto jest winien szkolenie",
+                "text": "Status obowiązkowych szkoleń na potrzeby zgodności."
               },
               {
-                "title": "Raporty e-mailem według harmonogramu",
-                "text": "Wysyłane codziennie, co tydzień lub co miesiąc."
-              },
-              {
-                "title": "Learner insights",
-                "text": "Gdzie uczący się mają trudności, przypisane do konkretnego elementu lekcji, z propozycją poprawki AI, którą oceniasz jako diff."
-              },
-              {
-                "title": "Własny magazyn xAPI (LRS)",
-                "text": "Wbudowany magazyn rekordów w Twoim wdrożeniu, więc zapisy zostają u Ciebie."
+                "title": "Co wyeksportować",
+                "text": "CSV, JSON lines i ślad audytowy, na żądanie lub e-mailem."
               }
             ],
+            "panel": {
+              "title": "Analityka kursu",
+              "label": "Ilustracja",
+              "alt": "Ilustracja panelu analityki kursu z paskami dla osób, które skończyły, są w trakcie, są zagrożone oraz dla wyników quizów. To nie są prawdziwe dane.",
+              "rows": [
+                {
+                  "label": "Ukończyli",
+                  "level": 72,
+                  "tone": "ok"
+                },
+                {
+                  "label": "W trakcie",
+                  "level": 46,
+                  "tone": "muted"
+                },
+                {
+                  "label": "Zagrożeni",
+                  "level": 18,
+                  "tone": "warn"
+                },
+                {
+                  "label": "Wyniki quizów",
+                  "level": 60,
+                  "tone": "ok"
+                }
+              ]
+            },
+            "chips": [
+              "Analityka każdego kursu",
+              "Raporty zgodności i eksport audytu",
+              "Eksport CSV i JSON lines",
+              "Raporty e-mailem według harmonogramu",
+              "Learner insights",
+              "Własny LRS xAPI"
+            ],
             "cta": {
-              "label": "Zobacz pełną analitykę",
+              "label": "Zobacz szczegóły",
               "href": "/pl/reporting/"
             }
           }

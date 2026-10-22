@@ -234,31 +234,43 @@
           "component": "CtaBand",
           "props": {
             "id": "cost-cta",
+            "variant": "feature",
             "eyebrow": "faster courses",
-            "title": "Courses build much faster",
-            "text": "One measured run, not an average or a promise: from a public docs repository (13 passages) ULAMS generated a 6-lesson course with 18 quiz questions in about 7.5 minutes of generation, at a model cost of USD 0.28.",
-            "bullets": [
+            "title": "Courses build much faster: a cited draft in minutes",
+            "text": "In our own measured run, ULAMS turned a public docs repository into a 6-lesson course draft with 18 quiz questions, every block citing its source, in about 7.5 minutes of generation.",
+            "statsLabel": "One measured run · draft for author review",
+            "stats": [
               {
-                "title": "6 lessons, 18 quiz questions",
-                "text": "Every one of 35 content blocks cites the source. It is a draft: the author reviews and approves it before publishing."
+                "value": "7.5",
+                "label": "minutes of generation",
+                "note": "outline 24 s · lessons, quizzes, checks 6 min 57 s · apply 23 s"
               },
               {
-                "title": "About 7.5 minutes of generation",
-                "text": "Outline 24 s, lessons, quizzes and checks 6 min 57 s, apply 23 s."
+                "value": "6 + 18",
+                "label": "lessons + quiz questions",
+                "note": "from 13 passages of the source"
               },
               {
-                "title": "USD 0.28 model cost",
-                "text": "27 model calls."
+                "value": "USD 0.28",
+                "label": "model cost",
+                "note": "27 model calls"
               },
               {
-                "title": "Hand-built e-learning: 49 to 716 hours of work per hour of finished course",
-                "text": "Chapman Alliance ratios, as reported by eLearning Industry. Different measures, so we give no \"times faster\" figure.",
+                "value": "35/35",
+                "label": "content blocks cite the source",
+                "note": "the author approves before publishing"
+              },
+              {
+                "value": "49–716",
+                "label": "hours of work per hour of finished course, built by hand",
+                "note": "Chapman Alliance, via eLearning Industry",
+                "kind": "benchmark",
                 "href": "https://elearningindustry.com/development-costs-for-your-online-learning-start-estimating"
               }
             ],
-            "note": "One run on one source, generation time only. Author review and approval come on top.",
+            "note": "One run on one source, generation time only; author review comes on top. The two measure different things, so we claim no speed-up ratio.",
             "cta": {
-              "label": "See how courses are built faster",
+              "label": "See the details",
               "href": "/content-cost/"
             }
           }
@@ -279,37 +291,65 @@
           "component": "CtaBand",
           "props": {
             "id": "reporting-cta",
+            "variant": "feature",
             "eyebrow": "full analytics",
-            "title": "Full analytics, built in",
-            "text": "See how every course performs and document compliance, with the data kept in your own deployment.",
+            "title": "Full analytics: see who is stuck, who finished and what to report",
+            "text": "Per-course analytics, compliance reports and exports are built in, and the data stays in your own deployment.",
             "bullets": [
               {
-                "title": "Per-course analytics",
-                "text": "Progress, completion, quiz performance, at-risk learners and the sections that confuse people. Very small groups are hidden."
+                "title": "Who is stuck",
+                "text": "At-risk learners and the sections that confuse people."
               },
               {
-                "title": "Compliance reports and audit export",
-                "text": "Mandatory-training status and a tamper-evident audit trail, exportable."
+                "title": "Who finished",
+                "text": "Progress, completion and quiz performance, per course."
               },
               {
-                "title": "CSV and JSON-lines export",
-                "text": "Any report for your own tools."
+                "title": "Who still owes training",
+                "text": "Mandatory-training status for compliance."
               },
               {
-                "title": "Scheduled e-mail reports",
-                "text": "Sent daily, weekly or monthly."
-              },
-              {
-                "title": "Learner insights",
-                "text": "Where learners struggle, tied to the exact lesson element, with an AI-proposed improvement you review as a diff."
-              },
-              {
-                "title": "xAPI LRS owned by you",
-                "text": "A built-in learning record store in your own deployment, so the statements stay with you."
+                "title": "What to export",
+                "text": "CSV, JSON lines and an audit trail, on demand or by e-mail."
               }
             ],
+            "panel": {
+              "title": "Course analytics",
+              "label": "Illustration",
+              "alt": "Illustration of a course analytics panel with bars for learners who finished, learners in progress, learners at risk and quiz results. Not real data.",
+              "rows": [
+                {
+                  "label": "Finished",
+                  "level": 72,
+                  "tone": "ok"
+                },
+                {
+                  "label": "In progress",
+                  "level": 46,
+                  "tone": "muted"
+                },
+                {
+                  "label": "At risk",
+                  "level": 18,
+                  "tone": "warn"
+                },
+                {
+                  "label": "Quiz results",
+                  "level": 60,
+                  "tone": "ok"
+                }
+              ]
+            },
+            "chips": [
+              "Per-course analytics",
+              "Compliance reports and audit export",
+              "CSV and JSON-lines export",
+              "Scheduled e-mail reports",
+              "Learner insights",
+              "xAPI LRS you own"
+            ],
             "cta": {
-              "label": "See the full analytics",
+              "label": "See the details",
               "href": "/reporting/"
             }
           }

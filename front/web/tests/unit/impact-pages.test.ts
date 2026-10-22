@@ -114,12 +114,18 @@ describe("home call-to-action bands", () => {
       expect(json).toMatch(/7[.,]5/);
       expect(json).toMatch(/0[.,]28/);
       expect(json).toContain(CHAPMAN_SOURCE);
+      const stats = cost.props!.stats as Array<{ kind?: string }>;
+      expect(stats.filter((s) => s.kind === "benchmark")).toHaveLength(1);
+      expect(stats).toHaveLength(5);
       expect(json).not.toMatch(/\d\s*(x|×|times|razy)\b/i);
     });
 
     it(`${locale}: the analytics block lists the six shipped features`, () => {
       const reporting = ofType(landingDocFor("platform", locale)!, "CtaBand").find((b) => b.props!.id === "reporting-cta")!;
-      expect((reporting.props!.bullets as unknown[]).length).toBe(6);
+      expect(reporting.props!.variant).toBe("feature");
+      expect((reporting.props!.chips as unknown[]).length).toBe(6);
+      expect((reporting.props!.bullets as unknown[]).length).toBe(4);
+      expect((reporting.props!.panel as { label: string }).label.length).toBeGreaterThan(0);
       expect(text(reporting)).toMatch(/xAPI/);
       expect(text(reporting)).toMatch(/JSON/);
     });

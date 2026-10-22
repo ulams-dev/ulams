@@ -6,7 +6,7 @@ import NewTabMark from "./NewTabMark.astro";
 import { linkTarget } from "../lib/links.ts";
 
 interface Props {
-  variant?: "banner" | "newsletter" | "terminal";
+  variant?: "banner" | "newsletter" | "terminal" | "feature";
   eyebrow?: string;
   title: string;
   text?: string;
@@ -16,8 +16,17 @@ interface Props {
   cta: { label: string; href: string };
   secondary?: { label: string; href: string };
   id?: string;
+  /** Feature variant: big figures. `kind: "benchmark"` marks a third-party figure, shown apart from our own. */
+  stats?: Array<{ value: string; label: string; note?: string; kind?: "own" | "benchmark"; href?: string }>;
+  statsLabel?: string;
+  /** Feature variant: short capability chips. */
+  chips?: string[];
+  /** Feature variant: a labelled schematic of the product (bars carry no numbers). */
+  panel?: { title: string; label: string; alt: string; rows: Array<{ label: string; level: number; tone?: "ok" | "warn" | "muted" }> };
 }
-const { variant = "banner", eyebrow, title, text, bullets = [], note, code = [], cta, secondary, id = "join" } = Astro.props;
+const { variant = "banner", eyebrow, title, text, bullets = [], note, code = [], cta, secondary, id = "join", stats = [], statsLabel, chips = [], panel } = Astro.props;
+const own = stats.filter((stat) => stat.kind !== "benchmark");
+const benchmark = stats.filter((stat) => stat.kind === "benchmark");
 const t = uiStrings(pageLocale(Astro));
 ---
 
@@ -28,12 +37,42 @@ const t = uiStrings(pageLocale(Astro));
         {eyebrow && <p class="u-eyebrow">{eyebrow}</p>}
         <h2 class="u-h2" id={`${id}-title`}>{title}</h2>
         {text && <p class="u-lead">{text}</p>}
-        {bullets.length > 0 && <ul class="u-cta__bullets" role="list">{bullets.map((bullet) => <li>
+        {bullets.length > 0 && <ul class={variant === "feature" ? "u-cta__outcomes" : "u-cta__bullets"} role="list">{bullets.map((bullet) => <li>
+          {variant === "feature" && <Icon name="check" />}
           {bullet.href ? <a href={bullet.href} {...linkTarget(bullet.href)}>{bullet.title}<NewTabMark href={bullet.href} /></a> : <strong>{bullet.title}</strong>}
           <p>{bullet.text}</p>
         </li>)}</ul>}
-        {note && <p class="u-cta__note">{note}</p>}
+        {note && variant !== "feature" && <p class="u-cta__note">{note}</p>}
       </div>
+      {panel && (
+        <figure class="u-cta__panel" role="img" aria-label={panel.alt}>
+          <figcaption class="u-cta__panel-head" aria-hidden="true"><strong>{panel.title}</strong><span>{panel.label}</span></figcaption>
+          <ul aria-hidden="true">
+            {panel.rows.map((row) => (
+              <li data-tone={row.tone ?? "ok"}><span>{row.label}</span><i style={`--w:${Math.max(4, Math.min(100, row.level))}%`} /></li>
+            ))}
+          </ul>
+        </figure>
+      )}
+      {own.length > 0 && (
+        <div class="u-cta__stats">
+          {statsLabel && <p class="u-cta__stats-label">{statsLabel}</p>}
+          <ul role="list">
+            {own.map((stat) => (
+              <li><strong>{stat.value}</strong><span>{stat.label}</span>{stat.note && <small>{stat.note}</small>}</li>
+            ))}
+          </ul>
+          {benchmark.map((stat) => (
+            <p class="u-cta__bench">
+              <strong>{stat.value}</strong>
+              <span>{stat.label}</span>
+              {stat.note && (stat.href ? <a href={stat.href} {...linkTarget(stat.href)}>{stat.note}<NewTabMark href={stat.href} /></a> : <small>{stat.note}</small>)}
+            </p>
+          ))}
+        </div>
+      )}
+      {chips.length > 0 && <ul class="u-cta__chips" role="list">{chips.map((chip) => <li>{chip}</li>)}</ul>}
+      {note && variant === "feature" && <p class="u-cta__note u-cta__note--feature">{note}</p>}
       {
         variant === "terminal" && code.length > 0 && (
           <pre class="u-cta__term" aria-label={t.terminal} tabindex="0">
@@ -72,7 +111,50 @@ const t = uiStrings(pageLocale(Astro));
   .u-cta__bullets a:hover { text-decoration-thickness:2px; }
   .u-cta__bullets a:focus-visible { outline:3px solid var(--ulams-brand-blue); outline-offset:4px; }
   .u-cta__bullets p { margin:5px 0 0; font-size:.82rem; line-height:1.6; }
-  .u-cta--banner .u-cta__bullets { grid-template-columns:repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap:14px 28px; }
+  .u-cta--feature .u-cta__box { grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr); grid-template-areas:none; gap:clamp(20px,3vw,32px); align-items:start; }
+  .u-cta--feature .u-cta__box > * { grid-area:auto; grid-column:1 / -1; }
+  .u-cta--feature .u-cta__box > .u-cta__copy { grid-column:1; grid-row:1; }
+  .u-cta--feature .u-cta__box:not(:has(.u-cta__panel)) > .u-cta__copy { grid-column:1 / -1; }
+  .u-cta--feature .u-cta__box > .u-cta__panel { grid-column:2; grid-row:1; }
+  .u-cta--feature .u-cta__copy :global(h2) { font-size:clamp(1.9rem,4.2vw,3.1rem); line-height:1.08; max-width:22ch; }
+  .u-cta--feature .u-cta__copy :global(.u-lead) { max-width:60ch; }
+  .u-cta__outcomes { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr)); gap:12px 20px; margin:6px 0 0; padding:0; list-style:none; }
+  .u-cta__outcomes li { position:relative; padding-left:30px; }
+  .u-cta__outcomes li :global(svg) { width:18px; height:18px; position:absolute; left:0; top:2px; color:var(--ulams-color-positive); }
+  .u-cta__outcomes strong { font-size:1rem; color:var(--ulams-color-header); }
+  .u-cta__outcomes p { margin:2px 0 0; font-size:.875rem; line-height:1.5; color:var(--ulams-color-muted); }
+  .u-cta__stats { display:grid; gap:12px; }
+  .u-cta__stats-label { margin:0; justify-self:start; padding:5px 12px; border:1px solid var(--ulams-color-border); border-radius:999px; background:var(--ulams-color-card-bg); font-size:.8125rem; font-weight:600; color:var(--ulams-color-header); }
+  .u-cta__stats ul { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr)); gap:12px; margin:0; padding:0; list-style:none; }
+  .u-cta__stats li { display:grid; gap:4px; align-content:start; padding:18px 20px; border:1px solid var(--ulams-color-border); border-radius:var(--ulams-radius-card); background:var(--ulams-color-card-bg); border-top:4px solid var(--ulams-color-primary); }
+  .u-cta__stats li strong { font-family:var(--ulams-font-family); font-size:clamp(2rem,4.4vw,3rem); line-height:1; letter-spacing:-.02em; color:var(--ulams-color-header); overflow-wrap:anywhere; }
+  .u-cta__stats li span { font-size:.9375rem; line-height:1.35; color:var(--ulams-color-text); }
+  .u-cta__stats li small { font-size:.8125rem; color:var(--ulams-color-muted); }
+  .u-cta__bench { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 16px; margin:0; padding:14px 20px; border:2px dashed var(--ulams-color-border); border-radius:var(--ulams-radius-card); }
+  .u-cta__bench strong { font-family:var(--ulams-font-family); font-size:clamp(1.4rem,3vw,1.9rem); color:var(--ulams-color-header); }
+  .u-cta__bench span { flex:1 1 220px; font-size:.9375rem; color:var(--ulams-color-text); }
+  .u-cta__bench small, .u-cta__bench a { font-size:.8125rem; color:var(--ulams-color-muted); }
+  .u-cta__bench a { display:inline-flex; align-items:center; gap:6px; color:var(--ulams-color-header); text-decoration:underline; text-underline-offset:3px; min-height:24px; }
+  .u-cta__bench a :global(svg) { width:12px; height:12px; }
+  .u-cta__bench a:focus-visible { outline:3px solid var(--ulams-brand-blue); outline-offset:3px; }
+  .u-cta__chips { display:flex; flex-wrap:wrap; gap:8px; margin:0; padding:0; list-style:none; }
+  .u-cta__chips li { padding:8px 14px; border:1px solid var(--ulams-color-border); border-radius:999px; background:var(--ulams-color-card-bg); font-size:.875rem; font-weight:600; color:var(--ulams-color-header); }
+  .u-cta__note--feature { margin:0; color:var(--ulams-color-muted); font-size:.8125rem; }
+  .u-cta__panel { margin:0; padding:18px 20px 20px; border:1px solid var(--ulams-color-border); border-radius:var(--ulams-radius-card); background:var(--ulams-color-bg); box-shadow:var(--ulams-shadow-hover); }
+  .u-cta__panel-head { display:flex; flex-wrap:wrap; justify-content:space-between; gap:6px 12px; margin-bottom:14px; font-size:.9375rem; color:var(--ulams-color-header); }
+  .u-cta__panel-head span { padding:2px 10px; border:1px dashed var(--ulams-color-muted); border-radius:999px; font-size:.75rem; font-weight:600; color:var(--ulams-color-muted); }
+  .u-cta__panel ul { display:grid; gap:14px; margin:0; padding:0; list-style:none; }
+  .u-cta__panel li { display:grid; gap:6px; font-size:.875rem; color:var(--ulams-color-text); }
+  .u-cta__panel li i { display:block; height:12px; width:100%; border-radius:999px; background:var(--ulams-color-surface); position:relative; overflow:hidden; }
+  .u-cta__panel li i::after { content:""; position:absolute; inset:0 auto 0 0; width:var(--w); border-radius:999px; background:var(--ulams-color-positive); transform-origin:left; }
+  .u-cta__panel li[data-tone="warn"] i::after { background:var(--ulams-color-warn); }
+  .u-cta__panel li[data-tone="muted"] i::after { background:var(--ulams-color-muted); }
+  @media (prefers-reduced-motion: no-preference) { .u-cta__panel li i::after { animation:u-bar .9s var(--ulams-ease) both; } }
+  @keyframes u-bar { from { transform:scaleX(0); } }
+  @media (max-width: 860px) {
+    .u-cta--feature .u-cta__box { grid-template-columns:1fr; }
+    .u-cta--feature .u-cta__box > .u-cta__copy, .u-cta--feature .u-cta__box > .u-cta__panel { grid-column:1; grid-row:auto; }
+  }
   .u-cta__note { margin:0; font-size:.75rem; line-height:1.6; }
   .u-cta--terminal .u-cta__bullets, .u-cta--terminal .u-cta__note { color:var(--ulams-color-card-bg); }
   .u-cta__box {

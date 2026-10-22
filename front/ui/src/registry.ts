@@ -872,12 +872,29 @@ export const registry = {
     children: false,
     props: obj(
       {
-        variant: oneOf(["banner", "newsletter", "terminal"], "Style; terminal shows `code` lines in a terminal window", "banner"),
+        variant: oneOf(["banner", "newsletter", "terminal", "feature"], "Style; terminal shows `code` lines in a terminal window; feature shows big `stats`, outcome `bullets`, a schematic `panel` and `chips`", "banner"),
         eyebrow: EYEBROW,
         title: TITLE,
         text: INTRO,
         bullets: list(obj({ title: text("Bullet heading", { maxLength: 80 }), text: text("Short explanation", { maxLength: 200 }), href: href("Guide or supporting resource") }, ["title", "text"]), "Concise call-to-action details", { maxItems: 6 }),
         note: text("Short closing note", { maxLength: 200 }),
+        stats: list(
+          obj({ value: text("Big figure", { maxLength: 24 }), label: text("What it is", { maxLength: 80 }), note: text("Small note or source", { maxLength: 80 }), kind: oneOf(["own", "benchmark"], "Our own measurement or a third-party benchmark", "own"), href: href("Source of a benchmark") }, ["value", "label"]),
+          "Feature variant: big figures (a benchmark one is shown apart)",
+          { maxItems: 6 }
+        ),
+        statsLabel: text("Feature variant: label above the figures", { maxLength: 100 }),
+        chips: list(text("Capability", { maxLength: 60 }), "Feature variant: capability chips", { maxItems: 8 }),
+        panel: obj(
+          {
+            title: text("Panel title", { maxLength: 60 }),
+            label: text("Label that says the panel is an illustration", { maxLength: 40 }),
+            alt: text("Text alternative for the whole panel", { maxLength: 300 }),
+            rows: list(obj({ label: text("Row label", { maxLength: 60 }), level: { type: "number", minimum: 0, maximum: 100, description: "Bar length in percent (drawn without a number)" }, tone: oneOf(["ok", "warn", "muted"], "Bar colour", "ok") }, ["label", "level"]), "Bars", { maxItems: 6 }),
+          },
+          ["title", "label", "alt", "rows"],
+          "Feature variant: schematic illustration of the product"
+        ),
         code: list(text("Command or output line", { maxLength: 120 }), "Terminal lines (terminal variant); lines starting with $ are commands", { maxItems: 10 }),
         id: text("Anchor id for in-page links (letters, digits, dashes)", { default: "join", maxLength: 40 }),
         cta: LINK,
