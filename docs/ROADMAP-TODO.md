@@ -108,6 +108,11 @@ small commits → tests → summary.
       self-hosters and other clients, stop PHP resizing on the hosted demos and the landing, and make the image service a deployment
       choice. Plan `docs/plans/images-cloudflare.md` and ADR 0193 were accepted by the owner on 2026-10-22 with the recommended defaults (plan section 14)
 
+- [ ] (new) Approve `docs/plans/authoring-metric-and-report-builder.md` and ADR 0194 (Proposed 2026-10-22): authoring time and cost
+      metric, report builder with saved reports and an OData BI feed, Notion integration token. Open questions Q1 to Q13 in plan
+      section 11 have recommended defaults (review time off by default and anonymous, registry in a new `reporting` package, OData
+      v4 subset, viewer's permissions for shared reports)
+
 - [ ] (new) Organic marketing campaign (`docs/plans/organic-marketing.md`, draft): analytics, SEO, Hacker News, Product Hunt,
       Reddit, directories, LinkedIn and e-learning communities. Waiting for approval; nothing is published before the owner
       opens the publishing gate (decisions 1-8 of its section 12)
@@ -516,6 +521,14 @@ approved apply through domain services → element chat edits. Designs:
       source passages behind every citation; the learner front is the existing one with the tenant
       theme; the workspace sources panel lists every section with the elements citing it, the
       uncovered sections and the sections of the selected element, `GET …/sessions/{s}/citations`; L2-10)
+- [ ] (new) Authoring time and cost metric per course: generation time per stage, LLM cost (build and maintenance),
+      opt-in anonymous author review time, counts (lessons, questions, cited blocks, AI elements accepted unchanged,
+      edited, revised on request, author-written), shown in the studio and admin analytics, exportable, over the
+      API, CLI and MCP, and an "hours per learner hour" figure from the tenant's own data with no benchmark claims
+      (plan `docs/plans/authoring-metric-and-report-builder.md` AM-1 to AM-6; ADR 0194 Proposed; market research:
+      authoring cost is the core pain)
+- [ ] (new) Element provenance for direct author edits: the outline editor tags edited elements, AI output carries a
+      content hash, so accepted vs edited AI elements can be counted (plan `authoring-metric-and-report-builder.md` AM-2)
 
 ### 2.7 Generative UI
 Architecture
@@ -616,6 +629,10 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
       author reviews as a diff; no quiz is generated with it yet)
 - [x] (new) Generic Git (`git` CLI) connector for hosts without a supported API (sandboxed, https only, off by default)
 - [x] (new) Google Drive and Notion connector plugins (designed in `docs/plans/phase-3.md` 6.6) (OAuth through a one-time grant, polling change detection; off by default, scripted-server tests only, live Drive/Notion runs tracked in #285 and #266)
+- [ ] (new) Notion source: a "paste an integration token" method in the studio's Notion form (the connector already
+      accepts `secrets.token`; the form offers only OAuth, which blocked the Notion case study in #408): masked input,
+      verified against Notion before saving, encrypted at rest, shown only as the last four characters, never in logs,
+      events, audit entries or responses (plan `docs/plans/authoring-metric-and-report-builder.md` NT-1)
 
 ### 3.1 Course versions with a visual diff (new)
 
@@ -757,8 +774,12 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       skip link, focus-visible, reduced motion, 360 px layout and a theme contrast test; axe scan of
       every page type in the Playwright e2e passes; axe and keyboard suite now runs in CI as the `web-a11y` job, #294; the accessibility gate (axe, keyboard and reduced-motion specs for the learner screens), the per-tenant `/accessibility` statement and the operator and learner EAA documentation merged in M-UI8, #325; open: the manual screen reader pass (VoiceOver and NVDA) is documented, not done, and the full-stack struggling-learner journey `front/web/tests/e2e/personalisation.spec.ts` is written but has not been run)
 - [ ] Admin UX: templates, guided empty states, sample course, bulk operations, saved filters
+      Note 2026-10-22: saved filters for list screens stay with `phase-5-remaining.md` P5R-10 (`admin_saved_views`). Saved,
+      shared and scheduled reports are a separate item under 6.5 (plan `authoring-metric-and-report-builder.md`)
 - [ ] AI transparency everywhere (diffs, citations, reasons one click away) (partial: learner surfaces done, #315, #319, #314, #320; fragment citations show a label, not a link, by design, O8)
 - [ ] Metrics: time to first course, time to first enrolment, admin task times
+      Note 2026-10-22: per-course authoring time and cost is a separate item under 2.6 (plan `authoring-metric-and-report-builder.md`);
+      it follows the same no-personal-data stance as ADR 0152
 - [x] (new) Learner views for required training, learning paths, certificates and skills: `/account/training`, `/account/skills`, a manager `/account/team`, certificate download through its own route and the account summary (M-UI5, #317; `docs/plans/phase-5-learner-ui.md`)
 - [x] (new) The finish page shows the issued certificate (with download and verify) instead of the mock preview (M-UI5, #317)
 - [x] (new) Per-tenant accessibility statement page `/accessibility` and European Accessibility Act documentation for operators and learners (M-UI8, #325)
@@ -977,6 +998,17 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 ### 6.5 Analytics and ROI
 - [ ] Dashboards (completion, results, struggle/recovery, certificates, overdue) (partial: dashboard API merged, #284; struggle and recovery numbers and the admin screen are not built)
 - [ ] BI export/API, scheduled reports, optional business KPI link (partial: CSV and JSON lines export merged, #276, #284; scheduled e-mail reports merged, #284; no BI connector beyond the export and the report API, no business KPI link)
+      Note 2026-10-22: the BI connector is planned in `authoring-metric-and-report-builder.md` RB-6 (options compared there; recommended: a read-only
+      OData v4 feed per saved report); the KPI link stays in `phase-6-remaining.md` P6R-6
+- [ ] (new) Report builder with saved reports: pick a dataset, columns, filters, grouping and a date range, preview,
+      save, share with tenant roles (run with the viewer's own permissions), schedule by e-mail through the existing
+      schedules, export CSV, JSON lines or XLSX; small-group suppression as in Learner Insights; datasets from a
+      registry in a new `reporting` package (takes over the registry of `phase-6-remaining.md` P6R-3 and the reports
+      screen of P6R-4) (plan `docs/plans/authoring-metric-and-report-builder.md` RB-1 to RB-5, RB-7; ADR 0194 Proposed;
+      market research: poor reporting is the top switch reason)
+- [ ] (new) BI connector: read-only OData v4 feed per saved report for Excel, Power BI and Tableau, with a `reports:read`
+      token that can be limited to one report; CSV and JSON lines URLs with recipes for Looker Studio, Metabase and
+      Superset (plan `authoring-metric-and-report-builder.md` RB-6)
 
 ### 6.6 Skills and competencies
 - [x] Competency framework; AI-suggested tags confirmed by author (`api/packages/compliance`, #286)
