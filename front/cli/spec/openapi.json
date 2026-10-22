@@ -11527,6 +11527,108 @@
     ]
    }
   },
+  "/api/admin/course-builder/sessions/{session}/variants": {
+   "get": {
+    "operationId": "admin.course-builder.sessions.by-session.variants.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "variants, cap, base and estimate"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Course variants by level and role: status, own course, drift from the base, estimate and cap",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   },
+   "post": {
+    "operationId": "admin.course-builder.sessions.by-session.variants.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "audiences": {
+          "items": {
+           "type": "object"
+          },
+          "type": "array"
+         },
+         "start": {
+          "type": "boolean"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the variants created and the run, when started"
+     },
+     "409": {
+      "description": "the base course is not applied yet"
+     },
+     "422": {
+      "description": "not valid, or over COURSE_BUILDER_MAX_VARIANTS"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create variants from the interview answer (or add some later); start=true drafts their outlines in one run",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
   "/api/admin/course-builder/sessions/{session}/versions": {
    "get": {
     "operationId": "admin.course-builder.sessions.by-session.versions.get",
@@ -11558,6 +11660,85 @@
      }
     ],
     "summary": "Blueprint version history",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/variants/{variant}": {
+   "delete": {
+    "operationId": "admin.course-builder.variants.by-variant.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "variant",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "retired"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Retire a variant (its course, if it has one, is kept)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   },
+   "patch": {
+    "operationId": "admin.course-builder.variants.by-variant.patch",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "variant",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the variant"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Rename, reorder or retire a variant",
     "tags": [
      "Admin Course Builder"
     ]
