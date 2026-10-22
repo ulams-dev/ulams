@@ -108,7 +108,7 @@ small commits → tests → summary.
       self-hosters and other clients, stop PHP resizing on the hosted demos and the landing, and make the image service a deployment
       choice. Plan `docs/plans/images-cloudflare.md` and ADR 0193 were accepted by the owner on 2026-10-22 with the recommended defaults (plan section 14)
 
-- [ ] (new) Approve `docs/plans/authoring-metric-and-report-builder.md` and ADR 0194 (Proposed 2026-10-22): authoring time and cost
+- [x] (new) Decision 2026-10-22: the owner approved `docs/plans/authoring-metric-and-report-builder.md` and accepted ADR 0194 with the recommended defaults (originally proposed 2026-10-22): authoring time and cost
       metric, report builder with saved reports and an OData BI feed, Notion integration token. Open questions Q1 to Q13 in plan
       section 11 have recommended defaults (review time off by default and anonymous, registry in a new `reporting` package, OData
       v4 subset, viewer's permissions for shared reports)
@@ -525,7 +525,7 @@ approved apply through domain services → element chat edits. Designs:
       opt-in anonymous author review time, counts (lessons, questions, cited blocks, AI elements accepted unchanged,
       edited, revised on request, author-written), shown in the studio and admin analytics, exportable, over the
       API, CLI and MCP, and an "hours per learner hour" figure from the tenant's own data with no benchmark claims
-      (plan `docs/plans/authoring-metric-and-report-builder.md` AM-1 to AM-6; ADR 0194 Proposed; market research:
+      (plan `docs/plans/authoring-metric-and-report-builder.md` AM-1 to AM-6; ADR 0194 Accepted 2026-10-22; market research:
       authoring cost is the core pain)
 - [ ] (new) Element provenance for direct author edits: the outline editor tags edited elements, AI output carries a
       content hash, so accepted vs edited AI elements can be counted (plan `authoring-metric-and-report-builder.md` AM-2)
@@ -1004,7 +1004,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       save, share with tenant roles (run with the viewer's own permissions), schedule by e-mail through the existing
       schedules, export CSV, JSON lines or XLSX; small-group suppression as in Learner Insights; datasets from a
       registry in a new `reporting` package (takes over the registry of `phase-6-remaining.md` P6R-3 and the reports
-      screen of P6R-4) (plan `docs/plans/authoring-metric-and-report-builder.md` RB-1 to RB-5, RB-7; ADR 0194 Proposed;
+      screen of P6R-4) (plan `docs/plans/authoring-metric-and-report-builder.md` RB-1 to RB-5, RB-7; ADR 0194 Accepted 2026-10-22;
       market research: poor reporting is the top switch reason)
 - [ ] (new) BI connector: read-only OData v4 feed per saved report for Excel, Power BI and Tableau, with a `reports:read`
       token that can be limited to one report; CSV and JSON lines URLs with recipes for Looker Studio, Metabase and
