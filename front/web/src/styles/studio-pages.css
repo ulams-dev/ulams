@@ -1456,3 +1456,39 @@
     margin-left: 6px;
   }
 }
+
+/* versions page: ticking two versions to compare */
+.st-ver-controls,
+.st-ver-pick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+.st-ver-picks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.st-ver-hint {
+  margin: 0;
+}
+.st-ver-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+.st-ver-toggle input,
+.st-ver-pick {
+  width: 1.4rem;
+  height: 1.4rem;
+  margin: 0;
+  flex: none;
+}
+a.st-ver-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  white-space: nowrap;
+}
