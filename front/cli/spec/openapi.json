@@ -10195,6 +10195,79 @@
     ]
    }
   },
+  "/api/admin/course-as-code/sessions/{session}/drift": {
+   "post": {
+    "operationId": "admin.course-as-code.sessions.by-session.drift.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "dryRun": {
+          "type": "boolean"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": false
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "nothing to absorb (or dryRun): the same listing, no version"
+     },
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "proposed version with what was absorbed and what could not be mapped back"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown session"
+     },
+     "409": {
+      "description": "NO_BLUEPRINT or NOT_APPLIED"
+     },
+     "422": {
+      "description": "INVALID_BLUEPRINT"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Read admin edits made after the last apply back into a proposed author version",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
   "/api/admin/course-as-code/sessions/{session}/imports": {
    "post": {
     "operationId": "admin.course-as-code.sessions.by-session.imports.post",
@@ -10315,6 +10388,48 @@
      }
     ],
     "summary": "Publish the applied course (no AI needed)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/versions/{version}": {
+   "get": {
+    "operationId": "admin.course-as-code.versions.by-version.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "version",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the version and its document"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown version"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One version with its Blueprint v3 document (what a three-way merge needs as the base)",
     "tags": [
      "Admin Course-as-code"
     ]

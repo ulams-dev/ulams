@@ -469,6 +469,12 @@
  },
  {
   "method": "POST",
+  "path": "/api/admin/course-as-code/sessions/{session}/drift",
+  "summary": "Read admin edits made after the last apply back into a proposed author version",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
   "path": "/api/admin/course-as-code/sessions/{session}/imports",
   "summary": "Import a Blueprint v3 document as a proposed version of kind import",
   "tag": "Admin Course-as-code"
@@ -477,6 +483,12 @@
   "method": "POST",
   "path": "/api/admin/course-as-code/sessions/{session}/publish",
   "summary": "Publish the applied course (no AI needed)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-as-code/versions/{version}",
+  "summary": "One version with its Blueprint v3 document (what a three-way merge needs as the base)",
   "tag": "Admin Course-as-code"
  },
  {
