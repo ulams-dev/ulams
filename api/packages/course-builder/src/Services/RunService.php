@@ -17,12 +17,14 @@ use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Source;
 use Ulams\CourseBuilder\Models\Step;
+use Ulams\CourseBuilder\Models\Variant;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Pipeline\GenerationService;
 use Ulams\CourseBuilder\Pipeline\InterviewService;
 use Ulams\CourseBuilder\Pipeline\Llm;
 use Ulams\CourseBuilder\Pipeline\OutlineService;
 use Ulams\CourseBuilder\Pipeline\PatchService;
+use Ulams\CourseBuilder\Pipeline\VariantOutlineService;
 use Ulams\CourseBuilder\Ui\Surfaces;
 
 /**
@@ -32,7 +34,8 @@ use Ulams\CourseBuilder\Ui\Surfaces;
  */
 final class RunService
 {
-    public const LLM_KINDS = ['interview', 'outline', 'generate', 'patch', 'variants'];
+    /** `variants` is "give me options" for one element; `variant_plan` drafts the outlines of the course variants by level and role (ADR 0192). */
+    public const LLM_KINDS = ['interview', 'outline', 'generate', 'patch', 'variants', 'variant_plan'];
 
     /**
      * Run handlers contributed by other packages (Living Course). A run whose `input.handler`
@@ -87,6 +90,8 @@ final class RunService
         private readonly VersionService $versions,
         private readonly BlueprintApplier $applier,
         private readonly Llm $llm,
+        private readonly VariantOutlineService $variantOutlines,
+        private readonly VariantService $variants,
     ) {
     }
 
@@ -96,9 +101,11 @@ final class RunService
         if (in_array($kind, self::LLM_KINDS, true) && !$this->llm->enabled()) {
             throw new BuilderException('AI features are disabled on this installation.', 503);
         }
-        if (in_array($kind, self::LLM_KINDS, true)) {
+        if (in_array($kind, self::LLM_KINDS, true) && !isset($input['variantId'])) {
+            // the generation of a variant is bounded by the variant cap, the lesson window and the session budget instead
             $active = Run::query()->whereIn('kind', self::LLM_KINDS)->whereIn('status', ['queued', 'running'])
-                ->whereIn('session_id', Session::query()->where('author_id', $session->author_id)->select('id'))->count();
+                ->whereIn('session_id', Session::query()->where('author_id', $session->author_id)->select('id'))->get()
+                ->filter(fn (Run $r) => !isset($r->input['variantId']))->count();
             if ($active >= (int) config('course_builder.limits.concurrent_runs_per_author', 2)) {
                 throw new BuilderException('You already have AI work running. Wait for it to finish, then try again.', 429);
             }
@@ -142,6 +149,7 @@ final class RunService
                 ),
                 'patch' => $this->patches->propose($session, $run, (string) $run->input['elementId'], (string) $run->input['message']),
                 'variants' => $this->patches->variants($session, $run, (string) $run->input['elementId'], (string) $run->input['message'], (int) ($run->input['count'] ?? 2)),
+                'variant_plan' => $this->variantPlan($session, $run),
                 'apply' => $this->apply($session, $run),
                 default => throw new InvalidArgumentException("Unknown run kind {$run->kind}"),
             };
@@ -227,6 +235,11 @@ final class RunService
     private function apply(Session $session, Run $run): void
     {
         $version = Version::query()->where('session_id', $session->id)->findOrFail($run->input['versionId']);
+        if (isset($run->input['variantId'])) {
+            $this->applyVariant($session, $run, $version);
+
+            return;
+        }
         $author = $session->author;
         if (!$author instanceof Authenticatable) {
             throw new BuilderException('The session author no longer exists.', 409);
@@ -248,6 +261,88 @@ final class RunService
             ? 'The course is in your academy as an unpublished draft. Open it in the admin, preview it as a learner, or keep refining here; publish when you are ready.'
             : 'The change is applied to the course.');
         $this->events->stateDelta($session, $run, [['op' => 'replace', 'path' => '/session', 'value' => SessionState::summary($session)]]);
+        $this->planVariantsAfterApply($session, $run);
+    }
+
+    /**
+     * Applies an approved variant as its own LMS course and groups it with the base course as a family (ADR 0192).
+     * The base course must be applied first: the family hangs on it.
+     */
+    private function applyVariant(Session $session, Run $run, Version $version): void
+    {
+        $variant = Variant::query()->where('session_id', $session->id)->findOrFail($run->input['variantId']);
+        $author = $session->author;
+        if (!$author instanceof Authenticatable) {
+            throw new BuilderException('The session author no longer exists.', 409);
+        }
+        if ($session->course_id === null) {
+            throw new BuilderException('Apply the base course first: the variants are grouped under it.', 409);
+        }
+        if ($version->variant_id !== $variant->id) {
+            throw new BuilderException('That version does not belong to this variant.', 409);
+        }
+        $this->events->stepStarted($run, 'apply');
+        if ($version->status === Version::PROPOSED) {
+            $this->versions->approve($version, $run->user_id);
+        }
+        $variant->forceFill(['current_version_id' => $version->id])->save();
+        $first = $variant->course_id === null;
+        $courseId = $this->applier->apply($session, $version, $author, (bool) ($run->input['overwrite'] ?? false), null, $variant);
+        $variant->forceFill(['course_id' => $courseId, 'applied_version_id' => $version->id, 'status' => Variant::APPROVED])->save();
+        $this->applier->registerFamily($session, $variant, $author);
+        $this->surfaces->variantReview($session, $run, $variant, $version, Version::query()->find($variant->based_on_version_id), 'approved');
+        $this->events->stepFinished($run, 'apply');
+        $this->events->custom($session, $run, 'applied', ['courseId' => $courseId, 'versionId' => $version->id, 'variantId' => $variant->id, 'variantKey' => $variant->key]);
+        $this->events->text($session, $run, $first
+            ? sprintf('%s is in your academy as its own unpublished course, grouped with the base course. Publishing the base course publishes the family.', $variant->label)
+            : sprintf('The change is applied to the course of %s.', $variant->label));
+    }
+
+    /** After the base course is applied for the first time, drafts the outlines of the audiences the interview asked for. */
+    private function planVariantsAfterApply(Session $session, Run $run): void
+    {
+        if (empty($session->brief['audiences']) || Variant::query()->where('session_id', $session->id)->exists() || !$this->llm->enabled()) {
+            return;
+        }
+        try {
+            $made = $this->variants->fromBrief($session);
+            $this->events->text($session, $run, sprintf('You asked for %d more versions of this course. I am drafting an outline for each from the same sources; you review each one as a list of changes against this course before any lesson is written.', count($made)));
+            $this->start($session, 'variant_plan', ['variants' => []], $run->user_id);
+        } catch (BuilderException $e) {
+            $this->events->text($session, $run, 'I could not start the variants yet: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Drafts the outline of every variant that has none yet (or of the ones named in `input.variants`, with the
+     * author's comment) as a proposal the author reviews against the base outline. One failing variant does not stop
+     * the others; when none succeeds the run fails with the first error and can be retried.
+     */
+    private function variantPlan(Session $session, Run $run): void
+    {
+        $this->variantOutlines->base($session);
+        $keys = array_values(array_filter((array) ($run->input['variants'] ?? []), 'is_string'));
+        $query = Variant::query()->where('session_id', $session->id)->where('status', '!=', Variant::RETIRED)->orderBy('position');
+        // naming a variant asks for a new plan, but never for one that already has its own course
+        $keys !== [] ? $query->whereIn('key', $keys)->whereNull('course_id') : $query->where('status', Variant::DRAFT)->whereNull('current_version_id');
+        $previous = isset($run->input['previousVersionId']) ? Version::query()->where('session_id', $session->id)->find($run->input['previousVersionId']) : null;
+        $comment = isset($run->input['comment']) ? (string) $run->input['comment'] : null;
+        $done = 0;
+        $failure = null;
+        foreach ($query->get() as $variant) {
+            $this->events->stepStarted($run, "variant:{$variant->key}");
+            try {
+                $this->variantOutlines->propose($session, $run, $variant, $comment, $previous);
+                $done++;
+            } catch (LlmException $e) {
+                $failure ??= $e;
+                $this->events->text($session, $run, sprintf('The outline for %s failed: %s Retry it from the variants list; the others are not affected.', $variant->label, $e->getMessage()));
+            }
+            $this->events->stepFinished($run, "variant:{$variant->key}");
+        }
+        if ($done === 0 && $failure !== null) {
+            throw $failure;
+        }
     }
 
     /** Re-applies the current version after an approved patch, undo, redo or restore. */
@@ -271,6 +366,9 @@ final class RunService
         $action = $input['forwardedProps']['action'] ?? null;
         if (is_array($action)) {
             return $this->action($session, $action, $userId);
+        }
+        if (($input['forwardedProps']['stage'] ?? null) === 'variants') {
+            return $this->variantRun($session, (array) ($input['forwardedProps']['variants'] ?? []), $userId);
         }
         $text = '';
         foreach (array_reverse($input['messages'] ?? []) as $message) {
@@ -312,6 +410,23 @@ final class RunService
         return $this->reply($session, 'Select a lesson, block or question in the course tree, then tell me what to change.');
     }
 
+    /**
+     * The `variants` stage of a run (`forwardedProps.stage`): creates the variants named in `variants` (audiences with a
+     * level, a role or both; none means the ones of the brief) and drafts their outlines. Also the way to retry one.
+     *
+     * @param array<int,array<string,mixed>> $audiences
+     *
+     * @return array{run:?Run,accepted:bool,message?:string}
+     */
+    public function variantRun(Session $session, array $audiences, int $userId): array
+    {
+        $this->variantOutlines->base($session);
+        $this->variants->create($session, $audiences !== [] ? $audiences : (array) ($session->brief['audiences'] ?? []));
+        $keys = array_values(array_filter(array_map(fn ($a) => is_array($a) ? VariantService::keyOf($a) : '', $audiences)));
+
+        return ['run' => $this->start($session, 'variant_plan', ['variants' => $keys], $userId), 'accepted' => true];
+    }
+
     /** @return array{run:?Run,accepted:bool,message?:string} */
     private function reply(Session $session, string $text, bool $accepted = true): array
     {
@@ -331,6 +446,7 @@ final class RunService
             'approve_outline', 'reject_outline' => 'outline',
             'approve_apply' => 'apply',
             'approve_patch', 'reject_patch' => 'patch',
+            'approve_variant', 'reject_variant' => 'variant',
             'choose_variant', 'reject_variants' => 'variants',
             'retry_step' => 'progress',
             'retry' => null,
@@ -338,7 +454,9 @@ final class RunService
         };
         if ($expected !== null) {
             $surface = $this->surfaces->openSurface($session, $surfaceId);
-            if ($surface === null || ($surface['kind'] ?? '') !== $expected) {
+            // the outline and the progress of a variant are the same cards under their own kinds (ADR 0192)
+            $accepted = in_array($expected, ['outline', 'progress'], true) ? [$expected, "variant_{$expected}"] : [$expected];
+            if ($surface === null || !in_array($surface['kind'] ?? '', $accepted, true)) {
                 return $this->reply($session, 'That card is out of date. Use the latest one in the conversation.', false);
             }
             if (isset($surface['versionId']) && isset($context['versionId']) && $context['versionId'] !== $surface['versionId']) {
@@ -372,6 +490,15 @@ final class RunService
 
             case 'approve_outline':
                 $version = $this->version($session, (string) $context['versionId']);
+                if ($version->variant_id !== null) {
+                    try {
+                        $approved = $this->variantOutlines->approve($session, null, $version, array_values((array) ($context['edits'] ?? [])), $userId);
+                    } catch (InvalidArgumentException $e) {
+                        return $this->reply($session, $e->getMessage(), false);
+                    }
+
+                    return ['run' => $this->start($session, 'generate', ['outlineVersionId' => $approved->id, 'variantId' => $version->variant_id], $userId), 'accepted' => true];
+                }
                 try {
                     $approved = $this->outline->approve($session, null, $version, array_values((array) ($context['edits'] ?? [])), $userId, array_values((array) ($context['formats'] ?? [])));
                 } catch (InvalidArgumentException $e) {
@@ -382,6 +509,13 @@ final class RunService
 
             case 'reject_outline':
                 $version = $this->version($session, (string) $context['versionId']);
+                if ($version->variant_id !== null) {
+                    $this->variantOutlines->reject($session, null, $version, $userId);
+                    $comment = trim((string) ($context['comment'] ?? '')) ?: 'Please propose a different plan.';
+                    $variant = Variant::query()->where('session_id', $session->id)->findOrFail($version->variant_id);
+
+                    return ['run' => $this->start($session, 'variant_plan', ['variants' => [$variant->key], 'comment' => mb_substr($comment, 0, 2000), 'previousVersionId' => $version->id], $userId), 'accepted' => true];
+                }
                 $this->outline->reject($session, null, $version, $userId);
                 $comment = trim((string) ($context['comment'] ?? '')) ?: 'Please propose a different outline.';
                 $session->forceFill(['status' => Session::OUTLINING])->save();
@@ -393,6 +527,33 @@ final class RunService
                 $this->surfaces->apply($session, null, $version, $this->applier->plan($session, $version->document), 'applying');
 
                 return ['run' => $this->start($session, 'apply', ['versionId' => $version->id], $userId), 'accepted' => true];
+
+            case 'approve_variant':
+                $version = $this->version($session, (string) $context['versionId']);
+                if ($version->variant_id === null || $version->kind !== 'content' || $version->status !== Version::PROPOSED) {
+                    return $this->reply($session, 'That variant is no longer waiting for a decision.', false);
+                }
+                $variant = Variant::query()->where('session_id', $session->id)->findOrFail($version->variant_id);
+                if ($session->course_id === null) {
+                    return $this->reply($session, 'Apply the base course first: the variants are grouped under it.', false);
+                }
+                $this->versions->approve($version, $userId);
+                $variant->forceFill(['current_version_id' => $version->id])->save();
+                $this->surfaces->variantReview($session, null, $variant, $version, Version::query()->find($variant->based_on_version_id), 'applying');
+
+                return ['run' => $this->start($session, 'apply', ['versionId' => $version->id, 'variantId' => $variant->id], $userId), 'accepted' => true];
+
+            case 'reject_variant':
+                $version = $this->version($session, (string) $context['versionId']);
+                if ($version->variant_id === null || $version->kind !== 'content' || $version->status !== Version::PROPOSED) {
+                    return $this->reply($session, 'That variant is no longer waiting for a decision.', false);
+                }
+                $this->versions->reject($version, $userId);
+                $variant = Variant::query()->where('session_id', $session->id)->findOrFail($version->variant_id);
+                $this->surfaces->variantReview($session, null, $variant, $version, Version::query()->find($variant->based_on_version_id), 'rejected');
+                $this->events->text($session, null, sprintf('%s was rejected; nothing was created. Ask for it again from the variants list when you are ready.', $variant->label));
+
+                return ['run' => null, 'accepted' => true];
 
             case 'approve_patch':
                 $version = $this->version($session, (string) $context['versionId']);

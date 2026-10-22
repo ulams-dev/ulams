@@ -1,0 +1,152 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Variant outline plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "message",
+    "lessons",
+    "added"
+  ],
+  "properties": {
+    "message": {
+      "type": "string",
+      "description": "One or two sentences to the author: what changes for this audience and why. Plain text.",
+      "maxLength": 600,
+      "minLength": 1
+    },
+    "lessons": {
+      "type": "array",
+      "description": "One entry for every lesson of the base course, in any order",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "lessonId",
+          "action",
+          "reason",
+          "citations"
+        ],
+        "properties": {
+          "lessonId": {
+            "type": "string",
+            "description": "A lesson id from task_input.baseLessons"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "keep",
+              "condense",
+              "deepen",
+              "skip"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why, in terms of this audience. Plain text.",
+            "maxLength": 300,
+            "minLength": 3
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$",
+              "description": "A fragment id from the source"
+            },
+            "minItems": 0,
+            "maxItems": 6,
+            "description": "Fragment ids the item is based on"
+          }
+        }
+      },
+      "minItems": 1,
+      "maxItems": 60
+    },
+    "added": {
+      "type": "array",
+      "description": "New lessons for this audience, grounded in the source. Empty when nothing is added.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "afterLessonId",
+          "title",
+          "summary",
+          "minutes",
+          "objectives",
+          "citations",
+          "reason"
+        ],
+        "properties": {
+          "afterLessonId": {
+            "type": "string",
+            "description": "The base lesson this one follows, or an empty string to add it at the end"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 2
+          },
+          "summary": {
+            "type": "string",
+            "maxLength": 600
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 600
+          },
+          "objectives": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "text",
+                "citations"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string",
+                  "maxLength": 400,
+                  "minLength": 3
+                },
+                "citations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^frg_[a-z2-7]{12}$",
+                    "description": "A fragment id from the source"
+                  },
+                  "minItems": 1,
+                  "maxItems": 6,
+                  "description": "Fragment ids the item is based on"
+                }
+              }
+            }
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$",
+              "description": "A fragment id from the source"
+            },
+            "minItems": 1,
+            "maxItems": 6,
+            "description": "Fragment ids the item is based on"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 300,
+            "minLength": 3
+          }
+        }
+      },
+      "maxItems": 6
+    }
+  }
+}

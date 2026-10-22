@@ -5,6 +5,7 @@ namespace Ulams\CourseBuilder\Tests\Feature;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Step;
+use Ulams\CourseBuilder\Models\Variant;
 use Ulams\CourseBuilder\Tests\TestCase;
 
 /**
@@ -23,6 +24,7 @@ class IsolationTest extends TestCase
         $version = $s->currentVersion;
         $run = Run::query()->where('session_id', $s->id)->first();
         $step = Step::query()->whereIn('run_id', Run::query()->where('session_id', $s->id)->select('id'))->first();
+        $variant = Variant::query()->firstOrCreate(['session_id' => $s->id, 'key' => 'expert'], ['label' => 'Expert', 'level' => 'expert', 'audience_brief' => ['level' => 'expert'], 'status' => Variant::DRAFT]);
         $p = '/api/admin/course-builder';
 
         return [
@@ -54,6 +56,10 @@ class IsolationTest extends TestCase
             ['POST', "{$p}/sessions/{$s->id}/new-site"],
             ['POST', "{$p}/sessions/{$s->id}/publish"],
             ['GET', "{$p}/sessions/{$s->id}/usage"],
+            ['GET', "{$p}/sessions/{$s->id}/variants"],
+            ['POST', "{$p}/sessions/{$s->id}/variants"],
+            ['PATCH', "{$p}/variants/{$variant->id}"],
+            ['DELETE', "{$p}/variants/{$variant->id}"],
         ];
     }
 
@@ -107,6 +113,11 @@ class IsolationTest extends TestCase
             ['GET', "{$p}/runs/not-an-id"],
             ['POST', "{$p}/runs/{$missing}/cancel"],
             ['GET', "{$p}/sessions/not-an-id/events"],
+            ['GET', "{$p}/sessions/{$missing}/variants"],
+            ['POST', "{$p}/sessions/{$missing}/variants"],
+            ['PATCH', "{$p}/variants/{$missing}"],
+            ['DELETE', "{$p}/variants/{$missing}"],
+            ['DELETE', "{$p}/variants/not-an-id"],
         ] as [$method, $uri]) {
             $this->actingAs($author, 'api')->json($method, $uri)->assertStatus(404);
         }

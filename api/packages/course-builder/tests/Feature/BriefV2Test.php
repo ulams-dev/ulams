@@ -40,7 +40,7 @@ class BriefV2Test extends TestCase
     {
         $session = $this->uploaded($this->author());
         $keys = array_column($session->stateValue('interview.questions'), 'key');
-        $this->assertSame(['audience', 'level', 'duration', 'tone', 'assessments', 'language', 'pricing'], $keys);
+        $this->assertSame(['audience', 'level', 'duration', 'tone', 'assessments', 'language', 'audiences', 'pricing'], $keys);
 
         $admin = $this->siteAdmin();
         $session = $this->uploaded($admin);

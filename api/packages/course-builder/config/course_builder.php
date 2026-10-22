@@ -26,6 +26,14 @@ return [
         'eval_monthly_usd' => (float) env('COURSE_BUILDER_EVAL_MONTHLY_USD', 20),
     ],
 
+    // Course variants by level and role (ADR 0192): one base course plus up to `max` variants for other audiences,
+    // drafted from the same sources. `lesson_estimate_usd` is the per-lesson cost used for the estimate shown in
+    // the interview when the session has no lessons yet.
+    'variants' => [
+        'max' => (int) env('COURSE_BUILDER_MAX_VARIANTS', 6),
+        'lesson_estimate_usd' => (float) env('COURSE_BUILDER_VARIANT_LESSON_USD', 0.06),
+    ],
+
     'fragments' => ['min_tokens' => 150, 'max_tokens' => 600],
 
     // Pruning of the AG-UI event log
