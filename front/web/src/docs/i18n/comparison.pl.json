@@ -421,7 +421,10 @@
                     "title": "Warianty kursu według poziomu i roli",
                     "text": "Kreator kursów AI pyta, jakie poziomy i role ma objąć, i przygotowuje kilka wariantów jednego kursu z tych samych źródeł; każdy wariant sprawdzasz jako różnicę względem wersji bazowej. Uczący się zaczyna w wariancie dopasowanym do siebie, a ekspert pomija podstawy.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming"
+                    "status": "coming",
+                    "packages": [
+                      "course-variants"
+                    ]
                   },
                   {
                     "title": "Warstwa LLM niezależna od dostawcy",
