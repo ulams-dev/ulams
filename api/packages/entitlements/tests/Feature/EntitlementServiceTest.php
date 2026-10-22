@@ -4,7 +4,7 @@ namespace Ulams\Entitlements\Tests\Feature;
 
 use Illuminate\Support\Facades\Event;
 use Ulams\CourseAccess\Models\Course;
-use Ulams\CourseAccess\Services\Contracts\CourseAccessServiceContract;
+use Ulams\CourseAccess\Services\CourseAccessService;
 use Ulams\Courses\Events\CourseAssigned;
 use Ulams\Courses\Events\CourseUnassigned;
 use Ulams\Courses\Models\CourseUserPivot;
@@ -139,7 +139,7 @@ class EntitlementServiceTest extends TestCase
     {
         $user = User::factory()->create();
         $course = Course::factory()->create();
-        app(CourseAccessServiceContract::class)->addAccessForUsers($course, [$user->getKey()]);
+        (new CourseAccessService())->addAccessForUsers($course, [$user->getKey()]);
 
         $this->grant($user, $course, 'order-a');
         $this->service->revoke('order-a', 'refund');
@@ -155,7 +155,7 @@ class EntitlementServiceTest extends TestCase
         $user = User::factory()->create();
         $course = Course::factory()->create();
         $end = now()->addDays(5)->startOfSecond();
-        app(CourseAccessServiceContract::class)->addAccessForUsers($course, [$user->getKey() => ['end_date' => $end]]);
+        (new CourseAccessService())->addAccessForUsers($course, [$user->getKey() => ['end_date' => $end]]);
 
         $this->grant($user, $course, 'order-a');
         $this->service->revoke('order-a', 'refund');
@@ -190,5 +190,50 @@ class EntitlementServiceTest extends TestCase
         $this->assertNull($this->pivot($alice, $one));
         $this->assertNotNull($this->pivot($bob, $one));
         $this->assertNotNull($this->pivot($alice, $two));
+    }
+
+    public function testEverySourceTypeIsAccepted(): void
+    {
+        $course = Course::factory()->create();
+        foreach (Entitlement::SOURCE_TYPES as $i => $type) {
+            $user = User::factory()->create();
+            $this->assertSame($type, $this->service->grantCourse($user->getKey(), $course->getKey(), $type, "k{$i}")->source_type);
+        }
+        $this->assertCount(9, Entitlement::SOURCE_TYPES);
+    }
+
+    public function testAnUnknownSourceTypeIsRefusedWithoutRows(): void
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->create();
+
+        $this->expectException(\InvalidArgumentException::class);
+        try {
+            $this->service->grantCourse($user->getKey(), $course->getKey(), 'coupon', 'k1');
+        } finally {
+            $this->assertSame(0, Entitlement::query()->count());
+        }
+    }
+
+    public function testOnlyManualSourcesCanBeGrantedManually(): void
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->create();
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->service->grantManual($user->getKey(), $course->getKey(), 'order_item');
+    }
+
+    public function testRecordingWithoutProjectingLeavesCourseUserToTheOtherWriter(): void
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->create();
+
+        $this->service->grantCourse($user->getKey(), $course->getKey(), 'wellms_order', 'w1', [], null, null, false);
+
+        $this->assertNull($this->pivot($user, $course));
+        $this->assertSame(1, Entitlement::query()->count());
+        $this->service->project($user->getKey(), $course->getKey());
+        $this->assertNotNull($this->pivot($user, $course));
     }
 }

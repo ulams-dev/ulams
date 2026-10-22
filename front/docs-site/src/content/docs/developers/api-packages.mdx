@@ -360,7 +360,10 @@ A Sylius adapter is planned (Phase 6.4).
 
 What granted a user access to a course (`entitlements`: subject, validity, unique source key) and
 `EntitlementService`, the only writer of purchased access: it grants and revokes through
-`CourseAccessService`, so `course_user` stays the projection every policy reads. No routes.
+`CourseAccessService`, so `course_user` stays the projection every policy reads. It also decorates
+`CourseAccessService` (every access written by an admin, LTI or compliance gets an entitlement), expires
+entitlements hourly and checks `course_user` against them nightly (`ulams:entitlements:parity`). The access
+backfill (`ulams:entitlements:backfill`) and the Wellms shadow listener live in `commerce`. No routes.
 
 ### [shopping-cart](/reference/packages/shopping-cart/)
 

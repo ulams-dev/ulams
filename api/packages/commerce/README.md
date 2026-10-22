@@ -20,6 +20,12 @@ never decides who has access.
   (`Ulams\Entitlements`, ADR 0130). `ulams:commerce:reconcile` reads the optional `ReconcilesOrders` feed to
   repair missed webhooks. Prototype (CM-1): the only provider with these capabilities is the test-only fake.
 
+- Shadow mode (CM-2, ADR 0130): while the Wellms cart sells, `RecordWellmsPurchase` records each purchase as a
+  `wellms_order` entitlement (on `ProductBought`, without touching `course_user`; on `ProductAttached` it aligns the end
+  date the cart wrote). `ulams:entitlements:backfill [--dry-run]` gives every existing `course_user` row an entitlement
+  and proves, in the same transaction, that no access changed (all or nothing); the parity check is
+  `ulams:entitlements:parity` in the `entitlements` package. `COMMERCE_SHADOW_WELLMS=false` turns the listener off.
+
 The Course Builder uses it to create an inactive product when a paid course is applied and to
 activate it when the course is published.
 

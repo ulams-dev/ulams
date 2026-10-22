@@ -2,6 +2,7 @@
 
 namespace Ulams\Compliance\Services;
 
+use Ulams\CourseAccess\Support\AccessSourceContext;
 use Carbon\CarbonInterface;
 use Illuminate\Support\Facades\DB;
 use Ulams\Compliance\Enums\AssignmentSource;
@@ -72,7 +73,11 @@ class AssignmentService
             ]);
 
             if (!$valid) {
-                $this->access->addAccessForUsers(AccessCourse::findOrFail($course->getKey()), [$user->getKey()]);
+                AccessSourceContext::as(
+                    'compliance',
+                    fn () => $this->access->addAccessForUsers(AccessCourse::findOrFail($course->getKey()), [$user->getKey()]),
+                    ['assignment_source' => $source, 'assigned_by' => $by?->getKey()],
+                );
                 $this->startOver($user, $course);
                 $this->writeDeadline($user, $course, $dueAt);
                 $created = true;

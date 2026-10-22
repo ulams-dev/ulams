@@ -10,8 +10,9 @@ modules:
 import { Aside } from "@astrojs/starlight/components";
 
 <Aside type="caution">
-  This is the CM-1 prototype of Phase 6.4 (ADR 0130, still Proposed). No Sylius instance is wired in yet: the
-  flow is exercised with a fake provider in the test suite. The Wellms cart keeps granting access as before.
+  Phase 6.4 (ADR 0130). The entitlement model, the backfill and the shadow mode (CM-2) are complete and run against
+  the Wellms cart. No Sylius instance is wired in yet: the order-event flow is exercised with a fake provider in the
+  test suite. The Wellms cart keeps granting access as before.
 </Aside>
 
 The LMS owns access. A commerce provider only reports that an order was paid, refunded or cancelled; it never
@@ -24,13 +25,54 @@ An entitlement records one reason a user may open a course: `subject` (a course)
 line the key is `<provider>:<channel>:order_item:<id>`, so applying the same order twice changes nothing.
 
 `course_user` stays the projection that policies, H5P and SCORM read. `EntitlementService` is the only writer for
-purchased access and goes through `CourseAccessService`:
+purchased access and goes through `CourseAccessService`. The source types are `order_item`, `admin`, `compliance`,
+`lti`, `wellms_order` and `migration` (written today) and `seat`, `group_legacy` and `voucher_legacy` (reserved):
 
 - granting creates the entitlement and the `course_user` row, with the latest `valid_until` as `end_date`;
 - revoking marks the entitlement and recomputes the row: another active entitlement keeps access, otherwise the
   row is removed. Progress is never deleted;
 - access that existed before the first purchase (an admin attached the course) is recorded as a `migration`
-  entitlement first, so a refund cannot remove it.
+  entitlement first, so a refund cannot remove it;
+- expiry (`ulams:entitlements:expire`, hourly) marks entitlements whose end has passed as `expired` and keeps the
+  `course_user` row with the last end date, so progress survives and a re-purchase restores access.
+
+## Admin access and other writers
+
+Everything else that attaches a course goes through `CourseAccessService`, which the entitlements package decorates:
+an admin attaching a user records an `admin` entitlement (with the admin as `granted_by`), an LTI launch an `lti` one
+and a compliance assignment a `compliance` one (`AccessSourceContext::as('lti', ...)`). Attaching again moves the end
+date of the same entitlement instead of adding rows, and attaching without an end date never extends existing access.
+Events and end-date rules are unchanged.
+
+An explicit removal (the admin remove and set endpoints) revokes every entitlement of the user for the course with
+reason `admin_removed`: an admin who removes a learner expects the access to be gone. Refunds, cancellations and expiry
+are narrower and never remove access another source still grants. Group access is not a `course_user` row and is
+neither recorded nor compared.
+
+## Backfill and parity
+
+`ulams:entitlements:backfill` gives every existing `course_user` row an entitlement without changing any access.
+`--dry-run` computes and reports without writing. A row explained by a paid Wellms order line becomes a `wellms_order`
+entitlement (`wellms:order_item:<line>:course:<course>`), any other row a `migration` one
+(`migration:course_user:<course>:<user>`), each with the row's own end date. A Wellms subscription over a course the
+user has gets an entitlement ending with the subscription, never later than the row. Rows that already have an
+entitlement in force are left alone, so a refund can still revoke a purchase. It is idempotent by `source_key`.
+
+`ulams:entitlements:parity` compares, for every user and course, the access in `course_user` with the access the
+entitlements in force give, using the date rule of `Course::hasUser()`. Differences are `missing_entitlement`,
+`unprojected_entitlement` and `end_date_mismatch`. Every run stores a report in `entitlement_parity_reports`
+(`--latest` prints the last one) and the command fails when any pair differs. The backfill runs the same check in its
+transaction: one difference, or a changed `course_user`/`products_users` hash, rolls everything back, so a failed run
+changes nothing. Parity runs nightly (03:30, per tenant) once a backfill has passed, for as long as shadow mode lasts, and must show zero differences before a
+tenant's cutover (CM-10).
+
+## Shadow mode
+
+While the Wellms cart sells, a listener records each purchase as a `wellms_order` entitlement. On `ProductBought` it
+writes one entitlement per course in the product (open-ended, without touching `course_user`: the cart attaches the
+course itself, with its own events); on `ProductAttached` it aligns the end date with the one the cart wrote for a
+subscription. A failure is logged and never blocks the purchase; the parity check reports what was missed. Turn it off
+with `COMMERCE_SHADOW_WELLMS=false` for a tenant that never used the cart.
 
 ## The order-event webhook
 
@@ -70,11 +112,16 @@ gave up on again. Set `COMMERCE_RECONCILE=true` to run it every five minutes fro
 | `COMMERCE_WEBHOOK_SECRET` | none | Per-tenant HMAC secret (`whsec_...`) |
 | `COMMERCE_WEBHOOK_SECRET_PREVIOUS` | none | Secret being rotated out, accepted as well |
 | `COMMERCE_RECONCILE` | `false` | Schedule reconciliation every five minutes |
+| `COMMERCE_SHADOW_WELLMS` | `true` | Record Wellms cart purchases as entitlements (shadow mode) |
+| `ENTITLEMENTS_EXPIRE` | `true` | Schedule `ulams:entitlements:expire` hourly |
+| `ENTITLEMENTS_PARITY` | `true` | Schedule `ulams:entitlements:parity` nightly |
 
 ## What is stubbed
 
 - The provider: `FakeCommerceProvider` (tests only) plays the Sylius Admin API and its event feed. The Sylius
   adapter, the bridge bundle with its outbox, and `scripts/commerce-e2e.sh` follow in CM-3 and later.
 - Bundles are not expanded to courses yet: a paid line without a linked course fails the job loudly instead of
-  being skipped. Seat pools, the expiry job, the access backfill and the `CourseAccessService` decorator are CM-2 and CM-9.
+  being skipped. Seat pools are CM-9; the source types `seat`, `group_legacy` and `voucher_legacy` are reserved.
+- The parity report is read with `ulams:entitlements:parity --latest`; showing it in the admin comes with the unified
+  commerce admin (CM-8). There is no new HTTP endpoint in CM-2.
 - The nightly `--full` sweep that compares paid orders with entitlements in both directions.
