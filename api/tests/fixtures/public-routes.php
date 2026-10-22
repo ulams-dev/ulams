@@ -65,7 +65,7 @@ return [
 
     // Sign in, registration, recovery (no session exists yet) ---------------------------------------
     ['method' => 'POST', 'uri' => 'oauth/token', 'kind' => 'own-credentials', 'reason' => 'Passport token endpoint: client id and secret or user credentials travel in the body.'],
-    ['method' => 'GET', 'uri' => 'oauth/authorize', 'kind' => 'open', 'reason' => 'Passport authorization screen, needs a web session; the API issues personal access tokens only, so nothing links here.'],
+    ['method' => 'GET', 'uri' => 'oauth/authorize', 'kind' => 'open', 'reason' => 'Passport authorization endpoint, needs a web session; the API issues personal access tokens only, so nothing links here. Answers 400 without valid parameters and 404 where a consent screen would be shown.'],
     ['method' => '*', 'uri' => 'oauth/*', 'kind' => 'inline-auth', 'reason' => 'Passport routes behind `auth:web` (session): refresh and approve/deny, 401 without a session.'],
     ['method' => 'POST', 'uri' => 'api/auth/device/code', 'kind' => 'open', 'reason' => 'Device authorization for the CLI: starts the flow, a signed-in user approves it at api/auth/device/requests (auth:api).'],
     ['method' => 'POST', 'uri' => 'api/auth/device/token', 'kind' => 'open', 'reason' => 'Device authorization: the CLI polls with its device code.'],
@@ -82,7 +82,7 @@ return [
         'reason' => 'Redeems a one-time login code with the PKCE verifier; codes are per tenant.'],
     ['method' => 'POST', 'uri' => 'api/auth/social/complete/{token}', 'kind' => 'open', 'reason' => 'Completes a social registration with a one-time token.'],
     ['method' => 'GET', 'uri' => 'api/auth/email/verify/{id}/{hash}', 'kind' => 'open', 'reason' => 'E-mail verification link: the hash of the address is the credential.'],
-    ['method' => 'GET', 'uri' => 'api/profile/delete/{userId}/{token}', 'kind' => 'open', 'reason' => 'Account deletion confirmation link: the emailed token is the credential. Answers 500 to a malformed token (not an isolation matter).'],
+    ['method' => 'GET', 'uri' => 'api/profile/delete/{userId}/{token}', 'kind' => 'own-credentials', 'reason' => 'Account deletion confirmation link: the emailed token is the credential; answers 401 to a missing, malformed, wrong or expired token.'],
     ['method' => 'GET', 'uri' => 'api/refresh-token', 'kind' => 'own-credentials', 'covered_by' => 'api/packages/youtube/tests/Services/YoutubeServiceTest.php',
         'reason' => 'Google OAuth redirect target of the YouTube connection (a browser redirect carries no bearer token): the signed, single-use state issued to an administrator by api/admin/g-token/generate is the credential; answers 400 without it.'],
 
@@ -118,7 +118,7 @@ return [
     ['method' => 'GET', 'uri' => 'api/certificates/verify/{certificateId}', 'kind' => 'own-credentials',
         'covered_by' => 'api/packages/templates-pdf/tests/Api/CertificateTenantIsolationTest.php',
         'reason' => 'Certificate verification: what the QR code leads to; the unguessable certificate id is the credential, answers 404 to an unknown one.'],
-    ['method' => '*', 'uri' => 'api/images/img', 'kind' => 'open', 'reason' => 'Renders a public image from the tenant disk with a size and format (cached, throttled). Answers 500 without parameters.'],
+    ['method' => '*', 'uri' => 'api/images/img', 'kind' => 'open', 'reason' => 'Renders a public image from the tenant disk with a size and format (cached, throttled). Answers 422 without a path.'],
     ['method' => 'GET', 'uri' => 'api/questionnaire/stars/{model_type_title}/{model_id}', 'kind' => 'open', 'reason' => 'Aggregate star ratings of a course or other model.'],
     ['method' => 'GET', 'uri' => 'api/questionnaire/{model_type_title}/{model_id}', 'kind' => 'open', 'reason' => 'Questionnaires assigned to a model.'],
     ['method' => 'GET', 'uri' => 'api/questionnaire/{model_type_title}/{model_id}/questions/{question_id}/answers', 'kind' => 'open', 'reason' => 'Answers the author marked as public.'],
