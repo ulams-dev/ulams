@@ -190,3 +190,14 @@ Recommended first: **EP-1**, then EP-2 and EP-3. EP-4 is what the policy lifecyc
   `.example.test`) activates any host under it.
 - **Ids** are ULIDs (no guessable sequence); host, key and kind are fixed after creation.
 - **Not in EP-1:** the logo file of an entry point theme (comes with the admin screen in EP-4) and the `verify` CLI command (EP-7).
+- **EP-2, resolution.** `GET /api/platform/entry-points/resolve?host=` (or `?tenant=&key=` for `/go/<key>`) is public, platform
+  hosts only, needs no switch, is throttled per address (`TENANCY_ENTRY_RESOLVE_RATE`, 600 a minute) and answers one and the same 404
+  for an unknown, pending, disabled or malformed host. The front (`ULAMS_PLATFORM_API_URL`, empty = off) asks only for hosts that no
+  `ULAMS_TENANT_HOSTS` rule matches; a failed lookup answers 503 instead of falling through to the default academy. The cache is the
+  SWR cache with a TTL that depends on the answer (60 s hit, 10 s miss) and serves the last answer while the platform is down.
+- **Theme.** The entry point's accent, logo text and language replace the academy's in the public settings the page reads (per
+  request, through `AsyncLocalStorage`; the cached settings are never changed). The preset is applied to the look only (`Base.astro`):
+  `theme.theme` also picks the academy's landing document. `accentCss` now holds the accent to 4.5:1 on the cards of the preset too,
+  because axe found small accent text on dark presets at 4.2:1 (a fix for every academy, not only entry points).
+- **Not in EP-2:** `X-Ulams-Entry` on API presentation endpoints (nothing reads it before EP-4), the entry label in the header (EP-4),
+  canonical URLs and sitemaps per host (EP-5).

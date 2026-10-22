@@ -3,6 +3,9 @@ title: Entry points
 description: Give one academy several branded addresses for a department, a course or a role, add them with the API or the ulams CLI, and know what each rule and permission means.
 modules:
   - tenancy
+  - web
+learnerRoutes:
+  - /go/[key]
 sidebar:
   order: 41
 ---
@@ -18,12 +21,39 @@ An entry point only changes what the learner front shows first. It never grants 
 learner to a group: enrolments, entitlements, groups and rules decide who can open what, on every address.
 
 <Aside type="note">
-Built so far: the table, the admin API and the `ulams entry-points` commands. The learner front serving the
-address, the theme, the sign-in hand-off between addresses, the department catalogue, the course and role
-behaviour and DNS verification are built in the next steps of the
+Built so far: the table, the admin API, the `ulams entry-points` commands, the learner front serving an entry
+host in its own theme and the `/go/<key>` fallback. The sign-in hand-off between addresses, the department
+catalogue, the course and role behaviour and DNS verification are built in the next steps of the
 [plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/academy-entry-points.md) and are marked
 <Badge text="Coming" variant="caution" /> below.
 </Aside>
+
+## What a visitor sees
+
+The learner front (`front/web`) maps a request host to an academy with its own host rules first
+(`ULAMS_TENANT_HOSTS`). A host that no rule matches is looked up on the platform
+(`GET /api/platform/entry-points/resolve`, public, platform hosts only) when `ULAMS_PLATFORM_API_URL` is set. For
+an active entry point the front serves the academy's pages under that host with:
+
+- the entry point's theme: its preset, its accent and its logo text over the academy's. The academy's own accent is
+  not kept when the entry point sets a preset (it was chosen for the academy's preset). Every accent goes through
+  the same contrast adjustment, on the page and on cards, so the theme passes WCAG 2.2 AA;
+- the entry point's default language, when it has one;
+- `noindex` (header and meta tag) when the entry point is not indexed: department and role hosts by default.
+
+The answer is cached for 60 seconds ("no such host" for 10 seconds), and the last answer is served while the
+platform cannot be reached. A host the platform cannot say anything about answers 503, never another academy's
+pages. Disabling or deleting an entry point stops its host within about a minute.
+
+Every host has its own session cookie (`__Host-` on https, no `Domain`), so a session never reaches a sibling
+host. Access is the same everywhere: the same API, the same academy, the same enrolments.
+
+### Without DNS: `/go/<key>`
+
+`https://<academy host>/go/sales` looks through the entry point with the key `sales` for the rest of the browser
+session: the same theme and rules, on the academy's own host. `?next=/courses/1` chooses the page to land on (a path
+of this site only). `/go/main` goes back to the academy's own pages; `main` is not a usable key. The cookie holds the
+key, never a token, and an entry point that was disabled or deleted is dropped from it on the next page.
 
 ## Kinds
 
@@ -55,11 +85,11 @@ The same operations are `GET/POST /api/admin/entry-points`, `GET/PATCH/DELETE /a
 | Field | Rule |
 |---|---|
 | `host` | A DNS name in lower case: no address, port, path or credentials, at least two labels, no `content` label. It cannot be a platform host, a host of an academy, or another entry point's host. |
-| `key` | Lower case letters, digits and hyphens, up to 40, unique in the academy. The main host also answers at `/go/<key>` <Badge text="Coming" variant="caution" />. |
+| `key` | Lower case letters, digits and hyphens, up to 40, unique in the academy; `main` is reserved. The academy's own host also answers at `/go/<key>`. |
 | `label` | Up to 120 characters, shown in the header and the host switcher <Badge text="Coming" variant="caution" />. |
 | `theme` | `preset` (one of the tenant theme presets), `accent` (`#rrggbb`) and `logo_alt`. |
 | `seo` | `canonical` (`tenant`, or `self` for a course entry point only), `index`, `title` and `description`. |
-| `locale` | Optional default language, for example `pl`. |
+| `locale` | Optional default language, for example `pl`; it replaces the academy's default language on that host. |
 
 An academy can have 20 entry points (`TENANCY_MAX_ENTRY_POINTS`).
 
@@ -90,6 +120,8 @@ kept after an entry point is deleted.
 | `TENANCY_ENTRY_PLATFORM_SUFFIXES` | `.app.localhost` | Suffixes the platform serves itself (wildcard DNS and certificate). Comma separated. |
 | `TENANCY_ENTRY_TRUSTED_SUFFIXES` | empty | Development and CI only: any host under these suffixes is active at once. |
 | `TENANCY_ENTRY_CNAME_TARGET` | empty | Where a custom domain's CNAME has to point; shown with the DNS instructions. |
+| `TENANCY_ENTRY_RESOLVE_RATE` | `600` | Lookups per minute and address that the public resolve endpoint answers. |
+| `ULAMS_PLATFORM_API_URL` (`web`) | empty | Public URL of the platform API, for example `http://api.localhost`. Empty switches entry points off in the front. |
 
 The table lives in the platform database, which an academy's own process cannot reach. The academy API asks
 a platform process to read and write it, the way "new site" in the Course Builder asks for a new tenant, so
