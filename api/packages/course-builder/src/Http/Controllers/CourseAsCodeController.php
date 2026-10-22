@@ -33,6 +33,8 @@ use Ulams\Courses\Models\Course;
  *     @OA\Response(response=200, description="unchanged: the document equals the current version, no version is created", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
  *     @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown session"),
  *     @OA\Response(response=409, description="BASE_OUTDATED (with the remote diff) or NO_BLUEPRINT"), @OA\Response(response=413, description="document too large"), @OA\Response(response=422, description="INVALID_BLUEPRINT, BASE_UNKNOWN or a missing field"))
+ * @OA\Get(path="/api/admin/course-as-code/versions/{version}", operationId="admin.course-as-code.versions.by-version.get", summary="One version with its Blueprint v3 document (what a three-way merge needs as the base)", tags={"Admin Course-as-code"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="version", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="the version and its document", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown version"))
  * @OA\Get(path="/api/admin/course-as-code/versions/{version}/diff", operationId="admin.course-as-code.versions.by-version.diff.get", summary="Element-aware diff of a version against its parent or ?against=", tags={"Admin Course-as-code"}, security={{"passport": {}}},
  *     @OA\Parameter(name="version", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="against", in="query", @OA\Schema(type="string")), @OA\Response(response=200, description="changes", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
  * @OA\Post(path="/api/admin/course-as-code/versions/{version}/approve", operationId="admin.course-as-code.versions.by-version.approve.post", summary="Approve a proposed import (people and CLI tokens; never agents or MCP clients)", tags={"Admin Course-as-code"}, security={{"passport": {}}},
@@ -97,6 +99,7 @@ class CourseAsCodeController extends Controller
                 'changes' => $result['changes'],
                 'warnings' => $result['warnings'],
                 'handEdited' => $result['handEdited'],
+                'merged' => $result['merged'],
             ], $version === null ? 200 : 201);
         });
     }
