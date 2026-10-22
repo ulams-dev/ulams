@@ -629,7 +629,7 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
       author reviews as a diff; no quiz is generated with it yet)
 - [x] (new) Generic Git (`git` CLI) connector for hosts without a supported API (sandboxed, https only, off by default)
 - [x] (new) Google Drive and Notion connector plugins (designed in `docs/plans/phase-3.md` 6.6) (OAuth through a one-time grant, polling change detection; off by default, scripted-server tests only, live Drive/Notion runs tracked in #285 and #266)
-- [ ] (new) Notion source: a "paste an integration token" method in the studio's Notion form (the connector already
+- [ ] (new) Notion source (partial: the masked field and the connect with a pasted token are in the studio form, the API verifies the page on connect; last-four display and the plan's other points pending): a "paste an integration token" method in the studio's Notion form (the connector already
       accepts `secrets.token`; the form offers only OAuth, which blocked the Notion case study in #408): masked input,
       verified against Notion before saving, encrypted at rest, shown only as the last four characters, never in logs,
       events, audit entries or responses (plan `docs/plans/authoring-metric-and-report-builder.md` NT-1)

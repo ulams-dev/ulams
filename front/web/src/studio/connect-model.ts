@@ -106,7 +106,12 @@ export interface AccountForm {
   address: string;
   children: boolean;
   schedule: string;
+  /** A Notion integration token pasted instead of signing in; never stored by the browser. */
+  token?: string;
 }
+
+/** True when a Notion integration token was pasted: the connection is made with it, without the sign-in. */
+export const usesToken = (form: Pick<AccountForm, "source" | "token">): boolean => form.source === "notion" && (form.token ?? "").trim() !== "";
 
 export function accountFormProblem(form: AccountForm): string | null {
   const address = form.address.trim();
@@ -115,11 +120,13 @@ export function accountFormProblem(form: AccountForm): string | null {
   return /^https:\/\/(www\.)?notion\.(so|site)\/\S+$/i.test(address) || /^[0-9a-f-]{32,36}$/i.test(address) ? null : "Paste the address of the Notion page, or its id.";
 }
 
-/** What the connect request sends once the sign-in is done; the grant replaces any token. */
+/** What the connect request sends: the one-time grant of the sign-in, or (Notion only) the pasted integration token. The grant replaces any token. */
 export function accountPayload(form: AccountForm, grant?: string): ConnectInput {
   const address = form.address.trim();
   const config: Record<string, unknown> = form.source === "notion" ? { pageId: address, ...(form.children ? { includeChildren: true } : {}) } : { fileId: address };
-  return { connector: form.source, config, ...(grant ? { secrets: { grant } } : {}), schedule: asSchedule(form.schedule) };
+  const token = usesToken(form) ? (form.token ?? "").trim() : "";
+  const secrets: Record<string, string> | null = grant ? { grant } : token ? { token } : null;
+  return { connector: form.source, config, ...(secrets ? { secrets } : {}), schedule: asSchedule(form.schedule) };
 }
 
 export function urlFormProblem(form: UrlForm): string | null {

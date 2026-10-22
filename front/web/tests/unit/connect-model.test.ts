@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  accountFormProblem, accountPayload, connectionFacts, connectionState, gitFormProblem, gitPayload, hasToken, hintFor, normaliseRepository, scheduleLabel, splitList, urlFormProblem, urlPayload,
+  accountFormProblem, accountPayload, usesToken, connectionFacts, connectionState, gitFormProblem, gitPayload, hasToken, hintFor, normaliseRepository, scheduleLabel, splitList, urlFormProblem, urlPayload,
   type GitForm,
 } from "../../src/studio/connect-model.ts";
 
@@ -112,6 +112,13 @@ describe("connection panel model", () => {
     const notion = { source: "notion", address: "https://www.notion.so/Coffee-handbook-0123456789abcdef0123456789abcdef", children: true, schedule: "nonsense" };
     expect(accountFormProblem(notion)).toBeNull();
     expect(accountPayload(notion)).toEqual({ connector: "notion", config: { pageId: notion.address, includeChildren: true }, schedule: "daily" });
+    // a pasted integration token connects Notion without the sign-in; blank and Drive tokens are ignored
+    expect(usesToken({ ...notion, token: "  ntn_secret  " })).toBe(true);
+    expect(usesToken({ ...notion, token: "   " })).toBe(false);
+    expect(usesToken({ ...drive, token: "ntn_secret" })).toBe(false);
+    expect(accountPayload({ ...notion, token: "  ntn_secret  " })).toEqual({ connector: "notion", config: { pageId: notion.address, includeChildren: true }, secrets: { token: "ntn_secret" }, schedule: "daily" });
+    expect(accountPayload({ ...notion, token: "ntn_secret" }, "g1").secrets).toEqual({ grant: "g1" });
+    expect(accountPayload({ ...drive, token: "ntn_secret" }).secrets).toBeUndefined();
     expect(accountFormProblem({ ...notion, address: "docs" })).toMatch(/Notion page/);
     expect(accountFormProblem({ ...notion, source: "dropbox" })).toMatch(/Choose/);
     expect(connectionFacts({ connector: "notion", config: { pageId: "abc", includeChildren: true } } as never)).toEqual([{ label: "Notion page", value: "abc and the pages under it" }]);
