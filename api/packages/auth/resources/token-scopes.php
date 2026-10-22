@@ -171,6 +171,9 @@ return [
 
     // ---- certificates --------------------------------------------------------------------------
     ['api/admin/pdfs*', 'certificates'],
+    // the report and the scheduled reports are analytics: reports:read (ADR 0194, Q10); the rest of compliance stays with certificates
+    ['api/admin/compliance/report*', 'reports'],
+    ['api/admin/compliance/schedules*', 'reports'],
     ['api/admin/compliance*', 'certificates'],
 
     // ---- commerce ------------------------------------------------------------------------------
@@ -185,6 +188,8 @@ return [
 
     // ---- reports -------------------------------------------------------------------------------
     ['api/admin/reports*', 'reports'],
+    // report builder: datasets, queries, saved reports (the prefix avoids the legacy api/admin/reports* routes)
+    ['api/admin/reporting*', 'reports'],
     ['api/admin/stats*', 'reports'],
     ['api/admin/questionnaire*', 'reports'],
     ['api/admin/tasks*', 'reports'],
