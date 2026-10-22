@@ -1162,6 +1162,48 @@
 .st-evidence-reasons li + li {
   margin-top: 2px;
 }
+/* "Versions of this update" on the review screen: one link per proposal of the group, current one marked in words and by outline */
+.st-vg-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.st-vg-link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--ulams-studio-line);
+  border-radius: 12px;
+  color: var(--ulams-studio-ink);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.st-vg-link:hover {
+  background: var(--ulams-studio-sunken);
+}
+.st-vg-link[aria-current="page"] {
+  background: var(--ulams-studio-iris-soft);
+  border-color: var(--ulams-studio-iris);
+  border-width: 2px;
+  padding: 7px 11px;
+}
+.st-vg-name {
+  font-weight: 600;
+}
+.st-vg-status,
+.st-vg-counts {
+  color: var(--ulams-studio-muted);
+}
+@media (max-width: 720px) {
+  .st-vg-list {
+    flex-direction: column;
+  }
+}
 .st-badge {
   display: inline-block;
   margin-inline-start: 6px;
@@ -1171,6 +1213,12 @@
   background: var(--ulams-studio-sunken);
   font-size: 0.75rem;
   font-weight: 500;
+}
+.st-badge.st-course-badge {
+  border-color: var(--ulams-studio-iris);
+  color: var(--ulams-studio-iris);
+  background: var(--ulams-studio-iris-soft);
+  font-weight: 600;
 }
 @media (max-width: 720px) {
   .st-page {
