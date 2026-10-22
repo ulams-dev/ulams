@@ -179,6 +179,7 @@ return [
         Ulams\Bookmarks\UlamsBookmarksServiceProvider::class,
         Ulams\Webhooks\UlamsWebhooksServiceProvider::class,
         Ulams\KnowledgeExport\UlamsKnowledgeExportServiceProvider::class,
+        Ulams\Identity\UlamsIdentityServiceProvider::class,
         Ulams\Commerce\UlamsCommerceServiceProvider::class,
         Ulams\Entitlements\UlamsEntitlementsServiceProvider::class,
         Ulams\BulkNotifications\UlamsBulkNotificationsServiceProvider::class,

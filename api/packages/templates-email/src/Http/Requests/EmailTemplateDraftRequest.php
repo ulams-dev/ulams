@@ -20,6 +20,14 @@ class EmailTemplateDraftRequest extends FormRequest
         return Gate::allows('update', Template::class);
     }
 
+    protected function prepareForValidation(): void
+    {
+        if (is_string($this->input('locale'))) {
+            $locale = strtolower(trim($this->input('locale')));
+            $this->merge(['locale' => $locale === '' ? null : $locale]);
+        }
+    }
+
     public function rules(): array
     {
         $events = array_keys(array_filter(
@@ -35,6 +43,7 @@ class EmailTemplateDraftRequest extends FormRequest
                     $fail(__('The content may not be larger than 512 KiB.'));
                 }
             }],
+            'locale' => ['sometimes', 'nullable', 'string', 'regex:/^[a-z]{2,3}$/'],
             'sample_overrides' => ['sometimes', 'array'],
             'sample_overrides.*' => ['nullable', 'string', 'max:500'],
         ];
@@ -53,6 +62,12 @@ class EmailTemplateDraftRequest extends FormRequest
                 }
             }
         });
+    }
+
+    /** The language the draft is written for, if the editor says so. */
+    public function locale(): ?string
+    {
+        return $this->validated()['locale'] ?? null;
     }
 
     /**

@@ -967,6 +967,48 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/identity/audit",
+  "summary": "Identity audit trail, newest first",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/identity/audit/verify",
+  "summary": "Recompute the hash chain of the audit trail",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/identity/providers",
+  "summary": "Identity providers of this academy",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/identity/providers",
+  "summary": "Add an OpenID Connect identity provider",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/identity/providers/{provider}",
+  "summary": "Delete an identity provider and its account links (accounts stay)",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/identity/providers/{provider}",
+  "summary": "One identity provider",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/identity/providers/{provider}",
+  "summary": "Change an identity provider (leave client_secret out to keep the stored one)",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/interactive",
   "summary": "List interactive packages",
   "tag": "Admin Interactive"
@@ -3190,6 +3232,30 @@
   "path": "/api/health-check",
   "summary": "Check health of the application",
   "tag": "Api"
+ },
+ {
+  "method": "GET",
+  "path": "/api/identity/oidc/{slug}/callback",
+  "summary": "Where the provider sends the browser back; redirects to the return URL with a one-time code or an error",
+  "tag": "Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/identity/providers",
+  "summary": "Identity providers a learner can sign in with",
+  "tag": "Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/identity/sso/{slug}/start",
+  "summary": "Start a sign-in: redirects the browser to the provider",
+  "tag": "Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/identity/sso/exchange",
+  "summary": "Redeem the one-time code with the verifier for an access token",
+  "tag": "Identity"
  },
  {
   "method": "GET",

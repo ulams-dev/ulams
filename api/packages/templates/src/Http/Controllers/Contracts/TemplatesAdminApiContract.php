@@ -41,6 +41,15 @@ interface TemplatesAdminApiContract
      *             type="string"
      *         )
      *     ),
+     *     @OA\Parameter(
+     *         description="Language code (en, pl, zh) the template is written for",
+     *         in="query",
+     *         name="locale",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="list of available templates",

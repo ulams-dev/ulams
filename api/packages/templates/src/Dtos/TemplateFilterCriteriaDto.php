@@ -46,6 +46,10 @@ class TemplateFilterCriteriaDto extends CriteriaDto implements InstantiateFromRe
             $criteria->push(new EqualCriterion('channel', $request->input('channel')));
         }
 
+        if ($request->has('locale')) {
+            $criteria->push(new EqualCriterion('locale', $request->input('locale')));
+        }
+
         return new self($criteria);
     }
 }

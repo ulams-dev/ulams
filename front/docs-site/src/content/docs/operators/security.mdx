@@ -14,6 +14,9 @@ modules:
 
 import { Aside, Badge } from "@astrojs/starlight/components";
 
+Verifying signed images, SBOMs, vulnerability scanning, the patch policy and a hardening checklist are
+on [Hardening and supply chain](/operators/hardening/).
+
 ## Uploaded content is untrusted
 
 Course packages, H5P files, images and documents come from authors and imports and are treated as
@@ -54,6 +57,20 @@ Sign-in with Google and Facebook is hardened (ADR 0121, [operator guide](/operat
   with "forgot password". Until you have run `ulams:upgrade` on a platform that was created before
   this fix, those accounts can still be signed in to with the password `1`;
 - deactivating or deleting a user revokes all of their tokens.
+
+## Single sign-on
+
+OpenID Connect sign-in ([operator guide](/operators/single-sign-on/)) uses the same hand-off as the social
+login and adds:
+
+- the ID token is verified with the provider's published keys: algorithm allow-list (RS256/384/512, PS256, ES256/384; no
+  `none`, no HMAC), issuer, audience (and `azp`), expiry, `nonce`, with 60 seconds of clock skew; an unknown key id
+  refetches the key set once;
+- every request to the provider (discovery, keys, token, userinfo) goes through the SSRF-safe client: https only,
+  public addresses only, pinned for the connection;
+- the client secret is encrypted with the tenant key, never returned by the API, and never written to logs or the audit trail;
+- an existing account is linked only for a verified address in a trusted domain, never an admin or tutor;
+  a provider can never grant a role, and sign-ins and provider changes are written to a hash-chained audit trail.
 
 ## Links in e-mails
 

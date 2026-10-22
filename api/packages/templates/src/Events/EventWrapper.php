@@ -3,6 +3,7 @@
 namespace Ulams\Templates\Events;
 
 use Ulams\Core\Models\User;
+use Ulams\Templates\Support\TemplateLocale;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\ForwardsCalls;
@@ -45,6 +46,65 @@ class EventWrapper
 
         $id = $this->extractIdForPropertyOfClass(User::class);
         return $id ? User::find($id) : null;
+    }
+
+    /**
+     * The language of the event: its own `getLocale()` / `getLanguage()`, else the `language` (or `locale`) of the
+     * first model it carries (a course has one). Null when there is none; the caller falls back.
+     */
+    public function language(): ?string
+    {
+        foreach (['getLocale', 'getLanguage'] as $getter) {
+            try {
+                $value = $this->__call($getter, []);
+                if (is_string($value) && TemplateLocale::normalize($value)) {
+                    return TemplateLocale::normalize($value);
+                }
+            } catch (\BadMethodCallException $ex) {
+                // ignore
+            }
+        }
+
+        foreach ($this->modelsOfTheEvent() as $value) {
+            $attributes = $value->getAttributes();
+            foreach (['language', 'locale'] as $key) {
+                $locale = isset($attributes[$key]) && is_string($attributes[$key]) ? TemplateLocale::normalize($attributes[$key]) : null;
+                if ($locale) {
+                    return $locale;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * The models the event carries: the ones in its array form or properties, and the ones its getters
+     * (`getCourse(): Course`) return. A getter is needed when the property is private to a parent class.
+     *
+     * @return Model[]
+     */
+    private function modelsOfTheEvent(): array
+    {
+        $values = method_exists($this->event, 'toArray') ? $this->event->toArray() : [];
+        $values = array_merge(array_values($values), array_values($this->extractPropertiesFromBaseEvent()));
+
+        foreach ((new ReflectionClass($this->event))->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+            $type = $method->getReturnType();
+            if (
+                !str_starts_with($method->getName(), 'get') || $method->isStatic() || $method->getNumberOfRequiredParameters() > 0
+                || !$type instanceof \ReflectionNamedType || $type->isBuiltin() || !is_a($type->getName(), Model::class, true)
+            ) {
+                continue;
+            }
+            try {
+                $values[] = $method->invoke($this->event);
+            } catch (\Throwable $e) {
+                // a getter that cannot answer (an uninitialised property): the event has no language through it
+            }
+        }
+
+        return array_values(array_filter($values, fn ($value) => $value instanceof Model));
     }
 
     public function getEmail(): ?string

@@ -39,7 +39,8 @@ fires, the listener, for each channel:
 
 1. picks the template **assigned** to the item the event is about, if the event type supports
    assignment (for example a certificate assigned to one course), otherwise the **default**
-   template for that event and channel;
+   template for that event and channel, in the language of the course, the academy's default
+   language or English (see [Languages](#languages));
 2. skips the channel and writes an error to the log if there is no template, or if the
    template is invalid (for example it lacks a required variable);
 3. replaces the variables and hands the result to the channel, which sends the email or SMS
@@ -148,6 +149,19 @@ Email templates exist for events of most packages: account registration, verific
 blocking and deletion, password reset and change, group membership, course access and
 deadlines, payments, tasks, webinars and consultations, video processing, users imported from
 CSV and invitations of people without an account.
+
+### Languages
+
+An e-mail template can be written for one language. On the template page, the **Languages** panel
+shows English, Polski and 中文 for the event: the ones that have a template, and the ones marked
+**Missing translation**. **Create translation** starts a new template for the missing language as a
+copy of the one you have, **Copy content from** copies another template's content into the form, and
+the **Language** field sets the language of the template. The list has **Language** and
+**Translations** columns, so you can see which events still miss a language.
+
+The language of an e-mail is the language of the course it is about, then the academy's default
+language, then English, then a template without a language. The full order, the seeded defaults and
+the API fields are in [E-mail](/operators/email/#templates-per-language).
 
 ## PDF templates
 

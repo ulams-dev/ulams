@@ -168,4 +168,31 @@ export default {
   'templates.kb_edit_done': 'Finished editing the text.',
   'templates.visual_keyboard_hint':
     'Visual mode works with the keyboard: use the structure and the tools above the canvas instead of dragging.',
+  'templates.lang_title': 'Languages',
+  'templates.lang_hint':
+    'An e-mail is sent in the language of the course, then in the default language of the academy, then in English. A template without a language is the last fallback.',
+  'templates.lang_field': 'Language',
+  'templates.lang_field_tooltip':
+    'The language this template is written for. Choose "No language" for a template that is used when a language has no template of its own.',
+  'templates.lang_none': 'No language (fallback)',
+  'templates.lang_present': 'Has a template',
+  'templates.lang_missing': 'Missing translation',
+  'templates.lang_current': 'This template',
+  'templates.lang_edit': 'Edit',
+  'templates.lang_edit_in': 'Edit the {language} template',
+  'templates.lang_create': 'Create translation',
+  'templates.lang_create_in': 'Create the {language} translation',
+  'templates.lang_missing_summary':
+    'Missing translations: {languages}. E-mails in these languages use the fallback.',
+  'templates.lang_complete': 'Every language has a template.',
+  'templates.lang_universal':
+    'A template without a language also exists. It is used when a language has no template of its own.',
+  'templates.lang_copy_label': 'Copy content from',
+  'templates.lang_copy_placeholder': 'Choose a template',
+  'templates.lang_copy_button': 'Copy content',
+  'templates.lang_copy_confirm':
+    'Replace the content in this form with the content of the chosen template? Unsaved changes are lost.',
+  'templates.lang_copied': 'Content copied from "{name}". Translate it, then save.',
+  'templates.lang_translations': 'Translations',
+  'templates.send_test_in': 'The sample values and the test e-mail use {language}.',
 };

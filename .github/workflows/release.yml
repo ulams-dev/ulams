@@ -1,0 +1,98 @@
+name: Release assets
+
+# After "Publish images" has pushed a v* tag: verify the signature of every image of that version, attach
+# their SPDX SBOMs, the SBOM of the source tree and a signed SHA256SUMS to the GitHub release (created
+# when it does not exist yet, with generated notes). Nothing here pushes images or tags.
+# Logic and tests: .github/scripts/release-assets.sh, test-supply-chain.sh. Background: ADR 0108.
+
+on:
+  workflow_run:
+    workflows: ["Publish images"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag whose images are already published, for example v0.1.0"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event.inputs.tag || github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  assets:
+    name: SBOMs and checksums
+    # A workflow_run fires for every publish run; only a successful run for a push is of interest, and the
+    # first step checks that its ref is a v* tag.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      packages: read
+      id-token: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Which tag
+        id: tag
+        env:
+          INPUT_TAG: ${{ github.event.inputs.tag }}
+          RUN_REF: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          tag="${INPUT_TAG:-$RUN_REF}"
+          case "$tag" in
+            v[0-9]*) ;;
+            *) echo "'$tag' is not a v* tag, nothing to do"; echo "skip=true" >> "$GITHUB_OUTPUT"; exit 0 ;;
+          esac
+          if ! gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag" --silent; then
+            echo "'$tag' is not a tag of this repository, nothing to do"; echo "skip=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v7
+        if: steps.tag.outputs.skip == 'false'
+        with:
+          ref: refs/tags/${{ steps.tag.outputs.tag }}
+      - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6
+        if: steps.tag.outputs.skip == 'false'
+        with:
+          cosign-release: v3.1.3
+      - uses: docker/setup-buildx-action@v4
+        if: steps.tag.outputs.skip == 'false'
+      - uses: docker/login-action@v4
+        if: steps.tag.outputs.skip == 'false'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Trivy database cache
+        if: steps.tag.outputs.skip == 'false'
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/trivy-ulams
+          key: trivy-db-${{ github.run_id }}
+          restore-keys: trivy-db-
+      - name: Collect the assets
+        if: steps.tag.outputs.skip == 'false'
+        run: sh .github/scripts/release-assets.sh "${{ steps.tag.outputs.tag }}" release-assets
+      - name: Sign the checksums
+        if: steps.tag.outputs.skip == 'false'
+        working-directory: release-assets
+        run: |
+          cosign sign-blob --yes --bundle SHA256SUMS.sigstore.json SHA256SUMS
+          cosign verify-blob --bundle SHA256SUMS.sigstore.json \
+            --certificate-identity-regexp "^https://github.com/${GITHUB_REPOSITORY}/.github/workflows/release.yml@" \
+            --certificate-oidc-issuer https://token.actions.githubusercontent.com SHA256SUMS
+      - name: Attach to the release
+        if: steps.tag.outputs.skip == 'false'
+        env:
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --verify-tag --title "$TAG" --generate-notes
+          gh release upload "$TAG" release-assets/* --clobber

@@ -765,6 +765,7 @@
                     "text": "用户、用户组和个人资料管理，角色与权限通过 REST API 提供。",
                     "packages": [
                       "auth",
+                      "identity",
                       "permissions"
                     ]
                   },

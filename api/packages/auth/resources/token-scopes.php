@@ -8,7 +8,7 @@
  * patterns above general ones.
  *
  * Areas: courses, users, enrolments, settings, events, certificates, commerce, reports, lti,
- * builder, living-course, learner, tokens, webhooks, platform, plus two pseudo areas:
+ * builder, living-course, learner, tokens, webhooks, platform, identity, plus two pseudo areas:
  *   public  any valid scoped token may call it (identity, health, anonymous endpoints);
  *   none    never callable with a scoped token (it would mint unscoped credentials, change the
  *           account's credentials or let a scoped token widen its own rights).
@@ -44,6 +44,8 @@ return [
     ['api/auth/register*', 'public'],
     ['api/auth/password/*', 'public'],
     ['api/auth/social/*', 'public'],
+    // single sign-on: providers list, start, callback, code exchange (an access token is the result, never the input)
+    ['api/identity/*', 'public'],
     ['api/auth/email/*', 'public'],
     ['api/health*', 'public'],
     ['api/certificates/verify/*', 'public'],
@@ -69,6 +71,9 @@ return [
     // ---- webhooks ------------------------------------------------------------------------------
     // test sends and replays are POSTs, so they need webhooks:write
     ['api/admin/webhooks*', 'webhooks'],
+
+    // ---- identity providers and their audit trail (read = list and verify, write = change) -----
+    ['api/admin/identity*', 'identity'],
 
     // ---- knowledge export ----------------------------------------------------------------------
     // reads course content and writes only the pack files, so starting an export needs courses:read

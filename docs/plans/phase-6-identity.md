@@ -581,3 +581,21 @@ existing translation files.
   Workspace test domain (paid; skip by default). No spending is required; Keycloak covers CI.
 - Approval of ADR 0120 and 0121 (currently Proposed).
 - No DNS, hosting or deployment changes (work stays local until the roadmap is done).
+
+## 15. ID-1 as shipped
+
+Differences from the plan text, so later milestones start from what is in the code:
+
+- `POST /api/identity/discover` (email to provider) and the admin "test login" endpoint are not part of ID-1; they
+  arrive with ID-3 (enforcement, claim viewer). The login page shows one button per enabled provider.
+- `identity_external_ids`, `saml_replays`, `identity_sessions` and the HRIS tables are created by the milestones that
+  use them. ID-1 migrations: `identity_providers`, `identity_links`, `identity_audit` + `identity_audit_head`.
+- `identity_providers` has `oidc_secret_hint` (last four characters, only for secrets of 16 characters or more);
+  `enforce_for_domains`, `attribute_map`, `group_map` and the SAML columns are added by ID-2 and ID-3.
+- JIT needs an address the provider vouches for (`email_verified: true`) or `trust_email` on the provider; an
+  unverified address is refused with `email_unverified` instead of creating an unverified account.
+- Lookups of users go through `auth.providers.users.model` (`Ulams\Identity\Support\Users`), because Passport can only
+  issue tokens for that class; this was found by the Keycloak run, not by the fixture tests.
+- The Keycloak run is `.github/workflows/identity-keycloak.yml` (pull requests labelled `identity`, a manual run, and
+  called by `nightly-conformance.yml`, job `sso`), with `--profile sso` in `.github/conformance/compose.yml`.
+- A new token scope area `identity` (`api/admin/identity*`); `api/identity/*` is public.

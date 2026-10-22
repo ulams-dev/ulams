@@ -25,7 +25,7 @@ export const SOCIAL_HEADERS: Readonly<Record<string, string>> = {
   "Referrer-Policy": "no-referrer",
 };
 
-export const isSocialPath = (pathname: string): boolean => pathname.startsWith("/auth/social/");
+export const isSocialPath = (pathname: string): boolean => pathname.startsWith("/auth/social/") || pathname.startsWith("/auth/sso/");
 
 export function isSocialProvider(value: string | undefined): value is SocialProvider {
   return (SOCIAL_PROVIDERS as readonly string[]).includes(value ?? "");
@@ -86,6 +86,7 @@ const MESSAGES: Record<string, string> = {
   provider_denied: "Sign-in was cancelled.",
   provider_failed: "The sign-in provider did not accept the request. Try again.",
   link_required: "An account with this e-mail address already exists. Sign in with your password first.",
+  signup_disabled: "This academy does not create accounts through this sign-in. Ask your administrator.",
   email_unverified: "Confirm your e-mail address with the link we sent you, then sign in again.",
   account_unavailable: "This account is not available.",
   email_required: "The provider did not share an e-mail address. Sign in with your e-mail and password instead.",
@@ -109,10 +110,11 @@ export async function exchangeCode(
   tenant: Pick<Tenant, "apiUrl">,
   code: string,
   verifier: string,
-  fetcher: typeof fetch = tenantFetch(tenant)
+  fetcher: typeof fetch = tenantFetch(tenant),
+  path = "/api/auth/social/exchange"
 ): Promise<Exchange> {
   try {
-    const response = await fetcher(new URL("/api/auth/social/exchange", tenant.apiUrl), {
+    const response = await fetcher(new URL(path, tenant.apiUrl), {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({ code, verifier }),

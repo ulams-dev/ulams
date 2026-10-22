@@ -119,7 +119,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0105](0105-stream-tutor-answers-over-the-sse-event-log.md) | Stream tutor answers over the SSE event log | Accepted |
 | [0106](0106-learner-interface-language-follows-the-course.md) | The learner interface language follows the course language | Accepted (2026-10-21), amended 2026-10-21 (P5R-1) |
 | [0107](0107-visual-email-editor-library.md) | Visual e-mail editor: GrapesJS with grapesjs-mjml on top of MJML | Accepted |
-| [0108](0108-signed-images-and-cve-scanning.md) | Keyless-signed images, SBOM release assets and Trivy scanning with a patch policy | Proposed |
+| [0108](0108-signed-images-and-cve-scanning.md) | Keyless-signed images, SBOM release assets and Trivy scanning with a patch policy | Accepted |
 | [0109](0109-helm-chart-next-to-the-stack-launcher.md) | A Helm chart for production Kubernetes next to the stack launcher | Proposed |
 | [0120](0120-identity-package-and-sso-libraries.md) | An identity package with onelogin/php-saml, an in-house OIDC client and an in-house SCIM server | Accepted |
 | [0121](0121-sso-login-handoff-account-linking-and-scim-tokens.md) | SSO login handoff by one-time code, strict account linking and SCIM tokens on service users | Accepted |
@@ -129,6 +129,9 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0140](0140-policy-lifecycle-package.md) | Policy lifecycle as a package orchestrating Living Course, Course Builder and compliance | Proposed |
 | [0141](0141-department-academies-as-host-aliases.md) | Department academies as branded host aliases inside one tenant | Proposed |
 | [0142](0142-scoped-admins-by-group.md) | Scoped admins for partner and customer portals, scoped by group | Proposed |
+| [0150](0150-pwa-offline-mode-and-progress-sync-rules.md) | PWA offline mode: saved lessons and idempotent, monotonic progress sync | Proposed |
+| [0151](0151-search-full-text-first-with-optional-embeddings.md) | Search: full text and model query rewrite first, optional pgvector embeddings | Proposed |
+| [0152](0152-first-party-ux-metrics-without-personal-data.md) | First-party UX metrics stored in the tenant, without personal data | Proposed |
 | [0160](0160-course-as-code-sync-through-blueprint-v3-import-versions.md) | Course-as-code sync through Blueprint v3 import versions | Accepted |
 | [0161](0161-cli-release-engineering.md) | CLI release engineering: release-please, npm trusted publishing, attested binaries | Proposed |
 | [0170](0170-code-exercise-runners.md) | Code exercises run in our own browser runner inside the opaque content-origin sandbox, with an optional gVisor server runner for verified grading | Accepted |
