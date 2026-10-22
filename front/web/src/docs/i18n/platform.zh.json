@@ -66,6 +66,51 @@
           }
         },
         {
+          "component": "CtaBand",
+          "props": {
+            "id": "cost-cta",
+            "variant": "feature",
+            "eyebrow": "更快成课",
+            "title": "课程生成快得多:几分钟得到带出处的草稿",
+            "text": "在我们自己的一次实测中,ULAMS 把一个公开文档仓库变成了含 6 个课时和 18 道测验题的课程草稿,每个内容块都标注出处,生成时间 7 分 44 秒。",
+            "statsLabel": "一次实测 · 草稿,待作者审阅",
+            "stats": [
+              {
+                "value": "7:44",
+                "label": "分钟生成时间(7 分 44 秒)",
+                "note": "大纲 24 秒 · 课时、测验与检查 6 分 57 秒 · 应用 23 秒"
+              },
+              {
+                "value": "6 + 18",
+                "label": "课时 + 测验题",
+                "note": "来自资料的 13 个片段"
+              },
+              {
+                "value": "USD 0.28",
+                "label": "模型成本",
+                "note": "27 次模型调用"
+              },
+              {
+                "value": "35/35",
+                "label": "个内容块标注了资料出处",
+                "note": "作者批准后才发布"
+              },
+              {
+                "value": "49–716",
+                "label": "小时人工工作量,对应每 1 小时成品课程",
+                "note": "Chapman Alliance,由 eLearning Industry 转述",
+                "kind": "benchmark",
+                "href": "https://elearningindustry.com/development-costs-for-your-online-learning-start-estimating"
+              }
+            ],
+            "note": "一次运行,一份资料,仅含生成时间;作者审阅另需时间。两者度量不同,因此我们不宣称提速倍数。",
+            "cta": {
+              "label": "查看详情",
+              "href": "/zh/content-cost/"
+            }
+          }
+        },
+        {
           "component": "Showcase",
           "props": {
             "eyebrow": "在线演示",
@@ -75,6 +120,73 @@
               "$data": "/demos"
             },
             "note": "演示每小时重置一次，无需注册，系统会自动为你登录。"
+          }
+        },
+        {
+          "component": "CtaBand",
+          "props": {
+            "id": "reporting-cta",
+            "variant": "feature",
+            "eyebrow": "完整分析",
+            "title": "完整分析:谁卡住了,谁学完了,该报告什么",
+            "text": "按课程的分析、合规报表和导出均已内置,数据保留在你自己的部署中。",
+            "bullets": [
+              {
+                "title": "谁卡住了",
+                "text": "有掉队风险的学员,以及令人困惑的章节。"
+              },
+              {
+                "title": "谁学完了",
+                "text": "每门课程的进度、完成率和测验表现。"
+              },
+              {
+                "title": "谁还欠培训",
+                "text": "用于合规的必修培训状态。"
+              },
+              {
+                "title": "导出什么",
+                "text": "CSV、JSON lines 和审计记录,可随时导出或通过邮件发送。"
+              }
+            ],
+            "panel": {
+              "title": "课程分析",
+              "label": "示意图",
+              "alt": "课程分析面板示意图:学完、学习中、有风险的学员以及测验结果各一条柱。并非真实数据。",
+              "rows": [
+                {
+                  "label": "已学完",
+                  "level": 72,
+                  "tone": "ok"
+                },
+                {
+                  "label": "学习中",
+                  "level": 46,
+                  "tone": "muted"
+                },
+                {
+                  "label": "有风险",
+                  "level": 18,
+                  "tone": "warn"
+                },
+                {
+                  "label": "测验结果",
+                  "level": 60,
+                  "tone": "ok"
+                }
+              ]
+            },
+            "chips": [
+              "按课程的分析",
+              "合规报表与审计导出",
+              "CSV 与 JSON-lines 导出",
+              "定时邮件报表",
+              "学习洞察",
+              "由你持有的 xAPI LRS"
+            ],
+            "cta": {
+              "label": "查看详情",
+              "href": "/zh/reporting/"
+            }
           }
         },
         {

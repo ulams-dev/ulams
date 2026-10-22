@@ -7,9 +7,10 @@ import { landingDocFor } from "../../src/lib/docs.ts";
 import { applyLandingStatus } from "../../src/lib/landing-status.ts";
 import { comparisonModel } from "../../src/lib/comparison.ts";
 import { workflowsModel } from "../../src/lib/workflows.ts";
-import { CHAPMAN_SOURCE } from "../../src/lib/impact-pages.ts";
 import { homeStory, planHomeBody, STEP_KEYS, STORY_ID } from "../../src/lib/home-story.ts";
 import { LOCALES, publicPagePath, type Locale } from "../../src/i18n/locales.ts";
+
+const ofType = (node: UiNode, name: string): UiNode[] => [...(node.component === name ? [node] : []), ...(node.children ?? []).flatMap((c) => ofType(c, name))];
 
 /** Shape of a copy object: keys, array lengths and number values, with the strings left out. */
 const shape = (value: unknown): unknown => {
@@ -61,23 +62,15 @@ describe("home story: copy", () => {
     expect(homeStory("en").draft.run.badge).toBe("One measured run · draft for your review");
   });
 
-  it("shows the Chapman range apart from the run, with its source, and claims no speed-up ratio", () => {
+  it("states the same run figures as the faster-courses block after it, and claims no speed-up ratio", () => {
     for (const locale of LOCALES) {
       const copy = homeStory(locale);
-      expect(copy.draft.benchmark.value).toMatch(/^49–716/);
-      expect(copy.draft.benchmark.href).toBe(CHAPMAN_SOURCE);
-      expect(copy.draft.benchmark.source).toContain("Chapman Alliance");
-      // the run's figures never sit inside the benchmark
-      expect(JSON.stringify(copy.draft.benchmark)).not.toMatch(/0[.,]28|7 (min|分)|35\/35/);
+      const band = JSON.stringify(ofType(landingDocFor("platform", locale)!, "CtaBand").find((b) => b.props!.id === "cost-cta")!.props);
+      for (const fact of copy.draft.run.facts) {
+        const value = fact.value.replace(/^0,28 USD$|^0\.28 美元$/, "0.28");
+        expect(band, `${locale}: ${fact.value}`).toContain(value);
+      }
       expect(JSON.stringify(copy)).not.toMatch(RATIO);
-    }
-  });
-
-  it("links the two detail pages in the page's language", () => {
-    for (const locale of LOCALES) {
-      const copy = homeStory(locale);
-      expect(copy.draft.cta.href).toBe(publicPagePath(locale, "content-cost"));
-      expect(copy.evidence.cta.href).toBe(publicPagePath(locale, "reporting"));
     }
   });
 
@@ -91,18 +84,20 @@ describe("home story: copy", () => {
 });
 
 describe("home story: placement", () => {
-  it("goes right after the hero, inside the main landmark, and the old hero story and bands are gone", () => {
+  it("goes right after the hero and before the two call-to-action blocks; the old hero story is gone", () => {
     for (const locale of LOCALES) {
       const doc = landingDocFor("platform", locale)!;
       const plan = planHomeBody(doc)!;
       expect(plan.before.map((n) => n.component)).toEqual(["SiteHeader"]);
       expect(plan.after.map((n) => n.component)).toEqual(["SiteFooter"]);
       const order = plan.main.map((p) => (p.kind === "story" ? "story" : p.node.component));
-      expect(order.slice(0, 3)).toEqual(["Hero", "story", "Showcase"]);
+      expect(order.slice(0, 3)).toEqual(["Hero", "story", "CtaBand"]);
+      const ids = plan.main.map((p) => (p.kind === "story" ? "story" : String(p.node.props?.id ?? p.node.component)));
+      expect(ids.indexOf("story")).toBeLessThan(ids.indexOf("cost-cta"));
+      expect(ids.indexOf("story")).toBeLessThan(ids.indexOf("reporting-cta"));
       expect(order.filter((name) => name === "story")).toHaveLength(1);
       const json = JSON.stringify(doc);
       expect(json).not.toContain('"diff"');
-      expect(json).not.toMatch(/cost-cta|reporting-cta/);
     }
   });
 
@@ -163,7 +158,7 @@ describe("home story: rendered markup", () => {
       expect(story.querySelector(".hs-again h3")!.textContent).toBe(copy.again.title);
     });
 
-    it(`${locale}: figures, evidence labels and the two detail links are real text outside the pictures`, async () => {
+    it(`${locale}: figures and evidence labels are real text outside the pictures; the links stay on the blocks below`, async () => {
       const document = await render(locale);
       const copy = homeStory(locale);
       const draft = document.getElementById(copy.draft.id)!;
@@ -171,19 +166,23 @@ describe("home story: rendered markup", () => {
       expect(facts).toEqual(copy.draft.run.facts.map((f) => f.value));
       expect(draft.querySelector(".hs-run")!.closest("[role='img']")).toBeNull();
       expect(draft.querySelector(".dg__badge--run")!.textContent).toBe(copy.draft.run.badge);
-      const source = draft.querySelector(`.hs-bench a[href="${CHAPMAN_SOURCE}"]`)!;
-      expect(source.getAttribute("target")).toBe("_blank");
-      expect(source.getAttribute("rel")).toContain("noopener");
       // the variants status is shown as text badges, not only in the picture
       const learners = document.getElementById(copy.learners.id)!;
       expect(learners.querySelectorAll(".hs-status .u-status--available")).toHaveLength(1);
       expect(learners.querySelectorAll(".hs-status .u-status--coming")).toHaveLength(1);
       expect(document.getElementById(copy.living.id)!.querySelector(".hs-step__label .u-status--available")).not.toBeNull();
-      // the links keep the Umami events of the former call-to-action bands
-      const cost = draft.querySelector(`a.hs-cta[href="${publicPagePath(locale, "content-cost")}"]`)!;
-      expect(cost.getAttribute("data-umami-event")).toBe("cost_page_open");
-      const reporting = document.getElementById(copy.evidence.id)!.querySelector(`a.hs-cta[href="${publicPagePath(locale, "reporting")}"]`)!;
-      expect(reporting.getAttribute("data-umami-event")).toBe("reporting_page_open");
+      // the story does not repeat the blocks' buttons: each detail page has one link, on its block, with its Umami event
+      const story = document.querySelector(`#${STORY_ID}`)!;
+      expect(story.querySelectorAll("a[data-umami-event]")).toHaveLength(0);
+      let next = story.nextElementSibling;
+      while (next && next.tagName !== "SECTION") next = next.nextElementSibling;
+      expect(next?.id).toBe("cost-cta");
+      for (const [id, slug, event] of [["cost-cta", "content-cost", "cost_page_open"], ["reporting-cta", "reporting", "reporting_page_open"]] as const) {
+        const links = document.querySelectorAll(`main a[href="${publicPagePath(locale, slug)}"]`);
+        expect(links).toHaveLength(1);
+        expect(links[0]!.closest("section")!.id).toBe(id);
+        expect(links[0]!.getAttribute("data-umami-event")).toBe(event);
+      }
       const text = document.querySelector(`#${STORY_ID}`)!.textContent!;
       expect(text).not.toMatch(DECIMAL_MINUTES);
       expect(text).not.toMatch(RATIO);

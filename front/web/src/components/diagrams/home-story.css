@@ -250,98 +250,55 @@
   text-transform: uppercase;
 }
 
+/* The one measured run as one compact line: the "faster courses" block after the story shows it in full. */
 .hs-run {
   display: grid;
-  gap: 12px;
-  padding: 16px;
+  gap: 8px;
+  padding: 12px 14px;
   border: 1px solid var(--dg-line);
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--dg-card);
 }
 .hs-run .dg__badge {
   margin: 0;
+  font-size: 0.74rem;
 }
 .hs-run__facts {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0;
   margin: 0;
 }
 .hs-run__facts > div {
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: flex-end;
-  gap: 2px;
-  min-width: 0;
-  padding: 8px 10px;
-  border-radius: 8px;
-  background: var(--dg-paper);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.hs-run__facts > div:not(:last-child)::after {
+  content: "·";
+  margin: 0 8px;
+  color: var(--dg-muted);
 }
 .hs-run__facts dt {
+  order: 2;
   color: var(--dg-muted);
-  font-size: 0.78rem;
-  line-height: 1.3;
+  font-size: 0.86rem;
 }
 .hs-run__facts dd {
+  order: 1;
   margin: 0;
   color: var(--ulams-color-header, #10283b);
-  font-family: var(--ulams-font-family);
-  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.3rem);
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
-  line-height: 1.15;
   white-space: nowrap;
+}
+.hs-run__facts > div::after {
+  order: 3;
 }
 .hs-run__note {
   margin: 0;
   color: var(--dg-muted);
-  font-size: 0.82rem;
-}
-@media (max-width: 420px) {
-  .hs-run__facts {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.hs-bench {
-  display: grid;
-  gap: 4px;
-  margin-top: 8px;
-  padding: 12px 14px;
-  border: 1px dashed var(--dg-muted);
-  border-radius: 10px;
-  background: var(--dg-card);
-}
-.hs-bench p {
-  margin: 0;
-}
-.hs-bench .hs-bench__title {
-  color: var(--dg-muted);
   font-size: 0.8rem;
-  font-weight: 700;
-}
-.hs-bench__figure strong {
-  color: var(--ulams-color-header, #10283b);
-  font-family: var(--ulams-font-family);
-  font-size: 1.3rem;
-  font-weight: 400;
-  font-variant-numeric: tabular-nums;
-}
-.hs-bench__source,
-.hs-bench__note {
-  font-size: 0.82rem;
-}
-.hs-bench__source a {
-  color: var(--dg-ink);
-  text-underline-offset: 2px;
-}
-.hs-bench__source svg {
-  width: 12px;
-  height: 12px;
-  margin-left: 4px;
-  vertical-align: -1px;
-}
-.hs-bench__note {
-  color: var(--dg-muted);
 }
 
 .hs-status {
@@ -357,14 +314,6 @@
   align-items: center;
   gap: 6px 10px;
   font-size: 0.92rem;
-}
-
-.hs-cta {
-  justify-self: start;
-}
-.hs-cta svg {
-  width: 16px;
-  height: 16px;
 }
 
 /* ---------- Pictures ---------- */

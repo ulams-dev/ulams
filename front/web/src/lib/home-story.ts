@@ -1,15 +1,16 @@
 /**
  * The animated story of the platform home page: how ULAMS works end to end, in six steps and a loop, with what each
  * step means for an L&D team's budget and work. Written for instructors, instructional designers and L&D managers.
- * Copy in English, Polish and Chinese; the story is placed right after the hero by `planHomeBody`.
+ * Copy in English, Polish and Chinese; the story is placed right after the hero by `planHomeBody`, before the two
+ * call-to-action blocks of the page document.
  *
- * Figures: only the one measured run (as on the content-cost page) and the cited Chapman range, shown apart from it
- * and never as a ratio. The pictures are labelled examples or illustrations. Status follows docs/ROADMAP-TODO.md:
+ * Figures: only the one measured run, identical to the "faster courses" block that follows the story (which also
+ * carries the cited Chapman range and the links to the detail pages). The pictures are labelled examples or
+ * illustrations. Status follows docs/ROADMAP-TODO.md:
  * course variants are drafted and reviewed in the builder (CV-4, merged); routing learners to a variant is coming.
  */
 import type { UiNode } from "@ulams/ui/render-core";
-import { publicPagePath, type Locale } from "../i18n/locales.ts";
-import { CHAPMAN_SOURCE } from "./impact-pages.ts";
+import type { Locale } from "../i18n/locales.ts";
 
 export const STORY_ID = "how-it-works";
 
@@ -26,11 +27,6 @@ export interface StoryStep {
   alt: string;
 }
 
-export interface StoryLink {
-  label: string;
-  href: string;
-}
-
 export interface HomeStoryCopy {
   eyebrow: string;
   title: string;
@@ -43,8 +39,6 @@ export interface HomeStoryCopy {
   draft: StoryStep & {
     block: { lesson: string; line: string; chip: string };
     run: { badge: string; facts: Array<{ value: string; label: string }>; note: string };
-    benchmark: { title: string; value: string; text: string; source: string; href: string; note: string };
-    cta: StoryLink;
   };
   review: StoryStep & { card: { title: string; removed: string; added: string; reject: string; accept: string; approved: string } };
   living: StoryStep & {
@@ -57,7 +51,6 @@ export interface HomeStoryCopy {
   evidence: StoryStep & {
     badge: string;
     card: { title: string; rows: Array<{ label: string; tone: "ok" | "muted" | "warn" | "bad"; level: number }>; export: string };
-    cta: StoryLink;
   };
   again: { title: string; text: string };
 }
@@ -107,15 +100,6 @@ const EN: HomeStoryCopy = {
       ],
       note: "One run on a public docs repository. Generation time only; your review comes on top.",
     },
-    benchmark: {
-      title: "For comparison, measured differently",
-      value: "49–716 h",
-      text: "of work per finished hour of e-learning built by hand",
-      source: "Chapman Alliance (2010), via eLearning Industry",
-      href: CHAPMAN_SOURCE,
-      note: "Two different measures, so we state no speed-up ratio.",
-    },
-    cta: { label: "The cost of creating content", href: "" },
   },
   review: {
     id: "how-review",
@@ -183,7 +167,6 @@ const EN: HomeStoryCopy = {
       ],
       export: "Audit export · CSV",
     },
-    cta: { label: "Reporting in detail", href: "" },
   },
   again: {
     title: "Then the loop starts again",
@@ -229,15 +212,6 @@ const PL: HomeStoryCopy = {
       ],
       note: "Jeden przebieg na publicznym repozytorium dokumentacji. Tylko czas generowania; Twój przegląd dochodzi do tego.",
     },
-    benchmark: {
-      title: "Dla porównania, inna miara",
-      value: "49–716 h",
-      text: "pracy na godzinę gotowego e-learningu tworzonego ręcznie",
-      source: "Chapman Alliance (2010), za eLearning Industry",
-      href: CHAPMAN_SOURCE,
-      note: "To dwie różne miary, więc nie podajemy przelicznika przyspieszenia.",
-    },
-    cta: { label: "Koszt tworzenia treści", href: "" },
   },
   review: {
     id: "how-review",
@@ -305,7 +279,6 @@ const PL: HomeStoryCopy = {
       ],
       export: "Eksport audytu · CSV",
     },
-    cta: { label: "Raportowanie w szczegółach", href: "" },
   },
   again: {
     title: "Potem pętla zaczyna się od nowa",
@@ -351,15 +324,6 @@ const ZH: HomeStoryCopy = {
       ],
       note: "在一个公开文档仓库上的一次运行。仅含生成时间；你的审阅另需时间。",
     },
-    benchmark: {
-      title: "作为对照，度量方式不同",
-      value: "49–716 小时",
-      text: "人工制作每 1 小时成品在线课程所需的工作量",
-      source: "Chapman Alliance（2010），由 eLearning Industry 转述",
-      href: CHAPMAN_SOURCE,
-      note: "两者度量不同，因此我们不宣称提速倍数。",
-    },
-    cta: { label: "内容制作成本", href: "" },
   },
   review: {
     id: "how-review",
@@ -427,7 +391,6 @@ const ZH: HomeStoryCopy = {
       ],
       export: "审计导出 · CSV",
     },
-    cta: { label: "报表详情", href: "" },
   },
   again: {
     title: "然后，循环再次开始",
@@ -437,15 +400,8 @@ const ZH: HomeStoryCopy = {
 
 const COPY: Record<Locale, HomeStoryCopy> = { en: EN, pl: PL, zh: ZH };
 
-/** The story in one language, with its two links pointing at that language's content-cost and reporting pages. */
-export function homeStory(locale: Locale): HomeStoryCopy {
-  const copy = COPY[locale];
-  return {
-    ...copy,
-    draft: { ...copy.draft, cta: { ...copy.draft.cta, href: publicPagePath(locale, "content-cost") } },
-    evidence: { ...copy.evidence, cta: { ...copy.evidence.cta, href: publicPagePath(locale, "reporting") } },
-  };
-}
+/** The story in one language. */
+export const homeStory = (locale: Locale): HomeStoryCopy => COPY[locale];
 
 export type HomePart = { kind: "node"; node: UiNode } | { kind: "story" };
 

@@ -8,8 +8,6 @@
 import "./diagrams.css";
 import "./home-story.css";
 import Icon from "@ulams/ui/components/Icon.astro";
-import NewTabMark from "@ulams/ui/components/NewTabMark.astro";
-import { ctaEvent } from "@ulams/ui/analytics";
 import { STEP_KEYS, STORY_ID, type HomeStoryCopy } from "../../lib/home-story.ts";
 
 interface Props {
@@ -78,7 +76,7 @@ const titleId = `${STORY_ID}-title`;
         </div>
       </li>
 
-      {/* 2. Cited draft, with the one measured run and the benchmark apart from it */}
+      {/* 2. Cited draft, with the one measured run (the block after the story sells it, with the benchmark) */}
       <li class="hs-step dg" id={draft.id} data-dg>
         <span class="hs-step__spine" aria-hidden="true"></span>
         <div class="hs-step__copy">
@@ -100,16 +98,7 @@ const titleId = `${STORY_ID}-title`;
           <div class="hs-why">
             <p class="hs-why__label">{copy.whyLabel}</p>
             <p>{draft.why}</p>
-            <div class="hs-bench">
-              <p class="hs-bench__title">{draft.benchmark.title}</p>
-              <p class="hs-bench__figure"><strong>{draft.benchmark.value}</strong> <span>{draft.benchmark.text}</span></p>
-              <p class="hs-bench__source">
-                <a href={draft.benchmark.href} target="_blank" rel="noopener noreferrer">{draft.benchmark.source}<NewTabMark href={draft.benchmark.href} /></a>
-              </p>
-              <p class="hs-bench__note">{draft.benchmark.note}</p>
-            </div>
           </div>
-          <a class="u-btn u-btn--ghost hs-cta" href={draft.cta.href} data-umami-event={ctaEvent(draft.cta.href)}>{draft.cta.label}<Icon name="arrow" /></a>
         </div>
         <div class="hs-visual" role="img" aria-label={draft.alt}>
           <span class="hs-visual__tag">{copy.example}</span>
@@ -222,7 +211,6 @@ const titleId = `${STORY_ID}-title`;
           <h3 class="hs-step__title">{evidence.title}</h3>
           <p class="hs-step__text">{evidence.text}</p>
           <div class="hs-why"><p class="hs-why__label">{copy.whyLabel}</p><p>{evidence.why}</p></div>
-          <a class="u-btn u-btn--ghost hs-cta" href={evidence.cta.href} data-umami-event={ctaEvent(evidence.cta.href)}>{evidence.cta.label}<Icon name="arrow" /></a>
         </div>
         <div class="hs-visual" role="img" aria-label={evidence.alt}>
           <span class="hs-visual__tag hs-visual__tag--illustration">{evidence.badge}</span>
