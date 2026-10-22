@@ -6,12 +6,13 @@ import { demoToken, setSessionCookie } from "../lib/session.ts";
 import { themeFor } from "../lib/theme.ts";
 import { config } from "../lib/config.ts";
 import { enabledProviders, errorMessage } from "../lib/social-login.ts";
+import { listProviders } from "../lib/sso-login.ts";
 import { accountStrings, fill } from "@ulams/ui/account-strings";
 import { accountLocale } from "../lib/locale.ts";
 
 const tenant = Astro.locals.tenant;
 if (!tenant) return Astro.redirect("/tenants");
-const settings = await getSettings(tenant).catch(() => null);
+const [settings, ssoProviders] = await Promise.all([getSettings(tenant).catch(() => null), listProviders(tenant)]);
 const theme = themeFor(settings?.theme?.theme, tenant.slug);
 const locale = accountLocale(settings);
 const a = accountStrings(locale);
@@ -56,8 +57,13 @@ if (Astro.request.method === "POST") {
       <input id="password" name="password" type="password" autocomplete="current-password" required />
       <button class="u-btn" type="submit">{a.signIn}</button>
     </form>
-    {providers.length > 0 && (
+    {(providers.length > 0 || ssoProviders.length > 0) && (
       <nav class="u-login__social" aria-label={a.otherWays}>
+        {ssoProviders.map((provider) => (
+          <a class="u-btn u-btn--ghost" href={`/auth/sso/${provider.slug}?next=${encodeURIComponent(safeNext)}`}>
+            {fill(a.continueWith, { provider: provider.name })}
+          </a>
+        ))}
         {providers.map((provider) => (
           <a class="u-btn u-btn--ghost" href={`/auth/social/${provider}?next=${encodeURIComponent(safeNext)}`}>
             {fill(a.continueWith, { provider: PROVIDER_LABELS[provider] })}

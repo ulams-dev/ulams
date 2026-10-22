@@ -3,10 +3,13 @@
 #
 #   docker compose -f .github/conformance/compose.yml --profile lti up -d     # Moodle 5.0 + MariaDB
 #   docker compose -f .github/conformance/compose.yml --profile adapt up -d   # Adapt build worker
+#   docker compose -f .github/conformance/compose.yml --profile sso up -d     # Keycloak (OpenID Connect sign-in)
 #
 # The ulams API runs on the host (php artisan serve on :18000). Names used by every party:
 #   moodle.test:18080  Moodle (container port 18080, published on the host)
 #   ulams.test:18000   ulams API (host; containers reach it through host-gateway)
+#   keycloak.test:18180  Keycloak (container port 18180, published on the host; the host maps the name in /etc/hosts,
+#                        the browser through --host-resolver-rules). The issuer is http://keycloak.test:18180/realms/ulams.
 # The browser maps both names to 127.0.0.1 (Chromium --host-resolver-rules); the host maps
 # moodle.test in /etc/hosts. Test fixtures only: nothing here is for production.
 name: ulams-conformance
@@ -66,3 +69,23 @@ services:
     read_only: true
     tmpfs:
       - /tmp:exec,size=1g
+
+  # Identity provider for the single sign-on tests (docs/plans/phase-6-identity.md 4.14): one realm "ulams" imported
+  # from keycloak/realm-ulams.json with an OIDC client and two users. Development mode (http, in-memory H2): a test
+  # fixture, never for production. The API needs IDENTITY_ALLOW_INSECURE_URLS=true to talk to it over http.
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4.7
+    profiles: ["sso"]
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin-conformance
+      KC_HTTP_PORT: "18180"
+      KC_HOSTNAME: http://keycloak.test:18180
+      KC_HOSTNAME_STRICT: "false"
+      KC_HEALTH_ENABLED: "false"
+      KC_LOG_LEVEL: warn
+    ports:
+      - "18180:18180"
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro

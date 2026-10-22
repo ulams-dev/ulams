@@ -116,6 +116,41 @@ class TenantIsolationTest extends TestCase
         $this->assertSame(401, $this->request(self::B, 'GET', $summary, $tokenA)->getStatusCode());
     }
 
+    public function testIdentityProvidersAndSignInStateDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $slug = 'probe-' . bin2hex(random_bytes(3));
+
+        $created = $this->request(self::A, 'POST', '/api/admin/identity/providers', $tokenA, [
+            'slug' => $slug,
+            'name' => 'Isolation probe',
+            'enabled' => false,
+            'oidc' => ['issuer' => 'https://idp.example.com/realms/probe', 'client_id' => 'probe'],
+        ]);
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['id'];
+
+        // the provider is A's: listed and readable there, unknown at B
+        $slugsOf = fn (string $tenant, string $token): array => array_column(json_decode((string) $this->request($tenant, 'GET', '/api/admin/identity/providers', $token)->getBody(), true)['data'] ?? [], 'slug');
+        $this->assertContains($slug, $slugsOf(self::A, $tokenA));
+        $this->assertNotContains($slug, $slugsOf(self::B, $tokenB));
+        $this->assertSame(200, $this->request(self::A, 'GET', "/api/admin/identity/providers/{$id}", $tokenA)->getStatusCode());
+        $this->assertSame(404, $this->request(self::B, 'GET', "/api/admin/identity/providers/{$id}", $tokenB)->getStatusCode());
+        $this->assertSame(404, $this->request(self::B, 'DELETE', "/api/admin/identity/providers/{$id}", $tokenB)->getStatusCode());
+
+        // every tenant signs tokens with its own keys, so A's admin token is nothing at B
+        $this->assertSame(401, $this->request(self::B, 'GET', '/api/admin/identity/providers', $tokenA)->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'GET', '/api/admin/identity/audit', $tokenA)->getStatusCode());
+
+        // a sign-in cannot start at B for A's provider (and B has no such enabled provider either)
+        $noRedirects = fn (string $tenant, string $uri) => self::$http->request('GET', $uri, ['allow_redirects' => false, 'headers' => ['Host' => "{$tenant}.localhost", 'Accept' => 'application/json']]);
+        $this->assertSame(404, $noRedirects(self::B, "/api/identity/sso/{$slug}/start")->getStatusCode());
+        $this->assertSame(400, $noRedirects(self::B, "/api/identity/oidc/{$slug}/callback?state=" . str_repeat('a', 43) . '.9999999999.' . str_repeat('b', 43))->getStatusCode());
+
+        $this->request(self::A, 'DELETE', "/api/admin/identity/providers/{$id}", $tokenA);
+    }
+
     public function testSocialLoginStateAndCodesDoNotCrossTenants(): void
     {
         $verifier = bin2hex(random_bytes(32));

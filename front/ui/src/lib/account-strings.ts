@@ -14,7 +14,7 @@ export type AccountLocale = TrainingLocale;
 export const TOKEN_PRESET_KEYS = ["read-only", "author", "ci", "learner", "admin"] as const;
 export const TOKEN_KIND_KEYS = ["cli", "agent", "ci", "integration"] as const;
 export const TOKEN_FAILURES = ["unauthenticated", "forbidden", "invalid", "throttled", "unavailable"] as const;
-export const SOCIAL_ERRORS = ["provider_denied", "provider_failed", "link_required", "email_unverified", "account_unavailable", "email_required"] as const;
+export const SOCIAL_ERRORS = ["provider_denied", "provider_failed", "link_required", "signup_disabled", "email_unverified", "account_unavailable", "email_required"] as const;
 
 interface Preset {
   label: string;
@@ -127,6 +127,7 @@ const en: AccountStrings = {
     provider_denied: "Sign-in was cancelled.",
     provider_failed: "The sign-in provider did not accept the request. Try again.",
     link_required: "An account with this e-mail address already exists. Sign in with your password first.",
+    signup_disabled: "This academy does not create accounts through this sign-in. Ask your administrator.",
     email_unverified: "Confirm your e-mail address with the link we sent you, then sign in again.",
     account_unavailable: "This account is not available.",
     email_required: "The provider did not share an e-mail address. Sign in with your e-mail and password instead.",
@@ -224,6 +225,7 @@ const pl: AccountStrings = {
     provider_denied: "Logowanie zostało anulowane.",
     provider_failed: "Dostawca logowania nie przyjął żądania. Spróbuj ponownie.",
     link_required: "Konto z tym adresem e-mail już istnieje. Najpierw zaloguj się hasłem.",
+    signup_disabled: "Ta akademia nie tworzy kont przez to logowanie. Zapytaj administratora.",
     email_unverified: "Potwierdź adres e-mail linkiem, który wysłaliśmy, a potem zaloguj się ponownie.",
     account_unavailable: "To konto jest niedostępne.",
     email_required: "Dostawca nie udostępnił adresu e-mail. Zaloguj się adresem e-mail i hasłem.",
@@ -321,6 +323,7 @@ const zh: AccountStrings = {
     provider_denied: "登录已取消。",
     provider_failed: "登录服务商未接受该请求，请重试。",
     link_required: "已存在使用此邮箱的账号。请先用密码登录。",
+    signup_disabled: "此学院不通过该登录方式创建账号。请联系管理员。",
     email_unverified: "请点击我们发送的链接确认你的邮箱，然后重新登录。",
     account_unavailable: "此账号不可用。",
     email_required: "服务商未提供邮箱地址。请改用邮箱和密码登录。",

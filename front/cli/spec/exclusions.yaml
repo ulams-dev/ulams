@@ -9,6 +9,10 @@ browser-only:
   - "POST /api/auth/social/complete/*"
   # redeemed by the front end's server with the verifier of the browser that started a social login (ADR 0121)
   - "POST /api/auth/social/exchange"
+  # single sign-on (identity package): the browser is sent to the provider and back, and the front end's server redeems the code
+  - "GET /api/identity/sso/*"
+  - "GET /api/identity/oidc/*"
+  - "POST /api/identity/sso/exchange"
   - "GET /api/auth/email/verify/*"
   - "GET /api/consultations/approve-term/*"
   - "GET /api/consultations/reject-term/*"
