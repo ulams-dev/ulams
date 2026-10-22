@@ -61,12 +61,6 @@ vulnerabilities:
   - id: CVE-2025-64756
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in glob (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
-  - id: CVE-2025-6545
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in pbkdf2 (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2025-6547
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in pbkdf2 (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
   - id: CVE-2025-71329
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in image-size (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
@@ -79,12 +73,6 @@ vulnerabilities:
   - id: CVE-2025-7783
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in form-data (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
-  - id: CVE-2025-9287
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in cipher-base (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2025-9288
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in sha.js (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
   - id: CVE-2026-101916
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @grpc/grpc-js (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
@@ -93,21 +81,6 @@ vulnerabilities:
     expired_at: 2026-12-01
   - id: CVE-2026-102278
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in brace-expansion (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-102992
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in piscina (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-104848
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in tinypool (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-104849
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in tinypool (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-106445
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in handlebars (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-106446
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in handlebars (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
   - id: CVE-2026-111758
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in markdown-it (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
@@ -126,9 +99,6 @@ vulnerabilities:
     expired_at: 2026-12-01
   - id: CVE-2026-13149
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in brace-expansion (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-13311
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in shell-quote (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
   - id: CVE-2026-13676
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in fast-uri (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
@@ -214,29 +184,11 @@ vulnerabilities:
   - id: CVE-2026-33671
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in picomatch (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
-  - id: CVE-2026-33937
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in handlebars (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-33938
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in handlebars (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-33939
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in handlebars (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-33940
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in handlebars (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-33941
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in handlebars (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
   - id: CVE-2026-34601
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
   - id: CVE-2026-3520
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in multer (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-41242
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in protobufjs (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
   - id: CVE-2026-41672
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in @xmldom/xmldom (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
@@ -261,18 +213,6 @@ vulnerabilities:
     expired_at: 2026-12-01
   - id: CVE-2026-42089
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in yeoman-environment (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-44289
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in protobufjs (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-44290
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in protobufjs (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-44291
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in protobufjs (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-44293
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in protobufjs (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
   - id: CVE-2026-44486
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in axios (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
@@ -301,9 +241,6 @@ vulnerabilities:
   - id: CVE-2026-46625
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in js-cookie (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
-  - id: CVE-2026-47429
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in vitest (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
   - id: CVE-2026-4800
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in lodash-es (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
@@ -315,9 +252,6 @@ vulnerabilities:
     expired_at: 2026-12-01
   - id: CVE-2026-4867
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in path-to-regexp (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-48712
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in protobufjs (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
   - id: CVE-2026-48779
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in ws (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
@@ -333,15 +267,6 @@ vulnerabilities:
     expired_at: 2026-12-01
   - id: CVE-2026-5079
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in multer (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-53571
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in vite (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-54466
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in websocket-driver (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-55388
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in piscina (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
   - id: CVE-2026-59869
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in js-yaml (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
@@ -430,12 +355,6 @@ vulnerabilities:
   - id: CVE-2026-87776
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in compression (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
-  - id: CVE-2026-90711
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in proxy-addr (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: CVE-2026-9277
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in shell-quote (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
   - id: CVE-2026-9496
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in pacote (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
@@ -447,9 +366,6 @@ vulnerabilities:
     expired_at: 2026-12-01
   - id: GHSA-rgj7-g3m4-5g8c
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in sharp (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
-    expired_at: 2026-12-01
-  - id: GHSA-vjh7-7g9h-fjfh
-    statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): critical in elliptic (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
     expired_at: 2026-12-01
   - id: GHSA-wq5f-xc86-pv6w
     statement: "Baseline when Trivy scanning started (P8-2, 2026-10-21): high in sharp (yarn.lock), fix available, upgrade tracked in the Trivy baseline issue. Expires so it cannot be forgotten."
