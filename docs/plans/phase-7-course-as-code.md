@@ -454,6 +454,50 @@ differently from sections 7.4 and 7.5, and why:
 - **Errors keep their server code**: 403 and 422 responses now carry `error.details.code` (and `data`) so `APPROVAL_REQUIRES_HUMAN` and
   `INVALID_BLUEPRINT` are machine-readable.
 
+### 7.7 As built in CAC-4
+
+What the implementation (`front/cli/src/course/merge.ts`, `conflicts.ts`, `sync-merge.ts`; `api/packages/course-builder/src/CourseAsCode/ElementMerge.php`,
+`DriftAbsorber.php`; reference: `developers/cli-course`, `developers/course-builder-api`) does differently from sections 7.4 and 7.5, and why:
+
+- **One algorithm, two implementations, shared cases.** The element-level three-way merge exists in TypeScript (CLI) and PHP (server). Both run
+  `api/packages/course-builder/tests/fixtures/merge/cases.json` (35 cases: every row of the 7.5 table, delete against edit in both directions,
+  removals with edits below them, ordering, moves, single slots, defaults that are not changes), so they cannot drift. *Ours* is the author's
+  folder (on the server: the pushed document), *theirs* is the server (on the server: the current version).
+- **What counts as a change** is the element's own data after the normalisation the folder format implies (null and absent, empty lists, the
+  defaults `contentType: richtext`, `status: generated`, `correct: false`, Markdown line ends), so a file written by `fmt` never differs from the
+  server's form. Children are separate elements; `meta` and `sources` are not compared. The root fields (`schemaVersion`, ...) are one element, and so is `pages`.
+- **Removal is judged on the subtree.** An element one side removed is a conflict when the other side changed it *or anything below it*
+  (a block of a removed lesson, a block added to it); the whole subtree is then held back as one conflict (`held`) and ours decides the content
+  until resolved. Two more conflict kinds exist that the plan did not name: `slot` (both sides put a different element into a single slot such as
+  `interaction`) and `orphan` (an element whose parent is gone).
+- **Order** follows the plan: one side reordered, its order wins; both, the server's order with the new elements of the author placed after their
+  neighbours, reported as a note (`ORDER_BOTH`). Several additions after the same neighbour are placed in a stable but unspecified order.
+- **Where the merge runs.** `pull` merges (the CLI needs the base *document*, so the course-as-code group gained `GET versions/{version}`, a thin
+  route to the builder's existing controller method). `push` stays non-mutating: a push behind the server is merged **by the server** when nothing
+  overlaps (a proposed `import` whose parent is the current version, `data.merged` says what came from where) and refused with `BASE_OUTDATED` and
+  `data.conflicts[]` when something does; the CLI turns that into `SYNC_CONFLICT` and points at `pull`. The plan's conflict entry
+  `{elementId, field, base, ours, theirs}` is one entry per element (default 4), so `fields[]` holds `{field, base, ours, theirs}` and `field` the
+  first conflicting field. After a merged push is approved the base is **not** advanced (the version holds the server's changes the folder lacks); the next `pull` is a clean merge.
+- **Conflict files** are `.ulams/conflicts/<element id>.md` (`_root.md` for the course settings): a front matter with the element, its type, the
+  conflict kind and the two versions, the three renderings in the folder syntax (a block as a directive, any other element as YAML, `(removed)` for
+  nothing) in `~~~ulams-element` fences, a unified diff (`textdiff.ts`, the 100-line implementation of section 15 became a longest-common-subsequence
+  diff) and a `## Resolution` section that starts as the author's version. `pull` moves the base to the server's version, so after resolving, `diff`
+  shows what a push sends. `push` and `pull` refuse while a file is open (`OPEN_CONFLICTS`, exit 6); there is still no `--force`.
+- **`resolve <element> --take local|remote|file`** needs only the folder (and, for `remote` and `file`, the version the folder is based on, fetched by id).
+  `remote` replaces the element or removes it with its subtree; `file` reads the Resolution section. It validates the folder it would write before
+  writing and leaves the conflict in place when the validator refuses. Files a merge or a resolution does not change keep the author's bytes.
+- **Absorbing admin edits** is `POST sessions/{session}/drift` (`course.absorb-drift`, `ulams course absorb-drift [--preview]`). The export's `drift` only
+  lists elements an apply would overwrite, which misses an admin edit when the blueprint did not change, so the export has a new `edits` field
+  (`absorbable` and `unmapped`) from the same scan. The scan reads back titles, summaries, lesson Markdown (block by block), question stems, option
+  texts and explanations, only where the blueprint still holds what was applied; everything else is listed with a reason (HTML from the visual editor,
+  added or merged paragraphs, a changed correct answer, quiz titles, the landing page, edits the blueprint also made). The proposal is a version of kind
+  `author`, never applied or approved by itself; approving it follows the approval rules below.
+- **Approval rules** are the CAC-1 rules (`ApprovalGuard`: a person or a `cli` token; never `agent` or an MCP client; `ci` only with
+  `course_as_code.ci_may_approve`), now also covering `author` proposals and merged imports (tests per token kind in `CourseAsCodeMergeTest`).
+  After an absorbed version is approved the same entities still count as drifted for an apply (same values, older fingerprint), so `course apply`
+  passes `overwrite` only when every drifted element is one the absorption took its edits from; anything else stays refused.
+- **Still open:** a run endpoint in the `course-as-code` group (CAC-3's candidate), field-level merge (default 4), merging inside Markdown text.
+
 ## 8. GitHub Action, Docker image and preview academies
 
 ### 8.1 Image `ghcr.io/ulams-dev/ulams-cli`

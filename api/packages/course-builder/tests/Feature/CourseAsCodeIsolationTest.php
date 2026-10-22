@@ -38,8 +38,10 @@ class CourseAsCodeIsolationTest extends TestCase
         return [
             ['GET', self::P . "/courses/{$s->course_id}/blueprint", []],
             ['POST', self::P . "/sessions/{$s->id}/imports", ['document' => $doc, 'baseVersionId' => $s->current_version_id]],
+            ['GET', self::P . "/versions/{$s->current_version_id}", []],
             ['GET', self::P . "/versions/{$s->current_version_id}/diff", []],
             ['POST', self::P . "/versions/{$s->current_version_id}/approve", []],
+            ['POST', self::P . "/sessions/{$s->id}/drift", []],
             ['POST', self::P . "/sessions/{$s->id}/apply", []],
             ['POST', self::P . "/sessions/{$s->id}/publish", []],
         ];
@@ -76,6 +78,7 @@ class CourseAsCodeIsolationTest extends TestCase
         $this->actingAs($admin, 'api')->getJson(self::P . "/courses/{$session->course_id}/blueprint")->assertOk();
         $this->actingAs($admin, 'api')->postJson(self::P . "/sessions/{$session->id}/imports", ['document' => $session->currentVersion->document, 'baseVersionId' => $session->current_version_id])->assertStatus(403);
         $this->actingAs($admin, 'api')->postJson(self::P . "/sessions/{$session->id}/apply")->assertStatus(403);
+        $this->actingAs($admin, 'api')->postJson(self::P . "/sessions/{$session->id}/drift")->assertStatus(403);
     }
 
     public function testUnknownIdsAreNotFound(): void
@@ -86,7 +89,9 @@ class CourseAsCodeIsolationTest extends TestCase
             ['GET', self::P . '/courses/987654321/blueprint', []],
             ['POST', self::P . "/sessions/{$missing}/imports", ['document' => [], 'baseVersionId' => $missing]],
             ['POST', self::P . '/sessions/not-an-id/imports', []],
+            ['GET', self::P . "/versions/{$missing}", []],
             ['GET', self::P . "/versions/{$missing}/diff", []],
+            ['POST', self::P . "/sessions/{$missing}/drift", []],
             ['POST', self::P . "/versions/{$missing}/approve", []],
             ['POST', self::P . "/sessions/{$missing}/apply", []],
             ['POST', self::P . "/sessions/{$missing}/publish", []],

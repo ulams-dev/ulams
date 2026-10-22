@@ -3272,6 +3272,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/course-as-code/sessions/{session}/drift": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Read admin edits made after the last apply back into a proposed author version */
+        post: operations["admin.course-as-code.sessions.by-session.drift.post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/course-as-code/versions/{version}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One version with its Blueprint v3 document (what a three-way merge needs as the base) */
+        get: operations["admin.course-as-code.versions.by-version.get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/course-as-code/versions/{version}/diff": {
         parameters: {
             query?: never;
@@ -20241,6 +20275,107 @@ export interface operations {
             };
         };
     };
+    "admin.course-as-code.sessions.by-session.drift.post": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": {
+                    dryRun?: boolean;
+                };
+            };
+        };
+        responses: {
+            /** @description nothing to absorb (or dryRun): the same listing, no version */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description proposed version with what was absorbed and what could not be mapped back */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown session */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description NO_BLUEPRINT or NOT_APPLIED */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description INVALID_BLUEPRINT */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "admin.course-as-code.versions.by-version.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                version: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description the version and its document */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiEnvelope"];
+                };
+            };
+            /** @description another author's session */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description unknown version */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     "admin.course-as-code.versions.by-version.diff.get": {
         parameters: {
             query?: {
@@ -24757,7 +24892,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Elements; those with fewer active learners than the minimum group are returned as `hidden` */
+            /** @description Elements; those with fewer active learners than the minimum group are returned as `hidden`; `improvable` says whether a proposal can be made for the element */
             200: {
                 headers: {
                     [name: string]: unknown;

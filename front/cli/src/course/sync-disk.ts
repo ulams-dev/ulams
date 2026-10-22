@@ -2,10 +2,11 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, rmdirSync, wr
 import { dirname, join } from "node:path";
 import { CliError } from "../errors.ts";
 import { orderOf } from "./folder.ts";
-import { COURSE_FILE, FINAL_TEST_FILE, MODULES_DIR } from "./layout.ts";
+import { folderFromBlueprint } from "./from-blueprint.ts";
+import { COURSE_FILE, FINAL_TEST_FILE, MODULES_DIR, ULAMS_FILE } from "./layout.ts";
 import { pad } from "./ids.ts";
 import { parseBase, serializeBase, type BaseFile } from "./sync.ts";
-import type { Files } from "./types.ts";
+import type { Files, Obj } from "./types.ts";
 
 /* The files `init`, `pull` and `push` keep next to the course: `.ulams/base.json` (committed) and
  * `.ulams/proposal.json` (local: the version a push proposed and nobody has approved yet). */
@@ -47,6 +48,12 @@ export interface Proposal {
   message: string | null;
   counts: { added: number; changed: number; removed: number };
   pushedAt: string;
+  /** The server merged the push with newer changes: the version is not what the folder holds, so approving it must not move the base. */
+  merged?: boolean;
+  /** `absorb`: the version reads admin edits back from the LMS (`course absorb-drift`); absent means a push of the folder. */
+  kind?: "absorb";
+  /** `type:element` keys of the LMS entities the absorbed version took edits from. */
+  absorbed?: string[];
 }
 
 export function readProposal(root: string): Proposal | null {
@@ -66,6 +73,26 @@ export function writeProposal(root: string, p: Proposal): void {
 
 export function clearProposal(root: string): void {
   rmSync(join(root, PROPOSAL_FILE), { force: true });
+}
+
+export const conflictPath = (root: string, name: string): string => join(root, CONFLICTS_DIR, `${name}.md`);
+
+export function writeConflict(root: string, name: string, text: string): void {
+  write(root, `${CONFLICTS_DIR}/${name}.md`, text);
+}
+
+export function readConflictText(root: string, name: string): string | null {
+  const path = conflictPath(root, name);
+  return existsSync(path) ? readFileSync(path, "utf8") : null;
+}
+
+export function removeConflict(root: string, name: string): void {
+  rmSync(conflictPath(root, name), { force: true });
+  try {
+    rmdirSync(join(root, CONFLICTS_DIR));
+  } catch {
+    /* other conflicts are still open */
+  }
 }
 
 export function listConflicts(root: string): string[] {
@@ -183,4 +210,24 @@ export function materialise(root: string, existing: Files, files: Files): Materi
     }
   }
   return plan;
+}
+
+/**
+ * The files after a change to the document, leaving untouched every file whose content did not change: `before` and
+ * `after` are written the canonical way, and a file that is the same in both keeps the author's own text (comments,
+ * spacing). Files that did change are written canonically.
+ */
+export function filesAfterChange(existing: Files, before: Obj, after: Obj): Files {
+  const canonical = (doc: Obj): Files => {
+    const generated = folderFromBlueprint(doc);
+    generated.delete(ULAMS_FILE);
+    return keepAuthorNames(generated, existing);
+  };
+  const was = canonical(before);
+  const out: Files = new Map();
+  for (const [path, text] of canonical(after)) {
+    const original = existing.get(path);
+    out.set(path, original !== undefined && was.get(path) === text ? original : text);
+  }
+  return out;
 }

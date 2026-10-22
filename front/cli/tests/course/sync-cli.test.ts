@@ -352,21 +352,42 @@ describe("course push", () => {
     expect(text.stdout).toContain("01-install.md:");
   });
 
-  it("BASE_OUTDATED becomes SYNC_CONFLICT (exit 6) with the remote changes and the way out, and changes no file", async () => {
+  it("BASE_OUTDATED becomes SYNC_CONFLICT (exit 6) with the conflicting elements and the way out, and changes no file", async () => {
     const { fake, dir } = await initialised();
     fake.studioEdit((doc) => {
-      (((doc.modules as Out[])[0] as Out).lessons as Out[])[0]!.minutes = 30;
+      ((((doc.modules as Out[])[0] as Out).lessons as Out[])[0] as Out).blocks[0].markdown = "kubectl, said the studio.";
     });
     edit(dir, INSTALL, EDIT_FROM, EDIT_TO);
     const baseBefore = read(dir, ".ulams/base.json");
     const r = await cli(fake, ["course", "push", dir, "--json"]);
     expect(r.code).toBe(6);
     expect(r.error()).toMatchObject({ code: "SYNC_CONFLICT", details: { code: "BASE_OUTDATED", currentVersionNumber: 2 } });
-    expect(r.error().details.remote[0]).toMatchObject({ kind: "changed", type: "lesson" });
+    expect(r.error().details.remote[0]).toMatchObject({ kind: "changed", type: "block" });
+    expect(r.error().details.conflicts[0]).toMatchObject({ kind: "edit-edit", type: "block", label: "Lesson 1.1 > block 1", field: "markdown" });
+    expect(r.error().message).toContain("Lesson 1.1 > block 1");
     expect(r.error().hint).toContain("ulams course pull");
     expect(read(dir, ".ulams/base.json")).toBe(baseBefore);
     expect(existsSync(join(dir, ".ulams/proposal.json"))).toBe(false);
+    expect(existsSync(join(dir, ".ulams/conflicts"))).toBe(false);
     expect(read(dir, INSTALL)).toContain(EDIT_TO);
+  });
+
+  it("a push that is behind the server but touches other elements is merged by the server into one proposal", async () => {
+    const { fake, dir } = await initialised();
+    fake.studioEdit((doc) => {
+      ((((doc.modules as Out[])[0] as Out).lessons as Out[])[0] as Out).minutes = 30;
+    });
+    edit(dir, INSTALL, EDIT_FROM, EDIT_TO);
+    const r = await cli(fake, ["course", "push", dir, "--json"]);
+    expect(r.code, r.stdout + r.stderr).toBe(0);
+    expect(r.data()).toMatchObject({ pushed: true, version: { kind: "import", status: "proposed", parentId: fake.current().id }, merged: { baseVersionNumber: 1, currentVersionNumber: 2 } });
+    expect(r.data().merged.fromServer).toEqual([expect.objectContaining({ kind: "changed" })]);
+    expect(r.data().counts).toEqual({ added: 0, changed: 1, removed: 0 });
+    const doc = fake.db.versions.at(-1)?.document as Out;
+    expect(doc.modules[0].lessons[0]).toMatchObject({ minutes: 30 });
+    expect(JSON.stringify(doc)).toContain(EDIT_TO);
+    const text = await cli(fake, ["course", "status", dir]);
+    expect(text.stdout).toContain("waiting for approval");
   });
 
   it("an invalid blueprint on the server is VALIDATION_FAILED with the server's errors", async () => {
@@ -594,21 +615,26 @@ describe("course pull", () => {
     expect(read(dir, INSTALL)).toContain(EDIT_TO);
   });
 
-  it("stops with SYNC_CONFLICT when both sides changed, and writes nothing", async () => {
+  it("merges when both sides changed different elements: the server's edit lands in the folder, yours stays", async () => {
     const { fake, dir } = await initialised();
     fake.studioEdit((doc) => {
       ((((doc.modules as Out[])[0] as Out).lessons as Out[])[0] as Out).minutes = 45;
     });
     edit(dir, INSTALL, EDIT_FROM, EDIT_TO);
-    const before = read(dir, INSTALL);
-    const baseBefore = read(dir, ".ulams/base.json");
     const r = await cli(fake, ["course", "pull", dir, "--json"]);
-    expect(r.code).toBe(6);
-    expect(r.error()).toMatchObject({ code: "SYNC_CONFLICT", details: { code: "DIVERGED", localChanges: { changed: 1 }, serverChanges: { changed: 1 }, serverVersionNumber: 2 } });
-    expect(r.error().details.localElements).toHaveLength(1);
-    expect(r.error().hint).toContain("no merge yet");
-    expect(read(dir, INSTALL)).toBe(before);
-    expect(read(dir, ".ulams/base.json")).toBe(baseBefore);
+    expect(r.code, r.stdout + r.stderr).toBe(0);
+    expect(r.data()).toMatchObject({ state: "merged", version: { number: 2 }, conflicts: [], fromServer: [expect.objectContaining({ kind: "changed" })] });
+    expect(r.data().fromFolder).toHaveLength(1);
+    expect(read(dir, INSTALL)).toContain("minutes: 45");
+    expect(read(dir, INSTALL)).toContain(EDIT_TO);
+    expect(base(dir).baseVersionNumber).toBe(2);
+    expect(existsSync(join(dir, ".ulams/conflicts"))).toBe(false);
+    // the folder now differs from the new base by exactly your edit
+    const diff = await cli(fake, ["course", "diff", dir, "--json"]);
+    expect(diff.data().counts).toEqual({ added: 0, changed: 1, removed: 0 });
+    const push = await cli(fake, ["course", "push", dir, "--json"]);
+    expect(push.data()).toMatchObject({ pushed: true, version: { parentId: fake.current().id } });
+    expect(push.data().merged).toBeNull();
   });
 
   it("moves only the base when the folder already equals the server (the pushed version was approved in the studio)", async () => {
@@ -710,14 +736,25 @@ describe("the whole loop", () => {
     expect((await cli(fake, ["course", "push", dir, "--apply", "--json"])).code).toBe(0);
 
     edit(other, PODS, "A pod is", "A pod is really");
-    const refused = await cli(fake, ["course", "push", other, "--json"]);
-    expect(refused.code).toBe(6);
-    expect(refused.error().details.code).toBe("BASE_OUTDATED");
+    // the two authors touched different elements: the server merges the second push on top of the first
+    const merged = await cli(fake, ["course", "push", other, "--apply", "--json"]);
+    expect(merged.code, merged.stdout + merged.stderr).toBe(0);
+    expect(merged.data()).toMatchObject({ approved: true, applied: true, merged: { baseVersionNumber: 1, currentVersionNumber: 2 } });
+    expect(learnerText(fake)).toContain(EDIT_TO);
+    expect(learnerText(fake)).toContain("A pod is really");
+    // the approved version holds the other author's edit too, so it is not what the second folder contains: the base stays put
+    expect(base(other).baseVersionNumber).toBe(1);
+    const follow = await cli(fake, ["course", "pull", other, "--json"]);
+    expect(follow.data()).toMatchObject({ state: "merged", conflicts: [] });
+    expect(read(other, INSTALL)).toContain(EDIT_TO);
+    expect(read(other, PODS)).toContain("A pod is really");
+    expect((await cli(fake, ["course", "status", other, "--json"])).data()).toMatchObject({ local: { state: "clean" }, remote: { state: "in-sync" } });
 
-    // their edit and the other author's do not touch the same file, but there is no merge yet: pull stops
-    const pull = await cli(fake, ["course", "pull", other, "--json"]);
-    expect(pull.code).toBe(6);
-    expect(pull.error().details.code).toBe("DIVERGED");
+    // and the first author's folder takes both edits on the next pull
+    const pull = await cli(fake, ["course", "pull", dir, "--json"]);
+    expect(pull.code).toBe(0);
+    expect(pull.data().state).toBe("updated");
+    expect(read(dir, PODS)).toContain("A pod is really");
   });
 });
 

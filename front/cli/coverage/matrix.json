@@ -1,5 +1,5 @@
 {
- "summary": "606/690 covered, 84 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "608/692 covered, 84 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -470,6 +470,12 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/course-as-code/sessions/{session}/drift",
+   "summary": "Read admin edits made after the last apply back into a proposed author version",
+   "command": "course.absorb-drift",
+   "status": "covered"
+  },
+  {
    "key": "POST /api/admin/course-as-code/sessions/{session}/imports",
    "summary": "Import a Blueprint v3 document as a proposed version of kind import",
    "command": "course.import",
@@ -479,6 +485,12 @@
    "key": "POST /api/admin/course-as-code/sessions/{session}/publish",
    "summary": "Publish the applied course (no AI needed)",
    "command": "course.publish",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-as-code/versions/{version}",
+   "summary": "One version with its Blueprint v3 document (what a three-way merge needs as the base)",
+   "command": "course.resolve",
    "status": "covered"
   },
   {

@@ -60,25 +60,63 @@ Blueprint v3 (`schemas/course-blueprint/v3.json` on this site); v1 and v2 docume
 
 | Method and path | Purpose |
 |---|---|
-| `GET courses/{course}/blueprint` | The current version of a course as a v3 document: `courseId`, `sessionId`, `versionId`, `versionNumber`, `appliedVersionId`, `document`, and `drift` (elements an apply would change although an admin edited them). 409 `NOT_ADOPTED` for a course that was not made with the builder, 409 `NO_BLUEPRINT` before any content exists |
-| `POST sessions/{session}/imports` `{document, baseVersionId, message?}` | Store the document as a **proposed** version of kind `import` (origin `author`). 201 with `version`, `counts`, the element `changes`, `warnings` and `handEdited` (AI-written elements whose text you changed by hand). 200 with `unchanged: true` and no version when the document equals the current version (a `meta`-only change counts as unchanged). 422 `INVALID_BLUEPRINT` with `data.errors`, 422 `BASE_UNKNOWN`, 413 for a document over `COURSE_AS_CODE_MAX_DOCUMENT_MB` (8) |
+| `GET courses/{course}/blueprint` | The current version of a course as a v3 document: `courseId`, `sessionId`, `versionId`, `versionNumber`, `appliedVersionId`, `document`, and `drift` (elements an apply would change although an admin edited them) and `edits` (what an admin changed in the LMS after the last apply: `absorbable` elements, with their fields, that [`drift`](#reading-admin-edits-back-into-the-blueprint) can read back, and `unmapped` ones with the reason). 409 `NOT_ADOPTED` for a course that was not made with the builder, 409 `NO_BLUEPRINT` before any content exists |
+| `POST sessions/{session}/imports` `{document, baseVersionId, message?}` | Store the document as a **proposed** version of kind `import` (origin `author`). 201 with `version`, `counts`, the element `changes`, `warnings`, `handEdited` (AI-written elements whose text you changed by hand) and `merged` (`null`, or what the server merged when your base was behind, see below). 200 with `unchanged: true` and no version when the document equals the current version (a `meta`-only change counts as unchanged). 422 `INVALID_BLUEPRINT` with `data.errors`, 422 `BASE_UNKNOWN`, 413 for a document over `COURSE_AS_CODE_MAX_DOCUMENT_MB` (8) |
+| `POST sessions/{session}/drift` `{dryRun?}` | Read admin edits made in the LMS after the last apply back into a **proposed** version of kind `author` (see below). 201 with `version`, `counts`, `changes`, `absorbed[]` and `unmapped[]`; 200 with `unchanged: true` when there is nothing to absorb or with `dryRun`. 409 `NO_BLUEPRINT`, 409 `NOT_APPLIED`, 422 `INVALID_BLUEPRINT` |
+| `GET versions/{version}` | One version with its blueprint `document` (the base a three-way merge needs) |
 | `GET versions/{version}/diff?against=` | The element-aware diff, against the parent by default. It now includes self-checks and interactions |
-| `POST versions/{version}/approve` | Approve a proposed `import` (other kinds follow the builder's own flow). Needs a person, see below. 409 `NOT_PROPOSED`, 409 `STALE_PROPOSAL` when the course changed after the import was proposed |
+| `POST versions/{version}/approve` | Approve a proposed `import` or `author` version (other kinds follow the builder's own flow). Needs a person, see below. 409 `NOT_PROPOSED`, 409 `STALE_PROPOSAL` when the course changed after the version was proposed |
 | `POST sessions/{session}/apply` `{overwrite?}`, `POST sessions/{session}/publish` | The same as in the builder group, without the AI gate |
 
 Errors carry a stable `code` next to `message`: `{"success": false, "message": "…", "code": "BASE_OUTDATED", "data": {…}}`.
 
-**A push is always a proposal.** Nothing reaches learners until a version is approved *and* applied. An import must be based on the
-current version: if the course changed since your export, the import is refused with 409 `BASE_OUTDATED` and `data.remote`, the diff
-between your base and the current version, so export again. (Merging disjoint edits arrives with the sync commands.) Only the document
+**A push is always a proposal.** Nothing reaches learners until a version is approved *and* applied. Only the document
 is trusted as data, never as instructions: it must pass the JSON Schema, the HTML, script-link and image checks and the citation
 rules, and the server keeps the `sources` list it already has.
+
+**A push that is behind the server is merged.** `baseVersionId` is the version your document started from. When it is not the current
+version (the studio, a Living Course update or another push moved the course on), the server runs the same element-level three-way merge
+as the CLI (`base`, your document as *ours*, the current version as *theirs*; one conflict per element, no field-level merge):
+
+- **No overlap** (you and the server changed different elements): one **proposed** `import` is stored with the current version as its parent
+  and your changes on top. `data.merged` says what came from where: `baseVersionId`, `currentVersionId`, `fromPush[]` and `fromServer[]`
+  (element `id` and `kind`: `added`, `changed`, `removed` or `moved`) and `notes[]` (for example `ORDER_BOTH`: both sides reordered a list
+  and the server's order was kept). `counts` and `changes` are against the current version. A document whose changes the server already
+  has is `unchanged: true` (still with `merged`).
+- **Overlap**: 409 `BASE_OUTDATED`, nothing is stored. `data` holds `currentVersionId`, `currentVersionNumber`, `remote` (what the server
+  changed since your base) and `conflicts[]`: `elementId`, `type`, `label`, `kind` (`edit-edit`, `add-add`, `move-move`, `removed-ours` when
+  you removed what the server changed, `removed-theirs` for the reverse, `slot`, `orphan`), `field` (the first conflicting field) and
+  `fields[]` with `base`, `ours` (your pushed value) and `theirs` (the server's). Removing an element together with everything in it is
+  one conflict when the other side changed anything inside; `held` counts those elements.
+
+The merge is the same algorithm as `ulams course pull`; the two implementations share their test cases
+(`api/packages/course-builder/tests/fixtures/merge/cases.json`).
 
 **Who may approve.** A person logged in to the studio, or a `cli` token created by a person. An `agent` token or a request sent with
 `X-Ulams-Client: mcp` never can (403 `APPROVAL_REQUIRES_HUMAN`): an agent proposes, the author approves. A `ci` token can approve only
 when the tenant setting `course_as_code.ci_may_approve` is on (default off; the merged pull request then counts as the review).
 Imports, approvals and who made them (user, token id and kind, `X-Ulams-Commit`, `X-Ulams-Change-Url`) are written to the session's
-event log as `course_as_code.imported` and `course_as_code.approved`.
+event log as `course_as_code.imported` (with `mergedWith` when the server merged), `course_as_code.drift_absorbed` and `course_as_code.approved`.
+An `agent` token may call `drift` (it only proposes) and is refused when it approves what it absorbed.
+
+### Reading admin edits back into the blueprint
+
+An admin who edits an entity in the LMS after an apply changes what learners see, not the blueprint. `POST sessions/{session}/drift`
+finds the elements whose LMS entity was changed after the last apply and whose mapped fields differ from what the apply wrote, and stores
+a **proposed** `author` version with those values. It never touches the current version, the course or the entities. A field is read back
+only where the blueprint still holds what was applied; otherwise it is `unmapped`, with a reason, and the blueprint value stays.
+
+| Entity | Read back into | Not read back (listed as `unmapped`) |
+|---|---|---|
+| Course | `title`, `subtitle`, `description` | |
+| Module (lesson entity) | `title`, `summary` | the generated final-test lesson |
+| Lesson (topic) | `title`, `summary`, the Markdown, block by block (edited blocks become `origin: author`) | HTML from the visual editor, paragraphs added, removed or merged |
+| Question | the stem, the option texts, the explanation | a changed correct answer, added or removed options, forms the GIFT reader does not know |
+| Quiz topic, landing page | | everything (generated from the blueprint) |
+
+`absorbed[]` entries carry `key` (`type:element id`, the same key as `drift[].element` of the export), `element`, `title` and `fields`.
+Approving the version leaves the same entities "drifted" for an apply (the values are the same, the stored fingerprint is not): apply it with
+`overwrite: true` only when every drifted element is in `absorbed[]` (`ulams course apply` does exactly that).
 
 ### Elements written by hand: `origin` and citations
 

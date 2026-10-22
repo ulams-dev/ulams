@@ -339,13 +339,15 @@ class TenantIsolationTest extends TestCase
         $versionId = '01aaaaaaaaaaaaaaaaaaaaaaaa';
         $body = ['document' => ['schemaVersion' => 3], 'baseVersionId' => $versionId];
 
-        foreach ([['POST', "/api/admin/course-as-code/sessions/{$id}/imports", $body], ['POST', "/api/admin/course-as-code/sessions/{$id}/apply", []], ['POST', "/api/admin/course-as-code/sessions/{$id}/publish", []]] as [$method, $uri, $payload]) {
+        foreach ([['POST', "/api/admin/course-as-code/sessions/{$id}/imports", $body], ['POST', "/api/admin/course-as-code/sessions/{$id}/apply", []], ['POST', "/api/admin/course-as-code/sessions/{$id}/publish", []], ['POST', "/api/admin/course-as-code/sessions/{$id}/drift", []]] as [$method, $uri, $payload]) {
             $onB = $this->request(self::B, $method, $uri, $tokenB, $payload);
             $this->assertSame(404, $onB->getStatusCode(), "{$method} {$uri}");
             $this->assertStringNotContainsString('Isolation probe', (string) $onB->getBody());
             $this->assertSame(401, $this->request(self::B, $method, $uri, $tokenA, $payload)->getStatusCode(), "{$method} {$uri} with A's token");
         }
         $this->assertSame(401, $this->request(self::B, 'GET', '/api/admin/course-as-code/courses/1/blueprint', $tokenA)->getStatusCode());
+        $this->assertSame(404, $this->request(self::B, 'GET', "/api/admin/course-as-code/versions/{$versionId}", $tokenB)->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'GET', "/api/admin/course-as-code/versions/{$versionId}", $tokenA)->getStatusCode());
     }
 
     private function login(string $slug): string

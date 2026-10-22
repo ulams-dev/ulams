@@ -195,7 +195,7 @@ class CourseAsCodeTest extends TestCase
         $this->assertSame($count, Version::query()->where('session_id', $session->id)->count(), 'nothing was stored');
     }
 
-    public function testAnImportThatIsBehindTheServerIsRefusedWithWhatChanged(): void
+    public function testAnImportThatChangesTheSameElementAsTheServerIsRefusedWithTheConflicts(): void
     {
         $session = $this->applied();
         $data = $this->exported($session);
@@ -207,10 +207,12 @@ class CourseAsCodeTest extends TestCase
         $versions->setCurrent($session, $studio);
 
         $mine = $data['document'];
-        $mine['modules'][0]['lessons'][0]['title'] = 'Changed in Git';
+        $mine['course']['title'] = 'Changed in Git';
         $res = $this->push($session, $mine, $data['versionId'])->assertStatus(409)->assertJsonPath('code', 'BASE_OUTDATED')
             ->assertJsonPath('data.currentVersionId', $studio->id);
         $this->assertSame('Changed in the studio', collect($res->json('data.remote'))->firstWhere('type', 'course')['fields'][0]['after']);
+        $this->assertSame($mine['course']['id'], $res->json('data.conflicts.0.elementId'));
+        $this->assertSame('edit-edit', $res->json('data.conflicts.0.kind'));
         $this->assertSame(0, Version::query()->where('session_id', $session->id)->where('kind', 'import')->count());
     }
 

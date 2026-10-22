@@ -77,6 +77,9 @@ class AdminCourseAsCodeApi
         'adminCourseAsCodeSessionsBySessionApplyPost' => [
             'application/json',
         ],
+        'adminCourseAsCodeSessionsBySessionDriftPost' => [
+            'application/json',
+        ],
         'adminCourseAsCodeSessionsBySessionImportsPost' => [
             'application/json',
         ],
@@ -87,6 +90,9 @@ class AdminCourseAsCodeApi
             'application/json',
         ],
         'adminCourseAsCodeVersionsByVersionDiffGet' => [
+            'application/json',
+        ],
+        'adminCourseAsCodeVersionsByVersionGet' => [
             'application/json',
         ],
     ];
@@ -712,6 +718,366 @@ class AdminCourseAsCodeApi
 
         // for model (json/xml)
         if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation adminCourseAsCodeSessionsBySessionDriftPost
+     *
+     * Read admin edits made after the last apply back into a proposed author version
+     *
+     * @param  string $session session (required)
+     * @param  \Ulams\Sdk\Model\AdminCourseAsCodeSessionsBySessionDriftPostRequest $admin_course_as_code_sessions_by_session_drift_post_request admin_course_as_code_sessions_by_session_drift_post_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeSessionsBySessionDriftPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope
+     */
+    public function adminCourseAsCodeSessionsBySessionDriftPost($session, $admin_course_as_code_sessions_by_session_drift_post_request = null, string $contentType = self::contentTypes['adminCourseAsCodeSessionsBySessionDriftPost'][0])
+    {
+        list($response) = $this->adminCourseAsCodeSessionsBySessionDriftPostWithHttpInfo($session, $admin_course_as_code_sessions_by_session_drift_post_request, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation adminCourseAsCodeSessionsBySessionDriftPostWithHttpInfo
+     *
+     * Read admin edits made after the last apply back into a proposed author version
+     *
+     * @param  string $session (required)
+     * @param  \Ulams\Sdk\Model\AdminCourseAsCodeSessionsBySessionDriftPostRequest $admin_course_as_code_sessions_by_session_drift_post_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeSessionsBySessionDriftPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function adminCourseAsCodeSessionsBySessionDriftPostWithHttpInfo($session, $admin_course_as_code_sessions_by_session_drift_post_request = null, string $contentType = self::contentTypes['adminCourseAsCodeSessionsBySessionDriftPost'][0])
+    {
+        $request = $this->adminCourseAsCodeSessionsBySessionDriftPostRequest($session, $admin_course_as_code_sessions_by_session_drift_post_request, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                case 201:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                case 201:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation adminCourseAsCodeSessionsBySessionDriftPostAsync
+     *
+     * Read admin edits made after the last apply back into a proposed author version
+     *
+     * @param  string $session (required)
+     * @param  \Ulams\Sdk\Model\AdminCourseAsCodeSessionsBySessionDriftPostRequest $admin_course_as_code_sessions_by_session_drift_post_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeSessionsBySessionDriftPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminCourseAsCodeSessionsBySessionDriftPostAsync($session, $admin_course_as_code_sessions_by_session_drift_post_request = null, string $contentType = self::contentTypes['adminCourseAsCodeSessionsBySessionDriftPost'][0])
+    {
+        return $this->adminCourseAsCodeSessionsBySessionDriftPostAsyncWithHttpInfo($session, $admin_course_as_code_sessions_by_session_drift_post_request, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation adminCourseAsCodeSessionsBySessionDriftPostAsyncWithHttpInfo
+     *
+     * Read admin edits made after the last apply back into a proposed author version
+     *
+     * @param  string $session (required)
+     * @param  \Ulams\Sdk\Model\AdminCourseAsCodeSessionsBySessionDriftPostRequest $admin_course_as_code_sessions_by_session_drift_post_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeSessionsBySessionDriftPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminCourseAsCodeSessionsBySessionDriftPostAsyncWithHttpInfo($session, $admin_course_as_code_sessions_by_session_drift_post_request = null, string $contentType = self::contentTypes['adminCourseAsCodeSessionsBySessionDriftPost'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+        $request = $this->adminCourseAsCodeSessionsBySessionDriftPostRequest($session, $admin_course_as_code_sessions_by_session_drift_post_request, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'adminCourseAsCodeSessionsBySessionDriftPost'
+     *
+     * @param  string $session (required)
+     * @param  \Ulams\Sdk\Model\AdminCourseAsCodeSessionsBySessionDriftPostRequest $admin_course_as_code_sessions_by_session_drift_post_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeSessionsBySessionDriftPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function adminCourseAsCodeSessionsBySessionDriftPostRequest($session, $admin_course_as_code_sessions_by_session_drift_post_request = null, string $contentType = self::contentTypes['adminCourseAsCodeSessionsBySessionDriftPost'][0])
+    {
+
+        // verify the required parameter 'session' is set
+        if ($session === null || (is_array($session) && count($session) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $session when calling adminCourseAsCodeSessionsBySessionDriftPost'
+            );
+        }
+
+
+
+        $resourcePath = '/api/admin/course-as-code/sessions/{session}/drift';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($session !== null) {
+            $resourcePath = str_replace(
+                '{' . 'session' . '}',
+                ObjectSerializer::toPathValue($session),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($admin_course_as_code_sessions_by_session_drift_post_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($admin_course_as_code_sessions_by_session_drift_post_request));
+            } else {
+                $httpBody = $admin_course_as_code_sessions_by_session_drift_post_request;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {
@@ -2009,6 +2375,318 @@ class AdminCourseAsCodeApi
             true, // explode
             false // required
         ) ?? []);
+
+
+        // path params
+        if ($version !== null) {
+            $resourcePath = str_replace(
+                '{' . 'version' . '}',
+                ObjectSerializer::toPathValue($version),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'GET',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation adminCourseAsCodeVersionsByVersionGet
+     *
+     * One version with its Blueprint v3 document (what a three-way merge needs as the base)
+     *
+     * @param  string $version version (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeVersionsByVersionGet'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\ApiEnvelope
+     */
+    public function adminCourseAsCodeVersionsByVersionGet($version, string $contentType = self::contentTypes['adminCourseAsCodeVersionsByVersionGet'][0])
+    {
+        list($response) = $this->adminCourseAsCodeVersionsByVersionGetWithHttpInfo($version, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation adminCourseAsCodeVersionsByVersionGetWithHttpInfo
+     *
+     * One version with its Blueprint v3 document (what a three-way merge needs as the base)
+     *
+     * @param  string $version (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeVersionsByVersionGet'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function adminCourseAsCodeVersionsByVersionGetWithHttpInfo($version, string $contentType = self::contentTypes['adminCourseAsCodeVersionsByVersionGet'][0])
+    {
+        $request = $this->adminCourseAsCodeVersionsByVersionGetRequest($version, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation adminCourseAsCodeVersionsByVersionGetAsync
+     *
+     * One version with its Blueprint v3 document (what a three-way merge needs as the base)
+     *
+     * @param  string $version (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeVersionsByVersionGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminCourseAsCodeVersionsByVersionGetAsync($version, string $contentType = self::contentTypes['adminCourseAsCodeVersionsByVersionGet'][0])
+    {
+        return $this->adminCourseAsCodeVersionsByVersionGetAsyncWithHttpInfo($version, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation adminCourseAsCodeVersionsByVersionGetAsyncWithHttpInfo
+     *
+     * One version with its Blueprint v3 document (what a three-way merge needs as the base)
+     *
+     * @param  string $version (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeVersionsByVersionGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminCourseAsCodeVersionsByVersionGetAsyncWithHttpInfo($version, string $contentType = self::contentTypes['adminCourseAsCodeVersionsByVersionGet'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+        $request = $this->adminCourseAsCodeVersionsByVersionGetRequest($version, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'adminCourseAsCodeVersionsByVersionGet'
+     *
+     * @param  string $version (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeVersionsByVersionGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function adminCourseAsCodeVersionsByVersionGetRequest($version, string $contentType = self::contentTypes['adminCourseAsCodeVersionsByVersionGet'][0])
+    {
+
+        // verify the required parameter 'version' is set
+        if ($version === null || (is_array($version) && count($version) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $version when calling adminCourseAsCodeVersionsByVersionGet'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/course-as-code/versions/{version}';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
 
 
         // path params
