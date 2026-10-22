@@ -99,7 +99,7 @@ small commits → tests → summary.
 - [ ] (new) Decision 2026-10-22: the owner asked to replace the PHP image resize with Cloudflare Image Transformations (enabled and
       verified on the `ulams.app` zone), then narrowed it the same day: keep `api/packages/images` and `/api/images/img` for
       self-hosters and other clients, stop PHP resizing on the hosted demos and the landing, and make the image service a deployment
-      choice. Plan `docs/plans/images-cloudflare.md` and ADR 0193 (Proposed) wait for approval of their defaults (plan section 14)
+      choice. Plan `docs/plans/images-cloudflare.md` and ADR 0193 were accepted by the owner on 2026-10-22 with the recommended defaults (plan section 14)
 
 - [ ] (new) Organic marketing campaign (`docs/plans/organic-marketing.md`, draft): analytics, SEO, Hacker News, Product Hunt,
       Reddit, directories, LinkedIn and e-learning communities. Waiting for approval; nothing is published before the owner
@@ -1100,7 +1100,7 @@ each variant reviewed as a diff against the base. Shown as "Coming" on the Compa
 - [ ] (new) Image service as a deployment choice (`cloudflare | astro | noop | php`): one URL builder and presets in `@ulams/sdk`,
       the hosted demo academies and the `ulams.app` landing on Cloudflare Image Transformations with `onerror=redirect` and a `noop`
       kill switch, admin and imports on demo deployments without `/api/images/img`, the PHP images API kept as an optional legacy API
-      (plan `docs/plans/images-cloudflare.md`, milestones IMG-1 to IMG-7; ADR 0193 Proposed; not started, waiting for approval)
+      (plan `docs/plans/images-cloudflare.md`, milestones IMG-1 to IMG-7; ADR 0193 Accepted 2026-10-22; IMG-1 starts first)
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
 - [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI

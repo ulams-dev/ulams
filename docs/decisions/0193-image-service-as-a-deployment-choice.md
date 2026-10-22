@@ -1,6 +1,6 @@
 # 0193. The image service is a deployment choice behind one URL builder; the hosted demos and the landing use Cloudflare Image Transformations, and the PHP images API stays as an optional legacy API
 
-- Status: Proposed
+- Status: Accepted (2026-10-22, owner accepted the 12 recommended defaults)
 - Date: 2026-10-22
 - Plan: `docs/plans/images-cloudflare.md`; TODO Phase 8 "(new) Image service as a deployment choice"
 

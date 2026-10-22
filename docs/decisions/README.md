@@ -142,6 +142,6 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0190](0190-tenant-isolation-route-coverage.md) | Tenant isolation for every endpoint through one route-walking test and a public-route allow-list | Accepted |
 | [0191](0191-learning-benefit-claims-register.md) | Register of learning-benefit claims, checked in CI | Proposed |
 | [0192](0192-course-releases-and-variants-as-branches-of-one-builder-session.md) | Course releases are recorded applies, and course variants are branches of one builder session applied as separate LMS courses | Accepted |
-| [0193](0193-image-service-as-a-deployment-choice.md) | The image service is a deployment choice behind one URL builder; the hosted demos and the landing use Cloudflare Image Transformations, and the PHP images API stays as an optional legacy API | Proposed |
+| [0193](0193-image-service-as-a-deployment-choice.md) | The image service is a deployment choice behind one URL builder; the hosted demos and the landing use Cloudflare Image Transformations, and the PHP images API stays as an optional legacy API | Accepted (2026-10-22, owner accepted the 12 recommended defaults) |
 
 <!-- END GENERATED: adr-index -->
