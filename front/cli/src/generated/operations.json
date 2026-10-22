@@ -2845,6 +2845,18 @@
  },
  {
   "method": "POST",
+  "path": "/api/auth/handoff",
+  "summary": "Ask for a one-time code that hands this session to another host of the academy",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
+  "path": "/api/auth/handoff/exchange",
+  "summary": "Exchange a hand-off code for a session token of the target host",
+  "tag": "Auth"
+ },
+ {
+  "method": "POST",
   "path": "/api/auth/impersonate",
   "summary": "",
   "tag": "Auth"

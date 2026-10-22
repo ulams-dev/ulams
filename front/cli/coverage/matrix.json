@@ -1,5 +1,5 @@
 {
- "summary": "628/718 covered, 90 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "628/720 covered, 92 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -2842,6 +2842,18 @@
   {
    "key": "GET /api/auth/email/verify/{id}/{hash}",
    "summary": "Email verification",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/auth/handoff",
+   "summary": "Ask for a one-time code that hands this session to another host of the academy",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/auth/handoff/exchange",
+   "summary": "Exchange a hand-off code for a session token of the target host",
    "command": "",
    "status": "excluded: browser-only"
   },

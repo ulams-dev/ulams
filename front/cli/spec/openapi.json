@@ -31940,6 +31940,188 @@
     ]
    }
   },
+  "/api/auth/handoff": {
+   "post": {
+    "description": "Needs the caller's own login token (not a scoped token). `host` must be the academy's own front or one of its active entry hosts; `challenge` is the S256 challenge of a verifier that the browser at the target host keeps. The code lives 60 seconds, works once, and is bound to this user, that host and that challenge. The response is never cached. Send the browser to the target host with the code, never the token.",
+    "operationId": "auth.handoff.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "challenge": {
+          "description": "base64url(sha256(verifier)), 43 characters",
+          "type": "string"
+         },
+         "host": {
+          "description": "Host name of the target, without a port",
+          "example": "sales.academy.example.org",
+          "type": "string"
+         }
+        },
+        "required": [
+         "host",
+         "challenge"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "code": {
+             "type": "string"
+            },
+            "expires_in": {
+             "example": 60,
+             "type": "integer"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The code"
+     },
+     "403": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The host is not a front of this academy (or has been disabled)"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Ask for a one-time code that hands this session to another host of the academy",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
+  "/api/auth/handoff/exchange": {
+   "post": {
+    "description": "Redeemed by the target host's server with the secret `verifier` whose S256 challenge asked for the code and with its own `host`. The code works once, within 60 seconds, and only for the host it was issued for; the host must still be a front of the academy. Returns a new token that belongs to the target host's session. Never call it from a page that may be logged.",
+    "operationId": "auth.handoff.exchange.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "code": {
+          "type": "string"
+         },
+         "host": {
+          "description": "Host name of the target, without a port",
+          "type": "string"
+         },
+         "verifier": {
+          "description": "43 to 128 characters of [A-Za-z0-9._~-]",
+          "type": "string"
+         }
+        },
+        "required": [
+         "code",
+         "verifier",
+         "host"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "expires_at": {
+             "format": "date-time",
+             "type": "string"
+            },
+            "token": {
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Token of the target host"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The code is invalid, expired, already used, for another host, or does not match the verifier"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Validation error"
+     }
+    },
+    "summary": "Exchange a hand-off code for a session token of the target host",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
   "/api/auth/impersonate": {
    "post": {
     "description": "User impersonate",
@@ -32034,8 +32216,23 @@
   },
   "/api/auth/logout": {
    "post": {
-    "description": "User logout",
+    "description": "User logout. With `everywhere` true every login session of the user is revoked too (one per host of the academy after a hand-off); scoped tokens of agents, CI and the CLI are not.",
     "operationId": "auth.logout.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "everywhere": {
+          "type": "boolean"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": false
+    },
     "responses": {
      "200": {
       "content": {

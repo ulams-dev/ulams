@@ -2127,7 +2127,7 @@ class IdentityApi
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Ulams\Sdk\Model\DemoLoginPost200Response
+     * @return \Ulams\Sdk\Model\AuthHandoffExchangePost200Response
      */
     public function identitySsoExchange($identity_sso_exchange_request, string $contentType = self::contentTypes['identitySsoExchange'][0])
     {
@@ -2145,7 +2145,7 @@ class IdentityApi
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Ulams\Sdk\Model\DemoLoginPost200Response, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Ulams\Sdk\Model\AuthHandoffExchangePost200Response, HTTP status code, HTTP response headers (array of strings)
      */
     public function identitySsoExchangeWithHttpInfo($identity_sso_exchange_request, string $contentType = self::contentTypes['identitySsoExchange'][0])
     {
@@ -2176,11 +2176,11 @@ class IdentityApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Ulams\Sdk\Model\DemoLoginPost200Response' === '\SplFileObject') {
+                    if ('\Ulams\Sdk\Model\AuthHandoffExchangePost200Response' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Ulams\Sdk\Model\DemoLoginPost200Response' !== 'string') {
+                        if ('\Ulams\Sdk\Model\AuthHandoffExchangePost200Response' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -2198,7 +2198,7 @@ class IdentityApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\DemoLoginPost200Response', []),
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\AuthHandoffExchangePost200Response', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -2217,7 +2217,7 @@ class IdentityApi
                 );
             }
 
-            $returnType = '\Ulams\Sdk\Model\DemoLoginPost200Response';
+            $returnType = '\Ulams\Sdk\Model\AuthHandoffExchangePost200Response';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -2250,7 +2250,7 @@ class IdentityApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Ulams\Sdk\Model\DemoLoginPost200Response',
+                        '\Ulams\Sdk\Model\AuthHandoffExchangePost200Response',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -2294,7 +2294,7 @@ class IdentityApi
      */
     public function identitySsoExchangeAsyncWithHttpInfo($identity_sso_exchange_request, string $contentType = self::contentTypes['identitySsoExchange'][0])
     {
-        $returnType = '\Ulams\Sdk\Model\DemoLoginPost200Response';
+        $returnType = '\Ulams\Sdk\Model\AuthHandoffExchangePost200Response';
         $request = $this->identitySsoExchangeRequest($identity_sso_exchange_request, $contentType);
 
         return $this->client
