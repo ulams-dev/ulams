@@ -30,6 +30,7 @@ use Ulams\CourseVariants\Support\NoFitSignals;
 use Ulams\CourseVariants\Support\NoPlacementSource;
 use Ulams\CourseVariants\Support\NoTopicCorrespondence;
 use Ulams\Entitlements\Events\AccessProjected;
+use Ulams\TemplatesPdf\Courses\CommonUserAndCourseVariables;
 use Ulams\Entitlements\UlamsEntitlementsServiceProvider;
 
 /**
@@ -72,6 +73,20 @@ class UlamsCourseVariantsServiceProvider extends ServiceProvider
         $family = fn ($resource) => ['variant_family' => $this->app->make(FamilyDirectory::class)->forCourse((int) ($resource->resource->id ?? $resource->resource->getKey()))];
         CourseListResource::extend($family);
         CourseSimpleResource::extend($family);
+
+        // the certificate names the variant the learner completed (ADR 0192): the picker label of that course, empty outside a family
+        if (class_exists(CommonUserAndCourseVariables::class)) {
+            CommonUserAndCourseVariables::extendCourseVariables(function (Course $course): array {
+                $family = $this->app->make(FamilyDirectory::class)->forCourse((int) $course->getKey());
+                $row = collect($family['variants'] ?? [])->firstWhere('courseId', (int) $course->getKey());
+                $label = (string) ($row['label'] ?? '');
+                if (($row['isDefault'] ?? false) && $label === (string) $course->title) {
+                    $label = ''; // a default course nobody named in the picker has no variant name of its own
+                }
+
+                return [CommonUserAndCourseVariables::VAR_COURSE_VARIANT => (string) $label];
+            });
+        }
 
         if ($this->app->runningInConsole()) {
             $this->commands([AssignByRulesCommand::class]);
