@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/course-folder/1/quiz.schema.json",
+  "title": "Quiz",
+  "description": "A lesson quiz (*.quiz.yaml) or the final test (final-test.quiz.yaml).",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[0-9a-z]{26}$",
+      "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+    },
+    "passScore": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "questions": {
+      "maxItems": 50,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[0-9a-z]{26}$",
+            "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "single",
+              "multiple",
+              "truefalse",
+              "short"
+            ]
+          },
+          "stem": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 1000
+          },
+          "options": {
+            "minItems": 1,
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-z]{26}$",
+                  "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 500
+                },
+                "correct": {
+                  "default": false,
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "explanation": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 2000
+          },
+          "origin": {
+            "type": "string",
+            "enum": [
+              "ai",
+              "author"
+            ],
+            "description": "Who wrote it. Absent means ai; only author elements may have no citations."
+          },
+          "citations": {
+            "default": [],
+            "description": "Source fragments this element cites. Only elements with origin: author may leave it empty.",
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$"
+            }
+          },
+          "objectiveIds": {
+            "default": [],
+            "description": "Ids of objectives of the lesson this question checks.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9a-z]{26}$",
+              "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+            }
+          }
+        },
+        "required": [
+          "type",
+          "stem",
+          "options",
+          "explanation"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "questions"
+  ],
+  "additionalProperties": false
+}

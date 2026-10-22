@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/course-folder/1/module.schema.json",
+  "title": "module.yaml",
+  "description": "A module of the course.",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[0-9a-z]{26}$",
+      "description": "Element id: a lowercase ULID. `ulams course fmt` mints missing ids."
+    },
+    "key": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+      "description": "Optional stable slug, unique among siblings."
+    },
+    "title": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 200
+    },
+    "summary": {
+      "type": "string",
+      "maxLength": 600
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "additionalProperties": false
+}

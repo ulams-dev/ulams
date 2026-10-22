@@ -1,0 +1,14 @@
+id: 01m5gj6q4byksx844m0qzsy171
+passScore: 70
+questions:
+  - id: 01m5gj6q4bjh0aphnrhf9ypy0k
+    type: single
+    stem: Which command prints the client version?
+    options:
+      - { id: 01m5gj6q4bykhexkxrhbtxwmt6, text: kubectl version --client, correct: true }
+      - { id: 01m5gj6q4by9h4qc1c45e2ncvk, text: kubectl get version }
+      - { id: 01m5gj6q4bchm5b2g4qqk2gdkm, text: kube --v }
+    explanation: The --client flag skips the call to the server.
+    origin: author
+    objectiveIds:
+      - 01m5gj6q4acs4e96zefy2148wg

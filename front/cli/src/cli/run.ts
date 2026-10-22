@@ -192,7 +192,7 @@ export async function main(deps: Deps): Promise<number> {
       client,
       profile: cmd.id === "login" ? loginProfile : profile,
       fs,
-      io: { stderr: (line) => !flags?.quiet && deps.stderr(redactString(line, secrets)), isTTY: deps.stderrIsTTY, interactive },
+      io: { stderr: (line) => !flags?.quiet && deps.stderr(redactString(line, secrets)), stdout: (text) => deps.stdout(text), isTTY: deps.stderrIsTTY, interactive },
       signal,
       emit: (event, meta) => deps.stdout(JSON.stringify({ type: "event", ...(meta?.id ? { id: meta.id } : {}), data: event })),
       flags,
@@ -216,7 +216,7 @@ export async function main(deps: Deps): Promise<number> {
       // apply --dry-run --exit-code: exit 13 when the plan contains changes (ADR 0073).
       const planned = (result.data as { dryRun?: boolean; changes?: unknown[] } | null)?.changes;
       if (parsed.input.exitCode && flags.dryRun && Array.isArray(planned) && planned.length > 0) return 13;
-      return 0;
+      return result.exitCode ?? 0;
     } finally {
       process.off("SIGINT", onSignal);
     }
