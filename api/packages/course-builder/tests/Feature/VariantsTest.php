@@ -48,6 +48,12 @@ class VariantsTest extends TestCase
         return Variant::query()->where('session_id', $session->id)->where('key', $key)->firstOrFail();
     }
 
+    /** The generate run of a variant (not the base's: runs created in the same second cannot be told apart by time). */
+    private function variantRunOf(Session $session, Variant $variant): Run
+    {
+        return Run::query()->where('session_id', $session->id)->where('kind', 'generate')->get()->first(fn (Run $r) => ($r->input['variantId'] ?? null) === $variant->id) ?? $this->fail('No generate run for the variant.');
+    }
+
     private function approveVariantOutline(User $author, Session $session, Variant $variant): void
     {
         $outline = $variant->refresh()->current_version_id;
@@ -152,7 +158,7 @@ class VariantsTest extends TestCase
 
         $this->approveVariantOutline($author, $session, $expert);
 
-        $run = Run::query()->where('session_id', $session->id)->where('kind', 'generate')->latest('created_at')->firstOrFail();
+        $run = $this->variantRunOf($session, $expert);
         $this->assertSame($expert->id, $run->input['variantId']);
         $this->assertSame('finished', $run->status);
         // one rewritten lesson (condense): one lesson step, plus a quiz for it, plus the final test; no metadata step
@@ -199,7 +205,7 @@ class VariantsTest extends TestCase
 
         $this->approveVariantOutline($author, $session, $expert);
 
-        $run = Run::query()->where('session_id', $session->id)->where('kind', 'generate')->latest('created_at')->firstOrFail();
+        $run = $this->variantRunOf($session, $expert);
         $this->assertSame('needs_attention', $run->status);
         $failed = Step::query()->where('run_id', $run->id)->where('status', 'failed')->firstOrFail();
         $this->assertStringStartsWith('lesson:', $failed->key);
