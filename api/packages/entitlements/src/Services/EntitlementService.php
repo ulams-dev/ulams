@@ -11,6 +11,7 @@ use InvalidArgumentException;
 use Ulams\CourseAccess\Models\Course;
 use Ulams\CourseAccess\Services\Contracts\CourseAccessServiceContract;
 use Ulams\Courses\Models\CourseUserPivot;
+use Ulams\Entitlements\Events\AccessProjected;
 use Ulams\Entitlements\Models\Entitlement;
 
 /**
@@ -167,6 +168,42 @@ class EntitlementService
         return $expired;
     }
 
+    /**
+     * Writes an entitlement that is derived from other entitlements (a family of course variants, ADR 0192) and keeps it
+     * in step: creates it, or, when it exists, moves its end and brings it back into force (a derived source may lapse
+     * and return, unlike an order that stays revoked). Projects `course_user` through the plain access service.
+     *
+     * @param array<string,mixed> $sourceRef
+     */
+    public function syncDerived(int $userId, int $courseId, string $sourceType, string $sourceKey, array $sourceRef, ?CarbonInterface $validUntil): Entitlement
+    {
+        $this->assertSourceType($sourceType);
+
+        return DB::transaction(function () use ($userId, $courseId, $sourceType, $sourceKey, $sourceRef, $validUntil) {
+            Course::query()->findOrFail($courseId);
+            $this->adoptExistingAccess($userId, $courseId);
+            $row = Entitlement::query()->where('source_key', $sourceKey)->lockForUpdate()->first();
+            if ($row === null) {
+                $row = Entitlement::query()->create([
+                    'user_id' => $userId,
+                    'subject_type' => Entitlement::SUBJECT_COURSE,
+                    'subject_id' => $courseId,
+                    'status' => Entitlement::STATUS_ACTIVE,
+                    'valid_from' => now(),
+                    'valid_until' => $validUntil,
+                    'source_type' => $sourceType,
+                    'source_key' => $sourceKey,
+                    'source_ref' => $sourceRef,
+                ]);
+            } else {
+                $row->forceFill(['status' => Entitlement::STATUS_ACTIVE, 'valid_until' => $validUntil, 'revoked_at' => null, 'revoke_reason' => null, 'source_ref' => $sourceRef])->save();
+            }
+            $this->project($userId, $courseId);
+
+            return $row;
+        });
+    }
+
     /** Revokes the entitlement of one source. Idempotent; returns null when the source is unknown. */
     public function revoke(string $sourceKey, string $reason): ?Entitlement
     {
@@ -195,6 +232,13 @@ class EntitlementService
      * no end date when any entitlement is open-ended, and the row goes away when nothing grants access anymore.
      */
     public function project(int $userId, int $courseId): void
+    {
+        $this->projectCourse($userId, $courseId);
+        // after the row is settled: families of course variants derive their entitlements from it (ADR 0192)
+        event(new AccessProjected($userId, $courseId));
+    }
+
+    private function projectCourse(int $userId, int $courseId): void
     {
         $course = Course::query()->find($courseId);
         if ($course === null) {
