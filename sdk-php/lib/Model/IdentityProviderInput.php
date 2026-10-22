@@ -63,7 +63,9 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         'enabled' => 'bool',
         'jit_enabled' => 'bool',
         'name' => 'string',
-        'oidc' => '\Ulams\Sdk\Model\IdentityProviderOidc',
+        'oidc' => '\Ulams\Sdk\Model\IdentityProviderInputOidc',
+        'protocol' => 'string',
+        'saml' => '\Ulams\Sdk\Model\IdentityProviderInputSaml',
         'slug' => 'string',
         'trust_email' => 'bool'
     ];
@@ -83,6 +85,8 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         'jit_enabled' => null,
         'name' => null,
         'oidc' => null,
+        'protocol' => null,
+        'saml' => null,
         'slug' => null,
         'trust_email' => null
     ];
@@ -100,6 +104,8 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         'jit_enabled' => false,
         'name' => false,
         'oidc' => false,
+        'protocol' => false,
+        'saml' => false,
         'slug' => false,
         'trust_email' => false
     ];
@@ -197,6 +203,8 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         'jit_enabled' => 'jit_enabled',
         'name' => 'name',
         'oidc' => 'oidc',
+        'protocol' => 'protocol',
+        'saml' => 'saml',
         'slug' => 'slug',
         'trust_email' => 'trust_email'
     ];
@@ -214,6 +222,8 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         'jit_enabled' => 'setJitEnabled',
         'name' => 'setName',
         'oidc' => 'setOidc',
+        'protocol' => 'setProtocol',
+        'saml' => 'setSaml',
         'slug' => 'setSlug',
         'trust_email' => 'setTrustEmail'
     ];
@@ -231,6 +241,8 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         'jit_enabled' => 'getJitEnabled',
         'name' => 'getName',
         'oidc' => 'getOidc',
+        'protocol' => 'getProtocol',
+        'saml' => 'getSaml',
         'slug' => 'getSlug',
         'trust_email' => 'getTrustEmail'
     ];
@@ -278,6 +290,8 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
 
     public const DEFAULT_ROLE_STUDENT = 'student';
     public const DEFAULT_ROLE_TUTOR = 'tutor';
+    public const PROTOCOL_OIDC = 'oidc';
+    public const PROTOCOL_SAML = 'saml';
 
     /**
      * Gets allowable values of the enum
@@ -289,6 +303,19 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         return [
             self::DEFAULT_ROLE_STUDENT,
             self::DEFAULT_ROLE_TUTOR,
+        ];
+    }
+
+    /**
+     * Gets allowable values of the enum
+     *
+     * @return string[]
+     */
+    public function getProtocolAllowableValues()
+    {
+        return [
+            self::PROTOCOL_OIDC,
+            self::PROTOCOL_SAML,
         ];
     }
 
@@ -314,6 +341,8 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         $this->setIfExists('jit_enabled', $data ?? [], null);
         $this->setIfExists('name', $data ?? [], null);
         $this->setIfExists('oidc', $data ?? [], null);
+        $this->setIfExists('protocol', $data ?? [], null);
+        $this->setIfExists('saml', $data ?? [], null);
         $this->setIfExists('slug', $data ?? [], null);
         $this->setIfExists('trust_email', $data ?? [], null);
     }
@@ -350,6 +379,15 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
             $invalidProperties[] = sprintf(
                 "invalid value '%s' for 'default_role', must be one of '%s'",
                 $this->container['default_role'],
+                implode("', '", $allowedValues)
+            );
+        }
+
+        $allowedValues = $this->getProtocolAllowableValues();
+        if (!is_null($this->container['protocol']) && !in_array($this->container['protocol'], $allowedValues, true)) {
+            $invalidProperties[] = sprintf(
+                "invalid value '%s' for 'protocol', must be one of '%s'",
+                $this->container['protocol'],
                 implode("', '", $allowedValues)
             );
         }
@@ -544,7 +582,7 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Gets oidc
      *
-     * @return \Ulams\Sdk\Model\IdentityProviderOidc|null
+     * @return \Ulams\Sdk\Model\IdentityProviderInputOidc|null
      */
     public function getOidc()
     {
@@ -554,7 +592,7 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
     /**
      * Sets oidc
      *
-     * @param \Ulams\Sdk\Model\IdentityProviderOidc|null $oidc oidc
+     * @param \Ulams\Sdk\Model\IdentityProviderInputOidc|null $oidc oidc
      *
      * @return self
      */
@@ -564,6 +602,70 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
             throw new \InvalidArgumentException('non-nullable oidc cannot be null');
         }
         $this->container['oidc'] = $oidc;
+
+        return $this;
+    }
+
+    /**
+     * Gets protocol
+     *
+     * @return string|null
+     */
+    public function getProtocol()
+    {
+        return $this->container['protocol'];
+    }
+
+    /**
+     * Sets protocol
+     *
+     * @param string|null $protocol Fixed at creation (default oidc); ignored on update
+     *
+     * @return self
+     */
+    public function setProtocol($protocol)
+    {
+        if (is_null($protocol)) {
+            throw new \InvalidArgumentException('non-nullable protocol cannot be null');
+        }
+        $allowedValues = $this->getProtocolAllowableValues();
+        if (!in_array($protocol, $allowedValues, true)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    "Invalid value '%s' for 'protocol', must be one of '%s'",
+                    $protocol,
+                    implode("', '", $allowedValues)
+                )
+            );
+        }
+        $this->container['protocol'] = $protocol;
+
+        return $this;
+    }
+
+    /**
+     * Gets saml
+     *
+     * @return \Ulams\Sdk\Model\IdentityProviderInputSaml|null
+     */
+    public function getSaml()
+    {
+        return $this->container['saml'];
+    }
+
+    /**
+     * Sets saml
+     *
+     * @param \Ulams\Sdk\Model\IdentityProviderInputSaml|null $saml saml
+     *
+     * @return self
+     */
+    public function setSaml($saml)
+    {
+        if (is_null($saml)) {
+            throw new \InvalidArgumentException('non-nullable saml cannot be null');
+        }
+        $this->container['saml'] = $saml;
 
         return $this;
     }

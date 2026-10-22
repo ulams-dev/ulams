@@ -64,6 +64,7 @@
     "mailerlite/mailerlite-api-v2-php-sdk": "^0.3.2",
     "nesbot/carbon": "^3.8",
     "omnipay/stripe": "^3.1",
+    "onelogin/php-saml": "^4.3",
     "opis/json-schema": "^2.6",
     "packbackbooks/lti-1p3-tool": "^6.4",
     "pbmedia/laravel-ffmpeg": "^8.9",

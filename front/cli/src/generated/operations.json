@@ -1022,7 +1022,7 @@
  {
   "method": "POST",
   "path": "/api/admin/identity/providers",
-  "summary": "Add an OpenID Connect identity provider",
+  "summary": "Add an OpenID Connect or SAML identity provider",
   "tag": "Admin Identity"
  },
  {
@@ -1041,6 +1041,18 @@
   "method": "PUT",
   "path": "/api/admin/identity/providers/{provider}",
   "summary": "Change an identity provider (leave client_secret out to keep the stored one)",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/identity/providers/{provider}/metadata/refresh",
+  "summary": "Fetch the SAML identity provider metadata again",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/identity/providers/{provider}/sp-keys/rotate",
+  "summary": "Prepare or activate the next SAML service provider key pair",
   "tag": "Admin Identity"
  },
  {
@@ -3300,9 +3312,39 @@
   "tag": "Identity"
  },
  {
+  "method": "POST",
+  "path": "/api/identity/saml/{slug}/acs",
+  "summary": "Assertion consumer service: the identity provider's browser POST (SAMLResponse and RelayState)",
+  "tag": "Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/identity/saml/{slug}/logout",
+  "summary": "Sign out of this academy and, when the identity provider supports it, start single logout there",
+  "tag": "Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/identity/saml/{slug}/metadata",
+  "summary": "SAML service provider metadata of an identity provider",
+  "tag": "Identity"
+ },
+ {
+  "method": "GET",
+  "path": "/api/identity/saml/{slug}/slo",
+  "summary": "Single logout service (redirect binding): a LogoutRequest from the identity provider or the LogoutResponse to ours",
+  "tag": "Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/identity/saml/{slug}/slo",
+  "summary": "Single logout service (POST binding with an enveloped XML signature)",
+  "tag": "Identity"
+ },
+ {
   "method": "GET",
   "path": "/api/identity/sso/{slug}/start",
-  "summary": "Start a sign-in: redirects the browser to the provider",
+  "summary": "Start a sign-in (OpenID Connect or SAML): redirects the browser to the provider",
   "tag": "Identity"
  },
  {

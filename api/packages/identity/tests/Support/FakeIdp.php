@@ -56,6 +56,12 @@ class FakeIdp
         $this->store($kid, $key);
     }
 
+    /** An EC key given as PEM, for fixtures whose coordinates start with a zero byte. */
+    public function addEcFromPem(string $kid, string $pem): void
+    {
+        $this->store($kid, openssl_pkey_get_private($pem));
+    }
+
     private function store(string $kid, \OpenSSLAsymmetricKey $key): void
     {
         $this->privateKeys[$kid] = $key;
@@ -63,8 +69,13 @@ class FakeIdp
         $this->pems[$kid] = $pem;
     }
 
-    /** @return array<string,mixed> */
-    public function publicJwk(string $kid): array
+    /**
+     * The public JWK. EC coordinates are fixed-width (RFC 7518 6.2.1.2); openssl returns them without leading zero
+     * bytes, so they are padded here. `$stripLeadingZeros` publishes them the way a sloppy provider would.
+     *
+     * @return array<string,mixed>
+     */
+    public function publicJwk(string $kid, bool $stripLeadingZeros = false): array
     {
         $details = openssl_pkey_get_details($this->privateKeys[$kid]);
         $b64 = static fn (string $bytes): string => rtrim(strtr(base64_encode($bytes), '+/', '-_'), '=');
@@ -72,7 +83,9 @@ class FakeIdp
             return ['kty' => 'RSA', 'kid' => $kid, 'use' => 'sig', 'n' => $b64($details['rsa']['n']), 'e' => $b64($details['rsa']['e'])];
         }
 
-        return ['kty' => 'EC', 'kid' => $kid, 'use' => 'sig', 'crv' => 'P-256', 'x' => $b64($details['ec']['x']), 'y' => $b64($details['ec']['y'])];
+        $coordinate = static fn (string $bytes): string => $stripLeadingZeros ? ltrim($bytes, "\0") : str_pad($bytes, 32, "\0", STR_PAD_LEFT);
+
+        return ['kty' => 'EC', 'kid' => $kid, 'use' => 'sig', 'crv' => 'P-256', 'x' => $b64($coordinate($details['ec']['x'])), 'y' => $b64($coordinate($details['ec']['y']))];
     }
 
     /** @return array<string,mixed> */

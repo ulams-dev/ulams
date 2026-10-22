@@ -55,12 +55,12 @@ describe("content cost and reporting pages", () => {
     });
   }
 
-  it("cites the Chapman ratios with their source and never the 197-hour average", () => {
+  it("cites only the verified Chapman range with its source and no per-level mid values", () => {
     for (const locale of LOCALES) {
       const copy = impactCopy("content-cost", locale);
       expect(copy.problem).toContain(CHAPMAN_SOURCE);
-      for (const figure of ["49", "716", "79", "184", "490"]) expect(copy.problem).toContain(figure);
-      expect(JSON.stringify(copy)).not.toContain("197");
+      for (const figure of ["49", "716"]) expect(copy.problem).toContain(figure);
+      for (const figure of ["79", "184", "490", "197"]) expect(JSON.stringify(copy)).not.toContain(figure);
     }
     expect(new URL(CHAPMAN_SOURCE).hostname).toBe("elearningindustry.com");
   });
@@ -70,7 +70,11 @@ describe("content cost and reporting pages", () => {
       const copy = impactCopy("reporting", locale);
       expect(copy.problem).toContain(BRANDON_HALL_SOURCE);
       expect(JSON.stringify(copy)).not.toContain("9%");
+      for (const figure of ["2013", "2012", "457"]) expect(copy.problem).toContain(figure);
+      expect(copy.problem).toMatch(/45[.,]5%/);
+      expect(copy.problem).toMatch(/47[.,]7%/);
     }
+    expect(JSON.stringify(impactCopy("reporting", "en"))).not.toContain("small minority");
   });
 });
 

@@ -28,7 +28,7 @@ tenant has its own cache prefix ([Tenancy](/developers/tenancy/)).
 | `POST /api/lti/tool/exchange` | 30 / min | IP | fixed |
 | `GET /api/auth/social/{provider}` and `/callback` (shared bucket) | 30 / min | IP | fixed |
 | `POST /api/auth/social/exchange` | 30 / min | IP | fixed |
-| `/api/identity/*` (single sign-on: providers, start, callback, exchange; shared bucket) | 30 / min | IP | `ulams_identity.public_rate_limit` (config) |
+| `/api/identity/*` (single sign-on: providers, start, callback, exchange, SAML metadata, ACS, SLO and logout; shared bucket) | 30 / min | IP | `ulams_identity.public_rate_limit` (config) |
 | `/api/admin/identity/*` ([single sign-on](/operators/single-sign-on/)) | 60 / min | user | `ulams_identity.admin_rate_limit` (config) |
 | `POST /api/liascript/progress/{topic}` | 120 / min | user or IP | fixed |
 | `POST /api/liascript/{id}/preview`, `POST /api/cmi5/fetch`, `POST /api/csp-report` | 60 / min | IP | fixed |

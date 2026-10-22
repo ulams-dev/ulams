@@ -1,5 +1,5 @@
 {
- "summary": "612/696 covered, 84 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "614/703 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1023,7 +1023,7 @@
   },
   {
    "key": "POST /api/admin/identity/providers",
-   "summary": "Add an OpenID Connect identity provider",
+   "summary": "Add an OpenID Connect or SAML identity provider",
    "command": "identity.providers-create",
    "status": "covered"
   },
@@ -1043,6 +1043,18 @@
    "key": "DELETE /api/admin/identity/providers/{provider}",
    "summary": "Delete an identity provider and its account links (accounts stay)",
    "command": "identity.providers-delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/identity/providers/{provider}/metadata/refresh",
+   "summary": "Fetch the SAML identity provider metadata again",
+   "command": "identity.providers-refresh-metadata",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/identity/providers/{provider}/sp-keys/rotate",
+   "summary": "Prepare or activate the next SAML service provider key pair",
+   "command": "identity.providers-rotate-sp-keys",
    "status": "covered"
   },
   {
@@ -3302,6 +3314,36 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/identity/saml/{slug}/acs",
+   "summary": "Assertion consumer service: the identity provider's browser POST (SAMLResponse and RelayState)",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/identity/saml/{slug}/logout",
+   "summary": "Sign out of this academy and, when the identity provider supports it, start single logout there",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/identity/saml/{slug}/metadata",
+   "summary": "SAML service provider metadata of an identity provider",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/identity/saml/{slug}/slo",
+   "summary": "Single logout service (redirect binding): a LogoutRequest from the identity provider or the LogoutResponse to ours",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "POST /api/identity/saml/{slug}/slo",
+   "summary": "Single logout service (POST binding with an enveloped XML signature)",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
    "key": "POST /api/identity/sso/exchange",
    "summary": "Redeem the one-time code with the verifier for an access token",
    "command": "",
@@ -3309,7 +3351,7 @@
   },
   {
    "key": "GET /api/identity/sso/{slug}/start",
-   "summary": "Start a sign-in: redirects the browser to the provider",
+   "summary": "Start a sign-in (OpenID Connect or SAML): redirects the browser to the provider",
    "command": "",
    "status": "excluded: browser-only"
   },
