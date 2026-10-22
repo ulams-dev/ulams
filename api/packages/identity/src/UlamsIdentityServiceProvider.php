@@ -3,14 +3,17 @@
 namespace Ulams\Identity;
 
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Auth\UlamsAuthServiceProvider;
+use Ulams\Identity\Console\PruneIdentityCommand;
+use Ulams\Identity\Console\RefreshMetadataCommand;
 
 /**
- * Identity (Phase 6.3): single sign-on per tenant. OpenID Connect login with per-tenant providers, account
- * creation and strict linking, and a hash-chained audit trail. SAML, SCIM and HRIS import follow in later
+ * Identity (Phase 6.3): single sign-on per tenant. OpenID Connect and SAML 2.0 login with per-tenant providers,
+ * account creation and strict linking, and a hash-chained audit trail. SCIM and HRIS import follow in later
  * milestones (docs/plans/phase-6-identity.md, ADR 0120).
  */
 class UlamsIdentityServiceProvider extends ServiceProvider
@@ -30,6 +33,12 @@ class UlamsIdentityServiceProvider extends ServiceProvider
 
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        $this->commands([RefreshMetadataCommand::class, PruneIdentityCommand::class]);
+        $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
+            $schedule->command('identity:refresh-metadata')->dailyAt((string) config('ulams_identity.saml.metadata_refresh_at', '03:30'))->withoutOverlapping();
+            $schedule->command('identity:prune')->dailyAt('03:50')->withoutOverlapping();
+        });
 
         if ($this->app->runningInConsole()) {
             $this->publishes([__DIR__ . '/config.php' => config_path(self::CONFIG_KEY . '.php')], self::CONFIG_KEY . '.config');

@@ -77,6 +77,21 @@ class IdentityApi
         'identityProvidersPublic' => [
             'application/json',
         ],
+        'identitySamlAcs' => [
+            'application/x-www-form-urlencoded',
+        ],
+        'identitySamlLogout' => [
+            'application/json',
+        ],
+        'identitySamlMetadata' => [
+            'application/json',
+        ],
+        'identitySamlSlo' => [
+            'application/json',
+        ],
+        'identitySamlSloPost' => [
+            'application/x-www-form-urlencoded',
+        ],
         'identitySsoExchange' => [
             'application/json',
         ],
@@ -682,6 +697,1427 @@ class IdentityApi
     }
 
     /**
+     * Operation identitySamlAcs
+     *
+     * Assertion consumer service: the identity provider&#39;s browser POST (SAMLResponse and RelayState)
+     *
+     * @param  string $slug slug (required)
+     * @param  string $relay_state The signed login state this service gave the identity provider in the AuthnRequest redirect (required)
+     * @param  string $saml_response Base64 SAML response, at most 256 KB (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlAcs'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return void
+     */
+    public function identitySamlAcs($slug, $relay_state, $saml_response, string $contentType = self::contentTypes['identitySamlAcs'][0])
+    {
+        $this->identitySamlAcsWithHttpInfo($slug, $relay_state, $saml_response, $contentType);
+    }
+
+    /**
+     * Operation identitySamlAcsWithHttpInfo
+     *
+     * Assertion consumer service: the identity provider&#39;s browser POST (SAMLResponse and RelayState)
+     *
+     * @param  string $slug (required)
+     * @param  string $relay_state The signed login state this service gave the identity provider in the AuthnRequest redirect (required)
+     * @param  string $saml_response Base64 SAML response, at most 256 KB (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlAcs'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of null, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function identitySamlAcsWithHttpInfo($slug, $relay_state, $saml_response, string $contentType = self::contentTypes['identitySamlAcs'][0])
+    {
+        $request = $this->identitySamlAcsRequest($slug, $relay_state, $saml_response, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            return [null, $statusCode, $response->getHeaders()];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation identitySamlAcsAsync
+     *
+     * Assertion consumer service: the identity provider&#39;s browser POST (SAMLResponse and RelayState)
+     *
+     * @param  string $slug (required)
+     * @param  string $relay_state The signed login state this service gave the identity provider in the AuthnRequest redirect (required)
+     * @param  string $saml_response Base64 SAML response, at most 256 KB (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlAcs'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identitySamlAcsAsync($slug, $relay_state, $saml_response, string $contentType = self::contentTypes['identitySamlAcs'][0])
+    {
+        return $this->identitySamlAcsAsyncWithHttpInfo($slug, $relay_state, $saml_response, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation identitySamlAcsAsyncWithHttpInfo
+     *
+     * Assertion consumer service: the identity provider&#39;s browser POST (SAMLResponse and RelayState)
+     *
+     * @param  string $slug (required)
+     * @param  string $relay_state The signed login state this service gave the identity provider in the AuthnRequest redirect (required)
+     * @param  string $saml_response Base64 SAML response, at most 256 KB (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlAcs'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identitySamlAcsAsyncWithHttpInfo($slug, $relay_state, $saml_response, string $contentType = self::contentTypes['identitySamlAcs'][0])
+    {
+        $returnType = '';
+        $request = $this->identitySamlAcsRequest($slug, $relay_state, $saml_response, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    return [null, $response->getStatusCode(), $response->getHeaders()];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'identitySamlAcs'
+     *
+     * @param  string $slug (required)
+     * @param  string $relay_state The signed login state this service gave the identity provider in the AuthnRequest redirect (required)
+     * @param  string $saml_response Base64 SAML response, at most 256 KB (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlAcs'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function identitySamlAcsRequest($slug, $relay_state, $saml_response, string $contentType = self::contentTypes['identitySamlAcs'][0])
+    {
+
+        // verify the required parameter 'slug' is set
+        if ($slug === null || (is_array($slug) && count($slug) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $slug when calling identitySamlAcs'
+            );
+        }
+
+        // verify the required parameter 'relay_state' is set
+        if ($relay_state === null || (is_array($relay_state) && count($relay_state) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $relay_state when calling identitySamlAcs'
+            );
+        }
+
+        // verify the required parameter 'saml_response' is set
+        if ($saml_response === null || (is_array($saml_response) && count($saml_response) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $saml_response when calling identitySamlAcs'
+            );
+        }
+
+
+        $resourcePath = '/api/identity/saml/{slug}/acs';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($slug !== null) {
+            $resourcePath = str_replace(
+                '{' . 'slug' . '}',
+                ObjectSerializer::toPathValue($slug),
+                $resourcePath
+            );
+        }
+
+        // form params
+        if ($relay_state !== null) {
+            $formParams['RelayState'] = ObjectSerializer::toFormValue($relay_state);
+        }
+        // form params
+        if ($saml_response !== null) {
+            $formParams['SAMLResponse'] = ObjectSerializer::toFormValue($saml_response);
+        }
+
+        $headers = $this->headerSelector->selectHeaders(
+            [],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation identitySamlLogout
+     *
+     * Sign out of this academy and, when the identity provider supports it, start single logout there
+     *
+     * @param  string $slug slug (required)
+     * @param  \Ulams\Sdk\Model\IdentitySamlLogoutRequest $identity_saml_logout_request identity_saml_logout_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlLogout'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\IdentitySamlLogout200Response
+     */
+    public function identitySamlLogout($slug, $identity_saml_logout_request = null, string $contentType = self::contentTypes['identitySamlLogout'][0])
+    {
+        list($response) = $this->identitySamlLogoutWithHttpInfo($slug, $identity_saml_logout_request, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation identitySamlLogoutWithHttpInfo
+     *
+     * Sign out of this academy and, when the identity provider supports it, start single logout there
+     *
+     * @param  string $slug (required)
+     * @param  \Ulams\Sdk\Model\IdentitySamlLogoutRequest $identity_saml_logout_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlLogout'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\IdentitySamlLogout200Response, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function identitySamlLogoutWithHttpInfo($slug, $identity_saml_logout_request = null, string $contentType = self::contentTypes['identitySamlLogout'][0])
+    {
+        $request = $this->identitySamlLogoutRequest($slug, $identity_saml_logout_request, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\IdentitySamlLogout200Response' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\IdentitySamlLogout200Response' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\IdentitySamlLogout200Response', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\IdentitySamlLogout200Response';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\IdentitySamlLogout200Response',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation identitySamlLogoutAsync
+     *
+     * Sign out of this academy and, when the identity provider supports it, start single logout there
+     *
+     * @param  string $slug (required)
+     * @param  \Ulams\Sdk\Model\IdentitySamlLogoutRequest $identity_saml_logout_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlLogout'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identitySamlLogoutAsync($slug, $identity_saml_logout_request = null, string $contentType = self::contentTypes['identitySamlLogout'][0])
+    {
+        return $this->identitySamlLogoutAsyncWithHttpInfo($slug, $identity_saml_logout_request, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation identitySamlLogoutAsyncWithHttpInfo
+     *
+     * Sign out of this academy and, when the identity provider supports it, start single logout there
+     *
+     * @param  string $slug (required)
+     * @param  \Ulams\Sdk\Model\IdentitySamlLogoutRequest $identity_saml_logout_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlLogout'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identitySamlLogoutAsyncWithHttpInfo($slug, $identity_saml_logout_request = null, string $contentType = self::contentTypes['identitySamlLogout'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\IdentitySamlLogout200Response';
+        $request = $this->identitySamlLogoutRequest($slug, $identity_saml_logout_request, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'identitySamlLogout'
+     *
+     * @param  string $slug (required)
+     * @param  \Ulams\Sdk\Model\IdentitySamlLogoutRequest $identity_saml_logout_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlLogout'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function identitySamlLogoutRequest($slug, $identity_saml_logout_request = null, string $contentType = self::contentTypes['identitySamlLogout'][0])
+    {
+
+        // verify the required parameter 'slug' is set
+        if ($slug === null || (is_array($slug) && count($slug) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $slug when calling identitySamlLogout'
+            );
+        }
+
+
+
+        $resourcePath = '/api/identity/saml/{slug}/logout';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($slug !== null) {
+            $resourcePath = str_replace(
+                '{' . 'slug' . '}',
+                ObjectSerializer::toPathValue($slug),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($identity_saml_logout_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($identity_saml_logout_request));
+            } else {
+                $httpBody = $identity_saml_logout_request;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation identitySamlMetadata
+     *
+     * SAML service provider metadata of an identity provider
+     *
+     * @param  string $slug slug (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlMetadata'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return string
+     */
+    public function identitySamlMetadata($slug, string $contentType = self::contentTypes['identitySamlMetadata'][0])
+    {
+        list($response) = $this->identitySamlMetadataWithHttpInfo($slug, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation identitySamlMetadataWithHttpInfo
+     *
+     * SAML service provider metadata of an identity provider
+     *
+     * @param  string $slug (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlMetadata'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of string, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function identitySamlMetadataWithHttpInfo($slug, string $contentType = self::contentTypes['identitySamlMetadata'][0])
+    {
+        $request = $this->identitySamlMetadataRequest($slug, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('string' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('string' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, 'string', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = 'string';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        'string',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation identitySamlMetadataAsync
+     *
+     * SAML service provider metadata of an identity provider
+     *
+     * @param  string $slug (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlMetadata'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identitySamlMetadataAsync($slug, string $contentType = self::contentTypes['identitySamlMetadata'][0])
+    {
+        return $this->identitySamlMetadataAsyncWithHttpInfo($slug, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation identitySamlMetadataAsyncWithHttpInfo
+     *
+     * SAML service provider metadata of an identity provider
+     *
+     * @param  string $slug (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlMetadata'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identitySamlMetadataAsyncWithHttpInfo($slug, string $contentType = self::contentTypes['identitySamlMetadata'][0])
+    {
+        $returnType = 'string';
+        $request = $this->identitySamlMetadataRequest($slug, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'identitySamlMetadata'
+     *
+     * @param  string $slug (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlMetadata'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function identitySamlMetadataRequest($slug, string $contentType = self::contentTypes['identitySamlMetadata'][0])
+    {
+
+        // verify the required parameter 'slug' is set
+        if ($slug === null || (is_array($slug) && count($slug) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $slug when calling identitySamlMetadata'
+            );
+        }
+
+
+        $resourcePath = '/api/identity/saml/{slug}/metadata';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($slug !== null) {
+            $resourcePath = str_replace(
+                '{' . 'slug' . '}',
+                ObjectSerializer::toPathValue($slug),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/samlmetadata+xml', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'GET',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation identitySamlSlo
+     *
+     * Single logout service (redirect binding): a LogoutRequest from the identity provider or the LogoutResponse to ours
+     *
+     * @param  string $slug slug (required)
+     * @param  string $saml_request saml_request (optional)
+     * @param  string $saml_response saml_response (optional)
+     * @param  string $relay_state relay_state (optional)
+     * @param  string $sig_alg sig_alg (optional)
+     * @param  string $signature signature (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlSlo'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return void
+     */
+    public function identitySamlSlo($slug, $saml_request = null, $saml_response = null, $relay_state = null, $sig_alg = null, $signature = null, string $contentType = self::contentTypes['identitySamlSlo'][0])
+    {
+        $this->identitySamlSloWithHttpInfo($slug, $saml_request, $saml_response, $relay_state, $sig_alg, $signature, $contentType);
+    }
+
+    /**
+     * Operation identitySamlSloWithHttpInfo
+     *
+     * Single logout service (redirect binding): a LogoutRequest from the identity provider or the LogoutResponse to ours
+     *
+     * @param  string $slug (required)
+     * @param  string $saml_request (optional)
+     * @param  string $saml_response (optional)
+     * @param  string $relay_state (optional)
+     * @param  string $sig_alg (optional)
+     * @param  string $signature (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlSlo'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of null, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function identitySamlSloWithHttpInfo($slug, $saml_request = null, $saml_response = null, $relay_state = null, $sig_alg = null, $signature = null, string $contentType = self::contentTypes['identitySamlSlo'][0])
+    {
+        $request = $this->identitySamlSloRequest($slug, $saml_request, $saml_response, $relay_state, $sig_alg, $signature, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            return [null, $statusCode, $response->getHeaders()];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation identitySamlSloAsync
+     *
+     * Single logout service (redirect binding): a LogoutRequest from the identity provider or the LogoutResponse to ours
+     *
+     * @param  string $slug (required)
+     * @param  string $saml_request (optional)
+     * @param  string $saml_response (optional)
+     * @param  string $relay_state (optional)
+     * @param  string $sig_alg (optional)
+     * @param  string $signature (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlSlo'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identitySamlSloAsync($slug, $saml_request = null, $saml_response = null, $relay_state = null, $sig_alg = null, $signature = null, string $contentType = self::contentTypes['identitySamlSlo'][0])
+    {
+        return $this->identitySamlSloAsyncWithHttpInfo($slug, $saml_request, $saml_response, $relay_state, $sig_alg, $signature, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation identitySamlSloAsyncWithHttpInfo
+     *
+     * Single logout service (redirect binding): a LogoutRequest from the identity provider or the LogoutResponse to ours
+     *
+     * @param  string $slug (required)
+     * @param  string $saml_request (optional)
+     * @param  string $saml_response (optional)
+     * @param  string $relay_state (optional)
+     * @param  string $sig_alg (optional)
+     * @param  string $signature (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlSlo'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identitySamlSloAsyncWithHttpInfo($slug, $saml_request = null, $saml_response = null, $relay_state = null, $sig_alg = null, $signature = null, string $contentType = self::contentTypes['identitySamlSlo'][0])
+    {
+        $returnType = '';
+        $request = $this->identitySamlSloRequest($slug, $saml_request, $saml_response, $relay_state, $sig_alg, $signature, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    return [null, $response->getStatusCode(), $response->getHeaders()];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'identitySamlSlo'
+     *
+     * @param  string $slug (required)
+     * @param  string $saml_request (optional)
+     * @param  string $saml_response (optional)
+     * @param  string $relay_state (optional)
+     * @param  string $sig_alg (optional)
+     * @param  string $signature (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlSlo'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function identitySamlSloRequest($slug, $saml_request = null, $saml_response = null, $relay_state = null, $sig_alg = null, $signature = null, string $contentType = self::contentTypes['identitySamlSlo'][0])
+    {
+
+        // verify the required parameter 'slug' is set
+        if ($slug === null || (is_array($slug) && count($slug) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $slug when calling identitySamlSlo'
+            );
+        }
+
+
+
+
+
+
+
+        $resourcePath = '/api/identity/saml/{slug}/slo';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $saml_request,
+            'SAMLRequest', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            false // required
+        ) ?? []);
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $saml_response,
+            'SAMLResponse', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            false // required
+        ) ?? []);
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $relay_state,
+            'RelayState', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            false // required
+        ) ?? []);
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $sig_alg,
+            'SigAlg', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            false // required
+        ) ?? []);
+        // query params
+        $queryParams = array_merge($queryParams, ObjectSerializer::toQueryValue(
+            $signature,
+            'Signature', // param base name
+            'string', // openApiType
+            'form', // style
+            true, // explode
+            false // required
+        ) ?? []);
+
+
+        // path params
+        if ($slug !== null) {
+            $resourcePath = str_replace(
+                '{' . 'slug' . '}',
+                ObjectSerializer::toPathValue($slug),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            [],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'GET',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation identitySamlSloPost
+     *
+     * Single logout service (POST binding with an enveloped XML signature)
+     *
+     * @param  string $slug slug (required)
+     * @param  string $relay_state relay_state (optional)
+     * @param  string $saml_request saml_request (optional)
+     * @param  string $saml_response saml_response (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlSloPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return void
+     */
+    public function identitySamlSloPost($slug, $relay_state = null, $saml_request = null, $saml_response = null, string $contentType = self::contentTypes['identitySamlSloPost'][0])
+    {
+        $this->identitySamlSloPostWithHttpInfo($slug, $relay_state, $saml_request, $saml_response, $contentType);
+    }
+
+    /**
+     * Operation identitySamlSloPostWithHttpInfo
+     *
+     * Single logout service (POST binding with an enveloped XML signature)
+     *
+     * @param  string $slug (required)
+     * @param  string $relay_state (optional)
+     * @param  string $saml_request (optional)
+     * @param  string $saml_response (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlSloPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of null, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function identitySamlSloPostWithHttpInfo($slug, $relay_state = null, $saml_request = null, $saml_response = null, string $contentType = self::contentTypes['identitySamlSloPost'][0])
+    {
+        $request = $this->identitySamlSloPostRequest($slug, $relay_state, $saml_request, $saml_response, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            return [null, $statusCode, $response->getHeaders()];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation identitySamlSloPostAsync
+     *
+     * Single logout service (POST binding with an enveloped XML signature)
+     *
+     * @param  string $slug (required)
+     * @param  string $relay_state (optional)
+     * @param  string $saml_request (optional)
+     * @param  string $saml_response (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlSloPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identitySamlSloPostAsync($slug, $relay_state = null, $saml_request = null, $saml_response = null, string $contentType = self::contentTypes['identitySamlSloPost'][0])
+    {
+        return $this->identitySamlSloPostAsyncWithHttpInfo($slug, $relay_state, $saml_request, $saml_response, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation identitySamlSloPostAsyncWithHttpInfo
+     *
+     * Single logout service (POST binding with an enveloped XML signature)
+     *
+     * @param  string $slug (required)
+     * @param  string $relay_state (optional)
+     * @param  string $saml_request (optional)
+     * @param  string $saml_response (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlSloPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identitySamlSloPostAsyncWithHttpInfo($slug, $relay_state = null, $saml_request = null, $saml_response = null, string $contentType = self::contentTypes['identitySamlSloPost'][0])
+    {
+        $returnType = '';
+        $request = $this->identitySamlSloPostRequest($slug, $relay_state, $saml_request, $saml_response, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    return [null, $response->getStatusCode(), $response->getHeaders()];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'identitySamlSloPost'
+     *
+     * @param  string $slug (required)
+     * @param  string $relay_state (optional)
+     * @param  string $saml_request (optional)
+     * @param  string $saml_response (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identitySamlSloPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function identitySamlSloPostRequest($slug, $relay_state = null, $saml_request = null, $saml_response = null, string $contentType = self::contentTypes['identitySamlSloPost'][0])
+    {
+
+        // verify the required parameter 'slug' is set
+        if ($slug === null || (is_array($slug) && count($slug) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $slug when calling identitySamlSloPost'
+            );
+        }
+
+
+
+
+
+        $resourcePath = '/api/identity/saml/{slug}/slo';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($slug !== null) {
+            $resourcePath = str_replace(
+                '{' . 'slug' . '}',
+                ObjectSerializer::toPathValue($slug),
+                $resourcePath
+            );
+        }
+
+        // form params
+        if ($relay_state !== null) {
+            $formParams['RelayState'] = ObjectSerializer::toFormValue($relay_state);
+        }
+        // form params
+        if ($saml_request !== null) {
+            $formParams['SAMLRequest'] = ObjectSerializer::toFormValue($saml_request);
+        }
+        // form params
+        if ($saml_response !== null) {
+            $formParams['SAMLResponse'] = ObjectSerializer::toFormValue($saml_response);
+        }
+
+        $headers = $this->headerSelector->selectHeaders(
+            [],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
      * Operation identitySsoExchange
      *
      * Redeem the one-time code with the verifier for an access token
@@ -991,7 +2427,7 @@ class IdentityApi
     /**
      * Operation identitySsoStart
      *
-     * Start a sign-in: redirects the browser to the provider
+     * Start a sign-in (OpenID Connect or SAML): redirects the browser to the provider
      *
      * @param  string $slug slug (required)
      * @param  string $challenge base64url SHA-256 of a verifier only the caller&#39;s server knows (43 characters) (required)
@@ -1010,7 +2446,7 @@ class IdentityApi
     /**
      * Operation identitySsoStartWithHttpInfo
      *
-     * Start a sign-in: redirects the browser to the provider
+     * Start a sign-in (OpenID Connect or SAML): redirects the browser to the provider
      *
      * @param  string $slug (required)
      * @param  string $challenge base64url SHA-256 of a verifier only the caller&#39;s server knows (43 characters) (required)
@@ -1060,7 +2496,7 @@ class IdentityApi
     /**
      * Operation identitySsoStartAsync
      *
-     * Start a sign-in: redirects the browser to the provider
+     * Start a sign-in (OpenID Connect or SAML): redirects the browser to the provider
      *
      * @param  string $slug (required)
      * @param  string $challenge base64url SHA-256 of a verifier only the caller&#39;s server knows (43 characters) (required)
@@ -1083,7 +2519,7 @@ class IdentityApi
     /**
      * Operation identitySsoStartAsyncWithHttpInfo
      *
-     * Start a sign-in: redirects the browser to the provider
+     * Start a sign-in (OpenID Connect or SAML): redirects the browser to the provider
      *
      * @param  string $slug (required)
      * @param  string $challenge base64url SHA-256 of a verifier only the caller&#39;s server knows (43 characters) (required)

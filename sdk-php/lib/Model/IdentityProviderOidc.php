@@ -35,6 +35,7 @@ use \Ulams\Sdk\ObjectSerializer;
  * IdentityProviderOidc Class Doc Comment
  *
  * @category Class
+ * @description OpenID Connect providers only
  * @package  Ulams\Sdk
  * @author   OpenAPI Generator team
  * @link     https://openapi-generator.tech

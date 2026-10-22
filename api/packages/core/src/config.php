@@ -45,6 +45,10 @@ return [
             // referrer policy makes the browser send Origin: null
             'api/lti/tool/launch/verify',
             'api/lti/tool/deep-link',
+            // SAML: the identity provider's browser POST (response, logout request) comes from its own origin and is
+            // authenticated by the XML signature and the single-use state, not by the browser's ambient state
+            'api/identity/saml/*/acs',
+            'api/identity/saml/*/slo',
             'api/payments-gateways/callback/*',
             'api/payments-gateways/webhook/*',
         ],

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Export the product pages (overview, comparison, FAQ, course generation and its case studies, in three languages), the blog (English and Polish) and their SEO routes from the production Astro build.
+// Export the product pages (overview, comparison, FAQ, content cost, reporting, course generation and its case studies, in three languages), the blog (English and Polish) and their SEO routes from the production Astro build.
 // Build with ULAMS_IMAGE_SERVICE=noop, then pass a new output directory and the public host.
 import { spawn } from "node:child_process";
 import { request } from "node:http";
@@ -22,6 +22,8 @@ const pages = [
   ...overviews,
   "/comparison/", "/pl/comparison/", "/zh/comparison/",
   "/faq/", "/pl/faq/", "/zh/faq/",
+  "/content-cost/", "/pl/content-cost/", "/zh/content-cost/",
+  "/reporting/", "/pl/reporting/", "/zh/reporting/",
   "/course-generation/", "/pl/course-generation/", "/zh/course-generation/",
   "/course-generation/microdosing-study/", "/pl/course-generation/microdosing-study/", "/zh/course-generation/microdosing-study/",
   "/course-generation/stablecoin-report/", "/pl/course-generation/stablecoin-report/", "/zh/course-generation/stablecoin-report/",

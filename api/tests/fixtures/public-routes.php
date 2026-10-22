@@ -157,7 +157,7 @@ return [
     ['method' => '*', 'uri' => 'api/lti/tool/*', 'kind' => 'own-credentials', 'covered_by' => 'api/packages/lti/tests/Feature/TenantIsolationTest.php',
         'reason' => 'LTI 1.3 tool side (login, launch, deep link): signed id_token, state and nonce; one-time codes are per tenant.'],
 
-    // Single sign-on (OpenID Connect), registered only when IDENTITY_ENABLED is true -----------------
+    // Single sign-on (OpenID Connect and SAML 2.0), registered only when IDENTITY_ENABLED is true -----------------
     ['method' => 'GET', 'uri' => 'api/identity/providers', 'kind' => 'open', 'optional' => true,
         'reason' => 'Sign-in providers the tenant offers (slug and name only), read from the tenant database chosen by host; throttled.'],
     ['method' => 'GET', 'uri' => 'api/identity/sso/{slug}/start', 'kind' => 'open', 'optional' => true, 'covered_by' => 'api/packages/identity/tests/Feature/IsolationTest.php',
@@ -166,4 +166,10 @@ return [
         'reason' => 'Provider redirect: the single-use state is the credential; an invalid, expired or foreign state answers 400.'],
     ['method' => 'POST', 'uri' => 'api/identity/sso/exchange', 'kind' => 'own-credentials', 'optional' => true, 'covered_by' => 'api/packages/identity/tests/Feature/IsolationTest.php',
         'reason' => 'Redeems the one-time code with the PKCE verifier (400 without them); codes are per tenant.'],
+    ['method' => 'GET', 'uri' => 'api/identity/saml/{slug}/metadata', 'kind' => 'open', 'optional' => true, 'covered_by' => 'api/packages/identity/tests/Feature/IsolationTest.php',
+        'reason' => 'SAML service provider metadata (entity id, ACS and SLO URLs, public certificates) for the identity provider to import; built from the tenant database and the request host, no secret in it.'],
+    ['method' => 'POST', 'uri' => 'api/identity/saml/{slug}/acs', 'kind' => 'own-credentials', 'optional' => true, 'covered_by' => 'api/packages/identity/tests/Feature/IsolationTest.php',
+        'reason' => 'SAML assertion consumer service: the signed assertion and the single-use login state are the credentials; origin-exempt because the IdP posts from its own origin (400 without a valid state).'],
+    ['method' => '*', 'uri' => 'api/identity/saml/{slug}/slo', 'kind' => 'own-credentials', 'optional' => true, 'covered_by' => 'api/packages/identity/tests/Feature/IsolationTest.php',
+        'reason' => 'SAML single logout service: LogoutRequest and LogoutResponse must be signed by the provider\'s certificate, name the IdP as issuer and our SLO URL as destination (400 otherwise); origin-exempt like the ACS.'],
 ];

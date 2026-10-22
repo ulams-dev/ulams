@@ -155,6 +155,44 @@ class IdTokenValidationTest extends TestCase
         $this->assertTrue(User::query()->where('email', 'ada@example.com')->exists());
     }
 
+    /** x = 003a8d9b..., so the coordinate is 31 bytes long without padding (the test used to fail about once in 110 runs). */
+    private const EC_KEY_WITH_LEADING_ZERO = <<<'PEM'
+-----BEGIN PRIVATE KEY-----
+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg0uR9yLYi28ZPmu/v
+qRGQUpfxIdPXPIbt4n6gSHVkHOuhRANCAAQAOo2b+l4e/7eskDsG4i6rzH5hJwPF
+KO68JCbFA2Uzwl/NKSnVOahQBTQ8thTLYpqBWgY6s2jGzTA/oGGnvR27
+-----END PRIVATE KEY-----
+PEM;
+
+    public function testAnEcKeyWithALeadingZeroByteIsAccepted(): void
+    {
+        $this->idp->addEcFromPem('ec-zero', self::EC_KEY_WITH_LEADING_ZERO);
+        $this->assertSame(31, strlen(openssl_pkey_get_details(openssl_pkey_get_private(self::EC_KEY_WITH_LEADING_ZERO))['ec']['x']));
+
+        foreach ([false, true] as $strip) {
+            $this->idp->jwks = [$this->idp->publicJwk('ec-zero', $strip)];
+            \Illuminate\Support\Facades\Cache::flush();
+            $claims = app(\Ulams\Identity\Services\Oidc\OidcClient::class)
+                ->validateIdToken($this->provider(['slug' => 'zero' . (int) $strip]), $this->idp->idToken('n1', [], 'ES256', 'ec-zero'), 'n1');
+            $this->assertSame('subject-1', $claims['sub']);
+        }
+    }
+
+    public function testEveryRandomEcKeyValidatesWhetherOrNotItsCoordinatesAreStripped(): void
+    {
+        $client = app(\Ulams\Identity\Services\Oidc\OidcClient::class);
+        $provider = $this->provider(['slug' => 'loop']);
+        for ($i = 0; $i < 500; $i++) {
+            $this->idp->addEc('ec-loop');
+            foreach ([false, true] as $strip) {
+                $this->idp->jwks = [$this->idp->publicJwk('ec-loop', $strip)];
+                \Illuminate\Support\Facades\Cache::flush();
+                $claims = $client->validateIdToken($provider, $this->idp->idToken('n1', [], 'ES256', 'ec-loop'), 'n1');
+                $this->assertSame('subject-1', $claims['sub']);
+            }
+        }
+    }
+
     public function testAnUnknownKidRefetchesTheKeysOnceAndThenFails(): void
     {
         $this->idp->addRsa('rsa-unknown');

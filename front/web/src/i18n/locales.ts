@@ -23,7 +23,7 @@ export const LOCALE_META: Record<Locale, LocaleMeta> = {
   zh: { lang: "zh-Hans", label: "中文", name: "简体中文", path: "/zh/" },
 };
 
-export const PUBLIC_PAGES = ["overview", "comparison", "faq", "generation", "case-microdosing", "case-stablecoins"] as const;
+export const PUBLIC_PAGES = ["overview", "comparison", "faq", "generation", "case-microdosing", "case-stablecoins", "content-cost", "reporting"] as const;
 export type PublicPage = (typeof PUBLIC_PAGES)[number];
 
 /** Canonical paths for the public product pages, translated in each supported locale. */
@@ -31,6 +31,8 @@ export function publicPagePath(locale: Locale, page: PublicPage = "overview"): s
   const prefix = locale === "en" ? "" : `/${locale}`;
   if (page === "comparison") return `${prefix}/comparison/`;
   if (page === "faq") return `${prefix}/faq/`;
+  if (page === "content-cost") return `${prefix}/content-cost/`;
+  if (page === "reporting") return `${prefix}/reporting/`;
   if (page === "generation") return `${prefix}/course-generation/`;
   if (page === "case-microdosing") return `${prefix}/course-generation/microdosing-study/`;
   if (page === "case-stablecoins") return `${prefix}/course-generation/stablecoin-report/`;

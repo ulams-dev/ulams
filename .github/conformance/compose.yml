@@ -71,7 +71,8 @@ services:
       - /tmp:exec,size=1g
 
   # Identity provider for the single sign-on tests (docs/plans/phase-6-identity.md 4.14): one realm "ulams" imported
-  # from keycloak/realm-ulams.json with an OIDC client and two users. Development mode (http, in-memory H2): a test
+  # from keycloak/realm-ulams.json with an OIDC client and three users; the SAML client is created by run-saml.cjs
+  # from the API's own SP metadata. Development mode (http, in-memory H2): a test
   # fixture, never for production. The API needs IDENTITY_ALLOW_INSECURE_URLS=true to talk to it over http.
   keycloak:
     image: quay.io/keycloak/keycloak:26.4.7
@@ -87,5 +88,8 @@ services:
       KC_LOG_LEVEL: warn
     ports:
       - "18180:18180"
+    # single logout started by Keycloak: it POSTs a signed LogoutRequest to the API on the host
+    extra_hosts:
+      - "ulams.test:host-gateway"
     volumes:
       - ./keycloak:/opt/keycloak/data/import:ro

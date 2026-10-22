@@ -19,7 +19,9 @@ use Ulams\Core\Tests\CreatesUsers;
 use Ulams\Core\Tests\TestCase as CoreTestCase;
 use Ulams\Identity\Database\Seeders\IdentityPermissionSeeder;
 use Ulams\Identity\Models\IdentityProvider;
+use Ulams\Identity\Services\Saml\SpKeyGenerator;
 use Ulams\Identity\Tests\Support\FakeIdp;
+use Ulams\Identity\Tests\Support\FakeSamlIdp;
 use Ulams\Identity\UlamsIdentityServiceProvider;
 use Ulams\ModelFields\ModelFieldsServiceProvider;
 use Ulams\Templates\UlamsTemplatesServiceProvider;
@@ -30,6 +32,7 @@ class TestCase extends CoreTestCase
     use DatabaseTransactions;
 
     protected FakeIdp $idp;
+    protected FakeSamlIdp $samlIdp;
 
     protected function setUp(): void
     {
@@ -46,6 +49,17 @@ class TestCase extends CoreTestCase
         SafeHttp::useResolver(fn (string $host) => ['93.184.216.34']);
         $this->idp = new FakeIdp();
         $this->app->instance('identity.http_handler', $this->idp->handler());
+        // SAML: a second fake identity provider, and service provider keys that do not cost seconds per provider
+        $this->samlIdp = new FakeSamlIdp();
+        $this->app->bind(SpKeyGenerator::class, fn () => new class extends SpKeyGenerator {
+            private static int $count = 0;
+
+            public function generate(string $commonName): array
+            {
+                // the first pair for a provider, a different one for the "next" key
+                return FakeSamlIdp::pair('sp-' . (self::$count++ % 3));
+            }
+        });
         config([
             'app.frontend_url' => 'https://app.example.test',
             'ulams.core.security.trusted_origins' => ['https://app.example.test', 'https://admin.example.test'],
@@ -123,6 +137,42 @@ class TestCase extends CoreTestCase
             'oidc' => $oidc,
             'oidc_client_secret' => FakeIdp::CLIENT_SECRET,
             'oidc_secret_hint' => substr(FakeIdp::CLIENT_SECRET, -4),
+        ]);
+        $provider->save();
+
+        return $provider->refresh();
+    }
+
+    /** An enabled SAML provider that trusts the fake SAML identity provider's certificate. */
+    protected function samlProvider(array $attributes = [], array $saml = []): IdentityProvider
+    {
+        $pair = FakeSamlIdp::pair('sp-0');
+        $provider = new IdentityProvider();
+        $provider->forceFill($attributes + [
+            'slug' => 'acme-saml',
+            'name' => 'Acme SAML',
+            'protocol' => 'saml',
+            'enabled' => true,
+            'email_domains' => ['example.com'],
+            'trust_email' => true,
+            'jit_enabled' => true,
+            'default_role' => 'student',
+            'saml' => array_replace([
+                'entity_id' => FakeSamlIdp::ENTITY_ID,
+                'sso_url' => FakeSamlIdp::SSO_URL,
+                'slo_url' => FakeSamlIdp::SLO_URL,
+                'metadata_url' => FakeSamlIdp::METADATA_URL,
+                'name_id_format' => null,
+                'want_encrypted_assertions' => false,
+                'allow_sha1' => false,
+            ], $saml),
+            'saml_idp_certs' => [[
+                'pem' => FakeSamlIdp::certBody($this->samlIdp->signing['cert']),
+                'fingerprint' => hash('sha256', (string) base64_decode(FakeSamlIdp::certBody($this->samlIdp->signing['cert']))),
+                'not_before' => null, 'not_after' => null, 'added_at' => now()->toIso8601String(), 'source' => 'metadata',
+            ]],
+            'saml_sp_key' => $pair['key'],
+            'saml_sp_cert' => $pair['cert'],
         ]);
         $provider->save();
 
