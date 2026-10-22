@@ -1,0 +1,70 @@
+---
+title: Choosing your version of a course
+description: How to choose and switch between the versions of a course for your level or role, what carries over when you switch, the optional placement check, the hint to switch and what "assigned by your organisation" means.
+sidebar:
+  order: 3
+learnerRoutes:
+  - /courses/[id]/placement
+  - /learn/[courseId]/variant
+  - /learn/[courseId]/placement
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Some courses come in more than one **version**: for example Beginner, Intermediate and Expert, or one version for developers and one for support. Each version is a full course for a different level or role. When a course has versions, its [course page](/learners/course-page/) shows a section called **Choose your version**.
+
+<Aside>
+Choosing a version never costs you anything and nobody decides it for you silently. You can switch later, and your progress is kept.
+</Aside>
+
+## What you see for each version
+
+- **The name** of the version and, as text, its **level**, **role** and **duration**. The standard version is marked **Standard version**.
+- **A line on who it is for**, so you can tell which one fits.
+- **Your current version**, marked in words, when you are enrolled.
+
+Before you are enrolled, the versions are a read-only list with a note: "You can choose your version once you are enrolled." Every version has its own page, so you can read the program of each one first.
+
+## Switching version
+
+1. Open the course page and choose a version in the group **Versions of this course**. You reach the group with Tab and move between versions with the arrow keys.
+2. Choose **Switch to this version**.
+3. The page comes back with a message that tells you which version you are in now and how many completed lessons were carried over.
+
+It is a plain form, so it works without JavaScript. After you switch, the focus is on the message, so a screen reader reads it out.
+
+### What carries over
+
+- **Your progress is kept.** The course you leave is not deleted: switching back brings its progress back.
+- **Completed lessons that are the same in the new version carry over.** A lesson counts as the same when it is the same content in both versions. Lessons that differ start from the beginning.
+- **Quizzes are taken again.** Quiz attempts, scores and H5P results are never copied, so a scored quiz in the new version is yours to take.
+- **Continue learning** always opens the version you are in, whichever version's page you are looking at.
+
+## Not sure? The placement check
+
+Some courses offer **Not sure? Take the placement check** next to the picker, for learners who are enrolled. It is a short set of questions taken from the course's own quizzes, with no timer. It is scored by a program on the server, and your answers are not stored: only your score for each level is kept.
+
+The result says **We suggest** a version and why, for example "You answered 5 of 6 intermediate questions correctly, so we suggest Expert", and lists your score for each level as text. Then you choose:
+
+- **Use this version** switches to the suggestion;
+- **Choose another version** takes you back to the picker;
+- **Take the check again** starts over.
+
+The check is **advisory**. It only suggests a version: nothing decides your level for you, and you always choose which version to use.
+
+## A hint to switch
+
+If a version looks too hard or too easy for you, the course page may show **A suggestion for you** at the top: for example that you are finding the first modules hard, or that you pass every quiz at the first attempt in much less than the usual time. The notice lists its reasons in plain language and has two buttons:
+
+- **Switch to** the suggested version;
+- **No thanks**, which also stops these suggestions for this course.
+
+A hint is only a suggestion. Your version never changes unless you press the first button. You see at most one hint a week for a course, and hints need your academy to have learner insights switched on; if you opted out of learner insights in [Personalisation and privacy](/learners/personalisation/), you get none.
+
+## Assigned by your organisation
+
+When your organisation puts you in a version, for example by a rule for your team, the picker says **Assigned by your organisation**, with the name of the rule when there is one. You can still change it, unless your organisation locked the course: then the button is disabled and the page says "Your organisation chose this version for you, so you cannot change it here." If you think the version is wrong, ask the person who manages your courses.
+
+## With a keyboard or a screen reader
+
+The versions are radio buttons in a labelled group; each one is read out with its level, role, duration and who it is for. The placement check has one group per question, with the question as its label, radio buttons for one answer and checkboxes when more than one answer applies. Messages after you switch, and the hint, are read out as status messages. Nothing moves when your system asks for reduced motion, and everything works at 360 pixels wide.

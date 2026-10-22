@@ -16,8 +16,8 @@ import { Aside } from "@astrojs/starlight/components";
 **Built:** course variants in the Course Builder: the interview question, one outline and one generation run
 per audience from the same sources, each variant reviewed as a diff against the base, each approved variant
 created as its own course and grouped with the base as a family; numbered course releases and a screen that compares
-any two versions, a variant included. **Coming:** learners choosing or being routed
-to a variant, one purchase for the whole family, and variant-aware Living Course updates and certificates. Progress is tracked in the [roadmap](/roadmap/)
+any two versions, a variant included; and the **learner screens** for variants: the picker on the course page, the hint to switch and the optional placement check
+(see [Choosing your version](/learners/course-versions/)). **Coming:** one purchase for the whole family, and variant-aware Living Course updates and certificates. Progress is tracked in the [roadmap](/roadmap/)
 (Phase 3.1 and Phase 4.4); the design is in `docs/plans/course-versions-and-variants.md` and ADR 0192.
 </Aside>
 
@@ -137,11 +137,17 @@ ulams course variants retire <variant> --yes
 The endpoints are in the [Course Builder API](/developers/course-builder-api/) (`sessions/{session}/variants`, `variants/{variant}`). Review a variant with
 `GET versions/{version}/diff?against=<base version>`: it is the same element diff the builder uses everywhere.
 
+### What learners see
+
+A learner of a course with variants finds **Choose your version** on the course page: every published variant with its level, role, duration and who it is for, the
+version they are in, and **Switch to this version**. Switching keeps the old course and its progress and carries completed lessons over when they are the same in both
+variants; quizzes are taken again. Where an administrator turned the placement check on, an enrolled learner can take it (advisory only: it suggests a variant and the learner
+chooses), and a transparent hint can suggest an easier or more advanced variant, never switching on its own. A learner whose organisation assigned a variant sees
+**Assigned by your organisation**, with the rule name, and cannot change it when the course is locked. The screens work with the keyboard and a screen reader, without JavaScript, in
+English, Polish and Chinese: see [Choosing your version](/learners/course-versions/).
+
 ### What is not built yet
 
-- **Learners choosing a variant.** A variant course is hidden from the catalogue and reachable by an administrator (or by enrolling learners in it by hand).
-  The picker on the course page, the optional placement check, assignment by an admin or an enrolment rule, the adaptive hint to switch, and carrying completed
-  lessons over when a learner switches are planned.
 - **One purchase, all variants.** A variant has no product of its own: the plan is one entitlement for the family. Until then a paid base course sells the base only.
 - **Living Course for variants.** When a source changes, Living Course still proposes the update for the base course only. Proposing the matching patch for every variant
   that inherits the changed element, rebasing a variant on a newer base, and certificates that name the variant are planned.
