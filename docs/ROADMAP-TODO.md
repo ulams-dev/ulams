@@ -675,6 +675,7 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 ### 4.3 Trust and transparency
 - [ ] Reasons for every recommendation · AI on/off and provider per tenant (partial: learner-side reasons on the Extra help card and on suggested lesson views, #315, #320; per-tenant provider choice not built)
 - [ ] AI content labelling · documented data flows, no training on customer content (partial: AI labels on remediations, reflection feedback, tutor answers and AI-assisted topics, #315, #319, #314; the data-flow documentation is open)
+      Note 2026-10-22 (market research, docs/reports/market-research-2026-10.md): EU AI Act Art. 50 transparency and marking obligations apply from 2 Dec 2026, so every remaining AI-generated surface (builder drafts, variants, exports) needs its label before that date.
 
 ### 4.4 Course variants by level and role (new)
 
