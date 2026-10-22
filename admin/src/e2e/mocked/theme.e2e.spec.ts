@@ -204,13 +204,11 @@ test.describe('admin theme screen', () => {
     await expect(
       page.getByRole('alert').filter({ hasText: 'The logo must be a PNG or SVG file.' }),
     ).toBeVisible();
-    await page
-      .locator('#theme-logo-file')
-      .setInputFiles({
-        name: 'big.png',
-        mimeType: 'image/png',
-        buffer: Buffer.alloc(200 * 1024 + 1),
-      });
+    await page.locator('#theme-logo-file').setInputFiles({
+      name: 'big.png',
+      mimeType: 'image/png',
+      buffer: Buffer.alloc(200 * 1024 + 1),
+    });
     await expect(
       page.getByRole('alert').filter({ hasText: 'The logo may not be larger than 200 KB.' }),
     ).toBeVisible();
@@ -223,13 +221,11 @@ test.describe('admin theme screen', () => {
       theme: 'coffee',
       logoRefusal: 'The element <script> is not allowed in a logo.',
     });
-    await page
-      .locator('#theme-logo-file')
-      .setInputFiles({
-        name: 'logo.svg',
-        mimeType: 'image/svg+xml',
-        buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><script/></svg>'),
-      });
+    await page.locator('#theme-logo-file').setInputFiles({
+      name: 'logo.svg',
+      mimeType: 'image/svg+xml',
+      buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><script/></svg>'),
+    });
     await save(page).click();
     await expect(
       page.getByRole('alert').filter({ hasText: 'The element <script> is not allowed in a logo.' }),

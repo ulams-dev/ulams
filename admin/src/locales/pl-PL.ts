@@ -13,8 +13,8 @@ import pages from './pl-PL/pages';
 import pwa from './pl-PL/pwa';
 import settingDrawer from './pl-PL/settingDrawer';
 import settings from './pl-PL/settings';
-import theme from './pl-PL/theme';
 import templates from './pl-PL/templates';
+import theme from './pl-PL/theme';
 import vouchers from './pl-PL/vouchers';
 
 export default {
