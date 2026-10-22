@@ -194,10 +194,21 @@ export interface ProposalCounts {
 /** A proposal follows a source change (`source`) or comes from what learners struggle with (`insights`, ADR 0181). */
 export type ProposalKind = "source" | "insights";
 
+/** The course variant a proposal is for (ADR 0192). `key` and `label` are absent when the API could not read the variant's name. */
+export interface ProposalVariant {
+  id: string;
+  key?: string;
+  label?: string;
+}
+
 export interface ProposalSummary {
   id: string;
   number: number;
   sessionId: string;
+  /** The course variant this proposal is for; null for the base course (and for every proposal of a course without variants). */
+  variant?: ProposalVariant | null;
+  /** Proposals made together for one source revision (the base and its variants) share this id; null for a proposal on its own. */
+  proposalGroup?: string | null;
   /** Null for an improvement from learner insights. */
   sourceId: string | null;
   kind: ProposalKind;
@@ -231,6 +242,8 @@ export interface ItemFlags {
   ungrounded?: string[];
   signals?: string[];
   checkAnswer?: boolean;
+  /** A variant item that took the patch of the base proposal's item with this id, at no cost (ADR 0192). */
+  reusedFrom?: string;
 }
 
 export interface ProposalItem {
@@ -364,7 +377,19 @@ export interface ConnectResult {
   webhookSecret: string | null;
 }
 
+/** Another proposal of the same group, as listed on a proposal's detail. */
+export interface ProposalSibling {
+  id: string;
+  number: number;
+  status: ProposalStatus;
+  /** Null for the base course. */
+  variant: ProposalVariant | null;
+  decisions: Partial<Record<ItemStatus, number>>;
+}
+
 export interface ProposalDetail extends ProposalSummary {
+  /** The other proposals of the group (empty when the course has no variants, or on an older API). */
+  siblings?: ProposalSibling[];
   /** Absent on an API older than the learner notices. */
   learnerImpact?: LearnerImpact;
   steps?: AnalysisStep[];
@@ -375,6 +400,12 @@ export interface ProposalDetail extends ProposalSummary {
 export interface ItemResult {
   item: ProposalItem;
   proposal: ProposalSummary;
+}
+
+/** `accepted` counts the items accepted in the other proposals (not this one); `proposals` lists their ids. */
+export interface AcceptInGroupResult extends ItemResult {
+  accepted: number;
+  proposals: string[];
 }
 
 export interface AnalyseResult {
@@ -517,6 +548,12 @@ export function createLivingCourseClient(options: ClientOptions & { prefix?: str
       analyse: async (proposalId: string, confirmEstimate = false) =>
         (await call<AnalyseResult>("POST", `/proposals/${id(proposalId)}/analyse`, undefined, { confirmEstimate })).data,
       accept: async (proposalId: string, itemId: string) => (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/accept`)).data,
+      /**
+       * Accepts the item and the same patch (same element, text before and replacement, still undecided) in the other
+       * proposals of its group. `accepted` is the number accepted elsewhere; 0 when the item is not shared.
+       */
+      acceptInGroup: async (proposalId: string, itemId: string) =>
+        (await call<AcceptInGroupResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/accept-in-group`)).data,
       reject: async (proposalId: string, itemId: string) => (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/reject`)).data,
       reset: async (proposalId: string, itemId: string) => (await call<ItemResult>("POST", `/proposals/${id(proposalId)}/items/${id(itemId)}/reset`)).data,
       /** One new call for one element; at most three per item. */
