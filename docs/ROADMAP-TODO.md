@@ -959,6 +959,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 - [ ] (new) Policy lifecycle delivery: link the uploaded policy version and cited fragments to all departmental
       course variants; use departments, duration, seniority and experience from the course brief;
       apply an uploaded style guide and provision distinct branded department domains (Coming).
+- [ ] (new) Per-course and per-role subdomains or entry points inside one academy, with their own branding: needs a plan and ADR
+      (routing, auth cookies on sibling subdomains, SEO canonical, entitlements). Today one academy (tenant) runs on one subdomain, which a
+      customer can use per client, department or audience; the landing and the FAQ say so and show this as "Coming".
 - [ ] (new) Policy owner dashboard: show assigned people by department, completed and pending training,
       course version and issued PDF certificate; support the branded tenant learning application (Coming).
 - [ ] (new) On an approved policy change, update affected course variants, invalidate superseded certificates,

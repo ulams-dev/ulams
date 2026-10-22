@@ -193,7 +193,7 @@
                   },
                   {
                     "title": "按需缩放图片",
-                    "text": "请求任意宽高或命名尺寸（如缩略图），即可得到缓存并优化后的副本：一次带重定向的调用，或一次 JSON 批量请求处理多张图片。尺寸限制和速率限制保护服务器。",
+                    "text": "请求任意宽高或命名尺寸（如缩略图），即可得到缓存并优化后的副本：一次带重定向的调用，或一次 JSON 批量请求处理多张图片。尺寸限制和速率限制保护服务器。部署也可以改为通过 Cloudflare Image Transformations 提供图片。",
                     "packages": [
                       "images"
                     ]
@@ -404,15 +404,31 @@
                     ]
                   },
                   {
-                    "title": "Living Course",
-                    "text": "监控课程来源，找出引用了变更段落的课时和测验题，并提出带引用的更新，供你作为一份差异统一审阅。学员进度按明确的规则保留。",
+                    "title": "Git、Google Drive 和 Notion 来源",
+                    "text": "在上传的文件和网页之外，还可以连接 Git 仓库、Google Drive 文件或文件夹，或者 Notion 页面。Living Course 会检查它们是否有变化，并提出带引用的更新。Drive 和 Notion 连接器在管理员开启之前是关闭的，Notion 也可以用粘贴的集成令牌连接。",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-builder/",
                     "packages": [
                       "living-course"
                     ]
                   },
                   {
+                    "title": "Living Course",
+                    "text": "监控课程来源，找出引用了变更段落的课时和测验题，并提出带引用的更新，供你作为一份差异统一审阅。学员进度按明确的规则保留。Learner Insights 还可以为许多学员感到吃力的部分提出改进建议。",
+                    "packages": [
+                      "living-course"
+                    ]
+                  },
+                  {
+                    "title": "课程发布记录与对比",
+                    "text": "每次对课程执行应用，都会记录为带编号的发布记录：由什么触发、谁批准以及所依据的来源修订。Studio 会列出课程的发布记录。你可以通过 API、命令行或 AI 智能体对比任意两个版本或发布记录：移动的课时、变更的引用和测验答案，以及学员会注意到什么。",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
+                    "packages": [
+                      "course-builder"
+                    ]
+                  },
+                  {
                     "title": "带可视化对比的课程版本",
-                    "text": "作者的每次修改和每次被接受的来源更新都会生成一个带编号的课程版本。任选两个版本进行对比：新增、删除或移动的课时，逐词的文本变化，变更的引用，以及正确答案已经不同的测验题。",
+                    "text": "在 Studio 中选取任意两个版本或发布记录并排对比的界面：新增、删除或移动的课时，逐词的文本变化，以及变更的引用和测验答案。发布记录列表以及用于对比的 API、命令和智能体工具已经可用。",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
                     "status": "coming",
                     "packages": [
@@ -421,12 +437,16 @@
                   },
                   {
                     "title": "按水平和角色划分的课程变体",
-                    "text": "AI 课程生成器会询问需要覆盖哪些水平和角色，并基于同一组来源为一门课程起草多个变体，每个变体都以相对基础版本的差异形式供你审阅。学习者从适合自己的变体开始，专家可以跳过基础内容。",
+                    "text": "AI 课程生成器会询问需要覆盖哪些水平和角色，并基于同一组来源为每一个起草一门课程的变体。每个变体都以相对基础课程的差异形式供你审阅，批准后成为与基础课程归为一组的、未发布的独立课程。",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming",
                     "packages": [
                       "course-variants"
                     ]
+                  },
+                  {
+                    "title": "把学员引导到合适的变体",
+                    "text": "学员在课程页面选择变体，或由管理员或报名规则分配；一次购买涵盖整个课程系列，Living Course 的更新会同步到每个变体。",
+                    "status": "coming"
                   },
                   {
                     "title": "与服务商无关的 LLM 层",
@@ -741,7 +761,7 @@
                   },
                   {
                     "title": "课程访问权限",
-                    "text": "向个人用户和用户组授予课程访问权限，也可以分配尚无账号的用户。",
+                    "text": "向个人用户和用户组授予课程访问权限，也可以分配尚无账号的用户。每次授予访问权限都会记录为一条带来源的权益，来源例如购买、管理员或 LTI 启动。",
                     "packages": [
                       "course-access",
                       "assign-without-account"
@@ -785,6 +805,14 @@
                       "auth",
                       "identity",
                       "permissions"
+                    ]
+                  },
+                  {
+                    "title": "OpenID Connect 与 SAML 2.0 登录",
+                    "text": "每个学院都可以在 Google 和 Facebook 登录之外，通过 OpenID Connect 或 SAML 2.0 接入自己的身份提供方。提供方通过 API 或命令行配置。目前还没有管理界面，SAML 登录不能从提供方一侧发起，用户组和角色也不做映射。",
+                    "href": "https://ulams-dev.github.io/ulams/operators/single-sign-on/",
+                    "packages": [
+                      "identity"
                     ]
                   },
                   {
@@ -839,7 +867,7 @@
                   },
                   {
                     "title": "白标主题",
-                    "text": "每个学院都有自己的主题预设和强调色，并在服务端检查对比度是否符合无障碍要求。",
+                    "text": "每个学院都有自己的主题预设、强调色和徽标。管理后台的主题界面会按 WCAG 2.2 AA 报告对比度，并拒绝保存不合格的强调色。",
                     "packages": [
                       "tenancy",
                       "settings"
@@ -880,6 +908,14 @@
                     "title": "自托管方式",
                     "text": "Docker Compose、共享的 MyDevil 账户，或位于 Cloudflare 之后的 VPS，每种方式都有书面指南。",
                     "href": "https://ulams-dev.github.io/ulams/operators/self-hosting/"
+                  },
+                  {
+                    "title": "每个学院独立的存储密钥",
+                    "text": "内置的 SeaweedFS 存储为每个学院提供只限于其存储桶的独立 S3 密钥，因此另一个学院的密钥无法列出、写入或删除它的文件。外部 S3 服务可以使用一个共享密钥，但项目不对其进行测试。一个脚本可以迁移现有的 MinIO 安装。",
+                    "href": "https://ulams-dev.github.io/ulams/operators/storage/",
+                    "packages": [
+                      "tenancy"
+                    ]
                   },
                   {
                     "title": "高可用",
@@ -938,6 +974,19 @@
                     "title": "用命令行构建课程",
                     "text": "课程生成器和 Living Course 都是命令和 MCP 工具：启动运行、回答访谈、批准大纲、应用，并通过等待句柄轮询长时间运行的任务。",
                     "href": "https://ulams-dev.github.io/ulams/developers/cli-builder/"
+                  },
+                  {
+                    "title": "课程即代码",
+                    "text": "把课程保存为 Markdown 和 YAML 文件夹。命令行可以从课程创建该文件夹，显示状态和差异，并执行拉取、推送、应用和发布。当两边都有修改时，它会逐个元素合并，并把冲突写入文件，用一条命令即可解决。",
+                    "href": "https://ulams-dev.github.io/ulams/developers/cli-course/",
+                    "packages": [
+                      "course-builder"
+                    ]
+                  },
+                  {
+                    "title": "由 Git 驱动的课程更新",
+                    "text": "已规划：面向命令行的 GitHub Action 和容器镜像、每个拉取请求一个预览学院、Git 合并触发 Living Course 提案，以及同步并非用课程生成器创建的课程。",
+                    "status": "coming"
                   },
                   {
                     "title": "机器可读的 CLI",
@@ -1094,11 +1143,11 @@
               },
               {
                 "q": "AI 会自动发布课程吗？",
-                "a": "不会。AI 准备附有来源引用的草稿。作者审查大纲和内容，再批准发布。生产环境最初禁用 AI，直到配置提供商。"
+                "a": "不会。AI 准备附有来源引用的草稿，每一项 AI 修改都会以可审阅的差异形式交给你。作者审查大纲和内容，再批准发布。生产环境最初禁用 AI，直到配置提供商。"
               },
               {
                 "q": "每个学院可以使用自己的品牌和域名吗？",
-                "a": "可以。每个租户都有独立学习网站、主题和隔离数据库。CLI 创建首个学院；其他租户通过平台的租户管理流程创建。"
+                "a": "可以。每个学院（租户）都有自己的子域名、学习站点、主题、徽标和隔离的数据库，因此可以为每个客户、部门或受众各开一个。首个学院由堆栈启动器创建，其他租户使用平台的租户流程。在同一学院内为每门课程或每个角色提供子域名的功能尚未实现。"
               },
               {
                 "q": "如何停止系统而保留课程？",

@@ -193,7 +193,7 @@
                   },
                   {
                     "title": "On-demand image resizing",
-                    "text": "Request any width and height, or a named size such as thumbnail, and get a cached, optimised copy: one call that redirects, or a JSON batch for many images. Size limits and rate limits protect the server.",
+                    "text": "Request any width and height, or a named size such as thumbnail, and get a cached, optimised copy: one call that redirects, or a JSON batch for many images. Size limits and rate limits protect the server. A deployment can serve images through Cloudflare Image Transformations instead.",
                     "packages": [
                       "images"
                     ]
@@ -405,15 +405,31 @@
                     ]
                   },
                   {
-                    "title": "Living Course",
-                    "text": "Watches the sources of a course, finds the lessons and quiz questions that cite changed passages and proposes cited updates for you to review as one diff. Learner progress is preserved by explicit rules.",
+                    "title": "Git, Google Drive and Notion sources",
+                    "text": "Connect a Git repository, a Google Drive file or folder or a Notion page, next to uploaded files and web pages. Living Course checks them for changes and proposes cited updates. The Drive and Notion connectors are off until an administrator turns them on, and Notion also connects with a pasted integration token.",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-builder/",
                     "packages": [
                       "living-course"
                     ]
                   },
                   {
+                    "title": "Living Course",
+                    "text": "Watches the sources of a course, finds the lessons and quiz questions that cite changed passages and proposes cited updates for you to review as one diff. Learner progress is preserved by explicit rules. Learner Insights can also propose an improvement for a section many learners struggle with.",
+                    "packages": [
+                      "living-course"
+                    ]
+                  },
+                  {
+                    "title": "Course releases and compare",
+                    "text": "Every apply to a course is recorded as a numbered release: what started it, who approved it and the source revisions. The studio lists a course's releases. Compare any two versions or releases through the API, the command line or an AI agent: moved lessons, changed citations and quiz answers, and a plain summary.",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
+                    "packages": [
+                      "course-builder"
+                    ]
+                  },
+                  {
                     "title": "Course versions with a visual diff",
-                    "text": "Every author edit and every accepted source update becomes a numbered course version. Pick any two and compare them: lessons added, removed or moved, word-level text changes, citations that changed and quiz answers that now differ.",
+                    "text": "A studio screen to pick any two versions or releases and compare them side by side: lessons added, removed or moved, word-level text changes, changed citations and quiz answers. The releases list and the compare API, command and agent tool already exist.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
                     "status": "coming",
                     "packages": [
@@ -422,12 +438,16 @@
                   },
                   {
                     "title": "Course variants by level and role",
-                    "text": "The AI Course Builder asks which levels and roles to cover and drafts several variants of one course from the same sources, each reviewed as a diff against the base. Learners start in the variant that fits them; experts skip the basics.",
+                    "text": "The AI Course Builder asks which levels and roles to cover and drafts a variant of one course for each, from the same sources. Each is reviewed as a diff against the base course and, once approved, becomes its own unpublished course grouped with the base.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming",
                     "packages": [
                       "course-variants"
                     ]
+                  },
+                  {
+                    "title": "Learners routed to a variant",
+                    "text": "Learners choose a variant on the course page or are assigned one by an administrator or an enrolment rule, one purchase covers the whole family, and Living Course updates reach every variant.",
+                    "status": "coming"
                   },
                   {
                     "title": "Provider-agnostic LLM layer",
@@ -742,7 +762,7 @@
                   },
                   {
                     "title": "Course access",
-                    "text": "Grant access to a course to individual users and groups, or assign users who do not have an account yet.",
+                    "text": "Grant access to a course to individual users and groups, or assign users who do not have an account yet. Every grant is recorded as an entitlement with its source, such as a purchase, an administrator or an LTI launch.",
                     "packages": [
                       "course-access",
                       "assign-without-account"
@@ -786,6 +806,14 @@
                       "auth",
                       "identity",
                       "permissions"
+                    ]
+                  },
+                  {
+                    "title": "OpenID Connect and SAML 2.0 sign-in",
+                    "text": "Each academy can connect its own identity provider through OpenID Connect or SAML 2.0, next to Google and Facebook sign-in. Providers are set up through the API or the command line. No admin screen yet, SAML sign-in cannot start at the provider, and groups and roles are not mapped.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/single-sign-on/",
+                    "packages": [
+                      "identity"
                     ]
                   },
                   {
@@ -840,7 +868,7 @@
                   },
                   {
                     "title": "White-label themes",
-                    "text": "Each academy has its own theme preset and accent colour, with accessible contrast checked on the server.",
+                    "text": "Each academy has its own theme preset, accent colour and logo. The admin theme screen reports contrast against WCAG 2.2 AA and will not save an accent colour that fails.",
                     "packages": [
                       "tenancy",
                       "settings"
@@ -881,6 +909,14 @@
                     "title": "Self-hosting options",
                     "text": "Docker Compose, a shared MyDevil account, or a VPS behind Cloudflare, each with a written guide.",
                     "href": "https://ulams-dev.github.io/ulams/operators/self-hosting/"
+                  },
+                  {
+                    "title": "Per-tenant storage keys",
+                    "text": "The bundled SeaweedFS store gives every academy its own S3 key, limited to its bucket, so another academy's key cannot list, write or delete its files. An external S3 service works with one shared key, but the project does not test it. A script moves an existing MinIO installation over.",
+                    "href": "https://ulams-dev.github.io/ulams/operators/storage/",
+                    "packages": [
+                      "tenancy"
+                    ]
                   },
                   {
                     "title": "High availability",
@@ -939,6 +975,19 @@
                     "title": "Build courses from the command line",
                     "text": "The Course Builder and Living Course are commands and MCP tools: start a run, answer the interview, approve the outline, apply, and poll long runs with a wait handle.",
                     "href": "https://ulams-dev.github.io/ulams/developers/cli-builder/"
+                  },
+                  {
+                    "title": "Course as code",
+                    "text": "Keep a course as a folder of Markdown and YAML. The command line creates the folder from a course, shows status and differences, pulls, pushes, applies and publishes. When both sides changed, it merges element by element and writes the conflicts to files you resolve with one command.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/cli-course/",
+                    "packages": [
+                      "course-builder"
+                    ]
+                  },
+                  {
+                    "title": "Git-driven course updates",
+                    "text": "A GitHub Action and container image for the command line, a preview academy for each pull request, a Git merge that triggers a Living Course proposal, and syncing courses that were not built with the Course Builder are planned.",
+                    "status": "coming"
                   },
                   {
                     "title": "Machine-readable CLI",
@@ -1095,11 +1144,11 @@
               },
               {
                 "q": "Does AI publish a course automatically?",
-                "a": "No. AI prepares a draft with source citations. The author reviews the outline and content, then approves publication. Production starts with AI disabled until you configure a provider."
+                "a": "No. AI prepares a draft with source citations, and every AI change reaches you as a reviewable diff. The author reviews the outline and content, then approves publication. Production starts with AI disabled until you configure a provider."
               },
               {
                 "q": "Can each academy use its own brand and domain?",
-                "a": "Yes. Each tenant has its own learning site, theme and isolated database. The initial academy is created by the stack launcher; additional tenants use the platform tenant workflow."
+                "a": "Yes. Each academy (tenant) has its own subdomain, learning site, theme, logo and isolated database, so you can run one per client, department or audience. The initial academy is created by the stack launcher; additional tenants use the platform tenant workflow. A subdomain for each course or role inside one academy is not built."
               },
               {
                 "q": "How do I stop it without losing courses?",

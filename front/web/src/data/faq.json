@@ -43,7 +43,7 @@
       "items": [
         {
           "q": "What material can I build a course from?",
-          "a": "The Course Builder accepts Markdown, PDF and DOCX documents. Material with a clear structure and real text works best; a scanned PDF without a text layer needs text recognition first. The default limit is 20 MB per file and 300 pages per PDF."
+          "a": "The Course Builder accepts Markdown, PDF and DOCX documents. Material with a clear structure and real text works best; a scanned PDF without a text layer needs text recognition first. The default limit is 20 MB per file and 300 pages per PDF. You can also connect a Git repository, a Google Drive file or folder or a Notion page; the Drive and Notion connectors are off until an administrator turns them on."
         },
         {
           "q": "What do the source references in a generated course mean?",
@@ -55,7 +55,7 @@
         },
         {
           "q": "What happens when my documentation changes?",
-          "a": "Living Course compares source versions and points to the parts of the course that may need an update. You can upload a new version of the document or connect a Git repository or a website. Changes to the course need the author’s decision: a new source version never overwrites published content on its own."
+          "a": "Living Course compares source versions and points to the parts of the course that may need an update. You can upload a new version of the document or connect a Git repository, a Google Drive file, a Notion page or a website. Changes to the course need the author’s decision: a new source version never overwrites published content on its own. Learner Insights can also turn a section many learners struggle with into an improvement proposal, which you review the same way."
         },
         {
           "q": "Are my documents sent to an external AI provider?",
@@ -64,6 +64,22 @@
         {
           "q": "Can I use ULAMS without AI?",
           "a": "Yes. AI is optional. You can create courses by hand, add material, manage learners and access, and track progress. Turning AI off does not disable any other LMS feature and does not require a model provider key."
+        },
+        {
+          "q": "How do I review what the AI changed?",
+          "a": "Every AI change, whether it comes from generation, a chat edit, a source update or a learner-insights proposal, arrives as a diff: what is removed, what is added and the passage behind it. You accept it all, accept element by element or reject it, and the audit trail records who approved what and when. Nothing reaches learners without approval, and version history lets you undo to an earlier version."
+        },
+        {
+          "q": "Can one course have versions for different levels and roles?",
+          "a": "Yes, in the Course Builder. The interview can ask for a beginner, intermediate or expert version and for roles you name. Each is drafted from the same sources, reviewed as a diff against the base course and approved one by one into its own unpublished course. Sending each learner to the right version is not built yet: today an administrator enrols learners in a variant by hand."
+        },
+        {
+          "q": "Can I see what changed between two versions of a course?",
+          "a": "Partly. Every apply is recorded as a numbered release, listed in the studio, and you can compare any two versions or releases through the API, the command line or an AI agent. The studio screen that shows the comparison side by side is not built yet."
+        },
+        {
+          "q": "How were the numbers on this site measured?",
+          "a": "They come from single runs of the real Studio with a real model, and each is labelled as one run. A public docs repository of 13 passages became 6 lessons and 18 quiz questions in 7 min 44 s of generation, for USD 0.28. A Notion page of 6 passages took 27 s for the outline, 4 min 58 s for lessons, quizzes and checks and 1 s to apply, for USD 0.1973. Times and costs are copied from the Studio’s own records. Author review comes on top, one run on a small source says nothing about large ones, and we claim no speed-up ratio."
         }
       ]
     },
@@ -124,6 +140,10 @@
         {
           "q": "How do I upgrade to a new version?",
           "a": "Back up the database and files first, then follow the upgrade steps for your deployment in the documentation. The upgrade runs database migrations for the platform and every academy. Check the release notes for changes that need configuration before you upgrade production."
+        },
+        {
+          "q": "Where are course files stored when I self-host?",
+          "a": "In S3-compatible storage with one bucket per academy. The bundled SeaweedFS store gives every academy its own key limited to its bucket, so one academy’s key cannot list, write or delete another’s files; a file whose exact name is known stays readable, as the public-read policy intends. An external S3 service such as AWS S3 or Cloudflare R2 works with one shared key, but the project does not test provider accounts. Images are resized by the built-in service or, as a deployment choice, by Cloudflare Image Transformations. A script moves an existing MinIO installation over."
         }
       ]
     },
@@ -142,6 +162,10 @@
         {
           "q": "Can I extend ULAMS with my own features?",
           "a": "Yes. The platform is modular and the source code is open. You can build your own API modules, content types, interface components and integrations. The documentation includes guides and a sample extension module."
+        },
+        {
+          "q": "Can I keep a course in Git and edit it as code?",
+          "a": "In part. The command line can write a course as a folder of Markdown and YAML, then show status and differences, pull, push, apply and publish. When both the folder and the server changed, it merges element by element and writes conflicts to files you resolve. Not built yet: a GitHub Action, a preview academy for each pull request, a Git merge that triggers a Living Course proposal, and courses that were not made with the Course Builder."
         }
       ]
     },
@@ -151,15 +175,19 @@
       "items": [
         {
           "q": "Can I run several academies on one installation?",
-          "a": "Yes. ULAMS supports many academies, called tenants. Each can have its own addresses, database, file storage, accounts and theme, so you can run separate environments for customers, brands or departments. Creating and maintaining them is done by the platform operator."
+          "a": "Yes. ULAMS supports many academies, called tenants. Each can have its own addresses, database, file storage, accounts and theme, so you can run separate environments for customers, brands or departments. Creating and maintaining them is done by the platform operator. Today each academy has its own subdomain; a subdomain or entry point for each course or role inside one academy is not built."
         },
         {
           "q": "Can I match an academy to my brand?",
-          "a": "Yes. An academy can have its own name, theme, accent colour and domain. For deeper changes you can extend the frontend that ships with ULAMS or build your own interface on the ULAMS API."
+          "a": "Yes. An academy can have its own name, theme, accent colour, logo and domain. The admin theme screen checks the accent colour’s contrast against WCAG 2.2 AA and does not save one that fails. For deeper changes you can extend the frontend that ships with ULAMS or build your own interface on the ULAMS API."
         },
         {
           "q": "Can I sell access to courses?",
-          "a": "The platform includes modules for prices, payments, cart and coupons. Selling needs a supported payment gateway to be configured and the whole flow tested, from purchase to granting access. Which sales scenarios are available depends on the version and interface you use."
+          "a": "The platform includes modules for prices, payments, cart and coupons, and every access grant is recorded as an entitlement with its source. Selling needs a supported payment gateway to be configured and the whole flow tested, from purchase to granting access. Which sales scenarios are available depends on the version and interface you use."
+        },
+        {
+          "q": "Does ULAMS support single sign-on?",
+          "a": "Learners can sign in with Google or Facebook, and each academy can connect its own identity provider through OpenID Connect or SAML 2.0. Providers are set up through the API or the command line. There is no admin screen yet, SAML sign-in has to start at ULAMS rather than at the provider, groups and roles are not mapped and SCIM provisioning is not built. SAML was tested against Keycloak; Entra ID and Okta are documented but not run by the project."
         }
       ]
     },

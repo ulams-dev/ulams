@@ -81,20 +81,31 @@ has its API at `coffee.localhost`, its learner site at `coffee.app.localhost` an
 - **Developer surface**: the `ulams` CLI, the MCP server, scoped tokens with per-token rate
   limits and signed outgoing webhooks with retries and replay. See
   [What's new](/getting-started/whats-new/).
+- **Sources, versions and variants**: Living Course follows Git repositories, Google Drive files and Notion pages as well as
+  uploads and web pages (the Drive and Notion connectors are off until an administrator turns them on); every apply to a course is recorded as
+  a numbered release that you can compare through the API, the CLI or an agent; the Course Builder drafts variants of a course by level and role.
+  See [Course versions and variants](/creators/course-versions-and-variants/).
+- **Course as code**: a course as a folder of Markdown and YAML that the CLI pulls, pushes, diffs, merges and publishes
+  ([Course as code](/developers/cli-course/)).
+- **Sign-in and storage**: OpenID Connect and SAML 2.0 per tenant ([single sign-on](/operators/single-sign-on/), [SAML 2.0](/operators/single-sign-on-saml/)),
+  and bundled SeaweedFS storage with one S3 key per tenant ([storage](/operators/storage/)).
 
 ## What is planned <Badge text="Coming" variant="caution" />
 
 - **The interfaces for the modules above.** An admin screen for compliance, a studio Insights
   page and author analytics dashboard, learner components for remediation and an adaptive
   layout, and the tutor panel with streaming answers.
-- **Course versions and variants, the rest.** Numbered course versions you can compare side by side,
-  and learners choosing or being routed to a variant (variants themselves are drafted and reviewed in
-  the Course Builder today). See [Course versions and variants](/creators/course-versions-and-variants/).
+- **Course versions and variants, the rest.** The studio screen that compares two versions side by side (releases and
+  compare already work through the API, the CLI and the MCP server), and learners choosing or being routed to a variant
+  (variants themselves are drafted and reviewed in the Course Builder today). See
+  [Course versions and variants](/creators/course-versions-and-variants/).
 - **Commerce through Sylius** as a separate headless service, with the LMS keeping control of
-  who has access.
-- **Identity**: SAML 2.0 and OIDC per tenant, and SCIM provisioning.
-- **Course-as-code with Git sync, a PHP SDK, knowledge export for company RAG, a plugin
-  manifest and `create-ulams`.**
+  who has access. The entitlements that record every access grant already exist.
+- **Identity, the rest**: an admin screen, group and role mapping and sign-in started at the provider for SAML 2.0
+  and OIDC, and SCIM provisioning.
+- **Course-as-code, the rest**: a GitHub Action and container image, preview academies, Git merges that trigger
+  Living Course proposals, and adopting courses that were not built with the Course Builder.
+- **A plugin manifest, and finishing the PHP SDK and `create-ulams`.**
 - **Self-hosting variants**: a Helm chart and the remaining deployment options (Phase 8).
 
 <Aside type="note">

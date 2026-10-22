@@ -110,7 +110,12 @@ describe("comparison data (public claims about other products)", () => {
     }
     expect(ulams.cells.mcp?.value).toBe("Yes");
     expect(ulams.cells.webhooks?.value).toBe("Yes");
-    expect(ulams.cells.course_as_code?.value).toBe("Coming");
+    expect(ulams.cells.course_as_code?.value).toBe("Partial");
+    // SAML and OIDC are built per tenant, but there is no admin screen, SCIM or group mapping yet
+    expect(ulams.cells.sso?.value).toBe("Partial");
+    expect(ulams.cells.sso?.note).toMatch(/SAML 2\.0/);
+    expect(ulams.cells.sso?.source).toMatch(/single-sign-on-saml\.mdx$/);
+    expect(ulams.cells.course_as_code?.note).toMatch(/no Git watching/);
     expect(ulams.cells.cli?.value).toBe("Yes");
     expect(ulams.cells.generative_ui?.value).toBe("Partial");
   });

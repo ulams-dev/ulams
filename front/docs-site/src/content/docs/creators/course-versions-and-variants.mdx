@@ -14,10 +14,12 @@ import { Aside } from "@astrojs/starlight/components";
 <Aside type="note" title="What is built and what is coming">
 **Built:** course variants in the Course Builder: the interview question, one outline and one generation run
 per audience from the same sources, each variant reviewed as a diff against the base, each approved variant
-created as its own course and grouped with the base as a family. **Coming:** learners choosing or being routed
-to a variant, one purchase for the whole family, variant-aware Living Course updates and certificates, and
-the numbered course versions with a visual comparison. Progress is tracked in the [roadmap](/roadmap/)
-(Phase 3.1 and Phase 4.4); the design is in `docs/plans/course-versions-and-variants.md` and ADR 0192.
+created as its own course and grouped with the base as a family; numbered **releases** of a course, listed in the
+studio and through the API, and **compare** for any two versions or releases through the API, the CLI and the MCP
+server. **Coming:** the studio screen that shows a comparison side by side, learners choosing or being routed
+to a variant, one purchase for the whole family, and variant-aware Living Course updates and certificates.
+Progress is tracked in the [roadmap](/roadmap/) (Phase 3.1 and Phase 4.4); the design is in
+`docs/plans/course-versions-and-variants.md` and ADR 0192.
 </Aside>
 
 Two related features answer two questions authors ask about AI-built courses: **"what exactly changed
@@ -46,8 +48,10 @@ exist already).
 
 ## Course versions with a visual diff
 
-<Aside type="caution" title="Coming">
-Nothing in this section is built yet. It describes the planned behaviour so you can comment on it before it is built.
+<Aside type="caution" title="Partly built">
+The release list and the compare API, command and agent tool are built; they are described under "What you can do today".
+The studio screen that shows a comparison side by side is **coming**, and so are the points below that say so. The rest of this
+section describes the planned behaviour so you can comment on it before it is built.
 </Aside>
 
 ### The problem
