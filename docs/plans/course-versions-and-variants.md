@@ -319,6 +319,10 @@ CLI: `ulams course releases`, `ulams course diff --from --to [--json]`, `ulams c
 MCP: `course_releases`, `course_compare` (read-only). OpenAPI annotations on every endpoint; SDK regenerated in the
 implementing PRs (not in this docs PR).
 
+Built in CV-2: `course diff` already existed (folder against base, server or one version), so `--from` and `--to` are two new flags of
+that command, and `ulams course compare <course> --from --to` is the standalone form that the MCP tool runs (`course_compare`, read-only,
+toolset `builder`). `GET courses/{course}/versions` (the "all versions" list) is left for CV-3, which needs it for the screen.
+
 ## 13. Tenant isolation, security and privacy
 
 - Every new route is behind `auth:api` and is covered automatically by `TenantIsolationCoverageTest`
