@@ -1,0 +1,218 @@
+---
+title: Single sign-on (SAML 2.0)
+description: Connect a tenant to its identity provider with SAML 2.0 - Keycloak, Microsoft Entra ID and Okta recipes, the service provider metadata and keys, metadata refresh and certificate rotation, signed and encrypted assertions, SHA-1 policy, single logout and what each error means.
+sidebar:
+  order: 15
+modules:
+  - identity
+  - web
+learnerRoutes:
+  - /auth/sso/[slug]
+  - /auth/sso/callback
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Staff and learners can sign in with the SAML 2.0 identity provider (IdP) of their organisation: Keycloak,
+Microsoft Entra ID, Okta, ADFS or any other. SAML is the second protocol of [single sign-on](/operators/single-sign-on/):
+providers live per tenant, the learner app shows one "Continue with ..." button per enabled provider on `/login`,
+accounts are created and linked by the same [rules](/operators/single-sign-on/#who-gets-an-account), and every sign-in and every change is
+written to the same tamper-evident audit trail. This page is for the person who runs the instance.
+
+What this version does:
+
+- **SP-initiated sign-in** with a signed AuthnRequest (redirect binding) and the assertion posted to the assertion consumer service (ACS);
+- **strict validation** of every response (see [What is checked](#what-is-checked)); a response is accepted once;
+- **service provider (SP) metadata** at a stable URL, which is also the entity id; one key pair per provider, with a prepared next pair for rollover;
+- **IdP metadata** imported from a URL or an upload, refreshed daily; new signing certificates are added automatically;
+- **encrypted assertions**, optional or required per provider;
+- **single logout**, started here or by the IdP.
+
+Not in this version: IdP-initiated sign-in (a response nobody asked for is refused), roles, groups and custom fields from
+attributes (only e-mail and name are read; nothing an IdP sends can make anybody an administrator), SCIM, enforcing
+single sign-on for a domain, an admin screen (use the API or the CLI below).
+
+## Set it up
+
+1. **Add the provider** (permission `identity_provider_manage`, which admins have). Give it the IdP's metadata URL:
+
+   ```bash
+   cat > provider.json <<'JSON'
+   {
+     "protocol": "saml",
+     "slug": "acme",
+     "name": "Acme staff",
+     "enabled": false,
+     "email_domains": ["acme.example"],
+     "trust_email": true,
+     "saml": { "metadata_url": "https://login.acme.example/realms/staff/protocol/saml/descriptor" }
+   }
+   JSON
+   ulams api POST /api/admin/identity/providers --body @provider.json
+   ```
+
+   The entity id, sign-on and logout URLs and the signing certificates are read from the metadata. No public metadata URL?
+   Send the document as `saml.metadata_xml`, or set `saml.entity_id`, `saml.sso_url` and `saml.idp_certificates` by hand.
+   The response has an `saml.sp` block: the exact values to register at the IdP.
+
+   | `saml.sp` | What it is |
+   |---|---|
+   | `entity_id` and `metadata_url` | `https://<tenant-api-host>/api/identity/saml/<slug>/metadata` (the same URL); give this to the IdP, which can import it |
+   | `acs_url` | `https://<tenant-api-host>/api/identity/saml/<slug>/acs` (HTTP-POST) |
+   | `slo_url` | `https://<tenant-api-host>/api/identity/saml/<slug>/slo` (HTTP-Redirect, and HTTP-POST for a LogoutRequest from the IdP) |
+   | `certificate_fingerprint` | SHA-256 of the certificate that signs requests; it is in the metadata, and `next_certificate_fingerprint` is the prepared next one |
+
+2. **Register ulams at the IdP** as a SAML application: import the SP metadata URL, or enter entity id and ACS URL by hand
+   (recipes below). The metadata is served as soon as the provider exists, before it is enabled.
+3. **Allow the learner app to receive the login**: the API sends the browser back only to an origin it trusts
+   (`FRONTEND_URL`, `ADMIN_URL`, `APP_URL`, `TRUSTED_ORIGINS`), exactly as for [social login](/operators/social-login/#set-it-up).
+4. **Enable and check.** `PUT /api/admin/identity/providers/{id}` with `{"enabled": true}`, open `/login`, sign in, and look at the
+   [audit trail](/operators/single-sign-on/#audit-trail).
+
+The host in these URLs is the tenant **API** host the browser reaches. If it changes (a custom domain), the entity id and the ACS URL change
+with it and the IdP has to be updated.
+
+| Field | Meaning |
+|---|---|
+| `protocol` | `saml`; fixed after creation |
+| `slug`, `name`, `enabled`, `email_domains`, `jit_enabled`, `default_role` | As for [OpenID Connect providers](/operators/single-sign-on/#set-it-up) |
+| `trust_email` | **A SAML assertion does not say that an address is verified**, so this switch does: with it on, addresses of `email_domains` count as verified. Without it nobody is created and nobody is linked (`email_unverified`) |
+| `saml.metadata_url` | Fetched when set and then every day; https and a public address only |
+| `saml.metadata_xml` | An uploaded metadata document (at most 2 MB); replaces the stored endpoints and certificates |
+| `saml.entity_id`, `saml.sso_url`, `saml.slo_url` | The IdP's; read from the metadata, or set by hand |
+| `saml.idp_certificates` | PEM certificates that replace the trusted signing certificates (RSA 2048 bits or more) |
+| `saml.name_id_format` | Requested NameID format; default is what the metadata offers |
+| `saml.want_encrypted_assertions` | Refuse assertions that are not encrypted, and publish the certificate for encryption (see [Encrypted assertions](#encrypted-assertions)) |
+| `saml.allow_sha1` | Accept SHA-1 signatures. Off by default (see [SHA-1](#sha-1)) |
+| `saml.attribute_map` | Attribute names for `email`, `first_name`, `last_name`, `name` and `subject` when the IdP does not use the usual ones |
+
+Attributes read by default: e-mail from `email`, `mail`, `emailAddress`, `urn:oid:0.9.2342.19200300.100.1.3` or the
+`.../claims/emailaddress` URI; first name from `givenName`, `firstName`, `urn:oid:2.5.4.42`, `.../claims/givenname`;
+last name from `sn`, `surname`, `lastName`, `urn:oid:2.5.4.4`, `.../claims/surname`; full name from `displayName`, `name`, `cn`.
+With NameID format `emailAddress` and no e-mail attribute the NameID is the address.
+
+The identity of a person is the **NameID**, scoped to the provider. A *persistent* NameID is right. A *transient* one (a new value on every
+sign-in) is refused with `transient_name_id`, unless `saml.attribute_map.subject` names an attribute that carries a stable identity.
+
+## Provider recipes
+
+### Keycloak
+
+1. In the realm, **Clients → Import client** (or **Create client** with client type **SAML**): load the SP metadata from
+   `https://<tenant-api-host>/api/identity/saml/<slug>/metadata`; the client id becomes the entity id. Keycloak reads the ACS and
+   logout URLs and the certificate that verifies our signed requests from it.
+2. Client settings: **Name ID format** `persistent` (or `email`), **Sign assertions** on (default), **Force POST binding** on, and
+   under **Logout settings** the logout service URL is the `slo_url`, **Front channel logout** on.
+3. **Client scopes → dedicated scope → Add mapper → User Property** three times: `email` → attribute `email`,
+   `firstName` → `givenName`, `lastName` → `sn`.
+4. The IdP metadata URL for ulams: `https://<keycloak-host>/realms/<realm>/protocol/saml/descriptor`.
+5. Encryption (optional): **Keys → Encrypt assertions** on. Keycloak 26 offers RSA-OAEP with SHA-256 by default, which the SAML library of ulams
+   cannot open: choose **RSA-OAEP-MGF1P** and digest **SHA-1** as the key encryption algorithm (the data cipher AES-128/256, CBC or GCM, is fine).
+
+### Microsoft Entra ID
+
+1. **Enterprise applications → New application → Create your own application**, then *Integrate any other application you don't find in the gallery*.
+2. **Single sign-on → SAML → Basic SAML configuration**: **Identifier (Entity ID)** = the `entity_id`, **Reply URL (Assertion Consumer Service URL)** = the `acs_url`,
+   **Logout URL** = the `slo_url`.
+3. **Attributes & claims**: the defaults (`emailaddress`, `givenname`, `surname`, `name` under `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/`) are read without any
+   mapping. For **Unique user identifier (Name identifier value)** use a stable value: format *Persistent* with source attribute `user.objectid`
+   (a user principal name changes when somebody is renamed, and the person would be a stranger afterwards).
+4. **SAML certificates**: keep *Sign SAML assertion* and the algorithm **SHA-256**. Copy **App Federation Metadata Url** into `saml.metadata_url`.
+5. **Users and groups**: assign the people who may sign in.
+6. Entra does not say that addresses are verified: set `trust_email` and `email_domains` if the directory is yours, as for [OpenID Connect](/operators/single-sign-on/#microsoft-entra-id).
+
+### Okta
+
+1. **Applications → Create App Integration → SAML 2.0**.
+2. **Single sign-on URL** = the `acs_url` (tick *Use this for Recipient URL and Destination URL*), **Audience URI (SP Entity ID)** = the `entity_id`,
+   **Name ID format** `Persistent` (or `EmailAddress`), **Application username** `Email`.
+3. **Attribute statements**: `email` → `user.email`, `givenName` → `user.firstName`, `sn` → `user.lastName`.
+4. Signatures: *Signed* assertion with **SHA256** (the defaults).
+5. Single logout (optional): **Enable Single Logout**, **Single Logout URL** = the `slo_url`, **SP Issuer** = the `entity_id`, and upload the SP certificate
+   (the `X509Certificate` of the SP metadata) as **Signature Certificate**; Okta only accepts logout requests it can verify.
+6. **Sign On → Metadata URL** goes into `saml.metadata_url`. **Assignments**: assign the people who may sign in.
+
+### ADFS and other IdPs
+
+ADFS: add a *Relying Party Trust* from the SP metadata URL, **Advanced → Secure hash algorithm: SHA-256**, claim rules sending the e-mail
+address as `E-Mail Address` and the NameID as a persistent identifier. Only a very old ADFS signs with SHA-1: see below.
+
+<Aside type="note">
+  The IdP metadata URL must be a public https address (the same guard as for OpenID Connect discovery, LTI and Git hosts). For a Keycloak on your own
+  network set `IDENTITY_ALLOW_INSECURE_URLS=true`; this lifts the guard for provider URLs and allows http, so use it for development only.
+</Aside>
+
+## What is checked
+
+An assertion that fails any of these is refused with a fixed reason code in the audit trail (`sso.login_failed`), the browser goes back with
+`error=provider_failed`, and nothing is created.
+
+| Check | Reason code |
+|---|---|
+| The login state in `RelayState` is ours, unexpired, unused, for this provider and this host (otherwise `400`, no redirect) | `state_*` |
+| The response answers the AuthnRequest this browser started (`InResponseTo`, in the response and in the subject confirmation) | `in_response_to_mismatch` |
+| The assertion is signed by one of the provider's stored certificates; a signed response with an unsigned assertion is not enough | `unsigned`, `signature_invalid` |
+| Signature, digest, canonicalisation and transform algorithms are on the allow-list (RSA-SHA256/384/512, SHA-256/384/512, exclusive or inclusive C14N, enveloped signature) | `algorithm_not_allowed`, `sha1_not_allowed` |
+| One assertion, signature structure intact, no duplicated ids: the known XML signature wrapping tricks fail | `assertion_count`, `signature_structure` |
+| `Destination` and `Recipient` are our ACS URL, exactly | `destination_mismatch`, `recipient_mismatch` |
+| Every `Audience` restriction names our entity id, exactly | `audience_mismatch` |
+| The issuer is the IdP's entity id | `issuer_mismatch` |
+| `NotBefore`, `NotOnOrAfter` and the subject confirmation window, with 180 seconds of clock skew; the assertion was issued at most 5 minutes ago (`IDENTITY_SAML_MAX_AGE`) | `expired`, `not_yet_valid`, `assertion_too_old` |
+| The assertion id was not accepted before | `replayed` |
+| No DOCTYPE or entity declaration, body at most 256 KB, no comment inside a NameID, attribute or issuer | `doctype`, `too_large`, `comment_in_value` |
+| Encrypted assertions open with this provider's key (or its prepared next key); RSA 1.5 key transport and weak ciphers are refused | `decryption_failed`, `encryption_required`, `algorithm_not_allowed` |
+| A stable subject exists | `no_name_id`, `transient_name_id` |
+
+Keep the server clock right (NTP): a clock that is off by more than three minutes fails every login with `expired` or `not_yet_valid`.
+
+### SHA-1
+
+Signatures and digests with SHA-1 are refused (`sha1_not_allowed`). A legacy IdP that cannot do better needs an explicit decision per provider:
+`PUT .../providers/{id}` with `{"saml": {"allow_sha1": true}}`. That writes a `saml.sha1_changed` audit row with a warning, and every sign-in that
+used SHA-1 writes a `saml.sha1_accepted` row. Switch it off again when the IdP is upgraded; weak digests make forged assertions cheaper.
+
+### Encrypted assertions
+
+With `saml.want_encrypted_assertions` the SP metadata publishes the certificate for encryption as well as signing and an unencrypted assertion is refused.
+Without it, the certificate is published for signing only, so an IdP does not start encrypting on its own. Supported: RSA-OAEP-MGF1P key transport
+(SHA-1 digest) with AES-128, AES-192 or AES-256 in CBC or GCM mode. **RSA-OAEP with a SHA-256 digest or MGF1-SHA256, the default of Keycloak 26, cannot be opened** by the
+SAML library: configure SHA-1 at the IdP, or do not encrypt (the assertion travels over the browser to an https endpoint and is signed).
+
+## Certificates and keys
+
+**IdP certificates.** The metadata is fetched every day (`identity:refresh-metadata`, 03:30 by default) and by `POST /api/admin/identity/providers/{id}/metadata/refresh`.
+
+- A new signing certificate is **added** next to the trusted ones: the IdP can start signing with it at any moment of a rotation.
+- A certificate the metadata no longer lists is **removed** only while at least one trusted certificate stays; the last trusted certificate is never removed.
+- A **different entity id**, or certificates with nothing in common with the trusted ones, are not applied silently. The change is recorded
+  (`saml.metadata_attention`, `last_error` on the provider, the event `SamlMetadataNeedsAttention` for listeners); the command exits with an error. An administrator decides:
+  `POST .../metadata/refresh` with `{"accept_changes": true}` applies the new entity id and replaces the trusted set with the one of the metadata.
+- Every change is an audit row (`saml.metadata_refreshed`, `saml.certs_changed`) listing certificate fingerprints, and a failed fetch changes nothing.
+
+**SP keys.** Each provider has its own RSA 3072 key pair and a self-signed certificate valid for five years, generated when the provider is created. The private key is encrypted with the tenant key and never leaves the API.
+To rotate: `POST .../sp-keys/rotate {"step": "prepare"}` generates the next pair and publishes its certificate in the SP metadata next to the current one; give the IdP the new
+metadata; when it has it, `{"step": "promote"}` makes it the current pair. Assertions encrypted for either key are opened in between.
+
+## Single logout
+
+- **Started here:** `POST /api/identity/saml/{slug}/logout` (with the user's token, optional `return_to`) revokes the token and returns `redirect_url`, the signed LogoutRequest for the IdP
+  (or `null` when this login did not come from the provider, or the IdP has no logout URL). The IdP ends its session and sends the browser back to the SLO URL, which sends it on to `return_to`.
+- **Started by the IdP:** a LogoutRequest at the SLO URL ends every token of that NameID (or of the listed SessionIndexes) and is answered with a signed LogoutResponse.
+  The request must be signed by a stored certificate (redirect binding signature or an enveloped XML signature), name the IdP as issuer, the SLO URL as destination, be fresh, and is accepted once.
+
+Both write `saml.logout` rows; a message that fails a check writes `saml.logout_failed` with the reason.
+
+## Troubleshooting
+
+| What you see | Cause |
+|---|---|
+| 502 when the sign-in starts | The provider has no entity id, sign-on URL or certificate (`last_error`); import its metadata |
+| The IdP says "unknown application" or "invalid audience" | The entity id registered at the IdP is not exactly the provider's `saml.sp.entity_id`, e.g. after a change of host |
+| The IdP shows an error about the signature of the request | The SP certificate at the IdP is not the one in the metadata (after a key rotation): import the metadata again |
+| Back on `/login` with "Sign-in failed" | `provider_failed`: the audit has the reason code. `signature_invalid` after a rotation at the IdP: refresh the metadata; `audience_mismatch` / `destination_mismatch`: the IdP was configured with other URLs; `expired` / `not_yet_valid`: clock |
+| `sha1_not_allowed` | The IdP signs with SHA-1: change it to SHA-256, or [opt in](#sha-1) |
+| `decryption_failed` or `algorithm_not_allowed` with encryption | The IdP encrypts with a key transport or digest the library cannot open: see [Encrypted assertions](#encrypted-assertions) |
+| `transient_name_id` | The IdP sends a transient NameID: switch to persistent or name a subject attribute |
+| `error=email_unverified` / `email_required` / `link_required` | `trust_email` is off, no e-mail attribute arrived, or an account with that address may not be linked automatically: see [Who gets an account](/operators/single-sign-on/#who-gets-an-account) |
+| "The login attempt is invalid or has expired" (400) | The state is older than 10 minutes, was used twice (back button) or reached another tenant host. Some IdPs cut a `RelayState` longer than 80 bytes; ours is about 100 characters. Tell us which IdP does |
+| A metadata refresh says `attention` | See [Certificates and keys](#certificates-and-keys) |
