@@ -9,6 +9,10 @@ use Spatie\Permission\PermissionServiceProvider;
 use Ulams\Auth\UlamsAuthServiceProvider;
 use Ulams\Core\Tests\TestCase as CoreTestCase;
 use Ulams\Settings\UlamsSettingsServiceProvider;
+use Ulams\Tenancy\Services\Contracts\EntryHostPublisherContract;
+use Ulams\Tenancy\Services\EntryHostStore;
+use Ulams\Tenancy\Services\EntryPointService;
+use Ulams\Tenancy\Services\NullEntryHostPublisher;
 use Ulams\Tenancy\UlamsTenancyServiceProvider;
 
 class TestCase extends CoreTestCase
@@ -29,6 +33,11 @@ class TestCase extends CoreTestCase
         (require __DIR__ . '/../database/migrations/2026_10_12_000000_create_tenant_operations_table.php')->up();
         (require __DIR__ . '/../database/migrations/2026_10_13_000000_add_storage_credentials_to_tenants_table.php')->up();
         (require __DIR__ . '/../database/migrations/2026_10_30_100000_create_tenant_entry_points_table.php')->up();
+        (require __DIR__ . '/../database/migrations/2026_10_31_100000_create_entry_host_publication_tables.php')->up();
+        // the platform table is the subject of most tests, not the academies' copies: nothing is published unless a test asks
+        $this->app->instance(EntryHostPublisherContract::class, new NullEntryHostPublisher());
+        $this->app->forgetInstance(EntryPointService::class);
+        EntryHostStore::forgetSchemaCheck();
     }
 
     protected function getPackageProviders($app): array

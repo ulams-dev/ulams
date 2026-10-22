@@ -10,6 +10,7 @@ use Ulams\Tenancy\Exceptions\EntryPointException;
 use Ulams\Tenancy\Models\EntryPoint;
 use Ulams\Tenancy\Models\EntryPointAudit;
 use Ulams\Tenancy\Models\Tenant;
+use Ulams\Tenancy\Services\Contracts\EntryHostPublisherContract;
 use Ulams\Tenancy\Services\Contracts\EntryPointGatewayContract;
 use Ulams\Tenancy\Support\EntryHost;
 use Ulams\Tenancy\Support\EntryPointRules;
@@ -22,6 +23,10 @@ use Ulams\Tenancy\Support\TenantNaming;
  */
 class EntryPointService implements EntryPointGatewayContract
 {
+    public function __construct(private readonly EntryHostPublisherContract $publisher)
+    {
+    }
+
     public function list(string $slug): array
     {
         $tenant = $this->tenant($slug);
@@ -78,6 +83,7 @@ class EntryPointService implements EntryPointGatewayContract
             return $entry;
         });
         event(new EntryPointsChanged($tenant));
+        $this->publish($tenant);
 
         return $this->present($entry, $tenant);
     }
@@ -137,6 +143,8 @@ class EntryPointService implements EntryPointGatewayContract
             });
             event(new EntryPointsChanged($tenant));
         }
+        // also when nothing changed: a retry after a failed publication brings the academy's copy up to date
+        $this->publish($tenant);
 
         return $this->present($entry->refresh(), $tenant);
     }
@@ -151,6 +159,7 @@ class EntryPointService implements EntryPointGatewayContract
             $entry->delete();
         });
         event(new EntryPointsChanged($tenant));
+        $this->publish($tenant);
     }
 
     public function audit(string $slug, int $limit = 100): array
@@ -198,6 +207,22 @@ class EntryPointService implements EntryPointGatewayContract
             'created_at' => $entry->created_at?->toIso8601String(),
             'updated_at' => $entry->updated_at?->toIso8601String(),
         ];
+    }
+
+    /**
+     * Brings the academy's own copy of its active entry hosts up to date, so the origin check, the return URLs and the
+     * hand-off follow the change at once. The change is already saved; when the academy cannot be reached the admin is
+     * told, a retry publishes again, and the reconcile job finds the academy anyway.
+     */
+    private function publish(Tenant $tenant): void
+    {
+        try {
+            $this->publisher->publish($tenant);
+        } catch (\Throwable $e) {
+            report($e);
+
+            throw new EntryPointException('Saved, but the academy could not be updated yet: its trusted address list is refreshed again within minutes. Repeat the request to refresh it now.', 503);
+        }
     }
 
     private function tenant(string $slug): Tenant

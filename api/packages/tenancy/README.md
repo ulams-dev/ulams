@@ -125,3 +125,10 @@ point never grants access.
   Under `TENANCY_ENTRY_PLATFORM_SUFFIXES` a host is one `{slug}-name` label and active at once; elsewhere it is a
   custom domain, `pending_dns` until verified. `TENANCY_ENTRY_TRUSTED_SUFFIXES` is for development and CI.
 - `TENANCY_MAX_ENTRY_POINTS` (20) limits them per tenant. CLI: `ulams entry-points list|get|create|update|delete|audit`.
+- **Trusted entry hosts (EP-3).** A tenant process cannot read the platform table, so the platform copies an academy's
+  active entry hosts into its own database (`tenant_entry_hosts`) after every change: `EntryHostPublisher` runs the hidden
+  `ulams:entry-points:publish` in a process of the academy, and remembers a hash of what it published
+  (`tenant_entry_host_publications`). `ulams:entry-points:reconcile` (scheduled every five minutes on the platform) republishes
+  the academies whose copy is out of date. `Ulams\Core\Support\EntryFronts` reads the copy (`EntryHostStore`) for the origin
+  check of the API, the return URLs of the redirect logins, the frame ancestors of interactive content and the session
+  hand-off (`POST /api/auth/handoff`, auth package), so an entry host is trusted everywhere or nowhere.
