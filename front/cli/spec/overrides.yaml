@@ -88,6 +88,16 @@ operations:
   "GET /api/admin/knowledge/exports/{export}/download": { id: knowledge.exports-download, positionals: [export], output: file, summary: "Download manifest.json, chunks.jsonl or index.json of a ready export (use --out)" }
   "GET /api/admin/knowledge/courses/{course}/latest": { id: knowledge.latest, positionals: [course], summary: "The latest ready export of a course" }
 
+  # --- identity providers and their audit trail (6.3)
+  "GET /api/identity/providers": { id: identity.providers-public, summary: "The identity providers a learner can sign in with (slug and name only)" }
+  "GET /api/admin/identity/providers": { id: identity.providers-list }
+  "POST /api/admin/identity/providers": { id: identity.providers-create, summary: "Add an OpenID Connect identity provider (the client secret is stored encrypted and never shown again)" }
+  "GET /api/admin/identity/providers/{provider}": { id: identity.providers-get, positionals: [provider] }
+  "PUT /api/admin/identity/providers/{provider}": { id: identity.providers-update, positionals: [provider], summary: "Change an identity provider (leave client_secret out to keep the stored one)" }
+  "DELETE /api/admin/identity/providers/{provider}": { id: identity.providers-delete, positionals: [provider] }
+  "GET /api/admin/identity/audit": { id: identity.audit-list }
+  "GET /api/admin/identity/audit/verify": { id: identity.audit-verify, summary: "Recompute the hash chain of the identity audit trail" }
+
   # --- users
   "PUT /api/admin/user/{id}": { id: users.update }
   "PATCH /api/admin/user/{id}": { id: users.patch }

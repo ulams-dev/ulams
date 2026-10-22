@@ -23,6 +23,10 @@ on:
         description: Upgrade a seeded PostgreSQL 12 cluster to 17 (dump and restore, plus logical replication)
         type: boolean
         default: true
+      sso:
+        description: OpenID Connect sign-in with Keycloak (the reusable workflow identity-keycloak.yml)
+        type: boolean
+        default: true
       saltire:
         description: LTI 1.3 against saLTIre (needs an operator, see the job)
         type: boolean
@@ -263,6 +267,15 @@ jobs:
           tail -200 /tmp/ulams.log || true
           tail -200 api/storage/logs/*.log || true
           docker compose -f .github/conformance/compose.yml --profile lti logs moodle | tail -200
+
+  # Single sign-on against Keycloak (docs/plans/phase-6-identity.md 4.14). The same workflow runs on pull requests
+  # labelled "identity"; it carries its own services and steps.
+  sso:
+    name: Single sign-on with Keycloak
+    if: >-
+      (github.event_name == 'schedule' && vars.NIGHTLY_CONFORMANCE == 'true') ||
+      (github.event_name == 'workflow_dispatch' && inputs.sso)
+    uses: ./.github/workflows/identity-keycloak.yml
 
   saltire:
     # saLTIre (https://saltire.lti.app) is a hosted LTI test platform with no API: a person

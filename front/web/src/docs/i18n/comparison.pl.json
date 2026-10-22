@@ -766,6 +766,7 @@
                     "text": "Zarządzanie użytkownikami, grupami i profilami z rolami i uprawnieniami za REST API.",
                     "packages": [
                       "auth",
+                      "identity",
                       "permissions"
                     ]
                   },

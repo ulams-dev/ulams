@@ -15,7 +15,8 @@
         "learner",
         "tokens",
         "webhooks",
-        "platform"
+        "platform",
+        "identity"
     ],
     "scopes": [
         "courses:read",
@@ -48,6 +49,8 @@
         "webhooks:write",
         "platform:read",
         "platform:write",
+        "identity:read",
+        "identity:write",
         "*"
     ],
     "presets": {
@@ -169,6 +172,10 @@
             "area": "public"
         },
         {
+            "pattern": "api/identity/*",
+            "area": "public"
+        },
+        {
             "pattern": "api/auth/email/*",
             "area": "public"
         },
@@ -247,6 +254,10 @@
         {
             "pattern": "api/admin/webhooks*",
             "area": "webhooks"
+        },
+        {
+            "pattern": "api/admin/identity*",
+            "area": "identity"
         },
         {
             "pattern": "api/admin/knowledge*",

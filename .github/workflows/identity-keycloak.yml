@@ -1,0 +1,132 @@
+name: Identity (Keycloak)
+
+# Single sign-on against a real Keycloak (docs/plans/phase-6-identity.md 4.14), too slow for every push, so it is
+# never part of the default pull request pipeline. It runs
+#   - on a pull request only when the PR carries the label "identity" (other pull request runs skip the job);
+#   - nightly and on a manual run of nightly-conformance.yml, which calls this workflow;
+#   - by hand (Actions -> Identity (Keycloak) -> Run workflow).
+# The fast path is the fixture-based PHPUnit suite `identity`, which runs in every PR. Fixtures, compose service
+# and scripts: .github/conformance/ (profile `sso`, keycloak/). Nothing here publishes.
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled]
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: identity-keycloak-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  keycloak:
+    name: OpenID Connect with Keycloak
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'identity')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      # Same tag as ci.yml: scripts/check-pinned-images.mjs fails when they differ.
+      postgres:
+        image: postgres:17.11-alpine
+        env:
+          POSTGRES_DB: default
+          POSTGRES_USER: default
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U default -d default"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      valkey:
+        image: valkey/valkey:8-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "valkey-cli ping"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+      DB_DATABASE: default
+      DB_USERNAME: default
+      DB_PASSWORD: secret
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+      XDEBUG_MODE: "off"
+      PLAYWRIGHT_VERSION: 1.63.0
+      # ulams serves http://ulams.test:18000 on the runner; Keycloak is http://keycloak.test:18180
+      APP_URL: http://ulams.test:18000
+      FRONTEND_URL: http://front.test:18001
+      TENANCY_PLATFORM_HOSTS: ulams.test,127.0.0.1,localhost
+      # development switch: Keycloak runs on http
+      IDENTITY_ALLOW_INSECURE_URLS: "true"
+      QUEUE_CONNECTION: sync
+      CACHE_DRIVER: array
+      CACHE_STORE: array
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Configure local test hostnames
+        run: |
+          echo "127.0.0.1 ulams.test front.test keycloak.test" | sudo tee -a /etc/hosts
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+
+      - name: Playwright (Chromium only, outside the workspace)
+        run: |
+          npm install --no-save --no-audit --no-fund --prefix /tmp/pw "playwright@${PLAYWRIGHT_VERSION}"
+          /tmp/pw/node_modules/.bin/playwright install --with-deps chromium
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: apcu, bcmath, exif, gd, intl, pcntl, pdo_pgsql, redis, zip
+          ini-values: memory_limit=1G
+          coverage: none
+          tools: composer:v2
+
+      # Keycloak first: it needs a minute to import the realm while the API installs
+      - name: Start Keycloak 26 (imports the realm of .github/conformance/keycloak)
+        run: docker compose -f .github/conformance/compose.yml --profile sso up -d
+
+      - name: Prepare and start the API
+        working-directory: api
+        run: |
+          cp docker/envs/.env.ci.postgres .env
+          composer install --no-interaction --no-progress --prefer-dist
+          php artisan migrate:fresh --force
+          php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"
+          php artisan passport:keys --force
+          php artisan passport:client --personal --no-interaction
+          PHP_CLI_SERVER_WORKERS=6 nohup php -S 0.0.0.0:18000 -t public \
+            vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php > /tmp/ulams.log 2>&1 &
+          for _ in $(seq 1 30); do curl -fsS -o /dev/null http://ulams.test:18000/api/identity/providers && break; sleep 1; done
+          curl -fsS http://ulams.test:18000/api/identity/providers
+
+      - name: Wait for Keycloak
+        run: |
+          for _ in $(seq 1 60); do
+            if curl -fsS -o /dev/null http://keycloak.test:18180/realms/ulams/.well-known/openid-configuration; then exit 0; fi
+            sleep 3
+          done
+          docker compose -f .github/conformance/compose.yml --profile sso logs keycloak | tail -100
+          exit 1
+
+      - name: Sign in through Keycloak (admin API, browser, code exchange, audit)
+        env:
+          NODE_PATH: /tmp/pw/node_modules
+        run: sh .github/conformance/keycloak/run-oidc.sh
+
+      - name: Logs
+        if: failure()
+        run: |
+          tail -200 /tmp/ulams.log || true
+          tail -200 api/storage/logs/*.log || true
+          docker compose -f .github/conformance/compose.yml --profile sso logs keycloak | tail -200

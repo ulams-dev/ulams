@@ -766,6 +766,7 @@
                     "text": "User, group and profile management with roles and permissions behind a REST API.",
                     "packages": [
                       "auth",
+                      "identity",
                       "permissions"
                     ]
                   },

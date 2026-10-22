@@ -2368,6 +2368,233 @@
     },
     "type": "object"
    },
+   "IdentityAuditEntry": {
+    "properties": {
+     "action": {
+      "example": "sso.login",
+      "type": "string"
+     },
+     "actor": {
+      "enum": [
+       "user",
+       "scim",
+       "hris",
+       "system",
+       "idp"
+      ],
+      "type": "string"
+     },
+     "actor_id": {
+      "nullable": true,
+      "type": "integer"
+     },
+     "created_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "data": {
+      "description": "Reason codes and ids only",
+      "nullable": true,
+      "type": "object"
+     },
+     "hash": {
+      "type": "string"
+     },
+     "id": {
+      "type": "integer"
+     },
+     "ip": {
+      "nullable": true,
+      "type": "string"
+     },
+     "provider_id": {
+      "format": "uuid",
+      "nullable": true,
+      "type": "string"
+     },
+     "subject_id": {
+      "nullable": true,
+      "type": "string"
+     },
+     "subject_type": {
+      "nullable": true,
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "IdentityProvider": {
+    "properties": {
+     "client_secret_hint": {
+      "nullable": true,
+      "type": "string"
+     },
+     "client_secret_set": {
+      "type": "boolean"
+     },
+     "created_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "default_role": {
+      "enum": [
+       "student",
+       "tutor"
+      ],
+      "type": "string"
+     },
+     "email_domains": {
+      "description": "Domains of the organisation",
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "enabled": {
+      "type": "boolean"
+     },
+     "id": {
+      "format": "uuid",
+      "type": "string"
+     },
+     "jit_enabled": {
+      "description": "Create an account on first sign-in",
+      "type": "boolean"
+     },
+     "last_error": {
+      "description": "Reason code of the last failed sign-in",
+      "nullable": true,
+      "type": "string"
+     },
+     "last_login_at": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     },
+     "name": {
+      "description": "Shown on the sign-in button",
+      "type": "string"
+     },
+     "oidc": {
+      "properties": {
+       "client_id": {
+        "type": "string"
+       },
+       "issuer": {
+        "format": "uri",
+        "type": "string"
+       },
+       "scopes": {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       "token_auth": {
+        "enum": [
+         "client_secret_basic",
+         "client_secret_post"
+        ],
+        "type": "string"
+       },
+       "userinfo": {
+        "type": "boolean"
+       }
+      },
+      "type": "object"
+     },
+     "protocol": {
+      "enum": [
+       "oidc"
+      ],
+      "type": "string"
+     },
+     "redirect_uri": {
+      "description": "Register this redirect URI at the provider",
+      "format": "uri",
+      "type": "string"
+     },
+     "slug": {
+      "description": "Used in the sign-in URLs; fixed after creation",
+      "type": "string"
+     },
+     "trust_email": {
+      "description": "The provider is authoritative for e-mail addresses of email_domains: an existing non-privileged account with a verified address there is linked on first sign-in",
+      "type": "boolean"
+     },
+     "updated_at": {
+      "format": "date-time",
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "IdentityProviderInput": {
+    "properties": {
+     "client_secret": {
+      "description": "Write-only; stored encrypted",
+      "type": "string"
+     },
+     "default_role": {
+      "enum": [
+       "student",
+       "tutor"
+      ],
+      "type": "string"
+     },
+     "email_domains": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "enabled": {
+      "type": "boolean"
+     },
+     "jit_enabled": {
+      "type": "boolean"
+     },
+     "name": {
+      "type": "string"
+     },
+     "oidc": {
+      "properties": {
+       "client_id": {
+        "type": "string"
+       },
+       "issuer": {
+        "format": "uri",
+        "type": "string"
+       },
+       "scopes": {
+        "items": {
+         "type": "string"
+        },
+        "type": "array"
+       },
+       "token_auth": {
+        "enum": [
+         "client_secret_basic",
+         "client_secret_post"
+        ],
+        "type": "string"
+       },
+       "userinfo": {
+        "type": "boolean"
+       }
+      },
+      "type": "object"
+     },
+     "slug": {
+      "description": "Lowercase letters, digits and hyphens; required on create, ignored on update",
+      "type": "string"
+     },
+     "trust_email": {
+      "type": "boolean"
+     }
+    },
+    "type": "object"
+   },
    "ImportDictionaryWordRequest": {
     "properties": {
      "dictionary_id": {
@@ -14359,6 +14586,395 @@
     "summary": "Delete H5P contents that no topic uses",
     "tags": [
      "Admin H5P"
+    ]
+   }
+  },
+  "/api/admin/identity/audit": {
+   "get": {
+    "description": "The identity audit trail (permission `identity_audit_read`): hash-chained, append-only, never holds tokens,\nassertions or secrets.",
+    "operationId": "identity.audit.list",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "action",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "provider_id",
+      "schema": {
+       "format": "uuid",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Page: entries older than this id",
+      "in": "query",
+      "name": "before_id",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "limit",
+      "schema": {
+       "default": 50,
+       "maximum": 200,
+       "minimum": 1,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/IdentityAuditEntry"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Entries"
+     },
+     "403": {
+      "description": "Needs identity_audit_read"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Identity audit trail, newest first",
+    "tags": [
+     "Admin Identity"
+    ]
+   }
+  },
+  "/api/admin/identity/audit/verify": {
+   "get": {
+    "operationId": "identity.audit.verify",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "broken_id": {
+             "nullable": true,
+             "type": "integer"
+            },
+            "checked": {
+             "type": "integer"
+            },
+            "ok": {
+             "type": "boolean"
+            },
+            "reason": {
+             "nullable": true,
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Result"
+     },
+     "403": {
+      "description": "Needs identity_audit_read"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Recompute the hash chain of the audit trail",
+    "tags": [
+     "Admin Identity"
+    ]
+   }
+  },
+  "/api/admin/identity/providers": {
+   "get": {
+    "description": "Identity providers of the tenant (admin only, permission `identity_provider_manage`). The client secret is\nwrite-only: responses say whether one is set and, for long secrets, its last four characters.",
+    "operationId": "identity.providers.list",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/IdentityProvider"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Providers"
+     },
+     "403": {
+      "description": "Needs identity_provider_manage"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Identity providers of this academy",
+    "tags": [
+     "Admin Identity"
+    ]
+   },
+   "post": {
+    "operationId": "identity.providers.create",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/IdentityProviderInput"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/IdentityProvider"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Created"
+     },
+     "403": {
+      "description": "Needs identity_provider_manage"
+     },
+     "422": {
+      "description": "Invalid input, duplicate slug, or the academy has too many providers"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Add an OpenID Connect identity provider",
+    "tags": [
+     "Admin Identity"
+    ]
+   }
+  },
+  "/api/admin/identity/providers/{provider}": {
+   "delete": {
+    "operationId": "identity.providers.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Deleted"
+     },
+     "404": {
+      "description": "Not found"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete an identity provider and its account links (accounts stay)",
+    "tags": [
+     "Admin Identity"
+    ]
+   },
+   "get": {
+    "operationId": "identity.providers.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/IdentityProvider"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Provider"
+     },
+     "404": {
+      "description": "Not found"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One identity provider",
+    "tags": [
+     "Admin Identity"
+    ]
+   },
+   "put": {
+    "operationId": "identity.providers.update",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/IdentityProviderInput"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/IdentityProvider"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Updated"
+     },
+     "404": {
+      "description": "Not found"
+     },
+     "422": {
+      "description": "Invalid input"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Change an identity provider (leave client_secret out to keep the stored one)",
+    "tags": [
+     "Admin Identity"
     ]
    }
   },
@@ -34083,6 +34699,225 @@
     ]
    }
   },
+  "/api/identity/oidc/{slug}/callback": {
+   "get": {
+    "operationId": "identity.oidc.callback",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "state",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "code",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "error",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "302": {
+      "description": "Redirect to the return URL with ?code=... (success) or ?error=provider_denied|provider_failed|link_required|email_required|email_unverified|account_unavailable|signup_disabled"
+     },
+     "400": {
+      "description": "The state is invalid, expired or already used"
+     }
+    },
+    "summary": "Where the provider sends the browser back; redirects to the return URL with a one-time code or an error",
+    "tags": [
+     "Identity"
+    ]
+   }
+  },
+  "/api/identity/providers": {
+   "get": {
+    "description": "Sign-in through a tenant's identity provider (OpenID Connect). Public routes on the tenant API host: the\nprovider rows live in the tenant's own database, so another tenant's slug, state or code never resolves here.",
+    "operationId": "identity.providers.public",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "properties": {
+             "name": {
+              "example": "Acme staff",
+              "type": "string"
+             },
+             "protocol": {
+              "enum": [
+               "oidc"
+              ],
+              "type": "string"
+             },
+             "slug": {
+              "example": "acme-keycloak",
+              "type": "string"
+             }
+            },
+            "type": "object"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Enabled providers: slug, name and protocol, nothing else"
+     }
+    },
+    "summary": "Identity providers a learner can sign in with",
+    "tags": [
+     "Identity"
+    ]
+   }
+  },
+  "/api/identity/sso/exchange": {
+   "post": {
+    "operationId": "identity.sso.exchange",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "code": {
+          "description": "The one-time code from the return URL (43 characters)",
+          "type": "string"
+         },
+         "verifier": {
+          "description": "The secret whose SHA-256 was sent as the challenge (43 to 128 characters)",
+          "type": "string"
+         }
+        },
+        "required": [
+         "code",
+         "verifier"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "expires_at": {
+             "format": "date-time",
+             "type": "string"
+            },
+            "token": {
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Access token"
+     },
+     "400": {
+      "description": "The code is invalid, expired, used already or does not match the verifier"
+     }
+    },
+    "summary": "Redeem the one-time code with the verifier for an access token",
+    "tags": [
+     "Identity"
+    ]
+   }
+  },
+  "/api/identity/sso/{slug}/start": {
+   "get": {
+    "operationId": "identity.sso.start",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "base64url SHA-256 of a verifier only the caller's server knows (43 characters)",
+      "in": "query",
+      "name": "challenge",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "Where to send the browser afterwards; must be an origin of this academy (default: the learner app)",
+      "in": "query",
+      "name": "return_to",
+      "schema": {
+       "format": "uri",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "302": {
+      "description": "Redirect to the provider's authorization endpoint"
+     },
+     "404": {
+      "description": "Unknown or disabled provider"
+     },
+     "422": {
+      "description": "Return URL not allowed or challenge missing"
+     },
+     "502": {
+      "description": "The provider could not be reached or is misconfigured"
+     }
+    },
+    "summary": "Start a sign-in: redirects the browser to the provider",
+    "tags": [
+     "Identity"
+    ]
+   }
+  },
   "/api/images/img": {
    "get": {
     "description": "Public endpoint, throttled by `images.render`. The cached file name is `sha1(path . json_encode(params))` plus the extension, so the same request always returns the same URL. The first request creates the copy, optimises it and stores it on the configured disk; later requests only redirect. A failed resize does not return an error status: the redirect points to an SVG that contains the error message.",
@@ -41548,6 +42383,14 @@
   {
    "description": "Admin H5P",
    "name": "Admin H5P"
+  },
+  {
+   "description": "Admin Identity",
+   "name": "Admin Identity"
+  },
+  {
+   "description": "Identity",
+   "name": "Identity"
   },
   {
    "description": "Images",

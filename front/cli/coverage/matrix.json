@@ -1,5 +1,5 @@
 {
- "summary": "596/676 covered, 80 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "604/687 covered, 83 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -965,6 +965,48 @@
    "key": "DELETE /api/admin/h5p/unused",
    "summary": "Delete H5P contents that no topic uses",
    "command": "h5p.unused",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/identity/audit",
+   "summary": "Identity audit trail, newest first",
+   "command": "identity.audit-list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/identity/audit/verify",
+   "summary": "Recompute the hash chain of the audit trail",
+   "command": "identity.audit-verify",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/identity/providers",
+   "summary": "Identity providers of this academy",
+   "command": "identity.providers-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/identity/providers",
+   "summary": "Add an OpenID Connect identity provider",
+   "command": "identity.providers-create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/identity/providers/{provider}",
+   "summary": "One identity provider",
+   "command": "identity.providers-get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/identity/providers/{provider}",
+   "summary": "Change an identity provider (leave client_secret out to keep the stored one)",
+   "command": "identity.providers-update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/identity/providers/{provider}",
+   "summary": "Delete an identity provider and its account links (accounts stay)",
+   "command": "identity.providers-delete",
    "status": "covered"
   },
   {
@@ -3192,6 +3234,30 @@
    "summary": "Check health of the application",
    "command": "",
    "status": "excluded: internal"
+  },
+  {
+   "key": "GET /api/identity/oidc/{slug}/callback",
+   "summary": "Where the provider sends the browser back; redirects to the return URL with a one-time code or an error",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/identity/providers",
+   "summary": "Identity providers a learner can sign in with",
+   "command": "identity.providers-public",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/identity/sso/exchange",
+   "summary": "Redeem the one-time code with the verifier for an access token",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/identity/sso/{slug}/start",
+   "summary": "Start a sign-in: redirects the browser to the provider",
+   "command": "",
+   "status": "excluded: browser-only"
   },
   {
    "key": "GET /api/images/img",

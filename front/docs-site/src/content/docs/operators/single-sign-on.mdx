@@ -1,0 +1,187 @@
+---
+title: Single sign-on (OpenID Connect)
+description: Connect a tenant to its identity provider with OpenID Connect - Keycloak, Microsoft Entra ID, Okta and Google examples, the settings of a provider, who gets an account, how existing accounts are linked, the audit trail and what each error means.
+sidebar:
+  order: 14
+modules:
+  - identity
+  - web
+learnerRoutes:
+  - /auth/sso/[slug]
+  - /auth/sso/callback
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Staff and learners can sign in with the identity provider (IdP) of their organisation: Keycloak, Microsoft
+Entra ID, Okta, Google Workspace or any other OpenID Connect provider. Each tenant has its own providers; a
+provider of one tenant is unknown to every other. This page is for the person who runs the instance. SAML,
+SCIM provisioning and HR import follow in later milestones of [the identity plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-6-identity.md);
+for the code exchange protocol see [Authentication](/developers/authentication/#single-sign-on).
+
+What this version does:
+
+- authorization code flow with PKCE (S256), `state` and `nonce`, discovery from `{issuer}/.well-known/openid-configuration`;
+- the ID token is verified (signature, issuer, audience, expiry, nonce) with the keys of the provider;
+- the first sign-in creates a **student** account with a verified e-mail address (when the provider allows it);
+- an existing account is linked only under strict rules (see [Existing accounts](#existing-accounts));
+- every sign-in and every change of a provider is written to a tamper-evident [audit trail](#audit-trail);
+- the learner app shows one "Continue with ..." button per enabled provider on `/login`.
+
+Not in this version: roles and groups from the provider (everything the provider sends beyond e-mail and name is
+ignored, so a claim can never make anybody an administrator), enforcing single sign-on for a domain, SAML and
+SCIM, an admin screen (use the API or the CLI below), logout at the provider.
+
+## Set it up
+
+1. **Register ulams at the provider** as a confidential OpenID Connect client (authorization code flow) with
+   this redirect URI, which is the tenant **API** host, not the learner app:
+
+   ```text
+   https://<tenant-api-host>/api/identity/oidc/<slug>/callback
+   ```
+
+   `<slug>` is the name you give the provider in step 3 (lowercase letters, digits, hyphens).
+2. **Allow the learner app to receive the login.** After the provider, the API sends the browser back to the
+   front end, but only to an origin it trusts: `FRONTEND_URL`, `ADMIN_URL`, `APP_URL` or one of
+   `TRUSTED_ORIGINS` of that tenant. See [Social login](/operators/social-login/#set-it-up), the rule is the same.
+3. **Add the provider** (permission `identity_provider_manage`, which admins have). With the CLI:
+
+   ```bash
+   cat > provider.json <<'JSON'
+   {
+     "slug": "acme",
+     "name": "Acme staff",
+     "enabled": true,
+     "email_domains": ["acme.example"],
+     "oidc": {
+       "issuer": "https://login.acme.example/realms/staff",
+       "client_id": "ulams-web",
+       "scopes": ["email", "profile"]
+     },
+     "client_secret": "the secret from the provider"
+   }
+   JSON
+   ulams api POST /api/admin/identity/providers --body @provider.json
+   ```
+
+   The response shows the exact `redirect_uri` to register. The client secret is encrypted with the tenant
+   key and is never returned again: the API only says `client_secret_set` and, for long secrets, the last
+   four characters.
+4. **Check it.** Open the learner app's `/login`: a button with the provider's name appears. Sign in, then
+   look at the [audit trail](#audit-trail) (`GET /api/admin/identity/audit`).
+
+| Field | Meaning |
+|---|---|
+| `slug` | Used in the URLs; fixed after creation |
+| `name` | Text of the button ("Continue with Acme staff") |
+| `enabled` | Needs issuer, client id and client secret |
+| `oidc.issuer` | Exactly the `issuer` of the discovery document; `https`, no query or fragment |
+| `oidc.scopes` | Added to `openid`; default `email profile` |
+| `oidc.token_auth` | `client_secret_basic` (default) or `client_secret_post`, as the provider requires |
+| `oidc.userinfo` | Also read the UserInfo endpoint and merge its claims (its `sub` must match) |
+| `email_domains` | Domains of the organisation; needed for `trust_email` |
+| `trust_email` | The provider is authoritative for addresses in `email_domains` (see below) |
+| `jit_enabled` | Create an account on first sign-in (default on); off means "ask your administrator" |
+| `default_role` | `student` (default) or `tutor`; never `admin` |
+
+A tenant may have up to 10 providers (`IDENTITY_MAX_PROVIDERS`). `IDENTITY_ENABLED=false` switches the public
+sign-in routes off for the whole deployment.
+
+## Provider recipes
+
+The discovery URL is always `{issuer}/.well-known/openid-configuration`; open it in a browser to check the issuer.
+
+### Keycloak
+
+1. In the realm, **Clients → Create client**: client type OpenID Connect, client id `ulams-web`, **Client
+   authentication** on, **Standard flow** on, everything else off.
+2. **Valid redirect URIs**: the callback URI from step 1 above, exactly (Keycloak accepts a `*` only at the end).
+3. Advanced settings: **Proof Key for Code Exchange Code Challenge Method** `S256`.
+4. Credentials tab: copy the client secret.
+5. Issuer: `https://<keycloak-host>/realms/<realm>`. Keep the default client scopes `email` and `profile`.
+   Mark users' e-mail addresses as verified (or switch on `trust_email`, see below).
+
+### Microsoft Entra ID
+
+1. **App registrations → New registration**, platform **Web**, redirect URI as above.
+2. **Certificates & secrets → New client secret**; copy the *value* (not the secret id).
+3. Issuer: `https://login.microsoftonline.com/<tenant-id>/v2.0` (the single-tenant v2.0 endpoint; the
+   `common` and `organizations` endpoints use a per-tenant issuer and do not work).
+4. Entra does not send `email_verified`. If the directory is yours and addresses are managed, set
+   `trust_email: true` and `email_domains` to your domains; without it nobody is created, because an
+   address the provider does not vouch for is never accepted.
+5. Add the optional claim `email` to the ID token (**Token configuration**), or switch on `oidc.userinfo`.
+
+### Okta
+
+1. **Applications → Create App Integration**: OIDC, **Web application**, grant type authorization code,
+   sign-in redirect URI as above.
+2. Copy the client id and secret. Make sure **Require PKCE** is on if offered.
+3. Issuer: the authorization server's issuer, `https://<org>.okta.com/oauth2/default` for the default one (or
+   `https://<org>.okta.com` for the org server).
+4. Okta sends `email_verified` for verified addresses.
+
+### Google (Workspace or personal accounts)
+
+1. In the Google Cloud console create an **OAuth client ID** of type **Web application** with the redirect URI
+   as above.
+2. Issuer: `https://accounts.google.com`. Google sends `email_verified`.
+3. To restrict sign-in to your own organisation use a Workspace-only consent screen (internal) and set
+   `email_domains` and `trust_email` for your domain.
+
+<Aside type="note">
+  The provider's URLs must be public https addresses. The API refuses discovery, token and key URLs that point to
+  private addresses or use http (it is the same guard as for LTI and Git hosts). For a Keycloak on your own
+  network set `IDENTITY_ALLOW_INSECURE_URLS=true`; this switches the guard off for provider URLs, so use it
+  for development only.
+</Aside>
+
+## Who gets an account
+
+| The provider says | Result |
+|---|---|
+| The subject (`sub`) is linked to an account | Sign in to that account, whatever e-mail the provider sends now |
+| New subject, no account with that e-mail, address verified (`email_verified: true`) or `trust_email` on | A student is created (name from `given_name`/`family_name` or `name`), verified e-mail, no password |
+| New subject, no account, address not verified and `trust_email` off | Refused with `email_unverified`, nothing is created |
+| New subject, no account, `jit_enabled` off | Refused with `signup_disabled` |
+| No usable e-mail address | Refused with `email_required` |
+| Account is deactivated or deleted | Refused with `account_unavailable` |
+
+### Existing accounts
+
+An account that already has the same e-mail address is linked automatically only when **all** of this holds:
+
+- `trust_email` is on and the address is in `email_domains`,
+- the provider says the address is verified (`email_verified: true`; a string such as `"yes"` does not count),
+- the account is not an admin, tutor or superadmin.
+
+Otherwise the user comes back with `error=link_required`. Admin accounts are never linked automatically. A
+local account that never confirmed its e-mail address, claimed this way, loses its password and tokens first, so
+somebody who registered an address they do not own cannot keep it. (Linking after confirming with the password
+and linking by an admin arrive with the next milestone.)
+
+## Audit trail
+
+`GET /api/admin/identity/audit` (permission `identity_audit_read`) lists, newest first: `sso.login`,
+`sso.login_failed` (with a reason code such as `wrong_audience`, `expired`, `nonce_mismatch`,
+`bad_signature`, `state_replayed`), `sso.link`, and `provider.created|updated|deleted`. Rows carry ids and reason
+codes only, never a token, code, assertion or secret. Each row includes the hash of the one before, the database
+refuses updates and deletes, and `GET /api/admin/identity/audit/verify` recomputes the chain and tells where it
+breaks.
+
+## Troubleshooting
+
+| What you see | Cause |
+|---|---|
+| 422 when the sign-in starts | The return URL is not an allowed origin: add the front end to `TRUSTED_ORIGINS`; or the challenge is missing |
+| 502 when the sign-in starts | The provider's discovery document cannot be fetched, its `issuer` differs from the configured one, or an endpoint is not https. `last_error` and the audit say which |
+| The provider says "invalid redirect URI" | The URI registered at the provider is not exactly the one in the provider's `redirect_uri` (scheme, host and path) |
+| "The login attempt is invalid or has expired" (400) after the provider | The state is older than 10 minutes, was used twice (back button, reload), or reached another tenant host |
+| Back on `/login` with "Sign-in failed" | `provider_failed`: look at the audit reason (`token_request_failed` is usually a wrong client secret or a missing redirect URI, `wrong_audience` a client id mismatch, `expired` or `not_yet_valid` a clock that is off by more than 60 seconds - run NTP) |
+| `error=link_required` | An account with that address exists and may not be linked automatically, see above |
+| `error=email_unverified` | The provider did not vouch for the address; switch on `trust_email` only if the provider is authoritative for it |
+| `error=account_unavailable` | The account is deactivated or deleted |
+
+To rotate a client secret, send `PUT /api/admin/identity/providers/{id}` with a new `client_secret`; leave it out
+to keep the stored one. To remove a provider: `DELETE` the same URL. Its links go away, the accounts stay.

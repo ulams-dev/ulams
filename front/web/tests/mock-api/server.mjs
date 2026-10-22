@@ -463,8 +463,8 @@ const routes = [
 const socialCodes = new Map();
 const challengeFor = (verifier) => createHash("sha256").update(verifier).digest("base64url");
 
-function socialStart(url, res) {
-  const returnUrl = url.searchParams.get("return_url") ?? "";
+function socialStart(url, res, returnParam = "return_url") {
+  const returnUrl = url.searchParams.get(returnParam) ?? "";
   const challenge = url.searchParams.get("challenge") ?? "";
   const allowed = /^http:\/\/[a-z]+\.app\.localhost:\d+\//.test(returnUrl);
   if (!allowed || !/^[A-Za-z0-9_-]{43}$/.test(challenge)) {
@@ -479,7 +479,7 @@ function socialStart(url, res) {
   res.end();
 }
 
-function socialExchange(body, res) {
+function socialExchange(body, res, tokenPrefix = "social-token") {
   let input = {};
   try {
     input = JSON.parse(body || "{}");
@@ -495,7 +495,7 @@ function socialExchange(body, res) {
     res.end(JSON.stringify({ success: false, message: "The login code is invalid or has expired. Start again." }));
     return;
   }
-  res.end(JSON.stringify({ success: true, message: "Login successful", data: { complete: true, token: `social-token-${input.code.slice(0, 8)}`, expires_at: new Date(Date.now() + 86_400_000).toISOString() } }));
+  res.end(JSON.stringify({ success: true, message: "Login successful", data: { complete: true, token: `${tokenPrefix}-${input.code.slice(0, 8)}`, expires_at: new Date(Date.now() + 86_400_000).toISOString() } }));
 }
 
 const server = createServer((req, res) => {
@@ -547,6 +547,23 @@ const server = createServer((req, res) => {
     const body = [];
     req.on("data", (chunk) => body.push(chunk));
     req.on("end", () => socialExchange(Buffer.concat(body).toString("utf8"), res));
+    return;
+  }
+  // single sign-on (identity package): the tenant lists its enabled providers, `start` redirects back with a code
+  if (req.method === "GET" && path === "/api/identity/providers") {
+    req.resume();
+    res.end(JSON.stringify({ success: true, message: "", data: [{ slug: "acme-sso", name: "Acme staff", protocol: "oidc" }] }));
+    return;
+  }
+  if (req.method === "GET" && path === "/api/identity/sso/acme-sso/start") {
+    req.resume();
+    socialStart(url, res, "return_to");
+    return;
+  }
+  if (req.method === "POST" && path === "/api/identity/sso/exchange") {
+    const body = [];
+    req.on("data", (chunk) => body.push(chunk));
+    req.on("end", () => socialExchange(Buffer.concat(body).toString("utf8"), res, "sso-token"));
     return;
   }
   const run = /^\/api\/tutor\/runs\/([0-9a-z]{26})\/events$/.exec(path);

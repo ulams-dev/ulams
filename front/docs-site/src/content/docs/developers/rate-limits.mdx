@@ -28,6 +28,8 @@ tenant has its own cache prefix ([Tenancy](/developers/tenancy/)).
 | `POST /api/lti/tool/exchange` | 30 / min | IP | fixed |
 | `GET /api/auth/social/{provider}` and `/callback` (shared bucket) | 30 / min | IP | fixed |
 | `POST /api/auth/social/exchange` | 30 / min | IP | fixed |
+| `/api/identity/*` (single sign-on: providers, start, callback, exchange; shared bucket) | 30 / min | IP | `ulams_identity.public_rate_limit` (config) |
+| `/api/admin/identity/*` ([single sign-on](/operators/single-sign-on/)) | 60 / min | user | `ulams_identity.admin_rate_limit` (config) |
 | `POST /api/liascript/progress/{topic}` | 120 / min | user or IP | fixed |
 | `POST /api/liascript/{id}/preview`, `POST /api/cmi5/fetch`, `POST /api/csp-report` | 60 / min | IP | fixed |
 | Image renderer `GET|POST /api/img` | 10 000 / min overall and 1 000 / min per IP. `GET` only when the limiter is enabled, `POST` always | host, IP | settings `images.private.rate_limit_global`, `rate_limit_per_ip`, `rate_limiter_status` (admin settings) |

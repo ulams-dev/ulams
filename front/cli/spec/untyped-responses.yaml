@@ -18,6 +18,8 @@
 "GET /api/cmi5/player/{cmi5AuId}": html-page
 "GET /api/courses/{id}/preview/{topic_id}": html-page
 "GET /api/courses/{id}/scorm": html-page
+"GET /api/identity/oidc/{slug}/callback": redirect
+"GET /api/identity/sso/{slug}/start": redirect
 "GET /api/images/img": redirect
 "GET /api/learner-insights/me/export": file-download
 "GET /api/living-course/oauth/{provider}/callback": redirect

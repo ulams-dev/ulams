@@ -4828,6 +4828,157 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/identity/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Identity audit trail, newest first
+         * @description The identity audit trail (permission `identity_audit_read`): hash-chained, append-only, never holds tokens,
+         *     assertions or secrets.
+         */
+        get: operations["identity.audit.list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/identity/audit/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recompute the hash chain of the audit trail */
+        get: operations["identity.audit.verify"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/identity/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Identity providers of this academy
+         * @description Identity providers of the tenant (admin only, permission `identity_provider_manage`). The client secret is
+         *     write-only: responses say whether one is set and, for long secrets, its last four characters.
+         */
+        get: operations["identity.providers.list"];
+        put?: never;
+        /** Add an OpenID Connect identity provider */
+        post: operations["identity.providers.create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/identity/providers/{provider}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One identity provider */
+        get: operations["identity.providers.get"];
+        /** Change an identity provider (leave client_secret out to keep the stored one) */
+        put: operations["identity.providers.update"];
+        post?: never;
+        /** Delete an identity provider and its account links (accounts stay) */
+        delete: operations["identity.providers.delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/providers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Identity providers a learner can sign in with
+         * @description Sign-in through a tenant's identity provider (OpenID Connect). Public routes on the tenant API host: the
+         *     provider rows live in the tenant's own database, so another tenant's slug, state or code never resolves here.
+         */
+        get: operations["identity.providers.public"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/sso/{slug}/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Start a sign-in: redirects the browser to the provider */
+        get: operations["identity.sso.start"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/oidc/{slug}/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Where the provider sends the browser back; redirects to the return URL with a one-time code or an error */
+        get: operations["identity.oidc.callback"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/identity/sso/exchange": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Redeem the one-time code with the verifier for an access token */
+        post: operations["identity.sso.exchange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/images/img": {
         parameters: {
             query?: never;
@@ -11179,6 +11330,89 @@ export interface components {
             library?: string;
             /** @example H5P.MultiChoice */
             main_library?: string;
+        };
+        IdentityAuditEntry: {
+            id?: number;
+            /** @enum {string} */
+            actor?: "user" | "scim" | "hris" | "system" | "idp";
+            actor_id?: number | null;
+            /** Format: uuid */
+            provider_id?: string | null;
+            /** @example sso.login */
+            action?: string;
+            subject_type?: string | null;
+            subject_id?: string | null;
+            /** @description Reason codes and ids only */
+            data?: Record<string, never> | null;
+            ip?: string | null;
+            /** Format: date-time */
+            created_at?: string;
+            hash?: string;
+        };
+        IdentityProvider: {
+            /** Format: uuid */
+            id?: string;
+            /** @description Used in the sign-in URLs; fixed after creation */
+            slug?: string;
+            /** @description Shown on the sign-in button */
+            name?: string;
+            /** @enum {string} */
+            protocol?: "oidc";
+            enabled?: boolean;
+            /** @description Domains of the organisation */
+            email_domains?: string[];
+            /** @description The provider is authoritative for e-mail addresses of email_domains: an existing non-privileged account with a verified address there is linked on first sign-in */
+            trust_email?: boolean;
+            /** @description Create an account on first sign-in */
+            jit_enabled?: boolean;
+            /** @enum {string} */
+            default_role?: "student" | "tutor";
+            oidc?: {
+                /** Format: uri */
+                issuer?: string;
+                client_id?: string;
+                scopes?: string[];
+                /** @enum {string} */
+                token_auth?: "client_secret_basic" | "client_secret_post";
+                userinfo?: boolean;
+            };
+            client_secret_set?: boolean;
+            client_secret_hint?: string | null;
+            /**
+             * Format: uri
+             * @description Register this redirect URI at the provider
+             */
+            redirect_uri?: string;
+            /** Format: date-time */
+            last_login_at?: string | null;
+            /** @description Reason code of the last failed sign-in */
+            last_error?: string | null;
+            /** Format: date-time */
+            created_at?: string;
+            /** Format: date-time */
+            updated_at?: string;
+        };
+        IdentityProviderInput: {
+            /** @description Lowercase letters, digits and hyphens; required on create, ignored on update */
+            slug?: string;
+            name?: string;
+            enabled?: boolean;
+            email_domains?: string[];
+            trust_email?: boolean;
+            jit_enabled?: boolean;
+            /** @enum {string} */
+            default_role?: "student" | "tutor";
+            oidc?: {
+                /** Format: uri */
+                issuer?: string;
+                client_id?: string;
+                scopes?: string[];
+                /** @enum {string} */
+                token_auth?: "client_secret_basic" | "client_secret_post";
+                userinfo?: boolean;
+            };
+            /** @description Write-only; stored encrypted */
+            client_secret?: string;
         };
         TopicInteractive: {
             id?: number;
@@ -23154,6 +23388,413 @@ export interface operations {
             };
             /** @description Forbidden */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.audit.list": {
+        parameters: {
+            query?: {
+                action?: string;
+                provider_id?: string;
+                /** @description Page: entries older than this id */
+                before_id?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Entries */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["IdentityAuditEntry"][];
+                    };
+                };
+            };
+            /** @description Needs identity_audit_read */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.audit.verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Result */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            ok?: boolean;
+                            checked?: number;
+                            broken_id?: number | null;
+                            reason?: string | null;
+                        };
+                    };
+                };
+            };
+            /** @description Needs identity_audit_read */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.list": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Providers */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["IdentityProvider"][];
+                    };
+                };
+            };
+            /** @description Needs identity_provider_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.create": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IdentityProviderInput"];
+            };
+        };
+        responses: {
+            /** @description Created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["IdentityProvider"];
+                    };
+                };
+            };
+            /** @description Needs identity_provider_manage */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid input, duplicate slug, or the academy has too many providers */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.get": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Provider */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["IdentityProvider"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IdentityProviderInput"];
+            };
+        };
+        responses: {
+            /** @description Updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: components["schemas"]["IdentityProvider"];
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Invalid input */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.delete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                provider: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Deleted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                    };
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.providers.public": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Enabled providers: slug, name and protocol, nothing else */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            /** @example acme-keycloak */
+                            slug?: string;
+                            /** @example Acme staff */
+                            name?: string;
+                            /** @enum {string} */
+                            protocol?: "oidc";
+                        }[];
+                    };
+                };
+            };
+        };
+    };
+    "identity.sso.start": {
+        parameters: {
+            query: {
+                /** @description base64url SHA-256 of a verifier only the caller's server knows (43 characters) */
+                challenge: string;
+                /** @description Where to send the browser afterwards; must be an origin of this academy (default: the learner app) */
+                return_to?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Redirect to the provider's authorization endpoint */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unknown or disabled provider */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Return URL not allowed or challenge missing */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The provider could not be reached or is misconfigured */
+            502: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.oidc.callback": {
+        parameters: {
+            query?: {
+                state?: string;
+                code?: string;
+                error?: string;
+            };
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Redirect to the return URL with ?code=... (success) or ?error=provider_denied|provider_failed|link_required|email_required|email_unverified|account_unavailable|signup_disabled */
+            302: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The state is invalid, expired or already used */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    "identity.sso.exchange": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description The one-time code from the return URL (43 characters) */
+                    code: string;
+                    /** @description The secret whose SHA-256 was sent as the challenge (43 to 128 characters) */
+                    verifier: string;
+                };
+            };
+        };
+        responses: {
+            /** @description Access token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        success?: boolean;
+                        message?: string;
+                        data?: {
+                            token?: string;
+                            /** Format: date-time */
+                            expires_at?: string;
+                        };
+                    };
+                };
+            };
+            /** @description The code is invalid, expired, used already or does not match the verifier */
+            400: {
                 headers: {
                     [name: string]: unknown;
                 };
