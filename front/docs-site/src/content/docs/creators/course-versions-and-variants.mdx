@@ -137,14 +137,29 @@ ulams course variants retire <variant> --yes
 The endpoints are in the [Course Builder API](/developers/course-builder-api/) (`sessions/{session}/variants`, `variants/{variant}`). Review a variant with
 `GET versions/{version}/diff?against=<base version>`: it is the same element diff the builder uses everywhere.
 
+### Updates when a source changes
+
+When a source of a course with variants changes, Living Course (see [the Git sync example](/creators/git-sync-worked-example/)) makes one update proposal for the base course and one for each
+variant, together. A variant gets its own proposal because it can cite passages the base does not, and because it is its own course. The element you did not
+change in a variant takes the base course's proposed edit without a new analysis (the item says "Same change as in the base course; no extra analysis was
+needed."), so it costs nothing extra. Only the elements you changed in the variant are analysed for it.
+
+On the update list and at the top of the review screen a text badge names the course a proposal is for: the variant's name, or "Base course". On the review
+screen, "Versions of this update" lists every proposal of the group with its status and how many items are decided and undecided; choose one to review it. Each
+proposal is still decided and applied on its own, and the base course is untouched when you apply a variant's proposal.
+
+Next to Accept, an item whose edit is the same in other versions has **Accept in all versions**. It accepts the item here and the identical edit (same element,
+same text before and after) in the other versions that have not decided it yet, and says how many: "Accepted here and in 2 other versions". Edits that differ
+stay for you to decide in their own version. Applying a variant's proposal does not mark the source revision as reviewed; only the base proposal does.
+
 ### What is not built yet
 
 - **Learners choosing a variant.** A variant course is hidden from the catalogue and reachable by an administrator (or by enrolling learners in it by hand).
   The picker on the course page, the optional placement check, assignment by an admin or an enrolment rule, the adaptive hint to switch, and carrying completed
   lessons over when a learner switches are planned.
 - **One purchase, all variants.** A variant has no product of its own: the plan is one entitlement for the family. Until then a paid base course sells the base only.
-- **Living Course for variants.** When a source changes, Living Course still proposes the update for the base course only. Proposing the matching patch for every variant
-  that inherits the changed element, rebasing a variant on a newer base, and certificates that name the variant are planned.
+- **Living Course for variants, still missing.** Improvements from learner insights are made for the base course only, rebasing a variant on a newer base
+  is not built, and certificates that name the variant are planned.
 - **Chat edits on a variant.** The element chat edits the base course.
 
 ## Decisions behind it
