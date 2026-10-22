@@ -101,9 +101,8 @@ their licence texts ship with the service. ReportBro (AGPL-3.0) was removed.
 
 ## Known issues (tracked in `docs/ROADMAP-TODO.md`)
 
-- Infrastructure defaults with copyleft licences: MinIO (AGPL-3.0, upstream archived) and Soketi
-  (AGPL-3.0). Fine unmodified as separate processes; to be replaced by permissive defaults
-  (SeaweedFS or RustFS, Laravel Reverb after the framework upgrade). Redis was replaced by Valkey
+- Infrastructure defaults with copyleft licences: MinIO (AGPL-3.0, upstream archived). Fine unmodified as a
+  separate process; to be replaced by a permissive default (SeaweedFS or RustFS). Redis was replaced by Valkey
   (BSD-3-Clause).
 - Binaries in the PHP image (ffmpeg built with GPL codecs, pngquant, gifsicle, jpegoptim) run as
   separate processes; distributing the image requires offering their source.

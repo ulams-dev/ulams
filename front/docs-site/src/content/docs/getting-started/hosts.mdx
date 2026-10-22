@@ -28,8 +28,6 @@ tenant slug such as `coffee`.
 | `http://content.localhost` | `api` through `/api/content` | Platform content origin |
 | `http://storage.localhost` | `minio` (S3 API) | Uploaded files, e.g. `http://storage.localhost/ulams-coffee/...`; SVGs get `script-src 'none'` |
 | `http://minio.localhost` | `minio` (console) | MinIO console; user `admin`, password from `MINIO_ROOT_PASSWORD` (`minio_secretpassword` by default) |
-| `http://ws.localhost` | `soketi` (6001) | WebSockets (the broadcast driver is `log` by default, so nothing uses it yet) |
-| `http://metrics.localhost` | `soketi` (9601) | Soketi metrics |
 
 The tenant blocks are wildcards (`*.localhost`, `*.app.localhost`, `*.admin.localhost`, `*.content.localhost`), so a new
 tenant needs no Caddy change. The six demo tenants use `coffee`, `oncall`, `nightsky`, `gravity`, `poland` and `ulam` as the slug

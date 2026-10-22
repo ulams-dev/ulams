@@ -326,21 +326,3 @@ services:
     cpus: 1.0
     mem_limit: 1536m
     pids_limit: 256
-
-  soketi:
-    image: quay.io/soketi/soketi:latest
-    networks:
-      - ulams
-    expose:
-      - "6001"
-      - "9601"
-    environment:
-      SOKETI_DEFAULT_APP_ID: uuid
-      SOKETI_DEFAULT_APP_KEY: key_TEST
-      SOKETI_DEFAULT_APP_SECRET: secret_TEST
-      SOKETI_ADAPTER: redis
-      SOKETI_REDIS_HOST: redis
-      SOKETI_REDIS_PORT: 6379
-      SOKETI_REDIS_PASSWORD: ulams
-      SOKETI_METRICS_SERVER_PORT: 9601
-      SOKETI_METRICS_ENABLED: 1
