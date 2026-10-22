@@ -13,6 +13,7 @@
     "experimentalDecorators": true,
     "strict": true,
     "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
 
     "paths": {

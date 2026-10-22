@@ -1,5 +1,5 @@
 {
- "summary": "604/687 covered, 83 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "606/689 covered, 83 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -2171,6 +2171,18 @@
    "key": "POST /api/admin/templates/{id}/unassign",
    "summary": "Remove template assignment to model",
    "command": "templates.unassign",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/theme/logo",
+   "summary": "Upload the tenant logo",
+   "command": "theme.logo-add",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/theme/logo",
+   "summary": "Remove the tenant logo",
+   "command": "theme.logo-delete",
    "status": "covered"
   },
   {

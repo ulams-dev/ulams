@@ -106,3 +106,21 @@ Permissions are defined in [Enum](src/Enums/ReportsPermissionsEnum.php) and seed
 ## Roadmap. Todo. Troubleshooting
 
 - Describe what "Settings" part of this package does (as only "Config" was described, and this package has/had second purpose)
+
+## Theme settings and the tenant logo
+
+The learner site's look is the public settings group `theme`:
+
+| Key | Value | Checked by the settings API |
+|---|---|---|
+| `theme.theme` | a preset name | one of `resources/themes.json` (`ThemePresets`), the list generated from `front/ui/src/theme/presets.ts` (`yarn workspace @ulams/ui theme-manifest`; CI fails when it is stale) |
+| `theme.accent` | brand colour | six digit hex (`#c8102e`) |
+| `theme.logo` | storage path of the logo (type `image`, so the public API returns its URL) | refused on the generic endpoints: it is written only by the logo endpoint |
+| `theme.logoAlt` | text alternative of the logo | at most 120 characters |
+
+`POST /api/admin/theme/logo` (multipart `logo`, optional `alt`; `settings_update`; throttled to 20 a minute) stores a
+PNG or SVG of at most 200 KB in the tenant's storage under `theme/logo-<uuid>.<ext>`, replaces the previous logo file
+and sets `theme.logo` and `theme.logoAlt`. The type comes from the content. A PNG must decode (at most 4096 px a
+side). An SVG goes through `SvgSanitizer`, an allow-list of elements and attributes: a script, `style`,
+`foreignObject`, event attribute, DOCTYPE or any reference to another address makes the upload fail with the reason,
+and the stored file is the re-serialised document. `DELETE /api/admin/theme/logo` removes the file and both settings.

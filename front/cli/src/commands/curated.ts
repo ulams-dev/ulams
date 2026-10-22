@@ -240,15 +240,15 @@ export const curatedCommands: AnyCommand[] = [
   defineCommand({
     ...admin,
     id: "theme.set",
-    summary: "Change the tenant theme name and accent colour",
+    summary: "Change the tenant theme name and accent colour (a preset of the shared list; a six digit hex accent)",
     kind: "write",
     idempotent: true,
     scopes: ["settings:write"],
     endpoints: ["GET /api/admin/settings", "POST /api/admin/settings", "PUT /api/admin/settings/{id}"],
-    input: z.object({ theme: z.string().optional().describe("Theme name."), accent: z.string().optional().describe("Accent colour, e.g. #C2552D.") }),
+    input: z.object({ theme: z.string().optional().describe("Theme name."), accent: z.string().optional().describe("Accent colour as six digit hex, e.g. #C2552D.") }),
     output: z.unknown(),
     mcp: { toolset: "settings" },
-    examples: [{ title: "Set the accent", argv: "theme set --accent '#0A7' --json" }],
+    examples: [{ title: "Set the accent", argv: "theme set --accent '#00AA77' --json" }],
     async run(ctx, i) {
       if (i.theme === undefined && i.accent === undefined) throw new CliError("INPUT_INVALID", "Pass --theme and/or --accent.");
       const out: Record<string, unknown> = {};
