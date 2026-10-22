@@ -1,0 +1,167 @@
+{
+  "title": "Payment Stablecoins: Risks and Regulatory Recommendations",
+  "subtitle": "For policy staff and finance students who need to assess how payment stablecoins are structured, where their prudential risks lie, and how regulators can respond.",
+  "summary": "For policy staff and finance students who need to assess how payment stablecoins are structured, where their prudential risks lie, and how regulators can respond.",
+  "description": "This intermediate course walks through how payment stablecoins are minted, redeemed, backed by reserve assets, transferred and stored, and who performs each activity, including custodial wallet providers. It then distinguishes the prudential risk categories identified in the interagency report: run risk, payment system risk, and risks of scale such as systemic risk and concentration of economic power. Learners examine the regulatory gaps that leave these arrangements without consistent oversight and match each recommended legislative measure to the risk it targets. The course closes by evaluating the interim measures available to agencies and the Financial Stability Oversight Council if Congress does not act.",
+  "level": "intermediate",
+  "language": "en",
+  "duration": "30 min",
+  "target_group": "Policy staff and finance students reading the stablecoin report",
+  "lessons": [
+    {
+      "title": "How Stablecoin Arrangements Work",
+      "summary": "Learners build the foundation on creation, redemption, reserves, transfer, storage and the participants in an arrangement.",
+      "duration": null,
+      "topics": [
+        {
+          "type": "richtext",
+          "title": "Minting, Redemption, Reserves and Transfer",
+          "summary": "Covers how stablecoins are created and redeemed, how reserve assets and redemption rights vary, how transfers and storage work, and which activities and participants support an arrangement.",
+          "introduction": null,
+          "description": null,
+          "duration": "10 min",
+          "preview": false,
+          "fields": {
+            "value": "You already know how a bank deposit works: you hold a claim on a bank and can ask for dollars back. Stablecoins aim at the same stable value, but the report shows that the claim behind them can look very different. This lesson covers how a coin is minted and redeemed, what backs it, how it moves, and who does the work.\n\n#### Minting, reserves and redemption\n\nStablecoins are generally *minted* in exchange for fiat currency that an issuer receives from a user or third party. Many promise or imply redemption at par on request, and are often advertised as backed by \"reserve assets\". Three points of variation matter:\n\n- **Reserves:** There are no standards for reserve composition, and public disclosure is inconsistent in both content and frequency. Some arrangements reportedly hold nearly all reserves in insured-bank deposits or U.S. Treasury bills. Others reportedly hold riskier assets such as commercial paper, corporate and municipal bonds, and other digital assets.\n- **Redemption rights:** These vary in who may redeem and in what quantities. Some issuers may postpone redemption payments for seven days or suspend redemptions at any time. Minimum redemption amounts can be far above a typical user's holdings.\n- **Nature of the claim:** Some coins give users a claim on the issuer, while others give no direct redemption rights. Even if reserves equal coins outstanding, other creditors may have competing claims on them.\n\n> **Benchmark: the insured deposit.** A demand deposit is a claim on the issuing bank to receive U.S. dollars on request. It is insured up to certain amounts, has depositor preference in resolution, and the bank can access emergency liquidity and is supervised to limit balance-sheet risk. Holding reserves at an insured bank does not by itself extend deposit insurance to the stablecoin user.\n\n| Feature | Public blockchain | Permissioned blockchain |\n|---|---|---|\n| Access | Open; node operators need no prior approval | Participants must obtain permission |\n| Settlement | Consensus can need greater computational resources, which constrains throughput | More certainty about who monitors the network, so faster and more predictable settlement |\n| Transparency and security | Transparency from a public ledger | Depending on design, possibly less transparency and security |\n| Cost | May be more expensive and energy intensive than traditional payment systems | Not addressed in the source |\n\n**On-chain vs. off-chain:** transfers between users of different wallets are recorded on the distributed ledger (on-chain). Transfers between users of the same wallet provider can be recorded on the provider's own books (off-chain), without touching the ledger.\n\n#### Storage and the traditional comparison\n\nIn some arrangements, users can hold and spend coins directly, like bearer assets transferred peer-to-peer, without a custodian. In others, coins can only be accessed through an account with a wallet provider, and a limited group of participants transfers assets for account holders. Many users voluntarily rely on custodians even when they could self-hold. Traditional retail payments (check, ACH, cards) all rely on financial institutions, each keeping its own ledger, and their network rules govern processing order and limit customer liability for unauthorized transactions.\n\n#### Activities and who performs them\n\n| Activity | What it involves |\n|---|---|\n| Governance | Defining and ensuring compliance with standards for buying, redeeming, holding and transferring |\n| Reserve management | Setting reserve standards, aiming for a one-to-one ratio, and making investment decisions including asset riskiness |\n| Reserve custody | A custodian or trust acquires and holds the assets and executes transactions |\n| Settlement | Parties authenticate and validate transactions and, on-chain, update the ledger |\n| Distribution | Access channels and services for users to obtain, hold and transact |\n\n**Scenario check.** Imagine one party handles governance, another minting and burning, another ledger validation, another reserve management, and others face users. Which participant may be a user's only recourse?\n\nThe report notes that these activities can be highly distributed and complex. Many are done by the issuer and its agents, but others by third parties such as wallet providers or exchanges. Users may rely on **custodial wallet providers** to hold and transfer coins for them. Depending on the arrangement's terms, users may have only limited rights, if any, against the issuer, so their recourse could be limited to the custodial wallet provider.\n\n---\n\n**Sources**\n\n1. §2 Interagency Report On Stablecoins — Report on Stablecoins\n2. §2 Interagency Report On Stablecoins — Report on Stablecoins\n3. §2 Interagency Report On Stablecoins — Report on Stablecoins\n4. §2 Interagency Report On Stablecoins — Report on Stablecoins\n5. §2 Interagency Report On Stablecoins — Report on Stablecoins\n"
+          },
+          "questions": null
+        },
+        {
+          "type": "gift",
+          "title": "Quiz: Minting, Redemption, Reserves and Transfer",
+          "summary": null,
+          "introduction": null,
+          "description": null,
+          "duration": null,
+          "preview": false,
+          "fields": {
+            "value": "Check what you learned in “Minting, Redemption, Reserves and Transfer”.",
+            "max_attempts": null,
+            "min_pass_score": null,
+            "counts_to_grade": false,
+            "weight": 1,
+            "randomize_order": false
+          },
+          "questions": [
+            {
+              "type": "multiple_choice",
+              "gift": "A stablecoin issuer holds all of its reserves as deposits at an FDIC-insured bank. How does this affect a stablecoin holder's protection compared with a demand deposit held directly at an insured bank? {=Deposit insurance does not automatically extend to the holder; the holder has an insured claim only if pass-through coverage requirements are met, and otherwise the deposit is insured only to the issuer.#Reserves at an insured bank do not by themselves mean deposit insurance extends to the stablecoin user. Without pass-through coverage, the deposit is insured only to the issuer itself, whereas a demand deposit is a direct, insured claim on the bank. ~The holder has the same insured claim on the bank as a depositor, because the reserves sit in an insured institution. ~The holder is covered through depositor preference, because the issuer's reserves are held at a bank. ~The holder is protected by the bank's access to emergency liquidity, which passes through to every stablecoin user.}",
+              "score": 1
+            },
+            {
+              "type": "multiple_choice",
+              "gift": "Compared with a public blockchain, what advantage does the report attribute to a permissioned blockchain, and what is the possible trade-off? {=More certainty about who monitors the network, giving faster and more predictable settlement, but possibly less transparency and security.#Permissioned blockchains require permission to participate, so it is clearer who is responsible for monitoring the network and following its rules. This can mean faster, more predictable settlement, though depending on design they may offer less transparency and security. Open access is a feature of public blockchains, not permissioned ones. ~Open access for any node operator, giving greater transparency, but slower settlement. ~Lower energy use because transactions are recorded off-chain on a wallet provider's books, but no clear responsibility for network rules. ~Greater computational throughput through consensus, but higher cost per transaction.}",
+              "score": 1
+            },
+            {
+              "type": "multiple_choice",
+              "gift": "In a stablecoin arrangement, different parties handle governance, minting and burning, ledger validation, reserve management and user interfaces. Depending on the arrangement's terms, whose services may be the only recourse available to a user? {=The custodial wallet provider that holds and transfers the coins on the user's behalf#Users may rely on custodial wallet providers to hold and transfer coins, and may have limited rights, if any, against the issuer. Their recourse could therefore be limited to the custodial wallet provider. Node operators and reserve custodians perform back-end functions and do not face users. ~The node operators who validate transactions on the ledger ~The custodian that holds the reserve assets ~The party responsible for governance standards}",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Risks and the Recommended Response",
+      "summary": "Learners analyze the prudential risks of payment stablecoins and the legislative and interim measures proposed to address them.",
+      "duration": null,
+      "topics": [
+        {
+          "type": "richtext",
+          "title": "Prudential Risks and Regulatory Gaps",
+          "summary": "Examines stablecoin runs, payment system risks, risks of scale, and why current oversight is inconsistent.",
+          "introduction": null,
+          "description": null,
+          "duration": "10 min",
+          "preview": false,
+          "fields": {
+            "value": "You already know that a payment stablecoin is meant to hold a stable value and that users rely on its redeemability. This lesson looks at what happens when that reliance fails, and at the other risks the report identifies. Per the report, an instrument works as a means of payment or store of value only when there is confidence in its value, *particularly in periods of stress*. For stablecoins, that confidence rests partly on redeemability and on the belief that a stabilization mechanism will work in normal and stressed conditions.\n\n#### How confidence loss becomes a run\n\n1. **Confidence is undermined.** The report lists four factors: reserve assets that could fall in price or become illiquid; a failure to safeguard reserve assets; unclear redemption rights; and operational risks tied to cybersecurity and data.\n2. **A run starts.** Even the *prospect* of a stablecoin not performing as expected can trigger a run, defined as a self-reinforcing cycle of redemptions and fire sales of reserve assets.\n3. **Markets are disrupted.** Fire sales of reserve assets could disrupt critical funding markets, depending on the type and volume of assets involved.\n4. **Contagion.** Runs could spread from one stablecoin to another, or to other financial institutions believed to have a similar risk profile.\n\n> **Key takeaway:** The report notes the financial stability risk of a run would be greater for stablecoins backed by potentially volatile and illiquid assets than for those backed one-for-one by high quality liquid assets. A run under strained market conditions may amplify a shock to the economy and financial system.\n\n#### Payment system risks\n\nPayment stablecoins face many of the same basic risks as traditional payment systems: credit, liquidity, operational and settlement risk, plus risks from ineffective governance. Unmanaged, these make systems less available and reliable and can channel financial shocks. Three are worth distinguishing:\n\n- **Operational risk:** deficiencies in systems, processes, human error, management failures or external events that degrade or break services. Stablecoins also face novel risks in validating transactions and maintaining the distributed ledger. For example, validation incentives may not motivate participants enough to meet demand, causing network congestion. Where no single organization controls the infrastructure, risk is harder to manage or supervise.\n- **Settlement risk:** the risk that settlement does not occur as expected. Where rules do not clearly define when settlement is final, uncertainty rises. Open, permissionless networks combined with consensus-based settlement may leave technical settlement uncertain for longer, with no party accountable for legal finality.\n- **Liquidity risk:** can arise from mismatched timing, for instance a stablecoin arrangement that runs 24/7 while the system used to fund issuance and return fiat on redemption keeps regular business hours. The result can be temporary shortages of stablecoins available for payments.\n\n#### Scenario: a weekend payment arrangement\n\nA stablecoin arrangement processes payments around the clock, but the payment system that funds issuance and returns fiat on redemption works only during business hours. Many different parties operate the infrastructure, and no single organization is accountable for the whole.\n\n- **Liquidity:** the timing misalignment can cause temporary shortages of stablecoins available to make payments.\n- **Settlement:** if the arrangement's rules do not define when settlement is final, participants face heightened uncertainty and credit and liquidity pressures.\n- **Operational:** if validation incentives are weak, congestion can delay payments, and an error or fraud could cost users money.\n- **Supervision:** with many entities involved, the issuer's supervisor may struggle to require effective risk management across the whole arrangement.\n\n#### Risks of scale and regulatory gaps\n\nStablecoins are small relative to traditional money but have grown rapidly. Growth may come from economies of scale and scope, network effects and first-mover advantages. The report raises three concerns:\n\n1. **Systemic risk:** failure or distress of an issuer or key participant, such as a custodial wallet provider, could harm financial stability and the real economy.\n2. **Concentration of economic power:** combining an issuer or wallet provider with a commercial firm is analogous to the traditional concerns about mixing banking and commerce.\n3. **Anti-competitive effects:** widely adopted stablecoins could impose undue frictions or costs on users who switch, a concern likely greater without interoperability standards.\n\nAggregate growth matters too: if banks lose retail deposits to stablecoins and reserves do not support credit creation, borrowing costs could rise and credit availability could fall.\n\n**Regulatory gaps:** stablecoin arrangements are not subject to a consistent set of prudential standards. The many key parties and operational complexity also challenge supervisors. Even where the issuer is a bank, insight into other key entities depends on the structure of the relationship and the services provided. The report concludes a consistent, comprehensive framework is needed to increase transparency and ensure stablecoins function in normal and stressed conditions.\n\n---\n\n**Sources**\n\n1. §2 Interagency Report On Stablecoins — Report on Stablecoins\n2. §2 Interagency Report On Stablecoins — Report on Stablecoins\n3. §2 Interagency Report On Stablecoins — Report on Stablecoins\n4. §2 Interagency Report On Stablecoins — Report on Stablecoins\n"
+          },
+          "questions": null
+        },
+        {
+          "type": "gift",
+          "title": "Quiz: Prudential Risks and Regulatory Gaps",
+          "summary": null,
+          "introduction": null,
+          "description": null,
+          "duration": null,
+          "preview": false,
+          "fields": {
+            "value": "Check what you learned in “Prudential Risks and Regulatory Gaps”.",
+            "max_attempts": null,
+            "min_pass_score": null,
+            "counts_to_grade": false,
+            "weight": 1,
+            "randomize_order": false
+          },
+          "questions": [
+            {
+              "type": "multiple_choice",
+              "gift": "According to the report, which stablecoin would face the greatest financial stability risk if a run occurred? {=One backed by potentially volatile and illiquid reserve assets#The report states that run risks to financial stability are greater when reserves are volatile and illiquid, because fire sales of such assets can disrupt funding markets. Stablecoins backed one-for-one by high quality liquid assets pose less of this risk. ~One backed one-for-one by high quality liquid assets ~One whose reserves are held entirely in an insured depository institution ~One that is used only for trading on digital asset platforms}",
+              "score": 1
+            },
+            {
+              "type": "multiple_choice",
+              "gift": "A stablecoin arrangement operates 24/7, but the payment system that funds issuance and returns fiat upon redemption operates only during regular business hours. Which risk does the report say this misalignment can create? {=Liquidity risk, through temporary shortages of stablecoins available for payments#The report gives this exact timing mismatch as an example of liquidity risk, causing temporary shortages of stablecoins for payments. Settlement risk concerns whether and when settlement is final, which is a different problem. ~Settlement risk, because the ledger can no longer reach consensus ~Concentration risk, because one commercial firm controls issuance ~Credit risk, because reserve assets automatically lose value overnight}",
+              "score": 1
+            },
+            {
+              "type": "multiple_choice_with_multiple_right_answers",
+              "gift": "Which of the following are policy concerns the report associates with the rapid scaling of an individual stablecoin? {~%33.33333%Failure of an issuer or key participant could threaten financial stability ~%33.33333%Combining an issuer or wallet provider with a commercial firm could concentrate economic power ~%33.33333%Users may face undue costs when switching to other payment products, especially without interoperability standards ~%-50%Reserve assets will always be held in uninsured accounts ~%-50%Stablecoin transactions cannot be recorded on a distributed ledger}",
+              "score": 1
+            }
+          ]
+        },
+        {
+          "type": "richtext",
+          "title": "Legislative Recommendations and Interim Measures",
+          "summary": "Maps the recommended federal prudential framework to the risks it targets and reviews the interim steps available without Congressional action.",
+          "introduction": null,
+          "description": null,
+          "duration": "10 min",
+          "preview": false,
+          "fields": {
+            "value": "You have seen the three prudential risk groups the report identifies: run risk, payment system risk, and risks of scale. This lesson maps each to the legislative response the agencies recommend. It then looks at what can happen if Congress does not act. The recommendations apply to **payment stablecoins**: those designed to hold a stable value relative to a fiat currency and with the potential to be used as a widespread means of payment. The agencies advise that legislation should give regulators flexibility, because this is an emerging and rapidly developing type of financial instrument.\n\n| Risk | Recommended legislative measure |\n|---|---|\n| User protection and run risk | Require stablecoin issuers to be **insured depository institutions**, supervised at the depository institution and holding company level |\n| Payment system risk | Require **custodial wallet providers** to be subject to appropriate federal oversight; give the issuer's supervisor authority to require **any entity performing critical activities** to meet risk-management standards |\n| Systemic risk and concentration of economic power | Require issuers to comply with **activities restrictions** limiting affiliation with commercial entities; give supervisors authority to set **interoperability** standards; consider limits on wallet providers' commercial affiliation or use of transaction data |\n\n**Why insured depository institutions?** Legislation would limit issuance, redemption and maintenance of reserve assets to these entities and prohibit others from issuing payment stablecoins. Such institutions face supervision by a federal banking agency, consolidated supervision by the Federal Reserve at the holding company level, and capital and liquidity standards. They also fall under a special resolution regime that protects insured deposits and gives deposit claims priority over those of general creditors.\n\n**Why look beyond issuers?** Functions in an arrangement may be spread across different parties, so a framework focused only on issuers would likely leave some payment system risks inadequately or inconsistently addressed. Oversight of custodial wallet providers should include authority to restrict them from lending customer stablecoins and to require risk-management, liquidity and capital compliance. Critical entities could be held to standards such as the Principles for Financial Market Infrastructures, as adapted to stablecoin arrangements.\n\n> **Key takeaway:** Each recommendation targets a specific risk. Issuer status addresses run risk. Wallet and critical-entity oversight addresses payment system risk. Activities restrictions and interoperability address scale and concentration.\n\n**If Congress does not act.** The agencies say legislation is urgently needed, but meanwhile they will use existing authorities to the extent possible. For example, banking agencies evaluating a charter application will seek to ensure applicants address the report's risks. Stablecoins that are securities, commodities and/or derivatives are subject to the securities laws and/or the CEA. Consumer financial protection laws provide safeguards in the payments sector. An arrangement offering money transmission services may trigger Bank Secrecy Act AML/CFT obligations enforced by FinCEN.\n\nIn the absence of Congressional action, the agencies recommend that the **Financial Stability Oversight Council** consider the steps available to it. These may include designating certain activities within stablecoin arrangements as, or as likely to become, systemically important **payment, clearing, and settlement (PCS) activities**.\n\n**Scenario.** Congress has not legislated, and a payment stablecoin is growing quickly. Its reserve assets are of uncertain quality, and its operations are spread across several parties.\n\n1. *Agencies act first.* The banking agencies apply the report's risks in charter reviews, and securities, CEA, consumer protection and BSA rules apply where relevant.\n2. *The Council may then step in.* It can designate certain arrangement activities as systemically important PCS activities.\n3. *Effect of designation.* The appropriate agency can set risk-management standards for institutions engaged in those activities, covering the assets backing the stablecoin, the operation of the arrangement, and other prudential standards. Those institutions would also face an examination and enforcement framework, and any designation would follow a transparent process.\n\n**Evaluate:** this route can reach activities without new legislation, but the report calls legislation the comprehensive solution. PCS designation applies only to the extent activities do not involve the offer or sale of a security or pre-trade or execution activity.\n\n---\n\n**Sources**\n\n1. §2 Interagency Report On Stablecoins — Report on Stablecoins\n2. §2 Interagency Report On Stablecoins — Report on Stablecoins\n3. §2 Interagency Report On Stablecoins — Report on Stablecoins\n4. §2 Interagency Report On Stablecoins — Report on Stablecoins\n5. §2 Interagency Report On Stablecoins — Report on Stablecoins\n"
+          },
+          "questions": null
+        },
+        {
+          "type": "gift",
+          "title": "Quiz: Legislative Recommendations and Interim Measures",
+          "summary": null,
+          "introduction": null,
+          "description": null,
+          "duration": null,
+          "preview": false,
+          "fields": {
+            "value": "Check what you learned in “Legislative Recommendations and Interim Measures”.",
+            "max_attempts": null,
+            "min_pass_score": null,
+            "counts_to_grade": false,
+            "weight": 1,
+            "randomize_order": false
+          },
+          "questions": [
+            {
+              "type": "multiple_choice",
+              "gift": "Which legislative recommendation is meant to address user protection and stablecoin run risk? {=Require stablecoin issuers to be insured depository institutions, supervised at the depository institution and holding company level#The report links user protection and run risk to requiring issuers to be insured depository institutions. Wallet provider oversight targets payment system risk, while activities restrictions and interoperability target systemic risk and concentration of economic power. ~Require custodial wallet providers to be subject to appropriate federal oversight ~Require issuers to comply with activities restrictions limiting affiliation with commercial entities ~Give supervisors authority to set interoperability standards among stablecoins}",
+              "score": 1
+            },
+            {
+              "type": "multiple_choice_with_multiple_right_answers",
+              "gift": "Which of the following measures does the report recommend to address systemic risk and concentration of economic power? {~%50%Activities restrictions limiting issuers' affiliation with commercial entities ~%50%Supervisory authority to implement standards promoting interoperability among stablecoins ~%-50%Authority to require any critical entity to meet risk-management standards ~%-50%Requiring custodial wallet providers to be subject to federal oversight}",
+              "score": 1
+            },
+            {
+              "type": "multiple_choice",
+              "gift": "Congress has not legislated and a payment stablecoin is scaling quickly. What step could the Financial Stability Oversight Council consider under the report's interim measures? {=Designating certain activities within the stablecoin arrangement as systemically important payment, clearing, and settlement activities#Without legislation, the Council can designate PCS activities, which lets the appropriate agency set risk-management standards. Limiting issuance to insured depository institutions and prohibiting other issuers would require legislation. ~Prohibiting all non-bank entities from issuing payment stablecoins ~Requiring all stablecoin issuers to become insured depository institutions ~Granting stablecoin holders deposit insurance directly}",
+              "score": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -99,10 +99,9 @@ small commits → tests → summary.
 
 ## Open decisions
 
-- [x] (new) Course versions with a visual diff and course variants by level and role: the owner approved the plan
-      (`docs/plans/course-versions-and-variants.md`) on 2026-10-22 with the recommended defaults for the open questions Q1 to Q11
-      (see "Decisions made"). Still open: ADR 0192 is Proposed until the owner accepts it, and the spec (`docs/ROADMAP-PROMPT.md`)
-      needs a matching paragraph in Phases 3 and 4, which only the owner may approve
+- [x] (new) Decision 2026-10-22: the owner accepted ADR 0192 and the plan `docs/plans/course-versions-and-variants.md` with its
+      recommended defaults for Q1 to Q11, approved the matching spec sections (ROADMAP-PROMPT 3.1 and 4.4), and accepted that variant
+      courses stay unlisted and unsold on their own until CV-5 routing exists
 
 - [ ] (new) Organic marketing campaign (`docs/plans/organic-marketing.md`, draft): analytics, SEO, Hacker News, Product Hunt,
       Reddit, directories, LinkedIn and e-learning communities. Waiting for approval; nothing is published before the owner
@@ -139,7 +138,7 @@ stale content.
 
 ## Phase 0: Foundation and audit
 
-Plan (new): `docs/plans/leftovers-0-2.md` (draft, waiting for approval; ADRs 0040–0056 Proposed) covers every
+Plan (new): `docs/plans/leftovers-0-2.md` (approved 2026-10-22; ADRs 0040–0056 Proposed) covers every
 open Phase 0, 1 and 2 item as work packages L0-01…L2-24; owner questions #41–#44, #46–#63.
 
 ### 0.1 Explore and report (no code)
@@ -615,8 +614,8 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
 
 ### 3.1 Course versions with a visual diff (new)
 
-Requested by the owner on 2026-10-22. Plan: `docs/plans/course-versions-and-variants.md` (draft, waiting for approval;
-ADR 0192 Proposed). Builds on the builder version history (ADR 0010, `course_builder_versions`), the element-aware
+Requested by the owner on 2026-10-22. Plan: `docs/plans/course-versions-and-variants.md` (approved 2026-10-22;
+ADR 0192 Accepted). Builds on the builder version history (ADR 0010, `course_builder_versions`), the element-aware
 `BlueprintDiff` (the API already accepts `?against=<version>`), the CAC-4 three-way merge (`ElementMerge`) and Blueprint v3.
 Shown as "Coming" on the Comparison page and in the docs (`creators/course-versions-and-variants`).
 
@@ -637,7 +636,7 @@ Shown as "Coming" on the Comparison page and in the docs (`creators/course-versi
 
 ## Phase 4: Personalisation
 
-Plan (new): `docs/plans/phase-4.md` (draft, waiting for approval; ADRs 0057–0062 Proposed). Milestones M4.1 signal
+Plan (new): `docs/plans/phase-4.md` (approved 2026-10-22; ADRs 0057–0062 Proposed). Milestones M4.1 signal
 stream → M4.2 risk scoring → M4.3 privacy and transparency → M4.4 nudges and recovery → M4.5 remediations →
 M4.6 author analytics → M4.7 AI tutor → M4.8 adaptive interface, experiments, evals. Designs:
 `front/docs/design/stitch/personalisation/`. Owner questions #59–#63.
@@ -683,12 +682,13 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 ### 4.3 Trust and transparency
 - [ ] Reasons for every recommendation · AI on/off and provider per tenant (partial: learner-side reasons on the Extra help card and on suggested lesson views, #315, #320; per-tenant provider choice not built)
 - [ ] AI content labelling · documented data flows, no training on customer content (partial: AI labels on remediations, reflection feedback, tutor answers and AI-assisted topics, #315, #319, #314; the data-flow documentation is open)
+      Note 2026-10-22 (market research, docs/reports/market-research-2026-10.md): EU AI Act Art. 50 transparency and marking obligations apply from 2 Dec 2026, so every remaining AI-generated surface (builder drafts, variants, exports) needs its label before that date.
 
 ### 4.4 Course variants by level and role (new)
 
 Requested by the owner on 2026-10-22: today every learner gets the same course regardless of level and role, so the expert
 wades through basics and the beginner gets lost in the middle. Plan: `docs/plans/course-versions-and-variants.md` (approved
-2026-10-22; ADR 0192 Proposed). Variants are branches of one course: shared sources, fragments and citations,
+2026-10-22; ADR 0192 Accepted). Variants are branches of one course: shared sources, fragments and citations,
 each variant reviewed as a diff against the base. Shown as "Coming" on the Comparison page until the whole item set below
 is done; the docs page (`creators/course-versions-and-variants`) says which parts are built (CV-4: drafting, review and apply in the
 builder). Related: the Phase 6.1 policy lifecycle items (departmental course variants).
@@ -1000,7 +1000,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       `BASE_OUTDATED` and `STALE_PROPOSAL` into the same error; the three-way merge, conflict files and `resolve` are CAC-4, and nothing watches a Git repository yet (CAC-6, CAC-7)
 - [ ] GitHub Action + Docker image; preview deployment per PR
 - [ ] Git merge triggers Living Course update proposal
-- [ ] (new) CLI plan `docs/plans/cli.md`: agent-first `ulams` CLI and MCP server (draft, waiting for approval;
+- [ ] (new) CLI plan `docs/plans/cli.md`: agent-first `ulams` CLI and MCP server (approved 2026-10-22;
       ADRs 0072–0079)
 - [x] (new) M1 CLI core: `front/cli` workspace, command registry, output contract and exit codes, profiles,
       `login` (token/password/demo), `whoami`, `ulams api`, `schema`, `describe`

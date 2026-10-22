@@ -78,6 +78,8 @@ export function platformLlmsTxt(origin: string): string {
     `- [llms.txt of the documentation](${PRODUCT_DOCS}llms.txt): an index of every guide as Markdown, with the OpenAPI document and the JSON Schemas`,
     `- [Comparison](${origin}/comparison/): what ulams does against other platforms`,
     `- [FAQ](${origin}/faq/)`,
+    `- [Content cost](${origin}/content-cost/): what creating e-learning content costs and how ulams reduces it`,
+    `- [Reporting](${origin}/reporting/): analytics, compliance reports and exports`,
     "",
     "Each academy serves its own /llms.txt on its own host.",
     "",
