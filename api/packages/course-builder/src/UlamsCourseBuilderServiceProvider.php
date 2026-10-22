@@ -19,7 +19,9 @@ use Ulams\CourseBuilder\ContentTypes\LiaScriptType;
 use Ulams\CourseBuilder\ContentTypes\RichTextType;
 use Ulams\CourseBuilder\Contracts\FragmentArchive;
 use Ulams\CourseBuilder\Contracts\RemovalPolicy;
+use Ulams\CourseBuilder\Contracts\SourceHistory;
 use Ulams\CourseBuilder\Ingestion\NoFragmentArchive;
+use Ulams\CourseBuilder\Ingestion\NoSourceHistory;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
 use Ulams\CourseBuilder\Console\BackfillReleasesCommand;
 use Ulams\CourseBuilder\Console\EvalCommand;
@@ -45,6 +47,7 @@ use Ulams\CourseBuilder\Pipeline\PromptContext;
 use Ulams\CourseBuilder\Pipeline\VariantOutlineService;
 use Ulams\CourseBuilder\Services\AiAssistedTopics;
 use Ulams\CourseBuilder\Services\ReleaseRecorder;
+use Ulams\CourseBuilder\Services\VersionComparer;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\CourseBuilder\Services\VariantService;
 use Ulams\CourseBuilder\Services\VersionService;
@@ -108,6 +111,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         AiAssistedTopics::class => AiAssistedTopics::class,
         RemovalPolicy::class => DeleteEverything::class,
         FragmentArchive::class => NoFragmentArchive::class,
+        SourceHistory::class => NoSourceHistory::class,
     ];
 
     public function register(): void
