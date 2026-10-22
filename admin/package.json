@@ -65,7 +65,8 @@
       "<rootDir>/config/jest/setupTests.js"
     ],
     "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/src/$1"
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^@ulams/images$": "<rootDir>/../front/sdk/src/images.ts"
     },
     "testPathIgnorePatterns": [
       "/e2e/"
@@ -160,6 +161,7 @@
   },
   "devDependencies": {
     "@ant-design/pro-cli": "^3.4.0",
+    "@babel/plugin-syntax-import-attributes": "^7.26.0",
     "@axe-core/playwright": "4.13.0",
     "@playwright/test": "^1.63.0",
     "@testing-library/react": "^13.4.0",

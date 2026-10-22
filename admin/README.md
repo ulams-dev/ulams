@@ -29,7 +29,13 @@ Platform login: `admin@ulams.app` / `secret`. On a tenant, `admin@<slug>.ulams.a
 
 `REACT_APP_API_URL` sets a fixed API URL; without it the API comes from the host rule `REACT_APP_TENANT_API_HOST_PATTERN` (default `{slug}.admin.localhost=>http://{slug}.localhost`).
 
+`REACT_APP_IMAGE_SERVICE` (`php` default, `cloudflare`, `noop`) sets how image URLs are built (ADR 0193, `src/services/ulams/imageService.ts`, builder from `@ulams/sdk/images` via the `@ulams/images` alias). With `php` the admin calls the API resizer exactly as before. See the operators page "Admin and front images".
+
 ## Tests
+
+```bash
+corepack yarn workspace admin jest   # unit tests (jest)
+```
 
 ```bash
 corepack yarn workspace admin playwright:headed   # end-to-end

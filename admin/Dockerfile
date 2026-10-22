@@ -18,6 +18,9 @@ COPY front/ui/src/schema.ts front/ui/src/schema.ts
 COPY front/ui/catalogue/learner-layout-manifest.json front/ui/catalogue/learner-layout-manifest.json
 # the Theme settings screen shares the preset list, the contrast report and the brand importer with the sites
 COPY front/ui/src/theme/ front/ui/src/theme/
+# the image URL builder shared with the fronts (ADR 0193)
+COPY front/sdk/src/images.ts front/sdk/src/images.ts
+COPY front/sdk/src/images/ front/sdk/src/images/
 COPY admin/ admin/
 RUN cd admin && n=1; until yarn build; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); echo "retrying ($n/3): yarn build" >&2; sleep 5; done && find dist -name '*.map' -delete
 
@@ -29,6 +32,7 @@ FROM nginxinc/nginx-unprivileged:1.30-alpine@sha256:f5116ed4606f3eb015dd4a8e28cb
 # /runtime-config.json, which the app loads before it boots (ADR 0056). Examples:
 #   REACT_APP_API_URL            fixed API URL (single tenant); empty: derived from the host
 #   REACT_APP_TENANT_API_HOST_PATTERN, REACT_APP_STUDIO_URL, REACT_APP_SENTRYDSN, REACT_APP_YBUG,
+#   REACT_APP_IMAGE_SERVICE      php (default) | cloudflare | noop (ADR 0193)
 #   REACT_APP_ULAMS_DOCS_URL     base URL of the documentation (ULAMS_DOCS_URL); empty: ulams-dev.github.io/ulams
 ARG ADMIN_VERSION="dev-main"
 USER root
