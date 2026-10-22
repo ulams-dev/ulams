@@ -806,10 +806,6 @@
         {
             "pattern": "api/core/packages",
             "area": "learner"
-        },
-        {
-            "pattern": "broadcasting/auth",
-            "area": "learner"
         }
     ]
 }

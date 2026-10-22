@@ -53,7 +53,7 @@ jobs:
           node-version-file: .nvmrc
           cache: yarn
       - name: Install dependencies
-        run: corepack yarn install --frozen-lockfile
+        uses: ./.github/actions/setup-yarn
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"
@@ -94,7 +94,7 @@ jobs:
       - id: pages
         uses: actions/configure-pages@v6
       - name: Install dependencies
-        run: corepack yarn install --frozen-lockfile
+        uses: ./.github/actions/setup-yarn
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"

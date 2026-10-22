@@ -137,7 +137,7 @@ For a complete installation with generated credentials and readiness checks, use
 | Passport keys for H5P | Same mount | The `api_storage` volume mounted read-only |
 | H5P profile calls | `http://caddy` | `http://caddy:8081`, an internal plain-HTTP listener (port 80 redirects to HTTPS) |
 | Object storage | SeaweedFS always on, a key per tenant | External S3, or SeaweedFS behind `--profile storage` |
-| Tools | Adminer, MailHog, Soketi | None; broadcasting stays on the `log` driver as in development |
+| Tools | Adminer, MailHog | None; broadcasting is off (`BROADCAST_DRIVER=null`) as in development |
 | PostgreSQL | `postgres:17.11-alpine` (also used in CI) | `postgres:17.11-alpine` |
 
 <Aside>

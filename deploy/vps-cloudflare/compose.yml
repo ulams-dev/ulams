@@ -141,7 +141,7 @@ services:
       LARAVEL_SESSION_DRIVER: cookie
       LARAVEL_QUEUE_DRIVER: redis
       LARAVEL_QUEUE_CONNECTION: redis
-      LARAVEL_BROADCAST_DRIVER: log
+      LARAVEL_BROADCAST_DRIVER: "null"
       # The platform is behind Cloudflare: public catalogue responses carry s-maxage and Vary
       # (config/http_cache.php), which the cache rules of scripts/cloudflare-setup.sh use.
       LARAVEL_HTTP_CACHE_PUBLIC: "true"

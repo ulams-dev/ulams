@@ -27,8 +27,6 @@ tenant slug such as `coffee`.
 | `http://<slug>.content.localhost` | `api` through `/api/content` | Tenant content origin: SCORM, cmi5, Adapt and LiaScript package files under a strict CSP, no cookies |
 | `http://content.localhost` | `api` through `/api/content` | Platform content origin |
 | `http://storage.localhost` | `storage` (SeaweedFS S3 API, reads only) | Uploaded files, e.g. `http://storage.localhost/ulams-coffee/...`; SVGs get `script-src 'none'`; writes get 405 |
-| `http://ws.localhost` | `soketi` (6001) | WebSockets (the broadcast driver is `log` by default, so nothing uses it yet) |
-| `http://metrics.localhost` | `soketi` (9601) | Soketi metrics |
 
 The tenant blocks are wildcards (`*.localhost`, `*.app.localhost`, `*.admin.localhost`, `*.content.localhost`), so a new
 tenant needs no Caddy change. The six demo tenants use `coffee`, `oncall`, `nightsky`, `gravity`, `poland` and `ulam` as the slug

@@ -52,7 +52,6 @@ flowchart LR
   pg[(PostgreSQL<br/>db per tenant)]
   valkey[(Valkey<br/>queues, cache)]
   storage[(SeaweedFS<br/>bucket and key per tenant)]
-  soketi["Soketi<br/>websockets"]
   mailhog["MailHog"]
 
   browser --> caddy
@@ -63,7 +62,6 @@ flowchart LR
   caddy -- "*.localhost (FastCGI)" --> fpm
   caddy -- "*.content.localhost" --> fpm
   caddy -- "storage.localhost (reads)" --> storage
-  caddy -- "ws.localhost" --> soketi
   browser -. "localhost:3000" .-> legacy
   web -- "server-side fetch" --> caddy
   fpm --> pg
@@ -77,8 +75,11 @@ flowchart LR
   h5p --> pg
   h5p --> valkey
   h5p --> storage
-  soketi --> valkey
 ```
+
+There is no WebSocket server. The studio and the tutor stream over Server-Sent Events (ADR 0011, ADR 0105),
+and the broadcast driver is `null` (ADR 0042). If a feature ever needs bidirectional push, Laravel Reverb
+is the planned way to add it.
 
 ### API (`api`)
 
@@ -157,9 +158,8 @@ environment variables (`PDF_MAX_*`, `PDF_RENDER_TIMEOUT_MS`). See
 | Service | Image | Used for |
 |---|---|---|
 | PostgreSQL | `postgres:17.11-alpine` | Platform database `default`; one database and role per tenant (`ulams_<slug>`); schema `h5p` per tenant for the H5P service |
-| Valkey | `valkey/valkey:8-alpine` | Queues, cache, Horizon, H5P caches and locks, Soketi adapter. BSD-3-Clause drop-in for Redis; the service is still called `redis` |
+| Valkey | `valkey/valkey:8-alpine` | Queues, cache, Horizon, H5P caches and locks. BSD-3-Clause drop-in for Redis; the service is still called `redis` |
 | SeaweedFS | `chrislusf/seaweedfs` | S3-compatible storage; bucket `ulams` for the platform, `ulams-<slug>` per tenant with its own key, public read |
-| Soketi | `quay.io/soketi/soketi` | Pusher-protocol websockets on `ws.localhost` (the dev API sets `BROADCAST_DRIVER=log`) |
 | MailHog | `mailhog/mailhog` | Catches outgoing mail; web UI on `localhost:8025` |
 | mjml | built from `deploy/stack/mjml` (published as `ghcr.io/ulams-dev/mjml`) | MJML API for e-mail templates (`templates-email`, used when `MJML_API_URL` is set) |
 | Adminer | `adminer` | Database UI on `localhost:8078` |
@@ -183,7 +183,6 @@ production names are set per deployment ([Hosts](/getting-started/hosts/)).
 | `<slug>.admin.localhost` | host `:8000` | Admin panel; report-only CSP |
 | `<slug>.content.localhost`, `content.localhost` | `api:9000` as `GET /api/content/...` | Content origin: only `GET`/`HEAD` on `/scorm/*`, `/cmi5/*`, `/adapt/*`, `/liascript/*`; cookies and auth headers stripped; own CSP |
 | `storage.localhost` | `storage:8333` | Public bucket files, reads only; `nosniff`, SVG served with `script-src 'none'; sandbox` |
-| `ws.localhost`, `metrics.localhost` | `soketi:6001`, `soketi:9601` | Websockets and Soketi metrics |
 
 ### A learner opens a lesson
 
