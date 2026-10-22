@@ -9,6 +9,8 @@ export const umamiEnabled = (host: string): boolean => UMAMI_HOSTS.includes(host
 /** A scroll to the demo section is not a demo opening. */
 export function ctaEvent(href: string): string | undefined {
   if (href === "#demos" || /\/#demos$/.test(href)) return "demos_scroll";
+  const page = /^(?:\/(?:pl|zh))?\/(content-cost|reporting)\/?$/.exec(href);
+  if (page) return page[1] === "reporting" ? "reporting_page_open" : "cost_page_open";
   try {
     const url = new URL(href);
     if (UMAMI_DEMO_HOSTS.includes(url.hostname)) return "demo_open";
