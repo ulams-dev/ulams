@@ -85,6 +85,6 @@ class InvoicesApiTest extends TestCase
     {
         $response = $this->getJson('api/order-invoices/'.$this->order->getKey());
 
-        $response->assertForbidden();
+        $response->assertUnauthorized();
     }
 }

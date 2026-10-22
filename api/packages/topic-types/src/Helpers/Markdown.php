@@ -103,10 +103,23 @@ class Markdown
         return $results;
     }
 
-    private function convertFilePathByHttp(string $destinationPrefix, string $filepath, string &$destination): array
+    /**
+     * A link to a file on this application's own origin that is neither storage nor the images API. It is
+     * read from the application's public directory, never fetched over HTTP: inside a container the
+     * public host name (api.localhost, a tenant host) does not resolve to this application.
+     * A link that does not resolve to a file there stays as it is.
+     */
+    private function convertFilePathByHttp(string $destinationPrefix, string $filepath, string &$destination): ?array
     {
+        $local = $this->publicFile($filepath);
+        if ($local === null) {
+            $destination = $filepath;
+
+            return null;
+        }
+
         $destination = sprintf($destinationPrefix . '%s', Str::slug(basename($filepath)));
-        Storage::put($destination, file_get_contents($filepath));
+        Storage::put($destination, (string) file_get_contents($local));
         $pathInfo = pathinfo($destination);
         if (!array_key_exists(self::EXT_STRING_NAME, $pathInfo) ||
             (
@@ -156,5 +169,18 @@ class Markdown
 
             return $match[0];
         }, $input);
+    }
+
+    /** The file in public_path() that a same-origin URL points to, or null (also for paths that climb out of it). */
+    private function publicFile(string $url): ?string
+    {
+        $path = rawurldecode((string) parse_url($url, PHP_URL_PATH));
+        $root = realpath(public_path());
+        $file = $path === '' ? false : realpath(public_path(ltrim($path, '/')));
+        if ($root === false || $file === false || !is_file($file) || !str_starts_with($file, $root . DIRECTORY_SEPARATOR)) {
+            return null;
+        }
+
+        return $file;
     }
 }

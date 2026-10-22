@@ -139,7 +139,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0172](0172-hosted-mcp-gateway-on-cloudflare-workers.md) | Hosted MCP gateway on Cloudflare Workers sharing the CLI tool registry, OAuth at the gateway and scoped tokens upstream | Proposed |
 | [0180](0180-experiment-assignment-exposure-and-statistics.md) | Course experiments: salted assignment, exposure logging and fixed-horizon statistics with guard rails | Proposed |
 | [0181](0181-insights-improvement-proposals-in-living-course.md) | Improvement proposals from learner insights are Living Course proposals of their own kind | Proposed |
-| [0190](0190-tenant-isolation-route-coverage.md) | Tenant isolation for every endpoint through one route-walking test and a public-route allow-list | Proposed |
+| [0190](0190-tenant-isolation-route-coverage.md) | Tenant isolation for every endpoint through one route-walking test and a public-route allow-list | Accepted |
 | [0191](0191-learning-benefit-claims-register.md) | Register of learning-benefit claims, checked in CI | Proposed |
 
 <!-- END GENERATED: adr-index -->

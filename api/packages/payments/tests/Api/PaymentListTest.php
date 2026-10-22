@@ -27,7 +27,7 @@ class PaymentListTest extends \Ulams\Payments\Tests\TestCase
         ]);
 
         /** @var TestResponse $response */
-        $response = $this->actingAs($billable)->json('GET', 'api/payments/', [
+        $response = $this->actingAs($billable, 'api')->json('GET', 'api/payments/', [
             'per_page' => 20
         ]);
         $response->assertOk();

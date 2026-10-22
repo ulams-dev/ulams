@@ -136,10 +136,11 @@ Without `CONTENT_ORIGIN` the legacy SCORM player on the API origin is used. Full
 
 ## Tenant isolation tests
 
-The spec requires a tenant isolation test for every new endpoint. Three kinds exist today:
+The spec requires a tenant isolation test for every new endpoint. Four kinds exist today:
 
 | Test | What it checks | How to run |
 |---|---|---|
+| `api/tests/Integrations/TenantIsolationCoverageTest.php` | Every registered route: behind `auth:api` it answers 401 to no token and to a token signed by another tenant's key pair; otherwise it is in the reviewed list `api/tests/fixtures/public-routes.php` (ADR 0190) | `vendor/bin/phpunit --testsuite Integrations` (every pull request) |
 | `api/packages/tenancy/tests/Integration/TenantIsolationTest.php` | Provisions two real tenants with `ulams:tenant:create` and talks to them over HTTP through Caddy: each tenant on its own host, data and tokens do not cross, LTI key sets and registrations do not cross, LiaScript sources do not cross | `docker compose exec -T -e TENANCY_INTEGRATION=1 api vendor/bin/phpunit packages/tenancy/tests/Integration` |
 | `api/packages/lti/tests/Feature/TenantIsolationTest.php` | In-process: switches the tenant secrets (`APP_KEY`, LTI key set) and checks that login hints, AGS tokens, deep-linking data and one-time codes of tenant A are rejected by tenant B | `vendor/bin/phpunit --testsuite lti` |
 | `api/packages/scorm/tests/API/ScormContentOriginApiTest.php`, `api/packages/demo/tests/Integration/DemoTenantIsolationTest.php` | Tracking token scope and forgery across tenants; demo login and reset confined to one tenant | per package test suite |
@@ -148,7 +149,8 @@ Because tenants have separate databases, most cross-tenant leaks come from value
 carries from one host to another: tokens, signed hints, URLs, cached data keyed without the tenant.
 When you add an endpoint, test that a value issued by one tenant is rejected by another (the
 in-process pattern of the LTI test), and extend the integration test when the endpoint stores data.
-`TENANCY_INTEGRATION_KEEP=1` keeps the two probe tenants for debugging. More on the suites in
+`TENANCY_INTEGRATION_KEEP=1` keeps the two probe tenants for debugging. The integration test runs
+every night (`Nightly conformance`, job `tenancy`). More on the suites in
 [Testing](/developers/testing/).
 
 <Aside type="caution" title="Known limits">

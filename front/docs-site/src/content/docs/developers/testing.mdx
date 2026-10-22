@@ -115,14 +115,27 @@ docker compose -f api/docker-compose.yml exec -T -e TENANCY_INTEGRATION=1 api \
 ## Tenant isolation tests
 
 The spec requires a tenant isolation test for every new endpoint (`docs/ROADMAP-PROMPT.md`,
-quality bar). The tracker item for full coverage is still open. Two patterns exist:
+quality bar). Three layers exist:
+
+- **Every route, in one test** (ADR 0190): `api/tests/Integrations/TenantIsolationCoverageTest.php`
+  walks all registered routes. A route behind `auth:api` must answer 401 to a request with no token and
+  to one with a token signed by another tenant's key pair. A route that is not behind `auth:api` must
+  be listed with a reason in `api/tests/fixtures/public-routes.php`, or the test fails. It runs in the
+  `platform` shard on every pull request and takes about ten seconds. How to add a route:
+  [Adding an endpoint](/developers/adding-an-endpoint/#tenant-isolation-test).
 
 - **In-process**, inside the package suite: switch the tenant secrets and check that a value
   issued for tenant A is rejected. Example:
   [`api/packages/lti/tests/Feature/TenantIsolationTest.php`](https://github.com/ulams-dev/ulams/blob/main/api/packages/lti/tests/Feature/TenantIsolationTest.php)
   replaces `APP_KEY` (and the LTI key set) with `becomeAnotherTenant()` and asserts that login
   hints, AGS tokens and deep-linking data of the first tenant fail.
-- **End to end**, against two provisioned tenants: the opt-in tenancy and demo tests above.
+- **End to end**, against two provisioned tenants: the opt-in tenancy and demo tests above. The tenancy
+  test runs every night in the `Nightly conformance` workflow (job `tenancy`, it brings up the compose
+  stack); run it by hand from Actions with the `tenancy` input.
+
+`api/tests/Integrations/NoPublicStorageFetchTest.php` is the guard for a related container pitfall:
+server-side code must not fetch `Storage::url()` addresses (`storage.localhost` does not resolve inside
+a container); read through the disk instead.
 
 See [Adding an endpoint](/developers/adding-an-endpoint/) for where the test goes.
 

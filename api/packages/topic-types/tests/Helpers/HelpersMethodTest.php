@@ -74,4 +74,50 @@ class HelpersMethodTest extends TestCase
         $this->assertArrayHasKey('results', $result);
         $this->assertEmpty($result['results']);
     }
+
+    public function testALinkToAFileOnThisOriginIsReadFromThePublicDirectoryNotOverHttp(): void
+    {
+        Storage::fake(config('filesystems.default'));
+        $destinationPrefix = sprintf('course/%d/topic/%d/', $this->topic->lesson->course->id, $this->topic->id);
+        $directory = public_path('ulams-markdown-test');
+        @mkdir($directory, 0777, true);
+        // a 1x1 PNG
+        file_put_contents($directory . '/pixel.png', base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='));
+
+        try {
+            $result = Markdown::convertAssetPaths('![Pixel](' . url('ulams-markdown-test/pixel.png') . ')', $destinationPrefix);
+        } finally {
+            @unlink($directory . '/pixel.png');
+            @rmdir($directory);
+        }
+
+        $this->assertCount(1, $result['results']);
+        $this->assertStringContainsString($destinationPrefix . 'pixelpng.png', $result['value']);
+        Storage::assertExists($destinationPrefix . 'pixelpng.png');
+    }
+
+    public function testALinkToAMissingFileOnThisOriginStaysAsItIsAndIsNotFetched(): void
+    {
+        Storage::fake(config('filesystems.default'));
+        $destinationPrefix = sprintf('course/%d/topic/%d/', $this->topic->lesson->course->id, $this->topic->id);
+        $markdown = '![Gone](' . url('ulams-markdown-test/missing.png') . ')';
+
+        $result = Markdown::convertAssetPaths($markdown, $destinationPrefix);
+
+        $this->assertSame($markdown, $result['value']);
+        $this->assertSame([null], $result['results']);
+        $this->assertSame([], Storage::allFiles());
+    }
+
+    public function testALinkThatClimbsOutOfThePublicDirectoryIsNotRead(): void
+    {
+        Storage::fake(config('filesystems.default'));
+        $destinationPrefix = sprintf('course/%d/topic/%d/', $this->topic->lesson->course->id, $this->topic->id);
+        $markdown = '![Env](' . url('../../.env') . ')';
+
+        $result = Markdown::convertAssetPaths($markdown, $destinationPrefix);
+
+        $this->assertSame($markdown, $result['value']);
+        $this->assertSame([], Storage::allFiles());
+    }
 }
