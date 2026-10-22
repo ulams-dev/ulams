@@ -44,6 +44,26 @@ final class EventCatalog
             'class' => 'Ulams\KnowledgeExport\Events\KnowledgeExported',
             'description' => 'A knowledge pack (cited chunks for RAG) was written for a course or the whole tenant; an automatic re-export that finds nothing new sends nothing.',
         ],
+        'training.assigned' => [
+            'class' => 'Ulams\Compliance\Events\TrainingAssigned',
+            'description' => 'A learner was given a required course (by an admin, a rule, a learning path step or recertification); sent once per assignment.',
+        ],
+        'training.completed' => [
+            'class' => 'Ulams\Compliance\Events\TrainingCompleted',
+            'description' => 'A learner finished a required course; sent once per assignment.',
+        ],
+        'training.overdue' => [
+            'class' => 'Ulams\Compliance\Events\TrainingOverdue',
+            'description' => 'A required course passed its due date unfinished; sent once per assignment.',
+        ],
+        'path.completed' => [
+            'class' => 'Ulams\Compliance\Events\PathCompleted',
+            'description' => 'A learner finished every course of a learning path; sent once per enrolment.',
+        ],
+        'certificate.revoked' => [
+            'class' => 'Ulams\TemplatesPdf\Events\CertificateRevoked',
+            'description' => 'A course certificate was revoked.',
+        ],
     ];
 
     private const PLANNED = [
@@ -102,6 +122,14 @@ final class EventCatalog
                 'update_proposal.applied' => self::proposalApplied($event),
                 'certificate.issued' => self::certificate($event),
                 'knowledge.exported' => self::knowledgeExported($event),
+                'training.assigned' => self::training($event, 'training.assigned', ['assigned_at' => $event->assignment->assigned_at?->toIso8601String()]),
+                'training.completed' => self::training($event, 'training.completed', [
+                    'completed_at' => $event->assignment->completed_at?->toIso8601String() ?? now()->toIso8601String(),
+                    'certificate_id' => $event->assignment->certificate_id,
+                ]),
+                'training.overdue' => self::training($event, 'training.overdue', []),
+                'path.completed' => self::pathCompleted($event),
+                'certificate.revoked' => self::certificateRevoked($event),
                 default => null,
             };
         } catch (Throwable $e) {
@@ -123,6 +151,11 @@ final class EventCatalog
             'update_proposal.ready' => ['proposal_id' => '01SAMPLE0PROPOSAL0000000000', 'session_id' => '01SAMPLE0SESSION00000000000', 'course_title' => 'Sample course', 'elements' => 3, 'answer_checks' => 1, 'status' => 'ready'],
             'update_proposal.applied' => ['proposal_id' => '01SAMPLE0PROPOSAL0000000000', 'session_id' => '01SAMPLE0SESSION00000000000', 'number' => 2, 'status' => 'applied', 'counts' => ['applied' => 3]],
             'certificate.issued' => ['user' => $user, 'certificate_id' => 1, 'course_id' => 1, 'issued_at' => now()->toIso8601String()],
+            'training.assigned' => ['user' => $user, 'course' => $course, 'assignment_id' => 1, 'source' => 'manual', 'assigned_at' => now()->toIso8601String(), 'due_at' => now()->addDays(30)->toIso8601String(), 'path' => ['id' => 1, 'title' => 'Onboarding', 'step' => 2, 'steps' => 4]],
+            'training.completed' => ['user' => $user, 'course' => $course, 'assignment_id' => 1, 'source' => 'manual', 'due_at' => null, 'path' => null, 'completed_at' => now()->toIso8601String(), 'certificate_id' => 1],
+            'training.overdue' => ['user' => $user, 'course' => $course, 'assignment_id' => 1, 'source' => 'rule', 'due_at' => now()->subDay()->toIso8601String(), 'path' => null],
+            'path.completed' => ['user' => $user, 'path' => ['id' => 1, 'title' => 'Onboarding', 'steps' => 4], 'enrollment_id' => 1, 'completed_at' => now()->toIso8601String()],
+            'certificate.revoked' => ['user' => $user, 'certificate_id' => 1, 'course_id' => 1, 'revoked_at' => now()->toIso8601String(), 'reason' => 'Superseded by policy version 2'],
             'knowledge.exported' => ['export_id' => '01SAMPLE0EXPORT00000000000', 'scope' => 'course', 'course_id' => 1, 'trigger' => 'auto', 'pack_hash' => str_repeat('a', 64), 'courses' => 1, 'chunks' => 12, 'uncited_chunks' => 2, 'finished_at' => now()->toIso8601String()],
             default => ['message' => 'This is a test event from ulams.'],
         };
@@ -204,6 +237,69 @@ final class EventCatalog
                 'issued_at' => now()->toIso8601String(),
             ],
             'key' => null,
+        ];
+    }
+
+    /**
+     * The required-training events share one shape: who, which course, which assignment, and the learning path
+     * step when the course belongs to one. The key makes a repeated domain event one delivery per assignment.
+     *
+     * @param array<string,mixed> $extra
+     * @return array{object:array<string,mixed>,key:?string}
+     */
+    private static function training(object $event, string $type, array $extra): array
+    {
+        $assignment = $event->assignment;
+        $course = $event->getCourse();
+        $context = app('Ulams\Compliance\Services\PathContext')->forAssignment($assignment);
+
+        return [
+            'object' => [
+                'user' => self::person($event->getUser()),
+                'course' => ['id' => $course->getKey(), 'title' => (string) $course->title],
+                'assignment_id' => $assignment->getKey(),
+                'source' => (string) $assignment->source,
+                'due_at' => $assignment->due_at?->toIso8601String(),
+                'path' => $context ? ['id' => $context['path_id'], 'title' => $context['path_title'], 'step' => $context['step'], 'steps' => $context['steps']] : null,
+            ] + $extra,
+            'key' => $type . ':' . $assignment->getKey(),
+        ];
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string} */
+    private static function pathCompleted(object $event): array
+    {
+        $enrollment = $event->enrollment;
+
+        return [
+            'object' => [
+                'user' => self::person($event->getUser()),
+                'path' => ['id' => $enrollment->path_id, 'title' => (string) $enrollment->path?->title, 'steps' => $enrollment->path?->steps()->count() ?? 0],
+                'enrollment_id' => $enrollment->getKey(),
+                'completed_at' => $enrollment->completed_at?->toIso8601String() ?? now()->toIso8601String(),
+            ],
+            'key' => 'path.completed:' . $enrollment->getKey(),
+        ];
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string}|null */
+    private static function certificateRevoked(object $event): ?array
+    {
+        $pdf = $event->pdf;
+        // only course certificates are events here, as for certificate.issued
+        if (!str_ends_with((string) $pdf->assignable_type, 'Course') || !$pdf->user) {
+            return null;
+        }
+
+        return [
+            'object' => [
+                'user' => self::person($pdf->user),
+                'certificate_id' => $pdf->getKey(),
+                'course_id' => $pdf->assignable_id,
+                'revoked_at' => $pdf->revoked_at?->toIso8601String() ?? now()->toIso8601String(),
+                'reason' => $pdf->revoked_reason,
+            ],
+            'key' => 'certificate.revoked:' . $pdf->getKey(),
         ];
     }
 

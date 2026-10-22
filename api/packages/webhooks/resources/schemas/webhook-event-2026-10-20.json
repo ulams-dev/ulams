@@ -11,7 +11,7 @@
     "api_version": { "const": "2026-10-20" },
     "created": { "type": "integer", "minimum": 0 },
     "type": {
-      "enum": ["course.completed", "enrolment.created", "update_proposal.ready", "update_proposal.applied", "certificate.issued", "knowledge.exported", "webhook.test"]
+      "enum": ["course.completed", "enrolment.created", "update_proposal.ready", "update_proposal.applied", "certificate.issued", "knowledge.exported", "training.assigned", "training.completed", "training.overdue", "path.completed", "certificate.revoked", "webhook.test"]
     },
     "data": {
       "type": "object",
@@ -37,6 +37,21 @@
     },
     {
       "properties": { "type": { "const": "knowledge.exported" }, "data": { "properties": { "object": { "$ref": "#/$defs/knowledgeExported" } } } }
+    },
+    {
+      "properties": { "type": { "const": "training.assigned" }, "data": { "properties": { "object": { "$ref": "#/$defs/trainingAssigned" } } } }
+    },
+    {
+      "properties": { "type": { "const": "training.completed" }, "data": { "properties": { "object": { "$ref": "#/$defs/trainingCompleted" } } } }
+    },
+    {
+      "properties": { "type": { "const": "training.overdue" }, "data": { "properties": { "object": { "$ref": "#/$defs/trainingOverdue" } } } }
+    },
+    {
+      "properties": { "type": { "const": "path.completed" }, "data": { "properties": { "object": { "$ref": "#/$defs/pathCompleted" } } } }
+    },
+    {
+      "properties": { "type": { "const": "certificate.revoked" }, "data": { "properties": { "object": { "$ref": "#/$defs/certificateRevoked" } } } }
     },
     {
       "properties": { "type": { "const": "webhook.test" }, "data": { "properties": { "object": { "$ref": "#/$defs/test" } } } }
@@ -124,6 +139,76 @@
         "chunks": { "type": "integer", "minimum": 0 },
         "uncited_chunks": { "type": "integer", "minimum": 0 },
         "finished_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "trainingPath": {
+      "description": "The learning path step this required course is, or null when it is not a step of a path the learner is enrolled in.",
+      "type": ["object", "null"],
+      "required": ["id", "title", "step", "steps"],
+      "properties": {
+        "id": { "type": "integer" },
+        "title": { "type": "string" },
+        "step": { "type": "integer", "minimum": 1 },
+        "steps": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "training": {
+      "type": "object",
+      "required": ["user", "course", "assignment_id", "source", "due_at", "path"],
+      "properties": {
+        "user": { "$ref": "#/$defs/user" },
+        "course": { "$ref": "#/$defs/course" },
+        "assignment_id": { "type": "integer" },
+        "source": { "enum": ["manual", "rule", "recertification"] },
+        "due_at": { "type": ["string", "null"], "format": "date-time" },
+        "path": { "$ref": "#/$defs/trainingPath" }
+      }
+    },
+    "trainingAssigned": {
+      "allOf": [{ "$ref": "#/$defs/training" }],
+      "required": ["assigned_at"],
+      "properties": { "assigned_at": { "type": "string", "format": "date-time" } }
+    },
+    "trainingCompleted": {
+      "allOf": [{ "$ref": "#/$defs/training" }],
+      "required": ["completed_at", "certificate_id"],
+      "properties": {
+        "completed_at": { "type": "string", "format": "date-time" },
+        "certificate_id": { "type": ["integer", "string", "null"] }
+      }
+    },
+    "trainingOverdue": {
+      "allOf": [{ "$ref": "#/$defs/training" }],
+      "required": ["due_at"],
+      "properties": { "due_at": { "type": "string", "format": "date-time" } }
+    },
+    "pathCompleted": {
+      "type": "object",
+      "required": ["user", "path", "enrollment_id", "completed_at"],
+      "properties": {
+        "user": { "$ref": "#/$defs/user" },
+        "path": {
+          "type": "object",
+          "required": ["id", "title", "steps"],
+          "properties": {
+            "id": { "type": "integer" },
+            "title": { "type": "string" },
+            "steps": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "enrollment_id": { "type": "integer" },
+        "completed_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "certificateRevoked": {
+      "type": "object",
+      "required": ["user", "certificate_id", "course_id", "revoked_at", "reason"],
+      "properties": {
+        "user": { "$ref": "#/$defs/user" },
+        "certificate_id": { "type": ["integer", "string"] },
+        "course_id": { "type": ["integer", "string"] },
+        "revoked_at": { "type": "string", "format": "date-time" },
+        "reason": { "type": ["string", "null"] }
       }
     },
     "test": {
