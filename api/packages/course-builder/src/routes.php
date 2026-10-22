@@ -55,6 +55,7 @@ Route::group([
 ], function () {
     Route::get('courses/{course}/blueprint', [CourseAsCodeController::class, 'export']);
     Route::post('sessions/{session}/imports', [CourseAsCodeController::class, 'import']);
+    Route::post('sessions/{session}/drift', [CourseAsCodeController::class, 'absorbDrift']);
     Route::get('versions/{version}', [CourseBuilderController::class, 'version']);
     Route::get('versions/{version}/diff', [CourseBuilderController::class, 'diff']);
     Route::post('versions/{version}/approve', [CourseAsCodeController::class, 'approve']);

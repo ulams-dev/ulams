@@ -69,7 +69,7 @@ final class GiftRenderer
         return (string) preg_replace('/([\\\\~=#{}:])/', '\\\\$1', $text);
     }
 
-    private static function plain(string $text): string
+    public static function plain(string $text): string
     {
         return trim((string) preg_replace('/\s+/', ' ', strip_tags($text)));
     }

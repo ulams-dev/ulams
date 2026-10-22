@@ -10,6 +10,7 @@ use Ulams\CourseBuilder\CourseAsCode\ApprovalGuard;
 use Ulams\CourseBuilder\CourseAsCode\CourseAsCodeException;
 use Ulams\CourseBuilder\CourseAsCode\CourseExporter;
 use Ulams\CourseBuilder\CourseAsCode\CourseImporter;
+use Ulams\CourseBuilder\CourseAsCode\DriftAbsorber;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Http\Controllers\Concerns\ResolvesSessions;
 use Ulams\CourseBuilder\Models\Session;
@@ -35,6 +36,12 @@ use Ulams\Courses\Models\Course;
  *     @OA\Response(response=409, description="BASE_OUTDATED (with the remote diff) or NO_BLUEPRINT"), @OA\Response(response=413, description="document too large"), @OA\Response(response=422, description="INVALID_BLUEPRINT, BASE_UNKNOWN or a missing field"))
  * @OA\Get(path="/api/admin/course-as-code/versions/{version}", operationId="admin.course-as-code.versions.by-version.get", summary="One version with its Blueprint v3 document (what a three-way merge needs as the base)", tags={"Admin Course-as-code"}, security={{"passport": {}}},
  *     @OA\Parameter(name="version", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="the version and its document", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown version"))
+ * @OA\Post(path="/api/admin/course-as-code/sessions/{session}/drift", operationId="admin.course-as-code.sessions.by-session.drift.post", summary="Read admin edits made after the last apply back into a proposed author version", tags={"Admin Course-as-code"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\RequestBody(required=false, @OA\JsonContent(@OA\Property(property="dryRun", type="boolean"))),
+ *     @OA\Response(response=201, description="proposed version with what was absorbed and what could not be mapped back", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
+ *     @OA\Response(response=200, description="nothing to absorb (or dryRun): the same listing, no version", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
+ *     @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown session"), @OA\Response(response=409, description="NO_BLUEPRINT or NOT_APPLIED"), @OA\Response(response=422, description="INVALID_BLUEPRINT"))
  * @OA\Get(path="/api/admin/course-as-code/versions/{version}/diff", operationId="admin.course-as-code.versions.by-version.diff.get", summary="Element-aware diff of a version against its parent or ?against=", tags={"Admin Course-as-code"}, security={{"passport": {}}},
  *     @OA\Parameter(name="version", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="against", in="query", @OA\Schema(type="string")), @OA\Response(response=200, description="changes", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
  * @OA\Post(path="/api/admin/course-as-code/versions/{version}/approve", operationId="admin.course-as-code.versions.by-version.approve.post", summary="Approve a proposed import (people and CLI tokens; never agents or MCP clients)", tags={"Admin Course-as-code"}, security={{"passport": {}}},
@@ -56,6 +63,7 @@ class CourseAsCodeController extends Controller
         private readonly ApprovalGuard $approvals,
         private readonly VersionService $versions,
         private readonly EventLog $events,
+        private readonly DriftAbsorber $drift,
     ) {
     }
 
@@ -111,7 +119,7 @@ class CourseAsCodeController extends Controller
             throw new NotFoundHttpException('Version not found.');
         }
         $s = $this->sessionFor($request, $v->session_id, 'update');
-        if ($v->kind !== 'import') {
+        if (!in_array($v->kind, ['import', 'author'], true)) {
             // outline, patch and content proposals keep their own flow (and its gates)
             return app(CourseBuilderController::class)->approve($request, $version);
         }
@@ -129,6 +137,18 @@ class CourseAsCodeController extends Controller
             $this->events->custom($s, null, 'course_as_code.approved', array_filter($this->actor($request) + ['versionId' => $v->id, 'number' => $v->number], fn ($x) => $x !== null));
 
             return self::ok(['versionId' => $v->id, 'number' => $v->number, 'status' => Version::APPROVED, 'currentVersionId' => $v->id, 'applied' => false]);
+        });
+    }
+
+    public function absorbDrift(Request $request, string $session): JsonResponse
+    {
+        $s = $this->sessionFor($request, $session, 'update');
+        $dryRun = $request->boolean('dryRun');
+
+        return $this->guard(function () use ($request, $s, $dryRun) {
+            $result = $this->drift->absorb($s, $this->actor($request), $dryRun);
+
+            return self::ok($result, ($result['version'] ?? null) === null ? 200 : 201);
         });
     }
 

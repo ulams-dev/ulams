@@ -14,7 +14,7 @@ use Ulams\CourseBuilder\Services\VersionService;
  */
 final class CourseExporter
 {
-    public function __construct(private readonly BlueprintApplier $applier)
+    public function __construct(private readonly BlueprintApplier $applier, private readonly DriftAbsorber $absorber)
     {
     }
 
@@ -27,6 +27,8 @@ final class CourseExporter
         }
         $document = Blueprint::upgrade($version->document);
         $drift = $session->course_id !== null ? $this->applier->drift($session, $document) : [];
+        // edits an admin made in the LMS after the last apply (whether or not an apply would touch them): `absorb-drift` reads them back
+        $edits = $session->course_id !== null && $session->applied_version_id !== null ? $this->absorber->scan($session, $document) : ['absorbed' => [], 'unmapped' => []];
 
         return [
             'courseId' => $session->course_id,
@@ -39,6 +41,10 @@ final class CourseExporter
             'schemaVersion' => $document['schemaVersion'],
             'document' => $document,
             'drift' => array_map(fn ($key, $title) => ['element' => $key, 'title' => $title], array_keys($drift), array_values($drift)),
+            'edits' => [
+                'absorbable' => array_map(fn ($a) => ['element' => $a['key'], 'title' => $a['title'], 'fields' => $a['fields']], $edits['absorbed']),
+                'unmapped' => array_map(fn ($a) => ['element' => $a['key'], 'title' => $a['title'], 'reason' => $a['reason']], $edits['unmapped']),
+            ],
         ];
     }
 }
