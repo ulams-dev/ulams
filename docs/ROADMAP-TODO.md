@@ -526,7 +526,8 @@ approved apply through domain services → element chat edits. Designs:
       edited, revised on request, author-written), shown in the studio and admin analytics, exportable, over the
       API, CLI and MCP, and an "hours per learner hour" figure from the tenant's own data with no benchmark claims
       (plan `docs/plans/authoring-metric-and-report-builder.md` AM-1 to AM-6; ADR 0194 Proposed; market research:
-      authoring cost is the core pain)
+      authoring cost is the core pain) (partial: AM-1 done: `authoring_stage_timings` records wall time per pipeline stage,
+      kept beyond the 30-day event retention, with the idempotent `authoring-metrics:backfill`; AM-2 to AM-6 pending)
 - [ ] (new) Element provenance for direct author edits: the outline editor tags edited elements, AI output carries a
       content hash, so accepted vs edited AI elements can be counted (plan `authoring-metric-and-report-builder.md` AM-2)
 
