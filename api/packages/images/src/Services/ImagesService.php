@@ -3,6 +3,7 @@
 namespace Ulams\Images\Services;
 
 use Ulams\Core\Repositories\Criteria\Primitives\LikeCriterion;
+use Ulams\Core\Storage\LocalCopy;
 use Ulams\Images\Enum\ConstantEnum;
 use Ulams\Images\Enum\SupportedFormatsEnum;
 use Ulams\Images\Events\FileStored;
@@ -44,12 +45,7 @@ class ImagesService implements ImagesServiceContract
         if (!Storage::exists($output_file)) {
             try {
                 Event::forget(FileStored::class);
-                $dir = dirname($output_file);
-                Storage::makeDirectory($dir);
-                $output_path = Storage::path($output_file);
-
-                // Create empty file as placeholder, so that subsequent calls wont try to resize same file
-                Storage::put($output_path, '', 'public');
+                Storage::makeDirectory(dirname($output_file));
                 $img = Image::make(Storage::get($path))->encode($ext);
 
                 list($width, $height) = $this->determineWidthAndHeight($img, $params);
@@ -62,9 +58,14 @@ class ImagesService implements ImagesServiceContract
 
                 Storage::put($output_file, $img->stream(), 'public');
 
-                if (file_exists($output_path)) {
-                    $optimizerChain = OptimizerChainFactory::create();
-                    $optimizerChain->optimize($output_path);
+                // The optimiser binaries work on a file on this machine: only a local disk has one. On S3
+                // Storage::path() is just the object key, so the cached image is stored as encoded.
+                $disk = Storage::disk();
+                if (LocalCopy::isLocal($disk)) {
+                    $optimizedPath = $disk->path($output_file);
+                    if (file_exists($optimizedPath)) {
+                        OptimizerChainFactory::create()->optimize($optimizedPath);
+                    }
                 }
 
                 $this->imageCacheRepository->create([

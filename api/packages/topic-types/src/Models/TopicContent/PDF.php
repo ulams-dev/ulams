@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Smalot\PdfParser\Parser;
+use Ulams\Core\Storage\LocalCopy;
 
 /**
  * @OA\Schema(
@@ -65,7 +66,8 @@ class PDF extends AbstractTopicFileContent
     protected function processUploadedFiles(): void
     {
         try {
-            $pdf = (new Parser())->parseFile(Storage::path($this->value));
+            // the parser needs a file: a local copy when the object is on S3
+            $pdf = LocalCopy::with(Storage::disk(), $this->value, fn (string $path) => (new Parser())->parseFile($path));
             $this->length = strlen($pdf->getText());
             $this->page_count = count($pdf->getPages());
         } catch (Exception $e) {
