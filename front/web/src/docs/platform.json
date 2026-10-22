@@ -296,7 +296,7 @@
             "id": "cost-cta",
             "eyebrow": "content cost",
             "title": "Content is the expensive part of e-learning",
-            "text": "Benchmarks put it at roughly 197 working hours for every hour of finished course. See how ULAMS attacks that cost, and what is still coming.",
+            "text": "Benchmarks put it at 49 to 716 working hours for every hour of finished course. See how ULAMS attacks that cost, and what is still coming.",
             "cta": {
               "label": "See how we cut content cost",
               "href": "/content-cost/"
@@ -362,7 +362,7 @@
             "id": "reporting-cta",
             "eyebrow": "reporting",
             "title": "Reporting is why teams leave their LMS",
-            "text": "Industry research names missing reporting as the most common reason to switch. See the analytics, exports and compliance reports ULAMS already ships.",
+            "text": "Industry research keeps ranking weak reporting among the top reasons to switch. See the analytics, exports and compliance reports ULAMS already ships.",
             "cta": {
               "label": "See the reporting",
               "href": "/reporting/"

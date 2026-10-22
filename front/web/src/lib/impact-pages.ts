@@ -11,6 +11,7 @@ export const IMPACT_PAGES = ["content-cost", "reporting"] as const;
 export type ImpactPage = (typeof IMPACT_PAGES)[number];
 
 export const CHAPMAN_SOURCE = "https://elearningindustry.com/development-costs-for-your-online-learning-start-estimating";
+export const BRANDON_HALL_SOURCE = "https://trainingmag.com/?p=13564";
 const DOCS = "https://ulams-dev.github.io/ulams/";
 
 interface Item { icon: string; title: string; text: string }
@@ -52,7 +53,7 @@ const COST_EN: ImpactCopy = {
   primary: "What ULAMS does today",
   secondary: "Explore the demos",
   problemTitle: "The benchmark",
-  problem: "The Chapman Alliance benchmark puts the work at about **197 hours per hour of finished e-learning** on average, from **49 hours** for the simplest courses to **over 700** for the most interactive ones. Source: [Chapman Alliance figures, as reported by eLearning Industry](" + CHAPMAN_SOURCE + "). The study dates from 2010; treat it as an order of magnitude, not a quote for your project.",
+  problem: "Chapman Alliance development ratios run from **49 to 716 hours of work for every 1 hour of finished e-learning**, depending on interactivity. Typical mid values per level are **79 hours** for passive content, **184 hours** for limited interaction and **490 hours** for moderate participation. Source: [Chapman Alliance figures, as reported by eLearning Industry](" + CHAPMAN_SOURCE + "). Maintenance, updating content once it goes stale, is a hidden multiplier on top. The study dates from 2010; treat it as an order of magnitude, not a quote for your project.",
   todayTitle: "What ULAMS does today",
   todayIntro: "All of this is in the product now.",
   today: [
@@ -88,7 +89,7 @@ const COST_PL: ImpactCopy = {
   primary: "Co ULAMS robi dziś",
   secondary: "Zobacz demo",
   problemTitle: "Punkt odniesienia",
-  problem: "Benchmark Chapman Alliance szacuje pracę średnio na około **197 godzin na godzinę gotowego e-learningu**, od **49 godzin** dla najprostszych kursów do **ponad 700** dla najbardziej interaktywnych. Źródło: [dane Chapman Alliance w opisie eLearning Industry](" + CHAPMAN_SOURCE + "). Badanie pochodzi z 2010 roku; traktuj je jako rząd wielkości, a nie wycenę Twojego projektu.",
+  problem: "Wskaźniki Chapman Alliance wahają się od **49 do 716 godzin pracy na 1 godzinę gotowego e-learningu**, zależnie od interaktywności. Typowe wartości środkowe na poziom to **79 godzin** dla treści pasywnych, **184 godziny** dla ograniczonej interakcji i **490 godzin** dla umiarkowanego zaangażowania. Źródło: [dane Chapman Alliance w opisie eLearning Industry](" + CHAPMAN_SOURCE + "). Utrzymanie, czyli aktualizacja nieaktualnych treści, to ukryty mnożnik ponad to. Badanie pochodzi z 2010 roku; traktuj je jako rząd wielkości, a nie wycenę Twojego projektu.",
   todayTitle: "Co ULAMS robi dziś",
   todayIntro: "Wszystko to jest już w produkcie.",
   today: [
@@ -124,7 +125,7 @@ const COST_ZH: ImpactCopy = {
   primary: "ULAMS 现在能做什么",
   secondary: "查看演示",
   problemTitle: "行业基准",
-  problem: "Chapman Alliance 的基准显示,每小时成品在线课程平均约需 **197 小时**工作量,最简单的课程约 **49 小时**,交互最多的课程**超过 700 小时**。来源:[eLearning Industry 转述的 Chapman Alliance 数据](" + CHAPMAN_SOURCE + ")。该研究发表于 2010 年,请当作数量级参考,而不是你项目的报价。",
+  problem: "Chapman Alliance 的开发比例为每 1 小时成品在线课程需要 **49 至 716 小时**工作量,取决于交互程度。各级别的典型中间值为:被动内容 **79 小时**,有限交互 **184 小时**,中等参与 **490 小时**。来源:[eLearning Industry 转述的 Chapman Alliance 数据](" + CHAPMAN_SOURCE + ")。维护,即更新过时内容,是在此之上隐藏的倍增因素。该研究发表于 2010 年,请当作数量级参考,而不是你项目的报价。",
   todayTitle: "ULAMS 现在能做什么",
   todayIntro: "以下功能均已在产品中提供。",
   today: [
@@ -152,7 +153,7 @@ const COST_ZH: ImpactCopy = {
 
 const REPORTING_EN: ImpactCopy = {
   title: "ulams — LMS reporting and analytics",
-  description: "Missing reporting is the most common reason to switch LMS. The analytics, exports and compliance reports ULAMS ships, and what is coming.",
+  description: "Weak reporting is a top reason to switch LMS. The analytics, exports and compliance reports ULAMS ships, and what is coming.",
   eyebrow: "Reporting",
   heading: "Reporting you can act on and take with you",
   subtitle: "Dashboards for authors, reports for compliance, and exports your own tools can read.",
@@ -160,7 +161,7 @@ const REPORTING_EN: ImpactCopy = {
   primary: "What ULAMS has today",
   secondary: "Explore the demos",
   problemTitle: "Why it matters",
-  problem: "Industry research reports that only about **9% of organisations are very satisfied** with their LMS, and that missing reporting is the most common reason for switching. This figure comes from industry research, not from ULAMS, and we do not link a single source for it.",
+  problem: "Brandon Hall Group research repeatedly finds that only a small minority of organisations are very satisfied with their LMS, that a third to almost half are actively looking to replace it, and that poor reporting has been among the most cited reasons to switch. Source: [Training Magazine on Brandon Hall LMS surveys](" + BRANDON_HALL_SOURCE + ").",
   todayTitle: "What ULAMS has today",
   todayIntro: "Shipped and documented.",
   today: [
@@ -189,7 +190,7 @@ const REPORTING_EN: ImpactCopy = {
 
 const REPORTING_PL: ImpactCopy = {
   title: "ulams — Raportowanie i analityka w LMS",
-  description: "Brak raportowania to najczęstszy powód zmiany LMS. Analityka, eksporty i raporty zgodności w ULAMS oraz to, co jest w drodze.",
+  description: "Słabe raportowanie to jeden z głównych powodów zmiany LMS. Analityka, eksporty i raporty zgodności w ULAMS oraz to, co jest w drodze.",
   eyebrow: "Raportowanie",
   heading: "Raporty, z których można korzystać i które można zabrać",
   subtitle: "Panele dla autorów, raporty zgodności i eksporty czytelne dla Twoich narzędzi.",
@@ -197,7 +198,7 @@ const REPORTING_PL: ImpactCopy = {
   primary: "Co ULAMS ma dziś",
   secondary: "Zobacz demo",
   problemTitle: "Dlaczego to ważne",
-  problem: "Badania branżowe wskazują, że tylko około **9% organizacji jest bardzo zadowolonych** ze swojego LMS, a brak raportowania jest najczęstszym powodem zmiany systemu. Ta liczba pochodzi z badań branżowych, nie od ULAMS, i nie podajemy jednego źródła.",
+  problem: "Badania Brandon Hall Group wielokrotnie pokazują, że tylko niewielka mniejszość organizacji jest bardzo zadowolona ze swojego LMS, że od jednej trzeciej do prawie połowy aktywnie szuka zamiennika, a słabe raportowanie należy do najczęściej wskazywanych powodów zmiany. Źródło: [Training Magazine o badaniach LMS Brandon Hall](" + BRANDON_HALL_SOURCE + ").",
   todayTitle: "Co ULAMS ma dziś",
   todayIntro: "Dostępne i opisane w dokumentacji.",
   today: [
@@ -226,7 +227,7 @@ const REPORTING_PL: ImpactCopy = {
 
 const REPORTING_ZH: ImpactCopy = {
   title: "ulams — LMS 报表与分析",
-  description: "缺少报表是更换 LMS 最常见的原因。ULAMS 已提供的分析、导出与合规报表,以及即将推出的功能。",
+  description: "报表不足是更换 LMS 的主要原因之一。ULAMS 已提供的分析、导出与合规报表,以及即将推出的功能。",
   eyebrow: "报表",
   heading: "可行动、可带走的报表",
   subtitle: "面向作者的仪表板、面向合规的报表,以及你自己的工具能读取的导出。",
@@ -234,7 +235,7 @@ const REPORTING_ZH: ImpactCopy = {
   primary: "ULAMS 现在有什么",
   secondary: "查看演示",
   problemTitle: "为什么重要",
-  problem: "行业调研显示,只有约 **9% 的组织对其 LMS 非常满意**,而缺少报表是更换系统最常见的原因。该数字来自行业调研,并非来自 ULAMS,我们不为它附单一来源链接。",
+  problem: "Brandon Hall Group 的研究反复发现:只有少数组织对其 LMS 非常满意,三分之一到近一半的组织正在积极寻找替代方案,而报表不足一直是最常被提及的更换原因之一。来源:[Training Magazine 关于 Brandon Hall LMS 调查的报道](" + BRANDON_HALL_SOURCE + ")。",
   todayTitle: "ULAMS 现在有什么",
   todayIntro: "已发布并有文档说明。",
   today: [

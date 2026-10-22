@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { validateDocument } from "@ulams/ui/render-core";
 import type { UiNode } from "@ulams/ui/render-core";
-import { CHAPMAN_SOURCE, IMPACT_PAGES, impactCopy, impactPage } from "../../src/lib/impact-pages.ts";
+import { BRANDON_HALL_SOURCE, CHAPMAN_SOURCE, IMPACT_PAGES, impactCopy, impactPage } from "../../src/lib/impact-pages.ts";
 import { applyLandingStatus } from "../../src/lib/landing-status.ts";
 import { landingDocFor } from "../../src/lib/docs.ts";
 import { LOCALES, publicPagePath } from "../../src/i18n/locales.ts";
@@ -55,22 +55,21 @@ describe("content cost and reporting pages", () => {
     });
   }
 
-  it("links the Chapman figures to elearningindustry.com and quotes no ULAMS savings", () => {
+  it("cites the Chapman ratios with their source and never the 197-hour average", () => {
     for (const locale of LOCALES) {
       const copy = impactCopy("content-cost", locale);
       expect(copy.problem).toContain(CHAPMAN_SOURCE);
-      expect(copy.problem).toContain("197");
-      expect(copy.problem).toContain("49");
-      expect(copy.problem).toContain("700");
+      for (const figure of ["49", "716", "79", "184", "490"]) expect(copy.problem).toContain(figure);
+      expect(JSON.stringify(copy)).not.toContain("197");
     }
     expect(new URL(CHAPMAN_SOURCE).hostname).toBe("elearningindustry.com");
   });
 
-  it("cites the satisfaction statistic as industry research, without a link", () => {
+  it("cites the LMS satisfaction research to Training Magazine and states no 9%", () => {
     for (const locale of LOCALES) {
       const copy = impactCopy("reporting", locale);
-      expect(copy.problem).toContain("9%");
-      expect(copy.problem).not.toMatch(/https?:\/\//);
+      expect(copy.problem).toContain(BRANDON_HALL_SOURCE);
+      expect(JSON.stringify(copy)).not.toContain("9%");
     }
   });
 });
