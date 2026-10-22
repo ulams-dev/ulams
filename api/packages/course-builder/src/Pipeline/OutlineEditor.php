@@ -4,6 +4,7 @@ namespace Ulams\CourseBuilder\Pipeline;
 
 use InvalidArgumentException;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
+use Ulams\CourseBuilder\Blueprint\Provenance;
 use Ulams\CourseBuilder\Blueprint\Checks;
 use Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry;
 
@@ -75,8 +76,10 @@ final class OutlineEditor
         [$kind, $m, $l] = $this->locate($doc, $id);
         if ($kind === 'module') {
             $doc['modules'][$m]['title'] = $title;
+            $doc['modules'][$m] = Provenance::markEdited($doc['modules'][$m]);
         } else {
             $doc['modules'][$m]['lessons'][$l]['title'] = $title;
+            $doc['modules'][$m]['lessons'][$l] = Provenance::markEdited($doc['modules'][$m]['lessons'][$l]);
         }
 
         return [$doc, "Renamed the {$kind} to “{$title}”."];
@@ -146,9 +149,10 @@ final class OutlineEditor
             'blocks' => [],
             'quiz' => null,
             'flags' => [],
+            'edited_by_author' => true, // the author chose this lesson; the assistant writes its text later
         ];
         if (($action['kind'] ?? 'lesson') === 'module') {
-            $doc['modules'][] = ['id' => Blueprint::newId(), 'title' => $title, 'lessons' => [$lesson]];
+            $doc['modules'][] = ['id' => Blueprint::newId(), 'title' => $title, 'lessons' => [$lesson], 'edited_by_author' => true];
 
             return [$doc, "Added module “{$title}” with its first lesson."];
         }
@@ -198,6 +202,7 @@ final class OutlineEditor
             throw new InvalidArgumentException('A written lesson can only go back to rich text; its other formats are written together with the lesson.');
         }
         $doc['modules'][$m]['lessons'][$l]['contentType'] = $key;
+        $doc['modules'][$m]['lessons'][$l] = Provenance::markEdited($doc['modules'][$m]['lessons'][$l]);
         if ($key === 'richtext') {
             unset($doc['modules'][$m]['lessons'][$l]['selfChecks']);
             $doc['modules'][$m]['lessons'][$l]['interaction'] = null;

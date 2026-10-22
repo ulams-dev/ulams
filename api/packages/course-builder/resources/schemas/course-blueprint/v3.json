@@ -98,6 +98,12 @@
         },
         "meta": {
           "$ref": "#/$defs/meta"
+        },
+        "ai_hash": {
+          "$ref": "#/$defs/aiHash"
+        },
+        "edited_by_author": {
+          "$ref": "#/$defs/editedByAuthor"
         }
       },
       "if": {
@@ -200,6 +206,12 @@
         },
         "meta": {
           "$ref": "#/$defs/meta"
+        },
+        "ai_hash": {
+          "$ref": "#/$defs/aiHash"
+        },
+        "edited_by_author": {
+          "$ref": "#/$defs/editedByAuthor"
         }
       },
       "if": {
@@ -417,6 +429,12 @@
           "type": "array",
           "maxItems": 0,
           "description": "Reserved for code exercises (phase 7.2)"
+        },
+        "ai_hash": {
+          "$ref": "#/$defs/aiHash"
+        },
+        "edited_by_author": {
+          "$ref": "#/$defs/editedByAuthor"
         }
       },
       "allOf": [
@@ -530,6 +548,12 @@
         },
         "meta": {
           "$ref": "#/$defs/meta"
+        },
+        "ai_hash": {
+          "$ref": "#/$defs/aiHash"
+        },
+        "edited_by_author": {
+          "$ref": "#/$defs/editedByAuthor"
         }
       }
     },
@@ -764,6 +788,15 @@
         }
       },
       "description": "Set by the server after an upload or an adoption"
+    },
+    "aiHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "sha256 of the normalised content of the element when the AI produced or last revised it. Set by the server; lets a later read tell an unchanged AI element from one an author edited (ADR 0194). Absent on older documents."
+    },
+    "editedByAuthor": {
+      "type": "boolean",
+      "description": "True once a person changed the element directly (outline editor, a change absorbed from the LMS, an import). Cleared when the AI revises the element on request. Absent means not known to be edited."
     }
   },
   "properties": {

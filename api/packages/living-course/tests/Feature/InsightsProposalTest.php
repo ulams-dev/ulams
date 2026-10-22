@@ -279,7 +279,7 @@ class InsightsProposalTest extends TestCase
         $question = $this->questionId($session);
         $proposal = $this->create($session, $question, $author)['proposal'];
         $node = Blueprint::find($session->currentVersion->document, $question)['node'];
-        $swapped = $node;
+        $swapped = \Ulams\CourseBuilder\Blueprint\Provenance::withoutBookkeeping($node); // a model never sees the hash
         $swapped['options'] = array_map(fn ($o) => ['correct' => !$o['correct']] + $o, $node['options']);
         $answer = ['items' => [['elementId' => $question, 'decision' => 'update', 'reason' => 'Clearer wording.', 'severity' => 'major', 'fragmentIds' => $node['citations'], 'answerStatus' => 'unchanged', 'block' => null, 'question' => $swapped, 'objective' => null]], 'reply' => 'ok'];
         $this->fake()->queueJson('insights_improve', $answer)->queueJson('insights_improve', $answer);
