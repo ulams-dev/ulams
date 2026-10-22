@@ -155,6 +155,16 @@ return [
     ['method' => '*', 'uri' => 'api/lti/tool/*', 'kind' => 'own-credentials', 'covered_by' => 'api/packages/lti/tests/Feature/TenantIsolationTest.php',
         'reason' => 'LTI 1.3 tool side (login, launch, deep link): signed id_token, state and nonce; one-time codes are per tenant.'],
 
+    // Single sign-on (OpenID Connect), registered only when IDENTITY_ENABLED is true -----------------
+    ['method' => 'GET', 'uri' => 'api/identity/providers', 'kind' => 'open', 'optional' => true,
+        'reason' => 'Sign-in providers the tenant offers (slug and name only), read from the tenant database chosen by host; throttled.'],
+    ['method' => 'GET', 'uri' => 'api/identity/sso/{slug}/start', 'kind' => 'open', 'optional' => true, 'covered_by' => 'api/packages/identity/tests/Feature/IsolationTest.php',
+        'reason' => 'Starts an OIDC login: needs a PKCE challenge, stores a signed state in the tenant database; another tenant never resolves the slug.'],
+    ['method' => 'GET', 'uri' => 'api/identity/oidc/{slug}/callback', 'kind' => 'open', 'optional' => true, 'covered_by' => 'api/packages/identity/tests/Feature/IsolationTest.php',
+        'reason' => 'Provider redirect: the single-use state is the credential; an invalid, expired or foreign state answers 400.'],
+    ['method' => 'POST', 'uri' => 'api/identity/sso/exchange', 'kind' => 'own-credentials', 'optional' => true, 'covered_by' => 'api/packages/identity/tests/Feature/IsolationTest.php',
+        'reason' => 'Redeems the one-time code with the PKCE verifier (400 without them); codes are per tenant.'],
+
     // Known gaps ------------------------------------------------------------------------------------
     ['method' => 'GET', 'uri' => 'api/refresh-token', 'kind' => 'known-gap',
         'reason' => 'KNOWN GAP (security issue ulams-dev/ulams#370): Google OAuth redirect that stores a YouTube refresh token in the tenant configuration without authentication or a state check. Owner: live-streaming (packages/youtube).'],
