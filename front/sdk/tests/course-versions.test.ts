@@ -50,4 +50,34 @@ describe("course versions client", () => {
 
     await expect(client.releases(3)).rejects.toMatchObject({ status: 0 });
   });
+
+  it("lists every version of the branch, or of every branch, with paging", async () => {
+    const payload = { sessionId: "s1", variantId: null, courseId: 12, baseCourseId: 12, versions: [], variants: [], total: 0, page: 1, perPage: 100 };
+    const { fn, calls } = fakeFetch([{ body: { data: payload } }, { body: { data: payload } }, { body: { data: payload } }]);
+    const client = createCourseVersionsClient({ baseUrl: "/studio/api", prefix: "/course-versions", fetch: fn });
+
+    expect(await client.versions(12)).toEqual(payload);
+    await client.versions(12, { branch: "all", perPage: 200, page: 2 });
+    await client.versions(12, { branch: "own" });
+    expect(calls[0]!.url).toBe("/studio/api/course-versions/courses/12/versions");
+    expect(calls[1]!.url).toBe("/studio/api/course-versions/courses/12/versions?branch=all&page=2&perPage=200");
+    expect(calls[2]!.url).toBe("/studio/api/course-versions/courses/12/versions");
+  });
+
+  it("compares two versions or releases and encodes both ids in the query", async () => {
+    const payload = { diffVersion: 1, courseId: 12, sessionId: "s1", changes: [], quiz: [], fragments: {} };
+    const { fn, calls } = fakeFetch([{ body: { data: payload } }]);
+    const client = createCourseVersionsClient({ baseUrl: "/studio/api", prefix: "/course-versions", fetch: fn });
+
+    expect(await client.compare(12, "01aaa", "01b&b")).toEqual(payload);
+    expect(calls[0]!.url).toBe("/studio/api/course-versions/courses/12/compare?from=01aaa&to=01b%26b");
+    expect(calls[0]!.init.method).toBe("GET");
+  });
+
+  it("surfaces a refused pair as an ApiError", async () => {
+    const { fn } = fakeFetch([{ status: 404, body: { message: "That version or release is not part of this course." } }]);
+    const client = createCourseVersionsClient({ baseUrl: "/studio/api", prefix: "/course-versions", fetch: fn });
+
+    await expect(client.compare(12, "a", "b")).rejects.toMatchObject({ status: 404, message: "That version or release is not part of this course." });
+  });
 });

@@ -47,7 +47,7 @@ final class SemanticDiff
         foreach (BlueprintDiff::compare($from, $to) as $change) {
             $id = $change['id'];
             $seen[$id] = true;
-            $entries[] = self::entry($change, $moves[$id] ?? null, $a[$id] ?? null, $b[$id] ?? null, $repointed);
+            $entries[] = self::entry($change, $moves[$id] ?? null, $a[$id] ?? null, $b[$id] ?? null, $repointed, $a, $b);
         }
         foreach ($moves as $id => $move) {
             if (isset($seen[$id])) {
@@ -57,7 +57,7 @@ final class SemanticDiff
             $entries[] = self::entry([
                 'id' => $id, 'type' => $node['type'], 'label' => $node['label'], 'kind' => $move['moved'] !== null ? 'moved' : 'reordered',
                 'ancestors' => $node['ancestors'], 'fields' => [],
-            ], $move, $a[$id], $node, $repointed);
+            ], $move, $a[$id], $node, $repointed, $a, $b);
         }
 
         $summary = self::summary($from === [], $entries, $quiz, $a, $b);
@@ -168,17 +168,30 @@ final class SemanticDiff
     }
 
     /** @param array<string,string> $repointed */
-    private static function entry(array $change, ?array $move, ?array $was, ?array $now, array $repointed): array
+    private static function entry(array $change, ?array $move, ?array $was, ?array $now, array $repointed, array $a = [], array $b = []): array
     {
         $citations = null;
         if ($was !== null && $now !== null) {
             $citations = self::citations(self::ids($was['fields']['citations'] ?? ''), self::ids($now['fields']['citations'] ?? ''), $repointed);
         }
         $entry = $change + ['moved' => $move['moved'] ?? null, 'reordered' => $move['reordered'] ?? null, 'citations' => $citations];
+        // the element's place in the course tree, for a view that shows the changes as a tree: the unchanged ancestors have
+        // a type, a label and a title here too (an element that was removed has the place it had in the `from` document)
+        $tree = $now !== null ? $b : $a;
+        $entry['title'] = self::titleOf($now ?? $was);
+        $entry['path'] = array_map(fn (string $id) => ['id' => $id, 'type' => $tree[$id]['type'] ?? null, 'label' => $tree[$id]['label'] ?? $id, 'title' => self::titleOf($tree[$id] ?? null)], $change['ancestors']);
         $entry['fields'] = array_map(self::bounded(...), $entry['fields']);
         $entry['description'] = self::describe($entry);
 
         return $entry;
+    }
+
+    /** The title of a module, lesson or the course (the only elements that have one), shortened; null for the others. */
+    private static function titleOf(?array $node): ?string
+    {
+        $title = $node['fields']['title'] ?? null;
+
+        return is_string($title) && $title !== '' ? mb_substr($title, 0, 200) : null;
     }
 
     /** @return string[] */

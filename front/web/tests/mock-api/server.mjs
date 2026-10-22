@@ -294,7 +294,7 @@ const IMPROVE_LIMIT = "01arz3ndektsv4rrffq69g5fa2";
 const IMPROVE_OFF = "01arz3ndektsv4rrffq69g5fa3";
 const IMPROVE_SESSION = `01s${"0".repeat(22)}1`;
 const IMPROVE_PROPOSAL = `01p${"0".repeat(22)}1`;
-const insightsTitles = { 1: "Coffee brewing basics", 2: "Cupping for beginners", 3: "Roasting 101", 4: "Espresso machines", 5: "Latte art", 6: "Barista secrets" };
+const insightsTitles = { 1: "Coffee brewing basics", 2: "Cupping for beginners", 3: "Roasting 101", 4: "Espresso machines", 5: "Latte art", 6: "Barista secrets", 7: "Water and temperature", 9: "Brewing for every level", 10: "Brewing for every level (expert)", 12: "Milk steaming" };
 const insightsFails = new Map();
 const insightsSummary = (id, days) =>
   id === 2
@@ -461,10 +461,10 @@ const releaseOf = (course, number) => ({
   sourceRevisions: null,
   summary: number === 1
     ? { first: true, counts: { added: 24, changed: 0, removed: 0 }, lessons: { added: 6, changed: 0, removed: 0 }, questions: { added: 8, changed: 0, removed: 0 }, citationsChanged: 0, answerKeysChanged: 0 }
-    : { first: false, counts: { added: 0, changed: 2, removed: 0 }, lessons: { added: 0, changed: 1, removed: 0 }, questions: zero, citationsChanged: number % 3 === 0 ? 2 : 0, answerKeysChanged: number % 4 === 0 ? 1 : 0 },
+    : { first: false, counts: { added: 0, changed: 2, removed: 0 }, lessons: { added: 0, changed: 1, removed: 0 }, questions: zero, citationsChanged: number % 3 === 0 ? 2 : 0, answerKeysChanged: number % 4 === 0 ? 1 : 0, moved: number % 6 === 0 ? 1 : 0, lessonsMoved: number % 6 === 0 ? 1 : 0 },
   releasedAt: isoDay(-(40 - number)),
 });
-const versionsCount = { 1: 28, 2: 0, 5: 3, 6: 3 };
+const versionsCount = { 1: 28, 2: 0, 5: 3, 6: 3, 7: 3, 9: 3, 10: 2, 12: 3 };
 const courseReleases = (id, query) => {
   if (id === 3) return { __status: 404, message: "This course was not made with the Course Builder, so it has no releases. Adopt the course to track its versions." };
   if (id === 4) return { __status: 403, message: "This builder session belongs to another author." };
@@ -473,11 +473,144 @@ const courseReleases = (id, query) => {
   const perPage = Math.min(100, Math.max(1, Number(query.get("perPage") ?? 25)));
   const page = Math.max(1, Number(query.get("page") ?? 1));
   const numbers = Array.from({ length: total }, (_, i) => total - i).slice((page - 1) * perPage, page * perPage);
-  return { sessionId: `01s${"0".repeat(22)}${id}`, courseId: id, releases: numbers.map((n) => releaseOf(id, n)), total, page, perPage };
+  return { sessionId: `01s${"0".repeat(22)}${id}`, variantId: id === 10 ? VARIANT_ID : null, courseId: id, releases: numbers.map((n) => ({ ...releaseOf(id, n), variantId: id === 10 ? VARIANT_ID : null })), total, page, perPage };
+};
+
+/**
+ * Every version of a course's branch and the comparison of two of them (CV-3). Ids carry the course: a release is
+ * 01r<course><n>, its version 01v<course><n>, a rejected version 01x<course><n>, a proposal 01p<course><n>. Course 9 is a
+ * base with a variant whose own course is 10. Course 12 fails its first compare and then works; course 6 compares two
+ * releases without a change (1 and 2) or with one small one (1 and 3); every other course gets the rich payload.
+ */
+const VARIANT_ID = "01w00000000000000000000009";
+const idFor = (kind, course, n) => `01${kind}${String(course).padStart(2, "0")}${String(n).padStart(21, "0")}`;
+const parseId = (id) => {
+  const m = /^01([rvxp])(\d{2})(\d{21})$/.exec(id ?? "");
+  return m ? { kind: m[1], course: Number(m[2]), n: Number(m[3]) } : null;
+};
+const versionRowsOf = (course, variantId) => {
+  const count = versionsCount[course] ?? 0;
+  const rows = [];
+  for (let n = count; n >= 1; n--) {
+    rows.push({ id: idFor("v", course, n), number: 2 * n, kind: n === 1 ? "content" : "author", origin: n === 1 ? "ai" : "author", status: "approved", reason: null, variantId, releaseId: idFor("r", course, n), releaseNumber: n, createdAt: isoDay(-(40 - n)), decidedAt: isoDay(-(40 - n)) });
+    if (n % 3 === 0) rows.push({ id: idFor("x", course, n), number: 2 * n - 1, kind: "patch", origin: "ai", status: "rejected", reason: "Too long", variantId, releaseId: null, releaseNumber: null, createdAt: isoDay(-(40 - n) - 0.5), decidedAt: null });
+    if (n === count && count > 2) rows.push({ id: idFor("p", course, n), number: 2 * n + 1, kind: "patch", origin: "ai", status: "proposed", reason: "Shorter intro", variantId, releaseId: null, releaseNumber: null, createdAt: isoDay(-1), decidedAt: null });
+  }
+  return rows;
+};
+const courseVersionList = (id, query) => {
+  if (id === 3) return { __status: 404, message: "This course was not made with the Course Builder, so it has no versions. Adopt the course to track its versions." };
+  if (id === 4) return { __status: 403, message: "This builder session belongs to another author." };
+  if (versionsCount[id] === undefined) return { __status: 404, message: "Not found" };
+  const base = id === 10 ? 9 : id;
+  const hasVariants = base === 9;
+  const ownVariant = id === 10 ? VARIANT_ID : null;
+  const own = versionRowsOf(id, ownVariant);
+  const all = query.get("branch") === "all" && hasVariants ? [...versionRowsOf(9, null), ...versionRowsOf(10, VARIANT_ID)].sort((a, b) => b.number - a.number) : own;
+  const perPage = Math.min(200, Math.max(1, Number(query.get("perPage") ?? 100)));
+  const page = Math.max(1, Number(query.get("page") ?? 1));
+  return {
+    sessionId: `01s${"0".repeat(22)}${base}`, variantId: ownVariant, courseId: id, baseCourseId: base,
+    versions: all.slice((page - 1) * perPage, page * perPage),
+    variants: hasVariants ? [{ id: VARIANT_ID, key: "expert", label: "Expert", level: "expert", role: null, status: "approved", courseId: 10 }] : [],
+    total: all.length, page, perPage,
+  };
+};
+
+const NODE = {
+  m1: { id: "mod_1", type: "module", label: "Module 1", title: "Water and brewing" },
+  m2: { id: "mod_2", type: "module", label: "Module 2", title: "Grinding" },
+  l1: { id: "les_1", type: "lesson", label: "Lesson 1.1", title: "Brewing basics" },
+  l3: { id: "les_3", type: "lesson", label: "Lesson 1.3", title: "Choosing a kettle" },
+  qz: { id: "qz_1", type: "quiz", label: "Lesson 1.1 › quiz", title: null },
+  q1: { id: "q_1", type: "question", label: "Lesson 1.1 › Q1", title: null },
+};
+const field = (name, label, before, after, extra = {}) => ({ field: name, label, before, after, ...extra });
+const entry = (change) => ({ title: null, path: [], moved: null, reordered: null, citations: null, description: "", ...change, ancestors: (change.path ?? []).map((p) => p.id) });
+const sideOf = (ref, courseId) => {
+  const n = ref.n;
+  const released = ref.kind === "r" || ref.kind === "v";
+  return {
+    versionId: idFor("v", ref.course, n), versionNumber: released ? 2 * n : 2 * n - 1, kind: released ? "author" : "patch", status: ref.kind === "x" ? "rejected" : ref.kind === "p" ? "proposed" : "approved",
+    variantId: ref.course === 10 ? VARIANT_ID : null, releaseId: released ? idFor("r", ref.course, n) : null, releaseNumber: released ? n : null, releasedAt: released ? isoDay(-(40 - n)) : null, createdAt: isoDay(-(40 - n)), courseId,
+  };
+};
+const noCounts = { added: 0, changed: 0, removed: 0, moved: 0, reordered: 0 };
+const richCompare = () => {
+  const changes = [
+    entry({ id: "les_3", type: "lesson", label: "Lesson 1.3", title: "Choosing a kettle", kind: "added", path: [NODE.m1],
+      fields: [field("title", "Title", null, "Choosing a kettle"), field("summary", "Summary", null, "Why a gooseneck kettle gives control."), field("minutes", "Minutes", null, 6), field("citations", "Citations", null, "frg_added000001")],
+      citations: { added: ["frg_added000001"], removed: [], repointed: [] }, description: "Lesson 1.3 added." }),
+    entry({ id: "blk_old", type: "block", label: "Lesson 1.1 › block 2", kind: "removed", path: [NODE.m1, NODE.l1],
+      fields: [field("kind", "Block type", "text", null), field("markdown", "Content", "Use a cheap blade grinder for the best results.", null)], description: "Lesson 1.1 › block 2 removed." }),
+    entry({ id: "les_1", type: "lesson", label: "Lesson 1.1", title: "Brewing basics", kind: "changed", path: [NODE.m1],
+      fields: [field("title", "Title", "Brewing basic", "Brewing basics"), field("summary", "Summary", "Learn to brew coffee with water at ninety degrees.", "Learn to brew coffee with water at ninety-five degrees for four minutes."), field("minutes", "Minutes", 5, 6), field("citations", "Citations", "frg_removed00001, frg_old00000001", "frg_new000000001, frg_added000002")],
+      citations: { added: ["frg_added000002"], removed: ["frg_removed00001"], repointed: [{ from: "frg_old00000001", to: "frg_new000000001" }] }, description: "Lesson 1.1 changed title, summary, minutes; citations changed." }),
+    entry({ id: "blk_1", type: "block", label: "Lesson 1.1 › block 1", kind: "changed", path: [NODE.m1, NODE.l1],
+      fields: [field("markdown", "Content", "Heat the water to ninety degrees.\nPour slowly in circles.", "Warm the water to ninety-five degrees.\nPour slowly in circles and wait thirty seconds.")], description: "Lesson 1.1 › block 1 changed content." }),
+    entry({ id: "blk_big", type: "block", label: "Lesson 1.1 › block 3", kind: "changed", path: [NODE.m1, NODE.l1],
+      fields: [field("markdown", "Content", null, null, { truncated: true, lineDiff: { removed: ["A very long line that was removed."], added: ["A very long line that was added.", "Another added line."], omitted: 12 } })], description: "Lesson 1.1 › block 3 changed content." }),
+    entry({ id: "les_2", type: "lesson", label: "Lesson 2.1", title: "Grind size", kind: "moved", path: [NODE.m2], moved: { from: { id: "mod_1", label: "Module 1" }, to: { id: "mod_2", label: "Module 2" } }, fields: [], description: "Lesson 2.1 moved." }),
+    entry({ id: "les_5", type: "lesson", label: "Lesson 2.3", title: "Burr or blade", kind: "reordered", path: [NODE.m2], reordered: { parentId: "mod_2", from: 3, to: 1 }, fields: [], description: "Lesson 2.3 moved." }),
+    entry({ id: "o_a", type: "option", label: "Lesson 1.1 › Q1 › option A", kind: "changed", path: [NODE.m1, NODE.l1, NODE.qz, NODE.q1], fields: [field("correct", "Correct answer", true, false)], description: "option A changed." }),
+    entry({ id: "o_b", type: "option", label: "Lesson 1.1 › Q1 › option B", kind: "changed", path: [NODE.m1, NODE.l1, NODE.qz, NODE.q1], fields: [field("correct", "Correct answer", false, true)], description: "option B changed." }),
+    entry({ id: "q_2", type: "question", label: "Lesson 1.1 › Q2", kind: "changed", path: [NODE.m1, NODE.l1, NODE.qz], fields: [field("stem", "Question", "Which temperature is best?", "Which water temperature is best for a pour-over?"), field("origin", "Written by", "ai", "author")],
+      citations: null, description: "Lesson 1.1 › Q2 changed question." }),
+  ];
+  const passage = (label, text, revision) => ({ label, text, sourceRevision: revision ? { id: `01z${String(revision).padStart(23, "0")}`, number: revision } : null });
+  return {
+    summary: {
+      first: false, counts: { added: 1, changed: 5, removed: 1, moved: 1, reordered: 1 },
+      types: { lesson: { added: 1, changed: 1, removed: 0, moved: 1, reordered: 1 }, block: { ...noCounts, changed: 2, removed: 1 }, option: { ...noCounts, changed: 2 }, question: { ...noCounts, changed: 1 } },
+      citations: { added: 2, removed: 1, repointed: 1 }, quiz: { answerKeysChanged: 1, reworded: 1, questionsAdded: 0, questionsRemoved: 0 },
+      learnerImpact: { lessonsKeepingCompletion: 5, lessonsWithUpdatedNotice: 1, lessonsChangedSilently: 1, lessonsRemoved: 0, lessonsAdded: 1, reattemptNotices: 1 },
+      lines: [], text: "1 lesson added.",
+    },
+    changes,
+    quiz: [
+      { questionId: "q_1", label: "Lesson 1.1 › Q1", lessonId: "les_1", stem: null, type: null, explanation: false,
+        options: { added: [], removed: [], reworded: [], keyChanged: [{ id: "o_a", text: "Pressure", before: true, after: false }, { id: "o_b", text: "Temperature", before: false, after: true }] },
+        answerKeyChanged: true, wording: false, correctBefore: ["Pressure"], correctAfter: ["Temperature"], consequence: "Learners who already answered this question get a re-attempt notice." },
+      { questionId: "q_2", label: "Lesson 1.1 › Q2", lessonId: "les_1", stem: { before: "Which temperature is best?", after: "Which water temperature is best for a pour-over?" }, type: null, explanation: false,
+        options: { added: [], removed: [], reworded: [], keyChanged: [] }, answerKeyChanged: false, wording: true, correctBefore: ["Ninety"], correctAfter: ["Ninety"], consequence: null },
+    ],
+    fragments: {
+      frg_added000001: passage("Kettles.md › Gooseneck", "A gooseneck spout lets you pour slowly and steadily.", 3),
+      frg_added000002: passage("Water.md › Temperature", "Water between 92 and 96 degrees extracts sweetness without bitterness.", 3),
+      frg_removed00001: passage("Water.md › Old guidance", "Boiling water is fine for every roast.", 2),
+      frg_old00000001: passage("Water.md › Temperature (revision 2)", "Use water at 90 degrees.", 2),
+      frg_new000000001: passage("Water.md › Temperature (revision 3)", "Use water at 95 degrees.", 3),
+    },
+  };
+};
+const smallCompare = () => ({
+  ...richCompare(),
+  summary: { ...richCompare().summary, counts: { added: 0, changed: 1, removed: 0, moved: 0, reordered: 0 }, types: { lesson: { ...noCounts, changed: 1 } }, citations: { added: 0, removed: 0, repointed: 0 }, quiz: { answerKeysChanged: 0, reworded: 0, questionsAdded: 0, questionsRemoved: 0 }, learnerImpact: { lessonsKeepingCompletion: 6, lessonsWithUpdatedNotice: 0, lessonsChangedSilently: 1, lessonsRemoved: 0, lessonsAdded: 0, reattemptNotices: 0 } },
+  changes: [entry({ id: "les_1", type: "lesson", label: "Lesson 1.1", title: "Brewing basics", kind: "changed", path: [NODE.m1], fields: [field("title", "Title", "Brewing basic", "Brewing basics")], description: "Lesson 1.1 changed title." })],
+  quiz: [], fragments: {},
+});
+const emptyCompare = () => ({ ...richCompare(), summary: { ...richCompare().summary, counts: noCounts, types: {}, citations: { added: 0, removed: 0, repointed: 0 }, quiz: { answerKeysChanged: 0, reworded: 0, questionsAdded: 0, questionsRemoved: 0 }, learnerImpact: { lessonsKeepingCompletion: 6, lessonsWithUpdatedNotice: 0, lessonsChangedSilently: 0, lessonsRemoved: 0, lessonsAdded: 0, reattemptNotices: 0 } }, changes: [], quiz: [], fragments: {} });
+const compareFails = new Map();
+const courseCompare = (id, query, tenant) => {
+  if (id === 3) return { __status: 404, message: "This course was not made with the Course Builder, so it has no versions. Adopt the course to track its versions." };
+  if (id === 4) return { __status: 403, message: "This builder session belongs to another author." };
+  if (versionsCount[id] === undefined) return { __status: 404, message: "Not found" };
+  const [fromId, toId] = [query.get("from"), query.get("to")];
+  if (!fromId || !toId) return { __status: 422, message: "The given data was invalid.", errors: { from: ["The from field is required."] } };
+  const a = parseId(fromId);
+  const b = parseId(toId);
+  const family = id === 9 || id === 10 ? [9, 10] : [id];
+  if (!a || !b || !family.includes(a.course) || !family.includes(b.course)) return { __status: 404, message: "That version or release is not part of this course." };
+  if (id === 12 && !compareFails.get(`${tenant}:12`)) {
+    compareFails.set(`${tenant}:12`, true);
+    return { __status: 500, message: "The comparison is temporarily unavailable." };
+  }
+  const base = fromId === toId || (a.course === b.course && a.n === b.n) ? emptyCompare() : id === 6 ? (Math.min(a.n, b.n) === 1 && Math.max(a.n, b.n) === 2 ? emptyCompare() : smallCompare()) : richCompare();
+  return { diffVersion: 1, courseId: id, sessionId: `01s${"0".repeat(22)}${id === 10 ? 9 : id}`, from: sideOf(a, id), to: sideOf(b, id), ...base };
 };
 const courseVersionsRoutes = [
-  // test control: course 5 fails its next request again (every tenant has its own state)
-  ["POST", /^\/__mock\/course-versions\/reset$/, ({ tenant }) => (versionsFails.delete(`${tenant}:5`), { reset: true })],
+  // test control: course 5 (releases) and course 12 (compare) fail their next request again (every tenant has its own state)
+  ["POST", /^\/__mock\/course-versions\/reset$/, ({ tenant }) => (versionsFails.delete(`${tenant}:5`), compareFails.delete(`${tenant}:12`), { reset: true })],
   ["GET", /^\/api\/admin\/course-versions\/courses\/(\d+)\/releases$/, ({ match, query, tenant }) => {
     const id = Number(match[1]);
     if (id === 5 && !versionsFails.get(`${tenant}:5`)) {
@@ -486,6 +619,8 @@ const courseVersionsRoutes = [
     }
     return courseReleases(id, query);
   }],
+  ["GET", /^\/api\/admin\/course-versions\/courses\/(\d+)\/versions$/, ({ match, query }) => courseVersionList(Number(match[1]), query)],
+  ["GET", /^\/api\/admin\/course-versions\/courses\/(\d+)\/compare$/, ({ match, query, tenant }) => courseCompare(Number(match[1]), query, tenant)],
 ];
 
 const routes = [
