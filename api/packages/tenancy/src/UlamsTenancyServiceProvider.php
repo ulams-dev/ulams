@@ -97,6 +97,7 @@ class UlamsTenancyServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         RateLimiter::for('ulams-entry-points-admin', fn (Request $request) => Limit::perMinute(60)->by('entry-points:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
+        RateLimiter::for('ulams-entry-resolve', fn (Request $request) => Limit::perMinute((int) config(self::CONFIG_KEY . '.entry_resolve_rate', 600))->by('entry-resolve:' . $request->ip()));
         RateLimiter::for('ulams-platform', fn (Request $request) => Limit::perMinute(60)->by('platform:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
 
         $kernel = $this->app->make(HttpKernel::class);

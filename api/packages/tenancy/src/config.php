@@ -137,6 +137,8 @@ return [
     'max_entry_points' => (int) env('TENANCY_MAX_ENTRY_POINTS', 20),
     'entry_platform_suffixes' => $list(env('TENANCY_ENTRY_PLATFORM_SUFFIXES', '.app.localhost')),
     'entry_trusted_suffixes' => $list(env('TENANCY_ENTRY_TRUSTED_SUFFIXES', '')),
+    // lookups per minute and address of the public endpoint the learner front calls for an unknown host
+    'entry_resolve_rate' => (int) env('TENANCY_ENTRY_RESOLVE_RATE', 600),
     'entry_cname_target' => env('TENANCY_ENTRY_CNAME_TARGET') ?: null,
 
     'php_binary' => env('TENANCY_PHP_BINARY', PHP_BINARY ?: 'php'),

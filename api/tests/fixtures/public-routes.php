@@ -44,6 +44,8 @@ return [
         'reason' => 'Static "your email is now verified" text shown after the verification link.'],
 
     // Health and platform metadata -----------------------------------------------------------------
+    ['method' => 'GET', 'uri' => 'api/platform/entry-points/resolve', 'kind' => 'open', 'covered_by' => 'api/packages/tenancy/tests/Feature/EntryPointResolveTest.php',
+        'reason' => 'Which academy and entry point serve a host (ADR 0195): read by the learner front before it knows the academy. Platform hosts only (404 on a tenant host), returns only active entry points and no ids of people, throttled per address.'],
     ['method' => 'GET', 'uri' => 'api/name', 'kind' => 'open', 'reason' => 'Application name, read by the front end and by the tenant probe.'],
     ['method' => 'GET', 'uri' => 'api/events', 'kind' => 'open', 'reason' => 'Event catalogue of the API (names only).'],
     ['method' => 'GET', 'uri' => 'api/health', 'kind' => 'open', 'reason' => 'Liveness probe for load balancers.'],

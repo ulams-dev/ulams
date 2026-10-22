@@ -203,6 +203,8 @@ return [
     ['api/admin/lti*', 'lti'],
 
     // ---- platform (tenant API, platform hosts only) --------------------------------------------
+    // the lookup the learner front makes for a host it does not know (ADR 0195): public data, no token
+    ['api/platform/entry-points/resolve', 'public'],
     ['api/platform*', 'platform'],
 
     // ---- learner (everything a signed-in learner does on the public API) -----------------------

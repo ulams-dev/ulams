@@ -637,6 +637,10 @@
             "area": "lti"
         },
         {
+            "pattern": "api/platform/entry-points/resolve",
+            "area": "public"
+        },
+        {
             "pattern": "api/platform*",
             "area": "platform"
         },

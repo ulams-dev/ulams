@@ -13,6 +13,8 @@ use Ulams\Tenancy\Models\EntryPoint;
  */
 final class EntryPointRules
 {
+    /** `/go/main` leaves an entry point and returns to the academy's own pages. */
+    public const RESERVED_KEYS = ['main'];
     public const KEY_PATTERN = '/^[a-z0-9](?:[a-z0-9-]{0,38}[a-z0-9])?$/';
     public const ROLE_PATTERN = '/^[a-z0-9][a-z0-9_-]{0,48}$/';
     public const LOCALE_PATTERN = '/^[a-z]{2,3}(?:-[A-Za-z]{2,4})?$/';
@@ -22,7 +24,7 @@ final class EntryPointRules
     {
         return [
             'host' => ['required', 'string', 'max:253'],
-            'key' => ['required', 'string', 'max:40', 'regex:' . self::KEY_PATTERN],
+            'key' => ['required', 'string', 'max:40', 'regex:' . self::KEY_PATTERN, Rule::notIn(self::RESERVED_KEYS)],
             'kind' => ['required', Rule::in(EntryPoint::KINDS)],
             'target' => ['nullable', 'array'],
             'label' => ['required', 'string', 'min:1', 'max:120'],

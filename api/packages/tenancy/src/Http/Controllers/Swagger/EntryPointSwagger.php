@@ -35,7 +35,7 @@ use Ulams\Tenancy\Http\Requests\EntryPointRequest;
  *     @OA\Property(property="created_at", type="string", format="date-time"), @OA\Property(property="updated_at", type="string", format="date-time"))
  * @OA\Schema(schema="EntryPointCreate", required={"host","key","kind","label"},
  *     @OA\Property(property="host", type="string", example="sales.academy.example.org", description="A DNS name: no address, port or path; hosts under a platform suffix must be {slug}-name.suffix"),
- *     @OA\Property(property="key", type="string", example="sales", description="Lower case letters, digits and hyphens, up to 40"),
+ *     @OA\Property(property="key", type="string", example="sales", description="Lower case letters, digits and hyphens, up to 40; the key main is reserved (it leaves an entry point)"),
  *     @OA\Property(property="kind", type="string", enum={"academy","department","course","role"}),
  *     @OA\Property(property="target", type="object", description="department: {group_id}; course: {course_id}; role: {role}; academy: omit",
  *         @OA\Property(property="group_id", type="integer"), @OA\Property(property="course_id", type="integer"), @OA\Property(property="role", type="string")),

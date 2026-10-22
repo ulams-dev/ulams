@@ -2,9 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use Ulams\Tenancy\Http\Controllers\EntryPointController;
+use Ulams\Tenancy\Http\Controllers\EntryPointResolveController;
 use Ulams\Tenancy\Http\Controllers\PlatformOperationController;
 use Ulams\Tenancy\Http\Controllers\PlatformTenantController;
 use Ulams\Tenancy\Http\Middleware\EnsurePlatformApi;
+use Ulams\Tenancy\Http\Middleware\EnsurePlatformHost;
 use Ulams\Tenancy\Http\Middleware\EnsureTenantApi;
 
 // The platform tenant API (ADR 0078): off by default (TENANCY_PLATFORM_API), platform hosts only.
@@ -35,3 +37,8 @@ Route::group([
     Route::patch('{entryPoint}', [EntryPointController::class, 'update'])->where('entryPoint', '[0-9a-z]{26}');
     Route::delete('{entryPoint}', [EntryPointController::class, 'destroy'])->where('entryPoint', '[0-9a-z]{26}');
 });
+
+// Public lookup the learner front makes for a host it does not know (ADR 0195): platform hosts only, no switch, no
+// credentials, throttled per address. Declared outside the platform tenant API group on purpose.
+Route::get('api/platform/entry-points/resolve', [EntryPointResolveController::class, 'show'])
+    ->middleware([EnsurePlatformHost::class, 'throttle:ulams-entry-resolve']);
