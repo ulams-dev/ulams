@@ -382,6 +382,9 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       with an operator
       Note 2026-10-21 (TD-1): first half done: the repository variable `NIGHTLY_CONFORMANCE` has been `true` since 2026-10-09 and the
       scheduled run passes again since #306. Left: one operator run of the saLTIre job (#141, owner action)
+      Note 2026-10-22 (#379, #372): the nightly jobs were fixed (PostgreSQL 12 to 17 upgrade, two real tenants over HTTP, LTI with Moodle) and a manual dispatch on
+      `main` (run on #379) passes all five automatic jobs, including Keycloak OIDC; the saLTIre job is skipped (operator-driven). The last three scheduled runs
+      (19 to 21 Oct) still failed, before those fixes, so the next scheduled run has to be seen green before this is called stable
 - [x] (new) Adapt Path B admin screen (sources, versions, build status)
 - [x] (new) Astro front: H5P plays without a token, so learner state is not restored (decide: a short-lived
       H5P token from the BFF, or state through the BFF) (decided: state through the BFF, ADR 0045; the `/h5p`
@@ -618,6 +621,10 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 - [x] Nudges via `notifications`, rate-limited (M4.4, per learner and per course limits, #277)
 - [x] Recovery rate measurement (outcome tracker and `LearnerRecovered`, `learner-insights:cohort-stats`, M4.4, #277)
 - [ ] Author analytics; high-struggle elements → update proposals (partial: author and admin analytics API merged, #283; the Living Course proposal from insights, `ProposalService::createFromInsights`, is open)
+      Note 2026-10-22 (LX-2, #383): partial. The proposal entry point is built and merged: proposals have a `kind` (`source` or `insights`), `ProposalService::createFromInsights()`
+      (groups below 10 learners, uncited and non-block elements refused, three proposals per course and day), `POST /api/admin/learner-insights/courses/{course}/elements/{elementKey}/improve`,
+      the studio button, evidence card and review badge (EN/PL/ZH), ADRs 0180 and 0181 Accepted; all tests use a mocked model. Open: no live model has run and
+      the `insights_improve` eval fixtures are missing (owner inputs, issue #382), and the remediation pattern key does not use the chosen options yet
 - [x] (new) Per-course analytics dashboard for authors and admins: progress, completion, quiz performance, at-risk
       learners and the sections that confuse people, per course (Phase 4, M4.6 author analytics; API merged, #283, studio Insights page not built; shown as "Coming" in the
       white-label section of the platform landing)
@@ -649,14 +656,20 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 
 ## Phase 5: UX and reference frontend
 
-- [ ] Audit Wellms frontends; evolve or build new reference app (justify; SSR/SEO) (partial: new Astro
+- [x] Audit Wellms frontends; evolve or build new reference app (justify; SSR/SEO) (partial: new Astro
       SSR app `front/web`, ADR 0008 Accepted 2026-10-09; landing, course, lesson player, quiz, finish for the demo
       tenants; plan and numbers in `docs/plans/phase-5-reference-frontend.md`; on `main`; the audit is recorded in the docs
       site, Developers, Reference frontend, "Why a new app"; Course JSON-LD on course pages; to tick with P5R-2)
-- [ ] Themeable from builder presets; per-tenant theme (partial: `--ulams-*` theme files per demo
+      Note 2026-10-22 (P5R-2, #378): audit record `developers/reference-frontend` "Why a new app", `front/web/src/lib/course-jsonld.ts` and its Playwright spec
+      are on `main`
+- [x] Themeable from builder presets; per-tenant theme (partial: `--ulams-*` theme files per demo
       preset in `front/ui/src/styles/themes`, chosen from `theme.theme`; accent from `theme.accent`
       applied server-side with AA contrast; builder presets are connected (`SiteTheme` on apply); P5R-2 adds one shared preset
       list, the admin Theme screen with the contrast report, the tenant logo and the per-tenant web manifest; to tick with it)
+      Note 2026-10-22 (P5R-2, #378): done. One preset list (`front/ui/catalogue/themes.json`, copy in `api/packages/settings/resources/themes.json`, checked in `yarn test`),
+      `admin/src/pages/Settings/theme.tsx` (preset cards, accent with the AA contrast report, logo upload with alt text, brand import as a diff to approve),
+      `/site.webmanifest` per tenant host, mocked-API Playwright `theme.e2e.spec.ts` with axe, `ThemeLogoTest`. Limit: the contrast block is enforced by the admin
+      screen only; the API checks that the accent is a six digit hex colour and the learner site still adjusts a weak accent set through the API
 - [x] (new) Brand import: built-in brand importer (no agent needed) that generates a tenant theme preset from a Figma
       file, a Stitch DESIGN.md or a brand guide (tokens, fonts, logo), proposed as a diff the admin approves (today an
       agent with the ulams CLI and the design tool's MCP does it: `ulams theme set`, `ulams settings set`)
@@ -697,6 +710,9 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 - [ ] (new) Build the arm64 images natively instead of under QEMU (`publish.yml`; #336 pinned the emulator, #368 builds each platform on its own runner and merges the digests)
       (merged, not confirmed: the `publish.yml` runs after #368 had not completed when this was written; tick when a run publishes both platforms and the
       supply-chain job verifies the merged digests)
+      Note 2026-10-22: partial. The `publish.yml` run on `main` for #378 built all eight images natively on amd64 and arm64 and merged every digest
+      successfully (only the signing jobs failed, fixed by #381); signing is now off unless `SIGN_IMAGES` is `true` (owner issue #354), so the merged digests
+      are still not verified by a signature check, and the run after #381 had not finished when this was written
 - [x] (new) Docker and CI robustness: retries for `npm ci`, `yarn install`, `yarn build` and `composer install` in the image builds (#307, #313, #321), the nightly
       keeps PostgreSQL and Valkey alive across the Docker daemon restart (#306)
 - [x] (new) Deterministic tests: the clock-dependent tests (#364), `ConsultationChangeTermTest` and `BaseRepositoryTest::testPaginate` (#308), the lesson view and
@@ -706,7 +722,7 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
       (`phase-6-identity.md`, #341), the Phase 6 remainder (`phase-6-remaining.md`, #342), the Sylius commerce block (`phase-6-commerce.md`, #343), tech debt and the quality bar
       (`tech-debt-and-quality-bar.md`, #344), experiments, surveys and the insights studio (`phase-4-experiments-and-analytics.md`, #345) and the Phase 5 remainder
       (`phase-5-remaining.md`, #346); each is a plan, not implemented work, and the plan texts still say "draft" or "proposed" although the owner approved the batch in advance
-- [ ] (new) Reference frontend for the demos: UI catalogue `@ulams/ui` (JSON-schema registry, renderer
+- [x] (new) Reference frontend for the demos: UI catalogue `@ulams/ui` (JSON-schema registry, renderer
       with fallbacks, landing pages as A2UI-shaped documents), BFF with httpOnly session, demo auto-login,
       SWR cache of public API data (partial: on `main`, implemented and tested; Caddy already points
       `*.app.localhost` to :4321 in this checkout; API fixes remain listed in the plan; Batch 3 platform landing redesign
@@ -714,7 +730,7 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
       EN/PL/ZH layout; web/UI suites and desktop/phone axe pass; 2026-10-11 visual refinement adds a
       midnight/lilac/citrus direction from the owner's Dribbble references, with rebuilt docs and locale
       screenshots; production build passes and desktop/phone renders have no horizontal overflow)
-- [ ] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
+- [x] (new) Platform product landing on the platform host (`app.localhost`) with the live demos;
       account area; webinars/events/consultations pages (partial: on `main`, implemented and tested;
       see `docs/plans/phase-5-reference-frontend.md`, batch 2; Overview in EN/PL/ZH shows an animated privacy-policy
       lifecycle from source v1 through course, exam and certificate to source updates and recertification; one
@@ -728,6 +744,7 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
       example tenant domains. The repeated
       principles grid is replaced by a sourced Scottish Book brand story and the selected Stitch Ulam portrait.
       The example workflow has no availability badges; planned delivery is tracked under Phase 6)
+      Note 2026-10-22 (P5R-2, #378): both items above are the close-out of the plan (T10, T11); the code is on `main` with its tests, ticked with the theme close-out
 - [x] (new) Link the owner’s ULAM scientific paper under the standards, as requested in the
       follow-up: verified PDF and source repository, authorship and PDF version date, EN/PL/ZH.
 - [x] (new) Restore the complete Comparison feature catalogue by stakeholder: 101 descriptions,
@@ -834,7 +851,7 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 
 ### 6.2 Automated enrolment and paths
 - [x] Rule engine (attribute → path, due in N days), on change and on schedule (attribute enrolment rules and `RuleEngine`, #280)
-- [ ] Learning paths with prerequisites; lifecycle notifications (partial: learning paths with prerequisites merged, #280; lifecycle notifications beyond the deadline reminders of #298 not confirmed)
+- [x] Learning paths with prerequisites; lifecycle notifications (learning paths with prerequisites merged, #280; deadline reminders, #298; path and training notifications, #374: `TrainingCompleted` for the learner and `TrainingCompletedForManager`, path context in every training e-mail, webhook events `training.assigned`, `training.completed`, `training.overdue`, `path.completed` and `certificate.revoked`, `PathLifecycleNotificationTest` walks a three-step path once; the notices reach the learner by e-mail and in-app notification, a list of them in `front/web` is not built)
 
 ### 6.3 Identity and HR
 - [ ] SAML 2.0 and OIDC per tenant · SCIM 2.0 · HRIS import (CSV/API first)
@@ -849,6 +866,11 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
       the once-per-target upgrade step disarm the password `1` of accounts created by the old social login; every token is revoked when a user is deactivated
       or deleted. Tests: `ReturnUrlValidationTest`, `DisarmLegacySocialPasswordsCommandTest`, the social login unit and node:test suites and a Playwright flow against the mock API in `front/web` (no token in any URL, replay, injected code, missing verifier);
       ADRs 0120 and 0121 Accepted; docs `operators/social-login.mdx` and `operators/security.mdx`
+- [x] (new) Security fixes from the route-walking test (#372, #377): `GET /api/refresh-token` (YouTube) now needs a signed state (HMAC, tenant host, single use, 10 minutes, starter needs `settings_config_update`; issue #370 closed),
+      the 14 routes that relied on a FormRequest policy (order invoices, PDFs, vouchers, questionnaires) now sit behind `auth:api` and answer 401 to a guest instead of 403 or 404, and the three
+      routes that answered 500 now answer 400 (`oauth/authorize`), 422 (`api/images/img` without `path`) and 401 (`api/profile/delete/{id}/{token}` with a bad token)
+- [ ] (new) Live check of insights improvement proposals: eval fixtures for `insights_improve` and one real-model run (LX-2, owner inputs in issue #382: API key and spending cap)
+- [ ] (new) Remediation pattern key uses the chosen quiz options (`quiz.answer` signals record them since #383; needs generator input, plan 5.3 of `phase-4-experiments-and-analytics.md`)
 - [x] (new) OpenID Connect login per tenant (ID-1, #371): `api/packages/identity` with per-tenant identity providers (encrypted client secrets), authorization
       code flow with PKCE, ID token validation on `firebase/php-jwt`, students created on first sign-in only for an address the provider vouches for (or a provider with `trust_email`), strict
       account linking, a hash-chained identity audit trail, an admin API with the `identity` token scope, provider buttons and a callback page in `front/web` on
@@ -896,14 +918,22 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 ## Phase 7: Developer experience and agents
 
 ### 7.1 Course-as-code
-- [ ] Markdown + YAML/JSON format with JSON Schema
+- [x] Markdown + YAML/JSON format with JSON Schema
       Note 2026-10-22 (CAC-1, #359): partial. Blueprint v3 is the JSON Schema (reads every v1 and v2 document unchanged; element `origin` ai or author, only author
       elements may lack citations, lesson fields `key`, `meta`, `asset`, `video`, `embed`, reserved `exercises`); the Markdown + directives folder format and its file
       schemas (CAC-2) are not built
+      Note 2026-10-22 (CAC-2, #376): done. The folder format (`ulams.yaml`, `course.yaml`, module files, lessons as front matter plus `:::kind{...}` directives, `*.quiz.yaml`)
+      maps losslessly to and from Blueprint v3, with a line-based parser, JSON Schemas for the files in `front/cli/schemas/course-folder/`, the example `front/cli/examples/kubernetes-101`
+      and the reference `developers/course-folder-format`; `cite=` resolution against `sources/` is CAC-8
 - [ ] CLI `ulams`: init, validate, preview, push, pull, diff, publish
+      Note 2026-10-22 (CAC-2 #376, CAC-3 #384): partial. Done: `course validate` and `course fmt` (offline, file:line issues, SARIF, exit 7 and 13), `course init --from-course`, `status`, `diff`,
+      `pull` (fast-forward only), `push`, `apply`, `publish`, with a base snapshot in `.ulams/base.json`. Open: `preview` (preview academies, CAC-7), hand-made (non-builder) courses
+      are refused with `NOT_ADOPTED` (CAC-5), asset download and upload (CAC-5), and a failed apply run shows as a timeout because the run endpoint is behind the AI gate
       Note 2026-10-22 (CAC-1, #359): partial. Thin `ulams course export|import|diff|approve|apply|publish` commands over the new endpoints exist; `init`, `validate`,
       `preview`, folder `push` and `pull` wait for CAC-2 and CAC-3
 - [ ] Two-way Git sync with diff-based conflicts
+      Note 2026-10-22 (CAC-3, #384): partial. Folder and server sync works in both directions without a merge: `pull` stops with `SYNC_CONFLICT` when both sides changed and `push` turns
+      `BASE_OUTDATED` and `STALE_PROPOSAL` into the same error; the three-way merge, conflict files and `resolve` are CAC-4, and nothing watches a Git repository yet (CAC-6, CAC-7)
 - [ ] GitHub Action + Docker image; preview deployment per PR
 - [ ] Git merge triggers Living Course update proposal
 - [ ] (new) CLI plan `docs/plans/cli.md`: agent-first `ulams` CLI and MCP server (draft, waiting for approval;
@@ -922,6 +952,8 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
       interaction changes, an `import` version kind that a person approves (agent tokens and MCP clients never approve; CI tokens only with the tenant setting
       `course_as_code.ci_may_approve`, off by default), and the export and import endpoints; ADR 0160 Accepted. Open: CAC-2 to CAC-8 (folder format, pull and push,
       three-way merge, adoption of hand-made courses, `ulams-cli` image and Action, preview academies, `cite=` resolution)
+      Note 2026-10-22 (CAC-2 #376, CAC-3 #384): the folder format, `validate`, `fmt` and the sync commands without merge are merged; open: CAC-4 (three-way merge, conflict files),
+      CAC-5 (adoption of hand-made courses, new content types, assets), CAC-6 (`ulams-cli` image and Action), CAC-7 (preview academies, Git merge metadata), CAC-8 (`cite=` resolution)
       (after Phase 3; citations for author blocks pending #78) (plan `docs/plans/phase-7-course-as-code.md`, draft, milestones
       CAC-1..8 and M6-a/b, ADRs 0160–0161 Proposed; note: the schema becomes Blueprint v3 because v2 is already the content-type schema)
 - [ ] (new) M6 CLI release: npm `ulams` (pending #77), bun-compiled binaries (signing pending #76), Docker image
@@ -1024,6 +1056,9 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
       signing and the code-scanning upload need repository settings only the owner can change (owner issue #354, open), and no completed publish run has been
       checked yet for a verified signature (the `publish.yml` run on #367 failed and later runs were still running, #368); the ISO 27001 / GDPR audit documentation pack (P8-10)
       is not written
+      Note 2026-10-22 (#381): signing, verification and the SBOM attestation in `publish.yml` now run only when the repository variable `SIGN_IMAGES` is `true`; by default the
+      `supply-chain` job still scans with Trivy and stays green with a summary notice (it has `packages: write`), and `release.yml` skips signature verification with a notice.
+      The first publish run on `main` failed in every `sign` job; nothing is signed until the owner does the steps of issue #354, so signing stays unverified
 
 ---
 
@@ -1037,6 +1072,10 @@ open Phase 0 and Phase 1 tech-debt items outside the Phase 8 self-hosting plan.
 - [ ] Tenant isolation tests for every endpoint
       Note 2026-10-22: partial. Route-complete suites exist for `learner-insights` and `tutor` (#362, with a router-reading companion test) and `commerce` has
       `CommerceTenantIsolationTest` (#356); the platform-wide route-walking test with a reviewed public-route list (TD-3, ADR 0190) is in the open PR #372, not on `main`
+      Note 2026-10-22 (TD-3, #372, merged): `api/tests/Integrations/TenantIsolationCoverageTest.php` walks every registered route: behind `auth:api` a missing token and a token
+      of another tenant must give 401 (with a positive control); every other route must be in `api/tests/fixtures/public-routes.php` with a kind and a reason, and a stale
+      entry fails; ADR 0190 Accepted; the nightly `tenancy` job runs the real two-tenant check. It proves that authentication is tenant-bound, not data separation
+      inside a tenant, so the item stays open until the packages without their own route-complete suite have one
 - [ ] WCAG 2.2 AA checks for learner-facing UI
 - [ ] A/B experiment + delayed-retention metric for every feature claiming learning benefit
 - [ ] E2E: upload → interview → live course → chat edit → source change → accepted update →
