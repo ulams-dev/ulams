@@ -23,6 +23,14 @@ describe("Img", () => {
     expect(html).toContain('height="900"');
   });
 
+  it("builds Cloudflare Image Transformations URLs with distinct widths for the cloudflare service", async () => {
+    process.env.ULAMS_IMAGE_SERVICE = "cloudflare";
+    const html = await render();
+    expect(html).toContain("/cdn-cgi/image/width=360,format=auto,quality=78/landing/shot.png 360w");
+    expect(html).toContain("/cdn-cgi/image/width=1600,format=auto,quality=78/landing/shot.png 1600w");
+    expect(new Set(html.match(/\/cdn-cgi\/image\/width=\d+/g)).size).toBeGreaterThan(1);
+  });
+
   it("keeps the responsive srcset with a real image service", async () => {
     delete process.env.ULAMS_IMAGE_SERVICE;
     const html = await render();
