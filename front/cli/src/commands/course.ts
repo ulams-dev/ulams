@@ -144,7 +144,7 @@ export const courseCommands: AnyCommand[] = [
     positionals: ["release"],
     input: z.object({ release: z.string().regex(/^[0-9a-z]{26}$/i, "A release id (data.releases[].id of `course releases`).").describe("Release id.") }),
     output: z.unknown(),
-    examples: [{ title: "Save what learners got in release 3", argv: "course release <release id> --out release-3.json --json" }],
+    examples: [{ title: "Save what learners got in release 3", argv: "course release 01jb0000000000000000000003 --out release-3.json --json" }],
     async run(ctx, i) {
       const payload = await callVersions<ReleaseRow & { document?: unknown }>(ctx, "/releases/{release}", { params: { release: i.release } });
       if (ctx.flags.out) {

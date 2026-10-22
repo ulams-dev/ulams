@@ -275,6 +275,10 @@
             "area": "builder"
         },
         {
+            "pattern": "api/admin/course-versions*",
+            "area": "builder"
+        },
+        {
             "pattern": "api/admin/living-course*",
             "area": "living-course"
         },

@@ -4,6 +4,8 @@ description: Planned. Numbered course versions you can compare side by side afte
 sidebar:
   order: 42
 coming: true
+learnerRoutes:
+  - /studio/courses/[courseId]/versions
 ---
 
 import { Aside } from "@astrojs/starlight/components";
@@ -22,6 +24,8 @@ since last time?"** and **"why does everybody get the same course?"**
 
 These parts already work and the planned features build on them:
 
+- **Releases** list every version of a course that learners got, newest first, with what started it, who approved it and
+  what changed. Open **Versions** in the studio (`/studio/courses/<id>/versions`), or run `ulams course releases <id>`.
 - The [Course Builder](/creators/course-builder/) keeps every version of a course. **Version history**
   lists them, **Undo**, **Redo** and **Restore** move between them, and every AI change is shown as a diff
   you approve or reject.
