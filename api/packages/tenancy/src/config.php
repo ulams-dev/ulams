@@ -124,6 +124,21 @@ return [
      */
     'platform_api' => filter_var(env('TENANCY_PLATFORM_API', false), FILTER_VALIDATE_BOOLEAN),
 
+    /*
+     * Branded entry points of a tenant (ADR 0195, docs/plans/academy-entry-points.md).
+     *  - max_entry_points: per tenant.
+     *  - entry_platform_suffixes: hosts under these suffixes are provided by the platform (its wildcard DNS and
+     *    certificate cover them): they must be one flat label `{slug}-<name>.<suffix>` and are active at once.
+     *  - entry_trusted_suffixes: development and CI only (for example `.example.test`): any host under them is
+     *    active at once. Empty in production.
+     *  - Every other host is a custom domain: it starts as `pending_dns` until its DNS record is verified.
+     *  - entry_cname_target: where a custom domain's CNAME has to point (shown to the administrator).
+     */
+    'max_entry_points' => (int) env('TENANCY_MAX_ENTRY_POINTS', 20),
+    'entry_platform_suffixes' => $list(env('TENANCY_ENTRY_PLATFORM_SUFFIXES', '.app.localhost')),
+    'entry_trusted_suffixes' => $list(env('TENANCY_ENTRY_TRUSTED_SUFFIXES', '')),
+    'entry_cname_target' => env('TENANCY_ENTRY_CNAME_TARGET') ?: null,
+
     'php_binary' => env('TENANCY_PHP_BINARY', PHP_BINARY ?: 'php'),
     'process_timeout' => (int) env('TENANCY_PROCESS_TIMEOUT', 900),
 
