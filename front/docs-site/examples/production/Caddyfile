@@ -9,7 +9,7 @@
 #   app.D, <slug>.app.D        learner front (web)
 #   admin.D, <slug>.admin.D    admin panel
 #   platform.C, <slug>.C       content origins (SCORM, cmi5, Adapt, LiaScript packages)
-#   storage.C                  bundled MinIO (only with the `minio` profile)
+#   storage.C                  bundled SeaweedFS (only with the `storage` profile)
 #
 # Certificates: fixed host names get regular certificates. Tenant host names use on-demand
 # TLS: a certificate is requested on the first TLS handshake, after the `ask` check below
@@ -323,13 +323,16 @@ platform.{$ULAMS_CONTENT_DOMAIN} {
 	}
 }
 
-# Bundled MinIO (profile `minio`). Uploaded files must not run as active content here: no MIME
-# sniffing, and SVG/HTML/XML opened directly run no script. The dev config covers SVG only.
+# Bundled SeaweedFS (profile `storage`). Uploaded files must not run as active content here: no MIME
+# sniffing, and SVG/HTML/XML opened directly run no script. The dev config covers SVG only. Reads only:
+# the S3 port also serves the IAM API and every write, which must never be reachable from outside.
 storage.{$ULAMS_CONTENT_DOMAIN} {
 	header >X-Content-Type-Options nosniff
 	@active path *.svg *.svgz *.html *.htm *.xhtml *.xml
 	header @active Content-Security-Policy "script-src 'none'; sandbox"
-	reverse_proxy minio:9000
+	@writes not method GET HEAD OPTIONS
+	respond @writes 405
+	reverse_proxy storage:8333
 }
 
 # Internal listener (not published): the H5P service calls GET /api/profile/me here with the

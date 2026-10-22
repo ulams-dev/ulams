@@ -55,8 +55,8 @@ How it fits together:
   exit (`--max-time`, `queue:restart`, a crash) are started again. The platform queue runs on
   Horizon.
 
-Known limits: all tenants use the same MinIO credentials (isolation is per bucket, not per
-key), and the H5P service (`api/h5p`) is still single-tenant.
+Known limits: with an external S3 service all tenants use the same credentials (isolation is per
+bucket; the bundled SeaweedFS gives each tenant its own key, ADR 0041), and the H5P service (`api/h5p`) is still single-tenant.
 
 ## Legacy: `MULTI_DOMAINS` set from environment variables
 
@@ -74,7 +74,7 @@ Configuration and files are stored only in
 
 - environmental variables
 - database
-- s3 compatible buckets, eg s3, minIO etc.
+- s3 compatible buckets, eg AWS S3, Cloudflare R2, SeaweedFS etc.
 
 ## How it works. Example
 
@@ -135,7 +135,7 @@ To debug you can also use tools:
 
 - [adminer](https://www.adminer.org/) to check whats in the database [http://localhost:8078/](http://localhost:8078/). Use credentials from env vars to login, by default those are Database Type: Postgres, Server: postgres, username: default, password: secret, database: default
 - [MailHog](https://github.com/mailhog/MailHog) to simulate email sending. [http://localhost:8025/](http://localhost:8025/)
-- [MinIO](https://min.io/) to check your Object Store CDN http://minio.localhost/ Use credentials from env vars to login, by default those are username: admin, password: minio_secretpassword
+- The object store is [SeaweedFS](https://seaweedfs.com/) (service `storage`); files are served at http://storage.localhost/<bucket>/..., and the S3 API is `http://storage:8333` inside the docker network (admin key `admin` / `minio_secretpassword` by default). There is no web console.
 
 ### Multidomain. `multidomain` helper tool.
 
@@ -149,11 +149,11 @@ composer install
 
 Then you need to get to know some variables
 
-- `AWS_ROOT_ACCESS_KEY_ID` refers to root username to MinIO, default `admin`
-- `AWS_ROOT_SECRET_ACCESS_KEY` refers to root password to MinIO, default `minio_secretpassword`
-- `AWS_ENDPOINT` refers to internal minio ui accessible from docker image, default `http://minio:9000`
-- `AWS_API_ENDPOINT` refers to internal minio api accessible from docker image, default `http://minio:9001`
-- `AWS_URL_PREFIX` refers to external minio storage address, default `http://storage.localhost` (reversed proxy by Caddy)
+- `AWS_ROOT_ACCESS_KEY_ID` refers to the root (admin) key of the object store, default `admin`
+- `AWS_ROOT_SECRET_ACCESS_KEY` refers to its secret, default `minio_secretpassword`
+- `AWS_ENDPOINT` refers to the S3 API of the object store accessible from the docker image, default `http://storage:8333`
+- `AWS_API_ENDPOINT` refers to the same API, default `http://storage:8333`
+- `AWS_URL_PREFIX` refers to external object storage address, default `http://storage.localhost` (reversed proxy by Caddy)
 - `DB_ROOT_HOST` default `postgres`
 - `DB_ROOT_PORT` default `5432`
 - `DB_ROOT_USERNAME` default `default`
@@ -164,8 +164,8 @@ once you know those you can run multidomain helper
 ```bash
 AWS_ROOT_ACCESS_KEY_ID=admin \
 AWS_ROOT_SECRET_ACCESS_KEY=minio_secretpassword \
-AWS_ENDPOINT=http://minio:9000 \
-AWS_API_ENDPOINT=http://minio:9001 \
+AWS_ENDPOINT=http://storage:8333 \
+AWS_API_ENDPOINT=http://storage:8333 \
 AWS_URL_PREFIX=http://storage.localhost \
 DB_ROOT_HOST=postgres \
 DB_ROOT_PORT=5432 \
@@ -181,8 +181,8 @@ or you can skin the randomness and use 1,2,3
 ```bash
 AWS_ROOT_ACCESS_KEY_ID=admin \
 AWS_ROOT_SECRET_ACCESS_KEY=minio_secretpassword \
-AWS_ENDPOINT=http://minio:9000 \
-AWS_API_ENDPOINT=http://minio:9001 \
+AWS_ENDPOINT=http://storage:8333 \
+AWS_API_ENDPOINT=http://storage:8333 \
 AWS_URL_PREFIX=http://storage.localhost \
 DB_ROOT_HOST=postgres \
 DB_ROOT_PORT=5432 \

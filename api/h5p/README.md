@@ -23,7 +23,7 @@ h5p service
   ├─ TenantResolver ─► Tenant { pg pool, S3 client, JWT key, H5PEditor, H5PPlayer }
   │        (host → Laravel env file .env.<host>; platform → .env)
   ├─ Postgres  schema "h5p" in each tenant DB: contents, content_user_data, finished_data, schema_migrations
-  ├─ S3/MinIO  tenant bucket (ulams-<slug>): h5p/content/{id}/…, h5p/temp/…
+  ├─ S3 (SeaweedFS by default) tenant bucket (ulams-<slug>): h5p/content/{id}/…, h5p/temp/…
   ├─ Redis     library cache, content-type cache, profile cache, locks
   └─ volume    /data/libraries  (installed H5P libraries, shared)
 ```
@@ -68,13 +68,13 @@ to 4.7.1.
 | `REDIS_URL` | – | overrides the `REDIS_*` fields |
 | `REDIS_HOST` / `REDIS_PORT` / `REDIS_PASSWORD` / `REDIS_DB` | `redis` / `6379` / – / `0` | |
 | `REDIS_KEY_PREFIX` | `h5p:` | all keys are namespaced |
-| `S3_ENDPOINT` | `http://minio:9000` | empty for AWS |
+| `S3_ENDPOINT` | `http://storage:8333` | empty for AWS |
 | `S3_REGION` | `us-east-1` | |
 | `S3_KEY` / `S3_SECRET` | `admin` / `minio_secretpassword` | also read from `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` |
 | `S3_BUCKET` | `ulams` | |
 | `S3_PREFIX` | `h5p` | key prefix inside the bucket |
-| `S3_FORCE_PATH_STYLE` | `true` | needed for MinIO |
-| `S3_MAX_KEY_LENGTH` | `1024` | lower it (e.g. 255) for MinIO on Windows |
+| `S3_FORCE_PATH_STYLE` | `true` | needed for SeaweedFS, MinIO and most S3-compatible stores |
+| `S3_MAX_KEY_LENGTH` | `1024` | lower it (e.g. 255) for a store on a file system with short names |
 | `JWT_PUBLIC_KEY_PATH` | `/keys/oauth-public.key` | Laravel Passport public key |
 | `JWT_PUBLIC_KEY` | – | PEM content instead of a file (`\n` escapes allowed) |
 | `JWT_AUDIENCE` / `JWT_ISSUER` | – | optional extra checks (Passport `aud` is the client uuid) |
@@ -457,7 +457,7 @@ package-lock). From the repository root:
 ```
 corepack yarn install
 corepack yarn workspace api-h5p download:core   # H5P core + editor into api/h5p/h5p
-corepack yarn workspace api-h5p dev             # tsx watch; needs postgres/redis/minio reachable
+corepack yarn workspace api-h5p dev             # tsx watch; needs postgres/redis/storage reachable
 corepack yarn turbo run build typecheck lint test --filter=api-h5p
 ```
 
@@ -465,7 +465,7 @@ corepack yarn turbo run build typecheck lint test --filter=api-h5p
 `embed-client/*.ts` with `@lumieducation/h5p-webcomponents` into
 `dist/embed/`). `test` runs the unit suites only. The integration suites
 (`test/http.test.ts`, `test/pg-storage.test.ts`) need the real Postgres, Redis
-and MinIO, so run `test:integration` in a container on the `ulams` network.
+and the object store, so run `test:integration` in a container on the `ulams` network.
 Each run uses a throwaway schema `h5p_test_<random>` and S3 prefix
 `h5p-test-<random>` and removes both.
 

@@ -14,7 +14,6 @@ use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 class FileService implements FileServiceContract
@@ -146,12 +145,12 @@ class FileService implements FileServiceContract
         try {
             $this->isOfBounds($path);
 
-            if ($this->disk->exists($path)) {
-                if (File::isDirectory($this->disk->path($path))) {
-                    $deleted = $this->disk->deleteDirectory($path);
-                } else {
-                    $deleted = $this->disk->delete($path);
-                }
+            // not File::isDirectory(disk->path()): on S3 the path is only an object key, and a "directory"
+            // there is a key prefix that exists() does not see
+            if ($this->disk->directoryExists($path)) {
+                $deleted = $this->disk->deleteDirectory($path);
+            } elseif ($this->disk->exists($path)) {
+                $deleted = $this->disk->delete($path);
             } else {
                 $deleted = false;
             }

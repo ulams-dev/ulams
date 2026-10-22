@@ -96,4 +96,11 @@ else
   bad "shellcheck deploy/scripts: $(cat "$tmp/out")"
 fi
 
+# the object store scripts: compatibility run, MinIO to SeaweedFS migration and its test
+if docker run --rm -v "$root/../scripts:/mnt:ro" -w /mnt koalaman/shellcheck:stable -s sh s3-compat.sh storage-migrate.sh test-storage-migrate.sh >"$tmp/out" 2>&1; then
+  ok "shellcheck deploy/scripts/{s3-compat,storage-migrate,test-storage-migrate}.sh"
+else
+  bad "shellcheck deploy/scripts storage scripts: $(cat "$tmp/out")"
+fi
+
 exit "$failed"

@@ -295,7 +295,7 @@ Same style, mobile 390px. (1) Mission quiz with one big question per screen and 
 ## 5. From designs to the app (feeds the implementation)
 
 - Each experience becomes a **theme = a set of CSS custom properties** (`--color-bg`, `--color-text`, `--color-accent`, `--font-display`, `--radius-md`, …) applied on `:root` / `[data-theme="coffee|oncall|nightsky"]`. Stitch's exported tokens map 1:1 onto that contract — no styled-components ThemeProvider.
-- The three courses above (lessons, topics of all 11 types, quizzes with all 8 question types, projects, tutors, categories, packages, webinars, events, consultations, vouchers) are seeded by `DemoCoursesSeeder` so every Stitch screen has real data behind it. Media placeholders: royalty-free images/video/audio + generated PDFs, uploaded to MinIO by the seeder; SCORM/cmi5/H5P packages from public sample packages.
+- The three courses above (lessons, topics of all 11 types, quizzes with all 8 question types, projects, tutors, categories, packages, webinars, events, consultations, vouchers) are seeded by `DemoCoursesSeeder` so every Stitch screen has real data behind it. Media placeholders: royalty-free images/video/audio + generated PDFs, uploaded to the object store (SeaweedFS) by the seeder; SCORM/cmi5/H5P packages from public sample packages.
 - The prompts and content live in the repo as `front/docs/design/experiences.md` so designers and agents share one source.
 
 ---

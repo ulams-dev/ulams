@@ -547,7 +547,7 @@ jobs:
           for c in pg12 pg17 old12 new17; do docker logs --tail 80 "$c" 2>&1 || true; done
 
   # TD-3 (docs/plans/tech-debt-and-quality-bar.md, ADR 0190): the opt-in two-tenant test brings up the
-  # development compose stack (Caddy, the API, PostgreSQL, Valkey, MinIO), provisions two real tenants
+  # development compose stack (Caddy, the API, PostgreSQL, Valkey, SeaweedFS), provisions two real tenants
   # with `ulams:tenant:create` (database, bucket, env file, Passport keys) and talks to them over HTTP
   # by Host header. It also covers the cross-tenant builder check of docs/plans/leftovers-0-2.md L2-04.
   # The in-process walk over every route (api/tests/Integrations/TenantIsolationCoverageTest.php) runs
@@ -590,13 +590,11 @@ jobs:
 
       - name: Start the stack
         run: |
-          # minio runs as a non-root user: a bind-mounted data directory that docker creates (root,
-          # 755) makes it exit at once, and the tenant provisioning then cannot resolve "minio"
-          mkdir -p docker/minio_storage
-          chmod 777 docker/minio_storage
-          docker compose up -d --build api caddy postgres redis minio
+          # SeaweedFS (service `storage`) runs as root, so the bind-mounted data directory needs no preparation;
+          # the API gives each tenant its own S3 key through its IAM API (LARAVEL_TENANCY_S3_IDENTITY_DRIVER)
+          docker compose up -d --build api caddy postgres redis storage
           sleep 10
-          docker compose ps --status running --services | grep -qx minio || { docker compose logs minio; exit 1; }
+          docker compose ps --status running --services | grep -qx storage || { docker compose logs storage; exit 1; }
 
       - name: Wait for the API to finish its start-up (migrations, keys, permissions)
         run: docker compose exec -T api ./wait.sh
@@ -611,7 +609,7 @@ jobs:
         if: failure()
         run: |
           docker compose ps
-          docker compose logs --tail 200 api caddy minio
+          docker compose logs --tail 200 api caddy storage
 
       - name: Tear down
         if: always()

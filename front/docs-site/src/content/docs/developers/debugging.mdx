@@ -21,7 +21,7 @@ import { Aside } from "@astrojs/starlight/components";
 | Caddy | stdout, JSON access log for `*.localhost` | `docker compose … logs -f caddy` |
 | H5P service | stdout, `LOG_LEVEL=info` | `docker compose … logs -f h5p` |
 | PDF service | stdout, `LOG_LEVEL=info` | `docker compose … logs -f pdf` |
-| Postgres, Valkey, MinIO | stdout | `docker compose … logs -f postgres` |
+| Postgres, Valkey, SeaweedFS (`storage`) | stdout | `docker compose … logs -f postgres` |
 | MailHog | not logged (`logging.driver: none`) | use its web UI |
 | admin, front, web, docs dev servers | your terminal | |
 
@@ -59,7 +59,7 @@ Adminer (below) shows the data itself.
 | Horizon | http://api.localhost/horizon | Platform queues. Open without login in the `local` and `stage` environments (`App\Providers\HorizonServiceProvider`); elsewhere the `viewHorizon` gate allows an empty e-mail list. Tenant queues are worked by `queue.sh`, not Horizon |
 | MailHog | http://localhost:8025 | Every outgoing e-mail (`LARAVEL_MAIL_HOST=mailhog`, port 1025) |
 | Adminer | http://localhost:8078 | PostgreSQL: server `postgres`, user `default`, password `secret`, database `default` (platform) or `ulams_<slug>` (tenant) |
-| MinIO console | http://minio.localhost | user `admin`, password `minio_secretpassword`; buckets `ulams` and `ulams-<slug>` |
+| Object store | no console; `docker compose exec api php artisan ulams:tenant:ensure-buckets` lists the buckets it checks | S3 API `http://storage:8333` inside the network, admin key `admin` / `minio_secretpassword`; buckets `ulams` and `ulams-<slug>`, one key per tenant in its env file |
 | Swagger UI | http://api.localhost/api/documentation | Regenerated on each request locally (`L5_SWAGGER_GENERATE_ALWAYS` defaults to true) |
 | Health | http://api.localhost/api/health, `/api/healthcheck` | Database and Redis checks (`spatie/laravel-health`); `php artisan health:check` is the image health check |
 | Tinker | `make -C api tinker` | Add `--domain=<slug>.localhost` inside the container to target a tenant |

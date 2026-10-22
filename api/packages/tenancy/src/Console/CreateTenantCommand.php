@@ -23,7 +23,7 @@ class CreateTenantCommand extends Command
         {--users=5 : Number of demo students}
         {--demo= : Demo mode (DEMO_MODE: login without password, hourly reset): on or off}
         {--db-password= : Password of a database you created yourself (TENANCY_DATABASE_PROVISIONER=manual), at least 16 characters}
-        {--redo=* : Step to run again even if recorded as done: database, bucket, env, migrate, passport_keys, passport_client, permissions or demo}';
+        {--redo=* : Step to run again even if recorded as done: database, bucket, storage_identity, env, migrate, passport_keys, passport_client, permissions or demo}';
 
     protected $description = 'Provision a tenant (database, bucket, env file, migrations, keys, demo users). Safe to re-run: finished steps are skipped.';
 

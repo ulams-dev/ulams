@@ -1,0 +1,147 @@
+name: Object storage
+
+# SeaweedFS and the per-tenant S3 identities against real stores (ADR 0041, docs/plans/phase-8-self-hosting.md 4.3).
+# Not part of the default pipeline: it starts several object stores and takes minutes. It runs
+#   - on a pull request that changes the storage code, only when the PR has the label `storage-compat`;
+#   - nightly, when the repository variable NIGHTLY_CONFORMANCE is "true";
+#   - by hand (Actions -> Object storage -> Run workflow).
+# What it proves:
+#   1. api/tests/S3Compat: the S3 operations ulams uses (put with ACL, multipart, presigned URLs, public-read
+#      policy, CORS, identities) against SeaweedFS in both launch modes, and MinIO as the baseline. RustFS, the
+#      recorded fallback, is run for information.
+#   2. api/packages/tenancy/tests/Integration/StorageIsolationTest.php: two tenants made by the real commands;
+#      a tenant's key is refused on every other bucket, rotation and deletion work.
+#   3. deploy/scripts/test-storage-migrate.sh: the MinIO to SeaweedFS migration (dry run, checksums,
+#      idempotency, the source never changes).
+
+on:
+  schedule:
+    - cron: "50 2 * * *"
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+    paths:
+      - "api/tests/S3Compat/**"
+      - "api/packages/tenancy/**"
+      - "api/packages/core/src/Storage/**"
+      - "deploy/scripts/s3-compat.sh"
+      - "deploy/scripts/storage-migrate.sh"
+      - "deploy/scripts/test-storage-migrate.sh"
+      - ".github/workflows/storage-compat.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  storage:
+    name: Compatibility, tenant isolation and migration
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'schedule' && vars.NIGHTLY_CONFORMANCE == 'true') ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'storage-compat'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      # the API test environment of ci.yml's PHPUnit job
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+      DB_DATABASE: default
+      DB_USERNAME: default
+      DB_PASSWORD: secret
+      REDIS_HOST: 127.0.0.1
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+      XDEBUG_MODE: "off"
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: apcu, bcmath, exif, gd, intl, pcntl, pdo_pgsql, redis, zip
+          ini-values: memory_limit=2G
+          coverage: none
+          tools: composer:v2
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ hashFiles('api/composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-
+
+      - name: Install Composer dependencies
+        working-directory: api
+        run: |
+          cp docker/envs/.env.ci.postgres .env
+          composer install --no-interaction --no-progress --prefer-dist --no-scripts
+
+      - name: S3 compatibility, SeaweedFS (weed mini)
+        run: sh deploy/scripts/s3-compat.sh --store seaweedfs
+
+      - name: S3 compatibility, SeaweedFS (weed server with an identity file)
+        run: sh deploy/scripts/s3-compat.sh --store seaweedfs-server
+
+      - name: S3 compatibility, MinIO (baseline)
+        run: sh deploy/scripts/s3-compat.sh --store minio
+
+      # The recorded fallback (ADR 0041): its result is information, not a gate.
+      - name: S3 compatibility, RustFS (fallback, for information)
+        continue-on-error: true
+        run: sh deploy/scripts/s3-compat.sh --store rustfs
+
+      - name: Start PostgreSQL, Valkey and SeaweedFS for the tenant isolation test
+        run: |
+          docker run -d --name pg --restart always -p 5432:5432 -e POSTGRES_DB=default -e POSTGRES_USER=default \
+            -e POSTGRES_PASSWORD=secret postgres:17.11-alpine
+          docker run -d --name valkey --restart always -p 6379:6379 valkey/valkey:8-alpine
+          docker run -d --name storage --restart always -p 127.0.0.1:8333:8333 \
+            -e AWS_ACCESS_KEY_ID=isolationadmin -e AWS_SECRET_ACCESS_KEY=isolationadminsecret0123456789 \
+            chrislusf/seaweedfs:4.37 mini -dir=/data -s3.iam.readOnly=false
+          for _ in $(seq 1 60); do
+            docker exec pg pg_isready -U default -d default && curl -fsS http://127.0.0.1:8333/healthz && break
+            sleep 2
+          done
+          sleep 3
+
+      - name: Prepare database and Passport
+        working-directory: api
+        run: |
+          php artisan migrate:fresh --force
+          php artisan db:seed --force --class="Database\Seeders\PermissionsSeeder"
+          php artisan passport:keys --force
+          php artisan passport:client --personal --no-interaction
+          mkdir -p vendor/orchestra/testbench-core/laravel/storage
+          cp storage/oauth-private.key storage/oauth-public.key vendor/orchestra/testbench-core/laravel/storage/
+          php artisan migrate --force --path=packages/courses/tests/Database/Migrations
+
+      - name: Tenant isolation against SeaweedFS
+        working-directory: api
+        env:
+          S3_COMPAT: "1"
+          S3_COMPAT_FLAVOR: seaweedfs
+          S3_COMPAT_ENDPOINT: http://127.0.0.1:8333
+          S3_COMPAT_KEY: isolationadmin
+          S3_COMPAT_SECRET: isolationadminsecret0123456789
+        run: ./vendor/bin/phpunit --testsuite tenancy --filter StorageIsolationTest --fail-on-skipped
+
+      - name: Migration from MinIO to SeaweedFS
+        run: sh deploy/scripts/test-storage-migrate.sh
+
+      - name: Logs
+        if: failure()
+        run: docker ps -a && docker logs --tail 100 storage || true

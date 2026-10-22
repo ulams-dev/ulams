@@ -77,7 +77,7 @@ degrade the service for others or test against deployments you do not own.
 
 - `api/h5p` bundles third-party H5P core and editor code; vulnerabilities in H5P itself are
   best reported upstream as well. We will still patch or pin our copy.
-- Infrastructure defaults in the development stack (MinIO, MailHog, Adminer) are for local
+- Infrastructure defaults in the development stack (SeaweedFS with the admin key from the compose file, MailHog, Adminer) are for local
   development and are not meant to be exposed in production.
 
 `api/SECURITY.md` points to this file; this policy covers the whole repository.

@@ -17,6 +17,7 @@ docker/mysql-data
 docker/www_logs
 docker/postgres-backups
 docker/minio_storage
+docker/seaweedfs_data
 docker/postgres-data
 docker/postgres17-data
 docker/pg-upgrade-dumps

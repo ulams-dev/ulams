@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * Checks the Caddy content origin (docker/conf/Caddyfile) over HTTP. Opt-in, needs Caddy and
- * MinIO from the compose stack:
+ * the object store (SeaweedFS) from the compose stack:
  *
  *   docker compose exec -T -e CONTENT_ORIGIN_INTEGRATION_URL=http://caddy api \
  *     vendor/bin/phpunit packages/scorm/tests/Integration

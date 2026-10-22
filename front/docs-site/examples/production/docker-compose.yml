@@ -2,7 +2,7 @@
 #
 # Example, not tested end to end by the project: read the Operators section of the docs first.
 # Usage: copy this file, Caddyfile and .env.example (as .env) to one directory, fill in .env,
-# then `docker compose up -d` (add `--profile minio` for the bundled object store).
+# then `docker compose up -d` (add `--profile storage` for the bundled object store, SeaweedFS).
 #
 # Differences from the development stack (api/docker-compose.yml): published images instead of
 # builds, TLS in Caddy, no Adminer/MailHog, secrets from .env, and a least-privilege config
@@ -34,7 +34,7 @@ volumes:
   h5p_libraries:
   caddy_data:
   caddy_config:
-  minio_data:
+  storage_data:
 
 services:
   caddy:
@@ -162,6 +162,8 @@ services:
       LARAVEL_TENANCY_CONTENT_HOST: "{slug}.${ULAMS_CONTENT_DOMAIN}"
       LARAVEL_TENANCY_EMAIL_DOMAIN: "{slug}.${ULAMS_DOMAIN}"
       LARAVEL_TENANCY_STORAGE_PUBLIC_URL: ${S3_PUBLIC_URL}
+      # none: every tenant uses the S3 key above. seaweedfs: one key per tenant, limited to its bucket (ADR 0041)
+      LARAVEL_TENANCY_S3_IDENTITY_DRIVER: ${TENANCY_S3_IDENTITY_DRIVER:-none}
       LARAVEL_TENANT_DEMO_PASSWORD: ${TENANT_INITIAL_PASSWORD:?set TENANT_INITIAL_PASSWORD}
     volumes:
       - api_storage:/var/www/html/storage
@@ -299,19 +301,26 @@ services:
     <<: *service
     image: ghcr.io/ulams-dev/mjml:${ULAMS_VERSION:-latest}
 
-  # Optional bundled object store: `docker compose --profile minio up -d`. MinIO is AGPL-3.0
-  # and this image line is no longer maintained upstream; prefer an external S3-compatible
-  # service. MINIO_DEFAULT_BUCKETS creates the platform bucket with public read.
-  minio:
+  # Optional bundled object store: `docker compose --profile storage up -d`. SeaweedFS (Apache-2.0),
+  # one container; the API gives every tenant its own S3 key, limited to its bucket, through the
+  # store's IAM API on the S3 port (TENANCY_S3_IDENTITY_DRIVER=seaweedfs in .env). Internal only:
+  # Caddy publishes reads at storage.<content domain>, never writes or the IAM API. Not needed with an
+  # external S3 service (AWS S3, Cloudflare R2, ...). Moving from the MinIO this profile used to run:
+  # docs "Object storage", `deploy/scripts/storage-migrate.sh`.
+  storage:
     <<: *service
-    image: bitnamilegacy/minio:latest
-    profiles: ["minio"]
+    image: chrislusf/seaweedfs:4.37
+    profiles: ["storage"]
+    command:
+      - mini
+      - -dir=/data
+      - -s3.iam.readOnly=false
+      - -bucket=${S3_PLATFORM_BUCKET:-ulams}
     environment:
-      MINIO_ROOT_USER: ${S3_KEY}
-      MINIO_ROOT_PASSWORD: ${S3_SECRET}
-      MINIO_DEFAULT_BUCKETS: ${S3_PLATFORM_BUCKET:-ulams}:download
+      AWS_ACCESS_KEY_ID: ${S3_KEY}
+      AWS_SECRET_ACCESS_KEY: ${S3_SECRET}
     volumes:
-      - minio_data:/bitnami/minio/data
+      - storage_data:/data
 
   # Optional virus scanning of uploads (UPLOADS_SCANNER=clamd), GPL-2.0, separate process:
   # `docker compose --profile av up -d` and add LARAVEL_UPLOADS_SCANNER: clamd to the api service.

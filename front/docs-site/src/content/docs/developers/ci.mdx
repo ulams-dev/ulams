@@ -84,9 +84,10 @@ check". Branch protection is configured in GitHub, not in the repository.
 
 ## H5P integration tests (`h5p-integration.yml`)
 
-Manual (`workflow_dispatch`). Starts `postgres:17.11-alpine`, `valkey/valkey:8-alpine` and
-`bitnamilegacy/minio:latest` as service containers, installs the workspaces, downloads the H5P
-core and editor files (`yarn workspace api-h5p download:core`), waits for MinIO and runs
+Manual (`workflow_dispatch`). Starts `postgres:17.11-alpine` and `valkey/valkey:8-alpine` as service
+containers and `chrislusf/seaweedfs:4.37` with `docker run` (a service container cannot take command
+arguments), installs the workspaces, downloads the H5P
+core and editor files (`yarn workspace api-h5p download:core`), waits for SeaweedFS and runs
 `corepack yarn test:h5p:integration` (`test/http.test.ts` and `test/pg-storage.test.ts`). The
 unit suites of `api-h5p` already run in `ci.yml`.
 

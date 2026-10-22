@@ -30,7 +30,7 @@ For a tenant with the slug `coffee`, with the default naming:
 | Admin panel | `http://coffee.admin.localhost` |
 | Content origin | `http://coffee.content.localhost` (written as `CONTENT_ORIGIN`) |
 | PostgreSQL role and database | `ulams_coffee` |
-| MinIO/S3 bucket | `ulams-coffee`, public read |
+| S3 bucket and, on the bundled SeaweedFS, its own key limited to the bucket | `ulams-coffee`, public read |
 | Env file | `.env.coffee.localhost` on top of the platform `.env` |
 | Storage directory | `storage/coffee_localhost/` |
 | Passport keys | `storage/coffee_localhost/oauth-*.key` |
@@ -93,6 +93,7 @@ The steps, in order:
 |---|---|
 | `database` | Creates the PostgreSQL role and database through the `pgsql_admin` connection (needs `CREATEROLE`/`CREATEDB`). |
 | `bucket` | Creates the bucket and a public read policy. |
+| `storage_identity` | With `TENANCY_S3_IDENTITY_DRIVER=seaweedfs`: creates the tenant's own object store key, limited to its bucket, and keeps an encrypted copy on the tenant row. Nothing happens with `none` (the tenant uses the platform key). See [Object storage](/operators/storage/#one-key-per-tenant). |
 | `env` | Registers the host and writes `.env.<host>`. |
 | `migrate` | `migrate --force` in the tenant database. |
 | `passport_keys` | Generates the Passport key pair; an encrypted copy is stored on the tenant row. |
@@ -145,6 +146,16 @@ tenant from the `tenants` table. `--migrate` also runs pending migrations in eve
 database. The container start script (`api/init.sh`) runs it with `--migrate` after the
 platform migrations, so a fresh container or pod gets all tenants back. It runs without
 `--migrate` when `DISABLE_DB_MIGRATE=true`, and not at all when `DISABLE_TENANT_SYNC=true`.
+
+```bash
+php artisan ulams:tenant:sync-env --rotate-storage-keys            # tenants without a key get one, others get an additional key
+php artisan ulams:tenant:sync-env --prune-storage-keys             # delete the old keys once every process uses the new one
+php artisan ulams:tenant:sync-env --rotate-storage-keys --tenant=coffee
+php artisan ulams:tenant:ensure-buckets                            # create missing buckets and re-apply the public read policy
+```
+
+`--rotate-storage-keys` adds a key and rewrites the env file; the old key keeps working until `--prune-storage-keys`, so queue workers and the H5P
+service can be restarted in between. `ensure-buckets` is what you run after moving to another object store.
 
 Because the env files are generated, edit tenant values through `ulams:tenant:create`, not
 by hand: hand edits are overwritten on the next sync.
@@ -207,6 +218,7 @@ Platform environment variables of the tenancy package (defaults in
 | `TENANCY_S3_ENDPOINT`, `TENANCY_S3_REGION`, `TENANCY_S3_KEY`, `TENANCY_S3_SECRET` | the `AWS_*` values | Object store used to create buckets. |
 | `TENANCY_ADMIN_CONNECTION` | `pgsql_admin` | Database connection with rights to create roles and databases. |
 | `TENANCY_DATABASE_PROVISIONER` | `admin` | `manual`: you create each tenant database (shared hosting); the `database` step only checks the login. Pass its password to `ulams:tenant:create --db-password=` (16+ characters). See [Install on MyDevil](/operators/install-mydevil/). |
+| `TENANCY_S3_IDENTITY_DRIVER`, `TENANCY_S3_IAM_ENDPOINT` | `none`, the S3 endpoint | `seaweedfs`: one object store key per tenant through the store's IAM API. `none`: every tenant uses the platform key (AWS S3, R2). |
 | `TENANCY_S3_PUBLIC_READ_POLICY` | `true` | `false` for stores without bucket policies (Cloudflare R2): no policy is attached; make the buckets public yourself. |
 | `TENANT_DEMO_PASSWORD` | `secret` | Password of the seeded accounts. Development only. |
 | `TENANCY_PROCESS_TIMEOUT` | `900` | Timeout of each child `artisan` process, in seconds. |
@@ -219,7 +231,7 @@ See also [Environment variables](/reference/environment-variables/) and
 
 ## Known limitations
 
-- All tenants use the same object store credentials; isolation is per bucket, not per key.
+- With `TENANCY_S3_IDENTITY_DRIVER=none` (external S3) all tenants use the same object store credentials; isolation is per bucket, not per key. The bundled SeaweedFS gives each tenant its own key.
 - There is no admin UI for tenants. They are managed with the artisan commands above or, when `TENANCY_PLATFORM_API=true`, over HTTP and with `ulams tenants` ([Platform tenant API](/operators/platform-api/)).
 - Theme presets are defined in the frontends. The reference front (`front/web`) uses the
   `theme.theme` setting if it is a known preset, else the slug if that names a preset, else

@@ -87,6 +87,19 @@ return [
     ],
 
     /*
+     * Per-tenant object-store identities (ADR 0041). `seaweedfs`: every tenant gets its own key pair,
+     * limited to its bucket, through the store's embedded IAM API (the admin key of `s3` above signs the
+     * calls; the store must run with `-s3.iam.readOnly=false`). `none` (default): every tenant uses the
+     * platform keys, for AWS S3, Cloudflare R2 and other external stores where the operator manages IAM.
+     * The launcher, the development stack and the chart set `seaweedfs`.
+     */
+    'storage_identity' => [
+        'driver' => env('TENANCY_S3_IDENTITY_DRIVER', 'none'),
+        // where the IAM API listens; the S3 port of the bundled store
+        'endpoint' => env('TENANCY_S3_IAM_ENDPOINT') ?: null,
+    ],
+
+    /*
      * Connection with CREATEROLE/CREATEDB rights (see `pgsql_admin` in config/database.php).
      */
     'admin_connection' => env('TENANCY_ADMIN_CONNECTION', 'pgsql_admin'),

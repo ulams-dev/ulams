@@ -226,7 +226,7 @@ export function loadConfig(): AppConfig {
             keyPrefix: env('REDIS_KEY_PREFIX', 'h5p:') as string
         },
         s3: {
-            endpoint: env('S3_ENDPOINT', 'http://minio:9000'),
+            endpoint: env('S3_ENDPOINT', 'http://storage:8333'),
             region: env('S3_REGION', 'us-east-1') as string,
             accessKeyId: required('S3_KEY', env('AWS_ACCESS_KEY_ID', 'admin')),
             secretAccessKey: required('S3_SECRET', env('AWS_SECRET_ACCESS_KEY', 'minio_secretpassword')),

@@ -79,7 +79,7 @@ curl -s "${H[@]}" http://api.localhost/api/platform/operations/<operation id>   
 | `GET /api/platform/operations`, `GET /api/platform/operations/{id}` | Latest 50, or one: `status` (`queued`, `running`, `succeeded`, `failed`), `steps` with `name`, `status`, times and `error`, and `error`. |
 
 Provisioning runs as a queued job on the platform queue worker (the supplied stack has one) and takes about a
-minute: `database`, `bucket`, `env`, `migrate`, `passport_keys`, `passport_client`, `permissions`, `lti_keys`,
+minute: `database`, `bucket`, `storage_identity`, `env`, `migrate`, `passport_keys`, `passport_client`, `permissions`, `lti_keys`,
 `demo`. A step that failed is kept on the operation; asking for the tenant again continues from it. Deletion has
 the steps `database`, `bucket`, `env`, `redis`.
 

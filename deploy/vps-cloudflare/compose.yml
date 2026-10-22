@@ -188,6 +188,8 @@ services:
       # R2 has no bucket policies and one public URL per bucket (ADR 0092)
       LARAVEL_TENANCY_S3_PUBLIC_READ_POLICY: ${TENANCY_S3_PUBLIC_READ_POLICY:-false}
       LARAVEL_TENANCY_BUCKET_PUBLIC_URL: ${TENANCY_BUCKET_PUBLIC_URL:-}
+      # `none`: every tenant uses the S3 key above (R2, AWS S3). `seaweedfs`: one key per tenant, limited to its bucket (ADR 0041)
+      LARAVEL_TENANCY_S3_IDENTITY_DRIVER: ${TENANCY_S3_IDENTITY_DRIVER:-none}
       LARAVEL_TENANT_DEMO_PASSWORD: ${TENANT_INITIAL_PASSWORD:?set TENANT_INITIAL_PASSWORD}
       LARAVEL_TENANCY_PLATFORM_API: ${TENANCY_PLATFORM_API:-false}
     volumes:

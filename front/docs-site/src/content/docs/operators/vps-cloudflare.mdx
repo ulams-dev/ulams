@@ -10,7 +10,7 @@ modules:
   - web
   - admin
   - tenancy
-needsReview: "Prepared and validated locally (compose config, Caddy and cloudflared validation, shellcheck, a local run of install.sh with MinIO standing in for R2), not yet deployed to a VPS or run against a real Cloudflare account: do the first install on a staging domain and check the Cloudflare API steps, the R2 custom domain and the tunnel."
+needsReview: "Prepared and validated locally (compose config, Caddy and cloudflared validation, shellcheck, a local run of install.sh with SeaweedFS standing in for R2), not yet deployed to a VPS or run against a real Cloudflare account: do the first install on a staging domain and check the Cloudflare API steps, the R2 custom domain and the tunnel."
 ---
 
 import { Aside, Badge, Code, Steps, Tabs, TabItem } from "@astrojs/starlight/components";
@@ -27,7 +27,7 @@ important ones at the end, so the page and the files cannot drift apart. The dec
 [ADR 0092](/decisions/0092-vps-cloudflare-hosting-reference/).
 
 <Aside type="caution" title="Prepared, not yet deployed">
-  The files were validated locally and run once with the published images and MinIO instead of R2. Nothing has run
+  The files were validated locally and run once with the published images and SeaweedFS instead of R2. Nothing has run
   against a real Cloudflare account or a real VPS yet. Use a staging domain for the first install.
 </Aside>
 
@@ -107,7 +107,7 @@ Prices change; the figures below were read from Cloudflare's documentation on 20
    ```
 
    Copy `cloudflared/credentials.json` there if `cloudflare-setup.sh` ran on another machine. For a dry run on your
-   laptop first, `scripts/install.sh --local` starts the same stack on `http://*.ulams.localhost:8480` with MinIO instead
+   laptop first, `scripts/install.sh --local` starts the same stack on `http://*.ulams.localhost:8480` with SeaweedFS instead
    of R2 and changes nothing on the host.
 
 3. **Run the installer.**
@@ -341,7 +341,7 @@ The installer does the first four; the rest is yours.
 - **Cloudflare**: turn on 2FA on the account; scope API tokens (the setup token can be deleted after the install);
   consider a WAF rate-limiting rule on `/api/auth/*` and the platform login; enable "Block AI bots" or Bot Fight Mode if you
   do not want crawlers; keep the SSL mode on Full (strict).
-- Do not publish container ports. Do not run the optional MinIO or Adminer services on this host.
+- Do not publish container ports. Do not run the local-trial object store (`compose.local.yml`) or Adminer on this host.
 - Uploads: virus scanning is optional (`clamav` profile of the generic example, see [Security](/operators/security/)).
 
 ## Troubleshooting

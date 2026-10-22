@@ -1,6 +1,6 @@
 name: H5P integration tests
 
-# api-h5p suites that need real Postgres, Valkey and MinIO (test/http.test.ts, test/pg-storage.test.ts).
+# api-h5p suites that need real Postgres, Valkey and an S3 store (SeaweedFS) (test/http.test.ts, test/pg-storage.test.ts).
 # Manual for now; the unit suites run in ci.yml on every change.
 
 on:
@@ -37,15 +37,6 @@ jobs:
         options: >-
           --health-cmd "valkey-cli ping"
           --health-interval 5s --health-timeout 5s --health-retries 20
-      minio:
-        # Same image as api/docker-compose.yml; it creates the bucket from MINIO_DEFAULT_BUCKETS.
-        image: bitnamilegacy/minio:latest
-        env:
-          MINIO_ROOT_USER: admin
-          MINIO_ROOT_PASSWORD: minio_secretpassword
-          MINIO_DEFAULT_BUCKETS: ulams
-        ports:
-          - 9000:9000
     env:
       HUSKY: "0"
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
@@ -58,10 +49,12 @@ jobs:
       DB_PASSWORD: secret
       REDIS_HOST: 127.0.0.1
       REDIS_PORT: "6379"
-      S3_ENDPOINT: http://127.0.0.1:9000
+      S3_ENDPOINT: http://127.0.0.1:8333
       S3_KEY: admin
       S3_SECRET: minio_secretpassword
       S3_BUCKET: ulams
+      # Same tag as api/docker-compose.yml and the launcher: scripts/check-pinned-images.mjs fails when they differ.
+      SEAWEEDFS_IMAGE: "chrislusf/seaweedfs:4.37"
     steps:
       - uses: actions/checkout@v7
 
@@ -76,13 +69,18 @@ jobs:
       - name: Download H5P core and editor files
         run: corepack yarn workspace api-h5p download:core
 
-      - name: Wait for MinIO
+      # A service container cannot take command arguments, so the store is started here (as in api/docker-compose.yml).
+      - name: Start SeaweedFS
         run: |
+          docker run -d --name storage -p 127.0.0.1:8333:8333 \
+            -e AWS_ACCESS_KEY_ID="$S3_KEY" -e AWS_SECRET_ACCESS_KEY="$S3_SECRET" \
+            "$SEAWEEDFS_IMAGE" mini -dir=/data -s3.iam.readOnly=false -bucket="$S3_BUCKET"
           for _ in $(seq 1 60); do
-            curl -fsS http://127.0.0.1:9000/minio/health/ready && exit 0
+            curl -fsS http://127.0.0.1:8333/healthz && exit 0
             sleep 2
           done
-          echo "::error::MinIO did not become ready"
+          docker logs storage
+          echo "::error::SeaweedFS did not become ready"
           exit 1
 
       - name: Integration tests

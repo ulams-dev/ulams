@@ -130,7 +130,11 @@ class Markdown
                 )
             )
         ) {
-            $info = getimagesize(Storage::path($destination));
+            // read through the disk: on S3 Storage::path() is not a file on this machine
+            $info = @getimagesizefromstring((string) Storage::get($destination));
+            if ($info === false) {
+                return [$filepath, url('api/images/img?path=') . $destination];
+            }
             $ext = explode('/', $info['mime']);
             if (Storage::exists($destination . '.' . $ext[1])) {
                 Storage::delete($destination . '.' . $ext[1]);

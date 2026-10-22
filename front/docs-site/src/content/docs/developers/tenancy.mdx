@@ -69,7 +69,7 @@ them: `init.sh` runs `ulams:tenant:sync-env --migrate` after the platform migrat
 
 `php artisan ulams:tenant:create <slug>` runs these steps and records each one in `tenants.steps`,
 so a failed run can be repeated and resumes where it stopped (`--redo=<step>` repeats one):
-`database`, `bucket`, `env`, `migrate`, `passport_keys`, `passport_client`, `permissions`,
+`database`, `bucket`, `storage_identity`, `env`, `migrate`, `passport_keys`, `passport_client`, `permissions`,
 `lti_keys`, `demo`. Every step from `migrate` on runs as a child process
 `php artisan … --domain=<host>`: an in-process `Artisan::call` would keep the platform
 configuration. The full step table is in
@@ -154,7 +154,8 @@ every night (`Nightly conformance`, job `tenancy`). More on the suites in
 [Testing](/developers/testing/).
 
 <Aside type="caution" title="Known limits">
-  All tenants use the same MinIO/S3 credentials (isolation is per bucket, not per key),
+  With an external S3 service every tenant uses the same credentials (isolation is per bucket; the bundled
+  SeaweedFS gives each tenant its own key, see [Object storage](/operators/storage/)),
   `config/domain.php` is runtime state, and production DNS and TLS for wildcard subdomains are not
   designed yet (ADR 0007, Consequences). Many tenants mean many databases, migrations and worker
   passes; see [High availability](/operators/high-availability/).

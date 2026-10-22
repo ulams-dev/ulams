@@ -1,6 +1,6 @@
 ---
 title: Object storage
-description: S3-compatible storage for ulams - platform and per-tenant buckets, the variables for the API and the H5P service, public URLs and the MinIO licence note.
+description: S3-compatible storage for ulams - SeaweedFS by default, any S3 service works, one bucket and one key per tenant, the variables for the API and the H5P service, public URLs, and moving data over from MinIO.
 sidebar:
   order: 8
 modules:
@@ -11,7 +11,7 @@ modules:
   - scorm
 ---
 
-import { Aside, Badge } from "@astrojs/starlight/components";
+import { Aside } from "@astrojs/starlight/components";
 
 ## Layout
 
@@ -24,26 +24,78 @@ import { Aside, Badge } from "@astrojs/starlight/components";
 (`S3BucketProvisioner`): files are served to browsers by URL. The bucket's public base URL is
 `TENANCY_STORAGE_PUBLIC_URL` plus `/<bucket>` and is written to the tenant's `AWS_URL`.
 
-All tenants use the platform's access key: isolation is per bucket, not per credential (a known
-limit recorded in `api/docs/multidomain.md`).
+## Choosing a store
+
+Any S3-compatible service works. The bundled one is **SeaweedFS** (Apache-2.0, one container, `weed mini`),
+the default of the development stack, the `ulams stack` launcher, `install.sh --local` and the example below.
+It replaced MinIO, whose community edition is AGPL-3.0 and no longer published as images
+([ADR 0041](/decisions/0041-seaweedfs-and-per-tenant-s3-identities/)).
+
+| | Bundled SeaweedFS | External S3 (AWS S3, Cloudflare R2, Backblaze B2, Scaleway, OVH, ...) |
+|---|---|---|
+| Who runs it | You, one container with a volume to back up | The provider |
+| Credentials | **One key per tenant**, limited to that tenant's bucket | The key you give the platform, shared by all tenants |
+| `TENANCY_S3_IDENTITY_DRIVER` | `seaweedfs` | `none` (the default) |
+| Public read | Bucket policy (`TENANCY_S3_PUBLIC_READ_POLICY=true`) | Bucket policy where the service has one; on R2 a custom domain per bucket (`TENANCY_BUCKET_PUBLIC_URL`) |
+| Tested by the project | Every pull request that touches storage and nightly, against a real container | Not tested: provider accounts are the operator's |
+
+On AWS, S3 Block Public Access rejects public bucket policies by default; tenant provisioning
+fails at the `bucket` step until you allow public policies for these buckets (or pre-create
+them and serve files through a CDN). The access key needs `CreateBucket` and `PutBucketPolicy`
+for tenant provisioning.
+
+RustFS (Apache-2.0, young) is the recorded fallback if SeaweedFS ever fails a check the application needs;
+the compatibility suite runs against it in the nightly job for information.
+
+## One key per tenant
+
+With `TENANCY_S3_IDENTITY_DRIVER=seaweedfs` the API creates a separate identity for every tenant through the
+store's IAM API (on the S3 port, signed with the platform's admin key; the store must run with
+`-s3.iam.readOnly=false`, which every bundled configuration sets). Provisioning has a `storage_identity` step
+after `bucket`:
+
+- The identity is named `ulams-<slug>` and may read, write, delete and list **its own bucket** and nothing else:
+  no other bucket, no bucket creation, no bucket policy changes.
+- The key pair is stored encrypted on the tenant row (`tenants.storage_key`, `storage_secret`) so replicas can
+  rebuild the env files, and written as `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` to the tenant's env file.
+  The H5P service reads them from there. The platform keeps the admin key; it never reaches a tenant.
+- Deleting a tenant removes its identity before its bucket.
+- Reading a file by its exact name stays public on purpose (the bucket policy serves uploaded files by URL, to
+  anyone). What a key from tenant A cannot do in tenant B's bucket is list, write, overwrite or delete.
+  Run with `TENANCY_S3_PUBLIC_READ_POLICY=false` (and serve files another way) if you need private buckets;
+  then another tenant's key cannot read them either.
+
+```bash
+# give tenants created before this feature their identity, or issue a new key (old keys keep working)
+docker compose exec api php artisan ulams:tenant:sync-env --rotate-storage-keys
+# restart the queue workers and the H5P service so they use the new key, then drop the old keys
+docker compose exec api php artisan ulams:tenant:sync-env --prune-storage-keys
+# one tenant only
+docker compose exec api php artisan ulams:tenant:sync-env --rotate-storage-keys --tenant=coffee
+```
+
+With an external S3 service (`none`) every tenant uses the platform key, so isolation between tenants is the
+bucket name only; give each tenant an IAM user limited to its bucket yourself if you need more.
 
 ## Variables
 
 | Where | Variables |
 |---|---|
 | `api` (platform) | `FILESYSTEM_DRIVER=s3`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, `AWS_BUCKET`, `AWS_ENDPOINT`, `AWS_URL`, `AWS_USE_PATH_STYLE_ENDPOINT` |
-| `api` (bucket creation) | `TENANCY_S3_ENDPOINT`, `TENANCY_S3_KEY`, `TENANCY_S3_SECRET`, `TENANCY_S3_REGION` (default to the `AWS_*` values), `TENANCY_BUCKET`, `TENANCY_STORAGE_PUBLIC_URL` |
+| `api` (bucket creation) | `TENANCY_S3_ENDPOINT`, `TENANCY_S3_KEY`, `TENANCY_S3_SECRET`, `TENANCY_S3_REGION` (default to the `AWS_*` values), `TENANCY_BUCKET`, `TENANCY_STORAGE_PUBLIC_URL`, `TENANCY_S3_PUBLIC_READ_POLICY` |
+| `api` (identities) | `TENANCY_S3_IDENTITY_DRIVER` (`seaweedfs` or `none`), `TENANCY_S3_IAM_ENDPOINT` (default `TENANCY_S3_ENDPOINT`) |
 | `api` (package disks) | `SCORM_DISK` (default `local`), `CMI5_DISK` (default: the value of `SCORM_DISK`), `LIASCRIPT_DISK` (default `FILESYSTEM_DRIVER`) |
 | `h5p` | `S3_ENDPOINT`, `S3_REGION`, `S3_KEY`, `S3_SECRET`, `S3_BUCKET`, `S3_PREFIX` (`h5p`), `S3_FORCE_PATH_STYLE`; per tenant, the `AWS_*` values of its env file win |
 
 `AWS_ENDPOINT` is the address the containers use; `AWS_URL` and `TENANCY_STORAGE_PUBLIC_URL` are
-what browsers use. They differ when the store sits on the internal network (the example's MinIO:
-`http://minio:9000` inside, `https://storage.<content domain>` outside).
+what browsers use. They differ when the store sits on the internal network (the bundled
+SeaweedFS: `http://storage:8333` inside, `https://storage.<content domain>` outside).
 
 Server-side code reads files through the disk (`AWS_ENDPOINT`) and never fetches its own public URL. In the
 development stack `storage.localhost` resolves to the container itself, so a request to it from inside a
-container would not reach the store; for example, the Image topic reads its dimensions from the stored
-file, not from `AWS_URL`.
+container would not reach the store. Code that needs a file on disk (the PDF parser, an image size, a SCORM
+archive) gets a temporary copy through `Ulams\Core\Storage\LocalCopy`, which is removed afterwards, and
+`Storage::path()` is never used for a disk that may be S3 (`NoLocalPathOnObjectStorageTest` fails the build if it is).
 
 <Aside type="caution" title="SCORM packages on a local disk">
   `SCORM_DISK` defaults to `local`, so extracted SCORM packages are written under the API's
@@ -51,23 +103,67 @@ file, not from `AWS_URL`.
   For several API replicas, switch to `SCORM_DISK=s3`; the content origin reads from either disk.
 </Aside>
 
-## Choosing a store
+## Running the bundled store
 
-- **A managed S3-compatible service** (AWS S3, Cloudflare R2, Backblaze B2, Scaleway, OVH and
-  others). The access key needs `CreateBucket` and `PutBucketPolicy` for tenant provisioning.
-  On AWS, S3 Block Public Access rejects public bucket policies by default; tenant provisioning
-  fails at the `bucket` step until you allow public policies for these buckets (or pre-create
-  them and serve files through a CDN). Not tested by the project.
-- **Self-hosted.** The development stack uses MinIO, and the example offers it behind
-  `--profile minio`. <Badge text="Recommended" variant="tip" /> evaluate SeaweedFS or RustFS
-  instead: the project plans to move to a permissively licensed default.
+The development stack (`api/docker-compose.yml`) and the example in `examples/production` run the store as
+the service `storage`; the launcher calls it `object-store`.
 
-<Aside title="MinIO licence">
-  MinIO is AGPL-3.0, and its upstream community distribution is archived; the image in the
-  development stack (`bitnamilegacy/minio`) is no longer updated. Running it unmodified as a
-  separate process is fine for the project's licensing rules (`LICENSING.md`), but you depend on
-  an unmaintained image.
+```yaml
+storage:
+  image: chrislusf/seaweedfs:4.37
+  command: ["mini", "-dir=/data", "-s3.iam.readOnly=false", "-bucket=ulams"]
+  environment:
+    AWS_ACCESS_KEY_ID: ${S3_KEY}        # the admin key; the API signs bucket and IAM calls with it
+    AWS_SECRET_ACCESS_KEY: ${S3_SECRET}
+  volumes:
+    - storage_data:/data
+```
+
+- **Back up the volume**, together with the database: both hold tenant state.
+- **Keep the store off the internet.** The S3 port also serves the IAM API and every write. Caddy publishes only
+  `GET`, `HEAD` and `OPTIONS` at `storage.<content domain>`; do not publish port 8333 or any other port of the
+  container (the master, volume, filer and admin UI ports of `weed mini` have no authentication). On Kubernetes
+  allow the object store pod only from the API, H5P and gateway pods.
+- The platform bucket (`ulams`) is created by the store at start and made public by
+  `php artisan ulams:tenant:ensure-buckets`, which `init.sh` runs at boot.
+- The one tag, `chrislusf/seaweedfs:4.37`, is the same everywhere (development stack, launcher, example, CI;
+  `scripts/check-pinned-images.mjs` fails when they differ). To upgrade, change it in all of them and run the
+  nightly `Object storage` workflow by hand first.
+
+<Aside type="note" title="Known SeaweedFS 4.37 limits">
+  SeaweedFS accepts the `public-read` ACL and ignores it: files are public because of the bucket policy, so keep
+  `TENANCY_S3_PUBLIC_READ_POLICY=true` with it (the default).
+
+  `PutObjectAcl` on a key that contains `/` answers 500. ulams sets `public-read` when it writes a file (that
+  works) and again after video transcoding; the second call is not needed because the bucket policy makes files
+  public, and Laravel returns `false` instead of throwing, so nothing breaks. MinIO answers 501 to the same call.
+  The compatibility suite records it and passes on a newer tag without the workaround.
 </Aside>
+
+## Moving from MinIO
+
+Existing developer stacks and `install.sh --local` installs have their files in MinIO. The migration copies every
+`ulams` and `ulams-*` bucket to SeaweedFS, compares the copy byte for byte, re-applies the bucket policies and gives
+every tenant its own key. The old data is only read and stays where it is.
+
+```bash
+# development stack: starts the new store (docker/seaweedfs_data) and copies from docker/minio_storage
+cd api && docker compose up -d storage api && make storage-migrate
+
+# any other install: the old MinIO directory or endpoint, the new endpoint, keys from the environment
+FROM_S3_KEY=... FROM_S3_SECRET=... TO_S3_KEY=... TO_S3_SECRET=... \
+  deploy/scripts/storage-migrate.sh --from-minio-dir /path/to/minio/data --to-endpoint http://storage:8333 \
+  --network <docker network> --api-container <api container> --dry-run
+```
+
+- `--dry-run` lists what would be copied and writes nothing. Run it first.
+- Run it again whenever you like: only new or changed objects are copied, nothing is removed from either side, and
+  `--verify-only` compares without copying and exits non-zero on any difference (`--verify hash` is a quick check,
+  the default `download` compares the contents).
+- Then restart the queue workers and the H5P service so they pick up the per-tenant keys, and check the platform and one tenant.
+  Remove the old MinIO data when you are satisfied.
+- The service name `minio` stays as a network alias of `storage` in the development stack for one release, so old
+  env files that name `http://minio:9000` keep resolving; change them to `http://storage:8333`.
 
 ## Serving files safely
 
