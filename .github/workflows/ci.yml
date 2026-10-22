@@ -642,7 +642,8 @@ jobs:
         run: docker logs smoke || true
 
   # Offline checks of the production install files (deploy/vps-cloudflare): docker compose config in
-  # every mode, Caddy in both host layouts and both origin modes, cloudflared ingress and shellcheck.
+  # every mode, Caddy in both host layouts and both origin modes, cloudflared ingress and shellcheck;
+  # and of the docs example (front/docs-site/examples/production).
   deploy:
     name: Deploy files
     needs: changes
@@ -665,6 +666,8 @@ jobs:
             docker pull "$src" && docker tag "$src" "$img"
           done
       - run: deploy/vps-cloudflare/scripts/validate.sh
+      # The single-server example published by the docs site: compose, Caddyfile in both content-domain layouts.
+      - run: deploy/vps-cloudflare/scripts/validate-docs-example.sh
       - name: MyDevil PHP version check
         run: |
           sh deploy/mydevil/test/check-host-version.sh
