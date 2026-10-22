@@ -1,5 +1,5 @@
 {
- "summary": "608/692 covered, 84 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "610/694 covered, 84 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -683,6 +683,18 @@
    "key": "POST /api/admin/course-builder/versions/{version}/restore",
    "summary": "Restore an old version as a new one",
    "command": "builder.versions.restore",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-versions/courses/{course}/releases",
+   "summary": "Releases of a course (what learners got), newest first, with a summary of what changed",
+   "command": "course.releases",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-versions/releases/{release}",
+   "summary": "One release with the blueprint document of its version",
+   "command": "course.release",
    "status": "covered"
   },
   {

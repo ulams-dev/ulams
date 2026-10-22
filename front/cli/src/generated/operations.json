@@ -685,6 +685,18 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/course-versions/courses/{course}/releases",
+  "summary": "Releases of a course (what learners got), newest first, with a summary of what changed",
+  "tag": "Admin Course Versions"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-versions/releases/{release}",
+  "summary": "One release with the blueprint document of its version",
+  "tag": "Admin Course Versions"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/courses",
   "summary": "Get a listing of the Courses.",
   "tag": "Admin Courses"
