@@ -1,0 +1,122 @@
+---
+/**
+ * Reporting: a schematic of the analytics and compliance views. Labelled as an illustration; shapes stand in for
+ * data and carry no numbers. Each panel says in words what it shows; the shapes themselves are decorative.
+ */
+import DiagramFrame from "./DiagramFrame.astro";
+import type { Controls, DashboardCopy } from "../../lib/impact-diagrams.ts";
+
+interface Props {
+  copy: DashboardCopy;
+  controls: Controls;
+}
+const { copy, controls } = Astro.props;
+const FUNNEL = [100, 76, 52];
+const QUESTIONS = [72, 58, 80, 24, 64, 76];
+const STANDOUT = 3;
+type Mark = "done" | "due" | "overdue";
+const MATRIX: Mark[][] = [
+  ["done", "done", "done", "due"],
+  ["done", "due", "overdue", "due"],
+  ["done", "done", "due", "due"],
+];
+const GLYPH: Record<Mark, string> = { done: "✓", due: "◷", overdue: "!" };
+---
+
+<DiagramFrame id="dg-dashboard" head={copy} tone="illustration" control={{ kind: "replay", label: controls.replay }}>
+  <div class="dg-dash">
+    <div class="dg-dash__bar">
+      <span class="dg-dash__crumb" aria-hidden="true"></span>
+      <span class="dg-dash__frame">{copy.frame}</span>
+    </div>
+    <div class="dg-dash__grid">
+      <div class="dg-dash__panel">
+        <h4 class="dg-dash__title">{copy.funnel.title}</h4>
+        <p class="dg-dash__text">{copy.funnel.text}</p>
+        <ol class="dg-funnel" role="list">
+          {
+            copy.funnel.steps.map((step, i) => (
+              <li>
+                <span class="dg-funnel__label">{step}</span>
+                <span class="dg-funnel__track" aria-hidden="true">
+                  <span class="dg-funnel__bar" data-dg-grow="x" style={`width:${FUNNEL[i]}%;--dg-i:${i}`} />
+                </span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <div class="dg-dash__panel">
+        <h4 class="dg-dash__title">{copy.support.title}</h4>
+        <p class="dg-dash__text">{copy.support.text}</p>
+        <ul class="dg-support" aria-hidden="true">
+          {
+            [0, 1, 2].map((i) => (
+              <li data-dg-step style={`--dg-i:${i + 2}`}>
+                <span class="dg-support__avatar" />
+                <span class="dg-support__lines"><i /><i /></span>
+                <span class="dg-support__reason" />
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="dg-dash__panel">
+        <h4 class="dg-dash__title">{copy.questions.title}</h4>
+        <p class="dg-dash__text">{copy.questions.text}</p>
+        <div class="dg-qs">
+          <ol class="dg-qs__bars" aria-hidden="true">
+            {
+              QUESTIONS.map((h, i) => (
+                <li class:list={{ "is-standout": i === STANDOUT }}>
+                  <span class="dg-qs__col">
+                    <span class="dg-qs__bar" data-dg-grow="y" style={`height:${h}%;--dg-i:${i + 2}`} />
+                  </span>
+                  <span class="dg-qs__label">{`Q${i + 1}`}</span>
+                </li>
+              ))
+            }
+          </ol>
+          <p class="dg-qs__standout" data-dg-step style="--dg-i:8">
+            <span aria-hidden="true">{`Q${STANDOUT + 1}`}</span>
+            {copy.questions.standout}
+          </p>
+        </div>
+      </div>
+
+      <div class="dg-dash__panel">
+        <h4 class="dg-dash__title">{copy.training.title}</h4>
+        <p class="dg-dash__text">{copy.training.text}</p>
+        <div class="dg-matrix" aria-hidden="true">
+          {
+            MATRIX.map((row, r) => (
+              <div class="dg-matrix__row">
+                <span class="dg-matrix__who" />
+                {row.map((mark, c) => (
+                  <span class={`dg-matrix__cell is-${mark}`} data-dg-pop style={`--dg-i:${r + c + 2}`}>
+                    {GLYPH[mark]}
+                  </span>
+                ))}
+              </div>
+            ))
+          }
+        </div>
+        <ul class="dg-legend" role="list">
+          <li><span class="dg-matrix__cell is-done" aria-hidden="true">{GLYPH.done}</span>{copy.training.done}</li>
+          <li><span class="dg-matrix__cell is-due" aria-hidden="true">{GLYPH.due}</span>{copy.training.due}</li>
+          <li><span class="dg-matrix__cell is-overdue" aria-hidden="true">{GLYPH.overdue}</span>{copy.training.overdue}</li>
+        </ul>
+      </div>
+
+      <div class="dg-dash__panel dg-dash__panel--hidden" data-dg-step style="--dg-i:7">
+        <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><rect x="4" y="9" width="12" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6" /><path d="M7 9V6.5a3 3 0 0 1 6 0V9" fill="none" stroke="currentColor" stroke-width="1.6" /></svg>
+        <div>
+          <h4 class="dg-dash__title">{copy.hidden.title}</h4>
+          <p class="dg-dash__text">{copy.hidden.text}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</DiagramFrame>

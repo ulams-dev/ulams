@@ -1,0 +1,39 @@
+---
+/** Content cost: the Living Course loop, as shipped. A highlight walks the five steps; it has a pause button. */
+import DiagramFrame from "./DiagramFrame.astro";
+import type { Controls, LoopCopy } from "../../lib/impact-diagrams.ts";
+
+interface Props {
+  copy: LoopCopy;
+  controls: Controls;
+}
+const { copy, controls } = Astro.props;
+const DIFF = 2;
+---
+
+<DiagramFrame id="dg-living-loop" head={copy} tone="available" control={{ kind: "pause", pause: controls.pause, play: controls.play }}>
+  <div class="dg-loop">
+    <ol class="dg-loop__steps" role="list">
+      {
+        copy.steps.map((step, i) => (
+          <li class="dg-loop__step" data-dg-step style={`--dg-i:${i}`}>
+            <span class="dg-loop__pulse" aria-hidden="true" />
+            <span class="dg-loop__num" aria-hidden="true">{i + 1}</span>
+            <h4 class="dg-loop__title">{step.title}</h4>
+            <p class="dg-loop__text">{step.text}</p>
+            {i === DIFF && (
+              <span class="dg-loop__diff" aria-hidden="true">
+                <span class="dg-loop__del">−</span>
+                <span class="dg-loop__add">+</span>
+              </span>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+    <p class="dg-loop__again" data-dg-step style="--dg-i:5">
+      <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M15.5 8A6 6 0 1 0 16 11.5M16 3.5V8h-4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+      <span>{copy.again}</span>
+    </p>
+  </div>
+</DiagramFrame>
