@@ -1,5 +1,6 @@
 ---
 import { pageLocale } from "../lib/i18n.ts";
+import { imageSrc } from "../lib/images.ts";
 
 interface Post {
   title: string;
@@ -38,7 +39,7 @@ const label = (date: string) => fmt.format(new Date(`${date}T00:00:00Z`));
           <li>
             <article class="u-blogx__card">
               {post.image && (
-                <img class="u-blogx__thumb" src={post.image.src} alt="" width={post.image.width} height={post.image.height} loading="lazy" decoding="async" />
+                <img class="u-blogx__thumb" src={imageSrc(post.image.src, "card", 480, post.image.width)} alt="" width={post.image.width} height={post.image.height} loading="lazy" decoding="async" />
               )}
               <div class="u-blogx__body">
                 <p class="u-blogx__meta">

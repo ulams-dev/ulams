@@ -27,7 +27,7 @@ const { eyebrow, title, paragraphs, quote, people = [], id = "letter" } = Astro.
             <figure class="u-letter__person" style={`--tilt:${i % 2 ? 1.5 : -1.5}deg`}>
               {person.image && (
                 <div class="u-letter__photo">
-                  <Img {...person.image} sizes="(min-width: 960px) 260px, 45vw" />
+                  <Img {...person.image} sizes="(min-width: 960px) 260px, 45vw" preset="avatar" />
                 </div>
               )}
               <figcaption>

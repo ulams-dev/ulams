@@ -26,6 +26,12 @@ describe("front CSP (ADR 0044)", () => {
     expect(directive(policy, "media-src")).not.toContain("data:");
   });
 
+  it("allows the same-host /cdn-cgi/image URLs of the cloudflare image mode (self and https: in img-src)", () => {
+    const img = directive(buildCsp(input), "img-src");
+    expect(img).toContain("'self'");
+    expect(img).toContain("https:");
+  });
+
   it("reports to the tenant's own API through both mechanisms", () => {
     const policy = buildCsp(input);
     expect(reportUrl(tenant)).toBe("http://coffee.localhost/api/csp-report");
