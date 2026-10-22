@@ -239,5 +239,4 @@ return [
     ['api/lti/*', 'learner'],
     ['api/pencil-spaces/*', 'learner'],
     ['api/core/packages', 'learner'],
-    ['broadcasting/auth', 'learner'],
 ];

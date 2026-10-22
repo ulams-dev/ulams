@@ -53,7 +53,7 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0039](0039-author-preview-of-draft-courses.md) | Author preview of draft courses runs on its own routes with the author's token | Proposed |
 | [0040](0040-postgresql-17.md) | PostgreSQL 17 with a tested dump-and-restore upgrade | Accepted |
 | [0041](0041-seaweedfs-and-per-tenant-s3-identities.md) | SeaweedFS replaces MinIO; per-tenant S3 identities; server-side reads use the internal endpoint | Proposed |
-| [0042](0042-no-websocket-server.md) | No WebSocket server: Soketi and Pusher removed, Reverb only when a feature needs push | Proposed |
+| [0042](0042-no-websocket-server.md) | No WebSocket server: Soketi and Pusher removed, Reverb only when a feature needs push | Accepted |
 | [0043](0043-enforced-morph-map.md) | An enforced morph map with stable aliases for polymorphic types | Proposed (data layer implemented 2026-10-21, see "Implementation") |
 | [0044](0044-content-security-policy-enforcement.md) | Content Security Policy: report collector, enforcement, tool origins from the API | Proposed |
 | [0045](0045-h5p-state-through-bff.md) | H5P learner state through the BFF; no API token in the browser | Proposed |

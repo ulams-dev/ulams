@@ -40,7 +40,6 @@ class UlamsWebinarServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'webinar');
-        $this->loadRoutesFrom(__DIR__ . '/channels.php');
 
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
