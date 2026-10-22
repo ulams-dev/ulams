@@ -67,10 +67,18 @@ async function api(method, path, token, body) {
         }
     });
 
-    await page.goto(`${MOODLE}/login/index.php`);
-    await page.fill('#username', username);
-    await page.fill('#password', password);
-    await Promise.all([page.waitForLoadState('load'), page.click('#loginbtn')]);
+    // The fixture is verified server-side by moodle-setup.php; a first "Invalid login" right after
+    // setup is still seen on a cold Moodle, so one retry after a short wait.
+    for (let attempt = 1; attempt <= 2; attempt++) {
+        await page.goto(`${MOODLE}/login/index.php`);
+        await page.fill('#username', username);
+        await page.fill('#password', password);
+        await Promise.all([page.waitForLoadState('load'), page.click('#loginbtn')]);
+        if (!page.url().includes('/login/') || attempt === 2) {
+            break;
+        }
+        await page.waitForTimeout(5000);
+    }
     if (page.url().includes('/login/')) {
         const shown = (await page.locator('#loginerrormessage, .loginerrors, .alert-danger, .alert').allInnerTexts()).join(' | ').slice(0, 300);
         const cookies = (await page.context().cookies()).map((c) => c.name).join(',');

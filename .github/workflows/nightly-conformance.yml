@@ -447,7 +447,9 @@ jobs:
         working-directory: api
         run: |
           cp docker/envs/.env.ci.postgres .env
-          composer install --no-interaction --no-progress --prefer-dist
+          # No scripts: post-autoload-dump runs package:discover, which boots Laravel and reads the
+          # database (translations), and PostgreSQL 12 only starts in the next step.
+          composer install --no-interaction --no-progress --prefer-dist --no-scripts
 
       - name: Start PostgreSQL 12 on a data directory
         run: |
@@ -578,7 +580,9 @@ jobs:
           tools: composer:v2
 
       - name: Install Composer dependencies
-        run: composer install --no-interaction --no-progress --prefer-dist
+        # No scripts: package:discover boots Laravel against a database that only exists once the
+        # stack below is up; the container discovers the packages itself when it starts.
+        run: composer install --no-interaction --no-progress --prefer-dist --no-scripts
 
       - name: Start the stack
         run: docker compose up -d --build api caddy postgres redis minio
