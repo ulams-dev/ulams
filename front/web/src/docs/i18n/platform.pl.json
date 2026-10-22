@@ -291,6 +291,19 @@
           }
         },
         {
+          "component": "CtaBand",
+          "props": {
+            "id": "cost-cta",
+            "eyebrow": "koszt treści",
+            "title": "Treści to najdroższa część e-learningu",
+            "text": "Wg benchmarków to średnio około 197 godzin pracy na godzinę gotowego kursu. Zobacz, jak ULAMS obniża ten koszt i co jeszcze jest w drodze.",
+            "cta": {
+              "label": "Zobacz, jak obniżamy koszt treści",
+              "href": "/pl/content-cost/"
+            }
+          }
+        },
+        {
           "component": "Chips",
           "props": {
             "eyebrow": "standardy",
@@ -340,6 +353,19 @@
                   "href": "https://github.com/EscolaLMS/headless-format"
                 }
               ]
+            }
+          }
+        },
+        {
+          "component": "CtaBand",
+          "props": {
+            "id": "reporting-cta",
+            "eyebrow": "raportowanie",
+            "title": "Przez raportowanie firmy zmieniają LMS",
+            "text": "Badania branżowe wskazują brak raportowania jako najczęstszy powód zmiany LMS. Zobacz analitykę, eksporty i raporty zgodności, które ULAMS już ma.",
+            "cta": {
+              "label": "Zobacz raportowanie",
+              "href": "/pl/reporting/"
             }
           }
         },
