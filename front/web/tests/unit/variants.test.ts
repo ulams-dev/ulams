@@ -318,9 +318,9 @@ describe("the calls", () => {
   });
 
   it("tells a locked family from a missing enrolment after a 403, and reports other failures", async () => {
-    const locked = await withFetch((url, init) => (init.method === "PUT" ? reply(403, null) : reply(200, stateRaw({ canChange: false, lockedReason: "locked" }))), () => applyChoice(tenant, "tok", 11, { kind: "switch", courseId: 12 }));
+    const locked = await withFetch((_url, init) => (init.method === "PUT" ? reply(403, null) : reply(200, stateRaw({ canChange: false, lockedReason: "locked" }))), () => applyChoice(tenant, "tok", 11, { kind: "switch", courseId: 12 }));
     expect(locked.result).toEqual({ kind: "locked" });
-    const noAccess = await withFetch((url, init) => (init.method === "PUT" ? reply(403, null) : reply(200, stateRaw({ enrolled: false, canChange: false, lockedReason: "not_enrolled" }))), () => applyChoice(tenant, "tok", 11, { kind: "switch", courseId: 12 }));
+    const noAccess = await withFetch((_url, init) => (init.method === "PUT" ? reply(403, null) : reply(200, stateRaw({ enrolled: false, canChange: false, lockedReason: "not_enrolled" }))), () => applyChoice(tenant, "tok", 11, { kind: "switch", courseId: 12 }));
     expect(noAccess.result).toEqual({ kind: "no-access" });
     expect((await withFetch(() => reply(422, null), () => applyChoice(tenant, "tok", 11, { kind: "switch", courseId: 99 }))).result).toEqual({ kind: "failed" });
     expect((await withFetch(() => Promise.reject(new Error("down")), () => applyChoice(tenant, "tok", 11, { kind: "switch", courseId: 12 }))).result).toEqual({ kind: "failed" });

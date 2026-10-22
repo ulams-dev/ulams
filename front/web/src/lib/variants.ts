@@ -203,7 +203,7 @@ async function call(tenant: Tenant, token: string | null, method: string, path: 
 }
 
 /** The picker's public data for any course of a family, or null when it has no variants. Cached briefly. */
-export function getVariantFamily(tenant: Tenant, courseId: number): Promise<VariantFamily | null> {
+export async function getVariantFamily(tenant: Tenant, courseId: number): Promise<VariantFamily | null> {
   return publicData(
     tenant,
     `variants:${courseId}`,
