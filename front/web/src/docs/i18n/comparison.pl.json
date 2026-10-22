@@ -361,11 +361,10 @@
                   },
                   {
                     "title": "LTI 1.3 w obie strony",
-                    "text": "Uruchamiaj zewnętrzne narzędzia w lekcjach z przekazywaniem ocen albo pozwól, by Moodle, Canvas i inne LMS-y uruchamiały kursy ulams.",
+                    "text": "Uruchamiaj zewnętrzne narzędzia w lekcjach z deep linkingiem, przekazywaniem ocen i listą uczestników albo pozwól, by Moodle, Canvas i inne LMS-y uruchamiały kursy ulams i otrzymywały oceny.",
                     "packages": [
                       "lti"
-                    ],
-                    "status": "coming"
+                    ]
                   },
                   {
                     "title": "Import i eksport kursów",
@@ -429,7 +428,7 @@
                   },
                   {
                     "title": "Wersje kursu z wizualnym porównaniem",
-                    "text": "Ekran w Studio porównuje dowolne dwie wersje lub wydania albo kurs bazowy z wariantem: zmienione elementy jako drzewo, zmiany w tekście co do słowa, fragmenty stojące za zmienionymi cytowaniami i wpływ na odpowiedzi w quizach. Każda zmiana jest oznaczona słowem i symbolem, nie tylko kolorem.",
+                    "text": "Każda zmiana autora i każda zaakceptowana aktualizacja źródła tworzy kolejną, numerowaną wersję kursu. Wybierz dowolne dwie i porównaj je: dodane, usunięte i przeniesione lekcje, zmiany w tekście co do słowa, zmienione cytowania i pytania quizu, których poprawna odpowiedź jest teraz inna.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
                     "packages": [
                       "authoring-metrics"
@@ -437,7 +436,7 @@
                   },
                   {
                     "title": "Warianty kursu według poziomu i roli",
-                    "text": "Kreator kursów AI pyta, jakie poziomy i role ma objąć, i z tych samych źródeł przygotowuje wariant jednego kursu dla każdego z nich. Każdy sprawdzasz jako różnicę względem kursu bazowego, a po zatwierdzeniu staje się osobnym, nieopublikowanym kursem zgrupowanym z bazowym.",
+                    "text": "Kreator kursów AI pyta, jakie poziomy i role ma objąć, i przygotowuje kilka wariantów jednego kursu z tych samych źródeł; każdy wariant sprawdzasz jako różnicę względem wersji bazowej i publikujesz razem z nią.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
                     "packages": [
                       "course-variants"
@@ -445,8 +444,12 @@
                   },
                   {
                     "title": "Kierowanie uczących się do wariantu",
-                    "text": "Uczący się wybierają wariant na stronie kursu albo dostają go od administratora lub z reguły zapisów, jeden zakup obejmuje całą rodzinę kursów, a aktualizacje Living Course docierają do każdego wariantu.",
-                    "status": "coming"
+                    "text": "Uczący się wybiera poziom i rolę przy zapisie, rozwiązuje opcjonalny test kwalifikacyjny z cytowaniami albo dostaje wariant od administratora lub reguły; po zmianie wariantu postęp zostaje.",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
+                    "status": "coming",
+                    "packages": [
+                      "course-variants"
+                    ]
                   },
                   {
                     "title": "Warstwa LLM niezależna od dostawcy",
@@ -547,11 +550,11 @@
                   },
                   {
                     "title": "Analityka kursu dla autorów",
-                    "text": "Pulpit dla każdego kursu z postępami, ukończeniem, wynikami quizów i fragmentami, które mylą uczących się.",
-                    "status": "coming",
+                    "text": "Pulpit dla każdego kursu w studiu i w formularzu kursu w panelu administratora: postępy, ukończenie, wyniki quizów, kto potrzebuje wsparcia i fragmenty, które mylą uczących się.",
                     "packages": [
                       "learner-insights"
-                    ]
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/learner-insights/"
                   },
                   {
                     "title": "Uczący się zagrożeni porażką",
@@ -562,11 +565,11 @@
                   },
                   {
                     "title": "Tutor AI",
-                    "text": "Odpowiada wyłącznie na podstawie źródeł kursu, z cytowaniami, i mówi, gdy pytanie wykracza poza zakres.",
-                    "status": "coming",
+                    "text": "Odpowiada wyłącznie na podstawie źródeł kursu, z cytowaniami, mówi, gdy pytanie wykracza poza zakres, i nie podaje odpowiedzi w trakcie quizu. Domyślnie wyłączony w każdej akademii.",
                     "packages": [
                       "tutor"
-                    ]
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/tutor/"
                   }
                 ],
                 "audience": "owner"
@@ -976,19 +979,6 @@
                     "href": "https://ulams-dev.github.io/ulams/developers/cli-builder/"
                   },
                   {
-                    "title": "Kurs jako kod",
-                    "text": "Trzymaj kurs jako folder plików Markdown i YAML. Wiersz poleceń tworzy folder z kursu, pokazuje stan i różnice, pobiera, wysyła, stosuje zmiany i publikuje. Gdy zmieniły się obie strony, scala element po elemencie, a konflikty zapisuje w plikach, które rozwiązujesz jednym poleceniem.",
-                    "href": "https://ulams-dev.github.io/ulams/developers/cli-course/",
-                    "packages": [
-                      "course-builder"
-                    ]
-                  },
-                  {
-                    "title": "Aktualizacje kursu sterowane przez Git",
-                    "text": "Zaplanowane są: GitHub Action i obraz kontenera dla wiersza poleceń, akademia podglądowa dla każdego pull requesta, scalenie w Git uruchamiające propozycję Living Course oraz synchronizacja kursów, które nie powstały w Kreatorze kursów.",
-                    "status": "coming"
-                  },
-                  {
                     "title": "CLI czytelne dla maszyn",
                     "text": "Każde polecenie zwraca kopertę JSON z kodami wyjścia, opisuje się przez ulams schema i loguje przez przeglądarkę z kodem urządzenia. Uzupełnianie w powłoce w zestawie.",
                     "href": "https://ulams-dev.github.io/ulams/developers/cli/"
@@ -1022,6 +1012,17 @@
                     "title": "Webhooki przychodzące",
                     "text": "Webhooki dla pushy Git w Living Course, Stripe i nagrań Jitsi. Podpisane webhooki wychodzące z ponawianiem, powtórkami i dziennikiem dostaw mają osobną stronę dokumentacji.",
                     "href": "https://ulams-dev.github.io/ulams/developers/webhooks/"
+                  },
+                  {
+                    "title": "Kurs jako kod",
+                    "text": "Eksportuj kurs jako pliki Markdown i YAML, sprawdzaj je offline i wysyłaj lub pobieraj zmiany ze scalaniem trójstronnym; każdy import to wersja, którą zatwierdza autor.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/course-folder-format/"
+                  },
+                  {
+                    "title": "Aktualizacje kursu sterowane z Gita",
+                    "text": "GitHub Action sprawdza foldery kursów w pull requestach i otwiera dla każdego akademię podglądu, a scalenie staje się propozycją aktualizacji Living Course.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/cli-course/",
+                    "status": "coming"
                   }
                 ],
                 "audience": "engineering"

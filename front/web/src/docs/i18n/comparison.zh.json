@@ -360,11 +360,10 @@
                   },
                   {
                     "title": "双向 LTI 1.3",
-                    "text": "在课程中启动外部工具并回传成绩，也可以让 Moodle、Canvas 等其他 LMS 启动 ulams 课程。",
+                    "text": "在课程中启动外部工具，支持深度链接、成绩回传和成员名单；也可以让 Moodle、Canvas 等其他 LMS 启动 ulams 课程并接收成绩。",
                     "packages": [
                       "lti"
-                    ],
-                    "status": "coming"
+                    ]
                   },
                   {
                     "title": "课程导入与导出",
@@ -428,7 +427,7 @@
                   },
                   {
                     "title": "带可视化对比的课程版本",
-                    "text": "Studio 中的界面可以对比任意两个版本或发布记录，或对比基础课程与变体：以树形显示变更的元素、逐词的文本变化、变更引用背后的段落，以及对测验答案的影响。每处变化都用文字和符号标记，而不只靠颜色。",
+                    "text": "作者的每次修改和每次被接受的来源更新都会生成一个带编号的课程版本。任选两个版本进行对比：新增、删除或移动的课时，逐词的文本变化，变更的引用，以及正确答案已经不同的测验题。",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
                     "packages": [
                       "authoring-metrics"
@@ -436,16 +435,20 @@
                   },
                   {
                     "title": "按水平和角色划分的课程变体",
-                    "text": "AI 课程生成器会询问需要覆盖哪些水平和角色，并基于同一组来源为每一个起草一门课程的变体。每个变体都以相对基础课程的差异形式供你审阅，批准后成为与基础课程归为一组的、未发布的独立课程。",
+                    "text": "AI 课程生成器会询问需要覆盖哪些水平和角色，并基于同一组来源为一门课程起草多个变体，每个变体都以相对基础版本的差异形式供你审阅，并与基础版本一起发布。",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
                     "packages": [
                       "course-variants"
                     ]
                   },
                   {
-                    "title": "把学员引导到合适的变体",
-                    "text": "学员在课程页面选择变体，或由管理员或报名规则分配；一次购买涵盖整个课程系列，Living Course 的更新会同步到每个变体。",
-                    "status": "coming"
+                    "title": "将学习者分配到变体",
+                    "text": "学习者在报名时选择自己的水平和角色，可参加带引用的分级测试，也可由管理员或规则分配变体；切换变体时学习进度会保留。",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
+                    "status": "coming",
+                    "packages": [
+                      "course-variants"
+                    ]
                   },
                   {
                     "title": "与服务商无关的 LLM 层",
@@ -546,11 +549,11 @@
                   },
                   {
                     "title": "单门课程的作者分析",
-                    "text": "每门课程一个仪表盘，展示进度、完成率、测验表现以及让学员困惑的章节。",
-                    "status": "coming",
+                    "text": "每门课程一个仪表盘，位于工作室和管理后台的课程表单中，展示进度、完成率、测验表现、需要帮助的学员以及让学员困惑的章节。",
                     "packages": [
                       "learner-insights"
-                    ]
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/learner-insights/"
                   },
                   {
                     "title": "有风险的学员",
@@ -561,11 +564,11 @@
                   },
                   {
                     "title": "AI 导师",
-                    "text": "只根据课程来源作答并附带引用，遇到超出范围的问题会明确说明。",
-                    "status": "coming",
+                    "text": "只根据课程来源作答并附带引用，遇到超出范围的问题会明确说明，测验进行中不提供答案。每个学院默认关闭。",
                     "packages": [
                       "tutor"
-                    ]
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/tutor/"
                   }
                 ],
                 "audience": "owner"
@@ -975,19 +978,6 @@
                     "href": "https://ulams-dev.github.io/ulams/developers/cli-builder/"
                   },
                   {
-                    "title": "课程即代码",
-                    "text": "把课程保存为 Markdown 和 YAML 文件夹。命令行可以从课程创建该文件夹，显示状态和差异，并执行拉取、推送、应用和发布。当两边都有修改时，它会逐个元素合并，并把冲突写入文件，用一条命令即可解决。",
-                    "href": "https://ulams-dev.github.io/ulams/developers/cli-course/",
-                    "packages": [
-                      "course-builder"
-                    ]
-                  },
-                  {
-                    "title": "由 Git 驱动的课程更新",
-                    "text": "已规划：面向命令行的 GitHub Action 和容器镜像、每个拉取请求一个预览学院、Git 合并触发 Living Course 提案，以及同步并非用课程生成器创建的课程。",
-                    "status": "coming"
-                  },
-                  {
                     "title": "机器可读的 CLI",
                     "text": "每条命令都返回带退出码的 JSON 信封，可用 ulams schema 自我描述，并通过浏览器使用设备码登录。附带 shell 补全。",
                     "href": "https://ulams-dev.github.io/ulams/developers/cli/"
@@ -1021,6 +1011,17 @@
                     "title": "入站 Webhook",
                     "text": "支持 Living Course 的 Git 推送、Stripe 和 Jitsi 录制的 Webhook。带重试、重放和投递日志的已签名出站 Webhook 有单独的文档页面。",
                     "href": "https://ulams-dev.github.io/ulams/developers/webhooks/"
+                  },
+                  {
+                    "title": "课程即代码",
+                    "text": "将课程导出为 Markdown 和 YAML 文件，离线校验，并通过三方合并推送或拉取更改；每次导入都是一个需要作者批准的版本。",
+                    "href": "https://ulams-dev.github.io/ulams/developers/course-folder-format/"
+                  },
+                  {
+                    "title": "由 Git 驱动的课程更新",
+                    "text": "GitHub Action 在拉取请求中校验课程文件夹并为每个拉取请求开启预览学院，合并后生成 Living Course 更新提案。",
+                    "href": "https://ulams-dev.github.io/ulams/developers/cli-course/",
+                    "status": "coming"
                   }
                 ],
                 "audience": "engineering"

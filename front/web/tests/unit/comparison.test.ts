@@ -33,7 +33,8 @@ describe("comparison data (public claims about other products)", () => {
     const ulams = comparisonData.systems.find((s) => s.ours)!;
     expect(ulams.groups).toEqual(comparisonData.groups.map((g) => g.key));
     expect(ulams.cells.scim?.value).toBe("Coming");
-    expect(ulams.cells.sso?.value).not.toBe("Yes");
+    // SAML 2.0 and OpenID Connect sign-in per tenant are built (identity ID-1, ID-2); SCIM is not
+    expect(ulams.cells.sso?.value).toBe("Yes");
     for (const key of ["sso", "scim", "authoring_tool", "content_library", "data_residency"]) {
       expect(ulams.cells[key]?.source, key).toMatch(/^https:\/\/github\.com\/ulams-dev\/ulams\/blob\/main\//);
     }
@@ -110,12 +111,9 @@ describe("comparison data (public claims about other products)", () => {
     }
     expect(ulams.cells.mcp?.value).toBe("Yes");
     expect(ulams.cells.webhooks?.value).toBe("Yes");
+    // folder format, validation and push/pull with a three-way merge are built (CAC-1 to CAC-4); the Action and previews are not
     expect(ulams.cells.course_as_code?.value).toBe("Partial");
-    // SAML and OIDC are built per tenant, but there is no admin screen, SCIM or group mapping yet
-    expect(ulams.cells.sso?.value).toBe("Partial");
-    expect(ulams.cells.sso?.note).toMatch(/SAML 2\.0/);
-    expect(ulams.cells.sso?.source).toMatch(/single-sign-on-saml\.mdx$/);
-    expect(ulams.cells.course_as_code?.note).toMatch(/no Git watching/);
+    expect(ulams.cells.lti13?.value).toBe("Yes");
     expect(ulams.cells.cli?.value).toBe("Yes");
     expect(ulams.cells.generative_ui?.value).toBe("Partial");
   });

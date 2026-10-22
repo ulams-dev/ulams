@@ -99,6 +99,14 @@ small commits → tests → summary.
 
 ## Open decisions
 
+- [x] (new) Decision 2026-10-22: the owner decided that everything labelled "Coming" on the public site and in the docs must be
+      implemented. The audit of that date relabelled what had shipped (LTI 1.3 both directions, course versions, variant drafting,
+      per-course author analytics, the AI tutor, SAML/OIDC SSO, course as code) and gave every remaining label a plan: existing
+      plans for learner routing (CV-5), the report builder, BI feed and authoring metric (AM-3 to AM-6, RB-1 to RB-7), the policy
+      lifecycle (P6R-8 to P6R-12), Sylius (CM-3 onwards), Git-driven updates (CAC-6, CAC-7) and SCIM (ID-4, ID-5); new plans
+      `academy-entry-points.md` (ADR 0195), `style-guide-course-design.md` (ADR 0196) and `scorm-playback-tests.md` (ADR 0197),
+      all three Proposed and waiting for approval
+
 - [x] (new) Decision 2026-10-22: the owner accepted ADR 0192 and the plan `docs/plans/course-versions-and-variants.md` with its
       recommended defaults for Q1 to Q11, approved the matching spec sections (ROADMAP-PROMPT 3.1 and 4.4), and accepted that variant
       courses stay unlisted and unsold on their own until CV-5 routing exists
@@ -362,6 +370,11 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
 - [x] (new) Zip-slip: SCORM (`ScormService::unzipScormArchive`) and cmi5 (`Cmi5UploadService`) extract
       archives with `ZipArchive::extractTo` and no entry-path checks; replace with a safe extractor (M1.1)
 - [x] (new) The SCORM player loads `scorm-again` from the jsDelivr CDN; vendor it (air-gapped installs)
+- [ ] (new) SCORM playback regression tests and the `scorm-again` 3 upgrade: original SCORM 1.2 and 2004 fixture packages
+      played in a browser through the React `<ScormPreview>` (admin, legacy front) and the API content player, with golden
+      runtime and tracking traces captured on 2.6.x; then `scorm-again` 3 with every changed default set to the 2.6
+      behaviour, AICC removed and the Dependabot ignore rule #431 dropped (closed PR #232 explains why)
+      (plan `docs/plans/scorm-playback-tests.md` SC-1 to SC-4; ADR 0197 Proposed)
 - [x] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
       packages and players to a per-tenant content origin (M1.1) (SCORM and cmi5 done, `<slug>.content.localhost`,
       `api/docs/content-origin.md`; run `ulams:tenant:sync-env` so existing tenants get `CONTENT_ORIGIN`)
@@ -643,6 +656,8 @@ Requested by the owner on 2026-10-22. Plan: `docs/plans/course-versions-and-vari
 ADR 0192 Accepted). Builds on the builder version history (ADR 0010, `course_builder_versions`), the element-aware
 `BlueprintDiff` (the API already accepts `?against=<version>`), the CAC-4 three-way merge (`ElementMerge`) and Blueprint v3.
 Shown as "Coming" on the Comparison page and in the docs (`creators/course-versions-and-variants`).
+Note 2026-10-22 (Coming audit): CV-3 is merged (#425), so the Comparison catalogue, the content-cost page and the docs now show course
+versions as available; only "Learners routed to a variant" (CV-5) stays "Coming".
 
 - [x] (new) Course releases: every approved change that reaches learners (author edit, chat edit, accepted Living Course
       update, course-as-code import, insights proposal) is recorded as a numbered release with its trigger, source
@@ -661,7 +676,8 @@ Shown as "Coming" on the Comparison page and in the docs (`creators/course-versi
       answer key consequence, a pair picker, a swap link and a base-against-variant picker, EN, PL and ZH; the Versions page gets Compare with
       previous, two tick boxes with Compare the two selected and Show all versions; done and tested, tick when the CV-3 PR is merged; open: the
       `VersionCompare` component in `@ulams/ui` with a catalogue entry and a playground example (the screen is page code in `front/web` for now))
-- [ ] (new) Semantic diff on top of `BlueprintDiff`: move and reorder detection, citation set diff with fragment text, quiz
+      Note 2026-10-22 (Coming audit): CV-3 merged in #425; stays `[ ]` only for the `VersionCompare` catalogue component
+- [x] (new) Semantic diff on top of `BlueprintDiff`: move and reorder detection, citation set diff with fragment text, quiz
       answer key change flag, per-release change summary counts; one diff payload shared by the studio, the CLI
       (`ulams course diff --from --to`) and the MCP tool
       (partial, CV-2: `SemanticDiff` (moved and reordered by longest common subsequence, citations added, removed and
@@ -676,18 +692,20 @@ Shown as "Coming" on the Comparison page and in the docs (`creators/course-versi
       its variants) with the session's variants, a hand-written TypeScript client (`createCourseVersionsClient`: `versions`, `compare`; the SDK
       generate was not run), the BFF allow-list, the OpenAPI spec, the CLI coverage matrix and the PHP SDK; the studio screen reads it; tick when the
       CV-3 PR is merged)
+      Note 2026-10-22 (Coming audit): CV-3 merged in #425, so ticked
 - [x] (new) Variant apply writes a release: CV-4 set a variant's `applied_version_id` directly and recorded no release, so
       variant courses had no timeline; `ReleaseRecorder::appliedVariant` now writes the release in the same transaction
       (numbers per variant, trigger derived like the base), `course-builder:backfill-releases` covers variants applied
       earlier, and the release list answers for a variant course id
       (CV-2, merged in #418)
 - [ ] (new) Releases and compare for courses not built with the Course Builder once they are adopted (depends on CAC-5)
-- [ ] (new) Tenant isolation suite for the release and compare endpoints (ADR 0190 route coverage), WCAG 2.2 AA for the
+- [x] (new) Tenant isolation suite for the release and compare endpoints (ADR 0190 route coverage), WCAG 2.2 AA for the
       compare screen (colour is never the only signal of added or removed)
       (partial: route coverage walks both route groups, `ReleaseApiTest`, `CompareApiTest` and `VersionListApiTest` cover other authors, students,
       guests, a token of another tenant, unknown ids and a pair from two sessions; CV-3: axe and keyboard Playwright specs for the compare screen and the
       new Versions page controls at desktop and 360 px with reduced motion, in EN, PL and ZH (`studio-compare.a11y.spec.ts`,
       `studio-versions.a11y.spec.ts`); tick when the CV-3 PR is merged)
+      Note 2026-10-22 (Coming audit): CV-3 merged in #425, so ticked
 
 ---
 
@@ -795,6 +813,11 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       file, a Stitch DESIGN.md or a brand guide (tokens, fonts, logo), proposed as a diff the admin approves (today an
       agent with the ulams CLI and the design tool's MCP does it: `ulams theme set`, `ulams settings set`)
       (done: importer that proposes a tenant theme with contrast checks, `front/ui/src/theme/brand-import.ts`, #297)
+- [ ] (new) Style guide shapes the generated course design: an uploaded style guide becomes a cited style profile (theme
+      tokens, voice, terminology, banned phrases, reading level, component preferences, image rules) that an author approves
+      as a diff; the builder prompt carries the approved profile (never the raw style guide), a style check critic reports
+      deviations, and a changed profile can propose a reviewed restyle; per tenant, entry point and brief
+      (plan `docs/plans/style-guide-course-design.md` SG-1 to SG-5; ADR 0196 Proposed; shown as "Coming" in the policy story)
 - [ ] PWA offline mode with tested sync/conflict rules
 - [ ] Single frontend for LMS **and** Sylius commerce (catalogue, checkout, account)
 - [x] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge) (
@@ -970,14 +993,21 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 - [ ] (new) Policy lifecycle delivery: link the uploaded policy version and cited fragments to all departmental
       course variants; use departments, duration, seniority and experience from the course brief;
       apply an uploaded style guide and provision distinct branded department domains (Coming).
-- [ ] (new) Per-course and per-role subdomains or entry points inside one academy, with their own branding: needs a plan and ADR
-      (routing, auth cookies on sibling subdomains, SEO canonical, entitlements). Today one academy (tenant) runs on one subdomain, which a
-      customer can use per client, department or audience; the landing and the FAQ say so and show this as "Coming".
 - [ ] (new) Policy owner dashboard: show assigned people by department, completed and pending training,
       course version and issued PDF certificate; support the branded tenant learning application (Coming).
 - [ ] (new) On an approved policy change, update affected course variants, invalidate superseded certificates,
       notify learners and policy owners with a source diff, assign a new exam for a minor change or a new
       course for a major change, and issue a replacement PDF certificate after completion (Coming).
+      Note 2026-10-22 (Coming audit): the three policy lifecycle items above are planned in `docs/plans/phase-6-remaining.md` P6R-8 (package,
+      variants per department, owner dashboard API), P6R-9 (approved change: rollouts, revoke and reassign, new exam or course,
+      replacement certificate), P6R-10 (studio UI) and P6R-12 (demo); ADR 0140 Proposed. The branded department domains move to
+      `academy-entry-points.md` (EP-1 to EP-4, ADR 0195 amends 0141) and the style guide to `style-guide-course-design.md`
+      (SG-1 to SG-4, ADR 0196). These labels live in the hero story of the unmerged `feat/landing-admin-panel` branch, not on `main`
+- [ ] (new) Branded entry points inside one academy: per-department, per-course and per-role hosts with their own theme,
+      catalogue focus and SEO settings, resolved to the tenant by the front; access never depends on the host; per-host
+      `__Host-` sessions with a one-time hand-off code between hosts; entry hosts join the trusted origins and return URLs;
+      custom domains verified by DNS TXT, TLS through Caddy on-demand `ask` or Cloudflare custom hostnames
+      (plan `docs/plans/academy-entry-points.md` EP-1 to EP-7; ADR 0195 Proposed, amends ADR 0141)
 - [x] Verification URL/QR, expiry, recertification, reminders (verification endpoint and page, QR, expiry, revocation, #273; recertification and reminders, #298)
 - [x] Mandatory training with due dates and manager escalation (`api/packages/compliance`, #298)
 - [x] Compliance reports and audit export (linked to Phase 3 audit trail) (#276)
@@ -991,6 +1021,8 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       Note 2026-10-22 (plan `docs/plans/phase-6-identity.md`, #341): partial. Done: OIDC login per tenant (ID-1, #371, see the new item below).
       Open: SAML SP (ID-2), full attribute, group and role mapping, enforcement and the claim viewer (ID-3), SCIM Users and Groups
       (ID-4, ID-5), HRIS CSV import (ID-6) and the later milestones of the plan; `POST /api/identity/discover` and a test-login endpoint come with ID-3
+      Note 2026-10-22 (Coming audit): SAML 2.0 login per tenant (ID-2) is merged (#392), so the Comparison matrix now shows SSO as "Yes"; mapping
+      and enforcement (ID-3), SCIM (ID-4, ID-5) and HRIS import (ID-6) stay open, and SCIM stays "Coming"
 - [x] (new) Social login hardening (ID-0, #353, #357): `return_url` must be an origin of the tenant's own apps; the access token is no longer in the
       redirect URL (a one-time code, 60 s, single use, bound to the tenant host and an S256 challenge, redeemed at `POST /api/auth/social/exchange`);
       signed, server-side, single-use OAuth state; accounts linked by e-mail only for a provider-verified address in a trusted domain and never for admins,
@@ -1013,6 +1045,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 ### 6.4 Commerce (Sylius) and extended enterprise
 - [ ] `CommerceProvider` interface (sync product, create checkout, handle order events) (partial: interface and the Wellms cart adapter shipped in `api/packages/commerce`, ADR 0049; the Sylius adapter is pending)
 - [ ] Sylius adapter as default implementation
+      Note 2026-10-22 (Coming audit): "Headless Sylius shop" stays "Coming". Plan `phase-6-commerce.md` CM-3 to CM-12; everything except live payment
+      keys, seller legal data, the production Sylius host and staff accounts (section 17, owner inputs) can be built and tested
+      locally with the `commerce` Docker profile and the offline payment method
 - [ ] Entitlements model in LMS (access, validity, source order or seat package)
       Note 2026-10-22 (CM-1, #356): partial. `api/packages/entitlements` (ADR 0130) has the `entitlements` table (course subject, status, `valid_from`,
       `valid_until`, unique `source_key`), `EntitlementService` as the only writer of purchased access (idempotent grant and revoke, through `CourseAccessService`),
@@ -1080,6 +1115,10 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       `BASE_OUTDATED` and `STALE_PROPOSAL` into the same error; the three-way merge, conflict files and `resolve` are CAC-4, and nothing watches a Git repository yet (CAC-6, CAC-7)
 - [ ] GitHub Action + Docker image; preview deployment per PR
 - [ ] Git merge triggers Living Course update proposal
+      Note 2026-10-22 (Coming audit): this item and the one above are "Git-driven course updates" in the Comparison catalogue (Coming), planned as
+      CAC-6 (`ulams-cli` image, `actions/course`, PR validation and diff) and CAC-7 (preview academies per PR, Git merge metadata,
+      merge to Living Course proposal) in `phase-7-course-as-code.md`; CAC-1 to CAC-4 are merged (#359, #376, #384, #390), so
+      "Course as code" is listed as available and the matrix cell reads "Partial"
 - [ ] (new) CLI plan `docs/plans/cli.md`: agent-first `ulams` CLI and MCP server (approved 2026-10-22;
       ADRs 0072–0079)
 - [x] (new) M1 CLI core: `front/cli` workspace, command registry, output contract and exit codes, profiles,

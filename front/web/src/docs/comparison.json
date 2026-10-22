@@ -361,11 +361,10 @@
                   },
                   {
                     "title": "LTI 1.3, both directions",
-                    "text": "Launch external tools inside lessons with grade passback, or let Moodle, Canvas and other LMSs launch ulams courses.",
+                    "text": "Launch external tools inside lessons with deep linking, grade passback and member lists, or let Moodle, Canvas and other LMSs launch ulams courses and receive grades.",
                     "packages": [
                       "lti"
-                    ],
-                    "status": "coming"
+                    ]
                   },
                   {
                     "title": "Course import and export",
@@ -429,7 +428,7 @@
                   },
                   {
                     "title": "Course versions with a visual diff",
-                    "text": "A studio screen compares any two versions or releases, or the base course with a variant: the changed elements as a tree, word-level text changes, the passages behind changed citations and the effect on quiz answers. Each change is marked by a word and a symbol, not by colour alone.",
+                    "text": "Every author edit and every accepted source update becomes a numbered course version. Pick any two and compare them: lessons added, removed or moved, word-level text changes, citations that changed and quiz answers that now differ.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
                     "packages": [
                       "authoring-metrics"
@@ -437,7 +436,7 @@
                   },
                   {
                     "title": "Course variants by level and role",
-                    "text": "The AI Course Builder asks which levels and roles to cover and drafts a variant of one course for each, from the same sources. Each is reviewed as a diff against the base course and, once approved, becomes its own unpublished course grouped with the base.",
+                    "text": "The AI Course Builder asks which levels and roles to cover and drafts several variants of one course from the same sources, each reviewed as a diff against the base and published with it.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
                     "packages": [
                       "course-variants"
@@ -445,8 +444,12 @@
                   },
                   {
                     "title": "Learners routed to a variant",
-                    "text": "Learners choose a variant on the course page or are assigned one by an administrator or an enrolment rule, one purchase covers the whole family, and Living Course updates reach every variant.",
-                    "status": "coming"
+                    "text": "Learners pick their level and role at enrolment, take an optional cited placement check, or are assigned a variant by an admin or a rule; progress carries over when they switch.",
+                    "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
+                    "status": "coming",
+                    "packages": [
+                      "course-variants"
+                    ]
                   },
                   {
                     "title": "Provider-agnostic LLM layer",
@@ -547,11 +550,11 @@
                   },
                   {
                     "title": "Per-course author analytics",
-                    "text": "A dashboard per course with progress, completion, quiz performance and the sections that confuse people.",
-                    "status": "coming",
+                    "text": "A dashboard per course in the studio and on the admin course form: progress, completion, quiz performance, who needs support and the sections that confuse people.",
                     "packages": [
                       "learner-insights"
-                    ]
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/learner-insights/"
                   },
                   {
                     "title": "At-risk learners",
@@ -562,11 +565,11 @@
                   },
                   {
                     "title": "AI tutor",
-                    "text": "Answers only from the course sources with citations, and says when a question is out of scope.",
-                    "status": "coming",
+                    "text": "Answers only from the course sources with citations, says when a question is out of scope and gives no quiz answers during an attempt. Off by default per academy.",
                     "packages": [
                       "tutor"
-                    ]
+                    ],
+                    "href": "https://ulams-dev.github.io/ulams/admin/tutor/"
                   }
                 ],
                 "audience": "owner"
@@ -976,19 +979,6 @@
                     "href": "https://ulams-dev.github.io/ulams/developers/cli-builder/"
                   },
                   {
-                    "title": "Course as code",
-                    "text": "Keep a course as a folder of Markdown and YAML. The command line creates the folder from a course, shows status and differences, pulls, pushes, applies and publishes. When both sides changed, it merges element by element and writes the conflicts to files you resolve with one command.",
-                    "href": "https://ulams-dev.github.io/ulams/developers/cli-course/",
-                    "packages": [
-                      "course-builder"
-                    ]
-                  },
-                  {
-                    "title": "Git-driven course updates",
-                    "text": "A GitHub Action and container image for the command line, a preview academy for each pull request, a Git merge that triggers a Living Course proposal, and syncing courses that were not built with the Course Builder are planned.",
-                    "status": "coming"
-                  },
-                  {
                     "title": "Machine-readable CLI",
                     "text": "Every command returns a JSON envelope with exit codes, describes itself with ulams schema, and logs in through the browser with a device code. Shell completion included.",
                     "href": "https://ulams-dev.github.io/ulams/developers/cli/"
@@ -1022,6 +1012,17 @@
                     "title": "Inbound webhooks",
                     "text": "Webhooks for Living Course Git pushes, Stripe and Jitsi recordings. Outgoing signed webhooks with retries, replay and a delivery log are documented on their own page.",
                     "href": "https://ulams-dev.github.io/ulams/developers/webhooks/"
+                  },
+                  {
+                    "title": "Course as code",
+                    "text": "Export a course as Markdown and YAML files, validate them offline, and push or pull changes with a three-way merge; every import is a version an author approves.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/course-folder-format/"
+                  },
+                  {
+                    "title": "Git-driven course updates",
+                    "text": "A GitHub Action validates course folders in pull requests and opens a preview academy for each, and a merge becomes a Living Course update proposal.",
+                    "href": "https://ulams-dev.github.io/ulams/developers/cli-course/",
+                    "status": "coming"
                   }
                 ],
                 "audience": "engineering"
