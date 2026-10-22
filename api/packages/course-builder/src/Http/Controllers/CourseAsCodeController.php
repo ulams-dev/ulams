@@ -5,9 +5,12 @@ namespace Ulams\CourseBuilder\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\CourseAsCode\ApprovalGuard;
+use Ulams\CourseBuilder\CourseAsCode\CourseAdopter;
 use Ulams\CourseBuilder\CourseAsCode\CourseAsCodeException;
 use Ulams\CourseBuilder\CourseAsCode\CourseExporter;
 use Ulams\CourseBuilder\CourseAsCode\CourseImporter;
@@ -28,6 +31,12 @@ use Ulams\Courses\Models\Course;
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\Response(response=200, description="the blueprint with versionId, appliedVersionId and drift", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
  *     @OA\Response(response=403, description="another author's course"), @OA\Response(response=404, description="unknown course"), @OA\Response(response=409, description="NOT_ADOPTED (no builder session) or NO_BLUEPRINT"))
+ * @OA\Post(path="/api/admin/course-as-code/courses/{course}/adopt", operationId="admin.course-as-code.courses.by-course.adopt.post", summary="Adopt a course made by hand: a first blueprint, version, session and entity map from the live course (idempotent)", tags={"Admin Course-as-code"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
+ *     @OA\Response(response=201, description="adopted: sessionId, versionId and the topics that were left out (skipped, with the reason)", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
+ *     @OA\Response(response=200, description="already adopted: the existing session", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
+ *     @OA\Response(response=403, description="no access to the course builder, or the course may not be changed by this user"), @OA\Response(response=404, description="unknown course"),
+ *     @OA\Response(response=422, description="NOTHING_TO_ADOPT (no lesson the blueprint can hold) or ADOPTION_INVALID"))
  * @OA\Post(path="/api/admin/course-as-code/courses", operationId="admin.course-as-code.courses.post", summary="Create an empty course (an approved empty blueprint) for a folder that has no course yet; the course row is made by the first apply", tags={"Admin Course-as-code"}, security={{"passport": {}}},
  *     @OA\RequestBody(required=true, @OA\JsonContent(required={"title"}, @OA\Property(property="title", type="string"), @OA\Property(property="language", type="string", example="en"), @OA\Property(property="key", type="string", description="idempotency key: the same key returns the same course (200, existing true) instead of creating another"))),
  *     @OA\Response(response=200, description="the course of this key already exists: its sessionId, current versionId and courseId", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
@@ -74,6 +83,7 @@ class CourseAsCodeController extends Controller
         private readonly VersionService $versions,
         private readonly EventLog $events,
         private readonly DriftAbsorber $drift,
+        private readonly CourseAdopter $adopter,
     ) {
     }
 
@@ -92,6 +102,38 @@ class CourseAsCodeController extends Controller
         $session = $this->sessionFor($request, ($mine ?? $sessions->first())->id);
 
         return $this->guard(fn () => self::ok($this->exporter->export($session)));
+    }
+
+    /**
+     * Adopts a course that was made by hand: a first blueprint, an approved version, a builder session and an entity map made from the
+     * live course (plan 7.3). Idempotent: an adopted course answers with its session (200). Needs the right to update the course.
+     */
+    public function adopt(Request $request, string $course): JsonResponse
+    {
+        $this->assertCanUse($request);
+        $model = ctype_digit($course) ? Course::query()->find((int) $course) : null;
+        if ($model === null) {
+            throw new NotFoundHttpException('Course not found.');
+        }
+        if (!Gate::forUser($request->user())->allows('update', $model)) {
+            throw new AccessDeniedHttpException('You may not change this course.');
+        }
+
+        return $this->guard(function () use ($request, $model) {
+            $result = $this->adopter->adopt($model, (int) $request->user()->getAuthIdentifier());
+            if ($result['created']) {
+                $this->events->custom($result['session'], null, 'course_as_code.adopted', array_filter($this->actor($request) + ['versionId' => $result['version']->id, 'skipped' => count($result['skipped'])], fn ($v) => $v !== null));
+            }
+
+            return self::ok([
+                'created' => $result['created'],
+                'courseId' => (int) $model->getKey(),
+                'sessionId' => $result['session']->id,
+                'versionId' => $result['version']->id,
+                'versionNumber' => $result['version']->number,
+                'skipped' => $result['skipped'],
+            ], $result['created'] ? 201 : 200);
+        });
     }
 
     /** A new, empty course for a course folder that has no course on the server yet (a preview academy): an approved empty blueprint the first import builds on. */
