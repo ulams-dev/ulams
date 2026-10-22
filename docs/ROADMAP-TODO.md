@@ -995,13 +995,14 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 - [ ] (new) Policy lifecycle delivery: link the uploaded policy version and cited fragments to all departmental
       course variants; use departments, duration, seniority and experience from the course brief;
       apply an uploaded style guide and provision distinct branded department domains (Coming)
-      (partial: P6R-8 done, see the note below; style guide and branded domains pending).
+      (partial: P6R-8 and P6R-9 done, see the notes below; style guide and branded domains pending).
 - [ ] (new) Policy owner dashboard: show assigned people by department, completed and pending training,
       course version and issued PDF certificate; support the branded tenant learning application (Coming)
       (partial: API and CSV export done in P6R-8; Studio screen and branded application pending).
 - [ ] (new) On an approved policy change, update affected course variants, invalidate superseded certificates,
       notify learners and policy owners with a source diff, assign a new exam for a minor change or a new
-      course for a major change, and issue a replacement PDF certificate after completion (Coming).
+      course for a major change, and issue a replacement PDF certificate after completion (Coming)
+      (partial: API, rollout, exam course, notices and certificate link done in P6R-9; Studio screens pending).
       Note 2026-10-22 (Coming audit): the three policy lifecycle items above are planned in `docs/plans/phase-6-remaining.md` P6R-8 (package,
       variants per department, owner dashboard API), P6R-9 (approved change: rollouts, revoke and reassign, new exam or course,
       replacement certificate), P6R-10 (studio UI) and P6R-12 (demo); ADR 0140 Proposed. The branded department domains move to
@@ -1019,6 +1020,16 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       departments because brief schema v3 was taken by course variants (ADR 0192), so no interview change; the export is its own endpoint
       because the shared reporting dataset registry (`policy_training` dataset) is not merged. Not done: policy changes (P6R-9), Studio UI
       (P6R-10), exam-only course per department (P6R-9), style guide tokens (SG), department hosts (EP-1 to EP-4), demo (P6R-12).
+      Note 2026-10-23 (P6R-9): policy changes. `POST /api/admin/policies/{id}/versions` stores the file as version N+1 and a new revision of each
+      department's source (Living Course proposes the updates); `versions/{n}` shows the source diff, proposals, suggested class and a pre-flight of
+      certificates to revoke and people to reassign; `approve` (class suggested from the proposals, raise freely, lower with a recorded reason)
+      updates every department course and only then revokes certificates linked to the previous version (reason `policy_superseded:v<N>`) and assigns
+      the exam course (minor, 14 days) or the course (major, 30 days) with source `policy_change`, idempotently; `reject` drops a change. The exam
+      course is derived from the approved department course's final test, rebuilt after every change, published and not in the catalogue.
+      E-mails, in-app notices and webhooks `policy.change.approved` and `policy.retraining.assigned`; a revocation notice for other revocations;
+      the replacement certificate is linked to the new version. Departments whose course cites nothing that changed are not retrained. Items the model
+      could not propose (final-test questions) are the owner's to edit and block approval until decided. Not done: Studio screens and learner-side labels
+      (P6R-10), demo (P6R-12); the generic compliance "assigned" mail still goes out next to the policy notice.
 - [ ] (new) Branded entry points inside one academy: per-department, per-course and per-role hosts with their own theme,
       catalogue focus and SEO settings, resolved to the tenant by the front; access never depends on the host; per-host
       `__Host-` sessions with a one-time hand-off code between hosts; entry hosts join the trusted origins and return URLs;

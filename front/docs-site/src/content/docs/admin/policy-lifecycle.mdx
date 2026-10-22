@@ -1,6 +1,6 @@
 ---
 title: Policy lifecycle
-description: Turn a policy document into one cited course per department, approve the first version, and follow who is assigned, who finished and which policy version their certificate certifies.
+description: Turn a policy document into one cited course per department, approve changes that update the courses and retrain the people they affect, and follow who is assigned and which policy version their certificate certifies.
 sidebar:
   order: 11
 modules:
@@ -12,7 +12,7 @@ import { Aside } from "@astrojs/starlight/components";
 The policy lifecycle module starts from a policy document (Markdown, PDF or DOCX) and a list of departments. It prepares one
 [Course Builder](/admin/course-builder/) course for each department, every lesson and quiz question citing the policy text, and
 gives the policy owner a dashboard of who is trained. Everything is available through the API (`/api/admin/policies`) and the CLI
-(`ulams policies`); the studio screens come with the next milestone.
+(`ulams policies`); the studio screens come with a later milestone.
 
 <Aside type="note">
 AI proposes, the owner approves. The module prepares each department's course up to the outline review. The owner approves the
@@ -53,6 +53,20 @@ one-course learning path is created, and an enrolment rule `group equals <audien
 everyone who joins the group later. Reminders, escalation, certificates and the [compliance](/admin/compliance/) reports apply
 unchanged.
 
+## Changing the policy
+
+1. **Upload the new file.** `POST /api/admin/policies/{policy}/versions` (multipart `file`). The first version must be approved and no other version may wait. The file becomes version N+1, in review, and a new revision of each department's source, so Living Course finds what changed and prepares one update proposal per department. A file with the same text is refused. A department whose course cites nothing that changed shows `no_change` and is left alone.
+2. **Review.** `GET /api/admin/policies/{policy}/versions/{n}` returns the source diff (built from the stored fragment changes, not generated), each department's proposal and what still blocks approval, the suggested change class with its reasons, and a pre-flight: per department, how many certificates approving will revoke and how many people it will reassign. Decide each item of each proposal in the Studio (or `living-course` endpoints). Items the model could not propose a change for (for example final-test questions) are yours to edit; until you do, the exam carries the old question.
+3. **Approve.** `POST .../versions/{n}/approve` with an optional `change_class` (`minor` or `major`), `reason` and `overwrite`. The class is suggested from the proposals: major when an item changes the meaning of a lesson, changes a quiz answer, adds a lesson or removes a question, otherwise minor. You may raise it freely; lowering it needs a `reason`, which is recorded. Every department course is updated; nothing below runs unless all of them are. If one fails, the version returns to review and approving again resumes.
+4. **Roll out.** For everyone whose live certificate certified the previous version of a department's course, the certificate is revoked (reason `policy_superseded:v<N>`) and they are given the exam (minor change, due in `minor_due_days`, 14 by default) or the department course (major change, `major_due_days`, 30) with the assignment source `policy_change`. People who never finished keep their open assignment and see the updated course. The rollout is idempotent per person and version.
+5. **Replacement certificate.** Finishing the exam or the course issues a certificate as usual; it is linked to the new policy version.
+
+`POST .../versions/{n}/reject` (with a `reason`) drops a change in review: its proposals are rejected, the current version stays in force and nobody is retrained.
+
+The **exam course** is the department course's own final test, with every question cited to the policy, as a course of its own (one heading lesson and the final test). It is derived from the course you approved, rebuilt after every change, published and kept out of the catalogue. Compliance certifies whole courses, so assignment, certificates and reports work on it unchanged; there is no topic-level exam.
+
+Notices: each reassigned person gets one e-mail and one in-app notice with the source diff, the course or exam and the due date (`policy.retraining.assigned` webhook); the owner gets one notice with the counts per department (`policy.change.approved`). A revoked certificate that no policy change superseded sends the holder a notice too. Templates are editable like any other; Polish texts ship. Nothing here is decided by AI: the class is a suggestion, approval is the owner's, and completion is the course's own.
+
 ## The owner dashboard
 
 `GET /api/admin/policies/{policy}/dashboard` returns, per department, the stage of the generation (`waiting`, `ingesting`,
@@ -64,13 +78,13 @@ verification path. Filters: `variant` (department), `status`, `per_page`.
 with who exported it. Scoped tokens use the `reports` area for both dashboard routes and the `builder` area for the rest.
 
 <Aside type="note">
-The dashboard counts assignments of the department courses whatever created them (the enrolment rule or a manual assignment). It
+The dashboard shows each person's latest assignment of the department course or its exam, whatever created it (the enrolment rule or a manual assignment). It
 does not use the shared reporting dataset registry yet; the export endpoint is its own until that registry is part of the product.
 </Aside>
 
 ## Audit
 
-Every state change (`policy.created`, `policy.variants.requested`, `policy.version.approved`) is written to the Living Course audit
+Every state change (`policy.created`, `policy.variants.requested`, `policy.version.submitted`, `policy.version.approved`, `policy.version.rejected`, `policy.certificate.revoked`, `policy.reassigned`, `policy.rollout.applied`) is written to the Living Course audit
 chain, so the existing audit export and verification cover it.
 
 ## Install
