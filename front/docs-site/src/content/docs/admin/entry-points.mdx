@@ -1,0 +1,96 @@
+---
+title: Entry points
+description: Give one academy several branded addresses for a department, a course or a role, add them with the API or the ulams CLI, and know what each rule and permission means.
+modules:
+  - tenancy
+sidebar:
+  order: 41
+---
+
+import { Aside, Badge } from "@astrojs/starlight/components";
+
+An **entry point** is an extra front address of one academy, aimed at an audience: a department
+(`sales.academy.example.org`), a single course (`kubernetes.example.org`) or a role
+(`managers.academy.example.org`). Each one can have its own label, theme and search-engine settings. The
+design is in [ADR 0195](/decisions/0195-academy-entry-points-as-front-hosts/).
+
+An entry point only changes what the learner front shows first. It never grants access, and it never adds a
+learner to a group: enrolments, entitlements, groups and rules decide who can open what, on every address.
+
+<Aside type="note">
+Built so far: the table, the admin API and the `ulams entry-points` commands. The learner front serving the
+address, the theme, the sign-in hand-off between addresses, the department catalogue, the course and role
+behaviour and DNS verification are built in the next steps of the
+[plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/academy-entry-points.md) and are marked
+<Badge text="Coming" variant="caution" /> below.
+</Aside>
+
+## Kinds
+
+| Kind | Aims at | `target` | Search engines by default |
+|---|---|---|---|
+| `academy` | the whole academy, a second brand | none | indexed |
+| `department` | a user group | `{ "group_id": 7 }` | `noindex` |
+| `course` | one course | `{ "course_id": 12 }` | indexed |
+| `role` | a role variant of courses | `{ "role": "manager" }` | `noindex` |
+
+The group and the course must exist in the academy. The kind, the host and the key cannot be changed after
+creation; to change one, delete the entry point and add a new one.
+
+## Add an entry point
+
+You need the `entry_points_manage` permission (the admin role has it). With the CLI:
+
+```bash
+ulams entry-points create --host coffee-sales.app.localhost --key sales --kind department \
+  --label "Sales academy" --target '{"group_id": 7}' --theme '{"accent": "#c2552d"}' --json
+ulams entry-points list --json
+ulams entry-points update 01j9z3k8m2x4q7r5t6v8w0y1ab --status disabled --json
+ulams entry-points audit --json
+```
+
+The same operations are `GET/POST /api/admin/entry-points`, `GET/PATCH/DELETE /api/admin/entry-points/{id}` and
+`GET /api/admin/entry-points/audit`. Scoped tokens need `settings:read` or `settings:write`.
+
+| Field | Rule |
+|---|---|
+| `host` | A DNS name in lower case: no address, port, path or credentials, at least two labels, no `content` label. It cannot be a platform host, a host of an academy, or another entry point's host. |
+| `key` | Lower case letters, digits and hyphens, up to 40, unique in the academy. The main host also answers at `/go/<key>` <Badge text="Coming" variant="caution" />. |
+| `label` | Up to 120 characters, shown in the header and the host switcher <Badge text="Coming" variant="caution" />. |
+| `theme` | `preset` (one of the tenant theme presets), `accent` (`#rrggbb`) and `logo_alt`. |
+| `seo` | `canonical` (`tenant`, or `self` for a course entry point only), `index`, `title` and `description`. |
+| `locale` | Optional default language, for example `pl`. |
+
+An academy can have 20 entry points (`TENANCY_MAX_ENTRY_POINTS`).
+
+## Status
+
+| Status | Meaning |
+|---|---|
+| `pending_dns` | A custom domain that is not verified yet. The response lists the TXT record to publish. |
+| `active` | Verified, or provided by the platform. |
+| `disabled` | Switched off by an administrator. |
+
+A host under a platform suffix (`TENANCY_ENTRY_PLATFORM_SUFFIXES`, `.app.localhost` by default) must be one
+label that starts with the academy's slug (`coffee-sales.app.localhost`) and is active at once. Any other host
+is a custom domain and starts as `pending_dns`; checking the DNS record and activating the host is
+<Badge text="Coming" variant="caution" />. Hosts under `TENANCY_ENTRY_TRUSTED_SUFFIXES` (for example
+`.example.test`) are active at once; use it in development and tests only.
+
+## Audit
+
+Every change is recorded with who made it, what changed and when (`ulams entry-points audit`). The trail is
+kept after an entry point is deleted.
+
+## Settings
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `TENANCY_MAX_ENTRY_POINTS` | `20` | Entry points per academy. |
+| `TENANCY_ENTRY_PLATFORM_SUFFIXES` | `.app.localhost` | Suffixes the platform serves itself (wildcard DNS and certificate). Comma separated. |
+| `TENANCY_ENTRY_TRUSTED_SUFFIXES` | empty | Development and CI only: any host under these suffixes is active at once. |
+| `TENANCY_ENTRY_CNAME_TARGET` | empty | Where a custom domain's CNAME has to point; shown with the DNS instructions. |
+
+The table lives in the platform database, which an academy's own process cannot reach. The academy API asks
+a platform process to read and write it, the way "new site" in the Course Builder asks for a new tenant, so
+the academy is always the one the request is served for and never something the request names.
