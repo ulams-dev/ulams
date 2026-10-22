@@ -1753,8 +1753,26 @@
  },
  {
   "method": "POST",
+  "path": "/api/admin/policies/{policy}/versions",
+  "summary": "Upload a new version of a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/versions/{number}",
+  "summary": "Review a policy version",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
   "path": "/api/admin/policies/{policy}/versions/{number}/approve",
   "summary": "Approve a policy version",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/versions/{number}/reject",
+  "summary": "Reject a policy version in review",
   "tag": "Policies"
  },
  {
