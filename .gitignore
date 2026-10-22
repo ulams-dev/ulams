@@ -15,3 +15,6 @@ node_modules/
 .env.*
 !.env.example
 .claude/worktrees/
+
+# vitest 5 cache
+.vitest/
