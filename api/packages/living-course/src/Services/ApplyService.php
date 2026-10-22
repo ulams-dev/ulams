@@ -14,6 +14,7 @@ use Ulams\CourseBuilder\Models\Fragment;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Version;
+use Ulams\CourseBuilder\Services\ReleaseRecorder;
 use Ulams\CourseBuilder\Services\VersionService;
 use Ulams\LivingCourse\Analysis\Evidence;
 use Ulams\LivingCourse\Diff\ImpactAnalyzer;
@@ -44,6 +45,7 @@ final class ApplyService
         private readonly EventLog $events,
         private readonly ImpactAnalyzer $impact,
         private readonly Notifier $notifier,
+        private readonly ReleaseRecorder $releases,
     ) {
     }
 
@@ -155,7 +157,7 @@ final class ApplyService
                 $this->revisions->promote($to->refresh(), $userId);
             }
             $courseId = $this->applier->apply($session, $version, $author, (bool) ($run->input['overwrite'] ?? false), $proposal->id);
-            $session->forceFill(['course_id' => $courseId, 'applied_version_id' => $version->id])->save();
+            $this->releases->applied($session, $version, $courseId, [], $insights ? 'insights' : 'update');
             $this->staleness->set($session, $applied->pluck('element_id')->all(), 'in_sync');
             if (!$insights) {
                 $this->staleness->settleOpen($session, 'dismissed');

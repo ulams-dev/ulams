@@ -87,6 +87,7 @@ final class RunService
         private readonly VersionService $versions,
         private readonly BlueprintApplier $applier,
         private readonly Llm $llm,
+        private readonly ReleaseRecorder $releases,
     ) {
     }
 
@@ -240,7 +241,8 @@ final class RunService
         $first = $session->course_id === null;
         $plan = $this->applier->plan($session, $version->document);
         $courseId = $this->applier->apply($session, $version, $author, (bool) ($run->input['overwrite'] ?? false));
-        $session->forceFill(['course_id' => $courseId, 'applied_version_id' => $version->id, 'status' => Session::APPLIED])->save();
+        // the apply and its release are one fact: a release is written in the transaction that sets applied_version_id (ADR 0192)
+        $this->releases->applied($session, $version, $courseId, ['status' => Session::APPLIED]);
         $this->surfaces->apply($session, $run, $version, ['courseId' => $courseId] + $plan, 'applied');
         $this->events->stepFinished($run, 'apply');
         $this->events->custom($session, $run, 'applied', ['courseId' => $courseId, 'versionId' => $version->id] + SessionState::links($session));
