@@ -1,5 +1,5 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import SiteHeader from "../src/components/SiteHeader.astro";
 
 const render = async (locals: Record<string, unknown> | undefined, props: Record<string, unknown> = {}) => {
@@ -48,5 +48,27 @@ describe("SiteHeader with a tenant logo", () => {
     // the quote that would end the attribute is escaped, so the text stays inside the alt value
     expect(html).toContain('alt="&quot;');
     expect(html).not.toMatch(/alt="[^"]*"[^>]*<script>alert/);
+  });
+});
+
+describe("SiteHeader logo through the image service", () => {
+  const previous = { service: process.env.ULAMS_IMAGE_SERVICE, sources: process.env.ULAMS_IMAGE_SOURCES };
+  afterEach(() => {
+    for (const [key, value] of [["ULAMS_IMAGE_SERVICE", previous.service], ["ULAMS_IMAGE_SOURCES", previous.sources]] as const) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  });
+
+  it("uses the logo preset in cloudflare mode and the original otherwise", async () => {
+    process.env.ULAMS_IMAGE_SOURCES = "https://s.example";
+    const locals = { tenantLogo: { src: "https://s.example/theme/logo.png", alt: "Acme" } };
+    delete process.env.ULAMS_IMAGE_SERVICE;
+    expect(await render(locals)).toContain('src="https://s.example/theme/logo.png"');
+    process.env.ULAMS_IMAGE_SERVICE = "cloudflare";
+    const html = await render(locals);
+    expect(html).toContain("/cdn-cgi/image/width=320,quality=85,format=auto,fit=scale-down,onerror=redirect/https://s.example/theme/logo.png");
+    expect(html).toContain('height="40"');
+    expect(html).toContain('alt="Acme"');
   });
 });

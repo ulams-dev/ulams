@@ -6,6 +6,7 @@
  */
 import { Marked, type RendererObject, type Tokens } from "marked";
 import { isSafeHref } from "../schema.ts";
+import { imageSrc } from "./images.ts";
 
 export const escapeHtml = (s: string): string =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
@@ -22,7 +23,8 @@ export const baseRenderer: RendererObject = {
   },
   image(token: Tokens.Image) {
     if (!isSafeHref(token.href)) return escapeHtml(token.text);
-    return `<img src="${escapeHtml(token.href)}" alt="${escapeHtml(token.text)}" loading="lazy" decoding="async">`;
+    // Rich-text images carry no intrinsic size: the richText preset (one URL, no srcset) through the shared builder.
+    return `<img src="${escapeHtml(imageSrc(token.href, "richText", 1280))}" alt="${escapeHtml(token.text)}" loading="lazy" decoding="async">`;
   },
   code(token: Tokens.Code) {
     return `<pre tabindex="0"><code>${escapeHtml(token.text)}</code></pre>\n`;
