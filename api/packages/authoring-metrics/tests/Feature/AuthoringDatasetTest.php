@@ -55,4 +55,24 @@ class AuthoringDatasetTest extends TestCase
         $this->assertSame((int) $metric->blocks, (int) $row['cited_blocks'], 'every block of the build cites its sources');
         $this->assertNull($row['author_minutes'], 'review time that was not recorded is empty, never zero');
     }
+
+    public function testAReportOverTheMetricAveragesCostAndCountsCourses(): void
+    {
+        $this->seed(\Ulams\Reporting\Database\Seeders\ReportingPermissionSeeder::class);
+        $session = $this->toApplied($this->author(), 'coffee-brewing.md', ['quiz', 'final']);
+        $metric = CourseMetric::query()->findOrFail((int) $session->refresh()->course_id);
+
+        $response = $this->actingAs($this->admin(), 'api')->postJson('/api/admin/reporting/query', [
+            'dataset' => 'authoring',
+            'aggregates' => [['fn' => 'count', 'as' => 'courses'], ['fn' => 'sum', 'column' => 'cost_build_usd', 'as' => 'build_cost'], ['fn' => 'max', 'column' => 'lessons', 'as' => 'most_lessons']],
+            'dateRange' => ['column' => 'computed_at', 'preset' => 'last_7_days'],
+        ])->assertOk();
+
+        $row = $response->json('data.rows.0');
+        $this->assertSame(1, $row['courses']);
+        $this->assertEqualsWithDelta($metric->cost_build_micro_usd / 1000000, $row['build_cost'], 0.0000001);
+        $this->assertSame((int) $metric->lessons, $row['most_lessons']);
+        $this->assertNull($response->json('meta.min_group_size'), 'a course is not a learner: no suppression');
+        $this->actingAs($this->author(), 'api')->postJson('/api/admin/reporting/query', ['dataset' => 'authoring', 'columns' => ['course_id']])->assertForbidden();
+    }
 }

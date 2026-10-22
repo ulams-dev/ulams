@@ -23195,6 +23195,179 @@
     ]
    }
   },
+  "/api/admin/reporting/query": {
+   "post": {
+    "description": "Runs a report definition against one dataset with the caller's own permissions and returns at most 500 rows and the total. A row-level report lists `columns`; a grouped report lists `groupBy` and `aggregates` and returns the groups followed by their aggregates. On a dataset that holds learners, every group with fewer distinct learners than the threshold (10 by default) is withheld: it is replaced, together with the smallest remaining group when needed so that it cannot be derived by subtraction, by one row marked `_withheld`. Needs reporting_read and the permission of the dataset (see the datasets endpoint). 422 lists what is wrong with the definition, by path.",
+    "operationId": "admin.reporting.query.run",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "aggregates": {
+          "items": {
+           "properties": {
+            "as": {
+             "description": "Name of the output column, lower case letters, digits and underscores",
+             "type": "string"
+            },
+            "column": {
+             "type": "string"
+            },
+            "fn": {
+             "enum": [
+              "count",
+              "count_distinct",
+              "sum",
+              "avg",
+              "min",
+              "max"
+             ],
+             "type": "string"
+            }
+           },
+           "required": [
+            "fn",
+            "as"
+           ],
+           "type": "object"
+          },
+          "type": "array"
+         },
+         "columns": {
+          "description": "Row-level report: the columns to list",
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         },
+         "dataset": {
+          "description": "Key of a dataset, for example assignments",
+          "example": "assignments",
+          "type": "string"
+         },
+         "dateRange": {
+          "description": "Restrict a date column to a preset (last_7_days, last_30_days, last_90_days, last_12_months, this_month, last_month, this_quarter, this_year, last_year) or to from and to dates (YYYY-MM-DD, inclusive)",
+          "properties": {
+           "column": {
+            "type": "string"
+           },
+           "from": {
+            "format": "date",
+            "type": "string"
+           },
+           "preset": {
+            "type": "string"
+           },
+           "to": {
+            "format": "date",
+            "type": "string"
+           }
+          },
+          "required": [
+           "column"
+          ],
+          "type": "object"
+         },
+         "filters": {
+          "description": "All filters apply (AND). op is eq, neq, in, not_in, lt, lte, gt, gte, between, contains or is_null; value is a scalar, a list (in, not_in), two values (between) or a boolean (is_null)",
+          "items": {
+           "properties": {
+            "column": {
+             "type": "string"
+            },
+            "op": {
+             "type": "string"
+            },
+            "value": {}
+           },
+           "required": [
+            "column",
+            "op"
+           ],
+           "type": "object"
+          },
+          "type": "array"
+         },
+         "groupBy": {
+          "description": "A column name, or {column, bucket} with bucket day, week, month, quarter or year on a date column (the output column is named column_bucket)",
+          "items": {
+           "oneOf": [
+            {
+             "type": "string"
+            },
+            {
+             "type": "object"
+            }
+           ]
+          },
+          "type": "array"
+         },
+         "limit": {
+          "description": "Most rows the report returns",
+          "type": "integer"
+         },
+         "sort": {
+          "description": "Output columns, first one first",
+          "items": {
+           "properties": {
+            "column": {
+             "type": "string"
+            },
+            "dir": {
+             "enum": [
+              "asc",
+              "desc"
+             ],
+             "type": "string"
+            }
+           },
+           "required": [
+            "column"
+           ],
+           "type": "object"
+          },
+          "type": "array"
+         }
+        },
+        "required": [
+         "dataset"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "columns (name, type, label), rows and meta: mode, total_rows, preview_rows, truncated, withheld_groups, min_group_size"
+     },
+     "403": {
+      "description": "No reporting_read, or no permission for the dataset"
+     },
+     "422": {
+      "description": "The definition is invalid"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Preview a report definition",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
   "/api/admin/reports/available-for-user": {
    "get": {
     "description": "",
