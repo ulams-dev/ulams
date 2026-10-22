@@ -18,13 +18,16 @@ RUN cd front && n=1; until yarn build; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); 
 RUN echo $APP_VERSION >> front/dist/version.html
 
 
-# Non-root static server (uid 101, port 8080). The tag is pinned by digest; bump both together.
-FROM nginxinc/nginx-unprivileged:1.29-alpine@sha256:0c79d56aee561a1d81c63f00eee5fb5fe29279560cdc55e91425133104c7fbe6 AS httpd
+# Non-root static server (uid 101, port 8080). The tag is pinned by digest (Dependabot's docker ecosystem bumps tag and
+# digest together, weekly); bump both together by hand otherwise. The upstream image lags Alpine security fixes, so the
+# stage also runs `apk upgrade` to pick up patched packages (curl, openssl, expat, ...) at every build.
+FROM nginxinc/nginx-unprivileged:1.30-alpine@sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03 AS httpd
 # Settings are read at start from the environment (names starting with VITE_APP_) and written to
 # /runtime-config.json, which index.html loads before the app boots (ADR 0056). Examples:
 #   VITE_APP_API_URL, VITE_APP_TENANT_API_HOST_PATTERN, VITE_APP_SENTRYDSN, VITE_APP_FIREBASE_*,
 #   VITE_APP_ULAMS_DOCS_URL (ULAMS_DOCS_URL): base URL of the documentation
 USER root
+RUN apk upgrade --no-cache
 COPY front/nginx.conf /etc/nginx/conf.d/default.conf
 COPY front/entrypoint.sh /docker-entrypoint.d/40-runtime-config.sh
 COPY --from=base /home/node/app/front/dist /usr/share/nginx/html
