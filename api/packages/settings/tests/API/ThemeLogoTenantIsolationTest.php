@@ -6,9 +6,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Laravel\Passport\Bridge\AccessTokenRepository;
-use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\ResourceServer;
+use Ulams\Core\Tests\Concerns\ForeignTenantToken;
 use Ulams\Core\Tests\CreatesUsers;
 use Ulams\Settings\Database\Seeders\DatabaseSeeder;
 use Ulams\Settings\Database\Seeders\PermissionTableSeeder;
@@ -17,12 +15,12 @@ use Ulams\Settings\Tests\TestCase;
 
 /**
  * Tenants have separate databases and their own Passport key pair (ADR 0007), so a token issued by one tenant
- * must be rejected by another on the logo endpoints and the theme settings. Same technique as
- * packages/templates-email/tests/Api/TenantIsolationTest.php.
+ * must be rejected by another on the logo endpoints and the theme settings (ForeignTenantToken, ADR 0190). The route
+ * walk of tests/Integrations/TenantIsolationCoverageTest covers the bare 401; this checks that nothing is stored or removed.
  */
 class ThemeLogoTenantIsolationTest extends TestCase
 {
-    use DatabaseTransactions, CreatesUsers;
+    use DatabaseTransactions, CreatesUsers, ForeignTenantToken;
 
     private const PNG = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
 
@@ -61,18 +59,5 @@ class ThemeLogoTenantIsolationTest extends TestCase
         Auth::forgetGuards();
 
         return $response;
-    }
-
-    private function switchToTenantWithOwnKeys(): void
-    {
-        $key = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
-        openssl_pkey_export($key, $private);
-        $public = openssl_pkey_get_details($key)['key'];
-
-        config(['passport.private_key' => $private, 'passport.public_key' => $public]);
-        foreach ([AuthorizationServer::class, ResourceServer::class, AccessTokenRepository::class] as $service) {
-            $this->app->forgetInstance($service);
-        }
-        Auth::forgetGuards();
     }
 }
