@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 // Export the product pages (overview, comparison, FAQ, content cost, reporting, course generation and its case studies, in three languages), the blog (English and Polish) and their SEO routes from the production Astro build.
-// Build with ULAMS_IMAGE_SERVICE=noop, then pass a new output directory and the public host.
+// Build and run this with the production env of the front, then pass a new output directory and the public host.
+// ULAMS_IMAGE_SERVICE must be `cloudflare` (images become same-host /cdn-cgi/image URLs; check the host first with
+// bin/check-images.sh) or `noop` (original images); `astro` would leave /_image URLs that a static host cannot serve.
+// ULAMS_ADMIN_URL must be set to the admin pattern, 'https://{slug}-admin.ulams.app'; without it the demo links in the
+// export point at the localhost default.
 import { spawn } from "node:child_process";
 import { request } from "node:http";
 import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
@@ -11,6 +15,13 @@ if (!process.argv[2]) throw new Error("usage: landing-static.mjs <new-output-dir
 const out = resolve(process.argv[2]);
 if (existsSync(out)) throw new Error("Output directory must be new; existing files will not be replaced.");
 const host = process.argv[3] ?? "ulams.app";
+const imageService = (process.env.ULAMS_IMAGE_SERVICE ?? "").trim();
+if (!["cloudflare", "noop"].includes(imageService)) {
+  throw new Error(`ULAMS_IMAGE_SERVICE must be "cloudflare" or "noop" for the static export (got "${imageService}"); "astro" and unset leave /_image URLs that need a server.`);
+}
+if (!(process.env.ULAMS_ADMIN_URL ?? "").includes("{slug}")) {
+  throw new Error("ULAMS_ADMIN_URL must be set to the admin pattern, e.g. 'https://{slug}-admin.ulams.app'; the default points at localhost.");
+}
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const dist = join(root, "front/web/dist");
 const port = Number(process.env.ULAMS_STATIC_RENDER_PORT ?? 4399);
