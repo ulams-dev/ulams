@@ -109,7 +109,7 @@ Services in `api/docker-compose.yml`, all on the `ulams` network:
 | `pdf` | built from `api/pdf/Dockerfile` | PDF renderer for certificates and templates | internal only |
 | `postgres` | `postgres:17.11-alpine` | Database; data in `api/docker/postgres17-data` (a stack that still has `postgres-data` from PostgreSQL 12 runs `make pg-upgrade` once, see [Upgrades](/operators/upgrades/#upgrade-postgresql-to-a-new-major-version)) | internal; Adminer |
 | `redis` | `valkey/valkey:8-alpine` | Cache, queues, Horizon (password `ulams`) | internal |
-| `minio` | `bitnamilegacy/minio:latest` | S3-compatible storage; data in `api/docker/minio_storage` | `http://storage.localhost`, console at `http://minio.localhost` |
+| `storage` | `chrislusf/seaweedfs:4.37` | S3-compatible storage (SeaweedFS), a key per tenant; data in `api/docker/seaweedfs_data`; alias `minio` for one release. Coming from MinIO: `make storage-migrate` ([Object storage](/operators/storage/#moving-from-minio)) | files at `http://storage.localhost` (reads only), no console |
 | `mailhog` | `mailhog/mailhog` | Catches outgoing mail | http://localhost:8025 |
 | `adminer` | `adminer` | Database UI (server `postgres`, user `default`, password `secret`) | http://localhost:8078 |
 | `mjml` | built from `deploy/stack/mjml` | MJML rendering for e-mail templates | internal |
@@ -135,7 +135,7 @@ Caddy sends each host to a service:
 | `<slug>.app.localhost` | `front/web` dev server on the host, port 4321 |
 | `<slug>.admin.localhost` | admin dev server on the host, port 8000 |
 | `content.localhost`, `<slug>.content.localhost` | read-only content origin for SCORM, cmi5, Adapt and LiaScript packages |
-| `storage.localhost` | MinIO |
+| `storage.localhost` | SeaweedFS (reads only) |
 
 The legacy React front is not behind Caddy: open it at http://localhost:3000.
 

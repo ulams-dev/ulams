@@ -51,7 +51,7 @@ export default defineConfig({
     // Build-time switch for hosts where sharp has no binary (FreeBSD shared hosting, deploy/mydevil): the
     // /_image endpoint then returns the original file unchanged instead of failing with a 500.
     ...(process.env.ULAMS_IMAGE_SERVICE === "noop" ? { service: { entrypoint: "astro/assets/services/noop" } } : {}),
-    // Course images and avatars come from the tenant storage (MinIO behind Caddy).
+    // Course images and avatars come from the tenant storage (SeaweedFS behind Caddy).
     remotePatterns: [{ protocol: "http", hostname: "**.localhost" }, { protocol: "https", hostname: "**.ulams.app" }],
   },
   // Self-hosted fonts (no Google request at runtime). Fallback faces with measured metrics live

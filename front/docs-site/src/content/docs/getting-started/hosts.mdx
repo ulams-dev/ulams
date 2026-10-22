@@ -26,8 +26,7 @@ tenant slug such as `coffee`.
 | `http://<slug>.admin.localhost` | host port 8000 | Admin panel of the tenant |
 | `http://<slug>.content.localhost` | `api` through `/api/content` | Tenant content origin: SCORM, cmi5, Adapt and LiaScript package files under a strict CSP, no cookies |
 | `http://content.localhost` | `api` through `/api/content` | Platform content origin |
-| `http://storage.localhost` | `minio` (S3 API) | Uploaded files, e.g. `http://storage.localhost/ulams-coffee/...`; SVGs get `script-src 'none'` |
-| `http://minio.localhost` | `minio` (console) | MinIO console; user `admin`, password from `MINIO_ROOT_PASSWORD` (`minio_secretpassword` by default) |
+| `http://storage.localhost` | `storage` (SeaweedFS S3 API, reads only) | Uploaded files, e.g. `http://storage.localhost/ulams-coffee/...`; SVGs get `script-src 'none'`; writes get 405 |
 | `http://ws.localhost` | `soketi` (6001) | WebSockets (the broadcast driver is `log` by default, so nothing uses it yet) |
 | `http://metrics.localhost` | `soketi` (9601) | Soketi metrics |
 
@@ -77,7 +76,7 @@ These services are on the `ulams` Docker network and publish no port to the host
 | `pdf` | `pdf:3000` | PDF renderer; only the API calls it, with an internal token |
 | `postgres` | `postgres:5432` | PostgreSQL 17; one database per tenant |
 | `redis` | `redis:6379` | Valkey (Redis protocol), password `ulams` |
-| `minio` | `minio:9000`, `minio:9001` | S3 API and console, published through Caddy as above |
+| `storage` | `storage:8333` (alias `minio` for one release) | SeaweedFS S3 and IAM API; reads are published through Caddy as above, nothing else |
 | `mjml` | not on the `ulams` network | E-mail template renderer; not wired to the API yet |
 | `clamav` | `clamav` | Optional virus scanner, compose profile `av` |
 

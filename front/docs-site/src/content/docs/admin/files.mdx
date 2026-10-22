@@ -14,7 +14,7 @@ import Screenshot from "../../../components/Screenshot.astro";
 
 **Configuration → Files** (`/configuration/files`, permission `file_list`) is a browser for
 the tenant's file storage, provided by the [files](/reference/packages/files/) package. Each
-tenant has its own storage bucket (`ulams-<slug>` on MinIO or S3; see
+tenant has its own storage bucket (`ulams-<slug>` on SeaweedFS or S3; see
 [Tenants](/admin/tenants/)), so the library shows only that tenant's files.
 
 <Screenshot name="admin-configuration-files" alt="The file browser showing folders and files" />

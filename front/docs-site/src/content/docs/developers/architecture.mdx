@@ -51,7 +51,7 @@ flowchart LR
   pdf["pdf<br/>pdfme renderer<br/>:3000, internal"]
   pg[(PostgreSQL<br/>db per tenant)]
   valkey[(Valkey<br/>queues, cache)]
-  minio[(MinIO<br/>bucket per tenant)]
+  storage[(SeaweedFS<br/>bucket and key per tenant)]
   soketi["Soketi<br/>websockets"]
   mailhog["MailHog"]
 
@@ -62,13 +62,13 @@ flowchart LR
   caddy -- "*.localhost /h5p/*" --> h5p
   caddy -- "*.localhost (FastCGI)" --> fpm
   caddy -- "*.content.localhost" --> fpm
-  caddy -- "storage.localhost" --> minio
+  caddy -- "storage.localhost (reads)" --> storage
   caddy -- "ws.localhost" --> soketi
   browser -. "localhost:3000" .-> legacy
   web -- "server-side fetch" --> caddy
   fpm --> pg
   fpm --> valkey
-  fpm --> minio
+  fpm --> storage
   fpm -- "X-Internal-Token" --> h5p
   fpm -- "X-Internal-Token" --> pdf
   fpm -- SMTP --> mailhog
@@ -76,7 +76,7 @@ flowchart LR
   workers --> valkey
   h5p --> pg
   h5p --> valkey
-  h5p --> minio
+  h5p --> storage
   soketi --> valkey
 ```
 
@@ -158,7 +158,7 @@ environment variables (`PDF_MAX_*`, `PDF_RENDER_TIMEOUT_MS`). See
 |---|---|---|
 | PostgreSQL | `postgres:17.11-alpine` | Platform database `default`; one database and role per tenant (`ulams_<slug>`); schema `h5p` per tenant for the H5P service |
 | Valkey | `valkey/valkey:8-alpine` | Queues, cache, Horizon, H5P caches and locks, Soketi adapter. BSD-3-Clause drop-in for Redis; the service is still called `redis` |
-| MinIO | `bitnamilegacy/minio` | S3-compatible storage; bucket `ulams` for the platform, `ulams-<slug>` per tenant, public read |
+| SeaweedFS | `chrislusf/seaweedfs` | S3-compatible storage; bucket `ulams` for the platform, `ulams-<slug>` per tenant with its own key, public read |
 | Soketi | `quay.io/soketi/soketi` | Pusher-protocol websockets on `ws.localhost` (the dev API sets `BROADCAST_DRIVER=log`) |
 | MailHog | `mailhog/mailhog` | Catches outgoing mail; web UI on `localhost:8025` |
 | mjml | built from `deploy/stack/mjml` (published as `ghcr.io/ulams-dev/mjml`) | MJML API for e-mail templates (`templates-email`, used when `MJML_API_URL` is set) |
@@ -182,8 +182,7 @@ production names are set per deployment ([Hosts](/getting-started/hosts/)).
 | `<slug>.app.localhost`, `app.localhost` | host `:4321` | Reference frontend (`front/web`); report-only CSP |
 | `<slug>.admin.localhost` | host `:8000` | Admin panel; report-only CSP |
 | `<slug>.content.localhost`, `content.localhost` | `api:9000` as `GET /api/content/...` | Content origin: only `GET`/`HEAD` on `/scorm/*`, `/cmi5/*`, `/adapt/*`, `/liascript/*`; cookies and auth headers stripped; own CSP |
-| `storage.localhost` | `minio:9000` | Public bucket files; `nosniff`, SVG served with `script-src 'none'; sandbox` |
-| `minio.localhost` | `minio:9001` | MinIO console |
+| `storage.localhost` | `storage:8333` | Public bucket files, reads only; `nosniff`, SVG served with `script-src 'none'; sandbox` |
 | `ws.localhost`, `metrics.localhost` | `soketi:6001`, `soketi:9601` | Websockets and Soketi metrics |
 
 ### A learner opens a lesson
