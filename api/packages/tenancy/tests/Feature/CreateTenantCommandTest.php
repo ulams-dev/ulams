@@ -90,7 +90,7 @@ class CreateTenantCommandTest extends TestCase
         $this->assertSame('acme.app.localhost', $tenant->front_host);
         $this->assertSame('acme.admin.localhost', $tenant->admin_host);
         $this->assertSame(
-            ['database', 'bucket', 'env', 'migrate', 'passport_keys', 'passport_client', 'permissions', 'lti_keys', 'demo'],
+            ['database', 'bucket', 'storage_identity', 'env', 'migrate', 'passport_keys', 'passport_client', 'permissions', 'lti_keys', 'demo'],
             array_keys($tenant->steps)
         );
         $this->assertSame('PRIVATE-acme.localhost', $tenant->passport_private_key);
@@ -160,7 +160,7 @@ class CreateTenantCommandTest extends TestCase
         $tenant = Tenant::query()->firstWhere('slug', 'acme');
         $this->assertSame(Tenant::STATUS_FAILED, $tenant->status);
         $this->assertStringContainsString('[migrate] migrate exploded', $tenant->last_error);
-        $this->assertSame(['database', 'bucket', 'env'], array_keys($tenant->steps));
+        $this->assertSame(['database', 'bucket', 'storage_identity', 'env'], array_keys($tenant->steps));
 
         $this->runner->failOn = [];
         $this->runner->calls = [];

@@ -6,6 +6,8 @@ use Aws\Iam\IamClient;
 use Aws\S3\Exception\S3Exception;
 use Aws\S3\MultipartUploader;
 use Aws\S3\S3Client;
+use Ulams\Tenancy\Services\SeaweedFsIdentityProvisioner;
+use Ulams\Tenancy\Storage\StorageCredentials;
 use GuzzleHttp\Client as Http;
 use PHPUnit\Framework\TestCase;
 
@@ -134,25 +136,27 @@ class S3CompatibilityTest extends TestCase
         }
     }
 
-    /** @return array{0: S3Client, 1: string, 2: string} a limited identity for one bucket */
+    private function provisioner(): SeaweedFsIdentityProvisioner
+    {
+        return SeaweedFsIdentityProvisioner::fromConfig([
+            'endpoint' => $this->endpoint,
+            'key' => (string) getenv('S3_COMPAT_KEY'),
+            'secret' => (string) getenv('S3_COMPAT_SECRET'),
+        ]);
+    }
+
+    /**
+     * A tenant identity made by the production provisioner for one bucket (the slug is the bucket name).
+     *
+     * @return array{0: S3Client, 1: StorageCredentials}
+     */
     private function identity(string $bucket): array
     {
         $this->requireSeaweedFs();
-        $user = "compat-{$bucket}";
-        $this->users[] = $user;
-        $this->iam()->createUser(['UserName' => $user]);
-        $key = $this->iam()->createAccessKey(['UserName' => $user])['AccessKey'];
-        $this->iam()->putUserPolicy([
-            'UserName' => $user,
-            'PolicyName' => 'bucket',
-            'PolicyDocument' => json_encode(['Version' => '2012-10-17', 'Statement' => [[
-                'Effect' => 'Allow',
-                'Action' => ['s3:*'],
-                'Resource' => ["arn:aws:s3:::{$bucket}", "arn:aws:s3:::{$bucket}/*"],
-            ]]]),
-        ]);
+        $this->users[] = SeaweedFsIdentityProvisioner::userName($bucket);
+        $credentials = $this->provisioner()->ensure($bucket, $bucket);
 
-        return [$this->client($key['AccessKeyId'], $key['SecretAccessKey']), $key['AccessKeyId'], $key['SecretAccessKey']];
+        return [$this->client($credentials->accessKey, $credentials->secret()), $credentials];
     }
 
     private function requireSeaweedFs(): void
@@ -486,23 +490,51 @@ class S3CompatibilityTest extends TestCase
         $this->assertNotContains("compat-beta-{$this->suffix}", $names);
     }
 
-    public function testARevokedAndARotatedKeyStopWorking(): void
+    public function testARotatedAndARevokedKeyStopWorking(): void
     {
         $bucket = $this->bucket('rotate');
-        [$client, $oldKey] = $this->identity($bucket);
+        [$client, $old] = $this->identity($bucket);
         $client->putObject(['Bucket' => $bucket, 'Key' => 'f.txt', 'Body' => 'x']);
-        $user = "compat-{$bucket}";
 
-        $new = $this->iam()->createAccessKey(['UserName' => $user])['AccessKey'];
-        $this->iam()->deleteAccessKey(['UserName' => $user, 'AccessKeyId' => $oldKey]);
-
-        $this->assertContains($this->statusOf(fn () => $client->getObject(['Bucket' => $bucket, 'Key' => 'f.txt'])), [403, 401], 'the old key is refused');
-        $fresh = $this->client($new['AccessKeyId'], $new['SecretAccessKey']);
+        $new = $this->provisioner()->rotate($bucket, $bucket);
+        $fresh = $this->client($new->accessKey, $new->secret());
+        $this->assertSame('x', (string) $client->getObject(['Bucket' => $bucket, 'Key' => 'f.txt'])['Body'], 'the old key works until pruned');
         $this->assertSame('x', (string) $fresh->getObject(['Bucket' => $bucket, 'Key' => 'f.txt'])['Body']);
 
-        $this->iam()->deleteAccessKey(['UserName' => $user, 'AccessKeyId' => $new['AccessKeyId']]);
-        $this->iam()->deleteUser(['UserName' => $user]);
-        $this->assertContains($this->statusOf(fn () => $fresh->getObject(['Bucket' => $bucket, 'Key' => 'f.txt'])), [403, 401], 'a deleted identity is refused');
+        $this->provisioner()->prune($bucket, $new);
+        $this->assertContains($this->statusOf(fn () => $client->getObject(['Bucket' => $bucket, 'Key' => 'f.txt'])), [403, 401], 'the pruned key is refused');
+        $this->assertSame('x', (string) $fresh->getObject(['Bucket' => $bucket, 'Key' => 'f.txt'])['Body']);
+
+        $this->provisioner()->revoke($bucket);
+        $this->assertContains($this->statusOf(fn () => $fresh->getObject(['Bucket' => $bucket, 'Key' => 'f.txt'])), [403, 401], 'a revoked identity is refused');
+        $this->provisioner()->revoke($bucket);
+    }
+
+    public function testEnsureIsIdempotentAndRecoversALostKey(): void
+    {
+        $bucket = $this->bucket('idem');
+        [, $first] = $this->identity($bucket);
+
+        $again = $this->provisioner()->ensure($bucket, $bucket, $first);
+        $this->assertSame($first->accessKey, $again->accessKey);
+        $this->assertSame($first->secret(), $again->secret());
+
+        $recovered = $this->provisioner()->ensure($bucket, $bucket, null);
+        $this->assertNotSame($first->accessKey, $recovered->accessKey, 'a lost secret cannot be recovered: a new key is issued');
+        $client = $this->client($recovered->accessKey, $recovered->secret());
+        $client->putObject(['Bucket' => $bucket, 'Key' => 'ok.txt', 'Body' => 'ok']);
+        $old = $this->client($first->accessKey, $first->secret());
+        $this->assertContains($this->statusOf(fn () => $old->getObject(['Bucket' => $bucket, 'Key' => 'ok.txt'])), [403, 401], 'keys the record does not know are dropped');
+    }
+
+    public function testAnIdentityLeavesThePublicReadPolicyAlone(): void
+    {
+        $bucket = $this->bucket('pub', publicRead: true);
+        [$client] = $this->identity($bucket);
+        $client->putObject(['Bucket' => $bucket, 'Key' => 'logo.png', 'Body' => 'png', 'ACL' => 'public-read']);
+
+        $this->assertSame(200, $this->anonymous->get($this->url($bucket, 'logo.png'))->getStatusCode());
+        $this->assertContains($this->anonymous->get("{$this->endpoint}/{$bucket}?list-type=2")->getStatusCode(), [401, 403]);
     }
 
     public function testCreatingAUserTwiceIsRecognisable(): void
@@ -517,6 +549,12 @@ class S3CompatibilityTest extends TestCase
             $this->fail('a second CreateUser for the same name must fail so the provisioner can tell it exists');
         } catch (\Aws\Exception\AwsException $exception) {
             $this->assertSame('EntityAlreadyExists', $exception->getAwsErrorCode());
+        }
+        try {
+            $this->iam()->deleteUser(['UserName' => "compat-missing-{$this->suffix}"]);
+            $this->fail('deleting a missing user must fail');
+        } catch (\Aws\Exception\AwsException $exception) {
+            $this->assertSame('NoSuchEntity', $exception->getAwsErrorCode());
         }
     }
 }

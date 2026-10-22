@@ -123,7 +123,14 @@ class TenantNaming
     {
         $prefix = $tenant->redis_prefix;
 
-        return self::inheritedValues($tenant) + [
+        // the tenant's own object-store key pair (ADR 0041); without one the platform keys apply
+        $storage = $tenant->storageCredentials();
+        $storageKeys = $storage === null ? [] : [
+            'AWS_ACCESS_KEY_ID' => $storage->accessKey,
+            'AWS_SECRET_ACCESS_KEY' => $storage->secret(),
+        ];
+
+        return self::inheritedValues($tenant) + $storageKeys + [
             'APP_NAME' => $tenant->name,
             'APP_URL' => $tenant->apiUrl(),
             'APP_KEY' => $tenant->app_key,

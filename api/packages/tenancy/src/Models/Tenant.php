@@ -3,6 +3,7 @@
 namespace Ulams\Tenancy\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Ulams\Tenancy\Storage\StorageCredentials;
 
 /**
  * A provisioned tenant. Stored in the platform database only.
@@ -23,6 +24,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property ?string $passport_private_key
  * @property ?string $passport_public_key
  * @property string $bucket
+ * @property ?string $storage_key
+ * @property ?string $storage_secret
  * @property string $redis_prefix
  * @property string $status
  * @property ?array $env_overrides
@@ -53,6 +56,8 @@ class Tenant extends Model
         'passport_private_key',
         'passport_public_key',
         'bucket',
+        'storage_key',
+        'storage_secret',
         'redis_prefix',
         'env_overrides',
         'status',
@@ -65,6 +70,8 @@ class Tenant extends Model
         'app_key' => 'encrypted',
         'passport_private_key' => 'encrypted',
         'passport_public_key' => 'encrypted',
+        'storage_key' => 'encrypted',
+        'storage_secret' => 'encrypted',
         'env_overrides' => 'encrypted:array',
         'steps' => 'array',
         'demo' => 'boolean',
@@ -75,8 +82,20 @@ class Tenant extends Model
         'app_key',
         'passport_private_key',
         'passport_public_key',
+        'storage_key',
+        'storage_secret',
         'env_overrides',
     ];
+
+    /** The tenant's own object-store key pair, null while it uses the platform keys. */
+    public function storageCredentials(): ?StorageCredentials
+    {
+        if (!$this->storage_key || !$this->storage_secret) {
+            return null;
+        }
+
+        return new StorageCredentials($this->storage_key, $this->storage_secret);
+    }
 
     public function hasCompleted(string $step): bool
     {

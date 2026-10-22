@@ -9,8 +9,10 @@ use Ulams\Tenancy\Models\Tenant;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
+use Ulams\Tenancy\Services\Contracts\StorageIdentityProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
 use Ulams\Tenancy\Support\PassportKeyPermissions;
+use Ulams\Tenancy\Storage\StorageCredentials;
 use Ulams\Tenancy\Support\TenantNaming;
 
 /**
@@ -22,6 +24,7 @@ class TenantProvisioner
     public const STEPS = [
         'database',
         'bucket',
+        'storage_identity',
         'env',
         'migrate',
         'passport_keys',
@@ -41,7 +44,9 @@ class TenantProvisioner
         private TenantCommandRunnerContract $runner,
         private Filesystem $files,
         private ?H5PServiceConfigExporter $h5pConfig = null,
+        private ?StorageIdentityProvisionerContract $identities = null,
     ) {
+        $this->identities ??= new NullStorageIdentityProvisioner();
     }
 
     /**
@@ -112,6 +117,8 @@ class TenantProvisioner
         $report('database', 'running');
         $this->database->drop($tenant->db_name, $tenant->db_user);
         $report('bucket', 'running');
+        // the identity first: nothing may be left that could write to a bucket name another tenant may take
+        $this->identities->revoke($tenant->slug);
         $this->buckets->delete($tenant->bucket);
         $report('env', 'running');
         $this->domains->remove($tenant->api_host);
@@ -125,6 +132,7 @@ class TenantProvisioner
         match ($step) {
             'database' => $this->database->ensure($tenant->db_name, $tenant->db_user, $tenant->db_password),
             'bucket' => $this->buckets->ensure($tenant->bucket),
+            'storage_identity' => $this->storageIdentity($tenant),
             'env' => $this->domains->add($host, TenantNaming::envValues($tenant)),
             'migrate' => $this->runner->run($host, ['migrate', '--force']),
             'passport_keys' => $this->passportKeys($tenant),
@@ -146,6 +154,63 @@ class TenantProvisioner
                 '--email-domain=' . TenantNaming::emailDomain($tenant),
             ]))),
         };
+    }
+
+    /**
+     * Gives the tenant its own object-store key pair, limited to its bucket, and keeps an encrypted copy on
+     * the tenant row. A no-op with the `none` identity driver (the tenant uses the platform keys).
+     */
+    private function storageIdentity(Tenant $tenant): void
+    {
+        $this->saveStorageCredentials($tenant, $this->identities->ensure($tenant->slug, $tenant->bucket, $tenant->storageCredentials()));
+    }
+
+    /**
+     * Creates the tenant's object-store identity when it has none, else issues an additional key. The old
+     * keys keep working until `pruneStorageKeys()`, so the new key can reach every process first. Rewrites
+     * the tenant's env file. Returns false when the identity driver manages no identities.
+     */
+    public function rotateStorageKey(Tenant $tenant): bool
+    {
+        $current = $tenant->storageCredentials();
+        $credentials = $current === null
+            ? $this->identities->ensure($tenant->slug, $tenant->bucket)
+            : $this->identities->rotate($tenant->slug, $tenant->bucket);
+        if ($credentials === null) {
+            return false;
+        }
+
+        $this->saveStorageCredentials($tenant, $credentials);
+        $tenant->markCompleted('storage_identity');
+        $this->syncRuntime($tenant);
+
+        return true;
+    }
+
+    /**
+     * Deletes every key of the tenant's identity except the one stored on the tenant row.
+     */
+    public function pruneStorageKeys(Tenant $tenant): bool
+    {
+        $credentials = $tenant->storageCredentials();
+        if ($credentials === null) {
+            return false;
+        }
+
+        $this->identities->prune($tenant->slug, $credentials);
+
+        return true;
+    }
+
+    private function saveStorageCredentials(Tenant $tenant, ?StorageCredentials $credentials): void
+    {
+        if ($credentials === null) {
+            return;
+        }
+
+        $tenant->storage_key = $credentials->accessKey;
+        $tenant->storage_secret = $credentials->secret();
+        $tenant->save();
     }
 
     /**

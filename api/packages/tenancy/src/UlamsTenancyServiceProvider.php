@@ -22,13 +22,16 @@ use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
+use Ulams\Tenancy\Services\Contracts\StorageIdentityProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
 use Ulams\Tenancy\Services\H5PServiceConfigExporter;
 use Ulams\Tenancy\Services\ManualDatabaseProvisioner;
+use Ulams\Tenancy\Services\NullStorageIdentityProvisioner;
 use Ulams\Tenancy\Services\MultidomainRegistry;
 use Ulams\Tenancy\Services\PostgresDatabaseProvisioner;
 use Ulams\Tenancy\Services\ProcessTenantCommandRunner;
 use Ulams\Tenancy\Services\S3BucketProvisioner;
+use Ulams\Tenancy\Services\SeaweedFsIdentityProvisioner;
 use Ulams\Tenancy\Upgrade\DefaultUpgradeSteps;
 
 class UlamsTenancyServiceProvider extends ServiceProvider
@@ -52,6 +55,18 @@ class UlamsTenancyServiceProvider extends ServiceProvider
             BucketProvisionerContract::class,
             fn () => S3BucketProvisioner::fromConfig(config(self::CONFIG_KEY . '.s3', []))
         );
+        $this->app->singleton(StorageIdentityProvisionerContract::class, function () {
+            $driver = strtolower((string) config(self::CONFIG_KEY . '.storage_identity.driver', 'none'));
+
+            return match ($driver) {
+                'none', '' => new NullStorageIdentityProvisioner(),
+                'seaweedfs' => SeaweedFsIdentityProvisioner::fromConfig(array_merge(
+                    (array) config(self::CONFIG_KEY . '.s3', []),
+                    array_filter(['endpoint' => config(self::CONFIG_KEY . '.storage_identity.endpoint')])
+                )),
+                default => throw new \InvalidArgumentException("TENANCY_S3_IDENTITY_DRIVER must be seaweedfs or none, got '{$driver}'."),
+            };
+        });
         $this->app->singleton(TenantCommandRunnerContract::class, fn ($app) => new ProcessTenantCommandRunner(
             $app->basePath(),
             (string) config(self::CONFIG_KEY . '.php_binary', 'php'),
