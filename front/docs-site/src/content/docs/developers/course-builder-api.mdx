@@ -47,6 +47,22 @@ are in [Course Builder settings](/admin/course-builder/); the internals are in [
 | `POST sessions/{session}/apply` `{overwrite?}` | Create or update the course (unpublished); 202 with `runId`; 409 when there is no generated content |
 | `POST sessions/{session}/publish` | Publish the applied course; 409 before the first apply |
 | `GET sessions/{session}/usage` | AI calls by task and model: tokens, cost in micro-USD (1,000,000 = 1 USD), latency |
+| `GET sessions/{session}/variants` | The [variants](/creators/course-versions-and-variants/) of the course by level and role: `variants[]` (status, `courseId`, `currentVersionId`, `baseDrift`, `family`), `cap`, `active`, `base.ready` and the cost `estimate` |
+| `POST sessions/{session}/variants` `{audiences?, start?}` | Create variants (`level`: beginner, intermediate or expert; `role`; `label`; `notes`; none means the audiences of the brief); `start: true` drafts the outline of every waiting variant in one run. 409 until the base course is applied, 422 over `COURSE_BUILDER_MAX_VARIANTS` |
+| `PATCH variants/{variant}` `{label?, position?, notes?}` | Rename or reorder a variant |
+| `DELETE variants/{variant}` | Retire a variant (its course is kept); it stops counting against the cap |
+
+The same run as `POST sessions/{session}/variants` with `start: true` can be started from the run endpoint, which is also how one variant outline is
+drafted again: `forwardedProps: {"stage": "variants", "variants": [{"level": "expert", "role": "developer"}]}`. After the first apply of a course whose
+interview asked for audiences, the builder starts it by itself. Run kinds: `variant_plan` (the outlines) and `generate` with a `variantId`
+(a variant's lessons; these runs do not count toward `COURSE_BUILDER_CONCURRENT_RUNS`). Surfaces of a variant use the kinds `variant_outline`,
+`variant_progress` and `variant`, and the actions `approve_variant` and `reject_variant`.
+
+A variant has its own versions (`variantId` on `GET versions/{version}`). Review one with `GET versions/{version}/diff?against=<base version id>`:
+the same element diff, the version of the variant against the version of the base. The variant's outline and its generated course are
+approved with `POST versions/{version}/approve` and `reject` like the base's (an outline, then a `content` version that creates the variant's
+own course). Every model call of a variant is logged against it (`subject_type` `course_builder_variant`), and its cost counts toward the
+session budget.
 
 The session `status` moves through `draft`, `ingesting`, `interviewing`, `outlining`, `outline_review`, `generating`,
 `apply_review`, `applying`, `applied` (or `failed`).

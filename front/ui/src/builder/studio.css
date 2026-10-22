@@ -95,6 +95,7 @@ a.cb-btn { text-decoration: none; }
 }
 .cb-label { display: block; font-weight: 500; margin: 12px 0 6px; }
 .cb-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 16px; }
+.cb-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; padding: 0; list-style: none; }
 .cb-tag { font-family: var(--ulams-studio-mono); font-size: 0.75rem; background: var(--ulams-studio-sunken); border-radius: 6px; padding: 2px 6px; margin-left: 6px; }
 .cb-error { color: var(--ulams-studio-danger); display: flex; gap: 6px; align-items: center; margin: 6px 0 0; }
 

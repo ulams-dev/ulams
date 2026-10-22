@@ -47,7 +47,8 @@ class AiAssistedTopics
             return collect();
         }
 
-        return EntityMapEntry::query()
+        // every branch counts: the topics of a variant course are AI-assisted too (ADR 0192)
+        return EntityMapEntry::withoutGlobalScope('base')
             ->whereIn('entity_type', ['topic', 'quiz_topic'])
             ->whereIn('entity_id', $topicIds->all())
             ->whereNull('retired_at')

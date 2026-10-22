@@ -11,6 +11,13 @@ small commits → tests → summary.
 
 ## Decisions made
 
+- [x] (new, 2026-10-22) Course versions and variants: the plan is approved with the recommended defaults. The LMS-side family lives in a
+      new `course-variants` package (Q1); the cap is 6 variants per course, `COURSE_BUILDER_MAX_VARIANTS` (Q2); mandatory training accepts any
+      variant unless an admin pins one (Q3); a learner may change a variant assigned by an admin or a rule, with a per-course lock (Q4); the base is
+      itself a variant learners can pick (Q5); the variant list is public like the course page (Q6); undo and redo that re-apply create a release,
+      trigger `restore` (Q7); placement is off by default (Q8); at most one hint to switch per course and learner per week (Q9); no versions for
+      hand-made courses before CAC-5 (Q10); the landing keeps "Coming" for unbuilt features (Q11). ADR 0192.
+
 - [x] (new) Umami integration on the owned landing, documentation and six demos: automatic pageviews,
       demo_open versus demos_scroll, exact CSP origins and per-browser exclusion
       (ADR 0101 Proposed; requested by owner 2026-10-12). Documentation published through PR #247 and GitHub Pages run 38295754529.
@@ -95,6 +102,16 @@ small commits → tests → summary.
 - [x] (new) Decision 2026-10-22: the owner accepted ADR 0192 and the plan `docs/plans/course-versions-and-variants.md` with its
       recommended defaults for Q1 to Q11, approved the matching spec sections (ROADMAP-PROMPT 3.1 and 4.4), and accepted that variant
       courses stay unlisted and unsold on their own until CV-5 routing exists
+
+- [ ] (partial: IMG-1 done, the `@ulams/sdk/images` URL builder, presets and unit tests; IMG-2 done, `Img.astro`, the plain `<img>` sites in `front/ui` and rich-text images on the builder with a runtime `ULAMS_IMAGE_SERVICE`; the client-side `elements/showcase.ts` and `InteractiveLesson` poster are unchanged; IMG-6a, IMG-3 to IMG-7 pending) (new) Decision 2026-10-22: the owner asked to replace the PHP image resize with Cloudflare Image Transformations (enabled and
+      verified on the `ulams.app` zone), then narrowed it the same day: keep `api/packages/images` and `/api/images/img` for
+      self-hosters and other clients, stop PHP resizing on the hosted demos and the landing, and make the image service a deployment
+      choice. Plan `docs/plans/images-cloudflare.md` and ADR 0193 were accepted by the owner on 2026-10-22 with the recommended defaults (plan section 14)
+
+- [ ] (new) Approve `docs/plans/authoring-metric-and-report-builder.md` and ADR 0194 (Proposed 2026-10-22): authoring time and cost
+      metric, report builder with saved reports and an OData BI feed, Notion integration token. Open questions Q1 to Q13 in plan
+      section 11 have recommended defaults (review time off by default and anonymous, registry in a new `reporting` package, OData
+      v4 subset, viewer's permissions for shared reports)
 
 - [ ] (new) Organic marketing campaign (`docs/plans/organic-marketing.md`, draft): analytics, SEO, Hacker News, Product Hunt,
       Reddit, directories, LinkedIn and e-learning communities. Waiting for approval; nothing is published before the owner
@@ -504,6 +521,14 @@ approved apply through domain services → element chat edits. Designs:
       source passages behind every citation; the learner front is the existing one with the tenant
       theme; the workspace sources panel lists every section with the elements citing it, the
       uncovered sections and the sections of the selected element, `GET …/sessions/{s}/citations`; L2-10)
+- [ ] (new) Authoring time and cost metric per course: generation time per stage, LLM cost (build and maintenance),
+      opt-in anonymous author review time, counts (lessons, questions, cited blocks, AI elements accepted unchanged,
+      edited, revised on request, author-written), shown in the studio and admin analytics, exportable, over the
+      API, CLI and MCP, and an "hours per learner hour" figure from the tenant's own data with no benchmark claims
+      (plan `docs/plans/authoring-metric-and-report-builder.md` AM-1 to AM-6; ADR 0194 Proposed; market research:
+      authoring cost is the core pain)
+- [ ] (new) Element provenance for direct author edits: the outline editor tags edited elements, AI output carries a
+      content hash, so accepted vs edited AI elements can be counted (plan `authoring-metric-and-report-builder.md` AM-2)
 
 ### 2.7 Generative UI
 Architecture
@@ -604,6 +629,10 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
       author reviews as a diff; no quiz is generated with it yet)
 - [x] (new) Generic Git (`git` CLI) connector for hosts without a supported API (sandboxed, https only, off by default)
 - [x] (new) Google Drive and Notion connector plugins (designed in `docs/plans/phase-3.md` 6.6) (OAuth through a one-time grant, polling change detection; off by default, scripted-server tests only, live Drive/Notion runs tracked in #285 and #266)
+- [ ] (new) Notion source: a "paste an integration token" method in the studio's Notion form (the connector already
+      accepts `secrets.token`; the form offers only OAuth, which blocked the Notion case study in #408): masked input,
+      verified against Notion before saving, encrypted at rest, shown only as the last four characters, never in logs,
+      events, audit entries or responses (plan `docs/plans/authoring-metric-and-report-builder.md` NT-1)
 
 ### 3.1 Course versions with a visual diff (new)
 
@@ -680,24 +709,34 @@ Plan for the remaining Learner Insights items, experiments and surveys (new): `d
 ### 4.4 Course variants by level and role (new)
 
 Requested by the owner on 2026-10-22: today every learner gets the same course regardless of level and role, so the expert
-wades through basics and the beginner gets lost in the middle. Plan: `docs/plans/course-versions-and-variants.md` (draft,
-waiting for approval; ADR 0192 Accepted). Variants are branches of one course: shared sources, fragments and citations,
-each variant reviewed as a diff against the base. Shown as "Coming" on the Comparison page and in the docs
-(`creators/course-versions-and-variants`). Related: the Phase 6.1 policy lifecycle items (departmental course variants).
+wades through basics and the beginner gets lost in the middle. Plan: `docs/plans/course-versions-and-variants.md` (approved
+2026-10-22; ADR 0192 Accepted). Variants are branches of one course: shared sources, fragments and citations,
+each variant reviewed as a diff against the base. Shown as "Coming" on the Comparison page until the whole item set below
+is done; the docs page (`creators/course-versions-and-variants`) says which parts are built (CV-4: drafting, review and apply in the
+builder). Related: the Phase 6.1 policy lifecycle items (departmental course variants).
 
 - [ ] (new) Course Builder interview asks which audiences to cover: levels (beginner, intermediate, expert) and roles
       (free text or presets), with "one course for everyone" as the default and the cost estimate shown before generation
+      (partial: built in milestone CV-4, PR #396, waiting to merge: chips for the levels, roles typed next to them, the grid of levels
+      times roles, the cap, Course Brief v3 `audiences`, the estimate in the card and in `GET sessions/{session}/variants`; the grid cannot yet be trimmed
+      cell by cell: an unwanted variant is rejected at its outline or retired)
 - [ ] (new) Generate several variants of one course at once from the approved base outline: each variant skips, condenses
       or deepens lessons and adds only content grounded in the same sources; every generated element cites fragments; each
       LLM call is logged with the variant it belongs to; a hard cap on the number of variants per course
 - [ ] (new) Author reviews each variant as a diff against the base (reusing the 3.1 compare screen) and approves variants
       one by one; a Living Course update to the base proposes matching patches for every variant that inherits the element
+      (partial: built in CV-4, PR #396: each variant outline is reviewed with the builder's outline diff against the base outline and each
+      generated variant with a new `VariantReview` card (lessons kept, rewritten, added, skipped; word-level text changes) built on the existing
+      `BlueprintDiff`, approved one by one, applied as its own course through the domain services, grouped as a family hidden from the catalogue
+      and published with the base; open: the 3.1 compare screen (CV-2, CV-3), Living Course patches for variants and rebase on a newer base (CV-5))
 - [ ] (new) Learner routing: self-declared role and level at enrolment, an optional cited placement check, assignment by an
       admin or an enrolment rule (6.2), and an adaptive hint from Learner Insights to switch variant that the learner confirms
       (never a silent switch); progress carries over for elements that are identical in both variants
 - [ ] (new) One entitlement for the course covers all its variants (ADR 0130); certificates name the variant completed
 - [ ] (new) Tenant isolation suite for the variant and routing endpoints; WCAG 2.2 AA for the variant picker and placement
       check; evals for variant grounding and level fit through the eval command only
+      (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #396; open: the routing endpoints,
+      the picker and the placement check (CV-5) and the evals)
 
 ---
 
@@ -735,8 +774,12 @@ each variant reviewed as a diff against the base. Shown as "Coming" on the Compa
       skip link, focus-visible, reduced motion, 360 px layout and a theme contrast test; axe scan of
       every page type in the Playwright e2e passes; axe and keyboard suite now runs in CI as the `web-a11y` job, #294; the accessibility gate (axe, keyboard and reduced-motion specs for the learner screens), the per-tenant `/accessibility` statement and the operator and learner EAA documentation merged in M-UI8, #325; open: the manual screen reader pass (VoiceOver and NVDA) is documented, not done, and the full-stack struggling-learner journey `front/web/tests/e2e/personalisation.spec.ts` is written but has not been run)
 - [ ] Admin UX: templates, guided empty states, sample course, bulk operations, saved filters
+      Note 2026-10-22: saved filters for list screens stay with `phase-5-remaining.md` P5R-10 (`admin_saved_views`). Saved,
+      shared and scheduled reports are a separate item under 6.5 (plan `authoring-metric-and-report-builder.md`)
 - [ ] AI transparency everywhere (diffs, citations, reasons one click away) (partial: learner surfaces done, #315, #319, #314, #320; fragment citations show a label, not a link, by design, O8)
 - [ ] Metrics: time to first course, time to first enrolment, admin task times
+      Note 2026-10-22: per-course authoring time and cost is a separate item under 2.6 (plan `authoring-metric-and-report-builder.md`);
+      it follows the same no-personal-data stance as ADR 0152
 - [x] (new) Learner views for required training, learning paths, certificates and skills: `/account/training`, `/account/skills`, a manager `/account/team`, certificate download through its own route and the account summary (M-UI5, #317; `docs/plans/phase-5-learner-ui.md`)
 - [x] (new) The finish page shows the issued certificate (with download and verify) instead of the mock preview (M-UI5, #317)
 - [x] (new) Per-tenant accessibility statement page `/accessibility` and European Accessibility Act documentation for operators and learners (M-UI8, #325)
@@ -955,6 +998,17 @@ each variant reviewed as a diff against the base. Shown as "Coming" on the Compa
 ### 6.5 Analytics and ROI
 - [ ] Dashboards (completion, results, struggle/recovery, certificates, overdue) (partial: dashboard API merged, #284; struggle and recovery numbers and the admin screen are not built)
 - [ ] BI export/API, scheduled reports, optional business KPI link (partial: CSV and JSON lines export merged, #276, #284; scheduled e-mail reports merged, #284; no BI connector beyond the export and the report API, no business KPI link)
+      Note 2026-10-22: the BI connector is planned in `authoring-metric-and-report-builder.md` RB-6 (options compared there; recommended: a read-only
+      OData v4 feed per saved report); the KPI link stays in `phase-6-remaining.md` P6R-6
+- [ ] (new) Report builder with saved reports: pick a dataset, columns, filters, grouping and a date range, preview,
+      save, share with tenant roles (run with the viewer's own permissions), schedule by e-mail through the existing
+      schedules, export CSV, JSON lines or XLSX; small-group suppression as in Learner Insights; datasets from a
+      registry in a new `reporting` package (takes over the registry of `phase-6-remaining.md` P6R-3 and the reports
+      screen of P6R-4) (plan `docs/plans/authoring-metric-and-report-builder.md` RB-1 to RB-5, RB-7; ADR 0194 Proposed;
+      market research: poor reporting is the top switch reason)
+- [ ] (new) BI connector: read-only OData v4 feed per saved report for Excel, Power BI and Tableau, with a `reports:read`
+      token that can be limited to one report; CSV and JSON lines URLs with recipes for Looker Studio, Metabase and
+      Superset (plan `authoring-metric-and-report-builder.md` RB-6)
 
 ### 6.6 Skills and competencies
 - [x] Competency framework; AI-suggested tags confirmed by author (`api/packages/compliance`, #286)
@@ -1092,6 +1146,10 @@ each variant reviewed as a diff against the base. Shown as "Coming" on the Compa
       Prepared and validated locally with the published images and MinIO; nothing is deployed
 - [ ] (new) First production deployment on the VPS and Cloudflare (owner publishes later, issue #24): staging
       install, restore drill, R2 custom domains, tunnel, then the launch switches (landing `actual`, CSP enforce)
+- [ ] (new) Image service as a deployment choice (`cloudflare | astro | noop | php`): one URL builder and presets in `@ulams/sdk`,
+      the hosted demo academies and the `ulams.app` landing on Cloudflare Image Transformations with `onerror=redirect` and a `noop`
+      kill switch, admin and imports on demo deployments without `/api/images/img`, the PHP images API kept as an optional legacy API
+      (plan `docs/plans/images-cloudflare.md`, milestones IMG-1 to IMG-7; ADR 0193 Accepted 2026-10-22; IMG-1 starts first)
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
 - [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI

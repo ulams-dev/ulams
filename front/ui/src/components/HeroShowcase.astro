@@ -9,6 +9,7 @@
  */
 import { SANDBOX_INTERACTIVE } from "@ulams/sdk/frames";
 import type { StepInfo } from "../lib/interactive.ts";
+import { imageSrc } from "../lib/images.ts";
 
 interface Props {
   src: string;
@@ -30,7 +31,7 @@ const alternative = [`${title}.`, loopTitles.length ? `A slow loop through: ${lo
 
 <ulams-showcase class="u-sc" src={src} locale={locale} steps={loop.join(" ")} requires={requires.join(" ")} state="still">
   <div class="u-sc__stage" aria-hidden="true">
-    {showcase.poster && <img class="u-sc__still" src={showcase.poster} alt="" width="1280" height="720" decoding="async" />}
+    {showcase.poster && <img class="u-sc__still" src={imageSrc(showcase.poster, "content", 1280)} alt="" width="1280" height="720" decoding="async" />}
     <iframe
       class="u-sc__frame"
       data-src={src}

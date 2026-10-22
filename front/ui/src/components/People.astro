@@ -31,7 +31,7 @@ const { eyebrow, title, intro, people, id = "people" } = Astro.props;
           <li class="u-person u-card u-card--hover" data-reveal style={`--reveal-i:${i}`}>
             {person.image && (
               <div class="u-person__photo">
-                <Img {...person.image} sizes="160px" />
+                <Img {...person.image} sizes="160px" preset="avatar" />
               </div>
             )}
             <div class="u-person__text">

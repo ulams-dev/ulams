@@ -151,6 +151,52 @@ class TenantIsolationTest extends TestCase
         $this->request(self::A, 'DELETE', "/api/admin/identity/providers/{$id}", $tokenA);
     }
 
+    public function testSamlProvidersAndTheirEndpointsDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $slug = 'saml-probe-' . bin2hex(random_bytes(3));
+        $key = openssl_pkey_new(['private_key_bits' => 2048, 'private_key_type' => OPENSSL_KEYTYPE_RSA]);
+        openssl_x509_export(openssl_csr_sign(openssl_csr_new(['commonName' => 'probe.example.test'], $key, ['digest_alg' => 'sha256']), null, $key, 30, ['digest_alg' => 'sha256']), $certificate);
+
+        $created = $this->request(self::A, 'POST', '/api/admin/identity/providers', $tokenA, [
+            'protocol' => 'saml',
+            'slug' => $slug,
+            'name' => 'SAML isolation probe',
+            'enabled' => false,
+            'saml' => ['entity_id' => 'https://idp.example.com/probe', 'sso_url' => 'https://idp.example.com/sso', 'idp_certificates' => [$certificate]],
+        ]);
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['id'];
+        $this->assertStringNotContainsString('PRIVATE KEY', (string) $created->getBody());
+
+        $noRedirects = fn (string $tenant, string $method, string $uri, array $form = []) => self::$http->request($method, $uri, [
+            'allow_redirects' => false,
+            'headers' => ['Host' => "{$tenant}.localhost", 'Accept' => 'application/json'],
+            'form_params' => $form ?: null,
+        ]);
+
+        // the service provider metadata exists at A, names A's host, carries no private key, and does not exist at B
+        $metadata = $noRedirects(self::A, 'GET', "/api/identity/saml/{$slug}/metadata");
+        $this->assertSame(200, $metadata->getStatusCode());
+        $this->assertMatchesRegularExpression('#entityID="https?://' . preg_quote(self::A, '#') . '\.localhost(:\d+)?/api/identity/saml/' . preg_quote($slug, '#') . '/metadata"#', (string) $metadata->getBody());
+        $this->assertStringNotContainsString('PRIVATE KEY', (string) $metadata->getBody());
+        $this->assertSame(404, $noRedirects(self::B, 'GET', "/api/identity/saml/{$slug}/metadata")->getStatusCode());
+
+        // B's ACS and SLO know nothing of A's provider, and a response without B's own state is refused
+        $this->assertSame(400, $noRedirects(self::B, 'POST', "/api/identity/saml/{$slug}/acs", ['SAMLResponse' => base64_encode('<x/>'), 'RelayState' => str_repeat('a', 43) . '.9999999999.' . str_repeat('b', 43)])->getStatusCode());
+        $this->assertSame(404, $noRedirects(self::B, 'GET', "/api/identity/saml/{$slug}/slo?SAMLRequest=eA")->getStatusCode());
+        $this->assertSame(404, $noRedirects(self::B, 'GET', "/api/identity/sso/{$slug}/start")->getStatusCode());
+
+        // the admin endpoints of A's provider do not exist at B and A's token is nothing there
+        $this->assertSame(404, $this->request(self::B, 'POST', "/api/admin/identity/providers/{$id}/sp-keys/rotate", $tokenB, ['step' => 'prepare'])->getStatusCode());
+        $this->assertSame(404, $this->request(self::B, 'POST', "/api/admin/identity/providers/{$id}/metadata/refresh", $tokenB)->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'POST', "/api/admin/identity/providers/{$id}/sp-keys/rotate", $tokenA, ['step' => 'prepare'])->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'POST', "/api/identity/saml/{$slug}/logout", $tokenA)->getStatusCode());
+
+        $this->request(self::A, 'DELETE', "/api/admin/identity/providers/{$id}", $tokenA);
+    }
+
     public function testSocialLoginStateAndCodesDoNotCrossTenants(): void
     {
         $verifier = bin2hex(random_bytes(32));

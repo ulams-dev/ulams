@@ -12,7 +12,7 @@ function registry() {
     const build = spawnSync("corepack", ["yarn", "workspace", "ulams", "build"], { cwd: ROOT, stdio: "inherit" });
     if (build.status !== 0) throw new Error("Could not build front/cli for the CLI reference");
   }
-  const run = spawnSync("node", [dist, "schema", "--json"], { cwd: ROOT, encoding: "utf8", env: { ...process.env, ULAMS_CONFIG_DIR: join(ROOT, "front/cli/.docs-config") } });
+  const run = spawnSync("node", [dist, "schema", "--json"], { cwd: ROOT, encoding: "utf8", maxBuffer: 64 * 1024 * 1024, env: { ...process.env, ULAMS_CONFIG_DIR: join(ROOT, "front/cli/.docs-config") } });
   if (run.status !== 0) throw new Error(`ulams schema failed: ${run.stderr || run.stdout}`);
   return JSON.parse(run.stdout).data;
 }

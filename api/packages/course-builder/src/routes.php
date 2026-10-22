@@ -45,6 +45,12 @@ Route::group([
     Route::get('sessions/{session}/publish-check', [CourseBuilderController::class, 'publishCheck']);
     Route::post('sessions/{session}/publish', [CourseBuilderController::class, 'publish']);
     Route::get('sessions/{session}/usage', [CourseBuilderController::class, 'usage']);
+
+    // course variants by level and role (ADR 0192)
+    Route::get('sessions/{session}/variants', [CourseBuilderController::class, 'variantsIndex']);
+    Route::post('sessions/{session}/variants', [CourseBuilderController::class, 'variantsStore']);
+    Route::patch('variants/{variant}', [CourseBuilderController::class, 'variantUpdate']);
+    Route::delete('variants/{variant}', [CourseBuilderController::class, 'variantDestroy']);
 });
 
 // Course-as-code (ADR 0160): export a course as a blueprint, import one as a proposed version. No AI gate: it works

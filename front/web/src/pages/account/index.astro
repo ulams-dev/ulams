@@ -159,7 +159,7 @@ const courses = (progress ?? []).map((entry) => {
               <li class="u-account__course u-card u-card--hover" data-reveal style={`--reveal-i:${i}`}>
                 {c.image && (
                   <div class="u-account__thumb">
-                    <Img {...c.image} sizes="220px" />
+                    <Img {...c.image} sizes="220px" preset="card" />
                   </div>
                 )}
                 <div class="u-account__body">

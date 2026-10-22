@@ -72,6 +72,19 @@ login and adds:
 - an existing account is linked only for a verified address in a trusted domain, never an admin or tutor;
   a provider can never grant a role, and sign-ins and provider changes are written to a hash-chained audit trail.
 
+SAML 2.0 sign-in ([operator guide](/operators/single-sign-on-saml/)) adds, on top of the same hand-off:
+
+- the assertion must be signed by one of the provider's stored certificates (a signed envelope with an unsigned assertion is refused); signature,
+  digest, canonicalisation and transform algorithms are on an allow-list, **SHA-1 is refused** unless the provider opted in (an audit row says when,
+  and one more for every sign-in that used it); encrypted assertions use OAEP key transport only (no RSA 1.5);
+- the response must answer the request this browser started (`InResponseTo`), be addressed to our ACS URL (exactly, in `Destination` and `Recipient`),
+  name our entity id as audience, come from the IdP, be fresh, and is accepted once (a table of assertion ids until they cannot be valid any more);
+- a document with a DOCTYPE or an entity declaration is refused before it is parsed, bodies are capped at 256 KB, a comment inside an identity is refused, and
+  the known XML signature wrapping variants (second assertion, assertion in `Advice` or `Extensions`, moved signature, duplicated id) are fixtures of the test suite;
+- the metadata of the identity provider is fetched through the SSRF-safe client; a changed entity id or an unrelated certificate set is never applied by the daily refresh;
+- the SP private key of each provider is encrypted with the tenant key and never returned, logged or audited; keys rotate in two steps with the next certificate published first;
+- single logout messages must be signed, addressed to our SLO URL and fresh, and are accepted once.
+
 ## Links in e-mails
 
 Every link the API builds from a `return_url` sent by the caller (password reset, e-mail

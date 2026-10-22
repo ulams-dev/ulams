@@ -241,6 +241,7 @@ class IdentityProvidersPublic200ResponseDataInner implements ModelInterface, Arr
     }
 
     public const PROTOCOL_OIDC = 'oidc';
+    public const PROTOCOL_SAML = 'saml';
 
     /**
      * Gets allowable values of the enum
@@ -251,6 +252,7 @@ class IdentityProvidersPublic200ResponseDataInner implements ModelInterface, Arr
     {
         return [
             self::PROTOCOL_OIDC,
+            self::PROTOCOL_SAML,
         ];
     }
 

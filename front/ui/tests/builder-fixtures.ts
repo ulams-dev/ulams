@@ -208,6 +208,21 @@ export const builderFixtures: Record<string, Record<string, unknown>> = {
     citations: [cite(2)],
   },
   ApplySummary: { versionId: "01c", status: "proposed", firstApply: true, create: counts(1), update: counts(0), delete: counts(0), warnings: ["Lesson 1.2: Possibly unsupported claim"] },
+  VariantReview: {
+    versionId: "01var1",
+    variantKey: "expert",
+    label: "Expert",
+    level: "expert",
+    status: "proposed",
+    baseNumber: 3,
+    summary: { lessons: 3, kept: 1, changed: 1, added: 1, removed: 1, citations: 5 },
+    changes: [
+      { path: "l1.title", label: "Lesson 1.1 · Title", kind: "changed", before: "Why grind size matters", after: "Grind size in depth" },
+      { path: "l9.title", label: "Lesson 2.3 · Title", kind: "added", after: "Going further" },
+      { path: "l2.title", label: "Lesson 1.2 · Title", kind: "removed", before: "What coffee is" },
+    ],
+    costMicroUsd: 120000,
+  },
   VersionList: {
     currentVersionId: "v3",
     versions: [

@@ -41,12 +41,15 @@ use Ulams\CourseBuilder\Publish\PublishCheck;
 use Ulams\CourseBuilder\Site\NewSite;
 use Ulams\CourseBuilder\Transfer\SessionArchive;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
+use Ulams\CourseBuilder\Pipeline\VariantOutlineService;
 use Ulams\CourseBuilder\Services\AiAssistedTopics;
 use Ulams\CourseBuilder\Services\RunService;
+use Ulams\CourseBuilder\Services\VariantService;
 use Ulams\CourseBuilder\Services\VersionService;
 use Ulams\CourseBuilder\Ui\Surfaces;
 use Ulams\CourseBuilder\Ui\UiCatalogue;
 use Ulams\Commerce\UlamsCommerceServiceProvider;
+use Ulams\CourseVariants\UlamsCourseVariantsServiceProvider;
 use Ulams\Courses\Http\Resources\TopicResource;
 use Ulams\Courses\UlamsCourseServiceProvider;
 use Ulams\H5P\UlamsH5PServiceProvider;
@@ -97,6 +100,8 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         SessionArchive::class => SessionArchive::class,
         LandingValidator::class => LandingValidator::class,
         RunService::class => RunService::class,
+        VariantService::class => VariantService::class,
+        VariantOutlineService::class => VariantOutlineService::class,
         AiAssistedTopics::class => AiAssistedTopics::class,
         RemovalPolicy::class => DeleteEverything::class,
         FragmentArchive::class => NoFragmentArchive::class,
@@ -106,7 +111,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/course_builder.php', 'course_builder');
         $this->mergeConfigFrom(__DIR__ . '/../config/course_as_code.php', 'course_as_code');
-        foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class, UlamsSettingsServiceProvider::class, UlamsCommerceServiceProvider::class, UlamsLiaScriptServiceProvider::class, UlamsH5PServiceProvider::class, UlamsInteractiveServiceProvider::class] as $provider) {
+        foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class, UlamsSettingsServiceProvider::class, UlamsCommerceServiceProvider::class, UlamsLiaScriptServiceProvider::class, UlamsH5PServiceProvider::class, UlamsInteractiveServiceProvider::class, UlamsCourseVariantsServiceProvider::class] as $provider) {
             $this->app->register($provider);
         }
     }

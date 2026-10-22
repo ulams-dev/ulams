@@ -33,6 +33,12 @@ learnerRoutes:
   - /zh/course-generation/notion-page
   - /pl/faq
   - /zh/faq
+  - /content-cost
+  - /pl/content-cost
+  - /zh/content-cost
+  - /reporting
+  - /pl/reporting
+  - /zh/reporting
   - /robots.txt
   - /sitemap.xml
   - /site.webmanifest
@@ -67,6 +73,7 @@ What learners see is described in [Learners](/learners/); this page covers the c
     - index.astro landing (tenant document) or platform landing
     - comparison.astro and pl/comparison.astro, zh/comparison.astro
     - faq.astro and pl/faq.astro, zh/faq.astro
+    - content-cost.astro and reporting.astro, also under pl/ and zh/
     - course-generation/ (index, microdosing-study, stablecoin-report, docs-repo, notion-page), also under pl/ and zh/
     - blog/ and pl/blog/ the blog: index and one page per post
     - sitemap.xml.ts and robots.txt.ts (platform-host only)
@@ -133,6 +140,8 @@ FAQ page, linked from the footer, at `/faq/`, `/pl/faq/` and `/zh/faq/`. Its que
 ids in every language. All page families use server rendered catalogue documents and the existing sourced comparison data. Public
 product claims keep their actual roadmap status, including when a local preview setting hides those
 labels elsewhere.
+
+The content-cost and reporting pages (`/content-cost/`, `/reporting/`, with `/pl/` and `/zh/` variants) are the two pages the overview's call-to-action bands link to. Their copy lives in `src/lib/impact-pages.ts`, one object per language; shipped features are plain and anything planned carries the `coming` status, and the pages claim no ULAMS savings. The home bands carry the `cost_page_open` and `reporting_page_open` Umami events.
 
 The course-generation pages (`/course-generation/`, `/pl/course-generation/`, `/zh/course-generation/`) show four real courses built from a source (two PDFs, one Git repository and one Notion page), one page per case study (`microdosing-study`, `stablecoin-report`, `docs-repo`, `notion-page`) with a frame slider of the Course Builder steps.
 

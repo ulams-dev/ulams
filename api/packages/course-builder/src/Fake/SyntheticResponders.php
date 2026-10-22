@@ -26,6 +26,8 @@ final class SyntheticResponders
         $responders->register('metadata', fn (DriverRequest $r) => self::metadata($r));
         $responders->register('price', fn (DriverRequest $r) => self::price($r));
         $responders->register('patch', fn (DriverRequest $r) => self::patch($r));
+        $responders->register('variant_outline', fn (DriverRequest $r) => self::variantOutline($r));
+        $responders->register('variant_lesson', fn (DriverRequest $r) => self::variantLesson($r));
     }
 
     /** @return array<string,array{id:string,section:string,text:string}> */
@@ -207,6 +209,64 @@ final class SyntheticResponders
         }
 
         return ['blocks' => $blocks];
+    }
+
+    /**
+     * A plan for the audience: an expert skips the first lesson (when there are more than two) and condenses the second,
+     * a beginner gets the first lesson deepened, and the last lesson is deepened for every audience whose notes ask for
+     * "extra"; those notes also add one lesson at the end. Everything else is kept.
+     */
+    private static function variantOutline(DriverRequest $r): array
+    {
+        $input = self::input($r);
+        $lessons = (array) ($input['baseLessons'] ?? []);
+        $audience = (array) ($input['audience'] ?? []);
+        $level = $audience['level'] ?? null;
+        $notes = (string) ($audience['notes'] ?? '');
+        $ids = [];
+        foreach ($r->blocks as $block) {
+            preg_match_all('/^(frg_[a-z2-7]{12}) \| /m', $block->text, $m);
+            array_push($ids, ...$m[1]);
+        }
+        $entries = [];
+        foreach ($lessons as $i => $lesson) {
+            $action = 'keep';
+            $reason = 'The lesson fits this audience as it is.';
+            if ($level === 'expert' && $i === 0 && count($lessons) > 2) {
+                [$action, $reason] = ['skip', 'An expert already knows these basics.'];
+            } elseif ($level === 'expert' && $i === 1) {
+                [$action, $reason] = ['condense', 'An expert needs this shorter.'];
+            } elseif ($level === 'beginner' && $i === 0) {
+                [$action, $reason] = ['deepen', 'A beginner needs more practice with the basics.'];
+            } elseif (str_contains($notes, 'extra') && $i === count($lessons) - 1) {
+                [$action, $reason] = ['deepen', 'This audience asked for more depth here.'];
+            }
+            $entries[] = ['lessonId' => $lesson['id'], 'action' => $action, 'reason' => $reason, 'citations' => $action === 'deepen' ? array_slice(array_values(array_unique([...($lesson['citations'] ?? []), ...$ids])), 0, 2) : []];
+        }
+        $added = [];
+        if (str_contains($notes, 'extra') && $ids !== []) {
+            $added[] = ['afterLessonId' => '', 'title' => 'Going further', 'summary' => 'Material this audience asked for.', 'minutes' => 5,
+                'objectives' => [['text' => 'Apply the material to a case from your own work', 'citations' => [$ids[0]]]], 'citations' => [$ids[0]], 'reason' => 'The audience brief asks for it.'];
+        }
+
+        return ['message' => sprintf('For %s I kept most lessons and changed %d.', $audience['label'] ?? 'this audience', count(array_filter($entries, fn ($e) => $e['action'] !== 'keep'))), 'lessons' => $entries, 'added' => $added];
+    }
+
+    /** The lesson, shorter for `condense` and with a worked example for `deepen`. */
+    private static function variantLesson(DriverRequest $r): array
+    {
+        $result = self::lesson($r);
+        $mode = (string) (self::input($r)['variant']['mode'] ?? 'add');
+        $all = self::fragments($r);
+        if ($mode === 'condense') {
+            $result['blocks'] = array_map(fn ($b) => ['markdown' => (self::sentences($b['markdown'])[0] ?? $b['markdown'])] + $b, array_slice($result['blocks'], 0, 2));
+        } elseif ($mode === 'deepen') {
+            $id = $result['blocks'][0]['citations'][0];
+            $result['blocks'][] = ['kind' => 'example', 'markdown' => '**Worked example:** ' . (self::sentences($all[$id]['text'])[1] ?? self::sentences($all[$id]['text'])[0] ?? mb_substr($all[$id]['text'], 0, 200)),
+                'citations' => [$id], 'objectiveIds' => [$result['blocks'][0]['objectiveIds'][0]]];
+        }
+
+        return $result;
     }
 
     private static function quiz(DriverRequest $r): array

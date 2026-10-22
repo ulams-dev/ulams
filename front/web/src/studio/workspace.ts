@@ -56,7 +56,7 @@ export function mountWorkspace(root: HTMLElement): void {
   const timeline = new Timeline({
     container: chat,
     dispatch,
-    kinds: ["patch", "apply", "variants"],
+    kinds: ["patch", "apply", "variants", "variant_outline", "variant_progress", "variant"],
     startAfterKind: "apply",
     onCitation,
     onState: (state) => void onState(state),

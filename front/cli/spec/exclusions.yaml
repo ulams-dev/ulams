@@ -12,6 +12,9 @@ browser-only:
   # single sign-on (identity package): the browser is sent to the provider and back, and the front end's server redeems the code
   - "GET /api/identity/sso/*"
   - "GET /api/identity/oidc/*"
+  # SAML 2.0 service provider: metadata for the IdP, the browser POST of the IdP to the ACS, single logout, and the logout call of the front end
+  - "GET /api/identity/saml/*"
+  - "POST /api/identity/saml/*"
   - "POST /api/identity/sso/exchange"
   - "GET /api/auth/email/verify/*"
   - "GET /api/consultations/approve-term/*"

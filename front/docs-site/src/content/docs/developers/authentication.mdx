@@ -26,6 +26,7 @@ token issued by one tenant is rejected by every other.
 | `POST /api/auth/register`, `/api/auth/password/forgot`, `/api/auth/password/reset`, `/api/auth/email/verify/{id}/{hash}` | Registration, password reset, e-mail verification |
 | `GET /api/auth/social/{provider}`, `/callback` and `POST /api/auth/social/exchange` | Google and Facebook login: signed state, one-time code instead of a token in the URL, then `POST /api/auth/social/complete/{token}` if the provider gave no e-mail (see [Social login](#social-login)) |
 | `GET /api/identity/sso/{slug}/start`, `/api/identity/oidc/{slug}/callback` and `POST /api/identity/sso/exchange` | Sign-in through the tenant's own OpenID Connect providers, same hand-off as social login (see [Single sign-on](#single-sign-on)) |
+| `GET /api/identity/saml/{slug}/metadata`, `POST /api/identity/saml/{slug}/acs`, `GET\|POST /api/identity/saml/{slug}/slo`, `POST /api/identity/saml/{slug}/logout` (authenticated) | SAML 2.0 service provider: metadata, assertion consumer service, single logout (see [Single sign-on](#single-sign-on)) |
 | `POST /api/admin/auth/impersonate` | An admin gets a token for another user |
 | `GET /api/profile/me` | The current user with roles and permissions |
 
@@ -111,20 +112,24 @@ no-referrer`.
 
 ## Single sign-on
 
-OpenID Connect sign-in through the providers an admin configured for the tenant ([operator guide](/operators/single-sign-on/))
+OpenID Connect and SAML 2.0 sign-in through the providers an admin configured for the tenant ([OpenID Connect guide](/operators/single-sign-on/), [SAML guide](/operators/single-sign-on-saml/))
 uses the same state and one-time code primitives as social login (`LoginHandoffService`, ADR 0121), so the front end
 code is the same: a verifier in an httpOnly cookie, its S256 challenge to the API, and the code redeemed on the server.
 
 1. `GET /api/identity/providers` lists the enabled providers (`slug`, `name`, `protocol`, nothing else), for the buttons.
-2. `GET /api/identity/sso/{slug}/start?challenge=…&return_to=…` redirects to the provider (authorization code, PKCE S256,
-   `state`, `nonce`). `return_to` must be an origin of the tenant's own apps, as for social login; `404` for an unknown or
+2. `GET /api/identity/sso/{slug}/start?challenge=…&return_to=…` redirects to the provider (OpenID Connect: authorization code, PKCE S256,
+   `state`, `nonce`; SAML: a signed AuthnRequest with the signed login state as `RelayState`). `return_to` must be an origin of the tenant's own apps, as for social login; `404` for an unknown or
    disabled provider, `422` for a bad return URL or challenge, `502` when the provider cannot be reached.
-3. The provider calls `GET /api/identity/oidc/{slug}/callback`. An invalid, expired, replayed or foreign state is a `400`
+3. The provider calls `GET /api/identity/oidc/{slug}/callback` (OpenID Connect) or posts to `POST /api/identity/saml/{slug}/acs` (SAML). An invalid, expired, replayed or foreign state is a `400`
    with no redirect. Otherwise the browser is sent to `return_to` with `?code=…&complete=true` or `?error=<reason>`,
-   where reason is one of `provider_denied`, `provider_failed`, `link_required`, `signup_disabled`, `email_required`,
+   where reason is one of `provider_denied` (OpenID Connect), `provider_failed`, `link_required`, `signup_disabled`, `email_required`,
    `email_unverified`, `account_unavailable`.
 4. `POST /api/identity/sso/exchange` `{code, verifier}` returns `{token, expires_at}`; the code works once, for 60
    seconds, on the host that issued it.
+
+SAML adds `POST /api/identity/saml/{slug}/logout` (with the token, optional `return_to`): it revokes the token and returns
+`redirect_url`, the signed LogoutRequest to send the browser to, or `null` when the login did not come from that provider or the IdP has
+no single logout. The IdP's answer returns to `GET /api/identity/saml/{slug}/slo`, which redirects to `return_to`.
 
 **Reference frontend.** `/auth/sso/{slug}` starts a login (only for providers the tenant lists), `/auth/sso/callback`
 redeems the code on the server and sets the session cookie. Both answer with `Cache-Control: no-store` and

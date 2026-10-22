@@ -2,6 +2,7 @@
 
 namespace Ulams\CourseBuilder\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $applied_version_id
  * @property \Illuminate\Support\Carbon|null $retired_at set when the entity was deactivated instead of deleted
  * @property string|null $added_by_proposal_id the update proposal that created the entity
+ * @property string $variant_id '' for the base branch, else the id of the variant the entity belongs to (ADR 0192)
  */
 class EntityMapEntry extends Model
 {
@@ -26,4 +28,19 @@ class EntityMapEntry extends Model
     protected $guarded = [];
 
     protected $casts = ['entity_id' => 'integer', 'retired_at' => 'datetime'];
+
+    /**
+     * Every existing reader (Living Course, Tutor, Learner Insights, course-as-code) means the base branch, so a
+     * global scope keeps them on it; the branch-aware code reads a branch with {@see self::branch()}.
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope('base', fn (Builder $query) => $query->where($query->getModel()->getTable() . '.variant_id', ''));
+    }
+
+    /** The entries of one branch of a session: the base (no variant) or a variant. */
+    public static function branch(string $sessionId, ?string $variantId = null): Builder
+    {
+        return static::withoutGlobalScope('base')->where('session_id', $sessionId)->where('variant_id', $variantId ?? '');
+    }
 }

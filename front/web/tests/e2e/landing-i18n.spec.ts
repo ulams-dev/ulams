@@ -183,6 +183,8 @@ test("platform robots and sitemap list only the localized public page URLs", asy
     `${base}/course-generation/stablecoin-report/`, `${base}/pl/course-generation/stablecoin-report/`, `${base}/zh/course-generation/stablecoin-report/`,
     `${base}/course-generation/docs-repo/`, `${base}/pl/course-generation/docs-repo/`, `${base}/zh/course-generation/docs-repo/`,
     `${base}/course-generation/notion-page/`, `${base}/pl/course-generation/notion-page/`, `${base}/zh/course-generation/notion-page/`,
+    `${base}/content-cost/`, `${base}/pl/content-cost/`, `${base}/zh/content-cost/`,
+    `${base}/reporting/`, `${base}/pl/reporting/`, `${base}/zh/reporting/`,
   ]);
   expect(xml.match(/hreflang="x-default"/g)).toHaveLength(24);
 });
@@ -201,6 +203,30 @@ test("the FAQ page lists every question once, in every language, with one FAQPag
   await page.emulateMedia({ reducedMotion: "reduce" });
   const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
   expect(axe.violations.map((v) => v.id)).toEqual([]);
+});
+
+test("the content-cost and reporting pages and their home call-to-action bands", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  for (const [prefix, lang] of [["", "en"], ["/pl", "pl"], ["/zh", "zh-Hans"]] as const) {
+    await page.goto(`${base}${prefix}/`);
+    for (const [id, slug, event] of [["cost-cta", "content-cost", "cost_page_open"], ["reporting-cta", "reporting", "reporting_page_open"]] as const) {
+      const band = page.locator(`section#${id}`);
+      await expect(band.locator("h2")).toHaveCount(1);
+      const link = band.locator("a.u-btn").first();
+      await expect(link).toHaveAttribute("href", `${prefix}/${slug}/`);
+      await expect(link).toHaveAttribute("data-umami-event", event);
+      await link.click();
+      await expect(page).toHaveURL(`${base}${prefix}/${slug}/`);
+      await expect(page.locator("html")).toHaveAttribute("lang", lang);
+      await expect(page.locator("h1")).toHaveCount(1);
+      await expect(page.locator("#today .u-feature, #today li").first()).toBeVisible();
+      await expect(page.locator("#coming")).toBeVisible();
+      if (slug === "content-cost") await expect(page.locator(`a[href="https://elearningindustry.com/development-costs-for-your-online-learning-start-estimating"]`)).toHaveCount(1);
+      const axe = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
+      expect(axe.violations.map((v) => v.id), `${prefix}/${slug}/`).toEqual([]);
+      await page.goto(`${base}${prefix}/`);
+    }
+  }
 });
 
 test("zh uses the system CJK font stack and no synthetic italics; English keeps its fonts", async ({ page }) => {

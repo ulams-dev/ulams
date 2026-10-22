@@ -3,13 +3,15 @@ import { tenantFetch } from "./api-transport.ts";
 import { exchangeCode, type Exchange } from "./social-login.ts";
 
 /**
- * Single sign-on through the identity providers a tenant configured (OpenID Connect, ADR 0120/0121).
+ * Single sign-on through the identity providers a tenant configured (OpenID Connect and SAML 2.0, ADR 0120/0121).
  * The browser flow is the one of the social login (lib/login-flow.ts): verifier cookie, challenge to the
  * API, one-time code back. What differs is where the buttons come from (the tenant's own list of
- * enabled providers) and which API endpoints are called.
+ * enabled providers) and which API endpoints are called. The protocol does not matter here: the API's
+ * start endpoint redirects to the provider whichever protocol it speaks.
  */
 export const SSO_CALLBACK_PATH = "/auth/sso/callback";
 const SLUG = /^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$/;
+const PROTOCOLS = new Set(["oidc", "saml"]);
 
 export interface SsoProvider {
   slug: string;
@@ -33,7 +35,7 @@ export async function listProviders(tenant: Pick<Tenant, "apiUrl">, fetcher: typ
     if (!Array.isArray(body.data)) return [];
     const providers: SsoProvider[] = [];
     for (const row of body.data as Array<Record<string, unknown>>) {
-      if (row && row.protocol === "oidc" && typeof row.slug === "string" && isSsoSlug(row.slug) && typeof row.name === "string" && row.name.trim() !== "") {
+      if (row && typeof row.protocol === "string" && PROTOCOLS.has(row.protocol) && typeof row.slug === "string" && isSsoSlug(row.slug) && typeof row.name === "string" && row.name.trim() !== "") {
         providers.push({ slug: row.slug, name: row.name.trim().slice(0, 120) });
       }
       if (providers.length >= 10) break;

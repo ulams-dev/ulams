@@ -9,6 +9,7 @@ use Ulams\CourseBuilder\Models\Fragment;
 use Ulams\CourseBuilder\Models\Run;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Source;
+use Ulams\CourseBuilder\Models\Variant;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Pipeline\Llm;
 
@@ -94,8 +95,10 @@ final class Surfaces
         $this->emit($session, $run, 'interview', 'interview', $components);
     }
 
+    /** A variant's outline is the same card against the base outline, with its own kind so the studio shows only those after the apply. */
     public function outline(Session $session, ?Run $run, Version $version, ?array $previous = null, string $status = 'proposed', ?string $comment = null): void
     {
+        $kind = $version->variant_id !== null ? 'variant_outline' : 'outline';
         $doc = $version->document;
         $fragments = self::labels($doc);
         $changes = $previous !== null ? BlueprintDiff::compare($previous, $doc) : [];
@@ -166,7 +169,7 @@ final class Surfaces
             'comment' => $comment,
         ], fn ($v) => $v !== null);
 
-        $this->emit($session, $run, "outline-{$version->id}", 'outline', [['id' => 'root', 'component' => 'OutlineDiff'] + $props], ['versionId' => $version->id]);
+        $this->emit($session, $run, "outline-{$version->id}", $kind, [['id' => 'root', 'component' => 'OutlineDiff'] + $props], ['versionId' => $version->id]);
         if ($status !== 'proposed') {
             $this->close($session, "outline-{$version->id}");
         }
@@ -175,7 +178,7 @@ final class Surfaces
     /** @param array<string,mixed> $props GenerationProgress props */
     public function progress(Session $session, Run $run, array $props): void
     {
-        $this->emit($session, $run, "progress-{$run->id}", 'progress', [['id' => 'root', 'component' => 'GenerationProgress'] + $props], ['runId' => $run->id]);
+        $this->emit($session, $run, "progress-{$run->id}", isset($run->input['variantId']) ? 'variant_progress' : 'progress', [['id' => 'root', 'component' => 'GenerationProgress'] + $props], ['runId' => $run->id]);
     }
 
     /** @param array<string,mixed> $plan ApplySummary props without versionId/status */
@@ -190,6 +193,62 @@ final class Surfaces
         $this->emit($session, $run, "apply-{$version->id}", 'apply', [['id' => 'root', 'component' => 'ApplySummary'] + $props], ['versionId' => $version->id]);
         if ($status !== 'proposed') {
             $this->close($session, "apply-{$version->id}");
+        }
+    }
+
+    /**
+     * A variant of the course for review (ADR 0192): what differs from the base course, by id with the existing builder
+     * diff, as counts of lessons kept, changed, added and removed and the changed text, with the cost of the variant.
+     */
+    public function variantReview(Session $session, ?Run $run, Variant $variant, Version $version, ?Version $base, string $status = 'proposed'): void
+    {
+        $changes = $base !== null ? BlueprintDiff::compare($base->document, $version->document) : [];
+        $lessonsNow = array_column(array_map(fn ($i) => $i['lesson'], iterator_to_array(Blueprint::lessons($version->document), false)), 'id');
+        $lessonsBase = $base !== null ? array_column(array_map(fn ($i) => $i['lesson'], iterator_to_array(Blueprint::lessons($base->document), false)), 'id') : [];
+        $added = array_values(array_diff($lessonsNow, $lessonsBase));
+        $removed = array_values(array_diff($lessonsBase, $lessonsNow));
+        $changed = [];
+        foreach ($changes as $c) {
+            foreach (array_filter([...$c['ancestors'], $c['type'] === 'lesson' ? $c['id'] : null]) as $id) {
+                if (in_array($id, $lessonsNow, true) && in_array($id, $lessonsBase, true)) {
+                    $changed[$id] = true;
+                }
+            }
+        }
+        $rows = [];
+        foreach ($changes as $c) {
+            foreach ($c['fields'] as $f) {
+                if (!is_scalar($f['before'] ?? '') || !is_scalar($f['after'] ?? '')) {
+                    continue;
+                }
+                $rows[] = array_filter([
+                    'path' => $c['id'] . '.' . $f['field'],
+                    'label' => $c['label'] . ' · ' . $f['label'],
+                    'kind' => $c['kind'],
+                    'before' => $f['before'] !== null ? mb_substr(self::scalar($f['before']), 0, 20000) : null,
+                    'after' => $f['after'] !== null ? mb_substr(self::scalar($f['after']), 0, 20000) : null,
+                ], fn ($v) => $v !== null);
+            }
+        }
+        $cost = (int) \Ulams\Ai\Models\AiCall::query()->forSubject(Variant::SUBJECT_TYPE, $variant->id)->sum('cost_micro_usd');
+        $fragments = self::labels($version->document);
+        $props = array_filter([
+            'versionId' => $version->id,
+            'variantKey' => $variant->key,
+            'label' => $variant->label,
+            'level' => $variant->level,
+            'role' => $variant->role,
+            'status' => $status,
+            'baseNumber' => $base?->number,
+            'summary' => ['lessons' => count($lessonsNow), 'kept' => count($lessonsNow) - count($added) - count($changed), 'changed' => count($changed), 'added' => count($added), 'removed' => count($removed), 'citations' => count($fragments)],
+            'changes' => array_slice($rows, 0, 150),
+            'truncated' => count($rows) > 150 ? count($rows) - 150 : null,
+            'costMicroUsd' => $cost,
+            'courseId' => $variant->course_id,
+        ], fn ($v) => $v !== null);
+        $this->emit($session, $run, "variant-{$version->id}", 'variant', [['id' => 'root', 'component' => 'VariantReview'] + $props], ['versionId' => $version->id, 'variantId' => $variant->id]);
+        if ($status !== 'proposed') {
+            $this->close($session, "variant-{$version->id}");
         }
     }
 

@@ -1,5 +1,6 @@
 ---
 import Prose from "./Prose.astro";
+import { imageSrc } from "../lib/images.ts";
 import { fill, pageLocale, uiStrings } from "../lib/i18n.ts";
 
 interface Props {
@@ -61,7 +62,7 @@ const dateLabel = new Intl.DateTimeFormat(tag, { day: "numeric", month: "long", 
           {imagesIntro && <p>{imagesIntro}</p>}
           {images.map((image) => (
             <figure class:list={["u-blogp__figure", { "u-blogp__figure--portrait": image.height > image.width }]}>
-              <img src={image.src} alt={image.alt} width={image.width} height={image.height} loading="lazy" decoding="async" />
+              <img src={imageSrc(image.src, "content", image.width, image.width)} alt={image.alt} width={image.width} height={image.height} loading="lazy" decoding="async" />
               {image.caption && <figcaption>{image.caption}</figcaption>}
             </figure>
           ))}

@@ -1,9 +1,12 @@
 ---
 /**
- * Image through Astro's image service: WebP, responsive widths, explicit size (no CLS).
+ * Image on the shared URL builder (ADR 0193): Astro's image service (WebP, sharp), Cloudflare Image Transformations or
+ * the original file, chosen per deployment. Responsive widths, explicit size (no CLS).
  * Works for public files ("/landing/…") and the tenant storage (remote, allow-listed).
  */
 import { Image } from "astro:assets";
+import { IMAGE_PRESETS } from "@ulams/sdk/images";
+import { imageConfig, imageSrcSet, imageUrl, type PresetName } from "../lib/images.ts";
 
 interface Props {
   src: string;
@@ -17,25 +20,49 @@ interface Props {
   class?: string;
   /** Crop to this aspect (width/height) using object-fit in CSS. */
   fit?: "cover" | "contain";
+  /** Widths and quality of the shared image presets (`@ulams/sdk/images`). */
+  preset?: PresetName;
 }
 
-const { src, alt, width, height, sizes = "100vw", priority = false, class: className, fit = "cover" } = Astro.props;
-const widths = [360, 640, 960, 1280, 1600].filter((w) => w <= width * 1.01);
+const { src, alt, width, height, sizes = "100vw", priority = false, class: className, fit = "cover", preset = "content" } = Astro.props;
+// The mode is a runtime setting (ULAMS_IMAGE_SERVICE): `astro` uses Astro's /_image (sharp), `cloudflare` the
+// edge's /cdn-cgi/image URLs relative to the page's own host, `noop` the original file. With `noop` (or a source
+// that must not be transformed) a srcset would repeat one URL, so a plain src is sent.
+const config = imageConfig();
+const edge = config.service !== "astro";
+const edgeSrc = edge ? imageUrl(src, width, preset, config, width) : "";
+const edgeSrcset = edge ? imageSrcSet(src, preset, config, width) : undefined;
+const presetConfig = IMAGE_PRESETS[preset];
+const widths = presetConfig.widths.filter((w) => w <= width * 1.01);
 if (widths.length === 0 || widths[widths.length - 1]! < width) widths.push(width);
+const responsive = { widths, sizes, format: "webp" as const, quality: presetConfig.quality };
 ---
 
+{edge ? (
+  <img
+    src={edgeSrc}
+    srcset={edgeSrcset}
+    sizes={edgeSrcset ? sizes : undefined}
+    alt={alt}
+    width={width}
+    height={height}
+    loading={priority ? "eager" : "lazy"}
+    fetchpriority={priority ? "high" : "auto"}
+    decoding={priority ? "sync" : "async"}
+    class={className}
+    style={`object-fit:${fit}`}
+  />
+) : (
 <Image
   src={src}
   alt={alt}
   width={width}
   height={height}
-  widths={widths}
-  sizes={sizes}
-  format="webp"
-  quality={78}
+  {...responsive}
   loading={priority ? "eager" : "lazy"}
   fetchpriority={priority ? "high" : "auto"}
   decoding={priority ? "sync" : "async"}
   class={className}
   style={`object-fit:${fit}`}
 />
+)}
