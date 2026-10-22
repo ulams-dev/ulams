@@ -447,7 +447,9 @@ jobs:
         working-directory: api
         run: |
           cp docker/envs/.env.ci.postgres .env
-          composer install --no-interaction --no-progress --prefer-dist
+          # No scripts: post-autoload-dump runs package:discover, which boots Laravel and reads the
+          # database (translations), and PostgreSQL 12 only starts in the next step.
+          composer install --no-interaction --no-progress --prefer-dist --no-scripts
 
       - name: Start PostgreSQL 12 on a data directory
         run: |
@@ -578,24 +580,38 @@ jobs:
           tools: composer:v2
 
       - name: Install Composer dependencies
-        run: composer install --no-interaction --no-progress --prefer-dist
+        # No scripts: package:discover boots Laravel against a database that only exists once the
+        # stack below is up; the container discovers the packages itself when it starts. The
+        # post-root-package-install script is what created .env, which the tenant provisioning tests
+        # (artisan child processes with an empty environment) read: create it here.
+        run: |
+          [ -f .env ] || cp .env.example .env
+          composer install --no-interaction --no-progress --prefer-dist --no-scripts
 
       - name: Start the stack
-        run: docker compose up -d --build api caddy postgres redis minio
+        run: |
+          # minio runs as a non-root user: a bind-mounted data directory that docker creates (root,
+          # 755) makes it exit at once, and the tenant provisioning then cannot resolve "minio"
+          mkdir -p docker/minio_storage
+          chmod 777 docker/minio_storage
+          docker compose up -d --build api caddy postgres redis minio
+          sleep 10
+          docker compose ps --status running --services | grep -qx minio || { docker compose logs minio; exit 1; }
 
       - name: Wait for the API to finish its start-up (migrations, keys, permissions)
         run: docker compose exec -T api ./wait.sh
 
       - name: Tenant isolation over HTTP
         run: |
+          # only the HTTP test: the other tests of the directory need the CI database on 127.0.0.1
           docker compose exec -T -e TENANCY_INTEGRATION=1 api \
-            vendor/bin/phpunit packages/tenancy/tests/Integration
+            vendor/bin/phpunit packages/tenancy/tests/Integration/TenantIsolationTest.php
 
       - name: Logs
         if: failure()
         run: |
           docker compose ps
-          docker compose logs --tail 200 api caddy
+          docker compose logs --tail 200 api caddy minio
 
       - name: Tear down
         if: always()

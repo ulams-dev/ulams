@@ -212,7 +212,7 @@ class TenantIsolationTest extends TestCase
         $course = $this->request(self::A, 'POST', '/api/admin/courses', $tokenA, ['title' => 'Layout isolation course', 'status' => 'published']);
         $this->assertContains($course->getStatusCode(), [200, 201], (string) $course->getBody());
         $courseId = json_decode((string) $course->getBody(), true)['data']['id'];
-        $lesson = $this->request(self::A, 'POST', '/api/admin/lessons', $tokenA, ['title' => 'Layout isolation lesson', 'course_id' => $courseId, 'active' => true]);
+        $lesson = $this->request(self::A, 'POST', '/api/admin/lessons', $tokenA, ['title' => 'Layout isolation lesson', 'course_id' => $courseId, 'active' => true, 'order' => 1]);
         $this->assertContains($lesson->getStatusCode(), [200, 201], (string) $lesson->getBody());
         $lessonId = json_decode((string) $lesson->getBody(), true)['data']['id'];
 
