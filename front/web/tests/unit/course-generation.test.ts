@@ -70,3 +70,19 @@ describe("course generation pages", () => {
     }
   });
 });
+
+describe("case study media", () => {
+  it("references only files that exist under public/ (posters, frames, videos)", async () => {
+    const { existsSync } = await import("node:fs");
+    const { fileURLToPath } = await import("node:url");
+    const publicDir = fileURLToPath(new URL("../../public", import.meta.url));
+    const pageNames = { "microdosing-study": "case-microdosing", "stablecoin-report": "case-stablecoins", "docs-repo": "case-docs-repo", "notion-page": "case-notion" } as const;
+    for (const caseId of CASE_IDS) {
+      const path = publicPagePath("en", pageNames[caseId]);
+      const page = caseStudyPage("en", caseId, requestFor(path), new URL(`https://ulams.app${path}`));
+      const refs = new Set(JSON.stringify(page!.doc).match(/\/course-generation\/[\w./-]+\.(?:png|jpe?g|webp|mp4|webm)/g) ?? []);
+      expect(refs.size).toBeGreaterThan(0);
+      for (const ref of refs) expect(existsSync(`${publicDir}${ref}`), `${caseId}: ${ref}`).toBe(true);
+    }
+  });
+});

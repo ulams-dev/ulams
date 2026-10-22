@@ -159,7 +159,9 @@ export function generationPage(locale: Locale, request: Request, url: URL) {
 export function caseStudyPage(locale: Locale, caseId: CaseId, request: Request, url: URL) {
   const copy = generationCopy(locale).cases[caseId];
   const next = CASE_IDS[(CASE_IDS.indexOf(caseId) + 1) % CASE_IDS.length]!;
-  const poster = `/course-generation/${SHOTS[caseId].folder}/02-studio.png`;
+  // The second frame shows the studio in every case study (the file name differs per case).
+  const shots = SHOTS[caseId];
+  const poster = `/course-generation/${shots.folder}/${(shots.frames[1] ?? shots.frames[0])!.file}`;
   const videos = CASE_VIDEOS[caseId];
   const course = COURSE_LINKS[caseId];
   const source = SOURCE_LINKS[caseId];
