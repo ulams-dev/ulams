@@ -233,7 +233,8 @@ jobs:
     needs: changes
     if: needs.changes.outputs.js == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # about 6 min of install on a cache miss plus 9-10 min of specs
+    timeout-minutes: 25
     env:
       HUSKY: "0"
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
@@ -343,7 +344,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.demo == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       HUSKY: "0"
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
