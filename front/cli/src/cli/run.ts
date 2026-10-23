@@ -184,6 +184,8 @@ export async function main(deps: Deps): Promise<number> {
       userAgent: `ulams-cli/${VERSION} (${process.platform}; node ${process.versions.node})`,
       client: "cli",
       agent: env.ULAMS_AGENT,
+      commit: headerValue(env.ULAMS_COMMIT),
+      changeUrl: headerValue(env.ULAMS_CHANGE_URL),
       debug: flags.debug ? (line) => deps.stderr(`[debug] ${redactString(line, secrets)}`) : undefined,
     });
 
@@ -226,3 +228,9 @@ export async function main(deps: Deps): Promise<number> {
 }
 
 export { validateInput };
+
+/** A CI value for a request header: one printable line, at most 500 characters (what the server keeps). */
+function headerValue(value: string | undefined): string | undefined {
+  const v = value?.replace(/[^\x20-\x7e]/g, "").trim().slice(0, 500);
+  return v ? v : undefined;
+}

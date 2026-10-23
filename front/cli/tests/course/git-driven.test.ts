@@ -1,8 +1,10 @@
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync } from "node:fs";
+import * as fs from "node:fs";
+import { mkdtempSync, realpathSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
+import { parse as parseYaml } from "yaml";
 import { gitOrigin, repoFromRemote, splitRemote } from "../../src/course/repo.ts";
 import { runCli, type Handler } from "../helpers.ts";
 import { fakeCourseAsCode, remoteDocument, type FakeOptions } from "./fake-course-as-code.ts";
@@ -215,5 +217,75 @@ describe("course sources-connect", () => {
     const unbound = await cli(["course", "sources-connect", tmp(), "--json"], {});
     expect(unbound.code).not.toBe(0);
     expect(unbound.requests).toHaveLength(0);
+  });
+});
+
+describe("course init --ci github", () => {
+  const { existsSync, readFileSync, mkdirSync, writeFileSync } = fs;
+
+  it("writes the workflow at the repository root, pointing at the course folder", async () => {
+    const fake = fakeCourseAsCode();
+    const repo = tmp();
+    execFileSync("git", ["init", "-q", "-b", "main", repo]);
+    const dir = join(repo, "courses", "k8s");
+    const r = await cli(["course", "init", dir, "--from-course", "12", "--ci", "github", "--json"], fake.routes);
+    expect(r.code, r.stdout + r.stderr).toBe(0);
+    const file = join(realpathSync(repo), ".github/workflows/ulams.yml");
+    expect(r.data().workflow).toBe(file);
+    const text = readFileSync(file, "utf8");
+    const wf = parseYaml(text) as Out;
+    expect(Object.keys(wf.jobs)).toEqual(["validate", "push", "sync"]);
+    expect(wf.on.pull_request.paths).toEqual(["courses/k8s/**", ".github/workflows/ulams.yml"]);
+    expect(wf.on.push.branches).toEqual(["main"]);
+    expect(wf.on.repository_dispatch.types).toEqual(["ulams-course-changed"]);
+    expect(wf.jobs.sync.steps[1]).toMatchObject({ uses: "ulams-dev/ulams/actions/course@cli-v1", with: { command: "pull-pr", path: "courses/k8s" } });
+    expect(text).toContain("secrets.ULAMS_TOKEN");
+    expect(text).not.toContain("tok-secret");
+    // the push job never applies by itself
+    expect(JSON.stringify(wf.jobs.push)).not.toContain("apply");
+  });
+
+  it("uses the repository itself as the course folder when it is the root", async () => {
+    const fake = fakeCourseAsCode();
+    const repo = tmp();
+    execFileSync("git", ["init", "-q", "-b", "trunk", repo]);
+    writeFileSync(join(repo, "README.md"), "mine");
+    const r = await cli(["course", "init", repo, "--from-course", "12", "--ci", "github", "--json"], fake.routes);
+    expect(r.code, r.stdout + r.stderr).toBe(0);
+    const wf = parseYaml(readFileSync(join(repo, ".github/workflows/ulams.yml"), "utf8")) as Out;
+    expect(wf.jobs.sync.steps[1].with.path).toBe(".");
+    expect(wf.on.pull_request).toBeNull();
+  });
+
+  it("does not overwrite a workflow, and --dry-run writes nothing", async () => {
+    const fake = fakeCourseAsCode();
+    const repo = tmp();
+    execFileSync("git", ["init", "-q", "-b", "main", repo]);
+    const dry = await cli(["course", "init", join(repo, "c"), "--from-course", "12", "--ci", "github", "--dry-run", "--json"], fake.routes);
+    expect(dry.code, dry.stdout + dry.stderr).toBe(0);
+    expect(existsSync(join(repo, ".github"))).toBe(false);
+    expect(existsSync(join(repo, "c"))).toBe(false);
+
+    mkdirSync(join(repo, ".github/workflows"), { recursive: true });
+    writeFileSync(join(repo, ".github/workflows/ulams.yml"), "mine");
+    const r = await cli(["course", "init", join(repo, "c"), "--from-course", "12", "--ci", "github", "--json"], fake.routes);
+    expect(r.code).toBe(2);
+    expect(r.error().message).toContain("already exists");
+    expect(r.requests).toHaveLength(0);
+    expect(readFileSync(join(repo, ".github/workflows/ulams.yml"), "utf8")).toBe("mine");
+  });
+});
+
+describe("CI environment becomes audit headers", () => {
+  it("sends the commit and the change URL of a CI job with every request, trimmed to one printable line", async () => {
+    const fake = fakeCourseAsCode();
+    const r = await runCli(["course", "init", join(tmp(), "c"), "--from-course", "12", "--json"], { env: { ...env, ULAMS_COMMIT: "abc1234\n", ULAMS_CHANGE_URL: "https://github.com/acme/course/pull/7" + "x".repeat(600) }, routes: fake.routes });
+    cleanups.push(r.cleanup);
+    expect(r.code, r.stdout + r.stderr).toBe(0);
+    expect(r.requests[0]?.headers["x-ulams-commit"]).toBe("abc1234");
+    expect(r.requests[0]?.headers["x-ulams-change-url"]).toHaveLength(500);
+
+    const none = await cli(["course", "init", join(tmp(), "d"), "--from-course", "12", "--json"], fake.routes);
+    expect(none.requests[0]?.headers).not.toHaveProperty("x-ulams-commit");
   });
 });

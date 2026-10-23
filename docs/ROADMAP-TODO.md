@@ -1125,6 +1125,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       Note 2026-10-22 (CAC-3, #384): partial. Folder and server sync works in both directions without a merge: `pull` stops with `SYNC_CONFLICT` when both sides changed and `push` turns
       `BASE_OUTDATED` and `STALE_PROPOSAL` into the same error; the three-way merge, conflict files and `resolve` are CAC-4, and nothing watches a Git repository yet (CAC-6, CAC-7)
 - [ ] GitHub Action + Docker image; preview deployment per PR
+      Note 2026-10-22 (branch phase-7/git-action): partial. The course action `actions/course` (validate with SARIF, diff, preview comment, push, sync pull request `ulams/sync`, unit tested entrypoint),
+      the `ulams-cli` Dockerfile (about 290 MB, not published), `ulams course init --ci github`, CI headers `ULAMS_COMMIT`/`ULAMS_CHANGE_URL` and the outgoing webhook `course.version_applied`.
+      Open: preview academies per PR (tenant TTL, reaper, one-time token), publishing the image (M6-a)
 - [ ] Git merge triggers Living Course update proposal
       Note 2026-10-22 (#437): partial. A merged pull request is recorded on the revision (commit, subject, PR number and link) and shown on the update review; `living connections check --commit`
       for CI; `ulams course sources-connect` watches `sources/**` of the course repository; a push waits (`PROPOSAL_PENDING`) while an open proposal edits the same elements; the loop test

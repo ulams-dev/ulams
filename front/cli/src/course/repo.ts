@@ -53,3 +53,8 @@ export function gitOrigin(dir: string, git: GitRunner = run): { remote: string; 
   const current = git(["rev-parse", "--abbrev-ref", "HEAD"], dir);
   return { remote, branch: head || (current && current !== "HEAD" ? current : "main") };
 }
+
+/** The top level of the repository around `dir`, or null outside one. */
+export function gitTopLevel(dir: string, git: GitRunner = run): string | null {
+  return git(["rev-parse", "--show-toplevel"], dir) || null;
+}
