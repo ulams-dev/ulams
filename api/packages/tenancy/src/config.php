@@ -65,6 +65,9 @@ return [
         'AI_MODEL_DEFAULT_LABEL' => env('AI_MODEL_DEFAULT_LABEL'),
         'AI_MODEL_LIGHT_LABEL' => env('AI_MODEL_LIGHT_LABEL'),
         'AI_MODEL_PREMIUM_LABEL' => env('AI_MODEL_PREMIUM_LABEL'),
+        // the tenant's commerce channel is made once with these (the base currency cannot change afterwards), ADR 0131
+        'COMMERCE_CURRENCY' => env('COMMERCE_CURRENCY'),
+        'COMMERCE_LOCALE' => env('COMMERCE_LOCALE'),
     ],
 
     /*

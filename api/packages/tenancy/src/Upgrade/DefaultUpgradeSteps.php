@@ -17,6 +17,8 @@ class DefaultUpgradeSteps
         UpgradeSteps::command('migrate', 'migrate', ['--force' => true], once: false);
         // new permissions of the release (the seeder only adds what is missing)
         UpgradeSteps::command('permissions', 'db:seed', ['--class' => 'PermissionsSeeder', '--force' => true], once: false);
+        // the commerce channel of tenants made before commerce was switched on (ADR 0131); a no-op without a provider that has channels
+        UpgradeSteps::command('commerce_channel', 'ulams:tenant:commerce-channel', once: false, scope: UpgradeSteps::PLATFORM);
         // per-tenant LTI signing keys (ADR 0012); a no-op when the key set exists
         UpgradeSteps::command('lti_keys', 'ulams:lti:rotate-keys', ['--init' => true], once: false, requiresCommand: true);
         // SCORM and cmi5 packages uploaded to the local disk move to the bucket (L0-09)

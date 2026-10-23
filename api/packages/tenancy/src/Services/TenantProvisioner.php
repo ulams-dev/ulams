@@ -7,6 +7,7 @@ use Illuminate\Filesystem\Filesystem;
 use Throwable;
 use Ulams\Tenancy\Models\Tenant;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
+use Ulams\Tenancy\Services\Contracts\CommerceChannelProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
 use Ulams\Tenancy\Services\Contracts\StorageIdentityProvisionerContract;
@@ -30,6 +31,7 @@ class TenantProvisioner
         'passport_keys',
         'passport_client',
         'permissions',
+        'commerce_channel',
         'lti_keys',
         'demo',
     ];
@@ -45,8 +47,10 @@ class TenantProvisioner
         private Filesystem $files,
         private ?H5PServiceConfigExporter $h5pConfig = null,
         private ?StorageIdentityProvisionerContract $identities = null,
+        private ?CommerceChannelProvisionerContract $commerce = null,
     ) {
         $this->identities ??= new NullStorageIdentityProvisioner();
+        $this->commerce ??= new NullCommerceChannelProvisioner();
     }
 
     /**
@@ -64,6 +68,11 @@ class TenantProvisioner
 
         foreach (self::STEPS as $step) {
             if ($tenant->hasCompleted($step)) {
+                $report($step, 'skipped');
+                continue;
+            }
+            if ($step === 'commerce_channel' && !$this->commerce->enabled()) {
+                // not recorded: the first upgrade after commerce is switched on creates the channel (ulams:tenant:commerce-channel)
                 $report($step, 'skipped');
                 continue;
             }
@@ -114,6 +123,7 @@ class TenantProvisioner
     {
         $report ??= fn () => null;
 
+        $this->disableCommerceChannel($tenant);
         $report('database', 'running');
         $this->database->drop($tenant->db_name, $tenant->db_user);
         $report('bucket', 'running');
@@ -142,6 +152,7 @@ class TenantProvisioner
                 '--name=' . $tenant->name . ' Personal Access Client',
             ]),
             'permissions' => $this->runner->run($host, ['db:seed', '--class=PermissionsSeeder', '--force']),
+            'commerce_channel' => $this->commerceChannelStep($tenant),
             // per-tenant LTI signing keys (ADR 0012), rotated monthly by the scheduler
             'lti_keys' => $this->runner->run($host, ['ulams:lti:rotate-keys', '--init']),
             'demo' => $this->runner->run($host, array_values(array_filter([
@@ -154,6 +165,61 @@ class TenantProvisioner
                 '--email-domain=' . TenantNaming::emailDomain($tenant),
             ]))),
         };
+    }
+
+    public function commerceEnabled(): bool
+    {
+        return $this->commerce->enabled();
+    }
+
+    /**
+     * Creates the tenant's commerce channel (or repairs it) and records it on the tenant row, then rewrites the env file
+     * so the tenant API knows its channel and webhook secret. The secret is made once and kept, so running this again
+     * never changes a working secret. Returns the channel code.
+     */
+    public function ensureCommerceChannel(Tenant $tenant): string
+    {
+        $channel = $this->commerceChannel($tenant);
+        $tenant->markCompleted('commerce_channel');
+        if ($tenant->hasCompleted('env')) {
+            $this->syncRuntime($tenant);
+        }
+
+        return $channel;
+    }
+
+    /** The provisioning step: the channel, then the env file again, which now carries its code and secret. */
+    private function commerceChannelStep(Tenant $tenant): void
+    {
+        $this->commerceChannel($tenant);
+        $this->domains->add($tenant->api_host, TenantNaming::envValues($tenant));
+    }
+
+    private function commerceChannel(Tenant $tenant): string
+    {
+        if (!$tenant->commerce_webhook_secret) {
+            $tenant->commerce_webhook_secret = 'whsec_' . bin2hex(random_bytes(32));
+            $tenant->save();
+        }
+        $url = TenantNaming::origin($tenant->api_host) . '/api/commerce/webhooks/sylius';
+        $channel = $this->commerce->ensure($tenant, $url, (string) $tenant->commerce_webhook_secret);
+        $tenant->commerce_channel = $channel;
+        $tenant->save();
+
+        return $channel;
+    }
+
+    /** Best effort: a provider that is down must not stop a tenant from being deleted; the channel can be disabled by hand. */
+    private function disableCommerceChannel(Tenant $tenant): void
+    {
+        if (!$tenant->commerce_channel || !$this->commerce->enabled()) {
+            return;
+        }
+        try {
+            $this->commerce->disable($tenant);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('tenancy: the commerce channel of a deleted tenant could not be disabled', ['tenant' => $tenant->slug, 'error' => $e->getMessage()]);
+        }
     }
 
     /**
