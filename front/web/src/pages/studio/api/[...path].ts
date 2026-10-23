@@ -1,12 +1,12 @@
 import { tenantFetch } from "../../../lib/api-transport.ts";
 import type { APIRoute } from "astro";
-import { clearAuthorCookie, courseVersionsTarget, insightsTarget, isCourseVersionsCall, isInsightsCall, isLivingCourseCall, isStudioCall, LIVING_COURSE_PREFIX } from "../../../lib/studio.ts";
+import { authoringMetricsTarget, clearAuthorCookie, courseVersionsTarget, isAuthoringMetricsCall, insightsTarget, isCourseVersionsCall, isInsightsCall, isLivingCourseCall, isStudioCall, LIVING_COURSE_PREFIX } from "../../../lib/studio.ts";
 
 /**
  * Studio BFF: the browser calls /studio/api/…; the server adds the author's token (httpOnly
  * cookie) and forwards to the tenant's /api/admin/course-builder/… (and /studio/api/living-course/…
  * to /api/admin/living-course/…, /studio/api/learner-insights/… to /api/admin/learner-insights/…, /studio/api/course-versions/… to
- * /api/admin/course-versions/…). JSON, multipart uploads and the
+ * /api/admin/course-versions/…, /studio/api/authoring-metrics/… to /api/admin/authoring-metrics/…). JSON, multipart uploads and the
  * AG-UI event stream (piped as it arrives) pass through. Cross-site writes are refused by the
  * middleware; paths outside the allow-list are 404.
  */
@@ -16,7 +16,8 @@ export const ALL: APIRoute = async ({ params, request, locals, cookies, url }) =
   const living = isLivingCourseCall(request.method, path);
   const insights = isInsightsCall(request.method, path);
   const versions = isCourseVersionsCall(request.method, path);
-  if (!tenant || !(living || insights || versions || isStudioCall(request.method, path))) return json(404, { message: "Not found" });
+  const metrics = isAuthoringMetricsCall(request.method, path);
+  if (!tenant || !(living || insights || versions || metrics || isStudioCall(request.method, path))) return json(404, { message: "Not found" });
   if (!locals.authorToken) return json(401, { message: "Sign in to use the Course Builder." });
 
   const isStream = path.endsWith("/events");
@@ -35,7 +36,7 @@ export const ALL: APIRoute = async ({ params, request, locals, cookies, url }) =
 
   let upstream: Response;
   try {
-    const target = living ? `/api/admin/living-course${path.slice(LIVING_COURSE_PREFIX.length)}` : insights ? insightsTarget(path) : versions ? courseVersionsTarget(path) : `/api/admin/course-builder${path}`;
+    const target = living ? `/api/admin/living-course${path.slice(LIVING_COURSE_PREFIX.length)}` : insights ? insightsTarget(path) : versions ? courseVersionsTarget(path) : metrics ? authoringMetricsTarget(path) : `/api/admin/course-builder${path}`;
     upstream = await tenantFetch(tenant)(`${tenant.apiUrl}${target}${url.search}`, {
       method: request.method,
       headers,

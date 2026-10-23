@@ -8,6 +8,7 @@ import settingDrawer from './en-US/settingDrawer';
 import settings from './en-US/settings';
 import theme from './en-US/theme';
 
+import authoringMetrics from './en-US/authoringMetrics';
 import consultations from './en-US/consultations';
 import courses from './en-US/courses';
 import events from './en-US/events';
@@ -165,6 +166,7 @@ export default {
   ...codeExercises,
   ...courses,
   ...insights,
+  ...authoringMetrics,
   ...events,
   branding: 'Branding',
   product_details: 'Product details',

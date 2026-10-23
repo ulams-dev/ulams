@@ -8,6 +8,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Ulams\AuthoringMetrics\Console\BackfillCommand;
 use Ulams\AuthoringMetrics\Console\RecomputeCommand;
+use Ulams\AuthoringMetrics\Console\RollupCommand;
+use Ulams\AuthoringMetrics\Http\Controllers\ActivityController;
+use Ulams\AuthoringMetrics\Services\ReviewTime;
+use Ulams\Settings\Facades\AdministrableConfig;
+use Ulams\Settings\UlamsSettingsServiceProvider;
 use Ulams\AuthoringMetrics\Http\Controllers\CourseMetricsController;
 use Ulams\AuthoringMetrics\Listeners\RecomputeCourseMetrics;
 use Ulams\AuthoringMetrics\Reporting\AuthoringDataset;
@@ -36,11 +41,20 @@ class UlamsAuthoringMetricsServiceProvider extends ServiceProvider
         StageTimingRecorder::class => StageTimingRecorder::class,
         SubjectResolvers::class => SubjectResolvers::class,
         CourseMetrics::class => CourseMetrics::class,
+        ReviewTime::class => ReviewTime::class,
     ];
 
     public function register(): void
     {
+        $this->mergeConfigFrom(__DIR__ . '/../config/authoring_metrics.php', 'authoring_metrics');
         $this->app->register(UlamsCourseBuilderServiceProvider::class);
+        if (class_exists(UlamsSettingsServiceProvider::class)) {
+            if (!$this->app->getProviders(UlamsSettingsServiceProvider::class)) {
+                $this->app->register(UlamsSettingsServiceProvider::class);
+            }
+            // off by default; the tenant admin switches it after reading what is stored (public: the studio asks too)
+            AdministrableConfig::registerConfig('authoring_metrics.review_time', ['boolean'], true, false);
+        }
         $this->app->register(UlamsReportingServiceProvider::class);
     }
 
@@ -65,15 +79,22 @@ class UlamsAuthoringMetricsServiceProvider extends ServiceProvider
 
         Route::group(['prefix' => 'api/admin/authoring-metrics', 'middleware' => ['auth:api'], 'where' => ['course' => '[0-9]+']], function () {
             Route::get('courses', [CourseMetricsController::class, 'index']);
+            Route::get('courses/export', [CourseMetricsController::class, 'export']);
             Route::get('courses/{course}', [CourseMetricsController::class, 'show']);
+            Route::get('activity/status', [ActivityController::class, 'status']);
+            Route::post('activity', [ActivityController::class, 'store']);
+            Route::delete('activity', [ActivityController::class, 'destroy']);
         });
 
         if ($this->app->runningInConsole()) {
-            $this->commands([BackfillCommand::class, RecomputeCommand::class]);
+            $this->commands([BackfillCommand::class, RecomputeCommand::class, RollupCommand::class]);
         }
 
         // courses worked on recently; the snapshot also follows each apply, publish and applied proposal
         $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command('authoring-metrics:recompute --active')->dailyAt('03:20')->withoutOverlapping());
+
+        // anonymous review minutes: daily totals, raw minutes deleted after 7 days
+        $this->callAfterResolving(Schedule::class, fn (Schedule $schedule) => $schedule->command('authoring-metrics:rollup')->dailyAt('03:10')->withoutOverlapping());
 
         // builds that ran before this release: timings from the events that still exist, whole-run time for older ones
         if (class_exists(UpgradeSteps::class)) {

@@ -29,6 +29,7 @@ class CourseMetricsApiTest extends TestCase
         $data = $this->actingAs($this->admin(), 'api')->getJson("/api/admin/authoring-metrics/courses/{$course}")->assertOk()->json('data');
 
         $this->assertSame($course, $data['course_id']);
+        $this->assertSame(\Ulams\Courses\Models\Course::query()->find($course)->title, $data['course_title']);
         $this->assertSame($session->id, $data['session_id']);
         $this->assertNull($data['time']['author_minutes']);
         $this->assertGreaterThan(0, $data['cost']['llm_calls']);
@@ -83,9 +84,56 @@ class CourseMetricsApiTest extends TestCase
         $this->assertNotNull(CourseMetric::query()->find($course));
     }
 
+    public function testTheExportIsOneRowPerCourseInCsvAndJsonLines(): void
+    {
+        [$author, , $course] = $this->applied();
+        $admin = $this->admin();
+        \Illuminate\Support\Facades\Auth::forgetGuards();
+
+        $csv = $this->actingAs($admin, 'api')->get('/api/admin/authoring-metrics/courses/export')->assertOk();
+        $this->assertStringStartsWith('text/csv', $csv->headers->get('Content-Type'));
+        $this->assertStringContainsString('authoring-metrics-', $csv->headers->get('Content-Disposition'));
+        $lines = array_values(array_filter(explode("\n", $csv->streamedContent())));
+        $header = str_getcsv($lines[0], ',', '"', '');
+        $this->assertCount(2, $lines, 'a header and one course');
+        $row = array_combine($header, str_getcsv($lines[1], ',', '"', ''));
+        $this->assertSame((string) $course, $row['course_id']);
+        $this->assertSame('1', $row['method_version']);
+        $this->assertSame('', $row['author_minutes'], 'not recorded is an empty cell, not a zero');
+        foreach (['generation_seconds', 'cost_build_micro_usd', 'ai_accepted_unchanged', 'ai_unknown', 'learner_minutes_estimate'] as $column) {
+            $this->assertContains($column, $header);
+        }
+
+        $jsonl = $this->actingAs($admin, 'api')->get('/api/admin/authoring-metrics/courses/export?format=jsonl')->assertOk();
+        $this->assertStringStartsWith('application/x-ndjson', $jsonl->headers->get('Content-Type'));
+        $decoded = json_decode(trim($jsonl->streamedContent()), true);
+        $this->assertSame($course, $decoded['course_id']);
+        $this->assertNull($decoded['author_minutes']);
+
+        $this->actingAs($admin, 'api')->getJson('/api/admin/authoring-metrics/courses/export?format=xml')->assertStatus(422);
+        $this->actingAs($admin, 'api')->get('/api/admin/authoring-metrics/courses/export?course_id[]=999999')->assertOk();
+        $this->actingAs($author, 'api')->get('/api/admin/authoring-metrics/courses/export')->assertForbidden();
+    }
+
+    public function testAnEmptyExportStillHasItsHeader(): void
+    {
+        $csv = $this->actingAs($this->admin(), 'api')->get('/api/admin/authoring-metrics/courses/export')->assertOk()->streamedContent();
+
+        $this->assertStringStartsWith('course_id,session_id,method_version,', $csv);
+        $this->assertCount(1, array_filter(explode("\n", $csv)));
+    }
+
+    /** method, uri, body (with {minute}), the status in this tenant */
     public static function routeProvider(): array
     {
-        return ['list' => ['GET', 'api/admin/authoring-metrics/courses'], 'show' => ['GET', 'api/admin/authoring-metrics/courses/{course}']];
+        return [
+            'list' => ['GET', 'api/admin/authoring-metrics/courses', [], 200],
+            'export' => ['GET', 'api/admin/authoring-metrics/courses/export', [], 200],
+            'show' => ['GET', 'api/admin/authoring-metrics/courses/{course}', [], 200],
+            'status' => ['GET', 'api/admin/authoring-metrics/activity/status', [], 200],
+            'record' => ['POST', 'api/admin/authoring-metrics/activity', ['course_id' => '{course}', 'minutes' => ['{minute}'], 'surface' => 'studio', 'tab_nonce' => 'AAAAAAAAAAAAAAAAAAAAAA'], 200],
+            'delete' => ['DELETE', 'api/admin/authoring-metrics/activity', [], 200],
+        ];
     }
 
     public function testEveryRouteOfThePackageIsListed(): void
@@ -98,20 +146,22 @@ class CourseMetricsApiTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('routeProvider')]
-    public function testATokenOfAnotherTenantIsRejectedOnEveryRoute(string $method, string $uri): void
+    public function testATokenOfAnotherTenantIsRejectedOnEveryRoute(string $method, string $uri, array $body, int $status): void
     {
+        config(['authoring_metrics.review_time' => true]);
         [, , $course] = $this->applied();
         $admin = $this->admin();
         \Illuminate\Support\Facades\Auth::forgetGuards(); // actingAs of the build above would answer as the author
         $uri = '/' . str_replace('{course}', (string) $course, $uri);
+        $body = json_decode(str_replace(['"{course}"', '{minute}'], [(string) $course, now()->subMinute()->toIso8601String()], json_encode($body)), true);
 
         $token = $admin->createToken('test')->accessToken;
-        $this->sendAs($token, $method, $uri)->assertOk();
-        $this->json($method, $uri)->assertUnauthorized();
+        $this->sendAs($token, $method, $uri, $body)->assertStatus($status);
+        $this->json($method, $uri, $body)->assertUnauthorized();
 
         $this->switchToTenantWithOwnKeys();
 
-        $this->sendAs($token, $method, $uri)->assertUnauthorized();
-        $this->sendAs($admin->createToken('test')->accessToken, $method, $uri)->assertOk();
+        $this->sendAs($token, $method, $uri, $body)->assertUnauthorized();
+        $this->sendAs($admin->createToken('test')->accessToken, $method, $uri, $body)->assertStatus($status);
     }
 }

@@ -1,5 +1,5 @@
 {
- "summary": "622/711 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "623/715 covered, 92 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -56,9 +56,33 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/authoring-metrics/activity",
+   "summary": "Report active review minutes",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "DELETE /api/admin/authoring-metrics/activity",
+   "summary": "Delete recorded review time",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/admin/authoring-metrics/activity/status",
+   "summary": "Is review time recorded",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
    "key": "GET /api/admin/authoring-metrics/courses",
    "summary": "Authoring metric of courses",
    "command": "authoring-metrics.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/authoring-metrics/courses/export",
+   "summary": "Export the authoring metric",
+   "command": "authoring-metrics.export",
    "status": "covered"
   },
   {

@@ -6,6 +6,7 @@ import type { IntlShape } from 'react-intl';
 import { FormattedMessage, history, useIntl, useModel, useParams } from 'umi';
 
 import { configs as fetchConfigs } from '@/services/ulams/settings';
+import ReviewTimeNotice from './components/ReviewTimeNotice';
 import GlobalSettings from './global';
 import PackageForm from './package';
 import ThemeSettings from './theme';
@@ -127,6 +128,7 @@ export default () => {
               </span>
             }
           >
+            {pkg === 'authoring_metrics' && <ReviewTimeNotice />}
             <PackageForm
               key={pkg + JSON.stringify(configs[pkg])}
               values={configs}
