@@ -111,11 +111,11 @@ small commits → tests → summary.
       recommended defaults for Q1 to Q11, approved the matching spec sections (ROADMAP-PROMPT 3.1 and 4.4), and accepted that variant
       courses stay unlisted and unsold on their own until CV-5 routing exists
 
-- [ ] (partial: IMG-1 done, the `@ulams/sdk/images` URL builder, presets and unit tests; IMG-2 done, `Img.astro`, the plain `<img>` sites in `front/ui` and rich-text images on the builder with a runtime `ULAMS_IMAGE_SERVICE`; the client-side `elements/showcase.ts` and `InteractiveLesson` poster are unchanged; IMG-6a done, MyDevil fronts and the landing export in `cloudflare` mode with `deploy/mydevil/bin/check-images.sh`; IMG-4 in review, `IMAGES_CONTENT_URLS=api|original` for imports and the markdown helper, MyDevil on `original`, seed checks, the PHP endpoint labelled legacy and optional in its README and OpenAPI text; IMG-3 (admin) in review; IMG-5, IMG-6b and IMG-7 pending) (new) Decision 2026-10-22: the owner asked to replace the PHP image resize with Cloudflare Image Transformations (enabled and
+- [ ] (partial: IMG-1 done, the `@ulams/sdk/images` URL builder, presets and unit tests; IMG-2 done, `Img.astro`, the plain `<img>` sites in `front/ui` and rich-text images on the builder with a runtime `ULAMS_IMAGE_SERVICE`; the client-side `elements/showcase.ts` and `InteractiveLesson` poster are unchanged; IMG-6a done, MyDevil fronts and the landing export in `cloudflare` mode with `deploy/mydevil/bin/check-images.sh`; IMG-4 merged (#469), `IMAGES_CONTENT_URLS=api|original` for imports and the markdown helper, MyDevil on `original`, seed checks, the PHP endpoint labelled legacy and optional in its README and OpenAPI text; IMG-3 merged (#427): admin `ResponsiveImage`, `resizedImage` and `WysiwygMarkdown` on the builder with `REACT_APP_IMAGE_SERVICE` (default `php`, byte-identical URLs), unit-tested per mode, not yet seen against a real Cloudflare zone, which needs the demos' admin runtime config (IMG-6b); IMG-5 merged (#472) and IMG-6b merged (#470), IMG-7 in review) (new) Decision 2026-10-22: the owner asked to replace the PHP image resize with Cloudflare Image Transformations (enabled and
       verified on the `ulams.app` zone), then narrowed it the same day: keep `api/packages/images` and `/api/images/img` for
       self-hosters and other clients, stop PHP resizing on the hosted demos and the landing, and make the image service a deployment
       choice. Plan `docs/plans/images-cloudflare.md` and ADR 0193 were accepted by the owner on 2026-10-22 with the recommended defaults (plan section 14)
-      Note 2026-10-23 (IMG-5, in review): the legacy learner app builds avatar URLs through the shared builder with the build setting
+      Note 2026-10-23 (IMG-5, merged): the legacy learner app builds avatar URLs through the shared builder with the build setting
       `VITE_ULAMS_IMAGE_SERVICE` (default `php`, the URLs it always built; `cloudflare`, `noop`), `VITE_ULAMS_IMAGE_SOURCES` and
       `VITE_ULAMS_IMAGE_TRANSFORM_ORIGIN`; the `Image` component keeps its `imgcache` flow only in `php`. The app is not hosted anywhere
 
@@ -378,7 +378,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       runtime and tracking traces captured on 2.6.x; then `scorm-again` 3 with every changed default set to the 2.6
       behaviour, AICC removed and the Dependabot ignore rule #431 dropped (closed PR #232 explains why)
       (plan `docs/plans/scorm-playback-tests.md` SC-1 to SC-4; ADR 0197 Proposed)
-      (partial: SC-1 fixtures, trace normaliser and parser tests done; SC-2 React player specs and golden traces done; SC-3 content player specs done, run per pull request instead of nightly; SC-4 upgrade pending)
+      (partial: SC-1 fixtures, trace normaliser and parser tests done; SC-2 React player specs and golden traces done; SC-3 content player specs done, run per pull request instead of nightly; SC-4 upgrade stopped: scorm-again 3.4.7 differs from 2.6 in ways settings cannot pin, owner decision in plan section 11)
 - [x] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
       packages and players to a per-tenant content origin (M1.1) (SCORM and cmi5 done, `<slug>.content.localhost`,
       `api/docs/content-origin.md`; run `ulams:tenant:sync-env` so existing tenants get `CONTENT_ORIGIN`)
@@ -787,15 +787,31 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       (partial: built in CV-4, PR #396: each variant outline is reviewed with the builder's outline diff against the base outline and each
       generated variant with a new `VariantReview` card (lessons kept, rewritten, added, skipped; word-level text changes) built on the existing
       `BlueprintDiff`, approved one by one, applied as its own course through the domain services, grouped as a family hidden from the catalogue
-      and published with the base; the 3.1 compare screen shows a variant against its base (CV-3, waiting to merge); open: Living Course patches for variants and rebase on a newer base (CV-5))
+      and published with the base; the 3.1 compare screen shows a variant against its base (CV-3, waiting to merge); Living Course patches for variants built in CV-5 part 3 (waiting to merge: one proposal per variant in a group, shared elements take the base patch at no model cost, only the variant's own elements analysed, accept in group, apply per variant); open: the tabbed review in the studio and rebase on a newer base)
 - [ ] (new) Learner routing: self-declared role and level at enrolment, an optional cited placement check, assignment by an
       admin or an enrolment rule (6.2), and an adaptive hint from Learner Insights to switch variant that the learner confirms
       (never a silent switch); progress carries over for elements that are identical in both variants
+      (partial, CV-5 part 1 of 3, waiting to merge: the API side is built. Learner endpoints `api/courses/{course}/variants` (public), `variant`, `placement`; admin
+      endpoints `api/admin/course-variant-groups` with assignment of learners and user groups and attribute rules (the `variant` action of the enrolment rules,
+      routing only learners who already have access); lock of assigned variants, pinned course, the placement check (cited quiz questions that already exist, scored by
+      code, advisory, off by default) and the hint rules (too hard, too easy; at most one a week, dismiss stops them); completion carried over through the courses
+      progress service for topics with the same element and content, quizzes retaken; variant pages open but unlisted and `variant_family` on the catalogue card;
+      open: the learner screens (CV-5 part 2) and the comparison catalogue status)
+      (partial: learner screens built in CV-5 part 2 (waiting to merge): the version picker on the course page (radio group, works without
+      JavaScript, read-only for visitors, locked and "assigned by your organisation" states), the dismissible hint to switch, the advisory placement
+      check with its result page, "Continue" following the learner's version, EN, PL and ZH, axe and keyboard specs; open: certificates that name the
+      variant and Living Course for variants (CV-5 part 3), and carrying the choice from the course page into enrolment or purchase)
 - [ ] (new) One entitlement for the course covers all its variants (ADR 0130); certificates name the variant completed
+      (partial, CV-5 part 1 of 3, waiting to merge: a derived `family` entitlement per variant the learner uses, ended and moved with the entitlements it derives
+      from, so refunds, expiry and renewals reach every variant and `course_user` stays a projection; mandatory training accepts any variant or only the pinned
+      one, a variant uses the default course's compliance settings; certificates name the variant (`@VarCourseVariant`, `course_variant` on the verification record) and Living Course reaches every variant (CV-5 part 3, waiting to merge))
 - [ ] (new) Tenant isolation suite for the variant and routing endpoints; WCAG 2.2 AA for the variant picker and placement
       check; evals for variant grounding and level fit through the eval command only
+      (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #396; the routing endpoints have
+      isolation tests and are in the route-walking coverage test (CV-5 part 1, waiting to merge); open: the axe and keyboard checks of the picker and the placement
+      check (CV-5 part 2) and the evals)
       (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #396; open: the routing endpoints,
-      the picker and the placement check (CV-5) and the evals)
+      the picker and the placement check (CV-5) and the evals; the axe and keyboard checks of the picker, the hint and the placement check are in CV-5 part 2, waiting to merge)
 
 ---
 
@@ -998,17 +1014,57 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
         installation. Ticked because the goal holds; raise if you would rather have it left open.
 - [ ] (new) Policy lifecycle delivery: link the uploaded policy version and cited fragments to all departmental
       course variants; use departments, duration, seniority and experience from the course brief;
-      apply an uploaded style guide and provision distinct branded department domains (Coming).
+      apply an uploaded style guide and provision distinct branded department domains (Coming)
+      (partial: P6R-8 and P6R-9 done, see the notes below; style guide and branded domains pending).
 - [ ] (new) Policy owner dashboard: show assigned people by department, completed and pending training,
-      course version and issued PDF certificate; support the branded tenant learning application (Coming).
+      course version and issued PDF certificate; support the branded tenant learning application (Coming)
+      (partial: API and CSV export done in P6R-8, Studio screen in P6R-10; the branded application of a department pending).
 - [ ] (new) On an approved policy change, update affected course variants, invalidate superseded certificates,
       notify learners and policy owners with a source diff, assign a new exam for a minor change or a new
-      course for a major change, and issue a replacement PDF certificate after completion (Coming).
+      course for a major change, and issue a replacement PDF certificate after completion (Coming)
+      (partial: API, rollout, exam course, notices and certificate link done in P6R-9, Studio review and learner notices in P6R-10; demo pending).
       Note 2026-10-22 (Coming audit): the three policy lifecycle items above are planned in `docs/plans/phase-6-remaining.md` P6R-8 (package,
       variants per department, owner dashboard API), P6R-9 (approved change: rollouts, revoke and reassign, new exam or course,
       replacement certificate), P6R-10 (studio UI) and P6R-12 (demo); ADR 0140 Proposed. The branded department domains move to
       `academy-entry-points.md` (EP-1 to EP-4, ADR 0195 amends 0141) and the style guide to `style-guide-course-design.md`
       (SG-1 to SG-4, ADR 0196). These labels live in the hero story of the unmerged `feat/landing-admin-panel` branch, not on `main`
+      Note 2026-10-23 (P6R-8): package `api/packages/policy-lifecycle` (ADR 0140, now Accepted): `POST /api/admin/policies` stores the
+      policy file as version 1 and one variant per department (audience group, seniority, prior experience, duration);
+      `variants/generate` starts one Course Builder session per department, each with its own copy of the policy file as source, answers the
+      interview from the policy and department brief and stops at the outline review (AI proposes, the owner approves in the Studio);
+      `versions/1/approve` needs every department course applied and published, then makes the courses mandatory and enrols each
+      department's group through a rule on a one-course path; certificates are linked to the policy version in `policy_certificates`;
+      `GET /dashboard` and `/dashboard/export` give per-department counts and per-person course version, policy version and certificate.
+      Every step is in the Living Course audit chain. Differences from the plan: departments are sessions with their own source copy (a source
+      belongs to one session), so `policy_variants.source_id` replaces `policies.source_id`; the policy brief lives on the policy and its
+      departments because brief schema v3 was taken by course variants (ADR 0192), so no interview change; the CSV export is its own endpoint;
+      the people are also the `policy_training` dataset of the reporting registry (RB-1). Not done: policy changes (P6R-9), Studio UI
+      (P6R-10), exam-only course per department (P6R-9), style guide tokens (SG), department hosts (EP-1 to EP-4), demo (P6R-12).
+      Note 2026-10-23 (P6R-9): policy changes. `POST /api/admin/policies/{id}/versions` stores the file as version N+1 and a new revision of each
+      department's source (Living Course proposes the updates); `versions/{n}` shows the source diff, proposals, suggested class and a pre-flight of
+      certificates to revoke and people to reassign; `approve` (class suggested from the proposals, raise freely, lower with a recorded reason)
+      updates every department course and only then revokes certificates linked to the previous version (reason `policy_superseded:v<N>`) and assigns
+      the exam course (minor, 14 days) or the course (major, 30 days) with source `policy_change`, idempotently; `reject` drops a change. The exam
+      course is derived from the approved department course's final test, rebuilt after every change, published and not in the catalogue.
+      E-mails, in-app notices and webhooks `policy.change.approved` and `policy.retraining.assigned`; a revocation notice for other revocations;
+      the replacement certificate is linked to the new version. Departments whose course cites nothing that changed are not retrained. Items the model
+      could not propose (final-test questions) are the owner's to edit and block approval until decided. Not done: Studio screens and learner-side labels
+      (P6R-10), demo (P6R-12); the generic compliance "assigned" mail still goes out next to the policy notice.
+      Note 2026-10-23 (P6R-10): Studio screens `/studio/policies` (list, new policy, one policy with departments, people, versions and uploading a change,
+      review of a version with the source diff, class choice, pre-flight, approve and reject) in English, Polish and Chinese, behind the studio BFF
+      allow-list; learner side: `GET /api/policies/my-changes` and a "what changed" line on My training for assignments a policy change created, and
+      the public certificate verification page says which policy version replaced a revoked certificate. axe (WCAG 2.2 AA) and keyboard specs at desktop
+      and phone width, unit tests for the model, strings parity and the BFF. Differences from the plan: the variants list is a section of the policy page
+      (no separate `variants.astro`), and the style guide upload and token review are not in `new` (SG, not built). Pending: P6R-12 demo.
+      Note 2026-10-23 (P6R-11, `(new)`): separate branded academies per department created from one policy, implemented as tenant provisioning from
+      a template (ADR 0141 amendment, Proposed). Platform: tenant templates (`ulams:tenant:template`, `/api/platform/templates`, `ulams:tenant:create --template`),
+      derived tenants with a record, a per-parent quota, no chains, idempotent re-run and cleanup (`--derived-from/--purpose/--reference`, `--with-derived`,
+      `/api/platform/tenants/{slug}/derived`). Policy: `GET|POST|DELETE /api/admin/policies/{id}/variants/{variant}/academy` and an "Own academy" block per department
+      in the Studio (theme preset, accent, status, links, remove after confirming; EN, PL, ZH; axe and keyboard specs). Like "new site" it needs `TENANCY_NEW_SITES` and
+      `platform_admin`; the department's reviewed builder session is moved there (the policy, certificates and the owner dashboard stay in the policy tenant, the
+      academy's learners and certificates are the academy's). Not done: later policy changes do not reach an academy (a new transfer), department hosts inside one
+      tenant stay with EP-1 to EP-4 (#451, #455, #457), style guide tokens (SG), cross-tenant reporting of academy completions. The public "Coming" label of
+      separate branded academies can be relabelled once this is merged and operated.
 - [ ] (new) Branded entry points inside one academy: per-department, per-course and per-role hosts with their own theme,
       catalogue focus and SEO settings, resolved to the tenant by the front; access never depends on the host; per-host
       `__Host-` sessions with a one-time hand-off code between hosts; entry hosts join the trusted origins and return URLs;
@@ -1262,10 +1318,13 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       the hosted demo academies and the `ulams.app` landing on Cloudflare Image Transformations with `onerror=redirect` and a `noop`
       kill switch, admin and imports on demo deployments without `/api/images/img`, the PHP images API kept as an optional legacy API
       (plan `docs/plans/images-cloudflare.md`, milestones IMG-1 to IMG-7; ADR 0193 Accepted 2026-10-22; IMG-1 starts first)
-      Note 2026-10-23 (IMG-6b, in review): prepared, not applied. Storage Worker `max-age=3600` with ETag for `image/*`,
+      Note 2026-10-23 (IMG-6b, merged): prepared, not applied. Storage Worker `max-age=3600` with ETag for `image/*`,
       `deploy/mydevil/bin/set-admin-images.sh` (admin mode through `runtime-config.json`), the optional WAF rule generated from
       `allowedCloudflareOptions()` (`deploy/mydevil/cloudflare/image-waf-rule.mjs`) and the smoke check `ULAMS_EXPECT_WAF=1`. Deploying
       the Worker, writing the admin config on MyDevil and creating the WAF rule are owner steps (`deploy/mydevil/STAGING-NOTES.md`)
+      Note 2026-10-23 (IMG-7, in review): operators page "Image service" (`operators/image-service.mdx`: modes, settings per client, Cloudflare
+      setup, free-plan budget, kill switch, WAF rule, `IMAGES_CONTENT_URLS`, the legacy PHP API) and the creators, developers and
+      MyDevil/VPS pages that mention images now point to it. Describes IMG-3 (#427), IMG-4 (#469), IMG-5 (#472) and IMG-6b (#470), all merged
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
 - [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI

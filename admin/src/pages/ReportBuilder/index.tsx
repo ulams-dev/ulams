@@ -176,8 +176,9 @@ const ReportBuilder: React.FC = () => {
       shared_roles: form.visibility === 'roles' ? form.roles : [],
       definition: toDefinition(state, dataset),
     };
-    const response: any = await (
-      opened && !asNew ? updateSavedReport(opened.id, body) : saveReport(body)
+    const response: any = await (opened && !asNew
+      ? updateSavedReport(opened.id, body)
+      : saveReport(body)
     ).catch((e: any) => e?.response?.data ?? e?.data ?? e);
     if (response?.success) {
       setSaveOpen(false);
@@ -241,8 +242,8 @@ const ReportBuilder: React.FC = () => {
       value === null || value === undefined
         ? ''
         : typeof value === 'boolean'
-          ? t(value ? 'yes' : 'no')
-          : String(value),
+        ? t(value ? 'yes' : 'no')
+        : String(value),
   }));
 
   return (
@@ -498,8 +499,8 @@ const ReportBuilder: React.FC = () => {
                       f.op === 'in' || f.op === 'not_in' || f.op === 'between'
                         ? t('listHint')
                         : target?.type === 'date' || target?.type === 'datetime'
-                          ? 'YYYY-MM-DD'
-                          : ''
+                        ? 'YYYY-MM-DD'
+                        : ''
                     }
                     onChange={(e) =>
                       set({

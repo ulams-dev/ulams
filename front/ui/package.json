@@ -17,6 +17,7 @@
     "./training-strings": "./src/lib/training-strings.ts",
     "./player-strings": "./src/lib/player-strings.ts",
     "./account-strings": "./src/lib/account-strings.ts",
+    "./variant-strings": "./src/lib/variant-strings.ts",
     "./accessibility-strings": "./src/lib/accessibility-strings.ts",
     "./components/*": "./src/components/*",
     "./elements/*": "./src/elements/*",

@@ -15,7 +15,7 @@ interface Props {
   /** Status pill text (e.g. "Draft · not published"). */
   status?: string;
   sessionId?: string | null;
-  active?: "builder" | "workspace" | "preview" | "done" | "sessions" | "sources" | "updates" | "audit" | "insights" | "versions";
+  active?: "builder" | "workspace" | "preview" | "done" | "sessions" | "sources" | "updates" | "audit" | "insights" | "versions" | "policies";
   /** The session has a course: updates can be proposed for it. */
   hasCourse?: boolean;
   /** The course the page is about: adds "Insights", which is keyed by course, so it also works without a session. */
@@ -32,6 +32,7 @@ const insights =
       ];
 const nav = [
   { key: "sessions", href: "/studio", label: "Sessions" },
+  { key: "policies", href: "/studio/policies", label: "Policies" },
   ...(sessionId
     ? [
         { key: "builder", href: `/studio/s/${sessionId}`, label: "Builder" },

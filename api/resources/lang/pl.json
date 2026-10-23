@@ -825,5 +825,11 @@
 "Learning path: :path": "Ścieżka nauki: :path",
 "<h1>Hello :user_name!</h1><p>You have been enrolled in the learning path \":path\". Due date: :due_date.</p>": "<h1>Witaj :user_name!</h1><p>Zapisano Cię na ścieżkę nauki „:path”. Termin: :due_date.</p>",
 "Learning path completed: :path": "Ukończono ścieżkę nauki: :path",
-"<h1>Congratulations :user_name!</h1><p>You have completed every course of the learning path \":path\".</p>": "<h1>Gratulacje :user_name!</h1><p>Ukończono wszystkie kursy ścieżki nauki „:path”.</p>"
+"<h1>Congratulations :user_name!</h1><p>You have completed every course of the learning path \":path\".</p>": "<h1>Gratulacje :user_name!</h1><p>Ukończono wszystkie kursy ścieżki nauki „:path”.</p>",
+"The policy \":policy\" changed: training required": "Polityka „:policy” się zmieniła: wymagane szkolenie",
+"<h1>Hello :user_name!</h1><p>The policy \":policy\" has a new version (:version). :what_changed</p><p>Your earlier certificate no longer applies. Please complete \":course\" by :due_date.</p><p><a href=\":url\">Open My training</a></p>": "<h1>Witaj :user_name!</h1><p>Polityka „:policy” ma nową wersję (:version). :what_changed</p><p>Twój wcześniejszy certyfikat przestał obowiązywać. Ukończ „:course” do :due_date.</p><p><a href=\":url\">Otwórz Moje szkolenia</a></p>",
+"Policy change approved: :policy": "Zmiana polityki zatwierdzona: :policy",
+"<h1>Hello :user_name!</h1><p>Version :version of \":policy\" is approved as a :class change and rolled out. :what_changed</p><p>Superseded certificates and reassigned training: :counts.</p>": "<h1>Witaj :user_name!</h1><p>Wersja :version polityki „:policy” została zatwierdzona jako zmiana (:class) i wdrożona. :what_changed</p><p>Unieważnione certyfikaty i ponownie przypisane szkolenia: :counts.</p>",
+"Your certificate was revoked: :course": "Twój certyfikat został unieważniony: :course",
+"<h1>Hello :user_name!</h1><p>Your certificate for \":course\" was revoked. Reason: :reason</p>": "<h1>Witaj :user_name!</h1><p>Twój certyfikat dla „:course” został unieważniony. Powód: :reason</p>"
 }

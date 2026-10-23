@@ -64,8 +64,19 @@
     });
   }
 
+  // scorm-again 3 changed several defaults compared with 2.6; these keep what 2.6 did, so playback is the same
+  // (same values as front/src/lib/scorm-player/settings.ts; the playback specs pin them, ADR 0197).
+  var LEGACY_SETTINGS = {
+    mastery_override: false,
+    useAsynchronousCommits: true,
+    throttleCommits: false,
+    strict_errors: true,
+    autoCompleteLessonStatus: false,
+    accumulateSessionTimeOnTerminate: false
+  };
+
   function start(data) {
-    var settings = Object.assign({}, data.player || {}, { autocommit: false });
+    var settings = Object.assign({}, LEGACY_SETTINGS, data.player || {}, { autocommit: false });
     if (data.version === 'scorm_2004') {
       window.API_1484_11 = new Scorm2004API(settings);
       window.API_1484_11.loadFromJSON(data.cmi || {});
