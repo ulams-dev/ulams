@@ -18,7 +18,7 @@ describe("public landing FAQ", () => {
         expect(questions[0]!.props!.id).toBe("faq");
         expect((questions[0]!.props!.more as { href: string }).href).toBe(publicPagePath(locale, "faq"));
         const items = questions[0]!.props!.items as Array<{q:string;a:string}>;
-        expect(items).toHaveLength(8);
+        expect(items).toHaveLength(page === "platform" ? 5 : 8);
         expect(new Set(items.map(item => item.q)).size).toBe(items.length);
         expect(items.every(item => item.q.trim() && item.a.trim())).toBe(true);
         const footer = document.children!.find(node => node.component === "SiteFooter")!;

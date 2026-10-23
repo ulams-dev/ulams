@@ -126,7 +126,7 @@ describe("learning elements: rendered markup", () => {
       for (const card of document.querySelectorAll(".le-card")) expect(card.querySelector(".le-tag--principle")!.textContent!.length).toBeGreaterThan(3);
     });
 
-    it(`${locale}: the home section follows the demos, with three live elements and every element linked to the page`, async () => {
+    it(`${locale}: the home page links the page from the advantages tile and the footer instead of embedding the section`, async () => {
       const { landingDocFor } = await import("../../src/lib/docs.ts");
       const { applyLandingStatus } = await import("../../src/lib/landing-status.ts");
       const { comparisonModel } = await import("../../src/lib/comparison.ts");
@@ -135,15 +135,10 @@ describe("learning elements: rendered markup", () => {
       const demo = { title: "Demo", theme: "coffee", facts: [], primary: { label: "Open", href: "https://coffee.ulams.app/" }, secondary: { label: "Admin", href: "https://coffee-admin.ulams.app/" } };
       const data = { demos: [demo], demoCount: 1, comparison: comparisonModel(), workflows: workflowsModel("actual", locale) };
       const document = dom(await container.renderToString(components.HomeBody as never, { props: { doc, data, locale } }));
-      const section = document.getElementById(LEARNING_ID)!;
-      let previous = section.previousElementSibling;
-      while (previous && previous.tagName !== "SECTION") previous = previous.previousElementSibling;
-      expect(previous!.id).toBe("demos");
-      expect(section.querySelectorAll(".le-live .le-card")).toHaveLength(HOME_LIVE.length);
-      expect(section.querySelectorAll(".le-index li")).toHaveLength(ELEMENTS.length);
+      expect(document.getElementById(LEARNING_ID)).toBeNull();
       const page = publicPagePath(locale, "learning-elements");
-      for (const a of section.querySelectorAll(".le-index a")) expect(a.getAttribute("href")).toMatch(new RegExp(`^${page}#le-`));
-      expect(section.querySelector(`a.u-btn[href="${page}"]`)!.getAttribute("data-umami-event")).toBe("learning_elements_open");
+      expect(document.querySelector(`#advantages a[href="${page}"]`)).not.toBeNull();
+      expect(document.querySelector(`footer a[href="${page}"]`)).not.toBeNull();
     });
   }
 });

@@ -14,10 +14,6 @@
         "mark": "logo",
         "links": [
           {
-            "label": "产品概览",
-            "href": "/zh/"
-          },
-          {
             "label": "对比",
             "href": "/zh/comparison/"
           },
@@ -52,9 +48,9 @@
           "props": {
             "variant": "product",
             "eyebrow": "AI 原生 LMS · 开源 · 自托管",
-            "title": "从文档构建课程，来源清晰。",
-            "titleAccent": "来源清晰。",
-            "subtitle": "AI 根据你的资料起草课程内容。发布前，每项改动都由你审核。",
+            "title": "几分钟内由你的文档生成课程。每次改动都保持同步。",
+            "titleAccent": "每次改动都保持同步。",
+            "subtitle": "ULAMS 几分钟内就能用你的资料生成带引用的课程。文档一旦变化，它会提出更新建议，并在你批准后发布新版本的课程。",
             "primaryCta": {
               "label": "体验在线演示",
               "href": "#demos"
@@ -66,182 +62,80 @@
           }
         },
         {
-          "component": "CtaBand",
+          "component": "FeatureList",
           "props": {
-            "id": "cost-cta",
-            "variant": "feature",
-            "eyebrow": "更快成课",
-            "title": "课程生成快得多:几分钟得到带出处的草稿",
-            "text": "在我们自己的一次实测中,ULAMS 把一个公开文档仓库变成了含 6 个课时和 18 道测验题的课程草稿,每个内容块都标注出处,生成时间 7 分 44 秒。",
-            "statsLabel": "一次实测 · 草稿,待作者审阅",
-            "stats": [
+            "id": "advantages",
+            "variant": "tiles",
+            "eyebrow": "为什么选 ulams",
+            "title": "你的团队能得到什么",
+            "items": [
               {
-                "value": "7:44",
-                "label": "分钟生成时间(7 分 44 秒)",
-                "note": "大纲 24 秒 · 课时、测验与检查 6 分 57 秒 · 应用 23 秒"
-              },
-              {
-                "value": "6 + 18",
-                "label": "课时 + 测验题",
-                "note": "来自资料的 13 个片段"
-              },
-              {
-                "value": "USD 0.28",
-                "label": "模型成本",
-                "note": "27 次模型调用"
-              },
-              {
-                "value": "35/35",
-                "label": "个内容块标注了资料出处",
-                "note": "作者批准后才发布"
-              },
-              {
-                "value": "49–716",
-                "label": "小时人工工作量,对应每 1 小时成品课程",
-                "note": "Chapman Alliance,由 eLearning Industry 转述",
-                "kind": "benchmark",
-                "href": "https://elearningindustry.com/development-costs-for-your-online-learning-start-estimating"
-              }
-            ],
-            "note": "一次运行,一份资料,仅含生成时间;作者审阅另需时间。两者度量不同,因此我们不宣称提速倍数。",
-            "cta": {
-              "label": "查看详情",
-              "href": "/zh/content-cost/"
-            }
-          }
-        },
-        {
-          "component": "CtaBand",
-          "props": {
-            "id": "reporting-cta",
-            "variant": "feature",
-            "eyebrow": "完整分析",
-            "title": "完整分析:谁卡住了,谁学完了,该报告什么",
-            "text": "按课程的分析、合规报表和导出均已内置,数据保留在你自己的部署中。",
-            "bullets": [
-              {
-                "title": "谁卡住了",
-                "text": "有掉队风险的学员,以及令人困惑的章节。"
-              },
-              {
-                "title": "谁学完了",
-                "text": "每门课程的进度、完成率和测验表现。"
-              },
-              {
-                "title": "谁还欠培训",
-                "text": "用于合规的必修培训状态。"
-              },
-              {
-                "title": "导出什么",
-                "text": "CSV、JSON lines 和审计记录,可随时导出或通过邮件发送。"
-              }
-            ],
-            "panel": {
-              "title": "课程分析",
-              "label": "示意图",
-              "alt": "课程分析面板示意图:学完、学习中、有风险的学员以及测验结果各一条柱。并非真实数据。",
-              "rows": [
-                {
-                  "label": "已学完",
-                  "level": 72,
-                  "tone": "ok"
-                },
-                {
-                  "label": "学习中",
-                  "level": 46,
-                  "tone": "muted"
-                },
-                {
-                  "label": "有风险",
-                  "level": 18,
-                  "tone": "warn"
-                },
-                {
-                  "label": "测验结果",
-                  "level": 60,
-                  "tone": "ok"
+                "icon": "clock",
+                "title": "几分钟出课程，而不是几个月",
+                "text": "一次实测：7 分 44 秒、0.28 美元生成 6 节课和 18 道测验题。手工制作 1 小时电子课程需要 49–716 小时。",
+                "link": {
+                  "label": "时间与成本",
+                  "href": "/zh/content-cost/"
                 }
-              ]
-            },
-            "chips": [
-              "按课程的分析",
-              "合规报表与审计导出",
-              "CSV 与 JSON-lines 导出",
-              "定时邮件报表",
-              "学习洞察",
-              "由你持有的 xAPI LRS"
-            ],
-            "cta": {
-              "label": "查看详情",
-              "href": "/zh/reporting/"
-            }
+              },
+              {
+                "icon": "quote",
+                "title": "每个论断都有引用，始终最新",
+                "text": "每个模块都链接到出处。来源一变，ULAMS 会标出受影响的课时，并提出更新供你审阅。",
+                "link": {
+                  "label": "查看真实案例",
+                  "href": "/zh/course-generation/"
+                }
+              },
+              {
+                "icon": "puzzle",
+                "title": "让人动手练习的课程",
+                "text": "测验、自测卡片、示例解析、拖放、图片热点、模拟和编程练习。AI 根据你的资料生成测验、卡片、示例和 H5P 活动，每一项都由你审阅。",
+                "link": {
+                  "label": "学习元素",
+                  "href": "/zh/learning-elements/"
+                }
+              },
+              {
+                "icon": "layers",
+                "title": "你的品牌，白标运行",
+                "text": "你的设计系统变成主题，并按 WCAG 2.2 AA 检查对比度。每个学院都有自己的子域名、证书和 SSO。",
+                "link": {
+                  "label": "风格指南",
+                  "href": "/zh/style-guide/"
+                }
+              },
+              {
+                "icon": "chart",
+                "title": "合规证据",
+                "text": "看到谁卡住了、谁已完成、谁还欠必修培训。证书、截止日期和审计导出。",
+                "link": {
+                  "label": "报表",
+                  "href": "/zh/reporting/"
+                }
+              },
+              {
+                "icon": "lock",
+                "title": "不被锁定",
+                "text": "MIT 许可，部署在你的服务器上。支持 SCORM、cmi5、带内置 LRS 的 xAPI、LTI 1.3 和 REST API。",
+                "link": {
+                  "label": "自托管",
+                  "href": "#self-host"
+                }
+              }
+            ]
           }
         },
         {
           "component": "Showcase",
           "props": {
             "eyebrow": "在线演示",
-            "title": "六所学院，一个平台",
-            "intro": "每个演示都是一个独立租户，有自己的主题、课程和数据，运行在同一套 ulams 之上。你可以以学员身份打开，也可以进入它的管理后台。",
+            "title": "体验在线学院",
+            "intro": "同一套 ulams 上的六所演示学院，各有自己的主题和课程。",
             "items": {
               "$data": "/demos"
             },
-            "note": "演示每小时重置一次，无需注册，系统会自动为你登录。"
-          }
-        },
-        {
-          "component": "CtaBand",
-          "props": {
-            "id": "white-label",
-            "variant": "feature",
-            "eyebrow": "白标",
-            "title": "你的品牌，你的子域名：为每类受众提供白标学院",
-            "text": "每个学院是一个租户，拥有自己的子域名、主题和数据。可以为每个客户、部门或受众各开一个，例如合作伙伴和员工，全部运行在同一套 ULAMS 上。",
-            "bullets": [
-              {
-                "title": "每个学院一个子域名",
-                "text": "每个租户都有自己的主机、数据库、存储桶、密钥和 Redis 前缀，因此一个学院的令牌会被其他所有学院拒绝。"
-              },
-              {
-                "title": "你的外观",
-                "text": "主题预设、由 WCAG 2.2 AA 对比度报告检查的强调色（不合格的颜色无法保存），以及带替代文本的徽标。"
-              },
-              {
-                "title": "你在网络上的身份",
-                "text": "带有学院名称、主题色和徽标的 Web 清单，以及课程页面上的 schema.org Course 数据。"
-              },
-              {
-                "title": "你的消息与证书",
-                "text": "每个学院在自己的数据库中编辑自己的邮件、短信和 PDF 模板，包括证书。"
-              },
-              {
-                "title": "每个学院独立登录",
-                "text": "每个学院都可以在 Google 和 Facebook 登录之外，通过 SAML 2.0 或 OpenID Connect 接入自己的身份提供方。"
-              },
-              {
-                "title": "每个学院独立存储",
-                "text": "使用内置的 SeaweedFS 存储时，每个学院都有只限于其存储桶的独立 S3 密钥。"
-              }
-            ],
-            "chips": [
-              "主题预设",
-              "AA 对比度报告",
-              "徽标与 Web 清单",
-              "以差异形式导入品牌",
-              "邮件、短信和 PDF 模板",
-              "SAML 2.0 与 OIDC",
-              "每个学院一个 S3 密钥",
-              "Course JSON-LD"
-            ],
-            "note": "目前每个子域名对应一个学院。在同一学院内为每门课程或每个角色提供带独立品牌的子域名或入口，尚未提供。",
-            "cta": {
-              "label": "打开在线演示",
-              "href": "#demos"
-            },
-            "secondary": {
-              "label": "租户如何工作",
-              "href": "https://ulams-dev.github.io/ulams/developers/tenancy/"
-            }
+            "note": "无需注册。演示每小时重置一次。"
           }
         },
         {
@@ -250,7 +144,7 @@
             "id": "white-paper-cta",
             "variant": "feature",
             "eyebrow": "白皮书",
-            "title": "从政策到证据：ULAMS 白皮书",
+            "title": "培训内容的真实成本，以及如何降低它",
             "text": "写给培训与发展负责人和审批培训者的长文：内容的真实成本、有出处的课程如何构建并保持更新，以及目前已经提供了什么。",
             "bullets": [
               {
@@ -278,85 +172,12 @@
           }
         },
         {
-          "component": "FeatureList",
-          "props": {
-            "variant": "tiles",
-            "eyebrow": "从制度到证明",
-            "title": "从一份制度到有证书、可追踪的培训",
-            "intro": "一份需要讲授、通过并定期更新的制度所走的路径，以及目前已有和尚未提供的部分。",
-            "items": [
-              {
-                "icon": "book",
-                "title": "一次简短访谈变成课程简报",
-                "text": "作者回答关于受众、时长、资历和经验水平的问题，审阅简报，之后才起草课程。"
-              },
-              {
-                "icon": "layers",
-                "title": "你的风格指南塑造课程设计",
-                "text": "品牌导入已经可以把 Figma 文件、Stitch DESIGN.md 或品牌指南变成你以差异形式批准的主题。在课程访谈中应用风格指南尚未提供。",
-                "status": "coming"
-              },
-              {
-                "icon": "users",
-                "title": "按部门划分的独立课程和学院",
-                "text": "为各部门分别建立学院现在就可以做到。由一份制度生成它们并保持课程关联尚未提供。",
-                "status": "coming"
-              },
-              {
-                "icon": "medal",
-                "title": "课时、结业测试和 PDF 证书",
-                "text": "学员学习课时、参加结业测试，并下载带公开验证页面的 PDF 证书。"
-              },
-              {
-                "icon": "chart",
-                "title": "谁完成了必修培训",
-                "text": "带截止日期、经理升级、完成情况报表和审计导出的必修培训。制度负责人仪表盘界面尚未提供。"
-              },
-              {
-                "icon": "sync",
-                "title": "制度变更后的更新",
-                "text": "证书可以到期并重新认证。在制度变更获批后自动替换证书并安排新的考试或课程，尚未提供。",
-                "status": "coming"
-              }
-            ]
-          }
-        },
-        {
-          "component": "HeritageStory",
-          "props": {
-            "id": "product",
-            "eyebrow": "名字背后的理念",
-            "title": "共同创造，让知识不断生长。",
-            "caption": "斯坦尼斯瓦夫·乌拉姆 · 肖像插画",
-            "paragraphs": [
-              "在利沃夫的咖啡馆里，斯坦尼斯瓦夫·乌拉姆与数学家们讨论问题，并将它们记在一本共享笔记中：苏格兰之书。问题、解答和新想法在协作中不断发展。",
-              "乌拉姆后来翻译了这部合集，让更多人可以阅读，并邀请读者提供更正和后续研究成果。"
-            ],
-            "connection": "这种精神启发了 ULAMS：把组织文档转化为共同学习，与人和智能体协作，一起持续完善知识。开源、免费使用，也欢迎你的贡献。",
-            "source": {
-              "label": "苏格兰之书 · 乌拉姆序言，圣安德鲁斯大学",
-              "href": "https://mathshistory.st-andrews.ac.uk/HistTopics/Scottish_Book/"
-            },
-            "cta": {
-              "label": "在 GitHub 上一起构建",
-              "href": "https://github.com/ulams-dev/ulams"
-            },
-            "image": {
-              "src": "/landing/ulam/stanislaw-ulam-stitch.png",
-              "alt": "Stanisław Ulam",
-              "width": 1024,
-              "height": 1024
-            }
-          }
-        },
-        {
           "component": "WorkflowShowcase",
           "props": {
             "id": "agents",
-            "eyebrow": "随处运行",
-            "title": "在管理后台、Claude、Claude Code 或终端里管理你的学院",
-            "intro": "ULAMS 也是一套标准 LMS。管理后台用来管理课程、人员和报名，以及查看报告。你也可以通过 Claude Code、Claude、Codex、OpenCode、Gemini CLI 或其他兼容 MCP 的智能体、ULAMS CLI 或 REST API 来使用。Studio 为团队提供可视化工作空间。",
-            "valueLine": "一个平台：团队熟悉的管理后台，以及他们已经在用的每一种界面。",
+            "eyebrow": "按你的方式运行",
+            "title": "管理后台、AI 智能体或终端",
+            "intro": "在熟悉的管理后台管理课程、人员、报名和报表。同样的操作也可以通过 Claude Code、任何 MCP 智能体、CLI 或 REST API 完成。",
             "legal": "Claude 和 Claude Code 是 Anthropic 的产品。ulams 是独立产品，与 Anthropic 没有关联，也未获其背书。",
             "description": {
               "$data": "/workflows/description"
@@ -370,123 +191,43 @@
           }
         },
         {
-          "component": "Chips",
-          "props": {
-            "eyebrow": "行业标准",
-            "title": "随处交付",
-            "intro": "以标准对抗锁定：沿用现有内容包，随处追踪学习，通过 API 集成。",
-            "items": [
-              {
-                "label": "H5P",
-                "note": "交互式内容"
-              },
-              {
-                "label": "SCORM 1.2 / 2004"
-              },
-              {
-                "label": "cmi5"
-              },
-              {
-                "label": "xAPI",
-                "note": "内置 LRS"
-              },
-              {
-                "label": "LTI 1.3",
-                "note": "平台 + 工具"
-              },
-              {
-                "label": "SAML 2.0 / OIDC",
-                "note": "按学院配置的登录"
-              },
-              {
-                "label": "OpenAPI",
-                "note": "REST API"
-              },
-              {
-                "label": "Webhooks"
-              }
-            ],
-            "research": {
-              "eyebrow": "有据可查的基础",
-              "title": "ULAM Headless Course Format",
-              "text": "Mateusz Wojczal 的 ULAM Headless Course Format 探讨将学习内容与展示层分离，并通过 API 提供课程。这项早期工作为 ULAMS 在不同学习界面中复用内容的方向提供了基础。",
-              "author": "Mateusz Wojczal",
-              "date": "2022-01-31",
-              "dateLabel": "PDF 版本 · 2022年1月31日",
-              "links": [
-                {
-                  "label": "阅读论文 (PDF)",
-                  "href": "https://escolalms.github.io/headless-format/paper.pdf"
-                },
-                {
-                  "label": "源代码仓库",
-                  "href": "https://github.com/EscolaLMS/headless-format"
-                }
-              ]
-            }
-          }
-        },
-        {
           "component": "CtaBand",
           "props": {
             "id": "self-host",
             "variant": "terminal",
             "eyebrow": "自托管",
             "title": "你的服务器，你的数据。",
-            "text": "一条命令即可在本机、Docker 服务器或 Kubernetes 集群启动完整平台。支持自有 VPS、AWS、Google Cloud 和 Azure。自主部署，自主管理数据。",
+            "text": "MIT 许可。一条命令即可在笔记本、Docker 服务器或 Kubernetes 上运行完整系统。",
             "code": [
               "$ npm install -g https://github.com/ulams-dev/ulams/releases/download/cli-v0.2.0/ulams-0.2.0.tgz",
               "$ ulams stack up",
-              "✓ academy, Studio, API, admin, H5P and storage",
-              "$ ulams stack up --mode production \\",
-              "  --domain learn.example.org",
-              "$ ulams stack up --target kubernetes"
+              "✓ academy, Studio, API, admin, H5P and storage"
             ],
             "cta": {
-              "label": "在 GitHub 上查看",
-              "href": "https://github.com/ulams-dev"
-            },
-            "secondary": {
               "label": "安装指南",
               "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
+            },
+            "secondary": {
+              "label": "在 GitHub 上查看",
+              "href": "https://github.com/ulams-dev"
             },
             "bullets": [
               {
                 "title": "本地试用",
-                "text": "使用确定性 AI 提供者创建学院，无需付费模型调用。",
+                "text": "无需付费模型调用：使用确定性 AI 提供方。",
                 "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               },
               {
                 "title": "Docker 生产部署",
-                "text": "配置 HTTPS、私密凭据和持久化存储。",
+                "text": "HTTPS、私有凭据和持久化存储。",
                 "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               },
               {
                 "title": "Kubernetes YAML",
-                "text": "CLI 生成并应用原生清单，创建学院并等待服务就绪。",
+                "text": "原生清单；CLI 会等待系统就绪。",
                 "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               }
-            ],
-            "note": "Helm chart 即将推出。"
-          }
-        },
-        {
-          "component": "ContactForm",
-          "props": {
-            "id": "contact",
-            "eyebrow": "联系",
-            "title": "联系 ULAMS 团队",
-            "intro": "对自托管、集成或参与项目有疑问？欢迎给我们留言。",
-            "nameLabel": "姓名",
-            "emailLabel": "电子邮件",
-            "subjectLabel": "主题",
-            "messageLabel": "留言",
-            "submitLabel": "发送消息",
-            "sendingLabel": "正在发送…",
-            "successMessage": "感谢联系。消息已发送给 ULAMS 团队。",
-            "errorMessage": "消息暂时无法发送，请稍后重试。",
-            "note": "消息会发送到 ULAMS 私密联系邮箱。请勿填写密码或敏感个人信息。",
-            "endpoint": "https://api.ulams.app"
+            ]
           }
         },
         {
@@ -509,18 +250,6 @@
                 "a": "是的。ULAMS 采用 MIT 许可证。你提供托管；如果启用付费 AI 调用，费用由所选提供商收取。H5P 作为独立服务运行，采用自己的 GPL 许可证。"
               },
               {
-                "q": "可以在本地试用整个系统吗？",
-                "a": "可以。安装 CLI，并在 Docker Compose 可用时运行 ulams stack up。开发试用使用确定性 AI 响应，无需付费模型调用。需要 Node.js 22.12 或更新版本。"
-              },
-              {
-                "q": "可以部署在哪里？",
-                "a": "可以在自有服务器使用 Docker Compose，或在现有集群使用原生 Kubernetes 清单。AWS、Google Cloud 或 Azure 上的 VPS 或虚拟机均可运行。生产部署需要 DNS、HTTPS 和持久存储。"
-              },
-              {
-                "q": "智能体可以操作 ULAMS 吗？",
-                "a": "CLI 和 MCP 接口支持兼容智能体。可以使用 Claude Code、Codex、OpenCode 或 Gemini CLI，也可以通过 REST API 直接集成。"
-              },
-              {
                 "q": "AI 会自动发布课程吗？",
                 "a": "不会。AI 准备附有来源引用的草稿，每一项 AI 修改都会以可审阅的差异形式交给你。作者审查大纲和内容，再批准发布。生产环境最初禁用 AI，直到配置提供商。"
               },
@@ -529,10 +258,29 @@
                 "a": "可以。每个学院（租户）都有自己的子域名、学习站点、主题、徽标和隔离的数据库，因此可以为每个客户、部门或受众各开一个。首个学院由堆栈启动器创建，其他租户使用平台的租户流程。在同一学院内为每门课程或每个角色提供子域名的功能尚未实现。"
               },
               {
-                "q": "如何停止系统而保留课程？",
-                "a": "运行 ulams stack down。在同一安装目录再次运行 stack up 时，数据和凭据仍可使用。只有 stack down --purge --yes 会明确删除持久数据。"
+                "q": "智能体可以操作 ULAMS 吗？",
+                "a": "CLI 和 MCP 接口支持兼容智能体。可以使用 Claude Code、Codex、OpenCode 或 Gemini CLI，也可以通过 REST API 直接集成。"
               }
             ]
+          }
+        },
+        {
+          "component": "ContactForm",
+          "props": {
+            "id": "contact",
+            "eyebrow": "联系",
+            "title": "联系 ULAMS 团队",
+            "intro": "对自托管、集成或参与项目有疑问？欢迎给我们留言。",
+            "nameLabel": "姓名",
+            "emailLabel": "电子邮件",
+            "subjectLabel": "主题",
+            "messageLabel": "留言",
+            "submitLabel": "发送消息",
+            "sendingLabel": "正在发送…",
+            "successMessage": "感谢联系。消息已发送给 ULAMS 团队。",
+            "errorMessage": "消息暂时无法发送，请稍后重试。",
+            "note": "消息会发送到 ULAMS 私密联系邮箱。请勿填写密码或敏感个人信息。",
+            "endpoint": "https://api.ulams.app"
           }
         }
       ]
@@ -544,28 +292,28 @@
         "text": "开源的 AI 原生 LMS。MIT 许可。",
         "links": [
           {
-            "label": "产品概览",
-            "href": "/zh/"
+            "label": "生成",
+            "href": "/zh/course-generation/"
+          },
+          {
+            "label": "学习元素",
+            "href": "/zh/learning-elements/"
+          },
+          {
+            "label": "风格指南",
+            "href": "/zh/style-guide/"
+          },
+          {
+            "label": "报表",
+            "href": "/zh/reporting/"
+          },
+          {
+            "label": "白皮书",
+            "href": "/zh/white-paper/"
           },
           {
             "label": "对比",
             "href": "/zh/comparison/"
-          },
-          {
-            "label": "演示",
-            "href": "#demos"
-          },
-          {
-            "label": "智能体工作流",
-            "href": "#agents"
-          },
-          {
-            "label": "标准",
-            "href": "#standards"
-          },
-          {
-            "label": "自托管",
-            "href": "#self-host"
           },
           {
             "label": "文档",

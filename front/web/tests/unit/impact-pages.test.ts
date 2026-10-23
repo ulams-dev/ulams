@@ -91,46 +91,18 @@ describe("content cost and reporting pages", () => {
   });
 });
 
-describe("home call-to-action bands", () => {
-  const text = (b: { props?: Record<string, unknown> }) => JSON.stringify(b.props);
+describe("home page links to the impact pages", () => {
   for (const locale of LOCALES) {
-    it(`${locale}: two high bands, side by side after the builder walkthrough and before the demos, that link to the two pages`, () => {
-      const doc = landingDocFor("platform", locale)!;
-      const bands = ofType(doc, "CtaBand");
-      const cost = bands.find((b) => b.props!.id === "cost-cta")!;
-      const reporting = bands.find((b) => b.props!.id === "reporting-cta")!;
-      expect((cost.props!.cta as { href: string }).href).toBe(publicPagePath(locale, "content-cost"));
-      expect((reporting.props!.cta as { href: string }).href).toBe(publicPagePath(locale, "reporting"));
-      const main = doc.children!.find((n) => n.component === "Main")!;
-      const order = main.children!.map((n) => String(n.props?.id ?? n.component));
-      expect(order.indexOf("reporting-cta")).toBe(order.indexOf("cost-cta") + 1);
-      expect(order.indexOf("reporting-cta")).toBeLessThan(order.indexOf("Showcase"));
-      expect(order.indexOf("cost-cta")).toBeLessThan(order.indexOf("agents"));
-      expect(order.indexOf("reporting-cta")).toBeLessThan(order.indexOf("agents"));
-    });
-
-    it(`${locale}: the speed block states one measured run and no speed-up ratio`, () => {
-      const cost = ofType(landingDocFor("platform", locale)!, "CtaBand").find((b) => b.props!.id === "cost-cta")!;
-      const json = text(cost);
-      for (const figure of ["13", "18", "35", "27", "24", "57", "23", "49", "716"]) expect(json).toContain(figure);
-      expect(json).toContain("7:44");
-      expect(json).toMatch(/7 (min|分) ?44/);
-      expect(json).toMatch(/0[.,]28/);
-      expect(json).toContain(CHAPMAN_SOURCE);
-      const stats = cost.props!.stats as Array<{ kind?: string }>;
-      expect(stats.filter((s) => s.kind === "benchmark")).toHaveLength(1);
-      expect(stats).toHaveLength(5);
-      expect(json).not.toMatch(/\d\s*(x|×|times|razy)\b/i);
-    });
-
-    it(`${locale}: the analytics block lists the six shipped features`, () => {
-      const reporting = ofType(landingDocFor("platform", locale)!, "CtaBand").find((b) => b.props!.id === "reporting-cta")!;
-      expect(reporting.props!.variant).toBe("feature");
-      expect((reporting.props!.chips as unknown[]).length).toBe(6);
-      expect((reporting.props!.bullets as unknown[]).length).toBe(4);
-      expect((reporting.props!.panel as { label: string }).label.length).toBeGreaterThan(0);
-      expect(text(reporting)).toMatch(/xAPI/);
-      expect(text(reporting)).toMatch(/JSON/);
+    it(`${locale}: the speed and compliance tiles link the two pages, with one measured run, the cited range and no speed-up ratio`, () => {
+      const list = ofType(landingDocFor("platform", locale)!, "FeatureList").find((l) => l.props!.id === "advantages")!;
+      const items = list.props!.items as Array<{ text: string; link: { href: string } }>;
+      expect(items[0]!.link.href).toBe(publicPagePath(locale, "content-cost"));
+      expect(items[4]!.link.href).toBe(publicPagePath(locale, "reporting"));
+      const speed = items[0]!.text;
+      for (const figure of ["6", "18", "49", "716"]) expect(speed).toContain(figure);
+      expect(speed).toMatch(/7\s*(min|分)\s*44/);
+      expect(speed).toMatch(/0[.,]28/);
+      expect(speed).not.toMatch(/\d\s*(x|×|times|razy)\b/i);
     });
   }
 });

@@ -1,7 +1,8 @@
 ---
 /**
  * "The builder asks, you get a course" (lib/builder-walkthrough.ts): the real Course Builder screens with the
- * questions it asks and what the author decides, then the course the measured run produced.
+ * questions it asks and what the author decides, then the course the measured run produced (or, with
+ * `result={false}`, only the links to the case studies).
  *
  * The server markup shows every step, one after another, with its caption as real text: that is the state without JS.
  * The script turns the step list into controls that show one step at a time (keyboard: the links, the Previous and
@@ -18,9 +19,11 @@ interface Props {
   copy: WalkthroughCopy;
   steps: WalkStep[];
   locale: Locale;
+  /** Show the course the measured run produced; without it only the links to the case studies follow the steps. */
+  result?: boolean;
 }
 
-const { copy, steps, locale } = Astro.props;
+const { copy, steps, locale, result = true } = Astro.props;
 const titleId = `${WALKTHROUGH_ID}-title`;
 const resultId = `${WALKTHROUGH_ID}-result`;
 const total = steps.length;
@@ -85,7 +88,7 @@ const total = steps.length;
               </div>
             </div>
             <figure class="wt-shot">
-              <a class="wt-shot__link" href={step.image.src} target="_blank" rel="noopener" aria-label={`${copy.open}: ${step.alt}`}>
+              <a class="wt-shot__link" href={step.image.src} aria-label={`${copy.open}: ${step.alt}`}>
                 <Img src={step.image.src} alt={step.alt} width={step.image.width} height={step.image.height} sizes="(min-width: 1000px) 720px, 100vw" preset="content" fit="cover" />
               </a>
               <figcaption>
@@ -98,61 +101,83 @@ const total = steps.length;
       }
     </ol>
 
-    <div class="wt-result" role="group" aria-labelledby={resultId}>
-      <div class="wt-result__course">
-        <h3 class="wt-result__title" id={resultId}>{copy.result.title}</h3>
-        <p class="wt-badge">{copy.result.badge}</p>
-        <p class="wt-course" lang="en">{copy.result.course}</p>
-        <p class="wt-note">{copy.result.courseNote}</p>
-        <ol class="wt-modules" role="list" lang="en">
-          {
-            copy.result.modules.map((module) => (
-              <li>
-                <p class="wt-modules__title">{module.title}</p>
-                <ul role="list">
-                  {module.lessons.map((lesson) => (
-                    <li><Icon name="book" />{lesson}</li>
-                  ))}
-                </ul>
-              </li>
-            ))
-          }
-        </ol>
-        <p class="wt-quiz"><Icon name="quiz" />{copy.result.quiz}</p>
-        <p class="wt-cites__label">{copy.result.citesLabel}</p>
-        <ul class="wt-cites" role="list" lang="en">
-          {copy.result.cites.map((cite) => <li><Icon name="quote" />{cite}</li>)}
-        </ul>
-      </div>
-      <div class="wt-result__run">
-        <dl class="wt-facts">
-          {
-            copy.result.facts.map((fact) => (
-              <div>
-                <dt>{fact.label}</dt>
-                <dd>{fact.value}</dd>
-              </div>
-            ))
-          }
-        </dl>
-        <p class="wt-note">{copy.result.note}</p>
-        <ul class="wt-cases" role="list">
-          {
-            copy.result.cases.map((item, i) => {
-              const href = publicPagePath(locale, item.page);
-              return (
-                <li>
-                  <a class={i === 0 ? "u-btn" : "u-btn u-btn--ghost"} href={href} data-umami-event={ctaEvent(href)}>
-                    {item.label}
-                    <Icon name="arrow" />
-                  </a>
-                </li>
-              );
-            })
-          }
-        </ul>
-      </div>
-    </div>
+    {
+      result ? (
+        <div class="wt-result" role="group" aria-labelledby={resultId}>
+          <div class="wt-result__course">
+            <h3 class="wt-result__title" id={resultId}>{copy.result.title}</h3>
+            <p class="wt-badge">{copy.result.badge}</p>
+            <p class="wt-course" lang="en">{copy.result.course}</p>
+            <p class="wt-note">{copy.result.courseNote}</p>
+            <ol class="wt-modules" role="list" lang="en">
+              {
+                copy.result.modules.map((module) => (
+                  <li>
+                    <p class="wt-modules__title">{module.title}</p>
+                    <ul role="list">
+                      {module.lessons.map((lesson) => (
+                        <li><Icon name="book" />{lesson}</li>
+                      ))}
+                    </ul>
+                  </li>
+                ))
+              }
+            </ol>
+            <p class="wt-quiz"><Icon name="quiz" />{copy.result.quiz}</p>
+            <p class="wt-cites__label">{copy.result.citesLabel}</p>
+            <ul class="wt-cites" role="list" lang="en">
+              {copy.result.cites.map((cite) => <li><Icon name="quote" />{cite}</li>)}
+            </ul>
+          </div>
+          <div class="wt-result__run">
+            <dl class="wt-facts">
+              {
+                copy.result.facts.map((fact) => (
+                  <div>
+                    <dt>{fact.label}</dt>
+                    <dd>{fact.value}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+            <p class="wt-note">{copy.result.note}</p>
+            <ul class="wt-cases" role="list">
+              {
+                copy.result.cases.map((item, i) => {
+                  const href = publicPagePath(locale, item.page);
+                  return (
+                    <li>
+                      <a class={i === 0 ? "u-btn" : "u-btn u-btn--ghost"} href={href} data-umami-event={ctaEvent(href)}>
+                        {item.label}
+                        <Icon name="arrow" />
+                      </a>
+                    </li>
+                  );
+                })
+              }
+            </ul>
+          </div>
+        </div>
+      ) : (
+        <div class="wt-more">
+          <ul class="wt-cases" role="list">
+            {
+              copy.result.cases.map((item, i) => {
+                const href = publicPagePath(locale, item.page);
+                return (
+                  <li>
+                    <a class={i === 0 ? "u-btn" : "u-btn u-btn--ghost"} href={href} data-umami-event={ctaEvent(href)}>
+                      {item.label}
+                      <Icon name="arrow" />
+                    </a>
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </div>
+      )
+    }
   </div>
 </section>
 

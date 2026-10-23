@@ -27,20 +27,19 @@ test.describe("with reduced motion", () => {
   test.use({ contextOptions: { reducedMotion: "reduce" } });
 
   for (const [prefix, lang, show] of PREFIXES) {
-    test(`${prefix || "/"}: the home section passes axe, fits the screen and its cards speak the page language`, async ({ page }) => {
+    test(`${prefix || "/"}: the home page links the page from its advantages instead of embedding the section`, async ({ page }) => {
       await page.goto(`${base}${prefix}/`);
       await expect(page.locator("html")).toHaveAttribute("lang", lang);
-      const section = page.locator("main#main > section#learning-elements");
-      await expect(section.locator(".le-live .le-card")).toHaveCount(3);
-      await expect(section.locator(".u-flip__toggle").first()).toHaveText(show);
-      await check(page, "#learning-elements");
+      await expect(page.locator("main#main > section#learning-elements")).toHaveCount(0);
+      await expect(page.locator(`#advantages a[href="${prefix}/learning-elements/"]`)).toBeVisible();
     });
 
-    test(`${prefix}/learning-elements/: passes axe and fits the screen`, async ({ page }) => {
+    test(`${prefix}/learning-elements/: passes axe, fits the screen and its cards speak the page language`, async ({ page }) => {
       await page.goto(`${base}${prefix}/learning-elements/`);
       await expect(page.locator("html")).toHaveAttribute("lang", lang);
       await expect(page.locator("h1")).toHaveCount(1);
       await expect(page.locator(".le-card")).toHaveCount(21);
+      await expect(page.locator(".u-flip__toggle").first()).toHaveText(show);
       await check(page);
     });
   }

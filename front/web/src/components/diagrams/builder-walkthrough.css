@@ -497,3 +497,15 @@
     }
   }
 }
+
+/* Home page: only the case-study links after the steps */
+.wt-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+.wt-more .wt-cases {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
