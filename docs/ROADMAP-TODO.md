@@ -1317,7 +1317,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       MyDevil/VPS pages that mention images now point to it. Describes IMG-3 (#427), IMG-4 (#469), IMG-5 (#472) and IMG-6b (#470), all merged
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
-- [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI
+- [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI (partial: `ulams stack backup` / `stack restore` for Docker and Kubernetes launcher installs, with a nightly backup, wipe and restore of a real Docker stack in `nightly-ops.yml`, and SeaweedFS buckets in the VPS local-trial backup, are done in P8-6, plan phase-8-self-hosting.md; stable/LTS release channels are the second P8-6 PR; the migration safety check waits for P8-5)
 - [ ] Health checks, Prometheus metrics, structured logs, zero-downtime guidance
 - [ ] SBOM, signed images, CVE scanning, hardening guide, ISO 27001 / GDPR audit docs
       Note 2026-10-22 (P8-2, #367): partial. Merged: Trivy on pull requests, in CI images and nightly against the published images (opens or updates one `security`
