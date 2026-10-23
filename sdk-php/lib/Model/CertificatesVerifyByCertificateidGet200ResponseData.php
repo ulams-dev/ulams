@@ -65,6 +65,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
         'issuer' => 'string',
         'revoked_at' => '\DateTime',
         'status' => 'string',
+        'superseded_by_policy_version' => 'int',
         'title' => 'string'
     ];
 
@@ -84,6 +85,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
         'issuer' => null,
         'revoked_at' => 'date-time',
         'status' => null,
+        'superseded_by_policy_version' => null,
         'title' => null
     ];
 
@@ -101,6 +103,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
         'issuer' => false,
         'revoked_at' => true,
         'status' => false,
+        'superseded_by_policy_version' => true,
         'title' => false
     ];
 
@@ -198,6 +201,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
         'issuer' => 'issuer',
         'revoked_at' => 'revoked_at',
         'status' => 'status',
+        'superseded_by_policy_version' => 'superseded_by_policy_version',
         'title' => 'title'
     ];
 
@@ -215,6 +219,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
         'issuer' => 'setIssuer',
         'revoked_at' => 'setRevokedAt',
         'status' => 'setStatus',
+        'superseded_by_policy_version' => 'setSupersededByPolicyVersion',
         'title' => 'setTitle'
     ];
 
@@ -232,6 +237,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
         'issuer' => 'getIssuer',
         'revoked_at' => 'getRevokedAt',
         'status' => 'getStatus',
+        'superseded_by_policy_version' => 'getSupersededByPolicyVersion',
         'title' => 'getTitle'
     ];
 
@@ -317,6 +323,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
         $this->setIfExists('issuer', $data ?? [], null);
         $this->setIfExists('revoked_at', $data ?? [], null);
         $this->setIfExists('status', $data ?? [], null);
+        $this->setIfExists('superseded_by_policy_version', $data ?? [], null);
         $this->setIfExists('title', $data ?? [], null);
     }
 
@@ -621,6 +628,40 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
             );
         }
         $this->container['status'] = $status;
+
+        return $this;
+    }
+
+    /**
+     * Gets superseded_by_policy_version
+     *
+     * @return int|null
+     */
+    public function getSupersededByPolicyVersion()
+    {
+        return $this->container['superseded_by_policy_version'];
+    }
+
+    /**
+     * Sets superseded_by_policy_version
+     *
+     * @param int|null $superseded_by_policy_version the policy version that replaced what the certificate certified, when it was revoked for that reason
+     *
+     * @return self
+     */
+    public function setSupersededByPolicyVersion($superseded_by_policy_version)
+    {
+        if (is_null($superseded_by_policy_version)) {
+            array_push($this->openAPINullablesSetToNull, 'superseded_by_policy_version');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('superseded_by_policy_version', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['superseded_by_policy_version'] = $superseded_by_policy_version;
 
         return $this;
     }

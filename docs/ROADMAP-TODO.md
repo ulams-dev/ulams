@@ -998,11 +998,11 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       (partial: P6R-8 and P6R-9 done, see the notes below; style guide and branded domains pending).
 - [ ] (new) Policy owner dashboard: show assigned people by department, completed and pending training,
       course version and issued PDF certificate; support the branded tenant learning application (Coming)
-      (partial: API and CSV export done in P6R-8; Studio screen and branded application pending).
+      (partial: API and CSV export done in P6R-8, Studio screen in P6R-10; the branded application of a department pending).
 - [ ] (new) On an approved policy change, update affected course variants, invalidate superseded certificates,
       notify learners and policy owners with a source diff, assign a new exam for a minor change or a new
       course for a major change, and issue a replacement PDF certificate after completion (Coming)
-      (partial: API, rollout, exam course, notices and certificate link done in P6R-9; Studio screens pending).
+      (partial: API, rollout, exam course, notices and certificate link done in P6R-9, Studio review and learner notices in P6R-10; demo pending).
       Note 2026-10-22 (Coming audit): the three policy lifecycle items above are planned in `docs/plans/phase-6-remaining.md` P6R-8 (package,
       variants per department, owner dashboard API), P6R-9 (approved change: rollouts, revoke and reassign, new exam or course,
       replacement certificate), P6R-10 (studio UI) and P6R-12 (demo); ADR 0140 Proposed. The branded department domains move to
@@ -1030,6 +1030,12 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       the replacement certificate is linked to the new version. Departments whose course cites nothing that changed are not retrained. Items the model
       could not propose (final-test questions) are the owner's to edit and block approval until decided. Not done: Studio screens and learner-side labels
       (P6R-10), demo (P6R-12); the generic compliance "assigned" mail still goes out next to the policy notice.
+      Note 2026-10-23 (P6R-10): Studio screens `/studio/policies` (list, new policy, one policy with departments, people, versions and uploading a change,
+      review of a version with the source diff, class choice, pre-flight, approve and reject) in English, Polish and Chinese, behind the studio BFF
+      allow-list; learner side: `GET /api/policies/my-changes` and a "what changed" line on My training for assignments a policy change created, and
+      the public certificate verification page says which policy version replaced a revoked certificate. axe (WCAG 2.2 AA) and keyboard specs at desktop
+      and phone width, unit tests for the model, strings parity and the BFF. Differences from the plan: the variants list is a section of the policy page
+      (no separate `variants.astro`), and the style guide upload and token review are not in `new` (SG, not built). Pending: P6R-12 demo.
 - [ ] (new) Branded entry points inside one academy: per-department, per-course and per-role hosts with their own theme,
       catalogue focus and SEO settings, resolved to the tenant by the front; access never depends on the host; per-host
       `__Host-` sessions with a one-time hand-off code between hosts; entry hosts join the trusted origins and return URLs;
