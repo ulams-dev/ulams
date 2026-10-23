@@ -1,0 +1,14 @@
+---
+/** The white paper "From policy to proof" on the public product site (zh). */
+import WhitePaperBody from "../../components/white-paper/WhitePaperBody.astro";
+import Base from "../../layouts/Base.astro";
+import { whitePaperPage } from "../../lib/white-paper.ts";
+
+if (!Astro.locals.platform) return Astro.rewrite("/404");
+const shell = whitePaperPage("zh", Astro.request, Astro.url);
+if (!shell) return Astro.rewrite("/404");
+---
+
+<Base theme="platform" title={shell.meta.title} description={shell.meta.description} lang={shell.meta.lang} canonical={shell.canonical} alternates={shell.alternates} ogLocale={shell.ogLocale} jsonLd={shell.jsonLd}>
+  <WhitePaperBody shell={shell} locale="zh" />
+</Base>
