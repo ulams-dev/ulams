@@ -8,11 +8,11 @@ import settingDrawer from './en-US/settingDrawer';
 import settings from './en-US/settings';
 import theme from './en-US/theme';
 
+import authoringMetrics from './en-US/authoringMetrics';
 import consultations from './en-US/consultations';
 import courses from './en-US/courses';
 import events from './en-US/events';
 import fabric from './en-US/fabric';
-import authoringMetrics from './en-US/authoringMetrics';
 import insights from './en-US/insights';
 import notifications from './en-US/notifications';
 import templates from './en-US/templates';

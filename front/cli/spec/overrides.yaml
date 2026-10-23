@@ -27,6 +27,8 @@ operations:
   "GET /api/admin/authoring-metrics/courses": { id: authoring-metrics.list, summary: "Authoring metric snapshots of courses built with the Course Builder" }
   "GET /api/admin/authoring-metrics/courses/export": { id: authoring-metrics.export, output: file, summary: "Download the authoring metric as CSV or JSON lines (use --out)" }
   "GET /api/admin/authoring-metrics/courses/{course}": { id: authoring-metrics.get, summary: "Authoring metric of one course: time per stage, cost and the split of AI elements" }
+  # --- report builder (ADR 0194): a preview reads data through a POST, so it is a read
+  "POST /api/admin/reporting/query": { id: reporting.query, kind: read, idempotent: true, summary: "Preview a report definition: rows or groups, with small groups withheld" }
   # --- compliance (certificates, required training, reports)
   "GET /api/admin/compliance/managers": { id: compliance.managers-list }
   "PUT /api/admin/compliance/managers/{user}": { id: compliance.managers-set, summary: "Set or clear (manager_id null) the manager that overdue training escalates to" }

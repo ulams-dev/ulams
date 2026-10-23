@@ -1,0 +1,272 @@
+{
+  "commitObject": {
+    "completionStatus": "completed",
+    "runtimeData": {
+      "cmi": {
+        "comments_from_learner": {},
+        "comments_from_lms": {},
+        "completion_status": "completed",
+        "completion_threshold": "",
+        "credit": "credit",
+        "entry": "",
+        "exit": "",
+        "interactions": {},
+        "launch_data": "",
+        "learner_id": "",
+        "learner_name": "",
+        "learner_preference": {
+          "audio_captioning": "0",
+          "audio_level": "1",
+          "delivery_speed": "1",
+          "language": ""
+        },
+        "location": "",
+        "max_time_allowed": "",
+        "mode": "normal",
+        "objectives": {},
+        "progress_measure": "",
+        "scaled_passing_score": "",
+        "score": {
+          "max": "",
+          "min": "",
+          "raw": "",
+          "scaled": ""
+        },
+        "session_time": "PT45S",
+        "success_status": "unknown",
+        "suspend_data": "",
+        "time_limit_action": "continue,no message"
+      }
+    },
+    "score": {},
+    "successStatus": "unknown",
+    "totalTimeSeconds": 45
+  },
+  "finalCmi": {
+    "comments_from_learner": {},
+    "comments_from_lms": {},
+    "completion_status": "completed",
+    "completion_threshold": "",
+    "credit": "credit",
+    "entry": "",
+    "exit": "",
+    "interactions": {},
+    "launch_data": "",
+    "learner_id": "",
+    "learner_name": "",
+    "learner_preference": {
+      "audio_captioning": "0",
+      "audio_level": "1",
+      "delivery_speed": "1",
+      "language": ""
+    },
+    "location": "",
+    "max_time_allowed": "",
+    "mode": "normal",
+    "objectives": {},
+    "progress_measure": "",
+    "scaled_passing_score": "",
+    "score": {
+      "max": "",
+      "min": "",
+      "raw": "",
+      "scaled": ""
+    },
+    "session_time": "PT45S",
+    "success_status": "unknown",
+    "suspend_data": "",
+    "time_limit_action": "continue,no message"
+  },
+  "fixture": "scorm2004-session",
+  "gets": [],
+  "mode": "default",
+  "posts": [],
+  "query": "phase=resume",
+  "requests": [
+    "GET /api/scorm/show/scorm2004-session~phase=resume"
+  ],
+  "sco": [
+    {
+      "args": [
+        ""
+      ],
+      "error": "0",
+      "fn": "Initialize",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.learner_id"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.entry"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.completion_status"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": "unknown"
+    },
+    {
+      "args": [
+        "cmi.success_status"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": "unknown"
+    },
+    {
+      "args": [
+        "cmi.location"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.total_time"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.suspend_data"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.completion_status",
+        "completed"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.session_time",
+        "PT45S"
+      ],
+      "error": "0",
+      "fn": "SetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.completion_status"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": "completed"
+    },
+    {
+      "args": [
+        "cmi.success_status"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": "unknown"
+    },
+    {
+      "args": [
+        "cmi.score.scaled"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.total_time"
+      ],
+      "error": "0",
+      "fn": "GetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        ""
+      ],
+      "error": "0",
+      "fn": "Terminate",
+      "result": "true"
+    }
+  ],
+  "settings": {
+    "alwaysSendTotalTime": false,
+    "asyncCommit": false,
+    "autoProgress": false,
+    "autocommit": false,
+    "autocommitSeconds": 10,
+    "commitRequestDataType": "application/json;charset=UTF-8",
+    "dataCommitFormat": "json",
+    "lmsCommitUrl": false,
+    "mastery_override": false,
+    "renderCommonCommitFields": false,
+    "selfReportSessionTime": false,
+    "sendFullCommit": true,
+    "strict_errors": true
+  },
+  "terminateCommitObject": {
+    "completionStatus": "completed",
+    "runtimeData": {
+      "cmi": {
+        "comments_from_learner": {},
+        "comments_from_lms": {},
+        "completion_status": "completed",
+        "completion_threshold": "",
+        "credit": "credit",
+        "entry": "",
+        "exit": "",
+        "interactions": {},
+        "launch_data": "",
+        "learner_id": "",
+        "learner_name": "",
+        "learner_preference": {
+          "audio_captioning": "0",
+          "audio_level": "1",
+          "delivery_speed": "1",
+          "language": ""
+        },
+        "location": "",
+        "max_time_allowed": "",
+        "mode": "normal",
+        "objectives": {},
+        "progress_measure": "",
+        "scaled_passing_score": "",
+        "score": {
+          "max": "",
+          "min": "",
+          "raw": "",
+          "scaled": ""
+        },
+        "session_time": "PT45S",
+        "success_status": "unknown",
+        "suspend_data": "",
+        "time_limit_action": "continue,no message",
+        "total_time": "PT45S"
+      }
+    },
+    "score": {},
+    "successStatus": "unknown",
+    "totalTimeSeconds": 45
+  },
+  "version": "2004"
+}

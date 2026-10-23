@@ -17,7 +17,8 @@ export default {
     'You need the permission to read authoring metrics. Authors can see the figures of their own courses in the studio.',
   authoring_metrics_error: 'The figures could not be loaded.',
   authoring_metrics_retry: 'Try again',
-  authoring_metrics_empty: 'No course built with the Course Builder has figures in this period yet.',
+  authoring_metrics_empty:
+    'No course built with the Course Builder has figures in this period yet.',
   authoring_metrics_scroll: 'Authoring metrics by course (scrolls sideways on small screens)',
   authoring_metrics_caption: 'Authoring metrics, one row per course',
   authoring_metrics_course_fallback: 'Course {id}',

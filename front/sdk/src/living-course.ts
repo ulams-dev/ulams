@@ -61,6 +61,16 @@ export interface LivingSource {
   revisionCount: number;
 }
 
+/** The change a Git push brought, as the webhook (or `check --commit`) reported it; shown as plain text, never trusted. */
+export interface SourceChange {
+  commit: string | null;
+  subject: string | null;
+  url: string | null;
+  pullRequest: number | null;
+  pullRequestUrl: string | null;
+  source: "webhook" | "ci";
+}
+
 export interface SourceRevision {
   id: string;
   sourceId: string;
@@ -78,6 +88,8 @@ export interface SourceRevision {
   counts: ChangeCounts | null;
   error: string | null;
   detectedAt: string | null;
+  /** The Git change that produced this revision, when a webhook or a CI check said so. */
+  change?: SourceChange | null;
   /** The course reflects this revision (null when the source has no connection). */
   synced: boolean | null;
   latest: boolean | null;
@@ -208,6 +220,8 @@ export interface ProposalSummary {
   evidence: InsightsEvidence | null;
   fromRevision: RevisionRef | null;
   toRevision: (RevisionRef & { detectedAt: string | null }) | null;
+  /** The Git change (merged pull request) behind the new revision, when known. */
+  change?: SourceChange | null;
   /** Analysis run (kind `sync`); its steps are in `ProposalDetail.steps`. */
   runId?: string | null;
   baseVersionId: string | null;

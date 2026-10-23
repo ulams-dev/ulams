@@ -4,7 +4,7 @@
  * renders from what the API returns; decisions are saved one by one, and nothing changes in the
  * course until the author applies.
  */
-import { apiErrorInfo, type AgUiEvent, type ProposalDetail, type ProposalItem, type RevisionChanges } from "@ulams/sdk";
+import { apiErrorInfo, type AgUiEvent, type ProposalDetail, type SourceChange, type ProposalItem, type RevisionChanges } from "@ulams/sdk";
 import { renderSurface, type FlatComponent } from "@ulams/ui/builder/renderer.ts";
 import type { A2uiActionOut } from "@ulams/ui/builder/components.ts";
 import { h, uid } from "@ulams/ui/builder/dom.ts";
@@ -225,6 +225,16 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     );
   }
 
+  /** "From PR #123: Rename the flag": the Git change behind the revision, as plain text (a commit message is untrusted). */
+  function gitChangeLine(c: SourceChange): HTMLElement {
+    const what = c.pullRequest !== null ? `PR #${c.pullRequest}` : c.commit ? `commit ${c.commit.slice(0, 7)}` : "a Git change";
+    const link = [c.pullRequestUrl, c.url].find((u) => typeof u === "string" && /^https:\/\//i.test(u));
+    return h("p", { class: "cb-muted", "data-git-change": "" },
+      "From ",
+      link ? h("a", { href: link, rel: "noopener noreferrer", target: "_blank" }, what) : what,
+      c.subject ? `: ${c.subject}` : "");
+  }
+
   function renderHeader(): void {
     const p = detail!;
     if (p.kind === "insights") return renderInsightsHeader(p);
@@ -240,6 +250,7 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
         source ? `What changed in the source: ${source}.` : "The source changed.",
         ` Proposal ${p.number}`,
         p.status === "ready" || p.status === "applied" ? ` · ${d.accepted ?? 0} accepted · ${d.rejected ?? 0} rejected · ${d.pending ?? 0} undecided` : ""),
+      ...(p.change ? [gitChangeLine(p.change)] : []),
       surface("ImpactSummary", impactProps(p)),
       learnerPanel.el,
       switchesHost
