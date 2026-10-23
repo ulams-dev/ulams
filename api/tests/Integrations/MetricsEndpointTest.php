@@ -27,6 +27,8 @@ class MetricsEndpointTest extends TestCase
             'ulams_tenancy.enforce_known_hosts' => false,
             'ulams_tenancy.tenant_slug' => null,
             'ulams.core.metrics.token' => null,
+            // queue gauges exist for the database and redis drivers only; CI runs with the sync driver
+            'queue.default' => 'database',
         ]);
         Cache::flush();
     }
