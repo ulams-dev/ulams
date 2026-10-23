@@ -1,5 +1,5 @@
 {
- "summary": "636/725 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "638/727 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -53,6 +53,18 @@
    "key": "GET /api/admin/agent-audit",
    "summary": "Agent audit log",
    "command": "tokens.agent-audit",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/authoring-metrics/courses",
+   "summary": "Authoring metric of courses",
+   "command": "authoring-metrics.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/authoring-metrics/courses/{course}",
+   "summary": "Authoring metric of one course",
+   "command": "authoring-metrics.get",
    "status": "covered"
   },
   {
