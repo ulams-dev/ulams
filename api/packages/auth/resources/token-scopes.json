@@ -287,6 +287,14 @@
             "area": "living-course"
         },
         {
+            "pattern": "api/admin/policies/*/dashboard*",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/policies*",
+            "area": "builder"
+        },
+        {
             "pattern": "api/living-course/courses/*/notices",
             "area": "learner"
         },

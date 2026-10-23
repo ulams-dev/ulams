@@ -57,6 +57,7 @@ return [
                     base_path('packages/authoring-metrics/src'),
                     base_path('packages/reporting/src'),
                     base_path('packages/compliance/src'),
+                    base_path('packages/policy-lifecycle/src'),
                     base_path('packages/notifications/src'),
                     base_path('packages/mattermost/src'),
                     base_path('packages/model-fields/src'),

@@ -85,6 +85,9 @@ return [
     ['api/admin/course-versions*', 'builder'],
     ['api/admin/authoring-metrics*', 'builder'],
     ['api/admin/living-course*', 'living-course'],
+    // policy lifecycle (ADR 0140): the owner dashboard and its export are reports, everything else prepares and approves training
+    ['api/admin/policies/*/dashboard*', 'reports'],
+    ['api/admin/policies*', 'builder'],
     // the learner's own update notices; the webhook is verified by its signature, not a token
     ['api/living-course/courses/*/notices', 'learner'],
     ['api/living-course/courses/*/freshness', 'learner'],

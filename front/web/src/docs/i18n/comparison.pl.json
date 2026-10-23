@@ -456,6 +456,13 @@
                     "packages": [
                       "ai"
                     ]
+                  },
+                  {
+                    "title": "Szkolenia z polityki według działów",
+                    "text": "Wgraj politykę i wskaż działy, które muszą ją znać. Kreator kursów przygotowuje po jednym kursie z cytowaniami dla działu z tego samego tekstu; właściciel sprawdza i publikuje kursy, zatwierdza wersję i widzi, kto jest przypisany, kto skończył i jaką wersję polityki potwierdza certyfikat.",
+                    "packages": [
+                      "policy-lifecycle"
+                    ]
                   }
                 ],
                 "audience": "author"
