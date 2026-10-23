@@ -445,7 +445,6 @@
                     "title": "将学习者分配到变体",
                     "text": "学习者在报名时选择自己的水平和角色，可参加带引用的分级测试，也可由管理员或规则分配变体；切换变体时学习进度会保留。",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming",
                     "packages": [
                       "course-variants"
                     ]
