@@ -862,7 +862,8 @@
                     "title": "报表",
                     "text": "统计数据和报表。",
                     "packages": [
-                      "reports"
+                      "reports",
+                      "reporting"
                     ]
                   },
                   {

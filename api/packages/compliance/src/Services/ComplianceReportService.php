@@ -5,28 +5,23 @@ namespace Ulams\Compliance\Services;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Ulams\Compliance\Models\Assignment;
 use Ulams\Courses\Models\Course;
+use Ulams\Reporting\Services\DatasetRegistry;
 use Ulams\TemplatesPdf\Models\FabricPDF;
 
 /**
  * Compliance datasets: who was required to do what and what came of it (`assignments`), the
  * certificates themselves with the course version they attest (`certificates`), and the
  * hash-chained Living Course audit entries of the courses involved (`audit`, when that package is
- * installed). The same rows feed the JSON report and the CSV export.
+ * installed). The same rows feed the JSON report and the CSV export. The columns come from the dataset registry of the
+ * `reporting` package, where this package registers the three datasets (`Ulams\Compliance\Reporting`).
  */
 class ComplianceReportService
 {
     public const DATASETS = ['assignments', 'certificates', 'audit'];
 
-    private const COLUMNS = [
-        'assignments' => ['assignment_id', 'user_id', 'user_name', 'user_email', 'course_id', 'course_title', 'source', 'status', 'assigned_at', 'due_at', 'completed_at', 'days_overdue', 'escalation_level', 'certificate_id', 'certificate_status', 'certificate_issued_at', 'certificate_expires_at', 'course_version'],
-        'certificates' => ['certificate_id', 'user_id', 'user_name', 'user_email', 'course_id', 'course_title', 'issued_at', 'expires_at', 'status', 'revoked_at', 'revoked_reason', 'superseded', 'course_version'],
-        'audit' => ['id', 'created_at', 'course_id', 'action', 'actor_type', 'actor_id', 'subject_type', 'subject_id', 'version_from', 'version_to', 'prev_hash', 'hash'],
-    ];
-
-    public function __construct(private CsvExporter $csv)
+    public function __construct(private CsvExporter $csv, private DatasetRegistry $datasets)
     {
     }
 
@@ -69,13 +64,13 @@ class ComplianceReportService
 
     public function available(string $dataset): bool
     {
-        return in_array($dataset, self::DATASETS, true) && ($dataset !== 'audit' || Schema::hasTable('living_course_audit'));
+        return in_array($dataset, self::DATASETS, true) && $this->datasets->has($dataset);
     }
 
     /** @return list<string> */
     public function columns(string $dataset): array
     {
-        return self::COLUMNS[$dataset];
+        return $this->datasets->columnNames($dataset);
     }
 
     /** @return array<string, mixed> */
