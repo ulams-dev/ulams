@@ -80,7 +80,10 @@ const AuthoringMetrics: React.FC = () => {
         name={name}
         value={filter[name] ?? ''}
         onChange={(event) =>
-          setFilter({ ...filter, [name]: event.target.value === '' ? undefined : event.target.value })
+          setFilter({
+            ...filter,
+            [name]: event.target.value === '' ? undefined : event.target.value,
+          })
         }
       />
     </label>
@@ -96,7 +99,9 @@ const AuthoringMetrics: React.FC = () => {
       );
     }
     if (state.mode === 'forbidden') {
-      return <Alert type="warning" showIcon role="alert" message={t('authoring_metrics_forbidden')} />;
+      return (
+        <Alert type="warning" showIcon role="alert" message={t('authoring_metrics_forbidden')} />
+      );
     }
     if (state.mode === 'error') {
       return (
@@ -114,76 +119,79 @@ const AuthoringMetrics: React.FC = () => {
     }
     return (
       <>
-      {state.summary && summaryCard(state.summary)}
-      <div
-        className="authoring-metrics__scroll"
-        role="region"
-        aria-label={t('authoring_metrics_scroll')}
-        tabIndex={0}
-      >
-        <table className="authoring-metrics__table">
-          <caption className="authoring-metrics__sr">{t('authoring_metrics_caption')}</caption>
-          <thead>
-            <tr>
-              <th scope="col">{t('authoring_metrics_col_course')}</th>
-              <th scope="col">{t('authoring_metrics_col_generation')}</th>
-              <th scope="col">{t('authoring_metrics_col_interview')}</th>
-              <th scope="col">{t('authoring_metrics_col_author')}</th>
-              <th scope="col">{t('authoring_metrics_col_build')}</th>
-              <th scope="col">{t('authoring_metrics_col_maintenance')}</th>
-              <th scope="col">{t('authoring_metrics_col_content')}</th>
-              <th scope="col">{t('authoring_metrics_col_hours')}</th>
-              <th scope="col">{t('authoring_metrics_col_elements')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {state.rows.map((m) => {
-              const split = elementSplit(m);
-              return (
-                <tr key={m.course_id} data-course={m.course_id}>
-                  <th scope="row">
-                    <Link to={`/courses/list/${m.course_id}`}>
-                      {m.course_title ?? t('authoring_metrics_course_fallback', { id: m.course_id })}
-                    </Link>
-                  </th>
-                  <td>{duration(m.time.generation_seconds + m.time.ai_edit_seconds, t)}</td>
-                  <td>{duration(m.time.interview_seconds, t)}</td>
-                  <td>
-                    {m.time.author_minutes === null
-                      ? t('authoring_metrics_not_recorded')
-                      : duration(m.time.author_minutes * 60, t)}
-                  </td>
-                  <td>{usd(m.cost.build_micro_usd, intl.locale)}</td>
-                  <td>{usd(m.cost.maintenance_micro_usd, intl.locale)}</td>
-                  <td>
-                    {t('authoring_metrics_content', {
-                      lessons: m.counts.lessons,
-                      questions: m.counts.questions,
-                    })}
-                  </td>
-                  <td>
-                    {m.hours?.hours_per_learner_hour == null
-                      ? t('authoring_metrics_not_recorded')
-                      : t('authoring_metrics_hours_value', { n: intl.formatNumber(m.hours.hours_per_learner_hour) })}
-                  </td>
-                  <td>
-                    {split.total === 0
-                      ? t('authoring_metrics_no_ai_elements')
-                      : t('authoring_metrics_split', {
-                          kept: split.kept,
-                          revised: split.revised,
-                          edited: split.edited,
-                          unknown: split.unknown,
-                          share: percent(split.keptShare ?? 0),
-                        })}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-      <p className="authoring-metrics__muted">{t('authoring_metrics_hours_formula')}</p>
+        {state.summary && summaryCard(state.summary)}
+        <div
+          className="authoring-metrics__scroll"
+          role="region"
+          aria-label={t('authoring_metrics_scroll')}
+          tabIndex={0}
+        >
+          <table className="authoring-metrics__table">
+            <caption className="authoring-metrics__sr">{t('authoring_metrics_caption')}</caption>
+            <thead>
+              <tr>
+                <th scope="col">{t('authoring_metrics_col_course')}</th>
+                <th scope="col">{t('authoring_metrics_col_generation')}</th>
+                <th scope="col">{t('authoring_metrics_col_interview')}</th>
+                <th scope="col">{t('authoring_metrics_col_author')}</th>
+                <th scope="col">{t('authoring_metrics_col_build')}</th>
+                <th scope="col">{t('authoring_metrics_col_maintenance')}</th>
+                <th scope="col">{t('authoring_metrics_col_content')}</th>
+                <th scope="col">{t('authoring_metrics_col_hours')}</th>
+                <th scope="col">{t('authoring_metrics_col_elements')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {state.rows.map((m) => {
+                const split = elementSplit(m);
+                return (
+                  <tr key={m.course_id} data-course={m.course_id}>
+                    <th scope="row">
+                      <Link to={`/courses/list/${m.course_id}`}>
+                        {m.course_title ??
+                          t('authoring_metrics_course_fallback', { id: m.course_id })}
+                      </Link>
+                    </th>
+                    <td>{duration(m.time.generation_seconds + m.time.ai_edit_seconds, t)}</td>
+                    <td>{duration(m.time.interview_seconds, t)}</td>
+                    <td>
+                      {m.time.author_minutes === null
+                        ? t('authoring_metrics_not_recorded')
+                        : duration(m.time.author_minutes * 60, t)}
+                    </td>
+                    <td>{usd(m.cost.build_micro_usd, intl.locale)}</td>
+                    <td>{usd(m.cost.maintenance_micro_usd, intl.locale)}</td>
+                    <td>
+                      {t('authoring_metrics_content', {
+                        lessons: m.counts.lessons,
+                        questions: m.counts.questions,
+                      })}
+                    </td>
+                    <td>
+                      {m.hours?.hours_per_learner_hour == null
+                        ? t('authoring_metrics_not_recorded')
+                        : t('authoring_metrics_hours_value', {
+                            n: intl.formatNumber(m.hours.hours_per_learner_hour),
+                          })}
+                    </td>
+                    <td>
+                      {split.total === 0
+                        ? t('authoring_metrics_no_ai_elements')
+                        : t('authoring_metrics_split', {
+                            kept: split.kept,
+                            revised: split.revised,
+                            edited: split.edited,
+                            unknown: split.unknown,
+                            share: percent(split.keptShare ?? 0),
+                          })}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p className="authoring-metrics__muted">{t('authoring_metrics_hours_formula')}</p>
       </>
     );
   };
@@ -238,7 +246,9 @@ const AuthoringMetrics: React.FC = () => {
           {field('from')}
           {field('to')}
           <Button onClick={() => void download('csv')}>{t('authoring_metrics_export_csv')}</Button>
-          <Button onClick={() => void download('jsonl')}>{t('authoring_metrics_export_jsonl')}</Button>
+          <Button onClick={() => void download('jsonl')}>
+            {t('authoring_metrics_export_jsonl')}
+          </Button>
         </form>
         <div role="status" aria-live="polite" className="authoring-metrics__notice">
           {notice}

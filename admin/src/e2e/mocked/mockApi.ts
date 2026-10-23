@@ -174,7 +174,12 @@ const metricRow = (m: MockMetric) => ({
     model_seconds: 902,
     author_minutes: m.author_minutes ?? null,
   },
-  cost: { build_micro_usd: 284100, maintenance_micro_usd: 1520000, llm_calls: 27, llm_calls_failed: 1 },
+  cost: {
+    build_micro_usd: 284100,
+    maintenance_micro_usd: 1520000,
+    llm_calls: 27,
+    llm_calls_failed: 1,
+  },
   counts: { lessons: 6, questions: 18, blocks: 35, cited_blocks: 35, learner_minutes_estimate: 60 },
   hours: {
     work_hours: m.hours ?? null,
@@ -210,7 +215,12 @@ export async function mockApi(
     /** Serve the Theme settings screen (adds the settings permissions) with this stored theme. */
     theme?: MockTheme;
     /** Serve Analytics > Authoring (adds its permission): the courses of the list, or a status to fail with. */
-    authoring?: { courses?: MockMetric[]; status?: number; failFirst?: boolean; summary?: MockSummary };
+    authoring?: {
+      courses?: MockMetric[];
+      status?: number;
+      failFirst?: boolean;
+      summary?: MockSummary;
+    };
     /** Serve Settings > Authoring metrics (adds the settings permissions): the setting and the delete action, or a status to fail the delete with. */
     reviewTime?: { deleteStatus?: number };
   } = {},
@@ -349,7 +359,11 @@ export async function mockApi(
         );
       }
       if (options.authoring && path.startsWith('/api/admin/authoring-metrics/')) {
-        state.metricRequests.push(`${path.endsWith('/export') ? 'export' : path.endsWith('/summary') ? 'summary' : 'list'}${url.search}`);
+        state.metricRequests.push(
+          `${path.endsWith('/export') ? 'export' : path.endsWith('/summary') ? 'summary' : 'list'}${
+            url.search
+          }`,
+        );
         if (options.authoring.status) {
           return json({ message: 'This action is unauthorized.' }, options.authoring.status);
         }
@@ -636,7 +650,11 @@ export async function mockApi(
       }
     }
 
-    if (options.reviewTime && method === 'DELETE' && path === '/api/admin/authoring-metrics/activity') {
+    if (
+      options.reviewTime &&
+      method === 'DELETE' &&
+      path === '/api/admin/authoring-metrics/activity'
+    ) {
       if (options.reviewTime.deleteStatus) {
         return json({ message: 'This action is unauthorized.' }, options.reviewTime.deleteStatus);
       }

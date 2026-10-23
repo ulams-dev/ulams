@@ -15,6 +15,7 @@ use Ulams\Settings\Facades\AdministrableConfig;
 use Ulams\Settings\UlamsSettingsServiceProvider;
 use Ulams\AuthoringMetrics\Http\Controllers\CourseMetricsController;
 use Ulams\AuthoringMetrics\Listeners\RecomputeCourseMetrics;
+use Ulams\AuthoringMetrics\Reporting\AuthoringDataset;
 use Ulams\AuthoringMetrics\Services\CourseMetrics;
 use Ulams\AuthoringMetrics\Services\SubjectResolvers;
 use Ulams\AuthoringMetrics\Services\Subjects\BuilderSessionResolver;
@@ -25,6 +26,8 @@ use Ulams\CourseBuilder\Events\BuilderStageFinished;
 use Ulams\CourseBuilder\Events\BuilderStageStarted;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
 use Ulams\Courses\Events\CoursedPublished;
+use Ulams\Reporting\Services\DatasetRegistry;
+use Ulams\Reporting\UlamsReportingServiceProvider;
 use Ulams\Tenancy\Upgrade\UpgradeSteps;
 
 /**
@@ -54,11 +57,15 @@ class UlamsAuthoringMetricsServiceProvider extends ServiceProvider
             // the academy's own earlier figure (hours of work per learner hour), shown next to the measured one and labelled as its own
             AdministrableConfig::registerConfig('authoring_metrics.baseline_hours_per_learner_hour', ['nullable', 'numeric', 'min:0', 'max:10000'], false, false);
         }
+        $this->app->register(UlamsReportingServiceProvider::class);
     }
 
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        // the metric is also a report dataset (RB-1)
+        $this->app->make(DatasetRegistry::class)->register(new AuthoringDataset());
 
         Event::listen(BuilderStageStarted::class, [RecordStageTimings::class, 'started']);
         Event::listen(BuilderStageFinished::class, [RecordStageTimings::class, 'finished']);

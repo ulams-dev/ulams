@@ -94,8 +94,11 @@ export async function exportCourseMetrics(format: 'csv' | 'jsonl', filter: Metri
 
 /** Deletes every recorded review minute and daily total; the figures that are not personal stay. */
 export async function deleteRecordedReviewTime() {
-  return request<{ data: { minutes: number; days: number } }>('/api/admin/authoring-metrics/activity', {
-    method: 'DELETE',
-    ...quiet,
-  });
+  return request<{ data: { minutes: number; days: number } }>(
+    '/api/admin/authoring-metrics/activity',
+    {
+      method: 'DELETE',
+      ...quiet,
+    },
+  );
 }

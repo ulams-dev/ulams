@@ -170,5 +170,7 @@ overdue course first. Struggle and recovery rates from Learner Insights are not 
 06:00: `name`, `dataset`, `frequency`, optional `format` (`csv` or `jsonl`) and `filters`, and `recipient_ids`. Recipients
 are users of this academy, never free-text addresses. A failing schedule is skipped and tried again at its next time.
 
-BI tools can read the same data through the API: create a scoped access token with the certificates scope and call
-`/api/admin/compliance/report` (paginated JSON) or `/report/export` (CSV or JSON lines).
+BI tools can read the same data through the API: create a scoped access token with the `reports:read` scope and call
+`/api/admin/compliance/report` (paginated JSON) or `/report/export` (CSV or JSON lines). The report and the schedules are in
+the `reports` token area, the rest of the compliance API is under `certificates`. The datasets behind the report are listed
+by the [report builder](/admin/report-builder/).

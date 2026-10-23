@@ -8,7 +8,10 @@ const messages: Record<string, string> = {
   authoring_metrics_duration_hours: '{h} h {m} min',
 };
 const t = (id: string, values: Record<string, string | number> = {}) =>
-  Object.entries(values).reduce((text, [k, v]) => text.replace(`{${k}}`, String(v)), messages[id] ?? id);
+  Object.entries(values).reduce(
+    (text, [k, v]) => text.replace(`{${k}}`, String(v)),
+    messages[id] ?? id,
+  );
 
 const metric = (elements: Partial<CourseMetric['elements']>): CourseMetric =>
   ({
@@ -21,7 +24,7 @@ const metric = (elements: Partial<CourseMetric['elements']>): CourseMetric =>
       author_written: 0,
       ...elements,
     },
-  }) as CourseMetric;
+  } as CourseMetric);
 
 describe('duration', () => {
   it.each([
@@ -42,7 +45,16 @@ describe('usd', () => {
 
 describe('elementSplit', () => {
   it('shares the kept elements of the AI elements', () => {
-    expect(elementSplit(metric({ ai_elements: 50, accepted_unchanged: 40, revised_on_request: 5, edited_by_author: 5 }))).toMatchObject({
+    expect(
+      elementSplit(
+        metric({
+          ai_elements: 50,
+          accepted_unchanged: 40,
+          revised_on_request: 5,
+          edited_by_author: 5,
+        }),
+      ),
+    ).toMatchObject({
       total: 50,
       kept: 40,
       revised: 5,

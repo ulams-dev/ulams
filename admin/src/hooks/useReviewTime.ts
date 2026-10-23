@@ -1,9 +1,6 @@
 import { useEffect } from 'react';
 import { request } from 'umi';
-import {
-  startReviewTime,
-  type ReviewEnvironment,
-} from '../../../front/web/src/studio/review-time';
+import { startReviewTime, type ReviewEnvironment } from '../../../front/web/src/studio/review-time';
 
 const ENDPOINT = '/api/admin/authoring-metrics/activity';
 

@@ -6,9 +6,9 @@ import type { IntlShape } from 'react-intl';
 import { FormattedMessage, history, useIntl, useModel, useParams } from 'umi';
 
 import { configs as fetchConfigs } from '@/services/ulams/settings';
+import ReviewTimeNotice from './components/ReviewTimeNotice';
 import GlobalSettings from './global';
 import PackageForm from './package';
-import ReviewTimeNotice from './components/ReviewTimeNotice';
 import ThemeSettings from './theme';
 import UserSettings from './user';
 

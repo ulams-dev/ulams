@@ -248,6 +248,41 @@ The defaults in `api/h5p/src/config.ts` point at compose service names; set `DB_
 `REDIS_HOST`, `S3_ENDPOINT` and the S3 credentials when the services run on `localhost`, as
 `.github/workflows/h5p-integration.yml` does.
 
+## SCORM playback tests
+
+`api/packages/scorm/tests/fixtures/playback` holds original SCORM 1.2 and 2004 test packages (MIT,
+written for ulams, no third-party content). Each SCO runs a scripted learner session against the
+SCORM API (status, score, suspend data, commits, session time, completion and success status,
+validation errors) and records every call, return value and error code. They exist so a SCORM
+player change, such as the `scorm-again` upgrade, can be proved not to change what learners get.
+Plan: `docs/plans/scorm-playback-tests.md`, decision: ADR 0197.
+
+```bash
+node api/packages/scorm/tests/fixtures/playback/build.mjs --check   # the committed zips match the sources
+corepack yarn workspace front test                                   # includes the fixture, zip and trace unit tests
+./vendor/bin/phpunit --testsuite scorm --filter ScormPlaybackFixturesTest   # parser and upload
+```
+
+The React player (`front/src/lib/scorm-player`, shared by the legacy front and the admin preview) is
+played in a real browser by `front/tests/scorm-playback/react-player.spec.ts`, once with the legacy
+front's service worker and once with the admin's. No API stack and no network are needed: a small
+server builds the harness page, serves each app's own service worker, the fixture zips and mock LMS
+endpoints. Each scenario's runtime calls, final CMI, commit object (status, score, total time),
+scorm-again settings and host requests are compared with a golden trace in
+`api/packages/scorm/tests/fixtures/playback/golden/react-player`.
+
+```bash
+corepack yarn playwright install chromium     # once
+corepack yarn workspace front test:scorm      # both apps against the golden traces
+UPDATE_GOLDEN=1 corepack yarn workspace front test:scorm   # rewrite them; explain the change in the PR
+```
+
+CI runs this as the **SCORM playback (Playwright)** job whenever the player, the service workers,
+the fixtures or the harness change. A changed golden trace is a behaviour change for learners and
+needs a reason in the pull request. The API content player and the `scorm-again` upgrade follow in
+the next milestones of the plan. After editing a fixture, rebuild the zips with `build.mjs`; the
+fixtures README lists the query parameters of each SCO.
+
 ## Performance
 
 `corepack yarn workspace @ulams/web perf` measures LCP, CLS and JavaScript per page of a running
