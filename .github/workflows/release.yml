@@ -25,11 +25,12 @@ concurrency:
 jobs:
   assets:
     name: SBOMs and checksums
-    # A workflow_run fires for every publish run; only a successful run for a push is of interest, and the
+    # A workflow_run fires for every publish run; only a successful run for a push, or for the dispatch that
+    # release-please.yml makes for a new tag, is of interest, and the
     # first step checks that its ref is a v* tag.
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+      (github.event.workflow_run.conclusion == 'success' && contains(fromJSON('["push","workflow_dispatch"]'), github.event.workflow_run.event))
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
