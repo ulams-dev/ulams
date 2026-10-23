@@ -10503,6 +10503,61 @@
     ]
    }
   },
+  "/api/admin/course-as-code/courses/{course}/adopt": {
+   "post": {
+    "operationId": "admin.course-as-code.courses.by-course.adopt.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "already adopted: the existing session"
+     },
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "adopted: sessionId, versionId and the topics that were left out (skipped, with the reason)"
+     },
+     "403": {
+      "description": "no access to the course builder, or the course may not be changed by this user"
+     },
+     "404": {
+      "description": "unknown course"
+     },
+     "422": {
+      "description": "NOTHING_TO_ADOPT (no lesson the blueprint can hold) or ADOPTION_INVALID"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Adopt a course made by hand: a first blueprint, version, session and entity map from the live course (idempotent)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
   "/api/admin/course-as-code/courses/{course}/blueprint": {
    "get": {
     "description": "Course-as-code API (ADR 0160, prefix `/api/admin/course-as-code`, `auth:api`, permission\n`course_builder_use`). It works with AI off: there is no AI gate on this route group. A push is\nalways a proposed version; a person approves it (agent tokens and MCP clients never can).",

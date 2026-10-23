@@ -1,5 +1,5 @@
 {
- "summary": "625/714 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "626/715 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -473,6 +473,12 @@
    "key": "POST /api/admin/course-as-code/courses",
    "summary": "Create an empty course (an approved empty blueprint) for a folder that has no course yet; the course row is made by the first apply",
    "command": "course.preview",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-as-code/courses/{course}/adopt",
+   "summary": "Adopt a course made by hand: a first blueprint, version, session and entity map from the live course (idempotent)",
+   "command": "course.adopt",
    "status": "covered"
   },
   {
