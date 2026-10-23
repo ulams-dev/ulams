@@ -1327,7 +1327,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
 - [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI
-- [ ] Health checks, Prometheus metrics, structured logs, zero-downtime guidance
+- [ ] Health checks, Prometheus metrics, structured logs, zero-downtime guidance (partial: probes, Prometheus metrics for API, queue, Caddy, H5P and PDF, and JSON logs with a request id are done in P8-4, plan phase-8-self-hosting.md; zero-downtime guidance waits for the Helm chart, P8-5)
 - [ ] SBOM, signed images, CVE scanning, hardening guide, ISO 27001 / GDPR audit docs
       Note 2026-10-22 (P8-2, #367): partial. Merged: Trivy on pull requests, in CI images and nightly against the published images (opens or updates one `security`
       issue; `.trivyignore.yaml` with a checked expiry), keyless cosign signing and verification of every digest and an SBOM attestation in `publish.yml`, SPDX SBOMs

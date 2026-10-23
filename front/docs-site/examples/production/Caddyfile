@@ -17,6 +17,9 @@
 
 {
 	email {$ACME_EMAIL}
+	servers {
+		metrics
+	}
 	on_demand_tls {
 		ask http://localhost:5555/check
 	}
@@ -88,6 +91,13 @@
 # Laravel API and the H5P service on one host
 (api) {
 	encode zstd gzip
+
+	# Never serve Prometheus metrics on a public host: the API's /metrics is for the internal listener below
+	# (docs/operators/monitoring). The PHP side also refuses requests that carry forwarding headers.
+	@metrics path /metrics
+	handle @metrics {
+		respond "Not found" 404
+	}
 
 	# H5P core sends the access token as ?_token=: keep it and the auth headers out of the log
 	log {
@@ -380,5 +390,27 @@ http://:5555 {
 
 	handle {
 		respond 404
+	}
+}
+
+# Prometheus scrape targets (internal listener, not published; never add a `ports:` entry for it).
+# /metrics: Caddy's own request, latency and status metrics (enabled by `servers { metrics }`).
+# /php-metrics: the platform API's gauges (queues, failed jobs, heartbeats, tenants, AI usage), served only
+# to private addresses or with METRICS_TOKEN. Other services expose their own /metrics (h5p:8080, pdf:3000).
+http://:9180 {
+	handle /metrics {
+		metrics
+	}
+	handle /php-metrics {
+		rewrite * /metrics
+		reverse_proxy api:9000 {
+			header_up Host api.{$ULAMS_DOMAIN}
+			transport fastcgi {
+				env SCRIPT_FILENAME /var/www/html/index.php
+			}
+		}
+	}
+	handle {
+		respond "Not found" 404
 	}
 }

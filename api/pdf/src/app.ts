@@ -1,10 +1,12 @@
 import { timingSafeEqual } from 'node:crypto';
 import express, { type NextFunction, type Request, type Response } from 'express';
 import { pinoHttp } from 'pino-http';
+import { randomUUID } from 'node:crypto';
 import type { Logger } from 'pino';
 import type { Config } from './config.js';
 import { fontManifest, type FontStore } from './fonts.js';
 import type { RenderPool } from './pool.js';
+import { createMetrics } from './metrics.js';
 import { prepare, RenderError } from './render.js';
 
 export interface AppDeps {
@@ -30,7 +32,24 @@ const sendError = (res: Response, status: number, code: string, message: string,
 export const createApp = ({ config, fonts, logger, pool }: AppDeps) => {
     const app = express();
     app.disable('x-powered-by');
-    app.use(pinoHttp({ logger, autoLogging: { ignore: (req) => req.url === '/health' } }));
+    const metrics = createMetrics(pool);
+    app.use(metrics.middleware);
+    // the API sends the request id of the call that caused the render; its log lines carry it (P8-4)
+    app.use(
+        pinoHttp({
+            logger,
+            genReqId: (req, res) => {
+                const given = req.headers['x-request-id'];
+                const id = typeof given === 'string' && /^[0-9A-Za-z-]{8,64}$/.test(given) ? given : randomUUID();
+                res.setHeader('X-Request-Id', id);
+                return id;
+            },
+            autoLogging: { ignore: (req) => req.url === '/health' || req.url === '/metrics' }
+        })
+    );
+
+    // Prometheus scrape: internal network only (the service is not published), so no token
+    app.get('/metrics', metrics.handler);
 
     app.get('/health', (_req, res) => {
         res.json({ status: 'ok', active: pool.active, fonts: fonts.files.size });

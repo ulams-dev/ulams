@@ -19,6 +19,7 @@ import { contentsRouter } from './routes/contents';
 import { healthRouter } from './routes/health';
 import { embedRouter } from './routes/embed';
 import { jsonErrorHandler, requireAny } from './http/respond';
+import { createMetrics, requestId } from './http/metrics';
 import { Tenant, TenantResolver } from './tenancy/types';
 
 export interface AppDeps {
@@ -112,14 +113,20 @@ export function createApp(deps: AppDeps): Express {
     app.disable('x-powered-by');
     app.set('trust proxy', true);
 
+    const metrics = createMetrics();
+    app.use(metrics.middleware);
+    // internal scrape endpoint: before tenant resolution, Caddy never routes it (only /h5p/*)
+    app.get('/metrics', metrics.handler);
+
     app.use(
         pinoHttp({
             logger,
+            genReqId: (req, res) => requestId(req as Request, res as any),
             serializers: {
                 req: (req) => ({ id: req.id, method: req.method, url: redactUrl(req.url) }),
                 res: (res) => ({ statusCode: res.statusCode })
             },
-            autoLogging: { ignore: (req) => req.url === `${base}/health` },
+            autoLogging: { ignore: (req) => req.url === `${base}/health` || req.url === '/metrics' },
             customLogLevel: (_req, res, err) => (err || res.statusCode >= 500 ? 'error' : 'info')
         })
     );
