@@ -8,7 +8,8 @@ use Ulams\Commerce\CommerceManager;
 use Ulams\Commerce\Contracts\CommerceProvider;
 use Ulams\Commerce\Support\CheckoutRef;
 use Ulams\Commerce\Support\OrderEvent;
-use Ulams\Commerce\Support\Price;
+use Ulams\Commerce\Support\OrderSnapshot;
+use Ulams\Commerce\Support\ProductSpec;
 use Ulams\Commerce\Support\ProductRef;
 use Ulams\Commerce\Support\SellableRef;
 use Ulams\CourseBuilder\Models\Session;
@@ -32,12 +33,12 @@ class CommerceStepTest extends TestCase
                 return 'fake';
             }
 
-            public function syncProduct(SellableRef $ref, Price $price, bool $active): ProductRef
+            public function syncProduct(SellableRef $ref, ProductSpec $spec): ProductRef
             {
                 if ($this->rejectCurrency) {
                     throw new InvalidArgumentException('The cart sells in USD.');
                 }
-                $this->calls[] = [$ref->type, $ref->id, $price->amountMinor, $price->currency, $active];
+                $this->calls[] = [$ref->type, $ref->id, $spec->price->amountMinor, $spec->price->currency, $spec->active];
 
                 return new ProductRef('fake', "course-{$ref->id}");
             }
@@ -45,6 +46,11 @@ class CommerceStepTest extends TestCase
             public function createCheckout(User $user, ProductRef $product, string $returnUrl): CheckoutRef
             {
                 return new CheckoutRef('https://pay.test');
+            }
+
+            public function fetchOrder(string $orderId): OrderSnapshot
+            {
+                throw new \RuntimeException('not used');
             }
 
             public function handleOrderEvent(Request $request): ?OrderEvent

@@ -10,6 +10,7 @@ use Ulams\Cart\Tests\Mocks\ExampleProductable;
 use Ulams\Commerce\Contracts\CommerceProvider;
 use Ulams\Commerce\Models\ProductLink;
 use Ulams\Commerce\Support\Price;
+use Ulams\Commerce\Support\ProductSpec;
 use Ulams\Commerce\Support\SellableRef;
 use Ulams\Commerce\Tests\TestCase;
 use Ulams\Core\Models\User;
@@ -22,6 +23,11 @@ class WellmsCartProviderTest extends TestCase
         Shop::registerProductableClass(ExampleProductable::class);
     }
 
+    private function spec(int $amount, string $currency, bool $active): ProductSpec
+    {
+        return new ProductSpec('Brewing basics', new Price($amount, $currency), $active);
+    }
+
     private function course(): ExampleProductable
     {
         return ExampleProductable::factory()->create(['name' => 'Brewing basics']);
@@ -30,7 +36,7 @@ class WellmsCartProviderTest extends TestCase
     public function testSyncCreatesAnInactiveSingleProductThroughTheCartService(): void
     {
         $course = $this->course();
-        $ref = app(CommerceProvider::class)->syncProduct(SellableRef::course($course->getKey()), new Price(4900, 'USD'), false);
+        $ref = app(CommerceProvider::class)->syncProduct(SellableRef::course($course->getKey()), $this->spec(4900, 'USD', false));
 
         $product = Product::query()->findOrFail((int) $ref->externalId);
         $this->assertSame('wellms', $ref->provider);
@@ -45,8 +51,8 @@ class WellmsCartProviderTest extends TestCase
     {
         $course = $this->course();
         $provider = app(CommerceProvider::class);
-        $first = $provider->syncProduct(SellableRef::course($course->getKey()), new Price(4900, 'USD'), false);
-        $second = $provider->syncProduct(SellableRef::course($course->getKey()), new Price(5900, 'USD'), true);
+        $first = $provider->syncProduct(SellableRef::course($course->getKey()), $this->spec(4900, 'USD', false));
+        $second = $provider->syncProduct(SellableRef::course($course->getKey()), $this->spec(5900, 'USD', true));
 
         $this->assertSame($first->externalId, $second->externalId);
         $this->assertSame(1, Product::query()->count());
@@ -62,7 +68,7 @@ class WellmsCartProviderTest extends TestCase
         $existing = Product::factory()->create(['price' => 100, 'type' => 'single']);
         $existing->productables()->create(['productable_type' => ExampleProductable::getMorphClassStatic(), 'productable_id' => $course->getKey()]);
 
-        $ref = app(CommerceProvider::class)->syncProduct(SellableRef::course($course->getKey()), new Price(2500, 'USD'), true);
+        $ref = app(CommerceProvider::class)->syncProduct(SellableRef::course($course->getKey()), $this->spec(2500, 'USD', true));
 
         $this->assertSame((string) $existing->getKey(), $ref->externalId);
         $this->assertSame(2500, $existing->refresh()->price);
@@ -72,20 +78,20 @@ class WellmsCartProviderTest extends TestCase
     {
         config(['ulams_payments.default_currency' => 'USD']);
         $this->expectException(InvalidArgumentException::class);
-        app(CommerceProvider::class)->syncProduct(SellableRef::course($this->course()->getKey()), new Price(100, 'EUR'), false);
+        app(CommerceProvider::class)->syncProduct(SellableRef::course($this->course()->getKey()), $this->spec(100, 'EUR', false));
     }
 
     public function testAnUnknownSellableFails(): void
     {
         config(['commerce.sellables.course' => null]);
         $this->expectException(InvalidArgumentException::class);
-        app(CommerceProvider::class)->syncProduct(SellableRef::course(1), new Price(100, 'USD'), false);
+        app(CommerceProvider::class)->syncProduct(SellableRef::course(1), $this->spec(100, 'USD', false));
     }
 
     public function testCheckoutPointsAtTheCartAndThereAreNoOrderWebhooks(): void
     {
         $provider = app(CommerceProvider::class);
-        $ref = $provider->syncProduct(SellableRef::course($this->course()->getKey()), new Price(100, 'USD'), true);
+        $ref = $provider->syncProduct(SellableRef::course($this->course()->getKey()), $this->spec(100, 'USD', true));
 
         $url = $provider->createCheckout(new User(), $ref, 'https://shop.test/courses/1')->url;
 

@@ -15,6 +15,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $amount_minor
  * @property string $currency
  * @property bool $active
+ * @property string|null $variant_code
+ * @property string|null $channel_code
+ * @property \Illuminate\Support\Carbon|null $synced_at
+ * @property string|null $sync_error
+ * @property string|null $payload_hash
  */
 class ProductLink extends Model
 {
@@ -22,5 +27,5 @@ class ProductLink extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = ['sellable_id' => 'integer', 'amount_minor' => 'integer', 'active' => 'boolean'];
+    protected $casts = ['sellable_id' => 'integer', 'amount_minor' => 'integer', 'active' => 'boolean', 'synced_at' => 'datetime'];
 }

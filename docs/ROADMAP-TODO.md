@@ -139,6 +139,7 @@ small commits → tests → summary.
 - [ ] Move certificates (6.1) earlier if compliance is the priority segment
 - [ ] Multitenancy for the POC: one deployment, tenant per subdomain with own theme?
 - [ ] Prototype the Sylius order → entitlement flow early (highest-risk commerce piece)
+      Note 2026-10-23 (CM-3): the Sylius half is built and tested against a real Sylius 2.3 (see Phase 6.4); the item closes with the CM-7 end-to-end job
       Note 2026-10-22: the LMS half is prototyped with a fake provider (CM-1, #356); the Sylius half is not started, so the risk this item names is still open
 - [x] Add the spec file to the repo as `docs/ROADMAP-PROMPT.md`
 - [x] (new) Approve the Phase 1 and Phase 2 plans (`docs/plans/phase-1.md`, `docs/plans/phase-2.md`)
@@ -1050,6 +1051,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 
 ### 6.4 Commerce (Sylius) and extended enterprise
 - [ ] `CommerceProvider` interface (sync product, create checkout, handle order events) (partial: interface and the Wellms cart adapter shipped in `api/packages/commerce`, ADR 0049; the Sylius adapter is pending)
+      Note 2026-10-23 (CM-3): interface v2 (`ProductSpec`, core `fetchOrder`, capabilities `ReportsOrderEvents`, `ReconcilesOrders`, `InspectsCatalogue`, `ListsOrders`),
+      the Sylius adapter in `api/packages/commerce-sylius` and one contract suite run against the Wellms adapter and a real Sylius 2.3 (ADR 0133); ticks when merged.
+      `createCheckout` only builds the frontend URL until CM-5
 - [ ] Sylius adapter as default implementation
       Note 2026-10-22 (Coming audit): "Headless Sylius shop" stays "Coming". Plan `phase-6-commerce.md` CM-3 to CM-12; everything except live payment
       keys, seller legal data, the production Sylius host and staff accounts (section 17, owner inputs) can be built and tested
@@ -1062,11 +1066,18 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       Note 2026-10-22 (CM-2): all source types, the hourly expiry job, the `CourseAccessService` decorator (admin, `lti`, `compliance`), the backfill with
       parity report and the `ProductBought` shadow listener are in; ADR 0130 is Accepted. Open here: seat pools (CM-9), the admin view of the parity report (CM-8)
 - [ ] Catalogue sync: course/bundle/subscription/seat package → digital Sylius product
+      Note 2026-10-23 (CM-3): course, bundle and access pass sync (prices kept in the LMS, product enabled while for sale and published, publish/unpublish through
+      `SyncSellableJob`, `ulams:commerce:sync --check --repair`, nightly drift report, admin API `api/admin/commerce/*`, CLI `ulams commerce ...`); seat packages are CM-9,
+      subscriptions are out of this block (plan Q5)
 - [ ] Order → entitlement via signed, idempotent webhooks + reconciliation job; never grant
       access from frontend redirect
       Note 2026-10-22 (CM-1, #356): prototype only. `POST /api/commerce/webhooks/{provider}` (HMAC, timestamp, event id, tenant channel), `ApplyOrderEvent`,
       `ulams:commerce:reconcile` and `OrderFlowTest`, `OrderWebhookTest`, `CommerceTenantIsolationTest` exist, but the only provider with these capabilities is the
       test-only `FakeCommerceProvider`; there is no Sylius service or adapter yet (CM-3), so nothing has been proved against a real order
+      Note 2026-10-23 (CM-3): now proved against a real Sylius 2.3 on PostgreSQL 17 (`commerce-sylius` live suite: checkout through the Shop API, paid and refunded
+      orders through the bridge feed and through the nightly `ulams:commerce:reconcile --full` sweep, bundles, access passes, unlinked customers); the bridge bundle
+      (outbox, feed, signed delivery) is in `api/sylius` with its own tests and the compose profile `commerce`. Not yet proved: delivery over the network from the
+      bridge to a running LMS and Stripe (CM-4), the CI job and `scripts/commerce-e2e.sh` (CM-7)
 - [ ] Single login: LMS as identity source; Sylius customer linked on first checkout
 - [ ] Tenant ↔ Sylius channel (catalogue, prices, currency, locale, tax zone), created at provisioning
 - [ ] Unified admin: prices, coupons, orders, refunds in LMS admin; native Sylius admin for

@@ -130,6 +130,9 @@
     <testsuite name="commerce">
       <directory suffix="Test.php">./packages/commerce/tests</directory>
     </testsuite>
+    <testsuite name="commerce-sylius">
+      <directory suffix="Test.php">./packages/commerce-sylius/tests</directory>
+    </testsuite>
     <testsuite name="entitlements">
       <directory suffix="Test.php">./packages/entitlements/tests</directory>
     </testsuite>
@@ -273,6 +276,7 @@
       <directory suffix=".php">./packages/compliance/</directory>
       <directory suffix=".php">./packages/ai/</directory>
       <directory suffix=".php">./packages/commerce/</directory>
+      <directory suffix=".php">./packages/commerce-sylius/</directory>
       <directory suffix=".php">./packages/entitlements/</directory>
 <directory suffix=".php">./packages/course-builder/</directory>
       <directory suffix=".php">./packages/course-variants/</directory>

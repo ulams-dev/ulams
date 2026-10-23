@@ -2,8 +2,8 @@
 
 return [
     /**
-     * Commerce backend: "wellms" is the built-in cart and payments. A Sylius adapter registers
-     * itself through CommerceManager::extend() (planned, Phase 6.4).
+     * Commerce backend: "wellms" is the built-in cart and payments; "sylius" is the headless Sylius service
+     * (`commerce-sylius`, Phase 6.4). Other adapters register through CommerceManager::extend().
      */
     'provider' => env('COMMERCE_PROVIDER', 'wellms'),
 
@@ -36,6 +36,10 @@ return [
         'page_size' => 200,
         /** An event that was stored but never applied for this long is queued again. */
         'stuck_after_minutes' => 5,
+        /** `--full` looks back this many days (the nightly sweep). */
+        'sweep_days' => 35,
+        /** Run the nightly order sweep and catalogue check from the scheduler (per tenant, 03:10). */
+        'nightly' => (bool) env('COMMERCE_NIGHTLY', false),
     ],
 
     /**

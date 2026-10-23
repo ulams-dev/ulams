@@ -182,6 +182,7 @@ return [
         Ulams\Identity\UlamsIdentityServiceProvider::class,
         Ulams\Commerce\UlamsCommerceServiceProvider::class,
         Ulams\Entitlements\UlamsEntitlementsServiceProvider::class,
+        Ulams\CommerceSylius\UlamsCommerceSyliusServiceProvider::class,
         Ulams\BulkNotifications\UlamsBulkNotificationsServiceProvider::class,
         Ulams\Cart\UlamsCartServiceProvider::class,
         Ulams\Categories\UlamsCategoriesServiceProvider::class,

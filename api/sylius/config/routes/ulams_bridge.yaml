@@ -1,0 +1,3 @@
+ulams_bridge:
+    resource: '../../bundles/UlamsBridgeBundle/src/Controller/'
+    type: attribute

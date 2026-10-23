@@ -1,0 +1,40 @@
+{
+  "@context": "/api/v2/contexts/ProductVariant",
+  "@id": "/api/v2/admin/product-variants/ul-acme-course-1-v",
+  "@type": "ProductVariant",
+  "onHold": 0,
+  "onHand": 0,
+  "tracked": false,
+  "weight": null,
+  "width": null,
+  "height": null,
+  "depth": null,
+  "taxCategory": "/api/v2/admin/tax-categories/e-service",
+  "shippingCategory": null,
+  "channelPricings": {
+    "acme": {
+      "@id": "/api/v2/admin/product-variants/ul-acme-course-1-v/channel-pricings/acme",
+      "@type": "ChannelPricing",
+      "price": 4900,
+      "originalPrice": null,
+      "minimumPrice": 0,
+      "lowestPriceBeforeDiscount": null,
+      "appliedPromotions": []
+    }
+  },
+  "shippingRequired": false,
+  "code": "ul-acme-course-1-v",
+  "product": "/api/v2/admin/products/ul-acme-course-1",
+  "optionValues": [],
+  "position": 0,
+  "createdAt": "2026-10-23 00:45:54",
+  "updatedAt": "2026-10-23 00:45:54",
+  "enabled": true,
+  "translations": {
+    "en_US": {
+      "@id": "/api/v2/admin/product-variants/ul-acme-course-1-v/translations/en_US",
+      "@type": "ProductVariantTranslation",
+      "name": "Brewing basics"
+    }
+  }
+}
