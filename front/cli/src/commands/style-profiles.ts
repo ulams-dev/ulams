@@ -16,6 +16,8 @@ const BASE = "/api/admin/course-builder/style-profiles";
 const profile = z.string().describe("Style profile id (from `ulams style-profiles list`).");
 const values = z.record(z.string(), z.unknown()).describe("Profile values as JSON, or @file.json / @file.yaml: voice, readingLevel, terminology, banned, components, imagery, theme, examples (schema: style-profile/v1).");
 
+const scopeBody = (i: { scope?: string; scopeId?: string }): Record<string, string> => ({ ...(i.scope ? { scopeType: i.scope } : {}), ...(i.scopeId ? { scopeId: i.scopeId } : {}) });
+
 const planOf = (method: string, path: string, body?: unknown): Plan => ({ request: { method, path, ...(body !== undefined ? { body } : {}) } });
 
 async function readStyleGuide(ctx: Ctx, path: string): Promise<{ name: string; bytes: Uint8Array }> {
@@ -72,13 +74,15 @@ export const styleProfileCommands: AnyCommand[] = [
       profile: values.optional(),
       from: z.string().optional().describe("Existing profile id to revise."),
       name: z.string().max(255).optional().describe("Name of the profile."),
+      scope: z.enum(["tenant", "brief"]).optional().describe("tenant (default): the academy's profile. brief: a named alternative that a Course Brief picks with `builder brief set --style-profile-id`."),
+      scopeId: z.string().regex(/^[a-z0-9][a-z0-9-]{0,63}$/).optional().describe("Name (slug) of a brief profile; defaults to the slug of --name."),
     }),
     output: z.unknown(),
     examples: [
       { title: "Read a style guide", argv: "style-profiles propose --file ./style-guide.md --json" },
       { title: "Change a rule of the approved profile", argv: 'style-profiles propose --from <profile> --profile \'{"terminology":[{"use":"participant","avoid":["learner"]}]}\' --json' },
     ],
-    plan: async (_ctx, i) => ({ note: i.file ? "Uploads the style guide." : "Creates the profile from the given values.", request: { method: "POST", path: BASE, body: { ...(i.file ? { file: i.file } : {}), ...(i.profile ? { profile: i.profile } : {}), ...(i.from ? { from: i.from } : {}), ...(i.name ? { name: i.name } : {}) } } }),
+    plan: async (_ctx, i) => ({ note: i.file ? "Uploads the style guide." : "Creates the profile from the given values.", request: { method: "POST", path: BASE, body: { ...(i.file ? { file: i.file } : {}), ...(i.profile ? { profile: i.profile } : {}), ...(i.from ? { from: i.from } : {}), ...(i.name ? { name: i.name } : {}), ...scopeBody(i) } } }),
     async run(ctx, i) {
       if (!i.file && !i.profile && !i.from) throw new CliError("INPUT_INVALID", "Pass --file <style guide>, --profile <values> or --from <profile>.");
       if (i.file && (i.profile || i.from)) throw new CliError("INPUT_INVALID", "--file reads a style guide; --profile and --from write values yourself. Use one or the other.");
@@ -87,9 +91,10 @@ export const styleProfileCommands: AnyCommand[] = [
         const form = new FormData();
         form.append("file", new Blob([file.bytes as BlobPart]), file.name);
         if (i.name) form.append("name", i.name);
+        for (const [k, v] of Object.entries(scopeBody(i))) form.append(k, v);
         return { data: await builderCall(ctx, "POST", "/style-profiles", { form }) };
       }
-      return { data: await builderCall(ctx, "POST", "/style-profiles", { body: { ...(i.profile ? { profile: i.profile } : {}), ...(i.from ? { from: i.from } : {}), ...(i.name ? { name: i.name } : {}) } }) };
+      return { data: await builderCall(ctx, "POST", "/style-profiles", { body: { ...(i.profile ? { profile: i.profile } : {}), ...(i.from ? { from: i.from } : {}), ...(i.name ? { name: i.name } : {}), ...scopeBody(i) } }) };
     },
   }),
   defineCommand({

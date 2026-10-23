@@ -258,6 +258,9 @@ class CourseBuilderController extends Controller
                     unset($before[$field]);
                 }
             }
+            if (array_key_exists('styleProfileId', $patch)) {
+                $patch['styleProfileId'] = BriefService::styleProfileId($patch['styleProfileId']);
+            }
         } catch (InvalidArgumentException $e) {
             return self::fail($e->getMessage(), 422);
         }

@@ -14,10 +14,11 @@ import { Aside } from "@astrojs/starlight/components";
 <Aside type="note" title="What is built and what is coming">
 **Built:** reading a style guide into a style profile, with every value citing the passage it came from; the **Style**
 screen of the studio (`/studio/style`) to review, edit and approve it, in English, Polish and Chinese; handing the theme
-part to the admin theme screen as a diff; the diff against the approved profile; the API and `ulams style-profiles`.
-**Coming:** the profile in the prompt of every course the builder drafts (and per entry point and per course brief), the
-style check with its findings in the publish summary, and restyle proposals for courses that already exist. Progress is
-tracked in the [roadmap](/roadmap/); the design is in `docs/plans/style-guide-course-design.md` and ADR 0196.
+part to the admin theme screen as a diff; the diff against the approved profile; **the approved profile in the prompt of
+every course the builder drafts, chosen per Course Brief**; the API and `ulams style-profiles`.
+**Coming:** the style check with its findings in the publish summary, restyle proposals for courses that already exist,
+and a profile per entry point (it arrives with entry points). Progress is tracked in the [roadmap](/roadmap/); the design
+is in `docs/plans/style-guide-course-design.md` and ADR 0196.
 </Aside>
 
 A style guide is a document. A **style profile** is what the builder can use from it: typed values that an admin
@@ -74,6 +75,32 @@ Open **Style** in the studio rail (`/studio/style`).
 
 The page works with the keyboard and a screen reader, at 320 px wide and with AI switched off.
 
+## How a course uses the profile
+
+When the builder drafts anything for a course (outline, lessons, quizzes, metadata, chat edits, variants) it adds the
+approved profile to the cached block with the Course Brief, as typed data:
+
+- the voice, reading level, terminology, banned phrases, component preferences, image rules and examples;
+- **not** the citations (they point into the style guide, not into your course's sources), **not** the theme (colours and
+  fonts shape the site, not the sentences), **not** the blocking switch, and **never** the text of the style guide.
+
+The profile is advisory: the instruction that comes with it says it never overrides the output schema, the citation rules
+or the facts of the source. Which profile is used:
+
+1. the profile the Course Brief names (`styleProfileId`, Course Brief v4), if it is still approved;
+2. otherwise the academy's approved profile;
+3. otherwise none, and prompts are exactly what they were before.
+
+The brief panel shows a **Style** row with the profile that will be used (*Academy default: Northwind* when the brief names
+none). Name a profile with `PUT .../sessions/{session}/brief` (`{"styleProfileId": "<id>"}`, `null` for the academy
+default) or `ulams builder brief set <session> --style-profile-id <id>` (`none` clears it). Only an approved profile is
+accepted. Changing the profile after the outline marks the outline and lessons stale, like any other brief change that
+shapes the writing; nothing is regenerated silently.
+
+To keep more than one profile in use (for example an expert track beside the academy default), propose it with
+`--scope brief` (`scopeType: brief`, named by `scopeId`). Approving a brief profile replaces only the approved profile of the
+same name, never the academy default.
+
 ## From the command line
 
 ```bash
@@ -82,6 +109,8 @@ ulams style-profiles get <profile> --json                     # values, cited pa
 ulams style-profiles edit <profile> --values @changes.json    # fix a value (invalid ones are dropped and reported)
 ulams style-profiles approve <profile>                        # admins; replaces the approved profile of the scope
 ulams style-profiles propose --from <profile> --profile '{"terminology":[{"use":"participant","avoid":["learner"]}]}'
+ulams style-profiles propose --file ./expert-guide.md --scope brief --name "Expert track"   # a named alternative a brief can pick
+ulams builder brief set <session> --style-profile-id <profile>   # none: back to the academy default
 ulams style-profiles list --status approved
 ulams style-profiles delete <profile> --yes                   # a suggestion or a superseded profile, never the approved one
 ```

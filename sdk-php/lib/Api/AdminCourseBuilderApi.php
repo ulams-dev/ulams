@@ -10293,15 +10293,17 @@ class AdminCourseBuilderApi
      * @param  string $from from (optional)
      * @param  string $name name (optional)
      * @param  string $profile profile (optional)
+     * @param  string $scope_id scope_id (optional)
+     * @param  string $scope_type scope_type (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseBuilderStyleProfilesPost'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return \Ulams\Sdk\Model\ApiEnvelope
      */
-    public function adminCourseBuilderStyleProfilesPost($file = null, $from = null, $name = null, $profile = null, string $contentType = self::contentTypes['adminCourseBuilderStyleProfilesPost'][0])
+    public function adminCourseBuilderStyleProfilesPost($file = null, $from = null, $name = null, $profile = null, $scope_id = null, $scope_type = null, string $contentType = self::contentTypes['adminCourseBuilderStyleProfilesPost'][0])
     {
-        list($response) = $this->adminCourseBuilderStyleProfilesPostWithHttpInfo($file, $from, $name, $profile, $contentType);
+        list($response) = $this->adminCourseBuilderStyleProfilesPostWithHttpInfo($file, $from, $name, $profile, $scope_id, $scope_type, $contentType);
         return $response;
     }
 
@@ -10314,15 +10316,17 @@ class AdminCourseBuilderApi
      * @param  string $from (optional)
      * @param  string $name (optional)
      * @param  string $profile (optional)
+     * @param  string $scope_id (optional)
+     * @param  string $scope_type (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseBuilderStyleProfilesPost'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return array of \Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
      */
-    public function adminCourseBuilderStyleProfilesPostWithHttpInfo($file = null, $from = null, $name = null, $profile = null, string $contentType = self::contentTypes['adminCourseBuilderStyleProfilesPost'][0])
+    public function adminCourseBuilderStyleProfilesPostWithHttpInfo($file = null, $from = null, $name = null, $profile = null, $scope_id = null, $scope_type = null, string $contentType = self::contentTypes['adminCourseBuilderStyleProfilesPost'][0])
     {
-        $request = $this->adminCourseBuilderStyleProfilesPostRequest($file, $from, $name, $profile, $contentType);
+        $request = $this->adminCourseBuilderStyleProfilesPostRequest($file, $from, $name, $profile, $scope_id, $scope_type, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -10442,14 +10446,16 @@ class AdminCourseBuilderApi
      * @param  string $from (optional)
      * @param  string $name (optional)
      * @param  string $profile (optional)
+     * @param  string $scope_id (optional)
+     * @param  string $scope_type (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseBuilderStyleProfilesPost'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function adminCourseBuilderStyleProfilesPostAsync($file = null, $from = null, $name = null, $profile = null, string $contentType = self::contentTypes['adminCourseBuilderStyleProfilesPost'][0])
+    public function adminCourseBuilderStyleProfilesPostAsync($file = null, $from = null, $name = null, $profile = null, $scope_id = null, $scope_type = null, string $contentType = self::contentTypes['adminCourseBuilderStyleProfilesPost'][0])
     {
-        return $this->adminCourseBuilderStyleProfilesPostAsyncWithHttpInfo($file, $from, $name, $profile, $contentType)
+        return $this->adminCourseBuilderStyleProfilesPostAsyncWithHttpInfo($file, $from, $name, $profile, $scope_id, $scope_type, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -10466,15 +10472,17 @@ class AdminCourseBuilderApi
      * @param  string $from (optional)
      * @param  string $name (optional)
      * @param  string $profile (optional)
+     * @param  string $scope_id (optional)
+     * @param  string $scope_type (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseBuilderStyleProfilesPost'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function adminCourseBuilderStyleProfilesPostAsyncWithHttpInfo($file = null, $from = null, $name = null, $profile = null, string $contentType = self::contentTypes['adminCourseBuilderStyleProfilesPost'][0])
+    public function adminCourseBuilderStyleProfilesPostAsyncWithHttpInfo($file = null, $from = null, $name = null, $profile = null, $scope_id = null, $scope_type = null, string $contentType = self::contentTypes['adminCourseBuilderStyleProfilesPost'][0])
     {
         $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
-        $request = $this->adminCourseBuilderStyleProfilesPostRequest($file, $from, $name, $profile, $contentType);
+        $request = $this->adminCourseBuilderStyleProfilesPostRequest($file, $from, $name, $profile, $scope_id, $scope_type, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -10519,13 +10527,17 @@ class AdminCourseBuilderApi
      * @param  string $from (optional)
      * @param  string $name (optional)
      * @param  string $profile (optional)
+     * @param  string $scope_id (optional)
+     * @param  string $scope_type (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseBuilderStyleProfilesPost'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function adminCourseBuilderStyleProfilesPostRequest($file = null, $from = null, $name = null, $profile = null, string $contentType = self::contentTypes['adminCourseBuilderStyleProfilesPost'][0])
+    public function adminCourseBuilderStyleProfilesPostRequest($file = null, $from = null, $name = null, $profile = null, $scope_id = null, $scope_type = null, string $contentType = self::contentTypes['adminCourseBuilderStyleProfilesPost'][0])
     {
+
+
 
 
 
@@ -10565,6 +10577,14 @@ class AdminCourseBuilderApi
         // form params
         if ($profile !== null) {
             $formParams['profile'] = ObjectSerializer::toFormValue($profile);
+        }
+        // form params
+        if ($scope_id !== null) {
+            $formParams['scopeId'] = ObjectSerializer::toFormValue($scope_id);
+        }
+        // form params
+        if ($scope_type !== null) {
+            $formParams['scopeType'] = ObjectSerializer::toFormValue($scope_type);
         }
 
         $headers = $this->headerSelector->selectHeaders(

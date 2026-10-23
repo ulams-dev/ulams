@@ -5,6 +5,7 @@ namespace Ulams\CourseBuilder\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Ulams\CourseBuilder\Exceptions\BuilderException;
@@ -24,7 +25,7 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  *     @OA\Parameter(name="status", in="query", @OA\Schema(type="string", enum={"suggested", "approved", "superseded"})),
  *     @OA\Response(response=200, description="profiles", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="no access to the Course Builder"))
  * @OA\Post(path="/api/admin/course-builder/style-profiles", operationId="admin.course-builder.style-profiles.post", summary="Propose a style profile: upload a style guide (file, MD/PDF/DOCX) to have it read and cited, or send values by hand (profile, optionally from an existing profile id)", tags={"Admin Course Builder"}, security={{"passport": {}}},
- *     @OA\RequestBody(@OA\MediaType(mediaType="multipart/form-data", @OA\Schema(@OA\Property(property="file", type="string", format="binary"), @OA\Property(property="name", type="string"), @OA\Property(property="profile", type="string"), @OA\Property(property="from", type="string")))),
+ *     @OA\RequestBody(@OA\MediaType(mediaType="multipart/form-data", @OA\Schema(@OA\Property(property="file", type="string", format="binary"), @OA\Property(property="name", type="string"), @OA\Property(property="profile", type="string"), @OA\Property(property="from", type="string"), @OA\Property(property="scopeType", type="string", enum={"tenant", "brief"}), @OA\Property(property="scopeId", type="string")))),
  *     @OA\Response(response=201, description="the suggested profile with what was dropped as warnings", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=422, description="rejected upload or invalid body"))
  * @OA\Get(path="/api/admin/course-builder/style-profiles/{profile}", operationId="admin.course-builder.style-profiles.by-profile.get", summary="A style profile with the passages it cites and its diff against the approved profile", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="profile", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="profile, diff, cited fragments", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="unknown"))
@@ -96,11 +97,22 @@ class StyleProfileController extends Controller
             'name' => ['nullable', 'string', 'max:255'],
             'file' => ['nullable', 'file'],
             'from' => ['nullable', 'string', 'max:26'],
+            'scopeType' => ['nullable', 'in:tenant,brief,entry_point'],
+            'scopeId' => ['nullable', 'regex:/^[a-z0-9][a-z0-9-]{0,63}$/'],
         ]);
+        // `brief` profiles are named alternatives a Course Brief can pick (scopeId is their name); entry points come with entry points
+        $scopeType = (string) $request->input('scopeType', StyleProfile::TENANT);
+        if ($scopeType === 'entry_point') {
+            return self::fail('Entry point profiles arrive with entry points: use scopeType tenant or brief.', 422, ['errors' => ['scopeType' => ['not available yet']]]);
+        }
+        $scopeId = $scopeType === StyleProfile::TENANT ? null : ((string) $request->input('scopeId') ?: (Str::slug((string) $request->input('name', '')) ?: null));
+        if ($scopeType === 'brief' && $scopeId === null) {
+            return self::fail('A brief profile needs a scopeId (its name) or a name.', 422, ['errors' => ['scopeId' => ['required for a brief profile']]]);
+        }
         $name = $request->filled('name') ? (string) $request->input('name') : null;
         if ($request->hasFile('file')) {
             try {
-                $profile = $this->profiles->createFromUpload($request->user(), $request->file('file'), $name);
+                $profile = $this->profiles->createFromUpload($request->user(), $request->file('file'), $name, $scopeType, $scopeId);
             } catch (UploadRejected $e) {
                 return self::fail($e->getMessage(), 422, ['errors' => ['file' => [$e->getMessage()]], 'reason' => $e->reason]);
             } catch (BuilderException $e) {
@@ -121,7 +133,7 @@ class StyleProfileController extends Controller
             return self::fail('Send a style guide file, or the values of a profile.', 422, ['errors' => ['file' => ['required without profile']]]);
         }
 
-        return self::ok($this->profiles->present($this->profiles->createManual($request->user(), $name, $values, $from), true), 201);
+        return self::ok($this->profiles->present($this->profiles->createManual($request->user(), $name, $values, $from, $scopeType, $scopeId), true), 201);
     }
 
     public function show(Request $request, string $profile): JsonResponse
