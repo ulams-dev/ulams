@@ -355,6 +355,10 @@
             "area": "enrolments"
         },
         {
+            "pattern": "api/admin/course-variant-groups*",
+            "area": "enrolments"
+        },
+        {
             "pattern": "api/admin/courses/*/clone",
             "area": "courses",
             "options": {

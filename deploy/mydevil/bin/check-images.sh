@@ -11,11 +11,15 @@
 #      and a cf-resized header (Transformations on, source accepted, no Worker interception, error 9524).
 #   2. The same with a source that does not exist and onerror=redirect answers 3xx to that source (the fallback
 #      the builder relies on when the monthly free quota is used up; without it the browser would get an error).
-# The options are the ones @ulams/sdk emits (front/sdk/src/images.ts); the smoke only has to prove the transport.
+#   3. Only with ULAMS_EXPECT_WAF=1 (IMG-6b): the optional WAF rule (cloudflare/image-waf-rule.mjs) is active, so a
+#      width the builder never emits (width=777) is blocked with 403. Without the rule that request would create a
+#      unique transformation, so it is never sent by default.
+# OPTIONS is one of the option strings @ulams/sdk emits (the `card` preset, front/sdk/src/images.ts), so the smoke also
+# passes with the WAF rule on; test/check-images.sh checks that it stays in `allowedCloudflareOptions()`.
 # CURL_BIN overrides the curl binary (tests use a fake).
 
 CURL="${CURL_BIN:-curl}"
-OPTIONS="width=320,quality=80,format=auto,fit=scale-down"
+OPTIONS="width=240,quality=78,format=auto,fit=scale-down,onerror=redirect"
 ACCEPT="image/avif,image/webp,image/*,*/*;q=0.8"
 fails=0
 
@@ -58,7 +62,7 @@ code="$(status_of "$out")"
 type="$(header_of "$out" content-type)"
 resized="$(header_of "$out" cf-resized)"
 if [ "$code" != 200 ]; then
-  fail "transformation: HTTP ${code:-none} (wanted 200). Transformations off for the zone, source origin not allowed, or the source URL is intercepted by a Worker (error 9524)"
+  fail "transformation: HTTP ${code:-none} (wanted 200). Transformations off for the zone, source origin not allowed, or the source URL is intercepted by a Worker (error 9524); a 3xx means onerror=redirect fell back to the original"
 else
   case "$type" in
     image/avif*|image/webp*) pass "transformation: 200 $type" ;;
@@ -69,7 +73,7 @@ fi
 
 # 2. the fallback: a missing source with onerror=redirect goes back to the source URL
 missing="${source%/*}/ulams-smoke-missing-$$.png"
-out="$(headers "$base/cdn-cgi/image/$OPTIONS,onerror=redirect/$missing")"
+out="$(headers "$base/cdn-cgi/image/$OPTIONS/$missing")"
 code="$(status_of "$out")"
 location="$(header_of "$out" location)"
 case "$code" in
@@ -80,5 +84,12 @@ case "$code" in
     esac ;;
   *) fail "onerror=redirect: HTTP ${code:-none} (wanted a redirect to the source)" ;;
 esac
+
+# 3. the WAF rule blocks an option string the builder never emits (opt-in: without the rule this costs a transformation)
+if [ "${ULAMS_EXPECT_WAF:-}" = 1 ]; then
+  out="$(headers "$base/cdn-cgi/image/width=777,quality=78,format=auto,fit=scale-down,onerror=redirect/$source")"
+  code="$(status_of "$out")"
+  if [ "$code" = 403 ]; then pass "WAF rule: width=777 blocked with 403"; else fail "WAF rule: HTTP ${code:-none} for width=777 (wanted 403: the rule is missing or not enabled)"; fi
+fi
 
 if [ "$fails" -eq 0 ]; then echo "all passed"; else echo "$fails failed"; exit 1; fi

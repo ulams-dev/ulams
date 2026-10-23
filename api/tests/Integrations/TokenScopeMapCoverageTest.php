@@ -81,6 +81,9 @@ class TokenScopeMapCoverageTest extends TestCase
             $this->assertSame('certificates', TokenScopes::requirement($uri, 'GET')['area'], $uri);
         }
         $this->assertFalse(TokenScopes::requirement('api/admin/reporting/datasets', 'GET')['write']);
+        $this->assertFalse(TokenScopes::requirement('api/admin/reporting/saved/{id}/run', 'GET')['write'], 'running a saved report reads');
+        $this->assertTrue(TokenScopes::requirement('api/admin/reporting/saved', 'POST')['write']);
+        $this->assertTrue(TokenScopes::requirement('api/admin/reporting/saved/{id}', 'DELETE')['write']);
         $this->assertFalse(TokenScopes::requirement('api/admin/reporting/query', 'POST')['write'], 'a preview changes nothing: reports:read is enough');
     }
 

@@ -55,7 +55,7 @@ The script is not part of CI.
 |---|---|---|
 | Public API data | `src/lib/cache.ts`, `src/lib/data.ts` | In-process stale-while-revalidate: fresh for `ULAMS_CACHE_TTL` seconds (default 45), then served stale for up to 30 minutes while one deduplicated request refreshes it; a failed refresh keeps the stale value; at most 500 entries |
 | Warm start | `src/lib/data.ts` | Tenants in `ULAMS_WARM_TENANTS` are fetched when the server starts |
-| Images | `src/lib/image-cache.ts` | Results of Astro's `/_image` endpoint (sharp) kept in memory for an hour, up to 64 MB, served with `Cache-Control: public, max-age=31536000, immutable` and `X-Ulams-Image-Cache: hit` |
+| Images (`astro` mode only) | `src/lib/image-cache.ts` | Results of Astro's `/_image` endpoint (sharp) kept in memory for an hour, up to 64 MB, served with `Cache-Control: public, max-age=31536000, immutable` and `X-Ulams-Image-Cache: hit` |
 
 Both caches are per process. The code notes that a multi-instance deployment needs a shared cache
 or a CDN in front instead.
@@ -118,7 +118,8 @@ are 250, 500 and 1000 kbit/s (`bitrates` in `packages/video/src/config.php`);
 
 ### Images
 
-`packages/images` resizes images on request (`GET /api/images/img`, throttled by the
+How an image is resized is a deployment choice (`astro`, `cloudflare`, `noop` or `php`; see [Image service](/operators/image-service/)).
+`packages/images`, the optional legacy resize API, resizes images on request (`GET /api/images/img`, throttled by the
 `images.render` rate limiter; the batch form `POST /api/images/img` takes at most 20 paths, 4096 px per side, and is always throttled) within configured limits (max 1000×1000, a `thumbnail` size of
 400×300), and `spatie/laravel-image-optimizer` uses the
 `jpegoptim`, `optipng`, `pngquant` and `gifsicle` binaries from the PHP image.

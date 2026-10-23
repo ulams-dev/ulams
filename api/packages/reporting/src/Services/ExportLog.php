@@ -27,4 +27,21 @@ class ExportLog
             'created_at' => now(),
         ]);
     }
+
+    /**
+     * An export of a report (CSV or JSON lines): always recorded, as the compliance exports are.
+     *
+     * @param array<string,mixed> $definition
+     */
+    public function export(?int $userId, string $dataset, array $definition, string $format, int $rows, ?string $savedReportId, string $channel): void
+    {
+        if (!Schema::hasTable('compliance_exports')) {
+            return;
+        }
+        $row = ['user_id' => $userId, 'dataset' => $dataset, 'format' => $format, 'filters' => json_encode(['report' => $definition]), 'row_count' => $rows, 'created_at' => now()];
+        if (Schema::hasColumn('compliance_exports', 'channel')) {
+            $row += ['saved_report_id' => $savedReportId, 'channel' => $channel];
+        }
+        DB::table('compliance_exports')->insert($row);
+    }
 }
