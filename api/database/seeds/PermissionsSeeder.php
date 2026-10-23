@@ -29,6 +29,7 @@ use Ulams\AuthoringMetrics\Database\Seeders\AuthoringMetricsPermissionSeeder;
 use Ulams\Compliance\Database\Seeders\CompliancePermissionSeeder;
 use Ulams\CourseVariants\Database\Seeders\CourseVariantsPermissionSeeder;
 use Ulams\Interactive\Database\Seeders\InteractivePermissionSeeder;
+use Ulams\Reporting\Database\Seeders\ReportingPermissionSeeder;
 use Ulams\LiaScript\Database\Seeders\LiaScriptPermissionSeeder;
 use Ulams\CourseBuilder\Database\Seeders\CourseBuilderPermissionSeeder;
 use Ulams\LearnerInsights\Database\Seeders\LearnerInsightsPermissionSeeder;
@@ -118,6 +119,7 @@ class PermissionsSeeder extends Seeder
         $this->call(CompliancePermissionSeeder::class);
         $this->call(CourseVariantsPermissionSeeder::class);
         $this->call(AuthoringMetricsPermissionSeeder::class);
+        $this->call(ReportingPermissionSeeder::class);
         $this->call(KnowledgePermissionSeeder::class);
         $this->call(IdentityPermissionSeeder::class);
 

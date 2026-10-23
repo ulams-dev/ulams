@@ -1,5 +1,5 @@
 {
- "summary": "638/727 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "640/729 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1558,7 +1558,7 @@
   {
    "key": "POST /api/admin/living-course/sessions/{session}/sources/connect",
    "summary": "Add a source through a connector (Git repository, web pages, plugins); validates and fetches revision 1",
-   "command": "living.sources.connect",
+   "command": "course.sources-connect",
    "status": "covered"
   },
   {
@@ -1979,6 +1979,18 @@
    "key": "PATCH /api/admin/quiz-attempts/{id}/feedback",
    "summary": "Add, edit or remove tutor feedback for a quiz attempt",
    "command": "quiz-attempts.feedback",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reporting/datasets",
+   "summary": "Datasets a report can be built on",
+   "command": "reporting.datasets",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/reporting/query",
+   "summary": "Preview a report definition",
+   "command": "reporting.query",
    "status": "covered"
   },
   {

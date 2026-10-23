@@ -49,10 +49,15 @@ use Ulams\Compliance\Services\CourseSettings;
 use Ulams\Compliance\Services\EloquentProgressResetter;
 use Ulams\Compliance\Services\PolicyCertificateValidity;
 use Ulams\Compliance\Services\RuleEngine;
+use Ulams\Compliance\Reporting\AssignmentsDataset;
+use Ulams\Compliance\Reporting\AuditDataset;
+use Ulams\Compliance\Reporting\CertificatesDataset;
 use Ulams\CourseAccess\UlamsCourseAccessServiceProvider;
 use Ulams\Core\Models\User;
 use Ulams\Courses\Events\CourseFinished;
 use Ulams\Courses\UlamsCourseServiceProvider;
+use Ulams\Reporting\Services\DatasetRegistry;
+use Ulams\Reporting\UlamsReportingServiceProvider;
 use Ulams\Templates\Facades\Template;
 use Ulams\TemplatesEmail\Core\EmailChannel;
 use Ulams\TemplatesPdf\Events\PdfCreated;
@@ -81,6 +86,7 @@ class UlamsComplianceServiceProvider extends ServiceProvider
         $this->app->register(UlamsCourseAccessServiceProvider::class);
         $this->app->register(UlamsTemplatesPdfServiceProvider::class);
         $this->app->register(UlamsAiServiceProvider::class);
+        $this->app->register(UlamsReportingServiceProvider::class);
 
         // Per-course validity replaces the single templates-pdf setting, which stays the fallback.
         $fallback = fn () => $this->app->make(\Ulams\TemplatesPdf\Services\ConfigCertificateValidity::class);
@@ -91,6 +97,10 @@ class UlamsComplianceServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'ulams-compliance');
+        $datasets = $this->app->make(DatasetRegistry::class);
+        foreach ([new AssignmentsDataset(), new CertificatesDataset(), new AuditDataset()] as $dataset) {
+            $datasets->register($dataset);
+        }
         CompetencyResponder::register($this->app->make(FakeResponders::class));
         $this->app->make(PromptRegistry::class)->addPath('compliance', __DIR__ . '/../resources/prompts');
 

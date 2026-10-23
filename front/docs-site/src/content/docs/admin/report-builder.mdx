@@ -1,0 +1,130 @@
+---
+title: Report builder
+description: The datasets an administrator can build reports on, how a report definition asks for rows or groups, and how small groups are withheld. Saved reports, sharing and the BI feed follow in later releases.
+modules:
+  - reporting
+sidebar:
+  order: 34
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Poor reporting is the most common reason an organisation replaces its LMS. The **report builder** lets an
+administrator pick a dataset, choose columns, filters, grouping and a date range, save the result as a report, share it
+and schedule it. It is built in steps (ADR 0194). This page covers what exists today: the **dataset registry** and the
+**report definition** that is compiled into a safe query.
+
+<Aside type="note">
+Today you can list the datasets, preview a report definition through the API and read the compliance report. Saving and
+sharing reports, the admin screen, schedules for saved reports, exports of a definition and the BI feed are planned and
+not available yet. Nothing on this page promises a date for them.
+</Aside>
+
+## Datasets
+
+A dataset is a set of rows a report can be built on. The package that owns the data registers it, so a dataset appears
+only when its package is installed and its tables exist.
+
+| Dataset | One row is | Permission to run it |
+|---|---|---|
+| `assignments` | a required-training assignment: learner, course, due date, outcome, certificate | `compliance_report` |
+| `certificates` | a course certificate with the course version it attests | `compliance_report` |
+| `audit` | a hash-chained Living Course audit entry (needs Living Course) | `compliance_report` |
+| `authoring` | a course built with the Course Builder: time, cost, counts and the split of AI elements ([authoring metrics](/operators/authoring-metrics/)) | `authoring_metrics_read` |
+| `ai_usage` | a model call: task, model, tokens, cost in USD, latency | `reporting_ai_usage` |
+
+Every dataset declares its columns: type (string, int, decimal, bool, date, datetime or enum), the filter operators it
+accepts, whether it can be grouped or aggregated, and whether it holds **personal** data (learner names and e-mail
+addresses). Personal columns are never groupable or aggregatable. A report can only use columns declared here: there is
+no way to name a table or write SQL.
+
+What the datasets leave out on purpose:
+
+- `ai_usage` has no prompt or response text, no error text, no request or subject ids and no user.
+- `audit` has no IP address, user agent or free-form payload, as in the audit export.
+- `authoring` has no per-person figures. Review time is empty, never zero, until it is recorded.
+- A learner who was deleted is not named in `assignments` or `certificates`; the id stays, so the row can still be counted.
+
+## List the datasets
+
+`GET /api/admin/reporting/datasets` (permission `reporting_read`, seeded for administrators and tutors) returns the
+datasets the caller may run, each with its columns. A tutor sees only the datasets whose permission they hold.
+
+```bash
+ulams reporting datasets --json
+```
+
+Each entry has `key`, `label`, `description`, `permission`, `subject_column` (the learner column used for small-group
+protection, null when the dataset holds no learner data), `aggregate_only`, `date_columns` and `columns`.
+
+## Describe a report
+
+A report definition is JSON (schema `report-definition/v1`, in the `reporting` package). It asks one dataset for rows or
+for groups:
+
+```json
+{
+  "dataset": "assignments",
+  "filters": [{ "column": "status", "op": "in", "value": ["overdue", "assigned"] }],
+  "dateRange": { "column": "assigned_at", "preset": "last_90_days" },
+  "groupBy": ["course_title", { "column": "assigned_at", "bucket": "month" }],
+  "aggregates": [{ "fn": "count_distinct", "column": "user_id", "as": "learners" }],
+  "sort": [{ "column": "learners", "dir": "desc" }],
+  "limit": 1000
+}
+```
+
+| Part | Meaning |
+|---|---|
+| `columns` | A **row-level** report: the columns to list. Leave it out for a grouped report. |
+| `filters` | All of them apply. Operators: `eq`, `neq`, `in`, `not_in`, `lt`, `lte`, `gt`, `gte`, `between`, `contains` (ignores case), `is_null` (`true` or `false`). Each column accepts only the operators its type allows, and values must have the column's type. |
+| `dateRange` | A date column and either a `preset` (`last_7_days`, `last_30_days`, `last_90_days`, `last_12_months`, `this_month`, `last_month`, `this_quarter`, `this_year`, `last_year`) or inclusive `from` and `to` dates. A preset is worked out every time the report runs. |
+| `groupBy` | A column name, or a date column with a `bucket` (`day`, `week`, `month`, `quarter`, `year`; weeks start on Monday). The output column of a bucket is named `<column>_<bucket>`. |
+| `aggregates` | `count`, `count_distinct`, `sum`, `avg`, `min`, `max`, each with an output name (`as`). `sum` and `avg` need a number, `min` and `max` a number or a date. |
+| `sort`, `limit` | Output columns and the most rows the report returns. |
+
+A grouped report returns its groups followed by its aggregates. Names are looked up in the dataset's declared columns,
+values are sent to the database as parameters, and the only SQL words that come from outside the dataset are the fixed
+list above, so a definition cannot read a table or column the dataset does not declare. Personal columns can be listed in
+a row-level report (and are then recorded like an export: who, which dataset, how many rows) but never grouped,
+aggregated, or used to filter a grouped report.
+
+`POST /api/admin/reporting/query` (permission `reporting_read` **and** the permission of the dataset; a token needs only
+`reports:read`, because a preview changes nothing) runs a definition with the caller's own permissions and returns at
+most 500 rows and the total:
+
+```bash
+ulams reporting query --dataset assignments --group-by '["course_title"]' \
+  --aggregates '[{"fn":"count_distinct","column":"user_id","as":"learners"}]' --json
+```
+
+The answer has `data.columns` (name, type, label), `data.rows` and `meta`: `mode` (`rows` or `grouped`), `total_rows`,
+`preview_rows`, `truncated`, `withheld_groups` and `min_group_size`. A definition that cannot run answers `422` with the
+problem by path, for example `filters.0.op`. A grouped report with more than 100 000 groups is refused.
+
+## Small groups are withheld
+
+On a dataset that holds learners (`assignments` and `certificates`), a grouped report never shows a group with fewer
+distinct learners than the threshold, **10** by default (`REPORTING_MIN_GROUP_SIZE`; when it is not set, the Learner
+Insights threshold `LEARNER_INSIGHTS_MIN_GROUP_SIZE` is used, so one number rules). The group's figures are not sent at
+all: it is replaced by one row marked `_withheld`, with the text "withheld (fewer than 10 learners)" in the first group
+column and empty figures.
+
+Withholding one group alone would not protect it: the total minus the visible groups would give it back. So the withheld
+groups together must span at least the threshold in distinct learners. When they do not, the smallest visible group is
+withheld with them. Learners who are in several groups (a learner in two courses) are counted once, not added up.
+`meta.withheld_groups` says how many groups are behind the row, never how many learners. A grand total (aggregates with
+no grouping) over fewer learners than the threshold is withheld the same way. Datasets without learners (`authoring`,
+`ai_usage`, `audit`) are not withheld.
+
+This protects the output of one report. It does not stop a person who may run row-level reports from reading individual
+rows, and it cannot stop two different queries from being subtracted from each other: who may see learner data at all is
+decided by the dataset's permission.
+
+## Tokens
+
+The datasets endpoint and the compliance report, its export and the compliance schedules belong to the **reports**
+token area: a scoped token needs `reports:read` (or `reports:write` to change schedules). Before this release the
+compliance report and schedules were under `certificates`; a token that was created for them with only
+`certificates:read` now needs `reports:read` as well. The rest of the compliance API (assignments, paths, rules,
+competencies, the dashboard) stays under `certificates`.
