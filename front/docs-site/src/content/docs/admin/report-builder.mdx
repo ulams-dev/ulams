@@ -1,0 +1,66 @@
+---
+title: Report builder
+description: The datasets an administrator can build reports on, which permission each one needs, and what they leave out. Saved reports, sharing and the BI feed follow in later releases.
+modules:
+  - reporting
+sidebar:
+  order: 34
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Poor reporting is the most common reason an organisation replaces its LMS. The **report builder** lets an
+administrator pick a dataset, choose columns, filters, grouping and a date range, save the result as a report, share it
+and schedule it. It is built in steps (ADR 0194). This page covers what exists today: the **dataset registry** that
+every later step builds on.
+
+<Aside type="note">
+Today you can list the datasets and read the compliance report. Running your own grouped queries, saving and sharing
+reports, the admin screen, schedules for saved reports and the BI feed are planned and not available yet. Nothing on this
+page promises a date for them.
+</Aside>
+
+## Datasets
+
+A dataset is a set of rows a report can be built on. The package that owns the data registers it, so a dataset appears
+only when its package is installed and its tables exist.
+
+| Dataset | One row is | Permission to run it |
+|---|---|---|
+| `assignments` | a required-training assignment: learner, course, due date, outcome, certificate | `compliance_report` |
+| `certificates` | a course certificate with the course version it attests | `compliance_report` |
+| `audit` | a hash-chained Living Course audit entry (needs Living Course) | `compliance_report` |
+| `authoring` | a course built with the Course Builder: time, cost, counts and the split of AI elements ([authoring metrics](/operators/authoring-metrics/)) | `authoring_metrics_read` |
+| `ai_usage` | a model call: task, model, tokens, cost in USD, latency | `reporting_ai_usage` |
+
+Every dataset declares its columns: type (string, int, decimal, bool, date, datetime or enum), the filter operators it
+accepts, whether it can be grouped or aggregated, and whether it holds **personal** data (learner names and e-mail
+addresses). Personal columns are never groupable or aggregatable. A report can only use columns declared here: there is
+no way to name a table or write SQL.
+
+What the datasets leave out on purpose:
+
+- `ai_usage` has no prompt or response text, no error text, no request or subject ids and no user.
+- `audit` has no IP address, user agent or free-form payload, as in the audit export.
+- `authoring` has no per-person figures. Review time is empty, never zero, until it is recorded.
+- A learner who was deleted is not named in `assignments` or `certificates`; the id stays, so the row can still be counted.
+
+## List the datasets
+
+`GET /api/admin/reporting/datasets` (permission `reporting_read`, seeded for administrators and tutors) returns the
+datasets the caller may run, each with its columns. A tutor sees only the datasets whose permission they hold.
+
+```bash
+ulams reporting datasets --json
+```
+
+Each entry has `key`, `label`, `description`, `permission`, `subject_column` (the learner column used for small-group
+protection, null when the dataset holds no learner data), `aggregate_only`, `date_columns` and `columns`.
+
+## Tokens
+
+The datasets endpoint and the compliance report, its export and the compliance schedules belong to the **reports**
+token area: a scoped token needs `reports:read` (or `reports:write` to change schedules). Before this release the
+compliance report and schedules were under `certificates`; a token that was created for them with only
+`certificates:read` now needs `reports:read` as well. The rest of the compliance API (assignments, paths, rules,
+competencies, the dashboard) stays under `certificates`.

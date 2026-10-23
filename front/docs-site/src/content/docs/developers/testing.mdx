@@ -248,6 +248,26 @@ The defaults in `api/h5p/src/config.ts` point at compose service names; set `DB_
 `REDIS_HOST`, `S3_ENDPOINT` and the S3 credentials when the services run on `localhost`, as
 `.github/workflows/h5p-integration.yml` does.
 
+## SCORM playback tests
+
+`api/packages/scorm/tests/fixtures/playback` holds original SCORM 1.2 and 2004 test packages (MIT,
+written for ulams, no third-party content). Each SCO runs a scripted learner session against the
+SCORM API (status, score, suspend data, commits, session time, completion and success status,
+validation errors) and records every call, return value and error code. They exist so a SCORM
+player change, such as the `scorm-again` upgrade, can be proved not to change what learners get.
+Plan: `docs/plans/scorm-playback-tests.md`, decision: ADR 0197.
+
+```bash
+node api/packages/scorm/tests/fixtures/playback/build.mjs --check   # the committed zips match the sources
+corepack yarn workspace front test                                   # includes the fixture, zip and trace unit tests
+./vendor/bin/phpunit --testsuite scorm --filter ScormPlaybackFixturesTest   # parser and upload
+```
+
+The browser specs that play these packages through the legacy front's `<ScormPreview>` and the API
+content player, and the golden traces they compare with, follow in the next milestones of the
+plan. Edit a fixture, then rebuild the zips with `build.mjs`; the package README lists the query
+parameters of each SCO.
+
 ## Performance
 
 `corepack yarn workspace @ulams/web perf` measures LCP, CLS and JavaScript per page of a running

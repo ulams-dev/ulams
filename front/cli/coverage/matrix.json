@@ -1,5 +1,5 @@
 {
- "summary": "629/718 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "630/719 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1961,6 +1961,12 @@
    "key": "PATCH /api/admin/quiz-attempts/{id}/feedback",
    "summary": "Add, edit or remove tutor feedback for a quiz attempt",
    "command": "quiz-attempts.feedback",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reporting/datasets",
+   "summary": "Datasets a report can be built on",
+   "command": "reporting.datasets",
    "status": "covered"
   },
   {

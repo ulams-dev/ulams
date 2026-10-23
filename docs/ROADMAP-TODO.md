@@ -375,6 +375,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       runtime and tracking traces captured on 2.6.x; then `scorm-again` 3 with every changed default set to the 2.6
       behaviour, AICC removed and the Dependabot ignore rule #431 dropped (closed PR #232 explains why)
       (plan `docs/plans/scorm-playback-tests.md` SC-1 to SC-4; ADR 0197 Proposed)
+      (partial: SC-1 done, fixture packages, trace normaliser and parser tests; SC-2 to SC-4 pending)
 - [x] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
       packages and players to a per-tenant content origin (M1.1) (SCORM and cmi5 done, `<slug>.content.localhost`,
       `api/docs/content-origin.md`; run `ulams:tenant:sync-env` so existing tenants get `CONTENT_ORIGIN`)
@@ -1099,7 +1100,11 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       schedules, export CSV, JSON lines or XLSX; small-group suppression as in Learner Insights; datasets from a
       registry in a new `reporting` package (takes over the registry of `phase-6-remaining.md` P6R-3 and the reports
       screen of P6R-4) (plan `docs/plans/authoring-metric-and-report-builder.md` RB-1 to RB-5, RB-7; ADR 0194 Accepted 2026-10-22;
-      market research: poor reporting is the top switch reason)
+      market research: poor reporting is the top switch reason) (partial: RB-1 done: `api/packages/reporting` with the dataset
+      registry and column capabilities, the `assignments`, `certificates`, `audit`, `authoring` and `ai_usage` datasets and
+      `GET /api/admin/reporting/datasets`; the compliance report, export and schedules moved to the `reports` token area;
+      RB-2 (query compiler, small-group suppression), RB-3 (saved and shared reports), RB-4 (admin screen), RB-5 (schedules
+      for saved reports), RB-7 (CLI and MCP) pending)
 - [ ] (new) BI connector: read-only OData v4 feed per saved report for Excel, Power BI and Tableau, with a `reports:read`
       token that can be limited to one report; CSV and JSON lines URLs with recipes for Looker Studio, Metabase and
       Superset (plan `authoring-metric-and-report-builder.md` RB-6)
