@@ -292,6 +292,13 @@ export const livingCommands: AnyCommand[] = [
       connection: z
         .string()
         .describe("Connection id (from `living sources list`)."),
+      commit: z
+        .string()
+        .regex(/^[0-9a-fA-F]{7,64}$/, "A commit id: 7 to 64 hex characters.")
+        .optional()
+        .describe(
+          "The commit this check is run for (a CI job on the merge commit passes $GITHUB_SHA); recorded on the new revision."
+        ),
     }),
     output: z.unknown(),
     examples: [
@@ -299,13 +306,22 @@ export const livingCommands: AnyCommand[] = [
         title: "Check now",
         argv: "living connections check <connection> --json",
       },
+      {
+        title: "From CI after a merge, for hosts that cannot reach the LMS with a webhook",
+        argv: "living connections check <connection> --commit 3f2a9c1d7e5b",
+      },
     ],
     plan: async (_ctx, i) =>
-      planOf("POST", `/connections/${i.connection}/check`),
+      planOf(
+        "POST",
+        `/connections/${i.connection}/check`,
+        i.commit ? { commit: i.commit } : undefined
+      ),
     async run(ctx, i) {
       return {
         data: await lc(ctx, "POST", "/connections/{connection}/check", {
           params: { connection: i.connection },
+          ...(i.commit ? { body: { commit: i.commit } } : {}),
         }),
       };
     },
