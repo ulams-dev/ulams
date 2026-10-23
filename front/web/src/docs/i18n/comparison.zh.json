@@ -774,6 +774,7 @@
                     "text": "一个前端背后的独立 Sylius 2.x 服务：目录、购物车和结账在其中，访问权限由 LMS 管理。",
                     "packages": [
                       "commerce",
+                      "commerce-sylius",
                       "entitlements"
                     ],
                     "status": "coming"

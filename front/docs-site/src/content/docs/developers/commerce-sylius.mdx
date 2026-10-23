@@ -1,0 +1,116 @@
+---
+title: The Sylius commerce service
+description: The headless Sylius 2.3 service behind the commerce package. How the catalogue is kept in step with LMS prices, how orders are read back, the ulams bridge bundle, the commerce compose profile, the nightly drift check and sweep, and what is verified only against a real Sylius.
+sidebar:
+  order: 12
+modules:
+  - commerce-sylius
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+<Aside type="caution">
+  Phase 6.4, milestone CM-3 (ADR 0131, ADR 0133). The catalogue sync, the Sylius adapter, the order read-back, the
+  event feed and the nightly sweep run against a real Sylius in the test suite. Buying from the learner frontend
+  (single login, cart, checkout) is CM-5 and is still **Coming**; today an order is created through the Shop API only
+  by the tests. The Wellms cart stays the default provider (`COMMERCE_PROVIDER=wellms`).
+</Aside>
+
+Sylius sells; the LMS decides who has access. Sylius owns the catalogue, cart, checkout, taxes and payments. The LMS
+holds the prices it wants, mirrors them to Sylius as products, and grants access only after it has read a paid order
+back from Sylius ([entitlements and order events](/developers/entitlements-and-order-events/)).
+
+## Run it locally
+
+The service is optional and outside the default stack: one image, two services, in the compose profile `commerce`.
+
+```bash
+docker compose -f api/docker-compose.yml --profile commerce up -d sylius sylius-worker
+```
+
+- `sylius` migrates its own database (`sylius`, on the shared PostgreSQL server), creates the one admin API user the
+  LMS signs in with and serves the Admin and Shop APIs on port 8080 inside the network. Caddy does not route it.
+- `sylius-worker` delivers outbox events to the LMS (signed webhooks, retried for 72 hours).
+- Point the API (platform env) at it: `COMMERCE_PROVIDER=sylius`, `COMMERCE_SYLIUS_URL=http://sylius:8080`,
+  `COMMERCE_SYLIUS_ADMIN_EMAIL` and `COMMERCE_SYLIUS_ADMIN_PASSWORD`. The values in the compose file are development
+  defaults; never reuse them. Tenant envs never hold Sylius credentials.
+
+The native Sylius admin UI needs Webpack assets that are not built into the image yet (CM-8); the Admin API does not.
+
+## One channel per tenant
+
+One Sylius instance serves every tenant, with a channel per tenant (code = tenant slug, `COMMERCE_CHANNEL`). Sylius has
+no tenant isolation of its own, so the adapter is bound to the tenant's channel: product codes, prices, order reads
+and the event feed all carry it, an order of another channel is reported with that channel and refused by the LMS, and
+a customer linked in another channel counts as unlinked. Creating the channel at provisioning is CM-4.
+
+## Catalogue sync
+
+The LMS keeps the intent in `commerce_sellable_prices` (a price and "for sale"). A sellable is a course, a **bundle** (a
+set of courses bought once) or an **access pass** (a course or bundle for a number of days). The product at Sylius is
+code `ul-<channel>-<type>-<id>` with one variant `<code>-v` that needs no shipping, carrying the channel price.
+
+- A product is **enabled** only while the sellable is for sale and every course in it is published. Unpublishing a
+  course disables its product, its bundles and its passes; publishing enables them again. Nothing is ever deleted,
+  because orders reference the variant.
+- A price change or a course status change queues `SyncSellableJob` (retried with backoff while Sylius is down). An
+  unchanged product is not sent again; the failure reason stays on the product link (`sync_error`).
+- A bundle grants one entitlement per course (`<provider>:<channel>:order_item:<item>:course:<course>`); courses added
+  later are not granted to past buyers. An access pass ends the access that many days after the purchase.
+
+Manage them with the admin API (permission `commerce_prices_manage`, scope area `commerce`):
+
+| Request | What it does |
+|---|---|
+| `GET /api/admin/commerce/products` | Prices and the state of each product (last sync, last error) |
+| `PUT /api/admin/commerce/products/{type}/{id}` | Set the price (`price_minor`, `currency`) and `for_sale` |
+| `POST /api/admin/commerce/bundles` | Create a bundle of courses |
+| `POST /api/admin/commerce/access-passes` | Create an access pass on a course or bundle |
+
+CLI: `ulams commerce products-list`, `products-set-price`, `bundles-create`, `access-passes-create`.
+
+```bash
+php artisan ulams:commerce:sync                    # push what is not yet in step
+php artisan ulams:commerce:sync --check            # report drift, exit 1 when there is any
+php artisan ulams:commerce:sync --check --repair   # and push the drifted sellables
+```
+
+## Nightly drift check and full sweep
+
+With `COMMERCE_NIGHTLY=true` the scheduler runs, per tenant, `ulams:commerce:reconcile --full` (03:10) and
+`ulams:commerce:sync --check --repair` (03:40). Both store a row in `commerce_drift_reports`.
+
+- The **catalogue check** reads every product back and reports a product that was deleted (`missing`), re-priced
+  (`price`), enabled or disabled by hand (`enabled`), renamed (`name`) or that failed its last sync (`error`).
+- The **order sweep** lists the channel's completed orders of the last 35 days (`--since=` for a longer look) and
+  repairs both directions without reading any event: a paid line without an entitlement is granted, a refunded or
+  cancelled line that still grants access is revoked. `--dry-run` only reports. The 5-minute `ulams:commerce:reconcile`
+  reads the bridge's event feed instead.
+
+## The ulams bridge bundle
+
+`api/sylius/bundles/UlamsBridgeBundle` adds what stock Sylius lacks:
+
+- a **transactional outbox**: every payment transition (paid, refunded, partially refunded, cancelled after payment)
+  writes an event in the same database transaction as the transition, so an event exists if and only if the transition
+  committed;
+- a **pull feed** `GET /api/v2/admin/ulams/events?channel=&after=&limit=` that does not depend on delivery;
+- **signed delivery** to the URL in the channel's link (HMAC over `<t>.<body>`, the same scheme as the other ulams
+  webhooks), retried with exponential backoff for 72 hours. Links are written only by the LMS provisioner through
+  `PUT /api/v2/admin/ulams/channel-links/{channel}`; the secret is sealed at rest and never returned;
+- the customer field `ulamsUserRef` (`<channel>:<LMS user id>`), written by the LMS, which is how an order is tied to
+  an LMS user (never by e-mail address);
+- `ulams:admin-api-user:ensure`, which creates the admin API user from the environment.
+
+## Tests, and what needs a live Sylius
+
+| Suite | Runs | Proves |
+|---|---|---|
+| `commerce` provider contract (`WellmsProviderContractTest`) | always | The Wellms adapter meets the contract |
+| `commerce-sylius` with an in-memory Sylius | always | Request shapes, token handling, errors, channel binding |
+| `commerce-sylius` `Live/*` | with `COMMERCE_SYLIUS_LIVE_URL` and the live admin credentials | The same contract and the whole flow (sync, checkout, access, refund, sweep, drift) against a real Sylius 2.3 |
+| `api/sylius` bridge tests | always (CI job `sylius`) | Outbox recording, feed, delivery signing and retry, channel links, sealing |
+
+The signature the bridge produces and the LMS verifies is checked against one recorded vector in both suites.
+Not verified without a real service: payment through Stripe (CM-4), delivery from the bridge to a running LMS over the
+network (the delivery request and its signature are tested on both sides, not the connection), and the native admin UI.

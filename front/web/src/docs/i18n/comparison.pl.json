@@ -775,6 +775,7 @@
                     "text": "Osobna usługa Sylius 2.x za jednym frontendem: katalog, koszyk i zamówienia tam, uprawnienia w LMS.",
                     "packages": [
                       "commerce",
+                      "commerce-sylius",
                       "entitlements"
                     ],
                     "status": "coming"

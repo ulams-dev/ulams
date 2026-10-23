@@ -1,6 +1,6 @@
 ---
 title: Entitlements and order events
-description: How a verified, idempotent order event from the commerce provider becomes (or removes) access to a course. Covers the entitlement model, the signed webhook, replay and duplicate handling, refunds, reconciliation and what is still a stub.
+description: How a verified, idempotent order event from the commerce provider becomes (or removes) access to a course. Covers the entitlement model, the signed webhook, replay and duplicate handling, refunds, reconciliation and what is still missing.
 sidebar:
   order: 11
 modules:
@@ -10,9 +10,10 @@ modules:
 import { Aside } from "@astrojs/starlight/components";
 
 <Aside type="caution">
-  Phase 6.4 (ADR 0130). The entitlement model, the backfill and the shadow mode (CM-2) are complete and run against
-  the Wellms cart. No Sylius instance is wired in yet: the order-event flow is exercised with a fake provider in the
-  test suite. The Wellms cart keeps granting access as before.
+  Phase 6.4 (ADR 0130). The entitlement model, the backfill and the shadow mode (CM-2) run against the Wellms cart.
+  The order-event flow is tested with an in-memory provider and, since CM-3, against a real Sylius
+  ([the Sylius commerce service](/developers/commerce-sylius/)). The Wellms cart keeps granting access as before and
+  stays the default provider.
 </Aside>
 
 The LMS owns access. A commerce provider only reports that an order was paid, refunded or cancelled; it never
@@ -113,15 +114,19 @@ gave up on again. Set `COMMERCE_RECONCILE=true` to run it every five minutes fro
 | `COMMERCE_WEBHOOK_SECRET_PREVIOUS` | none | Secret being rotated out, accepted as well |
 | `COMMERCE_RECONCILE` | `false` | Schedule reconciliation every five minutes |
 | `COMMERCE_SHADOW_WELLMS` | `true` | Record Wellms cart purchases as entitlements (shadow mode) |
+| `COMMERCE_NIGHTLY` | `false` | Run the nightly order sweep and catalogue check from the scheduler |
+| `COMMERCE_SYLIUS_URL`, `COMMERCE_SYLIUS_ADMIN_EMAIL`, `COMMERCE_SYLIUS_ADMIN_PASSWORD` | none | The Sylius service and its admin API user (platform env only) |
 | `ENTITLEMENTS_EXPIRE` | `true` | Schedule `ulams:entitlements:expire` hourly |
 | `ENTITLEMENTS_PARITY` | `true` | Schedule `ulams:entitlements:parity` nightly |
 
-## What is stubbed
+## What is still missing
 
-- The provider: `FakeCommerceProvider` (tests only) plays the Sylius Admin API and its event feed. The Sylius
-  adapter, the bridge bundle with its outbox, and `scripts/commerce-e2e.sh` follow in CM-3 and later.
-- Bundles are not expanded to courses yet: a paid line without a linked course fails the job loudly instead of
-  being skipped. Seat pools are CM-9; the source types `seat`, `group_legacy` and `voucher_legacy` are reserved.
+- Buying from the learner frontend (single login, cart, checkout, return page): CM-5. Until then orders reach the
+  LMS only from a Sylius an operator or a test fills.
+- Seat pools are CM-9; the source types `seat`, `group_legacy` and `voucher_legacy` are reserved.
+- Unit refunds (a partial refund tied to order units) are not read yet: a full refund or a cancellation revokes, a
+  goodwill amount keeps access.
 - The parity report is read with `ulams:entitlements:parity --latest`; showing it in the admin comes with the unified
-  commerce admin (CM-8). There is no new HTTP endpoint in CM-2.
-- The nightly `--full` sweep that compares paid orders with entitlements in both directions.
+  commerce admin (CM-8).
+- `scripts/commerce-e2e.sh` and the CI job that runs the flow against the compose profile are CM-7; until then the
+  live suites in `commerce-sylius` are run by hand against the profile.
