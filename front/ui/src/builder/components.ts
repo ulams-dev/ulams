@@ -1090,6 +1090,8 @@ const UpdateItem: Renderer = (p, ctx, id) => {
   const accept = h("button", { type: "button", class: "cb-btn cb-btn-small", "data-decision": "accepted", "data-focus-target": "" }, icon("check"), ACCEPT_LABEL[kind] ?? "Accept");
   const reject = h("button", { type: "button", class: "cb-btn cb-btn-small", "data-decision": "rejected" }, REJECT_LABEL[kind] ?? "Reject");
   const reset = h("button", { type: "button", class: "cb-link", "data-decision": "pending" }, "Undo my decision");
+  // variants of the course (ADR 0192): the same patch can be taken for every version in one step; the label comes localised from the page
+  const acceptGroup = p.acceptInGroupLabel ? h("button", { type: "button", class: "cb-btn cb-btn-small", "data-accept-in-group": "" }, icon("check"), String(p.acceptInGroupLabel)) : null;
   const note = h("p", { class: "cb-item-note", role: "alert" });
 
   function paint(): void {
@@ -1098,6 +1100,7 @@ const UpdateItem: Renderer = (p, ctx, id) => {
     statusEl.className = `cb-item-status cb-item-status-${status}`;
     accept.setAttribute("aria-pressed", String(status === "accepted"));
     reject.setAttribute("aria-pressed", String(status === "rejected"));
+    if (acceptGroup) acceptGroup.hidden = status !== "pending" && status !== "rejected";
     accept.disabled = status === "conflict" || status === "stale";
     reset.hidden = status !== "accepted" && status !== "rejected";
     root.dataset.status = status;
@@ -1134,8 +1137,14 @@ const UpdateItem: Renderer = (p, ctx, id) => {
     accept.focus();
   });
 
+  acceptGroup?.addEventListener("click", () => {
+    for (const button of [accept, acceptGroup, reject, reset]) button.disabled = true;
+    root.setAttribute("aria-busy", "true");
+    act(ctx, id, "accept_in_group", { itemId: p.itemId });
+  });
+
   const controls = h("div", { class: "cb-item-controls" });
-  if (canDecide) controls.append(h("div", { role: "group", "aria-label": `Decision for ${String(p.label)}`, class: "cb-item-decision" }, accept, reject, reset));
+  if (canDecide) controls.append(h("div", { role: "group", "aria-label": `Decision for ${String(p.label)}`, class: "cb-item-decision" }, accept, acceptGroup, reject, reset));
   else controls.append(h("p", { class: "cb-muted cb-small" }, status === "pending" ? "Decisions open when the analysis is finished." : "This proposal is settled."));
 
   if (canDecide && canRegenerate) {
@@ -1191,6 +1200,7 @@ const UpdateItem: Renderer = (p, ctx, id) => {
   const fields = (p.fields as Props[] | undefined) ?? [];
   const body: Array<HTMLElement | null> = [];
   if (KIND_NOTE[kind]) body.push(h("p", { class: "cb-item-kind-note" }, KIND_NOTE[kind]!));
+  if (p.reusedNote) body.push(h("p", { class: "cb-item-kind-note", "data-reused-note": "" }, String(p.reusedNote)));
   if (p.answerChanged) body.push(h("p", { class: "cb-item-warn cb-item-warn-answer", role: "note" }, icon("alert"), h("strong", {}, "Answer changed. "), "The correct answer is different now. Learners' earlier scores stay on record."));
   else if (p.answerCheck) body.push(h("p", { class: "cb-item-warn cb-item-warn-answer", role: "note" }, icon("alert"), h("strong", {}, "Answer may be wrong. "), "The source changed where this answer comes from. Check the marked answer."));
   for (const flag of (p.flags as string[] | undefined) ?? []) {

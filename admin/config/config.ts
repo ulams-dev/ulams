@@ -13,6 +13,9 @@ const {
   BASE_PATH,
   REACT_APP_SENTRY_RELEASE,
   REACT_APP_TENANT_API_HOST_PATTERN,
+  REACT_APP_IMAGE_SERVICE,
+  REACT_APP_IMAGE_SOURCES,
+  REACT_APP_IMAGE_TRANSFORM_ORIGIN,
 } = process.env;
 export default defineConfig({
   /**
@@ -178,6 +181,15 @@ export default defineConfig({
       typeof REACT_APP_TENANT_API_HOST_PATTERN !== 'undefined'
         ? REACT_APP_TENANT_API_HOST_PATTERN
         : '',
+    // image URLs (ADR 0193): php (default) | cloudflare | noop; runtime-config.json overrides these
+    REACT_APP_IMAGE_SERVICE:
+      typeof REACT_APP_IMAGE_SERVICE !== 'undefined' ? REACT_APP_IMAGE_SERVICE : '',
+    REACT_APP_IMAGE_SOURCES:
+      typeof REACT_APP_IMAGE_SOURCES !== 'undefined' ? REACT_APP_IMAGE_SOURCES : '',
+    REACT_APP_IMAGE_TRANSFORM_ORIGIN:
+      typeof REACT_APP_IMAGE_TRANSFORM_ORIGIN !== 'undefined'
+        ? REACT_APP_IMAGE_TRANSFORM_ORIGIN
+        : '',
   },
   devtool: 'source-map',
   /**
@@ -204,6 +216,9 @@ export default defineConfig({
     '@ulams/scorm-player': path.resolve(__dirname, '../../front/src/lib/scorm-player'),
     '@ulams/tenant': path.resolve(__dirname, '../../front/src/lib/tenant/resolveApiUrl.ts'),
     '@ulams/demo': path.resolve(__dirname, '../../front/src/lib/demo/demoMode.ts'),
+    '@ulams/images': path.resolve(__dirname, '../../front/sdk/src/images.ts'),
   },
+  // front/sdk/src/images.ts (the shared image URL builder) imports its presets with `with { type: 'json' }`
+  extraBabelPlugins: ['@babel/plugin-syntax-import-attributes'],
   plugins: [require.resolve('./plugin-scorm.ts')],
 });

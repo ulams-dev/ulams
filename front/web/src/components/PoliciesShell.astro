@@ -1,0 +1,49 @@
+---
+/**
+ * The frame of every studio Policies page: heading, language links, intro and the mount point of the island
+ * (src/studio/policies.ts). The page text comes from src/studio/policies-i18n.ts.
+ */
+import Studio from "../layouts/Studio.astro";
+import { POLICIES_LOCALES, POLICIES_STRINGS, type PoliciesLocale } from "../studio/policies-i18n.ts";
+
+interface Props {
+  title: string;
+  heading: string;
+  intro?: string;
+  locale: PoliciesLocale;
+  view: "list" | "create" | "policy" | "version";
+  policy?: string;
+  version?: number;
+  crumb?: string;
+}
+
+const { title, heading, intro, locale, view, policy, version, crumb } = Astro.props;
+const t = POLICIES_STRINGS[locale];
+const LANGUAGE_NAME: Record<string, string> = { en: "English", pl: "Polski", zh: "简体中文" };
+---
+
+<Studio title={title} crumb={crumb ?? t.nav} active="policies">
+  <main id="main" class="st-page" tabindex="-1" lang={t.htmlLang}>
+    <div class="st-ins-head">
+      <h1 class="cb-serif cb-h2" style="flex:1">{heading}</h1>
+      <nav class="st-ins-lang" aria-label={t.languageLabel}>
+        {
+          POLICIES_LOCALES.map((code) => (
+            <a href={`?lang=${code}`} lang={POLICIES_STRINGS[code].htmlLang} hreflang={POLICIES_STRINGS[code].htmlLang} aria-current={code === locale ? "true" : undefined}>
+              {LANGUAGE_NAME[code]}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+    {intro && <p class="cb-muted">{intro}</p>}
+    <div class="st-pol" data-policies-view={view} data-policy={policy} data-version={version} data-locale={locale}>
+      <p class="cb-muted" role="status">{t.loading}</p>
+    </div>
+    <noscript><p class="cb-error">{t.needsScript}</p></noscript>
+  </main>
+</Studio>
+
+<script>
+  import "../studio/policies.ts";
+</script>

@@ -75,7 +75,7 @@ Each tab has its own address, `/courses/list/<id>/<tab>`.
 | Tab (key) | Purpose |
 |---|---|
 | Product (`product`) | Turn the course into a product with a price. Shown only with the sales permission. See [Access, prices and publishing](/creators/access-and-publishing/#prices-and-products). |
-| Media (`media`) | Course image, promo video and poster. Upload a large enough original: the legacy learner app requests resized, cached variants from the image service (`/api/images/img`). |
+| Media (`media`) | Course image, promo video and poster. Upload a large enough original: the learner screens request resized variants from the deployment's [image service](/operators/image-service/) (Cloudflare Image Transformations, sharp, or the original file), never wider than the original. |
 | Categories & Tags (`categories`) | Pick categories from the tree and type tags. |
 | Program (`program`) | Lessons and topics. See [Lessons and topics](/creators/lessons-and-topics/). |
 | SCORM (`scorm`) | Use one SCORM package as the whole course. See [SCORM](/creators/scorm/#a-whole-course-from-one-package). |

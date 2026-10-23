@@ -199,7 +199,7 @@ class EntitlementServiceTest extends TestCase
             $user = User::factory()->create();
             $this->assertSame($type, $this->service->grantCourse($user->getKey(), $course->getKey(), $type, "k{$i}")->source_type);
         }
-        $this->assertCount(9, Entitlement::SOURCE_TYPES);
+        $this->assertCount(10, Entitlement::SOURCE_TYPES, 'the family source of course variants is the tenth (ADR 0192)');
     }
 
     public function testAnUnknownSourceTypeIsRefusedWithoutRows(): void
@@ -235,5 +235,39 @@ class EntitlementServiceTest extends TestCase
         $this->assertSame(1, Entitlement::query()->count());
         $this->service->project($user->getKey(), $course->getKey());
         $this->assertNotNull($this->pivot($user, $course));
+    }
+
+    public function testProjectingAnnouncesTheChangeSoFamiliesOfVariantsCanFollow(): void
+    {
+        \Illuminate\Support\Facades\Event::fake([\Ulams\Entitlements\Events\AccessProjected::class]);
+        $user = User::factory()->create();
+        $course = Course::factory()->create();
+
+        $this->grant($user, $course, 'announce-1');
+        $this->service->revoke('announce-1', 'refund');
+
+        \Illuminate\Support\Facades\Event::assertDispatchedTimes(\Ulams\Entitlements\Events\AccessProjected::class, 2);
+        \Illuminate\Support\Facades\Event::assertDispatched(\Ulams\Entitlements\Events\AccessProjected::class, fn ($e) => $e->userId === $user->getKey() && $e->courseId === $course->getKey());
+    }
+
+    public function testADerivedEntitlementIsCreatedMovedAndBroughtBackAfterItLapsed(): void
+    {
+        $user = User::factory()->create();
+        $course = Course::factory()->create();
+        $key = 'family:g:user:1:course:2';
+
+        $row = $this->service->syncDerived($user->getKey(), $course->getKey(), Entitlement::SOURCE_FAMILY, $key, ['group_id' => 'g'], now()->addDays(10));
+        $this->assertNotNull($this->pivot($user, $course));
+        $this->assertSame(Entitlement::SOURCE_FAMILY, $row->source_type);
+
+        $this->service->revoke($key, 'family_lost');
+        $this->assertNull($this->pivot($user, $course));
+
+        $again = $this->service->syncDerived($user->getKey(), $course->getKey(), Entitlement::SOURCE_FAMILY, $key, ['group_id' => 'g'], null);
+        $this->assertSame($row->getKey(), $again->getKey(), 'the same row, not a new one per grant');
+        $this->assertSame(Entitlement::STATUS_ACTIVE, $again->status);
+        $this->assertNull($again->valid_until);
+        $this->assertNotNull($this->pivot($user, $course));
+        $this->assertSame(1, Entitlement::query()->where('source_key', $key)->count());
     }
 }

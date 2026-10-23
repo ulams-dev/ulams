@@ -458,6 +458,13 @@
   color: var(--ulams-studio-muted);
 }
 .st-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+  border-left: 4px solid var(--ulams-studio-ink);
+}
 /* interactive preview: the course in a frame, the element chat on the right */
 .st-pv {
   display: grid;
@@ -483,8 +490,6 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 16px;
-  margin-bottom: 16px;
-  border-left: 4px solid var(--ulams-studio-ink);
 }
 .st-banner[hidden] {
   display: none;
@@ -988,7 +993,6 @@
 .cb-apply .cb-table td {
   overflow-wrap: anywhere;
 }
-}
 .st-pv-bar h1 {
   margin: 0;
 }
@@ -1162,6 +1166,48 @@
 .st-evidence-reasons li + li {
   margin-top: 2px;
 }
+/* "Versions of this update" on the review screen: one link per proposal of the group, current one marked in words and by outline */
+.st-vg-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.st-vg-link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--ulams-studio-line);
+  border-radius: 12px;
+  color: var(--ulams-studio-ink);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.st-vg-link:hover {
+  background: var(--ulams-studio-sunken);
+}
+.st-vg-link[aria-current="page"] {
+  background: var(--ulams-studio-iris-soft);
+  border-color: var(--ulams-studio-iris);
+  border-width: 2px;
+  padding: 7px 11px;
+}
+.st-vg-name {
+  font-weight: 600;
+}
+.st-vg-status,
+.st-vg-counts {
+  color: var(--ulams-studio-muted);
+}
+@media (max-width: 720px) {
+  .st-vg-list {
+    flex-direction: column;
+  }
+}
 .st-badge {
   display: inline-block;
   margin-inline-start: 6px;
@@ -1171,6 +1217,12 @@
   background: var(--ulams-studio-sunken);
   font-size: 0.75rem;
   font-weight: 500;
+}
+.st-badge.st-course-badge {
+  border-color: var(--ulams-studio-iris);
+  color: var(--ulams-studio-iris);
+  background: var(--ulams-studio-iris-soft);
+  font-weight: 600;
 }
 @media (max-width: 720px) {
   .st-page {
@@ -1491,4 +1543,115 @@ a.st-ver-link {
   align-items: center;
   text-decoration: none;
   white-space: nowrap;
+}
+
+/* policies pages (ADR 0140): list, create, policy, version review */
+.st-pol,
+.st-pol-body,
+.st-pol-decisions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.st-pol-new {
+  margin-top: 16px;
+}
+.st-pol-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 48rem;
+}
+.st-pol-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.st-pol-field label {
+  font-weight: 600;
+}
+.st-pol-field input[type="text"],
+.st-pol-field input[type="number"],
+.st-pol-field input[type="file"],
+.st-pol-field select,
+.st-pol-field textarea {
+  min-height: 44px;
+  max-width: 100%;
+  font: inherit;
+}
+.st-pol-hint {
+  margin: 0;
+}
+.st-pol-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+.st-pol-departments {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.st-pol-department {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid currentColor;
+}
+.st-pol-depts {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 12px;
+}
+.st-pol-figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 12px;
+  margin: 0;
+}
+.st-pol-figures dt {
+  font-weight: 600;
+}
+.st-pol-figures dd {
+  margin: 0;
+}
+.st-pol-filters,
+.st-pol-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 16px;
+}
+.st-pol-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+.st-pol-radio input {
+  width: 1.4rem;
+  height: 1.4rem;
+  margin: 0;
+  flex: none;
+}
+.st-pol-class {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.st-pol-result {
+  margin: 0;
+}
+@media (max-width: 520px) {
+  .st-pol-figures {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

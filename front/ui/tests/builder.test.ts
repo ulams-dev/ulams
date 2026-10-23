@@ -422,6 +422,31 @@ describe("interactions round-trip as A2UI actions", () => {
       expect(main.querySelector("[data-update-item]")?.getAttribute("data-status")).toBe("pending");
     });
 
+    it("offers Accept in all versions only when the page passes its label, and dispatches accept_in_group", () => {
+      expect(find(mount(item()), "Accept")).toBeTruthy();
+      expect(mount(item()).querySelector("[data-accept-in-group]")).toBeNull();
+      expect(mount(item()).querySelector("[data-reused-note]")).toBeNull();
+      const c = ctx();
+      const main = mount(item({ acceptInGroupLabel: "Accept in all versions", reusedNote: "Same change as in the base course; no extra analysis was needed." }), c);
+      const group = main.querySelector<HTMLButtonElement>("[data-accept-in-group]")!;
+      expect(group.textContent).toContain("Accept in all versions");
+      expect(group.hidden).toBe(false);
+      expect(main.querySelector("[data-reused-note]")?.textContent).toBe("Same change as in the base course; no extra analysis was needed.");
+      group.click();
+      expect(c.actions).toHaveLength(1);
+      expect(c.actions[0]!.name).toBe("accept_in_group");
+      expect(c.actions[0]!.context.itemId).toBe("01item1");
+      expect(group.disabled).toBe(true);
+      expect(main.querySelector("[data-update-item]")?.getAttribute("aria-busy")).toBe("true");
+    });
+
+    it("hides Accept in all versions once the item is accepted or in conflict", () => {
+      for (const status of ["accepted", "conflict", "stale"]) {
+        expect(mount(item({ status, acceptInGroupLabel: "Accept in all versions" })).querySelector<HTMLElement>("[data-accept-in-group]")!.hidden, status).toBe(true);
+      }
+      expect(mount(item({ status: "rejected", acceptInGroupLabel: "Accept in all versions" })).querySelector<HTMLElement>("[data-accept-in-group]")!.hidden).toBe(false);
+    });
+
     it("announces the decision politely and moves focus to the next undecided item", () => {
       vi.useFakeTimers();
       try {

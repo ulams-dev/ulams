@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 import { buildZip, packageFiles, packageNames, packagesDir } from './build.mjs';
-import { firstDifference, matchGolden, normalise, normaliseString } from './trace.mjs';
+import { differences, firstDifference, matchGolden, normalise, normaliseString } from './trace.mjs';
 import { readZip, writeZip } from './zip.mjs';
 
 describe('fixture packages', () => {
@@ -87,5 +87,6 @@ describe('golden helper', () => {
     assert.match(missing.message, /UPDATE_GOLDEN=1/);
     assert.equal(firstDifference({ a: [1, 2] }, { a: [1, 3] }), '$.a[1]: expected 2, got 3');
     assert.equal(firstDifference({ a: 1 }, { a: 1 }), '');
+    assert.deepEqual(differences({ a: 1, b: [1, 2] }, { a: 2, b: [1, 3] }), ['$.a: expected 1, got 2', '$.b[1]: expected 2, got 3']);
   });
 });

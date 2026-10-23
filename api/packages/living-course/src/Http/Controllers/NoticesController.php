@@ -68,7 +68,8 @@ class NoticesController extends Controller
         if ($c === null || !$c->users()->where('users.id', $request->user()->getKey())->exists()) {
             throw new NotFoundHttpException('Course not found.');
         }
-        $session = Session::withTrashed()->where('course_id', $c->getKey())->first();
+        $branch = \Ulams\LivingCourse\Support\ProposalBranch::ofCourse((int) $c->getKey());
+        $session = $branch?->session;
         $connections = $session ? Connection::query()->where('session_id', $session->id)->get() : collect();
         if ($session === null || !$connections->contains(fn (Connection $x) => (bool) $x->setting('show_pending_to_learners', false))) {
             return self::ok(['topics' => []]);
@@ -79,8 +80,8 @@ class NoticesController extends Controller
         if ($pending->isEmpty() || $proposal === null) {
             return self::ok(['topics' => []]);
         }
-        $map = \Ulams\CourseBuilder\Models\EntityMapEntry::query()->where('session_id', $session->id)->where('entity_type', 'topic')->pluck('entity_id', 'element_id');
-        $doc = $session->currentVersion?->document ?? [];
+        $map = $branch->entries()->where('entity_type', 'topic')->pluck('entity_id', 'element_id');
+        $doc = $branch->liveVersion()?->document ?? [];
         $topics = [];
         foreach ($pending as $element) {
             $found = \Ulams\CourseBuilder\Blueprint\Blueprint::find($doc, $element->element_id);
