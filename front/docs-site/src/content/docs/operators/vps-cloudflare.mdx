@@ -243,6 +243,13 @@ Private data never goes into a public bucket. Uploaded course sources stay on th
 Static files of the admin (hashed JavaScript and CSS) are cached by Cloudflare's default rules by extension. To turn
 the catalogue cache off, set `HTTP_CACHE_PUBLIC=false` on the API (the API then sends `private` everywhere).
 
+## Images
+
+Resizing is optional and off by default here: the front uses sharp and the admin the PHP resize API. Because every host is proxied,
+you can move both to Cloudflare Image Transformations: enable them for the zone (Images > Transformations), then set
+`ULAMS_IMAGE_SERVICE=cloudflare` and `REACT_APP_IMAGE_SERVICE=cloudflare`. `cloudflare-setup.sh` does not touch Images. The settings,
+the free-plan budget, the kill switch and the optional WAF rule are in [Image service](/operators/image-service/).
+
 ## E-mail
 
 Set the `MAIL_*` variables to any SMTP provider (host, port 587 with `tls`, user, password). Tenants send as

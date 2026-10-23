@@ -1,5 +1,5 @@
 {
- "summary": "640/729 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "646/735 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1991,6 +1991,42 @@
    "key": "POST /api/admin/reporting/query",
    "summary": "Preview a report definition",
    "command": "reporting.query",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reporting/saved",
+   "summary": "Saved reports the caller can see",
+   "command": "reporting.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/reporting/saved",
+   "summary": "Save a report",
+   "command": "reporting.save",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reporting/saved/{id}",
+   "summary": "One saved report",
+   "command": "reporting.show",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/reporting/saved/{id}",
+   "summary": "Change a saved report",
+   "command": "reporting.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/reporting/saved/{id}",
+   "summary": "Delete a saved report",
+   "command": "reporting.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reporting/saved/{id}/run",
+   "summary": "Run a saved report",
+   "command": "reporting.run",
    "status": "covered"
   },
   {

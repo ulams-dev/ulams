@@ -5,7 +5,7 @@ import { Tutor } from "@ulams/components/components/molecules/Tutor/Tutor";
 import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import styles from "./TutorsSection.module.css";
 import { User } from "@ulams/sdk/types";
-import { API_URL } from "@/config/index";
+import { avatarSrc } from "@ulams/images";
 
 type CustomUser = User & {
   bio?: string;
@@ -32,7 +32,7 @@ const TutorsSection = ({ users, title }: TutorsSectionProps) => {
             mobile={isMobile}
             avatar={{
               alt: `${user.first_name} ${user.last_name}`,
-              src: `${API_URL}/api/images/img?path=${user.path_avatar}` || "",
+              src: avatarSrc(user),
             }}
             // TODO: Change rating when will be available from response
             rating={{

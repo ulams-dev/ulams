@@ -19,6 +19,11 @@ class ReportingSettings
         return max(1, (int) config('reporting.preview_rows', 500));
     }
 
+    public function exportRows(): int
+    {
+        return max(1, (int) config('reporting.export_rows', 1000000));
+    }
+
     public function maxGroups(): int
     {
         return max(1, (int) config('reporting.max_groups', 100000));

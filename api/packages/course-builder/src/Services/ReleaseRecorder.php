@@ -4,6 +4,7 @@ namespace Ulams\CourseBuilder\Services;
 
 use Illuminate\Support\Facades\DB;
 use Ulams\CourseBuilder\Blueprint\SemanticDiff;
+use Ulams\CourseBuilder\Events\CourseVersionApplied;
 use Ulams\CourseBuilder\Models\Release;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Variant;
@@ -27,7 +28,7 @@ final class ReleaseRecorder
      */
     public function applied(Session $session, Version $version, int $courseId, array $sessionAttributes = [], ?string $trigger = null): ?Release
     {
-        return DB::transaction(function () use ($session, $version, $courseId, $sessionAttributes, $trigger) {
+        $release = DB::transaction(function () use ($session, $version, $courseId, $sessionAttributes, $trigger) {
             // the same lock that numbers versions: two applies of one session never take the same release number
             Session::query()->whereKey($session->id)->lockForUpdate()->first(['id']);
             $session->forceFill(['course_id' => $courseId, 'applied_version_id' => $version->id] + $sessionAttributes)->save();
@@ -39,6 +40,11 @@ final class ReleaseRecorder
 
             return $this->write($session, $version, $courseId, $previous, $trigger ?? $this->triggerFor($version, $previous));
         });
+        if ($release !== null) {
+            event(new CourseVersionApplied($session, $version, $release));
+        }
+
+        return $release;
     }
 
     /**

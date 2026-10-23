@@ -1,6 +1,6 @@
 ---
 title: Report builder
-description: The datasets an administrator can build reports on, how a report definition asks for rows or groups, and how small groups are withheld. Saved reports, sharing and the BI feed follow in later releases.
+description: The datasets an administrator can build reports on, how a report definition asks for rows or groups, how small groups are withheld, and how reports are saved, shared with roles and exported. The admin screen, schedules for saved reports and the BI feed follow in later releases.
 modules:
   - reporting
 sidebar:
@@ -15,9 +15,9 @@ and schedule it. It is built in steps (ADR 0194). This page covers what exists t
 **report definition** that is compiled into a safe query.
 
 <Aside type="note">
-Today you can list the datasets, preview a report definition through the API and read the compliance report. Saving and
-sharing reports, the admin screen, schedules for saved reports, exports of a definition and the BI feed are planned and
-not available yet. Nothing on this page promises a date for them.
+Today you can list the datasets, preview a report definition, save it, share it with roles and run or export it through the
+API. The admin screen, XLSX files, schedules for saved reports and the BI feed are planned and not available yet. Nothing
+on this page promises a date for them.
 </Aside>
 
 ## Datasets
@@ -121,9 +121,45 @@ This protects the output of one report. It does not stop a person who may run ro
 rows, and it cannot stop two different queries from being subtracted from each other: who may see learner data at all is
 decided by the dataset's permission.
 
+## Save and share a report
+
+A **saved report** is a name, a description and a definition. `POST /api/admin/reporting/saved` (permission
+`reporting_create`, administrators; the saver must also hold the permission of the dataset) stores it:
+
+```bash
+ulams reporting save --input @report.json
+```
+
+with `name`, optional `description`, `definition`, and `visibility`: `private` (the default: the owner, and administrators
+who hold `reporting_manage`) or `roles` with `shared_roles` naming roles of this academy (for example `tutor`). Everyone
+who holds one of those roles and the permission `reporting_read` then sees the report in `GET /api/admin/reporting/saved`.
+
+**Sharing shares the definition, not the data.** A report always runs with the permissions and scope of whoever runs it.
+A tutor who opens a report an administrator shared sees only what the dataset's `baseQuery` allows that tutor, and a
+person without the dataset's permission gets "you cannot run this report" (`403`; the list marks it `runnable: false`).
+Small groups are withheld the same way for every viewer.
+
+Only the owner (who still holds `reporting_create`) or an administrator with `reporting_manage` changes or deletes a
+report. Deleted reports are kept out of every list. When a dataset is removed or renames a column a saved report uses,
+the report is not silently wrong: the list and `GET /api/admin/reporting/saved/{id}` show `needs_repair: true` with the
+problems by path, and running it answers `409` until it is fixed.
+
+## Run and export
+
+`GET /api/admin/reporting/saved/{id}/run?format=json|csv|jsonl` runs the report as the caller:
+
+| Format | Answer |
+|---|---|
+| `json` (default) | like the query preview: `columns`, at most 500 `rows`, `meta` |
+| `csv` | every row up to 1 000 000 (`reporting.export_rows`) as a stream: UTF-8 with a BOM, text that a spreadsheet could read as a formula gets an apostrophe |
+| `jsonl` | the same rows as JSON lines; a withheld group is a row with `"_withheld": true` and empty figures |
+
+Every CSV and JSON lines export is recorded with who ran it, the dataset, the definition, the saved report, the number of rows
+and the route it left by (`download`). The record is the same `compliance_exports` log the compliance export uses.
+
 ## Tokens
 
-The datasets endpoint and the compliance report, its export and the compliance schedules belong to the **reports**
+The report builder endpoints (datasets, query, saved reports and their runs) and the compliance report, its export and the compliance schedules belong to the **reports**
 token area: a scoped token needs `reports:read` (or `reports:write` to change schedules). Before this release the
 compliance report and schedules were under `certificates`; a token that was created for them with only
 `certificates:read` now needs `reports:read` as well. The rest of the compliance API (assignments, paths, rules,
