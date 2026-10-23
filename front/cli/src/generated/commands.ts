@@ -764,9 +764,9 @@ export const generatedCommands: AnyCommand[] = [
     audience: ["admin"],
     endpoints: ["POST /api/admin/compliance/schedules"],
     mcp: { toolset: "compliance" },
-    examples: [{"title":"Schedule a report","argv":"compliance schedules-add --dataset text --frequency text --name Example --recipient-ids text --json"}],
-    input: z.looseObject({ "dataset": z.enum(["assignments", "certificates", "audit"]), "filters": z.record(z.string(), z.unknown()).describe("course_id, user_id, status, from, to").optional(), "format": z.enum(["csv", "jsonl"]).optional(), "frequency": z.enum(["daily", "weekly", "monthly"]), "name": z.string(), "recipient_ids": z.array(z.number().int()).describe("Ids of users of this tenant") }),
-    request: {"method":"POST","path":"/api/admin/compliance/schedules","pathParams":[],"queryParams":[],"bodyMode":"json","bodyFields":["dataset","filters","format","frequency","name","recipient_ids"]},
+    examples: [{"title":"Schedule a report","argv":"compliance schedules-add --frequency text --name Example --recipient-ids text --json"}],
+    input: z.looseObject({ "dataset": z.enum(["assignments", "certificates", "audit"]).describe("A compliance dataset; give this or saved_report_id").optional(), "filters": z.record(z.string(), z.unknown()).describe("course_id, user_id, status, from, to (datasets only)").optional(), "format": z.enum(["csv", "jsonl", "xlsx"]).describe("xlsx only for a saved report").optional(), "frequency": z.enum(["daily", "weekly", "monthly"]), "name": z.string(), "recipient_ids": z.array(z.number().int()).describe("Ids of users of this tenant"), "saved_report_id": z.string().describe("A saved report the caller can see (report builder); it runs once per recipient with the recipient's own permissions").optional() }),
+    request: {"method":"POST","path":"/api/admin/compliance/schedules","pathParams":[],"queryParams":[],"bodyMode":"json","bodyFields":["dataset","filters","format","frequency","name","recipient_ids","saved_report_id"]},
   }),
   httpCommand({
     id: "compliance.schedules-delete",
@@ -5956,7 +5956,7 @@ export const generatedCommands: AnyCommand[] = [
     positionals: ["id"],
     mcp: { toolset: "reporting" },
     examples: [{"title":"Run a saved report with your own permissions as json, csv or jsonl (use --out)","argv":"reporting run text --json"}],
-    input: z.looseObject({ "id": z.string(), "format": z.enum(["json", "csv", "jsonl"]).optional(), "out": z.string().optional().describe("Write the download to this path (- for stdout)").optional() }),
+    input: z.looseObject({ "id": z.string(), "format": z.enum(["json", "csv", "jsonl", "xlsx"]).optional(), "out": z.string().optional().describe("Write the download to this path (- for stdout)").optional() }),
     request: {"method":"GET","path":"/api/admin/reporting/saved/{id}/run","pathParams":["id"],"queryParams":["format"],"bodyMode":"none","bodyFields":[],"download":true},
   }),
   httpCommand({
