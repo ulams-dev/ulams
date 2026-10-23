@@ -25,7 +25,17 @@ class RuleEngine
     /** Whether every condition of the rule holds for the user (a rule without conditions matches nobody). */
     public function matches(User $user, Rule $rule): bool
     {
-        $conditions = $rule->conditions ?? [];
+        return $this->holds($user, $rule->conditions ?? []);
+    }
+
+    /**
+     * Whether every condition holds for the user (no conditions match nobody). Also used by the course-variants package
+     * to assign a variant by attribute.
+     *
+     * @param list<array{attribute: string, operator: string, value?: mixed}> $conditions
+     */
+    public function holds(User $user, array $conditions): bool
+    {
         if ($conditions === []) {
             return false;
         }

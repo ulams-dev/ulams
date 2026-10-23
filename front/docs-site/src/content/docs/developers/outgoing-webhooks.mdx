@@ -27,6 +27,7 @@ database. The API that manages them is `api/admin/webhooks` and needs the `webho
 |---|---|---|
 | `course.completed` | A learner finished a course | `user` (`id`, `email`, `name`), `course` (`id`, `title`), `completed_at` |
 | `enrolment.created` | A learner was given access to a course | `user`, `course`, `created_at` |
+| `course.version_applied` | A new version of a course made with the builder reached learners: generation, a chat change, a Living Course update, a [course-as-code](/developers/cli-course/) import, drift absorption or a restore. Once per release; an apply that changes nothing sends nothing. A Git repository follows the course with it | `course_id`, `session_id`, `version_id`, `number`, `release_number`, `kind`, `origin`, `reason`, `trigger`, `released_at` |
 | `update_proposal.ready` | A Living Course update proposal is ready for review. Once per proposal, however many reviewers are notified | `proposal_id`, `session_id`, `course_title`, `elements`, `answer_checks`, `status` |
 | `update_proposal.applied` | A proposal was reviewed and applied to the course (the "accepted" event) | `proposal_id`, `session_id`, `number`, `status`, `counts` |
 | `certificate.issued` | A course certificate PDF was generated | `user`, `certificate_id`, `course_id`, `issued_at` |

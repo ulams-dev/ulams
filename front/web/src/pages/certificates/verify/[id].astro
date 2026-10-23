@@ -38,6 +38,7 @@ const copy = certificate ? statusCopy(certificate) : null;
         <dl>
           {certificate.holder_name && (<><dt>Holder</dt><dd>{certificate.holder_name}</dd></>)}
           {certificate.course_title && (<><dt>Course</dt><dd>{certificate.course_title}</dd></>)}
+          {certificate.course_variant && (<><dt>Version</dt><dd>{certificate.course_variant}</dd></>)}
           <dt>Issued</dt><dd>{formatDate(certificate.issued_at)}</dd>
           {certificate.expires_at && (<><dt>Expires</dt><dd>{formatDate(certificate.expires_at)}</dd></>)}
           {certificate.issuer && (<><dt>Issued by</dt><dd>{certificate.issuer}</dd></>)}

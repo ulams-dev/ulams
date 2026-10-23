@@ -59,6 +59,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     protected static $openAPITypes = [
         'certificate_id' => 'string',
         'course_title' => 'string',
+        'course_variant' => 'string',
         'expires_at' => '\DateTime',
         'holder_name' => 'string',
         'issued_at' => '\DateTime',
@@ -79,6 +80,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     protected static $openAPIFormats = [
         'certificate_id' => null,
         'course_title' => null,
+        'course_variant' => null,
         'expires_at' => 'date-time',
         'holder_name' => null,
         'issued_at' => 'date-time',
@@ -97,6 +99,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     protected static array $openAPINullables = [
         'certificate_id' => false,
         'course_title' => true,
+        'course_variant' => true,
         'expires_at' => true,
         'holder_name' => true,
         'issued_at' => false,
@@ -195,6 +198,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     protected static $attributeMap = [
         'certificate_id' => 'certificate_id',
         'course_title' => 'course_title',
+        'course_variant' => 'course_variant',
         'expires_at' => 'expires_at',
         'holder_name' => 'holder_name',
         'issued_at' => 'issued_at',
@@ -213,6 +217,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     protected static $setters = [
         'certificate_id' => 'setCertificateId',
         'course_title' => 'setCourseTitle',
+        'course_variant' => 'setCourseVariant',
         'expires_at' => 'setExpiresAt',
         'holder_name' => 'setHolderName',
         'issued_at' => 'setIssuedAt',
@@ -231,6 +236,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     protected static $getters = [
         'certificate_id' => 'getCertificateId',
         'course_title' => 'getCourseTitle',
+        'course_variant' => 'getCourseVariant',
         'expires_at' => 'getExpiresAt',
         'holder_name' => 'getHolderName',
         'issued_at' => 'getIssuedAt',
@@ -317,6 +323,7 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
     {
         $this->setIfExists('certificate_id', $data ?? [], null);
         $this->setIfExists('course_title', $data ?? [], null);
+        $this->setIfExists('course_variant', $data ?? [], null);
         $this->setIfExists('expires_at', $data ?? [], null);
         $this->setIfExists('holder_name', $data ?? [], null);
         $this->setIfExists('issued_at', $data ?? [], null);
@@ -435,6 +442,40 @@ class CertificatesVerifyByCertificateidGet200ResponseData implements ModelInterf
             }
         }
         $this->container['course_title'] = $course_title;
+
+        return $this;
+    }
+
+    /**
+     * Gets course_variant
+     *
+     * @return string|null
+     */
+    public function getCourseVariant()
+    {
+        return $this->container['course_variant'];
+    }
+
+    /**
+     * Sets course_variant
+     *
+     * @param string|null $course_variant The variant of the course the holder completed (for example Expert), null for a course without variants
+     *
+     * @return self
+     */
+    public function setCourseVariant($course_variant)
+    {
+        if (is_null($course_variant)) {
+            array_push($this->openAPINullablesSetToNull, 'course_variant');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('course_variant', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['course_variant'] = $course_variant;
 
         return $this;
     }

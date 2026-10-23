@@ -1,0 +1,260 @@
+---
+/**
+ * The version picker of a course that has variants (CV-5): who it is for, level, role and duration of each version,
+ * which one the learner is in, and the choice to switch. A plain form (it works without JavaScript): it posts to
+ * /learn/:course/variant and comes back to this page with a status message the focus lands on. A visitor, or a
+ * learner who is not enrolled yet, gets a read-only list; a learner whose organisation locked the family sees the
+ * reason as text next to a disabled button. The words come from `@ulams/ui/variant-strings` (EN, PL, ZH).
+ */
+import { fill, levelName, variantStrings } from "@ulams/ui/variant-strings";
+import type { UiLocale } from "@ulams/ui/i18n";
+import type { PickerView } from "../lib/variants.ts";
+
+interface Props {
+  view: PickerView;
+  /** The course this page is about (the family is addressed through it). */
+  courseId: number;
+  locale: UiLocale;
+  /** Where the form returns to (the current page). */
+  next: string;
+  /** The status after the last post, from the query string. */
+  flash?: { tone: "ok" | "error"; text: string } | null;
+}
+const { view, courseId, locale, next, flash = null } = Astro.props;
+const t = variantStrings(locale);
+const lang = locale === "en" ? undefined : locale;
+const action = `/learn/${courseId}/variant`;
+const locked = view.mode === "locked";
+const assigned = view.assignedByOrganisation ? (view.ruleName ? fill(t.assignedByRule, { name: view.ruleName }) : t.assignedByOrg) : null;
+const reasonText = view.reason ? { self: t.reasonSelf, placement: t.reasonPlacement, "hint-easier": t.reasonHintEasier, "hint-harder": t.reasonHintHarder }[view.reason] : null;
+const badges = (item: PickerView["items"][number]) => [
+  ...(item.level ? [fill(t.levelBadge, { level: levelName(locale, item.level) })] : []),
+  ...(item.role ? [fill(t.roleBadge, { role: item.role })] : []),
+  ...(item.duration ? [fill(t.durationBadge, { duration: item.duration })] : []),
+  ...(item.isDefault ? [t.defaultBadge] : []),
+];
+---
+
+<section class="u-variants" id="variants" aria-labelledby="variants-heading" lang={lang} data-variants={view.mode}>
+  <div class="u-container u-variants__inner">
+    <h2 class="u-variants__title" id="variants-heading">{t.pickerHeading}</h2>
+    <p class="u-variants__lead">{t.pickerLead}</p>
+
+    {
+      flash && (
+        <p class:list={["u-variants__flash", flash.tone === "error" && "u-variants__flash--error"]} id="variant-status" role={flash.tone === "ok" ? "status" : "alert"} tabindex="-1">
+          {flash.text}
+        </p>
+      )
+    }
+
+    {assigned && <p class="u-variants__assigned" data-assigned>{assigned}</p>}
+    {!assigned && reasonText && <p class="u-variants__reason">{reasonText}</p>}
+
+    {
+      view.mode === "visitor" ? (
+        <>
+          <ul class="u-variants__list" aria-label={t.legend}>
+            {view.items.map((item) => (
+              <li class="u-variants__card">
+                <h3 class="u-variants__name">{item.href ? <a href={item.href}>{item.label}</a> : item.label}</h3>
+                <ul class="u-variants__badges">
+                  {badges(item).map((badge) => <li>{badge}</li>)}
+                </ul>
+                {item.description && <p class="u-variants__who">{item.description}</p>}
+              </li>
+            ))}
+          </ul>
+          <p class="u-variants__note" data-visitor-note>{t.visitorNote}</p>
+        </>
+      ) : (
+        <form class="u-variants__form" method="post" action={action}>
+          <fieldset class="u-variants__group" disabled={locked}>
+            <legend class="u-variants__legend">{t.legend}</legend>
+            <div class="u-variants__options">
+              {view.items.map((item) => (
+                <label class="u-variants__option" data-current={item.current ? "" : undefined}>
+                  <input type="radio" name="course_id" value={item.courseId} checked={item.selected} required aria-labelledby={`variant-${item.courseId}-name`} aria-describedby={`variant-${item.courseId}-meta`} />
+                  <span class="u-variants__body">
+                    <span class="u-variants__name" id={`variant-${item.courseId}-name`}>{item.label}</span>
+                    <span class="u-variants__meta" id={`variant-${item.courseId}-meta`}>
+                      {item.current && <span class="u-variants__current">{t.currentBadge}</span>}
+                      <span class="u-variants__badge-line">{badges(item).join(" · ")}</span>
+                      {item.description && <span class="u-variants__who">{item.description}</span>}
+                    </span>
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+          <input type="hidden" name="action" value="switch" />
+          <input type="hidden" name="next" value={next} />
+          <p class="u-variants__note" id="variant-switch-note">{locked ? t.lockedNote : t.keepsProgress}</p>
+          <div class="u-variants__actions">
+            <button class="u-btn u-variants__submit" type="submit" disabled={locked} aria-describedby="variant-switch-note">{t.switchCta}</button>
+            {view.placementHref && <a class="u-btn u-btn--ghost" href={view.placementHref} data-placement-link>{t.placementLink}</a>}
+          </div>
+        </form>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .u-variants {
+    padding-block: clamp(24px, 4vw, 40px);
+    background: var(--ulams-color-surface);
+    color: var(--ulams-color-text);
+  }
+  .u-variants__inner {
+    display: grid;
+    gap: 16px;
+  }
+  .u-variants__title {
+    margin: 0;
+    font-size: clamp(1.25rem, 2.4vw, 1.625rem);
+  }
+  .u-variants__lead,
+  .u-variants__note,
+  .u-variants__reason {
+    margin: 0;
+    max-width: 68ch;
+    color: var(--ulams-color-muted);
+  }
+  .u-variants__flash,
+  .u-variants__assigned {
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid var(--ulams-color-border);
+    border-left: 4px solid var(--ulams-color-primary);
+    border-radius: var(--ulams-radius);
+    background: var(--ulams-color-card-bg);
+    font-weight: 600;
+    max-width: 68ch;
+  }
+  .u-variants__flash--error {
+    border-left-color: var(--ulams-color-error);
+  }
+  .u-variants__flash:focus {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+  .u-variants__form {
+    display: grid;
+    gap: 16px;
+  }
+  .u-variants__group {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  .u-variants__legend {
+    padding: 0;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .u-variants__options,
+  .u-variants__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .u-variants__option,
+  .u-variants__card {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    min-height: 44px;
+    padding: 14px 16px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-variants__card {
+    display: grid;
+    gap: 8px;
+  }
+  .u-variants__option {
+    cursor: pointer;
+  }
+  .u-variants__option input {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    accent-color: var(--ulams-color-primary);
+  }
+  .u-variants__option:has(input:checked) {
+    border-color: var(--ulams-color-primary);
+    box-shadow: inset 0 0 0 1px var(--ulams-color-primary);
+  }
+  .u-variants__option:has(input:focus-visible) {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+  .u-variants__option:has(input:disabled) {
+    cursor: not-allowed;
+  }
+  .u-variants__body,
+  .u-variants__meta {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+  }
+  .u-variants__name {
+    margin: 0;
+    font-family: var(--ulams-font-family-body);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+  .u-variants__current {
+    justify-self: start;
+    padding: 2px 10px;
+    border: 1px solid var(--ulams-color-primary);
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--ulams-color-primary-on-light);
+  }
+  .u-variants__badge-line,
+  .u-variants__badges {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-variants__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+  .u-variants__who {
+    margin: 0;
+    font-size: 0.9375rem;
+    overflow-wrap: anywhere;
+  }
+  .u-variants__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+  .u-variants__submit:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  .u-variants a:focus-visible,
+  .u-variants__submit:focus-visible {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+</style>

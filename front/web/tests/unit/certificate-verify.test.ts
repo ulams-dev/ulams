@@ -31,6 +31,10 @@ describe("verifyCertificate", () => {
     expect(result).toEqual({ kind: "found", certificate: base });
     expect(fetcher).toHaveBeenCalledWith(`https://acme.example/api/certificates/verify/${base.certificate_id}`, expect.anything());
   });
+  it("passes the variant of the course through", async () => {
+    const result = await verifyCertificate(tenant, base.certificate_id, reply(200, { data: { ...base, course_variant: "Expert" } }));
+    expect(result).toEqual({ kind: "found", certificate: { ...base, course_variant: "Expert" } });
+  });
   it("tells an unknown id from an unavailable API", async () => {
     expect(await verifyCertificate(tenant, base.certificate_id, reply(404))).toEqual({ kind: "unknown" });
     expect(await verifyCertificate(tenant, base.certificate_id, reply(500))).toEqual({ kind: "unavailable" });
