@@ -77,13 +77,12 @@ describe.skipIf(!enabled)("backup, wipe and restore of a real Docker stack", () 
       expect(course.image_url, "a seeded course with an image").toBeTruthy();
       const topic = list((program.lessons as Json[] | undefined)?.flatMap(l => list(l.topics)) ?? []).find(t => t.id)!;
       expect(topic, "a topic in the seeded course").toBeTruthy();
-      // The progress is stored even when building the response fails (HTTP 500 on images sha-28a3cf1, #495);
-      // the snapshot below checks the stored progress either way.
-      await invoke(["api", "PATCH", `/api/courses/progress/${String(course.id)}`, "--body", JSON.stringify({ progress: [{ topic_id: topic.id, status: 1 }] })], student).catch((error: Error) => {
-        if (!error.message.includes("SERVER_ERROR")) throw error;
-      });
+      await invoke(["api", "PATCH", `/api/courses/progress/${String(course.id)}`, "--body", JSON.stringify({ progress: [{ topic_id: topic.id, status: 1 }] })], student);
 
       const snapshot = async () => ({
+        // signed-in course lists (#495: they answered 500 after an artisan command had created the day's log as root)
+        courses: list(await invoke(["courses", "list", "--all"], admin)).map(c => [c.id, c.title]).sort(),
+        catalogue: list(await invoke(["public", "courses-list", "--all"], student)).map(c => c.id).sort(),
         h5p: list(await invoke(["h5p", "contents", "--all"], admin)).map(h => [h.id, h.title]).sort(),
         progress: list(await invoke(["my", "courses-progress"], student)).map(p => [(p.course as Json).id, (p.course as Json).title, JSON.stringify(list(p.progress).map(t => [t.topic_id, t.status]).sort())]).sort(),
         lessons: list((await invoke(["my", "courses-program", String(course.id)], student) as Json).lessons).map(l => [l.id, l.title, list(l.topics).length]),
