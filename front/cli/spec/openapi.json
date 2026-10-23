@@ -12274,6 +12274,60 @@
     ]
    }
   },
+  "/api/admin/course-builder/style-profiles/{profile}/check": {
+   "get": {
+    "operationId": "admin.course-builder.style-profiles.by-profile.check.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "profile",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "LMS course id of a course made with the builder (a variant's course too)",
+      "in": "query",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "blocking, warnings and hints, each with the style guide passages it comes from"
+     },
+     "403": {
+      "description": "another author's course"
+     },
+     "404": {
+      "description": "unknown profile or course"
+     },
+     "422": {
+      "description": "course missing"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Style check: where a course departs from a profile (banned phrases, terminology, casing, landing components, image alt text; reading level and sentence length as hints). Only the author of the course or an admin; nothing is changed",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
   "/api/admin/course-builder/variants/{variant}": {
    "delete": {
     "operationId": "admin.course-builder.variants.by-variant.delete",

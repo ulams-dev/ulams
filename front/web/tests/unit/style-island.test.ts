@@ -63,6 +63,17 @@ function stubApi(options: { approve?: number; profiles?: unknown[]; detail?: Rec
       list = [detail({ status: "approved", approvedAt: "2026-10-22T10:00:00+00:00" })];
       return ok(detail({ status: "approved", approvedAt: "2026-10-22T10:00:00+00:00", diff: [] }));
     }
+    if (method === "GET" && path.startsWith(`/${ID}/check`)) {
+      const course = Number(new URL(`http://x${path}`).searchParams.get("course"));
+      if (course === 14) return new Response(JSON.stringify({ success: false, message: "That course was not made with the Course Builder." }), { status: 404 });
+      const clean = course === 13;
+      return ok({
+        profile: { id: ID, name: "Northwind", status: "suggested" }, course: { id: course, title: "Brewing" },
+        blocking: clean ? [] : [{ code: "style_banned", rule: "banned", severity: "blocking", message: "“Grinding”: “simply” is a banned phrase of the style guide (style guide §1 Voice and terms)", quote: "…Simply grind…", citations: [{ id: F1, label: "§1 Voice and terms" }] }],
+        warnings: [], hints: clean ? [] : [{ code: "style_reading_level", rule: "reading_level", severity: "hint", message: "“Grinding” reads at about grade 11", citations: [] }],
+        counts: { blocking: clean ? 0 : 1, warnings: 0, hints: clean ? 0 : 1 }, blocksPublishing: !clean,
+      });
+    }
     if (method === "DELETE" && path === `/${ID}`) {
       list = [];
       return ok({ id: ID });
@@ -170,8 +181,8 @@ describe("style page island", () => {
     root.querySelector<HTMLButtonElement>("[data-remove='terminology.lesson']")!.click();
     expect(root.querySelector("[data-value='terminology.lesson']")).toBeNull();
 
-    root.querySelector<HTMLSelectElement>("select")!.value = "we";
-    root.querySelector<HTMLInputElement>("input[type=number]")!.value = "9";
+    root.querySelector<HTMLSelectElement>("[data-edit] select")!.value = "we";
+    root.querySelector<HTMLInputElement>("[data-edit] input[type=number]")!.value = "9";
     root.querySelector<HTMLFormElement>("[data-edit]")!.dispatchEvent(new Event("submit", { cancelable: true }));
     await vi.waitFor(() => expect(calls.some((c) => c.method === "PATCH")).toBe(true));
     const patch = calls.find((c) => c.method === "PATCH")!.body as { profile: { voice: { person: string; formality: number }; terminology: Array<{ use: string }> } };
@@ -252,5 +263,40 @@ describe("style page island", () => {
     again.mountStyle(second);
     await vi.waitFor(() => expect(second.querySelector("[data-state='error']")).not.toBeNull());
     expect(second.querySelector("[data-state='error'] [role='alert']")?.textContent).toBe("The style profiles could not be loaded.");
+  });
+
+  it("checks a course against the profile and shows blocking items and hints with their passages", async () => {
+    const calls = stubApi();
+    const root = await mount();
+    root.querySelector<HTMLButtonElement>("[data-review]")!.click();
+    await vi.waitFor(() => expect(root.querySelector("[data-check]")).not.toBeNull());
+
+    root.querySelector<HTMLFormElement>("[data-check]")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    expect(root.querySelector("[data-check-result]")?.textContent).toBe("Enter the id of a course first.");
+    expect(calls.some((c) => c.path.includes("/check"))).toBe(false);
+
+    root.querySelector<HTMLInputElement>("[data-check] input")!.value = "12";
+    root.querySelector<HTMLFormElement>("[data-check]")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    await vi.waitFor(() => expect(root.querySelector("[data-check-summary]")).not.toBeNull());
+    expect(calls.some((c) => c.method === "GET" && c.path === `/${ID}/check?course=12`)).toBe(true);
+    expect(root.querySelector("[data-check-summary]")?.textContent).toBe("Check finished. Blocking: 1. Warnings: 0. Hints: 1.");
+    expect(root.querySelector("[data-blocks]")?.textContent).toContain("cannot be published");
+    expect(root.querySelector("[data-findings='blocking']")?.textContent).toContain("Blocks publishing: 1");
+    expect(root.querySelector("[data-findings='blocking'] [data-code='style_banned']")?.textContent).toContain("“simply” is a banned phrase");
+    expect(root.querySelector("[data-findings='warnings']")).toBeNull();
+    expect(root.querySelector("[data-findings='hints']")?.textContent).toContain("Hints (approximate, never blocking): 1");
+    const cite = root.querySelector<HTMLButtonElement>("[data-findings='blocking'] [data-cite]")!;
+    cite.click();
+    expect(document.getElementById(cite.getAttribute("aria-controls")!)?.textContent).toContain("Write to the learner as you");
+    expect(calls.filter((c) => c.method !== "GET")).toEqual([]);
+
+    root.querySelector<HTMLInputElement>("[data-check] input")!.value = "13";
+    root.querySelector<HTMLFormElement>("[data-check]")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    await vi.waitFor(() => expect(root.querySelector("[data-check-result]")?.textContent).toContain("Nothing to report"));
+    expect(root.querySelector("[data-blocks]")).toBeNull();
+
+    root.querySelector<HTMLInputElement>("[data-check] input")!.value = "14";
+    root.querySelector<HTMLFormElement>("[data-check]")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    await vi.waitFor(() => expect(root.querySelector("[data-check-result] [role='alert']")?.textContent).toBe("That course was not found, or it was not made with the Course Builder."));
   });
 });

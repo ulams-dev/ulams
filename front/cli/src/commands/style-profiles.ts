@@ -99,6 +99,23 @@ export const styleProfileCommands: AnyCommand[] = [
   }),
   defineCommand({
     ...common,
+    id: "style-profiles.check",
+    summary: "Check a course against a style profile: banned phrases, terminology, casing, landing components, image alt text, reading level",
+    description:
+      "A deterministic check, no model call, and nothing is changed. `data.blocking` lists banned phrases of a profile whose `banned.blocking` is on (they also block `builder publish`), `data.warnings` terminology, casing, components and image findings, `data.hints` reading level and sentence length (approximate formulas, never blocking). Every finding names the style guide passage it comes from. It works against a suggested profile too, to preview what approving it would flag. Exit code 0 even when there are findings; read `data.blocksPublishing`.",
+    kind: "read",
+    scopes: READ,
+    endpoints: [`GET ${BASE}/{profile}/check`],
+    positionals: ["profile"],
+    input: z.object({ profile, course: z.number().int().min(1).describe("LMS course id of a course made with the builder (a variant's course too).") }),
+    output: z.unknown(),
+    examples: [{ title: "Preview a proposal on a course", argv: "style-profiles check <profile> --course 12 --json" }],
+    async run(ctx, i) {
+      return { data: await builderCall(ctx, "GET", "/style-profiles/{profile}/check", { params: { profile: i.profile }, query: { course: i.course } }) };
+    },
+  }),
+  defineCommand({
+    ...common,
     id: "style-profiles.edit",
     summary: "Edit a suggested profile (values and name); invalid values are dropped and reported",
     description: "Only a suggestion can be edited, by its creator or an admin. An approved profile is revised with `style-profiles propose --from <profile>`.",

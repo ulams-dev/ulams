@@ -714,6 +714,12 @@
   "tag": "Admin Course Builder"
  },
  {
+  "method": "GET",
+  "path": "/api/admin/course-builder/style-profiles/{profile}/check",
+  "summary": "Style check: where a course departs from a profile (banned phrases, terminology, casing, landing components, image alt text; reading level and sentence length as hints). Only the author of the course or an admin; nothing is changed",
+  "tag": "Admin Course Builder"
+ },
+ {
   "method": "DELETE",
   "path": "/api/admin/course-builder/variants/{variant}",
   "summary": "Retire a variant (its course, if it has one, is kept)",

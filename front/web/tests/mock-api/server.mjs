@@ -728,6 +728,26 @@ const styleRoutes = [
     Object.assign(p, { status: "approved", approvedBy: 1, approvedAt: "2026-10-23T08:30:00+00:00" });
     return styleDetail(tenant, p);
   }],
+  // the style check: course 12 has a banned phrase that blocks (with its passage), a term to avoid and a hint; 13 is clean; 14 is not a builder course; 15 is another author's
+  ["GET", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})\/check$/, ({ tenant, match, query }) => {
+    const p = styleFind(tenant, match[1]);
+    if (!p) return STYLE_NOT_FOUND;
+    const course = Number(query.get("course"));
+    if (!Number.isInteger(course) || course < 1) return { __status: 422, message: "The course field is required." };
+    if (course === 14) return { __status: 404, message: "That course was not made with the Course Builder." };
+    if (course === 15) return { __status: 403, message: "This course belongs to another author." };
+    const cite = [{ id: STYLE_F2, label: "§2 Terminology" }];
+    const base = { profile: { id: p.id, name: p.name, status: p.status }, course: { id: course, title: "Brewing", sessionId: "s", variantId: null, versionId: "v" } };
+    if (course === 13) return { ...base, blocking: [], warnings: [], hints: [], counts: { blocking: 0, warnings: 0, hints: 0 }, blocksPublishing: false };
+    return {
+      ...base,
+      blocking: [{ code: "style_banned", rule: "banned", severity: "blocking", elementId: "e1", message: "“Grinding”: “simply” is a banned phrase of the style guide (style guide §2 Terminology)", term: "simply", quote: "…Simply grind the beans…", citations: cite }],
+      warnings: [{ code: "style_terminology", rule: "terminology", severity: "warning", elementId: "e2", message: "“Grinding”: use “learner”, not “student” (style guide §2 Terminology)", term: "student", quote: "…each student opens…", citations: cite }],
+      hints: [{ code: "style_reading_level", rule: "reading_level", severity: "hint", elementId: "e3", message: "“Grinding” reads at about grade 11 (an approximate formula) and the style guide asks for grade-8", citations: [{ id: STYLE_F1, label: "§1 Voice" }] }],
+      counts: { blocking: 1, warnings: 1, hints: 1 },
+      blocksPublishing: true,
+    };
+  }],
   ["DELETE", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})$/, ({ tenant, match }) => {
     const state = styleOf(tenant);
     const p = styleFind(tenant, match[1]);

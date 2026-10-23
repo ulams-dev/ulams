@@ -1,5 +1,5 @@
 {
- "summary": "628/717 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "629/718 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -713,6 +713,12 @@
    "key": "POST /api/admin/course-builder/style-profiles/{profile}/approve",
    "summary": "Approve a suggested profile (admins); it supersedes the approved profile of its scope",
    "command": "style-profiles.approve",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/style-profiles/{profile}/check",
+   "summary": "Style check: where a course departs from a profile (banned phrases, terminology, casing, landing components, image alt text; reading level and sentence length as hints). Only the author of the course or an admin; nothing is changed",
+   "command": "style-profiles.check",
    "status": "covered"
   },
   {

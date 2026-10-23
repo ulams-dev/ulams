@@ -258,3 +258,38 @@ export function withEdits(values: StyleValues, edit: VoiceEdit): StyleValues {
   if (next.banned) next.banned.blocking = edit.blocking;
   return next;
 }
+
+export interface Finding {
+  code: string;
+  rule: string;
+  severity: string;
+  elementId?: string;
+  message: string;
+  term?: string;
+  quote?: string;
+  citations: Array<{ id: string; label: string }>;
+}
+export interface CheckReport {
+  profile: { id: string; name: string; status: string };
+  course: { id: number; title: string | null };
+  blocking: Finding[];
+  warnings: Finding[];
+  hints: Finding[];
+  counts: { blocking: number; warnings: number; hints: number };
+  blocksPublishing: boolean;
+}
+
+export interface CheckGroup {
+  key: "blocking" | "warnings" | "hints";
+  title: string;
+  findings: Finding[];
+}
+
+/** The groups of a check report that have findings, blocking first; empty when there is nothing to report. */
+export function checkGroups(f: StyleFormatter, report: CheckReport): CheckGroup[] {
+  return [
+    { key: "blocking" as const, title: f.t.checkBlockingTitle, findings: report.blocking },
+    { key: "warnings" as const, title: f.t.checkWarningsTitle, findings: report.warnings },
+    { key: "hints" as const, title: f.t.checkHintsTitle, findings: report.hints },
+  ].filter((g) => g.findings.length > 0);
+}

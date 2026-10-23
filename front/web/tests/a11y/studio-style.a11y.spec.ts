@@ -195,3 +195,43 @@ test("Polish and Chinese pages pass axe and say their language", async ({ page }
   await expect(page.locator("[data-change='terminology.learner']")).toContainText("新增");
   expect(await scan(page), "zh").toEqual([]);
 });
+
+test("the style check lists blocking items, warnings and hints with their passages, passes axe, and is reachable by keyboard", async ({ page }, info) => {
+  await open(page, info.project.name);
+  await review(page, SUGGESTED).click();
+  await page.getByLabel("Course id").fill("12");
+  await page.getByLabel("Course id").press("Enter");
+  await expect(page.locator("[data-check-summary]")).toHaveText("Check finished. Blocking: 1. Warnings: 1. Hints: 1.");
+  await expect(page.locator("[data-findings='blocking']")).toContainText("Blocks publishing: 1");
+  await expect(page.locator("[data-blocks]")).toContainText("cannot be published");
+  await expect(page.locator("[data-announcer]")).toHaveText("Check finished. Blocking: 1. Warnings: 1. Hints: 1.");
+  const cite = page.locator("[data-findings='blocking'] [data-cite]").first();
+  await cite.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("[data-findings='blocking'] blockquote").first()).toContainText("Use");
+  expect(await scan(page), "check result").toEqual([]);
+  expect(await noSidewaysScroll(page), "page scrolls sideways").toBeLessThanOrEqual(1);
+
+  await page.getByLabel("Course id").fill("13");
+  await page.getByRole("button", { name: "Check the course" }).click();
+  await expect(page.locator("[data-check-result]")).toContainText("Nothing to report");
+  await page.getByLabel("Course id").fill("14");
+  await page.getByRole("button", { name: "Check the course" }).click();
+  await expect(page.locator("[data-check-result] [role='alert']")).toContainText("not made with the Course Builder");
+  expect(await scan(page), "not found").toEqual([]);
+});
+
+test("the style check is in Polish and Chinese too", async ({ page }, info) => {
+  await open(page, info.project.name, "pl");
+  await review(page, SUGGESTED).click();
+  await page.getByLabel("Identyfikator kursu").fill("12");
+  await page.getByRole("button", { name: "Sprawdź kurs" }).click();
+  await expect(page.locator("[data-check-summary]")).toContainText("Blokujące: 1");
+  expect(await scan(page), "pl").toEqual([]);
+  await open(page, info.project.name, "zh");
+  await review(page, SUGGESTED).click();
+  await page.getByLabel("课程编号").fill("12");
+  await page.getByRole("button", { name: "检查课程" }).click();
+  await expect(page.locator("[data-check-summary]")).toContainText("阻止发布：1");
+  expect(await scan(page), "zh").toEqual([]);
+});
