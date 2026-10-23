@@ -1,0 +1,86 @@
+{
+  "@context": "/api/v2/contexts/Order",
+  "@id": "/api/v2/admin/orders/6WJQB1CJJwiLpgHdHnnJOGIPuyix5Qp8ouncbYvsk5OTxX-TScO9yRa4jh2C2xnZ",
+  "@type": "Order",
+  "customer": "/api/v2/admin/customers/2",
+  "channel": "/api/v2/admin/channels/acme",
+  "shippingAddress": {
+    "@id": "/api/v2/admin/addresses/4",
+    "@type": "Address",
+    "firstName": "Bo",
+    "lastName": "Buyer",
+    "phoneNumber": null,
+    "company": null,
+    "countryCode": "PL",
+    "provinceName": null,
+    "street": "Main 1",
+    "city": "Warsaw",
+    "postcode": "00-001"
+  },
+  "billingAddress": {
+    "@id": "/api/v2/admin/addresses/5",
+    "@type": "Address",
+    "firstName": "Bo",
+    "lastName": "Buyer",
+    "phoneNumber": null,
+    "company": null,
+    "countryCode": "PL",
+    "provinceName": null,
+    "street": "Main 1",
+    "city": "Warsaw",
+    "postcode": "00-001"
+  },
+  "payments": [
+    {
+      "@id": "/api/v2/admin/payments/2",
+      "@type": "Payment",
+      "id": 2,
+      "method": "/api/v2/admin/payment-methods/offline"
+    }
+  ],
+  "shipments": [],
+  "currencyCode": "EUR",
+  "localeCode": "en_US",
+  "checkoutState": "completed",
+  "paymentState": "refunded",
+  "shippingState": "shipped",
+  "tokenValue": "6WJQB1CJJwiLpgHdHnnJOGIPuyix5Qp8ouncbYvsk5OTxX-TScO9yRa4jh2C2xnZ",
+  "customerIp": "127.0.0.1",
+  "id": 3,
+  "checkoutCompletedAt": "2026-10-23 00:55:55",
+  "number": "000000002",
+  "notes": null,
+  "items": [
+    {
+      "@id": "/api/v2/admin/order-items/2",
+      "@type": "OrderItem",
+      "variant": "/api/v2/admin/product-variants/ul-acme-course-1-v",
+      "productName": "Brewing basics",
+      "variantName": "Brewing basics",
+      "id": 2,
+      "quantity": 3,
+      "unitPrice": 4900,
+      "originalUnitPrice": 4900,
+      "total": 14700,
+      "units": [
+        "/api/v2/admin/order-item-units/2",
+        "/api/v2/admin/order-item-units/3",
+        "/api/v2/admin/order-item-units/4"
+      ],
+      "fullDiscountedUnitPrice": 4900,
+      "subtotal": 14700
+    }
+  ],
+  "itemsTotal": 14700,
+  "total": 14700,
+  "state": "fulfilled",
+  "itemsSubtotal": 14700,
+  "taxTotal": 0,
+  "shippingTaxTotal": 0,
+  "taxExcludedTotal": 0,
+  "taxIncludedTotal": 0,
+  "shippingTotal": 0,
+  "orderPromotionTotal": 0,
+  "orderAndItemPromotionTotal": 0,
+  "shippingPromotionTotal": 0
+}

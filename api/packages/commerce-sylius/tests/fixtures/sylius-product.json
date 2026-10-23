@@ -1,0 +1,38 @@
+{
+  "@context": "/api/v2/contexts/Product",
+  "@id": "/api/v2/admin/products/ul-acme-course-1",
+  "@type": "Product",
+  "variantSelectionMethod": "choice",
+  "productTaxons": [],
+  "channels": [
+    "/api/v2/admin/channels/acme"
+  ],
+  "mainTaxon": null,
+  "reviews": [],
+  "averageRating": 0,
+  "images": [],
+  "id": 1,
+  "code": "ul-acme-course-1",
+  "attributes": [],
+  "variants": [
+    "/api/v2/admin/product-variants/ul-acme-course-1-v"
+  ],
+  "options": [],
+  "associations": [],
+  "createdAt": "2026-10-23 00:45:49",
+  "updatedAt": "2026-10-23 00:45:50",
+  "enabled": true,
+  "translations": {
+    "en_US": {
+      "@id": "/api/v2/admin/products/ul-acme-course-1/translations/en_US",
+      "@type": "ProductTranslation",
+      "shortDescription": null,
+      "id": 1,
+      "name": "Brewing basics",
+      "slug": "ul-acme-course-1",
+      "description": "A course",
+      "metaKeywords": null,
+      "metaDescription": null
+    }
+  }
+}
