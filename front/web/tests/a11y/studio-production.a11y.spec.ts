@@ -81,7 +81,7 @@ test("the CSV download has the columns of the admin export and an empty cell for
   const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Download CSV" }).click()]);
   expect(download.suggestedFilename()).toBe("authoring-metrics-course-1.csv");
   const path = await download.path();
-  const text = (await import("node:fs")).readFileSync(path!, "utf8").trimEnd().split("\n");
+  const text = (await import("node:fs")).readFileSync(path!, "utf8").trimEnd().split("\n") as [string, string];
   expect(text[0]).toMatch(/^course_id,session_id,method_version,computed_at,generation_seconds,/);
   const cells = text[1].split(",");
   expect(cells[text[0].split(",").indexOf("author_minutes")]).toBe("");
