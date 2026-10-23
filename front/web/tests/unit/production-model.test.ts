@@ -83,14 +83,14 @@ describe("figures", () => {
 
 describe("files", () => {
   it("has the columns of the admin export, in order, with not recorded as an empty cell", () => {
-    const csv = toCsv(metric()).trimEnd().split("\n");
+    const csv = toCsv(metric()).trimEnd().split("\n") as [string, string];
     expect(csv[0]).toBe("course_id,session_id,method_version,computed_at,generation_seconds,ai_edit_seconds,interview_seconds,model_seconds,author_minutes,cost_build_micro_usd,cost_maintenance_micro_usd,llm_calls,llm_calls_failed,lessons,questions,blocks,cited_blocks,learner_minutes_estimate,hours_per_learner_hour,ai_elements,ai_accepted_unchanged,ai_revised_on_request,ai_edited_by_author,ai_unknown,author_elements");
     const cells = csv[1].split(",");
     expect(cells).toHaveLength(csv[0].split(",").length);
     expect(cells[8]).toBe("");
   });
   it("is numbers, identifiers and dates only: no cell can open with a formula character", () => {
-    for (const cell of toCsv(metric()).trim().split("\n")[1].split(",")) expect(cell).not.toMatch(/^[=+\-@]/);
+    for (const cell of toCsv(metric()).trim().split("\n")[1]!.split(",")) expect(cell).not.toMatch(/^[=+\-@]/);
   });
   it("is JSON with null for what was not recorded", () => {
     expect(JSON.parse(toJson(metric()))).toMatchObject({ course_id: 12, author_minutes: null, ai_accepted_unchanged: 40 });
