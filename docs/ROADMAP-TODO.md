@@ -375,6 +375,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       runtime and tracking traces captured on 2.6.x; then `scorm-again` 3 with every changed default set to the 2.6
       behaviour, AICC removed and the Dependabot ignore rule #431 dropped (closed PR #232 explains why)
       (plan `docs/plans/scorm-playback-tests.md` SC-1 to SC-4; ADR 0197 Proposed)
+      (partial: SC-1 fixtures, trace normaliser and parser tests done; SC-2 React player specs and golden traces done; SC-3 content player and SC-4 upgrade pending)
 - [x] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
       packages and players to a per-tenant content origin (M1.1) (SCORM and cmi5 done, `<slug>.content.localhost`,
       `api/docs/content-origin.md`; run `ulams:tenant:sync-env` so existing tenants get `CONTENT_ORIGIN`)
@@ -1086,7 +1087,12 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       schedules, export CSV, JSON lines or XLSX; small-group suppression as in Learner Insights; datasets from a
       registry in a new `reporting` package (takes over the registry of `phase-6-remaining.md` P6R-3 and the reports
       screen of P6R-4) (plan `docs/plans/authoring-metric-and-report-builder.md` RB-1 to RB-5, RB-7; ADR 0194 Accepted 2026-10-22;
-      market research: poor reporting is the top switch reason)
+      market research: poor reporting is the top switch reason) (partial: RB-1 done: `api/packages/reporting` with the dataset
+      registry and column capabilities, the `assignments`, `certificates`, `audit`, `authoring` and `ai_usage` datasets and
+      `GET /api/admin/reporting/datasets`; the compliance report, export and schedules moved to the `reports` token area;
+      RB-2 done: report definition schema v1, validator, query compiler with bound values and date buckets, preview
+      `POST /api/admin/reporting/query` with small-group suppression (threshold 10, complementary group, counted on learners);
+      RB-3 (saved and shared reports), RB-4 (admin screen), RB-5 (schedules for saved reports), RB-7 (curated CLI and MCP set) pending)
 - [ ] (new) BI connector: read-only OData v4 feed per saved report for Excel, Power BI and Tableau, with a `reports:read`
       token that can be limited to one report; CSV and JSON lines URLs with recipes for Looker Studio, Metabase and
       Superset (plan `authoring-metric-and-report-builder.md` RB-6)
@@ -1118,6 +1124,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       `BASE_OUTDATED` and `STALE_PROPOSAL` into the same error; the three-way merge, conflict files and `resolve` are CAC-4, and nothing watches a Git repository yet (CAC-6, CAC-7)
 - [ ] GitHub Action + Docker image; preview deployment per PR
 - [ ] Git merge triggers Living Course update proposal
+      Note 2026-10-22 (#437): partial. A merged pull request is recorded on the revision (commit, subject, PR number and link) and shown on the update review; `living connections check --commit`
+      for CI; `ulams course sources-connect` watches `sources/**` of the course repository; a push waits (`PROPOSAL_PENDING`) while an open proposal edits the same elements; the loop test
+      (applied update, export, push back) creates nothing. Open: the sync pull request flow of the Action, which closes the loop in Git
       Note 2026-10-22 (Coming audit): this item and the one above are "Git-driven course updates" in the Comparison catalogue (Coming), planned as
       CAC-6 (`ulams-cli` image, `actions/course`, PR validation and diff) and CAC-7 (preview academies per PR, Git merge metadata,
       merge to Living Course proposal) in `phase-7-course-as-code.md`; CAC-1 to CAC-4 are merged (#359, #376, #384, #390), so

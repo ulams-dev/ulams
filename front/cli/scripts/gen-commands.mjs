@@ -18,11 +18,13 @@ const AREAS = [
   [/^\/api\/admin\/(course-access-enquiries|consultation-access)/, "enrolments"],
   [/^\/api\/admin\/(settings|config|pages|templates|translations|notifications|bulk-notifications|model-fields|mattermost|mailerlite|events|theme)/, "settings"],
   [/^\/api\/admin\/(webinars|stationary-events|consultations|jitsi|pencil)/, "events"],
+  // the compliance report and its schedules are analytics (reports:read, ADR 0194 Q10); the rest of compliance stays with certificates
+  [/^\/api\/admin\/compliance\/(report|schedules)/, "reports"],
   [/^\/api\/admin\/(pdfs|compliance)/, "certificates"],
   [/^\/api\/admin\/(orders|products|productables|vouchers|payments|invoices)/, "commerce"],
-  [/^\/api\/admin\/(reports|stats|questionnaire|question|quiz-|tasks)/, "reports"],
+  [/^\/api\/admin\/(reports|reporting|stats|questionnaire|question|quiz-|tasks)/, "reports"],
   [/^\/api\/admin\/lti/, "lti"],
-  [/^\/api\/admin\/course-(builder|as-code)/, "builder"],
+  [/^\/api\/admin\/(course-(builder|as-code)|authoring-metrics)/, "builder"],
   [/^\/api\/(auth\/tokens|admin\/(tokens|agent-audit))/, "tokens"],
   [/^\/api\/admin\/webhooks/, "webhooks"],
 ];
