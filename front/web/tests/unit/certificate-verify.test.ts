@@ -51,4 +51,12 @@ describe("statusCopy", () => {
     expect(statusCopy({ ...base, status: "expired", expires_at: "2026-04-01T00:00:00+00:00" }).heading).toBe("This certificate has expired");
     expect(statusCopy({ ...base, status: "revoked", revoked_at: "2026-05-02T10:00:00+00:00" }).text).toContain("2 May 2026");
   });
+
+  it("says which policy version replaced what a revoked certificate certified, and nothing about other revocations", () => {
+    const revoked = { ...base, status: "revoked" as const, revoked_at: "2026-05-02T10:00:00+00:00" };
+
+    expect(statusCopy({ ...revoked, superseded_by_policy_version: 3 }).text).toContain("Policy version 3 replaced the version it certified");
+    expect(statusCopy({ ...revoked, superseded_by_policy_version: null }).text).not.toContain("Policy version");
+    expect(statusCopy(revoked).text).not.toContain("Policy version");
+  });
 });

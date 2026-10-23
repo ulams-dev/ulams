@@ -623,9 +623,113 @@ const courseVersionsRoutes = [
   ["GET", /^\/api\/admin\/course-versions\/courses\/(\d+)\/compare$/, ({ match, query, tenant }) => courseCompare(Number(match[1]), query, tenant)],
 ];
 
+// ---- policy lifecycle (ADR 0140): the policies of the studio. Policies: A has an approved first version and a change in
+// review (28 people, two pages), B is a draft whose second department is not ready, C is unknown, D belongs to someone
+// else, E fails its first dashboard request. Every tenant has its own decisions.
+const POLICY_A = `01pola${"0".repeat(20)}`;
+const POLICY_B = `01polb${"0".repeat(20)}`;
+const POLICY_D = `01pold${"0".repeat(20)}`;
+const POLICY_E = `01pole${"0".repeat(20)}`;
+const policyState = new Map();
+const policyFails = new Map();
+const policyOf = (tenant) => {
+  if (!policyState.has(tenant)) policyState.set(tenant, { approved: false, rejected: false });
+  return policyState.get(tenant);
+};
+const polSession = (n) => `01s${String(n).padStart(23, "0")}`;
+const polVariants = (stages) => stages.map((stage, i) => ({ id: `01var${i}${"0".repeat(21)}`, department: ["Engineering", "Sales"][i], groupId: 10 + i, brief: { seniority: i ? "mixed" : "senior", priorExperience: i ? "none" : "expert" }, stage, sessionId: stage === "not_started" ? null : polSession(i + 1), courseId: stage === "applied" ? 40 + i : null, pathId: null, ruleId: null, examCourseId: null, position: i }));
+const polVersion = (number, status, changeClass, over = {}) => ({ id: `01ver${number}${"0".repeat(21)}`, number, status, changeClass, summary: changeClass === "initial" ? null : "Sections 2 changed: §1.1 Approval and working hours; §2.2 Sharing and retention.", fileName: "policy.md", fileSha256: "a".repeat(64), fileSize: 4200, submittedBy: 1, approvedBy: null, approvedAt: null, effectiveAt: null, suggestedClass: null, classReason: null, rejectedBy: null, rejectReason: null, rolledOutAt: null, createdAt: "2026-10-20T09:00:00+00:00", ...over });
+const polBrief = { totalMinutes: 30, lessonMinutes: 10, language: "en", tone: "professional" };
+const polSummary = (id, title, current, pending, departments = 2) => ({ id, title, ownerUserId: 1, status: "active", minorDueDays: 14, majorDueDays: 30, brief: polBrief, currentVersion: current, latestVersion: pending ?? current ?? 1, pendingReview: pending, departments, createdAt: "2026-10-20T09:00:00+00:00" });
+const polDetail = (id, tenant) => {
+  const state = policyOf(tenant);
+  if (id === POLICY_A) {
+    const v2 = state.approved ? polVersion(2, "approved", "minor", { suggestedClass: "major", classReason: "Wording only.", approvedAt: "2026-10-22T10:00:00+00:00" }) : state.rejected ? polVersion(2, "rejected", "minor", { rejectReason: "Sent by mistake." }) : polVersion(2, "in_review", "minor");
+    return { ...polSummary(id, "Remote work and data handling", state.approved ? 2 : 1, state.approved || state.rejected ? null : 2), versions: [polVersion(1, state.approved ? "superseded" : "approved", "initial", { approvedAt: "2026-10-21T10:00:00+00:00" }), v2], variants: polVariants(["applied", "applied"]), estimate: { perVariant: [], totalMicroUsd: 0 } };
+  }
+  if (id === POLICY_B) return { ...polSummary(id, "Acceptable use of company laptops", null, null), versions: [polVersion(1, "draft", "initial")], variants: polVariants(["applied", "outline_review"]), estimate: { perVariant: [], totalMicroUsd: 0 } };
+  if (id === POLICY_E) return { ...polSummary(id, "Visitor access", 1, null, 1), versions: [polVersion(1, "approved", "initial")], variants: polVariants(["applied"]).slice(0, 1), estimate: { perVariant: [], totalMicroUsd: 0 } };
+  return null;
+};
+const polPeople = (page) => {
+  const names = ["Ada", "Linus", "Grace", "Alan", "Edsger", "Barbara", "Donald", "Margaret", "Ken", "Dennis", "Tim", "Radia", "Guido", "Bjarne", "Brian", "Anders", "Yukihiro", "Rob", "Larry", "James", "Brendan", "John", "Niklaus", "Leslie", "Fran", "Frances", "Vint", "Katherine"];
+  const all = names.map((first, i) => ({
+    assignmentId: 100 + i,
+    user: { id: 200 + i, name: `${first} Tester`, email: `${first.toLowerCase()}@example.test` },
+    department: i % 2 ? "Sales" : "Engineering", variantId: `01var${i % 2}${"0".repeat(21)}`, courseId: 40 + (i % 2), courseVersion: i % 3 === 0 ? 2 : 1, exam: i === 0,
+    status: i % 5 === 0 ? "completed" : i % 7 === 0 ? "overdue" : "assigned", source: i === 0 ? "policy_change" : "rule",
+    assignedAt: "2026-10-21T10:00:00+00:00", dueAt: "2026-11-20T10:00:00+00:00", completedAt: i % 5 === 0 ? "2026-10-25T10:00:00+00:00" : null,
+    policyVersion: i % 5 === 0 ? (i === 0 ? 2 : 1) : null,
+    certificate: i % 5 === 0 ? { id: 900 + i, certificateId: `aaaaaaaa-0000-4000-8000-0000000000${String(10 + i)}`, status: i === 5 ? "revoked" : "valid", expiresAt: null, verifyPath: `/api/certificates/verify/aaaaaaaa-0000-4000-8000-0000000000${String(10 + i)}` } : null,
+  }));
+  return all.slice((page - 1) * 25, page * 25);
+};
+const polDashboard = (id, tenant, query) => {
+  const detail = polDetail(id, tenant);
+  if (!detail) return { __status: 404, message: "No query results for model [Policy]." };
+  if (id === POLICY_E && !policyFails.get(`${tenant}:e`)) {
+    policyFails.set(`${tenant}:e`, true);
+    return { __status: 500, message: "The dashboard is temporarily unavailable." };
+  }
+  const page = Math.max(1, Number(query.get("page") ?? 1));
+  const big = id === POLICY_A;
+  const status = query.get("status");
+  const variant = query.get("variant");
+  let people = big ? polPeople(1).concat(polPeople(2)) : [];
+  if (variant) people = people.filter((p) => p.variantId === variant);
+  if (status) people = people.filter((p) => (status === "assigned" ? p.status === "assigned" : p.status === status));
+  const slice = people.slice((page - 1) * 25, page * 25);
+  return {
+    __raw: {
+      success: true,
+      message: "OK",
+      data: {
+        policy: { id, title: detail.title, currentVersion: detail.currentVersion },
+        departments: detail.variants.map((v, i) => ({ id: v.id, department: v.department, groupId: v.groupId, courseId: v.courseId, stage: v.stage, assigned: big ? 14 : 0, completed: big ? 3 - i : 0, pending: big ? 9 : 0, overdue: big ? 2 : 0, completionRate: big ? 0.2143 : null })),
+        people: slice,
+      },
+      meta: { total: people.length, per_page: 25, current_page: page, last_page: Math.max(1, Math.ceil(people.length / 25)) },
+    },
+  };
+};
+const polReview = (tenant, cls) => {
+  const state = policyOf(tenant);
+  const open = !state.approved && !state.rejected;
+  const chosen = cls ?? "major";
+  return {
+    ...polVersion(2, state.approved ? "approved" : state.rejected ? "rejected" : "in_review", state.approved ? "minor" : "minor", state.approved ? { suggestedClass: "major", classReason: "Wording only." } : {}),
+    suggestion: { class: "major", reasons: ["A substantial change: Lesson 1.1 › block 1", "The correct answer of a question changes: Lesson 1.1 › Q1"] },
+    rollouts: [
+      { id: `01rol0${"0".repeat(21)}`, variantId: `01var0${"0".repeat(21)}`, department: "Engineering", status: state.approved ? "applied" : "ready", error: null, proposal: { id: `01prp0${"0".repeat(21)}`, sessionId: polSession(1), status: state.approved ? "applied" : "ready", number: 1 }, undecided: 0, rolledOutAt: null },
+      { id: `01rol1${"0".repeat(21)}`, variantId: `01var1${"0".repeat(21)}`, department: "Sales", status: "no_change", error: null, proposal: null, undecided: 0, rolledOutAt: null },
+    ],
+    changes: { counts: { changed: 2, moved: 0, added: 0, removed: 0 }, sections: [{ kind: "changed", label: "§1.1 Approval and working hours", fragmentId: "frg_aaaaaaaaaaaa", magnitude: "substantive" }, { kind: "changed", label: "§2.2 Sharing and retention", fragmentId: "frg_bbbbbbbbbbbb", magnitude: "minor" }] },
+    blockers: [],
+    preflight: open ? { changeClass: chosen, departments: [{ id: `01var0${"0".repeat(21)}`, department: "Engineering", affected: true, certificatesToRevoke: chosen === "major" ? 3 : 2, peopleToReassign: chosen === "major" ? 3 : 2, assigns: chosen === "major" ? "course" : "exam" }, { id: `01var1${"0".repeat(21)}`, department: "Sales", affected: false, certificatesToRevoke: 0, peopleToReassign: 0, assigns: chosen === "major" ? "course" : "exam" }] } : null,
+  };
+};
+const policyRoutes = [
+  ["POST", /^\/__mock\/policies\/reset$/, ({ tenant }) => (policyState.delete(tenant), policyFails.delete(`${tenant}:e`), { reset: true })],
+  ["GET", /^\/api\/admin\/policies$/, () => [polSummary(POLICY_A, "Remote work and data handling", 1, 2), polSummary(POLICY_B, "Acceptable use of company laptops", null, null), polSummary(POLICY_E, "Visitor access", 1, null, 1)]],
+  ["POST", /^\/api\/admin\/policies$/, ({ tenant }) => polDetail(POLICY_B, tenant)],
+  ["GET", /^\/api\/admin\/policies\/([0-9a-z]{26})$/, ({ match, tenant }) => (match[1] === POLICY_D ? { __status: 403, message: "This action is unauthorized." } : (polDetail(match[1], tenant) ?? { __status: 404, message: "No query results for model [Policy]." }))],
+  ["GET", /^\/api\/admin\/policies\/([0-9a-z]{26})\/dashboard$/, ({ match, tenant, query }) => (match[1] === POLICY_D ? { __status: 403, message: "This action is unauthorized." } : polDashboard(match[1], tenant, query))],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/variants\/generate$/, () => polVariants(["ingesting"])],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/versions$/, ({ tenant }) => polReview(tenant, null)],
+  ["GET", /^\/api\/admin\/policies\/([0-9a-z]{26})\/versions\/(\d+)$/, ({ match, tenant, query }) => (match[1] === POLICY_A && match[2] === "2" ? polReview(tenant, query.get("class")) : { __status: 404, message: "No query results for model [PolicyVersion]." })],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/versions\/(\d+)\/approve$/, ({ match, tenant, body }) => {
+    if (match[1] === POLICY_B) return { __status: 422, message: "The policy cannot be approved yet.\nSales: review and apply the course in the Studio first." };
+    if ((body?.change_class ?? "minor") === "minor" && !String(body?.reason ?? "").trim()) return { __status: 422, message: "The changes suggest a major change. To approve it as minor, say why." };
+    policyOf(tenant).approved = true;
+    return polVersion(Number(match[2]), "applying", "minor");
+  }],
+  ["POST", /^\/api\/admin\/policies\/([0-9a-z]{26})\/versions\/(\d+)\/reject$/, ({ tenant }) => ((policyOf(tenant).rejected = true), polVersion(2, "rejected", "minor"))],
+];
+
 const routes = [
   ...insightsRoutes,
   ...courseVersionsRoutes,
+  ...policyRoutes,
   ...improveRoutes,
   ["POST", /^\/api\/code-exercises\/launches\/(\d+)$/, ({ tenant, match }) => {
     const topic = CODE_TOPICS.get(Number(match[1]));
@@ -645,6 +749,8 @@ const routes = [
     return { attempt: row, status: score >= topic.topicable.pass_score ? 1 : 2 };
   }],
   ["GET", /^\/api\/compliance\/my-assignments$/, () => assignments],
+  // an approved policy change gave "Food safety" again (assignment 2): what changed and which exam or course
+  ["GET", /^\/api\/policies\/my-changes$/, () => [{ assignmentId: 2, policy: { id: `01pola${"0".repeat(20)}`, title: "Food handling policy" }, version: 3, kind: "exam", summary: "Sections 1 changed: §2.1 Cold storage.", dueAt: isoDay(6), status: "assigned" }]],
   ["GET", /^\/api\/compliance\/my-paths$/, () => myPaths],
   ["GET", /^\/api\/compliance\/my-skills$/, () => mySkills],
   ["GET", /^\/api\/compliance\/team\/assignments$/, () => teamRows],
@@ -933,6 +1039,10 @@ function respond(req, res, path, route, rawBody) {
   })();
   const match = route[1].exec(path);
   const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body, query: new URL(req.url ?? "/", "http://mock").searchParams, status: (code) => (res.statusCode = code) });
+  if (data && typeof data === "object" && "__raw" in data) {
+    res.end(JSON.stringify(data.__raw));
+    return;
+  }
   if (data && typeof data === "object" && "__status" in data) {
     res.statusCode = data.__status;
     res.end(JSON.stringify({ success: false, message: data.message, ...(data.code ? { code: data.code } : {}) }));

@@ -1492,3 +1492,114 @@ a.st-ver-link {
   text-decoration: none;
   white-space: nowrap;
 }
+
+/* policies pages (ADR 0140): list, create, policy, version review */
+.st-pol,
+.st-pol-body,
+.st-pol-decisions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.st-pol-new {
+  margin-top: 16px;
+}
+.st-pol-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 48rem;
+}
+.st-pol-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.st-pol-field label {
+  font-weight: 600;
+}
+.st-pol-field input[type="text"],
+.st-pol-field input[type="number"],
+.st-pol-field input[type="file"],
+.st-pol-field select,
+.st-pol-field textarea {
+  min-height: 44px;
+  max-width: 100%;
+  font: inherit;
+}
+.st-pol-hint {
+  margin: 0;
+}
+.st-pol-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+}
+.st-pol-departments {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.st-pol-department {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid currentColor;
+}
+.st-pol-depts {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 12px;
+}
+.st-pol-figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 12px;
+  margin: 0;
+}
+.st-pol-figures dt {
+  font-weight: 600;
+}
+.st-pol-figures dd {
+  margin: 0;
+}
+.st-pol-filters,
+.st-pol-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 16px;
+}
+.st-pol-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+}
+.st-pol-radio input {
+  width: 1.4rem;
+  height: 1.4rem;
+  margin: 0;
+  flex: none;
+}
+.st-pol-class {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.st-pol-result {
+  margin: 0;
+}
+@media (max-width: 520px) {
+  .st-pol-figures {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
