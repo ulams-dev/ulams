@@ -102,6 +102,22 @@
   transform: scaleX(0);
   transform-origin: left center;
 }
+@media (min-width: 1024px) {
+  /* wide screens: tighter pills so all eight beats fit one row (Polish needs the most room); they still wrap rather
+     than overflow */
+  .hj-tabs {
+    gap: 6px;
+  }
+  .hj-tab {
+    gap: 6px;
+    padding: 6px 11px 6px 5px;
+    font-size: 0.84rem;
+  }
+  .hj-tab__num {
+    width: 26px;
+    height: 26px;
+  }
+}
 @media (max-width: 700px) {
   /* phones: one row that scrolls sideways */
   .hj-tabs {
