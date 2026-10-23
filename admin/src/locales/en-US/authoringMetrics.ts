@@ -17,7 +17,8 @@ export default {
     'You need the permission to read authoring metrics. Authors can see the figures of their own courses in the studio.',
   authoring_metrics_error: 'The figures could not be loaded.',
   authoring_metrics_retry: 'Try again',
-  authoring_metrics_empty: 'No course built with the Course Builder has figures in this period yet.',
+  authoring_metrics_empty:
+    'No course built with the Course Builder has figures in this period yet.',
   authoring_metrics_scroll: 'Authoring metrics by course (scrolls sideways on small screens)',
   authoring_metrics_caption: 'Authoring metrics, one row per course',
   authoring_metrics_course_fallback: 'Course {id}',
@@ -44,7 +45,7 @@ export default {
   authoring_metrics_review_stored:
     'Stored: the course, the start of the minute, the place (studio or admin) and a random code made when the page was opened. Not stored: a name or account, an address, a browser or device, or which lesson, block or question was open.',
   authoring_metrics_review_shown:
-    'Shown: author-minutes per course, per day and in total, never per person. A course with one author shows that author\'s time.',
+    "Shown: author-minutes per course, per day and in total, never per person. A course with one author shows that author's time.",
   authoring_metrics_review_kept:
     'Kept: the minutes are totalled per course and day every night and the single minutes are deleted after 7 days; the daily totals stay as long as the course.',
   authoring_metrics_review_switch:

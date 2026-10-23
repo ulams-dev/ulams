@@ -45,7 +45,9 @@ describe('ReviewTimeNotice', () => {
     render(<ReviewTimeNotice />);
     fireEvent.click(screen.getByRole('button', { name: 'Delete recorded review time' }));
     fireEvent.click(screen.getByRole('button', { name: 'Yes, delete it' }));
-    await waitFor(() => expect(screen.getByText('Deleted 42 minutes and 6 daily totals.')).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText('Deleted 42 minutes and 6 daily totals.')).toBeInTheDocument(),
+    );
     expect(mockDelete).toHaveBeenCalledTimes(1);
   });
 

@@ -164,7 +164,12 @@ const metricRow = (m: MockMetric) => ({
     model_seconds: 902,
     author_minutes: m.author_minutes ?? null,
   },
-  cost: { build_micro_usd: 284100, maintenance_micro_usd: 1520000, llm_calls: 27, llm_calls_failed: 1 },
+  cost: {
+    build_micro_usd: 284100,
+    maintenance_micro_usd: 1520000,
+    llm_calls: 27,
+    llm_calls_failed: 1,
+  },
   counts: { lessons: 6, questions: 18, blocks: 35, cited_blocks: 35, learner_minutes_estimate: 60 },
   elements: {
     ai_elements: m.ai_elements ?? 59,
@@ -602,7 +607,11 @@ export async function mockApi(
       }
     }
 
-    if (options.reviewTime && method === 'DELETE' && path === '/api/admin/authoring-metrics/activity') {
+    if (
+      options.reviewTime &&
+      method === 'DELETE' &&
+      path === '/api/admin/authoring-metrics/activity'
+    ) {
       if (options.reviewTime.deleteStatus) {
         return json({ message: 'This action is unauthorized.' }, options.reviewTime.deleteStatus);
       }

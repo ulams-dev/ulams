@@ -9,7 +9,9 @@ const mockStop = jest.fn();
 const mockStart = jest.fn((..._args: unknown[]) => ({ stop: mockStop }));
 
 jest.mock('umi', () => ({ request: (...args: unknown[]) => mockRequest(...args) }));
-jest.mock('../../../front/web/src/studio/review-time', () => ({ startReviewTime: (...args: unknown[]) => mockStart(...args) }));
+jest.mock('../../../front/web/src/studio/review-time', () => ({
+  startReviewTime: (...args: unknown[]) => mockStart(...args),
+}));
 
 import useReviewTime from './useReviewTime';
 
@@ -27,8 +29,16 @@ describe('useReviewTime', () => {
     const { unmount } = renderHook(() => useReviewTime(12));
     await settle();
 
-    expect(mockRequest).toHaveBeenCalledWith('/api/admin/authoring-metrics/activity/status', expect.objectContaining({ method: 'GET' }));
-    expect(mockStart).toHaveBeenCalledWith(12, expect.any(Object), 'admin', '/api/admin/authoring-metrics/activity');
+    expect(mockRequest).toHaveBeenCalledWith(
+      '/api/admin/authoring-metrics/activity/status',
+      expect.objectContaining({ method: 'GET' }),
+    );
+    expect(mockStart).toHaveBeenCalledWith(
+      12,
+      expect.any(Object),
+      'admin',
+      '/api/admin/authoring-metrics/activity',
+    );
     unmount();
     expect(mockStop).toHaveBeenCalled();
   });
@@ -47,11 +57,14 @@ describe('useReviewTime', () => {
     expect(mockStart).not.toHaveBeenCalled();
   });
 
-  it.each([[undefined], [NaN], [0], [1.5]])('asks nothing for the course %s (a new course has no id yet)', async (id) => {
-    renderHook(() => useReviewTime(id as number | undefined));
-    await settle();
-    expect(mockRequest).not.toHaveBeenCalled();
-  });
+  it.each([[undefined], [NaN], [0], [1.5]])(
+    'asks nothing for the course %s (a new course has no id yet)',
+    async (id) => {
+      renderHook(() => useReviewTime(id as number | undefined));
+      await settle();
+      expect(mockRequest).not.toHaveBeenCalled();
+    },
+  );
 
   it('does not start when the page was left before the answer came', async () => {
     let answer: (value: unknown) => void = () => undefined;
@@ -67,11 +80,17 @@ describe('useReviewTime', () => {
     mockRequest.mockResolvedValueOnce({ data: { enabled: true } });
     renderHook(() => useReviewTime(12));
     await settle();
-    const env = mockStart.mock.calls[0][1] as { fetch: (url: string, init: RequestInit) => Promise<{ status: number; ok: boolean }>; beacon: () => boolean };
+    const env = mockStart.mock.calls[0][1] as {
+      fetch: (url: string, init: RequestInit) => Promise<{ status: number; ok: boolean }>;
+      beacon: () => boolean;
+    };
 
     mockRequest.mockResolvedValueOnce({ response: { status: 200 } });
     expect(await env.fetch('/x', { body: '{"a":1}' })).toEqual({ status: 200, ok: true });
-    expect(mockRequest).toHaveBeenLastCalledWith('/x', expect.objectContaining({ method: 'POST', data: { a: 1 } }));
+    expect(mockRequest).toHaveBeenLastCalledWith(
+      '/x',
+      expect.objectContaining({ method: 'POST', data: { a: 1 } }),
+    );
     mockRequest.mockRejectedValueOnce({ response: { status: 404 } });
     expect(await env.fetch('/x', { body: '{}' })).toEqual({ status: 404, ok: false });
     mockRequest.mockRejectedValueOnce(new Error('offline'));

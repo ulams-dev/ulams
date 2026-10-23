@@ -15,6 +15,7 @@ use Ulams\Settings\Facades\AdministrableConfig;
 use Ulams\Settings\UlamsSettingsServiceProvider;
 use Ulams\AuthoringMetrics\Http\Controllers\CourseMetricsController;
 use Ulams\AuthoringMetrics\Listeners\RecomputeCourseMetrics;
+use Ulams\AuthoringMetrics\Reporting\AuthoringDataset;
 use Ulams\AuthoringMetrics\Services\CourseMetrics;
 use Ulams\AuthoringMetrics\Services\SubjectResolvers;
 use Ulams\AuthoringMetrics\Services\Subjects\BuilderSessionResolver;
@@ -25,6 +26,8 @@ use Ulams\CourseBuilder\Events\BuilderStageFinished;
 use Ulams\CourseBuilder\Events\BuilderStageStarted;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
 use Ulams\Courses\Events\CoursedPublished;
+use Ulams\Reporting\Services\DatasetRegistry;
+use Ulams\Reporting\UlamsReportingServiceProvider;
 use Ulams\Tenancy\Upgrade\UpgradeSteps;
 
 /**
@@ -52,11 +55,15 @@ class UlamsAuthoringMetricsServiceProvider extends ServiceProvider
             // off by default; the tenant admin switches it after reading what is stored (public: the studio asks too)
             AdministrableConfig::registerConfig('authoring_metrics.review_time', ['boolean'], true, false);
         }
+        $this->app->register(UlamsReportingServiceProvider::class);
     }
 
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        // the metric is also a report dataset (RB-1)
+        $this->app->make(DatasetRegistry::class)->register(new AuthoringDataset());
 
         Event::listen(BuilderStageStarted::class, [RecordStageTimings::class, 'started']);
         Event::listen(BuilderStageFinished::class, [RecordStageTimings::class, 'finished']);

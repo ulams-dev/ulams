@@ -18,9 +18,11 @@ use Ulams\CourseBuilder\ContentTypes\InteractiveType;
 use Ulams\CourseBuilder\ContentTypes\LiaScriptType;
 use Ulams\CourseBuilder\ContentTypes\RichTextType;
 use Ulams\CourseBuilder\Contracts\FragmentArchive;
+use Ulams\CourseBuilder\Contracts\PendingChanges;
 use Ulams\CourseBuilder\Contracts\RemovalPolicy;
 use Ulams\CourseBuilder\Contracts\SourceHistory;
 use Ulams\CourseBuilder\Ingestion\NoFragmentArchive;
+use Ulams\CourseBuilder\CourseAsCode\NoPendingChanges;
 use Ulams\CourseBuilder\Ingestion\NoSourceHistory;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
 use Ulams\CourseBuilder\Console\BackfillReleasesCommand;
@@ -112,6 +114,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         RemovalPolicy::class => DeleteEverything::class,
         FragmentArchive::class => NoFragmentArchive::class,
         SourceHistory::class => NoSourceHistory::class,
+        PendingChanges::class => NoPendingChanges::class,
     ];
 
     public function register(): void

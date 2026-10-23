@@ -13,13 +13,15 @@ use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
 use Ulams\LivingCourse\Jobs\CheckSourceJob;
 use Ulams\LivingCourse\Models\Connection;
 use Ulams\LivingCourse\Services\AuditLog;
+use Ulams\LivingCourse\Services\ChangeNote;
 use Ulams\LivingCourse\Services\CheckLimiter;
 
 /**
  * Inbound webhooks of source hosts (ADR 0032). Public route, authenticated by the signature with the
  * connection's own secret: invalid signatures are refused and logged, duplicates answer 200 without
  * work, only pushes to the tracked branch that touch the tracked paths queue a (debounced) check.
- * Payloads are never sent to the model and never stored, only their digest.
+ * Payloads are never sent to the model and never stored, only their digest; what the revision keeps of a push is the head commit,
+ * its subject line and the pull request number (`ChangeNote`).
  *
  * @OA\Post(path="/api/living-course/webhooks/{webhookId}", operationId="living-course.webhooks.by-webhookid.post", summary="Receive a push webhook of a connected repository", tags={"Living Course webhooks"},
  *     @OA\Parameter(name="webhookId", in="path", required=true, @OA\Schema(type="string")),
@@ -73,6 +75,9 @@ class WebhookController extends Controller
             return response()->json(['success' => true, 'data' => ['dropped' => true]], 200);
         }
         $this->log($connection, $delivery->id, $delivery->event, true, 'queued', $digest);
+        if ($delivery->change !== null) {
+            ChangeNote::put($connection->id, $delivery->change);
+        }
         CheckSourceJob::dispatchFor($connection->id, 'webhook', null, (int) config('living_course.webhook_debounce_seconds', 600));
 
         return response()->json(['success' => true, 'data' => ['queued' => true]], 202);
