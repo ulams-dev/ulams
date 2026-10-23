@@ -115,6 +115,9 @@ small commits → tests → summary.
       verified on the `ulams.app` zone), then narrowed it the same day: keep `api/packages/images` and `/api/images/img` for
       self-hosters and other clients, stop PHP resizing on the hosted demos and the landing, and make the image service a deployment
       choice. Plan `docs/plans/images-cloudflare.md` and ADR 0193 were accepted by the owner on 2026-10-22 with the recommended defaults (plan section 14)
+      Note 2026-10-23 (IMG-5, in review): the legacy learner app builds avatar URLs through the shared builder with the build setting
+      `VITE_ULAMS_IMAGE_SERVICE` (default `php`, the URLs it always built; `cloudflare`, `noop`), `VITE_ULAMS_IMAGE_SOURCES` and
+      `VITE_ULAMS_IMAGE_TRANSFORM_ORIGIN`; the `Image` component keeps its `imgcache` flow only in `php`. The app is not hosted anywhere
 
 - [x] (new) Decision 2026-10-22: the owner approved `docs/plans/authoring-metric-and-report-builder.md` and accepted ADR 0194 with the recommended defaults (originally proposed 2026-10-22): authoring time and cost
       metric, report builder with saved reports and an OData BI feed, Notion integration token. Open questions Q1 to Q13 in plan

@@ -6,7 +6,7 @@ import { Title } from "@ulams/components/components/atoms/Typography/Title";
 import { Tutor } from "@ulams/components/components/molecules/Tutor/Tutor";
 import { UlamsContext } from "@ulams/sdk/react";
 import styles from "./EventTutor.module.css";
-import { API_URL } from "@/config/index";
+import { avatarSrc } from "@ulams/images";
 
 const EventTutor = () => {
   const { stationaryEvent } = useContext(UlamsContext);
@@ -28,8 +28,7 @@ const EventTutor = () => {
               mobile={isMobile}
               avatar={{
                 alt: `${author.first_name} ${author.last_name}`,
-                src:
-                  `${API_URL}/api/images/img?path=${author.path_avatar}` || "",
+                src: avatarSrc(author),
               }}
               // TODO: Change rating when will be available from response
               rating={{
