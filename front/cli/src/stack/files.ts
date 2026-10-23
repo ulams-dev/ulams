@@ -26,11 +26,11 @@ export async function readSecrets(directory: string): Promise<Secrets> {
   for(const key of ["APP_KEY","DB_PASSWORD","POSTGRES_PASSWORD","VALKEY_PASSWORD","S3_KEY","S3_SECRET","JWT_PRIVATE_KEY_BASE64","JWT_PUBLIC_KEY_BASE64","PLATFORM_ADMIN_PASSWORD","TENANT_INITIAL_PASSWORD","H5P_INTERNAL_TOKEN","PDF_INTERNAL_TOKEN"])if(typeof value[key] !== "string" || !value[key])throw new CliError("CONFLICT",`Incomplete stack credentials: ${key}. Restore the credentials file; do not regenerate keys for an existing database.`);
   return value;
 }
-export async function atomicWrite(directory: string, name: string, value: string) {
+export async function atomicWrite(directory: string, name: string, value: string, mode = 0o600) {
   const target = join(directory,name);
   if(await exists(target) && (await lstat(target)).isSymbolicLink())throw new CliError("CONFLICT",`Refusing to overwrite symbolic link ${name}.`);
   const temporary = `${target}.tmp-${process.pid}`;
-  await writeFile(temporary,value,{mode:0o600,flag:"wx"});
+  await writeFile(temporary,value,{mode,flag:"wx"});
   await rename(temporary,target);
 }
 export async function withInstall<T>(directory: string, run: ()=>Promise<T>): Promise<T> {
@@ -62,7 +62,9 @@ export async function renderInstall(directory: string, input: StackInput): Promi
   config.credentialsReady = true;
   await atomicWrite(directory,"stack.json",JSON.stringify(config,null,2)+"\n");
   await atomicWrite(directory,".env",Object.entries(secrets).map(([k,v])=>`${k}=${v}`).join("\n")+"\n");
-  await atomicWrite(directory,"init.sql",initSql(secrets));
+  // Bind-mounted into the postgres container, whose entrypoint reads it as the postgres user (uid 70): a 0600 file
+  // owned by the installing user fails there on Linux. The install directory itself stays 0700.
+  await atomicWrite(directory,"init.sql",initSql(secrets),0o644);
   await atomicWrite(directory,"Caddyfile",caddyfile(config));
   await atomicWrite(directory,"compose.yaml",yaml(compose(config)));
   const kube = kubernetes(config,secrets);

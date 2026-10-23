@@ -82,6 +82,9 @@ describe("self-contained stack generator",()=>{
       expect(first.config.id).toBe(second.config.id);
       expect(await readFile(join(directory,"credentials.json"),"utf8")).toBe(before);
       expect((await stat(join(directory,"credentials.json"))).mode & 0o077).toBe(0);
+      // the postgres container reads init.sql as its own user; the 0700 directory keeps it private on the host
+      expect((await stat(join(directory,"init.sql"))).mode & 0o777).toBe(0o644);
+      expect((await stat(directory)).mode & 0o077).toBe(0);
       expect(await readFile(join(directory,"compose.yaml"),"utf8")).toContain("ghcr.io/ulams-dev/api:latest");
     }finally{await rm(directory,{recursive:true,force:true});}
   });
