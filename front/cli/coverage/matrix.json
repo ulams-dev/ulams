@@ -1,5 +1,5 @@
 {
- "summary": "622/711 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "625/714 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -470,9 +470,21 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/course-as-code/courses",
+   "summary": "Create an empty course (an approved empty blueprint) for a folder that has no course yet; the course row is made by the first apply",
+   "command": "course.preview",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/course-as-code/courses/{course}/blueprint",
    "summary": "Export a course as a Blueprint v3 document (current version, drift, applied version)",
    "command": "course.export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-as-code/sessions/{session}",
+   "summary": "Where a session stands: course id, current and applied version (poll it while an apply runs)",
+   "command": "course.preview",
    "status": "covered"
   },
   {
@@ -3821,6 +3833,12 @@
    "key": "PATCH /api/platform/tenants/{slug}/env",
    "summary": "Override or reset inheritable settings (AI driver, models) of a tenant",
    "command": "tenants.set-env",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/platform/tenants/{slug}/token",
+   "summary": "A one-day administrator token (builder:read, builder:write) for a preview academy",
+   "command": "tenants.token",
    "status": "covered"
   },
   {
