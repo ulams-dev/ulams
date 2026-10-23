@@ -33,6 +33,28 @@ window when the session ends, so a harness waits for that message and never for 
 durations, listed origins replaced) and compares it with a golden file in `golden/<player>/<fixture>.json`.
 `UPDATE_GOLDEN=1` rewrites golden files; a changed golden file needs a reason in the pull request.
 
+## Golden traces
+
+`golden/react-player/<scenario>.json`, one per scenario of `front/tests/scorm-playback/react-player.spec.ts`
+(11 scenarios: both versions, `passed`/`failed`, `resume`, `no-completion`, both mastery scores, and
+the community mode where the host stores CMI values through `onScormPost`/`onScormGet`). Each file has:
+
+- `sco`: every runtime call the SCO made, its return value and error code;
+- `finalCmi`: `api.cmi` after the session;
+- `commitObject` and `terminateCommitObject`: `api.renderCommitObject()`, the object scorm-again would send
+  to a commit endpoint (completion and success status derivation, score, `totalTimeSeconds`);
+- `settings`: the scorm-again settings that decide behaviour (`mastery_override`, `asyncCommit`,
+  `autocommit`, `strict_errors`, ...), as the player leaves them;
+- `requests`: the LMS requests the host page made; `posts` and `gets`: what the community callbacks received.
+
+The legacy front's and the admin's service workers must produce the same file. Run them with
+`yarn workspace front test:scorm` (`UPDATE_GOLDEN=1` rewrites the files).
+
+What the React player does not do, which the traces therefore pin as it is: it passes the whole `show` response
+to scorm-again as settings, so `autocommit` and `lmsCommitUrl` stay at their defaults (nothing is sent to the LMS
+from the plain player), and it never loads `data.player.cmi`, so a second launch starts empty and
+`cmi.core.credit`/`mastery_score` stay empty (the mastery override can only fire in the content player, SC-3).
+
 ## Editing
 
 The zips in `packages/` are committed because the PHPUnit and browser tests only read them. After

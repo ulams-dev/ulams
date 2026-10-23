@@ -1,0 +1,260 @@
+{
+  "commitObject": {
+    "completionStatus": "completed",
+    "runtimeData": {
+      "cmi": {
+        "comments": "",
+        "comments_from_lms": "",
+        "core": {
+          "credit": "",
+          "entry": "",
+          "exit": "",
+          "lesson_location": "",
+          "lesson_mode": "normal",
+          "lesson_status": "completed",
+          "score": {
+            "max": "100",
+            "min": "",
+            "raw": ""
+          },
+          "session_time": "0000:00:45",
+          "student_id": "",
+          "student_name": ""
+        },
+        "interactions": {},
+        "launch_data": "",
+        "objectives": {},
+        "student_data": {
+          "mastery_score": "",
+          "max_time_allowed": "",
+          "time_limit_action": ""
+        },
+        "student_preference": {
+          "audio": "",
+          "language": "",
+          "speed": "",
+          "text": ""
+        },
+        "suspend_data": ""
+      }
+    },
+    "score": {
+      "max": 100
+    },
+    "successStatus": "unknown",
+    "totalTimeSeconds": 45
+  },
+  "finalCmi": {
+    "comments": "",
+    "comments_from_lms": "",
+    "core": {
+      "credit": "",
+      "entry": "",
+      "exit": "",
+      "lesson_location": "",
+      "lesson_mode": "normal",
+      "lesson_status": "completed",
+      "score": {
+        "max": "100",
+        "min": "",
+        "raw": ""
+      },
+      "session_time": "0000:00:45",
+      "student_id": "",
+      "student_name": ""
+    },
+    "interactions": {},
+    "launch_data": "",
+    "objectives": {},
+    "student_data": {
+      "mastery_score": "",
+      "max_time_allowed": "",
+      "time_limit_action": ""
+    },
+    "student_preference": {
+      "audio": "",
+      "language": "",
+      "speed": "",
+      "text": ""
+    },
+    "suspend_data": ""
+  },
+  "fixture": "scorm12-session",
+  "gets": [],
+  "mode": "default",
+  "posts": [],
+  "query": "phase=resume",
+  "requests": [
+    "GET /api/scorm/show/scorm12-session~phase=resume"
+  ],
+  "sco": [
+    {
+      "args": [
+        ""
+      ],
+      "error": "0",
+      "fn": "LMSInitialize",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.core.student_id"
+      ],
+      "error": "0",
+      "fn": "LMSGetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.core.entry"
+      ],
+      "error": "0",
+      "fn": "LMSGetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.core.lesson_status"
+      ],
+      "error": "0",
+      "fn": "LMSGetValue",
+      "result": "not attempted"
+    },
+    {
+      "args": [
+        "cmi.core.lesson_location"
+      ],
+      "error": "0",
+      "fn": "LMSGetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.core.total_time"
+      ],
+      "error": "0",
+      "fn": "LMSGetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.suspend_data"
+      ],
+      "error": "0",
+      "fn": "LMSGetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.core.lesson_status",
+        "completed"
+      ],
+      "error": "0",
+      "fn": "LMSSetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.core.session_time",
+        "0000:00:45"
+      ],
+      "error": "0",
+      "fn": "LMSSetValue",
+      "result": "true"
+    },
+    {
+      "args": [
+        "cmi.core.lesson_status"
+      ],
+      "error": "0",
+      "fn": "LMSGetValue",
+      "result": "completed"
+    },
+    {
+      "args": [
+        "cmi.core.score.raw"
+      ],
+      "error": "0",
+      "fn": "LMSGetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        "cmi.core.total_time"
+      ],
+      "error": "0",
+      "fn": "LMSGetValue",
+      "result": ""
+    },
+    {
+      "args": [
+        ""
+      ],
+      "error": "0",
+      "fn": "LMSFinish",
+      "result": "true"
+    }
+  ],
+  "settings": {
+    "alwaysSendTotalTime": false,
+    "asyncCommit": false,
+    "autoProgress": false,
+    "autocommit": false,
+    "autocommitSeconds": 10,
+    "commitRequestDataType": "application/json;charset=UTF-8",
+    "dataCommitFormat": "json",
+    "lmsCommitUrl": false,
+    "mastery_override": false,
+    "renderCommonCommitFields": false,
+    "selfReportSessionTime": false,
+    "sendFullCommit": true,
+    "strict_errors": true
+  },
+  "terminateCommitObject": {
+    "completionStatus": "completed",
+    "runtimeData": {
+      "cmi": {
+        "comments": "",
+        "comments_from_lms": "",
+        "core": {
+          "credit": "",
+          "entry": "",
+          "exit": "",
+          "lesson_location": "",
+          "lesson_mode": "normal",
+          "lesson_status": "completed",
+          "score": {
+            "max": "100",
+            "min": "",
+            "raw": ""
+          },
+          "session_time": "0000:00:45",
+          "student_id": "",
+          "student_name": "",
+          "total_time": "00:00:45"
+        },
+        "interactions": {},
+        "launch_data": "",
+        "objectives": {},
+        "student_data": {
+          "mastery_score": "",
+          "max_time_allowed": "",
+          "time_limit_action": ""
+        },
+        "student_preference": {
+          "audio": "",
+          "language": "",
+          "speed": "",
+          "text": ""
+        },
+        "suspend_data": ""
+      }
+    },
+    "score": {
+      "max": 100
+    },
+    "successStatus": "unknown",
+    "totalTimeSeconds": 45
+  },
+  "version": "1.2"
+}

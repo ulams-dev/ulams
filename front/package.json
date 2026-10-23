@@ -97,7 +97,8 @@
     "typecheck": "tsc --project tsconfig.json --noEmit",
     "lint:gpl": "node scripts/check-no-gpl-imports.cjs",
     "lint:styled": "node scripts/check-no-styled-components.cjs",
-    "test:unit": "node --experimental-strip-types --no-warnings --test \"tests/**/*.test.ts\" \"../api/packages/scorm/tests/fixtures/playback/*.test.mjs\""
+    "test:unit": "node --experimental-strip-types --no-warnings --test \"tests/**/*.test.ts\" \"../api/packages/scorm/tests/fixtures/playback/*.test.mjs\"",
+    "test:scorm": "playwright test -c playwright.scorm.config.ts"
   },
   "browserslist": [
     ">0.2%",
@@ -107,6 +108,7 @@
   "devDependencies": {
     "@capacitor/assets": "^3.0.4",
     "@capacitor/cli": "^5.7.3",
+    "@playwright/test": "^1.63.0",
     "@types/chroma-js": "^3.1.2",
     "@types/lodash.debounce": "^4.0.9",
     "@types/lodash.flow": "^3.5.9",

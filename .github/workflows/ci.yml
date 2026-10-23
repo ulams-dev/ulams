@@ -43,6 +43,7 @@ jobs:
     outputs:
       js: ${{ steps.filter.outputs.js }}
       demo: ${{ steps.filter.outputs.demo }}
+      scorm: ${{ steps.filter.outputs.scorm }}
       deploy: ${{ steps.filter.outputs.deploy }}
       sdk: ${{ steps.filter.outputs.sdk }}
       php: ${{ steps.api.outputs.php == 'true' || steps.filter.outputs.ci == 'true' }}
@@ -101,6 +102,21 @@ jobs:
             demo:
               - "demo-content/**"
               - "front/interactive-bridge/**"
+              - "package.json"
+              - "yarn.lock"
+              - ".github/**"
+            scorm:
+              - "front/src/lib/scorm-player/**"
+              - "front/tests/scorm-playback/**"
+              - "front/playwright.scorm.config.ts"
+              - "front/public/service-worker-scorm.js"
+              - "front/public/modules/**"
+              - "admin/public/service-worker-scorm.js"
+              - "admin/public/modules/**"
+              - "api/packages/scorm/tests/fixtures/**"
+              - "api/packages/scorm/resources/**"
+              - "front/package.json"
+              - "admin/package.json"
               - "package.json"
               - "yarn.lock"
               - ".github/**"
@@ -279,6 +295,41 @@ jobs:
         with:
           name: admin-a11y-playwright
           path: admin/test-results
+          retention-days: 7
+
+  # SCORM playback regression (docs/plans/scorm-playback-tests.md, ADR 0197): the fixture packages played in a
+  # real browser through the legacy front's <ScormPreview> with each app's own service worker, compared with
+  # the golden traces in api/packages/scorm/tests/fixtures/playback/golden. No API stack, no network.
+  scorm-playback:
+    name: SCORM playback (Playwright)
+    needs: changes
+    if: needs.changes.outputs.scorm == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      HUSKY: "0"
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - name: Install dependencies
+        uses: ./.github/actions/setup-yarn
+      - name: Fixture zips are up to date
+        run: node api/packages/scorm/tests/fixtures/playback/build.mjs --check
+      - name: Install Chromium
+        run: corepack yarn playwright install --with-deps chromium
+      - name: Play the fixtures (legacy front and admin service workers)
+        working-directory: front
+        run: corepack yarn test:scorm
+      - name: Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: scorm-playback-playwright
+          path: front/test-results/pw
           retention-days: 7
 
   # The interactive content packages (demo-content) in a real browser, on throwaway servers: each package
@@ -790,7 +841,7 @@ jobs:
 
   ci-ok:
     name: CI OK
-    needs: [changes, js, demo-content, php, php-no-dev, php-sdk, images, deploy, security-scan]
+    needs: [changes, js, demo-content, scorm-playback, php, php-no-dev, php-sdk, images, deploy, security-scan]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -798,6 +849,6 @@ jobs:
       - name: Fail if any job failed or was cancelled
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: |
-          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} demo-content=${{ needs.demo-content.result }} php=${{ needs.php.result }} php-no-dev=${{ needs.php-no-dev.result }} php-sdk=${{ needs.php-sdk.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }} security-scan=${{ needs.security-scan.result }}"
+          echo "changes=${{ needs.changes.result }} js=${{ needs.js.result }} demo-content=${{ needs.demo-content.result }} scorm-playback=${{ needs.scorm-playback.result }} php=${{ needs.php.result }} php-no-dev=${{ needs.php-no-dev.result }} php-sdk=${{ needs.php-sdk.result }} images=${{ needs.images.result }} deploy=${{ needs.deploy.result }} security-scan=${{ needs.security-scan.result }}"
           exit 1
       - run: echo "All required jobs passed or were skipped by the path filters."
