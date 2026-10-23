@@ -764,9 +764,9 @@ export const generatedCommands: AnyCommand[] = [
     audience: ["admin"],
     endpoints: ["POST /api/admin/compliance/schedules"],
     mcp: { toolset: "compliance" },
-    examples: [{"title":"Schedule a report","argv":"compliance schedules-add --dataset text --frequency text --name Example --recipient-ids text --json"}],
-    input: z.looseObject({ "dataset": z.enum(["assignments", "certificates", "audit"]), "filters": z.record(z.string(), z.unknown()).describe("course_id, user_id, status, from, to").optional(), "format": z.enum(["csv", "jsonl"]).optional(), "frequency": z.enum(["daily", "weekly", "monthly"]), "name": z.string(), "recipient_ids": z.array(z.number().int()).describe("Ids of users of this tenant") }),
-    request: {"method":"POST","path":"/api/admin/compliance/schedules","pathParams":[],"queryParams":[],"bodyMode":"json","bodyFields":["dataset","filters","format","frequency","name","recipient_ids"]},
+    examples: [{"title":"Schedule a report","argv":"compliance schedules-add --frequency text --name Example --recipient-ids text --json"}],
+    input: z.looseObject({ "dataset": z.enum(["assignments", "certificates", "audit"]).describe("A compliance dataset; give this or saved_report_id").optional(), "filters": z.record(z.string(), z.unknown()).describe("course_id, user_id, status, from, to (datasets only)").optional(), "format": z.enum(["csv", "jsonl", "xlsx"]).describe("xlsx only for a saved report").optional(), "frequency": z.enum(["daily", "weekly", "monthly"]), "name": z.string(), "recipient_ids": z.array(z.number().int()).describe("Ids of users of this tenant"), "saved_report_id": z.string().describe("A saved report the caller can see (report builder); it runs once per recipient with the recipient's own permissions").optional() }),
+    request: {"method":"POST","path":"/api/admin/compliance/schedules","pathParams":[],"queryParams":[],"bodyMode":"json","bodyFields":["dataset","filters","format","frequency","name","recipient_ids","saved_report_id"]},
   }),
   httpCommand({
     id: "compliance.schedules-delete",
@@ -5956,7 +5956,7 @@ export const generatedCommands: AnyCommand[] = [
     positionals: ["id"],
     mcp: { toolset: "reporting" },
     examples: [{"title":"Run a saved report with your own permissions as json, csv or jsonl (use --out)","argv":"reporting run text --json"}],
-    input: z.looseObject({ "id": z.string(), "format": z.enum(["json", "csv", "jsonl"]).optional(), "out": z.string().optional().describe("Write the download to this path (- for stdout)").optional() }),
+    input: z.looseObject({ "id": z.string(), "format": z.enum(["json", "csv", "jsonl", "xlsx"]).optional(), "out": z.string().optional().describe("Write the download to this path (- for stdout)").optional() }),
     request: {"method":"GET","path":"/api/admin/reporting/saved/{id}/run","pathParams":["id"],"queryParams":["format"],"bodyMode":"none","bodyFields":[],"download":true},
   }),
   httpCommand({
@@ -5997,8 +5997,8 @@ export const generatedCommands: AnyCommand[] = [
     positionals: ["id"],
     mcp: { toolset: "reporting" },
     examples: [{"title":"Change a saved report (owner or reporting_manage)","argv":"reporting update text --json"}],
-    input: z.looseObject({ "id": z.string(), "definition": z.record(z.string(), z.unknown()).optional(), "description": z.string().optional(), "name": z.string().optional(), "shared_roles": z.array(z.string()).optional(), "visibility": z.enum(["private", "roles"]).optional() }),
-    request: {"method":"PUT","path":"/api/admin/reporting/saved/{id}","pathParams":["id"],"queryParams":[],"bodyMode":"json","bodyFields":["definition","description","name","shared_roles","visibility"]},
+    input: z.looseObject({ "id": z.string(), "definition": z.record(z.string(), z.unknown()).optional(), "description": z.string().optional(), "feed_enabled": z.boolean().describe("Offer the report as a read-only OData feed (needs reporting_manage)").optional(), "name": z.string().optional(), "shared_roles": z.array(z.string()).optional(), "visibility": z.enum(["private", "roles"]).optional() }),
+    request: {"method":"PUT","path":"/api/admin/reporting/saved/{id}","pathParams":["id"],"queryParams":[],"bodyMode":"json","bodyFields":["definition","description","feed_enabled","name","shared_roles","visibility"]},
   }),
   httpCommand({
     id: "reports.available-for-user",
@@ -6793,8 +6793,8 @@ export const generatedCommands: AnyCommand[] = [
     endpoints: ["POST /api/auth/tokens"],
     mcp: { toolset: "my" },
     examples: [{"title":"A CI token that can edit courses and run the builder, for 30 days","argv":"tokens create --name ci --scopes @ci --expires-in-days 30 --kind ci --json"},{"title":"A read-only token for an agent","argv":"tokens create --name reader --scopes @read-only --kind agent --agent-name claude-code --json"}],
-    input: z.looseObject({ "agent_name": z.string().nullable().optional(), "expires_in_days": z.number().int().optional(), "kind": z.enum(["cli", "agent", "ci", "integration"]).optional(), "name": z.string(), "rate_limit_per_minute": z.number().int().nullable().optional(), "scopes": z.array(z.string()).describe("Scopes or @presets (read-only, author, admin, learner, ci)") }),
-    request: {"method":"POST","path":"/api/auth/tokens","pathParams":[],"queryParams":[],"bodyMode":"json","bodyFields":["agent_name","expires_in_days","kind","name","rate_limit_per_minute","scopes"]},
+    input: z.looseObject({ "agent_name": z.string().nullable().optional(), "expires_in_days": z.number().int().optional(), "kind": z.enum(["cli", "agent", "ci", "integration"]).optional(), "name": z.string(), "rate_limit_per_minute": z.number().int().nullable().optional(), "resource_ids": z.array(z.string()).nullable().describe("Limit the token to these resources, for example the id of one saved report for a BI tool: it can then call only the endpoints that name one of them").optional(), "scopes": z.array(z.string()).describe("Scopes or @presets (read-only, author, admin, learner, ci)") }),
+    request: {"method":"POST","path":"/api/auth/tokens","pathParams":[],"queryParams":[],"bodyMode":"json","bodyFields":["agent_name","expires_in_days","kind","name","rate_limit_per_minute","resource_ids","scopes"]},
   }),
   httpCommand({
     id: "tokens.current",

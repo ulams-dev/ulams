@@ -124,4 +124,13 @@ return [
      * check has failed
      */
     'json_results_failure_status' => 500,
+
+    /*
+     * Ulams: a stale scheduler or queue heartbeat fails /api/health only when true. Keep it off on the
+     * probes of web pods; the check and ulams_heartbeat_age_seconds still show a dead worker.
+     */
+    'require_heartbeats' => filter_var(env('HEALTH_REQUIRE_HEARTBEATS', false), FILTER_VALIDATE_BOOLEAN),
+
+    // HorizonCheck, for installs where Horizon supervises the workers
+    'check_horizon' => filter_var(env('HEALTH_CHECK_HORIZON', false), FILTER_VALIDATE_BOOLEAN),
 ];

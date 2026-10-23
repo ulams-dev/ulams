@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "2f19cd93b0f0c8517eebcd34aa76aa9ef132a060",
+  "include-v-in-tag": true,
+  "bump-minor-pre-major": true,
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "package-name": "ulams",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": [
+        { "type": "json", "path": "front/cli/package.json", "jsonpath": "$.version" },
+        { "type": "generic", "path": "front/cli/src/cli/run.ts" }
+      ]
+    }
+  }
+}

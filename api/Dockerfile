@@ -35,6 +35,8 @@ RUN sh packages/code-exercises/bin/fetch-esbuild.sh
 RUN rm -f bootstrap/cache/*.php
 # init.sh builds the config/route/event/view caches per domain at start (php-profile.sh)
 ENV ULAMS_OPTIMIZE=true
+# one JSON object per line on stderr (docs/operators/monitoring); a bare checkout keeps the file channel
+ENV LOG_CHANNEL=stderr_json
 
 CMD /var/www/html/init.sh
 

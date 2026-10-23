@@ -196,7 +196,12 @@ return [
     // report builder: datasets, queries, saved reports (the prefix avoids the legacy api/admin/reports* routes)
     // a preview reads data through a POST, so it is a read for a reports:read token
     ['api/admin/reporting/query', 'reports', ['level' => 'read']],
+    // a token limited to one saved report may read that report and run it, nothing else of the builder
+    ['api/admin/reporting/saved/*/run', 'reports', ['methods' => ['GET'], 'resource' => ['param' => 'id']]],
+    ['api/admin/reporting/saved/*', 'reports', ['methods' => ['GET'], 'resource' => ['param' => 'id']]],
     ['api/admin/reporting*', 'reports'],
+    // the read-only OData feed of a saved report (BI tools): reports:read; a limited token names its report in the entity set
+    ['api/reporting/odata*', 'reports', ['resource' => ['param' => 'entity', 'prefix' => 'Report_', 'optional' => true]]],
     ['api/admin/stats*', 'reports'],
     ['api/admin/questionnaire*', 'reports'],
     ['api/admin/tasks*', 'reports'],

@@ -1153,10 +1153,19 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       RB-3 done: `saved_reports`, `GET|POST|PUT|DELETE /api/admin/reporting/saved`, sharing with tenant roles (the viewer's own
       permissions and scope on every run), `needs_repair`, `.../saved/{id}/run` as json, csv or jsonl with the exports recorded
       in `compliance_exports`; XLSX is not built yet (needs `maatwebsite/excel` streaming, planned with RB-5);
-      RB-4 (admin screen), RB-5 (schedules for saved reports), RB-7 (curated CLI and MCP set) pending)
+      RB-4 done: admin Analytics > Report builder (build, preview, withheld groups explained, save and share with roles, open, export
+      CSV and JSON lines, delete) in en, pl and zh with axe and keyboard browser tests; RB-5 done: a schedule can send a saved report
+      (`compliance_report_schedules.saved_report_id`), run once per recipient with their own permissions in one queued job each,
+      skipped recipients reported to the owner, XLSX through a streaming writer on `ext-zip` (no new dependency);
+      RB-6 done: read-only OData v4 feed per saved report (service document, `$metadata` with Capabilities annotations, entity sets with
+      `$select`, `$top`, `$skip`, `$count`, 5 000 rows a page, 501 for `$filter` and the rest), Basic or Bearer `reports:read` token limited
+      to one report through `api_token_meta.resource_ids`, 60 requests a minute, every read logged; not yet checked by hand in Excel or
+      Power BI; RB-7 (curated CLI and MCP set) pending)
 - [ ] (new) BI connector: read-only OData v4 feed per saved report for Excel, Power BI and Tableau, with a `reports:read`
       token that can be limited to one report; CSV and JSON lines URLs with recipes for Looker Studio, Metabase and
-      Superset (plan `authoring-metric-and-report-builder.md` RB-6)
+      Superset (plan `authoring-metric-and-report-builder.md` RB-6) (partial: RB-6 built: feed, limited
+      tokens and the setup guides `admin/bi-connectors` for Excel, Power BI, Tableau, Looker Studio, Metabase and Superset; the feed is covered by the
+      platform's own tests only, a manual check in Excel and Power BI Desktop is still open)
 
 ### 6.6 Skills and competencies
 - [x] Competency framework; AI-suggested tags confirmed by author (`api/packages/compliance`, #286)
@@ -1317,8 +1326,8 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       MyDevil/VPS pages that mention images now point to it. Describes IMG-3 (#427), IMG-4 (#469), IMG-5 (#472) and IMG-6b (#470), all merged
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
-- [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI (partial: `ulams stack backup` / `stack restore` for Docker and Kubernetes launcher installs, with a nightly backup, wipe and restore of a real Docker stack in `nightly-ops.yml`, and SeaweedFS buckets in the VPS local-trial backup, are done in P8-6, plan phase-8-self-hosting.md; stable/LTS release channels are the second P8-6 PR; the migration safety check waits for P8-5)
-- [ ] Health checks, Prometheus metrics, structured logs, zero-downtime guidance
+- [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI (partial: `ulams stack backup` / `stack restore` for Docker and Kubernetes launcher installs, with a nightly backup, wipe and restore of a real Docker stack in `nightly-ops.yml`, and SeaweedFS buckets in the VPS local-trial backup, are done in P8-6 (#497), plan phase-8-self-hosting.md; release channels are done in #498: release-please release pull requests with `CHANGELOG.md`, one `vX.Y.Z` for images and CLI, `stable` and `lts` image tags, supported versions in `SECURITY.md`, switched off until the owner sets `RELEASE_PLEASE` and picks the first version, owner issue #499; the migration safety check waits for P8-5)
+- [ ] Health checks, Prometheus metrics, structured logs, zero-downtime guidance (partial: probes, Prometheus metrics for API, queue, Caddy, H5P and PDF, and JSON logs with a request id are done in P8-4, plan phase-8-self-hosting.md; zero-downtime guidance waits for the Helm chart, P8-5)
 - [ ] SBOM, signed images, CVE scanning, hardening guide, ISO 27001 / GDPR audit docs
       Note 2026-10-22 (P8-2, #367): partial. Merged: Trivy on pull requests, in CI images and nightly against the published images (opens or updates one `security`
       issue; `.trivyignore.yaml` with a checked expiry), keyless cosign signing and verification of every digest and an SBOM attestation in `publish.yml`, SPDX SBOMs

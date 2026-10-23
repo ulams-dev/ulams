@@ -24,6 +24,11 @@ class RejectUnknownHost
             return $next($request);
         }
 
+        // liveness touches no tenant data, so any Host may ask (an orchestrator probes by pod address)
+        if ($request->is('up')) {
+            return $next($request);
+        }
+
         $host = self::hostOf($request);
         if ($this->isKnown($host)) {
             return $next($request);

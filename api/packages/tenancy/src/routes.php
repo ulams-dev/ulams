@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Ulams\Tenancy\Http\Controllers\MetricsController;
 use Ulams\Tenancy\Http\Controllers\PlatformOperationController;
 use Ulams\Tenancy\Http\Controllers\PlatformTemplateController;
 use Ulams\Tenancy\Http\Controllers\PlatformTenantController;
@@ -25,3 +26,6 @@ Route::group([
     Route::get('operations', [PlatformOperationController::class, 'index']);
     Route::get('operations/{id}', [PlatformOperationController::class, 'show'])->where('id', '[0-9a-z]{26}');
 });
+
+// Prometheus scrape endpoint: platform host, private network or bearer token (METRICS_ALLOWED_CIDRS, METRICS_TOKEN).
+Route::get('metrics', MetricsController::class);

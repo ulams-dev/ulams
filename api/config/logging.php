@@ -1,5 +1,6 @@
 <?php
 
+use Monolog\Formatter\JsonFormatter;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
 
@@ -76,6 +77,21 @@ return [
             'handler' => StreamHandler::class,
             'level' => env('LOG_LEVEL', env('APP_LOG_LEVEL', 'debug')),
             'formatter' => env('LOG_STDERR_FORMATTER'),
+            'with' => [
+                'stream' => 'php://stderr',
+            ],
+        ],
+
+        // One JSON object per line on stderr, for container logs: the images, the launcher, the VPS compose and the
+        // chart set LOG_CHANNEL=stderr_json. `extra` carries request_id (also in queued jobs), tenant, host, route and
+        // user_id (docs/operators/monitoring).
+        'stderr_json' => [
+            'driver' => 'monolog',
+            'handler' => StreamHandler::class,
+            'level' => env('LOG_LEVEL', env('APP_LOG_LEVEL', 'debug')),
+            'formatter' => JsonFormatter::class,
+            'formatter_with' => ['appendNewline' => true],
+            'processors' => [\Ulams\Core\Observability\ContextProcessor::class],
             'with' => [
                 'stream' => 'php://stderr',
             ],

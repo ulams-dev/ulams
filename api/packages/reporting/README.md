@@ -2,8 +2,8 @@
 
 The foundation of the report builder (ADR 0194, plan `docs/plans/authoring-metric-and-report-builder.md`). This
 release has the **dataset registry** (RB-1), the **report definition, query compiler and preview with small-group
-suppression** (RB-2) and **saved reports shared with roles** (RB-3); the admin screen, schedules for saved reports and
-the OData feed follow in RB-4 to RB-7.
+suppression** (RB-2) and **saved reports shared with roles** (RB-3), the **admin screen** (RB-4), **schedules and XLSX** (RB-5) and the **OData feed** (RB-6); the curated CLI
+and MCP set follows in RB-7.
 
 - `Contracts\ReportDataset`: a set of rows a report can be built on: `key()`, `label()`, `columns()` (typed
   `Support\Column` with filter operators, `groupable`, `aggregatable`, `personal`), `dateColumns()`, `permission()`,
@@ -15,6 +15,16 @@ the OData feed follow in RB-4 to RB-7.
   missing is not offered.
 - `GET /api/admin/reporting/datasets` (permission `reporting_read`: admin and tutor) lists the datasets the caller holds
   the dataset permission for, with every column. Token area `reports`.
+- `Export\XlsxWriter` writes one-sheet XLSX files as a stream with `ext-zip` and `XMLWriter` (no new dependency;
+  PhpSpreadsheet keeps every cell in memory), and `ReportExporter` offers it as `xlsx`.
+- `compliance` schedules a saved report (`compliance_report_schedules.saved_report_id`): `SendSavedReportToRecipient` runs
+  the report once per recipient with their own permissions; skipped recipients are reported to the schedule's owner.
+- `OData\Csdl`, `OData\QueryOptions` and `Http\Controllers\ODataController`: the read-only OData v4 feed of a saved report whose
+  `feed_enabled` is on (`api/reporting/odata`, `$metadata`, `Report_{id}`). Only `$select`, `$top`, `$skip`, `$count` and
+  `$format=json`; the rest answers 501. 5 000 rows a page, 60 requests a minute per token, every request logged as an export of
+  channel `feed`. Auth is a `reports:read` token as Bearer or as the password of HTTP Basic (`StripTokenPrefix` in `auth`); a token
+  limited to a report (`api_token_meta.resource_ids`, enforced by `EnforceTokenScopes` through the `resource` option of
+  `token-scopes.php`) reads only that report.
 - Permissions: `reporting_read`, `reporting_ai_usage` (admin). `ReportingPermissionSeeder` runs with `PermissionsSeeder`.
 
 - `resources/schemas/report-definition/v1.json` is the shape of a report definition; `Definition\DefinitionValidator`

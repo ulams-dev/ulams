@@ -1,0 +1,33 @@
+# Sample Prometheus scrape config for an ulams stack (docs: Operators, "Monitoring and logs").
+# Every target is on the Docker/Kubernetes network; none of them is published.
+global:
+  scrape_interval: 30s
+
+scrape_configs:
+  # Caddy: requests, latency and status per upstream
+  - job_name: caddy
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["caddy:9180"]
+
+  # Platform API gauges: queues, failed jobs, heartbeats, tenants, AI usage.
+  # Served to private addresses; with METRICS_TOKEN set, send it as a bearer token.
+  - job_name: ulams-api
+    metrics_path: /php-metrics
+    static_configs:
+      - targets: ["caddy:9180"]
+    # authorization:
+    #   credentials_file: /etc/prometheus/ulams-metrics-token
+
+  - job_name: ulams-h5p
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["h5p:8080"]
+
+  - job_name: ulams-pdf
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["pdf:3000"]
+
+rule_files:
+  - alerts.yml

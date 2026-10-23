@@ -581,6 +581,14 @@
       "nullable": true,
       "type": "integer"
      },
+     "resource_ids": {
+      "description": "The resources (saved report ids) the token is limited to; null: not limited",
+      "items": {
+       "type": "string"
+      },
+      "nullable": true,
+      "type": "array"
+     },
      "revoked": {
       "type": "boolean"
      },
@@ -9431,7 +9439,7 @@
   },
   "/api/admin/compliance/schedules": {
    "get": {
-    "description": "Scheduled reports: a compliance dataset e-mailed as CSV or JSON lines every day, week or month to\ntenant users. Permission `compliance_report`.",
+    "description": "Scheduled reports: a compliance dataset, or a saved report of the report builder, e-mailed as CSV, JSON lines or (saved\nreports) XLSX every day, week or month to tenant users. A saved report runs once per recipient with that recipient's own\npermissions. Permission `compliance_report`.",
     "operationId": "admin.compliance.schedules.get",
     "responses": {
      "200": {
@@ -9466,6 +9474,7 @@
        "schema": {
         "properties": {
          "dataset": {
+          "description": "A compliance dataset; give this or saved_report_id",
           "enum": [
            "assignments",
            "certificates",
@@ -9474,13 +9483,15 @@
           "type": "string"
          },
          "filters": {
-          "description": "course_id, user_id, status, from, to",
+          "description": "course_id, user_id, status, from, to (datasets only)",
           "type": "object"
          },
          "format": {
+          "description": "xlsx only for a saved report",
           "enum": [
            "csv",
-           "jsonl"
+           "jsonl",
+           "xlsx"
           ],
           "type": "string"
          },
@@ -9501,11 +9512,14 @@
            "type": "integer"
           },
           "type": "array"
+         },
+         "saved_report_id": {
+          "description": "A saved report the caller can see (report builder); it runs once per recipient with the recipient's own permissions",
+          "type": "string"
          }
         },
         "required": [
          "name",
-         "dataset",
          "frequency",
          "recipient_ids"
         ],
@@ -25231,7 +25245,7 @@
     ]
    },
    "put": {
-    "description": "Only the owner (who holds reporting_create) or an administrator with reporting_manage. Any of name, description, visibility, shared_roles and definition.",
+    "description": "Only the owner (who holds reporting_create) or an administrator with reporting_manage. Any of name, description, visibility, shared_roles, definition and feed_enabled (the OData feed for BI tools; reporting_manage only).",
     "operationId": "admin.reporting.reports.by-id.put",
     "parameters": [
      {
@@ -25253,6 +25267,10 @@
          },
          "description": {
           "type": "string"
+         },
+         "feed_enabled": {
+          "description": "Offer the report as a read-only OData feed (needs reporting_manage)",
+          "type": "boolean"
          },
          "name": {
           "type": "string"
@@ -25311,7 +25329,7 @@
   },
   "/api/admin/reporting/saved/{id}/run": {
    "get": {
-    "description": "Runs the report with the caller's own permissions and scope. format=json (default) answers like the query endpoint (500 rows and the total); csv and jsonl stream every row up to 1 000 000 and are recorded as exports. Groups of fewer learners than the threshold are withheld in every format. 403 when the caller lacks the permission of the dataset, 409 when the report needs repair.",
+    "description": "Runs the report with the caller's own permissions and scope. format=json (default) answers like the query endpoint (500 rows and the total); csv, jsonl and xlsx stream every row up to 1 000 000 (an XLSX sheet holds 1 048 575) and are recorded as exports. Groups of fewer learners than the threshold are withheld in every format. 403 when the caller lacks the permission of the dataset, 409 when the report needs repair.",
     "operationId": "admin.reporting.reports.by-id.run",
     "parameters": [
      {
@@ -25330,7 +25348,8 @@
        "enum": [
         "json",
         "csv",
-        "jsonl"
+        "jsonl",
+        "xlsx"
        ],
        "type": "string"
       }
@@ -25345,7 +25364,7 @@
         }
        }
       },
-      "description": "json: columns, rows and meta; csv and jsonl: a file"
+      "description": "json: columns, rows and meta; csv, jsonl and xlsx: a file"
      },
      "403": {
       "description": "Forbidden"
@@ -33832,6 +33851,14 @@
          "rate_limit_per_minute": {
           "nullable": true,
           "type": "integer"
+         },
+         "resource_ids": {
+          "description": "Limit the token to these resources, for example the id of one saved report for a BI tool: it can then call only the endpoints that name one of them",
+          "items": {
+           "type": "string"
+          },
+          "nullable": true,
+          "type": "array"
          },
          "scopes": {
           "description": "Scopes or @presets (read-only, author, admin, learner, ci)",
@@ -44346,6 +44373,186 @@
     "summary": "Finish quiz attempt",
     "tags": [
      "Gift Quiz Attempt"
+    ]
+   }
+  },
+  "/api/reporting/odata": {
+   "get": {
+    "description": "OData v4 service document: one entity set Report_{id} per saved report whose feed is on and that the token's user may see (a token limited to one report lists only that one). Auth: a reports:read access token as Bearer, or as the password of HTTP Basic (the user name is ignored), which is how Excel and Power BI send it.",
+    "operationId": "reporting.odata.service.get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "@odata.context": {
+           "type": "string"
+          },
+          "value": {
+           "items": {
+            "properties": {
+             "kind": {
+              "type": "string"
+             },
+             "name": {
+              "type": "string"
+             },
+             "url": {
+              "type": "string"
+             }
+            },
+            "type": "object"
+           },
+           "type": "array"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The entity sets"
+     },
+     "401": {
+      "description": "No or invalid token (with a Basic challenge)"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "OData service document",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
+  "/api/reporting/odata/$metadata": {
+   "get": {
+    "description": "The CSDL (XML) of the feed: one entity type per report with a RowNumber key and a property per output column, typed. Capabilities annotations say that only $select, $top, $skip and $count are supported.",
+    "operationId": "reporting.odata.metadata.get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/xml": {
+        "schema": {
+         "type": "string"
+        }
+       }
+      },
+      "description": "CSDL XML"
+     },
+     "401": {
+      "description": "No or invalid token"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "OData metadata document",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
+  "/api/reporting/odata/{entity}": {
+   "get": {
+    "description": "The rows of the saved report named Report_{id}, 5 000 per page with @odata.nextLink. Supports $select, $top, $skip, $count=true and $format=json. $filter, $orderby, $apply, $expand and the other options answer 501: the saved report is the filter, the grouping and the order. Groups of fewer learners than the threshold are withheld (a row with Withheld true), as in every other output. Each request is recorded as an export of channel feed.",
+    "operationId": "reporting.odata.entity-set.get",
+    "parameters": [
+     {
+      "description": "Report_ followed by the id of the saved report",
+      "in": "path",
+      "name": "entity",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "$select",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "$top",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "$skip",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "$count",
+      "schema": {
+       "type": "boolean"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "@odata.context": {
+           "type": "string"
+          },
+          "@odata.count": {
+           "type": "integer"
+          },
+          "@odata.nextLink": {
+           "type": "string"
+          },
+          "value": {
+           "items": {
+            "type": "object"
+           },
+           "type": "array"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "OData JSON: @odata.context, value, optional @odata.count and @odata.nextLink"
+     },
+     "401": {
+      "description": "No or invalid token"
+     },
+     "403": {
+      "description": "The token's user may not run this report, or the token is limited to another report"
+     },
+     "404": {
+      "description": "No such feed"
+     },
+     "409": {
+      "description": "The report needs repair"
+     },
+     "501": {
+      "description": "An unsupported query option"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Rows of a saved report as an OData entity set",
+    "tags": [
+     "Reporting"
     ]
    }
   },
