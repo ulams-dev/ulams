@@ -193,9 +193,9 @@ test("the FAQ page lists every question once, in every language, with one FAQPag
   for (const path of ["/faq/", "/pl/faq/", "/zh/faq/"]) {
     await page.goto(`${base}${path}`);
     await expect(page.locator("h1")).toHaveCount(1);
-    await expect(page.locator(".u-faq__item")).toHaveCount(32);
+    await expect(page.locator(".u-faq__item")).toHaveCount(39);
     await expect(page.locator(".u-faq details")).toHaveCount(0);
-    await expect(page.locator(".u-faq h3")).toHaveCount(32);
+    await expect(page.locator(".u-faq h3")).toHaveCount(39);
     const ld = await page.locator('script[type="application/ld+json"]').allTextContents();
     expect(ld.filter((json) => json.includes('"FAQPage"'))).toHaveLength(1);
     await expect(page.locator('footer a[aria-current="page"], footer a').filter({ hasText: "FAQ" })).toHaveAttribute("href", path);

@@ -6,11 +6,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Ulams\LivingCourse\Connectors\ConnectorException;
+use Ulams\LivingCourse\Connectors\Git\PushChange;
 use Ulams\LivingCourse\Connectors\OAuthConnector;
 use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
 use Ulams\LivingCourse\Http\Controllers\Concerns\ResolvesLivingCourse;
 use Ulams\LivingCourse\Jobs\CheckSourceJob;
 use Ulams\LivingCourse\Oauth\OAuthService;
+use Ulams\LivingCourse\Services\ChangeNote;
 use Ulams\LivingCourse\Services\SourceConnections;
 use Ulams\LivingCourse\Support\Presenter;
 
@@ -23,7 +25,9 @@ use Ulams\LivingCourse\Support\Presenter;
  *     @OA\RequestBody(@OA\JsonContent(@OA\Property(property="connector", type="string"), @OA\Property(property="config", type="object"), @OA\Property(property="secrets", type="object"), @OA\Property(property="schedule", type="string"))),
  *     @OA\Response(response=201, description="connection, source and the webhook secret (shown once)", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=422, description="settings refused by the connector"))
  * @OA\Post(path="/api/admin/living-course/connections/{connection}/check", operationId="admin.living-course.connections.by-connection.check.post", summary="Check the source now", tags={"Admin Living Course"}, security={{"passport": {}}},
- *     @OA\Parameter(name="connection", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=202, description="queued", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=409, description="nothing to check"))
+ *     @OA\Parameter(name="connection", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\RequestBody(required=false, @OA\JsonContent(@OA\Property(property="commit", type="string", description="the commit a CI job runs for (7 to 64 hex characters); recorded on the new revision"))),
+ *     @OA\Response(response=202, description="queued", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=409, description="nothing to check"), @OA\Response(response=422, description="not a commit id"))
  * @OA\Post(path="/api/admin/living-course/connections/{connection}/webhook-secret", operationId="admin.living-course.connections.by-connection.webhook-secret.post", summary="Rotate the webhook secret (returned once)", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="connection", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="the new secret", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")))
  */
@@ -73,6 +77,11 @@ class ConnectController extends Controller
         }
         if ($c->status === 'paused') {
             return self::fail('This source is paused. Resume it before checking.', 409);
+        }
+        $data = $request->validate(['commit' => ['nullable', 'string', 'regex:/^[0-9a-f]{7,64}$/i']]);
+        if (($data['commit'] ?? null) !== null) {
+            // a CI job on the merge commit: the revision records which commit set the check off
+            ChangeNote::put($c->id, PushChange::fromCommit($data['commit']));
         }
         CheckSourceJob::dispatchFor($c->id, 'manual', (int) $request->user()->getKey());
 

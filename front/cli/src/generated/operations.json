@@ -55,6 +55,18 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/authoring-metrics/courses",
+  "summary": "Authoring metric of courses",
+  "tag": "Authoring metrics"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/authoring-metrics/courses/{course}",
+  "summary": "Authoring metric of one course",
+  "tag": "Authoring metrics"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/bookmarks",
   "summary": "Get a listing of the bookmarks",
   "tag": "Admin Bookmarks"
@@ -1894,6 +1906,18 @@
   "path": "/api/admin/quiz-attempts/export",
   "summary": "Export course quiz results to an XLSX or XLS file",
   "tag": "Admin Gift Quiz Attempt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/reporting/datasets",
+  "summary": "Datasets a report can be built on",
+  "tag": "Reporting"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/reporting/query",
+  "summary": "Preview a report definition",
+  "tag": "Reporting"
  },
  {
   "method": "GET",

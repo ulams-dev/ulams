@@ -47,11 +47,17 @@ describe("FAQ page", () => {
     }
   });
 
+  it("answers the recent topics: AI diffs, variants, versions, measured numbers, storage, Git, single sign-on", () => {
+    const answers = en.sections.flatMap(s => s.items).map(item => `${item.q} ${item.a}`).join("\n");
+    for (const word of ["variant", "release", "7 min 44 s", "USD 0.1973", "SeaweedFS", "SAML 2.0", "Google Drive", "Notion", "speed-up ratio"]) expect(answers).toContain(word);
+    expect(answers).not.toMatch(/times faster/i);
+  });
+
   for (const locale of ["en", "pl", "zh"] as const) {
     it(`${locale}: unique questions, a valid document and one FAQPage with every question`, () => {
       const content = faqContent(locale)!;
       const all = content.sections.flatMap(s => s.items);
-      expect(all).toHaveLength(32);
+      expect(all).toHaveLength(39);
       expect(new Set(all.map(item => item.q)).size).toBe(all.length);
       const request = new Request(`https://ulams.app${publicPagePath(locale, "faq")}`);
       const page = faqPage(locale, request, new URL(request.url))!;

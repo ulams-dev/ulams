@@ -86,12 +86,12 @@ describe("impact-page diagrams: copy", () => {
     expect(reportingDiagrams("en").dashboard.badge).toBe("Illustration, not live data");
   });
 
-  it("planned features stay planned: the variants and the report builder and BI connector", () => {
+  it("planned features stay planned: learner routing to a variant, the report builder and the BI connector", () => {
     for (const locale of LOCALES) {
       const coming = impactCopy("reporting", locale).coming.map((i) => i.title);
       const flow = reportingDiagrams(locale).flow.columns.flatMap((c) => c.coming ?? []);
       expect(flow).toEqual([coming[0], coming[1]]);
-      expect(costDiagrams(locale).audiences.badge).toBe(["Coming", "Wkrótce", "即将推出"][LOCALES.indexOf(locale)]);
+      expect(costDiagrams(locale).audiences.badge).toBe(["Available, routing coming", "Dostępne, kierowanie wkrótce", "已可用,分配即将推出"][LOCALES.indexOf(locale)]);
     }
   });
 });

@@ -279,6 +279,10 @@
             "area": "builder"
         },
         {
+            "pattern": "api/admin/authoring-metrics*",
+            "area": "builder"
+        },
+        {
             "pattern": "api/admin/living-course*",
             "area": "living-course"
         },
@@ -558,6 +562,14 @@
             "area": "certificates"
         },
         {
+            "pattern": "api/admin/compliance/report*",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/compliance/schedules*",
+            "area": "reports"
+        },
+        {
             "pattern": "api/admin/compliance*",
             "area": "certificates"
         },
@@ -591,6 +603,17 @@
         },
         {
             "pattern": "api/admin/reports*",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/reporting/query",
+            "area": "reports",
+            "options": {
+                "level": "read"
+            }
+        },
+        {
+            "pattern": "api/admin/reporting*",
             "area": "reports"
         },
         {
