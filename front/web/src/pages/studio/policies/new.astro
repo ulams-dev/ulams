@@ -1,0 +1,10 @@
+---
+import PoliciesShell from "../../../components/PoliciesShell.astro";
+import { pickPoliciesLocale, POLICIES_STRINGS } from "../../../studio/policies-i18n.ts";
+
+if (!Astro.locals.tenant) return Astro.redirect("/tenants");
+const locale = pickPoliciesLocale(Astro.url.searchParams.get("lang"), Astro.request.headers.get("accept-language"));
+const t = POLICIES_STRINGS[locale];
+---
+
+<PoliciesShell title={`${t.create.pageTitle} · Course Builder`} heading={t.create.heading} intro={t.create.intro} locale={locale} view="create" />

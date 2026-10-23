@@ -19,7 +19,7 @@ use Ulams\TemplatesPdf\Models\FabricPDF;
  */
 class CompletionService
 {
-    public function __construct(private NotificationLog $log, private CourseSettings $settings, private ManagerService $managers)
+    public function __construct(private NotificationLog $log, private CourseSettings $settings, private ManagerService $managers, private ?FamilyCourses $families = null)
     {
     }
 
@@ -31,12 +31,14 @@ class CompletionService
             return;
         }
 
-        Assignment::query()->open()->where('user_id', $user->getKey())->where('course_id', $course->getKey())->get()
+        // an obligation on a course with variants is fulfilled by finishing any variant (or the pinned one), ADR 0192
+        $courseIds = $this->families?->fulfilledBy($course->getKey()) ?? [$course->getKey()];
+        Assignment::query()->open()->where('user_id', $user->getKey())->whereIn('course_id', $courseIds)->get()
             ->each(function (Assignment $assignment) use ($user, $course) {
                 $certificate = FabricPDF::query()
                     ->where('user_id', $assignment->user_id)
                     ->where('assignable_type', Course::class)
-                    ->where('assignable_id', $assignment->course_id)
+                    ->where('assignable_id', $course->getKey())
                     ->where('created_at', '>=', $assignment->assigned_at)
                     ->latest('id')
                     ->first();
@@ -85,7 +87,7 @@ class CompletionService
 
         $assignment = Assignment::query()
             ->where('user_id', $certificate->user_id)
-            ->where('course_id', $certificate->assignable_id)
+            ->whereIn('course_id', $this->families?->fulfilledBy((int) $certificate->assignable_id) ?? [$certificate->assignable_id])
             ->whereNull('certificate_id')
             ->whereIn('status', [AssignmentStatus::ASSIGNED, AssignmentStatus::COMPLETED])
             ->where('assigned_at', '<=', $certificate->created_at)

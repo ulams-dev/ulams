@@ -31,6 +31,7 @@ env:
     commerce=cart,commerce,entitlements,vouchers,payments,invoices,consultations,consultation-access,webinar,youtube,jitsi,assign-without-account
     platform=Integrations,auth,identity,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,ai,webhooks
     content=compliance,reporting,templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
+    policy=policy-lifecycle
 
 jobs:
   changes:
@@ -232,7 +233,8 @@ jobs:
     needs: changes
     if: needs.changes.outputs.js == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # about 6 min of install on a cache miss plus 9-10 min of specs
+    timeout-minutes: 25
     env:
       HUSKY: "0"
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
@@ -342,7 +344,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.demo == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       HUSKY: "0"
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
@@ -375,7 +377,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [learning, living, tasks-topics, gift-reports, commerce, platform, content]
+        shard: [learning, living, tasks-topics, gift-reports, commerce, platform, content, policy]
     defaults:
       run:
         working-directory: api

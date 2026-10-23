@@ -14,6 +14,7 @@ use Ulams\LivingCourse\Models\Connection;
 use Ulams\LivingCourse\Models\LearnerNotice;
 use Ulams\LivingCourse\Models\Proposal;
 use Ulams\LivingCourse\Models\ProposalItem;
+use Ulams\LivingCourse\Support\ProposalBranch;
 use Ulams\TopicTypeGift\Models\GiftQuiz;
 use Ulams\TopicTypeGift\Models\QuizAttempt;
 
@@ -34,14 +35,15 @@ final class ProgressRules
     /** What an update does for learners: notice specs with the learners they reach. @return array<int,array{kind:string,topicId:int,questionId:int,users:Builder,label:?string}> */
     public function specs(Proposal $proposal, array $statuses = ['accepted']): array
     {
-        $session = Session::withTrashed()->findOrFail($proposal->session_id);
+        $branch = ProposalBranch::of($proposal);
+        $courseId = $branch->courseId();
         $base = Version::query()->find($proposal->base_version_id);
-        if ($session->course_id === null || $base === null) {
+        if ($courseId === null || $base === null) {
             return [];
         }
         $doc = $base->document;
         $specs = [];
-        $map = fn (string $element, array $types) => EntityMapEntry::query()->where('session_id', $session->id)->where('element_id', $element)->whereIn('entity_type', $types)->value('entity_id');
+        $map = fn (string $element, array $types) => $branch->entries()->where('element_id', $element)->whereIn('entity_type', $types)->value('entity_id');
         $items = ProposalItem::query()->where('proposal_id', $proposal->id)->whereIn('status', $statuses)->where('kind', 'update')->get();
 
         $updatedTopics = [];
@@ -83,11 +85,11 @@ final class ProgressRules
 
         if ($proposal->applied_at !== null || $proposal->status === 'applying' || $proposal->status === 'applied') {
             $since = $proposal->decided_at ?? $proposal->created_at;
-            foreach (EntityMapEntry::query()->where('session_id', $session->id)->whereIn('entity_type', ['topic', 'quiz_topic'])->whereNotNull('retired_at')->where('retired_at', '>=', $since)->get() as $entry) {
+            foreach ($branch->entries()->whereIn('entity_type', ['topic', 'quiz_topic'])->whereNotNull('retired_at')->where('retired_at', '>=', $since)->get() as $entry) {
                 $specs[] = ['kind' => 'topic_retired', 'topicId' => (int) $entry->entity_id, 'questionId' => 0, 'users' => $this->completed((int) $entry->entity_id), 'label' => Topic::query()->whereKey($entry->entity_id)->value('title')];
             }
-            foreach (EntityMapEntry::query()->where('session_id', $session->id)->whereIn('entity_type', ['topic', 'quiz_topic'])->where('added_by_proposal_id', $proposal->id)->get() as $entry) {
-                $specs[] = ['kind' => 'course_extended', 'topicId' => (int) $entry->entity_id, 'questionId' => 0, 'users' => $this->finishedCourse((int) $session->course_id), 'label' => Topic::query()->whereKey($entry->entity_id)->value('title')];
+            foreach ($branch->entries()->whereIn('entity_type', ['topic', 'quiz_topic'])->where('added_by_proposal_id', $proposal->id)->get() as $entry) {
+                $specs[] = ['kind' => 'course_extended', 'topicId' => (int) $entry->entity_id, 'questionId' => 0, 'users' => $this->finishedCourse($courseId), 'label' => Topic::query()->whereKey($entry->entity_id)->value('title')];
             }
         }
 
@@ -130,6 +132,7 @@ final class ProgressRules
     public function run(Proposal $proposal): array
     {
         $session = Session::withTrashed()->findOrFail($proposal->session_id);
+        $courseId = ProposalBranch::of($proposal)->courseId();
         $connection = Connection::query()->where('source_id', $proposal->source_id)->first();
         $inform = (bool) ($connection?->setting('notify_learners_of_updates', true) ?? true);
         $note = $this->note($proposal);
@@ -144,11 +147,11 @@ final class ProgressRules
                 'course_extended' => 'New since you finished: ' . ($spec['label'] ?? 'a new lesson') . '.',
                 default => $note !== '' ? $note : 'This lesson was updated after you started it.',
             };
-            $spec['users']->orderBy('user_id')->select('user_id')->distinct()->chunk(500, function ($users) use ($spec, $proposal, $session, $message, &$created) {
+            $spec['users']->orderBy('user_id')->select('user_id')->distinct()->chunk(500, function ($users) use ($spec, $proposal, $courseId, $message, &$created) {
                 $rows = [];
                 foreach ($users as $u) {
                     $rows[] = [
-                        'user_id' => $u->user_id, 'course_id' => $session->course_id, 'topic_id' => $spec['topicId'], 'gift_question_id' => $spec['questionId'],
+                        'user_id' => $u->user_id, 'course_id' => $courseId, 'topic_id' => $spec['topicId'], 'gift_question_id' => $spec['questionId'],
                         'kind' => $spec['kind'], 'proposal_id' => $proposal->id, 'message' => $message, 'status' => 'open', 'created_at' => now(),
                     ];
                 }

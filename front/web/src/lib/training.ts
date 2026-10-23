@@ -1,6 +1,8 @@
 import {
   createCertificateClient,
   createComplianceClient,
+  createMyPolicyChangesClient,
+  type MyPolicyChange,
   type Assignment,
   type AssignmentStatus,
   type Certificate,
@@ -32,18 +34,21 @@ export interface TrainingData {
   paths: PathEnrollment[] | null;
   certificates: Certificate[] | null;
   skills: Skill[] | null;
+  /** Why some assignments exist: an approved policy change gave the training again. Empty when none, null on failure. */
+  policyChanges: MyPolicyChange[] | null;
 }
 
 export async function loadTraining(tenant: Tenant, token: string): Promise<TrainingData> {
   const compliance = createComplianceClient(options(tenant, token));
   const certificates = createCertificateClient(options(tenant, token));
-  const [assignments, paths, certs, skills] = await Promise.all([
+  const [assignments, paths, certs, skills, policyChanges] = await Promise.all([
     settle(compliance.myAssignments()),
     settle(compliance.myPaths()),
     settle(certificates.list()),
     settle(compliance.mySkills()),
+    settle(createMyPolicyChangesClient(options(tenant, token)).mine()),
   ]);
-  return { assignments, paths, certificates: certs ? certs.items : null, skills };
+  return { assignments, paths, certificates: certs ? certs.items : null, skills, policyChanges };
 }
 
 export const loadSkills = (tenant: Tenant, token: string): Promise<Skill[] | null> => settle(createComplianceClient(options(tenant, token)).mySkills());
@@ -87,12 +92,14 @@ export interface AssignmentRow {
   completedText: string;
   action: { label: string; href: string } | null;
   certificate: { href: string; label: string } | null;
+  /** Set when an approved policy change gave this training again: what happened and what changed. */
+  policy: { text: string; summary: string | null } | null;
 }
 
 const RANK: Record<AssignmentRow["state"], number> = { overdue: 0, dueSoon: 1, assigned: 2, completed: 3, cancelled: 4 };
 
 /** One assignment in words. `percent` maps a course to the learner's completion, to tell Start from Continue. */
-export function assignmentRow(a: Assignment, locale: TrainingLocale, now: Date, percent: Map<number, number> = new Map()): AssignmentRow {
+export function assignmentRow(a: Assignment, locale: TrainingLocale, now: Date, percent: Map<number, number> = new Map(), change: MyPolicyChange | null = null): AssignmentRow {
   const t = trainingStrings(locale);
   const due = a.due_at ? new Date(a.due_at) : null;
   const validDue = due && !Number.isNaN(due.getTime()) ? due : null;
@@ -126,6 +133,7 @@ export function assignmentRow(a: Assignment, locale: TrainingLocale, now: Date, 
     completedText: a.completed_at ? fill(t.completedOn, { date: formatDate(locale, a.completed_at) }) : "",
     action: open && courseId !== null ? { label, href: `/learn/${courseId}` } : null,
     certificate: a.status === "completed" && certificateId ? { href: `/certificates/verify/${encodeURIComponent(certificateId)}`, label: t.viewCertificate } : null,
+    policy: change ? { text: fill(t.policyChanged, { policy: change.policy.title, version: change.version, kind: change.kind === "exam" ? t.policyKindExam : t.policyKindCourse }), summary: change.summary ? fill(t.policyWhatChanged, { summary: change.summary }) : null } : null,
   };
 }
 
@@ -138,9 +146,10 @@ export function sortAssignments(rows: AssignmentRow[], dueOf: Map<number, string
   return [...rows].sort((a, b) => RANK[a.state] - RANK[b.state] || time(a) - time(b) || a.id - b.id);
 }
 
-export function assignmentRows(list: Assignment[], locale: TrainingLocale, now: Date, percent?: Map<number, number>): AssignmentRow[] {
+export function assignmentRows(list: Assignment[], locale: TrainingLocale, now: Date, percent?: Map<number, number>, changes: MyPolicyChange[] = []): AssignmentRow[] {
+  const byAssignment = new Map(changes.map((c) => [c.assignmentId, c]));
   return sortAssignments(
-    list.map((a) => assignmentRow(a, locale, now, percent)),
+    list.map((a) => assignmentRow(a, locale, now, percent, byAssignment.get(a.id) ?? null)),
     new Map(list.map((a) => [a.id, a.due_at])),
   );
 }

@@ -546,7 +546,7 @@ export async function mockApi(
             422,
           );
         }
-        const created: MockSavedReport = {
+        const savedReport: MockSavedReport = {
           id: `01SAVED${String(nextSaved++).padStart(19, '0')}`,
           name: body.name,
           description: body.description || null,
@@ -561,8 +561,8 @@ export async function mockApi(
           problems: [],
           last_run_at: null,
         };
-        savedReports.unshift(created);
-        return json(ok(created), 201);
+        savedReports.unshift(savedReport);
+        return json(ok(savedReport), 201);
       }
       if (savedId && method === 'PUT') {
         const body = request.postDataJSON();

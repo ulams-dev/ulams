@@ -74,8 +74,11 @@ curl -s "${H[@]}" http://api.localhost/api/platform/operations/<operation id>   
 |---|---|
 | `GET /api/platform/tenants`, `GET /api/platform/tenants/{slug}` | List, show: status, URLs, finished steps, names of the setting overrides. Never a database password, key or override value. |
 | `POST /api/platform/tenants` `{slug, name?, theme?, accent?, users?, demo?}` | Queue creation. 202 with `{operation, tenant}`. 409 if the tenant is active or an operation for it runs; a failed tenant is resumed. 422 for an invalid slug. |
+| `POST /api/platform/tenants` also takes `template`, and `derived_from` with `purpose` and `reference` | A tenant made from a [template](/admin/tenants/#templates-and-tenants-created-for-a-purpose), and recorded as created for another tenant and a purpose (a department academy). 409 over the parent's quota, or for a reference that already has a tenant. |
+| `GET /api/platform/tenants/{slug}/derived` | The active tenants created from this one, with who asked. |
+| `GET /api/platform/templates`, `GET /api/platform/templates/{slug}`, `POST /api/platform/templates`, `DELETE /api/platform/templates/{slug}` | Tenant templates: list, show (names of the settings only), create or change the given fields, remove. |
 | `PATCH /api/platform/tenants/{slug}/env` `{set?: {KEY: value}, unset?: [KEY]}` | Override or reset inheritable settings (`ANTHROPIC_API_KEY`, `AI_DRIVER`, `AI_MODEL_*`). 422 for any other key. |
-| `DELETE /api/platform/tenants/{slug}` `{confirm: "<slug>"}` | Queue deletion. 422 unless `confirm` equals the slug. |
+| `DELETE /api/platform/tenants/{slug}` `{confirm: "<slug>"}` | Queue deletion. 422 unless `confirm` equals the slug; 409 while tenants created from it exist. |
 | `GET /api/platform/operations`, `GET /api/platform/operations/{id}` | Latest 50, or one: `status` (`queued`, `running`, `succeeded`, `failed`), `steps` with `name`, `status`, times and `error`, and `error`. |
 
 Provisioning runs as a queued job on the platform queue worker (the supplied stack has one) and takes about a
