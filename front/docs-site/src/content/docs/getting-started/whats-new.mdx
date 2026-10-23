@@ -104,9 +104,10 @@ Features that exist only in the plan are marked "Coming" on their pages.
 - **Single sign-on per tenant**: OpenID Connect and SAML 2.0, with encrypted provider secrets and an audit trail, set up through the API or
   the CLI: [Single sign-on](/operators/single-sign-on/), [SAML 2.0](/operators/single-sign-on-saml/). No admin screen, group mapping or
   sign-in started at the provider yet.
+- **SCIM 2.0 provisioning**: an identity provider (Entra ID, Okta or any client) creates, updates and deactivates users and groups of a tenant with a per-provider token; deactivating a person ends every session and token and keeps the learning record, and a group can grant the student or tutor role: [SCIM provisioning](/operators/scim/), [SCIM API](/developers/scim-api/).
 - **Entitlements**: every access grant (purchase, administrator, LTI, compliance) is recorded with its source; an access backfill with a parity
   report and a shadow mode for Wellms purchases prepare the move to the Sylius shop: [Entitlements and order events](/developers/entitlements-and-order-events/).
-- There is no admin screen for the compliance modules yet. The Sylius shop and SCIM are not built.
+- There is no admin screen for the compliance modules yet. The Sylius shop is not built.
 
 ## Phase 7: CLI, MCP server and API
 

@@ -32,8 +32,10 @@ describe("comparison data (public claims about other products)", () => {
   it("keeps ulams in every group, first, and honest about unbuilt enterprise rows", () => {
     const ulams = comparisonData.systems.find((s) => s.ours)!;
     expect(ulams.groups).toEqual(comparisonData.groups.map((g) => g.key));
-    expect(ulams.cells.scim?.value).toBe("Coming");
-    // SAML 2.0 and OpenID Connect sign-in per tenant are built (identity ID-1, ID-2); SCIM is not
+    // SAML 2.0 and OpenID Connect sign-in per tenant (identity ID-1, ID-2) and SCIM 2.0 users and groups (ID-4, ID-5) are built;
+    // the SCIM note says what was checked and what was not (live Entra ID and Okta tenants)
+    expect(ulams.cells.scim?.value).toBe("Yes");
+    expect(ulams.cells.scim?.note).toMatch(/not yet against live tenants/);
     expect(ulams.cells.sso?.value).toBe("Yes");
     for (const key of ["sso", "scim", "authoring_tool", "content_library", "data_residency"]) {
       expect(ulams.cells[key]?.source, key).toMatch(/^https:\/\/github\.com\/ulams-dev\/ulams\/blob\/main\//);
