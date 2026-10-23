@@ -655,6 +655,13 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
       accepts `secrets.token`; the form offers only OAuth, which blocked the Notion case study in #408): masked input,
       verified against Notion before saving, encrypted at rest, shown only as the last four characters, never in logs,
       events, audit entries or responses (plan `docs/plans/authoring-metric-and-report-builder.md` NT-1)
+- [ ] (new) Confluence connector plugin (Cloud first, Data Center after): a space or a page tree as a source, page
+      versions as revisions for change detection, attachments as source documents, OAuth or an API token stored like the
+      Notion token; requested by the owner on 2026-10-23 for the home-page journey, which shows Confluence only as an
+      exported file until this ships
+- [ ] (new) SharePoint and OneDrive connector plugin (Microsoft Graph): a document library, folder or site pages as a
+      source, drive item versions and delta queries for change detection, Entra ID app consent per tenant; requested by
+      the owner on 2026-10-23
 
 ### 3.1 Course versions with a visual diff (new)
 
