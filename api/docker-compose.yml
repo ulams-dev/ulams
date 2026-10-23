@@ -7,6 +7,8 @@ networks:
     internal: true
 volumes:
   h5p_libraries:
+  sylius_jwt:
+  sylius_encryption:
 services:
   caddy:
     image: caddy
@@ -312,6 +314,52 @@ services:
     profiles: ["av"]
     networks:
       - ulams
+
+  # Commerce profile (ADR 0131): the headless Sylius 2.3 service with the ulams bridge bundle, one image, two services.
+  # Off by default and out of every other profile: `docker compose --profile commerce up -d sylius sylius-worker`,
+  # then COMMERCE_PROVIDER=sylius and COMMERCE_SYLIUS_URL=http://sylius:8080 in the API (platform) env. It shares the
+  # PostgreSQL server (database `sylius`, created on first start) and is reachable from the API containers only: Caddy
+  # does not route it. The values below are development defaults; `ulams stack` generates real ones.
+  sylius:
+    build:
+      context: ./sylius
+    image: ulams/commerce:dev
+    profiles: ["commerce"]
+    restart: unless-stopped
+    networks:
+      - ulams
+    depends_on:
+      - postgres
+    volumes:
+      - sylius_jwt:/var/www/sylius/config/jwt
+      - sylius_encryption:/var/www/sylius/config/encryption
+    environment:
+      APP_SECRET: "${SYLIUS_APP_SECRET:-ulams-dev-only-sylius-secret-0123456789ab}"
+      JWT_PASSPHRASE: "${SYLIUS_JWT_PASSPHRASE:-ulams-dev-only-sylius-jwt-passphrase}"
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-default}:${POSTGRES_PASSWORD:-secret}@postgres:5432/sylius?serverVersion=17&charset=utf8"
+      MAILER_DSN: "smtp://mailhog:1025"
+      # the one admin API user the LMS signs in with (COMMERCE_SYLIUS_ADMIN_EMAIL / _PASSWORD in the API platform env)
+      ULAMS_ADMIN_API_EMAIL: "${COMMERCE_SYLIUS_ADMIN_EMAIL:-lms@ulams.local}"
+      ULAMS_ADMIN_API_PASSWORD: "${COMMERCE_SYLIUS_ADMIN_PASSWORD:-ulams-dev-only-admin-api-password}"
+      # plain-http webhook targets (tenant API hosts) are accepted for these hosts only; never set in production
+      ULAMS_BRIDGE_HTTP_HOSTS: ".localhost"
+    # ports:
+    #   - "127.0.0.1:8089:8080"
+
+  sylius-worker:
+    image: ulams/commerce:dev
+    profiles: ["commerce"]
+    command: ["worker"]
+    restart: unless-stopped
+    networks:
+      - ulams
+    depends_on:
+      - sylius
+    environment:
+      APP_SECRET: "${SYLIUS_APP_SECRET:-ulams-dev-only-sylius-secret-0123456789ab}"
+      JWT_PASSPHRASE: "${SYLIUS_JWT_PASSPHRASE:-ulams-dev-only-sylius-jwt-passphrase}"
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-default}:${POSTGRES_PASSWORD:-secret}@postgres:5432/sylius?serverVersion=17&charset=utf8"
+      MAILER_DSN: "smtp://mailhog:1025"
 
   # Adapt Path B build worker (ADR 0013, api/adapt-builder/README.md). GPL-3.0, separate program.
   # Off by default: docker compose --profile adapt up -d adapt-builder, and ADAPT_SOURCE_ENABLED=true

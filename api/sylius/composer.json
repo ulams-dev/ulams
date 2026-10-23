@@ -1,0 +1,137 @@
+{
+    "name": "sylius/sylius-standard",
+    "type": "project",
+    "description": "Starting point for projects powered by Sylius eCommerce.",
+    "keywords": [
+        "symfony",
+        "sylius",
+        "distribution",
+        "ecommerce",
+        "cart",
+        "shopping"
+    ],
+    "homepage": "https://sylius.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pawe\u0142 J\u0119drzejewski"
+        },
+        {
+            "name": "Sylius project"
+        },
+        {
+            "name": "Community contributions"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "dompdf/dompdf": "^3.1.6",
+        "flux-se/sylius-stripe-plugin": "^2.1.0",
+        "sylius/mollie-plugin": "^3.5.0",
+        "sylius/refund-plugin": "^2.2.1",
+        "sylius/sylius": "^2.3.2",
+        "symfony/dotenv": "^7.4.11 || ^8.1.6",
+        "symfony/flex": "^2.11",
+        "symfony/runtime": "^7.4.13 || ^8.1.9"
+    },
+    "require-dev": {
+        "nyholm/psr7": "^1.8.2",
+        "phpstan/extension-installer": "^1.4.3",
+        "phpstan/phpstan": "^2.3.1",
+        "phpstan/phpstan-doctrine": "^2.0.28",
+        "phpstan/phpstan-webmozart-assert": "^2.0",
+        "phpunit/phpunit": "^10.5.66",
+        "sylius-labs/coding-standard": "^4.5.1",
+        "symfony/browser-kit": "^7.4.8 || ^8.1.9",
+        "symfony/contracts": "^3.7.3",
+        "symfony/debug-bundle": "^7.4.8 || ^8.1",
+        "symfony/http-client": "^7.4.13 || ^8.1.9",
+        "symfony/intl": "^7.4.8 || ^8.1.5",
+        "symfony/web-profiler-bundle": "^7.4.13 || ^8.1.9"
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": false,
+            "php-http/discovery": false,
+            "phpstan/extension-installer": false,
+            "rector/extension-installer": true,
+            "symfony/flex": true,
+            "symfony/runtime": true,
+            "symfony/thanks": false
+        },
+        "bump-after-update": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-2.3": "2.3.x-dev"
+        },
+        "symfony": {
+            "allow-contrib": true,
+            "require": "^7.4",
+            "endpoint": [
+                "https://api.github.com/repos/Sylius/SyliusRecipes/contents/index.json?ref=flex/main",
+                "flex://defaults"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "Ulams\\Bridge\\": "bundles/UlamsBridgeBundle/src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        },
+        "classmap": [
+            "src/Kernel.php"
+        ]
+    },
+    "prefer-stable": true,
+    "scripts": {
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ],
+        "post-create-project-cmd": [
+            "@remove-lockfiles-from-gitignore",
+            "@php bin/console sylius:inform-about-gus --ansi",
+            "@php bin/console sylius:show-plus-info --ansi"
+        ],
+        "remove-lockfiles-from-gitignore": "@php -r \"file_put_contents('.gitignore', str_replace(['/composer.lock' . PHP_EOL, '/yarn.lock' . PHP_EOL], '', file_get_contents('.gitignore')));\"",
+        "rector-dry-run": "vendor/bin/rector process --dry-run",
+        "rector-apply": "vendor/bin/rector process",
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        }
+    },
+    "suggest": {
+        "sylius/sylius-ai-dev-tools": "Dev-only AI tooling pack for Sylius: bundles Mate extension and Sylius skills."
+    },
+    "replace": {
+        "symfony/polyfill-apcu": "*",
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-intl": "*",
+        "symfony/polyfill-intl-grapheme": "*",
+        "symfony/polyfill-intl-icu": "*",
+        "symfony/polyfill-intl-idn": "*",
+        "symfony/polyfill-intl-normalizer": "*",
+        "symfony/polyfill-mbstring": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*",
+        "symfony/polyfill-php81": "*",
+        "symfony/polyfill-php82": "*",
+        "symfony/polyfill-php83": "*"
+    }
+}
