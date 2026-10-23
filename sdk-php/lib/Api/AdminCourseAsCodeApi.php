@@ -71,13 +71,22 @@ class AdminCourseAsCodeApi
 
     /** @var string[] $contentTypes **/
     public const contentTypes = [
+        'adminCourseAsCodeCoursesByCourseAdoptPost' => [
+            'application/json',
+        ],
         'adminCourseAsCodeCoursesByCourseBlueprintGet' => [
+            'application/json',
+        ],
+        'adminCourseAsCodeCoursesPost' => [
             'application/json',
         ],
         'adminCourseAsCodeSessionsBySessionApplyPost' => [
             'application/json',
         ],
         'adminCourseAsCodeSessionsBySessionDriftPost' => [
+            'application/json',
+        ],
+        'adminCourseAsCodeSessionsBySessionGet' => [
             'application/json',
         ],
         'adminCourseAsCodeSessionsBySessionImportsPost' => [
@@ -141,6 +150,353 @@ class AdminCourseAsCodeApi
     public function getConfig()
     {
         return $this->config;
+    }
+
+    /**
+     * Operation adminCourseAsCodeCoursesByCourseAdoptPost
+     *
+     * Adopt a course made by hand: a first blueprint, version, session and entity map from the live course (idempotent)
+     *
+     * @param  int $course course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeCoursesByCourseAdoptPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope
+     */
+    public function adminCourseAsCodeCoursesByCourseAdoptPost($course, string $contentType = self::contentTypes['adminCourseAsCodeCoursesByCourseAdoptPost'][0])
+    {
+        list($response) = $this->adminCourseAsCodeCoursesByCourseAdoptPostWithHttpInfo($course, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation adminCourseAsCodeCoursesByCourseAdoptPostWithHttpInfo
+     *
+     * Adopt a course made by hand: a first blueprint, version, session and entity map from the live course (idempotent)
+     *
+     * @param  int $course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeCoursesByCourseAdoptPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function adminCourseAsCodeCoursesByCourseAdoptPostWithHttpInfo($course, string $contentType = self::contentTypes['adminCourseAsCodeCoursesByCourseAdoptPost'][0])
+    {
+        $request = $this->adminCourseAsCodeCoursesByCourseAdoptPostRequest($course, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                case 201:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                case 201:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation adminCourseAsCodeCoursesByCourseAdoptPostAsync
+     *
+     * Adopt a course made by hand: a first blueprint, version, session and entity map from the live course (idempotent)
+     *
+     * @param  int $course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeCoursesByCourseAdoptPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminCourseAsCodeCoursesByCourseAdoptPostAsync($course, string $contentType = self::contentTypes['adminCourseAsCodeCoursesByCourseAdoptPost'][0])
+    {
+        return $this->adminCourseAsCodeCoursesByCourseAdoptPostAsyncWithHttpInfo($course, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation adminCourseAsCodeCoursesByCourseAdoptPostAsyncWithHttpInfo
+     *
+     * Adopt a course made by hand: a first blueprint, version, session and entity map from the live course (idempotent)
+     *
+     * @param  int $course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeCoursesByCourseAdoptPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminCourseAsCodeCoursesByCourseAdoptPostAsyncWithHttpInfo($course, string $contentType = self::contentTypes['adminCourseAsCodeCoursesByCourseAdoptPost'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+        $request = $this->adminCourseAsCodeCoursesByCourseAdoptPostRequest($course, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'adminCourseAsCodeCoursesByCourseAdoptPost'
+     *
+     * @param  int $course (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeCoursesByCourseAdoptPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function adminCourseAsCodeCoursesByCourseAdoptPostRequest($course, string $contentType = self::contentTypes['adminCourseAsCodeCoursesByCourseAdoptPost'][0])
+    {
+
+        // verify the required parameter 'course' is set
+        if ($course === null || (is_array($course) && count($course) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $course when calling adminCourseAsCodeCoursesByCourseAdoptPost'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/course-as-code/courses/{course}/adopt';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($course !== null) {
+            $resourcePath = str_replace(
+                '{' . 'course' . '}',
+                ObjectSerializer::toPathValue($course),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
     }
 
     /**
@@ -449,6 +805,352 @@ class AdminCourseAsCodeApi
         $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
             'GET',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation adminCourseAsCodeCoursesPost
+     *
+     * Create an empty course (an approved empty blueprint) for a folder that has no course yet; the course row is made by the first apply
+     *
+     * @param  \Ulams\Sdk\Model\AdminCourseAsCodeCoursesPostRequest $admin_course_as_code_courses_post_request admin_course_as_code_courses_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeCoursesPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope
+     */
+    public function adminCourseAsCodeCoursesPost($admin_course_as_code_courses_post_request, string $contentType = self::contentTypes['adminCourseAsCodeCoursesPost'][0])
+    {
+        list($response) = $this->adminCourseAsCodeCoursesPostWithHttpInfo($admin_course_as_code_courses_post_request, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation adminCourseAsCodeCoursesPostWithHttpInfo
+     *
+     * Create an empty course (an approved empty blueprint) for a folder that has no course yet; the course row is made by the first apply
+     *
+     * @param  \Ulams\Sdk\Model\AdminCourseAsCodeCoursesPostRequest $admin_course_as_code_courses_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeCoursesPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function adminCourseAsCodeCoursesPostWithHttpInfo($admin_course_as_code_courses_post_request, string $contentType = self::contentTypes['adminCourseAsCodeCoursesPost'][0])
+    {
+        $request = $this->adminCourseAsCodeCoursesPostRequest($admin_course_as_code_courses_post_request, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                case 201:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                case 201:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation adminCourseAsCodeCoursesPostAsync
+     *
+     * Create an empty course (an approved empty blueprint) for a folder that has no course yet; the course row is made by the first apply
+     *
+     * @param  \Ulams\Sdk\Model\AdminCourseAsCodeCoursesPostRequest $admin_course_as_code_courses_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeCoursesPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminCourseAsCodeCoursesPostAsync($admin_course_as_code_courses_post_request, string $contentType = self::contentTypes['adminCourseAsCodeCoursesPost'][0])
+    {
+        return $this->adminCourseAsCodeCoursesPostAsyncWithHttpInfo($admin_course_as_code_courses_post_request, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation adminCourseAsCodeCoursesPostAsyncWithHttpInfo
+     *
+     * Create an empty course (an approved empty blueprint) for a folder that has no course yet; the course row is made by the first apply
+     *
+     * @param  \Ulams\Sdk\Model\AdminCourseAsCodeCoursesPostRequest $admin_course_as_code_courses_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeCoursesPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminCourseAsCodeCoursesPostAsyncWithHttpInfo($admin_course_as_code_courses_post_request, string $contentType = self::contentTypes['adminCourseAsCodeCoursesPost'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+        $request = $this->adminCourseAsCodeCoursesPostRequest($admin_course_as_code_courses_post_request, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'adminCourseAsCodeCoursesPost'
+     *
+     * @param  \Ulams\Sdk\Model\AdminCourseAsCodeCoursesPostRequest $admin_course_as_code_courses_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeCoursesPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function adminCourseAsCodeCoursesPostRequest($admin_course_as_code_courses_post_request, string $contentType = self::contentTypes['adminCourseAsCodeCoursesPost'][0])
+    {
+
+        // verify the required parameter 'admin_course_as_code_courses_post_request' is set
+        if ($admin_course_as_code_courses_post_request === null || (is_array($admin_course_as_code_courses_post_request) && count($admin_course_as_code_courses_post_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $admin_course_as_code_courses_post_request when calling adminCourseAsCodeCoursesPost'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/course-as-code/courses';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($admin_course_as_code_courses_post_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($admin_course_as_code_courses_post_request));
+            } else {
+                $httpBody = $admin_course_as_code_courses_post_request;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
@@ -1121,6 +1823,318 @@ class AdminCourseAsCodeApi
         $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
             'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation adminCourseAsCodeSessionsBySessionGet
+     *
+     * Where a session stands: course id, current and applied version (poll it while an apply runs)
+     *
+     * @param  string $session session (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeSessionsBySessionGet'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\ApiEnvelope
+     */
+    public function adminCourseAsCodeSessionsBySessionGet($session, string $contentType = self::contentTypes['adminCourseAsCodeSessionsBySessionGet'][0])
+    {
+        list($response) = $this->adminCourseAsCodeSessionsBySessionGetWithHttpInfo($session, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation adminCourseAsCodeSessionsBySessionGetWithHttpInfo
+     *
+     * Where a session stands: course id, current and applied version (poll it while an apply runs)
+     *
+     * @param  string $session (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeSessionsBySessionGet'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function adminCourseAsCodeSessionsBySessionGetWithHttpInfo($session, string $contentType = self::contentTypes['adminCourseAsCodeSessionsBySessionGet'][0])
+    {
+        $request = $this->adminCourseAsCodeSessionsBySessionGetRequest($session, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation adminCourseAsCodeSessionsBySessionGetAsync
+     *
+     * Where a session stands: course id, current and applied version (poll it while an apply runs)
+     *
+     * @param  string $session (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeSessionsBySessionGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminCourseAsCodeSessionsBySessionGetAsync($session, string $contentType = self::contentTypes['adminCourseAsCodeSessionsBySessionGet'][0])
+    {
+        return $this->adminCourseAsCodeSessionsBySessionGetAsyncWithHttpInfo($session, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation adminCourseAsCodeSessionsBySessionGetAsyncWithHttpInfo
+     *
+     * Where a session stands: course id, current and applied version (poll it while an apply runs)
+     *
+     * @param  string $session (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeSessionsBySessionGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminCourseAsCodeSessionsBySessionGetAsyncWithHttpInfo($session, string $contentType = self::contentTypes['adminCourseAsCodeSessionsBySessionGet'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+        $request = $this->adminCourseAsCodeSessionsBySessionGetRequest($session, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'adminCourseAsCodeSessionsBySessionGet'
+     *
+     * @param  string $session (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminCourseAsCodeSessionsBySessionGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function adminCourseAsCodeSessionsBySessionGetRequest($session, string $contentType = self::contentTypes['adminCourseAsCodeSessionsBySessionGet'][0])
+    {
+
+        // verify the required parameter 'session' is set
+        if ($session === null || (is_array($session) && count($session) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $session when calling adminCourseAsCodeSessionsBySessionGet'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/course-as-code/sessions/{session}';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($session !== null) {
+            $resourcePath = str_replace(
+                '{' . 'session' . '}',
+                ObjectSerializer::toPathValue($session),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'GET',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody

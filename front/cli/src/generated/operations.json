@@ -468,9 +468,27 @@
   "tag": "Admin Course Access"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/courses",
+  "summary": "Create an empty course (an approved empty blueprint) for a folder that has no course yet; the course row is made by the first apply",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-as-code/courses/{course}/adopt",
+  "summary": "Adopt a course made by hand: a first blueprint, version, session and entity map from the live course (idempotent)",
+  "tag": "Admin Course-as-code"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/course-as-code/courses/{course}/blueprint",
   "summary": "Export a course as a Blueprint v3 document (current version, drift, applied version)",
+  "tag": "Admin Course-as-code"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-as-code/sessions/{session}",
+  "summary": "Where a session stands: course id, current and applied version (poll it while an apply runs)",
   "tag": "Admin Course-as-code"
  },
  {
@@ -3819,6 +3837,12 @@
   "method": "PATCH",
   "path": "/api/platform/tenants/{slug}/env",
   "summary": "Override or reset inheritable settings (AI driver, models) of a tenant",
+  "tag": "Platform"
+ },
+ {
+  "method": "POST",
+  "path": "/api/platform/tenants/{slug}/token",
+  "summary": "A one-day administrator token (builder:read, builder:write) for a preview academy",
   "tag": "Platform"
  },
  {

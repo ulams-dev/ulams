@@ -7,7 +7,7 @@ branding:
 
 inputs:
   command:
-    description: "validate, diff, preview, push or pull-pr."
+    description: "validate, diff, preview, preview-cleanup, push or pull-pr."
     required: true
   path:
     description: Course folder (the one that holds ulams.yaml), relative to the workspace.
@@ -38,6 +38,12 @@ inputs:
     default: ""
   base-branch:
     description: "pull-pr: branch the sync pull request targets. Default is the default branch of the repository."
+    default: ""
+  preview-url:
+    description: "preview, preview-cleanup: address of the preview platform API (an ulams install with TENANCY_PLATFORM_API=true). Falls back to ULAMS_PREVIEW_URL. Without a platform, preview proposes a version instead."
+    default: ""
+  preview-token:
+    description: "A platform:write token of the preview platform. Falls back to ULAMS_PREVIEW_TOKEN."
     default: ""
   github-token:
     description: "Token for gh (comments and sync pull requests). Default is the workflow's GITHUB_TOKEN."
@@ -81,4 +87,6 @@ runs:
         INPUT_BASE_BRANCH: ${{ inputs.base-branch }}
         ULAMS_URL: ${{ inputs.url || env.ULAMS_URL }}
         ULAMS_TOKEN: ${{ inputs.token || env.ULAMS_TOKEN }}
+        ULAMS_PREVIEW_URL: ${{ inputs.preview-url || env.ULAMS_PREVIEW_URL }}
+        ULAMS_PREVIEW_TOKEN: ${{ inputs.preview-token || env.ULAMS_PREVIEW_TOKEN }}
         GH_TOKEN: ${{ inputs.github-token }}

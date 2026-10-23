@@ -38,6 +38,7 @@ class CourseAsCodeIsolationTest extends TestCase
         return [
             ['GET', self::P . "/courses/{$s->course_id}/blueprint", []],
             ['POST', self::P . "/sessions/{$s->id}/imports", ['document' => $doc, 'baseVersionId' => $s->current_version_id]],
+            ['GET', self::P . "/sessions/{$s->id}", []],
             ['GET', self::P . "/versions/{$s->current_version_id}", []],
             ['GET', self::P . "/versions/{$s->current_version_id}/diff", []],
             ['POST', self::P . "/versions/{$s->current_version_id}/approve", []],

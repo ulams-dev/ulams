@@ -342,7 +342,7 @@
         },
         "course_as_code": {
           "value": "Partial",
-          "note": "Folder, push, pull, merge, GitHub Action, Git merges propose updates; PR previews coming",
+          "note": "Folder, push, pull, merge, GitHub Action, PR preview academies; Git merges propose updates",
           "source": "https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-7-course-as-code.md",
           "checkedAt": "2026-10-22"
         }

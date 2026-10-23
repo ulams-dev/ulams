@@ -194,7 +194,7 @@ final class OutlineEditor
     private function format(array $doc, string $id, string $key): array
     {
         [$kind, $m, $l] = $this->locate($doc, $id);
-        if ($kind !== 'lesson' || !isset($this->types->enabled()[$key])) {
+        if ($kind !== 'lesson' || $key === 'embed' || !isset($this->types->enabled()[$key])) {
             throw new InvalidArgumentException('That lesson format is not available here.');
         }
         $lesson = $doc['modules'][$m]['lessons'][$l];

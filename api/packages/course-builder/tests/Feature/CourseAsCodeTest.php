@@ -288,4 +288,109 @@ class CourseAsCodeTest extends TestCase
         $session = $this->applied();
         $this->actingAs($session->author, 'api')->postJson(self::P . "/sessions/{$session->id}/publish", ['acknowledgedWarnings' => true])->assertStatus(200)->assertJsonPath('data.published', true);
     }
+
+    /** The document as a person wrote it: no source behind it, so nothing cites (what a preview academy gets). */
+    private function written(array $document): array
+    {
+        $walk = function (mixed $node) use (&$walk) {
+            if (!is_array($node)) {
+                return $node;
+            }
+            foreach ($node as $k => $v) {
+                $node[$k] = $walk($v);
+            }
+            if (array_key_exists('citations', $node)) {
+                $node['citations'] = [];
+                if (isset($node['markdown']) || isset($node['stem']) || isset($node['blocks'])) {
+                    $node['origin'] = 'author';
+                }
+            }
+
+            return $node;
+        };
+        $document = $walk($document);
+        $document['sources'] = [];
+
+        return $document;
+    }
+
+    public function testAnEmptyCourseCanBeCreatedImportedApprovedAndAppliedWithAiOff(): void
+    {
+        $source = $this->applied();
+        $document = $this->written($this->exported($source)['document']);
+        $author = $this->author();
+        $this->disableAi();
+
+        $created = $this->actingAs($author, 'api')->postJson(self::P . '/courses', ['title' => 'Preview of Kubernetes 101', 'language' => 'en'])->assertCreated();
+        $created->assertJsonPath('data.courseId', null);
+        $session = Session::query()->findOrFail($created->json('data.sessionId'));
+        $this->assertSame($author->getKey(), (int) $session->author_id);
+        $this->assertSame('Preview of Kubernetes 101', $session->currentVersion->document['course']['title']);
+        $this->assertSame([], $session->currentVersion->document['modules']);
+        $this->assertSame('approved', $session->currentVersion->status);
+
+        $pushed = $this->actingAs($author, 'api')->postJson(self::P . "/sessions/{$session->id}/imports", ['document' => $document, 'baseVersionId' => $created->json('data.versionId')]);
+        $pushed->assertCreated()->assertJsonPath("data.version.kind", "import")->assertJsonPath('data.version.status', 'proposed');
+        $this->assertNull($session->refresh()->course_id, 'nothing is applied by an import');
+
+        $this->actingAs($author, 'api')->postJson(self::P . '/versions/' . $pushed->json('data.version.id') . '/approve')->assertOk();
+        $this->actingAs($author, 'api')->postJson(self::P . "/sessions/{$session->id}/apply")->assertStatus(202);
+
+        $session->refresh();
+        $this->assertNotNull($session->course_id);
+        $this->assertSame($session->current_version_id, $session->applied_version_id);
+        $course = \Ulams\Courses\Models\Course::query()->findOrFail($session->course_id);
+        $this->assertSame($document['course']['title'], $course->title);
+    }
+
+    public function testTheSessionEndpointShowsTheCourseOnlyAfterTheFirstApply(): void
+    {
+        $author = $this->author();
+        $created = $this->actingAs($author, 'api')->postJson(self::P . '/courses', ['title' => 'Polled'])->assertCreated();
+        $id = $created->json('data.sessionId');
+        $this->actingAs($author, 'api')->getJson(self::P . "/sessions/{$id}")->assertOk()
+            ->assertJsonPath('data.courseId', null)->assertJsonPath('data.currentVersionId', $created->json('data.versionId'))->assertJsonPath('data.currentVersionNumber', 1);
+
+        $applied = $this->applied();
+        $this->actingAs($applied->author, 'api')->getJson(self::P . "/sessions/{$applied->id}")->assertOk()
+            ->assertJsonPath('data.courseId', $applied->course_id)->assertJsonPath('data.appliedVersionId', $applied->applied_version_id);
+        $this->actingAs($author, 'api')->getJson(self::P . "/sessions/{$applied->id}")->assertStatus(403);
+        $this->actingAs($author, 'api')->getJson(self::P . '/sessions/01aaaaaaaaaaaaaaaaaaaaaaaa')->assertNotFound();
+    }
+
+    public function testTheSameKeyReturnsTheSameCourseAndAnotherAuthorGetsItsOwn(): void
+    {
+        $author = $this->author();
+        $first = $this->actingAs($author, 'api')->postJson(self::P . '/courses', ['title' => 'PR 7', 'key' => 'acme/course#7'])->assertCreated();
+        $again = $this->actingAs($author, 'api')->postJson(self::P . '/courses', ['title' => 'PR 7 renamed', 'key' => 'acme/course#7'])->assertOk();
+        $again->assertJsonPath('data.sessionId', $first->json('data.sessionId'))->assertJsonPath('data.existing', true)->assertJsonPath('data.versionId', $first->json('data.versionId'));
+        $this->assertSame(1, Session::query()->where('author_id', $author->getKey())->count());
+
+        $other = $this->actingAs($this->author(), 'api')->postJson(self::P . '/courses', ['title' => 'PR 7', 'key' => 'acme/course#7'])->assertCreated();
+        $this->assertNotSame($first->json('data.sessionId'), $other->json('data.sessionId'));
+        $this->actingAs($author, 'api')->postJson(self::P . '/courses', ['title' => 'x', 'key' => 'bad key!'])->assertStatus(422);
+    }
+
+    public function testCreatingACourseValidatesAndNeedsTheBuilderPermission(): void
+    {
+        $author = $this->author();
+        foreach ([[], ['title' => ''], ['title' => '<b>x</b>'], ['title' => 'ok', 'language' => 'english'], ['title' => str_repeat('x', 201)]] as $body) {
+            $this->actingAs($author, 'api')->postJson(self::P . '/courses', $body)->assertStatus(422);
+        }
+        $this->assertSame(0, Session::query()->where('author_id', $author->getKey())->count());
+        $this->actingAs($this->student(), 'api')->postJson(self::P . '/courses', ['title' => 'x'])->assertStatus(403);
+        $this->app['auth']->forgetGuards();
+        $this->postJson(self::P . '/courses', ['title' => 'x'])->assertStatus(401);
+    }
+
+    public function testAnAgentTokenCanCreateAnEmptyCourse(): void
+    {
+        $author = $this->author();
+        $issued = app(PersonalAccessTokenServiceContract::class)->issue($author, 'agent', ['builder:read', 'builder:write'], 30, 'agent', 'tester', 'admin', null);
+        $headers = ['Authorization' => 'Bearer ' . $issued->secret, 'Accept' => 'application/json'];
+        $this->app['auth']->forgetGuards();
+
+        $created = $this->postJson(self::P . '/courses', ['title' => 'By an agent'], $headers)->assertCreated();
+        $this->assertNotNull($created->json('data.sessionId'));
+    }
 }

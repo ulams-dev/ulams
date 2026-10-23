@@ -234,7 +234,12 @@ describe("course init --ci github", () => {
     expect(r.data().workflow).toBe(file);
     const text = readFileSync(file, "utf8");
     const wf = parseYaml(text) as Out;
-    expect(Object.keys(wf.jobs)).toEqual(["validate", "push", "sync"]);
+    expect(Object.keys(wf.jobs)).toEqual(["validate", "cleanup", "push", "sync"]);
+    expect(wf.on.pull_request.types).toEqual(["opened", "synchronize", "reopened", "closed"]);
+    expect(wf.jobs.cleanup.steps[0]).toMatchObject({ with: { command: "preview-cleanup" } });
+    expect(wf.jobs.cleanup.if).toContain("closed");
+    expect(wf.jobs.validate.if).toContain("!= 'closed'");
+    expect(wf.env.ULAMS_PREVIEW_TOKEN).toBe("${{ secrets.ULAMS_PREVIEW_TOKEN }}");
     expect(wf.on.pull_request.paths).toEqual(["courses/k8s/**", ".github/workflows/ulams.yml"]);
     expect(wf.on.push.branches).toEqual(["main"]);
     expect(wf.on.repository_dispatch.types).toEqual(["ulams-course-changed"]);
@@ -254,7 +259,7 @@ describe("course init --ci github", () => {
     expect(r.code, r.stdout + r.stderr).toBe(0);
     const wf = parseYaml(readFileSync(join(repo, ".github/workflows/ulams.yml"), "utf8")) as Out;
     expect(wf.jobs.sync.steps[1].with.path).toBe(".");
-    expect(wf.on.pull_request).toBeNull();
+    expect(wf.on.pull_request.paths).toBeUndefined();
   });
 
   it("does not overwrite a workflow, and --dry-run writes nothing", async () => {
@@ -287,5 +292,190 @@ describe("CI environment becomes audit headers", () => {
 
     const none = await cli(["course", "init", join(tmp(), "d"), "--from-course", "12", "--json"], fake.routes);
     expect(none.requests[0]?.headers).not.toHaveProperty("x-ulams-commit");
+  });
+});
+
+describe("course preview", () => {
+  const PLATFORM_URL = "http://platform.localhost";
+  const previewEnv = { ...env, ULAMS_PREVIEW_URL: PLATFORM_URL, ULAMS_PREVIEW_TOKEN: "platform-secret-1" };
+  const emptyCourse = (): Out => ({ schemaVersion: 3, sources: [], course: { id: "01j9z8x7w6v5t4s3r2q1p0n9aa", title: "Preview", language: "en", objectives: [] }, modules: [], finalTest: null, pages: { landing: null, header: null } });
+
+  /** A preview platform and the academy it creates, behind one fetch (requests are routed by host). */
+  function world(over: { tenant?: Out | null; tokenStatus?: number } = {}) {
+    const academy = fakeCourseAsCode({ fresh: true, document: emptyCourse(), applyTicks: 1 });
+    const tenants = new Map<string, Out>();
+    if (over.tenant) tenants.set("pr7acme", over.tenant);
+    let polls = 0;
+    const log: string[] = [];
+    const tenantRecord = (status = "active"): Out => ({ slug: "pr7acme", status, expires_at: "2026-10-30T10:00:00+00:00", urls: { api: "http://pr7acme.localhost", front: "http://pr7acme.app.localhost", admin: "http://pr7acme.admin.localhost" } });
+    const handler: Handler = (req) => {
+      const host = new URL(req.url).host;
+      if (host === "pr7acme.localhost") {
+        log.push(`academy ${req.method} ${req.path}`);
+        if (req.headers.authorization !== "Bearer ulams_pat_preview") return { status: 401, body: { success: false, message: "Unauthenticated." } };
+        return academy.handler(req);
+      }
+      log.push(`platform ${req.method} ${req.path}`);
+      if (req.headers.authorization !== "Bearer platform-secret-1") return { status: 401, body: { success: false, message: "Unauthenticated." } };
+      if (req.method === "GET" && req.path === "/api/platform/tenants/pr7acme") return tenants.has("pr7acme") ? { body: { success: true, data: tenants.get("pr7acme") } } : { status: 404, body: { success: false, message: "Tenant not found." } };
+      if (req.method === "POST" && req.path === "/api/platform/tenants") {
+        tenants.set("pr7acme", tenantRecord());
+        return { status: 202, body: { success: true, data: { operation: { id: "01op", status: "queued" } } } };
+      }
+      if (req.method === "GET" && req.path === "/api/platform/operations/01op") return { body: { success: true, data: { id: "01op", status: ++polls < 2 ? "running" : "succeeded", error: null } } };
+      if (req.method === "POST" && req.path === "/api/platform/tenants/pr7acme/token") {
+        if (over.tokenStatus) return { status: over.tokenStatus, body: { success: false, message: "Only preview academies hand out a token." } };
+        return { body: { success: true, data: { token: "ulams_pat_preview", expires_at: "2026-10-23T10:00:00+00:00", scopes: ["builder:read", "builder:write"], urls: tenants.get("pr7acme")?.urls } } };
+      }
+      return { status: 404, body: { success: false, message: "no mock" } };
+    };
+    return { academy, tenants, log, routes: { "*": handler } as Record<string, Handler>, tenantRecord };
+  }
+
+  async function folder() {
+    const fake = fakeCourseAsCode();
+    const dir = join(tmp(), "course");
+    const r = await cli(["course", "init", dir, "--from-course", "12", "--json"], fake.routes);
+    expect(r.code, r.stdout + r.stderr).toBe(0);
+    return dir;
+  }
+
+  const run = async (args: string[], routes: Record<string, Handler>, e: Record<string, string> = previewEnv) => {
+    const r = await runCli(args, { env: e, routes });
+    cleanups.push(r.cleanup);
+    return Object.assign(r, { body: (): Out => r.json() as Out, data: (): Out => ((r.json() as Out).data ?? {}) as Out, error: (): Out => ((r.json() as Out).error ?? {}) as Out });
+  };
+
+  it("creates the preview academy, builds the folder into it and prints where to look, without citations", async () => {
+    const dir = await folder();
+    const w = world();
+
+    const r = await run(["course", "preview", dir, "--tenant", "pr7acme", "--group", "acme-course", "--json"], w.routes);
+
+    expect(r.code, r.stdout + r.stderr).toBe(0);
+    expect(r.data()).toMatchObject({ tenant: "pr7acme", created: true, applied: true, courseId: 12, urls: { front: "http://pr7acme.app.localhost" } });
+    const create = r.requests.find((q) => q.method === "POST" && q.path === "/api/platform/tenants");
+    expect(create?.body).toMatchObject({ slug: "pr7acme", demo: true, ttl_days: 7, group: "acme-course" });
+    // the course in the preview is the folder's, written by the author, with nothing citing a source
+    const live = JSON.stringify(w.academy.db.live);
+    expect(live).toContain("kubectl is the command-line tool");
+    expect(live).not.toMatch(/frg_[a-z2-7]{12}/);
+    expect(w.academy.db.createCalls[0]).toMatchObject({ title: expect.any(String), key: "acme-course:pr7acme" });
+    const tail = w.log.filter((l) => l.startsWith("academy")).map((l) => l.replace("academy ", ""));
+    expect(tail.slice(0, 5)).toEqual(["POST /api/admin/course-as-code/courses", "POST /api/admin/course-as-code/sessions/" + w.academy.sessionId + "/imports", expect.stringMatching(/approve$/), expect.stringMatching(/apply$/), expect.stringMatching(/\/sessions\/[^/]+$/)]);
+    // the academy's token is never printed, and the real academy was not called at all
+    expect(r.stdout + r.stderr).not.toContain("ulams_pat_preview");
+    expect(r.stdout + r.stderr).not.toContain("platform-secret-1");
+    expect(r.requests.every((q) => !q.url.startsWith("http://coffee.localhost"))).toBe(true);
+  });
+
+  it("a second run updates the same preview: the academy is reused and an unchanged folder pushes nothing new", async () => {
+    const dir = await folder();
+    const w = world();
+    await run(["course", "preview", dir, "--tenant", "pr7acme", "--group", "g", "--json"], w.routes);
+    const again = await run(["course", "preview", dir, "--tenant", "pr7acme", "--group", "g", "--json"], w.routes);
+
+    expect(again.code, again.stdout + again.stderr).toBe(0);
+    expect(again.data()).toMatchObject({ created: false, unchanged: true, applied: false });
+    expect(again.requests.some((q) => q.method === "POST" && q.path === "/api/platform/tenants")).toBe(false);
+    expect(w.academy.db.createCalls.map((c) => c.key)).toEqual(["g:pr7acme", "g:pr7acme"]);
+  });
+
+  it("refuses a real academy, a missing platform and a platform without the API, before touching anything", async () => {
+    const dir = await folder();
+    const real = world({ tenant: { slug: "pr7acme", status: "active", expires_at: null, urls: { api: "http://pr7acme.localhost", front: "x", admin: "y" } } });
+    const refused = await run(["course", "preview", dir, "--tenant", "pr7acme", "--json"], real.routes);
+    expect(refused.code).toBe(4);
+    expect(refused.error().message).toContain("real academy");
+    expect(real.log.some((l) => l.includes("token"))).toBe(false);
+
+    const none = await run(["course", "preview", dir, "--tenant", "pr7acme", "--json"], real.routes, env);
+    expect(none.code).toBe(3);
+    expect(none.error().hint).toContain("ULAMS_PREVIEW_URL");
+    expect(none.requests).toHaveLength(0);
+
+    const off = await run(["course", "preview", dir, "--tenant", "pr7acme", "--json"], { "*": { status: 404, body: { success: false, message: "Not found." } } });
+    expect(off.code).toBe(12);
+  });
+
+  it("a folder with errors is refused before the platform is called, and --dry-run sends nothing", async () => {
+    const dir = await folder();
+    const fs2 = await import("node:fs");
+    const bad = join(dir, "modules/01-basics/01-install.md");
+    const good = fs2.readFileSync(bad, "utf8");
+    fs2.writeFileSync(bad, good.replace("---\nid:", "---\nidd:"));
+    const w = world();
+    const refused = await run(["course", "preview", dir, "--tenant", "pr7acme", "--json"], w.routes);
+    expect(refused.code).toBe(7);
+    expect(refused.requests).toHaveLength(0);
+
+    fs2.writeFileSync(bad, good);
+    const dry = await run(["course", "preview", dir, "--tenant", "pr7acme", "--dry-run", "--json"], w.routes);
+    expect(dry.code, dry.stdout + dry.stderr).toBe(0);
+    expect(dry.requests).toHaveLength(0);
+    expect(JSON.stringify(dry.body())).toContain("ttl_days");
+  });
+
+  it("without --tenant it only proposes the folder as a version and never approves", async () => {
+    const dir = await folder();
+    const { writeFileSync, readFileSync } = await import("node:fs");
+    const file = join(dir, "modules/01-basics/01-install.md");
+    writeFileSync(file, readFileSync(file, "utf8").replace("kubectl is the command-line tool for Kubernetes clusters.", "kubectl is the CLI."));
+    const fake = fakeCourseAsCode();
+    const r = await cli(["course", "init", join(tmp(), "c2"), "--from-course", "12", "--json"], fake.routes);
+    expect(r.code).toBe(0);
+
+    const pushed = await cli(["course", "preview", dir, "--json"], fake.routes);
+    expect(pushed.code, pushed.stdout + pushed.stderr).toBe(0);
+    expect(pushed.data()).toMatchObject({ pushed: true, approved: false, applied: false, version: { status: "proposed" } });
+  });
+});
+
+describe("course adopt", () => {
+  const skipped = [{ topicId: 77, title: "Screencast", type: "Video", reason: "This kind of topic needs its file to travel with the course (asset download), which is not built yet; the topic stays as it is and is never changed by an apply." }];
+
+  it("refuses init for a hand-made course and points at adopt, then adopt makes init work", async () => {
+    const fake = fakeCourseAsCode({ handMade: { skipped } });
+    const dir = join(tmp(), "course");
+
+    const refused = await cli(["course", "init", dir, "--from-course", "12", "--json"], fake.routes);
+    expect(refused.code).toBe(6);
+    expect(refused.error()).toMatchObject({ code: "CONFLICT", details: { code: "NOT_ADOPTED" }, hint: expect.stringContaining("ulams course adopt") });
+    expect(fs.existsSync(dir)).toBe(false);
+
+    const adopted = await cli(["course", "adopt", "12", "--json"], fake.routes);
+    expect(adopted.code, adopted.stdout + adopted.stderr).toBe(0);
+    expect(adopted.data()).toMatchObject({ created: true, courseId: 12, skipped: [{ topicId: 77, type: "Video" }] });
+
+    const init = await cli(["course", "init", dir, "--from-course", "12", "--json"], fake.routes);
+    expect(init.code, init.stdout + init.stderr).toBe(0);
+    expect(fs.existsSync(join(dir, "ulams.yaml"))).toBe(true);
+  });
+
+  it("says what was left out and why, in text, and is idempotent", async () => {
+    const fake = fakeCourseAsCode({ handMade: { skipped } });
+    const first = await cli(["course", "adopt", "12"], fake.routes);
+    expect(first.code).toBe(0);
+    expect(first.stdout).toContain("Adopted course 12");
+    expect(first.stdout).toContain("1 topic was left out and stay as they are");
+    expect(first.stdout).toContain("Screencast (Video)");
+    expect(first.stdout).toContain("ulams course init ./my-course --from-course 12");
+
+    const again = await cli(["course", "adopt", "12"], fake.routes);
+    expect(again.stdout).toContain("was adopted before");
+    expect(fake.db.adoptCalls).toBe(2);
+  });
+
+  it("--dry-run sends nothing, a bad id is refused before any request and an unknown course is exit 5", async () => {
+    const fake = fakeCourseAsCode({ handMade: {} });
+    const dry = await cli(["course", "adopt", "12", "--dry-run", "--json"], fake.routes);
+    expect(dry.code, dry.stdout + dry.stderr).toBe(0);
+    expect(dry.requests).toHaveLength(0);
+    expect(JSON.stringify(dry.body())).toContain("/adopt");
+    const bad = await cli(["course", "adopt", "abc", "--json"], fake.routes);
+    expect(bad.code).toBe(2);
+    expect(bad.requests).toHaveLength(0);
+    const unknown = await cli(["course", "adopt", "99", "--json"], fake.routes);
+    expect(unknown.code).toBe(5);
   });
 });

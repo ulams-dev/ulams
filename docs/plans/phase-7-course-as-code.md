@@ -498,6 +498,32 @@ What the implementation (`front/cli/src/course/merge.ts`, `conflicts.ts`, `sync-
   passes `overwrite` only when every drifted element is one the absorption took its edits from; anything else stays refused.
 - **Still open:** a run endpoint in the `course-as-code` group (CAC-3's candidate), field-level merge (default 4), merging inside Markdown text.
 
+### 7.8 As built in CAC-5, first part: adoption of hand-made courses
+
+What shipped (`api/packages/course-builder/src/CourseAsCode/CourseAdopter.php`, `ContentTypes/ReferencedTopics.php`, `EmbedType.php`,
+`front/cli/src/commands/course-sync.ts`; reference: `developers/cli-course`, `developers/course-builder-api`), and where it differs from 7.3:
+
+- **Adoption is its own command and endpoint**: `ulams course adopt <course>` and `POST course-as-code/courses/{course}/adopt` (`course.adopt`). `init
+  --from-course` stays a read command: on a hand-made course it stops with `NOT_ADOPTED` and says to adopt first. Adoption is idempotent and needs the
+  right to change the course (`CoursesPolicy::update`).
+- **What it reads**: rich text (HTML to Markdown with `league/html-to-markdown`, scripts, handlers, `javascript:` links and remote images removed, split
+  at top-level headings, `origin: author`, no citations), quizzes (as the quiz of the lesson before; single, multiple, true/false, short answer through
+  the existing `GiftReader`; matching and unreadable questions are left out), and H5P, LiaScript and oEmbed topics.
+- **Lessons that stand for a topic.** Instead of the plan's `contentType: "external"` (which would have needed a new schema value in four places), a lesson
+  with `assetRef: {entityType: topic, entityId}` is a reference whatever its `contentType` says (`h5p`, `liascript`, `embed`). `ReferencedTopics` makes
+  the applier follow its title, module and position and never rewrite the content; `Checks::blueprint` skips the type's own check for it. An embedded
+  page also keeps its address in `embed`.
+- **Zero writes on the first apply** is a test: the entity map holds the fingerprint `BlueprintApplier::desired()` computes for each element, the plan
+  is empty, `drift()` is empty, and the query log of an apply holds no write to an LMS table.
+- **Left out and listed** (`skipped[]`, never mapped, never touched by an apply): video, audio, PDF, image, SCORM and cmi5 topics (they need their files
+  to travel with the course), inactive topics, a quiz with no lesson before it, unreadable questions, topics beyond 30 per module. Each lesson gets one
+  fabricated objective because the blueprint requires one. Sub-lessons become modules named `Parent › Child`.
+- **New content type `embed`** (create an oEmbed topic from `embed: {url, title}`; https only). It is not offered by the outline picker or the studio
+  format list.
+- **Not built (CAC-5, second part):** the content types `scorm`, `cmi5`, `video` and `file` with asset upload (`POST sessions/{s}/assets`, content
+  addressed, through the `files`, `scorm`, `cmi5` and `video` services), `pull --assets` and asset upload on push. Until then those topics cannot be
+  adopted or created from Git.
+
 ## 8. GitHub Action, Docker image and preview academies
 
 ### 8.1 Image `ghcr.io/ulams-dev/ulams-cli`
@@ -546,6 +572,53 @@ preview URL of the proposed version (no new tenant), so previews work on a singl
   relay is not built; the docs show a 20-line Cloudflare Worker or GitHub App as an option. (Open question 6.)
 - The sync PR body lists the versions pulled, their reasons (e.g. "Source update r4 → r5: 3 changes", from the
   Living Course proposal) and links to the studio, so the Git reviewer sees why content changed.
+
+### 8.5 As built: the Action, the image and the workflow (second Git-driven milestone)
+
+What shipped for sections 8.1, 8.2 and 8.4 (`actions/course`, `front/cli/Dockerfile`, `front/cli/src/course/ci-github.ts`,
+`.github/workflows/course-action-test.yml`; reference: `developers/cli-course`, `developers/outgoing-webhooks`):
+
+- **The action** is a composite action whose logic is `actions/course/entrypoint.mjs`: inputs to one `ulams course ...` run in the image
+  (`docker run -e ULAMS_TOKEN ...`: secrets are passed by name, never in an argument), SARIF file and outputs, job summary, one sticky pull
+  request comment (`gh pr comment --edit-last --create-if-none`) and the `ulams/sync` pull request. All side effects go through an injected
+  `io`, so `node --test actions/course/test` covers it without Docker, git or gh. Commands: `validate`, `diff`, `preview`, `push`, `pull-pr`.
+  `preview` here is the studio fallback of 8.3 (a proposed version, never approved); real preview academies are the next milestone.
+- **`init --ci github`** writes the workflow of 8.2 at the repository root (path filters when the course is a subfolder, refuses to
+  overwrite). The `push` job proposes only; `apply: true` stays a deliberate edit.
+- **`ULAMS_COMMIT` and `ULAMS_CHANGE_URL`** become `X-Ulams-Commit` and `X-Ulams-Change-Url` on every CLI request (the server already audited
+  both); the action sets them from the pull request or push event.
+- **`course.version_applied`** fires from `ReleaseRecorder::applied` through a new builder event, once per release (an apply that changes
+  nothing and variants send nothing). Payload: `course_id`, `session_id`, `version_id`, `number`, `release_number`, `kind`, `origin`,
+  `reason`, `trigger`, `released_at`. Schema, catalogue sample, docs and tests added.
+- **Image**: the bundle is built outside and copied in (no monorepo install in the image); it is about 290 MB, not under 80 MB. The release
+  workflow, multi-arch builds, provenance and tags are M6-a; nothing is published.
+- **Not built:** the sync pull request does not list the version reasons ("Source update r4 → r5"): the export carries no version list, so the
+  body shows version number, counts and files; the relay for GitHub `repository_dispatch` (documented as an option); the Marketplace entry.
+
+### 8.6 As built: preview academies (third Git-driven milestone)
+
+What shipped for section 8.3 (`api/packages/tenancy`, `api/packages/course-builder`, `front/cli`, `actions/course`; reference: `operators/platform-api`,
+`developers/cli-course`, `developers/course-builder-api`):
+
+- **Throwaway tenants.** `tenants.expires_at` and `tenants.preview_group` (migration `2026_10_29_000000`). `POST /api/platform/tenants` takes
+  `ttl_days` (1 to 30) and `group` (required with it); at most `TENANCY_PREVIEW_CAP` (5) live previews per group, else 409 `preview_limit`.
+  `ulams:tenant:reap` (hourly, platform only, `--dry-run`) queues the deletion of expired tenants through the same `DeleteTenantJob`.
+- **The token** is `POST /api/platform/tenants/{slug}/token`, not a field of the create response: creation is queued, and the tenant does not
+  exist when the response is sent. It runs `ulams:tenant:preview-token` inside the tenant, for previews only (409 otherwise, so a platform token
+  never becomes an administrator of a real academy), kind `cli` (so the job may approve its own imports), one day, `builder:read` and
+  `builder:write`, shown once.
+- **Two server endpoints the plan listed but CAC-1 to CAC-4 did not build:** `POST course-as-code/courses` (`course.create`: an empty approved blueprint, idempotent
+  by `key`) and `GET course-as-code/sessions/{session}` (course id, current and applied version: the run endpoint candidate of 7.6, because the
+  first apply creates the course and nothing else says when). Both work with AI off.
+- **`ulams course preview [--tenant]`** drives all of it from the CLI with `ULAMS_PREVIEW_URL` and `ULAMS_PREVIEW_TOKEN` (the plan's secret
+  names). A preview has no sources, so `forPreview` drops every citation and marks citing elements `origin: author`; the folder is untouched.
+  A second run with the same slug finds the same academy and course; an unchanged folder pushes nothing. A tenant without `expires_at` is
+  refused. Without `--tenant` it is a push that never approves (the 8.2 fallback).
+- **The action** names the academy `pr` + six hex characters of the repository + the pull request number (letters and digits, at most 30),
+  comments its addresses, and a new command `preview-cleanup` (the workflow's `pull_request: closed` job) deletes it. Without the preview
+  secrets, or outside a pull request, `preview` stays the proposed-version fallback.
+- **Not built:** a separate preview host pattern (previews use the platform's tenant hosts), an automatic preview platform token (the owner
+  sets one up, see section 12), and previews of variants.
 
 ## 9. Git merge → Living Course update proposal
 
@@ -597,28 +670,6 @@ What shipped for items 1 to 5 above (`api/packages/living-course`, `api/packages
   `data.proposals[]` entry carries the proposal id and number, the CLI prints the studio-independent `ulams living proposals get` hint.
 - **Not built here:** the `course.version_applied` webhook event, the `ulams-cli` image, the Action and the sync PR flow (next milestone), preview
   academies. The studio's update review shows "From PR #123: subject" under the header (English only, like the rest of that screen).
-
-### 8.5 As built: the Action, the image and the workflow (second Git-driven milestone)
-
-What shipped for sections 8.1, 8.2 and 8.4 (`actions/course`, `front/cli/Dockerfile`, `front/cli/src/course/ci-github.ts`,
-`.github/workflows/course-action-test.yml`; reference: `developers/cli-course`, `developers/outgoing-webhooks`):
-
-- **The action** is a composite action whose logic is `actions/course/entrypoint.mjs`: inputs to one `ulams course ...` run in the image
-  (`docker run -e ULAMS_TOKEN ...`: secrets are passed by name, never in an argument), SARIF file and outputs, job summary, one sticky pull
-  request comment (`gh pr comment --edit-last --create-if-none`) and the `ulams/sync` pull request. All side effects go through an injected
-  `io`, so `node --test actions/course/test` covers it without Docker, git or gh. Commands: `validate`, `diff`, `preview`, `push`, `pull-pr`.
-  `preview` here is the studio fallback of 8.3 (a proposed version, never approved); real preview academies are the next milestone.
-- **`init --ci github`** writes the workflow of 8.2 at the repository root (path filters when the course is a subfolder, refuses to
-  overwrite). The `push` job proposes only; `apply: true` stays a deliberate edit.
-- **`ULAMS_COMMIT` and `ULAMS_CHANGE_URL`** become `X-Ulams-Commit` and `X-Ulams-Change-Url` on every CLI request (the server already audited
-  both); the action sets them from the pull request or push event.
-- **`course.version_applied`** fires from `ReleaseRecorder::applied` through a new builder event, once per release (an apply that changes
-  nothing and variants send nothing). Payload: `course_id`, `session_id`, `version_id`, `number`, `release_number`, `kind`, `origin`,
-  `reason`, `trigger`, `released_at`. Schema, catalogue sample, docs and tests added.
-- **Image**: the bundle is built outside and copied in (no monorepo install in the image); it is about 290 MB, not under 80 MB. The release
-  workflow, multi-arch builds, provenance and tags are M6-a; nothing is published.
-- **Not built:** the sync pull request does not list the version reasons ("Source update r4 → r5"): the export carries no version list, so the
-  body shows version number, counts and files; the relay for GitHub `repository_dispatch` (documented as an option); the Marketplace entry.
 
 ## 10. M6: CLI release engineering
 
