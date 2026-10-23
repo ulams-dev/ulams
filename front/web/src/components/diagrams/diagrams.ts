@@ -4,6 +4,18 @@
  * fold is "armed" (its parts start hidden, opacity and transform only) and plays once it scrolls into view. A
  * looping diagram pauses off screen and has a pause button; the others have a replay button.
  */
+/**
+ * Puts a diagram back in its hidden starting state at once. Without `is-rewinding` the parts would start a
+ * transition towards hidden and simply reverse it when `is-played` comes back, so nothing would visibly replay.
+ */
+function rewind(el: HTMLElement): void {
+  el.classList.add("is-rewinding");
+  el.classList.remove("is-played");
+  el.classList.add("is-armed");
+  void el.offsetWidth;
+  el.classList.remove("is-rewinding");
+}
+
 export function initDiagrams(): void {
   const root = document.documentElement;
   if (root.classList.contains("js-dg")) return;
@@ -38,9 +50,7 @@ export function initDiagrams(): void {
         button.textContent = paused ? (button.dataset.play ?? "") : (button.dataset.pause ?? "");
         return;
       }
-      el.classList.remove("is-played");
-      el.classList.add("is-armed");
-      void el.offsetWidth;
+      rewind(el);
       el.classList.add("is-played");
     });
   }
@@ -53,11 +63,7 @@ export function initDiagrams(): void {
     button.hidden = false;
     button.addEventListener("click", () => {
       const parts = [...group.querySelectorAll<HTMLElement>("[data-dg]")];
-      for (const el of parts) {
-        el.classList.remove("is-played");
-        el.classList.add("is-armed");
-      }
-      void group.offsetWidth;
+      for (const el of parts) rewind(el);
       const start = group.querySelector<HTMLElement>("[data-dg-start]") ?? group;
       start.scrollIntoView({ behavior: "smooth", block: "start" });
       start.focus({ preventScroll: true });
