@@ -23165,6 +23165,36 @@
     ]
    }
   },
+  "/api/admin/reporting/datasets": {
+   "get": {
+    "description": "The datasets the caller may run reports on (assignments, certificates, audit, authoring, ai_usage; each only when its package is installed and the caller holds the dataset's permission), with every column: type, label, the filter operators it accepts, whether it can be grouped or aggregated and whether it holds personal data. Needs the permission reporting_read.",
+    "operationId": "admin.reporting.datasets.list",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The datasets with their columns"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Datasets a report can be built on",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
   "/api/admin/reports/available-for-user": {
    "get": {
     "description": "",
@@ -44033,6 +44063,10 @@
   {
    "description": "QuestionnaireStars",
    "name": "QuestionnaireStars"
+  },
+  {
+   "description": "Reporting",
+   "name": "Reporting"
   },
   {
    "description": "Admin Reports",
