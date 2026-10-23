@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $definition_version
  * @property string $visibility
  * @property list<string>|null $shared_roles
+ * @property bool $feed_enabled offered as an OData feed
  * @property \Illuminate\Support\Carbon|null $last_run_at
  */
 class SavedReport extends Model
@@ -31,5 +32,5 @@ class SavedReport extends Model
 
     protected $guarded = [];
 
-    protected $casts = ['definition' => 'array', 'shared_roles' => 'array', 'definition_version' => 'integer', 'owner_user_id' => 'integer', 'last_run_at' => 'datetime'];
+    protected $casts = ['definition' => 'array', 'shared_roles' => 'array', 'definition_version' => 'integer', 'owner_user_id' => 'integer', 'feed_enabled' => 'boolean', 'last_run_at' => 'datetime'];
 }

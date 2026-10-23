@@ -1,5 +1,5 @@
 {
- "summary": "628/717 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "628/720 covered, 92 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -4038,6 +4038,24 @@
    "summary": "Finish quiz attempt",
    "command": "my.quiz-attempts-end",
    "status": "covered"
+  },
+  {
+   "key": "GET /api/reporting/odata",
+   "summary": "OData service document",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/reporting/odata/$metadata",
+   "summary": "OData metadata document",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/reporting/odata/{entity}",
+   "summary": "Rows of a saved report as an OData entity set",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/scorm/assets/scorm-again.min.js",

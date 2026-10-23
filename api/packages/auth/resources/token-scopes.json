@@ -613,8 +613,43 @@
             }
         },
         {
+            "pattern": "api/admin/reporting/saved/*/run",
+            "area": "reports",
+            "options": {
+                "methods": [
+                    "GET"
+                ],
+                "resource": {
+                    "param": "id"
+                }
+            }
+        },
+        {
+            "pattern": "api/admin/reporting/saved/*",
+            "area": "reports",
+            "options": {
+                "methods": [
+                    "GET"
+                ],
+                "resource": {
+                    "param": "id"
+                }
+            }
+        },
+        {
             "pattern": "api/admin/reporting*",
             "area": "reports"
+        },
+        {
+            "pattern": "api/reporting/odata*",
+            "area": "reports",
+            "options": {
+                "resource": {
+                    "param": "entity",
+                    "prefix": "Report_",
+                    "optional": true
+                }
+            }
         },
         {
             "pattern": "api/admin/stats*",

@@ -1,0 +1,131 @@
+---
+title: Connect a BI tool
+description: Read a saved report from Excel, Power BI or Tableau through a read-only OData feed with a token limited to that one report, and from Looker Studio, Metabase or Superset with the CSV and JSON lines recipes.
+sidebar:
+  order: 35
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+A [saved report](/admin/report-builder/) can be offered to a BI tool as a **read-only OData v4 feed**. The tool asks the
+platform, with a credential that can read that one report and nothing else, and the platform runs the report the way it runs
+every report: with the permissions of the token's user, small groups withheld, every read logged. The tenant database is never
+opened to the network.
+
+<Aside type="caution">
+The feed and the steps below were built to the OData v4 standard and tested against that standard in the platform's own
+tests (protocol, paging, authentication, limits). They were **not** run in Excel, Power BI Desktop or Tableau in the
+automated checks, which cannot start those programs. Check one report in your tool before you rely on it, and tell us what
+differs.
+</Aside>
+
+## Set it up
+
+1. **Save the report** in Analytics > Report builder (or through the API) and note its id (26 characters).
+2. **Turn its feed on.** Only an administrator who manages reports (`reporting_manage`) can:
+   `PUT /api/admin/reporting/saved/{id}` with `{"feed_enabled": true}`. The answer gives the feed address, for example
+   `https://academy.example.com/api/reporting/odata/`, and the name of the entity set, `Report_<id>`.
+3. **Create a token for the tool**, limited to this report, with the `reports:read` scope:
+
+   ```bash
+   ulams tokens create --name "Power BI, overdue by course" --scopes reports:read --kind integration \\
+     --resource-ids '["<report id>"]' --expires-in-days 365 --json
+   ```
+
+   The secret (`ulams_pat_…`) is shown once. A token limited to a report can read that report's feed and run that report
+   through the API (`GET /api/admin/reporting/saved/{id}/run?format=csv|jsonl|xlsx`); every other endpoint answers `403` with
+   the error `resource_limited`. A credential that leaks from a dashboard therefore reads one report, not the platform.
+   Revoke it in Settings > Access tokens (or `ulams tokens revoke`) at any time.
+
+The token belongs to the user who created it, so the report runs with **that user's** permissions and scope: if that person
+loses access to the dataset, the feed stops answering `403`. Create tokens for the person whose view the dashboard should show.
+
+## Excel (Windows and Mac)
+
+1. Data > Get Data > From Other Sources > **From OData Feed** (on older versions: Data > From Other Sources > From OData Feed).
+2. URL: the feed address, `https://academy.example.com/api/reporting/odata/`.
+3. When asked for credentials choose **Basic**: User name anything (it is ignored), **Password the token**
+   (`ulams_pat_…`). Excel sends the password as the credential; the platform accepts it as the token.
+4. Pick the table `Report_<id>` in the Navigator and Load (or Transform Data to rename columns). Data > Refresh All reads the
+   report again.
+
+## Power BI Desktop
+
+1. Home > Get data > **OData feed**; URL as above; choose OData version 4 if the dialog asks (the feed is v4 only).
+2. Credentials: **Basic**, user name anything, password the token. Set the privacy level of the source as your organisation
+   requires.
+3. Select the `Report_<id>` table. The metadata document declares that `$filter`, `$orderby` and `$expand` are not supported, so
+   Power BI does not send them; filter in the saved report instead.
+4. In the Power BI service, set the same Basic credentials for the dataset and a refresh schedule. The feed answers at most 60
+   requests a minute per token and 5 000 rows a page; Power BI follows the paging links by itself.
+
+## Tableau
+
+Connect > More > **OData** (Tableau Desktop), server URL as above, authentication **Username and Password**: any user name
+and the token as the password. Tableau builds an extract or a live connection on `Report_<id>`.
+
+## What the feed does and does not do
+
+| | |
+|---|---|
+| Read only | `GET` only. Nothing in the feed can change data. |
+| Query options | `$select`, `$top`, `$skip`, `$count=true` and `$format=json`. `$filter`, `$orderby`, `$apply`, `$expand`, `$search` answer **501** with an OData error: the saved report already is the filter, the grouping and the order. A tool that ignored your filter and showed wrong numbers would be worse than an error. |
+| Rows | Typed columns (text, whole number, decimal, true/false, date, date and time) and a `RowNumber` key. A grouped report has a `Withheld` column. |
+| Small groups | Groups of fewer learners than the threshold (10 by default) arrive as one row with `Withheld = true` and empty figures, exactly as in the admin screen. |
+| Paging | 5 000 rows a page with `@odata.nextLink`. A report is capped at 1 000 000 rows. |
+| Rate | 60 requests a minute per token (`429` after that). |
+| Audit | Every request with a token is in the token's audit log; every read of rows is also an export of channel `feed` in the compliance export log, with the report and the user. |
+
+## Looker Studio, Metabase and Superset
+
+These three have no OData connector. They read the **CSV or JSON lines** of the same saved report, which any HTTP client can
+fetch with the same limited token:
+
+```bash
+curl -H "Authorization: Bearer ulams_pat_…" \\
+  "https://academy.example.com/api/admin/reporting/saved/<report id>/run?format=csv" -o report.csv
+```
+
+These are recipes written from the tools' documentation. They are not run in the platform's checks.
+
+**Looker Studio.** Looker Studio cannot send an authorisation header to a URL, so put a Google Sheet in between. In the sheet,
+Extensions > Apps Script, store the token under Project Settings > Script properties as `ULAMS_TOKEN`, and run this on a time
+trigger:
+
+```javascript
+function refresh() {
+  const response = UrlFetchApp.fetch('https://academy.example.com/api/admin/reporting/saved/<report id>/run?format=csv', {
+    headers: { Authorization: 'Bearer ' + PropertiesService.getScriptProperties().getProperty('ULAMS_TOKEN') },
+  });
+  const rows = Utilities.parseCsv(response.getContentText().replace(/^\\uFEFF/, ''));
+  const sheet = SpreadsheetApp.getActive().getSheetByName('report');
+  sheet.clear();
+  sheet.getRange(1, 1, rows.length, rows[0].length).setValues(rows);
+}
+```
+
+Then add the Google Sheets connector in Looker Studio and choose the `report` tab. The sheet is a copy of the report on a Google
+account: share it as you would the report itself.
+
+**Metabase.** Load the CSV into a table that Metabase reads, on a schedule (cron, a CI job), for example into PostgreSQL:
+
+```bash
+curl -fsS -H "Authorization: Bearer $ULAMS_TOKEN" "$REPORT_URL" \\
+  | psql "$REPORTING_DB" -c "\\copy overdue_by_course FROM STDIN WITH (FORMAT csv, HEADER true, ENCODING 'UTF8')"
+```
+
+Create the table first with the report's columns (the `ulams reporting datasets` and the saved report's definition list them), and
+truncate it in the same job. Add that database to Metabase as a data source.
+
+**Superset.** Use the same load into a reporting database and add it as a database in Superset. Where DuckDB is already part of
+your Superset, `read_csv` on the URL works if your DuckDB version can send an `Authorization` header with the request; check
+its HTTP secrets documentation, since that feature differs between versions.
+
+For all three, an XLSX or CSV file e-mailed on a [schedule](/admin/report-builder/#schedule-a-saved-report) is the zero-setup
+alternative.
+
+## What is not offered, and why
+
+- **A database login for BI tools** (read-only Postgres views). It would open every tenant database to the network, bypass the
+  small-group protection and the scope of each viewer, and tie your reports to our internal tables.
+- **Parquet.** It needs a new library for little gain over the feed and the CSV recipes; it can follow if a customer needs it.

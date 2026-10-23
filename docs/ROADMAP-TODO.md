@@ -1101,10 +1101,15 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       CSV and JSON lines, delete) in en, pl and zh with axe and keyboard browser tests; RB-5 done: a schedule can send a saved report
       (`compliance_report_schedules.saved_report_id`), run once per recipient with their own permissions in one queued job each,
       skipped recipients reported to the owner, XLSX through a streaming writer on `ext-zip` (no new dependency);
-      RB-7 (curated CLI and MCP set) pending)
+      RB-6 done: read-only OData v4 feed per saved report (service document, `$metadata` with Capabilities annotations, entity sets with
+      `$select`, `$top`, `$skip`, `$count`, 5 000 rows a page, 501 for `$filter` and the rest), Basic or Bearer `reports:read` token limited
+      to one report through `api_token_meta.resource_ids`, 60 requests a minute, every read logged; not yet checked by hand in Excel or
+      Power BI; RB-7 (curated CLI and MCP set) pending)
 - [ ] (new) BI connector: read-only OData v4 feed per saved report for Excel, Power BI and Tableau, with a `reports:read`
       token that can be limited to one report; CSV and JSON lines URLs with recipes for Looker Studio, Metabase and
-      Superset (plan `authoring-metric-and-report-builder.md` RB-6)
+      Superset (plan `authoring-metric-and-report-builder.md` RB-6) (partial: RB-6 built: feed, limited
+      tokens and the setup guides `admin/bi-connectors` for Excel, Power BI, Tableau, Looker Studio, Metabase and Superset; the feed is covered by the
+      platform's own tests only, a manual check in Excel and Power BI Desktop is still open)
 
 ### 6.6 Skills and competencies
 - [x] Competency framework; AI-suggested tags confirmed by author (`api/packages/compliance`, #286)

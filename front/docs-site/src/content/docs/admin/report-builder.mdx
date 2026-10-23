@@ -1,6 +1,6 @@
 ---
 title: Report builder
-description: The datasets an administrator can build reports on, how a report definition asks for rows or groups, how small groups are withheld, and how reports are saved, shared with roles and exported. The admin screen, schedules for saved reports and the BI feed follow in later releases.
+description: The datasets an administrator can build reports on, how a report definition asks for rows or groups, how small groups are withheld, how reports are saved, shared with roles, exported and scheduled, and where the BI feed is described.
 modules:
   - reporting
 adminRoutes:
@@ -17,9 +17,8 @@ and schedule it. It is built in steps (ADR 0194). This page covers what exists t
 **report definition** that is compiled into a safe query.
 
 <Aside type="note">
-Today you can list the datasets, preview a report definition, save it, share it with roles and run or export it through the
-API. Schedules for saved reports and XLSX are covered below; the BI feed is planned and not available yet. Nothing
-on this page promises a date for them.
+You can list the datasets, build a report on the admin screen or through the API, save it, share it with roles, run or export
+it (CSV, JSON lines, XLSX), schedule it by e-mail and offer it to a BI tool as a [read-only feed](/admin/bi-connectors/).
 </Aside>
 
 ## The admin screen
@@ -193,6 +192,11 @@ file is mailed to that person: two people can get different rows from the same s
 permission, have no e-mail address, no longer exist) is skipped, and the person who created the schedule gets a mail that
 names who was skipped and why; `skipped_recipient_ids` on the schedule lists them. If the saved report was deleted nobody
 gets a file and the owner is told the same way. Existing schedules on a compliance dataset are unchanged.
+
+## BI tools
+
+A saved report can be offered as a read-only OData v4 feed to Excel, Power BI and Tableau, with a token limited to that one
+report; Looker Studio, Metabase and Superset read the CSV. See [Connect a BI tool](/admin/bi-connectors/).
 
 ## Tokens
 

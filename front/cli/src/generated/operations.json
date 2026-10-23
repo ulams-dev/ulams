@@ -4039,6 +4039,24 @@
  },
  {
   "method": "GET",
+  "path": "/api/reporting/odata",
+  "summary": "OData service document",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/reporting/odata/{entity}",
+  "summary": "Rows of a saved report as an OData entity set",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/reporting/odata/$metadata",
+  "summary": "OData metadata document",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
   "path": "/api/scorm/assets/scorm-again.min.js",
   "summary": "Vendored scorm-again runtime (MIT) for the legacy player",
   "tag": "SCORM"
