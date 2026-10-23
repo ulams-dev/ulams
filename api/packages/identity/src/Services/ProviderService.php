@@ -103,8 +103,10 @@ class ProviderService
             $id = $provider->getKey();
             $slug = $provider->slug;
             $links = $provider->links()->count();
+            // the provider's SCIM tokens stop working with it; the accounts it provisioned stay (never hard-deleted)
+            $scimTokens = app(\Ulams\Identity\Services\Scim\ScimTokenService::class)->revokeAll($provider);
             $provider->delete();
-            $this->audit->record('provider.deleted', ['provider_id' => $id, 'data' => ['slug' => $slug, 'links_removed' => $links]]);
+            $this->audit->record('provider.deleted', ['provider_id' => $id, 'data' => ['slug' => $slug, 'links_removed' => $links, 'scim_tokens_revoked' => $scimTokens]]);
         });
     }
 

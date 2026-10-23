@@ -18,7 +18,7 @@ class AdminListTokensRequest extends FormRequest
     {
         return [
             'user_id' => ['nullable', 'integer', 'min:1'],
-            'kind' => ['nullable', Rule::in(ApiTokenMeta::KINDS)],
+            'kind' => ['nullable', Rule::in([...ApiTokenMeta::KINDS, ApiTokenMeta::KIND_SCIM])],
             'include_revoked' => ['nullable', 'boolean'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:200'],
             'page' => ['nullable', 'integer', 'min:1'],

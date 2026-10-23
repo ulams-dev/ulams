@@ -6,6 +6,7 @@ use Ulams\Auth\Models\User as AuthUser;
 use Ulams\Auth\Repositories\Criteria\AdditionalField\AdditionalFieldBooleanCriterion;
 use Ulams\Auth\Repositories\Criteria\AdditionalField\AdditionalFieldEqualsCriterion;
 use Ulams\Auth\Repositories\Criteria\AdditionalField\AdditionalFieldLikeCriterion;
+use Ulams\Auth\Repositories\Criteria\HideServiceUsersCriterion;
 use Ulams\Auth\Repositories\Criteria\LastLoginToFrontCriterion;
 use Ulams\Auth\Repositories\Criteria\LastLoginCriterion;
 use Ulams\Core\Repositories\Criteria\PeriodCriterion;
@@ -29,6 +30,7 @@ class UserFilterCriteriaDto extends CriteriaDto implements DtoContract, Instanti
     public static function instantiateFromRequest(Request $request): self
     {
         $criteria = new Collection();
+        $criteria->push(new HideServiceUsersCriterion());
 
         if ($request->get('search')) {
             $criteria->push(new UserSearchCriterion($request->get('search')));
