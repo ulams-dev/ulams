@@ -115,6 +115,29 @@ export interface StyleStrings {
   checkBlocksPublishing: string;
   checkNeedCourse: string;
   checkNotFound: string;
+  restyleTitle: string;
+  restyleIntro: string;
+  restyleButton: string;
+  restyling: string;
+  restylePreview: string;
+  restyleSkipped: string;
+  restyleCreate: string;
+  restyleCreating: string;
+  restyleCreated: string;
+  restyleOpen: string;
+  restyleKept: string;
+  restyleHeading: string;
+  restyleSub: string;
+  restyleReviewIntro: string;
+  restyleAppliedTitle: string;
+  restyleAppliedText: string;
+  restyleRejectedTitle: string;
+  restyleRejectedText: string;
+  restyleRejectTitle: string;
+  restyleRejectText: string;
+  restyleBadge: string;
+  restyleName: string;
+  restyleNoSource: string;
 }
 
 const en: StyleStrings = {
@@ -225,6 +248,29 @@ const en: StyleStrings = {
   checkBlocksPublishing: "This course cannot be published until the blocking items are fixed.",
   checkNeedCourse: "Enter the id of a course first.",
   checkNotFound: "That course was not found, or it was not made with the Course Builder.",
+  restyleTitle: "Restyle a course for this profile",
+  restyleIntro: "Optional, and never automatic. The builder rewrites only what the style check can name: banned phrases, terms to avoid and product-name casing. It never rewrites the correct answer of a quiz question. You review every change as a diff, and nothing reaches the course until you apply it.",
+  restyleButton: "Preview a restyle",
+  restyling: "Working out what a restyle would change…",
+  restylePreview: "A restyle would rewrite {elements} elements to fix {findings} findings. Estimated cost: {cost}.",
+  restyleSkipped: "{skipped} flagged elements are left for you to edit by hand: they have no source passage to ground a rewrite, or the finding is in the answer key of a quiz question.",
+  restyleCreate: "Create the restyle proposal",
+  restyleCreating: "Creating the proposal and analysing the course…",
+  restyleCreated: "The restyle proposal was created. Review it as a diff before anything changes.",
+  restyleOpen: "Review the restyle",
+  restyleKept: "This course already has an open restyle proposal.",
+  restyleHeading: "Restyle for the style profile",
+  restyleSub: "Proposal {number}",
+  restyleReviewIntro: "The elements below depart from the approved style profile. Each proposal rewrites only what the style check found. Accept the changes you want and apply them; nothing reaches the course before that.",
+  restyleAppliedTitle: "The restyle is applied",
+  restyleAppliedText: "Your course now follows the style profile in the elements you accepted. Learners keep their progress.",
+  restyleRejectedTitle: "You kept the earlier version",
+  restyleRejectedText: "Your course was not changed.",
+  restyleRejectTitle: "Reject the whole restyle?",
+  restyleRejectText: "Your course stays as it is. You can ask for a new restyle later.",
+  restyleBadge: "Restyle",
+  restyleName: "Restyle {number}",
+  restyleNoSource: "No source change",
 };
 
 const pl: StyleStrings = {
@@ -335,6 +381,29 @@ const pl: StyleStrings = {
   checkBlocksPublishing: "Tego kursu nie można opublikować, dopóki nie poprawisz elementów blokujących.",
   checkNeedCourse: "Najpierw wpisz identyfikator kursu.",
   checkNotFound: "Nie znaleziono tego kursu albo nie powstał w Course Builderze.",
+  restyleTitle: "Dostosuj kurs do tego profilu",
+  restyleIntro: "Opcjonalnie i nigdy automatycznie. Kreator przepisuje tylko to, co potrafi wskazać sprawdzenie stylu: zakazane zwroty, terminy do unikania i pisownię nazw produktów. Nigdy nie przepisuje poprawnej odpowiedzi w pytaniu quizu. Każdą zmianę oceniasz jako podgląd zmian (diff), a nic nie trafi do kursu, dopóki jej nie zastosujesz.",
+  restyleButton: "Pokaż podgląd zmian stylu",
+  restyling: "Sprawdzanie, co zmieniłaby zmiana stylu…",
+  restylePreview: "Zmiana stylu przepisałaby elementy: {elements}, aby poprawić uwagi: {findings}. Szacowany koszt: {cost}.",
+  restyleSkipped: "Elementy oznaczone, ale zostawione do ręcznej edycji: {skipped}. Nie mają fragmentu źródła, na którym można oprzeć przepisanie, albo uwaga dotyczy klucza odpowiedzi w pytaniu quizu.",
+  restyleCreate: "Utwórz propozycję zmiany stylu",
+  restyleCreating: "Tworzenie propozycji i analiza kursu…",
+  restyleCreated: "Propozycja zmiany stylu została utworzona. Sprawdź ją jako podgląd zmian, zanim cokolwiek się zmieni.",
+  restyleOpen: "Sprawdź zmianę stylu",
+  restyleKept: "Ten kurs ma już otwartą propozycję zmiany stylu.",
+  restyleHeading: "Zmiana stylu zgodnie z profilem stylu",
+  restyleSub: "Propozycja {number}",
+  restyleReviewIntro: "Poniższe elementy odbiegają od zatwierdzonego profilu stylu. Każda propozycja przepisuje tylko to, co wykryło sprawdzenie stylu. Zaakceptuj zmiany, które chcesz, i zastosuj je; wcześniej nic nie trafi do kursu.",
+  restyleAppliedTitle: "Zmiana stylu została zastosowana",
+  restyleAppliedText: "Twój kurs jest teraz zgodny z profilem stylu w zaakceptowanych elementach. Uczestnicy zachowują swoje postępy.",
+  restyleRejectedTitle: "Zachowano wcześniejszą wersję",
+  restyleRejectedText: "Kurs nie został zmieniony.",
+  restyleRejectTitle: "Odrzucić całą zmianę stylu?",
+  restyleRejectText: "Kurs pozostaje bez zmian. Później możesz poprosić o nową zmianę stylu.",
+  restyleBadge: "Zmiana stylu",
+  restyleName: "Zmiana stylu {number}",
+  restyleNoSource: "Bez zmiany źródła",
 };
 
 const zh: StyleStrings = {
@@ -445,6 +514,29 @@ const zh: StyleStrings = {
   checkBlocksPublishing: "在修复阻止发布的项目之前，无法发布此课程。",
   checkNeedCourse: "请先输入课程编号。",
   checkNotFound: "未找到该课程，或它不是用 Course Builder 创建的。",
+  restyleTitle: "按此配置调整课程样式",
+  restyleIntro: "可选，且绝不会自动进行。构建器只改写样式检查能指出的内容：禁用语、应避免的术语和产品名称的大小写。它绝不会改写测验题的正确答案。每项更改都以差异对比形式供您审阅，在您应用之前不会影响课程。",
+  restyleButton: "预览样式调整",
+  restyling: "正在计算样式调整会改动什么…",
+  restylePreview: "样式调整将改写 {elements} 个元素，以解决 {findings} 项发现。预计费用：{cost}。",
+  restyleSkipped: "另有 {skipped} 个已标记的元素留给您手动编辑：它们没有可作为改写依据的来源段落，或问题出在测验题的答案中。",
+  restyleCreate: "创建样式调整建议",
+  restyleCreating: "正在创建建议并分析课程…",
+  restyleCreated: "样式调整建议已创建。请先以差异对比方式审阅，之后才会有任何更改。",
+  restyleOpen: "审阅样式调整",
+  restyleKept: "此课程已有一个未处理的样式调整建议。",
+  restyleHeading: "按样式配置调整样式",
+  restyleSub: "建议 {number}",
+  restyleReviewIntro: "以下元素与已批准的样式配置不符。每条建议只改写样式检查发现的内容。接受您想要的更改并应用；在此之前不会影响课程。",
+  restyleAppliedTitle: "样式调整已应用",
+  restyleAppliedText: "您接受的元素现在符合样式配置。学员的进度会保留。",
+  restyleRejectedTitle: "已保留之前的版本",
+  restyleRejectedText: "课程没有更改。",
+  restyleRejectTitle: "拒绝整个样式调整？",
+  restyleRejectText: "课程保持不变。您以后可以再次请求样式调整。",
+  restyleBadge: "样式调整",
+  restyleName: "样式调整 {number}",
+  restyleNoSource: "来源无变化",
 };
 
 export const STYLE_STRINGS: Record<StyleLocale, StyleStrings> = { en, pl, zh };

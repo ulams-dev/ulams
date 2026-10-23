@@ -34,11 +34,14 @@ final class StyleProfileResolver
      */
     public function promptFor(Session $session): ?array
     {
-        $profile = $this->profileFor($session);
+        return self::promptForProfile($this->profileFor($session));
+    }
 
+    /** @return array<string,mixed>|null null for no profile, or one with nothing for the writing (a theme only adds nothing to a prompt) */
+    public static function promptForProfile(?StyleProfile $profile): ?array
+    {
         $values = $profile === null ? null : self::forPrompt($profile);
 
-        // a profile with nothing for the writing (a theme only) adds nothing to the prompt
         return $values !== null && count($values) > 1 ? $values : null;
     }
 

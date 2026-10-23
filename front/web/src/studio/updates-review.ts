@@ -15,6 +15,7 @@ import { evidenceCard } from "@ulams/ui/builder/insights-view.ts";
 import { evidenceCardOptions, improveStrings } from "./improve-model.ts";
 import { fill, type InsightsLocale } from "./insights-i18n.ts";
 import { formatterFor } from "./insights-model.ts";
+import { STYLE_STRINGS } from "./style-i18n.ts";
 import {
   analyseLabel,
   applyLabel,
@@ -50,6 +51,9 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
   // improvements from learner insights (ADR 0181) speak the language the page was opened in; the rest of the screen is English
   const locale = (root.dataset.locale ?? "en") as InsightsLocale;
   const im = improveStrings(locale);
+  const st = STYLE_STRINGS[locale];
+  // improvements from learner insights and restyles for a style profile have no source revision (ADR 0181, 0196)
+  const sourceless = (kind?: string): boolean => kind === "insights" || kind === "style";
   const formatter = formatterFor(locale);
 
   const header = h("div", { "data-header": "" });
@@ -201,13 +205,25 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
 
   function render(): void {
     if (!detail) return;
-    changesCol.hidden = detail.kind === "insights";
+    changesCol.hidden = sourceless(detail.kind);
     renderHeader();
     learnerPanel.update(detail, settings);
     renderState();
     renderItemsIfChanged();
     renderApplyBar();
     renderChanges();
+  }
+
+  function renderStyleHeader(p: ProposalDetail): void {
+    header.replaceChildren(
+      h("div", { class: "st-review-head" },
+        h("h2", { class: "cb-serif cb-h2", lang: st.htmlLang }, st.restyleHeading),
+        h("span", { class: "st-status", "data-proposal-status": p.status }, PROPOSAL_STATUS_LABEL[p.status] ?? p.status)),
+      h("p", { class: "cb-muted", lang: st.htmlLang }, fill(st.restyleSub, { number: p.number }), p.counts?.styleProfileName ? ` · ${p.counts.styleProfileName}` : ""),
+      h("p", { class: "cb-muted", lang: st.htmlLang }, st.restyleReviewIntro),
+      learnerPanel.el,
+      switchesHost
+    );
   }
 
   function renderInsightsHeader(p: ProposalDetail): void {
@@ -237,6 +253,7 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
 
   function renderHeader(): void {
     const p = detail!;
+    if (p.kind === "style") return renderStyleHeader(p);
     if (p.kind === "insights") return renderInsightsHeader(p);
     const from = p.fromRevision?.number;
     const to = p.toRevision?.number;
@@ -297,15 +314,17 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
         break;
       case "applied":
         nodes.push(h("section", { class: "cb-card st-state st-done", "data-done": "" },
-          h("h2", { class: "cb-h3", lang: p.kind === "insights" ? im.htmlLang : undefined }, p.kind === "insights" ? im.appliedTitle : "The update is applied"),
-          h("p", { lang: p.kind === "insights" ? im.htmlLang : undefined }, p.kind === "insights" ? im.appliedText : `Your course now reflects source revision ${p.toRevision?.number ?? ""}. Learners keep their progress.`.replace("revision .", "the new revision.")),
+          h("h2", { class: "cb-h3", lang: p.kind === "style" ? st.htmlLang : p.kind === "insights" ? im.htmlLang : undefined }, p.kind === "style" ? st.restyleAppliedTitle : p.kind === "insights" ? im.appliedTitle : "The update is applied"),
+          h("p", { lang: p.kind === "style" ? st.htmlLang : p.kind === "insights" ? im.htmlLang : undefined }, p.kind === "style" ? st.restyleAppliedText : p.kind === "insights" ? im.appliedText : `Your course now reflects source revision ${p.toRevision?.number ?? ""}. Learners keep their progress.`.replace("revision .", "the new revision.")),
           h("div", { class: "cb-actions" }, h("a", { class: "cb-btn cb-btn-primary", href: `/studio/s/${sessionId}/workspace` }, "Back to the workspace"), h("a", { class: "cb-btn", href: `/studio/s/${sessionId}/updates` }, "All updates"))));
         break;
       case "no_impact":
         nodes.push(h("section", { class: "cb-card st-state" }, h("h2", { class: "cb-h3" }, "This change does not affect your course"), h("p", {}, "No lesson, question or objective relies on the passages that changed.")));
         break;
       case "rejected":
-        nodes.push(p.kind === "insights"
+        nodes.push(p.kind === "style"
+          ? h("section", { class: "cb-card st-state", lang: st.htmlLang }, h("h2", { class: "cb-h3" }, st.restyleRejectedTitle), h("p", {}, st.restyleRejectedText))
+          : p.kind === "insights"
           ? h("section", { class: "cb-card st-state", lang: im.htmlLang }, h("h2", { class: "cb-h3" }, im.rejectedTitle), h("p", {}, im.rejectedText))
           : h("section", { class: "cb-card st-state" }, h("h2", { class: "cb-h3" }, "You kept the earlier version"), h("p", {}, "Your course was not changed, and the source revision is marked as reviewed.")));
         break;
@@ -419,7 +438,8 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     reject.addEventListener("click", () => {
       reject.disabled = true;
       const insights = detail?.kind === "insights";
-      slot.replaceChildren(confirmPanel(insights ? im.rejectTitle : "Reject the whole update?", insights ? im.rejectText : rejectAllText(detail?.toRevision?.number), "Reject and keep my course", () => void rejectAll(), () => {
+      const restyle = detail?.kind === "style";
+      slot.replaceChildren(confirmPanel(restyle ? st.restyleRejectTitle : insights ? im.rejectTitle : "Reject the whole update?", restyle ? st.restyleRejectText : insights ? im.rejectText : rejectAllText(detail?.toRevision?.number), "Reject and keep my course", () => void rejectAll(), () => {
         slot.replaceChildren();
         reject.disabled = false;
         reject.focus();
@@ -427,7 +447,7 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     });
     return h("div", { class: "st-bulk" },
       h("div", { class: "cb-actions" }, all, reject),
-      h("p", { class: "cb-muted cb-small" }, detail?.kind === "insights"
+      h("p", { class: "cb-muted cb-small" }, sourceless(detail?.kind)
         ? "Accept all accepts every undecided change. Reject all keeps your course as it is."
         : "Accept all accepts every undecided update, removal and no-change item. Reject all keeps your course as it is and acknowledges this source revision."),
       slot);

@@ -100,3 +100,32 @@ describe("living course commands", () => {
     expect(r.requests.at(-1)?.query).toMatchObject({ format: "json" });
   });
 });
+
+describe("living restyle", () => {
+  const S = "01j9z3k8m2x4q7r5t6v8w0y1ab";
+  const env = { ULAMS_URL: "http://coffee.localhost", ULAMS_TOKEN: "tok-123456" };
+  const route = `POST /api/admin/living-course/sessions/${S}/style-proposals`;
+
+  it("asks for the estimate first, then creates the proposal with --confirm-estimate", async () => {
+    const estimate = { state: "estimate", elements: 4, findings: 6, estimateMicroUsd: 120000 };
+    const first = await runCli(["living", "restyle", S, "--json"], { env, routes: { [route]: { body: { success: true, data: estimate } } } });
+    expect(first.code).toBe(0);
+    expect(first.requests[0]?.body).toEqual({ confirmEstimate: false });
+    expect(first.json().data).toMatchObject({ state: "estimate", elements: 4 });
+    first.cleanup();
+
+    const done = { state: "started", runId: null, proposal: { id: "p1", kind: "style" } };
+    const second = await runCli(["living", "restyle", S, "--profile", "01arz3ndektsv4rrffq69g5fav", "--confirm-estimate", "--json"], { env, routes: { [route]: { status: 201, body: { success: true, data: done } } } });
+    expect(second.code).toBe(0);
+    expect(second.requests[0]?.body).toEqual({ styleProfileId: "01arz3ndektsv4rrffq69g5fav", confirmEstimate: true });
+    expect(second.json().data).toMatchObject({ proposal: { kind: "style" } });
+    second.cleanup();
+  });
+
+  it("shows the API's reason when nothing needs a restyle", async () => {
+    const r = await runCli(["living", "restyle", S, "--json"], { env, routes: { [route]: { status: 422, body: { success: false, code: "nothing_to_restyle", message: "Nothing in this course departs from the style profile." } } } });
+    expect(r.code).not.toBe(0);
+    expect(JSON.stringify(r.json())).toContain("Nothing in this course departs");
+    r.cleanup();
+  });
+});

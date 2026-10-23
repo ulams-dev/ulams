@@ -38,3 +38,20 @@ describe("Style profile BFF allow-list", () => {
     expect(isStudioCall(method, path)).toBe(false);
   });
 });
+
+describe("Restyle BFF allow-list", () => {
+  it("forwards the restyle of a session to Living Course and nothing else of that shape", () => {
+    expect(isLivingCourseCall("POST", `/living-course/sessions/${ID}/style-proposals`)).toBe(true);
+    expect(isStudioCall("POST", `/living-course/sessions/${ID}/style-proposals`)).toBe(false);
+    for (const [method, path] of [
+      ["GET", `/living-course/sessions/${ID}/style-proposals`],
+      ["PUT", `/living-course/sessions/${ID}/style-proposals`],
+      ["DELETE", `/living-course/sessions/${ID}/style-proposals`],
+      ["POST", `/living-course/sessions/${ID}/style-proposals/x`],
+      ["POST", "/living-course/sessions/short/style-proposals"],
+      ["POST", `/sessions/${ID}/style-proposals`],
+    ] as const) {
+      expect(isLivingCourseCall(method, path) || isStudioCall(method, path), `${method} ${path}`).toBe(false);
+    }
+  });
+});

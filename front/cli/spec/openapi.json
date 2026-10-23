@@ -19414,6 +19414,88 @@
     ]
    }
   },
+  "/api/admin/living-course/sessions/{session}/style-proposals": {
+   "post": {
+    "description": "Restyle proposals (ADR 0196): after a style profile changes, an optional proposal that brings the flagged elements of a\ncourse in line with it. Without `confirmEstimate` it only says what would be rewritten and what it would cost; with it, a\nproposal of kind `style` is created and analysed. The author reviews and applies the diff on the Living Course review\nscreen; nothing changes in the course before that, and a restyle is never started by itself.",
+    "operationId": "admin.living-course.sessions.by-session.style-proposals.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "confirmEstimate": {
+          "type": "boolean"
+         },
+         "styleProfileId": {
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "state estimate (what and how much) or kept_existing"
+     },
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "proposal created and analysis started"
+     },
+     "403": {
+      "description": "not the author"
+     },
+     "404": {
+      "description": "unknown session or profile"
+     },
+     "409": {
+      "description": "no approved version"
+     },
+     "422": {
+      "description": "profile not approved, nothing to restyle, or budget"
+     },
+     "429": {
+      "description": "daily limit"
+     },
+     "503": {
+      "description": "AI disabled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Propose a restyle of the course for an approved style profile (default: the one the brief names, else the academy's). Without confirmEstimate: the estimate only",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
   "/api/admin/living-course/sources/{source}/revisions": {
    "get": {
     "operationId": "admin.living-course.sources.by-source.revisions.get",

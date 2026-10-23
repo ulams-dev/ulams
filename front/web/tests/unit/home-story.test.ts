@@ -244,7 +244,7 @@ describe("home page: white label and the policy-to-proof path", () => {
       const list = ofType(landingDocFor("platform", locale)!, "FeatureList")[0]!;
       const items = list.props!.items as Array<{ status?: string }>;
       expect(items).toHaveLength(6);
-      expect(items.filter((i) => i.status === "coming")).toHaveLength(3);
+      expect(items.filter((i) => i.status === "coming")).toHaveLength(2);
     });
   }
 });

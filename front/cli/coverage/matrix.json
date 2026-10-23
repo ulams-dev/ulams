@@ -1,5 +1,5 @@
 {
- "summary": "629/718 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "630/719 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1535,6 +1535,12 @@
    "key": "GET /api/admin/living-course/sessions/{session}/staleness",
    "summary": "Per-element staleness and the course summary",
    "command": "living.staleness",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/sessions/{session}/style-proposals",
+   "summary": "Propose a restyle of the course for an approved style profile (default: the one the brief names, else the academy's). Without confirmEstimate: the estimate only",
+   "command": "living.restyle",
    "status": "covered"
   },
   {

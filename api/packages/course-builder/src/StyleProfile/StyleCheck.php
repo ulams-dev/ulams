@@ -171,24 +171,26 @@ final class StyleCheck
         $haystack = $unit['text'] . "\n" . $unit['markdown'];
         foreach ((array) ($rules['terminology'] ?? []) as $item) {
             $use = (string) $item['use'];
+            $casingFlagged = false;
             foreach ((array) ($item['avoid'] ?? []) as $avoid) {
                 // a "wrong" spelling that differs from the right one only by case is a casing rule: match it exactly
                 $caseOnly = mb_strtolower((string) $avoid) === mb_strtolower($use);
                 $match = self::find((string) $avoid, $haystack, $caseOnly);
                 if ($match !== null) {
+                    $casingFlagged = $casingFlagged || $caseOnly;
                     $out[] = [
-                        'rule' => 'terminology', 'code' => 'style_terminology', 'severity' => 'warning', 'unit' => $unit, 'term' => $avoid, 'quote' => $match,
+                        'rule' => 'terminology', 'code' => 'style_terminology', 'severity' => 'warning', 'unit' => $unit, 'term' => $avoid, 'use' => $use, 'quote' => $match,
                         'message' => "“{$unit['title']}”: use “{$use}”, not “{$avoid}”",
                         'citations' => (array) ($item['citations'] ?? []),
                     ];
                 }
             }
             // a name with capitals (a product name) is written exactly as the guide spells it
-            if ($use !== mb_strtolower($use)) {
+            if ($use !== mb_strtolower($use) && !$casingFlagged) {
                 $wrong = self::wrongCasing($use, $haystack);
                 if ($wrong !== null) {
                     $out[] = [
-                        'rule' => 'casing', 'code' => 'style_casing', 'severity' => 'warning', 'unit' => $unit, 'term' => $use, 'quote' => $wrong,
+                        'rule' => 'casing', 'code' => 'style_casing', 'severity' => 'warning', 'unit' => $unit, 'term' => $wrong, 'use' => $use, 'quote' => $wrong,
                         'message' => "“{$unit['title']}”: write “{$use}” exactly like that, not “{$wrong}”",
                         'citations' => (array) ($item['citations'] ?? []),
                     ];
@@ -349,6 +351,7 @@ final class StyleCheck
             'elementId' => $finding['unit']['elementId'],
             'message' => $prefix . $finding['message'] . $suffix,
             'term' => $finding['term'],
+            'use' => $finding['use'] ?? null,
             'quote' => $finding['quote'],
             'citations' => $citations,
         ], fn ($v) => $v !== null);

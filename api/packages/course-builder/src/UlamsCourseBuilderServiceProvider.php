@@ -29,6 +29,7 @@ use Ulams\CourseBuilder\Console\BackfillReleasesCommand;
 use Ulams\CourseBuilder\Console\EvalCommand;
 use Ulams\CourseBuilder\Console\PruneEventsCommand;
 use Ulams\CourseBuilder\Console\SessionExportCommand;
+use Ulams\CourseBuilder\Console\StyleEvalCommand;
 use Ulams\CourseBuilder\Console\SessionImportCommand;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Fake\SyntheticResponders;
@@ -160,7 +161,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         SyntheticResponders::register($this->app->make(FakeResponders::class));
 
         if ($this->app->runningInConsole()) {
-            $this->commands([BackfillReleasesCommand::class, EvalCommand::class, PruneEventsCommand::class, SessionExportCommand::class, SessionImportCommand::class]);
+            $this->commands([BackfillReleasesCommand::class, EvalCommand::class, PruneEventsCommand::class, SessionExportCommand::class, SessionImportCommand::class, StyleEvalCommand::class]);
         }
     }
 }

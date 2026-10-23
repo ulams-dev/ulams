@@ -73,8 +73,14 @@ class StyleCheckTest extends TestCase
         $this->assertContains('user', $terms);
         $this->assertContains('northwind academy', $terms);
         $this->assertContains('NWA', $terms);
-        $this->assertContains('Northwind Academy', $terms, 'casing rule');
+        $this->assertSame(['Northwind Academy', 'Northwind Academy'], array_values(array_filter(array_column($r['warnings'], 'use'), fn ($u) => $u === 'Northwind Academy')), 'both findings say what to write');
         $this->assertSame([], $r['blocking']);
+
+        // without the wrong spelling in the avoid list the casing rule reports it
+        $only = $this->check($this->doc(['Open northwind academy today.']), ['terminology' => [['use' => 'Northwind Academy', 'avoid' => [], 'citations' => []]]]);
+        $this->assertSame(['casing'], array_column($only['warnings'], 'rule'));
+        $this->assertSame('northwind academy', $only['warnings'][0]['term']);
+        $this->assertSame('Northwind Academy', $only['warnings'][0]['use']);
 
         $clean = $this->check($this->doc(['Every learner opens Northwind Academy.']), ['terminology' => [
             ['use' => 'learner', 'avoid' => ['student'], 'citations' => []],

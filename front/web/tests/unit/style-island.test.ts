@@ -43,8 +43,15 @@ function stubApi(options: { approve?: number; profiles?: unknown[]; detail?: Rec
   const calls: Call[] = [];
   let list = options.profiles ?? [detail()];
   vi.stubGlobal("fetch", async (url: string, init?: RequestInit) => {
-    const path = url.replace("/studio/api/style-profiles", "") || "/";
     const method = init?.method ?? "GET";
+    if (url.startsWith("/studio/api/living-course/")) {
+      const body = typeof init?.body === "string" ? JSON.parse(init.body) : {};
+      calls.push({ method, path: url, body });
+      const wrap = (data: unknown, status = 200) => new Response(JSON.stringify({ success: true, data }), { status });
+      if (url.endsWith("/01stylesession000000000002/style-proposals")) return new Response(JSON.stringify({ success: false, code: "nothing_to_restyle", message: "Nothing in this course departs from the style profile." }), { status: 422 });
+      return body.confirmEstimate ? wrap({ state: "started", proposal: { id: "01styleproposal000000000001", kind: "style" } }, 201) : wrap({ state: "estimate", elements: 4, findings: 6, skipped: 1, estimateMicroUsd: 120000 });
+    }
+    const path = url.replace("/studio/api/style-profiles", "") || "/";
     const form = init?.body instanceof FormData ? init.body : undefined;
     calls.push({ method, path, body: typeof init?.body === "string" ? JSON.parse(init.body) : undefined, ...(form ? { form } : {}) });
     const ok = (data: unknown, status = 200) => new Response(JSON.stringify({ success: true, data, message: "OK" }), { status });
@@ -65,6 +72,8 @@ function stubApi(options: { approve?: number; profiles?: unknown[]; detail?: Rec
     }
     if (method === "GET" && path.startsWith(`/${ID}/check`)) {
       const course = Number(new URL(`http://x${path}`).searchParams.get("course"));
+      if (course === 15) return ok({ profile: { id: ID, name: "Northwind", status: "approved" }, course: { id: 15, title: "Brewing", sessionId: "01stylesession000000000002" }, blocking: [], warnings: [], hints: [], counts: { blocking: 0, warnings: 0, hints: 0 }, blocksPublishing: false });
+      if (course === 16) return ok({ profile: { id: ID, name: "Northwind", status: "approved" }, course: { id: 16, title: "Brewing", sessionId: "01stylesession000000000001" }, blocking: [], warnings: [], hints: [], counts: { blocking: 0, warnings: 0, hints: 0 }, blocksPublishing: false });
       if (course === 14) return new Response(JSON.stringify({ success: false, message: "That course was not made with the Course Builder." }), { status: 404 });
       const clean = course === 13;
       return ok({
@@ -298,5 +307,38 @@ describe("style page island", () => {
     root.querySelector<HTMLInputElement>("[data-check] input")!.value = "14";
     root.querySelector<HTMLFormElement>("[data-check]")!.dispatchEvent(new Event("submit", { cancelable: true }));
     await vi.waitFor(() => expect(root.querySelector("[data-check-result] [role='alert']")?.textContent).toBe("That course was not found, or it was not made with the Course Builder."));
+  });
+
+  it("offers a restyle only for an approved profile: preview, cost, then the proposal on a second click", async () => {
+    const calls = stubApi({ detail: { status: "approved", approvedAt: "2026-10-22T10:00:00+00:00", diff: [] } });
+    const root = await mount();
+    root.querySelector<HTMLButtonElement>("[data-review]")!.click();
+    await vi.waitFor(() => expect(root.querySelector("[data-restyle]")).not.toBeNull());
+    expect(root.querySelector("[data-restyle]")?.textContent).toContain("never automatic");
+
+    root.querySelector<HTMLInputElement>("[data-restyle] input")!.value = "16";
+    root.querySelector<HTMLFormElement>("[data-restyle]")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    await vi.waitFor(() => expect(root.querySelector("[data-restyle-preview]")).not.toBeNull());
+    expect(root.querySelector("[data-restyle-preview]")?.textContent).toBe("A restyle would rewrite 4 elements to fix 6 findings. Estimated cost: $0.12.");
+    expect(root.querySelector("[data-restyle-result]")?.textContent).toContain("1 flagged elements are left for you to edit by hand");
+    // nothing was created by the preview
+    expect(calls.filter((c) => c.path.includes("style-proposals") && (c.body as { confirmEstimate?: boolean })?.confirmEstimate)).toEqual([]);
+
+    root.querySelector<HTMLButtonElement>("[data-restyle-create]")!.click();
+    await vi.waitFor(() => expect(root.querySelector("[data-restyle-done]")).not.toBeNull());
+    expect(calls.some((c) => c.path === "/studio/api/living-course/sessions/01stylesession000000000001/style-proposals" && (c.body as { confirmEstimate?: boolean }).confirmEstimate === true)).toBe(true);
+    expect(root.querySelector<HTMLAnchorElement>("[data-restyle-link]")?.getAttribute("href")).toBe("/studio/s/01stylesession000000000001/updates/01styleproposal000000000001?lang=en");
+
+    root.querySelector<HTMLInputElement>("[data-restyle] input")!.value = "15";
+    root.querySelector<HTMLFormElement>("[data-restyle]")!.dispatchEvent(new Event("submit", { cancelable: true }));
+    await vi.waitFor(() => expect(root.querySelector("[data-restyle-result] [role='alert']")?.textContent).toBe("Nothing in this course departs from the style profile."));
+  });
+
+  it("does not offer a restyle for a suggestion", async () => {
+    stubApi();
+    const root = await mount();
+    root.querySelector<HTMLButtonElement>("[data-review]")!.click();
+    await vi.waitFor(() => expect(root.querySelector("[data-check]")).not.toBeNull());
+    expect(root.querySelector("[data-restyle]")).toBeNull();
   });
 });

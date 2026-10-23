@@ -24,6 +24,7 @@ async function scan(page: Page) {
 const noSidewaysScroll = (page: Page) => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
 const slugOf = (project: string) => (project === "desktop" ? "coffee" : "nightsky");
 
+// eslint-disable-next-line no-empty-pattern
 test.beforeEach(async ({}, info) => {
   const reset = await fetch(`http://127.0.0.1:${process.env.MOCK_API_PORT ?? "4390"}/__mock/style/reset`, { method: "POST", headers: { "x-ulams-api-host": `${slugOf(info.project.name)}.localhost` } });
   expect(reset.ok).toBe(true);
@@ -233,5 +234,40 @@ test("the style check is in Polish and Chinese too", async ({ page }, info) => {
   await page.getByLabel("课程编号").fill("12");
   await page.getByRole("button", { name: "检查课程" }).click();
   await expect(page.locator("[data-check-summary]")).toContainText("阻止发布：1");
+  expect(await scan(page), "zh").toEqual([]);
+});
+
+test("a restyle of a course: preview with cost, create the proposal, open it; passes axe", async ({ page }, info) => {
+  await open(page, info.project.name);
+  await review(page, APPROVED).click();
+  await expect(page.locator("[data-restyle]")).toContainText("never automatic");
+  await page.locator("[data-restyle] input").fill("12");
+  await page.locator("[data-restyle] input").press("Enter");
+  await expect(page.locator("[data-restyle-preview]")).toHaveText("A restyle would rewrite 4 elements to fix 6 findings. Estimated cost: $0.12.");
+  expect(await scan(page), "preview").toEqual([]);
+  await page.getByRole("button", { name: "Create the restyle proposal" }).click();
+  await expect(page.locator("[data-restyle-done]")).toHaveText("The restyle proposal was created. Review it as a diff before anything changes.");
+  await expect(page.getByRole("link", { name: "Review the restyle" })).toHaveAttribute("href", /\/studio\/s\/01stylesession000000000001\/updates\/01styleproposal000000000001\?lang=en$/);
+  expect(await scan(page), "created").toEqual([]);
+  expect(await noSidewaysScroll(page), "page scrolls sideways").toBeLessThanOrEqual(1);
+
+  await page.locator("[data-restyle] input").fill("13");
+  await page.getByRole("button", { name: "Preview a restyle" }).click();
+  await expect(page.locator("[data-restyle-result] [role='alert']")).toContainText("Nothing in this course departs");
+  expect(await scan(page), "nothing to restyle").toEqual([]);
+});
+
+test("the restyle section is in Polish and Chinese", async ({ page }, info) => {
+  await open(page, info.project.name, "pl");
+  await review(page, APPROVED).click();
+  await page.locator("[data-restyle] input").fill("12");
+  await page.getByRole("button", { name: "Pokaż podgląd zmian stylu" }).click();
+  await expect(page.locator("[data-restyle-preview]")).toContainText("Szacowany koszt: $0.12");
+  expect(await scan(page), "pl").toEqual([]);
+  await open(page, info.project.name, "zh");
+  await review(page, APPROVED).click();
+  await page.locator("[data-restyle] input").fill("12");
+  await page.getByRole("button", { name: "预览样式调整" }).click();
+  await expect(page.locator("[data-restyle-preview]")).toContainText("预计费用：$0.12");
   expect(await scan(page), "zh").toEqual([]);
 });

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property string $id
  * @property int $number
- * @property string $kind source | insights (ADR 0181)
+ * @property string $kind source | insights (ADR 0181) | style (ADR 0196)
  * @property array|null $evidence aggregated learner evidence of an insights proposal
  * @property string $session_id
  * @property string|null $source_id
@@ -39,6 +39,9 @@ class Proposal extends Model
     public const KIND_SOURCE = 'source';
 
     public const KIND_INSIGHTS = 'insights';
+
+    /** A restyle after a style profile changed (ADR 0196): like insights it has no source revision. */
+    public const KIND_STYLE = 'style';
 
     public const SUBJECT_TYPE = 'living_course_proposal';
 
@@ -74,6 +77,17 @@ class Proposal extends Model
     public function isInsights(): bool
     {
         return $this->kind === self::KIND_INSIGHTS;
+    }
+
+    public function isStyle(): bool
+    {
+        return $this->kind === self::KIND_STYLE;
+    }
+
+    /** No source revision on either side: an improvement from learner insights or a restyle. They read the live fragments and promote nothing. */
+    public function isSourceless(): bool
+    {
+        return $this->isInsights() || $this->isStyle();
     }
 
     public function isOpen(): bool

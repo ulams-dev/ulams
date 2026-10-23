@@ -1536,6 +1536,12 @@
   "tag": "Admin Living Course"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/living-course/sessions/{session}/style-proposals",
+  "summary": "Propose a restyle of the course for an approved style profile (default: the one the brief names, else the academy's). Without confirmEstimate: the estimate only",
+  "tag": "Admin Living Course"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/living-course/sources/{source}/revisions",
   "summary": "Revisions of a source, newest first",

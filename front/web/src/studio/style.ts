@@ -4,7 +4,7 @@
  * Theme values are never applied here: the page links to the admin theme screen, which shows them as a diff to accept.
  * Every state is text (no meaning by colour alone), results are announced, and nothing animates under reduced motion.
  */
-import { h, uid } from "@ulams/ui/builder/dom.ts";
+import { h, uid, usd } from "@ulams/ui/builder/dom.ts";
 import { dataTable } from "@ulams/ui/builder/insights-view.ts";
 import { announce } from "./common.ts";
 import { fill, type StyleLocale } from "./style-i18n.ts";
@@ -25,6 +25,7 @@ import {
 } from "./style-model.ts";
 
 const BASE = "/studio/api/style-profiles";
+const LIVING = "/studio/api/living-course";
 
 class StyleError extends Error {
   constructor(
@@ -35,11 +36,11 @@ class StyleError extends Error {
   }
 }
 
-async function call<T>(method: string, path: string, body?: unknown): Promise<T> {
+async function call<T>(method: string, path: string, body?: unknown, base: string = BASE): Promise<T> {
   const form = body instanceof FormData;
   let response: Response;
   try {
-    response = await fetch(`${BASE}${path}`, {
+    response = await fetch(`${base}${path}`, {
       method,
       headers: { Accept: "application/json", ...(body !== undefined && !form ? { "Content-Type": "application/json" } : {}) },
       ...(body !== undefined ? { body: form ? (body as FormData) : JSON.stringify(body) } : {}),
@@ -56,6 +57,15 @@ async function call<T>(method: string, path: string, body?: unknown): Promise<T>
   }
   if (!response.ok) throw new StyleError(response.status, json.message ?? "");
   return json.data as T;
+}
+
+interface RestylePreview {
+  state: string;
+  elements?: number;
+  findings?: number;
+  skipped?: number;
+  estimateMicroUsd?: number;
+  proposal?: { id: string };
 }
 
 export function mountStyle(root: HTMLElement): void {
@@ -274,6 +284,7 @@ export function mountStyle(root: HTMLElement): void {
     }
 
     parts.push(checkSection(p, headingId));
+    if (p.status === "approved") parts.push(restyleSection(p, headingId));
     if (editable) parts.push(editForm(p));
 
     const actions = h("div", { class: "st-style-actions" });
@@ -338,6 +349,63 @@ export function mountStyle(root: HTMLElement): void {
               finding.citations.length ? citationButtons(own, passages, p) : null, passages);
           })))));
     box.replaceChildren(...nodes);
+  }
+
+  /** A restyle of a course for this approved profile (ADR 0196): preview what it would rewrite, then create the proposal. Never automatic. */
+  function restyleSection(p: StyleProfile, headingId: string): HTMLElement {
+    const courseId = uid("st-style-restyle-course");
+    const input = h("input", { type: "number", id: courseId, min: "1", step: "1", inputmode: "numeric" }) as HTMLInputElement;
+    const button = h("button", { type: "submit", class: "cb-btn" }, t.restyleButton) as HTMLButtonElement;
+    const result = h("div", { class: "st-style-restyle-result", "data-restyle-result": "", "aria-live": "polite" });
+    const form = h("form", { class: "st-style-restyle", "data-restyle": "", novalidate: true },
+      h("p", { class: "cb-muted" }, t.restyleIntro),
+      h("p", {}, h("label", { for: courseId }, t.checkCourseLabel), h("br"), input),
+      h("p", {}, button), result);
+    const proposalLink = (sessionId: string, proposalId: string) => h("a", { class: "cb-btn cb-btn-primary", href: `/studio/s/${sessionId}/updates/${proposalId}?lang=${locale}`, "data-restyle-link": "" }, t.restyleOpen);
+    const problem = (error: unknown) => result.replaceChildren(h("p", { class: "cb-error", role: "alert" }, error instanceof StyleError && error.status === 404 ? t.checkNotFound : error instanceof StyleError && error.status === 403 ? t.forbidden : error instanceof StyleError && error.message ? error.message : t.error));
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const course = Number.parseInt(input.value, 10);
+      if (!Number.isInteger(course) || course < 1) {
+        result.replaceChildren(h("p", { class: "cb-error", role: "alert" }, t.checkNeedCourse));
+        return;
+      }
+      button.disabled = true;
+      result.replaceChildren(h("p", { class: "cb-muted", role: "status" }, t.restyling));
+      call<CheckReport>("GET", `/${p.id}/check?course=${course}`)
+        .then(async (report) => {
+          const sessionId = (report.course as { sessionId?: string }).sessionId ?? "";
+          const preview = await call<RestylePreview>("POST", `/sessions/${sessionId}/style-proposals`, { styleProfileId: p.id }, LIVING);
+          if (preview.state === "kept_existing" && preview.proposal) {
+            result.replaceChildren(h("p", {}, t.restyleKept), proposalLink(sessionId, preview.proposal.id));
+            return;
+          }
+          const create = h("button", { type: "button", class: "cb-btn cb-btn-primary", "data-restyle-create": "" }, t.restyleCreate) as HTMLButtonElement;
+          create.addEventListener("click", () => {
+            create.disabled = true;
+            result.querySelector("[data-restyle-status]")?.replaceChildren(t.restyleCreating);
+            call<RestylePreview>("POST", `/sessions/${sessionId}/style-proposals`, { styleProfileId: p.id, confirmEstimate: true }, LIVING)
+              .then((created) => {
+                const done: Node[] = [h("p", { role: "status", "data-restyle-done": "" }, t.restyleCreated)];
+                if (created.proposal) done.push(proposalLink(sessionId, created.proposal.id));
+                result.replaceChildren(...done);
+                announce(t.restyleCreated);
+              })
+              .catch((error) => {
+                create.disabled = false;
+                problem(error);
+              });
+          });
+          const nodes: Node[] = [h("p", { "data-restyle-preview": "" }, fill(t.restylePreview, { elements: preview.elements ?? 0, findings: preview.findings ?? 0, cost: usd(preview.estimateMicroUsd ?? 0) }))];
+          if ((preview.skipped ?? 0) > 0) nodes.push(h("p", { class: "cb-muted" }, fill(t.restyleSkipped, { skipped: preview.skipped ?? 0 })));
+          nodes.push(h("p", { class: "cb-muted", role: "status", "data-restyle-status": "" }), create);
+          result.replaceChildren(...nodes);
+          announce(fill(t.restylePreview, { elements: preview.elements ?? 0, findings: preview.findings ?? 0, cost: usd(preview.estimateMicroUsd ?? 0) }));
+        })
+        .catch(problem)
+        .finally(() => (button.disabled = false));
+    });
+    return h("section", { class: "st-style-restylebox", "aria-labelledby": `${headingId}-r` }, h("h3", { id: `${headingId}-r`, class: "cb-h3" }, t.restyleTitle), form);
   }
 
   function editForm(p: StyleProfile): HTMLElement {

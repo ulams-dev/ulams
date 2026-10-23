@@ -695,7 +695,7 @@ const styleRoutes = [
     const created = {
       id: styleId(state.next++), name, scope: { type: "tenant", id: null }, status: "suggested", sourceId: from ? from.sourceId : "s9", createdBy: 1, approvedBy: null, approvedAt: null, createdAt: "2026-10-23T08:00:00+00:00",
       warnings: from ? [] : ["AI is off on this installation: fill the profile in by hand."],
-      profile: from ? structuredClone(from.profile) : { schemaVersion: 1 },
+      profile: from ? JSON.parse(JSON.stringify(from.profile)) : { schemaVersion: 1 },
     };
     state.list.unshift(created);
     return styleDetail(tenant, created);
@@ -737,7 +737,7 @@ const styleRoutes = [
     if (course === 14) return { __status: 404, message: "That course was not made with the Course Builder." };
     if (course === 15) return { __status: 403, message: "This course belongs to another author." };
     const cite = [{ id: STYLE_F2, label: "§2 Terminology" }];
-    const base = { profile: { id: p.id, name: p.name, status: p.status }, course: { id: course, title: "Brewing", sessionId: "s", variantId: null, versionId: "v" } };
+    const base = { profile: { id: p.id, name: p.name, status: p.status }, course: { id: course, title: "Brewing", sessionId: course === 13 ? "01stylesession000000000002" : "01stylesession000000000001", variantId: null, versionId: "v" } };
     if (course === 13) return { ...base, blocking: [], warnings: [], hints: [], counts: { blocking: 0, warnings: 0, hints: 0 }, blocksPublishing: false };
     return {
       ...base,
@@ -747,6 +747,15 @@ const styleRoutes = [
       counts: { blocking: 1, warnings: 1, hints: 1 },
       blocksPublishing: true,
     };
+  }],
+  // a restyle of a course (Living Course): session ...01 has something to restyle, ...02 has not, and a created proposal is remembered
+  ["POST", /^\/api\/admin\/living-course\/sessions\/([0-9a-z]{26})\/style-proposals$/, ({ tenant, match, body }) => {
+    const state = styleOf(tenant);
+    if (match[1] === "01stylesession000000000002") return { __status: 422, message: "Nothing in this course departs from the style profile in a way a rewrite can fix, so there is nothing to restyle.", code: "nothing_to_restyle" };
+    if (state.restyle) return { state: "kept_existing", proposal: { id: state.restyle, kind: "style" } };
+    if (!body?.confirmEstimate) return { state: "estimate", profile: { id: body?.styleProfileId, name: "Academy v1" }, elements: 4, findings: 6, skipped: 1, answerKeys: 1, estimateMicroUsd: 120000 };
+    state.restyle = "01styleproposal000000000001";
+    return { state: "started", runId: null, proposal: { id: state.restyle, kind: "style", status: "ready" } };
   }],
   ["DELETE", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})$/, ({ tenant, match }) => {
     const state = styleOf(tenant);
