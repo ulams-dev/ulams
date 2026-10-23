@@ -199,9 +199,10 @@ describe("paths, skills and the account summary", () => {
       paths: [],
       certificates: [cert({}), cert({ id: 10, status: "revoked" })],
       skills: null,
+      policyChanges: null,
     };
     expect(accountSummary(data, NOW)).toEqual({ dueThisMonth: 1, overdue: 1, certificates: 1, skills: null });
-    expect(accountSummary({ assignments: null, paths: null, certificates: null, skills: null }, NOW)).toEqual({ dueThisMonth: 0, overdue: 0, certificates: null, skills: null });
+    expect(accountSummary({ assignments: null, paths: null, certificates: null, skills: null, policyChanges: null }, NOW)).toEqual({ dueThisMonth: 0, overdue: 0, certificates: null, skills: null });
   });
 
   it("only accepts known team filters", () => {

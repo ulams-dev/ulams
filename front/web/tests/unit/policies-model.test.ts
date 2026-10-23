@@ -16,7 +16,7 @@ describe("policies i18n", () => {
   it.each(POLICIES_LOCALES)("%s has exactly the keys of English and no empty text", (locale) => {
     expect(keys(POLICIES_STRINGS[locale]).sort()).toEqual(en);
     for (const [k, v] of Object.entries(POLICIES_STRINGS[locale]).flatMap(([a, b]) => (typeof b === "object" ? Object.entries(b as Record<string, unknown>).map(([c, d]) => [`${a}.${c}`, d]) : [[a, b]]))) {
-      if (typeof v === "string") expect(v.length, k).toBeGreaterThan(0);
+      if (typeof v === "string") expect(v.length, String(k)).toBeGreaterThan(0);
     }
   });
 
