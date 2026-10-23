@@ -571,6 +571,33 @@ every push to its branch (a merge is a push). What this plan adds:
    element the push also changes, with the proposal link; `--allow-pending` stores the import anyway and the
    proposal's items for those elements become `conflict` (existing fingerprint rule).
 
+### 9.1 As built: watching a Git repository (first of the Git-driven milestones)
+
+What shipped for items 1 to 5 above (`api/packages/living-course`, `api/packages/course-builder`, `front/cli`; reference: `developers/living-course`,
+`developers/cli-course`, `developers/course-builder-api`), and where it differs from the text above:
+
+- **Merge metadata** (item 1) is `Connectors/Git/PushChange`: head commit id, the subject (for a merge commit the paragraph below the
+  `Merge ...` line), the commit URL and the pull request number and URL, read from GitHub, Gitea/Forgejo, GitLab and the generic signed
+  delivery. It is stored as `change` in the revision metadata and shown on the revision and on the proposal summary. The subject is untrusted
+  text: 200 characters, control characters stripped, only `http(s)` URLs, plain text in every UI, never sent to the model, not in the audit trail.
+- **How the note reaches the revision.** A check is debounced and unique per connection, so the webhook (and `check --commit`) leaves the latest
+  change in the cache (`ChangeNote`, one day) and the check takes it when it creates the revision. A burst of pushes ends as one revision that
+  names the last change; a CI note never overwrites the richer webhook note of the same commit.
+- **`check --commit`** (item 3): the existing `POST connections/{c}/check` takes an optional `commit` (7 to 64 hex characters, 422 otherwise);
+  the CLI flag is `ulams living connections check <connection> --commit <sha>`. It records the commit; it does not pin the fetch to it.
+- **Same repository for course and sources** (item 2) is a separate command, not an `init` flag: `ulams course sources-connect [dir]` reads the
+  `origin` remote and default branch, connects them as a `git` source with `paths: ["sources/**"]` (`--host` for servers other than github.com
+  and gitlab.com, `--token` or `ULAMS_SOURCES_TOKEN` for private repositories) and prints the webhook address and secret once. `init` stays a
+  read command and prints the next step instead of writing to Living Course.
+- **Loop guard** (item 4) needed no new code: an unchanged push already creates no version. `GitDrivenUpdatesTest` runs the loop (proposal
+  accepted and applied, export, push of the exported document) and asserts no new version, proposal or source revision.
+- **Pending proposals** (item 5) is `PROPOSAL_PENDING` on `POST sessions/{s}/imports`, `--allow-pending` in the CLI. The builder asks a new
+  contract, `Contracts\PendingChanges` (default: nothing pending), that Living Course binds (`LivingCoursePendingChanges`), so the builder keeps
+  no dependency on Living Course. Only undecided items of kind `update`, `citation_remap`, `remove` and `manual` of an open proposal count; the
+  `data.proposals[]` entry carries the proposal id and number, the CLI prints the studio-independent `ulams living proposals get` hint.
+- **Not built here:** the `course.version_applied` webhook event, the `ulams-cli` image, the Action and the sync PR flow (next milestone), preview
+  academies. The studio's update review shows "From PR #123: subject" under the header (English only, like the rest of that screen).
+
 ## 10. M6: CLI release engineering
 
 ### 10.1 Versioning and changelog

@@ -43,7 +43,8 @@ approve only when the tenant allows it. The rules are in the
 | `course init [dir] --from-course <id>` | Writes the course's current version as a folder (the folder must be empty; a README and dot files may be there) and records `.ulams/base.json`. A course that was not made with the builder is refused (`NOT_ADOPTED`). |
 | `course status` | One request plus the folder: local edits since the base, whether the server moved on (*behind*), a proposal waiting for approval, whether the current version is applied, drift (elements edited in the LMS since the last apply), open conflicts, and the next command to run. Always exits 0. |
 | `course diff` | Folder against its base: elements added, changed or removed, **offline**. `--remote` compares with the server's current version, field by field (what a push would change). `--version <id>` shows what a version on the server changes against its parent (or `--against <id>`). `--exit-code` exits 13 when there are differences. `--from <id> --to <id>` compares any two versions or releases instead (see `course compare` below). |
-| `course push [--message] [--approve] [--apply]` | Validates the folder, sends it as a proposed version based on the base, prints the diff. `--approve` approves it; `--apply` approves and applies it and waits for the apply (`--no-wait` returns at once with the run handle). A folder equal to its base sends nothing. |
+| `course push [--message] [--approve] [--apply] [--allow-pending]` | Validates the folder, sends it as a proposed version based on the base, prints the diff. `--approve` approves it; `--apply` approves and applies it and waits for the apply (`--no-wait` returns at once with the run handle). A folder equal to its base sends nothing. While an open Living Course update proposal changes the same elements the push stops with `SYNC_CONFLICT` (`PROPOSAL_PENDING`); `--allow-pending` stores the push anyway. |
+| `course sources-connect [dir] [--host] [--branch] [--paths] [--token]` | Lets Living Course watch the `sources/` folder of the repository the course folder lives in (see [Git merges and Living Course](#git-merges-and-living-course)). |
 | `course apply [session] [--approve] [--version <id>]` | Applies the current version (an unpublished draft). When the folder holds a proposal nobody approved, refuses with `CONFIRMATION_REQUIRED` (exit 11) unless `--approve`. Pass a session id to run it outside a folder. |
 | `course publish [session] [--acknowledge-warnings]` | Runs the publish check and publishes. Blocking items stop it (exit 6, `error.details.blocking`); warnings stop it until you pass `--acknowledge-warnings` (exit 11, `error.details.warnings`). The course must be applied first. |
 | `course pull` | Brings the folder up to date with the server, merging your edits with theirs (see below). |
@@ -156,6 +157,34 @@ stays refused until you pass `--overwrite` yourself.
 
 Credentials come from `ulams login` or `ULAMS_URL` and `ULAMS_TOKEN` (in CI), never from the folder.
 
+### Git merges and Living Course
+
+A course repository can hold the course (`modules/`, pushed as a course version) and the documents the course is built from (`sources/`,
+watched by Living Course). A merged change to `sources/` becomes an **update proposal**; a merged change to `modules/` never does.
+
+```bash
+cd my-course-repo                       # the clone; the course folder is inside it
+ulams course sources-connect course/    # origin remote + default branch -> a Living Course git source on sources/**
+```
+
+The command reads the `origin` remote and the default branch (github.com and gitlab.com are recognised; pass `--host gitlab|gitea` for
+any other server, Forgejo included), connects the repository to the folder's builder session with `paths: ["sources/**"]` and prints
+the **webhook address and the webhook secret once**. Add both to the repository's webhook settings (content type JSON, push events). For a
+private repository pass `--token` or set `ULAMS_SOURCES_TOKEN`: a read-only access token, stored encrypted on the server. The repository
+must already hold a file under `sources/` on that branch. `--dry-run` prints the request with the token masked.
+
+When the push webhook arrives, the revision keeps the **head commit, its subject line and the pull request number** (read from `Merge pull
+request #123`, a squash `Title (#123)`, GitLab's `See merge request group/project!123`, Gitea and Forgejo merge messages) and the proposal
+shows it ("from PR #123: Rename the --namespace flag"). The text is shown as plain text and never sent to the model. A host that cannot
+reach the academy with a webhook can report the merge from CI instead:
+
+```bash
+ulams living connections check <connection> --commit "$GITHUB_SHA"   # records the commit on the new revision
+```
+
+The loop does not run twice: an applied update proposal is pulled into Git as a pull request; merging it pushes a document equal to the
+current version, which the server answers with `unchanged` (no version, no new proposal). A sync pull request never touches `sources/`.
+
 ### For agents and CI
 
 Add `--json` (or `ULAMS_OUTPUT=json`) for the usual envelope: `ok`, `data`, `error`, `warnings`. Without it a terminal gets text.
@@ -173,7 +202,7 @@ ulams course diff --exit-code --json               # exit 13 when the folder dri
 | 3 | `AUTH_REQUIRED`, `AUTH_EXPIRED` | Not logged in, or the token was rejected |
 | 4 | `FORBIDDEN`, `SCOPE_MISSING` | Not allowed; approving as an agent token or MCP client (`error.details.code` is `APPROVAL_REQUIRES_HUMAN`, and for `push` `error.details.proposed` names the version that was proposed) |
 | 5 | `NOT_FOUND` | Unknown course or version |
-| 6 | `SYNC_CONFLICT`, `CONFLICT` | Both sides changed the same elements (`BASE_OUTDATED` on `push`, `data.conflicts` on `pull`), conflict files are still open (`OPEN_CONFLICTS`), the proposal went stale (`STALE_PROPOSAL`), blocking publish items, a course without a builder session |
+| 6 | `SYNC_CONFLICT`, `CONFLICT` | Both sides changed the same elements (`BASE_OUTDATED` on `push`, `data.conflicts` on `pull`), an open update proposal changes the same elements (`PROPOSAL_PENDING`, `error.details.proposals`), conflict files are still open (`OPEN_CONFLICTS`), the proposal went stale (`STALE_PROPOSAL`), blocking publish items, a course without a builder session |
 | 7 | `VALIDATION_FAILED` | The folder has errors (`error.details.issues` with file, line, column), or the server rejected the course (`error.details.errors`) |
 | 9 | `NETWORK`, `SERVER_ERROR` | The academy is unreachable or failed; nothing in the folder changed |
 | 10 | `TIMEOUT` | The apply is still running after `--timeout`; it continues on the server |
