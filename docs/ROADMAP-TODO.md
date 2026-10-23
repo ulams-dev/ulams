@@ -1243,6 +1243,10 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       the hosted demo academies and the `ulams.app` landing on Cloudflare Image Transformations with `onerror=redirect` and a `noop`
       kill switch, admin and imports on demo deployments without `/api/images/img`, the PHP images API kept as an optional legacy API
       (plan `docs/plans/images-cloudflare.md`, milestones IMG-1 to IMG-7; ADR 0193 Accepted 2026-10-22; IMG-1 starts first)
+      Note 2026-10-23 (IMG-6b, in review): prepared, not applied. Storage Worker `max-age=3600` with ETag for `image/*`,
+      `deploy/mydevil/bin/set-admin-images.sh` (admin mode through `runtime-config.json`), the optional WAF rule generated from
+      `allowedCloudflareOptions()` (`deploy/mydevil/cloudflare/image-waf-rule.mjs`) and the smoke check `ULAMS_EXPECT_WAF=1`. Deploying
+      the Worker, writing the admin config on MyDevil and creating the WAF rule are owner steps (`deploy/mydevil/STAGING-NOTES.md`)
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
 - [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI

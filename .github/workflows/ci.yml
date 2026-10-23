@@ -129,6 +129,8 @@ jobs:
             deploy:
               - "deploy/**"
               - "front/docs-site/examples/**"
+              - "front/sdk/src/images.ts"
+              - "front/sdk/src/images/**"
               - ".github/**"
       # Separate call: `every` is needed for the exclusions and applies to the whole call.
       - uses: dorny/paths-filter@v4
@@ -786,6 +788,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
       - uses: ./.github/actions/docker-hub-mirror
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -806,7 +811,9 @@ jobs:
         run: |
           sh deploy/mydevil/test/check-host-version.sh
           sh deploy/mydevil/test/check-images.sh
-          docker run --rm -v "$PWD/deploy/mydevil:/mnt" koalaman/shellcheck:stable -e SC3045,SC2016 bin/check-host.sh bin/check-images.sh test/check-host-version.sh test/check-images.sh
+          sh deploy/mydevil/test/set-admin-images.sh
+          node --experimental-strip-types --no-warnings --test deploy/mydevil/test/image-ops.test.mjs
+          docker run --rm -v "$PWD/deploy/mydevil:/mnt" koalaman/shellcheck:stable -e SC3045,SC2016 bin/check-host.sh bin/check-images.sh bin/set-admin-images.sh test/check-host-version.sh test/check-images.sh test/set-admin-images.sh
 
   # The PHP client in sdk-php/ is generated from front/cli/spec/openapi.json (openapi-generator, pinned image):
   # regenerate and fail on any difference, then run its tests against canned answers.
