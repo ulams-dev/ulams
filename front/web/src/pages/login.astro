@@ -60,12 +60,12 @@ if (Astro.request.method === "POST") {
     {(providers.length > 0 || ssoProviders.length > 0) && (
       <nav class="u-login__social" aria-label={a.otherWays}>
         {ssoProviders.map((provider) => (
-          <a class="u-btn u-btn--ghost" href={`/auth/sso/${provider.slug}?next=${encodeURIComponent(safeNext)}`}>
+          <a class="u-btn u-btn--ghost" data-astro-prefetch="false" href={`/auth/sso/${provider.slug}?next=${encodeURIComponent(safeNext)}`}>
             {fill(a.continueWith, { provider: provider.name })}
           </a>
         ))}
         {providers.map((provider) => (
-          <a class="u-btn u-btn--ghost" href={`/auth/social/${provider}?next=${encodeURIComponent(safeNext)}`}>
+          <a class="u-btn u-btn--ghost" data-astro-prefetch="false" href={`/auth/social/${provider}?next=${encodeURIComponent(safeNext)}`}>
             {fill(a.continueWith, { provider: PROVIDER_LABELS[provider] })}
           </a>
         ))}

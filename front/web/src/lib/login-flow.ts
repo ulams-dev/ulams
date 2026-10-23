@@ -30,6 +30,16 @@ const withHeaders = (response: Response): Response => {
 };
 
 /**
+ * True for a speculative request (link prefetch, prerender): browsers mark them with `Sec-Fetch-Dest: prefetch`
+ * or `Sec-Purpose` / `Purpose`. Such a request must not start a login, because the verifier cookie it would
+ * set can land after the callback has already used up the real one and then stays behind.
+ */
+export function isSpeculative(headers: Headers): boolean {
+  const mark = `${headers.get("sec-purpose") ?? ""} ${headers.get("purpose") ?? ""}`.toLowerCase();
+  return headers.get("sec-fetch-dest") === "prefetch" || /prefetch|prerender/.test(mark);
+}
+
+/**
  * Starts a login. `startUrl` builds the tenant API URL from this site's callback URL and the challenge.
  * `callbackPath` is the page the API sends the browser back to.
  */
@@ -37,6 +47,7 @@ export function beginLogin(ctx: Ctx, callbackPath: string, startUrl: (tenant: Pi
   const { request, url, cookies, locals, redirect } = ctx;
   const tenant = locals.tenant;
   if (!tenant) return new Response("Not found", { status: 404, headers: SOCIAL_HEADERS });
+  if (isSpeculative(request.headers)) return new Response(null, { status: 204, headers: SOCIAL_HEADERS });
 
   // this site's own origin as the browser sees it (the Host the proxy forwards), the one the API allow-lists
   const secure = locals.secure;

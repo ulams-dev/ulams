@@ -6743,6 +6743,110 @@
     ]
    }
   },
+  "/api/admin/authoring-metrics/courses": {
+   "get": {
+    "description": "One snapshot per course built with the Course Builder: generation, AI edit, interview and model time in seconds, build and maintenance cost in micro USD, the number of model calls and failed calls, element counts and how many AI elements were accepted unchanged, revised on request or edited by an author. Author time is null until review time is recorded. Needs the permission authoring_metrics_read.",
+    "operationId": "admin.authoring-metrics.courses.list",
+    "parameters": [
+     {
+      "description": "Courses created on or after this date (YYYY-MM-DD)",
+      "in": "query",
+      "name": "from",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Courses created on or before this date (YYYY-MM-DD)",
+      "in": "query",
+      "name": "to",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Only these courses",
+      "in": "query",
+      "name": "course_id[]",
+      "schema": {
+       "items": {
+        "type": "integer"
+       },
+       "type": "array"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "List of course snapshots"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Authoring metric of courses",
+    "tags": [
+     "Authoring metrics"
+    ]
+   }
+  },
+  "/api/admin/authoring-metrics/courses/{course}": {
+   "get": {
+    "description": "The snapshot of one course with the time of every pipeline stage (outline, lessons, quizzes, apply and the rest, each marked exact, coarse or incomplete) and the split of its AI elements. Needs authoring_metrics_read, or being the author of the course's builder session. 404 when the course was not built with the Course Builder.",
+    "operationId": "admin.authoring-metrics.courses.by-id.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Snapshot, stages and elements"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Not built with the Course Builder"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Authoring metric of one course",
+    "tags": [
+     "Authoring metrics"
+    ]
+   }
+  },
   "/api/admin/bookmarks": {
    "get": {
     "description": "Get all bookmarks",
@@ -12146,6 +12250,631 @@
     "summary": "Restore an old version as a new one",
     "tags": [
      "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups": {
+   "get": {
+    "description": "Families of course variants for admins (ADR 0192, permission `course_variants_assign`): the family's settings\n(lock assigned variants, pin the course mandatory training counts, placement check, hints), who is in which variant, an\nassignment of learners or groups, and the placement questions.",
+    "operationId": "admin.course-variant-groups.get",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "course_id",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "page",
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "groups with settings and counts"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List the families of course variants, optionally the one a course belongs to",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}": {
+   "get": {
+    "operationId": "admin.course-variant-groups.by-group.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the family"
+     },
+     "404": {
+      "description": "Unknown family"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One family: settings, variant courses, where learners are and the placement check",
+    "tags": [
+     "Course Variants"
+    ]
+   },
+   "put": {
+    "operationId": "admin.course-variant-groups.by-group.put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "hints_enabled": {
+          "type": "boolean"
+         },
+         "lock_assigned": {
+          "description": "A variant assigned by an admin or a rule cannot be changed by the learner",
+          "type": "boolean"
+         },
+         "pinned_course_id": {
+          "description": "Mandatory training counts only this course of the family; null lets any variant count",
+          "nullable": true,
+          "type": "integer"
+         },
+         "placement_enabled": {
+          "type": "boolean"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the family"
+     },
+     "422": {
+      "description": "The pinned course is not in the family"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Change the settings of a family",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}/assignments": {
+   "get": {
+    "operationId": "admin.course-variant-groups.by-group.assignments.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "user_id",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "page",
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "assignments and per-variant counts"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Who is in which variant (current assignments, with the source of each)",
+    "tags": [
+     "Course Variants"
+    ]
+   },
+   "put": {
+    "operationId": "admin.course-variant-groups.by-group.assignments.put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "course_id": {
+          "type": "integer"
+         },
+         "group_ids": {
+          "description": "User groups; their members (and subgroups) are assigned",
+          "items": {
+           "type": "integer"
+          },
+          "type": "array"
+         },
+         "user_ids": {
+          "items": {
+           "type": "integer"
+          },
+          "type": "array"
+         }
+        },
+        "required": [
+         "course_id"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "assigned (learners whose variant changed) and matched"
+     },
+     "422": {
+      "description": "Not a variant of this family, or nobody selected"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Assign learners or user groups to a variant; the learner sees it as assigned by their organisation",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}/placement": {
+   "get": {
+    "operationId": "admin.course-variant-groups.by-group.placement.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "enabled, available, levels and items"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The placement questions with their answer key and citations",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}/placement/rebuild": {
+   "post": {
+    "operationId": "admin.course-variant-groups.by-group.placement.rebuild.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "items and levels counts; zero items when the family has too few suitable questions"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Choose the placement questions again from the family's cited quiz questions (no model call)",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}/rules": {
+   "get": {
+    "description": "Assignment rules of a family (the `variant` action of the enrolment rules, ADR 0192): \"a learner whose attributes match\n * all conditions is put in this variant\". Rules route learners who already have access and have no variant yet; they never\nenrol anyone and never override a learner's own choice or an admin's assignment. Permission `course_variants_assign`.",
+    "operationId": "admin.course-variant-groups.by-group.rules.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "rules in the order they are tried"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List the assignment rules of a family",
+    "tags": [
+     "Course Variants"
+    ]
+   },
+   "post": {
+    "operationId": "admin.course-variant-groups.by-group.rules.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "active": {
+          "type": "boolean"
+         },
+         "conditions": {
+          "description": "All must hold",
+          "items": {
+           "properties": {
+            "attribute": {
+             "example": "department",
+             "type": "string"
+            },
+            "operator": {
+             "enum": [
+              "equals",
+              "not_equals",
+              "in",
+              "contains",
+              "starts_with",
+              "ends_with",
+              "exists"
+             ],
+             "type": "string"
+            },
+            "value": {
+             "items": {
+              "type": "string"
+             },
+             "type": "array"
+            }
+           },
+           "type": "object"
+          },
+          "type": "array"
+         },
+         "course_id": {
+          "description": "The variant course it assigns",
+          "type": "integer"
+         },
+         "name": {
+          "type": "string"
+         },
+         "position": {
+          "type": "integer"
+         }
+        },
+        "required": [
+         "name",
+         "course_id",
+         "conditions"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the rule"
+     },
+     "422": {
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create an assignment rule",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}/rules/{rule}": {
+   "delete": {
+    "operationId": "admin.course-variant-groups.by-group.rules.by-rule.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "rule",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "deleted"
+     },
+     "404": {
+      "description": "Unknown rule"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete an assignment rule (learners already assigned stay)",
+    "tags": [
+     "Course Variants"
+    ]
+   },
+   "put": {
+    "operationId": "admin.course-variant-groups.by-group.rules.by-rule.put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "rule",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the rule"
+     },
+     "404": {
+      "description": "Unknown rule"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Update an assignment rule",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}/rules/{rule}/evaluate": {
+   "post": {
+    "operationId": "admin.course-variant-groups.by-group.rules.by-rule.evaluate.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "rule",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "dry_run": {
+          "default": true,
+          "type": "boolean"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "count and a sample of the learners the rule would assign; assigned count when dry_run is false"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Preview or run a rule now",
+    "tags": [
+     "Course Variants"
     ]
    }
   },
@@ -35110,6 +35839,310 @@
     ]
    }
   },
+  "/api/courses/{course}/placement": {
+   "get": {
+    "description": "The optional placement check for learners (ADR 0192). Advisory only: the result suggests a variant with its reason and\nthe learner confirms it or picks another. Scored by code from cited quiz questions that already exist; nothing about\nthe learner is sent to a model. Needs access to the family.",
+    "operationId": "courses.by-course.placement.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "questions: id, type, stem, options (id, text); cited quiz questions chosen for the levels of the family"
+     },
+     "403": {
+      "description": "No access to the family"
+     },
+     "404": {
+      "description": "No placement check for this course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The placement questions of a course's family (no answer key); 404 when the check is off or not ready",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/courses/{course}/placement/attempts": {
+   "post": {
+    "operationId": "courses.by-course.placement.attempts.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "answers": {
+          "additionalProperties": {
+           "items": {
+            "type": "string"
+           },
+           "type": "array"
+          },
+          "description": "Question id to the option ids chosen",
+          "type": "object"
+         }
+        },
+        "required": [
+         "answers"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "id, scores per level, suggestedCourseId, reason; the answers are not stored"
+     },
+     "403": {
+      "description": "No access to the family"
+     },
+     "404": {
+      "description": "No placement check for this course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Score a placement attempt by code and get the suggested variant with the reason (advisory)",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/courses/{course}/variant": {
+   "get": {
+    "operationId": "courses.by-course.variant.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "variants, current (courseId, source, reason, byOrganisation), effectiveCourseId, enrolled, canChange, lockedReason, placement, hint"
+     },
+     "404": {
+      "description": "The course has no variants"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The signed-in learner's variant of this course's family, whether they may change it, the placement check and a hint to switch",
+    "tags": [
+     "Course Variants"
+    ]
+   },
+   "put": {
+    "operationId": "courses.by-course.variant.put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "attempt_id": {
+          "description": "With source placement: the placement attempt whose suggestion is confirmed",
+          "type": "string"
+         },
+         "course_id": {
+          "description": "The variant course to move to",
+          "type": "integer"
+         },
+         "hint_id": {
+          "description": "With source hint: the hint that is accepted",
+          "type": "integer"
+         },
+         "source": {
+          "default": "self",
+          "enum": [
+           "self",
+           "placement",
+           "hint"
+          ],
+          "type": "string"
+         }
+        },
+        "required": [
+         "course_id"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the state as in GET, plus changed and carried (topics completed by carry-over)"
+     },
+     "403": {
+      "description": "No access to the family, or the variant was assigned by the organisation and the family is locked"
+     },
+     "422": {
+      "description": "Not a variant of this course, not available, or the placement attempt or hint does not match"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Choose or switch variant: enrols the learner in the variant's course through the family entitlement and carries over identical completed topics",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/courses/{course}/variant/hints/{hint}/dismiss": {
+   "post": {
+    "operationId": "courses.by-course.variant.hints.by-hint.dismiss.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "path",
+      "name": "hint",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the state as in GET"
+     },
+     "404": {
+      "description": "Unknown hint"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Dismiss a hint to switch variant; hints stop for this course",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/courses/{course}/variants": {
+   "get": {
+    "description": "Variants of a course for learners (ADR 0192, CV-5): the picker's data (public, like the course page), the learner's own\nvariant and the choice to change it, and the hint to switch. `{course}` is the default course or any variant of the\nfamily. The LMS owns who may open what; choosing needs access to the family.",
+    "operationId": "courses.by-course.variants.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "groupId, defaultCourseId and variants (courseId, title, label, level, role, isDefault, description, duration); data is null for a course without variants"
+     }
+    },
+    "summary": "The variants of a course's family for the picker (public data), or null when it has none",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
   "/api/courses/{id}": {
    "get": {
     "description": "Get Course",
@@ -43643,6 +44676,10 @@
    "name": "Profile"
   },
   {
+   "description": "Authoring metrics",
+   "name": "Authoring metrics"
+  },
+  {
    "description": "Admin Bookmarks",
    "name": "Admin Bookmarks"
   },
@@ -43757,6 +44794,10 @@
   {
    "description": "Admin Course Builder",
    "name": "Admin Course Builder"
+  },
+  {
+   "description": "Course Variants",
+   "name": "Course Variants"
   },
   {
    "description": "Admin CSV",

@@ -1,5 +1,5 @@
 ---
-/** Content cost: one source fanning out into course variants by level and role. Planned, so it carries "Coming". */
+/** Content cost: one source fanning out into course variants by level and role. Drafting variants is built; routing learners to them is not (CV-5). */
 import DiagramFrame from "./DiagramFrame.astro";
 import type { AudiencesCopy, Controls } from "../../lib/impact-diagrams.ts";
 
@@ -14,7 +14,7 @@ const groups = [
 ];
 ---
 
-<DiagramFrame id="dg-audiences" head={copy} tone="coming" control={{ kind: "replay", label: controls.replay }}>
+<DiagramFrame id="dg-audiences" head={copy} tone="available" control={{ kind: "replay", label: controls.replay }}>
   <div class="dg-fan">
     <div class="dg-fan__node dg-fan__node--source" data-dg-step style="--dg-i:0">
       <h4>{copy.source}</h4>
@@ -24,7 +24,7 @@ const groups = [
       <h4>{copy.base}</h4>
       <p>{copy.baseText}</p>
     </div>
-    <span class="dg-fan__arrow dg-fan__arrow--planned" aria-hidden="true"></span>
+    <span class="dg-fan__arrow" aria-hidden="true"></span>
     <div class="dg-fan__groups">
       {
         groups.map((group, g) => (

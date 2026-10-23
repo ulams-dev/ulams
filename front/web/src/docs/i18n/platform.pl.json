@@ -190,6 +190,105 @@
           }
         },
         {
+          "component": "CtaBand",
+          "props": {
+            "id": "white-label",
+            "variant": "feature",
+            "eyebrow": "white label",
+            "title": "Twoja marka, Twoja subdomena: akademia white-label dla każdej grupy odbiorców",
+            "text": "Każda akademia to tenant z własną subdomeną, motywem i danymi. Uruchom po jednej dla klienta, działu lub grupy odbiorców, na przykład partnerów i pracowników, wszystko na jednej instalacji ULAMS.",
+            "bullets": [
+              {
+                "title": "Subdomena dla każdej akademii",
+                "text": "Każdy tenant ma własny host, bazę danych, bucket, klucze i prefiks Redis, więc token jednej akademii odrzucają wszystkie pozostałe."
+              },
+              {
+                "title": "Twój wygląd",
+                "text": "Motywy, kolor akcentu sprawdzany raportem kontrastu WCAG 2.2 AA, który nie zapisze koloru niespełniającego wymagań, oraz Twoje logo z tekstem alternatywnym."
+              },
+              {
+                "title": "Twoja tożsamość w sieci",
+                "text": "Manifest aplikacji z nazwą akademii, kolorem motywu i logo oraz dane schema.org Course na stronach kursów."
+              },
+              {
+                "title": "Twoje wiadomości i certyfikaty",
+                "text": "Każda akademia edytuje własne szablony e-mail, SMS i PDF, w tym certyfikaty, we własnej bazie danych."
+              },
+              {
+                "title": "Logowanie dla każdej akademii",
+                "text": "Każda akademia może połączyć własnego dostawcę tożsamości przez SAML 2.0 lub OpenID Connect, obok logowania przez Google i Facebooka."
+              },
+              {
+                "title": "Magazyn dla każdej akademii",
+                "text": "W dołączonym magazynie SeaweedFS każda akademia dostaje własny klucz S3 ograniczony do jej bucketu."
+              }
+            ],
+            "chips": [
+              "Motywy",
+              "Raport kontrastu AA",
+              "Logo i manifest aplikacji",
+              "Import marki jako różnica",
+              "Szablony e-mail, SMS i PDF",
+              "SAML 2.0 i OIDC",
+              "Klucz S3 na akademię",
+              "Course JSON-LD"
+            ],
+            "note": "Dziś jedna akademia na subdomenę. Subdomena lub punkt wejścia dla każdego kursu lub roli w jednej akademii, z własną marką, jest w przygotowaniu.",
+            "cta": {
+              "label": "Otwórz demo na żywo",
+              "href": "#demos"
+            },
+            "secondary": {
+              "label": "Jak działają tenanty",
+              "href": "https://ulams-dev.github.io/ulams/developers/tenancy/"
+            }
+          }
+        },
+        {
+          "component": "FeatureList",
+          "props": {
+            "variant": "tiles",
+            "eyebrow": "od polityki do dowodu",
+            "title": "Od jednej polityki do certyfikowanego, śledzonego szkolenia",
+            "intro": "Droga polityki, której trzeba nauczyć, którą trzeba zaliczyć i odnawiać, z tym, co działa dziś, i tym, co dopiero będzie.",
+            "items": [
+              {
+                "icon": "book",
+                "title": "Krótki wywiad staje się briefem kursu",
+                "text": "Autor odpowiada na pytania o odbiorców, czas trwania, poziom stanowiska i doświadczenia, sprawdza brief i dopiero potem powstaje szkic kursu."
+              },
+              {
+                "icon": "layers",
+                "title": "Twój przewodnik stylu kształtuje wygląd kursu",
+                "text": "Import marki zamienia już plik Figma, DESIGN.md ze Stitch lub przewodnik marki w motyw, który zatwierdzasz jako różnicę. Zastosowanie przewodnika stylu w wywiadzie kursu jest w przygotowaniu.",
+                "status": "coming"
+              },
+              {
+                "icon": "users",
+                "title": "Osobne kursy i akademie dla działów",
+                "text": "Osobne akademie dla działów działają dziś. Tworzenie ich z jednej polityki i powiązanie ich kursów jest w przygotowaniu.",
+                "status": "coming"
+              },
+              {
+                "icon": "medal",
+                "title": "Lekcje, test końcowy i certyfikat PDF",
+                "text": "Uczący się przechodzą lekcje, piszą test końcowy i pobierają certyfikat PDF ze stroną publicznej weryfikacji."
+              },
+              {
+                "icon": "chart",
+                "title": "Kto ukończył wymagane szkolenie",
+                "text": "Szkolenia obowiązkowe z terminami, eskalacją do przełożonego, raportami ukończenia i eksportem audytu. Ekran pulpitu właściciela polityki jest w przygotowaniu."
+              },
+              {
+                "icon": "sync",
+                "title": "Odnowienie po zmianie polityki",
+                "text": "Certyfikaty mogą wygasać i być odnawiane. Automatyczna wymiana po zatwierdzonej zmianie polityki, z nowym egzaminem lub kursem, jest w przygotowaniu.",
+                "status": "coming"
+              }
+            ]
+          }
+        },
+        {
           "component": "HeritageStory",
           "props": {
             "id": "product",
@@ -261,6 +360,10 @@
               {
                 "label": "LTI 1.3",
                 "note": "Platforma + narzędzie"
+              },
+              {
+                "label": "SAML 2.0 / OIDC",
+                "note": "logowanie dla każdej akademii"
               },
               {
                 "label": "OpenAPI",
@@ -386,11 +489,11 @@
               },
               {
                 "q": "Czy AI samo publikuje kurs?",
-                "a": "Nie. AI przygotowuje szkic z cytowanymi źródłami. Autor sprawdza konspekt i treść, a potem zatwierdza publikację. Produkcja startuje z wyłączonym AI do czasu skonfigurowania dostawcy."
+                "a": "Nie. AI przygotowuje szkic z cytowanymi źródłami, a każda zmiana AI trafia do Ciebie jako różnica do przejrzenia. Autor sprawdza konspekt i treść, a potem zatwierdza publikację. Produkcja startuje z wyłączonym AI do czasu skonfigurowania dostawcy."
               },
               {
                 "q": "Czy każda akademia może mieć własną markę i domenę?",
-                "a": "Tak. Każdy tenant ma własną witrynę, motyw i izolowaną bazę danych. CLI tworzy pierwszą akademię; kolejne powstają w procesie zarządzania tenantami."
+                "a": "Tak. Każda akademia (tenant) ma własną subdomenę, stronę nauki, motyw, logo i izolowaną bazę danych, więc możesz uruchomić po jednej dla klienta, działu lub grupy odbiorców. Pierwszą akademię tworzy launcher stosu; kolejne tenanty powstają w procesie tenantów platformy. Subdomena dla każdego kursu lub roli w jednej akademii nie jest gotowa."
               },
               {
                 "q": "Jak zatrzymać stos bez utraty kursów?",

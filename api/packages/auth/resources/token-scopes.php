@@ -83,6 +83,7 @@ return [
     ['api/admin/course-builder*', 'builder'],
     ['api/admin/course-as-code*', 'builder'],
     ['api/admin/course-versions*', 'builder'],
+    ['api/admin/authoring-metrics*', 'builder'],
     ['api/admin/living-course*', 'living-course'],
     // the learner's own update notices; the webhook is verified by its signature, not a token
     ['api/living-course/courses/*/notices', 'learner'],
@@ -105,6 +106,8 @@ return [
     ['api/admin/course-access-enquiries*', 'enrolments'],
     ['api/admin/consultation-access-enquiries*', 'enrolments'],
     ['api/admin/tutors/*', 'enrolments'],
+    // who is in which variant of a course, assignment rules and the family's settings (ADR 0192): a kind of enrolment
+    ['api/admin/course-variant-groups*', 'enrolments'],
 
     // ---- courses -------------------------------------------------------------------------------
     ['api/admin/courses/*/clone', 'courses', ['level' => 'write']],

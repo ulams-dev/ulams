@@ -279,6 +279,10 @@
             "area": "builder"
         },
         {
+            "pattern": "api/admin/authoring-metrics*",
+            "area": "builder"
+        },
+        {
             "pattern": "api/admin/living-course*",
             "area": "living-course"
         },
@@ -340,6 +344,10 @@
         },
         {
             "pattern": "api/admin/tutors/*",
+            "area": "enrolments"
+        },
+        {
+            "pattern": "api/admin/course-variant-groups*",
             "area": "enrolments"
         },
         {

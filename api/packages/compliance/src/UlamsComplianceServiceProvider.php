@@ -70,6 +70,7 @@ class UlamsComplianceServiceProvider extends ServiceProvider
 
     public $singletons = [
         CourseSettings::class => CourseSettings::class,
+        \Ulams\Compliance\Services\FamilyCourses::class => \Ulams\Compliance\Services\FamilyCourses::class,
         ProgressResetter::class => EloquentProgressResetter::class,
     ];
 
