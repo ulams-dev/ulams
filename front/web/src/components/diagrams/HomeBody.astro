@@ -17,6 +17,7 @@ import Hero from "@ulams/ui/components/Hero.astro";
 import type { ComponentProps } from "astro/types";
 import { heroJourneyCopy } from "../../lib/hero-journey.ts";
 import StyleGuideSection from "../style-guide/StyleGuideSection.astro";
+import LearningSection from "../learning/LearningSection.astro";
 import { walkthroughCopy, walkthroughSteps } from "../../lib/builder-walkthrough.ts";
 
 interface Props {
@@ -52,6 +53,8 @@ type HeroProps = ComponentProps<typeof Hero>;
             <HomeStory copy={copy} status={status} />
           ) : part.kind === "walkthrough" ? (
             <BuilderWalkthrough copy={walkthrough} steps={steps} locale={locale} />
+          ) : part.kind === "learning" ? (
+            <LearningSection locale={locale} />
           ) : (
             <StyleGuideSection locale={locale} />
           ),

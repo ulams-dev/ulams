@@ -100,6 +100,14 @@ describe("home story: placement", () => {
     }
   });
 
+  it("places the learning elements right after the demos, once", () => {
+    for (const locale of LOCALES) {
+      const ids = planHomeBody(landingDocFor("platform", locale)!)!.main.map((p) => (p.kind === "node" ? String(p.node.props?.id ?? p.node.component) : p.kind));
+      expect(ids[ids.indexOf("Showcase") + 1]).toBe("learning");
+      expect(ids.filter((id) => id === "learning")).toHaveLength(1);
+    }
+  });
+
   it("places the style guide after the white-label band and before the white-paper band, once", () => {
     for (const locale of LOCALES) {
       const ids = planHomeBody(landingDocFor("platform", locale)!)!.main.map((p) => (p.kind === "node" ? String(p.node.props?.id ?? p.node.component) : p.kind));
@@ -110,7 +118,7 @@ describe("home story: placement", () => {
 
   it("puts the story first when a document has no hero, and returns null without a main landmark", () => {
     const doc: UiNode = { component: "Page", children: [{ component: "Main", children: [{ component: "Faq", props: { items: [] } }] }] };
-    expect(planHomeBody(doc)!.main.map((p) => p.kind)).toEqual(["story", "walkthrough", "node", "style-guide"]);
+    expect(planHomeBody(doc)!.main.map((p) => p.kind)).toEqual(["story", "walkthrough", "node", "style-guide", "learning"]);
     expect(planHomeBody({ component: "Hero", props: { title: "x" } })).toBeNull();
   });
 });

@@ -81,6 +81,7 @@ export function platformLlmsTxt(origin: string): string {
     `- [Content cost](${origin}/content-cost/): what creating e-learning content costs and how ulams reduces it`,
     `- [Reporting](${origin}/reporting/): analytics, compliance reports and exports`,
     `- [White paper](${origin}/white-paper/): from policy to proof, how ulams builds and maintains cited courses, with sources and two measured runs`,
+    `- [Learning elements](${origin}/learning-elements/): quizzes, self-test cards, worked examples, H5P, code exercises, simulations and the learning principle behind each`,
     `- [Style guide](${origin}/style-guide/): the design tokens, component catalogue, theme presets and AA contrast guard`,
     `- [How a course is generated](${origin}/course-generation/): the Course Builder interview and the recorded case studies`,
     "",

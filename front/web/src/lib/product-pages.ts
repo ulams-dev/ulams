@@ -7,7 +7,7 @@ import type { UiNode } from "@ulams/ui/render-core";
 import { comparisonDocFor, withLanguages } from "./docs.ts";
 import { LOCALE_META, languageLinks, pageAlternateLinks, pageCanonicalUrl, publicOrigin, type Locale } from "../i18n/locales.ts";
 
-export type ProductPage = "white-paper" | "style-guide";
+export type ProductPage = "white-paper" | "style-guide" | "learning-elements";
 
 const OVERVIEW_NAME: Record<Locale, string> = { en: "Overview", pl: "Przegląd", zh: "产品概览" };
 

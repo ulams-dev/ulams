@@ -38,6 +38,8 @@ const PAGES = [
   "web/src/components/diagrams/HeroJourney.astro",
   ...["StyleGuideSection", "StyleGuideBody", "ThemeShowcase"].map((name) => `web/src/components/style-guide/${name}.astro`),
   "web/src/components/white-paper/WhitePaperBody.astro",
+  ...["ElementCard", "LearningSection", "LearningBody"].map((name) => `web/src/components/learning/${name}.astro`),
+  "ui/src/components/FlipCards.astro",
 ];
 const ELEMENTS = ["ui/src/elements/quiz.ts", "ui/src/elements/progress.ts", "ui/src/elements/notice.ts", "ui/src/elements/video.ts", "ui/src/elements/h5p.ts"];
 
