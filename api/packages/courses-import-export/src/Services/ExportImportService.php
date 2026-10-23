@@ -452,6 +452,11 @@ class ExportImportService implements ExportImportServiceContract
         $topicable->value = preg_replace_callback(
             '/\!\[\]\((course\/.*?\.\w+)\)/',
             function ($matches) use ($path) {
+                // images.content_urls=original (hosted demos): the plain storage URL, resized at display time
+                if (config('images.content_urls') === 'original') {
+                    return '![](' . Storage::url($path . basename($matches[1])) . ')';
+                }
+
                 return '![](' . url('api/images/img') . '?path=' . $path . basename($matches[1]) . '&w=1000)';
             },
             // @phpstan-ignore-next-line

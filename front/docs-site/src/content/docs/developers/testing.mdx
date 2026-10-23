@@ -277,10 +277,19 @@ corepack yarn workspace front test:scorm      # both apps against the golden tra
 UPDATE_GOLDEN=1 corepack yarn workspace front test:scorm   # rewrite them; explain the change in the PR
 ```
 
-CI runs this as the **SCORM playback (Playwright)** job whenever the player, the service workers,
+The API content player (`api/packages/scorm/resources/content-player`, the player of the reference
+front, with the vendored `scorm-again`) is played the same way by `content-player.spec.ts`: the mock
+server stands in for the content origin and the LMS, returns a canned launch `cmi` (first launch,
+resumed session, mastery score) and the golden traces record every request the player sends, in
+order, with headers and body. The spec also checks that the player refuses to start without a
+token, with a non-http API address, with an entry URL on another origin, or when the API rejects
+the token. The stored tracking on the PHP side is not simulated: that stays with `ScormTrackApiTest`
+and `ScormContentOriginApiTest`.
+
+CI runs this as the **SCORM playback (Playwright)** job whenever the players, the service workers,
 the fixtures or the harness change. A changed golden trace is a behaviour change for learners and
-needs a reason in the pull request. The API content player and the `scorm-again` upgrade follow in
-the next milestones of the plan. After editing a fixture, rebuild the zips with `build.mjs`; the
+needs a reason in the pull request. The `scorm-again` upgrade follows in the last milestone of the
+plan. After editing a fixture, rebuild the zips with `build.mjs`; the
 fixtures README lists the query parameters of each SCO.
 
 ## Performance

@@ -1,7 +1,7 @@
 # SCORM playback regression tests (unblocks scorm-again 3)
 
 Status: Proposed (2026-10-22). The owner approved the recommended defaults of section 9 on 2026-10-23
-(own MIT fixtures; scorm-again 3 keeps the 2.6 behaviour). Progress: SC-1 (#448) and SC-2 in review. ADR 0197 (Proposed) records the decision.
+(own MIT fixtures; scorm-again 3 keeps the 2.6 behaviour). Progress: SC-1 (#448), SC-2 (#449) and SC-3 in review. ADR 0197 (Proposed) records the decision.
 
 ## 1. Goal
 
@@ -60,6 +60,12 @@ examples) and two generic `scorm.zip` files.
 - **Content player (nightly)**: a job in `nightly-conformance.yml` that seeds a tenant, uploads the fixtures through
   `POST /api/admin/scorm/upload`, launches them in the reference front and reads the stored `ScoTracking` through an
   admin endpoint or a test-only artisan command.
+  *Implemented (SC-3), deviation from the plan:* the content player is not run in the nightly conformance workflow
+  against a seeded API. `content-player.spec.ts` plays the real `player.html`/`player.js` with the vendored
+  scorm-again against the same mock server (canned launch `cmi`, recorded track requests) on every pull request
+  that touches the players, because that needs no API stack and no network and catches the same regressions in
+  the player. The PHP tracking stays covered by `ScormTrackApiTest` and `ScormContentOriginApiTest`. A seeded,
+  end-to-end nightly run remains possible later; it is not needed to unblock scorm-again 3.
 - **Golden traces**: `tests/fixtures/playback/golden/<player>/<fixture>.json` with the API call log, the commit
   bodies and the final stored tracking; timestamps and durations are normalised (`PT…` rounded, ISO dates replaced).
   `UPDATE_GOLDEN=1` rewrites them; a changed trace needs a reason in the PR description.
