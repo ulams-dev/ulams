@@ -70,6 +70,28 @@ class FamilyObligationsTest extends TestCase
         $this->assertSame($certificate->getKey(), $assignment->certificate_id);
     }
 
+    public function testTheCertificateNamesTheVariantAndVerificationShowsIt(): void
+    {
+        $this->group->forceFill(['default_label' => 'Intermediate'])->save();
+        $this->app->make(\Ulams\CourseVariants\Services\FamilyDirectory::class)->forget();
+        $student = $this->learner();
+
+        $this->finish($student, $this->expert);
+        $this->finish($student, $this->base);
+
+        $variant = FabricPDF::query()->where('user_id', $student->getKey())->where('assignable_id', $this->expert->getKey())->firstOrFail();
+        $default = FabricPDF::query()->where('user_id', $student->getKey())->where('assignable_id', $this->base->getKey())->firstOrFail();
+        $this->assertSame('Expert', $variant->vars['@VarCourseVariant']);
+        $this->assertSame('Intermediate', $default->vars['@VarCourseVariant']);
+        $this->getJson("/api/certificates/verify/{$variant->certificate_id}")->assertOk()->assertJsonPath('data.course_variant', 'Expert');
+
+        $solo = Course::factory()->create(['status' => CourseStatusEnum::PUBLISHED]);
+        $this->finish($student, $solo);
+        $plain = FabricPDF::query()->where('user_id', $student->getKey())->where('assignable_id', $solo->getKey())->firstOrFail();
+        $this->assertSame('', $plain->vars['@VarCourseVariant']);
+        $this->getJson("/api/certificates/verify/{$plain->certificate_id}")->assertOk()->assertJsonPath('data.course_variant', null);
+    }
+
     public function testAPinnedVariantIsTheOnlyOneThatCountsAndTheLearnerIsGivenIt(): void
     {
         $this->group->forceFill(['pinned_course_id' => $this->expert->getKey()])->save();

@@ -18,8 +18,7 @@ per audience from the same sources, each variant reviewed as a diff against the 
 created as its own course and grouped with the base as a family); numbered course releases and a screen that compares
 any two versions, a variant included; the **routing of learners between variants**: the learner's own choice, an assignment by an
 administrator or a rule, the optional placement check, hints to switch, one entitlement for the whole family, progress carried over between variants and
-mandatory training that accepts any variant; and the **learner screens** for variants: the picker on the course page, the hint to switch and the optional placement check
-(see [Choosing your version](/learners/course-versions/)). **Coming:** variant-aware Living Course updates and certificates that name the variant. Progress is tracked in the [roadmap](/roadmap/)
+mandatory training that accepts any variant; the **learner screens** for variants (the picker on the course page, the hint to switch and the optional placement check, see [Choosing your version](/learners/course-versions/)); a source update that reaches every variant as its own reviewable proposal (one analysis for all, shared elements take the base's patch at no cost); and certificates that name the variant. **Coming:** rebasing a variant on a newer base. Progress is tracked in the [roadmap](/roadmap/)
 (Phase 3.1 and Phase 4.4); the design is in `docs/plans/course-versions-and-variants.md` and ADR 0192.
 </Aside>
 
@@ -168,10 +167,27 @@ chooses), and a transparent hint can suggest an easier or more advanced variant,
 **Assigned by your organisation**, with the rule name, and cannot change it when the course is locked. The screens work with the keyboard and a screen reader, without JavaScript, in
 English, Polish and Chinese: see [Choosing your version](/learners/course-versions/).
 
+### Updates when a source changes
+
+When a source of a course with variants changes, Living Course (see [the Git sync example](/creators/git-sync-worked-example/)) makes one update proposal for the base course and one for each
+variant, together. A variant gets its own proposal because it can cite passages the base does not, and because it is its own course. The element you did not
+change in a variant takes the base course's proposed edit without a new analysis (the item says "Same change as in the base course; no extra analysis was
+needed."), so it costs nothing extra. Only the elements you changed in the variant are analysed for it.
+
+On the update list and at the top of the review screen a text badge names the course a proposal is for: the variant's name, or "Base course". On the review
+screen, "Versions of this update" lists every proposal of the group with its status and how many items are decided and undecided; choose one to review it. Each
+proposal is still decided and applied on its own, and the base course is untouched when you apply a variant's proposal.
+
+Next to Accept, an item whose edit is the same in other versions has **Accept in all versions**. It accepts the item here and the identical edit (same element,
+same text before and after) in the other versions that have not decided it yet, and says how many: "Accepted here and in 2 other versions". Edits that differ
+stay for you to decide in their own version. Applying a variant's proposal does not mark the source revision as reviewed; only the base proposal does.
+
+**Certificates name the variant.** Each variant course has its own certificate template (its title already carries the variant), a template can print the variant with
+`@VarCourseVariant`, and the public verification record of a certificate shows it.
+
 ### What is not built yet
 
-- **Living Course for variants.** When a source changes, Living Course still proposes the update for the base course only. Proposing the matching patch for every variant
-  that inherits the changed element, rebasing a variant on a newer base, and certificates that name the variant are planned.
+- **Rebasing a variant on a newer base**, and improvements from learner insights for a variant (they propose for the base course).
 - **Chat edits on a variant.** The element chat edits the base course.
 
 ## Decisions behind it

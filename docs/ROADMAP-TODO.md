@@ -787,7 +787,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       (partial: built in CV-4, PR #396: each variant outline is reviewed with the builder's outline diff against the base outline and each
       generated variant with a new `VariantReview` card (lessons kept, rewritten, added, skipped; word-level text changes) built on the existing
       `BlueprintDiff`, approved one by one, applied as its own course through the domain services, grouped as a family hidden from the catalogue
-      and published with the base; the 3.1 compare screen shows a variant against its base (CV-3, waiting to merge); open: Living Course patches for variants and rebase on a newer base (CV-5))
+      and published with the base; the 3.1 compare screen shows a variant against its base (CV-3, waiting to merge); Living Course patches for variants built in CV-5 part 3 (waiting to merge: one proposal per variant in a group, shared elements take the base patch at no model cost, only the variant's own elements analysed, accept in group, apply per variant); open: the tabbed review in the studio and rebase on a newer base)
 - [ ] (new) Learner routing: self-declared role and level at enrolment, an optional cited placement check, assignment by an
       admin or an enrolment rule (6.2), and an adaptive hint from Learner Insights to switch variant that the learner confirms
       (never a silent switch); progress carries over for elements that are identical in both variants
@@ -804,7 +804,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 - [ ] (new) One entitlement for the course covers all its variants (ADR 0130); certificates name the variant completed
       (partial, CV-5 part 1 of 3, waiting to merge: a derived `family` entitlement per variant the learner uses, ended and moved with the entitlements it derives
       from, so refunds, expiry and renewals reach every variant and `course_user` stays a projection; mandatory training accepts any variant or only the pinned
-      one, a variant uses the default course's compliance settings; open: certificates naming the variant and variant-aware Living Course (CV-5 part 3))
+      one, a variant uses the default course's compliance settings; certificates name the variant (`@VarCourseVariant`, `course_variant` on the verification record) and Living Course reaches every variant (CV-5 part 3, waiting to merge))
 - [ ] (new) Tenant isolation suite for the variant and routing endpoints; WCAG 2.2 AA for the variant picker and placement
       check; evals for variant grounding and level fit through the eval command only
       (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #396; the routing endpoints have

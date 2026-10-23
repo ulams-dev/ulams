@@ -127,6 +127,9 @@ final class Presenter
             'sessionId' => $p->session_id,
             'sourceId' => $p->source_id,
             'kind' => $p->kind,
+            // the course variant this proposal is for (null: the base course) and the group of proposals made together (ADR 0192)
+            'variant' => $p->variant_id !== null ? ($p->counts['variant'] ?? ['id' => $p->variant_id]) : null,
+            'proposalGroup' => $p->proposal_group,
             'status' => $p->status,
             'trigger' => $p->trigger,
             'counts' => $p->counts,

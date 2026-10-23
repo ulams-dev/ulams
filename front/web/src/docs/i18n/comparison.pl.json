@@ -446,7 +446,6 @@
                     "title": "Kierowanie uczących się do wariantu",
                     "text": "Uczący się wybiera poziom i rolę przy zapisie, rozwiązuje opcjonalny test kwalifikacyjny z cytowaniami albo dostaje wariant od administratora lub reguły; po zmianie wariantu postęp zostaje.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming",
                     "packages": [
                       "course-variants"
                     ]
