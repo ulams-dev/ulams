@@ -6,7 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use RuntimeException;
 use Ulams\Commerce\Contracts\CommerceProvider;
-use Ulams\Commerce\Contracts\FetchesOrders;
+use Ulams\Commerce\Contracts\InspectsCatalogue;
+use Ulams\Commerce\Contracts\ListsOrders;
+use Ulams\Commerce\Contracts\ReportsOrderEvents;
+use Ulams\Commerce\Services\ProductLinkStore;
+use Ulams\Commerce\Support\ProductState;
 use Ulams\Commerce\Contracts\ReconcilesOrders;
 use Ulams\Commerce\Support\CheckoutRef;
 use Ulams\Commerce\Support\OrderEvent;
@@ -14,19 +18,19 @@ use Ulams\Commerce\Support\OrderEventEnvelope;
 use Ulams\Commerce\Support\OrderEventPage;
 use Ulams\Commerce\Support\OrderItemSnapshot;
 use Ulams\Commerce\Support\OrderSnapshot;
-use Ulams\Commerce\Support\Price;
+use Ulams\Commerce\Support\ProductSpec;
 use Ulams\Commerce\Support\ProductRef;
 use Ulams\Commerce\Support\SellableRef;
 use Ulams\Core\Models\User;
 
 /**
- * STUB of Sylius for CM-1 (ADR 0130): no Sylius instance exists yet, so this in-memory provider plays the part of
- * its Admin API (`fetchOrder`), its bridge event feed (`orderEventsAfter`) and its outbox (each state change appends
- * an event with a per-order sequence, which a test may deliver, delay, duplicate or drop). Replaced by the real
- * adapter and the `commerce` compose profile in CM-3; the contract it exercises is the one the bridge bundle will
- * have to meet.
+ * An in-memory stand-in for a webhook provider (ADR 0130): it plays the part of Sylius's Admin API (`fetchOrder`,
+ * `inspectProduct`, order listing), of the bridge's event feed (`orderEventsAfter`) and of its outbox (each state change
+ * appends an event with a per-order sequence, which a test may deliver, delay, duplicate or drop). The real adapter is
+ * tested against a real Sylius in `commerce-sylius`; this one lets the LMS side (webhook, applier, sweep, catalogue
+ * sync) run in every CI job without a Sylius service.
  */
-class FakeCommerceProvider implements CommerceProvider, FetchesOrders, ReconcilesOrders
+class FakeCommerceProvider implements CommerceProvider, ReportsOrderEvents, ReconcilesOrders, InspectsCatalogue, ListsOrders
 {
     /** @var array<string,array<string,mixed>> */
     public array $orders = [];
@@ -38,6 +42,15 @@ class FakeCommerceProvider implements CommerceProvider, FetchesOrders, Reconcile
     public bool $down = false;
 
     public int $fetches = 0;
+
+    /** @var array<string,ProductState> products by external id, as the provider holds them */
+    public array $products = [];
+
+    /** @var list<array{string,bool}> every syncProduct call: sellable key, active */
+    public array $syncCalls = [];
+
+    /** Fails syncProduct with this message while set (the provider is down). */
+    public ?string $syncFails = null;
 
     public function __construct(public string $channel = 'acme')
     {
@@ -109,9 +122,29 @@ class FakeCommerceProvider implements CommerceProvider, FetchesOrders, Reconcile
         return 'fake';
     }
 
-    public function syncProduct(SellableRef $ref, Price $price, bool $active): ProductRef
+    public function syncProduct(SellableRef $ref, ProductSpec $spec): ProductRef
     {
-        return new ProductRef('fake', "variant-{$ref->type}-{$ref->id}");
+        if ($this->syncFails !== null) {
+            throw new RuntimeException($this->syncFails);
+        }
+        $this->syncCalls[] = [$ref->key(), $spec->active];
+        $product = new ProductRef('fake', "variant-{$ref->type}-{$ref->id}");
+        $this->products[$product->externalId] = new ProductState($product, $spec->name, $spec->price->amountMinor, $spec->price->currency, $spec->active);
+        (new ProductLinkStore())->record($ref, $product, $spec);
+
+        return $product;
+    }
+
+    public function inspectProduct(ProductRef $product): ?ProductState
+    {
+        return $this->products[$product->externalId] ?? null;
+    }
+
+    public function ordersChangedSince(\Carbon\CarbonInterface $since): iterable
+    {
+        foreach (array_keys($this->orders) as $id) {
+            yield $this->fetchOrder((string) $id);
+        }
     }
 
     public function createCheckout(User $user, ProductRef $product, string $returnUrl): CheckoutRef

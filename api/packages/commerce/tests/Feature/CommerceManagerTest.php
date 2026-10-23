@@ -8,7 +8,9 @@ use Ulams\Commerce\CommerceManager;
 use Ulams\Commerce\Contracts\CommerceProvider;
 use Ulams\Commerce\Support\CheckoutRef;
 use Ulams\Commerce\Support\OrderEvent;
+use Ulams\Commerce\Support\OrderSnapshot;
 use Ulams\Commerce\Support\Price;
+use Ulams\Commerce\Support\ProductSpec;
 use Ulams\Commerce\Support\ProductRef;
 use Ulams\Commerce\Support\SellableRef;
 use Ulams\Commerce\Tests\TestCase;
@@ -27,9 +29,9 @@ class CommerceManagerTest extends TestCase
                 return 'fake';
             }
 
-            public function syncProduct(SellableRef $ref, Price $price, bool $active): ProductRef
+            public function syncProduct(SellableRef $ref, ProductSpec $spec): ProductRef
             {
-                $this->synced[] = [$ref->type, $ref->id, $price->amountMinor, $active];
+                $this->synced[] = [$ref->type, $ref->id, $spec->price->amountMinor, $spec->active];
 
                 return new ProductRef('fake', "{$ref->type}-{$ref->id}");
             }
@@ -37,6 +39,11 @@ class CommerceManagerTest extends TestCase
             public function createCheckout(User $user, ProductRef $product, string $returnUrl): CheckoutRef
             {
                 return new CheckoutRef("https://pay.test/{$product->externalId}");
+            }
+
+            public function fetchOrder(string $orderId): OrderSnapshot
+            {
+                throw new \RuntimeException('not used');
             }
 
             public function handleOrderEvent(Request $request): ?OrderEvent
@@ -59,7 +66,7 @@ class CommerceManagerTest extends TestCase
         config(['commerce.provider' => 'fake']);
 
         $provider = app(CommerceProvider::class);
-        $ref = $provider->syncProduct(SellableRef::course(3), new Price(1900, 'EUR'), false);
+        $ref = $provider->syncProduct(SellableRef::course(3), new ProductSpec('Course 3', new Price(1900, 'EUR'), false));
 
         $this->assertSame('fake', $provider->key());
         $this->assertSame('course-3', $ref->externalId);
