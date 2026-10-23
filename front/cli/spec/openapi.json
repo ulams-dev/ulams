@@ -11991,6 +11991,343 @@
     ]
    }
   },
+  "/api/admin/course-builder/style-profiles": {
+   "get": {
+    "description": "Style profiles (ADR 0196): the cited, author-approved reading of an organisation's style guide. Anyone who may use\nthe Course Builder can list, read and propose profiles (a profile belongs to the whole academy, like a theme);\nediting and deleting a suggestion is for its creator or an admin; approving is for admins, because an approved\nprofile shapes every course drafted afterwards. The style guide is an untrusted upload; its text never leaves the\nextraction call.",
+    "operationId": "admin.course-builder.style-profiles.get",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "status",
+      "schema": {
+       "enum": [
+        "suggested",
+        "approved",
+        "superseded"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "profiles"
+     },
+     "403": {
+      "description": "no access to the Course Builder"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Style profiles of the academy, newest first (filter with status, scopeType, scopeId)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   },
+   "post": {
+    "operationId": "admin.course-builder.style-profiles.post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "properties": {
+         "file": {
+          "format": "binary",
+          "type": "string"
+         },
+         "from": {
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         },
+         "profile": {
+          "type": "string"
+         },
+         "scopeId": {
+          "type": "string"
+         },
+         "scopeType": {
+          "enum": [
+           "tenant",
+           "brief"
+          ],
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the suggested profile with what was dropped as warnings"
+     },
+     "422": {
+      "description": "rejected upload or invalid body"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Propose a style profile: upload a style guide (file, MD/PDF/DOCX) to have it read and cited, or send values by hand (profile, optionally from an existing profile id)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/style-profiles/{profile}": {
+   "delete": {
+    "operationId": "admin.course-builder.style-profiles.by-profile.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "profile",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "deleted"
+     },
+     "409": {
+      "description": "approved profiles are replaced, not deleted"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete a suggested or superseded profile",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   },
+   "get": {
+    "operationId": "admin.course-builder.style-profiles.by-profile.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "profile",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "profile, diff, cited fragments"
+     },
+     "404": {
+      "description": "unknown"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "A style profile with the passages it cites and its diff against the approved profile",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   },
+   "patch": {
+    "operationId": "admin.course-builder.style-profiles.by-profile.patch",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "profile",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "name": {
+          "type": "string"
+         },
+         "profile": {
+          "type": "object"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the profile"
+     },
+     "403": {
+      "description": "not the creator or an admin"
+     },
+     "409": {
+      "description": "no longer a suggestion"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Edit a suggested profile (values and name); invalid values are dropped and reported",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/style-profiles/{profile}/approve": {
+   "post": {
+    "operationId": "admin.course-builder.style-profiles.by-profile.approve.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "profile",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "approved"
+     },
+     "403": {
+      "description": "not an admin"
+     },
+     "409": {
+      "description": "not a suggestion"
+     },
+     "422": {
+      "description": "empty profile"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Approve a suggested profile (admins); it supersedes the approved profile of its scope",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/style-profiles/{profile}/check": {
+   "get": {
+    "operationId": "admin.course-builder.style-profiles.by-profile.check.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "profile",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "LMS course id of a course made with the builder (a variant's course too)",
+      "in": "query",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "blocking, warnings and hints, each with the style guide passages it comes from"
+     },
+     "403": {
+      "description": "another author's course"
+     },
+     "404": {
+      "description": "unknown profile or course"
+     },
+     "422": {
+      "description": "course missing"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Style check: where a course departs from a profile (banned phrases, terminology, casing, landing components, image alt text; reading level and sentence length as hints). Only the author of the course or an admin; nothing is changed",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
   "/api/admin/course-builder/variants/{variant}": {
    "delete": {
     "operationId": "admin.course-builder.variants.by-variant.delete",

@@ -678,6 +678,48 @@
   "tag": "Admin Course Builder"
  },
  {
+  "method": "GET",
+  "path": "/api/admin/course-builder/style-profiles",
+  "summary": "Style profiles of the academy, newest first (filter with status, scopeType, scopeId)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/style-profiles",
+  "summary": "Propose a style profile: upload a style guide (file, MD/PDF/DOCX) to have it read and cited, or send values by hand (profile, optionally from an existing profile id)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/course-builder/style-profiles/{profile}",
+  "summary": "Delete a suggested or superseded profile",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/style-profiles/{profile}",
+  "summary": "A style profile with the passages it cites and its diff against the approved profile",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/course-builder/style-profiles/{profile}",
+  "summary": "Edit a suggested profile (values and name); invalid values are dropped and reported",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/style-profiles/{profile}/approve",
+  "summary": "Approve a suggested profile (admins); it supersedes the approved profile of its scope",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/style-profiles/{profile}/check",
+  "summary": "Style check: where a course departs from a profile (banned phrases, terminology, casing, landing components, image alt text; reading level and sentence length as hints). Only the author of the course or an admin; nothing is changed",
+  "tag": "Admin Course Builder"
+ },
+ {
   "method": "DELETE",
   "path": "/api/admin/course-builder/variants/{variant}",
   "summary": "Retire a variant (its course, if it has one, is kept)",

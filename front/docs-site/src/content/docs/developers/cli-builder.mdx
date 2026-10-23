@@ -129,6 +129,14 @@ ulams course variants update <variant> --label "Expert, developer"
 ulams course variants retire <variant> --yes                                     # its course is kept; it stops counting against the cap
 ```
 
+Style profiles (the cited, author-approved reading of an uploaded style guide, ADR 0196) have their own commands; see [Style profiles](/creators/style-profiles/):
+
+```bash
+ulams style-profiles propose --file ./style-guide.md --json    # read and cited; warnings list what was dropped
+ulams style-profiles get <profile> --json                      # values, cited passages, diff against the approved profile
+ulams style-profiles approve <profile>                         # admins only
+```
+
 `course variants list` gives each variant's `currentVersionId`, its kind (`outline`, then `content`) and status. Approve a proposed variant outline (it starts writing
 the lessons that changed) or a generated variant (it creates the variant's own course) with `ulams builder patches approve <version>`, or in the studio; reject with
 `builder patches reject <version>`. Review one with `GET versions/{version}/diff?against=<base version>`.

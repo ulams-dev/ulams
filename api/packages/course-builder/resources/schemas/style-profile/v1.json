@@ -1,0 +1,275 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ulams.dev/schemas/style-profile/v1.json",
+  "title": "Style profile v1",
+  "description": "Typed, cited reading of an organisation's style guide (ADR 0196). Every value cites the style guide passages it comes from; values the author writes by hand have an empty citation list.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "preset": {
+          "type": "string"
+        },
+        "accent": {
+          "type": "string",
+          "pattern": "^#[0-9a-f]{6}$"
+        },
+        "secondary": {
+          "type": "string",
+          "pattern": "^#[0-9a-f]{6}$"
+        },
+        "fonts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "maxLength": 60
+          },
+          "maxItems": 4
+        },
+        "logoFileId": {
+          "type": "string"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^frg_[a-z2-7]{12}$"
+          },
+          "description": "Style guide fragment ids; empty for values the author wrote by hand"
+        }
+      },
+      "required": [
+        "citations"
+      ]
+    },
+    "voice": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "person": {
+          "enum": [
+            "you",
+            "we",
+            "neutral"
+          ]
+        },
+        "formality": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "sentenceLength": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 60
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^frg_[a-z2-7]{12}$"
+          },
+          "description": "Style guide fragment ids; empty for values the author wrote by hand"
+        }
+      },
+      "required": [
+        "citations"
+      ]
+    },
+    "readingLevel": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "type": "string",
+            "pattern": "^[a-z]{2}$"
+          },
+          "level": {
+            "type": "string",
+            "pattern": "^(A1|A2|B1|B2|C1|C2|grade-([1-9]|1[0-6]))$"
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$"
+            },
+            "description": "Style guide fragment ids; empty for values the author wrote by hand"
+          }
+        },
+        "required": [
+          "language",
+          "level",
+          "citations"
+        ]
+      }
+    },
+    "terminology": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "use": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "avoid": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "maxLength": 80
+            },
+            "maxItems": 10
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$"
+            },
+            "description": "Style guide fragment ids; empty for values the author wrote by hand"
+          }
+        },
+        "required": [
+          "use",
+          "avoid",
+          "citations"
+        ]
+      }
+    },
+    "banned": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "blocking": {
+          "type": "boolean",
+          "description": "Set by the author: a banned phrase in a course blocks publishing"
+        },
+        "phrases": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "phrase": {
+                "type": "string",
+                "maxLength": 120
+              },
+              "citations": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^frg_[a-z2-7]{12}$"
+                },
+                "description": "Style guide fragment ids; empty for values the author wrote by hand"
+              }
+            },
+            "required": [
+              "phrase",
+              "citations"
+            ]
+          }
+        }
+      },
+      "required": [
+        "blocking",
+        "phrases"
+      ]
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "preferred": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "disallowed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^frg_[a-z2-7]{12}$"
+          },
+          "description": "Style guide fragment ids; empty for values the author wrote by hand"
+        }
+      },
+      "required": [
+        "citations"
+      ]
+    },
+    "imagery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "altTextRequired": {
+          "type": "boolean"
+        },
+        "decorativeAllowed": {
+          "type": "boolean"
+        },
+        "noTextInImages": {
+          "type": "boolean"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^frg_[a-z2-7]{12}$"
+          },
+          "description": "Style guide fragment ids; empty for values the author wrote by hand"
+        }
+      },
+      "required": [
+        "citations"
+      ]
+    },
+    "examples": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 600
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$"
+            },
+            "description": "Style guide fragment ids; empty for values the author wrote by hand"
+          }
+        },
+        "required": [
+          "text",
+          "citations"
+        ]
+      }
+    }
+  }
+}

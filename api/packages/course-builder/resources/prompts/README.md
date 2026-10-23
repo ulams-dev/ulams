@@ -18,6 +18,7 @@ output limit in `packages/ai/config/ai.php`), the output `schema` and a one-line
 | `price` | light | `outputs/price.json` (only for a paid course without an amount) | `Pipeline\PriceService` |
 | `variant_outline` | light | `outputs/variant_outline.json` (the plan per lesson for one audience) | `Pipeline\VariantOutlineService` |
 | `variant_lesson` | default | `outputs/variant_lesson.json` (a lesson condensed, deepened or added for one audience) | `Pipeline\GenerationService` |
+| `style_profile_extract` | default | `outputs/style_profile_extract.json` (a style guide read into a typed, cited style profile) | `StyleProfile\StyleProfileExtractor` |
 | `patch` | default | built per element type in `Pipeline\PatchSchemas` | `Pipeline\PatchService` |
 
 ## Rules

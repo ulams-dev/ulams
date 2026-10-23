@@ -6,10 +6,11 @@ use InvalidArgumentException;
 use Illuminate\Support\Str;
 use Ulams\CourseBuilder\Blueprint\SchemaRegistry;
 use Ulams\CourseBuilder\Models\Session;
+use Ulams\CourseBuilder\Models\StyleProfile;
 use Ulams\Settings\Support\ThemePresets;
 
 /**
- * The Course Brief: interview answers, schema-validated (`course-brief/v3`; v1 and v2 documents are read as v3), each field marked as
+ * The Course Brief: interview answers, schema-validated (`course-brief/v4`; v1 to v3 documents are read as v4), each field marked as
  * decided by the author or by default. Interview question keys map onto brief fields here.
  */
 final class BriefService
@@ -243,6 +244,28 @@ final class BriefService
         return $theme;
     }
 
+    /**
+     * The style profile a brief names (ADR 0196): an approved one, or null for the academy default.
+     *
+     * @throws InvalidArgumentException
+     */
+    public static function styleProfileId(mixed $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        $id = is_string($value) ? strtolower(trim($value)) : '';
+        $profile = preg_match('/^[0-9a-z]{26}$/', $id) ? StyleProfile::query()->find($id) : null;
+        if ($profile === null) {
+            throw new InvalidArgumentException('That style profile does not exist.');
+        }
+        if ($profile->status !== StyleProfile::APPROVED) {
+            throw new InvalidArgumentException('Only an approved style profile can shape a course: ask an admin to approve it first.');
+        }
+
+        return $profile->id;
+    }
+
     /** @return array{mode:string,slug?:string} */
     public static function site(mixed $value): array
     {
@@ -263,7 +286,7 @@ final class BriefService
 
     public function assertValid(array $brief): void
     {
-        $errors = $this->schemas->validate('course-brief/v3', $brief);
+        $errors = $this->schemas->validate('course-brief/v4', $brief);
         if ($errors !== []) {
             throw new InvalidArgumentException('Invalid brief: ' . implode('; ', array_slice($errors, 0, 5)));
         }
@@ -278,6 +301,18 @@ final class BriefService
         return isset($pricing['amountMinor'])
             ? sprintf('%s %s', number_format($pricing['amountMinor'] / 100, 2, '.', ''), $pricing['currency'] ?? 'USD')
             : 'Paid (price to confirm)';
+    }
+
+    /** The "Style" chip of the brief panel: the profile the brief names, else the academy default; none when there is neither. */
+    private static function styleRow(array $brief): ?array
+    {
+        $named = isset($brief['styleProfileId']) ? StyleProfile::query()->find($brief['styleProfileId']) : null;
+        if ($named !== null) {
+            return ['key' => 'style', 'label' => 'Style', 'value' => $named->name];
+        }
+        $default = StyleProfile::current();
+
+        return $default === null ? null : ['key' => 'style', 'label' => 'Style', 'value' => 'Academy default: ' . $default->name];
     }
 
     /** Readable summary rows for the brief panel. */
@@ -298,6 +333,7 @@ final class BriefService
             ...(!empty($brief['audiences']) ? [['key' => 'audiences', 'label' => 'Variants', 'value' => implode('; ', array_column($brief['audiences'], 'label'))]] : []),
             ['key' => 'pricing', 'label' => 'Price', 'value' => self::priceLabel($brief['pricing'] ?? ['mode' => 'free'])],
             ...(isset($brief['site']) ? [['key' => 'site', 'label' => 'Site', 'value' => ($brief['site']['mode'] ?? 'current') === 'new' ? 'New site: ' . ($brief['site']['slug'] ?? '') : 'This site']] : []),
+            ...(($style = self::styleRow($brief)) !== null ? [$style] : []),
             ...(isset($brief['theme']) ? [['key' => 'theme', 'label' => 'Theme', 'value' => ucfirst($brief['theme']['preset']) . (isset($brief['theme']['accent']) ? ' · ' . $brief['theme']['accent'] : '')]] : []),
         ];
     }

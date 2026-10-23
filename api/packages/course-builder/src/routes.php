@@ -6,6 +6,7 @@ use Ulams\CourseBuilder\Http\Controllers\CourseAsCodeController;
 use Ulams\CourseBuilder\Http\Controllers\CourseBuilderController;
 use Ulams\CourseBuilder\Http\Controllers\EventStreamController;
 use Ulams\CourseBuilder\Http\Controllers\ReleaseController;
+use Ulams\CourseBuilder\Http\Controllers\StyleProfileController;
 use Ulams\CourseBuilder\Http\Controllers\VersionListController;
 use Ulams\CourseBuilder\Http\Middleware\EnsureAiEnabled;
 
@@ -82,4 +83,19 @@ Route::group([
     Route::get('releases/{release}', [ReleaseController::class, 'show']);
     Route::get('courses/{course}/versions', [VersionListController::class, 'index'])->whereNumber('course');
     Route::get('courses/{course}/compare', [CompareController::class, 'show'])->whereNumber('course');
+});
+
+// Style profiles (ADR 0196): the cited, author-approved reading of an uploaded style guide. No AI gate: without AI the
+// author fills the profile by hand. Reading and proposing is for builder users, approving for admins.
+Route::group([
+    'prefix' => 'api/admin/course-builder',
+    'middleware' => ['auth:api'],
+], function () {
+    Route::get('style-profiles', [StyleProfileController::class, 'index']);
+    Route::post('style-profiles', [StyleProfileController::class, 'store']);
+    Route::get('style-profiles/{profile}', [StyleProfileController::class, 'show']);
+    Route::patch('style-profiles/{profile}', [StyleProfileController::class, 'update']);
+    Route::get('style-profiles/{profile}/check', [StyleProfileController::class, 'check']);
+    Route::post('style-profiles/{profile}/approve', [StyleProfileController::class, 'approve']);
+    Route::delete('style-profiles/{profile}', [StyleProfileController::class, 'destroy']);
 });
