@@ -67,7 +67,7 @@ describe('trace normaliser', () => {
     const short = normaliseString(long);
     assert.match(short, /^<4096 chars sha256:[0-9a-f]{12}>$/);
     assert.notEqual(short, normaliseString(`${long.slice(0, 4095)}y`));
-    assert.equal(normaliseString('x'.repeat(64)), 'x'.repeat(64));
+    assert.equal(normaliseString('x'.repeat(160)), 'x'.repeat(160));
   });
 
   it('replaces listed origins', () => {
