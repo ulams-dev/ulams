@@ -16,10 +16,10 @@ import { Aside } from "@astrojs/starlight/components";
 **Built:** course variants in the Course Builder (the interview question, one outline and one generation run
 per audience from the same sources, each variant reviewed as a diff against the base, each approved variant
 created as its own course and grouped with the base as a family); numbered course releases and a screen that compares
-any two versions, a variant included; and the **routing of learners between variants through the API**: the learner's own choice, an assignment by an
+any two versions, a variant included; the **routing of learners between variants**: the learner's own choice, an assignment by an
 administrator or a rule, the optional placement check, hints to switch, one entitlement for the whole family, progress carried over between variants and
-mandatory training that accepts any variant. **Coming:** the learner screens for all of this (the picker on the course page and the placement check), and variant-aware Living Course updates and
-certificates that name the variant. Progress is tracked in the [roadmap](/roadmap/)
+mandatory training that accepts any variant; and the **learner screens** for variants: the picker on the course page, the hint to switch and the optional placement check
+(see [Choosing your version](/learners/course-versions/)). **Coming:** variant-aware Living Course updates and certificates that name the variant. Progress is tracked in the [roadmap](/roadmap/)
 (Phase 3.1 and Phase 4.4); the design is in `docs/plans/course-versions-and-variants.md` and ADR 0192.
 </Aside>
 
@@ -142,7 +142,7 @@ The endpoints are in the [Course Builder API](/developers/course-builder-api/) (
 ### Learners and variants
 
 Learners are routed to a variant by their own choice, by an administrator or by a rule, never silently. The endpoints are in the
-[Course variants API](/developers/course-variants-api/); the learner screens are the next milestone, so today a frontend (or the `ulams` CLI) calls them.
+[Course variants API](/developers/course-variants-api/).
 
 - **The picker.** The default course and every published variant of the family, each with its label, level, role and a line on who it is for, for anyone who can see the
   course page. The base course is one of the choices, usually labelled "Intermediate".
@@ -159,9 +159,17 @@ Learners are routed to a variant by their own choice, by an administrator or by 
   refund or an expiry ends all of them, and the learner's progress is kept.
 - **Mandatory training.** An obligation on the course is fulfilled by finishing any variant, unless an administrator **pins** one; then the learner is given the pinned variant and only it counts.
 
+### What learners see
+
+A learner of a course with variants finds **Choose your version** on the course page: every published variant with its level, role, duration and who it is for, the
+version they are in, and **Switch to this version**. Switching keeps the old course and its progress and carries completed lessons over when they are the same in both
+variants; quizzes are taken again. Where an administrator turned the placement check on, an enrolled learner can take it (advisory only: it suggests a variant and the learner
+chooses), and a transparent hint can suggest an easier or more advanced variant, never switching on its own. A learner whose organisation assigned a variant sees
+**Assigned by your organisation**, with the rule name, and cannot change it when the course is locked. The screens work with the keyboard and a screen reader, without JavaScript, in
+English, Polish and Chinese: see [Choosing your version](/learners/course-versions/).
+
 ### What is not built yet
 
-- **The learner screens.** The picker on the course page, the placement check and the "assigned by your organisation" notice in the learner interface are planned.
 - **Living Course for variants.** When a source changes, Living Course still proposes the update for the base course only. Proposing the matching patch for every variant
   that inherits the changed element, rebasing a variant on a newer base, and certificates that name the variant are planned.
 - **Chat edits on a variant.** The element chat edits the base course.
