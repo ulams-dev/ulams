@@ -7915,6 +7915,252 @@
     ]
    }
   },
+  "/api/admin/commerce/access-passes": {
+   "post": {
+    "description": "An access pass sells a course or a bundle for a number of days; the learner's access ends that many days after the purchase. It has no price until one is set with PUT /api/admin/commerce/products/access_pass/{id}. Needs commerce_prices_manage.",
+    "operationId": "admin.commerce.access-passes.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "days": {
+          "maximum": 3650,
+          "minimum": 1,
+          "type": "integer"
+         },
+         "name": {
+          "type": "string"
+         },
+         "subject_id": {
+          "type": "integer"
+         },
+         "subject_type": {
+          "enum": [
+           "course",
+           "bundle"
+          ],
+          "type": "string"
+         }
+        },
+        "required": [
+         "name",
+         "subject_type",
+         "subject_id",
+         "days"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The access pass"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Invalid pass"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create an access pass",
+    "tags": [
+     "Commerce"
+    ]
+   }
+  },
+  "/api/admin/commerce/bundles": {
+   "post": {
+    "description": "A bundle is bought once and grants every course in it. It has no price until one is set with PUT /api/admin/commerce/products/bundle/{id}. Needs commerce_prices_manage.",
+    "operationId": "admin.commerce.bundles.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "course_ids": {
+          "items": {
+           "type": "integer"
+          },
+          "type": "array"
+         },
+         "description": {
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "name",
+         "course_ids"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The bundle"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Invalid bundle"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create a bundle of courses",
+    "tags": [
+     "Commerce"
+    ]
+   }
+  },
+  "/api/admin/commerce/products": {
+   "get": {
+    "description": "One row per sellable that has a price: its type (course, bundle or access_pass), name, price in minor units, whether it is for sale, whether it is published, and the product at the commerce provider (id, variant, last sync, last sync error). Needs the permission commerce_prices_manage.",
+    "operationId": "admin.commerce.products.list",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "List of sellables with a price"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Prices and product state of everything this tenant sells",
+    "tags": [
+     "Commerce"
+    ]
+   }
+  },
+  "/api/admin/commerce/products/{type}/{id}": {
+   "put": {
+    "description": "Records the price (minor units and an ISO currency) and whether the sellable is for sale, then queues the sync to the commerce provider. The product is enabled at the provider only while it is for sale and published. Needs commerce_prices_manage.",
+    "operationId": "admin.commerce.products.by-type.by-id.put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "type",
+      "required": true,
+      "schema": {
+       "enum": [
+        "course",
+        "bundle",
+        "access_pass"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "currency": {
+          "example": "EUR",
+          "type": "string"
+         },
+         "for_sale": {
+          "type": "boolean"
+         },
+         "price_minor": {
+          "minimum": 1,
+          "type": "integer"
+         }
+        },
+        "required": [
+         "price_minor",
+         "currency"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The sellable with its price"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "No such sellable"
+     },
+     "422": {
+      "description": "Invalid price"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Set the price of a sellable and put it on or off sale",
+    "tags": [
+     "Commerce"
+    ]
+   }
+  },
   "/api/admin/compliance/assignments": {
    "get": {
     "description": "Required training. Admin endpoints need `compliance_manage`; `my-assignments` is the learner's own list\nand `team/assignments` lists the direct reports of the manager that is logged in.",
@@ -44027,6 +44273,10 @@
   {
    "description": "Code exercises",
    "name": "Code exercises"
+  },
+  {
+   "description": "Commerce",
+   "name": "Commerce"
   },
   {
    "description": "Commerce webhooks",

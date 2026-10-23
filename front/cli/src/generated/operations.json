@@ -174,6 +174,30 @@
   "tag": "Code exercises"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/commerce/access-passes",
+  "summary": "Create an access pass",
+  "tag": "Commerce"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/commerce/bundles",
+  "summary": "Create a bundle of courses",
+  "tag": "Commerce"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/commerce/products",
+  "summary": "Prices and product state of everything this tenant sells",
+  "tag": "Commerce"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/commerce/products/{type}/{id}",
+  "summary": "Set the price of a sellable and put it on or off sale",
+  "tag": "Commerce"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/compliance/assignments",
   "summary": "List required-training assignments",

@@ -26,6 +26,11 @@ operations:
   # --- authoring metrics (time, cost and element counts of how a course was produced, ADR 0194)
   "GET /api/admin/authoring-metrics/courses": { id: authoring-metrics.list, summary: "Authoring metric snapshots of courses built with the Course Builder" }
   "GET /api/admin/authoring-metrics/courses/{course}": { id: authoring-metrics.get, summary: "Authoring metric of one course: time per stage, cost and the split of AI elements" }
+  # --- commerce catalogue (prices, bundles, access passes, ADR 0130)
+  "GET /api/admin/commerce/products": { id: commerce.products-list, summary: "Prices and product state of everything this tenant sells" }
+  "PUT /api/admin/commerce/products/{type}/{id}": { id: commerce.products-set-price, idempotent: true, summary: "Set the price of a course, bundle or access pass and put it on or off sale" }
+  "POST /api/admin/commerce/bundles": { id: commerce.bundles-create, summary: "Create a bundle of courses" }
+  "POST /api/admin/commerce/access-passes": { id: commerce.access-passes-create, summary: "Create an access pass: a course or bundle for a number of days" }
   # --- report builder (ADR 0194): a preview reads data through a POST, so it is a read
   "POST /api/admin/reporting/query": { id: reporting.query, kind: read, idempotent: true, summary: "Preview a report definition: rows or groups, with small groups withheld" }
   # --- compliance (certificates, required training, reports)
