@@ -1234,6 +1234,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       the hosted demo academies and the `ulams.app` landing on Cloudflare Image Transformations with `onerror=redirect` and a `noop`
       kill switch, admin and imports on demo deployments without `/api/images/img`, the PHP images API kept as an optional legacy API
       (plan `docs/plans/images-cloudflare.md`, milestones IMG-1 to IMG-7; ADR 0193 Accepted 2026-10-22; IMG-1 starts first)
+      Note 2026-10-23 (IMG-7, in review): operators page "Image service" (`operators/image-service.mdx`: modes, settings per client, Cloudflare
+      setup, free-plan budget, kill switch, WAF rule, `IMAGES_CONTENT_URLS`, the legacy PHP API) and the creators, developers and
+      MyDevil/VPS pages that mention images now point to it. Describes IMG-3 (#427), IMG-4, IMG-5 and IMG-6b as they merge
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
 - [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI
