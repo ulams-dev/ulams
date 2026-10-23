@@ -81,6 +81,7 @@ class TokenScopeMapCoverageTest extends TestCase
             $this->assertSame('certificates', TokenScopes::requirement($uri, 'GET')['area'], $uri);
         }
         $this->assertFalse(TokenScopes::requirement('api/admin/reporting/datasets', 'GET')['write']);
+        $this->assertFalse(TokenScopes::requirement('api/admin/reporting/query', 'POST')['write'], 'a preview changes nothing: reports:read is enough');
     }
 
     public function testTheCommittedJsonExportIsCurrent(): void

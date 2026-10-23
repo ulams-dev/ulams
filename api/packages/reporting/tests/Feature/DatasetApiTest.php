@@ -54,21 +54,24 @@ class DatasetApiTest extends TestCase
 
     public static function routeProvider(): array
     {
-        return ['datasets' => ['GET', 'api/admin/reporting/datasets']];
+        return [
+            'datasets' => ['GET', 'api/admin/reporting/datasets', []],
+            'query' => ['POST', 'api/admin/reporting/query', ['dataset' => 'ai_usage', 'columns' => ['task']]],
+        ];
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('routeProvider')]
-    public function testATokenOfAnotherTenantIsRejectedOnEveryRoute(string $method, string $uri): void
+    public function testATokenOfAnotherTenantIsRejectedOnEveryRoute(string $method, string $uri, array $body): void
     {
         $admin = $this->makeAdmin();
         $token = $admin->createToken('test')->accessToken;
 
-        $this->sendAs($token, $method, "/{$uri}")->assertOk();
-        $this->sendAs(null, $method, "/{$uri}")->assertUnauthorized();
+        $this->sendAs($token, $method, "/{$uri}", $body)->assertOk();
+        $this->sendAs(null, $method, "/{$uri}", $body)->assertUnauthorized();
 
         $this->switchToTenantWithOwnKeys();
 
-        $this->sendAs($token, $method, "/{$uri}")->assertUnauthorized();
-        $this->sendAs($admin->createToken('test')->accessToken, $method, "/{$uri}")->assertOk();
+        $this->sendAs($token, $method, "/{$uri}", $body)->assertUnauthorized();
+        $this->sendAs($admin->createToken('test')->accessToken, $method, "/{$uri}", $body)->assertOk();
     }
 }

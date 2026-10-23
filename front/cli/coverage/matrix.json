@@ -1,5 +1,5 @@
 {
- "summary": "621/710 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "622/711 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1913,6 +1913,12 @@
    "key": "GET /api/admin/reporting/datasets",
    "summary": "Datasets a report can be built on",
    "command": "reporting.datasets",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/reporting/query",
+   "summary": "Preview a report definition",
+   "command": "reporting.query",
    "status": "covered"
   },
   {

@@ -189,6 +189,8 @@ return [
     // ---- reports -------------------------------------------------------------------------------
     ['api/admin/reports*', 'reports'],
     // report builder: datasets, queries, saved reports (the prefix avoids the legacy api/admin/reports* routes)
+    // a preview reads data through a POST, so it is a read for a reports:read token
+    ['api/admin/reporting/query', 'reports', ['level' => 'read']],
     ['api/admin/reporting*', 'reports'],
     ['api/admin/stats*', 'reports'],
     ['api/admin/questionnaire*', 'reports'],
