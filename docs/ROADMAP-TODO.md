@@ -662,6 +662,11 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
 - [ ] (new) SharePoint and OneDrive connector plugin (Microsoft Graph): a document library, folder or site pages as a
       source, drive item versions and delta queries for change detection, Entra ID app consent per tenant; requested by
       the owner on 2026-10-23
+- [ ] (new) Help-center connector plugins (Zendesk Guide, Intercom Articles, Freshdesk Solutions): a help center,
+      category or section as a source, article update timestamps for change detection, an API token per tenant stored
+      like the Notion token; requested by the owner on 2026-10-23
+- [ ] (new) Box and Dropbox connector plugins: a folder as a source, file versions and change cursors for change
+      detection, OAuth per tenant like Google Drive; requested by the owner on 2026-10-23
 
 ### 3.1 Course versions with a visual diff (new)
 
