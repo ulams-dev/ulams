@@ -1,0 +1,535 @@
+/*
+ * The home hero's journey (HeroJourney.astro). Outside the motion block nothing is hidden by opacity or moved: the
+ * static state shows every caption and the chat scene. Every scene sits in the same grid cell, so switching beats never
+ * changes the height. With motion allowed and the script live, scenes and their parts fade and slide in (opacity and
+ * transform only).
+ */
+.u-hero--product .u-hero__journey {
+  width: min(100%, 1120px);
+  min-width: 0;
+}
+
+.hj {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(16px, 2.6vw, 32px);
+  align-items: center;
+  padding: clamp(14px, 2vw, 22px);
+  border: 1px solid var(--ulams-color-border, #e2e0da);
+  border-radius: var(--ulams-radius-card, 12px);
+  background: rgb(255 255 255 / 0.86);
+  box-shadow: 0 24px 48px -32px rgb(15 43 70 / 0.35);
+  color: var(--ulams-color-text, #233647);
+  text-align: left;
+}
+@media (max-width: 860px) {
+  .hj {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hj-side {
+    order: -1;
+  }
+}
+
+/* ---------- Captions: one line per beat ---------- */
+.hj-rail {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: none;
+}
+.hj-rail__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  color: var(--ulams-color-text, #233647);
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+.hj-rail__num {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--ulams-color-primary, #0f2b46);
+  border-radius: 50%;
+  color: var(--ulams-color-primary, #0f2b46);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+.hj.is-live .hj-rail__item.is-on {
+  background: var(--ulams-color-accent-bg, #fff0e7);
+  color: var(--ulams-color-header, #10283b);
+  font-weight: 600;
+}
+.hj.is-live .hj-rail__item.is-on .hj-rail__num {
+  border-color: var(--ulams-color-accent, #b44a1f);
+  background: var(--ulams-color-accent, #b44a1f);
+  color: #fff;
+}
+
+/* ---------- Stage ---------- */
+.hj-side {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.hj-stage {
+  display: grid;
+  min-height: 292px;
+  padding: 16px;
+  border: 1px solid var(--ulams-color-border, #e2e0da);
+  border-radius: 10px;
+  background-color: var(--ulams-color-surface, #f8f6f0);
+  background-image: linear-gradient(to right, rgb(15 43 70 / 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgb(15 43 70 / 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  overflow: hidden;
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+.hj-scene {
+  grid-area: 1 / 1;
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  min-width: 0;
+  visibility: hidden;
+}
+.hj-scene.is-on {
+  visibility: visible;
+}
+.hj-stage svg {
+  flex: none;
+  width: 15px;
+  height: 15px;
+}
+
+.hj-card__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--ulams-color-header, #10283b);
+  font-weight: 700;
+}
+.hj-chip,
+.hj-badge,
+.hj-coming,
+.hj-ok,
+.hj-wait {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  width: fit-content;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+/* source */
+.hj-scene--source {
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+}
+.hj-files {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hj-files li,
+.hj-node,
+.hj-flags li,
+.hj-update li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--ulams-color-border, #e2e0da);
+  border-radius: 8px;
+  background: #fff;
+  overflow-wrap: anywhere;
+}
+.hj-arrow {
+  color: var(--ulams-color-accent, #b44a1f);
+}
+.hj-tray {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 12px;
+  border: 1px dashed var(--ulams-color-primary, #0f2b46);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ulams-color-header, #10283b);
+  font-weight: 700;
+  text-align: center;
+}
+.hj-tray__marks {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 4px;
+  color: var(--ulams-color-accent, #b44a1f);
+}
+
+/* chat */
+.hj-chat {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hj-chat li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+.hj-chat p {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  max-width: 100%;
+  margin: 0;
+  padding: 5px 10px;
+  border-radius: 12px;
+}
+.hj-chat b {
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.hj-chat__q {
+  border: 1px solid var(--ulams-color-border, #e2e0da);
+  border-bottom-left-radius: 4px;
+  background: #fff;
+  color: var(--ulams-color-header, #10283b);
+}
+.hj-chat__q b {
+  color: var(--ulams-color-accent, #b44a1f);
+}
+.hj-chat__a {
+  margin-left: auto !important;
+  border-bottom-right-radius: 4px !important;
+  background: var(--ulams-color-primary, #0f2b46);
+  color: #fff;
+  font-weight: 600;
+}
+.hj-chat__a b {
+  color: #cdd8e4;
+}
+
+/* draft */
+.hj-draft__line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #fff;
+}
+.hj-chip {
+  border: 1px solid #e7b48f;
+  border-radius: 6px;
+  background: #fff6ec;
+  color: #6b3410;
+  font-family: var(--ulams-font-mono);
+}
+
+/* review */
+.hj-diff {
+  display: flex;
+  gap: 8px;
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+}
+.hj-diff span {
+  font-weight: 700;
+}
+.hj-diff--del {
+  background: #fbe9e7;
+  color: #8a2116;
+}
+.hj-diff--ins {
+  background: #e3f3ea;
+  color: #0f5132;
+}
+.hj-review__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+.hj-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #a9431d;
+  color: #fff;
+  font-weight: 600;
+}
+.hj-ok {
+  background: #e3f3ea;
+  color: #0f5132;
+}
+
+/* learners */
+.hj-scene--learners {
+  justify-items: center;
+}
+.hj-node--base {
+  border-color: var(--ulams-color-primary, #0f2b46);
+  color: var(--ulams-color-header, #10283b);
+  font-weight: 700;
+}
+.hj-versions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hj-routing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--ulams-color-muted, #52657a);
+  text-align: center;
+}
+.hj-routing__line {
+  width: 36px;
+  border-top: 2px dashed var(--ulams-color-muted, #52657a);
+}
+.hj-coming {
+  border: 1px solid #8a4b08;
+  color: #7a4207;
+  background: #fff;
+}
+
+/* analytics */
+.hj-badge {
+  margin: 0;
+  border: 1px solid var(--ulams-color-primary, #0f2b46);
+  background: #fff;
+  color: var(--ulams-color-primary, #0f2b46);
+}
+.hj-funnel {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hj-funnel li {
+  display: grid;
+  grid-template-columns: minmax(0, 7.5em) minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+.hj-funnel i {
+  display: block;
+  width: var(--w);
+  height: 12px;
+  border-radius: 4px;
+  background: var(--ulams-color-primary, #0f2b46);
+  transform-origin: left center;
+}
+.hj-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.hj-metric {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  margin: 0;
+  padding: 8px;
+  border: 1px solid var(--ulams-color-border, #e2e0da);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 0.76rem;
+}
+.hj-metric--risk {
+  color: #7a4207;
+  font-weight: 600;
+}
+.hj-metric--ok b {
+  color: #0f5132;
+}
+.hj-quiz {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 28px;
+}
+.hj-quiz i {
+  display: block;
+  flex: 1;
+  height: var(--h);
+  border-radius: 2px;
+  background: var(--ulams-color-accent, #b44a1f);
+  transform-origin: bottom center;
+}
+@media (max-width: 480px) {
+  /* a compact chat on phones: the first three questions; the captions list names the rest */
+  .hj-chat li:nth-child(n + 4) {
+    display: none;
+  }
+  .hj-stage {
+    min-height: 0;
+  }
+  .hj-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .hj-scene--source {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: stretch;
+  }
+  .hj-arrow {
+    justify-self: center;
+    transform: rotate(90deg);
+  }
+}
+
+/* change and update */
+.hj-change {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.hj-change del {
+  color: #8a2116;
+}
+.hj-change ins {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #e3f3ea;
+  color: #0f5132;
+  text-decoration: none;
+}
+.hj-flags,
+.hj-update {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hj-flags li {
+  border-color: #e7b48f;
+  color: #6b3410;
+}
+.hj-wait {
+  border: 1px solid var(--ulams-color-primary, #0f2b46);
+  background: #fff;
+  color: var(--ulams-color-primary, #0f2b46);
+}
+
+/* ---------- Controls ---------- */
+.hj-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.hj-controls[hidden] {
+  display: none;
+}
+.hj-controls__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid var(--ulams-color-border, #e2e0da);
+  border-radius: var(--ulams-radius-button, 6px);
+  background: #fff;
+  color: var(--ulams-color-header, #10283b);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.hj-controls__btn:hover {
+  border-color: var(--ulams-color-primary, #0f2b46);
+}
+.hj-controls__btn svg {
+  width: 16px;
+  height: 16px;
+}
+.hj-controls__btn [hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hj.is-live .hj-scene {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0s linear 0.35s;
+  }
+  .hj.is-live .hj-scene.is-on {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0s;
+  }
+  .hj.is-live .hj-scene.is-on [data-hj-i] {
+    animation: hj-in 0.45s var(--ulams-ease, ease-out) both;
+    animation-delay: calc(var(--i, 0) * 280ms + 150ms);
+  }
+  .hj.is-live .hj-scene.is-on [data-hj-grow] {
+    animation: hj-grow 0.7s var(--ulams-ease, ease-out) both;
+    animation-delay: calc(var(--i, 0) * 260ms + 250ms);
+  }
+  .hj.is-live .hj-scene.is-on [data-hj-rise] {
+    animation: hj-rise 0.5s var(--ulams-ease, ease-out) both;
+    animation-delay: calc(var(--i, 0) * 260ms + 250ms);
+  }
+  .hj.is-live.is-paused .hj-scene.is-on [data-hj-i],
+  .hj.is-live.is-paused .hj-scene.is-on [data-hj-grow],
+  .hj.is-live.is-paused .hj-scene.is-on [data-hj-rise] {
+    animation: none;
+  }
+  @keyframes hj-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+  @keyframes hj-grow {
+    from {
+      transform: scaleX(0);
+    }
+  }
+  @keyframes hj-rise {
+    from {
+      transform: scaleY(0);
+    }
+  }
+}

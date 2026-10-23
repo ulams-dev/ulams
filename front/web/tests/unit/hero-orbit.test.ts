@@ -38,7 +38,7 @@ describe("platform product hero", () => {
     ).toEqual([]);
   });
 
-  it("carries no animation of its own: the how-it-works story follows it", () => {
+  it("carries no animation in its document (the journey comes from HomeBody): the how-it-works story follows it", () => {
     expect(hero(platform).props).not.toHaveProperty("capabilities");
     expect(hero(platform).props).not.toHaveProperty("diff");
     expect(hero(platform)).not.toHaveProperty("final");

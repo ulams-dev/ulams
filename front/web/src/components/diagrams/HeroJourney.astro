@@ -1,0 +1,206 @@
+---
+/**
+ * The home hero's journey (lib/hero-journey.ts): eight beats of an L&D person's work, from a dropped source and a chat
+ * with the builder to live analytics and a course update. The captions are a list of real text, always visible; the
+ * stage beside them is an illustration of the same beats and is hidden from assistive technology.
+ *
+ * Without JS and with reduced motion the list is the summary and the stage shows the chat. With motion allowed the
+ * script starts once the hero is idle and in view, shows one beat at a time (opacity and transform only, every scene
+ * in the same grid cell, so nothing shifts), loops, and offers Pause/Play, Previous and Next. It stops while the hero
+ * is off screen or the tab is hidden. Nothing here delays the hero text.
+ */
+import "./hero-journey.css";
+import Icon from "@ulams/ui/components/Icon.astro";
+import { BEATS, BEAT_MS, JOURNEY_ID, STATIC_BEAT, type HeroJourneyCopy } from "../../lib/hero-journey.ts";
+
+interface Props {
+  copy: HeroJourneyCopy;
+}
+
+const { copy } = Astro.props;
+const on = (beat: string) => (beat === STATIC_BEAT ? " is-on" : "");
+const { source, chat, draft, review, learners, analytics, change, update } = copy;
+---
+
+<div class="hj" id={JOURNEY_ID} role="region" aria-label={copy.label} data-hj data-hj-ms={BEAT_MS} data-hj-pause={copy.pause} data-hj-play={copy.play}>
+  <ol class="hj-rail" role="list">
+    {
+      BEATS.map((beat, i) => (
+        <li class={`hj-rail__item${on(beat)}`} data-hj-caption={beat}>
+          <span class="hj-rail__num" aria-hidden="true">{i + 1}</span>
+          <span>{copy.captions[beat]}</span>
+        </li>
+      ))
+    }
+  </ol>
+
+  <div class="hj-side">
+    <div class="hj-stage" aria-hidden="true">
+      <div class={`hj-scene hj-scene--source${on("source")}`} data-hj-scene="source">
+        <ul class="hj-files">
+          {source.files.map((file, i) => <li data-hj-i style={`--i:${i}`}><Icon name={["pdf", "book", "layers"][i] ?? "book"} />{file}</li>)}
+        </ul>
+        <span class="hj-arrow" data-hj-i style="--i:3"><Icon name="arrow" /></span>
+        <div class="hj-tray" data-hj-i style="--i:4">
+          <span class="hj-tray__marks">{[0, 1, 2, 3, 4, 5].map(() => <b>§</b>)}</span>
+          <span>{source.passages}</span>
+        </div>
+      </div>
+
+      <div class={`hj-scene hj-scene--chat${on("chat")}`} data-hj-scene="chat">
+        <ol class="hj-chat">
+          {
+            chat.lines.map((line, i) => (
+              <li data-hj-i style={`--i:${i}`}>
+                <p class="hj-chat__q"><b>{chat.builder}</b>{line.q}</p>
+                <p class="hj-chat__a"><b>{chat.you}</b>{line.a}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+
+      <div class={`hj-scene hj-scene--draft${on("draft")}`} data-hj-scene="draft">
+        <p class="hj-card__title" data-hj-i style="--i:0"><Icon name="book" />{draft.lesson}</p>
+        {
+          draft.lines.map((line, i) => (
+            <p class="hj-draft__line" data-hj-i style={`--i:${1 + i * 2}`}>
+              {line}
+              <span class="hj-chip" data-hj-i style={`--i:${2 + i * 2}`}><Icon name="quote" />{draft.chips[i]}</span>
+            </p>
+          ))
+        }
+      </div>
+
+      <div class={`hj-scene hj-scene--review${on("review")}`} data-hj-scene="review">
+        <p class="hj-diff hj-diff--del" data-hj-i style="--i:0"><span>−</span>{review.removed}</p>
+        <p class="hj-diff hj-diff--ins" data-hj-i style="--i:1"><span>+</span>{review.added}</p>
+        <p class="hj-review__actions">
+          <span class="hj-btn" data-hj-i style="--i:2"><Icon name="check" />{review.approve}</span>
+          <span class="hj-ok" data-hj-i style="--i:4"><Icon name="check" />{review.approved}</span>
+        </p>
+      </div>
+
+      <div class={`hj-scene hj-scene--learners${on("learners")}`} data-hj-scene="learners">
+        <p class="hj-node hj-node--base" data-hj-i style="--i:0"><Icon name="book" />{learners.base}</p>
+        <ul class="hj-versions">
+          {learners.versions.map((version, i) => <li class="hj-node" data-hj-i style={`--i:${1 + i}`}><Icon name="users" />{version}</li>)}
+        </ul>
+        <p class="hj-routing" data-hj-i style="--i:4"><span class="hj-routing__line"></span>{learners.routing}<span class="hj-coming">{learners.coming}</span></p>
+      </div>
+
+      <div class={`hj-scene hj-scene--analytics${on("analytics")}`} data-hj-scene="analytics">
+        <p class="hj-badge">{analytics.badge}</p>
+        <ul class="hj-funnel">
+          {
+            analytics.funnel.map((row, i) => (
+              <li>
+                <span>{row.label}</span>
+                <i data-hj-grow style={`--i:${i};--w:${row.level}%`}></i>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="hj-metrics">
+          <p class="hj-metric hj-metric--risk" data-hj-i style="--i:3"><Icon name="users" />{analytics.risk}</p>
+          <div class="hj-metric">
+            <span>{analytics.quiz}</span>
+            <span class="hj-quiz">{analytics.quizBars.map((h, i) => <i data-hj-rise style={`--i:${4 + i * 0.5};--h:${h}%`}></i>)}</span>
+          </div>
+          <p class="hj-metric hj-metric--ok" data-hj-i style="--i:6"><Icon name="shield" />{analytics.compliance}<b>{analytics.complianceValue}</b></p>
+        </div>
+      </div>
+
+      <div class={`hj-scene hj-scene--change${on("change")}`} data-hj-scene="change">
+        <p class="hj-card__title"><Icon name="pdf" />{change.doc}</p>
+        <p class="hj-change"><del data-hj-i style="--i:0">{change.before}</del><ins data-hj-i style="--i:1">{change.after}</ins></p>
+        <ul class="hj-flags">
+          {change.flagged.map((item, i) => <li data-hj-i style={`--i:${2 + i}`}><Icon name="eye" />{item}</li>)}
+        </ul>
+      </div>
+
+      <div class={`hj-scene hj-scene--update${on("update")}`} data-hj-scene="update">
+        <p class="hj-card__title" data-hj-i style="--i:0"><Icon name="sync" />{update.title}</p>
+        <ul class="hj-update">
+          {update.items.map((item, i) => <li data-hj-i style={`--i:${1 + i}`}>{item}</li>)}
+        </ul>
+        <p class="hj-wait" data-hj-i style="--i:3"><Icon name="clock" />{update.waiting}</p>
+      </div>
+    </div>
+
+    <div class="hj-controls" data-hj-controls hidden>
+      <button class="hj-controls__btn" type="button" data-hj-prev aria-label={copy.previous}><Icon name="back" /></button>
+      <button class="hj-controls__btn hj-controls__btn--toggle" type="button" data-hj-toggle>
+        <span data-hj-toggle-icon="pause"><Icon name="pause" /></span>
+        <span data-hj-toggle-icon="play" hidden><Icon name="play" /></span>
+        <span data-hj-toggle-label>{copy.pause}</span>
+      </button>
+      <button class="hj-controls__btn" type="button" data-hj-next aria-label={copy.next}><Icon name="chevron" /></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /** Starts the journey once the hero is idle and in view, with motion allowed; otherwise the static summary stays. */
+  const motion = window.matchMedia("(prefers-reduced-motion: no-preference)");
+  for (const root of document.querySelectorAll<HTMLElement>("[data-hj]")) {
+    if (root.dataset.hjReady || !motion.matches) continue;
+    root.dataset.hjReady = "1";
+    const scenes = [...root.querySelectorAll<HTMLElement>("[data-hj-scene]")];
+    const captions = [...root.querySelectorAll<HTMLElement>("[data-hj-caption]")];
+    const controls = root.querySelector<HTMLElement>("[data-hj-controls]")!;
+    const toggle = root.querySelector<HTMLButtonElement>("[data-hj-toggle]")!;
+    const label = toggle.querySelector<HTMLElement>("[data-hj-toggle-label]")!;
+    const icons = { pause: toggle.querySelector<HTMLElement>('[data-hj-toggle-icon="pause"]')!, play: toggle.querySelector<HTMLElement>('[data-hj-toggle-icon="play"]')! };
+    const ms = Number(root.dataset.hjMs) || 3400;
+    let index = 0;
+    let playing = true;
+    let visible = false;
+    let started = false;
+    let timer: number | undefined;
+
+    const show = (target: number) => {
+      index = (target + scenes.length) % scenes.length;
+      scenes.forEach((scene, i) => scene.classList.toggle("is-on", i === index));
+      captions.forEach((caption, i) => {
+        caption.classList.toggle("is-on", i === index);
+        if (i === index) caption.setAttribute("aria-current", "step");
+        else caption.removeAttribute("aria-current");
+      });
+    };
+    const schedule = () => {
+      window.clearTimeout(timer);
+      if (started && playing && visible && !document.hidden) timer = window.setTimeout(() => (show(index + 1), schedule()), ms);
+    };
+    const setPlaying = (value: boolean) => {
+      playing = value;
+      label.textContent = (value ? root.dataset.hjPause : root.dataset.hjPlay) ?? "";
+      icons.pause.hidden = !value;
+      icons.play.hidden = value;
+      root.classList.toggle("is-paused", !value);
+      schedule();
+    };
+    const start = () => {
+      if (started) return;
+      started = true;
+      root.classList.add("is-live");
+      controls.hidden = false;
+      show(0);
+      schedule();
+    };
+
+    toggle.addEventListener("click", () => setPlaying(!playing));
+    root.querySelector("[data-hj-prev]")!.addEventListener("click", () => (show(index - 1), setPlaying(false)));
+    root.querySelector("[data-hj-next]")!.addEventListener("click", () => (show(index + 1), setPlaying(false)));
+    document.addEventListener("visibilitychange", schedule);
+    new IntersectionObserver((entries) => {
+      visible = entries.some((entry) => entry.isIntersecting);
+      if (visible && !started) {
+        const idle = (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number }).requestIdleCallback;
+        if (idle) idle(start, { timeout: 1500 });
+        else window.setTimeout(start, 600);
+      }
+      schedule();
+    }).observe(root);
+  }
+</script>

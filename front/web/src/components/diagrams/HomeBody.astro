@@ -1,6 +1,7 @@
 ---
 /**
- * Body of the platform home page in one language: the page document rendered as usual, with the "how it works" story
+ * Body of the platform home page in one language: the page document rendered as usual, the product hero with the
+ * L&D journey in its stage (HeroJourney, the ten-second overview), the "how it works" story
  * and the builder walkthrough right after the hero, and the style-guide section after the white-label band
  * (lib/home-story.ts `planHomeBody`). The main landmark is the one `Main` would render.
  */
@@ -11,6 +12,10 @@ import { LOCALE_META, type Locale } from "../../i18n/locales.ts";
 import { homeStory, planHomeBody } from "../../lib/home-story.ts";
 import HomeStory from "./HomeStory.astro";
 import BuilderWalkthrough from "./BuilderWalkthrough.astro";
+import HeroJourney from "./HeroJourney.astro";
+import Hero from "@ulams/ui/components/Hero.astro";
+import type { ComponentProps } from "astro/types";
+import { heroJourneyCopy } from "../../lib/hero-journey.ts";
 import StyleGuideSection from "../style-guide/StyleGuideSection.astro";
 import { walkthroughCopy, walkthroughSteps } from "../../lib/builder-walkthrough.ts";
 
@@ -27,6 +32,8 @@ const status = { available: strings.available, coming: strings.coming };
 const copy = homeStory(locale);
 const walkthrough = walkthroughCopy(locale);
 const steps = walkthroughSteps(locale);
+const journey = heroJourneyCopy(locale);
+type HeroProps = ComponentProps<typeof Hero>;
 ---
 
 {
@@ -35,7 +42,11 @@ const steps = walkthroughSteps(locale);
       {plan.before.map((node) => <Render doc={node} data={data} />)}
       <main id="main" tabindex="-1" class="dg-main">
         {plan.main.map((part) =>
-          part.kind === "node" ? (
+          part.kind === "node" && part.node.component === "Hero" && part.node.props?.variant === "product" ? (
+            <Hero {...(part.node.props as unknown as HeroProps)}>
+              <HeroJourney slot="journey" copy={journey} />
+            </Hero>
+          ) : part.kind === "node" ? (
             <Render doc={part.node} data={data} />
           ) : part.kind === "story" ? (
             <HomeStory copy={copy} status={status} />

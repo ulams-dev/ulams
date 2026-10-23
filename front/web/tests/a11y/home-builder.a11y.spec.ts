@@ -100,3 +100,72 @@ test("the walkthrough moves one step at a time from the keyboard", async ({ page
   await expect(next).toHaveAttribute("aria-disabled", "true");
   await expect(walk.locator("#wt-lesson img")).toBeVisible();
 });
+
+test.describe("hero journey", () => {
+  const CAPTIONS = 8;
+
+  test.describe("with reduced motion", () => {
+    test.use({ contextOptions: { reducedMotion: "reduce" } });
+    for (const [prefix, lang] of PREFIXES) {
+      test(`${prefix || "/"}: a still summary of every beat, no controls, axe clean, fits the screen`, async ({ page }) => {
+        await page.goto(`${base}${prefix}/`);
+        await expect(page.locator("html")).toHaveAttribute("lang", lang);
+        const journey = page.locator(".u-hero #hero-journey");
+        await expect(journey.locator("[data-hj-caption]:visible")).toHaveCount(CAPTIONS);
+        await expect(journey.locator('[data-hj-scene="chat"]')).toBeVisible();
+        await page.waitForTimeout(800);
+        await expect(journey).not.toHaveClass(/is-live/);
+        await expect(journey.locator("[data-hj-controls]")).toBeHidden();
+        await noHorizontalScroll(page);
+        await axe(page, ".u-hero");
+      });
+    }
+  });
+
+  test.describe("without JavaScript", () => {
+    test.use({ javaScriptEnabled: false });
+    test("every caption and the chat scene are readable", async ({ page }) => {
+      await page.goto(`${base}/`);
+      await expect(page.locator("#hero-journey [data-hj-caption]:visible")).toHaveCount(CAPTIONS);
+      await expect(page.locator('#hero-journey [data-hj-scene="chat"]')).toBeVisible();
+      await expect(page.locator("#hero-journey [data-hj-controls]")).toBeHidden();
+    });
+  });
+
+  test.describe("with motion", () => {
+    test.use({ contextOptions: { reducedMotion: "no-preference" } });
+
+    test("the headline renders at once; the journey starts, advances without layout shift, pauses and steps from the keyboard", async ({ page }) => {
+      await page.addInitScript(() => {
+        (window as unknown as { __cls: number }).__cls = 0;
+        new PerformanceObserver((list) => {
+          for (const entry of list.getEntries() as Array<PerformanceEntry & { value: number; hadRecentInput: boolean }>) {
+            if (!entry.hadRecentInput) (window as unknown as { __cls: number }).__cls += entry.value;
+          }
+        }).observe({ type: "layout-shift", buffered: true });
+      });
+      await page.goto(`${base}/`);
+      await expect(page.locator(".u-hero h1")).toBeVisible();
+      const journey = page.locator("#hero-journey");
+      await expect(journey).toHaveClass(/is-live/, { timeout: 5000 });
+      await expect(journey.locator('[data-hj-caption][aria-current="step"]')).toHaveAttribute("data-hj-caption", "source");
+      await expect(journey.locator('[data-hj-caption][aria-current="step"]')).toHaveAttribute("data-hj-caption", "chat", { timeout: 6000 });
+      await axe(page, ".u-hero");
+      const toggle = journey.locator("[data-hj-toggle]");
+      await toggle.focus();
+      await page.keyboard.press("Enter");
+      await expect(toggle).toContainText("Play the animation");
+      const paused = await journey.locator('[data-hj-caption][aria-current="step"]').getAttribute("data-hj-caption");
+      await page.waitForTimeout(4000);
+      await expect(journey.locator('[data-hj-caption][aria-current="step"]')).toHaveAttribute("data-hj-caption", paused!);
+      await journey.locator("[data-hj-next]").focus();
+      await page.keyboard.press("Enter");
+      await expect(journey.locator('[data-hj-caption][aria-current="step"]')).not.toHaveAttribute("data-hj-caption", paused!);
+      await page.keyboard.press("Shift+Tab");
+      await page.keyboard.press("Enter");
+      await expect(toggle).toContainText("Pause the animation");
+      expect(await page.evaluate(() => (window as unknown as { __cls: number }).__cls)).toBeLessThan(0.02);
+      await noHorizontalScroll(page);
+    });
+  });
+});

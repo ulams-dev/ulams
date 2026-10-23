@@ -212,6 +212,15 @@ const after = at >= 0 ? title.slice(at + (titleAccent?.length ?? 0)) : "";
     }
 
     {
+      /* A page can hand the product hero a stage of its own (the platform home's journey) through the named slot. */
+      variant === "product" && Astro.slots.has("journey") && (
+        <div class="u-hero__journey">
+          <slot name="journey" />
+        </div>
+      )
+    }
+
+    {
       variant === "product" && capabilities.length > 0 && (
         <div class="u-hero__orbit u-hero__in" style="--i:2">
           <CapabilityOrbit items={capabilities} />

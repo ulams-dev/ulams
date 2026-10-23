@@ -35,6 +35,7 @@ const PAGES = [
   "ui/src/components/PendingUpdateNotice.astro",
   ...["DiagramFrame", "ImpactBody", "BenchmarkRange", "CostPipeline", "LivingLoop", "AudienceFanout", "DashboardSketch", "ReportingFlow", "ReportingRoles"].map((name) => `web/src/components/diagrams/${name}.astro`),
   "web/src/components/diagrams/BuilderWalkthrough.astro",
+  "web/src/components/diagrams/HeroJourney.astro",
   ...["StyleGuideSection", "StyleGuideBody", "ThemeShowcase"].map((name) => `web/src/components/style-guide/${name}.astro`),
   "web/src/components/white-paper/WhitePaperBody.astro",
 ];
