@@ -32,7 +32,7 @@ COPY docker/php.ini /usr/local/etc/php/conf.d/zz-ulams-sylius.ini
 COPY docker/php-fpm.conf /usr/local/etc/php-fpm.d/zz-ulams-sylius.conf
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/entrypoint.sh /usr/local/bin/ulams-sylius
-ENV APP_ENV=prod APP_DEBUG=0
+ENV APP_ENV=prod APP_DEBUG=0 SYLIUS_TELEMETRY_ENABLED=false
 # Autoload as a classmap and warm nothing that needs the database or a secret: those come at start (entrypoint.sh).
 RUN composer dump-autoload --no-scripts --no-dev --classmap-authoritative \
   && chmod +x /usr/local/bin/ulams-sylius \

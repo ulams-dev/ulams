@@ -1,0 +1,8 @@
+# No usage reporting (plan Q12): the core switch here, the Stripe and Refund plugins' forced loading is removed by
+# Ulams\Bridge\DependencyInjection\Compiler\DisableTelemetryPass.
+sylius_core:
+    telemetry:
+        enabled: false
+        business: false
+        technical: false
+        plugins: false
