@@ -446,7 +446,7 @@
                     "title": "Learners routed to a variant",
                     "text": "Learners pick their level and role at enrolment, take an optional cited placement check, or are assigned a variant by an admin or a rule; progress carries over when they switch.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "available",
+                    "status": "coming",
                     "packages": [
                       "course-variants"
                     ]
