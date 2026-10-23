@@ -9388,7 +9388,7 @@
   },
   "/api/admin/compliance/schedules": {
    "get": {
-    "description": "Scheduled reports: a compliance dataset e-mailed as CSV or JSON lines every day, week or month to\ntenant users. Permission `compliance_report`.",
+    "description": "Scheduled reports: a compliance dataset, or a saved report of the report builder, e-mailed as CSV, JSON lines or (saved\nreports) XLSX every day, week or month to tenant users. A saved report runs once per recipient with that recipient's own\npermissions. Permission `compliance_report`.",
     "operationId": "admin.compliance.schedules.get",
     "responses": {
      "200": {
@@ -9423,6 +9423,7 @@
        "schema": {
         "properties": {
          "dataset": {
+          "description": "A compliance dataset; give this or saved_report_id",
           "enum": [
            "assignments",
            "certificates",
@@ -9431,13 +9432,15 @@
           "type": "string"
          },
          "filters": {
-          "description": "course_id, user_id, status, from, to",
+          "description": "course_id, user_id, status, from, to (datasets only)",
           "type": "object"
          },
          "format": {
+          "description": "xlsx only for a saved report",
           "enum": [
            "csv",
-           "jsonl"
+           "jsonl",
+           "xlsx"
           ],
           "type": "string"
          },
@@ -9458,11 +9461,14 @@
            "type": "integer"
           },
           "type": "array"
+         },
+         "saved_report_id": {
+          "description": "A saved report the caller can see (report builder); it runs once per recipient with the recipient's own permissions",
+          "type": "string"
          }
         },
         "required": [
          "name",
-         "dataset",
          "frequency",
          "recipient_ids"
         ],
@@ -23651,7 +23657,7 @@
   },
   "/api/admin/reporting/saved/{id}/run": {
    "get": {
-    "description": "Runs the report with the caller's own permissions and scope. format=json (default) answers like the query endpoint (500 rows and the total); csv and jsonl stream every row up to 1 000 000 and are recorded as exports. Groups of fewer learners than the threshold are withheld in every format. 403 when the caller lacks the permission of the dataset, 409 when the report needs repair.",
+    "description": "Runs the report with the caller's own permissions and scope. format=json (default) answers like the query endpoint (500 rows and the total); csv, jsonl and xlsx stream every row up to 1 000 000 (an XLSX sheet holds 1 048 575) and are recorded as exports. Groups of fewer learners than the threshold are withheld in every format. 403 when the caller lacks the permission of the dataset, 409 when the report needs repair.",
     "operationId": "admin.reporting.reports.by-id.run",
     "parameters": [
      {
@@ -23670,7 +23676,8 @@
        "enum": [
         "json",
         "csv",
-        "jsonl"
+        "jsonl",
+        "xlsx"
        ],
        "type": "string"
       }
@@ -23685,7 +23692,7 @@
         }
        }
       },
-      "description": "json: columns, rows and meta; csv and jsonl: a file"
+      "description": "json: columns, rows and meta; csv, jsonl and xlsx: a file"
      },
      "403": {
       "description": "Forbidden"

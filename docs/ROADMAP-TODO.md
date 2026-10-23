@@ -1098,7 +1098,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       permissions and scope on every run), `needs_repair`, `.../saved/{id}/run` as json, csv or jsonl with the exports recorded
       in `compliance_exports`; XLSX is not built yet (needs `maatwebsite/excel` streaming, planned with RB-5);
       RB-4 done: admin Analytics > Report builder (build, preview, withheld groups explained, save and share with roles, open, export
-      CSV and JSON lines, delete) in en, pl and zh with axe and keyboard browser tests; RB-5 (schedules for saved reports, XLSX),
+      CSV and JSON lines, delete) in en, pl and zh with axe and keyboard browser tests; RB-5 done: a schedule can send a saved report
+      (`compliance_report_schedules.saved_report_id`), run once per recipient with their own permissions in one queued job each,
+      skipped recipients reported to the owner, XLSX through a streaming writer on `ext-zip` (no new dependency);
       RB-7 (curated CLI and MCP set) pending)
 - [ ] (new) BI connector: read-only OData v4 feed per saved report for Excel, Power BI and Tableau, with a `reports:read`
       token that can be limited to one report; CSV and JSON lines URLs with recipes for Looker Studio, Metabase and

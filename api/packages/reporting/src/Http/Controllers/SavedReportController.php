@@ -48,10 +48,10 @@ use Ulams\Reporting\Support\ReportContext;
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Response(response=200, description="Deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Not the owner"), @OA\Response(response=404, description="Not found"))
  * @OA\Get(path="/api/admin/reporting/saved/{id}/run", operationId="admin.reporting.reports.by-id.run", summary="Run a saved report", tags={"Reporting"}, security={{"passport": {}}},
- *     description="Runs the report with the caller's own permissions and scope. format=json (default) answers like the query endpoint (500 rows and the total); csv and jsonl stream every row up to 1 000 000 and are recorded as exports. Groups of fewer learners than the threshold are withheld in every format. 403 when the caller lacks the permission of the dataset, 409 when the report needs repair.",
+ *     description="Runs the report with the caller's own permissions and scope. format=json (default) answers like the query endpoint (500 rows and the total); csv, jsonl and xlsx stream every row up to 1 000 000 (an XLSX sheet holds 1 048 575) and are recorded as exports. Groups of fewer learners than the threshold are withheld in every format. 403 when the caller lacks the permission of the dataset, 409 when the report needs repair.",
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
- *     @OA\Parameter(name="format", in="query", @OA\Schema(type="string", enum={"json","csv","jsonl"}, default="json")),
- *     @OA\Response(response=200, description="json: columns, rows and meta; csv and jsonl: a file", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=404, description="Not found"), @OA\Response(response=409, description="The report needs repair"))
+ *     @OA\Parameter(name="format", in="query", @OA\Schema(type="string", enum={"json","csv","jsonl","xlsx"}, default="json")),
+ *     @OA\Response(response=200, description="json: columns, rows and meta; csv, jsonl and xlsx: a file", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=404, description="Not found"), @OA\Response(response=409, description="The report needs repair"))
  */
 class SavedReportController extends Controller
 {
@@ -124,7 +124,7 @@ class SavedReportController extends Controller
                 $out = fopen('php://output', 'w');
                 $this->exporter->write($report->definition, $context, $format, $out, $report->id);
                 fclose($out);
-            }, $name, ['Content-Type' => $format === 'csv' ? 'text/csv; charset=UTF-8' : 'application/x-ndjson', 'Cache-Control' => 'no-store']);
+            }, $name, ['Content-Type' => ReportExporter::MIME[$format], 'Cache-Control' => 'no-store']);
         }
 
         $result = $this->guarded(fn () => $this->runner->preview($report->definition, $context));

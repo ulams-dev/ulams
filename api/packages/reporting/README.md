@@ -2,8 +2,8 @@
 
 The foundation of the report builder (ADR 0194, plan `docs/plans/authoring-metric-and-report-builder.md`). This
 release has the **dataset registry** (RB-1), the **report definition, query compiler and preview with small-group
-suppression** (RB-2) and **saved reports shared with roles** (RB-3); the admin screen, schedules for saved reports and
-the OData feed follow in RB-4 to RB-7.
+suppression** (RB-2) and **saved reports shared with roles** (RB-3), the **admin screen** (RB-4) and **schedules and XLSX** (RB-5); the OData
+feed and the curated CLI and MCP set follow in RB-6 and RB-7.
 
 - `Contracts\ReportDataset`: a set of rows a report can be built on: `key()`, `label()`, `columns()` (typed
   `Support\Column` with filter operators, `groupable`, `aggregatable`, `personal`), `dateColumns()`, `permission()`,
@@ -15,6 +15,10 @@ the OData feed follow in RB-4 to RB-7.
   missing is not offered.
 - `GET /api/admin/reporting/datasets` (permission `reporting_read`: admin and tutor) lists the datasets the caller holds
   the dataset permission for, with every column. Token area `reports`.
+- `Export\XlsxWriter` writes one-sheet XLSX files as a stream with `ext-zip` and `XMLWriter` (no new dependency;
+  PhpSpreadsheet keeps every cell in memory), and `ReportExporter` offers it as `xlsx`.
+- `compliance` schedules a saved report (`compliance_report_schedules.saved_report_id`): `SendSavedReportToRecipient` runs
+  the report once per recipient with their own permissions; skipped recipients are reported to the schedule's owner.
 - Permissions: `reporting_read`, `reporting_ai_usage` (admin). `ReportingPermissionSeeder` runs with `PermissionsSeeder`.
 
 - `resources/schemas/report-definition/v1.json` is the shape of a report definition; `Definition\DefinitionValidator`

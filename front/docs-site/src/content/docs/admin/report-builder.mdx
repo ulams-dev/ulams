@@ -18,7 +18,7 @@ and schedule it. It is built in steps (ADR 0194). This page covers what exists t
 
 <Aside type="note">
 Today you can list the datasets, preview a report definition, save it, share it with roles and run or export it through the
-API. XLSX files, schedules for saved reports and the BI feed are planned and not available yet. Nothing
+API. Schedules for saved reports and XLSX are covered below; the BI feed is planned and not available yet. Nothing
 on this page promises a date for them.
 </Aside>
 
@@ -176,9 +176,23 @@ problems by path, and running it answers `409` until it is fixed.
 | `json` (default) | like the query preview: `columns`, at most 500 `rows`, `meta` |
 | `csv` | every row up to 1 000 000 (`reporting.export_rows`) as a stream: UTF-8 with a BOM, text that a spreadsheet could read as a formula gets an apostrophe |
 | `jsonl` | the same rows as JSON lines; a withheld group is a row with `"_withheld": true` and empty figures |
+| `xlsx` | an Excel workbook with one sheet: the column labels as a bold, frozen header row with a filter, numbers and booleans as typed cells, text as text (a cell that starts with `=` is never a formula). An Excel sheet holds 1 048 575 data rows, so a longer report is cut there |
 
 Every CSV and JSON lines export is recorded with who ran it, the dataset, the definition, the saved report, the number of rows
 and the route it left by (`download`). The record is the same `compliance_exports` log the compliance export uses.
+
+## Schedule a saved report
+
+`POST /api/admin/compliance/schedules` (permission `compliance_report`) takes `saved_report_id` instead of `dataset`, with
+`name`, `frequency` (`daily`, `weekly`, `monthly`, always at 06:00), `recipient_ids` (users of this academy) and a `format`
+of `csv`, `jsonl` or `xlsx` (XLSX is for saved reports only). The report must be one you can see, and it must not need repair.
+
+The report is **run once per recipient, with that recipient's own permissions and scope**, in one queued job each, and the
+file is mailed to that person: two people can get different rows from the same schedule. Every run is recorded as an export
+(channel `schedule`, the recipient, the saved report). A recipient who cannot run the report (they lost the dataset's
+permission, have no e-mail address, no longer exist) is skipped, and the person who created the schedule gets a mail that
+names who was skipped and why; `skipped_recipient_ids` on the schedule lists them. If the saved report was deleted nobody
+gets a file and the owner is told the same way. Existing schedules on a compliance dataset are unchanged.
 
 ## Tokens
 
