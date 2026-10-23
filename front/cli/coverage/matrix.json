@@ -1,5 +1,5 @@
 {
- "summary": "622/711 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "628/717 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -929,6 +929,42 @@
    "key": "DELETE /api/admin/dictionary-words/{id}",
    "summary": "Remove the specified Dictionary Word from storage",
    "command": "dictionary-words.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/entry-points",
+   "summary": "Entry points of this academy",
+   "command": "entry-points.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/entry-points",
+   "summary": "Add an entry point (a pending host until its DNS record is verified)",
+   "command": "entry-points.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/entry-points/audit",
+   "summary": "Who changed which entry point, newest first",
+   "command": "entry-points.audit",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/entry-points/{entryPoint}",
+   "summary": "One entry point",
+   "command": "entry-points.get",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/entry-points/{entryPoint}",
+   "summary": "Change the label, target, theme, SEO or status of an entry point",
+   "command": "entry-points.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/entry-points/{entryPoint}",
+   "summary": "Delete an entry point (its host stops serving at once)",
+   "command": "entry-points.delete",
    "status": "covered"
   },
   {

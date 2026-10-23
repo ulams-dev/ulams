@@ -260,6 +260,10 @@
             "area": "identity"
         },
         {
+            "pattern": "api/admin/entry-points*",
+            "area": "settings"
+        },
+        {
             "pattern": "api/admin/knowledge*",
             "area": "courses",
             "options": {

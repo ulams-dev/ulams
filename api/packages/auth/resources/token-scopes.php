@@ -75,6 +75,9 @@ return [
     // ---- identity providers and their audit trail (read = list and verify, write = change) -----
     ['api/admin/identity*', 'identity'],
 
+    // ---- branded entry points (extra front hosts of the academy, ADR 0195): academy settings ----
+    ['api/admin/entry-points*', 'settings'],
+
     // ---- knowledge export ----------------------------------------------------------------------
     // reads course content and writes only the pack files, so starting an export needs courses:read
     ['api/admin/knowledge*', 'courses', ['level' => 'read']],
