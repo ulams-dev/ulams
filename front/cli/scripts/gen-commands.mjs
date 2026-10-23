@@ -30,7 +30,7 @@ const AREAS = [
 ];
 
 /** Areas with hand-written commands only (builder.ts, course.ts, living.ts, tenants.ts): runs and operations, not CRUD. */
-const HAND_WRITTEN = ["/api/admin/course-builder/", "/api/admin/course-as-code/", "/api/admin/living-course/", "/api/platform/"];
+const HAND_WRITTEN = ["/api/admin/course-builder/", "/api/admin/course-as-code/", "/api/admin/living-course/", "/api/admin/reporting/", "/api/platform/"];
 
 const kebab = (s) =>
   s

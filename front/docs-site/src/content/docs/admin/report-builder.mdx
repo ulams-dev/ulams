@@ -193,6 +193,25 @@ permission, have no e-mail address, no longer exist) is skipped, and the person 
 names who was skipped and why; `skipped_recipient_ids` on the schedule lists them. If the saved report was deleted nobody
 gets a file and the owner is told the same way. Existing schedules on a compliance dataset are unchanged.
 
+## From the command line and from an agent
+
+The same report builder is a set of CLI commands and, in the MCP toolset `analytics` (`ulams mcp --toolsets analytics`), eight
+tools named from the command (`reporting.run` is `reporting_run`):
+
+| Command | Tool | Does |
+|---|---|---|
+| `ulams reporting datasets` | `reporting_datasets` | the datasets and every column with what it allows |
+| `ulams reporting query --file def.json` | `reporting_query` | a preview of a definition (a file, or inline for an agent) |
+| `ulams reporting list`, `show <id>` | `reporting_list`, `reporting_show` | saved reports you can see |
+| `ulams reporting run <id> --format json\|csv\|jsonl\|xlsx [--out file]` | `reporting_run` | run a saved report with your permissions |
+| `ulams reporting save --name ... --file def.json [--role tutor]` | `reporting_save` | save a definition, private or shared |
+| `ulams reporting update <id> [--feed on]` | `reporting_update` | change a report; the feed switch needs `reporting_manage` |
+| `ulams reporting delete <id>` | `reporting_delete` | delete (destructive: a plan and a confirm token first) |
+
+The reads (`datasets`, `query`, `list`, `show`, `run`) work with `--read-only`. The descriptions an agent reads say that the
+figures are the academy's own measurements and that withheld groups are withheld on purpose, so an agent does not try to
+recover them. The result keeps the report's own `meta` (`mode`, `total_rows`, `withheld_groups`, `min_group_size`).
+
 ## BI tools
 
 A saved report can be offered as a read-only OData v4 feed to Excel, Power BI and Tableau, with a token limited to that one
