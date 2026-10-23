@@ -10,9 +10,12 @@ use RuntimeException;
 use Ulams\Commerce\Contracts\CommerceProvider;
 use Ulams\Commerce\Contracts\InspectsCatalogue;
 use Ulams\Commerce\Contracts\ListsOrders;
+use Ulams\Commerce\Contracts\ProvisionsChannels;
 use Ulams\Commerce\Contracts\ReconcilesOrders;
 use Ulams\Commerce\Contracts\ReportsOrderEvents;
 use Ulams\Commerce\Services\ProductLinkStore;
+use Ulams\Commerce\Support\ChannelRef;
+use Ulams\Commerce\Support\ChannelSpec;
 use Ulams\Commerce\Support\CheckoutRef;
 use Ulams\Commerce\Support\OrderEvent;
 use Ulams\Commerce\Support\OrderEventEnvelope;
@@ -37,8 +40,10 @@ use Ulams\CommerceSylius\Http\SyliusException;
  *   written by the LMS; a reference to another channel counts as unlinked). The LMS acts on that, not on a webhook.
  * - Events: the bridge bundle's outbox feed (`orderEventsAfter`) and signed webhooks (`ReportsOrderEvents`).
  * - Sweep: `ordersChangedSince()` lists the channel's completed orders.
+ * - Channels: `ensureChannel()` makes the tenant's channel (currency, locale, countries, tax zone, payment methods and the
+ *   bridge's webhook link) and is safe to repeat; the base currency cannot change and is never touched.
  */
-final class SyliusProvider implements CommerceProvider, ReportsOrderEvents, ReconcilesOrders, InspectsCatalogue, ListsOrders
+final class SyliusProvider implements CommerceProvider, ReportsOrderEvents, ReconcilesOrders, InspectsCatalogue, ListsOrders, ProvisionsChannels
 {
     public const KEY = 'sylius';
     private const ADMIN = '/api/v2/admin';
@@ -112,6 +117,102 @@ final class SyliusProvider implements CommerceProvider, ReportsOrderEvents, Reco
         $this->links->record($ref, $product, $spec, $variantCode, $channel);
 
         return $product;
+    }
+
+    public function ensureChannel(ChannelSpec $spec): ChannelRef
+    {
+        $a = self::ADMIN;
+        foreach ([['currencies', $spec->currency], ['locales', $spec->locale]] as [$collection, $code]) {
+            if ($this->client->get("{$a}/{$collection}/{$code}") === null) {
+                $this->client->post("{$a}/{$collection}", ['code' => $code]);
+            }
+        }
+        $seeder = new EuVatSeeder($this->client);
+        $countries = array_values(array_unique([...$seeder->countries(), ...$spec->countries, $spec->sellerCountry]));
+        foreach ($countries as $country) {
+            if ($this->client->get("{$a}/countries/{$country}") === null) {
+                $this->client->post("{$a}/countries", ['code' => $country, 'enabled' => true]);
+            }
+        }
+        // the seller's tax zone must exist before the channel can name it; the full seed corrects rates (ulams:commerce:seed-eu-vat)
+        $zone = 'eu-' . strtolower($spec->sellerCountry);
+        if ($this->client->get("{$a}/zones/{$zone}") === null) {
+            $seeder->seed();
+        }
+
+        $body = [
+            'name' => mb_substr($spec->name, 0, 250), 'enabled' => true,
+            'currencies' => ["{$a}/currencies/{$spec->currency}"], 'locales' => ["{$a}/locales/{$spec->locale}"],
+            'countries' => array_map(fn (string $c) => "{$a}/countries/{$c}", $countries),
+            'defaultTaxZone' => "{$a}/zones/{$zone}", 'taxCalculationStrategy' => 'order_items_based',
+            'skippingShippingStepAllowed' => true, 'shippingAddressInCheckoutRequired' => false,
+        ] + ($spec->hostname !== null ? ['hostname' => $spec->hostname] : []);
+
+        $existing = $this->client->get("{$a}/channels/{$spec->code}");
+        $created = $existing === null;
+        if ($created) {
+            $this->client->post("{$a}/channels", ['code' => $spec->code, 'baseCurrency' => "{$a}/currencies/{$spec->currency}", 'defaultLocale' => "{$a}/locales/{$spec->locale}"] + $body);
+        } else {
+            $current = $this->codeFromIri((string) ($existing['baseCurrency'] ?? ''));
+            if ($current !== $spec->currency) {
+                throw new SyliusException("The Sylius channel \"{$spec->code}\" sells in {$current}; the base currency cannot change, so it cannot be moved to {$spec->currency}.", 409);
+            }
+            // keep what an operator added by hand: more currencies, locales and countries stay
+            foreach (['currencies', 'locales', 'countries'] as $key) {
+                $body[$key] = array_values(array_unique([...array_map('strval', (array) ($existing[$key] ?? [])), ...$body[$key]]));
+            }
+            $this->client->put("{$a}/channels/{$spec->code}", $body);
+        }
+        unset($this->channels[$spec->code]);
+
+        $this->ensurePaymentMethods("{$a}/channels/{$spec->code}", $spec->locale);
+        if ($spec->webhookUrl !== null) {
+            $this->client->put("{$a}/ulams/channel-links/{$spec->code}", ['webhookUrl' => $spec->webhookUrl, 'secret' => $spec->webhookSecret]);
+        }
+
+        return new ChannelRef(self::KEY, $spec->code, $created);
+    }
+
+    public function disableChannel(string $code): void
+    {
+        if ($this->client->get(self::ADMIN . "/channels/{$code}") !== null) {
+            $this->client->put(self::ADMIN . "/channels/{$code}", ['enabled' => false]);
+        }
+        unset($this->channels[$code]);
+    }
+
+    /**
+     * Enables the configured payment methods on the channel (they are shared by all channels; a method that exists only
+     * gains this channel). Without any configured method the channel can be created but nothing can be paid.
+     */
+    private function ensurePaymentMethods(string $channelIri, string $locale): void
+    {
+        $methods = [];
+        if (config('commerce-sylius.payments.offline')) {
+            $methods[] = ['offline', 'Pay later (development)', 'offline', new \stdClass()];
+        }
+        $stripe = (array) config('commerce-sylius.payments.stripe');
+        if (is_string($stripe['publishable_key'] ?? null) && $stripe['publishable_key'] !== '' && is_string($stripe['secret_key'] ?? null) && $stripe['secret_key'] !== '') {
+            $methods[] = ['stripe', 'Card, BLIK and more (Stripe)', 'stripe_checkout', ['publishable_key' => $stripe['publishable_key'], 'secret_key' => $stripe['secret_key']]];
+        }
+        foreach ($methods as $position => [$code, $name, $factory, $config]) {
+            $path = self::ADMIN . '/payment-methods/' . $code;
+            $existing = $this->client->get($path);
+            if ($existing === null) {
+                $this->client->post(self::ADMIN . '/payment-methods', [
+                    'code' => $code, 'enabled' => true, 'position' => $position, 'channels' => [$channelIri],
+                    'gatewayConfig' => ['factoryName' => $factory, 'gatewayName' => $code, 'config' => $config],
+                    'translations' => [$locale => ['name' => $name]],
+                ]);
+                continue;
+            }
+            $update = ['enabled' => true, 'channels' => array_values(array_unique([...array_map('strval', (array) ($existing['channels'] ?? [])), $channelIri]))];
+            if (is_array($config) && ($existing['gatewayConfig']['config'] ?? null) != $config) {
+                $update['gatewayConfig'] = ['@id' => $existing['gatewayConfig']['@id'] ?? null, 'factoryName' => $factory, 'gatewayName' => $code, 'config' => $config];
+                $update['gatewayConfig'] = array_filter($update['gatewayConfig'], fn ($v) => $v !== null);
+            }
+            $this->client->put($path, $update);
+        }
     }
 
     public function createCheckout(User $user, ProductRef $product, string $returnUrl): CheckoutRef

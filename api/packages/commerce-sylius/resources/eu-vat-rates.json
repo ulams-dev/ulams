@@ -1,0 +1,11 @@
+{
+  "note": "Standard VAT rates of the 27 EU member states, in percent, as the author knew them when this file was written. SEED DATA, NOT TAX ADVICE: the seller's accountant must confirm every rate (and the seller's own country) before the first live sale, and rates change (several did in 2024 and 2025). Update this file and run `php artisan ulams:commerce:seed-eu-vat` to update an installation.",
+  "as_of": "2025-10-01",
+  "confirmed": false,
+  "source": "https://taxation-customs.ec.europa.eu/taxation/vat/vat-rates_en",
+  "rates": {
+    "AT": 20, "BE": 21, "BG": 20, "HR": 25, "CY": 19, "CZ": 21, "DK": 25, "EE": 24, "FI": 25.5, "FR": 20,
+    "DE": 19, "GR": 24, "HU": 27, "IE": 23, "IT": 22, "LV": 21, "LT": 21, "LU": 17, "MT": 18, "NL": 21,
+    "PL": 23, "PT": 23, "RO": 21, "SK": 23, "SI": 22, "ES": 21, "SE": 25
+  }
+}

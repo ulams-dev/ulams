@@ -86,20 +86,22 @@ final class LiveSylius
     }
 
     /** Buys one unit of a variant through the Shop API and completes the checkout. @return array{token:string,payment:string} */
-    public function buy(array $customer, string $variantCode): array
+    public function buy(array $customer, string $variantCode, ?string $channel = null, ?string $paymentMethod = null, string $country = 'PL'): array
     {
-        $shop = fn () => Http::baseUrl($this->url)->withHeaders(['Host' => "{$this->channel}.localhost"])->acceptJson()->timeout(30);
-        $token = $shop()->post('/api/v2/shop/customers/token', ['email' => $customer['email'], 'password' => $customer['password']])->throw()->json('token');
+        $channel ??= $this->channel;
+        $paymentMethod ??= 'offline-' . $this->channel;
+        $shop = fn () => Http::baseUrl($this->url)->withHeaders(['Host' => "{$channel}.localhost"])->acceptJson()->timeout(30);
+        $token = $shop()->post('/api/v2/shop/customers/token', ['email' => $customer['email'], 'password' => $customer['password']])->throw(fn ($r) => throw new \RuntimeException('Sylius answered ' . $r->status() . ': ' . mb_substr((string) ($r->json('detail') ?? $r->body()), 0, 400)))->json('token');
         $as = fn () => $shop()->withToken($token)->accept('application/ld+json');
-        $order = $as()->withHeaders(['Content-Type' => 'application/ld+json'])->post('/api/v2/shop/orders', ['localeCode' => 'en_US'])->throw()->json('tokenValue');
-        $as()->withHeaders(['Content-Type' => 'application/ld+json'])->post("/api/v2/shop/orders/{$order}/items", ['productVariant' => "/api/v2/shop/product-variants/{$variantCode}", 'quantity' => 1])->throw();
+        $order = $as()->withHeaders(['Content-Type' => 'application/ld+json'])->post('/api/v2/shop/orders', ['localeCode' => 'en_US'])->throw(fn ($r) => throw new \RuntimeException('Sylius answered ' . $r->status() . ': ' . mb_substr((string) ($r->json('detail') ?? $r->body()), 0, 400)))->json('tokenValue');
+        $as()->withHeaders(['Content-Type' => 'application/ld+json'])->post("/api/v2/shop/orders/{$order}/items", ['productVariant' => "/api/v2/shop/product-variants/{$variantCode}", 'quantity' => 1])->throw(fn ($r) => throw new \RuntimeException('Sylius answered ' . $r->status() . ': ' . mb_substr((string) ($r->json('detail') ?? $r->body()), 0, 400)));
         $as()->withHeaders(['Content-Type' => 'application/ld+json'])->put("/api/v2/shop/orders/{$order}", ['billingAddress' => [
-            'firstName' => 'Test', 'lastName' => 'Buyer', 'street' => 'Main 1', 'city' => 'Warsaw', 'postcode' => '00-001', 'countryCode' => 'PL',
-        ]])->throw();
-        $cart = $as()->get("/api/v2/shop/orders/{$order}")->throw()->json();
+            'firstName' => 'Test', 'lastName' => 'Buyer', 'street' => 'Main 1', 'city' => 'Warsaw', 'postcode' => '00-001', 'countryCode' => $country,
+        ]])->throw(fn ($r) => throw new \RuntimeException('Sylius answered ' . $r->status() . ': ' . mb_substr((string) ($r->json('detail') ?? $r->body()), 0, 400)));
+        $cart = $as()->get("/api/v2/shop/orders/{$order}")->throw(fn ($r) => throw new \RuntimeException('Sylius answered ' . $r->status() . ': ' . mb_substr((string) ($r->json('detail') ?? $r->body()), 0, 400)))->json();
         $payment = (string) $cart['payments'][0]['id'];
-        $as()->withHeaders(['Content-Type' => 'application/merge-patch+json'])->patch("/api/v2/shop/orders/{$order}/payments/{$payment}", ['paymentMethod' => '/api/v2/shop/payment-methods/offline-' . $this->channel])->throw();
-        $as()->withHeaders(['Content-Type' => 'application/merge-patch+json'])->patch("/api/v2/shop/orders/{$order}/complete", new \stdClass())->throw();
+        $as()->withHeaders(['Content-Type' => 'application/merge-patch+json'])->patch("/api/v2/shop/orders/{$order}/payments/{$payment}", ['paymentMethod' => '/api/v2/shop/payment-methods/' . $paymentMethod])->throw(fn ($r) => throw new \RuntimeException('Sylius answered ' . $r->status() . ': ' . mb_substr((string) ($r->json('detail') ?? $r->body()), 0, 400)));
+        $as()->withHeaders(['Content-Type' => 'application/merge-patch+json'])->patch("/api/v2/shop/orders/{$order}/complete", new \stdClass())->throw(fn ($r) => throw new \RuntimeException('Sylius answered ' . $r->status() . ': ' . mb_substr((string) ($r->json('detail') ?? $r->body()), 0, 400)));
 
         return ['token' => $order, 'payment' => $payment];
     }

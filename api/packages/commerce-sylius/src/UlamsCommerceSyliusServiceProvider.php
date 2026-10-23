@@ -7,7 +7,9 @@ use Illuminate\Support\ServiceProvider;
 use Ulams\Commerce\CommerceManager;
 use Ulams\Commerce\Services\ProductLinkStore;
 use Ulams\Commerce\UlamsCommerceServiceProvider;
+use Ulams\CommerceSylius\Console\SeedEuVatCommand;
 use Ulams\CommerceSylius\Http\SyliusClient;
+use Ulams\Tenancy\Services\Contracts\CommerceChannelProvisionerContract;
 
 /**
  * The Sylius adapter of the commerce package (ADR 0131). It only registers the provider under the key `sylius`;
@@ -29,7 +31,15 @@ class UlamsCommerceSyliusServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // tenants get their channel at provisioning (ADR 0131): rebinds the null implementation of the tenancy package
+        if (interface_exists(CommerceChannelProvisionerContract::class)) {
+            $this->app->singleton(CommerceChannelProvisionerContract::class, fn (Container $app) => new SyliusChannelProvisioner(
+                $app->make(CommerceManager::class)->provider(SyliusProvider::KEY),
+                $app->make(SyliusClient::class),
+            ));
+        }
         if ($this->app->runningInConsole()) {
+            $this->commands([SeedEuVatCommand::class]);
             $this->publishes([__DIR__ . '/config.php' => config_path(self::CONFIG_KEY . '.php')], self::CONFIG_KEY . '.config');
         }
     }
