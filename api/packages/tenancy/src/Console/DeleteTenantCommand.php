@@ -10,7 +10,7 @@ use Ulams\Tenancy\Support\TenantContext;
 
 class DeleteTenantCommand extends Command
 {
-    protected $signature = 'ulams:tenant:delete {slug} {--force : Required. Drops the database, role, bucket objects, env file and storage}';
+    protected $signature = 'ulams:tenant:delete {slug} {--force : Required. Drops the database, role, bucket objects, env file and storage} {--with-derived : Also delete the tenants created from this one (a tenant that has some is not deleted without it)}';
 
     protected $description = 'Delete a tenant and all its data';
 
@@ -35,7 +35,7 @@ class DeleteTenantCommand extends Command
         }
 
         try {
-            $lifecycle->delete($tenant, fn (string $step) => $this->line("  <info>remove</info> {$step}" . ($step === 'redis' ? ' keys' : '')));
+            $lifecycle->delete($tenant, fn (string $step) => $this->line("  <info>remove</info> {$step}" . ($step === 'redis' ? ' keys' : '')), (bool) $this->option('with-derived'));
         } catch (Throwable $exception) {
             $this->error($exception->getMessage());
 
