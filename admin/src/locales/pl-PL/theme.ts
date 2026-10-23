@@ -62,4 +62,11 @@ export default {
   'theme.saved': 'Motyw zapisany.',
   'theme.save_blocked': 'Motyw nie został zapisany: akcent nie spełnia WCAG 2.2 AA.',
   'theme.save_failed': 'Nie udało się zapisać motywu.',
+  'theme.profile_from_approved':
+    'Propozycja z zatwierdzonego profilu stylu „{name}”. Nic się nie zmieni, dopóki nie zatwierdzisz jej poniżej.',
+  'theme.profile_from_suggested':
+    'Propozycja z profilu stylu „{name}”, który nie jest jeszcze zatwierdzony. Nic się nie zmieni, dopóki nie zatwierdzisz motywu poniżej.',
+  'theme.profile_missing':
+    'Nie udało się odczytać profilu stylu z linku. Sprawdź, czy nadal istnieje i czy masz dostęp do Course Buildera.',
+  'theme.profile_no_theme': 'Profil stylu nie ma części dotyczącej motywu, więc nie ma czego proponować.',
 };
