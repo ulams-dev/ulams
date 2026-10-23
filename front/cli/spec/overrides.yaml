@@ -26,6 +26,14 @@ operations:
   # --- authoring metrics (time, cost and element counts of how a course was produced, ADR 0194)
   "GET /api/admin/authoring-metrics/courses": { id: authoring-metrics.list, summary: "Authoring metric snapshots of courses built with the Course Builder" }
   "GET /api/admin/authoring-metrics/courses/{course}": { id: authoring-metrics.get, summary: "Authoring metric of one course: time per stage, cost and the split of AI elements" }
+  # --- report builder (ADR 0194): a preview reads data through a POST, so it is a read
+  "POST /api/admin/reporting/query": { id: reporting.query, kind: read, idempotent: true, summary: "Preview a report definition: rows or groups, with small groups withheld" }
+  "GET /api/admin/reporting/saved": { id: reporting.list, summary: "Saved reports you can see: your own and those shared with your roles" }
+  "POST /api/admin/reporting/saved": { id: reporting.save, summary: "Save a report definition, private or shared with tenant roles" }
+  "GET /api/admin/reporting/saved/{id}": { id: reporting.show, summary: "One saved report with its definition" }
+  "PUT /api/admin/reporting/saved/{id}": { id: reporting.update, summary: "Change a saved report (owner or reporting_manage)" }
+  "DELETE /api/admin/reporting/saved/{id}": { id: reporting.delete, summary: "Delete a saved report (owner or reporting_manage)" }
+  "GET /api/admin/reporting/saved/{id}/run": { id: reporting.run, output: file, summary: "Run a saved report with your own permissions as json, csv or jsonl (use --out)" }
   # --- compliance (certificates, required training, reports)
   "GET /api/admin/compliance/managers": { id: compliance.managers-list }
   "PUT /api/admin/compliance/managers/{user}": { id: compliance.managers-set, summary: "Set or clear (manager_id null) the manager that overdue training escalates to" }

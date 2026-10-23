@@ -10608,6 +10608,10 @@
       "application/json": {
        "schema": {
         "properties": {
+         "allowPending": {
+          "description": "store the import although an open update proposal edits the same elements",
+          "type": "boolean"
+         },
          "baseVersionId": {
           "type": "string"
          },
@@ -10656,7 +10660,7 @@
       "description": "unknown session"
      },
      "409": {
-      "description": "BASE_OUTDATED (with the remote diff) or NO_BLUEPRINT"
+      "description": "BASE_OUTDATED (with the remote diff), PROPOSAL_PENDING (an open update proposal edits the same elements) or NO_BLUEPRINT"
      },
      "413": {
       "description": "document too large"
@@ -17908,6 +17912,22 @@
       }
      }
     ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "commit": {
+          "description": "the commit a CI job runs for (7 to 64 hex characters); recorded on the new revision",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": false
+    },
     "responses": {
      "202": {
       "content": {
@@ -17921,6 +17941,9 @@
      },
      "409": {
       "description": "nothing to check"
+     },
+     "422": {
+      "description": "not a commit id"
      }
     },
     "security": [
@@ -23162,6 +23185,526 @@
     "summary": "Add, edit or remove tutor feedback for a quiz attempt",
     "tags": [
      "Admin Gift Quiz Attempt"
+    ]
+   }
+  },
+  "/api/admin/reporting/datasets": {
+   "get": {
+    "description": "The datasets the caller may run reports on (assignments, certificates, audit, authoring, ai_usage; each only when its package is installed and the caller holds the dataset's permission), with every column: type, label, the filter operators it accepts, whether it can be grouped or aggregated and whether it holds personal data. Needs the permission reporting_read.",
+    "operationId": "admin.reporting.datasets.list",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The datasets with their columns"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Datasets a report can be built on",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
+  "/api/admin/reporting/query": {
+   "post": {
+    "description": "Runs a report definition against one dataset with the caller's own permissions and returns at most 500 rows and the total. A row-level report lists `columns`; a grouped report lists `groupBy` and `aggregates` and returns the groups followed by their aggregates. On a dataset that holds learners, every group with fewer distinct learners than the threshold (10 by default) is withheld: it is replaced, together with the smallest remaining group when needed so that it cannot be derived by subtraction, by one row marked `_withheld`. Needs reporting_read and the permission of the dataset (see the datasets endpoint). 422 lists what is wrong with the definition, by path.",
+    "operationId": "admin.reporting.query.run",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "aggregates": {
+          "items": {
+           "properties": {
+            "as": {
+             "description": "Name of the output column, lower case letters, digits and underscores",
+             "type": "string"
+            },
+            "column": {
+             "type": "string"
+            },
+            "fn": {
+             "enum": [
+              "count",
+              "count_distinct",
+              "sum",
+              "avg",
+              "min",
+              "max"
+             ],
+             "type": "string"
+            }
+           },
+           "required": [
+            "fn",
+            "as"
+           ],
+           "type": "object"
+          },
+          "type": "array"
+         },
+         "columns": {
+          "description": "Row-level report: the columns to list",
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         },
+         "dataset": {
+          "description": "Key of a dataset, for example assignments",
+          "example": "assignments",
+          "type": "string"
+         },
+         "dateRange": {
+          "description": "Restrict a date column to a preset (last_7_days, last_30_days, last_90_days, last_12_months, this_month, last_month, this_quarter, this_year, last_year) or to from and to dates (YYYY-MM-DD, inclusive)",
+          "properties": {
+           "column": {
+            "type": "string"
+           },
+           "from": {
+            "format": "date",
+            "type": "string"
+           },
+           "preset": {
+            "type": "string"
+           },
+           "to": {
+            "format": "date",
+            "type": "string"
+           }
+          },
+          "required": [
+           "column"
+          ],
+          "type": "object"
+         },
+         "filters": {
+          "description": "All filters apply (AND). op is eq, neq, in, not_in, lt, lte, gt, gte, between, contains or is_null; value is a scalar, a list (in, not_in), two values (between) or a boolean (is_null)",
+          "items": {
+           "properties": {
+            "column": {
+             "type": "string"
+            },
+            "op": {
+             "type": "string"
+            },
+            "value": {}
+           },
+           "required": [
+            "column",
+            "op"
+           ],
+           "type": "object"
+          },
+          "type": "array"
+         },
+         "groupBy": {
+          "description": "A column name, or {column, bucket} with bucket day, week, month, quarter or year on a date column (the output column is named column_bucket)",
+          "items": {
+           "oneOf": [
+            {
+             "type": "string"
+            },
+            {
+             "type": "object"
+            }
+           ]
+          },
+          "type": "array"
+         },
+         "limit": {
+          "description": "Most rows the report returns",
+          "type": "integer"
+         },
+         "sort": {
+          "description": "Output columns, first one first",
+          "items": {
+           "properties": {
+            "column": {
+             "type": "string"
+            },
+            "dir": {
+             "enum": [
+              "asc",
+              "desc"
+             ],
+             "type": "string"
+            }
+           },
+           "required": [
+            "column"
+           ],
+           "type": "object"
+          },
+          "type": "array"
+         }
+        },
+        "required": [
+         "dataset"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "columns (name, type, label), rows and meta: mode, total_rows, preview_rows, truncated, withheld_groups, min_group_size"
+     },
+     "403": {
+      "description": "No reporting_read, or no permission for the dataset"
+     },
+     "422": {
+      "description": "The definition is invalid"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Preview a report definition",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
+  "/api/admin/reporting/saved": {
+   "get": {
+    "description": "The caller's own reports and the reports shared with one of their roles (administrators with reporting_manage see all). Each has can_edit, runnable (the caller holds the permission of its dataset) and needs_repair with the problems when its dataset or a column it uses no longer exists. Needs reporting_read.",
+    "operationId": "admin.reporting.reports.list",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Saved reports"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Saved reports the caller can see",
+    "tags": [
+     "Reporting"
+    ]
+   },
+   "post": {
+    "description": "Saves a report definition (see the query endpoint) under a name. visibility is private (the default) or roles with shared_roles naming tenant roles. The caller must hold reporting_create and the permission of the definition's dataset.",
+    "operationId": "admin.reporting.reports.create",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "definition": {
+          "description": "A report definition, as for POST /api/admin/reporting/query",
+          "type": "object"
+         },
+         "description": {
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         },
+         "shared_roles": {
+          "description": "Role names of this tenant, for example tutor",
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         },
+         "visibility": {
+          "enum": [
+           "private",
+           "roles"
+          ],
+          "type": "string"
+         }
+        },
+        "required": [
+         "name",
+         "definition"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The saved report"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Invalid definition or sharing"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Save a report",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
+  "/api/admin/reporting/saved/{id}": {
+   "delete": {
+    "operationId": "admin.reporting.reports.by-id.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Deleted"
+     },
+     "403": {
+      "description": "Not the owner"
+     },
+     "404": {
+      "description": "Not found"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete a saved report",
+    "tags": [
+     "Reporting"
+    ]
+   },
+   "get": {
+    "operationId": "admin.reporting.reports.by-id.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The saved report with its definition"
+     },
+     "404": {
+      "description": "Not found, or not visible to the caller"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One saved report",
+    "tags": [
+     "Reporting"
+    ]
+   },
+   "put": {
+    "description": "Only the owner (who holds reporting_create) or an administrator with reporting_manage. Any of name, description, visibility, shared_roles and definition.",
+    "operationId": "admin.reporting.reports.by-id.put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "definition": {
+          "type": "object"
+         },
+         "description": {
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         },
+         "shared_roles": {
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         },
+         "visibility": {
+          "enum": [
+           "private",
+           "roles"
+          ],
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The saved report"
+     },
+     "403": {
+      "description": "Not the owner"
+     },
+     "404": {
+      "description": "Not found"
+     },
+     "422": {
+      "description": "Invalid definition or sharing"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Change a saved report",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
+  "/api/admin/reporting/saved/{id}/run": {
+   "get": {
+    "description": "Runs the report with the caller's own permissions and scope. format=json (default) answers like the query endpoint (500 rows and the total); csv and jsonl stream every row up to 1 000 000 and are recorded as exports. Groups of fewer learners than the threshold are withheld in every format. 403 when the caller lacks the permission of the dataset, 409 when the report needs repair.",
+    "operationId": "admin.reporting.reports.by-id.run",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "format",
+      "schema": {
+       "default": "json",
+       "enum": [
+        "json",
+        "csv",
+        "jsonl"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "json: columns, rows and meta; csv and jsonl: a file"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Not found"
+     },
+     "409": {
+      "description": "The report needs repair"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Run a saved report",
+    "tags": [
+     "Reporting"
     ]
    }
   },
@@ -36430,7 +36973,7 @@
   },
   "/api/images/img": {
    "get": {
-    "description": "Public endpoint, throttled by `images.render`. The cached file name is `sha1(path . json_encode(params))` plus the extension, so the same request always returns the same URL. The first request creates the copy, optimises it and stores it on the configured disk; later requests only redirect. A failed resize does not return an error status: the redirect points to an SVG that contains the error message.",
+    "description": "Optional legacy resize API, kept for self-hosted admin and third-party clients; prefer a CDN or the front's image service. Public endpoint, throttled by `images.render`. The cached file name is `sha1(path . json_encode(params))` plus the extension, so the same request always returns the same URL. The first request creates the copy, optimises it and stores it on the configured disk; later requests only redirect. A failed resize does not return an error status: the redirect points to an SVG that contains the error message.",
     "operationId": "images.img.get",
     "parameters": [
      {
@@ -36524,7 +37067,7 @@
     ]
    },
    "post": {
-    "description": "Public endpoint, throttled by `images.render`. Returns one entry per requested image, in the same order, with the URL of the cached copy.",
+    "description": "Optional legacy resize API, kept for self-hosted admin and third-party clients; prefer a CDN or the front's image service. Public endpoint, throttled by `images.render`. Returns one entry per requested image, in the same order, with the URL of the cached copy.",
     "operationId": "images.img.post",
     "requestBody": {
      "content": {
@@ -37660,7 +38203,7 @@
   },
   "/api/living-course/webhooks/{webhookId}": {
    "post": {
-    "description": "Inbound webhooks of source hosts (ADR 0032). Public route, authenticated by the signature with the\nconnection's own secret: invalid signatures are refused and logged, duplicates answer 200 without\nwork, only pushes to the tracked branch that touch the tracked paths queue a (debounced) check.\nPayloads are never sent to the model and never stored, only their digest.",
+    "description": "Inbound webhooks of source hosts (ADR 0032). Public route, authenticated by the signature with the\nconnection's own secret: invalid signatures are refused and logged, duplicates answer 200 without\nwork, only pushes to the tracked branch that touch the tracked paths queue a (debounced) check.\nPayloads are never sent to the model and never stored, only their digest; what the revision keeps of a push is the head commit,\nits subject line and the pull request number (`ChangeNote`).",
     "operationId": "living-course.webhooks.by-webhookid.post",
     "parameters": [
      {
@@ -44033,6 +44576,10 @@
   {
    "description": "QuestionnaireStars",
    "name": "QuestionnaireStars"
+  },
+  {
+   "description": "Reporting",
+   "name": "Reporting"
   },
   {
    "description": "Admin Reports",

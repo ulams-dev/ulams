@@ -80,6 +80,8 @@ export const DashboardComponent: React.FC = () => {
             {item.image_path ? (
               <ResponsiveImage
                 path={item.image_path}
+                url={item.image_url}
+                preset="card"
                 size={240}
                 width={240}
                 alt={item.title}

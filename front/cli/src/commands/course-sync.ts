@@ -1,9 +1,11 @@
-import { existsSync, readdirSync, statSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, mkdirSync, readdirSync, realpathSync, statSync, writeFileSync } from "node:fs";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { z } from "zod";
 import { compareCourse, diffLines } from "./course.ts";
 import { conflictFileName, parseElement, readConflict } from "../course/conflicts.ts";
 import { readFolder, type DiskFolder } from "../course/disk.ts";
+import { githubWorkflow, WORKFLOW_FILE } from "../course/ci-github.ts";
+import { gitOrigin, gitTopLevel, repoFromRemote, type GitHost } from "../course/repo.ts";
 import { folderFromBlueprint } from "../course/from-blueprint.ts";
 import { summarize } from "../course/issues.ts";
 import { ULAMS_FILE } from "../course/layout.ts";
@@ -132,6 +134,15 @@ function translate(e: unknown): unknown {
         ...keep,
         hint: "Run `ulams course pull`: it merges what only one side changed, writes a file for each element both changed to .ulams/conflicts/, and `ulams course resolve <element> --take local|remote|file` settles them. Then push again.",
         details: { code, currentVersionId: data.currentVersionId ?? null, currentVersionNumber: data.currentVersionNumber ?? null, conflicts, remote: Array.isArray(data.remote) ? data.remote : [] },
+      });
+    }
+    case "PROPOSAL_PENDING": {
+      const proposals = Array.isArray(data.proposals) ? data.proposals.filter(isObj) : [];
+      const names = proposals.slice(0, 3).map((p) => `#${String(p.number)} (${(Array.isArray(p.elements) ? p.elements : []).slice(0, 2).map((x) => (isObj(x) ? String(x.label ?? x.elementId) : String(x))).join(", ")})`);
+      return new CliError("SYNC_CONFLICT", `An update proposal that is still open changes elements this push changes too: ${names.join("; ")}${proposals.length > 3 ? "; ..." : ""}.`, {
+        ...keep,
+        hint: "Review the proposal in the studio (Living Course) or with `ulams living proposals get <proposal>` and accept, reject or apply it, then push again. `ulams course push --allow-pending` stores the push anyway; the proposal's items for those elements then become conflicts.",
+        details: { code, proposals },
       });
     }
     case "STALE_PROPOSAL":
@@ -313,6 +324,7 @@ const init = defineCommand({
   input: z.object({
     dir: dirInput,
     fromCourse: z.string().regex(/^\d+$/, "A numeric course id.").optional().describe("Course id on the server (required: scaffolding an empty course folder comes with course creation)."),
+    ci: z.enum(["github"]).optional().describe("Also write the CI workflow for this host (.github/workflows/ulams.yml at the repository root): validate and preview on pull requests, push on merge, hourly sync pull request."),
   }),
   output: z.unknown(),
   examples: [
@@ -325,6 +337,10 @@ const init = defineCommand({
     }
     const root = resolve(i.dir ?? ".");
     checkTargetIsEmpty(root);
+    const workflow = i.ci === "github" ? ciWorkflow(root) : null;
+    if (workflow && existsSync(workflow.file)) {
+      throw new CliError("INPUT_INVALID", `${workflow.file} already exists, so init would overwrite it.`, { hint: "Rename or remove it, or run init without --ci." });
+    }
     const payload = await fetchExport(ctx, i.fromCourse);
     const doc = assertRepresentable(payload.document);
     const files = folderFromBlueprint(payload.document, {
@@ -332,22 +348,109 @@ const init = defineCommand({
       ...(ctx.flags.profile ? { profile: ctx.flags.profile } : {}),
     });
     const names = [...files.keys()].sort();
-    const data = { dir: root, courseId: payload.courseId, sessionId: payload.sessionId, versionId: payload.versionId, versionNumber: payload.versionNumber, files: names, ...(ctx.flags.dryRun ? { dryRun: true } : {}) };
+    const data = { dir: root, ...(workflow ? { workflow: workflow.file } : {}), courseId: payload.courseId, sessionId: payload.sessionId, versionId: payload.versionId, versionNumber: payload.versionNumber, files: names, ...(ctx.flags.dryRun ? { dryRun: true } : {}) };
     if (!ctx.flags.dryRun) {
       materialise(root, new Map(), files);
       writeBase(root, makeBase(doc, { sessionId: payload.sessionId, courseId: payload.courseId, versionId: payload.versionId, versionNumber: payload.versionNumber }));
+      if (workflow) {
+        mkdirSync(dirname(workflow.file), { recursive: true });
+        writeFileSync(workflow.file, workflow.text);
+      }
     }
     return present(
       ctx,
       data,
       [
         `${ctx.flags.dryRun ? "Would write" : "Wrote"} ${names.length} files to ${root} (course ${payload.courseId ?? "?"}, version ${payload.versionNumber}).`,
-        ...(ctx.flags.dryRun ? names.map((n) => `  ${n}`) : [`Commit ${BASE_FILE}: it records the version this folder is based on.`, "Next: edit the Markdown, `ulams course diff`, then `ulams course push`."]),
+        ...(workflow ? [`${ctx.flags.dryRun ? "Would write" : "Wrote"} ${workflow.file}: set the repository secrets ULAMS_URL and ULAMS_TOKEN (a ci token).`] : []),
+        ...(ctx.flags.dryRun ? names.map((n) => `  ${n}`) : [`Commit ${BASE_FILE}: it records the version this folder is based on.`, "Next: edit the Markdown, `ulams course diff`, then `ulams course push`.", "To have Living Course watch this repository's sources/ folder: `ulams course sources-connect`."]),
       ],
       { warnings: driftWarnings(payload) }
     );
   },
 });
+
+/** The workflow file at the root of the repository around the folder (or in the folder itself outside a repository). */
+function ciWorkflow(root: string): { file: string; text: string } {
+  let existing = root;
+  while (!existsSync(existing) && dirname(existing) !== existing) existing = dirname(existing);
+  const real = join(realpathSync(existing), relative(existing, root));
+  const top = gitTopLevel(realpathSync(existing)) ?? real;
+  const path = relative(top, real).split(sep).join("/");
+  return { file: join(top, WORKFLOW_FILE), text: githubWorkflow({ path: path === "" ? "." : path, branch: gitOrigin(realpathSync(existing))?.branch ?? "main" }) };
+}
+
+/* ---------------------------------------------------------------- sources-connect */
+
+const LIVING = "/api/admin/living-course";
+
+const sourcesConnect = defineCommand({
+  ...folderCommand,
+  id: "course.sources-connect",
+  summary: "Let Living Course watch this repository's sources/ folder, so a merged change to the sources proposes updates to the course",
+  description:
+    "Reads the origin remote and the default branch of the Git repository around the course folder and connects it to the course's builder session as a Living Course `git` source that follows `sources/**` (override with --paths). A merged change to a file in sources/ then reaches Living Course through the host's push webhook (or `ulams living connections check <connection> --commit $GITHUB_SHA` from CI) and becomes an update proposal that names the pull request it came from; a merged change to modules/ never does (the Action pushes those as course versions). github.com and gitlab.com are recognised; for any other host pass --host gitlab or --host gitea (Forgejo too). For a private repository pass --token (or set ULAMS_SOURCES_TOKEN): a read-only access token, stored encrypted on the server. The answer shows the webhook address and the webhook secret once; add both to the repository's webhook settings (content type JSON, push events). Needs a folder created with `ulams course init`, and the repository must already hold at least one file under sources/ on that branch.",
+  kind: "write",
+  idempotent: false,
+  scopes: ["living-course:write"],
+  endpoints: [`POST ${LIVING}/sessions/{session}/sources/connect`],
+  positionals: ["dir"],
+  input: z.object({
+    dir: dirInput,
+    host: z.enum(["github", "gitlab", "gitea"]).optional().describe("Git host software for a host other than github.com and gitlab.com (gitea also means Forgejo)."),
+    branch: z.string().min(1).max(255).optional().describe("Branch to follow. Default: the remote's default branch."),
+    paths: z.array(z.string().min(1).max(255)).max(20).optional().describe("Globs of the source files. Default: sources/**."),
+    token: z.string().min(1).optional().describe("Read-only access token for a private repository (write-only; ULAMS_SOURCES_TOKEN also works)."),
+    schedule: z.enum(["hourly", "daily", "weekly", "manual"]).optional().describe("Polling schedule besides the webhook (default: daily)."),
+  }),
+  output: z.unknown(),
+  examples: [
+    { title: "Watch sources/ of the repository the folder is in", argv: "course sources-connect" },
+    { title: "A self-hosted Forgejo", argv: "course sources-connect --host gitea --token $FORGEJO_TOKEN" },
+  ],
+  plan: async (ctx, i) => {
+    const t = sourcesTarget(ctx, i);
+    return { request: { method: "POST", path: `${LIVING}/sessions/${t.sessionId}/sources/connect`, body: { ...t.body, ...(t.body.secrets ? { secrets: "«write-only»" } : {}) } } };
+  },
+  async run(ctx, i) {
+    const t = sourcesTarget(ctx, i);
+    const res = await ctx.client.call<{ connection: { id: string; webhookUrl: string | null }; source: unknown; webhookSecret: string | null }>("POST", `${LIVING}/sessions/{session}/sources/connect`, {
+      params: { session: t.sessionId },
+      body: t.body,
+      idempotent: false,
+      signal: ctx.signal,
+    });
+    const { connection, webhookSecret } = res.data;
+    return present(
+      ctx,
+      { ...res.data, repository: t.repo },
+      [
+        `Living Course now watches ${t.repo.repository} (${t.repo.branch}), ${t.paths.join(", ")}.`,
+        ...(connection.webhookUrl ? [`Webhook address: ${connection.webhookUrl}`] : []),
+        ...(webhookSecret ? [`Webhook secret (shown once): ${webhookSecret}`, "Add both to the repository's webhook settings (content type JSON, push events), or run `ulams living connections check " + connection.id + " --commit \"$GITHUB_SHA\"` from CI after a merge."] : []),
+      ]
+    );
+  },
+});
+
+/** The session of the folder, the repository around it and the request body for the connection. */
+function sourcesTarget(ctx: Ctx, i: { dir?: string | undefined; host?: GitHost | undefined; branch?: string | undefined; paths?: string[] | undefined; token?: string | undefined; schedule?: string | undefined }) {
+  const root = resolve(i.dir ?? ".");
+  const base = readBase(root);
+  const origin = gitOrigin(root);
+  if (!origin) {
+    throw new CliError("INPUT_INVALID", `${root} is not inside a Git repository with an origin remote.`, { hint: "Run it in the clone of the course repository (`git remote add origin <url>` first)." });
+  }
+  const repo = repoFromRemote(origin.remote, i.branch ?? origin.branch, i.host);
+  if (!repo) {
+    throw new CliError("INPUT_INVALID", `Cannot tell which Git host ${origin.remote.replace(/\/\/[^@/]*@/, "//")} is.`, { hint: "github.com and gitlab.com are recognised. For another host pass --host gitlab or --host gitea (Forgejo too)." });
+  }
+  const paths = i.paths ?? ["sources/**"];
+  const token = i.token ?? ctx.env.ULAMS_SOURCES_TOKEN;
+  const config = { host: repo.host, ...(repo.baseUrl ? { base_url: repo.baseUrl } : {}), repository: repo.repository, branch: repo.branch, paths };
+  const body: { connector: string; config: Obj; secrets?: Obj; schedule?: string } = { connector: "git", config, ...(token ? { secrets: { token } } : {}), ...(i.schedule ? { schedule: i.schedule } : {}) };
+  return { sessionId: base.sessionId, repo, paths, body };
+}
 
 /* ---------------------------------------------------------------- pull */
 
@@ -678,7 +781,7 @@ const push = defineCommand({
   id: "course.push",
   summary: "Propose the folder as a new version of the course (nothing changes for learners until it is approved and applied)",
   description:
-    "Validates the folder, sends it as a proposed version of kind `import` based on the version in .ulams/base.json, and prints what it changes. Nothing reaches learners: a person approves the version (in the studio, or --approve / --apply here) and it is applied. --approve approves it; --apply approves and applies it (waiting for the apply unless --no-wait). Agent tokens and MCP clients can only propose: approving is refused with APPROVAL_REQUIRES_HUMAN and the proposal stays (see `ulams course apply`). If the server moved on since the base, the server merges what the two sides changed separately and proposes the merged version; when both changed the same element it stops with SYNC_CONFLICT (exit 6) and lists the elements: run `ulams course pull` to merge them into the folder and settle them with `ulams course resolve`. Push also refuses while a conflict file is open. A folder equal to its base sends nothing. --dry-run validates and shows what would be sent.",
+    "Validates the folder, sends it as a proposed version of kind `import` based on the version in .ulams/base.json, and prints what it changes. Nothing reaches learners: a person approves the version (in the studio, or --approve / --apply here) and it is applied. --approve approves it; --apply approves and applies it (waiting for the apply unless --no-wait). Agent tokens and MCP clients can only propose: approving is refused with APPROVAL_REQUIRES_HUMAN and the proposal stays (see `ulams course apply`). A push also waits (SYNC_CONFLICT, exit 6) while an open Living Course update proposal changes elements the push changes too; decide the proposal, or pass --allow-pending. If the server moved on since the base, the server merges what the two sides changed separately and proposes the merged version; when both changed the same element it stops with SYNC_CONFLICT (exit 6) and lists the elements: run `ulams course pull` to merge them into the folder and settle them with `ulams course resolve`. Push also refuses while a conflict file is open. A folder equal to its base sends nothing. --dry-run validates and shows what would be sent.",
   kind: "write",
   idempotent: false,
   scopes: WRITE,
@@ -690,16 +793,18 @@ const push = defineCommand({
     approve: z.boolean().optional().describe("Approve the proposal after pushing it (people and CLI tokens only)."),
     apply: z.boolean().optional().describe("Approve and apply it; waits for the apply unless --no-wait."),
     overwrite: z.boolean().optional().describe("With --apply: overwrite edits an admin made in the LMS since the last apply."),
+    allowPending: z.boolean().optional().describe("Store the push although an open Living Course update proposal changes the same elements (the proposal's items for them become conflicts)."),
   }),
   output: z.unknown(),
   examples: [
     { title: "Propose a change for review", argv: "course push --message 'Fix the install step'" },
+    { title: "Push although an update proposal is open on the same elements", argv: "course push --allow-pending" },
     { title: "Propose, approve and apply as yourself", argv: "course push --apply" },
     { title: "Validate and preview without sending", argv: "course push --dry-run --json" },
   ],
   plan: async (ctx, i) => {
     const p = prepare(ctx, i.dir);
-    const request = planOf("POST", `/sessions/${p.base.sessionId}/imports`, { document: "<document>", baseVersionId: p.base.baseVersionId, ...(i.message ? { message: i.message } : {}) }).request;
+    const request = planOf("POST", `/sessions/${p.base.sessionId}/imports`, { document: "<document>", baseVersionId: p.base.baseVersionId, ...(i.message ? { message: i.message } : {}), ...(i.allowPending ? { allowPending: true } : {}) }).request;
     const then = [...(i.approve || i.apply ? ["POST /versions/<proposed version>/approve"] : []), ...(i.apply ? [`POST /sessions/${p.base.sessionId}/apply`] : [])];
     const plan: Plan = {
       request,
@@ -716,7 +821,7 @@ const push = defineCommand({
       return present(ctx, { unchanged: true, base: { versionId: base.baseVersionId, versionNumber: base.baseVersionNumber }, pushed: false }, [`Nothing to push: the folder equals version ${base.baseVersionNumber}.`]);
     }
     const res = await server(() =>
-      call<ImportResponse>(ctx, "POST", "/sessions/{session}/imports", { params: { session: base.sessionId }, body: { document: p.doc, baseVersionId: base.baseVersionId, ...(i.message ? { message: i.message } : {}) } })
+      call<ImportResponse>(ctx, "POST", "/sessions/{session}/imports", { params: { session: base.sessionId }, body: { document: p.doc, baseVersionId: base.baseVersionId, ...(i.message ? { message: i.message } : {}), ...(i.allowPending ? { allowPending: true } : {}) } })
     );
     if (res.unchanged || !res.version) {
       if (res.merged) {
@@ -1010,4 +1115,4 @@ const absorbDrift = defineCommand({
   },
 });
 
-export const courseSyncCommands: AnyCommand[] = [init, pull, diff, status, push, apply, publish, resolveCmd, absorbDrift];
+export const courseSyncCommands: AnyCommand[] = [init, sourcesConnect, pull, diff, status, push, apply, publish, resolveCmd, absorbDrift];

@@ -711,15 +711,16 @@ class AdminLivingCourseApi
      * Check the source now
      *
      * @param  string $connection connection (required)
+     * @param  \Ulams\Sdk\Model\AdminLivingCourseConnectionsByConnectionCheckPostRequest $admin_living_course_connections_by_connection_check_post_request admin_living_course_connections_by_connection_check_post_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return \Ulams\Sdk\Model\ApiEnvelope
      */
-    public function adminLivingCourseConnectionsByConnectionCheckPost($connection, string $contentType = self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'][0])
+    public function adminLivingCourseConnectionsByConnectionCheckPost($connection, $admin_living_course_connections_by_connection_check_post_request = null, string $contentType = self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'][0])
     {
-        list($response) = $this->adminLivingCourseConnectionsByConnectionCheckPostWithHttpInfo($connection, $contentType);
+        list($response) = $this->adminLivingCourseConnectionsByConnectionCheckPostWithHttpInfo($connection, $admin_living_course_connections_by_connection_check_post_request, $contentType);
         return $response;
     }
 
@@ -729,15 +730,16 @@ class AdminLivingCourseApi
      * Check the source now
      *
      * @param  string $connection (required)
+     * @param  \Ulams\Sdk\Model\AdminLivingCourseConnectionsByConnectionCheckPostRequest $admin_living_course_connections_by_connection_check_post_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return array of \Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
      */
-    public function adminLivingCourseConnectionsByConnectionCheckPostWithHttpInfo($connection, string $contentType = self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'][0])
+    public function adminLivingCourseConnectionsByConnectionCheckPostWithHttpInfo($connection, $admin_living_course_connections_by_connection_check_post_request = null, string $contentType = self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'][0])
     {
-        $request = $this->adminLivingCourseConnectionsByConnectionCheckPostRequest($connection, $contentType);
+        $request = $this->adminLivingCourseConnectionsByConnectionCheckPostRequest($connection, $admin_living_course_connections_by_connection_check_post_request, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -854,14 +856,15 @@ class AdminLivingCourseApi
      * Check the source now
      *
      * @param  string $connection (required)
+     * @param  \Ulams\Sdk\Model\AdminLivingCourseConnectionsByConnectionCheckPostRequest $admin_living_course_connections_by_connection_check_post_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function adminLivingCourseConnectionsByConnectionCheckPostAsync($connection, string $contentType = self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'][0])
+    public function adminLivingCourseConnectionsByConnectionCheckPostAsync($connection, $admin_living_course_connections_by_connection_check_post_request = null, string $contentType = self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'][0])
     {
-        return $this->adminLivingCourseConnectionsByConnectionCheckPostAsyncWithHttpInfo($connection, $contentType)
+        return $this->adminLivingCourseConnectionsByConnectionCheckPostAsyncWithHttpInfo($connection, $admin_living_course_connections_by_connection_check_post_request, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -875,15 +878,16 @@ class AdminLivingCourseApi
      * Check the source now
      *
      * @param  string $connection (required)
+     * @param  \Ulams\Sdk\Model\AdminLivingCourseConnectionsByConnectionCheckPostRequest $admin_living_course_connections_by_connection_check_post_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function adminLivingCourseConnectionsByConnectionCheckPostAsyncWithHttpInfo($connection, string $contentType = self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'][0])
+    public function adminLivingCourseConnectionsByConnectionCheckPostAsyncWithHttpInfo($connection, $admin_living_course_connections_by_connection_check_post_request = null, string $contentType = self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'][0])
     {
         $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
-        $request = $this->adminLivingCourseConnectionsByConnectionCheckPostRequest($connection, $contentType);
+        $request = $this->adminLivingCourseConnectionsByConnectionCheckPostRequest($connection, $admin_living_course_connections_by_connection_check_post_request, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -925,12 +929,13 @@ class AdminLivingCourseApi
      * Create request for operation 'adminLivingCourseConnectionsByConnectionCheckPost'
      *
      * @param  string $connection (required)
+     * @param  \Ulams\Sdk\Model\AdminLivingCourseConnectionsByConnectionCheckPostRequest $admin_living_course_connections_by_connection_check_post_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function adminLivingCourseConnectionsByConnectionCheckPostRequest($connection, string $contentType = self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'][0])
+    public function adminLivingCourseConnectionsByConnectionCheckPostRequest($connection, $admin_living_course_connections_by_connection_check_post_request = null, string $contentType = self::contentTypes['adminLivingCourseConnectionsByConnectionCheckPost'][0])
     {
 
         // verify the required parameter 'connection' is set
@@ -939,6 +944,7 @@ class AdminLivingCourseApi
                 'Missing the required parameter $connection when calling adminLivingCourseConnectionsByConnectionCheckPost'
             );
         }
+
 
 
         $resourcePath = '/api/admin/living-course/connections/{connection}/check';
@@ -967,7 +973,14 @@ class AdminLivingCourseApi
         );
 
         // for model (json/xml)
-        if (count($formParams) > 0) {
+        if (isset($admin_living_course_connections_by_connection_check_post_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($admin_living_course_connections_by_connection_check_post_request));
+            } else {
+                $httpBody = $admin_living_course_connections_by_connection_check_post_request;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {

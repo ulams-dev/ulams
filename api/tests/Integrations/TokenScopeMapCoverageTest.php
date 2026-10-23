@@ -67,6 +67,26 @@ class TokenScopeMapCoverageTest extends TestCase
         $this->assertSame('none', TokenScopes::requirement('api/auth/refresh', 'GET')['area']);
     }
 
+    /** ADR 0194, Q10: the report, its export and the schedules are analytics (reports:read); the rest of compliance stays with certificates. */
+    public function testComplianceReportsAndTheReportBuilderAreInTheReportsArea(): void
+    {
+        foreach ([
+            ['api/admin/compliance/report', 'GET'], ['api/admin/compliance/report/export', 'GET'],
+            ['api/admin/compliance/schedules', 'GET'], ['api/admin/compliance/schedules', 'POST'], ['api/admin/compliance/schedules/{id}', 'DELETE'],
+            ['api/admin/reporting/datasets', 'GET'],
+        ] as [$uri, $method]) {
+            $this->assertSame('reports', TokenScopes::requirement($uri, $method)['area'], "{$method} {$uri}");
+        }
+        foreach (['api/admin/compliance/assignments', 'api/admin/compliance/dashboard', 'api/admin/compliance/courses/{course}/settings', 'api/admin/compliance/rules'] as $uri) {
+            $this->assertSame('certificates', TokenScopes::requirement($uri, 'GET')['area'], $uri);
+        }
+        $this->assertFalse(TokenScopes::requirement('api/admin/reporting/datasets', 'GET')['write']);
+        $this->assertFalse(TokenScopes::requirement('api/admin/reporting/saved/{id}/run', 'GET')['write'], 'running a saved report reads');
+        $this->assertTrue(TokenScopes::requirement('api/admin/reporting/saved', 'POST')['write']);
+        $this->assertTrue(TokenScopes::requirement('api/admin/reporting/saved/{id}', 'DELETE')['write']);
+        $this->assertFalse(TokenScopes::requirement('api/admin/reporting/query', 'POST')['write'], 'a preview changes nothing: reports:read is enough');
+    }
+
     public function testTheCommittedJsonExportIsCurrent(): void
     {
         $this->artisan('ulams:tokens:export-scopes', ['--check' => true])->assertSuccessful();
