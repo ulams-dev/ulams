@@ -76,7 +76,7 @@ describe.skipIf(!enabled)("backup, wipe and restore of a real Docker stack", () 
       expect(course.image_url, "a seeded course with an image").toBeTruthy();
       const topic = list((program.lessons as Json[] | undefined)?.flatMap(l => list(l.topics)) ?? []).find(t => t.id)!;
       expect(topic, "a topic in the seeded course").toBeTruthy();
-      // The progress is stored even when building the response fails (images sha-28a3cf1 answer 500 there);
+      // The progress is stored even when building the response fails (HTTP 500 on images sha-28a3cf1, #495);
       // the snapshot below checks the stored progress either way.
       await invoke(["api", "PATCH", `/api/courses/progress/${String(course.id)}`, "--body", JSON.stringify({ progress: [{ topic_id: topic.id, status: 1 }] })], student).catch((error: Error) => {
         if (!error.message.includes("SERVER_ERROR")) throw error;
