@@ -14,6 +14,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { codeExerciseTopics, launchOf } from "./code-exercises.mjs";
+import { createVariantMock } from "./variants.mjs";
 
 const fixture = (name) => JSON.parse(readFileSync(fileURLToPath(new URL(`../fixtures/${name}.json`, import.meta.url)), "utf8"));
 const coffee = fixture("coffee");
@@ -623,7 +624,11 @@ const courseVersionsRoutes = [
   ["GET", /^\/api\/admin\/course-versions\/courses\/(\d+)\/compare$/, ({ match, query, tenant }) => courseCompare(Number(match[1]), query, tenant)],
 ];
 
+// Course variants (CV-5): five families, one per case of the learner's picker (tests/mock-api/variants.mjs)
+const variantMock = createVariantMock({ program, progressRows, courseFor });
+
 const routes = [
+  ...variantMock.routes,
   ...insightsRoutes,
   ...courseVersionsRoutes,
   ...improveRoutes,
@@ -794,6 +799,7 @@ const server = createServer((req, res) => {
     supportState.delete(url.searchParams.get("tenant") ?? "");
     reflectionCount.delete(url.searchParams.get("tenant") ?? "");
     presentationOverrides.delete(url.searchParams.get("tenant") ?? "");
+    variantMock.reset(url.searchParams.get("tenant") ?? "");
     res.end(JSON.stringify({ reset: true }));
     return;
   }
@@ -932,7 +938,7 @@ function respond(req, res, path, route, rawBody) {
     }
   })();
   const match = route[1].exec(path);
-  const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body, query: new URL(req.url ?? "/", "http://mock").searchParams, status: (code) => (res.statusCode = code) });
+  const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body, headers: req.headers, query: new URL(req.url ?? "/", "http://mock").searchParams, status: (code) => (res.statusCode = code) });
   if (data && typeof data === "object" && "__status" in data) {
     res.statusCode = data.__status;
     res.end(JSON.stringify({ success: false, message: data.message, ...(data.code ? { code: data.code } : {}) }));

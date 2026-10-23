@@ -60,6 +60,20 @@ test("signing in through the provider ends with a session cookie and no token in
   expect(await page.evaluate(() => document.cookie)).not.toContain("sso-token");
 });
 
+test("hovering the sign-in link before the click does not leave a state cookie behind", async ({ page }) => {
+  // Astro prefetches links on hover; a prefetched start request used to set a second verifier cookie that
+  // survived the callback (slow runners hover long enough for the prefetch to land after the click).
+  await page.goto(`${site}/login?next=%2Fcourses%2F1`);
+  const link = page.getByRole("link", { name: "Continue with Acme staff" });
+  await link.hover();
+  await page.waitForTimeout(800);
+  await link.click();
+  await page.waitForURL(`${site}/courses/1`);
+
+  expect((await cookie(page, SESSION))?.value).toMatch(/^sso-token-/);
+  expect(await cookie(page, SSO)).toBeUndefined();
+});
+
 test("the callback answers without caching and without a referrer", async ({ page }) => {
   let callback: { status: number; headers: Record<string, string> } | null = null;
   page.on("response", (response) => {

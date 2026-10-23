@@ -24,7 +24,7 @@ RUN cd admin && n=1; until yarn build; do [ "$n" -ge 3 ] && exit 1; n=$((n+1)); 
 # Non-root static server (uid 101, port 8080). The tag is pinned by digest (Dependabot's docker ecosystem bumps tag and
 # digest together, weekly); bump both together by hand otherwise. The upstream image lags Alpine security fixes, so the
 # stage also runs `apk upgrade` to pick up patched packages (curl, openssl, expat, ...) at every build.
-FROM nginxinc/nginx-unprivileged:1.30-alpine@sha256:f5116ed4606f3eb015dd4a8e28cb9b351476dc0ad4bc6e9f93b19cec130cdf03 AS httpd
+FROM nginxinc/nginx-unprivileged:1.31-alpine@sha256:b5047b9b76845eac124358373c6852377c52e4b05834a47647e955dd91cb8f1e AS httpd
 # Settings are read at start from the environment (names starting with REACT_APP_) and written to
 # /runtime-config.json, which the app loads before it boots (ADR 0056). Examples:
 #   REACT_APP_API_URL            fixed API URL (single tenant); empty: derived from the host

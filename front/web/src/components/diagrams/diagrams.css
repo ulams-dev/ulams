@@ -778,10 +778,6 @@
   background: var(--dg-ink);
   opacity: 0.4;
 }
-.dg-fan__arrow--planned {
-  background: none;
-  border-left: 2px dashed var(--dg-ink);
-}
 .dg-fan__groups {
   display: grid;
   gap: 16px;
@@ -791,7 +787,7 @@
   display: grid;
   gap: 8px;
   padding-left: 22px;
-  border-left: 2px dashed color-mix(in srgb, var(--dg-ink) 40%, transparent);
+  border-left: 2px solid color-mix(in srgb, var(--dg-ink) 40%, transparent);
   margin-left: 24px;
 }
 .dg-fan__group .dg-sub {
@@ -800,7 +796,7 @@
 .dg-fan__group li {
   position: relative;
   padding: 10px 14px;
-  border: 1.5px dashed var(--dg-muted);
+  border: 1.5px solid var(--dg-muted);
   border-radius: 10px;
   background: var(--dg-card);
   font-size: 0.92rem;
@@ -812,7 +808,7 @@
   top: 50%;
   left: -24px;
   width: 22px;
-  border-top: 2px dashed color-mix(in srgb, var(--dg-ink) 40%, transparent);
+  border-top: 2px solid color-mix(in srgb, var(--dg-ink) 40%, transparent);
 }
 .dg-fan__note {
   margin-top: 16px;
@@ -827,10 +823,6 @@
     width: 100%;
     height: 2px;
     margin: 0;
-  }
-  .dg-fan__arrow--planned {
-    border-left: 0;
-    border-top: 2px dashed var(--dg-ink);
   }
   .dg-fan__groups {
     grid-template-columns: repeat(2, minmax(0, 1fr));

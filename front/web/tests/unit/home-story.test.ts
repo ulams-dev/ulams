@@ -227,3 +227,24 @@ describe("home story: styles", () => {
     }
   });
 });
+
+describe("home page: white label and the policy-to-proof path", () => {
+  for (const locale of LOCALES) {
+    it(`${locale}: has the white-label band with six points and says a per-course subdomain is not built`, () => {
+      const doc = landingDocFor("platform", locale)!;
+      const band = ofType(doc, "CtaBand").find((b) => b.props!.id === "white-label")!;
+      expect((band.props!.bullets as unknown[]).length).toBe(6);
+      expect((band.props!.cta as { href: string }).href).toBe("#demos");
+      expect(String(band.props!.note).length).toBeGreaterThan(40);
+      const order = planHomeBody(doc)!.main.map((p) => (p.kind === "story" ? "story" : String(p.node.props?.id ?? p.node.component)));
+      expect(order.indexOf("white-label")).toBeGreaterThan(order.indexOf("reporting-cta"));
+      expect(order.indexOf("white-label")).toBeLessThan(order.indexOf("agents"));
+    });
+    it(`${locale}: labels what is not built in the policy-to-proof list`, () => {
+      const list = ofType(landingDocFor("platform", locale)!, "FeatureList")[0]!;
+      const items = list.props!.items as Array<{ status?: string }>;
+      expect(items).toHaveLength(6);
+      expect(items.filter((i) => i.status === "coming")).toHaveLength(3);
+    });
+  }
+});

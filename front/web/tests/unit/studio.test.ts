@@ -56,6 +56,7 @@ describe("studio BFF allow-list", () => {
     ["POST", `/living-course/proposals/${S}/items/${S}/reject`],
     ["POST", `/living-course/proposals/${S}/items/${S}/reset`],
     ["POST", `/living-course/proposals/${S}/items/${S}/regenerate`],
+    ["POST", `/living-course/proposals/${S}/items/${S}/suggest-lesson`],
     ["GET", `/living-course/sessions/${S}/audit`],
     ["GET", `/living-course/sessions/${S}/audit/verify`],
     ["GET", `/living-course/sessions/${S}/audit/export`],
