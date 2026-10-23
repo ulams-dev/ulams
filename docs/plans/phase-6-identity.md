@@ -628,3 +628,41 @@ Differences from the plan text, so later milestones start from what is in the co
   and `identity:prune`, scheduled daily per tenant. `api/identity/saml/*/acs` and `*/slo` are in `origin_exempt`.
 - The Keycloak run is extended (`.github/conformance/keycloak/run-saml.cjs`, same workflow): Keycloak builds its client from our SP metadata
   and verifies our signed requests; signed and encrypted assertions, a tampered and a replayed response, single logout and the metadata refresh.
+
+## 17. ID-4 as shipped
+
+Differences from the plan text, so ID-5 and later milestones start from what is in the code (ADR 0198 has the reasoning):
+
+- **A client sees only what its provider provisioned.** Every SCIM query joins `identity_external_ids` of the token's provider; administrators, other
+  providers' users and unmanaged accounts answer `404`, and a provisioned user who becomes an administrator is refused with `403`. The plan's tenant-wide
+  `userName` uniqueness stays: `userName` is unique across providers (`user_name_key`), a second provider gets `409`.
+- **Adoption** of an existing account on `POST /Users` happens only under the linking rule of 4.5 (`trust_email`, domain, verified, active, not admin or tutor); otherwise `409 uniqueness`.
+  A provisioned account links at its first sign-in without `trust_email` (`AccountResolver::provisionedByScim`).
+- **ETag is on** (`etag.supported = true`; the plan said false): a weak content hash of the representation as `meta.version` and the `ETag` header, `If-Match` on PUT, PATCH and
+  DELETE (`412`), `If-None-Match` on GET (`304`).
+- **Deprovisioning** keeps a tombstone (`identity_external_ids.deleted_at`) so the same `userName` revives the same account; `IDENTITY_SCIM_DELETE=anonymise` soft-deletes through `MaskUserData` and frees the keys.
+  `DELETE` also removes the `identity_links` row of the provider. A `PUT` without `active` keeps the current state.
+- **Tokens**: `ApiTokenMeta::KIND_SCIM`, scope area `scim` (`api/scim/*`), issued only by `POST /api/admin/identity/providers/{provider}/scim-tokens` (new permission `identity_scim_manage`),
+  `GET` and `DELETE` on the same path; the generic token endpoints list and revoke them but cannot create them. `EnforceTokenScopes` refuses a `scim` token on every other route.
+  The service user is inactive, passwordless and has the address `scim+<slug>@identity.invalid`; the admin user list hides it. Deleting a provider revokes its tokens.
+- **Rate limit** is inside `ScimAuthenticate` (per token, SCIM error format with `Retry-After`), not the named limiter `ulams-scim` of the plan; the config key is `ulams_identity.scim.rate_limit`.
+- **Enterprise attributes** (and `title`, `displayName`) round-trip from `identity_external_ids.meta`; they are mirrored into the model fields `employee_id`, `department`, `organization`, `division`, `cost_center`,
+  `job_title` only when the tenant defines them; the manager is kept in `meta` and mirrored through `ManagerService` when the `compliance` package is installed. `UserAttributesSynced` (ID-3) does not exist yet, so
+  rule enrolment after a SCIM write follows the existing `eloquent.saved` path.
+- **Not built**: attribute authority between SCIM, HRIS and manual edits (4.9; with ID-6 there is a second writer), the webhook events of section 11 (there is no `EventCatalog` in `api/packages/webhooks`),
+  an independent SCIM client in the nightly (manual checks are documented in `operators/scim.mdx`), SCIM endpoints in the CLI (excluded as planned; the token endpoints have `identity scim-tokens-*`).
+
+### ID-4 security review (plan section 8, items 1, 7, 8, 10)
+
+| # | Point | Result |
+|---|---|---|
+| 1 | No token, secret or personal value in URL, log, audit row or error | The token is in the create response only (never stored; Passport keeps the id). Audit rows hold ids and attribute *names*. SCIM errors name the attribute, never the value. Tests: `ScimDiscoveryAndAuthTest`, `ScimUsersTest::testCreateAUser`. |
+| 7 | Token kind separation | `scim` tokens only on `api/scim/*` (`EnforceTokenScopes`), other kinds refused by `ScimAuthenticate`; tests cover cli, ci, agent and login tokens on every route and a SCIM token on profile, admin, public and logout routes. |
+| 7 | Filter translated with bound parameters only | Columns from a fixed map in `FilterCompiler`, values bound, `LIKE` wildcards escaped; the parser has a grammar table, invalid-input table and a fuzz test (3 500 random inputs); `testFilterTextIsNeverPartOfTheQuery`. |
+| 7 | PATCH atomic | Operations run on a copy; the result is validated like a PUT and written in one transaction. `testAFailingOperationChangesNothing`. |
+| 7 | Rate limit | 600 per minute per token, `429` with `Retry-After`. `testTheRateLimitIsPerTokenAndAnswersInTheScimFormat`. |
+| 8 | Deactivation revokes all tokens; no sign-in by any method | `AccountBlocked` listener (ID-0); tests revoke a login token and a personal access token, and refuse password and SSO sign-in afterwards. |
+| 10 | Tenant isolation for every new endpoint | `ScimIsolationTest` walks every SCIM route (and fails when a route is added without being listed) with no token, a garbage token, every other token kind and another provider's token; `ScimDiscoveryAndAuthTest` covers the token endpoints (permission, other tenant's id, forged JWT signed with another key); `TenantIsolationTest` has the cross-tenant case against real tenants. |
+| - | SSRF | SCIM makes no outbound request; `$ref` and `manager.$ref` are never dereferenced. |
+| - | Takeover | Existing accounts are never claimed unless the linking rule holds; administrators and superadministrators are untouchable; the provisioned person's first sign-in link is limited to non-privileged accounts. |
+| - | Privilege | The role of a SCIM-created user is the provider's `default_role` (`student` or `tutor`); SCIM cannot grant `admin`; the service user has no role. |

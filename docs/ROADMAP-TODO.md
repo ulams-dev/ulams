@@ -1043,6 +1043,14 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       account linking, a hash-chained identity audit trail, an admin API with the `identity` token scope, provider buttons and a callback page in `front/web` on
       the one-time code flow; tests in `api/packages/identity/tests` (fake IdP, ID token validation, linking, isolation, audit) and a Keycloak run
       (`.github/workflows/identity-keycloak.yml`, label or nightly gated). Open in the same plan: SAML, SCIM, HRIS (see the item above)
+- [ ] (new) SCIM 2.0 Users (ID-4, branch `phase-6/id-4-scim`; ticks when merged, Groups and the interop check stay open): `/api/scim/v2` with ServiceProviderConfig,
+      ResourceTypes, Schemas, Users (create, list with the full RFC 7644 filter grammar, `.search`, get, PUT, PATCH, DELETE), pagination, `ETag` and `If-Match`,
+      the SCIM error format with `scimType`; bearer tokens of kind `scim` on a per-provider service user (shown once, 365 days at most, two active for rotation,
+      accepted only on SCIM routes); a client sees only the users its provider provisioned; `active=false` and `DELETE` deactivate and revoke every token and session and
+      keep the learning record (anonymise is opt-in, nothing is hard-deleted); administrators cannot be changed; 600 requests per minute per token; audit rows;
+      ADR 0198 (Proposed); docs `operators/scim.mdx`, `developers/scim-api.mdx`. Plan section 17 lists the differences from the plan. Open: Groups (ID-5), webhooks for user
+      lifecycle events (the plan's `EventCatalog` does not exist), an independent reference client in the nightly (documented manual checks until then), a check with real Entra ID and
+      Okta tenants (owner inputs), authority rules between SCIM and HRIS or manual edits (come with HRIS, ID-6) and the admin screen (ID-8)
 
 ### 6.4 Commerce (Sylius) and extended enterprise
 - [ ] `CommerceProvider` interface (sync product, create checkout, handle order events) (partial: interface and the Wellms cart adapter shipped in `api/packages/commerce`, ADR 0049; the Sylius adapter is pending)
