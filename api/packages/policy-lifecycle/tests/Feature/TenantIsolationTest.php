@@ -23,6 +23,7 @@ class TenantIsolationTest extends TestCase
         $endpoints = [
             ['GET', '/api/admin/policies', []],
             ['POST', '/api/admin/policies', ['title' => 'x']],
+            ['GET', '/api/policies/my-changes', []],
             ['GET', "/api/admin/policies/{$id}", []],
             ['GET', "/api/admin/policies/{$id}/versions", []],
             ['GET', "/api/admin/policies/{$id}/variants", []],

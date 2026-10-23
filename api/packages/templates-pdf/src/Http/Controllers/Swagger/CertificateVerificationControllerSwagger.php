@@ -40,6 +40,7 @@ interface CertificateVerificationControllerSwagger
      *                      @OA\Property(property="issued_at", type="string", format="date-time"),
      *                      @OA\Property(property="expires_at", type="string", format="date-time", nullable=true),
      *                      @OA\Property(property="revoked_at", type="string", format="date-time", nullable=true),
+     *                      @OA\Property(property="superseded_by_policy_version", type="integer", nullable=true, description="the policy version that replaced what the certificate certified, when it was revoked for that reason"),
      *                      @OA\Property(property="issuer", type="string"),
      *                  ),
      *              ),

@@ -408,6 +408,27 @@ class RolloutTest extends TestCase
         $this->assertSame(0, PolicyReassignment::query()->count());
     }
 
+    public function testALearnerSeesWhyTheyOweTheTrainingAgainAndNobodyElsesRows(): void
+    {
+        [$owner, $policy, $engineers, $seller] = $this->inReview();
+        $this->approveVersion($owner, $policy->id, 2, ['change_class' => 'minor', 'reason' => 'Wording only.'])->assertOk();
+
+        $mine = $this->actingAs($engineers[0], 'api')->getJson('/api/policies/my-changes')->assertOk()->json('data');
+
+        $this->assertCount(1, $mine);
+        $this->assertSame('Remote work and data handling', $mine[0]['policy']['title']);
+        $this->assertSame(2, $mine[0]['version']);
+        $this->assertSame('exam', $mine[0]['kind']);
+        $this->assertStringStartsWith('Sections 2 changed', $mine[0]['summary']);
+        $this->assertSame(Assignment::query()->where('user_id', $engineers[0]->getKey())->where('source', 'policy_change')->value('id'), $mine[0]['assignmentId']);
+        $this->assertSame('assigned', $mine[0]['status']);
+        // Linus never finished and was not reassigned; a person of another department sees only their own
+        $this->actingAs($engineers[1], 'api')->getJson('/api/policies/my-changes')->assertOk()->assertJsonCount(0, 'data');
+        $this->assertSame(1, count($this->actingAs($seller, 'api')->getJson('/api/policies/my-changes')->json('data')));
+        \Illuminate\Support\Facades\Auth::forgetGuards();
+        $this->getJson('/api/policies/my-changes')->assertUnauthorized();
+    }
+
     public function testEveryStepIsInTheAuditChainAndTheChainVerifies(): void
     {
         [$owner, $policy] = $this->inReview();

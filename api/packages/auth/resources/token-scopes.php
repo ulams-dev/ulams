@@ -235,6 +235,8 @@ return [
     ['api/content/*', 'learner'],
     ['api/pdfs*', 'learner'],
     ['api/compliance/*', 'learner'],
+    // the learner's own policy change notices (policy lifecycle)
+    ['api/policies/*', 'learner'],
     ['api/questionnaire/*', 'learner'],
     ['api/scorm/*', 'learner'],
     ['api/cmi5/*', 'learner'],
