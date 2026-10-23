@@ -28,6 +28,8 @@ class CertificateVerificationService
             'status' => $pdf->status(),
             'title' => $pdf->title,
             'course_title' => $vars['@VarCourseTitle'] ?? null,
+            // the variant of the course the holder completed, null for a course without variants (ADR 0192)
+            'course_variant' => ($vars['@VarCourseVariant'] ?? '') !== '' ? $vars['@VarCourseVariant'] : null,
             'holder_name' => $this->holderName($pdf->user),
             'issued_at' => $pdf->created_at?->toIso8601String(),
             'expires_at' => $pdf->expires_at?->toIso8601String(),

@@ -115,6 +115,7 @@ environment, then profile. A profile token is never sent to another `--url`.
 | Variable | Meaning |
 |---|---|
 | `ULAMS_URL`, `ULAMS_TOKEN` | instance origin and token (`--url`, `--token-stdin` on the command line) |
+| `ULAMS_COMMIT`, `ULAMS_CHANGE_URL` | The commit and the pull request or commit address a CI job acts for. Sent as `X-Ulams-Commit` and `X-Ulams-Change-Url` with every request; the server records them in the audit event of a course-as-code import and approval (one printable line, 500 characters). The course action sets both |
 | `ULAMS_PROFILE` | profile to use |
 | `ULAMS_CONFIG_DIR` | directory of `config.json` and `credentials.json` |
 | `ULAMS_OUTPUT` | default output mode (`json`, `ndjson`, `yaml`, `table`, `text`) |

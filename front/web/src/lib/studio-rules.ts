@@ -50,7 +50,7 @@ export const LIVING_COURSE_RULES: Array<{ method: string; pattern: RegExp }> = [
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/proposals$`) },
   { method: "GET", pattern: new RegExp(`^/proposals/${ID}$`) },
   { method: "POST", pattern: new RegExp(`^/proposals/${ID}/(analyse|accept-all|reject|apply)$`) },
-  { method: "POST", pattern: new RegExp(`^/proposals/${ID}/items/${ID}/(accept|reject|reset|regenerate|suggest-lesson)$`) },
+  { method: "POST", pattern: new RegExp(`^/proposals/${ID}/items/${ID}/(accept|accept-in-group|reject|reset|regenerate|suggest-lesson)$`) },
   // connect a Git repository or web pages, check now, rotate the webhook secret, disconnect
   { method: "GET", pattern: /^\/connectors$/ },
   { method: "POST", pattern: new RegExp(`^/sessions/${ID}/sources/connect$`) },

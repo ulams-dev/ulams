@@ -36,6 +36,7 @@ interface CertificateVerificationControllerSwagger
      *                      @OA\Property(property="status", type="string", enum={"valid", "expired", "revoked"}),
      *                      @OA\Property(property="title", type="string"),
      *                      @OA\Property(property="course_title", type="string", nullable=true),
+     *                      @OA\Property(property="course_variant", type="string", nullable=true, description="The variant of the course the holder completed (for example Expert), null for a course without variants"),
      *                      @OA\Property(property="holder_name", type="string", nullable=true),
      *                      @OA\Property(property="issued_at", type="string", format="date-time"),
      *                      @OA\Property(property="expires_at", type="string", format="date-time", nullable=true),
