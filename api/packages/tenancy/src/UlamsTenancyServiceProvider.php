@@ -23,6 +23,7 @@ use Ulams\Tenancy\Console\TemplateCommand;
 use Ulams\Tenancy\Console\UpgradeCommand;
 use Ulams\Tenancy\Console\WorkOnceCommand;
 use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
+use Ulams\Tenancy\Observability\TenantMetrics;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
@@ -88,6 +89,9 @@ class UlamsTenancyServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        if (\Ulams\Tenancy\Support\TenantContext::isPlatform()) {
+            $this->app->make(\Ulams\Core\Observability\MetricsRegistry::class)->register('tenancy', new TenantMetrics());
+        }
         RateLimiter::for('ulams-platform', fn (Request $request) => Limit::perMinute(60)->by('platform:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
 
         // preview academies expire (plan 8.3); `schedule:run` also runs per tenant, so only the platform reaps

@@ -1,0 +1,4 @@
+{
+  "$comment": "LTS release lines (X.Y) whose newest patch gets the lts image tag; one minor per year, security fixes for 12 months. See SECURITY.md.",
+  "lts": []
+}

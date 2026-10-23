@@ -1152,7 +1152,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       `POST /api/admin/reporting/query` with small-group suppression (threshold 10, complementary group, counted on learners);
       RB-3 done: `saved_reports`, `GET|POST|PUT|DELETE /api/admin/reporting/saved`, sharing with tenant roles (the viewer's own
       permissions and scope on every run), `needs_repair`, `.../saved/{id}/run` as json, csv or jsonl with the exports recorded
-      in `compliance_exports`; XLSX is not built yet (needs `maatwebsite/excel` streaming, planned with RB-5);
+      in `compliance_exports` (XLSX came with RB-5);
       RB-4 done: admin Analytics > Report builder (build, preview, withheld groups explained, save and share with roles, open, export
       CSV and JSON lines, delete) in en, pl and zh with axe and keyboard browser tests; RB-5 done: a schedule can send a saved report
       (`compliance_report_schedules.saved_report_id`), run once per recipient with their own permissions in one queued job each,
@@ -1160,7 +1160,8 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       RB-6 done: read-only OData v4 feed per saved report (service document, `$metadata` with Capabilities annotations, entity sets with
       `$select`, `$top`, `$skip`, `$count`, 5 000 rows a page, 501 for `$filter` and the rest), Basic or Bearer `reports:read` token limited
       to one report through `api_token_meta.resource_ids`, 60 requests a minute, every read logged; not yet checked by hand in Excel or
-      Power BI; RB-7 (curated CLI and MCP set) pending)
+      Power BI; RB-7 done: curated `ulams reporting` commands (`datasets`, `query`, `list`, `show`, `run`, `save`, `update`, `delete`) and the
+      same eight MCP tools in toolset `analytics`, reads available with `--read-only`)
 - [ ] (new) BI connector: read-only OData v4 feed per saved report for Excel, Power BI and Tableau, with a `reports:read`
       token that can be limited to one report; CSV and JSON lines URLs with recipes for Looker Studio, Metabase and
       Superset (plan `authoring-metric-and-report-builder.md` RB-6) (partial: RB-6 built: feed, limited
@@ -1328,7 +1329,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
 - [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI
-- [ ] Health checks, Prometheus metrics, structured logs, zero-downtime guidance
+- [ ] Health checks, Prometheus metrics, structured logs, zero-downtime guidance (partial: probes, Prometheus metrics for API, queue, Caddy, H5P and PDF, and JSON logs with a request id are done in P8-4, plan phase-8-self-hosting.md; zero-downtime guidance waits for the Helm chart, P8-5)
 - [ ] SBOM, signed images, CVE scanning, hardening guide, ISO 27001 / GDPR audit docs
       Note 2026-10-22 (P8-2, #367): partial. Merged: Trivy on pull requests, in CI images and nightly against the published images (opens or updates one `security`
       issue; `.trivyignore.yaml` with a checked expiry), keyless cosign signing and verification of every digest and an SBOM attestation in `publish.yml`, SPDX SBOMs
