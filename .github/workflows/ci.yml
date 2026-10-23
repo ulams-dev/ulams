@@ -670,7 +670,9 @@ jobs:
           node --test scripts/check-trivyignore.test.mjs
           node scripts/check-trivyignore.mjs
       - name: Shellcheck of the supply-chain scripts
-        run: docker run --rm -v "$PWD/.github/scripts:/mnt" koalaman/shellcheck:stable -e SC1091 /mnt/trivy.sh /mnt/supply-chain.sh /mnt/release-assets.sh /mnt/test-supply-chain.sh
+        run: docker run --rm -v "$PWD/.github/scripts:/mnt" koalaman/shellcheck:stable -e SC1091 /mnt/trivy.sh /mnt/supply-chain.sh /mnt/release-assets.sh /mnt/test-supply-chain.sh /mnt/release-channels.sh /mnt/test-release-channels.sh
+      - name: Release channel rules (stable and lts tags)
+        run: sh .github/scripts/test-release-channels.sh
       - name: Trivy database cache
         uses: actions/cache@v6
         with:
