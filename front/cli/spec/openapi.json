@@ -3982,6 +3982,49 @@
     },
     "type": "object"
    },
+   "PlatformTemplate": {
+    "properties": {
+     "accent": {
+      "nullable": true,
+      "type": "string"
+     },
+     "created_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "demo": {
+      "type": "boolean"
+     },
+     "env_override_keys": {
+      "description": "Names only, never values",
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "name": {
+      "type": "string"
+     },
+     "slug": {
+      "description": "Tenant templates (ADR 0141, amendment): named starting points for new tenants, applied when a tenant is created\n(`template` of `POST /api/platform/tenants`, `--template` of `ulams:tenant:create`). Same access as the platform tenant API.",
+      "example": "policy-academy",
+      "type": "string"
+     },
+     "theme": {
+      "nullable": true,
+      "type": "string"
+     },
+     "updated_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "users": {
+      "description": "Demo students created with a tenant made from it",
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   },
    "PlatformTenant": {
     "properties": {
      "accent": {
@@ -21298,6 +21341,194 @@
      }
     ],
     "summary": "Generate the department courses of a policy",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/variants/{variant}/academy": {
+   "delete": {
+    "description": "Deletes the academy's tenant with everything in it (database, files, settings). The platform keeps the record of who created it.",
+    "operationId": "admin.policies.by-id.variants.by-variant.academy.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "variant",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "removed"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy, department or academy"
+     },
+     "409": {
+      "description": "Being created"
+     },
+     "502": {
+      "description": "The platform could not remove it"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Remove the academy of a department",
+    "tags": [
+     "Policies"
+    ]
+   },
+   "get": {
+    "description": "The request for the department's academy and where it stands: queued, provisioning, transferring, done (with the studio, admin and front addresses of the new academy) or failed (with the reason). `available` says whether this caller may ask for one.",
+    "operationId": "admin.policies.by-id.variants.by-variant.academy.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "variant",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "academy (null when none was requested), available, themes"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy or department"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The academy of a department",
+    "tags": [
+     "Policies"
+    ]
+   },
+   "post": {
+    "description": "Queues a new tenant created from a template (the platform records it as created for this department and enforces its limit), styled with the chosen theme preset and accent, and moves the department's builder session there; the author is invited and applies and publishes the course in the academy. Asking again after a failure resumes. The policy, its certificates and its dashboard stay in this tenant.",
+    "operationId": "admin.policies.by-id.variants.by-variant.academy.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "variant",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "accent": {
+          "example": "#C2552D",
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         },
+         "template": {
+          "description": "tenant template slug; default the installation's",
+          "type": "string"
+         },
+         "theme": {
+          "description": "a theme preset",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": false
+    },
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "queued"
+     },
+     "403": {
+      "description": "Not a platform administrator, or new sites are off"
+     },
+     "404": {
+      "description": "Unknown policy or department"
+     },
+     "409": {
+      "description": "Being created, already done, or the course is not generated yet"
+     },
+     "422": {
+      "description": "Invalid theme, accent or template"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create an academy of its own for a department",
     "tags": [
      "Policies"
     ]
@@ -40185,6 +40416,244 @@
     ]
    }
   },
+  "/api/platform/templates": {
+   "get": {
+    "operationId": "platform.templates.get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/PlatformTemplate"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Templates"
+     },
+     "403": {
+      "description": "Not a platform administrator, or the token lacks platform:read"
+     },
+     "404": {
+      "description": "The platform API is off, or this is a tenant host"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List the tenant templates",
+    "tags": [
+     "Platform"
+    ]
+   },
+   "post": {
+    "operationId": "platform.templates.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "accent": {
+          "example": "#C2552D",
+          "type": "string"
+         },
+         "demo": {
+          "type": "boolean"
+         },
+         "env": {
+          "additionalProperties": {
+           "type": "string"
+          },
+          "description": "Inheritable settings only",
+          "example": {
+           "AI_DRIVER": "fake"
+          },
+          "type": "object"
+         },
+         "name": {
+          "type": "string"
+         },
+         "slug": {
+          "example": "policy-academy",
+          "type": "string"
+         },
+         "theme": {
+          "example": "coffee",
+          "type": "string"
+         },
+         "users": {
+          "maximum": 50,
+          "minimum": 0,
+          "type": "integer"
+         }
+        },
+        "required": [
+         "slug"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Updated"
+     },
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/PlatformTemplate"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Created"
+     },
+     "422": {
+      "description": "Invalid slug or value"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create a tenant template, or change the given fields of an existing one",
+    "tags": [
+     "Platform"
+    ]
+   }
+  },
+  "/api/platform/templates/{slug}": {
+   "delete": {
+    "operationId": "platform.templates.by-slug.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "slug": {
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Removed"
+     },
+     "404": {
+      "description": "Unknown template, or the platform API is off"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Remove a tenant template (tenants made from it are untouched)",
+    "tags": [
+     "Platform"
+    ]
+   },
+   "get": {
+    "operationId": "platform.templates.by-slug.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/PlatformTemplate"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The template"
+     },
+     "404": {
+      "description": "Unknown template, or the platform API is off"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One tenant template",
+    "tags": [
+     "Platform"
+    ]
+   }
+  },
   "/api/platform/tenants": {
    "get": {
     "operationId": "platform.tenants.get",
@@ -40244,12 +40713,28 @@
          "demo": {
           "type": "boolean"
          },
+         "derived_from": {
+          "description": "The tenant this one is created for (a department academy); needs purpose and reference, counts against its quota and is recorded",
+          "type": "string"
+         },
          "name": {
+          "type": "string"
+         },
+         "purpose": {
+          "example": "policy_department",
+          "type": "string"
+         },
+         "reference": {
+          "description": "Asking again with the same reference finds the same tenant",
           "type": "string"
          },
          "slug": {
           "description": "2-30 lowercase letters and digits, starting with a letter",
           "example": "acme",
+          "type": "string"
+         },
+         "template": {
+          "description": "A tenant template: its theme, accent, demo flag and settings are the starting point; the fields above win",
           "type": "string"
          },
          "theme": {
@@ -40302,10 +40787,10 @@
       "description": "Queued"
      },
      "409": {
-      "description": "The tenant exists, or an operation for it is in progress"
+      "description": "The tenant exists, an operation for it is in progress, or the parent's quota or the reference's tenant forbids it"
      },
      "422": {
-      "description": "Invalid slug or option"
+      "description": "Invalid slug or option, or an unknown template"
      }
     },
     "security": [
@@ -40379,7 +40864,7 @@
       "description": "Queued"
      },
      "409": {
-      "description": "An operation for this tenant is in progress"
+      "description": "An operation for this tenant is in progress, or tenants were created from it (delete those first)"
      },
      "422": {
       "description": "confirm does not equal the slug"
@@ -40439,6 +40924,81 @@
      }
     ],
     "summary": "One tenant",
+    "tags": [
+     "Platform"
+    ]
+   }
+  },
+  "/api/platform/tenants/{slug}/derived": {
+   "get": {
+    "operationId": "platform.tenants.by-slug.derived.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "properties": {
+             "created_at": {
+              "type": "string"
+             },
+             "purpose": {
+              "type": "string"
+             },
+             "reference": {
+              "type": "string"
+             },
+             "requested_by": {
+              "nullable": true,
+              "type": "string"
+             },
+             "template": {
+              "nullable": true,
+              "type": "string"
+             },
+             "tenant": {
+              "type": "string"
+             }
+            },
+            "type": "object"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Active derived tenants with the record of who asked"
+     },
+     "404": {
+      "description": "Unknown tenant, or the platform API is off"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The tenants created from this one for a purpose",
     "tags": [
      "Platform"
     ]

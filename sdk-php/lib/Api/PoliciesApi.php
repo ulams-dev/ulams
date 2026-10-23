@@ -80,6 +80,15 @@ class PoliciesApi
         'adminPoliciesByIdGet' => [
             'application/json',
         ],
+        'adminPoliciesByIdVariantsByVariantAcademyDelete' => [
+            'application/json',
+        ],
+        'adminPoliciesByIdVariantsByVariantAcademyGet' => [
+            'application/json',
+        ],
+        'adminPoliciesByIdVariantsByVariantAcademyPost' => [
+            'application/json',
+        ],
         'adminPoliciesByIdVariantsGeneratePost' => [
             'application/json',
         ],
@@ -1072,6 +1081,1015 @@ class PoliciesApi
         $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
             'GET',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation adminPoliciesByIdVariantsByVariantAcademyDelete
+     *
+     * Remove the academy of a department
+     *
+     * @param  string $policy policy (required)
+     * @param  string $variant variant (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyDelete'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\ApiEnvelope
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyDelete($policy, $variant, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyDelete'][0])
+    {
+        list($response) = $this->adminPoliciesByIdVariantsByVariantAcademyDeleteWithHttpInfo($policy, $variant, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation adminPoliciesByIdVariantsByVariantAcademyDeleteWithHttpInfo
+     *
+     * Remove the academy of a department
+     *
+     * @param  string $policy (required)
+     * @param  string $variant (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyDelete'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyDeleteWithHttpInfo($policy, $variant, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyDelete'][0])
+    {
+        $request = $this->adminPoliciesByIdVariantsByVariantAcademyDeleteRequest($policy, $variant, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation adminPoliciesByIdVariantsByVariantAcademyDeleteAsync
+     *
+     * Remove the academy of a department
+     *
+     * @param  string $policy (required)
+     * @param  string $variant (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyDelete'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyDeleteAsync($policy, $variant, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyDelete'][0])
+    {
+        return $this->adminPoliciesByIdVariantsByVariantAcademyDeleteAsyncWithHttpInfo($policy, $variant, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation adminPoliciesByIdVariantsByVariantAcademyDeleteAsyncWithHttpInfo
+     *
+     * Remove the academy of a department
+     *
+     * @param  string $policy (required)
+     * @param  string $variant (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyDelete'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyDeleteAsyncWithHttpInfo($policy, $variant, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyDelete'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+        $request = $this->adminPoliciesByIdVariantsByVariantAcademyDeleteRequest($policy, $variant, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'adminPoliciesByIdVariantsByVariantAcademyDelete'
+     *
+     * @param  string $policy (required)
+     * @param  string $variant (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyDelete'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyDeleteRequest($policy, $variant, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyDelete'][0])
+    {
+
+        // verify the required parameter 'policy' is set
+        if ($policy === null || (is_array($policy) && count($policy) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $policy when calling adminPoliciesByIdVariantsByVariantAcademyDelete'
+            );
+        }
+
+        // verify the required parameter 'variant' is set
+        if ($variant === null || (is_array($variant) && count($variant) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $variant when calling adminPoliciesByIdVariantsByVariantAcademyDelete'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/policies/{policy}/variants/{variant}/academy';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($policy !== null) {
+            $resourcePath = str_replace(
+                '{' . 'policy' . '}',
+                ObjectSerializer::toPathValue($policy),
+                $resourcePath
+            );
+        }
+        // path params
+        if ($variant !== null) {
+            $resourcePath = str_replace(
+                '{' . 'variant' . '}',
+                ObjectSerializer::toPathValue($variant),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'DELETE',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation adminPoliciesByIdVariantsByVariantAcademyGet
+     *
+     * The academy of a department
+     *
+     * @param  string $policy policy (required)
+     * @param  string $variant variant (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyGet'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\ApiEnvelope
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyGet($policy, $variant, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyGet'][0])
+    {
+        list($response) = $this->adminPoliciesByIdVariantsByVariantAcademyGetWithHttpInfo($policy, $variant, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation adminPoliciesByIdVariantsByVariantAcademyGetWithHttpInfo
+     *
+     * The academy of a department
+     *
+     * @param  string $policy (required)
+     * @param  string $variant (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyGet'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyGetWithHttpInfo($policy, $variant, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyGet'][0])
+    {
+        $request = $this->adminPoliciesByIdVariantsByVariantAcademyGetRequest($policy, $variant, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation adminPoliciesByIdVariantsByVariantAcademyGetAsync
+     *
+     * The academy of a department
+     *
+     * @param  string $policy (required)
+     * @param  string $variant (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyGetAsync($policy, $variant, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyGet'][0])
+    {
+        return $this->adminPoliciesByIdVariantsByVariantAcademyGetAsyncWithHttpInfo($policy, $variant, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation adminPoliciesByIdVariantsByVariantAcademyGetAsyncWithHttpInfo
+     *
+     * The academy of a department
+     *
+     * @param  string $policy (required)
+     * @param  string $variant (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyGetAsyncWithHttpInfo($policy, $variant, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyGet'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+        $request = $this->adminPoliciesByIdVariantsByVariantAcademyGetRequest($policy, $variant, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'adminPoliciesByIdVariantsByVariantAcademyGet'
+     *
+     * @param  string $policy (required)
+     * @param  string $variant (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyGet'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyGetRequest($policy, $variant, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyGet'][0])
+    {
+
+        // verify the required parameter 'policy' is set
+        if ($policy === null || (is_array($policy) && count($policy) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $policy when calling adminPoliciesByIdVariantsByVariantAcademyGet'
+            );
+        }
+
+        // verify the required parameter 'variant' is set
+        if ($variant === null || (is_array($variant) && count($variant) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $variant when calling adminPoliciesByIdVariantsByVariantAcademyGet'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/policies/{policy}/variants/{variant}/academy';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($policy !== null) {
+            $resourcePath = str_replace(
+                '{' . 'policy' . '}',
+                ObjectSerializer::toPathValue($policy),
+                $resourcePath
+            );
+        }
+        // path params
+        if ($variant !== null) {
+            $resourcePath = str_replace(
+                '{' . 'variant' . '}',
+                ObjectSerializer::toPathValue($variant),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'GET',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation adminPoliciesByIdVariantsByVariantAcademyPost
+     *
+     * Create an academy of its own for a department
+     *
+     * @param  string $policy policy (required)
+     * @param  string $variant variant (required)
+     * @param  \Ulams\Sdk\Model\AdminPoliciesByIdVariantsByVariantAcademyPostRequest $admin_policies_by_id_variants_by_variant_academy_post_request admin_policies_by_id_variants_by_variant_academy_post_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\ApiEnvelope
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyPost($policy, $variant, $admin_policies_by_id_variants_by_variant_academy_post_request = null, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyPost'][0])
+    {
+        list($response) = $this->adminPoliciesByIdVariantsByVariantAcademyPostWithHttpInfo($policy, $variant, $admin_policies_by_id_variants_by_variant_academy_post_request, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation adminPoliciesByIdVariantsByVariantAcademyPostWithHttpInfo
+     *
+     * Create an academy of its own for a department
+     *
+     * @param  string $policy (required)
+     * @param  string $variant (required)
+     * @param  \Ulams\Sdk\Model\AdminPoliciesByIdVariantsByVariantAcademyPostRequest $admin_policies_by_id_variants_by_variant_academy_post_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyPostWithHttpInfo($policy, $variant, $admin_policies_by_id_variants_by_variant_academy_post_request = null, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyPost'][0])
+    {
+        $request = $this->adminPoliciesByIdVariantsByVariantAcademyPostRequest($policy, $variant, $admin_policies_by_id_variants_by_variant_academy_post_request, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 202:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 202:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation adminPoliciesByIdVariantsByVariantAcademyPostAsync
+     *
+     * Create an academy of its own for a department
+     *
+     * @param  string $policy (required)
+     * @param  string $variant (required)
+     * @param  \Ulams\Sdk\Model\AdminPoliciesByIdVariantsByVariantAcademyPostRequest $admin_policies_by_id_variants_by_variant_academy_post_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyPostAsync($policy, $variant, $admin_policies_by_id_variants_by_variant_academy_post_request = null, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyPost'][0])
+    {
+        return $this->adminPoliciesByIdVariantsByVariantAcademyPostAsyncWithHttpInfo($policy, $variant, $admin_policies_by_id_variants_by_variant_academy_post_request, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation adminPoliciesByIdVariantsByVariantAcademyPostAsyncWithHttpInfo
+     *
+     * Create an academy of its own for a department
+     *
+     * @param  string $policy (required)
+     * @param  string $variant (required)
+     * @param  \Ulams\Sdk\Model\AdminPoliciesByIdVariantsByVariantAcademyPostRequest $admin_policies_by_id_variants_by_variant_academy_post_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyPostAsyncWithHttpInfo($policy, $variant, $admin_policies_by_id_variants_by_variant_academy_post_request = null, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyPost'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
+        $request = $this->adminPoliciesByIdVariantsByVariantAcademyPostRequest($policy, $variant, $admin_policies_by_id_variants_by_variant_academy_post_request, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'adminPoliciesByIdVariantsByVariantAcademyPost'
+     *
+     * @param  string $policy (required)
+     * @param  string $variant (required)
+     * @param  \Ulams\Sdk\Model\AdminPoliciesByIdVariantsByVariantAcademyPostRequest $admin_policies_by_id_variants_by_variant_academy_post_request (optional)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function adminPoliciesByIdVariantsByVariantAcademyPostRequest($policy, $variant, $admin_policies_by_id_variants_by_variant_academy_post_request = null, string $contentType = self::contentTypes['adminPoliciesByIdVariantsByVariantAcademyPost'][0])
+    {
+
+        // verify the required parameter 'policy' is set
+        if ($policy === null || (is_array($policy) && count($policy) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $policy when calling adminPoliciesByIdVariantsByVariantAcademyPost'
+            );
+        }
+
+        // verify the required parameter 'variant' is set
+        if ($variant === null || (is_array($variant) && count($variant) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $variant when calling adminPoliciesByIdVariantsByVariantAcademyPost'
+            );
+        }
+
+
+
+        $resourcePath = '/api/admin/policies/{policy}/variants/{variant}/academy';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($policy !== null) {
+            $resourcePath = str_replace(
+                '{' . 'policy' . '}',
+                ObjectSerializer::toPathValue($policy),
+                $resourcePath
+            );
+        }
+        // path params
+        if ($variant !== null) {
+            $resourcePath = str_replace(
+                '{' . 'variant' . '}',
+                ObjectSerializer::toPathValue($variant),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($admin_policies_by_id_variants_by_variant_academy_post_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($admin_policies_by_id_variants_by_variant_academy_post_request));
+            } else {
+                $httpBody = $admin_policies_by_id_variants_by_variant_academy_post_request;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody
