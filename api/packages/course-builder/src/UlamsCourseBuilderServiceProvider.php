@@ -42,6 +42,9 @@ use Ulams\CourseBuilder\Pipeline\PriceService;
 use Ulams\CourseBuilder\Publish\LandingValidator;
 use Ulams\CourseBuilder\Publish\PublishCheck;
 use Ulams\CourseBuilder\Site\NewSite;
+use Ulams\CourseBuilder\StyleProfile\StyleProfileCatalogue;
+use Ulams\CourseBuilder\StyleProfile\StyleProfileExtractor;
+use Ulams\CourseBuilder\StyleProfile\StyleProfileService;
 use Ulams\CourseBuilder\Transfer\SessionArchive;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
 use Ulams\CourseBuilder\Pipeline\VariantOutlineService;
@@ -109,6 +112,9 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         VariantService::class => VariantService::class,
         VariantOutlineService::class => VariantOutlineService::class,
         AiAssistedTopics::class => AiAssistedTopics::class,
+        StyleProfileCatalogue::class => StyleProfileCatalogue::class,
+        StyleProfileExtractor::class => StyleProfileExtractor::class,
+        StyleProfileService::class => StyleProfileService::class,
         RemovalPolicy::class => DeleteEverything::class,
         FragmentArchive::class => NoFragmentArchive::class,
         SourceHistory::class => NoSourceHistory::class,
