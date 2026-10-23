@@ -16,7 +16,8 @@ name: Publish images
 # also attached as a cosign attestation (best effort: a failure there warns, the signature is what counts).
 # Verify: docs "Operators > Hardening".
 #
-# Tags: sha-<short>, <branch>, <version> and <major>.<minor> on v* tags, latest on main.
+# Tags: sha-<short>, <branch>, <version> and <major>.<minor> on v* tags, latest on main; stable and lts move in the
+# `channels` job (.github/scripts/release-channels.sh).
 #
 # Licences (see LICENSING.md):
 # - h5p is GPL-3.0-or-later. Publishing the image conveys GPL software: the image ships the
@@ -634,3 +635,30 @@ jobs:
         run: |
           sh .github/scripts/supply-chain.sh attest "$REF"
           VERIFY_ATTESTATION=1 sh .github/scripts/supply-chain.sh verify "$REF"
+
+  # Release channels (docs/plans/phase-8-self-hosting.md 4.6, SECURITY.md): on a vX.Y.Z tag, after every image
+  # passed the scan (and was signed when signing is on), `stable` moves to this release when it is the newest one,
+  # and `lts` when it is the newest patch of a line listed in .github/release-channels.json. The channel tags
+  # point at the same digests, so the signatures cover them. `latest` keeps meaning main.
+  channels:
+    name: release channels
+    needs: [supply-chain]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - uses: docker/setup-buildx-action@v4
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Move the channel tags
+        run: sh .github/scripts/release-channels.sh apply "$GITHUB_REF_NAME"
