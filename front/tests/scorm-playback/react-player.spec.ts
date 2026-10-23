@@ -3,7 +3,7 @@
 // compares what happened with the golden traces in api/packages/scorm/tests/fixtures/playback/golden/react-player.
 // The same golden file must match for the legacy front's and the admin's service worker.
 import { expect, test, type Page } from "@playwright/test";
-import { PINNED_SETTINGS, collectApiState, loadTrace } from "./helpers";
+import { LEGACY_EXPECTED, PINNED_SETTINGS, collectApiState, loadTrace, readLegacySettings, settle } from "./helpers";
 
 type Scenario = { name: string; fixture: string; query?: string; mode?: "default" | "community" };
 
@@ -29,6 +29,7 @@ async function play(page: Page, scenario: Scenario) {
   await page.goto(`/?uuid=${encodeURIComponent(uuid)}&mode=${scenario.mode ?? "default"}`);
   await page.waitForFunction(() => (window as any).__host.done !== null, undefined, { timeout: 30_000 });
 
+  await settle(() => page.evaluate(() => (window as any).__host.posts.length));
   const run = await page.evaluate(collectApiState, PINNED_SETTINGS);
   const host = await page.evaluate(() => {
     const w = window as any;
@@ -54,3 +55,10 @@ test("every fixture call returned and the session ended", async ({ page }) => {
   expect((trace.sco as any[]).some((entry) => entry.note === "api-not-found")).toBe(false);
   expect((trace.sco as any[]).every((entry) => entry.exception === undefined)).toBe(true);
 });
+
+for (const fixture of ["scorm12-session", "scorm2004-session"]) {
+  test(`${fixture}: the 2.6 behaviour is set explicitly`, async ({ page }) => {
+    await play(page, { name: "x", fixture });
+    expect(await page.evaluate(readLegacySettings, LEGACY_EXPECTED)).toEqual(LEGACY_EXPECTED);
+  });
+}
