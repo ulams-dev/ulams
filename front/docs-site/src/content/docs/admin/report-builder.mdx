@@ -3,6 +3,8 @@ title: Report builder
 description: The datasets an administrator can build reports on, how a report definition asks for rows or groups, how small groups are withheld, and how reports are saved, shared with roles and exported. The admin screen, schedules for saved reports and the BI feed follow in later releases.
 modules:
   - reporting
+adminRoutes:
+  - /analytics/report-builder
 sidebar:
   order: 34
 ---
@@ -16,9 +18,30 @@ and schedule it. It is built in steps (ADR 0194). This page covers what exists t
 
 <Aside type="note">
 Today you can list the datasets, preview a report definition, save it, share it with roles and run or export it through the
-API. The admin screen, XLSX files, schedules for saved reports and the BI feed are planned and not available yet. Nothing
+API. XLSX files, schedules for saved reports and the BI feed are planned and not available yet. Nothing
 on this page promises a date for them.
 </Aside>
+
+## The admin screen
+
+**Analytics > Report builder** (`/analytics/report-builder`, shown to everyone with the permission `reporting_read`) builds
+the same definitions without writing JSON:
+
+1. **Dataset**: pick one from the datasets you may run. A short description says what a row is.
+2. **Kind of report**: *List rows* (choose columns; personal columns are marked) or *Group and aggregate* (group by columns,
+   dates with a day, week, month, quarter or year bucket, and aggregates with a name each).
+3. **Filters**, **Date range** (a period that is worked out on every run, or custom dates) and **Order and size**.
+4. **Preview** shows at most 500 rows and says how many there are. Small groups that were withheld are explained above the
+   table and appear as one marked row; the text is the same for every viewer.
+5. **Save report** asks for a name, an optional description and who sees it: only you and the people who manage reports, or
+   the roles you name. The note in the dialog repeats that sharing shares the report, not the data.
+
+Below the builder, **Saved reports** lists the reports you can see, who they are shared with, whether they are ready, need
+repair or cannot be run with your permissions, and when they last ran. **Open** loads a report into the builder (then *Save
+changes* updates it and *Save as a new report* copies it), **Export as CSV** and **Export as JSON lines** download a file, and
+**Delete** asks first. Every control has a label, the whole screen works with the keyboard, results are real tables, and
+state changes are announced to screen readers (WCAG 2.2 AA, checked with axe in the admin browser tests). The screen is
+available in English, Polish and Chinese.
 
 ## Datasets
 
