@@ -111,10 +111,13 @@ small commits → tests → summary.
       recommended defaults for Q1 to Q11, approved the matching spec sections (ROADMAP-PROMPT 3.1 and 4.4), and accepted that variant
       courses stay unlisted and unsold on their own until CV-5 routing exists
 
-- [ ] (partial: IMG-1 done, the `@ulams/sdk/images` URL builder, presets and unit tests; IMG-2 done, `Img.astro`, the plain `<img>` sites in `front/ui` and rich-text images on the builder with a runtime `ULAMS_IMAGE_SERVICE`; the client-side `elements/showcase.ts` and `InteractiveLesson` poster are unchanged; IMG-6a done, MyDevil fronts and the landing export in `cloudflare` mode with `deploy/mydevil/bin/check-images.sh`; IMG-3 to IMG-7 pending) (new) Decision 2026-10-22: the owner asked to replace the PHP image resize with Cloudflare Image Transformations (enabled and
+- [ ] (partial: IMG-1 done, the `@ulams/sdk/images` URL builder, presets and unit tests; IMG-2 done, `Img.astro`, the plain `<img>` sites in `front/ui` and rich-text images on the builder with a runtime `ULAMS_IMAGE_SERVICE`; the client-side `elements/showcase.ts` and `InteractiveLesson` poster are unchanged; IMG-6a done, MyDevil fronts and the landing export in `cloudflare` mode with `deploy/mydevil/bin/check-images.sh`; IMG-4 in review, `IMAGES_CONTENT_URLS=api|original` for imports and the markdown helper, MyDevil on `original`, seed checks, the PHP endpoint labelled legacy and optional in its README and OpenAPI text; IMG-3 (admin) in review; IMG-5, IMG-6b and IMG-7 pending) (new) Decision 2026-10-22: the owner asked to replace the PHP image resize with Cloudflare Image Transformations (enabled and
       verified on the `ulams.app` zone), then narrowed it the same day: keep `api/packages/images` and `/api/images/img` for
       self-hosters and other clients, stop PHP resizing on the hosted demos and the landing, and make the image service a deployment
       choice. Plan `docs/plans/images-cloudflare.md` and ADR 0193 were accepted by the owner on 2026-10-22 with the recommended defaults (plan section 14)
+      Note 2026-10-23 (IMG-5, in review): the legacy learner app builds avatar URLs through the shared builder with the build setting
+      `VITE_ULAMS_IMAGE_SERVICE` (default `php`, the URLs it always built; `cloudflare`, `noop`), `VITE_ULAMS_IMAGE_SOURCES` and
+      `VITE_ULAMS_IMAGE_TRANSFORM_ORIGIN`; the `Image` component keeps its `imgcache` flow only in `php`. The app is not hosted anywhere
 
 - [x] (new) Decision 2026-10-22: the owner approved `docs/plans/authoring-metric-and-report-builder.md` and accepted ADR 0194 with the recommended defaults (originally proposed 2026-10-22): authoring time and cost
       metric, report builder with saved reports and an OData BI feed, Notion integration token. Open questions Q1 to Q13 in plan
@@ -375,7 +378,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       runtime and tracking traces captured on 2.6.x; then `scorm-again` 3 with every changed default set to the 2.6
       behaviour, AICC removed and the Dependabot ignore rule #431 dropped (closed PR #232 explains why)
       (plan `docs/plans/scorm-playback-tests.md` SC-1 to SC-4; ADR 0197 Proposed)
-      (partial: SC-1 fixtures, trace normaliser and parser tests done; SC-2 React player specs and golden traces done; SC-3 content player and SC-4 upgrade pending)
+      (partial: SC-1 fixtures, trace normaliser and parser tests done; SC-2 React player specs and golden traces done; SC-3 content player specs done, run per pull request instead of nightly; SC-4 upgrade pending)
 - [x] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
       packages and players to a per-tenant content origin (M1.1) (SCORM and cmi5 done, `<slug>.content.localhost`,
       `api/docs/content-origin.md`; run `ulams:tenant:sync-env` so existing tenants get `CONTENT_ORIGIN`)
@@ -1123,6 +1126,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       Note 2026-10-22 (CAC-3, #384): partial. Folder and server sync works in both directions without a merge: `pull` stops with `SYNC_CONFLICT` when both sides changed and `push` turns
       `BASE_OUTDATED` and `STALE_PROPOSAL` into the same error; the three-way merge, conflict files and `resolve` are CAC-4, and nothing watches a Git repository yet (CAC-6, CAC-7)
 - [ ] GitHub Action + Docker image; preview deployment per PR
+      Note 2026-10-22 (branch phase-7/git-action): partial. The course action `actions/course` (validate with SARIF, diff, preview comment, push, sync pull request `ulams/sync`, unit tested entrypoint),
+      the `ulams-cli` Dockerfile (about 290 MB, not published), `ulams course init --ci github`, CI headers `ULAMS_COMMIT`/`ULAMS_CHANGE_URL` and the outgoing webhook `course.version_applied`.
+      Open: preview academies per PR (tenant TTL, reaper, one-time token), publishing the image (M6-a)
 - [ ] Git merge triggers Living Course update proposal
       Note 2026-10-22 (#437): partial. A merged pull request is recorded on the revision (commit, subject, PR number and link) and shown on the update review; `living connections check --commit`
       for CI; `ulams course sources-connect` watches `sources/**` of the course repository; a push waits (`PROPOSAL_PENDING`) while an open proposal edits the same elements; the loop test
@@ -1244,6 +1250,10 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       the hosted demo academies and the `ulams.app` landing on Cloudflare Image Transformations with `onerror=redirect` and a `noop`
       kill switch, admin and imports on demo deployments without `/api/images/img`, the PHP images API kept as an optional legacy API
       (plan `docs/plans/images-cloudflare.md`, milestones IMG-1 to IMG-7; ADR 0193 Accepted 2026-10-22; IMG-1 starts first)
+      Note 2026-10-23 (IMG-6b, in review): prepared, not applied. Storage Worker `max-age=3600` with ETag for `image/*`,
+      `deploy/mydevil/bin/set-admin-images.sh` (admin mode through `runtime-config.json`), the optional WAF rule generated from
+      `allowedCloudflareOptions()` (`deploy/mydevil/cloudflare/image-waf-rule.mjs`) and the smoke check `ULAMS_EXPECT_WAF=1`. Deploying
+      the Worker, writing the admin config on MyDevil and creating the WAF rule are owner steps (`deploy/mydevil/STAGING-NOTES.md`)
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
 - [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI

@@ -50,6 +50,17 @@ the community mode where the host stores CMI values through `onScormPost`/`onSco
 The legacy front's and the admin's service workers must produce the same file. Run them with
 `yarn workspace front test:scorm` (`UPDATE_GOLDEN=1` rewrites the files).
 
+`golden/content-player/<scenario>.json` (`front/tests/scorm-playback/content-player.spec.ts`) is the same for the API
+content player (`resources/content-player/player.js` with the vendored scorm-again), served by the mock LMS at
+`/scorm/_player/`. It adds `fetchLog`, the ordered list of every request the player made (the launch GET and
+each track POST with its headers, `keepalive` flag and body: a `{cmi: {element: value}}` per SetValue and the
+whole CMI per commit), and has no `posts`/`gets`. The launch `cmi` the mock returns is canned in the shape of
+`Scorm12FieldStrategy`/`Scorm2004FieldStrategy::getCmiData`: `fresh` (first launch), `resume` (a suspended session)
+and `mastery` (`fresh` plus `student_data.mastery_score` 70, which the API does not send today; it shows what the
+player does with a mastery score, `mastery_override`). The stored tracking is not simulated, so these traces pin the
+player, not the PHP tracking. The same spec checks that the player refuses to start (no token, no SCO, non-http API,
+foreign entry URL, unreachable or rejecting API) and frames nothing then.
+
 What the React player does not do, which the traces therefore pin as it is: it passes the whole `show` response
 to scorm-again as settings, so `autocommit` and `lmsCommitUrl` stay at their defaults (nothing is sent to the LMS
 from the plain player), and it never loads `data.player.cmi`, so a second launch starts empty and

@@ -1,0 +1,67 @@
+name: Course action
+
+# Tests the GitHub Action `actions/course` and the `ulams-cli` image (plan 8). Nothing is published: the image is built
+# locally on the runner under a test tag and the action is used from this checkout.
+
+on:
+  pull_request:
+    paths:
+      - "actions/course/**"
+      - "front/cli/**"
+      - ".github/workflows/course-action-test.yml"
+  push:
+    branches: [main]
+    paths:
+      - "actions/course/**"
+      - "front/cli/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  entrypoint:
+    name: Entrypoint unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - run: node --test actions/course/test/entrypoint.test.mjs
+
+  image-and-action:
+    name: Image and action against the example course
+    runs-on: ubuntu-latest
+    env:
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - uses: ./.github/actions/setup-yarn
+      - name: Build the CLI bundle
+        run: corepack yarn workspace ulams build
+      - name: Build the image
+        run: docker build -f front/cli/Dockerfile --build-arg VERSION=ci-test --build-arg REVISION="$GITHUB_SHA" -t ghcr.io/ulams-dev/ulams-cli:ci-test front/cli
+      - name: The image runs as a non-root user and prints its version
+        run: |
+          docker run --rm ghcr.io/ulams-dev/ulams-cli:ci-test --version
+          test "$(docker run --rm --entrypoint id ghcr.io/ulams-dev/ulams-cli:ci-test -u)" != 0
+      - name: validate through the action
+        id: validate
+        uses: ./actions/course
+        with:
+          command: validate
+          path: front/cli/examples/kubernetes-101
+          cli-version: ci-test
+      - name: The SARIF report exists and is valid JSON
+        run: |
+          test "${{ steps.validate.outputs.exit-code }}" = 0
+          node -e "const s=JSON.parse(require('fs').readFileSync('${{ steps.validate.outputs.sarif }}','utf8')); if (s.version !== '2.1.0') process.exit(1)"
