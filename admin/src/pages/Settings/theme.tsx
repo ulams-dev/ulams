@@ -17,8 +17,10 @@ import {
   uploadLogo,
   type ThemeValues,
 } from '@/services/ulams/theme';
+import { getStyleProfile, isStyleProfileId } from '@/services/ulams/style-profile';
 import {
   proposeBrandTheme,
+  proposeFromStyleTheme,
   themeDiff,
   type BrandProposal,
 } from '../../../../front/ui/src/theme/brand-import';
@@ -108,6 +110,10 @@ export default function ThemeSettings() {
   const [failure, setFailure] = useState<string | null>(null);
   const [brandText, setBrandText] = useState('');
   const [proposal, setProposal] = useState<BrandProposal | null | undefined>(undefined);
+  // the style profile whose theme is proposed (`?styleProfile=<id>`, linked from the studio): its name, or why there is none
+  const [fromProfile, setFromProfile] = useState<
+    { name: string; status: string } | { problem: 'missing' | 'no_theme' } | undefined
+  >(undefined);
   const fileInput = useRef<HTMLInputElement>(null);
 
   const load = useCallback(async () => {
@@ -128,6 +134,30 @@ export default function ThemeSettings() {
   useEffect(() => {
     load();
   }, [load]);
+
+  // A style profile in the link proposes its theme as the same diff the brand importer shows; nothing is saved until approved.
+  const profileId =
+    typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('styleProfile');
+  useEffect(() => {
+    if (!loaded || !isStyleProfileId(profileId)) return;
+    let cancelled = false;
+    getStyleProfile(profileId)
+      .then((res) => {
+        if (cancelled) return;
+        const next = proposeFromStyleTheme(res.data?.profile?.theme, {
+          accent: stored.accent?.value,
+        });
+        if (!next) return setFromProfile({ problem: 'no_theme' });
+        setFromProfile({ name: res.data.name, status: res.data.status });
+        setProposal(next);
+      })
+      .catch(() => !cancelled && setFromProfile({ problem: 'missing' }));
+    return () => {
+      cancelled = true;
+    };
+    // the stored accent only seeds the proposal once, when the screen has loaded
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loaded, profileId]);
 
   useEffect(() => {
     if (!file) return setPreview(null);
@@ -422,6 +452,18 @@ export default function ThemeSettings() {
 
         <section aria-labelledby="theme-import">
           <h3 id="theme-import">{t('section_import')}</h3>
+          <div aria-live="polite" data-testid="style-profile-note">
+            {fromProfile && 'name' in fromProfile && (
+              <p>{t(fromProfile.status === 'approved' ? 'profile_from_approved' : 'profile_from_suggested', { name: fromProfile.name })}</p>
+            )}
+            {fromProfile && 'problem' in fromProfile && (
+              <Alert
+                type="warning"
+                showIcon
+                message={t(fromProfile.problem === 'missing' ? 'profile_missing' : 'profile_no_theme')}
+              />
+            )}
+          </div>
           <label htmlFor="theme-import-text">{t('import_label')}</label>
           <Input.TextArea
             id="theme-import-text"

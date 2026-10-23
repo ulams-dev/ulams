@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractColours, parseColour, proposeBrandTheme, themeDiff } from "../src/theme/brand-import.ts";
+import { extractColours, parseColour, proposeBrandTheme, proposeFromStyleTheme, themeDiff } from "../src/theme/brand-import.ts";
 
 describe("parseColour", () => {
   it("reads hex, rgb and hsl, and ignores words that look like hex", () => {
@@ -97,5 +97,34 @@ describe("themeDiff", () => {
       { field: "theme.theme", from: null, to: "coffee" },
       { field: "theme.accent", from: null, to: "#a84521" },
     ]);
+  });
+});
+
+describe("proposeFromStyleTheme", () => {
+  it("uses the preset and accent of the style profile and reports the contrast like the importer", () => {
+    const proposal = proposeFromStyleTheme({ preset: "coffee", accent: "#1D6F5C" });
+    expect(proposal).toMatchObject({ theme: "coffee", accent: "#1d6f5c", settings: { theme: { theme: "coffee", accent: "#1d6f5c" } } });
+    expect(proposal?.checks.every((c) => c.pass)).toBe(true);
+    expect(themeDiff(proposal!, { theme: "poland", accent: "#c8102e" }).map((c) => c.field)).toEqual(["theme.theme", "theme.accent"]);
+    expect(themeDiff(proposal!, { theme: "coffee", accent: "#1D6F5C" })).toEqual([]);
+  });
+
+  it("flags an accent that is too weak and says what the site will show", () => {
+    const proposal = proposeFromStyleTheme({ preset: "coffee", accent: "#f5c06a" });
+    expect(proposal?.checks[0]?.pass).toBe(false);
+    expect(proposal?.renderedAccent).not.toBe("#f5c06a");
+    expect(proposal?.notes.join(" ")).toContain("too weak");
+  });
+
+  it("keeps the tenant accent when the profile sets only a preset, and picks the closest preset for an accent alone", () => {
+    expect(proposeFromStyleTheme({ preset: "oncall" }, { accent: "#58a6ff" })).toMatchObject({ theme: "oncall", accent: "#58a6ff" });
+    expect(proposeFromStyleTheme({ accent: "#c8102e" })?.theme).toBeTruthy();
+  });
+
+  it("is null without a usable preset or accent, and ignores an unknown preset", () => {
+    expect(proposeFromStyleTheme(null)).toBeNull();
+    expect(proposeFromStyleTheme({})).toBeNull();
+    expect(proposeFromStyleTheme({ preset: "neon", accent: "red" })).toBeNull();
+    expect(proposeFromStyleTheme({ preset: "neon", accent: "#c8102e" })?.accent).toBe("#c8102e");
   });
 });

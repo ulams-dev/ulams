@@ -59,4 +59,8 @@ export default {
   'theme.saved': '主题已保存。',
   'theme.save_blocked': '主题未保存：强调色不满足 WCAG 2.2 AA。',
   'theme.save_failed': '无法保存主题。',
+  'theme.profile_from_approved': '来自已批准的样式配置“{name}”的建议。在您于下方批准之前不会有任何更改。',
+  'theme.profile_from_suggested': '来自样式配置“{name}”的建议，该配置尚未批准。在您于下方批准主题之前不会有任何更改。',
+  'theme.profile_missing': '无法读取链接中的样式配置。请确认它仍然存在，并且您有权使用 Course Builder。',
+  'theme.profile_no_theme': '该样式配置没有主题部分，因此没有可建议的内容。',
 };

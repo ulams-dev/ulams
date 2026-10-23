@@ -26,6 +26,7 @@ final class SyntheticResponders
         $responders->register('metadata', fn (DriverRequest $r) => self::metadata($r));
         $responders->register('price', fn (DriverRequest $r) => self::price($r));
         $responders->register('patch', fn (DriverRequest $r) => self::patch($r));
+        $responders->register('style_profile_extract', fn (DriverRequest $r) => self::styleProfile($r));
         $responders->register('variant_outline', fn (DriverRequest $r) => self::variantOutline($r));
         $responders->register('variant_lesson', fn (DriverRequest $r) => self::variantLesson($r));
     }
@@ -465,6 +466,100 @@ final class SyntheticResponders
             'reply' => 'Here is a revised version' . ($request !== '' ? ' for: "' . mb_substr($request, 0, 120) . '"' : '') . '. Review the changes and approve them if they work for you.',
             'ui' => $type === 'question' ? 'QuizQuestionCard' : 'DiffView',
             'replacement' => $replacement,
+        ];
+    }
+    /**
+     * A style guide read by rules (lines such as `Use "learner", not "student".`), so the demo and the tests get a
+     * profile whose every value cites the fragment it was read from. Instructions in the guide are not followed:
+     * only these patterns are read.
+     *
+     * @return array<string,mixed>
+     */
+    private static function styleProfile(DriverRequest $r): array
+    {
+        $theme = ['preset' => '', 'accent' => '', 'secondary' => '', 'fonts' => [], 'citations' => []];
+        $voice = ['person' => '', 'formality' => 0, 'sentenceLength' => 0, 'citations' => []];
+        $reading = [];
+        $terms = [];
+        $banned = [];
+        $components = ['preferred' => [], 'disallowed' => [], 'citations' => []];
+        $imagery = ['altTextRequired' => 'unspecified', 'decorativeAllowed' => 'unspecified', 'noTextInImages' => 'unspecified', 'citations' => []];
+        $examples = [];
+        $quoted = fn (string $text): array => preg_match_all('/"([^"]+)"/', $text, $m) ? $m[1] : [];
+        $add = function (array &$cites, string $id): void {
+            $cites = array_values(array_unique([...$cites, $id]));
+        };
+        foreach (self::fragments($r) as $id => $fragment) {
+            foreach (preg_split('/\R/', $fragment['text']) ?: [] as $line) {
+                $line = trim($line);
+                if (preg_match('/Write to the learner as "(you|we)"/', $line, $m)) {
+                    $voice['person'] = $m[1];
+                    $add($voice['citations'], $id);
+                }
+                if (preg_match('/formality (\d) of 5/', $line, $m)) {
+                    $voice['formality'] = (int) $m[1];
+                    $add($voice['citations'], $id);
+                }
+                if (preg_match('/sentences under (\d+) words/', $line, $m)) {
+                    $voice['sentenceLength'] = (int) $m[1];
+                    $add($voice['citations'], $id);
+                }
+                if (preg_match('/^English: grade (\d+)\. Polish: ([ABC][12])\./', $line, $m)) {
+                    $reading[] = ['language' => 'en', 'level' => 'grade-' . $m[1], 'citations' => [$id]];
+                    $reading[] = ['language' => 'pl', 'level' => $m[2], 'citations' => [$id]];
+                }
+                if (preg_match('/^- Use "([^"]+)", not (.+)\.$/', $line, $m)) {
+                    $terms[] = ['use' => $m[1], 'avoid' => $quoted($m[2]), 'citations' => [$id]];
+                }
+                if (preg_match('/^- Write "([^"]+)" with this exact casing, never (.+)\.$/', $line, $m)) {
+                    $terms[] = ['use' => $m[1], 'avoid' => $quoted($m[2]), 'citations' => [$id]];
+                }
+                if (preg_match('/^Never write (.+?)\. /', $line . ' ', $m)) {
+                    foreach ($quoted($m[1]) as $phrase) {
+                        $banned[] = ['phrase' => $phrase, 'citations' => [$id]];
+                    }
+                }
+                if (preg_match('/^Prefer (.+?) for /', $line, $m)) {
+                    $components['preferred'] = preg_split('/\s+and\s+|,\s*/', $m[1]) ?: [];
+                    $add($components['citations'], $id);
+                }
+                if (preg_match('/Do not use (.+?)\.$/', $line, $m)) {
+                    $components['disallowed'] = preg_split('/\s+or\s+|,\s*/', $m[1]) ?: [];
+                    $add($components['citations'], $id);
+                }
+                if (str_contains($line, 'Every image needs alt text')) {
+                    $imagery['altTextRequired'] = 'yes';
+                    $add($imagery['citations'], $id);
+                }
+                if (str_contains($line, 'No text inside images')) {
+                    $imagery['noTextInImages'] = 'yes';
+                    $add($imagery['citations'], $id);
+                }
+                if (preg_match('/Decorative images are (not )?allowed/', $line, $m)) {
+                    $imagery['decorativeAllowed'] = $m[1] === '' ? 'yes' : 'no';
+                    $add($imagery['citations'], $id);
+                }
+                if (preg_match('/Brand colour: (#[0-9A-Fa-f]{6})/', $line, $m)) {
+                    $theme['accent'] = $m[1];
+                    $add($theme['citations'], $id);
+                }
+                if (preg_match('/Theme preset: (\w+)/', $line, $m)) {
+                    $theme['preset'] = $m[1];
+                    $add($theme['citations'], $id);
+                }
+                if (preg_match('/Fonts: (.+?)\.?$/', $line, $m)) {
+                    $theme['fonts'] = array_map('trim', preg_split('/\s+and\s+|,\s*/', $m[1]) ?: []);
+                    $add($theme['citations'], $id);
+                }
+                if (str_starts_with($line, '> ') && count($examples) < 3) {
+                    $examples[] = ['text' => trim(substr($line, 2)), 'citations' => [$id]];
+                }
+            }
+        }
+
+        return [
+            'theme' => $theme, 'voice' => $voice, 'readingLevel' => $reading, 'terminology' => $terms,
+            'banned' => ['phrases' => $banned], 'components' => $components, 'imagery' => $imagery, 'examples' => $examples,
         ];
     }
 }
