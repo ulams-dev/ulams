@@ -1080,6 +1080,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       bridge to a running LMS and Stripe (CM-4), the CI job and `scripts/commerce-e2e.sh` (CM-7)
 - [ ] Single login: LMS as identity source; Sylius customer linked on first checkout
 - [ ] Tenant ↔ Sylius channel (catalogue, prices, currency, locale, tax zone), created at provisioning
+      Note 2026-10-23 (CM-4): `TenantProvisioner` step `commerce_channel` (contract in `tenancy`, Sylius implementation in `commerce-sylius`), `ulams:tenant:commerce-channel`
+      and an upgrade step for existing tenants, channel disabled on tenant deletion; currency PLN/EUR by language, locale, EU countries, seller tax zone, payment methods
+      and the bridge webhook link, with the secret kept encrypted and written to the tenant env. Tested in memory and against a real Sylius; ticks when merged
 - [ ] Unified admin: prices, coupons, orders, refunds in LMS admin; native Sylius admin for
       advanced settings
 - [ ] B2B seat packages (Sylius product + LMS seat pool), invoices from Sylius
@@ -1087,6 +1090,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       Note 2026-10-22 (CM-2): partial. The access part is in: `ulams:entitlements:backfill` (dry run, all-or-nothing, idempotent) and the nightly
       `ulams:entitlements:parity`; orders and vouchers migrate in CM-10
 - [ ] EU VAT (OSS) for digital services: confirm Sylius handling, document options
+      Note 2026-10-23 (CM-4): setup done (`ulams:commerce:seed-eu-vat`: 27 zones, `e-service` category, standard rates included in price; a real checkout shows 23 % for a
+      Polish and 19 % for a German billing address). The rates in `eu-vat-rates.json` are unconfirmed seed data for the owner's accountant; the OSS return report and B2B reverse
+      charge are not built (CM-9); options for the owner are in `docs/plans/phase-6-commerce.md` section 11
 - [ ] Per-tenant branding, catalogue, sales pages
 - [ ] Partner/customer portals with scoped admins and reports
 

@@ -10,10 +10,12 @@ modules:
 import { Aside } from "@astrojs/starlight/components";
 
 <Aside type="caution">
-  Phase 6.4, milestone CM-3 (ADR 0131, ADR 0133). The catalogue sync, the Sylius adapter, the order read-back, the
+  Phase 6.4, milestones CM-3 and CM-4 (ADR 0131, ADR 0133). The catalogue sync, the Sylius adapter, the order read-back, the
   event feed and the nightly sweep run against a real Sylius in the test suite. Buying from the learner frontend
   (single login, cart, checkout) is CM-5 and is still **Coming**; today an order is created through the Shop API only
-  by the tests. The Wellms cart stays the default provider (`COMMERCE_PROVIDER=wellms`).
+  by the tests. Stripe has never been run against a Stripe account (CM-4 creates the method and tests it with dummy
+  keys; see `docs/reports/commerce-p24-spike.md` in the repository). The
+  Wellms cart stays the default provider (`COMMERCE_PROVIDER=wellms`).
 </Aside>
 
 Sylius sells; the LMS decides who has access. Sylius owns the catalogue, cart, checkout, taxes and payments. The LMS
@@ -42,7 +44,46 @@ The native Sylius admin UI needs Webpack assets that are not built into the imag
 One Sylius instance serves every tenant, with a channel per tenant (code = tenant slug, `COMMERCE_CHANNEL`). Sylius has
 no tenant isolation of its own, so the adapter is bound to the tenant's channel: product codes, prices, order reads
 and the event feed all carry it, an order of another channel is reported with that channel and refused by the LMS, and
-a customer linked in another channel counts as unlinked. Creating the channel at provisioning is CM-4.
+a customer linked in another channel counts as unlinked.
+
+### The channel is made when the tenant is
+
+With `COMMERCE_PROVIDER=sylius` in the platform env, `ulams tenant create` (and `POST /api/platform/tenants`) has a step
+`commerce_channel` after `permissions`. It creates the channel (code = tenant slug) with:
+
+- **currency**: PLN when the platform language is Polish, EUR otherwise; the base currency is fixed at creation. Override
+  once per tenant with `ulams:tenant:set-env <slug> --set=COMMERCE_CURRENCY=USD` before the step runs;
+- **locale** from the platform language (`COMMERCE_LOCALE` overrides), the 27 EU countries plus `COMMERCE_EXTRA_COUNTRIES`,
+  the tenant's front host as hostname, shipping skipped (digital products);
+- **default tax zone** of the seller country (`COMMERCE_SELLER_COUNTRY`, default `PL`; confirm with the accountant);
+- the **payment methods** below, and the **bridge link**: the tenant's webhook URL
+  (`<api host>/api/commerce/webhooks/sylius`) and a webhook secret made once, kept encrypted in the platform database and
+  written to the tenant env as `COMMERCE_CHANNEL` and `COMMERCE_WEBHOOK_SECRET`.
+
+It is idempotent. Tenants made before commerce was switched on get their channel from the upgrade step, or by hand with
+`php artisan ulams:tenant:commerce-channel [slug]`. Deleting a tenant disables its channel and keeps its orders and
+products. A different base currency for an existing channel is refused (HTTP 409 from the command's point of view); the
+channel stays as it was.
+
+### EU VAT
+
+`php artisan ulams:commerce:seed-eu-vat` (also run by the first channel) creates the 27 member states as countries, a
+zone `eu-<cc>` each, the tax category `e-service` and one rate `vat-<cc>` per country, included in the price, from
+`api/packages/commerce-sylius/resources/eu-vat-rates.json`. Sylius takes the zone from the billing address and falls back
+to the channel's default zone, so a Polish buyer pays 23 % and a German buyer 19 % of the same gross price (checked in a
+real checkout). **The rates are seed data marked unconfirmed**: the seller's accountant must confirm every rate and the
+seller country before the first live sale. Nothing here files or collects evidence for the OSS return, and B2B reverse
+charge is CM-9.
+
+### Payment methods
+
+| Method | Created when | Notes |
+|---|---|---|
+| `stripe` (Stripe Checkout) | `COMMERCE_STRIPE_PUBLISHABLE_KEY` and `COMMERCE_STRIPE_SECRET_KEY` are in the platform env | Use `pk_test_`/`sk_test_` keys first. BLIK and Przelewy24 are enabled in the Stripe dashboard |
+| `offline` (pay later) | `COMMERCE_SYLIUS_OFFLINE=true` | Development and tests only |
+
+Keys rotated in the env reach the Sylius method the next time the channel step runs. Sylius stores the gateway keys and
+shows them to its admin API user: the Admin API is internal and only the LMS holds its credentials.
 
 ## Catalogue sync
 
@@ -108,9 +149,10 @@ With `COMMERCE_NIGHTLY=true` the scheduler runs, per tenant, `ulams:commerce:rec
 |---|---|---|
 | `commerce` provider contract (`WellmsProviderContractTest`) | always | The Wellms adapter meets the contract |
 | `commerce-sylius` with an in-memory Sylius | always | Request shapes, token handling, errors, channel binding |
+| `commerce-sylius` `TenantCreateMakesChannelTest` | always | `ulams tenant create` through the real provisioner makes the channel, link and env |
 | `commerce-sylius` `Live/*` | with `COMMERCE_SYLIUS_LIVE_URL` and the live admin credentials | The same contract and the whole flow (sync, checkout, access, refund, sweep, drift) against a real Sylius 2.3 |
 | `api/sylius` bridge tests | always (CI job `sylius`) | Outbox recording, feed, delivery signing and retry, channel links, sealing |
 
 The signature the bridge produces and the LMS verifies is checked against one recorded vector in both suites.
-Not verified without a real service: payment through Stripe (CM-4), delivery from the bridge to a running LMS over the
+Not verified without a real service: payment through Stripe, BLIK or Przelewy24 (needs a Stripe account), delivery from the bridge to a running LMS over the
 network (the delivery request and its signature are tested on both sides, not the connection), and the native admin UI.

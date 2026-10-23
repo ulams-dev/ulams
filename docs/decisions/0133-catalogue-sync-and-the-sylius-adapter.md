@@ -61,3 +61,27 @@ Option 2, with LMS-side `Bundle` (courses sold together) and `AccessPass` (a cou
 - Updating a product translation or a channel price through the Admin API must name the sub-resource (`@id`); otherwise
   Sylius reads a second translation or price for the same locale or channel and answers 422.
 - Adyen and PayPal are not installed; Stripe, Mollie and the Refund plugin are (CM-4 configures them).
+
+## Implementation notes (CM-4)
+
+- **Channel at provisioning.** `TenantProvisioner` has a step `commerce_channel` after `permissions`, through a contract in
+  the tenancy package (`CommerceChannelProvisionerContract`); `commerce-sylius` implements it. The channel code is the
+  tenant slug, the secret (`whsec_` and 32 random bytes) is made once, stored encrypted on the tenant row and written to
+  the tenant env as `COMMERCE_CHANNEL` and `COMMERCE_WEBHOOK_SECRET`. Without `COMMERCE_PROVIDER=sylius` the step is
+  skipped and not recorded; the upgrade step and `ulams:tenant:commerce-channel` create the channel later, for every
+  tenant that has none. Deleting a tenant disables the channel (best effort) and keeps orders and products.
+- **Defaults.** Base currency PLN for Polish-language platforms and EUR otherwise (plan Q2), overridable once per tenant
+  with `COMMERCE_CURRENCY` and `COMMERCE_LOCALE` (`ulams:tenant:set-env`); the base currency of an existing channel is never
+  touched and a different one is reported (409).
+- **EU VAT seed through the Admin API, not a bridge command.** The plan put `ulams:commerce:seed-eu-vat` in the bridge
+  bundle. It is an LMS command instead (`resources/eu-vat-rates.json`, 27 countries, zones `eu-<cc>`, rates `vat-<cc>`
+  included in the price, tax category `e-service`): no Doctrine code in two places, and it is tested against the real
+  API. The rates are seed data marked unconfirmed until an accountant signs them off. A live checkout shows 23 % of a
+  gross price for a Polish and 19 % for a German billing address.
+- **Payment methods** are shared by all channels; each tenant channel is added to them. `offline` is for development
+  and tests (`COMMERCE_SYLIUS_OFFLINE`), `stripe` exists when the Stripe keys are in the platform env. Stripe payments
+  were not run: see `docs/reports/commerce-p24-spike.md`.
+- **No telemetry.** Core telemetry is switched off in configuration and a compiler pass removes any `sylius.telemetry.*`
+  service the Stripe or Refund plugin would load; in the 2.3.0 container none is loaded (plan Q12, risk R6).
+- Not done: rotating a tenant's webhook secret (`ulams:commerce:rotate-secret`, plan 5.6) and the accepted-currency
+  switch of a live channel.
