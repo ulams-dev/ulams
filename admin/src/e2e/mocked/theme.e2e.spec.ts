@@ -324,4 +324,64 @@ test.describe('admin theme screen', () => {
     await expect(page.getByText('Wszystkie sprawdzenia spełniają WCAG 2.2 AA.')).toBeVisible();
     expect(await scan(page)).toEqual([]);
   });
+
+  test.describe('theme proposed from a style profile', () => {
+    const PROFILE = '01j9z3k8m2x4q7r5t6v8w0y1ab';
+    const profiles = {
+      [PROFILE]: {
+        name: 'Northwind',
+        status: 'suggested',
+        profile: { theme: { preset: 'coffee', accent: '#1d6f5c', citations: ['frg_aaaaaaaaaaaa'] } },
+      },
+      '01j9z3k8m2x4q7r5t6v8w0y1ac': { name: 'No colours', status: 'approved', profile: { voice: {} } },
+    };
+
+    const openFromProfile = async (page: Page, id: string, theme: MockTheme = STORED) => {
+      const state = await mockApi(page, { theme, styleProfiles: profiles });
+      await page.goto(`${THEME_URL}?styleProfile=${id}`);
+      await expect(page.locator('.theme-settings')).toBeVisible();
+      return state;
+    };
+
+    test('shows the profile theme as the diff to approve, saves nothing until approved, and passes axe', async ({
+      page,
+    }) => {
+      const state = await openFromProfile(page, PROFILE);
+      const diff = page.getByTestId('brand-diff');
+      await expect(diff).toBeVisible();
+      await expect(page.getByTestId('style-profile-note')).toContainText(
+        'Proposed from the style profile "Northwind", which is not approved yet',
+      );
+      await expect(diff.getByRole('row', { name: /Preset/ })).toContainText('Poland, Measured');
+      await expect(diff.getByRole('row', { name: /Preset/ })).toContainText('The Coffee Atlas');
+      await expect(diff.getByRole('row', { name: /Accent colour/ })).toContainText('#1d6f5c');
+      expect(state.themeWrites).toEqual([]);
+      expect(await scan(page), 'diff from a style profile').toEqual([]);
+
+      await diff.getByRole('button', { name: 'Approve and save' }).click();
+      await expect(page.getByText('Theme saved.')).toBeVisible();
+      expect(state.theme()).toEqual({ theme: 'coffee', accent: '#1d6f5c', logoAlt: 'Acme Coffee logo', logo: 'theme/logo-1.png' });
+    });
+
+    test('says when the profile has no theme part or cannot be read, and proposes nothing', async ({
+      page,
+    }) => {
+      const state = await openFromProfile(page, '01j9z3k8m2x4q7r5t6v8w0y1ac');
+      await expect(page.getByTestId('style-profile-note')).toContainText('no theme part');
+      await expect(page.getByTestId('brand-diff')).toHaveCount(0);
+      expect(await scan(page), 'no theme part').toEqual([]);
+
+      await openFromProfile(page, '01j9z3k8m2x4q7r5t6v8w0y1zz');
+      await expect(page.getByTestId('style-profile-note')).toContainText('could not be read');
+      await expect(page.getByTestId('brand-diff')).toHaveCount(0);
+      expect(state.themeWrites).toEqual([]);
+    });
+
+    test('in Polish', async ({ page }) => {
+      const state = await mockApi(page, { theme: STORED, styleProfiles: profiles, locale: 'pl-PL' });
+      await page.goto(`${THEME_URL}?styleProfile=${PROFILE}`);
+      await expect(page.getByTestId('style-profile-note')).toContainText('Propozycja z profilu stylu „Northwind”');
+      expect(state.themeWrites).toEqual([]);
+    });
+  });
 });

@@ -1,0 +1,127 @@
+---
+title: Style profiles
+description: Upload your organisation's style guide and the Course Builder reads it into a cited style profile (theme, voice, terminology, banned phrases, reading level, components, image rules) that an admin approves as a diff.
+sidebar:
+  order: 43
+modules:
+  - course-builder
+learnerRoutes:
+  - /studio/style
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+<Aside type="note" title="What is built and what is coming">
+**Built:** reading a style guide into a style profile, with every value citing the passage it came from; the **Style**
+screen of the studio (`/studio/style`) to review, edit and approve it, in English, Polish and Chinese; handing the theme
+part to the admin theme screen as a diff; the diff against the approved profile; **the approved profile in the prompt of
+every course the builder drafts, chosen per Course Brief**; the API and `ulams style-profiles`.
+**Coming:** the style check with its findings in the publish summary, restyle proposals for courses that already exist,
+and a profile per entry point (it arrives with entry points). Progress is tracked in the [roadmap](/roadmap/); the design
+is in `docs/plans/style-guide-course-design.md` and ADR 0196.
+</Aside>
+
+A style guide is a document. A **style profile** is what the builder can use from it: typed values that an admin
+approved, each one pointing at the passage of the guide it came from. The raw guide never reaches the model that writes
+your lessons.
+
+## How a profile is made
+
+1. **Upload a style guide** (Markdown, PDF or DOCX). The file is read like any other source, as untrusted input.
+2. **One model call proposes the values.** The call is logged like every other (model, tokens, cost). Values that do not
+   fit the schema, name something unknown, carry a link or markup, or cite no passage of the guide are dropped, and the
+   response lists what was dropped in `warnings`. A style guide that says "ignore your instructions" can at most
+   produce a value that is dropped.
+3. **Review the proposal.** `GET` on a profile shows the values, the passages they cite (so a reviewer who did not
+   upload the guide can read them) and the diff against the approved profile.
+4. **Edit if needed.** Values you add by hand have no citation and are marked as yours.
+5. **An admin approves it.** Approving replaces the approved profile of its scope; the old one stays as superseded.
+   Nothing changes in an existing course or theme when a profile is approved.
+
+Without AI on the installation, or when the model cannot read the guide, the profile starts empty with a warning and you
+fill it in by hand.
+
+## What a profile holds
+
+| Part | Content |
+|---|---|
+| `theme` | theme preset, accent and secondary colour (six digit hex, with a warning when the accent is too weak on the preset), font family names (system or self-hosted fonts only; web-font URLs are ignored), logo file id |
+| `voice` | person (`you`, `we`, `neutral`), formality 1 to 5, longest sentence in words |
+| `readingLevel` | a CEFR level (A1 to C2) or `grade-1` to `grade-16` per language |
+| `terminology` | the term to use and the terms to avoid, product names with exact casing |
+| `banned` | phrases never to use, and `blocking`: whether a banned phrase blocks publishing (your decision, never the model's) |
+| `components` | preferred and disallowed layout components, which must exist in the page catalogue |
+| `imagery` | alt text required, decorative images allowed, no text in images |
+| `examples` | up to three short approved example paragraphs |
+
+The JSON Schema is `api/packages/course-builder/resources/schemas/style-profile/v1.json`.
+
+## In the studio
+
+Open **Style** in the studio rail (`/studio/style`).
+
+1. **Upload a style guide** (Markdown, PDF or DOCX) and, if you like, name the profile. The proposal opens below the list.
+2. **Read what was dropped.** The *Dropped from the proposal* list says which values did not fit and why.
+3. **Check the changes.** *Changes against the approved profile* marks every value *Added*, *Changed* or *Removed* with a word
+   and a symbol, never by colour alone. Each value has a button for the passage of the guide it cites; it opens the text
+   inline, so a reviewer who did not upload the guide can read it.
+4. **Edit a suggestion.** Remove a value with its **×** button, set the person, the formality (1 to 5) and the longest
+   sentence, switch on *A banned phrase blocks publishing*, or edit all values as JSON. Invalid values are dropped when you
+   save and listed again.
+5. **Approve it** (admins). An approved profile is read-only; **Create a revision** copies it into a new suggestion to change a rule.
+6. **Theme.** If the profile has a preset or an accent, *Review the theme in settings* opens the admin theme screen with the
+   profile in the link. The screen shows the preset and accent as the same diff it shows for an imported brand, with the
+   contrast report, and changes the academy's theme only when an admin approves that diff.
+
+The page works with the keyboard and a screen reader, at 320 px wide and with AI switched off.
+
+## How a course uses the profile
+
+When the builder drafts anything for a course (outline, lessons, quizzes, metadata, chat edits, variants) it adds the
+approved profile to the cached block with the Course Brief, as typed data:
+
+- the voice, reading level, terminology, banned phrases, component preferences, image rules and examples;
+- **not** the citations (they point into the style guide, not into your course's sources), **not** the theme (colours and
+  fonts shape the site, not the sentences), **not** the blocking switch, and **never** the text of the style guide.
+
+The profile is advisory: the instruction that comes with it says it never overrides the output schema, the citation rules
+or the facts of the source. Which profile is used:
+
+1. the profile the Course Brief names (`styleProfileId`, Course Brief v4), if it is still approved;
+2. otherwise the academy's approved profile;
+3. otherwise none, and prompts are exactly what they were before.
+
+The brief panel shows a **Style** row with the profile that will be used (*Academy default: Northwind* when the brief names
+none). Name a profile with `PUT .../sessions/{session}/brief` (`{"styleProfileId": "<id>"}`, `null` for the academy
+default) or `ulams builder brief set <session> --style-profile-id <id>` (`none` clears it). Only an approved profile is
+accepted. Changing the profile after the outline marks the outline and lessons stale, like any other brief change that
+shapes the writing; nothing is regenerated silently.
+
+To keep more than one profile in use (for example an expert track beside the academy default), propose it with
+`--scope brief` (`scopeType: brief`, named by `scopeId`). Approving a brief profile replaces only the approved profile of the
+same name, never the academy default.
+
+## From the command line
+
+```bash
+ulams style-profiles propose --file ./style-guide.md          # read and cite; returns a suggested profile with its warnings
+ulams style-profiles get <profile> --json                     # values, cited passages, diff against the approved profile
+ulams style-profiles edit <profile> --values @changes.json    # fix a value (invalid ones are dropped and reported)
+ulams style-profiles approve <profile>                        # admins; replaces the approved profile of the scope
+ulams style-profiles propose --from <profile> --profile '{"terminology":[{"use":"participant","avoid":["learner"]}]}'
+ulams style-profiles propose --file ./expert-guide.md --scope brief --name "Expert track"   # a named alternative a brief can pick
+ulams builder brief set <session> --style-profile-id <profile>   # none: back to the academy default
+ulams style-profiles list --status approved
+ulams style-profiles delete <profile> --yes                   # a suggestion or a superseded profile, never the approved one
+```
+
+To change a rule of the approved profile, propose a revision with `--from`, review its diff and approve it.
+
+## Who can do what
+
+Anyone who can use the Course Builder can list and read profiles and propose one; the creator of a suggestion or an
+admin edits or deletes it; only an admin approves, because an approved profile will shape every course drafted
+afterwards. Profiles belong to the whole academy (tenant), and an id from another tenant never resolves.
+
+The endpoints are under `/api/admin/course-builder/style-profiles` and use the `builder` scope of a scoped token
+(`builder:read` to read, `builder:write` to propose, edit, approve and delete).
