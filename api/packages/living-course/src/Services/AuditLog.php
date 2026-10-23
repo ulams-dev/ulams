@@ -26,6 +26,7 @@ final class AuditLog
         // policy lifecycle (ADR 0140): written by the policy-lifecycle package, carried by the same chain and export
         'policy.created', 'policy.variants.requested', 'policy.version.submitted', 'policy.version.approved', 'policy.version.rejected',
         'policy.rollout.applied', 'policy.certificate.revoked', 'policy.reassigned',
+        'policy.academy.requested', 'policy.academy.provisioned', 'policy.academy.failed', 'policy.academy.removed',
     ];
 
     private const GENESIS = '0000000000000000000000000000000000000000000000000000000000000000';

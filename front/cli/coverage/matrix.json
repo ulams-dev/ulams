@@ -1,5 +1,5 @@
 {
- "summary": "660/749 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "668/757 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1823,6 +1823,24 @@
    "key": "POST /api/admin/policies/{policy}/variants/generate",
    "summary": "Generate the department courses of a policy",
    "command": "policies.variants-generate",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/variants/{variant}/academy",
+   "summary": "The academy of a department",
+   "command": "policies.variants-academy-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/variants/{variant}/academy",
+   "summary": "Create an academy of its own for a department",
+   "command": "policies.variants-academy-add",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/policies/{policy}/variants/{variant}/academy",
+   "summary": "Remove the academy of a department",
+   "command": "policies.variants-academy-delete",
    "status": "covered"
   },
   {
@@ -4016,6 +4034,30 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/platform/templates",
+   "summary": "List the tenant templates",
+   "command": "tenants.templates.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/platform/templates",
+   "summary": "Create a tenant template, or change the given fields of an existing one",
+   "command": "tenants.templates.save",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/platform/templates/{slug}",
+   "summary": "One tenant template",
+   "command": "tenants.templates.get",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/platform/templates/{slug}",
+   "summary": "Remove a tenant template (tenants made from it are untouched)",
+   "command": "tenants.templates.delete",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/platform/tenants",
    "summary": "List the tenants",
    "command": "tenants.list",
@@ -4037,6 +4079,12 @@
    "key": "DELETE /api/platform/tenants/{slug}",
    "summary": "Delete a tenant and all its data (queued; send the slug as confirm)",
    "command": "tenants.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/platform/tenants/{slug}/derived",
+   "summary": "The tenants created from this one for a purpose",
+   "command": "tenants.derived",
    "status": "covered"
   },
   {

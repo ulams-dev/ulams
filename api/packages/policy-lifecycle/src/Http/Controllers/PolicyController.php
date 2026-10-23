@@ -9,6 +9,7 @@ use Ulams\PolicyLifecycle\Http\PolicyPresenter;
 use Ulams\PolicyLifecycle\Models\Policy;
 use Ulams\PolicyLifecycle\Models\PolicyVariant;
 use Ulams\PolicyLifecycle\Models\PolicyVersion;
+use Ulams\PolicyLifecycle\Services\DepartmentAcademy;
 use Ulams\PolicyLifecycle\Services\PolicyAccess;
 use Ulams\PolicyLifecycle\Services\PolicyService;
 use Ulams\PolicyLifecycle\Services\VariantGenerator;
@@ -45,7 +46,7 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  */
 class PolicyController extends PolicyApiController
 {
-    public function __construct(PolicyAccess $access, private PolicyService $policies, private VariantGenerator $generator)
+    public function __construct(PolicyAccess $access, private PolicyService $policies, private VariantGenerator $generator, private DepartmentAcademy $academies)
     {
         parent::__construct($access);
     }
@@ -98,7 +99,7 @@ class PolicyController extends PolicyApiController
     {
         $p = $this->policyFor($request, $policy);
 
-        return $this->ok(PolicyPresenter::policy($p, $this->generator, true) + ['estimate' => $this->policies->estimate($p)]);
+        return $this->ok(PolicyPresenter::policy($p, $this->generator, true) + ['estimate' => $this->policies->estimate($p), 'academyAvailable' => $this->academies->available($request->user()), 'academyThemes' => DepartmentAcademy::themes()]);
     }
 
     public function versions(Request $request, string $policy): JsonResponse
