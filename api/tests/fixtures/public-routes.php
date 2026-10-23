@@ -97,6 +97,7 @@ return [
     ['method' => 'GET', 'uri' => 'api/courses', 'kind' => 'open', 'reason' => 'Public course catalogue (published courses only).'],
     ['method' => 'GET', 'uri' => 'api/courses/{course}', 'kind' => 'open', 'reason' => 'Public course page (published courses only).'],
     ['method' => 'GET', 'uri' => 'api/courses/{course}/program', 'kind' => 'open', 'reason' => 'Public course programme.'],
+    ['method' => 'GET', 'uri' => 'api/courses/{course}/variants', 'kind' => 'open', 'reason' => 'Labels, levels and one-line descriptions of the variants of a course, for the picker on its public page (ADR 0192, Q6); no learner data.'],
     ['method' => 'GET', 'uri' => 'api/courses/{course}/preview/{topic_id}', 'kind' => 'open', 'reason' => 'Free preview of a topic the author marked as preview.'],
     ['method' => 'GET', 'uri' => 'api/tutors', 'kind' => 'open', 'reason' => 'Public instructor profiles.'],
     ['method' => 'GET', 'uri' => 'api/tutors/{id}', 'kind' => 'open', 'reason' => 'Public instructor profile.'],

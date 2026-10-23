@@ -50,7 +50,7 @@ export const LIVING_COURSE_RULES: Array<{ method: string; pattern: RegExp }> = [
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/proposals$`) },
   { method: "GET", pattern: new RegExp(`^/proposals/${ID}$`) },
   { method: "POST", pattern: new RegExp(`^/proposals/${ID}/(analyse|accept-all|reject|apply)$`) },
-  { method: "POST", pattern: new RegExp(`^/proposals/${ID}/items/${ID}/(accept|reject|reset|regenerate|suggest-lesson)$`) },
+  { method: "POST", pattern: new RegExp(`^/proposals/${ID}/items/${ID}/(accept|accept-in-group|reject|reset|regenerate|suggest-lesson)$`) },
   // connect a Git repository or web pages, check now, rotate the webhook secret, disconnect
   { method: "GET", pattern: /^\/connectors$/ },
   { method: "POST", pattern: new RegExp(`^/sessions/${ID}/sources/connect$`) },
@@ -123,4 +123,39 @@ export function isCourseVersionsCall(method: string, path: string): boolean {
 /** The API path of an allowed course-versions call (`path` as for `isCourseVersionsCall`). */
 export function courseVersionsTarget(path: string): string {
   return `/api/admin/course-versions${path.slice(COURSE_VERSIONS_PREFIX.length)}`;
+}
+
+/**
+ * Policy lifecycle (/api/admin/policies, ADR 0140). The browser reaches it as /studio/api/policies/…; the BFF forwards the part
+ * after the prefix. Creating a policy and uploading a new version are multipart POSTs; approving and rejecting a version are the
+ * owner's explicit decisions. The API checks the permission and that the policy is the caller's own; this list keeps the BFF
+ * from being an open proxy. The CSV export is a GET the page links to (the author's cookie signs it).
+ */
+export const POLICIES_PREFIX = "/policies";
+const PID = "[0-9a-z]{26}";
+export const POLICIES_RULES: Array<{ method: string; pattern: RegExp }> = [
+  { method: "GET", pattern: /^\/?$/ },
+  { method: "POST", pattern: /^\/?$/ },
+  { method: "GET", pattern: new RegExp(`^/${PID}$`) },
+  { method: "GET", pattern: new RegExp(`^/${PID}/(versions|variants|dashboard|dashboard/export)$`) },
+  { method: "POST", pattern: new RegExp(`^/${PID}/versions$`) },
+  { method: "GET", pattern: new RegExp(`^/${PID}/versions/\\d{1,6}$`) },
+  { method: "POST", pattern: new RegExp(`^/${PID}/versions/\\d{1,6}/(approve|reject)$`) },
+  { method: "POST", pattern: new RegExp(`^/${PID}/variants/generate$`) },
+  // a department's own academy (ADR 0141, amendment): ask, read, remove
+  { method: "GET", pattern: new RegExp(`^/${PID}/variants/${PID}/academy$`) },
+  { method: "POST", pattern: new RegExp(`^/${PID}/variants/${PID}/academy$`) },
+  { method: "DELETE", pattern: new RegExp(`^/${PID}/variants/${PID}/academy$`) },
+];
+
+/** `path` is relative to the BFF root, e.g. `/policies/01…/dashboard`. */
+export function isPoliciesCall(method: string, path: string): boolean {
+  if (path !== POLICIES_PREFIX && !path.startsWith(`${POLICIES_PREFIX}/`)) return false;
+  const rest = path.slice(POLICIES_PREFIX.length);
+  return POLICIES_RULES.some((r) => r.method === method.toUpperCase() && r.pattern.test(rest));
+}
+
+/** The API path of an allowed policies call (`path` as for `isPoliciesCall`). */
+export function policiesTarget(path: string): string {
+  return `/api/admin/policies${path.slice(POLICIES_PREFIX.length)}`;
 }

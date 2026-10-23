@@ -127,6 +127,9 @@ final class VariantService
     {
         $variant->status = Variant::RETIRED;
         $variant->save();
+        if ($variant->course_id !== null) {
+            app(CourseVariantServiceContract::class)->retire((int) $variant->course_id); // not offered to new learners any more
+        }
     }
 
     /**

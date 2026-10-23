@@ -50,7 +50,7 @@ export const FormWysiwyg: React.FC<FormWysiwygProps> = ({
               const resizePath = result.data[0].name.includes('/')
                 ? result.data[0].name
                 : `${directory}${result.data[0].name}`;
-              return resizedImage(resizePath, 1000);
+              return resizedImage(resizePath, 1000, result.data[0].url);
             }
             return result.data[0].url;
           }

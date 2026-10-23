@@ -67,6 +67,8 @@ test("training says what is overdue, due soon, locked and expiring, in words", a
   await expect(required.getByText("Overdue by 3 days")).toBeVisible();
   await expect(required.getByText("Due soon")).toBeVisible();
   await expect(required.getByText("Completed", { exact: true })).toBeVisible();
+await expect(required.locator("[data-policy-change]")).toContainText("Policy \"Food handling policy\" changed (version 3). Your earlier certificate was replaced: take the exam.");
+await expect(required.locator("[data-policy-change]")).toContainText("What changed: Sections 1 changed: §2.1 Cold storage.");
   // overdue first
   const titles = await required.locator("h3").allTextContents();
   expect(titles[0]).toContain("Coffee Atlas");

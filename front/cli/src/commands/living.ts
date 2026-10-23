@@ -727,13 +727,15 @@ export const livingCommands: AnyCommand[] = [
       };
     },
   }),
-  ...(["accept", "reject", "reset"] as const).map((verb) =>
+  ...(["accept", "accept-in-group", "reject", "reset"] as const).map((verb) =>
     defineCommand({
       ...common,
       id: `living.proposals.${verb}`,
       summary:
         verb === "accept"
           ? "Accept one item of a proposal"
+          : verb === "accept-in-group"
+          ? "Accept one item and the same patch in the other proposals of its group (the course's variants)"
           : verb === "reject"
           ? "Reject one item of a proposal"
           : "Reset a decision on one item",

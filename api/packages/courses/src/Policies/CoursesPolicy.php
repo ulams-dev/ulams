@@ -5,6 +5,7 @@ namespace Ulams\Courses\Policies;
 use Ulams\Core\Models\User;
 use Ulams\Courses\Enum\CoursesPermissionsEnum;
 use Ulams\Courses\Models\Course;
+use Ulams\Courses\Support\CourseVisibility;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class CoursesPolicy
@@ -105,7 +106,7 @@ class CoursesPolicy
 
     public function view(?User $user, Course $course): bool
     {
-        if ($course->is_published && $course->findable) {
+        if ($course->is_published && ($course->findable || CourseVisibility::viewable($course))) {
             return true;
         }
 

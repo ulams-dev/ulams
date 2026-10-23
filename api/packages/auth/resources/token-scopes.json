@@ -287,6 +287,14 @@
             "area": "living-course"
         },
         {
+            "pattern": "api/admin/policies/*/dashboard*",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/policies*",
+            "area": "builder"
+        },
+        {
             "pattern": "api/living-course/courses/*/notices",
             "area": "learner"
         },
@@ -344,6 +352,10 @@
         },
         {
             "pattern": "api/admin/tutors/*",
+            "area": "enrolments"
+        },
+        {
+            "pattern": "api/admin/course-variant-groups*",
             "area": "enrolments"
         },
         {
@@ -796,6 +808,10 @@
         },
         {
             "pattern": "api/compliance/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/policies/*",
             "area": "learner"
         },
         {
