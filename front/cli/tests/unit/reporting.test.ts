@@ -74,14 +74,14 @@ describe("reporting commands", () => {
     expect(csv.json().data).toBe("course_title\nSafety\n");
     expect(csv.requests.at(-1)?.query).toEqual({ format: "csv" });
 
-    const written: Record<string, Uint8Array> = {};
+    const written: Record<string, string | Uint8Array> = {};
     const file = await runCli(["reporting", "run", ID, "--format", "jsonl", "--out", "/tmp/r.jsonl", "--json"], {
       env,
       fs: { readFile: async () => new Uint8Array(), readText: async () => "", writeFile: async (p, b) => void (written[p] = b), exists: async () => true },
       routes: routes({ [`GET ${R}/saved/${ID}/run`]: { raw: '{"a":1}\n', headers: { "content-type": "application/x-ndjson" } } }),
     });
     expect(data(file)).toMatchObject({ path: "/tmp/r.jsonl", bytes: 8 });
-    expect(new TextDecoder().decode(written["/tmp/r.jsonl"])).toBe('{"a":1}\n');
+    expect(String(written["/tmp/r.jsonl"] instanceof Uint8Array ? new TextDecoder().decode(written["/tmp/r.jsonl"]) : written["/tmp/r.jsonl"])).toBe('{"a":1}\n');
   });
 
   it("an Excel file needs --out", async () => {

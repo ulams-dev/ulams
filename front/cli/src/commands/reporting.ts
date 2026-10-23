@@ -44,8 +44,8 @@ async function definitionOf(ctx: Ctx, i: { file?: string; definition?: Record<st
 }
 
 /** The report's own meta (mode, total_rows, truncated, withheld_groups, min_group_size): the client keeps only pagination meta. */
-const reportMeta = (res: { body: unknown }): { meta: unknown } | Record<string, never> => {
-  const meta = (res.body as { meta?: unknown } | null)?.meta;
+const reportMeta = (res: { body: unknown }): { meta: Record<string, unknown> } | Record<string, never> => {
+  const meta = (res.body as { meta?: Record<string, unknown> } | null)?.meta;
   return meta ? { meta } : {};
 };
 
