@@ -4009,6 +4009,48 @@
  },
  {
   "method": "GET",
+  "path": "/api/scim/v2/Groups",
+  "summary": "List or filter the groups this identity provider created",
+  "tag": "SCIM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/scim/v2/Groups",
+  "summary": "Create a group, optionally with members (users of this provider)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/scim/v2/Groups/.search",
+  "summary": "Search groups with a request body (RFC 7644 3.4.3)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/scim/v2/Groups/{id}",
+  "summary": "Delete a group: the access it gave goes, the people stay",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/Groups/{id}",
+  "summary": "One group with the members this provider provisioned",
+  "tag": "SCIM"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/scim/v2/Groups/{id}",
+  "summary": "Rename a group and add, replace or remove members (all or none)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/scim/v2/Groups/{id}",
+  "summary": "Replace a group (a missing members attribute keeps the membership; an empty list empties it)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
   "path": "/api/scim/v2/ResourceTypes",
   "summary": "SCIM resource types",
   "tag": "SCIM"

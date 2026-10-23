@@ -1,5 +1,5 @@
 {
- "summary": "623/724 covered, 101 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "623/731 covered, 108 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -4008,6 +4008,48 @@
    "summary": "Finish quiz attempt",
    "command": "my.quiz-attempts-end",
    "status": "covered"
+  },
+  {
+   "key": "GET /api/scim/v2/Groups",
+   "summary": "List or filter the groups this identity provider created",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/scim/v2/Groups",
+   "summary": "Create a group, optionally with members (users of this provider)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/scim/v2/Groups/.search",
+   "summary": "Search groups with a request body (RFC 7644 3.4.3)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/scim/v2/Groups/{id}",
+   "summary": "One group with the members this provider provisioned",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "PUT /api/scim/v2/Groups/{id}",
+   "summary": "Replace a group (a missing members attribute keeps the membership; an empty list empties it)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "PATCH /api/scim/v2/Groups/{id}",
+   "summary": "Rename a group and add, replace or remove members (all or none)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "DELETE /api/scim/v2/Groups/{id}",
+   "summary": "Delete a group: the access it gave goes, the people stay",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/scim/v2/ResourceTypes",

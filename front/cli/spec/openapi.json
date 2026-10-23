@@ -2680,6 +2680,17 @@
         "description": "Tenant URL to enter in the identity provider's SCIM settings",
         "format": "uri",
         "type": "string"
+       },
+       "group_roles": {
+        "additionalProperties": {
+         "enum": [
+          "student",
+          "tutor"
+         ],
+         "type": "string"
+        },
+        "description": "Display name of a SCIM group (lower case) to the role its members get",
+        "type": "object"
        }
       },
       "type": "object"
@@ -2820,6 +2831,23 @@
        },
        "want_encrypted_assertions": {
         "type": "boolean"
+       }
+      },
+      "type": "object"
+     },
+     "scim": {
+      "properties": {
+       "group_roles": {
+        "additionalProperties": {
+         "enum": [
+          "student",
+          "tutor"
+         ],
+         "type": "string"
+        },
+        "description": "Display name of a SCIM group to student or tutor: members of such a group get the role while they are members (replaces the whole mapping; admin cannot be mapped)",
+        "nullable": true,
+        "type": "object"
        }
       },
       "type": "object"
@@ -4506,6 +4534,103 @@
     "required": [
      "schemas",
      "status"
+    ],
+    "type": "object"
+   },
+   "ScimGroup": {
+    "properties": {
+     "displayName": {
+      "description": "Name of the group; case-insensitively unique among all groups of the academy",
+      "type": "string"
+     },
+     "externalId": {
+      "description": "The client's own id, unique per provider",
+      "type": "string"
+     },
+     "id": {
+      "readOnly": true,
+      "type": "string"
+     },
+     "members": {
+      "description": "Users of this provider (nested groups are not supported). Only members this provider provisioned are shown and changed",
+      "items": {
+       "properties": {
+        "$ref": {
+         "readOnly": true,
+         "type": "string"
+        },
+        "display": {
+         "readOnly": true,
+         "type": "string"
+        },
+        "type": {
+         "example": "User",
+         "type": "string"
+        },
+        "value": {
+         "description": "Id of the user",
+         "type": "string"
+        }
+       },
+       "type": "object"
+      },
+      "type": "array"
+     },
+     "meta": {
+      "properties": {
+       "created": {
+        "format": "date-time",
+        "type": "string"
+       },
+       "lastModified": {
+        "format": "date-time",
+        "type": "string"
+       },
+       "location": {
+        "format": "uri",
+        "type": "string"
+       },
+       "resourceType": {
+        "type": "string"
+       },
+       "version": {
+        "description": "Weak ETag of the representation",
+        "type": "string"
+       }
+      },
+      "readOnly": true,
+      "type": "object"
+     },
+     "schemas": {
+      "items": {
+       "example": "urn:ietf:params:scim:schemas:core:2.0:Group",
+       "type": "string"
+      },
+      "type": "array"
+     }
+    },
+    "required": [
+     "schemas",
+     "displayName"
+    ],
+    "type": "object"
+   },
+   "ScimGroupList": {
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ScimListResponse"
+     },
+     {
+      "properties": {
+       "Resources": {
+        "items": {
+         "$ref": "#/components/schemas/ScimGroup"
+        },
+        "type": "array"
+       }
+      },
+      "type": "object"
+     }
     ],
     "type": "object"
    },
@@ -42012,6 +42137,500 @@
     "summary": "Finish quiz attempt",
     "tags": [
      "Gift Quiz Attempt"
+    ]
+   }
+  },
+  "/api/scim/v2/Groups": {
+   "get": {
+    "operationId": "scim.groups.list",
+    "parameters": [
+     {
+      "description": "RFC 7644 filter. Attributes: id, displayName, externalId, members.value, members[value eq ...], meta.lastModified, meta.created",
+      "in": "query",
+      "name": "filter",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "1-based, default 1",
+      "in": "query",
+      "name": "startIndex",
+      "schema": {
+       "minimum": 1,
+       "type": "integer"
+      }
+     },
+     {
+      "description": "Default 100, at most 200; 0 returns only totalResults",
+      "in": "query",
+      "name": "count",
+      "schema": {
+       "maximum": 200,
+       "minimum": 0,
+       "type": "integer"
+      }
+     },
+     {
+      "description": "Comma-separated attributes to return",
+      "in": "query",
+      "name": "attributes",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "Comma-separated attributes to leave out, for example members",
+      "in": "query",
+      "name": "excludedAttributes",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimGroupList"
+        }
+       }
+      },
+      "description": "A page of groups"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidFilter or invalidValue"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "List or filter the groups this identity provider created",
+    "tags": [
+     "SCIM"
+    ]
+   },
+   "post": {
+    "operationId": "scim.groups.create",
+    "requestBody": {
+     "content": {
+      "application/scim+json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScimGroup"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimGroup"
+        }
+       }
+      },
+      "description": "Created: Location and ETag headers set"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidSyntax or invalidValue, for example a member that is not a user of this provider"
+     },
+     "409": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "uniqueness: the displayName (also of groups this provider did not create) or externalId is used"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Create a group, optionally with members (users of this provider)",
+    "tags": [
+     "SCIM"
+    ]
+   }
+  },
+  "/api/scim/v2/Groups/.search": {
+   "post": {
+    "operationId": "scim.groups.search",
+    "requestBody": {
+     "content": {
+      "application/scim+json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScimSearchRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimGroupList"
+        }
+       }
+      },
+      "description": "A page of groups"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidSyntax or invalidFilter"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Search groups with a request body (RFC 7644 3.4.3)",
+    "tags": [
+     "SCIM"
+    ]
+   }
+  },
+  "/api/scim/v2/Groups/{id}": {
+   "delete": {
+    "operationId": "scim.groups.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "A version (ETag) from meta.version; a stale one answers 412",
+      "in": "header",
+      "name": "If-Match",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Deleted"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Not a group of this provider"
+     },
+     "412": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Stale If-Match"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Delete a group: the access it gave goes, the people stay",
+    "tags": [
+     "SCIM"
+    ]
+   },
+   "get": {
+    "operationId": "scim.groups.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "The version you have; a match answers 304",
+      "in": "header",
+      "name": "If-None-Match",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "attributes",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "excludedAttributes",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimGroup"
+        }
+       }
+      },
+      "description": "The group with its ETag"
+     },
+     "304": {
+      "description": "Not modified"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Not a group of this provider"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "One group with the members this provider provisioned",
+    "tags": [
+     "SCIM"
+    ]
+   },
+   "patch": {
+    "operationId": "scim.groups.patch",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "A version (ETag) from meta.version; a stale one answers 412",
+      "in": "header",
+      "name": "If-Match",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/scim+json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScimPatchOp"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimGroup"
+        }
+       }
+      },
+      "description": "The updated group"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidSyntax, invalidPath, invalidValue, noTarget or mutability"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Not a group of this provider"
+     },
+     "409": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "uniqueness"
+     },
+     "412": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Stale If-Match"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Rename a group and add, replace or remove members (all or none)",
+    "tags": [
+     "SCIM"
+    ]
+   },
+   "put": {
+    "operationId": "scim.groups.replace",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "A version (ETag) from meta.version; a stale one answers 412",
+      "in": "header",
+      "name": "If-Match",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/scim+json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScimGroup"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimGroup"
+        }
+       }
+      },
+      "description": "The updated group"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidValue or mutability"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Not a group of this provider"
+     },
+     "409": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "uniqueness"
+     },
+     "412": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Stale If-Match"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Replace a group (a missing members attribute keeps the membership; an empty list empties it)",
+    "tags": [
+     "SCIM"
     ]
    }
   },

@@ -1,6 +1,6 @@
 <?php
 /**
- * ScimUserMeta
+ * ScimGroup
  *
  * PHP version 7.4
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \Ulams\Sdk\ObjectSerializer;
 
 /**
- * ScimUserMeta Class Doc Comment
+ * ScimGroup Class Doc Comment
  *
  * @category Class
  * @package  Ulams\Sdk
@@ -40,7 +40,7 @@ use \Ulams\Sdk\ObjectSerializer;
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class ScimUserMeta implements ModelInterface, ArrayAccess, \JsonSerializable
+class ScimGroup implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class ScimUserMeta implements ModelInterface, ArrayAccess, \JsonSerializable
       *
       * @var string
       */
-    protected static $openAPIModelName = 'ScimUser_meta';
+    protected static $openAPIModelName = 'ScimGroup';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,11 +57,12 @@ class ScimUserMeta implements ModelInterface, ArrayAccess, \JsonSerializable
       * @var string[]
       */
     protected static $openAPITypes = [
-        'created' => '\DateTime',
-        'last_modified' => '\DateTime',
-        'location' => 'string',
-        'resource_type' => 'string',
-        'version' => 'string'
+        'display_name' => 'string',
+        'external_id' => 'string',
+        'id' => 'string',
+        'members' => '\Ulams\Sdk\Model\ScimGroupMembersInner[]',
+        'meta' => '\Ulams\Sdk\Model\ScimGroupMeta',
+        'schemas' => 'string[]'
     ];
 
     /**
@@ -72,11 +73,12 @@ class ScimUserMeta implements ModelInterface, ArrayAccess, \JsonSerializable
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'created' => 'date-time',
-        'last_modified' => 'date-time',
-        'location' => 'uri',
-        'resource_type' => null,
-        'version' => null
+        'display_name' => null,
+        'external_id' => null,
+        'id' => null,
+        'members' => null,
+        'meta' => null,
+        'schemas' => null
     ];
 
     /**
@@ -85,11 +87,12 @@ class ScimUserMeta implements ModelInterface, ArrayAccess, \JsonSerializable
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'created' => false,
-        'last_modified' => false,
-        'location' => false,
-        'resource_type' => false,
-        'version' => false
+        'display_name' => false,
+        'external_id' => false,
+        'id' => false,
+        'members' => false,
+        'meta' => false,
+        'schemas' => false
     ];
 
     /**
@@ -178,11 +181,12 @@ class ScimUserMeta implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $attributeMap = [
-        'created' => 'created',
-        'last_modified' => 'lastModified',
-        'location' => 'location',
-        'resource_type' => 'resourceType',
-        'version' => 'version'
+        'display_name' => 'displayName',
+        'external_id' => 'externalId',
+        'id' => 'id',
+        'members' => 'members',
+        'meta' => 'meta',
+        'schemas' => 'schemas'
     ];
 
     /**
@@ -191,11 +195,12 @@ class ScimUserMeta implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $setters = [
-        'created' => 'setCreated',
-        'last_modified' => 'setLastModified',
-        'location' => 'setLocation',
-        'resource_type' => 'setResourceType',
-        'version' => 'setVersion'
+        'display_name' => 'setDisplayName',
+        'external_id' => 'setExternalId',
+        'id' => 'setId',
+        'members' => 'setMembers',
+        'meta' => 'setMeta',
+        'schemas' => 'setSchemas'
     ];
 
     /**
@@ -204,11 +209,12 @@ class ScimUserMeta implements ModelInterface, ArrayAccess, \JsonSerializable
      * @var string[]
      */
     protected static $getters = [
-        'created' => 'getCreated',
-        'last_modified' => 'getLastModified',
-        'location' => 'getLocation',
-        'resource_type' => 'getResourceType',
-        'version' => 'getVersion'
+        'display_name' => 'getDisplayName',
+        'external_id' => 'getExternalId',
+        'id' => 'getId',
+        'members' => 'getMembers',
+        'meta' => 'getMeta',
+        'schemas' => 'getSchemas'
     ];
 
     /**
@@ -268,11 +274,12 @@ class ScimUserMeta implements ModelInterface, ArrayAccess, \JsonSerializable
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('created', $data ?? [], null);
-        $this->setIfExists('last_modified', $data ?? [], null);
-        $this->setIfExists('location', $data ?? [], null);
-        $this->setIfExists('resource_type', $data ?? [], null);
-        $this->setIfExists('version', $data ?? [], null);
+        $this->setIfExists('display_name', $data ?? [], null);
+        $this->setIfExists('external_id', $data ?? [], null);
+        $this->setIfExists('id', $data ?? [], null);
+        $this->setIfExists('members', $data ?? [], null);
+        $this->setIfExists('meta', $data ?? [], null);
+        $this->setIfExists('schemas', $data ?? [], null);
     }
 
     /**
@@ -302,6 +309,12 @@ class ScimUserMeta implements ModelInterface, ArrayAccess, \JsonSerializable
     {
         $invalidProperties = [];
 
+        if ($this->container['display_name'] === null) {
+            $invalidProperties[] = "'display_name' can't be null";
+        }
+        if ($this->container['schemas'] === null) {
+            $invalidProperties[] = "'schemas' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -318,136 +331,163 @@ class ScimUserMeta implements ModelInterface, ArrayAccess, \JsonSerializable
 
 
     /**
-     * Gets created
+     * Gets display_name
      *
-     * @return \DateTime|null
+     * @return string
      */
-    public function getCreated()
+    public function getDisplayName()
     {
-        return $this->container['created'];
+        return $this->container['display_name'];
     }
 
     /**
-     * Sets created
+     * Sets display_name
      *
-     * @param \DateTime|null $created created
+     * @param string $display_name Name of the group; case-insensitively unique among all groups of the academy
      *
      * @return self
      */
-    public function setCreated($created)
+    public function setDisplayName($display_name)
     {
-        if (is_null($created)) {
-            throw new \InvalidArgumentException('non-nullable created cannot be null');
+        if (is_null($display_name)) {
+            throw new \InvalidArgumentException('non-nullable display_name cannot be null');
         }
-        $this->container['created'] = $created;
+        $this->container['display_name'] = $display_name;
 
         return $this;
     }
 
     /**
-     * Gets last_modified
-     *
-     * @return \DateTime|null
-     */
-    public function getLastModified()
-    {
-        return $this->container['last_modified'];
-    }
-
-    /**
-     * Sets last_modified
-     *
-     * @param \DateTime|null $last_modified last_modified
-     *
-     * @return self
-     */
-    public function setLastModified($last_modified)
-    {
-        if (is_null($last_modified)) {
-            throw new \InvalidArgumentException('non-nullable last_modified cannot be null');
-        }
-        $this->container['last_modified'] = $last_modified;
-
-        return $this;
-    }
-
-    /**
-     * Gets location
+     * Gets external_id
      *
      * @return string|null
      */
-    public function getLocation()
+    public function getExternalId()
     {
-        return $this->container['location'];
+        return $this->container['external_id'];
     }
 
     /**
-     * Sets location
+     * Sets external_id
      *
-     * @param string|null $location location
+     * @param string|null $external_id The client's own id, unique per provider
      *
      * @return self
      */
-    public function setLocation($location)
+    public function setExternalId($external_id)
     {
-        if (is_null($location)) {
-            throw new \InvalidArgumentException('non-nullable location cannot be null');
+        if (is_null($external_id)) {
+            throw new \InvalidArgumentException('non-nullable external_id cannot be null');
         }
-        $this->container['location'] = $location;
+        $this->container['external_id'] = $external_id;
 
         return $this;
     }
 
     /**
-     * Gets resource_type
+     * Gets id
      *
      * @return string|null
      */
-    public function getResourceType()
+    public function getId()
     {
-        return $this->container['resource_type'];
+        return $this->container['id'];
     }
 
     /**
-     * Sets resource_type
+     * Sets id
      *
-     * @param string|null $resource_type resource_type
+     * @param string|null $id id
      *
      * @return self
      */
-    public function setResourceType($resource_type)
+    public function setId($id)
     {
-        if (is_null($resource_type)) {
-            throw new \InvalidArgumentException('non-nullable resource_type cannot be null');
+        if (is_null($id)) {
+            throw new \InvalidArgumentException('non-nullable id cannot be null');
         }
-        $this->container['resource_type'] = $resource_type;
+        $this->container['id'] = $id;
 
         return $this;
     }
 
     /**
-     * Gets version
+     * Gets members
      *
-     * @return string|null
+     * @return \Ulams\Sdk\Model\ScimGroupMembersInner[]|null
      */
-    public function getVersion()
+    public function getMembers()
     {
-        return $this->container['version'];
+        return $this->container['members'];
     }
 
     /**
-     * Sets version
+     * Sets members
      *
-     * @param string|null $version Weak ETag of the representation
+     * @param \Ulams\Sdk\Model\ScimGroupMembersInner[]|null $members Users of this provider (nested groups are not supported). Only members this provider provisioned are shown and changed
      *
      * @return self
      */
-    public function setVersion($version)
+    public function setMembers($members)
     {
-        if (is_null($version)) {
-            throw new \InvalidArgumentException('non-nullable version cannot be null');
+        if (is_null($members)) {
+            throw new \InvalidArgumentException('non-nullable members cannot be null');
         }
-        $this->container['version'] = $version;
+        $this->container['members'] = $members;
+
+        return $this;
+    }
+
+    /**
+     * Gets meta
+     *
+     * @return \Ulams\Sdk\Model\ScimGroupMeta|null
+     */
+    public function getMeta()
+    {
+        return $this->container['meta'];
+    }
+
+    /**
+     * Sets meta
+     *
+     * @param \Ulams\Sdk\Model\ScimGroupMeta|null $meta meta
+     *
+     * @return self
+     */
+    public function setMeta($meta)
+    {
+        if (is_null($meta)) {
+            throw new \InvalidArgumentException('non-nullable meta cannot be null');
+        }
+        $this->container['meta'] = $meta;
+
+        return $this;
+    }
+
+    /**
+     * Gets schemas
+     *
+     * @return string[]
+     */
+    public function getSchemas()
+    {
+        return $this->container['schemas'];
+    }
+
+    /**
+     * Sets schemas
+     *
+     * @param string[] $schemas schemas
+     *
+     * @return self
+     */
+    public function setSchemas($schemas)
+    {
+        if (is_null($schemas)) {
+            throw new \InvalidArgumentException('non-nullable schemas cannot be null');
+        }
+        $this->container['schemas'] = $schemas;
 
         return $this;
     }
