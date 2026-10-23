@@ -129,6 +129,14 @@ settings. The proposal is data only: nothing is saved until an admin sets `theme
 `theme.accent` (or runs `ulams theme set`). Tenant themes keep the preset's own page colours, so a
 brand background only chooses light or dark. Logos and fonts are not imported.
 
+### Propose a theme from a style profile
+
+A [style profile](/creators/style-profiles/) made from an uploaded style guide can carry a theme preset and an accent. Its
+studio page links to this screen with the profile in the address (`?styleProfile=<id>`). The screen reads the profile and
+shows its preset and accent in the same *Proposed changes* table as an imported brand (`proposeFromStyleTheme()` in
+`@ulams/ui/theme/brand-import.ts`), with the contrast checks and, when the accent is too weak, the readable shade. A
+profile that sets only a preset keeps the current accent. Nothing is saved until you choose **Approve and save**.
+
 ## Package configuration tabs
 
 <Aside>
