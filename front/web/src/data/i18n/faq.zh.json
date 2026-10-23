@@ -187,7 +187,7 @@
         },
         {
           "q": "ULAMS 支持单点登录吗？",
-          "a": "学员可以用 Google 或 Facebook 登录，每个学院还可以通过 OpenID Connect 或 SAML 2.0 接入自己的身份提供方。提供方通过 API 或命令行配置。目前还没有管理界面，SAML 登录必须从 ULAMS 一侧发起而不是从提供方发起，用户组和角色不做映射，SCIM 配置尚未完成。SAML 已用 Keycloak 测试；Entra ID 和 Okta 在文档中有说明，但项目没有实际运行过。"
+          "a": "学员可以用 Google 或 Facebook 登录，每个学院还可以通过 OpenID Connect 或 SAML 2.0 接入自己的身份提供方。提供方通过 API 或命令行配置。身份提供方还可以通过 SCIM 2.0 创建、更新和停用账号与用户组，被停用的人会立即失去所有会话和令牌。目前还没有管理界面，SAML 登录必须从 ULAMS 一侧发起而不是从提供方发起，登录断言中的用户组不做映射（SCIM 用户组可以授予学员或导师角色）。SAML 已用 Keycloak 测试，SCIM 已用录制的 Entra ID 和 Okta 请求测试；项目本身没有实际运行过 Entra ID 或 Okta。"
         }
       ]
     },

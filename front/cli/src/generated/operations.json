@@ -1086,6 +1086,24 @@
   "tag": "Admin Identity"
  },
  {
+  "method": "GET",
+  "path": "/api/admin/identity/providers/{provider}/scim-tokens",
+  "summary": "SCIM tokens of an identity provider, active and revoked",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/identity/providers/{provider}/scim-tokens",
+  "summary": "Create a SCIM token for an identity provider (shown once; at most two active, for rotation)",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/identity/providers/{provider}/scim-tokens/{token}",
+  "summary": "Revoke a SCIM token",
+  "tag": "Admin Identity"
+ },
+ {
   "method": "POST",
   "path": "/api/admin/identity/providers/{provider}/sp-keys/rotate",
   "summary": "Prepare or activate the next SAML service provider key pair",
@@ -4000,6 +4018,120 @@
   "path": "/api/quiz-attempts/{id}/end",
   "summary": "Finish quiz attempt",
   "tag": "Gift Quiz Attempt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/Groups",
+  "summary": "List or filter the groups this identity provider created",
+  "tag": "SCIM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/scim/v2/Groups",
+  "summary": "Create a group, optionally with members (users of this provider)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/scim/v2/Groups/.search",
+  "summary": "Search groups with a request body (RFC 7644 3.4.3)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/scim/v2/Groups/{id}",
+  "summary": "Delete a group: the access it gave goes, the people stay",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/Groups/{id}",
+  "summary": "One group with the members this provider provisioned",
+  "tag": "SCIM"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/scim/v2/Groups/{id}",
+  "summary": "Rename a group and add, replace or remove members (all or none)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/scim/v2/Groups/{id}",
+  "summary": "Replace a group (a missing members attribute keeps the membership; an empty list empties it)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/ResourceTypes",
+  "summary": "SCIM resource types",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/ResourceTypes/{id}",
+  "summary": "One SCIM resource type",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/Schemas",
+  "summary": "SCIM schemas (User, EnterpriseUser, Group)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/Schemas/{id}",
+  "summary": "One SCIM schema by its URN",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/ServiceProviderConfig",
+  "summary": "SCIM service provider configuration (RFC 7644 4)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/Users",
+  "summary": "List or filter the users this identity provider provisioned",
+  "tag": "SCIM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/scim/v2/Users",
+  "summary": "Create a user (or adopt an existing account the provider is trusted for)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/scim/v2/Users/.search",
+  "summary": "Search users with a request body (RFC 7644 3.4.3)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/scim/v2/Users/{id}",
+  "summary": "Deprovision a user: deactivate, revoke every session and token, keep the learning record (anonymise when configured)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/Users/{id}",
+  "summary": "One user",
+  "tag": "SCIM"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/scim/v2/Users/{id}",
+  "summary": "Change a user with add, replace and remove operations (all or none)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/scim/v2/Users/{id}",
+  "summary": "Replace a user (omitted attributes are cleared; an omitted active keeps the current state)",
+  "tag": "SCIM"
  },
  {
   "method": "GET",

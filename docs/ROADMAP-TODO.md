@@ -1025,7 +1025,8 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       Open: SAML SP (ID-2), full attribute, group and role mapping, enforcement and the claim viewer (ID-3), SCIM Users and Groups
       (ID-4, ID-5), HRIS CSV import (ID-6) and the later milestones of the plan; `POST /api/identity/discover` and a test-login endpoint come with ID-3
       Note 2026-10-22 (Coming audit): SAML 2.0 login per tenant (ID-2) is merged (#392), so the Comparison matrix now shows SSO as "Yes"; mapping
-      and enforcement (ID-3), SCIM (ID-4, ID-5) and HRIS import (ID-6) stay open, and SCIM stays "Coming"
+      and enforcement (ID-3) and HRIS import (ID-6) stay open
+      Note 2026-10-23: SCIM Users (ID-4) and Groups (ID-5, branch `phase-6/id-5-scim-groups`) are built; the Comparison cell "SCIM provisioning" reads "Yes" with a note that live Entra ID and Okta tenants were not tested
 - [x] (new) Social login hardening (ID-0, #353, #357): `return_url` must be an origin of the tenant's own apps; the access token is no longer in the
       redirect URL (a one-time code, 60 s, single use, bound to the tenant host and an S256 challenge, redeemed at `POST /api/auth/social/exchange`);
       signed, server-side, single-use OAuth state; accounts linked by e-mail only for a provider-verified address in a trusted domain and never for admins,
@@ -1044,6 +1045,18 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       account linking, a hash-chained identity audit trail, an admin API with the `identity` token scope, provider buttons and a callback page in `front/web` on
       the one-time code flow; tests in `api/packages/identity/tests` (fake IdP, ID token validation, linking, isolation, audit) and a Keycloak run
       (`.github/workflows/identity-keycloak.yml`, label or nightly gated). Open in the same plan: SAML, SCIM, HRIS (see the item above)
+- [ ] (new) SCIM 2.0 Users (ID-4, #475; ticks when merged): `/api/scim/v2` with ServiceProviderConfig,
+      ResourceTypes, Schemas, Users (create, list with the full RFC 7644 filter grammar, `.search`, get, PUT, PATCH, DELETE), pagination, `ETag` and `If-Match`,
+      the SCIM error format with `scimType`; bearer tokens of kind `scim` on a per-provider service user (shown once, 365 days at most, two active for rotation,
+      accepted only on SCIM routes); a client sees only the users its provider provisioned; `active=false` and `DELETE` deactivate and revoke every token and session and
+      keep the learning record (anonymise is opt-in, nothing is hard-deleted); administrators cannot be changed; 600 requests per minute per token; audit rows;
+      ADR 0198 (Proposed); docs `operators/scim.mdx`, `developers/scim-api.mdx`. Plan section 17 lists the differences from the plan. Open: webhooks for user
+      lifecycle events (the plan's `EventCatalog` does not exist), an independent reference client in the nightly (documented manual checks until then), a check with real Entra ID and
+      Okta tenants (owner inputs), authority rules between SCIM and HRIS or manual edits (come with HRIS, ID-6) and the admin screen (ID-8)
+- [ ] (new) SCIM 2.0 Groups and roles from groups (ID-5, branch `phase-6/id-5-scim-groups`, stacked on ID-4; ticks when merged): `/api/scim/v2/Groups` with members, filters, PATCH
+      (Okta and Entra forms), ETag; groups managed by the provider that created them, display names unique across all groups, only provider-provisioned members visible; `scim.group_roles` maps a
+      group name to student or tutor (never admin) and only takes back what it granted; `DELETE` of a user leaves the groups; ADR 0199 (Proposed), docs updated, comparison cell Yes. Open: check with real Entra ID and Okta
+      tenants (owner inputs), reference client in the nightly, blocking hand edits of managed groups in the admin API (ID-8)
 
 ### 6.4 Commerce (Sylius) and extended enterprise
 - [ ] `CommerceProvider` interface (sync product, create checkout, handle order events) (partial: interface and the Wellms cart adapter shipped in `api/packages/commerce`, ADR 0049; the Sylius adapter is pending)

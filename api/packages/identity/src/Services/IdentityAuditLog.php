@@ -21,6 +21,12 @@ final class IdentityAuditLog
         'provider.created', 'provider.updated', 'provider.deleted',
         // SAML (ID-2): certificates, metadata refresh, SHA-1 opt-in, SP key rotation, single logout
         'saml.certs_changed', 'saml.metadata_refreshed', 'saml.metadata_failed', 'saml.metadata_attention',
+        // SCIM (ID-4): tokens and user provisioning
+        'scim.token_created', 'scim.token_revoked',
+        'scim.user_created', 'scim.user_updated', 'scim.user_deactivated', 'scim.user_reactivated', 'scim.user_deleted',
+        // SCIM groups (ID-5) and the roles their members get
+        'scim.group_created', 'scim.group_updated', 'scim.group_deleted', 'scim.group_members_changed',
+        'role.granted_by_mapping', 'role.revoked_by_mapping',
         'saml.sha1_changed', 'saml.sha1_accepted', 'saml.sp_keys_rotated', 'saml.logout', 'saml.logout_failed',
     ];
 

@@ -51,6 +51,37 @@ class UserGroupService implements UserGroupServiceContract
         return $group->refresh()->users;
     }
 
+    public function addMembers(Group $group, iterable $users): int
+    {
+        $byId = [];
+        foreach ($users as $user) {
+            $byId[$user->getKey()] = $user;
+        }
+        $changes = $byId === [] ? [] : $group->users()->syncWithoutDetaching(array_keys($byId));
+        foreach ($changes['attached'] ?? [] as $id) {
+            event(new UserAddedToGroup($byId[$id]));
+        }
+
+        return count($changes['attached'] ?? []);
+    }
+
+    public function removeMembers(Group $group, iterable $users): int
+    {
+        $byId = [];
+        foreach ($users as $user) {
+            $byId[$user->getKey()] = $user;
+        }
+        $present = $byId === [] ? [] : $group->users()->whereIn('users.id', array_keys($byId))->pluck('users.id')->all();
+        if ($present !== []) {
+            $group->users()->detach($present);
+        }
+        foreach ($present as $id) {
+            event(new UserRemovedFromGroup($byId[$id]));
+        }
+
+        return count($present);
+    }
+
     public function addMemberToMultipleGroups(array $groups, User $user): void
     {
         foreach ($groups as $group) {

@@ -187,7 +187,7 @@
         },
         {
           "q": "Does ULAMS support single sign-on?",
-          "a": "Learners can sign in with Google or Facebook, and each academy can connect its own identity provider through OpenID Connect or SAML 2.0. Providers are set up through the API or the command line. There is no admin screen yet, SAML sign-in has to start at ULAMS rather than at the provider, groups and roles are not mapped and SCIM provisioning is not built. SAML was tested against Keycloak; Entra ID and Okta are documented but not run by the project."
+          "a": "Learners can sign in with Google or Facebook, and each academy can connect its own identity provider through OpenID Connect or SAML 2.0. Providers are set up through the API or the command line. Identity providers can also create, update and deactivate accounts and groups with SCIM 2.0, and a deactivated person loses every session and token at once. There is no admin screen yet, SAML sign-in has to start at ULAMS rather than at the provider and groups from the sign-in assertion are not mapped (SCIM groups can grant the student or tutor role). SAML was tested against Keycloak and SCIM against recorded Entra ID and Okta requests; the project has not run Entra ID or Okta themselves."
         }
       ]
     },

@@ -92,6 +92,15 @@ class AdminIdentityApi
         'identityProvidersMetadataRefresh' => [
             'application/json',
         ],
+        'identityProvidersScimTokensCreate' => [
+            'application/json',
+        ],
+        'identityProvidersScimTokensList' => [
+            'application/json',
+        ],
+        'identityProvidersScimTokensRevoke' => [
+            'application/json',
+        ],
         'identityProvidersSpkeysRotate' => [
             'application/json',
         ],
@@ -2342,6 +2351,981 @@ class AdminIdentityApi
         $query = ObjectSerializer::buildQuery($queryParams);
         return new Request(
             'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation identityProvidersScimTokensCreate
+     *
+     * Create a SCIM token for an identity provider (shown once; at most two active, for rotation)
+     *
+     * @param  string $provider provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersScimTokensCreateRequest $identity_providers_scim_tokens_create_request identity_providers_scim_tokens_create_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensCreate'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response
+     */
+    public function identityProvidersScimTokensCreate($provider, $identity_providers_scim_tokens_create_request, string $contentType = self::contentTypes['identityProvidersScimTokensCreate'][0])
+    {
+        list($response) = $this->identityProvidersScimTokensCreateWithHttpInfo($provider, $identity_providers_scim_tokens_create_request, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation identityProvidersScimTokensCreateWithHttpInfo
+     *
+     * Create a SCIM token for an identity provider (shown once; at most two active, for rotation)
+     *
+     * @param  string $provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersScimTokensCreateRequest $identity_providers_scim_tokens_create_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensCreate'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function identityProvidersScimTokensCreateWithHttpInfo($provider, $identity_providers_scim_tokens_create_request, string $contentType = self::contentTypes['identityProvidersScimTokensCreate'][0])
+    {
+        $request = $this->identityProvidersScimTokensCreateRequest($provider, $identity_providers_scim_tokens_create_request, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 201:
+                    if ('\Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 201:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation identityProvidersScimTokensCreateAsync
+     *
+     * Create a SCIM token for an identity provider (shown once; at most two active, for rotation)
+     *
+     * @param  string $provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersScimTokensCreateRequest $identity_providers_scim_tokens_create_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensCreate'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identityProvidersScimTokensCreateAsync($provider, $identity_providers_scim_tokens_create_request, string $contentType = self::contentTypes['identityProvidersScimTokensCreate'][0])
+    {
+        return $this->identityProvidersScimTokensCreateAsyncWithHttpInfo($provider, $identity_providers_scim_tokens_create_request, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation identityProvidersScimTokensCreateAsyncWithHttpInfo
+     *
+     * Create a SCIM token for an identity provider (shown once; at most two active, for rotation)
+     *
+     * @param  string $provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersScimTokensCreateRequest $identity_providers_scim_tokens_create_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensCreate'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identityProvidersScimTokensCreateAsyncWithHttpInfo($provider, $identity_providers_scim_tokens_create_request, string $contentType = self::contentTypes['identityProvidersScimTokensCreate'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response';
+        $request = $this->identityProvidersScimTokensCreateRequest($provider, $identity_providers_scim_tokens_create_request, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'identityProvidersScimTokensCreate'
+     *
+     * @param  string $provider (required)
+     * @param  \Ulams\Sdk\Model\IdentityProvidersScimTokensCreateRequest $identity_providers_scim_tokens_create_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensCreate'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function identityProvidersScimTokensCreateRequest($provider, $identity_providers_scim_tokens_create_request, string $contentType = self::contentTypes['identityProvidersScimTokensCreate'][0])
+    {
+
+        // verify the required parameter 'provider' is set
+        if ($provider === null || (is_array($provider) && count($provider) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $provider when calling identityProvidersScimTokensCreate'
+            );
+        }
+
+        // verify the required parameter 'identity_providers_scim_tokens_create_request' is set
+        if ($identity_providers_scim_tokens_create_request === null || (is_array($identity_providers_scim_tokens_create_request) && count($identity_providers_scim_tokens_create_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $identity_providers_scim_tokens_create_request when calling identityProvidersScimTokensCreate'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/identity/providers/{provider}/scim-tokens';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($provider !== null) {
+            $resourcePath = str_replace(
+                '{' . 'provider' . '}',
+                ObjectSerializer::toPathValue($provider),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($identity_providers_scim_tokens_create_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($identity_providers_scim_tokens_create_request));
+            } else {
+                $httpBody = $identity_providers_scim_tokens_create_request;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation identityProvidersScimTokensList
+     *
+     * SCIM tokens of an identity provider, active and revoked
+     *
+     * @param  string $provider provider (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensList'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response
+     */
+    public function identityProvidersScimTokensList($provider, string $contentType = self::contentTypes['identityProvidersScimTokensList'][0])
+    {
+        list($response) = $this->identityProvidersScimTokensListWithHttpInfo($provider, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation identityProvidersScimTokensListWithHttpInfo
+     *
+     * SCIM tokens of an identity provider, active and revoked
+     *
+     * @param  string $provider (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensList'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function identityProvidersScimTokensListWithHttpInfo($provider, string $contentType = self::contentTypes['identityProvidersScimTokensList'][0])
+    {
+        $request = $this->identityProvidersScimTokensListRequest($provider, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation identityProvidersScimTokensListAsync
+     *
+     * SCIM tokens of an identity provider, active and revoked
+     *
+     * @param  string $provider (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensList'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identityProvidersScimTokensListAsync($provider, string $contentType = self::contentTypes['identityProvidersScimTokensList'][0])
+    {
+        return $this->identityProvidersScimTokensListAsyncWithHttpInfo($provider, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation identityProvidersScimTokensListAsyncWithHttpInfo
+     *
+     * SCIM tokens of an identity provider, active and revoked
+     *
+     * @param  string $provider (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensList'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identityProvidersScimTokensListAsyncWithHttpInfo($provider, string $contentType = self::contentTypes['identityProvidersScimTokensList'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response';
+        $request = $this->identityProvidersScimTokensListRequest($provider, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'identityProvidersScimTokensList'
+     *
+     * @param  string $provider (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensList'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function identityProvidersScimTokensListRequest($provider, string $contentType = self::contentTypes['identityProvidersScimTokensList'][0])
+    {
+
+        // verify the required parameter 'provider' is set
+        if ($provider === null || (is_array($provider) && count($provider) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $provider when calling identityProvidersScimTokensList'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/identity/providers/{provider}/scim-tokens';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($provider !== null) {
+            $resourcePath = str_replace(
+                '{' . 'provider' . '}',
+                ObjectSerializer::toPathValue($provider),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'GET',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation identityProvidersScimTokensRevoke
+     *
+     * Revoke a SCIM token
+     *
+     * @param  string $provider provider (required)
+     * @param  string $token Id of the token (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensRevoke'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\AdminCategoriesSortPost200Response
+     */
+    public function identityProvidersScimTokensRevoke($provider, $token, string $contentType = self::contentTypes['identityProvidersScimTokensRevoke'][0])
+    {
+        list($response) = $this->identityProvidersScimTokensRevokeWithHttpInfo($provider, $token, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation identityProvidersScimTokensRevokeWithHttpInfo
+     *
+     * Revoke a SCIM token
+     *
+     * @param  string $provider (required)
+     * @param  string $token Id of the token (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensRevoke'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\AdminCategoriesSortPost200Response, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function identityProvidersScimTokensRevokeWithHttpInfo($provider, $token, string $contentType = self::contentTypes['identityProvidersScimTokensRevoke'][0])
+    {
+        $request = $this->identityProvidersScimTokensRevokeRequest($provider, $token, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\AdminCategoriesSortPost200Response' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\AdminCategoriesSortPost200Response' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\AdminCategoriesSortPost200Response', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\AdminCategoriesSortPost200Response';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\AdminCategoriesSortPost200Response',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation identityProvidersScimTokensRevokeAsync
+     *
+     * Revoke a SCIM token
+     *
+     * @param  string $provider (required)
+     * @param  string $token Id of the token (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensRevoke'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identityProvidersScimTokensRevokeAsync($provider, $token, string $contentType = self::contentTypes['identityProvidersScimTokensRevoke'][0])
+    {
+        return $this->identityProvidersScimTokensRevokeAsyncWithHttpInfo($provider, $token, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation identityProvidersScimTokensRevokeAsyncWithHttpInfo
+     *
+     * Revoke a SCIM token
+     *
+     * @param  string $provider (required)
+     * @param  string $token Id of the token (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensRevoke'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function identityProvidersScimTokensRevokeAsyncWithHttpInfo($provider, $token, string $contentType = self::contentTypes['identityProvidersScimTokensRevoke'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\AdminCategoriesSortPost200Response';
+        $request = $this->identityProvidersScimTokensRevokeRequest($provider, $token, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'identityProvidersScimTokensRevoke'
+     *
+     * @param  string $provider (required)
+     * @param  string $token Id of the token (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['identityProvidersScimTokensRevoke'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function identityProvidersScimTokensRevokeRequest($provider, $token, string $contentType = self::contentTypes['identityProvidersScimTokensRevoke'][0])
+    {
+
+        // verify the required parameter 'provider' is set
+        if ($provider === null || (is_array($provider) && count($provider) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $provider when calling identityProvidersScimTokensRevoke'
+            );
+        }
+
+        // verify the required parameter 'token' is set
+        if ($token === null || (is_array($token) && count($token) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $token when calling identityProvidersScimTokensRevoke'
+            );
+        }
+
+
+        $resourcePath = '/api/admin/identity/providers/{provider}/scim-tokens/{token}';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // path params
+        if ($provider !== null) {
+            $resourcePath = str_replace(
+                '{' . 'provider' . '}',
+                ObjectSerializer::toPathValue($provider),
+                $resourcePath
+            );
+        }
+        // path params
+        if ($token !== null) {
+            $resourcePath = str_replace(
+                '{' . 'token' . '}',
+                ObjectSerializer::toPathValue($token),
+                $resourcePath
+            );
+        }
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'DELETE',
             $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
             $headers,
             $httpBody

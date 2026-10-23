@@ -78,6 +78,10 @@ class ProviderService
             $changed = array_keys($provider->getDirty());
             $secretChanged = in_array('oidc_client_secret', $changed, true);
             $provider->save();
+            if (in_array('scim_group_roles', $changed, true)) {
+                // the mapping changed: everybody provisioned by this provider gets the roles of the new mapping
+                app(\Ulams\Identity\Services\Scim\GroupRoleMapper::class)->resyncProvider($provider);
+            }
             Cache::forget('identity:oidc:discovery:' . $provider->getKey() . ':' . sha1((string) ($provider->oidc['issuer'] ?? '')));
             $this->audit->record('provider.updated', [
                 'provider_id' => $provider->getKey(),
@@ -103,8 +107,10 @@ class ProviderService
             $id = $provider->getKey();
             $slug = $provider->slug;
             $links = $provider->links()->count();
+            // the provider's SCIM tokens stop working with it; the accounts it provisioned stay (never hard-deleted)
+            $scimTokens = app(\Ulams\Identity\Services\Scim\ScimTokenService::class)->revokeAll($provider);
             $provider->delete();
-            $this->audit->record('provider.deleted', ['provider_id' => $id, 'data' => ['slug' => $slug, 'links_removed' => $links]]);
+            $this->audit->record('provider.deleted', ['provider_id' => $id, 'data' => ['slug' => $slug, 'links_removed' => $links, 'scim_tokens_revoked' => $scimTokens]]);
         });
     }
 
@@ -242,6 +248,14 @@ class ProviderService
         }
         if (array_key_exists('email_domains', $data)) {
             $provider->email_domains = array_values(array_unique(array_map('strtolower', (array) $data['email_domains'])));
+        }
+        if (isset($data['scim']) && is_array($data['scim']) && array_key_exists('group_roles', $data['scim'])) {
+            // keys are matched case-insensitively; only student and tutor are valid values (the controller validates)
+            $map = [];
+            foreach ((array) $data['scim']['group_roles'] as $name => $role) {
+                $map[mb_strtolower(trim((string) $name))] = $role;
+            }
+            $provider->scim_group_roles = $map === [] ? null : $map;
         }
         if ($provider->protocol === IdentityProvider::SAML) {
             $this->fillSaml($provider, $data, $prepared);

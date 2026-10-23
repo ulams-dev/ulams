@@ -104,7 +104,8 @@ class AccountResolver
 
     private function mayLinkByEmail(IdentityProvider $provider, User $existing, string $email, bool $providerVerified): bool
     {
-        if (!$provider->trust_email || !$providerVerified || !$provider->ownsDomainOf($email)) {
+        $provisioned = $this->provisionedByScim($provider, $existing);
+        if (!$provisioned && (!$provider->trust_email || !$providerVerified || !$provider->ownsDomainOf($email))) {
             return false;
         }
         $superadmins = array_map('strtolower', array_filter((array) config(UlamsAuthServiceProvider::CONFIG_KEY . '.superadmins', [])));
@@ -113,6 +114,18 @@ class AccountResolver
         }
 
         return !$existing->hasAnyRole([UserRole::ADMIN, UserRole::TUTOR]);
+    }
+
+    /**
+     * The provider's own SCIM client created this account (or an administrator let it adopt it): the provider has
+     * already asserted that address for this account, so the first sign-in links it without `trust_email`.
+     * Administrators and tutors are still never linked this way.
+     */
+    private function provisionedByScim(IdentityProvider $provider, User $user): bool
+    {
+        return \Ulams\Identity\Models\ExternalId::query()
+            ->where(['provider_id' => $provider->getKey(), 'resource_type' => \Ulams\Identity\Models\ExternalId::USER, 'local_id' => $user->getKey()])
+            ->whereNull('deleted_at')->exists();
     }
 
     /**

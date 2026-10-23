@@ -102,6 +102,9 @@ operations:
   "DELETE /api/admin/identity/providers/{provider}": { id: identity.providers-delete, positionals: [provider] }
   "POST /api/admin/identity/providers/{provider}/metadata/refresh": { id: identity.providers-refresh-metadata, positionals: [provider], summary: "Fetch the SAML identity provider metadata again (accept_changes applies a new entity id and certificate set)" }
   "POST /api/admin/identity/providers/{provider}/sp-keys/rotate": { id: identity.providers-rotate-sp-keys, positionals: [provider], summary: "Prepare or activate the next SAML service provider key pair (step prepare or promote)" }
+  "GET /api/admin/identity/providers/{provider}/scim-tokens": { id: identity.scim-tokens-list, positionals: [provider], summary: "SCIM tokens of an identity provider, active and revoked (the secret is never listed)" }
+  "POST /api/admin/identity/providers/{provider}/scim-tokens": { id: identity.scim-tokens-create, positionals: [provider], summary: "Create a SCIM token for an identity provider; the token is shown once and at most two are active (rotation: create the new one, switch the client, revoke the old one)" }
+  "DELETE /api/admin/identity/providers/{provider}/scim-tokens/{token}": { id: identity.scim-tokens-revoke, positionals: [provider, token] }
   "GET /api/admin/identity/audit": { id: identity.audit-list }
   "GET /api/admin/identity/audit/verify": { id: identity.audit-verify, summary: "Recompute the hash chain of the identity audit trail" }
 

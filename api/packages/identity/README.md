@@ -2,17 +2,19 @@
 
 OpenID Connect and SAML 2.0 login with per-tenant identity providers (Keycloak, Entra ID, Okta, Google, any OIDC or SAML
 provider), account creation on first sign-in, strict account linking and a hash-chained audit trail (Phase 6.3,
-milestones ID-1 and ID-2 of `docs/plans/phase-6-identity.md`; ADR 0120, ADR 0121). SCIM and HRIS import are later milestones.
+milestones ID-1, ID-2 and ID-4 of `docs/plans/phase-6-identity.md`; ADR 0120, ADR 0121, ADR 0198, ADR 0199) and a SCIM 2.0 server for users. HRIS import is a later milestone.
 
 - Guides for operators: `front/docs-site/src/content/docs/operators/single-sign-on.mdx` (OpenID Connect) and
   `single-sign-on-saml.mdx`; protocol: `developers/authentication.mdx`.
 - Public routes (`/api/identity/*`, throttled per IP): providers list, `sso/{slug}/start`, `oidc/{slug}/callback`, `sso/exchange`,
   SAML `saml/{slug}/metadata`, `saml/{slug}/acs` (POST), `saml/{slug}/slo` (GET and POST); `POST saml/{slug}/logout` needs the user's token.
-- Admin routes (`/api/admin/identity/*`, permissions `identity_provider_manage`, `identity_audit_read`, token scope
+- SCIM 2.0 (`/api/scim/v2/*`, `ScimAuthenticate`: only a `scim` token of one provider; 600 requests per minute per token): `ServiceProviderConfig`, `ResourceTypes`, `Schemas`, `Users` and `Groups` (CRUD, `.search`, filters, PATCH, ETag). Guide: `operators/scim.mdx`, reference: `developers/scim-api.mdx`.
+- Admin routes (`/api/admin/identity/*`, permissions `identity_provider_manage`, `identity_audit_read`, `identity_scim_manage` for `providers/{id}/scim-tokens`, token scope
   `identity:read|write`): providers CRUD, audit list and chain verification. OpenAPI tags "Identity" and "Admin Identity".
 - Tables (tenant database): `identity_providers` (client secret and SAML SP private keys encrypted with the tenant `APP_KEY`), `identity_links`,
   `saml_replays` (accepted assertion ids), `identity_sessions` (token to IdP session, for single logout),
-  `identity_audit` + `identity_audit_head` (append-only, PostgreSQL trigger).
+  `identity_audit` + `identity_audit_head` (append-only, PostgreSQL trigger),
+  `identity_external_ids` (SCIM ids of users per provider, `userName`, tombstone on deprovisioning).
 
 ```
 SsoLoginService     start (state + nonce + PKCE), callback (code -> ID token -> account -> one-time code), exchange
@@ -24,6 +26,12 @@ Saml\SamlService    onelogin/php-saml per provider and request: settings, SP met
 Saml\SamlLogout     single logout both ways (signed LogoutRequest/Response, sessions, token revocation)
 Saml\IdpMetadata    IdP metadata over SafeHttp, certificates; ProviderService applies the refresh policy
 Saml\SamlXml        size, DOCTYPE, algorithm allow-lists and comment checks that run before the library
+Scim\FilterParser   RFC 7644 filter grammar to a tree; Scim\FilterCompiler turns it into bound-parameter SQL on a fixed column map
+Scim\PatchApplier   add/replace/remove on the SCIM representation (Entra and Okta quirks); nothing is written until all succeed
+Scim\UserProvisioner create, adopt, update, deactivate, delete through UserService, model fields and ManagerService
+Scim\GroupProvisioner / GroupRoleMapper  groups through UserGroupService; roles from group names (student/tutor only)
+Scim\ScimDirectory  what a provider's client can see: only the users it provisioned
+Scim\ScimTokenService service user and scoped tokens of kind `scim` (two active, shown once)
 ```
 
 Commands: `identity:refresh-metadata` (daily 03:30, per tenant), `identity:prune` (daily).
@@ -31,7 +39,7 @@ Commands: `identity:refresh-metadata` (daily 03:30, per tenant), `identity:prune
 The login hand-off (signed state, one-time code, return URL allow-list) is `Ulams\Auth\Services\LoginHandoffService`.
 Every request to a provider goes through `Ulams\Core\Http\SafeHttp`.
 
-Config: `ulams_identity.*` (`IDENTITY_ENABLED`, `IDENTITY_MAX_PROVIDERS`, `IDENTITY_SAML_MAX_AGE`, `IDENTITY_ALLOW_INSECURE_URLS` for development only).
+Config: `ulams_identity.*` (`IDENTITY_ENABLED`, `IDENTITY_MAX_PROVIDERS`, `IDENTITY_SAML_MAX_AGE`, `IDENTITY_SCIM_RATE`, `IDENTITY_SCIM_DELETE`, `IDENTITY_ALLOW_INSECURE_URLS` for development only).
 
 Install: registered in `api/config/app.php`; run the migrations and `PermissionsSeeder`. Tests:
 `php artisan test --testsuite identity` (fixture providers in `tests/Support/FakeIdp.php` and `FakeSamlIdp.php`, which signs, encrypts and

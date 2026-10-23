@@ -17,6 +17,7 @@ class IdentityLink extends Model
 {
     public const JIT = 'jit';
     public const EMAIL_TRUST = 'email_trust';
+    public const SCIM = 'scim';
 
     protected $table = 'identity_links';
 
