@@ -701,6 +701,64 @@ export const livingCommands: AnyCommand[] = [
   }),
   defineCommand({
     ...common,
+    ...wait,
+    id: "living.restyle",
+    summary:
+      "Propose a restyle of a course for an approved style profile: the elements that depart from it, rewritten and reviewed as a diff",
+    description:
+      "Optional, never automatic (ADR 0196). Without --confirm-estimate it only says what would be rewritten and what it would cost (`data.state` is `estimate`). With it, a proposal of kind `style` is created and analysed (one model call per lesson, logged); review it with `living proposals get`, `accept`, `reject` and `apply` like any proposal. Only banned phrases, terms to avoid and product-name casing are rewritten, never the correct option of a quiz question. The profile is the brief's, else the academy's, or --profile.",
+    kind: "write",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: [`POST ${LC}/sessions/{session}/style-proposals`],
+    positionals: ["session"],
+    input: z.object({
+      session,
+      profile: z
+        .string()
+        .optional()
+        .describe(
+          "Approved style profile id (from `ulams style-profiles list --status approved`)."
+        ),
+      confirmEstimate: z
+        .boolean()
+        .optional()
+        .describe("Create the proposal and start the analysis."),
+    }),
+    output: z.unknown(),
+    examples: [
+      {
+        title: "What would change, and the cost",
+        argv: "living restyle <session> --json",
+      },
+      {
+        title: "Create the proposal",
+        argv: "living restyle <session> --confirm-estimate --json",
+      },
+    ],
+    plan: async (_ctx, i) =>
+      planOf("POST", `/sessions/${i.session}/style-proposals`, {
+        ...(i.profile ? { styleProfileId: i.profile } : {}),
+        confirmEstimate: Boolean(i.confirmEstimate),
+      }),
+    async run(ctx, i) {
+      const res = await lc<Record<string, unknown> & { runId?: string | null }>(
+        ctx,
+        "POST",
+        "/sessions/{session}/style-proposals",
+        {
+          params: { session: i.session },
+          body: {
+            ...(i.profile ? { styleProfileId: i.profile } : {}),
+            confirmEstimate: Boolean(i.confirmEstimate),
+          },
+        }
+      );
+      return withRun(ctx, res, res.runId);
+    },
+  }),
+  defineCommand({
+    ...common,
     id: "living.proposals.reanalyse",
     summary:
       "Start over from the newest revision (the open proposal is superseded; decisions are not carried over)",

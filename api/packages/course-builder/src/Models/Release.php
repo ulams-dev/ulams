@@ -27,7 +27,7 @@ class Release extends Model
     use HasUlids;
 
     /** @var string[] */
-    public const TRIGGERS = ['generate', 'author', 'chat', 'update', 'insights', 'import', 'restore', 'rebase'];
+    public const TRIGGERS = ['generate', 'author', 'chat', 'update', 'insights', 'style', 'import', 'restore', 'rebase'];
 
     public $timestamps = false;
 

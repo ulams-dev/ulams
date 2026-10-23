@@ -81,7 +81,7 @@ final class DecisionService
             $proposal->forceFill(['status' => 'rejected', 'decided_by' => $userId, 'decided_at' => now()])->save();
             ProposalItem::query()->where('proposal_id', $proposal->id)->whereIn('status', ['pending', 'accepted', 'conflict', 'stale'])->where('kind', '!=', 'citation_remap')
                 ->update(['status' => 'rejected', 'decided_by' => $userId, 'decided_at' => now()]);
-            if ($proposal->isInsights()) {
+            if ($proposal->isSourceless()) {
                 // no source revision to acknowledge and no source staleness to settle
                 $this->audit->record('proposal.rejected', [
                     'session_id' => $session->id, 'subject_type' => 'proposal', 'subject_id' => $proposal->id, 'actor_id' => $userId,

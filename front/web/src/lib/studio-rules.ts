@@ -27,6 +27,14 @@ export const STUDIO_RULES: Array<{ method: string; pattern: RegExp }> = [
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/citations$`) },
   { method: "POST", pattern: new RegExp(`^/sessions/${ID}/outline$`) },
   { method: "POST", pattern: new RegExp(`^/sessions/${ID}/elements/${ID}/variants$`) },
+  // style profiles (ADR 0196): the API checks the permission, the creator and the admin role
+  { method: "GET", pattern: /^\/style-profiles$/ },
+  { method: "POST", pattern: /^\/style-profiles$/ },
+  { method: "GET", pattern: new RegExp(`^/style-profiles/${ID}$`) },
+  { method: "PATCH", pattern: new RegExp(`^/style-profiles/${ID}$`) },
+  { method: "DELETE", pattern: new RegExp(`^/style-profiles/${ID}$`) },
+  { method: "POST", pattern: new RegExp(`^/style-profiles/${ID}/approve$`) },
+  { method: "GET", pattern: new RegExp(`^/style-profiles/${ID}/check$`) },
 ];
 
 export function isStudioCall(method: string, path: string): boolean {
@@ -62,6 +70,8 @@ export const LIVING_COURSE_RULES: Array<{ method: string; pattern: RegExp }> = [
   // audit trail: read, verify the hash chain, export (all GET; the trail cannot be changed from here)
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/audit$`) },
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/audit/(verify|export)$`) },
+  // a restyle for an approved style profile (ADR 0196): the estimate, then the proposal (reviewed with the calls above)
+  { method: "POST", pattern: new RegExp(`^/sessions/${ID}/style-proposals$`) },
 ];
 
 /** `path` is relative to the BFF root, e.g. `/living-course/sources/{id}/revisions`. */

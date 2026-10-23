@@ -1492,3 +1492,70 @@ a.st-ver-link {
   text-decoration: none;
   white-space: nowrap;
 }
+
+/* Style page (/studio/style): upload, profiles, one profile with its values, changes and edit form */
+.st-style {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+.st-style-form p {
+  margin: 0 0 12px;
+}
+.st-style-form input[type="text"],
+.st-style-edit input[type="text"],
+.st-style-edit input[type="number"],
+.st-style-edit select {
+  min-height: 40px;
+  min-width: min(100%, 320px);
+  padding: 0 10px;
+  font: inherit;
+  max-width: 100%;
+}
+.st-style-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.st-style-part ul,
+.st-style-diff,
+.st-style-warnings ul {
+  margin: 4px 0 0;
+  padding-left: 1.1em;
+}
+.st-style-value,
+.st-style-change {
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+}
+.st-style-kind {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.st-style-cites {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+.st-style-passage {
+  margin: 6px 0 0;
+  padding: 8px 12px;
+  border-left: 3px solid currentColor;
+  overflow-wrap: anywhere;
+}
+.st-style-json {
+  width: 100%;
+  max-width: 100%;
+  font-family: var(--ulams-studio-mono, monospace);
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+.st-style-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}

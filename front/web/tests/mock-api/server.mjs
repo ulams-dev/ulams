@@ -623,7 +623,152 @@ const courseVersionsRoutes = [
   ["GET", /^\/api\/admin\/course-versions\/courses\/(\d+)\/compare$/, ({ match, query, tenant }) => courseCompare(Number(match[1]), query, tenant)],
 ];
 
+/**
+ * Style profiles for the studio Style page (/studio/style, ADR 0196). Every tenant has its own list: a suggested profile
+ * with citations, dropped values and a diff against the approved one, the approved one, and a superseded one. A profile
+ * named "Forbidden" is refused on approve (403), as for a tutor. A style guide upload makes a new suggestion.
+ */
+const STYLE_F1 = "frg_aaaaaaaaaaaa";
+const STYLE_F2 = "frg_bbbbbbbbbbbb";
+const STYLE_FRAGMENTS = {
+  [STYLE_F1]: { label: "§1 Voice", preview: "Write to the learner as \"you\". Keep sentences under 20 words." },
+  [STYLE_F2]: { label: "§2 Terminology", preview: "Use \"learner\", not \"student\" or \"user\"." },
+};
+const styleId = (n) => `01styleprofile${String(n).padStart(12, "0")}`;
+const styleFresh = () => [
+  {
+    id: styleId(1), name: "Northwind", scope: { type: "tenant", id: null }, status: "suggested", sourceId: "s1", createdBy: 1, approvedBy: null, approvedAt: null, createdAt: "2026-10-22T09:30:00+00:00",
+    warnings: ["components.disallowed named Marquee, which is not in the catalogue, and it was dropped", "theme.accent does not reach a 5:1 contrast on the coffee theme; the site will show #1d6f5c"],
+    profile: {
+      schemaVersion: 1,
+      theme: { preset: "coffee", accent: "#1d6f5c", fonts: ["Inter"], citations: [STYLE_F1] },
+      voice: { person: "you", formality: 3, sentenceLength: 20, citations: [STYLE_F1] },
+      readingLevel: [{ language: "en", level: "grade-8", citations: [STYLE_F1] }],
+      terminology: [{ use: "learner", avoid: ["student", "user"], citations: [STYLE_F2] }, { use: "lesson", avoid: [], citations: [] }],
+      banned: { blocking: false, phrases: [{ phrase: "simply", citations: [STYLE_F2] }, { phrase: "just", citations: [STYLE_F2] }] },
+      components: { preferred: ["Callout"], disallowed: ["FlipCards"], citations: [STYLE_F1] },
+      imagery: { altTextRequired: true, decorativeAllowed: false, citations: [STYLE_F1] },
+      examples: [{ text: "You start with one small task.", citations: [STYLE_F1] }],
+    },
+  },
+  {
+    id: styleId(2), name: "Academy v1", scope: { type: "tenant", id: null }, status: "approved", sourceId: "s0", createdBy: 1, approvedBy: 1, approvedAt: "2026-10-20T10:00:00+00:00", createdAt: "2026-10-19T09:30:00+00:00", warnings: [],
+    profile: { schemaVersion: 1, voice: { person: "we", formality: 2, citations: [STYLE_F1] }, banned: { blocking: true, phrases: [{ phrase: "simply", citations: [STYLE_F2] }] }, terminology: [{ use: "student", avoid: [], citations: [STYLE_F2] }] },
+  },
+  {
+    id: styleId(3), name: "Old guide", scope: { type: "tenant", id: null }, status: "superseded", sourceId: "s00", createdBy: 1, approvedBy: 1, approvedAt: "2026-09-01T10:00:00+00:00", createdAt: "2026-08-30T09:30:00+00:00", warnings: [],
+    profile: { schemaVersion: 1, voice: { person: "neutral", citations: [STYLE_F1] } },
+  },
+];
+const styleState = new Map();
+const styleOf = (tenant) => {
+  if (!styleState.has(tenant)) styleState.set(tenant, { list: styleFresh(), next: 10 });
+  return styleState.get(tenant);
+};
+const styleDiff = (p, current) => {
+  if (p.status === "approved") return [];
+  const out = [];
+  const v = p.profile;
+  const c = current?.profile ?? {};
+  if (v.voice?.person && v.voice.person !== c.voice?.person) out.push({ path: "voice.person", change: c.voice?.person ? "changed" : "added", before: c.voice?.person ?? null, after: v.voice.person, citations: v.voice.citations });
+  if (v.voice?.formality && v.voice.formality !== c.voice?.formality) out.push({ path: "voice.formality", change: c.voice?.formality ? "changed" : "added", before: c.voice?.formality ?? null, after: v.voice.formality, citations: v.voice.citations });
+  for (const t of v.terminology ?? []) if (!(c.terminology ?? []).some((x) => x.use === t.use)) out.push({ path: `terminology.${t.use}`, change: "added", before: null, after: t.avoid, citations: t.citations });
+  for (const t of c.terminology ?? []) if (!(v.terminology ?? []).some((x) => x.use === t.use)) out.push({ path: `terminology.${t.use}`, change: "removed", before: t.avoid, after: null, citations: [] });
+  for (const b of v.banned?.phrases ?? []) if (!(c.banned?.phrases ?? []).some((x) => x.phrase === b.phrase)) out.push({ path: `banned.phrase.${b.phrase.toLowerCase()}`, change: "added", before: null, after: b.phrase, citations: b.citations });
+  if (v.banned && (v.banned.blocking ?? false) !== (c.banned?.blocking ?? false)) out.push({ path: "banned.blocking", change: "changed", before: c.banned?.blocking ?? false, after: v.banned.blocking ?? false, citations: [] });
+  return out;
+};
+const styleDetail = (tenant, p) => {
+  const current = styleOf(tenant).list.find((x) => x.status === "approved" && x.id !== p.id);
+  return { ...p, current: current ? { id: current.id, name: current.name, profile: current.profile } : null, diff: styleDiff(p, current), fragments: STYLE_FRAGMENTS };
+};
+const styleFind = (tenant, id) => styleOf(tenant).list.find((x) => x.id === id);
+const STYLE_NOT_FOUND = { __status: 404, message: "Style profile not found." };
+const styleRoutes = [
+  ["POST", /^\/__mock\/style\/reset$/, ({ tenant }) => (styleState.delete(tenant), { reset: true })],
+  ["GET", /^\/api\/admin\/course-builder\/style-profiles$/, ({ tenant }) => styleOf(tenant).list.map((p) => ({ ...p }))],
+  ["POST", /^\/api\/admin\/course-builder\/style-profiles$/, ({ tenant, body, raw }) => {
+    const state = styleOf(tenant);
+    const name = body?.name ?? /name="name"\r\n\r\n([^\r]*)/.exec(raw ?? "")?.[1] ?? "From a style guide";
+    const from = body?.from ? styleFind(tenant, body.from) : null;
+    if (body?.from && !from) return STYLE_NOT_FOUND;
+    const created = {
+      id: styleId(state.next++), name, scope: { type: "tenant", id: null }, status: "suggested", sourceId: from ? from.sourceId : "s9", createdBy: 1, approvedBy: null, approvedAt: null, createdAt: "2026-10-23T08:00:00+00:00",
+      warnings: from ? [] : ["AI is off on this installation: fill the profile in by hand."],
+      profile: from ? JSON.parse(JSON.stringify(from.profile)) : { schemaVersion: 1 },
+    };
+    state.list.unshift(created);
+    return styleDetail(tenant, created);
+  }],
+  ["GET", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})$/, ({ tenant, match }) => {
+    const p = styleFind(tenant, match[1]);
+    return p ? styleDetail(tenant, p) : STYLE_NOT_FOUND;
+  }],
+  ["PATCH", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})$/, ({ tenant, match, body }) => {
+    const p = styleFind(tenant, match[1]);
+    if (!p) return STYLE_NOT_FOUND;
+    if (p.status !== "suggested") return { __status: 409, message: "An approved profile is not edited: create a revision (POST with `from`) and approve that." };
+    if (body?.name) p.name = body.name;
+    const warnings = [];
+    const next = { ...(body?.profile ?? p.profile) };
+    if (next.voice && next.voice.formality !== undefined && !(Number.isInteger(next.voice.formality) && next.voice.formality >= 1 && next.voice.formality <= 5)) {
+      warnings.push("voice.formality must be a whole number from 1 to 5 and was dropped");
+      delete next.voice.formality;
+    }
+    p.profile = next;
+    p.warnings = warnings;
+    return styleDetail(tenant, p);
+  }],
+  ["POST", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})\/approve$/, ({ tenant, match }) => {
+    const p = styleFind(tenant, match[1]);
+    if (!p) return STYLE_NOT_FOUND;
+    if (p.name === "Forbidden") return { __status: 403, message: "Only an admin approves a style profile." };
+    if (p.status !== "suggested") return { __status: 409, message: "Only a suggested profile can be approved." };
+    for (const x of styleOf(tenant).list) if (x.status === "approved") x.status = "superseded";
+    Object.assign(p, { status: "approved", approvedBy: 1, approvedAt: "2026-10-23T08:30:00+00:00" });
+    return styleDetail(tenant, p);
+  }],
+  // the style check: course 12 has a banned phrase that blocks (with its passage), a term to avoid and a hint; 13 is clean; 14 is not a builder course; 15 is another author's
+  ["GET", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})\/check$/, ({ tenant, match, query }) => {
+    const p = styleFind(tenant, match[1]);
+    if (!p) return STYLE_NOT_FOUND;
+    const course = Number(query.get("course"));
+    if (!Number.isInteger(course) || course < 1) return { __status: 422, message: "The course field is required." };
+    if (course === 14) return { __status: 404, message: "That course was not made with the Course Builder." };
+    if (course === 15) return { __status: 403, message: "This course belongs to another author." };
+    const cite = [{ id: STYLE_F2, label: "§2 Terminology" }];
+    const base = { profile: { id: p.id, name: p.name, status: p.status }, course: { id: course, title: "Brewing", sessionId: course === 13 ? "01stylesession000000000002" : "01stylesession000000000001", variantId: null, versionId: "v" } };
+    if (course === 13) return { ...base, blocking: [], warnings: [], hints: [], counts: { blocking: 0, warnings: 0, hints: 0 }, blocksPublishing: false };
+    return {
+      ...base,
+      blocking: [{ code: "style_banned", rule: "banned", severity: "blocking", elementId: "e1", message: "“Grinding”: “simply” is a banned phrase of the style guide (style guide §2 Terminology)", term: "simply", quote: "…Simply grind the beans…", citations: cite }],
+      warnings: [{ code: "style_terminology", rule: "terminology", severity: "warning", elementId: "e2", message: "“Grinding”: use “learner”, not “student” (style guide §2 Terminology)", term: "student", quote: "…each student opens…", citations: cite }],
+      hints: [{ code: "style_reading_level", rule: "reading_level", severity: "hint", elementId: "e3", message: "“Grinding” reads at about grade 11 (an approximate formula) and the style guide asks for grade-8", citations: [{ id: STYLE_F1, label: "§1 Voice" }] }],
+      counts: { blocking: 1, warnings: 1, hints: 1 },
+      blocksPublishing: true,
+    };
+  }],
+  // a restyle of a course (Living Course): session ...01 has something to restyle, ...02 has not, and a created proposal is remembered
+  ["POST", /^\/api\/admin\/living-course\/sessions\/([0-9a-z]{26})\/style-proposals$/, ({ tenant, match, body }) => {
+    const state = styleOf(tenant);
+    if (match[1] === "01stylesession000000000002") return { __status: 422, message: "Nothing in this course departs from the style profile in a way a rewrite can fix, so there is nothing to restyle.", code: "nothing_to_restyle" };
+    if (state.restyle) return { state: "kept_existing", proposal: { id: state.restyle, kind: "style" } };
+    if (!body?.confirmEstimate) return { state: "estimate", profile: { id: body?.styleProfileId, name: "Academy v1" }, elements: 4, findings: 6, skipped: 1, answerKeys: 1, estimateMicroUsd: 120000 };
+    state.restyle = "01styleproposal000000000001";
+    return { state: "started", runId: null, proposal: { id: state.restyle, kind: "style", status: "ready" } };
+  }],
+  ["DELETE", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})$/, ({ tenant, match }) => {
+    const state = styleOf(tenant);
+    const p = styleFind(tenant, match[1]);
+    if (!p) return STYLE_NOT_FOUND;
+    if (p.status === "approved") return { __status: 409, message: "An approved profile cannot be deleted: approve a revision to replace it." };
+    state.list = state.list.filter((x) => x.id !== p.id);
+    return { id: p.id };
+  }],
+];
+
 const routes = [
+  ...styleRoutes,
   ...insightsRoutes,
   ...courseVersionsRoutes,
   ...improveRoutes,
@@ -932,7 +1077,7 @@ function respond(req, res, path, route, rawBody) {
     }
   })();
   const match = route[1].exec(path);
-  const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body, query: new URL(req.url ?? "/", "http://mock").searchParams, status: (code) => (res.statusCode = code) });
+  const data = path === "/api/settings" ? (settingsByTenant[tenant] ?? coffee.settings) : route[2]({ tenant, match, body, raw: rawBody, query: new URL(req.url ?? "/", "http://mock").searchParams, status: (code) => (res.statusCode = code) });
   if (data && typeof data === "object" && "__status" in data) {
     res.statusCode = data.__status;
     res.end(JSON.stringify({ success: false, message: data.message, ...(data.code ? { code: data.code } : {}) }));

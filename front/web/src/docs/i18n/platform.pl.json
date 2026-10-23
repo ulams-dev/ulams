@@ -260,8 +260,7 @@
               {
                 "icon": "layers",
                 "title": "Twój przewodnik stylu kształtuje wygląd kursu",
-                "text": "Import marki zamienia już plik Figma, DESIGN.md ze Stitch lub przewodnik marki w motyw, który zatwierdzasz jako różnicę. Zastosowanie przewodnika stylu w wywiadzie kursu jest w przygotowaniu.",
-                "status": "coming"
+                "text": "Prześlij przewodnik stylu: kreator czyta go do profilu stylu z cytatami, który zatwierdza administrator, szkicuje z nim każdy kurs, a sprawdzenie stylu pokazuje odstępstwa; zakazany zwrot może zablokować publikację."
               },
               {
                 "icon": "users",

@@ -29,6 +29,7 @@ use Ulams\CourseBuilder\Console\BackfillReleasesCommand;
 use Ulams\CourseBuilder\Console\EvalCommand;
 use Ulams\CourseBuilder\Console\PruneEventsCommand;
 use Ulams\CourseBuilder\Console\SessionExportCommand;
+use Ulams\CourseBuilder\Console\StyleEvalCommand;
 use Ulams\CourseBuilder\Console\SessionImportCommand;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Fake\SyntheticResponders;
@@ -44,6 +45,11 @@ use Ulams\CourseBuilder\Pipeline\PriceService;
 use Ulams\CourseBuilder\Publish\LandingValidator;
 use Ulams\CourseBuilder\Publish\PublishCheck;
 use Ulams\CourseBuilder\Site\NewSite;
+use Ulams\CourseBuilder\StyleProfile\StyleCheck;
+use Ulams\CourseBuilder\StyleProfile\StyleProfileCatalogue;
+use Ulams\CourseBuilder\StyleProfile\StyleProfileResolver;
+use Ulams\CourseBuilder\StyleProfile\StyleProfileExtractor;
+use Ulams\CourseBuilder\StyleProfile\StyleProfileService;
 use Ulams\CourseBuilder\Transfer\SessionArchive;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
 use Ulams\CourseBuilder\Pipeline\VariantOutlineService;
@@ -111,6 +117,11 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         VariantService::class => VariantService::class,
         VariantOutlineService::class => VariantOutlineService::class,
         AiAssistedTopics::class => AiAssistedTopics::class,
+        StyleProfileCatalogue::class => StyleProfileCatalogue::class,
+        StyleCheck::class => StyleCheck::class,
+        StyleProfileResolver::class => StyleProfileResolver::class,
+        StyleProfileExtractor::class => StyleProfileExtractor::class,
+        StyleProfileService::class => StyleProfileService::class,
         RemovalPolicy::class => DeleteEverything::class,
         FragmentArchive::class => NoFragmentArchive::class,
         SourceHistory::class => NoSourceHistory::class,
@@ -150,7 +161,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         SyntheticResponders::register($this->app->make(FakeResponders::class));
 
         if ($this->app->runningInConsole()) {
-            $this->commands([BackfillReleasesCommand::class, EvalCommand::class, PruneEventsCommand::class, SessionExportCommand::class, SessionImportCommand::class]);
+            $this->commands([BackfillReleasesCommand::class, EvalCommand::class, PruneEventsCommand::class, SessionExportCommand::class, SessionImportCommand::class, StyleEvalCommand::class]);
         }
     }
 }

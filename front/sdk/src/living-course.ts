@@ -201,10 +201,16 @@ export interface ProposalCounts {
   /** What an insights proposal is about: its element and the label shown to the author. */
   targetElementId?: string;
   targetLabel?: string;
+  /** What a `style` proposal (ADR 0196) restyles for: the style profile and how many findings it fixes. */
+  styleProfileId?: string;
+  styleProfileName?: string;
+  findings?: number;
+  skipped?: number;
+  answerKeys?: number;
 }
 
-/** A proposal follows a source change (`source`) or comes from what learners struggle with (`insights`, ADR 0181). */
-export type ProposalKind = "source" | "insights";
+/** A proposal follows a source change (`source`), comes from what learners struggle with (`insights`, ADR 0181) or brings a course in line with a style profile (`style`, ADR 0196). */
+export type ProposalKind = "source" | "insights" | "style";
 
 export interface ProposalSummary {
   id: string;
@@ -216,7 +222,7 @@ export interface ProposalSummary {
   status: ProposalStatus;
   trigger: string;
   counts: ProposalCounts | null;
-  /** The aggregated evidence of an `insights` proposal; null for a source update. */
+  /** The aggregated evidence of an `insights` proposal; null for a source update. A `style` proposal keeps the style check's findings here (`profileId`, `findings`), which the review screen does not read as evidence. */
   evidence: InsightsEvidence | null;
   fromRevision: RevisionRef | null;
   toRevision: (RevisionRef & { detectedAt: string | null }) | null;

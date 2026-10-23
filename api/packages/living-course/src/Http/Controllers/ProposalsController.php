@@ -149,8 +149,8 @@ class ProposalsController extends Controller
         if (!$p->isOpen()) {
             return self::fail('This proposal is already settled.', 409);
         }
-        if ($p->isInsights()) {
-            return self::fail('An improvement from learner insights has no source revision to start again from. Reject it and propose a new one from the Insights page.', 409);
+        if ($p->isSourceless()) {
+            return self::fail($p->isStyle() ? 'A restyle has no source revision to start again from. Reject it and propose a new one from the Style page.' : 'An improvement from learner insights has no source revision to start again from. Reject it and propose a new one from the Insights page.', 409);
         }
         $connection = Connection::query()->where('source_id', $p->source_id)->firstOrFail();
         $latest = Revision::query()->findOrFail($connection->latest_revision_id);
@@ -289,7 +289,7 @@ class ProposalsController extends Controller
                 $labels[$f->fragment_id] ??= $f->label();
             }
         }
-        if ($p->isInsights()) {
+        if ($p->isSourceless()) {
             // no revisions: the passages an improvement cites are the live fragments of the session's sources
             $ids = ProposalItem::query()->where('proposal_id', $p->id)->pluck('fragment_ids')->flatten()->unique()->all();
             foreach (\Ulams\CourseBuilder\Models\Fragment::query()->whereIn('id', $ids)->get() as $f) {

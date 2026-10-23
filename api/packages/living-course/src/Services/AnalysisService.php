@@ -25,6 +25,7 @@ use Ulams\CourseBuilder\Pipeline\PromptContext;
 use Ulams\CourseBuilder\Services\RunService;
 use Ulams\LivingCourse\Analysis\AnalysisRequest;
 use Ulams\LivingCourse\Analysis\ImproveRequest;
+use Ulams\LivingCourse\Analysis\RestyleRequest;
 use Ulams\LivingCourse\Analysis\UpdateRequest;
 use Ulams\LivingCourse\Analysis\UpdateValidator;
 use Ulams\LivingCourse\Jobs\AnalyseGroupJob;
@@ -62,17 +63,21 @@ final class AnalysisService
     /** The request builder of a proposal: source revisions for a source update, aggregated evidence for an insights proposal. */
     public function requestFor(Proposal $proposal, Session $session): AnalysisRequest
     {
-        return $proposal->isInsights() ? ImproveRequest::forProposal($proposal, $session, $this->context) : new UpdateRequest($proposal, $session, $this->context);
+        return match (true) {
+            $proposal->isStyle() => RestyleRequest::forProposal($proposal, $session, $this->context),
+            $proposal->isInsights() => ImproveRequest::forProposal($proposal, $session, $this->context),
+            default => new UpdateRequest($proposal, $session, $this->context),
+        };
     }
 
     private static function task(Proposal $proposal): string
     {
-        return $proposal->isInsights() ? 'insights_improve' : 'update';
+        return $proposal->isStyle() ? 'style_restyle' : ($proposal->isInsights() ? 'insights_improve' : 'update');
     }
 
     private static function promptName(Proposal $proposal): string
     {
-        return $proposal->isInsights() ? 'update-improve' : 'update';
+        return $proposal->isStyle() ? 'update-restyle' : ($proposal->isInsights() ? 'update-improve' : 'update');
     }
 
     private function model(string $task = 'update'): string
@@ -145,12 +150,12 @@ final class AnalysisService
         $cap = (int) round((float) config('living_course.cost.proposal_usd') * 1e6);
         $monthly = (int) round((float) config('living_course.cost.source_monthly_usd') * 1e6);
         // a source update counts against its source, an improvement from learner insights against the course (its session)
-        $spent = (int) Proposal::query()->where($proposal->isInsights() ? 'session_id' : 'source_id', $proposal->isInsights() ? $proposal->session_id : $proposal->source_id)->where('id', '!=', $proposal->id)->where('created_at', '>=', now()->startOfMonth())->sum('cost_micro_usd');
+        $spent = (int) Proposal::query()->where($proposal->isSourceless() ? 'session_id' : 'source_id', $proposal->isSourceless() ? $proposal->session_id : $proposal->source_id)->where('id', '!=', $proposal->id)->where('created_at', '>=', now()->startOfMonth())->sum('cost_micro_usd');
         if ($estimate + (int) $proposal->cost_micro_usd > $cap) {
             return $this->blocked($proposal, $estimate, sprintf('Analysing this proposal would cost about $%.2f, above the $%.2f limit per proposal. Update the changed elements by hand, or ask an admin to raise LIVING_COURSE_PROPOSAL_COST_USD.', $estimate / 1e6, $cap / 1e6));
         }
         if ($spent + $estimate > $monthly) {
-            return $this->blocked($proposal, $estimate, sprintf('%s has used $%.2f of its $%.2f monthly AI budget for updates. Try next month, update by hand, or ask an admin to raise LIVING_COURSE_SOURCE_MONTHLY_USD.', $proposal->isInsights() ? 'This course' : 'This source', $spent / 1e6, $monthly / 1e6));
+            return $this->blocked($proposal, $estimate, sprintf('%s has used $%.2f of its $%.2f monthly AI budget for updates. Try next month, update by hand, or ask an admin to raise LIVING_COURSE_SOURCE_MONTHLY_USD.', $proposal->isSourceless() ? 'This course' : 'This source', $spent / 1e6, $monthly / 1e6));
         }
         $auto = (int) round((float) config('living_course.cost.auto_analyse_usd') * 1e6);
         if (!$confirmed && $estimate > $auto) {
@@ -334,8 +339,8 @@ final class AnalysisService
             $cost += $check['cost'];
             $callIds = [...$callIds, ...$check['callIds']];
         }
-        if ($proposal->isInsights() && $check['unsupported'] !== []) {
-            // an improvement is only proposed when every claim is grounded: after one regeneration the author edits it by hand
+        if ($proposal->isSourceless() && $check['unsupported'] !== []) {
+            // an improvement or a restyle is only proposed when every claim is grounded: after one regeneration the author edits it by hand
             $this->leaveManual($items, $callIds, $check['unsupported']);
 
             return ['items' => 0, 'cost' => $cost];
@@ -379,7 +384,7 @@ final class AnalysisService
             userId: $insights ? null : ($userId !== null ? (int) $userId : null),
             validator: fn (array $data) => [
                 ...UpdateValidator::validate($data, $built['expected'], $built['known'], $built['objectiveIds']),
-                ...($insights ? UpdateValidator::improvement($data, $built['expected']) : []),
+                ...($proposal->isSourceless() ? UpdateValidator::improvement($data, $built['expected']) : []),
             ],
             budget: ['cost_micro_usd' => (int) round((float) config('living_course.cost.proposal_usd') * 1e6)],
         ));

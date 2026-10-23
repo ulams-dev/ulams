@@ -19,6 +19,7 @@ final class UpdateResponder
         $responders->register('update', fn (DriverRequest $r) => self::respond($r));
         $responders->register('new_lesson', fn (DriverRequest $r) => self::newLesson($r));
         $responders->register('insights_improve', fn (DriverRequest $r) => self::improve($r));
+        $responders->register('style_restyle', fn (DriverRequest $r) => self::restyle($r));
     }
 
     /**
@@ -68,6 +69,66 @@ final class UpdateResponder
         }
 
         return ['items' => $items, 'reply' => sprintf('Reviewed %d element%s against what learners struggle with.', count($items), count($items) === 1 ? '' : 's')];
+    }
+
+    /**
+     * A stand-in for `style_restyle` (ADR 0196): applies the style findings of each element to its own text, replacing a
+     * term to avoid by the term to use and dropping a banned phrase, and keeps everything else, citations and correct
+     * answers included. Instructions in the elements or sources are not read.
+     *
+     * @return array<string,mixed>
+     */
+    public static function restyle(DriverRequest $r): array
+    {
+        $fragments = SyntheticResponders::fragments($r);
+        $input = self::input($r);
+        $items = [];
+        foreach ($input['elements'] ?? [] as $el) {
+            $type = (string) $el['type'];
+            $element = (array) $el['element'];
+            $existing = array_values(array_filter((array) ($element['citations'] ?? []), fn ($id) => isset($fragments[$id])));
+            $fix = static function (string $text) use ($el): string {
+                foreach ((array) ($el['styleFindings'] ?? []) as $f) {
+                    $term = (string) ($f['term'] ?? '');
+                    if ($term === '') {
+                        continue;
+                    }
+                    $pattern = '/(?<![\p{L}\p{N}])' . preg_quote($term, '/') . '(?![\p{L}\p{N}])/u' . (($f['rule'] ?? '') === 'banned' || ($f['rule'] ?? '') === 'terminology' ? 'i' : '');
+                    $text = (string) preg_replace($pattern, ($f['rule'] ?? '') === 'banned' ? '' : (string) ($f['use'] ?? $term), $text);
+                }
+
+                return trim((string) preg_replace('/ {2,}/', ' ', (string) preg_replace('/\s+([,.;:!?])/u', '$1', $text)));
+            };
+            $base = [
+                'elementId' => $el['elementId'], 'decision' => 'no_change', 'reason' => 'None of the findings applies to this text.', 'severity' => 'minor',
+                'fragmentIds' => $existing, 'answerStatus' => $type === 'question' ? 'unchanged' : 'not_a_question', 'block' => null, 'question' => null, 'objective' => null,
+            ];
+            if ($type === 'block') {
+                $new = $fix((string) ($element['markdown'] ?? ''));
+                if ($new === trim((string) ($element['markdown'] ?? '')) || $new === '') {
+                    $items[] = $base;
+                    continue;
+                }
+                $items[] = ['decision' => 'update', 'reason' => 'Follows the style profile: terms and banned phrases fixed.', 'block' => ['id' => (string) $element['id'], 'kind' => (string) ($element['kind'] ?? 'paragraph'), 'markdown' => $new, 'citations' => $existing, 'objectiveIds' => array_values((array) ($element['objectiveIds'] ?? []))]] + $base;
+            } elseif ($type === 'question') {
+                $stem = $fix((string) $element['stem']);
+                $explanation = $fix((string) ($element['explanation'] ?? ''));
+                // the answer key is not restyled: a correct option keeps its wording
+                $options = array_map(fn ($o) => ['id' => (string) $o['id'], 'text' => !empty($o['correct']) ? (string) $o['text'] : ($fix((string) $o['text']) ?: (string) $o['text']), 'correct' => (bool) $o['correct']], (array) $element['options']);
+                if ($stem === trim((string) $element['stem']) && $explanation === trim((string) ($element['explanation'] ?? '')) && $options === array_map(fn ($o) => ['id' => (string) $o['id'], 'text' => (string) $o['text'], 'correct' => (bool) $o['correct']], (array) $element['options'])) {
+                    $items[] = $base;
+                    continue;
+                }
+                $items[] = ['decision' => 'update', 'reason' => 'Follows the style profile: terms and banned phrases fixed.', 'question' => [
+                    'id' => (string) $element['id'], 'type' => (string) $element['type'], 'stem' => $stem ?: (string) $element['stem'], 'options' => $options,
+                    'explanation' => $explanation, 'citations' => $existing, 'objectiveIds' => array_values((array) ($element['objectiveIds'] ?? [])),
+                ]] + $base;
+            } else {
+                $items[] = $base;
+            }
+        }
+
+        return ['items' => $items, 'reply' => sprintf('Checked %d element%s against the style profile.', count($items), count($items) === 1 ? '' : 's')];
     }
 
     /** @return array<string,mixed> */

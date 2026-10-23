@@ -6,10 +6,12 @@ import { STATUS_LABEL } from "../../../../../studio/labels.ts";
 import { PROPOSAL_STATUS_LABEL, usdText } from "../../../../../studio/updates.ts";
 import { pickInsightsLocale } from "../../../../../studio/insights-i18n.ts";
 import { IMPROVE_STRINGS } from "../../../../../studio/improve-i18n.ts";
+import { fill, STYLE_STRINGS } from "../../../../../studio/style-i18n.ts";
 
 const id = Astro.params.id ?? "";
 const locale = pickInsightsLocale(Astro.url.searchParams.get("lang"), Astro.request.headers.get("accept-language"));
 const im = IMPROVE_STRINGS[locale];
+const st = STYLE_STRINGS[locale];
 const tenant = Astro.locals.tenant;
 if (!tenant) return Astro.redirect("/tenants");
 if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 });
@@ -85,14 +87,15 @@ const OPEN = ["analysing", "ready", "awaiting_analysis", "budget_blocked", "appl
               {proposals.map((p) => (
                 <tr>
                   <th scope="row">
-                    <a href={`/studio/s/${id}/updates/${p.id}${p.kind === "insights" ? `?lang=${locale}` : ""}`}>
-                      {p.kind === "insights" ? "Improvement" : "Update"} {p.number}
+                    <a href={`/studio/s/${id}/updates/${p.id}${p.kind !== "source" ? `?lang=${locale}` : ""}`}>
+                      {p.kind === "style" ? fill(st.restyleName, { number: p.number }) : `${p.kind === "insights" ? "Improvement" : "Update"} ${p.number}`}
                       <span class="cb-sr"> ({PROPOSAL_STATUS_LABEL[p.status] ?? p.status})</span>
                     </a>
                     {OPEN.includes(p.status) && <span class="cb-tag">Open</span>}
                     {p.kind === "insights" && <span class="st-badge" lang={im.htmlLang}>{im.badge}</span>}
+                    {p.kind === "style" && <span class="st-badge" lang={st.htmlLang}>{st.restyleBadge}</span>}
                   </th>
-                  <td>{p.fromRevision && p.toRevision ? `r${p.fromRevision.number} → r${p.toRevision.number}` : p.kind === "insights" ? "No source change" : "–"}</td>
+                  <td>{p.fromRevision && p.toRevision ? `r${p.fromRevision.number} → r${p.toRevision.number}` : p.kind === "insights" ? "No source change" : p.kind === "style" ? st.restyleNoSource : "–"}</td>
                   <td>{PROPOSAL_STATUS_LABEL[p.status] ?? p.status}</td>
                   <td>{p.counts?.elements ?? 0}</td>
                   <td>{p.counts?.answerChecks ?? 0}</td>

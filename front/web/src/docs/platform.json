@@ -260,8 +260,7 @@
               {
                 "icon": "layers",
                 "title": "Your style guide shapes the course design",
-                "text": "A brand import already turns a Figma file, a Stitch DESIGN.md or a brand guide into a theme you approve as a diff. Applying a style guide inside the course interview is coming.",
-                "status": "coming"
+                "text": "Upload your style guide: the builder reads it into a cited style profile an admin approves, drafts every course with it, and a style check reports departures; a banned phrase can block publishing."
               },
               {
                 "icon": "users",
