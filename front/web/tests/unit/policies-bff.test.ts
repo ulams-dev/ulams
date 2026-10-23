@@ -18,6 +18,9 @@ describe("Policies BFF allow-list", () => {
     ["POST", `/policies/${P}/variants/generate`],
     ["GET", `/policies/${P}/dashboard`],
     ["GET", `/policies/${P}/dashboard/export`],
+    ["GET", `/policies/${P}/variants/${P}/academy`],
+    ["POST", `/policies/${P}/variants/${P}/academy`],
+    ["DELETE", `/policies/${P}/variants/${P}/academy`],
   ])("forwards %s %s", (method, path) => {
     expect(isPoliciesCall(method, path)).toBe(true);
     expect(isStudioCall(method, path)).toBe(false);
@@ -42,6 +45,10 @@ describe("Policies BFF allow-list", () => {
     ["GET", `/policies/${P}/versions/2/x`],
     ["GET", "/policies2"],
     ["GET", "/policy"],
+    ["PUT", `/policies/${P}/variants/${P}/academy`],
+    ["POST", `/policies/${P}/variants/${P}/academy/extra`],
+    ["GET", `/policies/${P}/variants/short/academy`],
+    ["DELETE", `/policies/${P}/variants/${P}`],
   ])("refuses %s %s", (method, path) => {
     expect(isPoliciesCall(method, path)).toBe(false);
   });
