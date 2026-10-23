@@ -1,6 +1,6 @@
 # Plan: course versions with a visual diff, and course variants by level and role
 
-Status: approved by the owner on 2026-10-22 with the recommended defaults for Q1 to Q11; ADR 0192 is Accepted. Milestones CV-1, CV-2 and CV-4 are merged; CV-3 (the studio compare screen, the version list API and the SDK client) is implemented in PR #425; CV-5 is being built in three parts (1: API, routing, entitlement and progress; 2: learner screens; 3: Living Course and certificates) and parts 1 and 3 are implemented; CV-6 is not.
+Status: approved by the owner on 2026-10-22 with the recommended defaults for Q1 to Q11; ADR 0192 is Accepted. Milestones CV-1, CV-2 and CV-4 are merged; CV-3 (the studio compare screen, the version list API and the SDK client) is implemented in PR #425; CV-5 is being built in three parts (1: API, routing, entitlement and progress; 2: learner screens; 3: Living Course and certificates) and all three parts are implemented (parts 1 and 2 are merged); CV-6 is not.
 TODO items: Phase 3.1 and Phase 4.4 in `docs/ROADMAP-TODO.md` (all marked `(new)`). The spec
 (`docs/ROADMAP-PROMPT.md`) does not mention either feature yet; it needs a matching paragraph in Phases 3 and 4
 once the owner approves.

@@ -1999,6 +1999,42 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/reporting/saved",
+  "summary": "Saved reports the caller can see",
+  "tag": "Reporting"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/reporting/saved",
+  "summary": "Save a report",
+  "tag": "Reporting"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/reporting/saved/{id}",
+  "summary": "Delete a saved report",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/reporting/saved/{id}",
+  "summary": "One saved report",
+  "tag": "Reporting"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/reporting/saved/{id}",
+  "summary": "Change a saved report",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/reporting/saved/{id}/run",
+  "summary": "Run a saved report",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/reports/available-for-user",
   "summary": "Get list of available metrics for logged user",
   "tag": "Admin Reports"

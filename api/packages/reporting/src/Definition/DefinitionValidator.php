@@ -17,6 +17,9 @@ use Ulams\Reporting\Support\Column;
  */
 class DefinitionValidator
 {
+    /** The schema version a saved report is stored with. */
+    public const VERSION = 1;
+
     public const SCHEMA = __DIR__ . '/../../resources/schemas/report-definition/v1.json';
 
     public function __construct(private readonly DatasetRegistry $registry)
