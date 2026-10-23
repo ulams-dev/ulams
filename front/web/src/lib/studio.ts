@@ -73,4 +73,4 @@ export async function courseTitleFor(tenant: Tenant, token: string, courseId: nu
   }
 }
 
-export { STUDIO_RULES, LIVING_COURSE_RULES, LIVING_COURSE_PREFIX, INSIGHTS_RULES, INSIGHTS_PREFIX, isStudioCall, isLivingCourseCall, isInsightsCall, insightsTarget, COURSE_VERSIONS_RULES, COURSE_VERSIONS_PREFIX, isCourseVersionsCall, courseVersionsTarget } from "./studio-rules.ts";
+export { STUDIO_RULES, LIVING_COURSE_RULES, LIVING_COURSE_PREFIX, INSIGHTS_RULES, INSIGHTS_PREFIX, isStudioCall, isLivingCourseCall, isInsightsCall, insightsTarget, COURSE_VERSIONS_RULES, COURSE_VERSIONS_PREFIX, isCourseVersionsCall, courseVersionsTarget, isAuthoringMetricsCall, authoringMetricsTarget } from "./studio-rules.ts";

@@ -10,8 +10,9 @@ modules:
 Authoring cost is what a course really costs to produce. The Course Builder already records what the model
 cost; the **authoring metrics** module adds how long each stage of a build took, so a course can state its own
 time to produce. This page covers what is recorded today: stage times, element provenance and the per-course snapshot
-with its API. Exports, the studio and admin screens, review time and the hours-per-learner-hour figure follow in later
-releases (ADR 0194).
+with its API, the export and the screens: **Analytics > Authoring** in the admin ([Reports and analytics](/admin/reports-and-analytics/))
+and **Production** per course in the studio ([How a course was produced](/creators/course-production/)). Opt-in review time and the honest hours-per-learner-hour
+figure are described below (ADR 0194).
 
 ## What is recorded
 
@@ -79,7 +80,7 @@ produced a number.
 | AI edit time | wall time of runs `patch` (element chat edits) |
 | Interview time | wall time of runs `interview`: the author answering questions, kept on its own line |
 | Model time | summed latency of the model calls, for comparison: parallel lessons overlap, so it is longer than the wall time |
-| Author time | `null` (not recorded). It is never shown as zero; recording review time is a separate, opt-in step |
+| Author time | the anonymous review minutes of the course (see Review time below), or `null` when none was recorded. It is never shown as zero |
 | Cost | the model calls of the course in micro USD at the price the call was made at, split into **build** (the builder session, its element chat edits and its variants) and **maintenance** (Living Course proposals from sources and from learner insights). Failed calls are included because they were paid for; their number is kept. Tutor answers and learner remediation are not authoring and are not counted |
 | Counts | lessons, quiz questions (and final test), blocks and blocks with at least one citation, from the applied blueprint; `learner_minutes_estimate` is the sum of the declared lesson minutes |
 | AI elements | modules, lessons, blocks and questions the AI wrote, split into accepted unchanged, revised by the AI on request, edited by the author and unknown (written before provenance was recorded); author-written elements are counted apart |
@@ -102,10 +103,77 @@ Scoped personal access tokens reach them through the `builder` area.
 | Request | Returns |
 |---|---|
 | `GET /api/admin/authoring-metrics/courses?from=&to=&course_id[]=` | the snapshots, optionally of courses created in a date range or of the listed courses |
+| `GET /api/admin/authoring-metrics/courses/export?format=csv\|jsonl` | the same rows as a file, with the same filters; one flat row per course with every figure and the `method_version`, only numbers, identifiers and dates, and an empty cell where author time is not recorded |
 | `GET /api/admin/authoring-metrics/courses/{course}` | one snapshot with the time of every pipeline stage (and whether each is `exact`, `coarse` or `incomplete`) and the element split. `404` when the course was not built with the Course Builder |
 
-From the CLI: `ulams authoring-metrics list` and `ulams authoring-metrics get <course>`. The figures are the tenant's
+From the CLI: `ulams authoring metrics`, `course <id>`, `summary` and `export --out file.csv`. The figures are the tenant's
 own measurements; no industry figure appears anywhere.
+
+## Hours of work per learner hour
+
+The figure the research on authoring cost asks for, computed from **your academy's own data** and from nothing else:
+
+```text
+(generation seconds + interview seconds + author minutes × 60) / (learner minutes × 60)
+```
+
+Learner minutes are the minutes declared for the lessons of the course. The figure is shown for a course only when its author
+time was recorded (review time, above); without it the work behind the course is not known and the page says so instead of
+showing a number built from machine time alone. Maintenance (the model calls that kept the course up to date) is shown
+separately, as a cost. Every figure comes with its inputs and the formula, and the exports carry `method_version` (now 2,
+which added this figure), so a file says which definitions produced a number.
+
+- **Per course**: `hours` in the course endpoint (`work_hours`, `learner_hours`, `hours_per_learner_hour`, and the `reason`
+  there is no figure: `author_time_not_recorded` or `no_learner_minutes`), the `hours_per_learner_hour` column of the export,
+  and a line on the studio's Production page.
+- **Across the academy**: `GET /api/admin/authoring-metrics/summary` returns the **median** over the courses that have the
+  figure, with how many (`n_with_figure`). With fewer than three such courses there is no median and `status` says why
+  (`not_enough_courses`, or `author_time_not_recorded` when no course has author time); nobody should fill the gap with an
+  estimate. The admin shows it on **Analytics > Authoring**.
+- **Your own earlier figure**: set `authoring_metrics.baseline_hours_per_learner_hour` in **Settings > Authoring metrics**
+  (or `AUTHORING_METRICS_BASELINE_HOURS`) to what your hand-built courses used to take. It is shown next to the measured median
+  and labelled as **your own estimate, not a measurement**.
+- **No benchmark, ever.** No industry ratio appears in the studio, the admin, the API, the exports, the CLI or the MCP tools,
+  and tests fail if one does. A marketing page that wants to compare must cite the academy's own export, not this feature.
+
+From the CLI and MCP: `ulams authoring summary` (`authoring_summary`), `ulams authoring metrics` (`authoring_metrics`),
+`ulams authoring course <id>` (`authoring_course`) and `ulams authoring export` (`authoring_export`), all read-only and in the
+`analytics` toolset. Their descriptions tell an agent that the numbers are the tenant's own, that not recorded is never zero and
+that a missing median must not be estimated.
+
+## Review time (opt-in)
+
+Author time, the minutes people actively spend on a course, is **off by default**. A tenant administrator turns it on in
+**Settings > Authoring metrics** (the setting `authoring_metrics.review_time`, also `AUTHORING_METRICS_REVIEW_TIME`),
+after reading the notice at the top of that tab. Turning it off stops collection at once; **Delete recorded review time**
+removes every recorded minute and daily total (generation time, cost and counts are not personal and stay).
+
+While it is on, the studio and the admin course editor count whole minutes of active screen time on one course. A minute
+counts when the tab is visible and in front and there was keyboard, pointer or scroll input in the last 120 seconds.
+Several tabs of one browser elect one sender (`BroadcastChannel`), so three open tabs count once. The browser reports once
+a minute (and when the page closes, in the studio) to `POST /api/admin/authoring-metrics/activity`. The studio header shows
+"Review time is recorded for this course (anonymous)" with a link to a page that names everything below.
+
+| | |
+|---|---|
+| Stored | per minute: the course, the start of the minute, the place (`studio` or `admin`) and a random 22-character code made when the page was opened and kept only in the page's memory (`authoring_activity_minutes`; unique on all four) |
+| Not stored | a user id, an IP address, a user agent, an element id. The tables have no column for them, a test checks the column list, and the endpoint ignores extra fields |
+| Shown | author-minutes per course, per day and in total; never per person. A course with one author shows that author's time, and in a small team a total can still point to a person. The notice says so |
+| Kept | `authoring-metrics:rollup` runs nightly (03:10): it totals the minutes per course, day and place into `authoring_course_daily` and deletes raw minutes older than 7 days. The daily totals stay as long as the course |
+| Snapshot | `author_minutes` is the daily totals plus the raw minutes of days not rolled up yet, or `null` when nothing was recorded. Not recorded is never shown as zero |
+
+The endpoint takes at most 10 minutes per call, none in the future and none older than 15 minutes (422), answers 404 while
+the setting is off or for a course that was not built with the Course Builder, 403 for someone who is neither the author of
+the course's builder session nor holder of `authoring_metrics_read`, and refuses scoped personal access tokens (the route
+map marks it `none`), so an agent or a script cannot inflate review time. `GET /api/admin/authoring-metrics/activity/status`
+tells the studio and the admin whether review time is on. `DELETE /api/admin/authoring-metrics/activity` (needs
+`authoring_metrics_read`, interactive sessions only) is the deletion above.
+
+**Legal note (not legal advice).** In the EU, measuring what employees do on a screen can need a legal basis and, in some
+countries (Germany, for example), the involvement of a works council. That is why review time is opt-in per academy, has no
+user id, counts whole minutes, shows an indicator while it is on and can be deleted. Tell your authors before you turn it
+on. The figure is active screen time and a lower bound of real effort: reading a printout or thinking away from the keyboard
+is not counted, and a tab left open with occasional scrolling can count a little extra.
 
 ## Failure behaviour
 

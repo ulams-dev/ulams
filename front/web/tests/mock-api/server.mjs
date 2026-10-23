@@ -623,9 +623,67 @@ const courseVersionsRoutes = [
   ["GET", /^\/api\/admin\/course-versions\/courses\/(\d+)\/compare$/, ({ match, query, tenant }) => courseCompare(Number(match[1]), query, tenant)],
 ];
 
+/**
+ * Authoring metrics (ADR 0194): the production figures of a course. Course 1 is the measured run (outline 24 s, lessons
+ * to quizzes 6 min 57 s, apply 23 s), 2 an older build with whole-run times only and nothing the AI wrote yet, 3 was not
+ * made with the builder (404), 4 is another author's (403), 5 fails once and then works, 6 has elements from before
+ * provenance was recorded, 7 has recorded review time.
+ */
+const metricsFails = new Map();
+const metricStages = [
+  ["outline", "outline", 24], ["generate", "lessons", 190], ["generate", "grounding", 40], ["generate", "interactions", 60], ["generate", "quizzes", 127], ["apply", "apply", 23],
+].map(([kind, stage, seconds], i) => ({ run_id: `01r${"0".repeat(22)}${i}`, run_kind: kind, stage, started_at: "2026-10-20T09:00:00+00:00", finished_at: "2026-10-20T09:03:10+00:00", seconds, quality: "exact" }));
+const courseMetric = (id) => {
+  const base = {
+    course_id: id, session_id: `01s${"0".repeat(22)}${id}`, method_version: 1, computed_at: "2026-10-22T12:00:00+00:00",
+    time: { generation_seconds: 464, ai_edit_seconds: 0, interview_seconds: 18, model_seconds: 902, author_minutes: null },
+    cost: { build_micro_usd: 284100, maintenance_micro_usd: 0, llm_calls: 27, llm_calls_failed: 1 },
+    counts: { lessons: 6, questions: 18, blocks: 35, cited_blocks: 35, learner_minutes_estimate: 60 },
+    elements: { ai_elements: 59, accepted_unchanged: 49, revised_on_request: 4, edited_by_author: 6, unknown: 0, author_written: 2 },
+    hours: { work_hours: null, learner_hours: 1, hours_per_learner_hour: null, reason: "author_time_not_recorded", formula: "(generation seconds + interview seconds + author minutes x 60) / (learner minutes x 60)" },
+    stages: metricStages,
+  };
+  if (id === 2) return { ...base, time: { ...base.time, generation_seconds: 31, interview_seconds: 0, model_seconds: 0 }, cost: { build_micro_usd: 0, maintenance_micro_usd: 0, llm_calls: 0, llm_calls_failed: 0 }, elements: { ai_elements: 0, accepted_unchanged: 0, revised_on_request: 0, edited_by_author: 0, unknown: 0, author_written: 0 }, stages: [{ ...metricStages[0], stage: "generate", run_kind: "generate", seconds: 31, quality: "coarse" }] };
+  if (id === 6) return { ...base, elements: { ai_elements: 59, accepted_unchanged: 0, revised_on_request: 0, edited_by_author: 0, unknown: 59, author_written: 0 } };
+  if (id === 7) return { ...base, hours: { ...base.hours, work_hours: 2.3839, hours_per_learner_hour: 2.38, reason: null }, time: { ...base.time, author_minutes: 135 }, cost: { ...base.cost, maintenance_micro_usd: 1520000 }, stages: [{ ...metricStages[5], quality: "incomplete" }] };
+  return base;
+};
+const authoringMetricsRoutes = [
+  ["POST", /^\/__mock\/authoring-metrics\/reset$/, ({ tenant }) => (metricsFails.delete(`${tenant}:5`), { reset: true })],
+  ["GET", /^\/api\/admin\/authoring-metrics\/courses\/(\d+)$/, ({ match, tenant }) => {
+    const id = Number(match[1]);
+    if (id === 3) return { __status: 404, message: "Not found" };
+    if (id === 4) return { __status: 403, message: "This action is unauthorized." };
+    if (id === 5 && !metricsFails.get(`${tenant}:5`)) {
+      metricsFails.set(`${tenant}:5`, true);
+      return { __status: 500, message: "The figures are temporarily unavailable." };
+    }
+    return insightsTitles[id] ? courseMetric(id) : { __status: 404, message: "Not found" };
+  }],
+];
+
+/**
+ * Review time (ADR 0194, AM-5): whether the tenant records it (a test switches it per tenant) and the minutes browsers
+ * reported, so a test can check what was sent and that it identifies nobody.
+ */
+const reviewOn = new Map();
+const reviewPosts = new Map();
+const reviewRoutes = [
+  ["POST", /^\/__mock\/authoring-metrics\/review$/, ({ tenant, body }) => (reviewOn.set(tenant, body?.enabled === true), reviewPosts.set(tenant, []), { enabled: reviewOn.get(tenant) })],
+  ["GET", /^\/__mock\/authoring-metrics\/activity$/, ({ tenant }) => ({ posts: reviewPosts.get(tenant) ?? [] })],
+  ["GET", /^\/api\/admin\/authoring-metrics\/activity\/status$/, ({ tenant }) => ({ enabled: reviewOn.get(tenant) === true, maxMinutesPerCall: 10, maxAgeMinutes: 15 })],
+  ["POST", /^\/api\/admin\/authoring-metrics\/activity$/, ({ tenant, body }) => {
+    if (reviewOn.get(tenant) !== true) return { __status: 404, message: "Not found" };
+    reviewPosts.set(tenant, [...(reviewPosts.get(tenant) ?? []), body]);
+    return { accepted: Array.isArray(body?.minutes) ? body.minutes.length : 0 };
+  }],
+];
+
 const routes = [
   ...insightsRoutes,
+  ...reviewRoutes,
   ...courseVersionsRoutes,
+  ...authoringMetricsRoutes,
   ...improveRoutes,
   ["POST", /^\/api\/code-exercises\/launches\/(\d+)$/, ({ tenant, match }) => {
     const topic = CODE_TOPICS.get(Number(match[1]));

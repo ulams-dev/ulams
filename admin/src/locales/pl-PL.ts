@@ -1,3 +1,4 @@
+import authoringMetrics from './pl-PL/authoringMetrics';
 import bulkNotifications from './pl-PL/bulkNotifications';
 import codeExercises from './pl-PL/codeExercises';
 import component from './pl-PL/component';
@@ -116,6 +117,7 @@ export default {
   ...codeExercises,
   ...courses,
   ...insights,
+  ...authoringMetrics,
   ...events,
   ...bulkNotifications,
   branding: 'Branding',
