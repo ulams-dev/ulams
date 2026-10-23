@@ -55,6 +55,7 @@ return [
                     base_path('packages/code-exercises/src'),
                     base_path('packages/adapt/src'),
                     base_path('packages/authoring-metrics/src'),
+                    base_path('packages/reporting/src'),
                     base_path('packages/compliance/src'),
                     base_path('packages/policy-lifecycle/src'),
                     base_path('packages/notifications/src'),

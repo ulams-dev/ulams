@@ -6,12 +6,16 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Ulams\Core\Http\SafeHttp;
+use Ulams\LivingCourse\Connectors\Git\PushChange;
 use Ulams\LivingCourse\Connectors\GitConnector;
 use Ulams\LivingCourse\Connectors\SourceConnectorRegistry;
 use Ulams\LivingCourse\Jobs\CheckSourceJob;
 use Ulams\LivingCourse\Models\AuditEntry;
 use Ulams\LivingCourse\Models\Connection;
+use Ulams\LivingCourse\Models\Proposal;
 use Ulams\LivingCourse\Models\Revision;
+use Ulams\LivingCourse\Services\ChangeNote;
+use Ulams\LivingCourse\Support\Presenter;
 use Ulams\LivingCourse\Tests\Support\FakeGitHost;
 use Ulams\LivingCourse\Tests\TestCase;
 
@@ -23,6 +27,8 @@ class WebhookTest extends TestCase
     private Connection $connection;
 
     private string $secret;
+
+    private \Ulams\Courses\Tests\Models\User $owner;
 
     protected function setUp(): void
     {
@@ -42,7 +48,7 @@ class WebhookTest extends TestCase
         $this->git = new FakeGitHost($host);
         $this->git->files = ['docs/a.md' => "# A\n\nFirst handbook page with enough words to be a real fragment of text.\n", 'docs/b.md' => "# B\n\nSecond handbook page with enough words to be a real fragment of text.\n"];
         app(SourceConnectorRegistry::class)->register(new GitConnector($this->git->handler()));
-        $author = $this->author();
+        $author = $this->owner = $this->author();
         $session = $this->newSession($author);
         $config = array_filter(['host' => $host, 'repository' => 'acme/handbook', 'branch' => 'main', 'paths' => ['docs/**/*.md'], 'base_url' => $host === 'gitea' ? 'https://git.example.org' : ($host === 'gitlab' ? 'https://gitlab.example.org/api/v4' : null)]);
         $response = $this->actingAs($author, 'api')->postJson("/api/admin/living-course/sessions/{$session->id}/sources/connect", ['connector' => 'git', 'config' => $config, 'secrets' => [], 'schedule' => 'daily'])->assertCreated();
@@ -226,5 +232,58 @@ class WebhookTest extends TestCase
             $this->assertStringNotContainsString('Ignore previous instructions', json_encode($entry->data));
         }
         $this->assertStringNotContainsString('Ignore previous', json_encode(DB::table('living_course_webhook_deliveries')->get()));
+    }
+
+    public function testAMergedPullRequestIsRecordedOnTheRevisionAndShownOnItsProposalSummary(): void
+    {
+        $this->connected();
+        $this->git->files['docs/a.md'] .= "\nA new sentence that changes the first page for readers of the handbook.\n";
+        $payload = $this->push() + ['head_commit' => ['id' => 'ABCDEF1234567', 'message' => "Merge pull request #123 from acme/rename\n\nRename the --namespace flag", 'url' => 'https://github.com/acme/handbook/commit/abcdef1']];
+
+        $this->github($payload)->assertStatus(202);
+
+        $revision = Revision::query()->where('source_id', $this->connection->source_id)->where('number', 2)->firstOrFail();
+        $this->assertSame(['abcdef1234567', 'Rename the --namespace flag', 123, 'https://github.com/acme/handbook/pull/123', 'webhook'],
+            [$revision->metadata['change']['commit'], $revision->metadata['change']['subject'], $revision->metadata['change']['pullRequest'], $revision->metadata['change']['pullRequestUrl'], $revision->metadata['change']['source']]);
+        $this->assertSame(123, Presenter::revision($revision)['change']['pullRequest']);
+        $this->assertSame(123, Presenter::proposalSummary(new Proposal(['to_revision_id' => $revision->id]))['change']['pullRequest']);
+        // the note is used once: the next check names no change
+        $this->assertNull(ChangeNote::take($this->connection->id));
+    }
+
+    public function testABurstOfPushesEndsAsOneRevisionThatNamesTheLastChange(): void
+    {
+        Queue::fake();
+        $this->connected();
+        $one = $this->push() + ['head_commit' => ['id' => '1111111', 'message' => 'First (#1)']];
+        $two = $this->push() + ['head_commit' => ['id' => '2222222', 'message' => 'Second (#2)']];
+        $this->github($one, null, 'b1')->assertStatus(202);
+        $this->github($two, null, 'b2')->assertStatus(202);
+
+        $note = ChangeNote::take($this->connection->id);
+        $this->assertSame(['2222222', 2], [$note['commit'], $note['pullRequest']]);
+    }
+
+    public function testACheckFromCiRecordsTheCommitAndABadCommitIsRefused(): void
+    {
+        $this->connected();
+        $author = $this->owner;
+        $this->git->files['docs/a.md'] .= "\nAnother sentence that changes the first page for readers of the handbook.\n";
+        $url = "/api/admin/living-course/connections/{$this->connection->id}/check";
+
+        $this->actingAs($author, 'api')->postJson($url, ['commit' => 'not-a-commit'])->assertStatus(422);
+        $this->actingAs($author, 'api')->postJson($url, ['commit' => 'ABCDEF1234'])->assertStatus(202);
+
+        $revision = Revision::query()->where('source_id', $this->connection->source_id)->where('number', 2)->firstOrFail();
+        $this->assertSame(['abcdef1234', 'ci'], [$revision->metadata['change']['commit'], $revision->metadata['change']['source']]);
+    }
+
+    public function testACiNoteDoesNotWipeTheRicherNoteOfAWebhookForTheSameCommit(): void
+    {
+        $this->connected();
+        ChangeNote::put($this->connection->id, ['commit' => 'abcdef1', 'subject' => 'Rename (#5)', 'pullRequest' => 5, 'source' => 'webhook']);
+        ChangeNote::put($this->connection->id, PushChange::fromCommit('abcdef1'));
+
+        $this->assertSame(5, ChangeNote::take($this->connection->id)['pullRequest']);
     }
 }
