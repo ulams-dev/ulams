@@ -54,6 +54,24 @@
   "tag": "Admin Tokens"
  },
  {
+  "method": "DELETE",
+  "path": "/api/admin/authoring-metrics/activity",
+  "summary": "Delete recorded review time",
+  "tag": "Authoring metrics"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/authoring-metrics/activity",
+  "summary": "Report active review minutes",
+  "tag": "Authoring metrics"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/authoring-metrics/activity/status",
+  "summary": "Is review time recorded",
+  "tag": "Authoring metrics"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/authoring-metrics/courses",
   "summary": "Authoring metric of courses",

@@ -137,6 +137,8 @@ export type MockApi = {
   theme: () => Record<string, string>;
   /** Query strings of every GET /api/admin/authoring-metrics/courses[/export], in order. */
   metricRequests: string[];
+  /** Number of DELETE /api/admin/authoring-metrics/activity calls (recorded review time deleted). */
+  reviewTimeDeletes: () => number;
 };
 
 /** One course of the authoring metrics list, as the API returns it. */
@@ -193,6 +195,8 @@ export async function mockApi(
     theme?: MockTheme;
     /** Serve Analytics > Authoring (adds its permission): the courses of the list, or a status to fail with. */
     authoring?: { courses?: MockMetric[]; status?: number; failFirst?: boolean };
+    /** Serve Settings > Authoring metrics (adds the settings permissions): the setting and the delete action, or a status to fail the delete with. */
+    reviewTime?: { deleteStatus?: number };
   } = {},
 ): Promise<MockApi> {
   const email = options.kind === 'email';
@@ -230,7 +234,9 @@ export async function mockApi(
     logoRemovals: () => logoRemovals,
     theme: () => Object.fromEntries(themeRows.map((r) => [r.key, r.value])),
     metricRequests: [],
+    reviewTimeDeletes: () => reviewDeletes,
   };
+  let reviewDeletes = 0;
   let metricFailures = options.authoring?.failFirst ? 1 : 0;
 
   const siblings = options.siblings ?? [];
@@ -320,7 +326,7 @@ export async function mockApi(
             roles: ['admin'],
             permissions: [
               ...PERMISSIONS,
-              ...(options.theme ? SETTINGS_PERMISSIONS : []),
+              ...(options.theme || options.reviewTime ? SETTINGS_PERMISSIONS : []),
               ...(options.authoring ? ['authoring_metrics_read'] : []),
             ],
           }),
@@ -347,6 +353,15 @@ export async function mockApi(
       }
       if (path === '/api/auth/refresh') {
         return json(ok({ token: TOKEN, expires_at: '2100-01-01T00:00:00Z' }));
+      }
+      if (options.reviewTime && path === '/api/admin/config') {
+        return json(
+          ok({
+            authoring_metrics: {
+              review_time: { rules: ['boolean'], public: true, readonly: false, value: false },
+            },
+          }),
+        );
       }
       if (path === '/api/config') {
         return json(ok({}));
@@ -585,6 +600,14 @@ export async function mockApi(
         if (alt) addThemeRow('logoAlt', alt);
         return json(ok({ url: logoUrl, mime: type, alt }));
       }
+    }
+
+    if (options.reviewTime && method === 'DELETE' && path === '/api/admin/authoring-metrics/activity') {
+      if (options.reviewTime.deleteStatus) {
+        return json({ message: 'This action is unauthorized.' }, options.reviewTime.deleteStatus);
+      }
+      reviewDeletes += 1;
+      return json(ok({ minutes: 42, days: 6 }));
     }
 
     if (method === 'POST' && path === '/api/admin/pdfs/preview') {

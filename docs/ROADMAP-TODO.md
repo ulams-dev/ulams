@@ -539,11 +539,12 @@ approved apply through domain services → element chat edits. Designs:
       edited, revised on request, author-written), shown in the studio and admin analytics, exportable, over the
       API, CLI and MCP, and an "hours per learner hour" figure from the tenant's own data with no benchmark claims
       (plan `docs/plans/authoring-metric-and-report-builder.md` AM-1 to AM-6; ADR 0194 Accepted 2026-10-22; market research:
-      authoring cost is the core pain) (partial: AM-1 to AM-4 done: `authoring_stage_timings` records wall time per pipeline stage,
+      authoring cost is the core pain) (partial: AM-1 to AM-5 done: `authoring_stage_timings` records wall time per pipeline stage,
       kept beyond the 30-day event retention, with the idempotent `authoring-metrics:backfill`; element provenance is in the next item; AM-3: `authoring_course_metrics` snapshot, cost resolver and
       `GET /api/admin/authoring-metrics/courses[/{course}]`; AM-4: studio "Production" page per course and admin Analytics > Authoring with
-      CSV and JSON lines export, EN/PL/ZH, axe and keyboard specs; tenant medians with n and the publish summary mention wait for AM-6; AM-5 (review time),
-      AM-6 (CLI curation, hours per learner hour) pending)
+      CSV and JSON lines export, EN/PL/ZH, axe and keyboard specs; tenant medians with n and the publish summary mention wait for AM-6; AM-5: opt-in anonymous review time (off by default, no user id, IP or user agent,
+      whole minutes with a per-page-load code, one sender per browser, 7-day raw retention, nightly rollup, delete action, indicator and notice, scoped
+      tokens refused); AM-6 (CLI curation, hours per learner hour) pending)
 - [ ] (new) Element provenance for direct author edits: the outline editor tags edited elements, AI output carries a
       content hash, so accepted vs edited AI elements can be counted (plan `authoring-metric-and-report-builder.md` AM-2) (partial: AM-2 done: `ai_hash` and
       `edited_by_author` in blueprint v3, set by generation, outline editor, LMS drift, import and element chat edits, with

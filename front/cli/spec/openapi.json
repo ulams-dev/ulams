@@ -6743,6 +6743,137 @@
     ]
    }
   },
+  "/api/admin/authoring-metrics/activity": {
+   "delete": {
+    "description": "Deletes every recorded review minute and daily total of the academy. Generation time, cost and counts are not personal and stay. Needs authoring_metrics_read. Interactive sessions only.",
+    "operationId": "admin.authoring-metrics.activity.delete",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "minutes and days deleted"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete recorded review time",
+    "tags": [
+     "Authoring metrics"
+    ]
+   },
+   "post": {
+    "description": "A browser reports the whole minutes in which the author was active on a course: the tab visible and keyboard, pointer or scroll input in the last 120 seconds. At most 10 minutes per call, none in the future and none older than 15 minutes. tab_nonce is random per page load. No user, address or element is stored. 404 when review time is not recorded or the course was not built with the Course Builder. Interactive sessions only.",
+    "operationId": "admin.authoring-metrics.activity.record",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "course_id": {
+          "type": "integer"
+         },
+         "minutes": {
+          "items": {
+           "format": "date-time",
+           "type": "string"
+          },
+          "type": "array"
+         },
+         "surface": {
+          "enum": [
+           "studio",
+           "admin"
+          ],
+          "type": "string"
+         },
+         "tab_nonce": {
+          "maxLength": 22,
+          "minLength": 22,
+          "type": "string"
+         }
+        },
+        "required": [
+         "course_id",
+         "minutes",
+         "surface",
+         "tab_nonce"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "accepted: minutes stored"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Not recorded or not a builder course"
+     },
+     "422": {
+      "description": "Invalid minutes"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Report active review minutes",
+    "tags": [
+     "Authoring metrics"
+    ]
+   }
+  },
+  "/api/admin/authoring-metrics/activity/status": {
+   "get": {
+    "description": "Whether the tenant records anonymous review time (the setting authoring_metrics.review_time) and the limits of the activity endpoint. Studio and admin ask before they start counting.",
+    "operationId": "admin.authoring-metrics.activity.status",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "enabled, maxMinutesPerCall, maxAgeMinutes"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Is review time recorded",
+    "tags": [
+     "Authoring metrics"
+    ]
+   }
+  },
   "/api/admin/authoring-metrics/courses": {
    "get": {
     "description": "One snapshot per course built with the Course Builder: generation, AI edit, interview and model time in seconds, build and maintenance cost in micro USD, the number of model calls and failed calls, element counts and how many AI elements were accepted unchanged, revised on request or edited by an author. Author time is null until review time is recorded. Needs the permission authoring_metrics_read.",

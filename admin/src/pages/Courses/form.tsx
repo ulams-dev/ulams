@@ -33,6 +33,7 @@ import { Alert, Button, Col, Row, Spin } from 'antd';
 import { isAfter, isBefore } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 import { FormattedMessage, history, useAccess, useIntl, useModel, useParams } from 'umi';
+import useReviewTime from '@/hooks/useReviewTime';
 import CourseAccess from './components/CourseAccess';
 import CourseCertificateForm from './components/CourseCertificateForm';
 import InsightsTab from './components/InsightsTab';
@@ -57,6 +58,8 @@ export default () => {
   const params = useParams<{ course?: string; tab?: string }>();
   const intl = useIntl();
   const { course, tab = TabNames.ATTRIBUTES } = params;
+  // anonymous review time of the course being edited, when the academy records it (ADR 0194)
+  useReviewTime(course ? Number(course) : undefined);
   const isNew = course === 'new';
   const access = useAccess();
   const [data, setData] = useState<Partial<API.Course>>();

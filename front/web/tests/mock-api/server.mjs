@@ -661,8 +661,26 @@ const authoringMetricsRoutes = [
   }],
 ];
 
+/**
+ * Review time (ADR 0194, AM-5): whether the tenant records it (a test switches it per tenant) and the minutes browsers
+ * reported, so a test can check what was sent and that it identifies nobody.
+ */
+const reviewOn = new Map();
+const reviewPosts = new Map();
+const reviewRoutes = [
+  ["POST", /^\/__mock\/authoring-metrics\/review$/, ({ tenant, body }) => (reviewOn.set(tenant, body?.enabled === true), reviewPosts.set(tenant, []), { enabled: reviewOn.get(tenant) })],
+  ["GET", /^\/__mock\/authoring-metrics\/activity$/, ({ tenant }) => ({ posts: reviewPosts.get(tenant) ?? [] })],
+  ["GET", /^\/api\/admin\/authoring-metrics\/activity\/status$/, ({ tenant }) => ({ enabled: reviewOn.get(tenant) === true, maxMinutesPerCall: 10, maxAgeMinutes: 15 })],
+  ["POST", /^\/api\/admin\/authoring-metrics\/activity$/, ({ tenant, body }) => {
+    if (reviewOn.get(tenant) !== true) return { __status: 404, message: "Not found" };
+    reviewPosts.set(tenant, [...(reviewPosts.get(tenant) ?? []), body]);
+    return { accepted: Array.isArray(body?.minutes) ? body.minutes.length : 0 };
+  }],
+];
+
 const routes = [
   ...insightsRoutes,
+  ...reviewRoutes,
   ...courseVersionsRoutes,
   ...authoringMetricsRoutes,
   ...improveRoutes,

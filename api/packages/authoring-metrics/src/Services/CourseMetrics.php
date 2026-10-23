@@ -16,6 +16,7 @@ use Ulams\CourseBuilder\Models\Version;
  * `authoring_course_metrics`. Every figure has a definition here and a `method_version`; when a definition
  * changes the version changes, so an export says which definitions produced a number.
  *
+ *  - author time: the anonymous review minutes of the course (ReviewTime), or null when none was recorded.
  *  - generation time: wall time of the stages of runs `outline`, `generate`, `apply`, `sync`; AI edit time: runs
  *    `patch`; interview time: runs `interview` (the author answering, shown on its own line). Runs `ingest` and the
  *    rest are in the stage list but in no total. Model time is the summed latency of the calls, for comparison.
@@ -30,7 +31,7 @@ class CourseMetrics
     /** Runs whose stage time is machine time the author waited for. */
     public const GENERATION_KINDS = ['outline', 'generate', 'apply', 'sync'];
 
-    public function __construct(private readonly SubjectResolvers $resolvers)
+    public function __construct(private readonly SubjectResolvers $resolvers, private readonly ReviewTime $reviewTime)
     {
     }
 
@@ -47,7 +48,7 @@ class CourseMetrics
         if ($session === null) {
             return null;
         }
-        $values = ['session_id' => $session->id, 'method_version' => self::METHOD_VERSION, 'computed_at' => now()]
+        $values = ['session_id' => $session->id, 'method_version' => self::METHOD_VERSION, 'computed_at' => now(), 'author_minutes' => $this->reviewTime->minutes($courseId)]
             + $this->time($session) + $this->cost($session) + $this->counts($session);
 
         CourseMetric::query()->updateOrCreate(['course_id' => $courseId], $values);

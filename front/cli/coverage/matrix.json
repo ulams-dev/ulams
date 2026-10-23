@@ -1,5 +1,5 @@
 {
- "summary": "621/710 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "621/713 covered, 92 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -54,6 +54,24 @@
    "summary": "Agent audit log",
    "command": "tokens.agent-audit",
    "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/authoring-metrics/activity",
+   "summary": "Report active review minutes",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "DELETE /api/admin/authoring-metrics/activity",
+   "summary": "Delete recorded review time",
+   "command": "",
+   "status": "excluded: browser-only"
+  },
+  {
+   "key": "GET /api/admin/authoring-metrics/activity/status",
+   "summary": "Is review time recorded",
+   "command": "",
+   "status": "excluded: browser-only"
   },
   {
    "key": "GET /api/admin/authoring-metrics/courses",

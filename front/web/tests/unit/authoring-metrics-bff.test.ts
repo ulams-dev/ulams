@@ -5,6 +5,8 @@ describe("Authoring metrics BFF allow-list", () => {
   it.each([
     ["GET", "/authoring-metrics/courses/5"],
     ["GET", "/authoring-metrics/courses/1234567890"],
+    ["GET", "/authoring-metrics/activity/status"],
+    ["POST", "/authoring-metrics/activity"],
   ])("forwards %s %s", (method, path) => {
     expect(isAuthoringMetricsCall(method, path)).toBe(true);
     expect(isStudioCall(method, path)).toBe(false);
@@ -14,14 +16,17 @@ describe("Authoring metrics BFF allow-list", () => {
   });
 
   it.each([
-    // one course at a time and read-only: the list and the export are for administrators, in the admin
+    // the list and the export are for administrators, in the admin; deleting recorded review time is an admin setting
     ["GET", "/authoring-metrics/courses"],
     ["GET", "/authoring-metrics/courses/export"],
     ["GET", "/authoring-metrics/summary"],
     ["POST", "/authoring-metrics/courses/5"],
     ["PUT", "/authoring-metrics/courses/5"],
     ["DELETE", "/authoring-metrics/courses/5"],
-    ["POST", "/authoring-metrics/activity"],
+    ["DELETE", "/authoring-metrics/activity"],
+    ["GET", "/authoring-metrics/activity"],
+    ["POST", "/authoring-metrics/activity/status"],
+    ["POST", "/authoring-metrics/activity/x"],
     // malformed or traversing paths
     ["GET", "/authoring-metrics/courses/abc"],
     ["GET", "/authoring-metrics/courses/12345678901"],

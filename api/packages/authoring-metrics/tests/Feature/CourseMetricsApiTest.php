@@ -123,9 +123,17 @@ class CourseMetricsApiTest extends TestCase
         $this->assertCount(1, array_filter(explode("\n", $csv)));
     }
 
+    /** method, uri, body (with {minute}), the status in this tenant */
     public static function routeProvider(): array
     {
-        return ['list' => ['GET', 'api/admin/authoring-metrics/courses'], 'export' => ['GET', 'api/admin/authoring-metrics/courses/export'], 'show' => ['GET', 'api/admin/authoring-metrics/courses/{course}']];
+        return [
+            'list' => ['GET', 'api/admin/authoring-metrics/courses', [], 200],
+            'export' => ['GET', 'api/admin/authoring-metrics/courses/export', [], 200],
+            'show' => ['GET', 'api/admin/authoring-metrics/courses/{course}', [], 200],
+            'status' => ['GET', 'api/admin/authoring-metrics/activity/status', [], 200],
+            'record' => ['POST', 'api/admin/authoring-metrics/activity', ['course_id' => '{course}', 'minutes' => ['{minute}'], 'surface' => 'studio', 'tab_nonce' => 'AAAAAAAAAAAAAAAAAAAAAA'], 200],
+            'delete' => ['DELETE', 'api/admin/authoring-metrics/activity', [], 200],
+        ];
     }
 
     public function testEveryRouteOfThePackageIsListed(): void
@@ -138,20 +146,22 @@ class CourseMetricsApiTest extends TestCase
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('routeProvider')]
-    public function testATokenOfAnotherTenantIsRejectedOnEveryRoute(string $method, string $uri): void
+    public function testATokenOfAnotherTenantIsRejectedOnEveryRoute(string $method, string $uri, array $body, int $status): void
     {
+        config(['authoring_metrics.review_time' => true]);
         [, , $course] = $this->applied();
         $admin = $this->admin();
         \Illuminate\Support\Facades\Auth::forgetGuards(); // actingAs of the build above would answer as the author
         $uri = '/' . str_replace('{course}', (string) $course, $uri);
+        $body = json_decode(str_replace(['"{course}"', '{minute}'], [(string) $course, now()->subMinute()->toIso8601String()], json_encode($body)), true);
 
         $token = $admin->createToken('test')->accessToken;
-        $this->sendAs($token, $method, $uri)->assertOk();
-        $this->json($method, $uri)->assertUnauthorized();
+        $this->sendAs($token, $method, $uri, $body)->assertStatus($status);
+        $this->json($method, $uri, $body)->assertUnauthorized();
 
         $this->switchToTenantWithOwnKeys();
 
-        $this->sendAs($token, $method, $uri)->assertUnauthorized();
-        $this->sendAs($admin->createToken('test')->accessToken, $method, $uri)->assertOk();
+        $this->sendAs($token, $method, $uri, $body)->assertUnauthorized();
+        $this->sendAs($admin->createToken('test')->accessToken, $method, $uri, $body)->assertStatus($status);
     }
 }

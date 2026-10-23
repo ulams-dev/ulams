@@ -7,6 +7,7 @@ import { Font } from "astro:assets";
 import studioCss from "@ulams/ui/builder/studio.css?inline";
 import "../styles/studio-pages.css";
 import Logo from "@ulams/ui/brand/Logo.astro";
+import { pickReviewLocale, REVIEW_STRINGS } from "../studio/review-time-i18n.ts";
 
 interface Props {
   title: string;
@@ -20,9 +21,13 @@ interface Props {
   hasCourse?: boolean;
   /** The course the page is about: adds "Insights", which is keyed by course, so it also works without a session. */
   courseId?: number | null;
+  /** The course whose review time is counted, for pages keyed by a session that has a course. Defaults to `courseId`. */
+  reviewCourseId?: number | null;
 }
 
-const { title, crumb, status, sessionId, active = "builder", hasCourse = false, courseId = null } = Astro.props;
+const { title, crumb, status, sessionId, active = "builder", hasCourse = false, courseId = null, reviewCourseId = null } = Astro.props;
+const reviewCourse = reviewCourseId ?? courseId;
+const review = REVIEW_STRINGS[pickReviewLocale(Astro.url.searchParams.get("lang"), Astro.request.headers.get("accept-language"))];
 const insights =
   courseId === null
     ? []
@@ -66,7 +71,7 @@ const nav = [
     <Font cssVariable="--font-jetbrains" />
     <style is:inline set:html={studioCss}></style>
   </head>
-  <body class="ulams-studio">
+  <body class="ulams-studio" data-review-course={reviewCourse ?? undefined}>
     <a class="st-skip" href="#main">Skip to content</a>
     <div class="st-app">
       <nav class="st-rail" aria-label="Course Builder">
@@ -93,6 +98,9 @@ const nav = [
           {status && <span class="st-status" data-status-pill>{status}</span>}
           <span class="st-cost" data-cost-pill hidden></span>
           <span class="st-conn" data-connection role="status" aria-live="polite"></span>
+          <p class="st-review" data-review-indicator hidden lang={review.htmlLang}>
+            {review.indicator} <a href="/studio/review-time">{review.indicatorLink}</a>
+          </p>
         </header>
         <slot />
       </div>
@@ -101,6 +109,10 @@ const nav = [
   </body>
 </html>
 
+<script>
+  import "../studio/review-time.ts";
+</script>
+
 <style is:global>
   body.ulams-studio {
     --ulams-studio-serif: var(--font-newsreader), "Newsreader", Georgia, serif;
@@ -108,6 +120,11 @@ const nav = [
     --ulams-studio-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
     margin: 0;
     min-height: 100vh;
+  }
+  .st-review {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--ulams-studio-muted);
   }
   .st-skip {
     position: absolute;

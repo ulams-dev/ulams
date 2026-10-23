@@ -127,12 +127,17 @@ export function courseVersionsTarget(path: string): string {
 
 /**
  * Authoring metrics (/api/admin/authoring-metrics, ADR 0194): the production figures of one course, for its author or an
- * administrator. The browser reaches them as /studio/api/authoring-metrics/…. Read-only, one course at a time: the list
- * and the export are for administrators and live in the admin. The API checks who may read; this list keeps the BFF from
+ * administrator. The browser reaches them as /studio/api/authoring-metrics/…. One course at a time: the list and the export
+ * are for administrators and live in the admin. The only write is the browser reporting its active minutes (review time). The API checks who may read; this list keeps the BFF from
  * being an open proxy.
  */
 export const AUTHORING_METRICS_PREFIX = "/authoring-metrics";
-export const AUTHORING_METRICS_RULES: Array<{ method: string; pattern: RegExp }> = [{ method: "GET", pattern: /^\/courses\/\d{1,10}$/ }];
+export const AUTHORING_METRICS_RULES: Array<{ method: string; pattern: RegExp }> = [
+  { method: "GET", pattern: /^\/courses\/\d{1,10}$/ },
+  // review time (AM-5): is it on, and the browser reporting its active minutes
+  { method: "GET", pattern: /^\/activity\/status$/ },
+  { method: "POST", pattern: /^\/activity$/ },
+];
 
 /** `path` is relative to the BFF root, e.g. `/authoring-metrics/courses/3`. */
 export function isAuthoringMetricsCall(method: string, path: string): boolean {

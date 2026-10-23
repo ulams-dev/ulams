@@ -37,6 +37,26 @@ export default {
     'Bez zmian: {kept} ({share}), poprawione na prośbę: {revised}, zmienione: {edited}, nieznane: {unknown}',
   authoring_metrics_note:
     'Czasy są zegarowe. Koszt obejmuje nieudane wywołania i pomija korepetycje oraz pomoc dla kursantów. Czas autora jest zapisywany tylko po włączeniu zapisu czasu przeglądu.',
+  authoring_metrics_review_title: 'Czas przeglądu',
+  authoring_metrics_review_intro:
+    'Gdy czas przeglądu jest włączony, akademia sumuje minuty, które osoby aktywnie spędzają nad kursem w studiu i w edytorze kursu, aby móc powiedzieć, ile trwało jego przygotowanie. Poinformuj autorów, zanim to włączysz: mierzenie pracy może wymagać podstawy prawnej, a w niektórych krajach udziału rady zakładowej. To nie jest porada prawna.',
+  authoring_metrics_review_measured:
+    'Mierzone: pełne minuty aktywnej pracy przy ekranie nad jednym kursem. Minuta się liczy, gdy karta jest widoczna i na wierzchu, a w ciągu ostatnich dwóch minut użyto klawiatury, wskaźnika albo przewijano.',
+  authoring_metrics_review_stored:
+    'Zapisywane: kurs, początek minuty, miejsce (studio lub panel) i losowy kod utworzony przy otwarciu strony. Nie zapisujemy: imienia ani konta, adresu, przeglądarki ani urządzenia, ani tego, która lekcja, blok lub pytanie było otwarte.',
+  authoring_metrics_review_shown:
+    'Pokazywane: minuty autorskie na kurs, na dzień i łącznie, nigdy na osobę. Kurs z jednym autorem pokazuje czas tego autora.',
+  authoring_metrics_review_kept:
+    'Przechowywane: co noc minuty są sumowane na kurs i dzień, a pojedyncze minuty usuwane po 7 dniach; sumy dzienne zostają tak długo jak kurs.',
+  authoring_metrics_review_switch:
+    'Włącz lub wyłącz to ustawieniem „review_time” poniżej. Wyłączenie natychmiast zatrzymuje zbieranie.',
+  authoring_metrics_review_delete: 'Usuń zapisany czas przeglądu',
+  authoring_metrics_review_delete_confirm:
+    'To usuwa każdą zapisaną minutę przeglądu i sumę dzienną tej akademii. Czas generowania, koszt i liczby zostają. Nie można tego cofnąć.',
+  authoring_metrics_review_delete_yes: 'Tak, usuń',
+  authoring_metrics_review_delete_cancel: 'Anuluj',
+  authoring_metrics_review_deleted: 'Usunięto {minutes} minut i {days} sum dziennych.',
+  authoring_metrics_review_delete_failed: 'Nie udało się usunąć czasu przeglądu.',
   authoring_metrics_duration_seconds: '{s} s',
   authoring_metrics_duration_minutes: '{m} min {s} s',
   authoring_metrics_duration_hours: '{h} godz. {m} min',
