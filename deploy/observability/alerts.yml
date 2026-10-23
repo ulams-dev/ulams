@@ -1,0 +1,23 @@
+groups:
+  - name: ulams
+    rules:
+      - alert: UlamsSchedulerStopped
+        expr: ulams_heartbeat_age_seconds{name="scheduler"} > 300
+        for: 5m
+        annotations: { summary: "No scheduler tick for over five minutes" }
+      - alert: UlamsQueueWorkerStopped
+        expr: ulams_heartbeat_age_seconds{name="queue"} > 300
+        for: 5m
+        annotations: { summary: "No queue worker picked up the heartbeat job for over five minutes" }
+      - alert: UlamsQueueBacklog
+        expr: ulams_queue_oldest_job_age_seconds > 900
+        for: 10m
+        annotations: { summary: "A job has waited more than 15 minutes in queue {{ $labels.queue }}" }
+      - alert: UlamsFailedJobs
+        expr: ulams_failed_jobs > 50
+        for: 15m
+        annotations: { summary: "More than 50 failed jobs" }
+      - alert: UlamsHealthCheckFailing
+        expr: ulams_health_check_ok == 0
+        for: 5m
+        annotations: { summary: "Health check {{ $labels.check }} fails" }
