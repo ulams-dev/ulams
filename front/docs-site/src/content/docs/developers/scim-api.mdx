@@ -1,0 +1,77 @@
+---
+title: SCIM 2.0 API
+description: The SCIM 2.0 server of a tenant for developers of provisioning clients - base URL and authentication, discovery documents, Users, filters, PATCH, pagination, ETag and If-Match, the error format with scimType, and what is deliberately not supported.
+sidebar:
+  order: 17
+modules:
+  - identity
+---
+
+The identity package serves SCIM 2.0 ([RFC 7643](https://www.rfc-editor.org/rfc/rfc7643), [RFC 7644](https://www.rfc-editor.org/rfc/rfc7644)) at
+`https://<tenant-api-host>/api/scim/v2` for identity providers and for integrators who build their own client. It is part of the OpenAPI
+document (tag *SCIM*, operation ids `scim.*`) and the PHP SDK (`SCIMApi`); it is deliberately not a CLI command, because it is called by identity
+providers, not by people. Setup and operations: [SCIM provisioning](/operators/scim/).
+
+## Authentication
+
+`Authorization: Bearer ulams_pat_...` with a **SCIM token** of one identity provider
+(`POST /api/admin/identity/providers/{provider}/scim-tokens`, permission `identity_scim_manage`). A SCIM token is a scoped token of kind `scim`
+(see [scoped tokens](/developers/scoped-tokens/)) held by a passwordless service user of the provider, with the scope `scim:write`:
+
+- it is accepted **only** on `/api/scim/*`, and every other kind of token (login, `cli`, `ci`, `agent`, `integration`) is refused there with `403`;
+- the token is bound to the provider: the client sees and changes only the users **that provider provisioned**; any other id answers `404`;
+- tokens are per tenant (each tenant signs with its own Passport keys), shown once, valid for at most 365 days, two active at a time;
+- 600 requests per minute and token, then `429` with `Retry-After`.
+
+Requests and responses are `application/scim+json` (`application/json` is accepted on input). Bodies are at most 1 MB.
+
+## Endpoints
+
+| Method and path | |
+|---|---|
+| `GET /ServiceProviderConfig` | Capabilities: patch yes, filter yes (max 200), etag yes, bulk, sort and changePassword no. |
+| `GET /ResourceTypes`, `/ResourceTypes/{id}` | `User` with the enterprise extension. |
+| `GET /Schemas`, `/Schemas/{urn}` | The supported attributes. Attributes that are not listed are ignored on input and never returned. |
+| `GET /Users` | List and filter; `filter`, `startIndex`, `count`, `attributes`, `excludedAttributes`. |
+| `POST /Users/.search` | The same with a `SearchRequest` body. |
+| `POST /Users` | Create. `201` with `Location` and `ETag`. |
+| `GET /Users/{id}` | One user. `If-None-Match` answers `304`. |
+| `PUT /Users/{id}` | Replace. Omitted attributes are cleared, except `active`, which keeps its value. |
+| `PATCH /Users/{id}` | `add`, `replace`, `remove`; all operations apply or none do. |
+| `DELETE /Users/{id}` | Deprovision (deactivate and unlink; `204`). |
+
+The `id` is the id of the account in the tenant and never changes. Groups are *Coming* (they are in the discovery documents only when they are built).
+
+## Filtering
+
+The grammar of RFC 7644 3.4.2.2: `eq ne co sw ew gt ge lt le pr`, `and`, `or`, `not ( ... )`, parentheses and value paths
+(`emails[type eq "work" and value co "@acme.example"]`). `not` binds tighter than `and`, which binds tighter than `or`. String comparisons are
+case-insensitive except `externalId`. Filterable attributes: `id`, `userName`, `externalId`, `emails.value`, `emails[...]`, `active`,
+`name.givenName`, `name.familyName`, `meta.lastModified`, `meta.created`. Anything else is `400 invalidFilter`. Values reach the database as bound
+parameters only; the column comes from a fixed map.
+
+## PATCH
+
+Operations follow RFC 7644 3.5.2: `op` in any letter case; `path` with sub-attributes (`name.givenName`), value paths
+(`emails[type eq "work"].value`) and the enterprise URN prefix (`urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department`); without a `path` the value is an object
+of attributes. `remove` needs a path. A value path that matches nothing is `noTarget`; changing `id`, `meta` or `groups` by path is `mutability`.
+The result is validated like a `PUT` body, so one bad operation changes nothing.
+
+## Versions and preconditions
+
+Every resource has `meta.version`, a weak ETag of the representation, and the `ETag` header. `PUT`, `PATCH` and `DELETE` honour `If-Match`
+(a list or `*`); a stale version is `412`.
+
+## Errors
+
+```json
+{ "schemas": ["urn:ietf:params:scim:api:messages:2.0:Error"], "status": "409", "scimType": "uniqueness", "detail": "The userName is already in use." }
+```
+
+`scimType` is one of `invalidFilter`, `invalidSyntax`, `invalidPath`, `invalidValue`, `noTarget`, `mutability`, `uniqueness` (409) and `tooMany`.
+Other statuses: `401` (no valid token, with `WWW-Authenticate`), `403` (wrong token kind, or an administrator), `404`, `412`, `413`, `429`.
+
+## Not supported
+
+Bulk, sorting (`sortBy` is ignored), password changes, `/Me`, nested groups, and attributes that are not in `/Schemas`. `$ref` values are never
+fetched: the server makes no outbound request while handling SCIM input.

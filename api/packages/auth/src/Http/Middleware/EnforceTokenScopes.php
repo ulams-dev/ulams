@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Symfony\Component\HttpFoundation\Response;
+use Ulams\Auth\Models\ApiTokenMeta;
 use Ulams\Auth\Support\EnforceKey;
 use Ulams\Auth\Support\TokenContext;
 use Ulams\Auth\Support\TokenScopes;
@@ -32,6 +33,11 @@ class EnforceTokenScopes
         $area = $requirement['area'] ?? null;
         $request->attributes->set('ulams.scope_area', $area);
 
+        // a SCIM token belongs to one provider's service user: it is for the identity provider's provisioning client
+        // and nothing else, so it never reaches the public, admin or learner API (ADR 0121)
+        if ($context->meta->kind === ApiTokenMeta::KIND_SCIM && $area !== 'scim') {
+            return $this->deny('A SCIM token can only be used on the SCIM endpoints.', 'scope_forbidden', []);
+        }
         if ($area === 'none') {
             return $this->deny('This endpoint cannot be used with an API token. Sign in with your account instead.', 'scope_forbidden', []);
         }

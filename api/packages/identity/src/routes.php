@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Ulams\Identity\Http\Controllers\Admin\AuditController;
 use Ulams\Identity\Http\Controllers\Admin\ProviderController;
+use Ulams\Identity\Http\Controllers\Admin\ScimTokenController;
+use Ulams\Identity\Http\Controllers\Scim\ScimDiscoveryController;
+use Ulams\Identity\Http\Controllers\Scim\ScimUsersController;
+use Ulams\Identity\Http\Middleware\ScimAuthenticate;
 use Ulams\Identity\Http\Controllers\SamlController;
 use Ulams\Identity\Http\Controllers\SsoController;
 
@@ -36,6 +40,32 @@ Route::prefix('api/admin/identity')
         Route::delete('providers/{provider}', [ProviderController::class, 'destroy']);
         Route::post('providers/{provider}/metadata/refresh', [ProviderController::class, 'refreshMetadata']);
         Route::post('providers/{provider}/sp-keys/rotate', [ProviderController::class, 'rotateSpKeys']);
+        // SCIM tokens of a provider (permission identity_scim_manage)
+        Route::get('providers/{provider}/scim-tokens', [ScimTokenController::class, 'index']);
+        Route::post('providers/{provider}/scim-tokens', [ScimTokenController::class, 'store']);
+        Route::delete('providers/{provider}/scim-tokens/{token}', [ScimTokenController::class, 'destroy']);
         Route::get('audit', [AuditController::class, 'index']);
         Route::get('audit/verify', [AuditController::class, 'verify']);
     });
+
+// SCIM 2.0 server (RFC 7643, 7644). Authenticated by ScimAuthenticate: only a SCIM token of one provider, which answers
+// in the SCIM error format and limits requests per token. Skipped when IDENTITY_ENABLED is false.
+if (config('ulams_identity.enabled')) {
+    // ScimAuthenticate runs first and answers in the SCIM format; `auth:api` stays on the route so the route walk of
+    // TenantIsolationCoverageTest (every route needs a token or is listed as public) holds for these too.
+    Route::prefix('api/scim/v2')->middleware([ScimAuthenticate::class, 'auth:api'])->group(function (): void {
+        Route::get('ServiceProviderConfig', [ScimDiscoveryController::class, 'config']);
+        Route::get('ResourceTypes', [ScimDiscoveryController::class, 'resourceTypes']);
+        Route::get('ResourceTypes/{id}', [ScimDiscoveryController::class, 'resourceType']);
+        Route::get('Schemas', [ScimDiscoveryController::class, 'schemas']);
+        Route::get('Schemas/{id}', [ScimDiscoveryController::class, 'schema'])->where('id', '.*');
+
+        Route::get('Users', [ScimUsersController::class, 'index']);
+        Route::post('Users', [ScimUsersController::class, 'store']);
+        Route::post('Users/.search', [ScimUsersController::class, 'search']);
+        Route::get('Users/{id}', [ScimUsersController::class, 'show']);
+        Route::put('Users/{id}', [ScimUsersController::class, 'replace']);
+        Route::patch('Users/{id}', [ScimUsersController::class, 'patch']);
+        Route::delete('Users/{id}', [ScimUsersController::class, 'destroy']);
+    });
+}

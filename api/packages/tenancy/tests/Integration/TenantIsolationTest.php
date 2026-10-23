@@ -197,6 +197,44 @@ class TenantIsolationTest extends TestCase
         $this->request(self::A, 'DELETE', "/api/admin/identity/providers/{$id}", $tokenA);
     }
 
+    public function testScimTokensAndTheUsersTheyProvisionDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $slug = 'scim-probe-' . bin2hex(random_bytes(3));
+        $created = $this->request(self::A, 'POST', '/api/admin/identity/providers', $tokenA, [
+            'slug' => $slug,
+            'name' => 'SCIM isolation probe',
+            'enabled' => false,
+            'oidc' => ['issuer' => 'https://idp.example.com/realms/probe', 'client_id' => 'probe'],
+        ]);
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['id'];
+        $issued = $this->request(self::A, 'POST', "/api/admin/identity/providers/{$id}/scim-tokens", $tokenA, ['name' => 'probe', 'expires_in_days' => 1]);
+        $this->assertSame(201, $issued->getStatusCode(), (string) $issued->getBody());
+        $scim = json_decode((string) $issued->getBody(), true)['data']['token'];
+        $userName = 'scim-probe-' . bin2hex(random_bytes(3)) . '@example.com';
+
+        $createdUser = $this->request(self::A, 'POST', '/api/scim/v2/Users', $scim, ['schemas' => ['urn:ietf:params:scim:schemas:core:2.0:User'], 'userName' => $userName]);
+        $this->assertSame(201, $createdUser->getStatusCode(), (string) $createdUser->getBody());
+        $userId = json_decode((string) $createdUser->getBody(), true)['id'];
+        $this->assertSame(200, $this->request(self::A, 'GET', "/api/scim/v2/Users/{$userId}", $scim)->getStatusCode());
+
+        // every tenant signs tokens with its own keys: A's SCIM token is nothing at B, on every SCIM route
+        foreach (['/api/scim/v2/ServiceProviderConfig', '/api/scim/v2/Users', "/api/scim/v2/Users/{$userId}"] as $path) {
+            $this->assertSame(401, $this->request(self::B, 'GET', $path, $scim)->getStatusCode(), $path);
+        }
+        $this->assertSame(401, $this->request(self::B, 'POST', '/api/scim/v2/Users', $scim, ['schemas' => ['urn:ietf:params:scim:schemas:core:2.0:User'], 'userName' => $userName])->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'DELETE', "/api/scim/v2/Users/{$userId}", $scim)->getStatusCode());
+        // an admin token of B is not a SCIM token either, and the SCIM token endpoints of A's provider do not exist at B
+        $this->assertSame(403, $this->request(self::B, 'GET', '/api/scim/v2/Users', $tokenB)->getStatusCode());
+        $this->assertSame(404, $this->request(self::B, 'GET', "/api/admin/identity/providers/{$id}/scim-tokens", $tokenB)->getStatusCode());
+        $this->assertSame(404, $this->request(self::B, 'POST', "/api/admin/identity/providers/{$id}/scim-tokens", $tokenB, ['name' => 'x'])->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'GET', "/api/admin/identity/providers/{$id}/scim-tokens", $tokenA)->getStatusCode());
+
+        $this->request(self::A, 'DELETE', "/api/admin/identity/providers/{$id}", $tokenA);
+    }
+
     public function testSocialLoginStateAndCodesDoNotCrossTenants(): void
     {
         $verifier = bin2hex(random_bytes(32));

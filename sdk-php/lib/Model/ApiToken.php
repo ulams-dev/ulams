@@ -307,6 +307,7 @@ class ApiToken implements ModelInterface, ArrayAccess, \JsonSerializable
     public const KIND_AGENT = 'agent';
     public const KIND_CI = 'ci';
     public const KIND_INTEGRATION = 'integration';
+    public const KIND_SCIM = 'scim';
 
     /**
      * Gets allowable values of the enum
@@ -334,6 +335,7 @@ class ApiToken implements ModelInterface, ArrayAccess, \JsonSerializable
             self::KIND_AGENT,
             self::KIND_CI,
             self::KIND_INTEGRATION,
+            self::KIND_SCIM,
         ];
     }
 

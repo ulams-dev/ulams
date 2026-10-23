@@ -37,7 +37,7 @@ class PersonalAccessTokenService implements PersonalAccessTokenServiceContract
         ?array $callerScopes = null,
     ): IssuedToken {
         $scopes = TokenScopes::normalize($scopes);
-        if (!in_array($kind, ApiTokenMeta::KINDS, true)) {
+        if (!in_array($kind, [...ApiTokenMeta::KINDS, ApiTokenMeta::KIND_SCIM], true)) {
             throw new InvalidArgumentException("Unknown token kind {$kind}.");
         }
         if (!in_array($createdVia, ApiTokenMeta::CREATED_VIA, true)) {

@@ -1,5 +1,5 @@
 {
- "summary": "620/709 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "623/724 covered, 101 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1085,6 +1085,24 @@
    "key": "POST /api/admin/identity/providers/{provider}/metadata/refresh",
    "summary": "Fetch the SAML identity provider metadata again",
    "command": "identity.providers-refresh-metadata",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/identity/providers/{provider}/scim-tokens",
+   "summary": "SCIM tokens of an identity provider, active and revoked",
+   "command": "identity.scim-tokens-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/identity/providers/{provider}/scim-tokens",
+   "summary": "Create a SCIM token for an identity provider (shown once; at most two active, for rotation)",
+   "command": "identity.scim-tokens-create",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/identity/providers/{provider}/scim-tokens/{token}",
+   "summary": "Revoke a SCIM token",
+   "command": "identity.scim-tokens-revoke",
    "status": "covered"
   },
   {
@@ -3990,6 +4008,78 @@
    "summary": "Finish quiz attempt",
    "command": "my.quiz-attempts-end",
    "status": "covered"
+  },
+  {
+   "key": "GET /api/scim/v2/ResourceTypes",
+   "summary": "SCIM resource types",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/scim/v2/ResourceTypes/{id}",
+   "summary": "One SCIM resource type",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/scim/v2/Schemas",
+   "summary": "SCIM schemas (User, EnterpriseUser, Group)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/scim/v2/Schemas/{id}",
+   "summary": "One SCIM schema by its URN",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/scim/v2/ServiceProviderConfig",
+   "summary": "SCIM service provider configuration (RFC 7644 4)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/scim/v2/Users",
+   "summary": "List or filter the users this identity provider provisioned",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/scim/v2/Users",
+   "summary": "Create a user (or adopt an existing account the provider is trusted for)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/scim/v2/Users/.search",
+   "summary": "Search users with a request body (RFC 7644 3.4.3)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/scim/v2/Users/{id}",
+   "summary": "One user",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "PUT /api/scim/v2/Users/{id}",
+   "summary": "Replace a user (omitted attributes are cleared; an omitted active keeps the current state)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "PATCH /api/scim/v2/Users/{id}",
+   "summary": "Change a user with add, replace and remove operations (all or none)",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "DELETE /api/scim/v2/Users/{id}",
+   "summary": "Deprovision a user: deactivate, revoke every session and token, keep the learning record (anonymise when configured)",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/scorm/assets/scorm-again.min.js",
