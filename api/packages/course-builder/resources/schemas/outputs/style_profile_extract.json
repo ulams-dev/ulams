@@ -1,0 +1,363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Style profile proposal",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "theme",
+    "voice",
+    "readingLevel",
+    "terminology",
+    "banned",
+    "components",
+    "imagery",
+    "examples"
+  ],
+  "properties": {
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preset",
+        "accent",
+        "secondary",
+        "fonts",
+        "citations"
+      ],
+      "properties": {
+        "preset": {
+          "type": "string",
+          "description": "Theme preset name, or an empty string when the guide names none"
+        },
+        "accent": {
+          "type": "string",
+          "description": "Brand colour as a six digit hex such as #1d6f5c, or an empty string",
+          "maxLength": 7
+        },
+        "secondary": {
+          "type": "string",
+          "description": "Secondary brand colour as a six digit hex, or an empty string",
+          "maxLength": 7
+        },
+        "fonts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "A font family name, never a URL",
+            "maxLength": 60
+          },
+          "minItems": 0,
+          "maxItems": 4,
+          "description": "Font family names the guide asks for"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^frg_[a-z2-7]{12}$",
+            "description": "A fragment id of the style guide"
+          },
+          "minItems": 0,
+          "maxItems": 6,
+          "description": "Fragment ids of the style guide passages the value comes from (at least one)"
+        }
+      },
+      "description": "Colours and fonts. Leave everything empty when the guide does not specify them."
+    },
+    "voice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "person",
+        "formality",
+        "sentenceLength",
+        "citations"
+      ],
+      "properties": {
+        "person": {
+          "type": "string",
+          "enum": [
+            "you",
+            "we",
+            "neutral",
+            ""
+          ],
+          "description": "Grammatical person the guide asks for, or an empty string"
+        },
+        "formality": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5,
+          "description": "1 (casual) to 5 (formal), or 0 when the guide does not say"
+        },
+        "sentenceLength": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 60,
+          "description": "Target maximum words per sentence, or 0"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^frg_[a-z2-7]{12}$",
+            "description": "A fragment id of the style guide"
+          },
+          "minItems": 0,
+          "maxItems": 6,
+          "description": "Fragment ids of the style guide passages the value comes from (at least one)"
+        }
+      },
+      "description": "Voice and sentence length"
+    },
+    "readingLevel": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "language",
+          "level",
+          "citations"
+        ],
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "Two letter language code",
+            "pattern": "^[a-z]{2}$"
+          },
+          "level": {
+            "type": "string",
+            "description": "CEFR level A1 to C2, or grade-1 to grade-16"
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$",
+              "description": "A fragment id of the style guide"
+            },
+            "minItems": 0,
+            "maxItems": 6,
+            "description": "Fragment ids of the style guide passages the value comes from (at least one)"
+          }
+        }
+      },
+      "minItems": 0,
+      "maxItems": 6,
+      "description": "Reading level per language"
+    },
+    "terminology": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "use",
+          "avoid",
+          "citations"
+        ],
+        "properties": {
+          "use": {
+            "type": "string",
+            "description": "The term to use, with its exact casing",
+            "maxLength": 80
+          },
+          "avoid": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "description": "A term to avoid instead",
+              "maxLength": 80
+            },
+            "minItems": 0,
+            "maxItems": 10,
+            "description": "Terms the guide says not to use for this concept"
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$",
+              "description": "A fragment id of the style guide"
+            },
+            "minItems": 0,
+            "maxItems": 6,
+            "description": "Fragment ids of the style guide passages the value comes from (at least one)"
+          }
+        }
+      },
+      "minItems": 0,
+      "maxItems": 100,
+      "description": "Terminology rules and product names"
+    },
+    "banned": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "phrases"
+      ],
+      "properties": {
+        "phrases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "phrase",
+              "citations"
+            ],
+            "properties": {
+              "phrase": {
+                "type": "string",
+                "description": "A phrase the guide says never to use",
+                "maxLength": 120
+              },
+              "citations": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^frg_[a-z2-7]{12}$",
+                  "description": "A fragment id of the style guide"
+                },
+                "minItems": 0,
+                "maxItems": 6,
+                "description": "Fragment ids of the style guide passages the value comes from (at least one)"
+              }
+            }
+          },
+          "minItems": 0,
+          "maxItems": 200,
+          "description": "Phrases never to use"
+        }
+      },
+      "description": "Banned phrases"
+    },
+    "components": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preferred",
+        "disallowed",
+        "citations"
+      ],
+      "properties": {
+        "preferred": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "A catalogue component name"
+          },
+          "minItems": 0,
+          "maxItems": 20,
+          "description": "Components the guide prefers"
+        },
+        "disallowed": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "description": "A catalogue component name"
+          },
+          "minItems": 0,
+          "maxItems": 20,
+          "description": "Components the guide forbids"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^frg_[a-z2-7]{12}$",
+            "description": "A fragment id of the style guide"
+          },
+          "minItems": 0,
+          "maxItems": 6,
+          "description": "Fragment ids of the style guide passages the value comes from (at least one)"
+        }
+      },
+      "description": "Preferred and disallowed layout components"
+    },
+    "imagery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "altTextRequired",
+        "decorativeAllowed",
+        "noTextInImages",
+        "citations"
+      ],
+      "properties": {
+        "altTextRequired": {
+          "type": "string",
+          "enum": [
+            "yes",
+            "no",
+            "unspecified"
+          ],
+          "description": "Does every image need alt text"
+        },
+        "decorativeAllowed": {
+          "type": "string",
+          "enum": [
+            "yes",
+            "no",
+            "unspecified"
+          ],
+          "description": "Are decorative images allowed"
+        },
+        "noTextInImages": {
+          "type": "string",
+          "enum": [
+            "yes",
+            "no",
+            "unspecified"
+          ],
+          "description": "Is text inside images forbidden"
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^frg_[a-z2-7]{12}$",
+            "description": "A fragment id of the style guide"
+          },
+          "minItems": 0,
+          "maxItems": 6,
+          "description": "Fragment ids of the style guide passages the value comes from (at least one)"
+        }
+      },
+      "description": "Rules for images the author supplies"
+    },
+    "examples": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "text",
+          "citations"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "A short approved example paragraph, copied from the guide, plain text",
+            "maxLength": 600
+          },
+          "citations": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^frg_[a-z2-7]{12}$",
+              "description": "A fragment id of the style guide"
+            },
+            "minItems": 0,
+            "maxItems": 6,
+            "description": "Fragment ids of the style guide passages the value comes from (at least one)"
+          }
+        }
+      },
+      "minItems": 0,
+      "maxItems": 3,
+      "description": "Up to three approved example paragraphs"
+    }
+  }
+}
