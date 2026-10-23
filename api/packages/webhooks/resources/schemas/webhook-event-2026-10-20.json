@@ -11,7 +11,7 @@
     "api_version": { "const": "2026-10-20" },
     "created": { "type": "integer", "minimum": 0 },
     "type": {
-      "enum": ["course.completed", "enrolment.created", "update_proposal.ready", "update_proposal.applied", "certificate.issued", "knowledge.exported", "training.assigned", "training.completed", "training.overdue", "path.completed", "certificate.revoked", "webhook.test"]
+      "enum": ["course.completed", "enrolment.created", "course.version_applied", "update_proposal.ready", "update_proposal.applied", "certificate.issued", "knowledge.exported", "training.assigned", "training.completed", "training.overdue", "path.completed", "certificate.revoked", "webhook.test"]
     },
     "data": {
       "type": "object",
@@ -25,6 +25,9 @@
     },
     {
       "properties": { "type": { "const": "enrolment.created" }, "data": { "properties": { "object": { "$ref": "#/$defs/enrolmentCreated" } } } }
+    },
+    {
+      "properties": { "type": { "const": "course.version_applied" }, "data": { "properties": { "object": { "$ref": "#/$defs/courseVersionApplied" } } } }
     },
     {
       "properties": { "type": { "const": "update_proposal.ready" }, "data": { "properties": { "object": { "$ref": "#/$defs/updateProposalReady" } } } }
@@ -124,6 +127,22 @@
         "certificate_id": { "type": ["integer", "string"] },
         "course_id": { "type": ["integer", "string"] },
         "issued_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "courseVersionApplied": {
+      "type": "object",
+      "required": ["course_id", "session_id", "version_id", "number", "release_number", "kind", "origin", "reason", "trigger", "released_at"],
+      "properties": {
+        "course_id": { "type": ["integer", "null"] },
+        "session_id": { "type": "string" },
+        "version_id": { "type": "string" },
+        "number": { "type": "integer", "minimum": 1 },
+        "release_number": { "type": "integer", "minimum": 1 },
+        "kind": { "type": "string" },
+        "origin": { "enum": ["ai", "author", "restore"] },
+        "reason": { "type": ["string", "null"] },
+        "trigger": { "type": "string" },
+        "released_at": { "type": "string", "format": "date-time" }
       }
     },
     "knowledgeExported": {

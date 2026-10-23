@@ -1,0 +1,84 @@
+name: ulams course
+description: Validate a course folder, propose it to an ulams academy, show a diff and keep it in sync with changes made in ulams.
+author: ulams
+branding:
+  icon: book-open
+  color: blue
+
+inputs:
+  command:
+    description: "validate, diff, preview, push or pull-pr."
+    required: true
+  path:
+    description: Course folder (the one that holds ulams.yaml), relative to the workspace.
+    default: "."
+  url:
+    description: Address of the academy API. Falls back to the ULAMS_URL environment variable.
+    default: ""
+  token:
+    description: A ci token of the academy (preset ci). Falls back to ULAMS_TOKEN. Not needed for validate.
+    default: ""
+  cli-version:
+    description: Tag of the ulams-cli image to run (for example cli-v1 moves with the 1.x line).
+    default: latest
+  comment:
+    description: "preview: post or update one comment on the pull request."
+    default: "true"
+  apply:
+    description: "push: approve and apply the proposed version. Only works when the academy lets ci tokens approve (course_as_code.ci_may_approve)."
+    default: "false"
+  strict:
+    description: "validate: treat warnings as errors."
+    default: "false"
+  message:
+    description: Message of the proposed version. Default is the pull request title or the commit subject.
+    default: ""
+  studio-url:
+    description: Address of the studio, used in the comment and the sync pull request.
+    default: ""
+  base-branch:
+    description: "pull-pr: branch the sync pull request targets. Default is the default branch of the repository."
+    default: ""
+  github-token:
+    description: "Token for gh (comments and sync pull requests). Default is the workflow's GITHUB_TOKEN."
+    default: ${{ github.token }}
+
+outputs:
+  exit-code:
+    description: Exit code of the ulams command.
+    value: ${{ steps.run.outputs.exit-code }}
+  sarif:
+    description: "validate: path of the SARIF report (upload it with github/codeql-action/upload-sarif)."
+    value: ${{ steps.run.outputs.sarif }}
+  issues:
+    description: "validate: number of issues."
+    value: ${{ steps.run.outputs.issues }}
+  version-id:
+    description: "push: id of the proposed version."
+    value: ${{ steps.run.outputs.version-id }}
+  changed:
+    description: "pull-pr: true when the folder changed."
+    value: ${{ steps.run.outputs.changed }}
+  pull-request:
+    description: "pull-pr: the sync pull request."
+    value: ${{ steps.run.outputs.pull-request }}
+
+runs:
+  using: composite
+  steps:
+    - id: run
+      shell: bash
+      run: node "${{ github.action_path }}/entrypoint.mjs"
+      env:
+        INPUT_COMMAND: ${{ inputs.command }}
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_CLI_VERSION: ${{ inputs.cli-version }}
+        INPUT_COMMENT: ${{ inputs.comment }}
+        INPUT_APPLY: ${{ inputs.apply }}
+        INPUT_STRICT: ${{ inputs.strict }}
+        INPUT_MESSAGE: ${{ inputs.message }}
+        INPUT_STUDIO_URL: ${{ inputs.studio-url }}
+        INPUT_BASE_BRANCH: ${{ inputs.base-branch }}
+        ULAMS_URL: ${{ inputs.url || env.ULAMS_URL }}
+        ULAMS_TOKEN: ${{ inputs.token || env.ULAMS_TOKEN }}
+        GH_TOKEN: ${{ inputs.github-token }}
