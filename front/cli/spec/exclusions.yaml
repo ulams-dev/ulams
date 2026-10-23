@@ -57,6 +57,8 @@ not-for-cli:
   # the author preview opens the exercise in the learner site; the teacher report of attempts gets a command with the verified grading of AX-4
   - "GET /api/admin/code-exercises/topics/{topic}/preview"
   - "GET /api/admin/code-exercises/topics/{topic}/attempts"
+  # the SCIM 2.0 server is called by identity providers (Entra ID, Okta, Keycloak) with a provider's SCIM token, never by a person or an agent
+  - "* /api/scim/*"
   - "GET /api/example-plugin/hello"
   - "POST /api/admin/example-plugin/greetings"
   - "POST /api/pencil-spaces/login"

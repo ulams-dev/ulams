@@ -1,6 +1,6 @@
 <?php
 /**
- * AuthTokensPost201Response
+ * ScimPatchOp
  *
  * PHP version 7.4
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \Ulams\Sdk\ObjectSerializer;
 
 /**
- * AuthTokensPost201Response Class Doc Comment
+ * ScimPatchOp Class Doc Comment
  *
  * @category Class
  * @package  Ulams\Sdk
@@ -40,7 +40,7 @@ use \Ulams\Sdk\ObjectSerializer;
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class AuthTokensPost201Response implements ModelInterface, ArrayAccess, \JsonSerializable
+class ScimPatchOp implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class AuthTokensPost201Response implements ModelInterface, ArrayAccess, \JsonSer
       *
       * @var string
       */
-    protected static $openAPIModelName = 'auth_tokens_post_201_response';
+    protected static $openAPIModelName = 'ScimPatchOp';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,9 +57,8 @@ class AuthTokensPost201Response implements ModelInterface, ArrayAccess, \JsonSer
       * @var string[]
       */
     protected static $openAPITypes = [
-        'data' => '\Ulams\Sdk\Model\ApiTokenCreated',
-        'message' => 'string',
-        'success' => 'bool'
+        'operations' => '\Ulams\Sdk\Model\ScimPatchOpOperationsInner[]',
+        'schemas' => 'string[]'
     ];
 
     /**
@@ -70,9 +69,8 @@ class AuthTokensPost201Response implements ModelInterface, ArrayAccess, \JsonSer
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'data' => null,
-        'message' => null,
-        'success' => null
+        'operations' => null,
+        'schemas' => null
     ];
 
     /**
@@ -81,9 +79,8 @@ class AuthTokensPost201Response implements ModelInterface, ArrayAccess, \JsonSer
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'data' => false,
-        'message' => false,
-        'success' => false
+        'operations' => false,
+        'schemas' => false
     ];
 
     /**
@@ -172,9 +169,8 @@ class AuthTokensPost201Response implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $attributeMap = [
-        'data' => 'data',
-        'message' => 'message',
-        'success' => 'success'
+        'operations' => 'Operations',
+        'schemas' => 'schemas'
     ];
 
     /**
@@ -183,9 +179,8 @@ class AuthTokensPost201Response implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $setters = [
-        'data' => 'setData',
-        'message' => 'setMessage',
-        'success' => 'setSuccess'
+        'operations' => 'setOperations',
+        'schemas' => 'setSchemas'
     ];
 
     /**
@@ -194,9 +189,8 @@ class AuthTokensPost201Response implements ModelInterface, ArrayAccess, \JsonSer
      * @var string[]
      */
     protected static $getters = [
-        'data' => 'getData',
-        'message' => 'getMessage',
-        'success' => 'getSuccess'
+        'operations' => 'getOperations',
+        'schemas' => 'getSchemas'
     ];
 
     /**
@@ -256,9 +250,8 @@ class AuthTokensPost201Response implements ModelInterface, ArrayAccess, \JsonSer
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('data', $data ?? [], null);
-        $this->setIfExists('message', $data ?? [], null);
-        $this->setIfExists('success', $data ?? [], null);
+        $this->setIfExists('operations', $data ?? [], null);
+        $this->setIfExists('schemas', $data ?? [], null);
     }
 
     /**
@@ -288,6 +281,12 @@ class AuthTokensPost201Response implements ModelInterface, ArrayAccess, \JsonSer
     {
         $invalidProperties = [];
 
+        if ($this->container['operations'] === null) {
+            $invalidProperties[] = "'operations' can't be null";
+        }
+        if ($this->container['schemas'] === null) {
+            $invalidProperties[] = "'schemas' can't be null";
+        }
         return $invalidProperties;
     }
 
@@ -304,82 +303,55 @@ class AuthTokensPost201Response implements ModelInterface, ArrayAccess, \JsonSer
 
 
     /**
-     * Gets data
+     * Gets operations
      *
-     * @return \Ulams\Sdk\Model\ApiTokenCreated|null
+     * @return \Ulams\Sdk\Model\ScimPatchOpOperationsInner[]
      */
-    public function getData()
+    public function getOperations()
     {
-        return $this->container['data'];
+        return $this->container['operations'];
     }
 
     /**
-     * Sets data
+     * Sets operations
      *
-     * @param \Ulams\Sdk\Model\ApiTokenCreated|null $data data
+     * @param \Ulams\Sdk\Model\ScimPatchOpOperationsInner[] $operations operations
      *
      * @return self
      */
-    public function setData($data)
+    public function setOperations($operations)
     {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException('non-nullable data cannot be null');
+        if (is_null($operations)) {
+            throw new \InvalidArgumentException('non-nullable operations cannot be null');
         }
-        $this->container['data'] = $data;
+        $this->container['operations'] = $operations;
 
         return $this;
     }
 
     /**
-     * Gets message
+     * Gets schemas
      *
-     * @return string|null
+     * @return string[]
      */
-    public function getMessage()
+    public function getSchemas()
     {
-        return $this->container['message'];
+        return $this->container['schemas'];
     }
 
     /**
-     * Sets message
+     * Sets schemas
      *
-     * @param string|null $message message
+     * @param string[] $schemas schemas
      *
      * @return self
      */
-    public function setMessage($message)
+    public function setSchemas($schemas)
     {
-        if (is_null($message)) {
-            throw new \InvalidArgumentException('non-nullable message cannot be null');
+        if (is_null($schemas)) {
+            throw new \InvalidArgumentException('non-nullable schemas cannot be null');
         }
-        $this->container['message'] = $message;
-
-        return $this;
-    }
-
-    /**
-     * Gets success
-     *
-     * @return bool|null
-     */
-    public function getSuccess()
-    {
-        return $this->container['success'];
-    }
-
-    /**
-     * Sets success
-     *
-     * @param bool|null $success success
-     *
-     * @return self
-     */
-    public function setSuccess($success)
-    {
-        if (is_null($success)) {
-            throw new \InvalidArgumentException('non-nullable success cannot be null');
-        }
-        $this->container['success'] = $success;
+        $this->container['schemas'] = $schemas;
 
         return $this;
     }
