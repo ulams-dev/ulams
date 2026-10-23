@@ -18955,6 +18955,59 @@
     ]
    }
   },
+  "/api/admin/living-course/proposals/{proposal}/items/{item}/accept-in-group": {
+   "post": {
+    "operationId": "admin.living-course.proposals.by-proposal.items.by-item.accept-in-group.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "item",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the item and proposal, how many other items were accepted (accepted) and in which proposals"
+     },
+     "403": {
+      "description": "not allowed"
+     },
+     "404": {
+      "description": "unknown"
+     },
+     "409": {
+      "description": "not decidable now"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Accept one item and the same patch in the other proposals of its group (the course's variants)",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
   "/api/admin/living-course/proposals/{proposal}/items/{item}/regenerate": {
    "post": {
     "operationId": "admin.living-course.proposals.by-proposal.items.by-item.regenerate.post",
@@ -34419,6 +34472,11 @@
              "type": "string"
             },
             "course_title": {
+             "nullable": true,
+             "type": "string"
+            },
+            "course_variant": {
+             "description": "The variant of the course the holder completed (for example Expert), null for a course without variants",
              "nullable": true,
              "type": "string"
             },
