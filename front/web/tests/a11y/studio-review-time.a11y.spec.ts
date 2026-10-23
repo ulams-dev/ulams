@@ -90,7 +90,7 @@ test("leaving the page reports the active minute: the course, the minute, the pl
   await page.goto(`${host(slug)}/studio`);
 
   await expect.poll(async () => (await posts(slug)).length).toBeGreaterThanOrEqual(1);
-  const [post] = await posts(slug);
+  const post = (await posts(slug))[0]!;
   expect(Object.keys(post).sort()).toEqual(["course_id", "minutes", "surface", "tab_nonce"]);
   expect(post.course_id).toBe(1);
   expect(post.surface).toBe("studio");

@@ -56,10 +56,11 @@ describe("startReviewTime", () => {
     await vi.advanceTimersByTimeAsync(60_000);
 
     expect(posts).toHaveLength(1);
-    expect(Object.keys(posts[0]).sort()).toEqual(["course_id", "minutes", "surface", "tab_nonce"]);
-    expect(posts[0]).toMatchObject({ course_id: 12, surface: "studio" });
-    expect(posts[0].tab_nonce).toMatch(/^[A-Za-z0-9_-]{22}$/);
-    expect((posts[0].minutes as string[]).length).toBeGreaterThanOrEqual(1);
+    const post = posts[0]!;
+    expect(Object.keys(post).sort()).toEqual(["course_id", "minutes", "surface", "tab_nonce"]);
+    expect(post).toMatchObject({ course_id: 12, surface: "studio" });
+    expect(post.tab_nonce).toMatch(/^[A-Za-z0-9_-]{22}$/);
+    expect((post.minutes as string[]).length).toBeGreaterThanOrEqual(1);
     run.stop();
   });
 
@@ -100,7 +101,7 @@ describe("startReviewTime", () => {
     press(); // every tab sees the input (one window in this test)
     await vi.advanceTimersByTimeAsync(60_000);
 
-    const leader = [...tabs].sort((a, b) => (a.id < b.id ? -1 : 1))[0];
+    const leader = [...tabs].sort((a, b) => (a.id < b.id ? -1 : 1))[0]!;
     expect(new Set(posts.map((p) => p.tab_nonce))).toEqual(new Set([leader.id]));
     const minutes = posts.flatMap((p) => p.minutes);
     expect(new Set(minutes).size).toBe(minutes.length);
@@ -147,7 +148,7 @@ describe("startReviewTime", () => {
     window.dispatchEvent(new Event("pagehide"));
 
     expect(posts).toHaveLength(1);
-    expect(posts[0].minutes).toEqual([new Date(T0).toISOString()]);
+    expect(posts[0]!.minutes).toEqual([new Date(T0).toISOString()]);
     run.stop();
   });
 
@@ -157,7 +158,7 @@ describe("startReviewTime", () => {
     press();
     window.dispatchEvent(new Event("pagehide"));
 
-    expect(posts[0].surface).toBe("admin");
+    expect(posts[0]!.surface).toBe("admin");
     run.stop();
   });
 });
