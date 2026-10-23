@@ -56,7 +56,8 @@ Path steps advance the same way. A variant course without compliance settings of
 
 ## Report and audit export
 
-`ComplianceReportService` serves three datasets, filterable by `course_id`, `user_id`, `status`, `from` and `to`:
+`ComplianceReportService` serves three datasets (registered in the `reporting` package's registry, which is also where
+their column list comes from: `Reporting/AssignmentsDataset`, `CertificatesDataset`, `AuditDataset`), filterable by `course_id`, `user_id`, `status`, `from` and `to`:
 `assignments` (who was required to do what, due, completed, overdue days, escalation level, certificate and its
 status and expiry, course version), `certificates` (every certificate with holder, issue and expiry dates, status,
 revocation reason and the course version it attests) and `audit` (the hash-chained Living Course audit entries,

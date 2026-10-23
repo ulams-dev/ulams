@@ -31,7 +31,7 @@ Authors and reviewers (`auth:api`, scope `living-course:read` for GET and `livin
 | `POST sessions/{s}/sources/connect` `{connector, config, secrets?, schedule?}` | Validate, fetch revision 1; 201 with `connection`, `source`, `webhookSecret` (once); 422 when the connector refuses the settings |
 | `PUT connections/{c}` | `schedule` (`manual`, `hourly`, `daily`, `weekly`), `autoAnalyse`, `status` (`active`, `paused`), `config`, `secrets`, `settings.show_pending_to_learners`, `settings.notify_learners_of_updates` |
 | `DELETE connections/{c}` | Disconnect: paused, manual, secrets removed; revisions and audit stay |
-| `POST connections/{c}/check` | Check now; 202, 409 for an upload or a paused source |
+| `POST connections/{c}/check` `{commit?}` | Check now; 202, 409 for an upload or a paused source, 422 for a `commit` that is not 7 to 64 hex characters. A CI job on the merge commit sends `commit`; the new revision records it as `change.commit` |
 | `POST connections/{c}/webhook-secret` | Rotate; the new secret is returned once, the old one stops working |
 | `GET sources/{s}/revisions`, `POST sources/{s}/revisions` (multipart `file`) | List, or upload a new version (no new revision when the file equals the latest) |
 | `GET revisions/{r}`, `GET revisions/{r}/changes?against=` | One revision; changed, moved, added and removed fragments with old and new text |
@@ -66,6 +66,8 @@ The URL is `https://<tenant API host>/api/living-course/webhooks/<webhookId>`; t
 | GitLab | `X-Gitlab-Token`: the secret itself |
 
 Only `push` events to the tracked branch that touch the tracked paths queue a check; others answer 200 `{"ignored": true}`. Replies: 202 `{"queued": true}`; 200 for `duplicate` (same delivery id) or `dropped` (paused connection or daily check limit); 401 invalid signature; 404 unknown id; 413 body over 1 MB; 429 over 60 requests a minute per webhook. Several pushes within `LIVING_COURSE_WEBHOOK_DEBOUNCE_SECONDS` become one check. Bodies are never stored, only their SHA-256.
+
+What a revision keeps of a push is the **change**: `commit` (head commit id), `subject` (first line of the message, 200 characters, control characters removed; for a merge commit the subject below the `Merge ...` line), `url`, `pullRequest` and `pullRequestUrl` (from `Merge pull request #123`, a squash `(#123)`, GitLab `See merge request group/project!123`) and `source` (`webhook` or `ci`). It is part of the revision (`change` in `GET revisions/{r}` and in `GET .../proposals`) and is shown as plain text; it never reaches the model and is not written to the audit trail. A burst of pushes that become one check names the last change.
 
 ```bash
 SECRET='<webhook secret>'

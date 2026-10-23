@@ -35,6 +35,8 @@ All the endpoints are defined in swagger [![swagger](https://img.shields.io/badg
 ## Tests
 Run `./vendor/bin/phpunit` to run tests. See [tests](https://github.com/EscolaLMS/Scorm/tree/main/tests) folder as it's quite good staring point as documentation appendix.
 
+Playback fixtures: `tests/fixtures/playback` holds original SCORM 1.2 and 2004 test packages (MIT) that the browser playback tests play and `ScormPlaybackFixturesTest` parses and uploads; see its README.
+
 Test details 
 
 
