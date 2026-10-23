@@ -119,7 +119,7 @@ ulams stack up --directory ./ulams-stack
 
 `render` writes inspectable `compose.yaml`, `Caddyfile`, `kubernetes.yaml`, a separate private `kubernetes-secret.yaml`, database bootstrap and private credentials. It does not start containers or contact a cluster. Files are generated from the installed CLI version. `stack up` regenerates them; do not treat hand edits to generated files as durable overrides. For advanced SMTP, external storage or AI settings, maintain your own deployment configuration derived from `render`, then operate it with Compose or kubectl directly.
 
-Stopping retains volumes, PVCs, credentials, encryption keys and Passport keys. Starting the same install resumes it. Back up the entire install directory **and** database/object volumes together. Never remove `credentials.json` from a populated installation: the CLI refuses to replace lost keys.
+Stopping retains volumes, PVCs, credentials, encryption keys and Passport keys. Starting the same install resumes it. Back up with `ulams stack backup`: it dumps every database, copies the buckets and volumes, and with a passphrase includes the credentials, encrypted. `ulams stack restore` brings a backup back ([Backups and restore](/operators/backups/#stacks-started-with-ulams-stack-up)). Never remove `credentials.json` from a populated installation: the CLI refuses to replace lost keys.
 
 To deliberately delete this installation's data:
 
