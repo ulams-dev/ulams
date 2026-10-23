@@ -236,6 +236,7 @@ return [
         Ulams\LivingCourse\UlamsLivingCourseServiceProvider::class,
         Ulams\PolicyLifecycle\UlamsPolicyLifecycleServiceProvider::class,
         Ulams\AuthoringMetrics\UlamsAuthoringMetricsServiceProvider::class,
+        Ulams\Reporting\UlamsReportingServiceProvider::class,
         Ulams\LearnerInsights\UlamsLearnerInsightsServiceProvider::class,
         Ulams\Tutor\UlamsTutorServiceProvider::class,
         Ulams\Adapt\UlamsAdaptServiceProvider::class,

@@ -863,7 +863,8 @@
                     "title": "Reports",
                     "text": "Statistics and reports.",
                     "packages": [
-                      "reports"
+                      "reports",
+                      "reporting"
                     ]
                   },
                   {

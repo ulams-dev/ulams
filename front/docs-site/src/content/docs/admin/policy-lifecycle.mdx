@@ -114,10 +114,7 @@ verification path. Filters: `variant` (department), `status`, `per_page`.
 `GET /api/admin/policies/{policy}/dashboard/export` streams the same people as CSV. Each export is recorded in `compliance_exports`
 with who exported it. Scoped tokens use the `reports` area for both dashboard routes and the `builder` area for the rest.
 
-<Aside type="note">
-The dashboard shows each person's latest assignment of the department course or its exam, whatever created it (the enrolment rule or a manual assignment). It
-does not use the shared reporting dataset registry yet; the export endpoint is its own until that registry is part of the product.
-</Aside>
+The people of the dashboard are also the `policy_training` dataset of the [report builder](/admin/report-builder/) (one row per person and department, with the policy version the certificate certifies): `policy_manage` sees every policy, `policy_owner` only their own. The CSV export above stays as it is.
 
 ## Audit
 

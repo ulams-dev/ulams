@@ -29,6 +29,8 @@ use Ulams\LivingCourse\Events\ProposalApplied;
 use Ulams\Templates\Facades\Template;
 use Ulams\TemplatesEmail\Core\EmailChannel;
 use Ulams\TemplatesPdf\Events\CertificateRevoked;
+use Ulams\PolicyLifecycle\Reporting\PolicyTrainingDataset;
+use Ulams\Reporting\Services\DatasetRegistry;
 use Ulams\TemplatesPdf\Events\PdfCreated;
 
 /**
@@ -50,6 +52,9 @@ class UlamsPolicyLifecycleServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        // the people of the owner dashboard, in the report registry (RB-1)
+        $this->app->make(DatasetRegistry::class)->register(new PolicyTrainingDataset());
 
         Event::listen(BuilderStageFinished::class, ContinueGeneration::class);
         Event::listen(PdfCreated::class, LinkCertificate::class);

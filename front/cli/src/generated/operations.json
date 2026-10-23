@@ -1999,6 +1999,18 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/reporting/datasets",
+  "summary": "Datasets a report can be built on",
+  "tag": "Reporting"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/reporting/query",
+  "summary": "Preview a report definition",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/reports/available-for-user",
   "summary": "Get list of available metrics for logged user",
   "tag": "Admin Reports"
