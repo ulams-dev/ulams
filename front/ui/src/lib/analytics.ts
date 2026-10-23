@@ -11,8 +11,8 @@ export function ctaEvent(href: string): string | undefined {
   if (href === "#demos" || /\/#demos$/.test(href)) return "demos_scroll";
   const page = /^(?:\/(?:pl|zh))?\/(content-cost|reporting)\/?$/.exec(href);
   if (page) return page[1] === "reporting" ? "reporting_page_open" : "cost_page_open";
-  const product = /^(?:\/(?:pl|zh))?\/(white-paper|style-guide|course-generation\/[a-z-]+)\/?$/.exec(href);
-  if (product) return product[1] === "white-paper" ? "white_paper_open" : product[1] === "style-guide" ? "style_guide_open" : "case_study_open";
+  const product = /^(?:\/(?:pl|zh))?\/(white-paper|style-guide|learning-elements|course-generation\/[a-z-]+)\/?$/.exec(href);
+  if (product) return product[1] === "white-paper" ? "white_paper_open" : product[1] === "style-guide" ? "style_guide_open" : product[1] === "learning-elements" ? "learning_elements_open" : "case_study_open";
   try {
     const url = new URL(href);
     if (UMAMI_DEMO_HOSTS.includes(url.hostname)) return "demo_open";
