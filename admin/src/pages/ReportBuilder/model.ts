@@ -156,8 +156,8 @@ export function fromDefinition(definition: ReportDefinition, dataset: ReportData
     value: Array.isArray(f.value)
       ? f.value.join(',')
       : f.value === undefined || f.value === null
-        ? ''
-        : String(f.value),
+      ? ''
+      : String(f.value),
   }));
   if (definition.dateRange) {
     state.dateColumn = definition.dateRange.column;
