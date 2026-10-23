@@ -56,10 +56,11 @@ describe.skipIf(!enabled)("backup, wipe and restore of a real Docker stack", () 
       if (result.code !== 0) throw new Error(`artisan ${args[0]}: ${result.err.slice(-3000)} ${result.out.slice(-3000)}`);
       return result.out;
     };
-    let installed = false;
+    let installed = false, passed = false;
     try {
-      const up = await invoke(["stack", "up", ...flags], base) as Json;
+      // set before the launch, so a failed launch still gets its logs printed and its resources removed
       installed = true;
+      const up = await invoke(["stack", "up", ...flags], base) as Json;
       expect(up.ready).toBe(true);
       const urls = up.urls as Record<string, string>;
       const secrets = JSON.parse(await readFile(join(directory, "credentials.json"), "utf8")) as Record<string, string>;
@@ -105,7 +106,13 @@ describe.skipIf(!enabled)("backup, wipe and restore of a real Docker stack", () 
       // stack restore ran ulams:upgrade, which lists the tenant bucket: it only succeeds with the per-tenant
       // storage key issued after the restore (the restored object store has no identities).
       expect(await readdir(join(directory, "backups"))).toHaveLength(1);
+      passed = true;
     } finally {
+      if (installed && !passed) {
+        // the purge below deletes the containers: print their logs first
+        const logs = await run("docker", ["compose", "--project-name", name, "--env-file", join(directory, ".env"), "-f", join(directory, "compose.yaml"), "logs", "--no-color", "--tail", "200"], base);
+        console.error(logs.out.slice(-60000));
+      }
       if (installed) await invoke(["stack", "down", "--directory", directory, "--purge", "--yes"], base).catch(() => undefined);
       await rm(root, { recursive: true, force: true });
     }
