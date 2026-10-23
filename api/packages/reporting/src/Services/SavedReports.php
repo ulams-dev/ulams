@@ -94,7 +94,7 @@ class SavedReports
         $this->checkDefinition($attributes['definition'], $owner);
         $this->checkSharing($attributes['visibility'] ?? SavedReport::PRIVATE, $attributes['shared_roles'] ?? []);
 
-        return SavedReport::query()->create($this->attributes($attributes) + ['owner_user_id' => $owner->getAuthIdentifier(), 'visibility' => SavedReport::PRIVATE]);
+        return SavedReport::query()->create($this->attributes($attributes) + ['owner_user_id' => $owner->getAuthIdentifier(), 'visibility' => SavedReport::PRIVATE, 'feed_enabled' => false]);
     }
 
     /**
@@ -120,6 +120,17 @@ class SavedReports
         $report->delete();
     }
 
+    /** The reports a BI tool may read through the feed: enabled, visible to the viewer, and not above the resources of a limited token. */
+    public function feedsFor(Authenticatable $viewer, ?array $tokenResources = null): Builder
+    {
+        $query = $this->visibleTo($viewer)->where('feed_enabled', true);
+        if (!empty($tokenResources)) {
+            $query->whereIn('id', $tokenResources);
+        }
+
+        return $query;
+    }
+
     public function markRun(SavedReport $report): void
     {
         $report->forceFill(['last_run_at' => now()])->saveQuietly();
@@ -128,7 +139,7 @@ class SavedReports
     /** @param array<string,mixed> $attributes @return array<string,mixed> */
     private function attributes(array $attributes): array
     {
-        $out = array_intersect_key($attributes, array_flip(['name', 'description', 'visibility', 'shared_roles', 'definition']));
+        $out = array_intersect_key($attributes, array_flip(['name', 'description', 'visibility', 'shared_roles', 'definition', 'feed_enabled']));
         if (($out['visibility'] ?? SavedReport::PRIVATE) === SavedReport::PRIVATE) {
             $out['shared_roles'] = null;
         } elseif (isset($out['shared_roles'])) {

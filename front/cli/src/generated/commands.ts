@@ -5997,8 +5997,8 @@ export const generatedCommands: AnyCommand[] = [
     positionals: ["id"],
     mcp: { toolset: "reporting" },
     examples: [{"title":"Change a saved report (owner or reporting_manage)","argv":"reporting update text --json"}],
-    input: z.looseObject({ "id": z.string(), "definition": z.record(z.string(), z.unknown()).optional(), "description": z.string().optional(), "name": z.string().optional(), "shared_roles": z.array(z.string()).optional(), "visibility": z.enum(["private", "roles"]).optional() }),
-    request: {"method":"PUT","path":"/api/admin/reporting/saved/{id}","pathParams":["id"],"queryParams":[],"bodyMode":"json","bodyFields":["definition","description","name","shared_roles","visibility"]},
+    input: z.looseObject({ "id": z.string(), "definition": z.record(z.string(), z.unknown()).optional(), "description": z.string().optional(), "feed_enabled": z.boolean().describe("Offer the report as a read-only OData feed (needs reporting_manage)").optional(), "name": z.string().optional(), "shared_roles": z.array(z.string()).optional(), "visibility": z.enum(["private", "roles"]).optional() }),
+    request: {"method":"PUT","path":"/api/admin/reporting/saved/{id}","pathParams":["id"],"queryParams":[],"bodyMode":"json","bodyFields":["definition","description","feed_enabled","name","shared_roles","visibility"]},
   }),
   httpCommand({
     id: "reports.available-for-user",
@@ -6793,8 +6793,8 @@ export const generatedCommands: AnyCommand[] = [
     endpoints: ["POST /api/auth/tokens"],
     mcp: { toolset: "my" },
     examples: [{"title":"A CI token that can edit courses and run the builder, for 30 days","argv":"tokens create --name ci --scopes @ci --expires-in-days 30 --kind ci --json"},{"title":"A read-only token for an agent","argv":"tokens create --name reader --scopes @read-only --kind agent --agent-name claude-code --json"}],
-    input: z.looseObject({ "agent_name": z.string().nullable().optional(), "expires_in_days": z.number().int().optional(), "kind": z.enum(["cli", "agent", "ci", "integration"]).optional(), "name": z.string(), "rate_limit_per_minute": z.number().int().nullable().optional(), "scopes": z.array(z.string()).describe("Scopes or @presets (read-only, author, admin, learner, ci)") }),
-    request: {"method":"POST","path":"/api/auth/tokens","pathParams":[],"queryParams":[],"bodyMode":"json","bodyFields":["agent_name","expires_in_days","kind","name","rate_limit_per_minute","scopes"]},
+    input: z.looseObject({ "agent_name": z.string().nullable().optional(), "expires_in_days": z.number().int().optional(), "kind": z.enum(["cli", "agent", "ci", "integration"]).optional(), "name": z.string(), "rate_limit_per_minute": z.number().int().nullable().optional(), "resource_ids": z.array(z.string()).nullable().describe("Limit the token to these resources, for example the id of one saved report for a BI tool: it can then call only the endpoints that name one of them").optional(), "scopes": z.array(z.string()).describe("Scopes or @presets (read-only, author, admin, learner, ci)") }),
+    request: {"method":"POST","path":"/api/auth/tokens","pathParams":[],"queryParams":[],"bodyMode":"json","bodyFields":["agent_name","expires_in_days","kind","name","rate_limit_per_minute","resource_ids","scopes"]},
   }),
   httpCommand({
     id: "tokens.current",
