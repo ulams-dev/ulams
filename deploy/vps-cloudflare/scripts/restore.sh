@@ -97,9 +97,24 @@ if [[ -f "$from/volumes.tar.gz" ]]; then
     -v "$from:/in:ro" alpine:3.22 sh -c 'cd /v && tar xzf /in/volumes.tar.gz'
 fi
 
+if [[ -f "$from/buckets.tar.gz" ]]; then
+  [[ "$ULAMS_LOCAL" == 1 ]] || ulams_die "this backup holds the buckets of a local trial; restore it with ULAMS_LOCAL=1"
+  ulams_log "buckets of the local SeaweedFS"
+  ulams_compose up -d storage
+  ulams_wait_healthy storage 60 || ulams_die "storage is not healthy"
+  # shellcheck disable=SC2016 # expanded by the shell inside the rclone container
+  ULAMS_RCLONE_DIR="$from" ulams_storage_sh 'set -e; mkdir -p /tmp/w; tar xzf /data/buckets.tar.gz -C /tmp/w
+    for d in /tmp/w/buckets/*/; do [ -d "$d" ] || continue; b=$(basename "$d"); rclone mkdir "s:$b"; rclone sync "$d" "s:$b"; done'
+fi
+
 ulams_log "starting the stack"
 ulams_compose up -d
 ulams_wait_healthy api 120 || ulams_die "the api did not become healthy: docker compose logs api"
+if [[ -f "$from/buckets.tar.gz" ]]; then
+  # a restored SeaweedFS has no tenant identities: public-read policies again, a new key for every tenant
+  ulams_artisan ulams:tenant:ensure-buckets
+  ulams_artisan ulams:tenant:sync-env --rotate-storage-keys
+fi
 ulams_artisan ulams:tenant:sync-env
 ulams_artisan ulams:h5p:export-config
 ulams_log "restored. Check the sign-in of the platform and of one tenant, and compare a record count with what you expect."
