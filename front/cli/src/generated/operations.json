@@ -91,6 +91,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/authoring-metrics/summary",
+  "summary": "Authoring metric of the academy",
+  "tag": "Authoring metrics"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/bookmarks",
   "summary": "Get a listing of the bookmarks",
   "tag": "Admin Bookmarks"

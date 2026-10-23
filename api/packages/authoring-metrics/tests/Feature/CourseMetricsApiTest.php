@@ -98,7 +98,7 @@ class CourseMetricsApiTest extends TestCase
         $this->assertCount(2, $lines, 'a header and one course');
         $row = array_combine($header, str_getcsv($lines[1], ',', '"', ''));
         $this->assertSame((string) $course, $row['course_id']);
-        $this->assertSame('1', $row['method_version']);
+        $this->assertSame('2', $row['method_version']);
         $this->assertSame('', $row['author_minutes'], 'not recorded is an empty cell, not a zero');
         foreach (['generation_seconds', 'cost_build_micro_usd', 'ai_accepted_unchanged', 'ai_unknown', 'learner_minutes_estimate'] as $column) {
             $this->assertContains($column, $header);
@@ -129,6 +129,7 @@ class CourseMetricsApiTest extends TestCase
         return [
             'list' => ['GET', 'api/admin/authoring-metrics/courses', [], 200],
             'export' => ['GET', 'api/admin/authoring-metrics/courses/export', [], 200],
+            'summary' => ['GET', 'api/admin/authoring-metrics/summary', [], 200],
             'show' => ['GET', 'api/admin/authoring-metrics/courses/{course}', [], 200],
             'status' => ['GET', 'api/admin/authoring-metrics/activity/status', [], 200],
             'record' => ['POST', 'api/admin/authoring-metrics/activity', ['course_id' => '{course}', 'minutes' => ['{minute}'], 'surface' => 'studio', 'tab_nonce' => 'AAAAAAAAAAAAAAAAAAAAAA'], 200],

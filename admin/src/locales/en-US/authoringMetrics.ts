@@ -28,7 +28,22 @@ export default {
   authoring_metrics_col_build: 'Build cost',
   authoring_metrics_col_maintenance: 'Maintenance cost',
   authoring_metrics_col_content: 'Content',
+  authoring_metrics_col_hours: 'Work per learner hour',
   authoring_metrics_col_elements: 'What the AI wrote',
+  authoring_metrics_hours_value: '{n} h',
+  authoring_metrics_hours_formula:
+    'Work per learner hour = (generation time + interview time + author time) / learner time, where learner time is the minutes declared for the lessons. It is shown only when author time is recorded for the course. Maintenance is shown apart, as a cost.',
+  authoring_metrics_summary_title: 'Across the academy',
+  authoring_metrics_summary_median:
+    'Median: {n} h of work per hour of learner time, over {courses} courses with recorded author time.',
+  authoring_metrics_summary_not_enough:
+    'Not enough courses yet: {courses} with recorded author time, at least {min} are needed for a median.',
+  authoring_metrics_summary_no_author_time:
+    'No figure yet: author time is not recorded for any course. Turn on review time in Settings to record it.',
+  authoring_metrics_summary_own:
+    "Your own earlier figure, entered in Settings: {n} h of work per hour of learner time (your own estimate, not a measurement).",
+  authoring_metrics_summary_maintenance:
+    'Maintenance, shown apart: {cost} of model calls on {courses} courses.',
   authoring_metrics_not_recorded: 'Not recorded',
   authoring_metrics_content: 'Lessons: {lessons}, questions: {questions}',
   authoring_metrics_no_ai_elements: 'Nothing yet',

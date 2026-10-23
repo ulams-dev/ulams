@@ -99,10 +99,10 @@ class ReviewTimeApiTest extends TestCase
         [$author, $course] = $this->applied();
 
         $this->actingAs($author, 'api')->withHeaders(['User-Agent' => 'Mozilla/5.0 (secret)'])
-            ->postJson('/api/admin/authoring-metrics/activity', $this->body($course, ['user_id' => 42, 'element_id' => 'abc', 'email' => 'a@b.test']), ['REMOTE_ADDR' => '203.0.113.9'])->assertOk();
+            ->postJson('/api/admin/authoring-metrics/activity', $this->body($course, ['user_id' => 987654, 'element_id' => 'element-xyz', 'email' => 'a@b.test']), ['REMOTE_ADDR' => '203.0.113.9'])->assertOk();
 
         $dump = json_encode(DB::table('authoring_activity_minutes')->get()->all());
-        foreach (['203.0.113.9', 'Mozilla', 'secret', '42', 'a@b.test', 'abc'] as $needle) {
+        foreach (['203.0.113.9', 'Mozilla', 'secret', '987654', 'a@b.test', 'element-xyz'] as $needle) {
             $this->assertStringNotContainsString($needle, $dump);
         }
     }

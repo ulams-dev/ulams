@@ -46,6 +46,13 @@ export interface ProductionStrings {
   authorTime: string;
   authorTimeNotRecorded: string;
   authorTimeValue: string;
+  hoursTitle: string;
+  hoursValue: string;
+  hoursNote: string;
+  hoursNotRecorded: string;
+  hoursNoLearnerMinutes: string;
+  hoursInputs: string;
+  hoursFormula: string;
   costTitle: string;
   costBuild: string;
   costBuildNote: string;
@@ -122,6 +129,13 @@ const en: ProductionStrings = {
   authorTime: "Author time",
   authorTimeNotRecorded: "Not recorded. Review time is only recorded when your administrator turns it on.",
   authorTimeValue: "{time} of active screen time",
+  hoursTitle: "Work per learner hour",
+  hoursValue: "{n} h of work per hour of learner time",
+  hoursNote: "Your academy's own figure for this course, from its own recorded data. It is not compared with any other course or any industry figure.",
+  hoursNotRecorded: "No figure: author time is not recorded for this course, and without it the work behind the course is not known.",
+  hoursNoLearnerMinutes: "No figure: the lessons have no declared minutes for learners.",
+  hoursInputs: "Work: {work}. Learner time: {learner}.",
+  hoursFormula: "Work is generation time plus interview time plus author time; learner time is the minutes declared for the lessons. Maintenance is shown separately, under cost.",
   costTitle: "Cost",
   costBuild: "Build cost",
   costBuildNote: "Model calls that made and changed this course, including variants.",
@@ -198,6 +212,13 @@ const pl: ProductionStrings = {
   authorTime: "Czas autora",
   authorTimeNotRecorded: "Nie zapisano. Czas przeglądu jest zapisywany tylko wtedy, gdy administrator to włączy.",
   authorTimeValue: "{time} aktywnej pracy przy ekranie",
+  hoursTitle: "Praca na godzinę kursanta",
+  hoursValue: "{n} godz. pracy na godzinę czasu kursanta",
+  hoursNote: "Własny wynik Twojej akademii dla tego kursu, z jej własnych zapisanych danych. Nie jest porównywany z innym kursem ani z żadnymi danymi branżowymi.",
+  hoursNotRecorded: "Brak wyniku: dla tego kursu nie zapisano czasu autora, a bez niego nie wiadomo, ile pracy kosztował kurs.",
+  hoursNoLearnerMinutes: "Brak wyniku: lekcje nie mają zadeklarowanych minut dla kursantów.",
+  hoursInputs: "Praca: {work}. Czas kursanta: {learner}.",
+  hoursFormula: "Praca to czas generowania plus czas wywiadu plus czas autora; czas kursanta to minuty zadeklarowane dla lekcji. Utrzymanie pokazujemy osobno, w kosztach.",
   costTitle: "Koszt",
   costBuild: "Koszt budowy",
   costBuildNote: "Wywołania modelu, które stworzyły i zmieniały ten kurs, także jego warianty.",
@@ -274,6 +295,13 @@ const zh: ProductionStrings = {
   authorTime: "作者时间",
   authorTimeNotRecorded: "未记录。只有管理员开启后才会记录审阅时间。",
   authorTimeValue: "{time} 的活跃屏幕时间",
+  hoursTitle: "每学员学时的工作量",
+  hoursValue: "每 1 小时学员学习时间需 {n} 小时工作",
+  hoursNote: "这是贵学院针对这门课程、基于自己记录的数据得出的数字，不与其他课程或任何行业数据比较。",
+  hoursNotRecorded: "没有数字：这门课程没有记录作者时间，没有它就无法知道制作课程投入了多少工作。",
+  hoursNoLearnerMinutes: "没有数字：这些课时没有为学员声明学习分钟数。",
+  hoursInputs: "工作量：{work}。学员时间：{learner}。",
+  hoursFormula: "工作量为生成时间加访谈时间加作者时间；学员时间为课时声明的分钟数。维护成本单独显示，见成本部分。",
   costTitle: "成本",
   costBuild: "构建成本",
   costBuildNote: "创建和修改这门课程的模型调用，包括其变体。",

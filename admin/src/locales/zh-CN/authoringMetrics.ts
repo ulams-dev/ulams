@@ -26,7 +26,21 @@ export default {
   authoring_metrics_col_build: '构建成本',
   authoring_metrics_col_maintenance: '维护成本',
   authoring_metrics_col_content: '内容',
+  authoring_metrics_col_hours: '每学员学时的工作量',
   authoring_metrics_col_elements: 'AI 写了什么',
+  authoring_metrics_hours_value: '{n} 小时',
+  authoring_metrics_hours_formula:
+    '每学员学时的工作量 =（生成时间 + 访谈时间 + 作者时间）/ 学员时间，其中学员时间为课时声明的分钟数。只有为该课程记录了作者时间时才会显示。维护成本单独作为成本显示。',
+  authoring_metrics_summary_title: '全学院',
+  authoring_metrics_summary_median:
+    '中位数：每 1 小时学员学习时间需 {n} 小时工作，基于 {courses} 门记录了作者时间的课程。',
+  authoring_metrics_summary_not_enough:
+    '课程数量不足：只有 {courses} 门记录了作者时间，至少需要 {min} 门才能计算中位数。',
+  authoring_metrics_summary_no_author_time:
+    '暂无数字：没有任何课程记录了作者时间。请在设置中开启审阅时间以记录。',
+  authoring_metrics_summary_own:
+    '你在设置中填写的自己此前的数字：每 1 小时学员学习时间需 {n} 小时工作（你自己的估计，不是测量值）。',
+  authoring_metrics_summary_maintenance: '维护成本单独显示：{courses} 门课程共 {cost} 的模型调用。',
   authoring_metrics_not_recorded: '未记录',
   authoring_metrics_content: '课时：{lessons}，题目：{questions}',
   authoring_metrics_no_ai_elements: '暂无',

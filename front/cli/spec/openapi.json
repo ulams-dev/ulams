@@ -7052,6 +7052,56 @@
     ]
    }
   },
+  "/api/admin/authoring-metrics/summary": {
+   "get": {
+    "description": "The academy's median hours of work per hour of learner time over the courses that have the figure, with how many (n). Needs recorded author time, and at least three courses, otherwise there is no median and status says why (author_time_not_recorded, not_enough_courses). Also the academy's own earlier figure when it entered one (labelled as its own estimate) and the maintenance cost, separately. The figure is the academy's own: no industry ratio is ever returned. Needs authoring_metrics_read.",
+    "operationId": "admin.authoring-metrics.summary",
+    "parameters": [
+     {
+      "description": "Courses created on or after this date (YYYY-MM-DD)",
+      "in": "query",
+      "name": "from",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Courses created on or before this date (YYYY-MM-DD)",
+      "in": "query",
+      "name": "to",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "status, n_courses, n_with_figure, median_hours_per_learner_hour, own_baseline, maintenance, formula"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Authoring metric of the academy",
+    "tags": [
+     "Authoring metrics"
+    ]
+   }
+  },
   "/api/admin/bookmarks": {
    "get": {
     "description": "Get all bookmarks",

@@ -47,7 +47,7 @@ class CourseMetricsTest extends TestCase
         $this->assertSame($session->id, $metric->session_id);
         $this->assertSame([$stats['lessons'], $stats['questions'], $stats['blocks']], [(int) $metric->lessons, (int) $metric->questions, (int) $metric->blocks]);
         $this->assertSame((int) $metric->blocks, (int) $metric->cited_blocks, 'every generated block cites a passage');
-        $this->assertSame(1, (int) $metric->method_version);
+        $this->assertSame(2, (int) $metric->method_version);
 
         $kinds = StageTiming::query()->where('session_id', $session->id)->selectRaw('run_kind, sum(seconds) s')->groupBy('run_kind')->pluck('s', 'run_kind');
         $this->assertEqualsWithDelta((float) ($kinds['outline'] ?? 0) + (float) ($kinds['generate'] ?? 0) + (float) ($kinds['apply'] ?? 0), (float) $metric->generation_seconds, 0.01);

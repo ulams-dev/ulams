@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { PRODUCTION_STRINGS } from "../../src/studio/production-i18n.ts";
-import { barText, costFigures, elementClasses, flatRow, productionFormatterFor, stageName, stageRows, toCsv, toJson, totals, type CourseMetricData } from "../../src/studio/production-model.ts";
+import { barText, costFigures, elementClasses, flatRow, hoursFigure, productionFormatterFor, stageName, stageRows, toCsv, toJson, totals, type CourseMetricData } from "../../src/studio/production-model.ts";
 
 const metric = (over: Partial<CourseMetricData> = {}): CourseMetricData => ({
   course_id: 12,
@@ -84,7 +84,7 @@ describe("figures", () => {
 describe("files", () => {
   it("has the columns of the admin export, in order, with not recorded as an empty cell", () => {
     const csv = toCsv(metric()).trimEnd().split("\n");
-    expect(csv[0]).toBe("course_id,session_id,method_version,computed_at,generation_seconds,ai_edit_seconds,interview_seconds,model_seconds,author_minutes,cost_build_micro_usd,cost_maintenance_micro_usd,llm_calls,llm_calls_failed,lessons,questions,blocks,cited_blocks,learner_minutes_estimate,ai_elements,ai_accepted_unchanged,ai_revised_on_request,ai_edited_by_author,ai_unknown,author_elements");
+    expect(csv[0]).toBe("course_id,session_id,method_version,computed_at,generation_seconds,ai_edit_seconds,interview_seconds,model_seconds,author_minutes,cost_build_micro_usd,cost_maintenance_micro_usd,llm_calls,llm_calls_failed,lessons,questions,blocks,cited_blocks,learner_minutes_estimate,hours_per_learner_hour,ai_elements,ai_accepted_unchanged,ai_revised_on_request,ai_edited_by_author,ai_unknown,author_elements");
     const cells = csv[1].split(",");
     expect(cells).toHaveLength(csv[0].split(",").length);
     expect(cells[8]).toBe("");
@@ -94,7 +94,32 @@ describe("files", () => {
   });
   it("is JSON with null for what was not recorded", () => {
     expect(JSON.parse(toJson(metric()))).toMatchObject({ course_id: 12, author_minutes: null, ai_accepted_unchanged: 40 });
-    expect(Object.keys(flatRow(metric()))).toHaveLength(24);
+    expect(Object.keys(flatRow(metric()))).toHaveLength(25);
+  });
+});
+
+describe("hours per learner hour", () => {
+  const f = productionFormatterFor("en");
+  const hours = (over: Partial<NonNullable<CourseMetricData["hours"]>> = {}): CourseMetricData => metric({ hours: { work_hours: 2.1667, learner_hours: 1, hours_per_learner_hour: 2.17, reason: null, formula: "x", ...over } });
+
+  it("states the figure and what it was made from", () => {
+    const h = hoursFigure(f, hours());
+    expect(h).toEqual({ value: "2.17 h of work per hour of learner time", inputs: "Work: 2 h 10 min. Learner time: 1 h 0 min.", figure: true });
+  });
+  it("says why there is no figure instead of showing one", () => {
+    const none = hoursFigure(f, hours({ work_hours: null, hours_per_learner_hour: null, reason: "author_time_not_recorded" }));
+    expect(none.figure).toBe(false);
+    expect(none.value).toContain("author time is not recorded");
+    expect(hoursFigure(f, hours({ hours_per_learner_hour: null, reason: "no_learner_minutes" })).value).toContain("no declared minutes");
+    expect(hoursFigure(f, metric()).figure).toBe(false);
+  });
+  it("is written in Polish and Chinese", () => {
+    expect(hoursFigure(productionFormatterFor("pl"), hours()).value).toBe("2,17 godz. pracy na godzinę czasu kursanta");
+    expect(hoursFigure(productionFormatterFor("zh"), hours()).value).toBe("每 1 小时学员学习时间需 2.17 小时工作");
+  });
+  it("is in the file, empty when there is none", () => {
+    expect(flatRow(hours()).hours_per_learner_hour).toBe(2.17);
+    expect(flatRow(metric()).hours_per_learner_hour).toBeNull();
   });
 });
 
@@ -106,6 +131,7 @@ describe("strings", () => {
   });
   it("claim no benchmark: no industry figure appears in any language", () => {
     const all = JSON.stringify(PRODUCTION_STRINGS);
-    for (const banned of ["Chapman", "49 ", "716", "79 h", "184 h", "490 h"]) expect(all).not.toContain(banned);
+    for (const banned of ["Chapman", "Brandon Hall", "716", "79 h", "184 h", "490 h", "49 h", "industry average", "benchmark"]) expect(all.toLowerCase()).not.toContain(banned.toLowerCase());
+    expect(all).not.toMatch(/\b(49|79|184|490|716)\s*(h|hours|godz|小时)/i);
   });
 });

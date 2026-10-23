@@ -29,7 +29,22 @@ export default {
   authoring_metrics_col_build: 'Koszt budowy',
   authoring_metrics_col_maintenance: 'Koszt utrzymania',
   authoring_metrics_col_content: 'Treść',
+  authoring_metrics_col_hours: 'Praca na godzinę kursanta',
   authoring_metrics_col_elements: 'Co napisało AI',
+  authoring_metrics_hours_value: '{n} godz.',
+  authoring_metrics_hours_formula:
+    'Praca na godzinę kursanta = (czas generowania + czas wywiadu + czas autora) / czas kursanta, gdzie czas kursanta to minuty zadeklarowane dla lekcji. Pokazujemy ją tylko wtedy, gdy dla kursu zapisano czas autora. Utrzymanie pokazujemy osobno, jako koszt.',
+  authoring_metrics_summary_title: 'W całej akademii',
+  authoring_metrics_summary_median:
+    'Mediana: {n} godz. pracy na godzinę czasu kursanta, z {courses} kursów z zapisanym czasem autora.',
+  authoring_metrics_summary_not_enough:
+    'Za mało kursów: {courses} z zapisanym czasem autora, do mediany potrzeba co najmniej {min}.',
+  authoring_metrics_summary_no_author_time:
+    'Jeszcze bez wyniku: żaden kurs nie ma zapisanego czasu autora. Włącz czas przeglądu w Ustawieniach, aby go zapisywać.',
+  authoring_metrics_summary_own:
+    'Twój własny wcześniejszy wynik, wpisany w Ustawieniach: {n} godz. pracy na godzinę czasu kursanta (Twoja własna ocena, nie pomiar).',
+  authoring_metrics_summary_maintenance:
+    'Utrzymanie, pokazane osobno: {cost} wywołań modelu w {courses} kursach.',
   authoring_metrics_not_recorded: 'Nie zapisano',
   authoring_metrics_content: 'Lekcje: {lessons}, pytania: {questions}',
   authoring_metrics_no_ai_elements: 'Jeszcze nic',

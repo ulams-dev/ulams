@@ -13,7 +13,7 @@ const URL = '/analytics/authoring';
 const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 const COURSES: MockMetric[] = [
   { course_id: 12, course_title: 'Coffee brewing basics' },
-  { course_id: 13, course_title: 'Cupping for beginners', author_minutes: 135 },
+  { course_id: 13, course_title: 'Cupping for beginners', author_minutes: 135, hours: 2.38 },
   { course_id: 14, course_title: null, ai_elements: 0, accepted_unchanged: 0 },
   { course_id: 15, course_title: 'Before provenance', accepted_unchanged: 0, unknown: 59 },
 ];
@@ -67,6 +67,7 @@ test.describe('Analytics > Authoring', () => {
     const text = (await page.locator('.authoring-metrics').innerText()).toLowerCase();
     expect(text).toContain('not compared with another academy');
     for (const banned of ['chapman', 'benchmark', 'industry average', '716']) expect(text).not.toContain(banned);
+    expect(text).not.toMatch(/\b(49|79|184|490|716)\s*(h|hours)\b/);
   });
 
   test('the date filter is sent to the API and the files are downloaded by keyboard', async ({ page }) => {
@@ -74,7 +75,9 @@ test.describe('Analytics > Authoring', () => {
     await expect(page.locator('table.authoring-metrics__table')).toBeVisible();
     await page.getByLabel('Courses created from').fill('2026-10-01');
     await page.getByLabel('Courses created until').fill('2026-10-31');
-    await expect.poll(() => state.metricRequests.at(-1)).toBe('list?from=2026-10-01&to=2026-10-31');
+    const lastOf = (kind: string) => state.metricRequests.filter((r) => r.startsWith(`${kind}?`) || r === kind).at(-1);
+    await expect.poll(() => lastOf('list')).toBe('list?from=2026-10-01&to=2026-10-31');
+    await expect.poll(() => lastOf('summary')).toBe('summary?from=2026-10-01&to=2026-10-31');
 
     const csv = page.getByRole('button', { name: 'Download CSV' });
     await csv.focus();
@@ -86,6 +89,34 @@ test.describe('Analytics > Authoring', () => {
     const [lines] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Download JSON lines' }).click()]);
     expect(lines.suggestedFilename()).toBe('authoring-metrics.jsonl');
     expect(await scan(page)).toEqual([]);
+  });
+
+  test('the academy figure is a median with n, and says why when there is none', async ({ page }) => {
+    await open(page, {
+      authoring: { courses: COURSES, summary: { status: 'ok', n_with_figure: 4, median: 5.2, ownBaseline: 40 } },
+    });
+    const summary = page.locator('.authoring-metrics__summary');
+    await expect(summary.getByRole('heading', { name: 'Across the academy' })).toBeVisible();
+    await expect(summary.locator('[data-state="median"]')).toHaveText(
+      'Median: 5.2 h of work per hour of learner time, over 4 courses with recorded author time.',
+    );
+    await expect(summary.locator('[data-state="own-baseline"]')).toContainText('your own estimate, not a measurement');
+    await expect(summary).toContainText('Maintenance, shown apart');
+    await expect(page.locator('tbody tr').nth(1)).toContainText('2.38 h');
+    await expect(page.locator('tbody tr').first()).toContainText('Not recorded');
+    expect(await scan(page), 'median').toEqual([]);
+  });
+
+  test('fewer than three courses is not enough courses yet, and no author time is no figure', async ({ page }) => {
+    await open(page, { authoring: { courses: COURSES, summary: { status: 'not_enough_courses', n_with_figure: 2 } } });
+    await expect(page.locator('[data-state="not_enough_courses"]')).toHaveText(
+      'Not enough courses yet: 2 with recorded author time, at least 3 are needed for a median.',
+    );
+    await expect(page.locator('.authoring-metrics__summary')).not.toContainText('Median');
+    expect(await scan(page), 'not enough').toEqual([]);
+
+    await open(page, { authoring: { courses: COURSES } });
+    await expect(page.locator('[data-state="author_time_not_recorded"]')).toContainText('author time is not recorded for any course');
   });
 
   test('an empty period says so', async ({ page }) => {

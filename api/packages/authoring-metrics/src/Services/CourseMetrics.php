@@ -26,7 +26,8 @@ use Ulams\CourseBuilder\Models\Version;
  */
 class CourseMetrics
 {
-    public const METHOD_VERSION = 1;
+    /** 2: adds the hours-per-learner-hour figure, derived from the same stored columns (HoursPerLearnerHour). */
+    public const METHOD_VERSION = 2;
 
     /** Runs whose stage time is machine time the author waited for. */
     public const GENERATION_KINDS = ['outline', 'generate', 'apply', 'sync'];

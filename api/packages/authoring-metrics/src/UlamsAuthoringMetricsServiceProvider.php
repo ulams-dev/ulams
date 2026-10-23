@@ -51,6 +51,8 @@ class UlamsAuthoringMetricsServiceProvider extends ServiceProvider
             }
             // off by default; the tenant admin switches it after reading what is stored (public: the studio asks too)
             AdministrableConfig::registerConfig('authoring_metrics.review_time', ['boolean'], true, false);
+            // the academy's own earlier figure (hours of work per learner hour), shown next to the measured one and labelled as its own
+            AdministrableConfig::registerConfig('authoring_metrics.baseline_hours_per_learner_hour', ['nullable', 'numeric', 'min:0', 'max:10000'], false, false);
         }
     }
 
@@ -74,6 +76,7 @@ class UlamsAuthoringMetricsServiceProvider extends ServiceProvider
             Route::get('courses', [CourseMetricsController::class, 'index']);
             Route::get('courses/export', [CourseMetricsController::class, 'export']);
             Route::get('courses/{course}', [CourseMetricsController::class, 'show']);
+            Route::get('summary', [CourseMetricsController::class, 'summary']);
             Route::get('activity/status', [ActivityController::class, 'status']);
             Route::post('activity', [ActivityController::class, 'store']);
             Route::delete('activity', [ActivityController::class, 'destroy']);
@@ -94,6 +97,8 @@ class UlamsAuthoringMetricsServiceProvider extends ServiceProvider
             UpgradeSteps::command('authoring_stage_timings_backfill', 'authoring-metrics:backfill', since: '0.3', requiresCommand: true);
             // the per-course snapshot of courses that already exist (it follows each apply and publish from here on)
             UpgradeSteps::command('authoring_course_metrics_recompute', 'authoring-metrics:recompute', since: '0.3', requiresCommand: true);
+            // method version 2 adds the hours figure: rebuild once so every snapshot says which definitions produced it
+            UpgradeSteps::command('authoring_course_metrics_recompute_v2', 'authoring-metrics:recompute', since: '0.3', requiresCommand: true);
         }
     }
 }

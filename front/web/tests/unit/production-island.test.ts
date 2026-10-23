@@ -13,6 +13,7 @@ const data = (over: Partial<CourseMetricData> = {}): CourseMetricData => ({
   cost: { build_micro_usd: 284100, maintenance_micro_usd: 0, llm_calls: 27, llm_calls_failed: 1 },
   counts: { lessons: 6, questions: 18, blocks: 35, cited_blocks: 35, learner_minutes_estimate: 60 },
   elements: { ai_elements: 59, accepted_unchanged: 49, revised_on_request: 4, edited_by_author: 6, unknown: 0, author_written: 2 },
+  hours: { work_hours: null, learner_hours: 1, hours_per_learner_hour: null, reason: "author_time_not_recorded", formula: "x" },
   stages: [{ run_id: "r1", run_kind: "outline", stage: "outline", started_at: "", finished_at: "", seconds: 24, quality: "exact" }],
   ...over,
 });
@@ -51,6 +52,16 @@ describe("Production island", () => {
     expect(root.querySelectorAll("table")).toHaveLength(2);
     expect(root.querySelectorAll("table caption")).toHaveLength(2);
     expect(await violations(root)).toEqual([]);
+  });
+
+  it("shows the hours figure only when there is one, and otherwise says why", async () => {
+    const none = await mount(() => json({ data: data() }));
+    expect(none.root.querySelector('[data-state="no-hours"]')?.textContent).toContain("author time is not recorded");
+    expect(none.root.textContent).not.toContain("h of work per hour");
+
+    const some = await mount(() => json({ data: data({ time: { generation_seconds: 464, ai_edit_seconds: 0, interview_seconds: 18, model_seconds: 902, author_minutes: 135 }, hours: { work_hours: 2.3839, learner_hours: 1, hours_per_learner_hour: 2.38, reason: null, formula: "x" } }) }));
+    expect(some.root.textContent).toContain("2.38 h of work per hour of learner time");
+    expect(some.root.textContent).toContain("not compared with any other course");
   });
 
   it("makes a CSV and a JSON file from the loaded figures", async () => {
