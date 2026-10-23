@@ -3,6 +3,7 @@ import { ApiError, createClient, createLivingLearnerClient, type Course, type Te
 import type { UiNode } from "@ulams/ui/render-core";
 import { cache } from "./cache.ts";
 import { config } from "./config.ts";
+import { currentEntry, overlaySettings } from "./entry.ts";
 import { fetchFrameOrigins } from "./frame-origins.ts";
 import { fetchShowcase } from "./interactive.ts";
 import type { LearnerNotices } from "./notices.ts";
@@ -21,8 +22,13 @@ export function publicData<T>(tenant: Tenant, name: string, fetcher: () => Promi
 
 const settle = <T>(promise: Promise<T>, fallback: T): Promise<T> => promise.catch(() => fallback);
 
-export function getSettings(tenant: Tenant) {
-  return publicData(tenant, "settings", () => apiFor(tenant).settings.public());
+/**
+ * The tenant's public settings, as the entry point of the request shows them (its theme and default language over the
+ * academy's, ADR 0195). The cached value is the academy's own and is never changed.
+ */
+export async function getSettings(tenant: Tenant) {
+  const settings = await publicData(tenant, "settings", () => apiFor(tenant).settings.public());
+  return overlaySettings(settings, currentEntry()) ?? settings;
 }
 
 /** The tenant's public configuration (`GET /api/config`: switches such as `ai.label_generated_courses`). */

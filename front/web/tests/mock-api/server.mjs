@@ -777,6 +777,117 @@ function socialExchange(body, res, tokenPrefix = "social-token") {
   res.end(JSON.stringify({ success: true, message: "Login successful", data: { complete: true, token: `${tokenPrefix}-${input.code.slice(0, 8)}`, expires_at: new Date(Date.now() + 86_400_000).toISOString() } }));
 }
 
+// Entry points (ADR 0195): the platform's public lookup, `GET /api/platform/entry-points/resolve`. Hosts are example.test
+// names (the browser maps them to the web server). An `outage` host makes the platform answer 503 for that host only (suites
+// run side by side), `disabled` hides an entry.
+const entryPoints = [
+  { tenant: "coffee", host: "sales.coffee.example.test", kind: "department", key: "sales", label: "Sales academy", target: { group_id: 7 }, theme: { preset: "nightsky", accent: "#c2552d" }, seo: { canonical: "tenant", index: false }, locale: null },
+  { tenant: "coffee", host: "kubernetes.coffee.example.test", kind: "course", key: "kubernetes", label: "Kubernetes in a day", target: { course_id: 1 }, theme: { accent: "#0b6e4f" }, seo: { canonical: "tenant", index: true }, locale: null },
+  { tenant: "coffee", host: "finance.coffee.example.test", kind: "department", key: "finance", label: "Finance", target: { group_id: 8 }, theme: {}, seo: { canonical: "tenant", index: false }, locale: null },
+  { tenant: "coffee", host: "managers.coffee.example.test", kind: "role", key: "managers", label: "Managers", target: { role: "manager" }, theme: {}, seo: { canonical: "tenant", index: false }, locale: "pl" },
+];
+const entryState = { outageHosts: new Set(), disabled: new Set(), lookups: [] };
+
+// An entry point also answers under `<key>-<variant>` (variant: desktop or phone, the two Playwright projects, which run
+// the same specs side by side): the same academy and settings under a key and host of its own, so a spec that changes one
+// (disable it, make the lookup fail) cannot disturb its twin.
+const VARIANT = /-(desktop|phone)$/;
+const entryByKey = (tenant, key) => {
+  const base = entryPoints.find((e) => e.tenant === tenant && e.key === key.replace(VARIANT, ""));
+  return base ? { ...base, key, host: base.host.replace(base.key, key) } : null;
+};
+
+function resolveEntry(url, res) {
+  entryState.lookups.push(url.search);
+  const host = (url.searchParams.get("host") ?? "").toLowerCase();
+  if (entryState.outageHosts.has(host)) {
+    res.statusCode = 503;
+    res.end(JSON.stringify({ success: false, message: "The platform is busy." }));
+    return;
+  }
+  const tenant = url.searchParams.get("tenant");
+  const keyParam = url.searchParams.get("key");
+  const label = host.split(".")[0] ?? "";
+  const found = host ? (host.endsWith(".coffee.example.test") ? entryByKey("coffee", label) : null) : tenant && keyParam ? entryByKey(tenant, keyParam) : null;
+  if (!found || entryState.disabled.has(found.key) || (host && found.host !== host)) {
+    res.statusCode = 404;
+    res.end(JSON.stringify({ success: false, message: "Not found." }));
+    return;
+  }
+  res.end(JSON.stringify({ success: true, message: "Entry point", data: found }));
+}
+
+// Session hand-off between the hosts of one academy (ADR 0195): `POST /api/auth/handoff` (the learner's own token) and
+// `POST /api/auth/handoff/exchange`. Models the API's rules: the target must be the academy's own front or an active
+// entry host of the SAME tenant (the tenant is the X-Ulams-Api-Host the web server names), the code is bound to the
+// token's user, the target host and the S256 challenge, lives 60 seconds and works once, and a refusal never says why.
+const handoffCodes = new Map();
+const handoffIssued = [];
+const logouts = [];
+const MAIN_FRONT = { coffee: "coffee.app.localhost", nightsky: "nightsky.app.localhost" };
+
+function handoffHostsOf(tenant) {
+  const variants = ["", "-desktop", "-phone"];
+  const hosts = entryPoints.filter((e) => e.tenant === tenant).flatMap((e) => variants.map((v) => entryByKey(tenant, `${e.key}${v}`)).filter((x) => x && !entryState.disabled.has(x.key)).map((x) => x.host));
+  return [MAIN_FRONT[tenant], ...hosts].filter(Boolean);
+}
+
+function handoffBody(req, done) {
+  const chunks = [];
+  req.on("data", (c) => chunks.push(c));
+  req.on("end", () => {
+    try {
+      done(JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}"));
+    } catch {
+      done({});
+    }
+  });
+}
+
+function handoffIssue(req, res, tenant) {
+  handoffBody(req, (input) => {
+    res.setHeader("Cache-Control", "no-store");
+    const bearer = /^Bearer (.+)$/.exec(String(req.headers.authorization ?? ""))?.[1];
+    if (!bearer) {
+      res.statusCode = 401;
+      res.end(JSON.stringify({ success: false, message: "Unauthenticated." }));
+      return;
+    }
+    const host = String(input.host ?? "").toLowerCase().replace(/:\d+$/, "");
+    if (!/^[A-Za-z0-9_-]{43}$/.test(String(input.challenge ?? ""))) {
+      res.statusCode = 422;
+      res.end(JSON.stringify({ success: false, message: "The challenge is not valid." }));
+      return;
+    }
+    if (!handoffHostsOf(tenant).includes(host)) {
+      res.statusCode = 403;
+      res.end(JSON.stringify({ success: false, message: "That address does not belong to this academy." }));
+      return;
+    }
+    const code = randomBytes(32).toString("base64url");
+    handoffCodes.set(`${tenant}:${code}`, { user: createHash("sha256").update(bearer).digest("hex").slice(0, 10), host, challenge: input.challenge, expires: Date.now() + 60_000, used: false });
+    handoffIssued.push({ tenant, host });
+    res.end(JSON.stringify({ success: true, message: "Hand-off code", data: { code, expires_in: 60 } }));
+  });
+}
+
+function handoffExchange(req, res, tenant) {
+  handoffBody(req, (input) => {
+    res.setHeader("Cache-Control", "no-store");
+    const host = String(input.host ?? "").toLowerCase().replace(/:\d+$/, "");
+    const row = handoffCodes.get(`${tenant}:${input.code}`);
+    const verifier = typeof input.verifier === "string" ? input.verifier : "";
+    const ok = row && !row.used && row.expires > Date.now() && row.host === host && challengeFor(verifier) === row.challenge && handoffHostsOf(tenant).includes(host);
+    if (row) row.used = true;
+    if (!ok) {
+      res.statusCode = 400;
+      res.end(JSON.stringify({ success: false, message: "The sign-in code is invalid or has expired. Start again." }));
+      return;
+    }
+    res.end(JSON.stringify({ success: true, message: "Login successful", data: { token: `handoff-${row.user}-${randomBytes(4).toString("hex")}`, expires_at: new Date(Date.now() + 86_400_000).toISOString() } }));
+  });
+}
+
 const server = createServer((req, res) => {
   const url = new URL(req.url ?? "/", "http://mock");
   const path = url.pathname;
@@ -786,6 +897,58 @@ const server = createServer((req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
     res.end(path.endsWith(".png") ? LOGO_PNG : LOGO_SVG);
+    return;
+  }
+  if (req.method === "POST" && (path === "/api/auth/handoff" || path === "/api/auth/handoff/exchange")) {
+    const tenant = String(req.headers["x-ulams-api-host"] ?? "").split(".")[0];
+    if (path === "/api/auth/handoff") handoffIssue(req, res, tenant);
+    else handoffExchange(req, res, tenant);
+    return;
+  }
+  // who a social or hand-off token belongs to, so the suite can tell that two hosts see the same learner (other tokens: 404 as before)
+  if (req.method === "GET" && path === "/api/profile/me") {
+    req.resume();
+    const bearer = /^Bearer (.+)$/.exec(String(req.headers.authorization ?? ""))?.[1] ?? "";
+    const handoff = /^handoff-([0-9a-f]{10})-/.exec(bearer)?.[1];
+    const user = handoff ?? (bearer.startsWith("social-token-") ? createHash("sha256").update(bearer).digest("hex").slice(0, 10) : null);
+    if (user) {
+      res.end(JSON.stringify({ success: true, data: { id: parseInt(user, 16), email: `learner-${user}@coffee.test` } }));
+      return;
+    }
+  }
+  // logout: records whether the front asked for every session to end (for the tests)
+  if (req.method === "POST" && path === "/api/auth/logout") {
+    const tenant = String(req.headers["x-ulams-api-host"] ?? "").split(".")[0];
+    handoffBody(req, (input) => {
+      logouts.push({ tenant, everywhere: input.everywhere === true, token: /^Bearer (.+)$/.exec(String(req.headers.authorization ?? ""))?.[1] ?? "" });
+      res.end(JSON.stringify({ success: true, message: "You have been successfully logged out!" }));
+    });
+    return;
+  }
+  if (req.method === "GET" && path === "/__mock/logouts") {
+    req.resume();
+    res.end(JSON.stringify(logouts));
+    return;
+  }
+  // the hand-offs this mock issued (for the tests): which tenant, which target host
+  if (req.method === "GET" && path === "/__mock/handoffs") {
+    req.resume();
+    res.end(JSON.stringify(handoffIssued));
+    return;
+  }
+  if (req.method === "GET" && path === "/api/platform/entry-points/resolve") {
+    req.resume();
+    resolveEntry(url, res);
+    return;
+  }
+  // test control of the entry point lookup: ?outage=<host>, ?recover=<host>, ?disable=<key>, ?enable=<key>; GET reads the lookups seen
+  if (path === "/__mock/entry-points") {
+    req.resume();
+    if (url.searchParams.has("outage")) entryState.outageHosts.add(url.searchParams.get("outage"));
+    if (url.searchParams.has("recover")) entryState.outageHosts.delete(url.searchParams.get("recover"));
+    if (url.searchParams.has("disable")) entryState.disabled.add(url.searchParams.get("disable"));
+    if (url.searchParams.has("enable")) entryState.disabled.delete(url.searchParams.get("enable"));
+    res.end(JSON.stringify({ outage: [...entryState.outageHosts], disabled: [...entryState.disabled], lookups: entryState.lookups }));
     return;
   }
   // test control: forget what a tenant changed (the suite calls this before a journey that changes state)

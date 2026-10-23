@@ -6,6 +6,7 @@ use Illuminate\Database\Events\MigrationsEnded;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Database\Events\SchemaLoaded;
 use Illuminate\Support\Facades\Event;
+use Ulams\Core\Support\EntryFronts;
 use Ulams\Core\Support\MorphMap;
 use Ulams\Core\Support\SchemaColumns;
 use Ulams\Core\Http\Middleware\EnforceTrustedOrigin;
@@ -33,6 +34,9 @@ class UlamsServiceProvider extends ServiceProvider
 
     public function register()
     {
+        // one list of entry hosts per request: the origin check, return URLs, frame ancestors and the session hand-off read it
+        $this->app->singleton(EntryFronts::class);
+
         // Every other class registers its own aliases (Ulams\Core\Support\MorphMap). The user model is configurable:
         // its alias is fixed and resolves to the configured class once the configuration is final.
         $this->app->booted(function () {

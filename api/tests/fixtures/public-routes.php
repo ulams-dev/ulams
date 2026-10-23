@@ -44,6 +44,8 @@ return [
         'reason' => 'Static "your email is now verified" text shown after the verification link.'],
 
     // Health and platform metadata -----------------------------------------------------------------
+    ['method' => 'GET', 'uri' => 'api/platform/entry-points/resolve', 'kind' => 'open', 'covered_by' => 'api/packages/tenancy/tests/Feature/EntryPointResolveTest.php',
+        'reason' => 'Which academy and entry point serve a host (ADR 0195): read by the learner front before it knows the academy. Platform hosts only (404 on a tenant host), returns only active entry points and no ids of people, throttled per address.'],
     ['method' => 'GET', 'uri' => 'api/name', 'kind' => 'open', 'reason' => 'Application name, read by the front end and by the tenant probe.'],
     ['method' => 'GET', 'uri' => 'api/events', 'kind' => 'open', 'reason' => 'Event catalogue of the API (names only).'],
     ['method' => 'GET', 'uri' => 'api/health', 'kind' => 'open', 'reason' => 'Liveness probe for load balancers.'],
@@ -80,6 +82,8 @@ return [
         'reason' => 'Provider redirect: the signed state is the credential, another tenant refuses it.'],
     ['method' => 'POST', 'uri' => 'api/auth/social/exchange', 'kind' => 'open', 'covered_by' => 'api/packages/tenancy/tests/Integration/TenantIsolationTest.php',
         'reason' => 'Redeems a one-time login code with the PKCE verifier; codes are per tenant.'],
+    ['method' => 'POST', 'uri' => 'api/auth/handoff/exchange', 'kind' => 'own-credentials', 'covered_by' => 'api/packages/auth/tests/API/SessionHandoffApiTest.php',
+        'reason' => 'Redeems a session hand-off code (ADR 0195) with the PKCE verifier and the target host; codes are per tenant, single use, 60 seconds, bound to user, host and verifier.'],
     ['method' => 'POST', 'uri' => 'api/auth/social/complete/{token}', 'kind' => 'open', 'reason' => 'Completes a social registration with a one-time token.'],
     ['method' => 'GET', 'uri' => 'api/auth/email/verify/{id}/{hash}', 'kind' => 'open', 'reason' => 'E-mail verification link: the hash of the address is the credential.'],
     ['method' => 'GET', 'uri' => 'api/profile/delete/{userId}/{token}', 'kind' => 'own-credentials', 'reason' => 'Account deletion confirmation link: the emailed token is the credential; answers 401 to a missing, malformed, wrong or expired token.'],

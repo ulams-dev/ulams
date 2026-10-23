@@ -8,6 +8,7 @@ use Ulams\Bookmarks\Database\Seeders\BookmarkPermissionSeeder;
 use Ulams\Webhooks\Database\Seeders\WebhookPermissionSeeder;
 use Ulams\KnowledgeExport\Database\Seeders\KnowledgePermissionSeeder;
 use Ulams\Identity\Database\Seeders\IdentityPermissionSeeder;
+use Ulams\Tenancy\Database\Seeders\TenancyPermissionSeeder;
 use Ulams\BulkNotifications\Database\Seeders\BulkNotificationPermissionSeeder;
 use Ulams\Cart\Database\Seeders\CartPermissionSeeder;
 use Ulams\Categories\Database\Seeders\CategoriesPermissionSeeder;
@@ -120,6 +121,7 @@ class PermissionsSeeder extends Seeder
         $this->call(ReportingPermissionSeeder::class);
         $this->call(KnowledgePermissionSeeder::class);
         $this->call(IdentityPermissionSeeder::class);
+        $this->call(TenancyPermissionSeeder::class);
 
         // if there are no users, we need to create first admin 
 

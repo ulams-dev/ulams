@@ -143,6 +143,11 @@ class SocialAccountService implements SocialAccountServiceContract
             return ['complete' => false, 'pre_user_token' => $row->payload];
         }
 
+        // only the code of a social login: a hand-off code (ADR 0195) is not one
+        if ($row->kind !== LoginHandoffCode::KIND_LOGIN) {
+            throw new LoginHandoffException(LoginHandoffException::UNKNOWN);
+        }
+
         /** @var User|null $user */
         $user = $row->user_id ? $this->userRepository->find($row->user_id) : null;
         if (!$user || !$this->isUserActiveAndVerified($user)) {

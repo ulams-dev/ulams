@@ -17,6 +17,8 @@ class LoginHandoffCode extends Model
 {
     public const KIND_LOGIN = 'login';
     public const KIND_COMPLETE = 'complete';
+    /** A session handed from one host of the academy to another (ADR 0195). */
+    public const KIND_HANDOFF = 'handoff';
 
     protected $table = 'login_handoff_codes';
 

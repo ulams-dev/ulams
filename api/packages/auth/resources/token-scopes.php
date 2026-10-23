@@ -44,6 +44,10 @@ return [
     ['api/auth/register*', 'public'],
     ['api/auth/password/*', 'public'],
     ['api/auth/social/*', 'public'],
+    // session hand-off between the hosts of the academy (ADR 0195): the code is redeemed with a verifier and mints a login
+    // token, so a scoped token must not ask for one; redeeming needs no token
+    ['api/auth/handoff/exchange', 'public'],
+    ['api/auth/handoff', 'none'],
     // single sign-on: providers list, start, callback, code exchange (an access token is the result, never the input)
     ['api/identity/*', 'public'],
     ['api/auth/email/*', 'public'],
@@ -74,6 +78,9 @@ return [
 
     // ---- identity providers and their audit trail (read = list and verify, write = change) -----
     ['api/admin/identity*', 'identity'],
+
+    // ---- branded entry points (extra front hosts of the academy, ADR 0195): academy settings ----
+    ['api/admin/entry-points*', 'settings'],
 
     // ---- knowledge export ----------------------------------------------------------------------
     // reads course content and writes only the pack files, so starting an export needs courses:read
@@ -200,6 +207,8 @@ return [
     ['api/admin/lti*', 'lti'],
 
     // ---- platform (tenant API, platform hosts only) --------------------------------------------
+    // the lookup the learner front makes for a host it does not know (ADR 0195): public data, no token
+    ['api/platform/entry-points/resolve', 'public'],
     ['api/platform*', 'platform'],
 
     // ---- learner (everything a signed-in learner does on the public API) -----------------------

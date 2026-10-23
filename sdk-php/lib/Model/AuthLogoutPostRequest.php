@@ -1,6 +1,6 @@
 <?php
 /**
- * DemoLoginPost200Response
+ * AuthLogoutPostRequest
  *
  * PHP version 7.4
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \Ulams\Sdk\ObjectSerializer;
 
 /**
- * DemoLoginPost200Response Class Doc Comment
+ * AuthLogoutPostRequest Class Doc Comment
  *
  * @category Class
  * @package  Ulams\Sdk
@@ -40,7 +40,7 @@ use \Ulams\Sdk\ObjectSerializer;
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class DemoLoginPost200Response implements ModelInterface, ArrayAccess, \JsonSerializable
+class AuthLogoutPostRequest implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class DemoLoginPost200Response implements ModelInterface, ArrayAccess, \JsonSeri
       *
       * @var string
       */
-    protected static $openAPIModelName = 'demo_login_post_200_response';
+    protected static $openAPIModelName = 'auth_logout_post_request';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,9 +57,7 @@ class DemoLoginPost200Response implements ModelInterface, ArrayAccess, \JsonSeri
       * @var string[]
       */
     protected static $openAPITypes = [
-        'data' => '\Ulams\Sdk\Model\DemoLoginPost200ResponseData',
-        'message' => 'string',
-        'success' => 'bool'
+        'everywhere' => 'bool'
     ];
 
     /**
@@ -70,9 +68,7 @@ class DemoLoginPost200Response implements ModelInterface, ArrayAccess, \JsonSeri
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'data' => null,
-        'message' => null,
-        'success' => null
+        'everywhere' => null
     ];
 
     /**
@@ -81,9 +77,7 @@ class DemoLoginPost200Response implements ModelInterface, ArrayAccess, \JsonSeri
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'data' => false,
-        'message' => false,
-        'success' => false
+        'everywhere' => false
     ];
 
     /**
@@ -172,9 +166,7 @@ class DemoLoginPost200Response implements ModelInterface, ArrayAccess, \JsonSeri
      * @var string[]
      */
     protected static $attributeMap = [
-        'data' => 'data',
-        'message' => 'message',
-        'success' => 'success'
+        'everywhere' => 'everywhere'
     ];
 
     /**
@@ -183,9 +175,7 @@ class DemoLoginPost200Response implements ModelInterface, ArrayAccess, \JsonSeri
      * @var string[]
      */
     protected static $setters = [
-        'data' => 'setData',
-        'message' => 'setMessage',
-        'success' => 'setSuccess'
+        'everywhere' => 'setEverywhere'
     ];
 
     /**
@@ -194,9 +184,7 @@ class DemoLoginPost200Response implements ModelInterface, ArrayAccess, \JsonSeri
      * @var string[]
      */
     protected static $getters = [
-        'data' => 'getData',
-        'message' => 'getMessage',
-        'success' => 'getSuccess'
+        'everywhere' => 'getEverywhere'
     ];
 
     /**
@@ -256,9 +244,7 @@ class DemoLoginPost200Response implements ModelInterface, ArrayAccess, \JsonSeri
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('data', $data ?? [], null);
-        $this->setIfExists('message', $data ?? [], null);
-        $this->setIfExists('success', $data ?? [], null);
+        $this->setIfExists('everywhere', $data ?? [], null);
     }
 
     /**
@@ -304,82 +290,28 @@ class DemoLoginPost200Response implements ModelInterface, ArrayAccess, \JsonSeri
 
 
     /**
-     * Gets data
-     *
-     * @return \Ulams\Sdk\Model\DemoLoginPost200ResponseData|null
-     */
-    public function getData()
-    {
-        return $this->container['data'];
-    }
-
-    /**
-     * Sets data
-     *
-     * @param \Ulams\Sdk\Model\DemoLoginPost200ResponseData|null $data data
-     *
-     * @return self
-     */
-    public function setData($data)
-    {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException('non-nullable data cannot be null');
-        }
-        $this->container['data'] = $data;
-
-        return $this;
-    }
-
-    /**
-     * Gets message
-     *
-     * @return string|null
-     */
-    public function getMessage()
-    {
-        return $this->container['message'];
-    }
-
-    /**
-     * Sets message
-     *
-     * @param string|null $message message
-     *
-     * @return self
-     */
-    public function setMessage($message)
-    {
-        if (is_null($message)) {
-            throw new \InvalidArgumentException('non-nullable message cannot be null');
-        }
-        $this->container['message'] = $message;
-
-        return $this;
-    }
-
-    /**
-     * Gets success
+     * Gets everywhere
      *
      * @return bool|null
      */
-    public function getSuccess()
+    public function getEverywhere()
     {
-        return $this->container['success'];
+        return $this->container['everywhere'];
     }
 
     /**
-     * Sets success
+     * Sets everywhere
      *
-     * @param bool|null $success success
+     * @param bool|null $everywhere everywhere
      *
      * @return self
      */
-    public function setSuccess($success)
+    public function setEverywhere($everywhere)
     {
-        if (is_null($success)) {
-            throw new \InvalidArgumentException('non-nullable success cannot be null');
+        if (is_null($everywhere)) {
+            throw new \InvalidArgumentException('non-nullable everywhere cannot be null');
         }
-        $this->container['success'] = $success;
+        $this->container['everywhere'] = $everywhere;
 
         return $this;
     }

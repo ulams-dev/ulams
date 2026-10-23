@@ -8,13 +8,16 @@ import { contentOriginFor, cspHeaders, wantsCsp } from "./lib/csp.ts";
 import { ensureSession, readSession } from "./lib/session.ts";
 import { H5P_ROUTE } from "./lib/h5p-proxy.ts";
 import { imageCache } from "./lib/image-cache.ts";
-import { resolveTenant } from "@ulams/sdk/tenant";
+import { resolveTenant, type Tenant } from "@ulams/sdk/tenant";
 import { refuseCrossSite } from "./lib/bff.ts";
 import { isSecureRequest } from "./lib/cookies.ts";
+import { EntryLookupError, entryCookieName, runWithEntry, type EntryContext } from "./lib/entry.ts";
+import { entries, tenantOfSlug } from "./lib/entry-runtime.ts";
 import { authorCookieName, authorToken } from "./lib/studio.ts";
 import { PREVIEW_HEADERS, isPreviewPath } from "./lib/preview.ts";
 import { CLI_HEADERS, isCliPath } from "./lib/cli-authorize.ts";
 import { SOCIAL_HEADERS, isSocialPath } from "./lib/social-login.ts";
+import { HANDOFF_HEADERS, isHandoffPath } from "./lib/handoff.ts";
 
 let warmed = false;
 function warmOnce(): void {
@@ -25,6 +28,21 @@ function warmOnce(): void {
     .map((slug) => resolveTenant(firstRule.replace("{slug}", slug), { pattern: config.tenantHosts, adminUrlTemplate: config.adminUrl }))
     .filter((t): t is NonNullable<typeof t> => t !== null);
   warm(tenants);
+}
+
+/** The entry point `/go/<key>` chose for this browser on the academy's own host, if it still exists. */
+async function entryFromCookie(tenant: Tenant, cookies: import("astro").AstroCookies, secure: boolean): Promise<EntryContext | null> {
+  const key = cookies.get(entryCookieName(secure, config.cookieFallbackPrefix))?.value;
+  if (!key) return null;
+  try {
+    const found = await entries.byKey(tenant.slug, key);
+    if (found) return { ...found, via: "go" };
+    // deleted or disabled since: the cookie is stale
+    cookies.delete(entryCookieName(secure, config.cookieFallbackPrefix), { path: "/" });
+  } catch {
+    // the platform cannot say: show the academy as it is, the cookie stays for the next request
+  }
+  return null;
 }
 
 const SESSION_ROUTES = /^\/(learn|bff|account)(\/|$)/;
@@ -46,7 +64,29 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (refused) return refused;
 
   locals.platform = isPlatformHost(host, config.platformHosts);
-  locals.tenant = locals.platform ? null : tenantForHost(host, config);
+  locals.entry = null;
+  let resolved: Tenant | null = null;
+  if (!locals.platform) {
+    resolved = resolveTenant(host, { pattern: config.tenantHosts, adminUrlTemplate: config.adminUrl });
+    if (!resolved && url.pathname !== "/healthz") {
+      // a host no rule matches may be an entry point of an academy; "the platform cannot say" must not fall through
+      // to the default tenant (that would show another academy on this host)
+      try {
+        const found = await entries.byHost(host);
+        const owner = found ? tenantOfSlug(found.tenant) : null;
+        if (found && owner) {
+          resolved = owner;
+          locals.entry = { ...found, via: "host" };
+        }
+      } catch (error) {
+        if (!(error instanceof EntryLookupError)) throw error;
+        return new Response("This address cannot be served right now. Try again in a moment.", { status: 503, headers: { "Retry-After": "5", "Cache-Control": "no-store", "Content-Type": "text/plain; charset=utf-8" } });
+      }
+    }
+    resolved ??= tenantForHost(host, config);
+    if (resolved && !locals.entry) locals.entry = await entryFromCookie(resolved, cookies, secure);
+  }
+  locals.tenant = resolved;
   locals.token = null;
   locals.sessionVia = null;
   locals.authorToken = null;
@@ -88,7 +128,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
     ]);
   }
 
-  const response = await next();
+  const response = await runWithEntry(locals.entry, () => next());
+  if (locals.entry && !locals.entry.seo.index) response.headers.set("X-Robots-Tag", "noindex, nofollow");
   if (csp && wantsCsp(url.pathname, response.headers.get("content-type"))) {
     const headers = cspHeaders(
       {
@@ -114,6 +155,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (isSocialPath(url.pathname)) {
     // the callback URL carries a one-time code: never cached, never passed on in a Referer
     for (const [name, value] of Object.entries(SOCIAL_HEADERS)) response.headers.set(name, value);
+  }
+  if (isHandoffPath(url.pathname)) {
+    // the hand-off pages carry a one-time code: never cached, never passed on in a Referer
+    for (const [name, value] of Object.entries(HANDOFF_HEADERS)) response.headers.set(name, value);
   }
   if (!response.headers.has("Cache-Control") && (response.headers.get("content-type") ?? "").includes("text/html")) {
     response.headers.set("Cache-Control", "private, no-cache");

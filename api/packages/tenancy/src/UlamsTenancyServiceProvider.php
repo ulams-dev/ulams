@@ -6,10 +6,15 @@ use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
+use Ulams\Core\Support\EntryFronts;
 use Ulams\Tenancy\Console\CreateTenantCommand;
 use Ulams\Tenancy\Console\DeleteTenantCommand;
 use Ulams\Tenancy\Console\EnsureTenantBucketsCommand;
+use Ulams\Tenancy\Console\EntryPointGatewayCommand;
+use Ulams\Tenancy\Console\PublishEntryHostsCommand;
+use Ulams\Tenancy\Console\ReconcileEntryHostsCommand;
 use Ulams\Tenancy\Console\ExportH5PServiceConfigCommand;
 use Ulams\Tenancy\Console\ListTenantsCommand;
 use Ulams\Tenancy\Console\ScheduleLoopCommand;
@@ -23,16 +28,23 @@ use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
+use Ulams\Tenancy\Services\Contracts\EntryHostPublisherContract;
+use Ulams\Tenancy\Services\Contracts\EntryPointGatewayContract;
 use Ulams\Tenancy\Services\Contracts\StorageIdentityProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
+use Ulams\Tenancy\Services\EntryHostPublisher;
+use Ulams\Tenancy\Services\EntryHostStore;
+use Ulams\Tenancy\Services\EntryPointService;
 use Ulams\Tenancy\Services\H5PServiceConfigExporter;
 use Ulams\Tenancy\Services\ManualDatabaseProvisioner;
 use Ulams\Tenancy\Services\NullStorageIdentityProvisioner;
 use Ulams\Tenancy\Services\MultidomainRegistry;
+use Ulams\Tenancy\Services\PlatformEntryPointGateway;
 use Ulams\Tenancy\Services\PostgresDatabaseProvisioner;
 use Ulams\Tenancy\Services\ProcessTenantCommandRunner;
 use Ulams\Tenancy\Services\S3BucketProvisioner;
 use Ulams\Tenancy\Services\SeaweedFsIdentityProvisioner;
+use Ulams\Tenancy\Support\TenantContext;
 use Ulams\Tenancy\Upgrade\DefaultUpgradeSteps;
 
 class UlamsTenancyServiceProvider extends ServiceProvider
@@ -73,6 +85,17 @@ class UlamsTenancyServiceProvider extends ServiceProvider
             (string) config(self::CONFIG_KEY . '.php_binary', 'php'),
             (int) config(self::CONFIG_KEY . '.process_timeout', 900),
         ));
+        // a tenant process reaches the platform table through a platform child process; the platform (and the
+        // tests) use the service itself
+        $this->app->singleton(EntryHostPublisherContract::class, fn ($app) => new EntryHostPublisher($app->make(TenantCommandRunnerContract::class)));
+        $this->app->singleton(EntryHostPublisher::class, fn ($app) => $app->make(EntryHostPublisherContract::class));
+        $this->app->singleton(EntryHostStore::class);
+        // one registry of entry hosts per request, shared with core (origin check, return URLs, frame ancestors, hand-off)
+        $this->app->singleton(EntryFronts::class);
+        $this->app->singleton(EntryPointService::class);
+        $this->app->singleton(EntryPointGatewayContract::class, fn ($app) => TenantContext::isPlatform()
+            ? $app->make(EntryPointService::class)
+            : new PlatformEntryPointGateway($app->make(TenantCommandRunnerContract::class)));
         $this->app->singleton(H5PServiceConfigExporter::class, fn ($app) => new H5PServiceConfigExporter(
             $app->make(\Illuminate\Filesystem\Filesystem::class),
             rtrim($app->environmentPath(), DIRECTORY_SEPARATOR),
@@ -85,7 +108,12 @@ class UlamsTenancyServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        RateLimiter::for('ulams-entry-points-admin', fn (Request $request) => Limit::perMinute(60)->by('entry-points:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
+        RateLimiter::for('ulams-entry-resolve', fn (Request $request) => Limit::perMinute((int) config(self::CONFIG_KEY . '.entry_resolve_rate', 600))->by('entry-resolve:' . $request->ip()));
         RateLimiter::for('ulams-platform', fn (Request $request) => Limit::perMinute(60)->by('platform:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
+
+        // the academy's own active entry hosts are trusted origins, return URLs, frame ancestors and hand-off targets (ADR 0195)
+        $this->app->make(EntryFronts::class)->addSource(fn () => $this->app->make(EntryHostStore::class)->origins());
 
         $kernel = $this->app->make(HttpKernel::class);
         if (method_exists($kernel, 'prependMiddleware')) {
@@ -101,6 +129,9 @@ class UlamsTenancyServiceProvider extends ServiceProvider
                 EnsureTenantBucketsCommand::class,
             SetTenantEnvCommand::class,
                 SeedTenantDemoCommand::class,
+                EntryPointGatewayCommand::class,
+                PublishEntryHostsCommand::class,
+                ReconcileEntryHostsCommand::class,
                 ExportH5PServiceConfigCommand::class,
                 ScheduleLoopCommand::class,
                 WorkOnceCommand::class,
@@ -110,6 +141,12 @@ class UlamsTenancyServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/config.php' => config_path(self::CONFIG_KEY . '.php'),
             ], self::CONFIG_KEY . '.config');
+            // academies whose copy of the entry hosts is out of date (a failed publication, a restored database)
+            $this->callAfterResolving(Schedule::class, function (Schedule $schedule): void {
+                if (TenantContext::isPlatform()) {
+                    $schedule->command('ulams:entry-points:reconcile')->everyFiveMinutes()->withoutOverlapping();
+                }
+            });
         }
     }
 }

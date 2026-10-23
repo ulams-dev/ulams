@@ -107,3 +107,28 @@ docker compose exec -T -e TENANCY_INTEGRATION=1 api vendor/bin/phpunit packages/
 The nightly workflow (`.github/workflows/nightly-conformance.yml`, job `tenancy`) runs it against the compose stack.
 Every route is also probed in-process on each pull request: `api/tests/Integrations/TenantIsolationCoverageTest.php`
 (ADR 0190).
+
+## Entry points (ADR 0195)
+
+`tenant_entry_points` (platform database) holds the branded front hosts of a tenant: kind `academy`, `department`,
+`course` or `role`, a target, a theme override and SEO settings (plan `docs/plans/academy-entry-points.md`). An entry
+point never grants access.
+
+- The tenant admin API is `GET|POST /api/admin/entry-points`, `GET|PATCH|DELETE /api/admin/entry-points/{id}` and
+  `GET /api/admin/entry-points/audit` (permission `entry_points_manage`, token scope `settings`, tenant hosts only).
+  The academy is the one the process serves (`TENANT_SLUG`), never a request value.
+- A tenant process has no credentials for the platform database: `PlatformEntryPointGateway` runs the hidden
+  command `ulams:entry-points:gateway <slug> <operation> --payload=<base64 json>` in a platform child process, which
+  prints one `ULAMS-JSON:` line. `EntryPointService` is the only writer of the table and audits every change in
+  `tenant_entry_point_audits`. It fires `EntryPointsChanged` after each change.
+- Hosts: `EntryHost` (DNS name, not an address, no `content` label, not a platform, academy or entry point host).
+  Under `TENANCY_ENTRY_PLATFORM_SUFFIXES` a host is one `{slug}-name` label and active at once; elsewhere it is a
+  custom domain, `pending_dns` until verified. `TENANCY_ENTRY_TRUSTED_SUFFIXES` is for development and CI.
+- `TENANCY_MAX_ENTRY_POINTS` (20) limits them per tenant. CLI: `ulams entry-points list|get|create|update|delete|audit`.
+- **Trusted entry hosts (EP-3).** A tenant process cannot read the platform table, so the platform copies an academy's
+  active entry hosts into its own database (`tenant_entry_hosts`) after every change: `EntryHostPublisher` runs the hidden
+  `ulams:entry-points:publish` in a process of the academy, and remembers a hash of what it published
+  (`tenant_entry_host_publications`). `ulams:entry-points:reconcile` (scheduled every five minutes on the platform) republishes
+  the academies whose copy is out of date. `Ulams\Core\Support\EntryFronts` reads the copy (`EntryHostStore`) for the origin
+  check of the API, the return URLs of the redirect logins, the frame ancestors of interactive content and the session
+  hand-off (`POST /api/auth/handoff`, auth package), so an entry host is trusted everywhere or nowhere.

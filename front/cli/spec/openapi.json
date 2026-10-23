@@ -2123,6 +2123,428 @@
     },
     "type": "object"
    },
+   "EntryPoint": {
+    "properties": {
+     "created_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "dns": {
+      "description": "What to publish for a custom domain while it is pending_dns",
+      "nullable": true,
+      "properties": {
+       "cname_target": {
+        "nullable": true,
+        "type": "string"
+       },
+       "txt_name": {
+        "type": "string"
+       },
+       "txt_value": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "go_url": {
+      "description": "The same entry on the main host, without DNS",
+      "format": "uri",
+      "type": "string"
+     },
+     "host": {
+      "description": "Fixed after creation",
+      "example": "sales.academy.example.org",
+      "type": "string"
+     },
+     "id": {
+      "description": "Branded entry points of the academy (ADR 0195): extra front hosts that aim at a department, a course or a\nrole. Permission `entry_points_manage`; scoped tokens need `settings:read|write`. An entry point never\ngrants access and never joins a learner to a group.",
+      "example": "01j9z3k8m2x4q7r5t6v8w0y1ab",
+      "type": "string"
+     },
+     "key": {
+      "description": "Short slug, unique in the academy; the host-less fallback is /go/{key} on the main host. Fixed after creation",
+      "example": "sales",
+      "type": "string"
+     },
+     "kind": {
+      "description": "Fixed after creation",
+      "enum": [
+       "academy",
+       "department",
+       "course",
+       "role"
+      ],
+      "type": "string"
+     },
+     "label": {
+      "description": "Shown in the header and the host switcher",
+      "type": "string"
+     },
+     "locale": {
+      "example": "pl",
+      "nullable": true,
+      "type": "string"
+     },
+     "seo": {
+      "properties": {
+       "canonical": {
+        "description": "tenant: the pages point at the main host; self: only for a course entry point",
+        "enum": [
+         "tenant",
+         "self"
+        ],
+        "type": "string"
+       },
+       "description": {
+        "type": "string"
+       },
+       "index": {
+        "description": "false adds noindex; the default is false for department and role, true for academy and course",
+        "type": "boolean"
+       },
+       "title": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "status": {
+      "description": "pending_dns: the host is not verified yet; disabled: the front, the trusted origins and the return URLs stop serving it at once",
+      "enum": [
+       "pending_dns",
+       "active",
+       "disabled"
+      ],
+      "type": "string"
+     },
+     "target": {
+      "description": "department: group_id; course: course_id; role: role; academy: empty",
+      "properties": {
+       "course_id": {
+        "type": "integer"
+       },
+       "group_id": {
+        "type": "integer"
+       },
+       "role": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "theme": {
+      "description": "Overrides of the academy theme on this host",
+      "properties": {
+       "accent": {
+        "example": "#c2552d",
+        "type": "string"
+       },
+       "logo_alt": {
+        "type": "string"
+       },
+       "preset": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "updated_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "url": {
+      "format": "uri",
+      "type": "string"
+     },
+     "verified_at": {
+      "format": "date-time",
+      "nullable": true,
+      "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "EntryPointAudit": {
+    "properties": {
+     "action": {
+      "enum": [
+       "created",
+       "updated",
+       "enabled",
+       "disabled",
+       "deleted"
+      ],
+      "type": "string"
+     },
+     "actor_email": {
+      "nullable": true,
+      "type": "string"
+     },
+     "actor_id": {
+      "nullable": true,
+      "type": "integer"
+     },
+     "changes": {
+      "type": "object"
+     },
+     "created_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "entry_point_id": {
+      "nullable": true,
+      "type": "string"
+     },
+     "host": {
+      "type": "string"
+     },
+     "id": {
+      "type": "integer"
+     }
+    },
+    "type": "object"
+   },
+   "EntryPointCreate": {
+    "properties": {
+     "host": {
+      "description": "A DNS name: no address, port or path; hosts under a platform suffix must be {slug}-name.suffix",
+      "example": "sales.academy.example.org",
+      "type": "string"
+     },
+     "key": {
+      "description": "Lower case letters, digits and hyphens, up to 40; the key main is reserved (it leaves an entry point)",
+      "example": "sales",
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "academy",
+       "department",
+       "course",
+       "role"
+      ],
+      "type": "string"
+     },
+     "label": {
+      "type": "string"
+     },
+     "locale": {
+      "nullable": true,
+      "type": "string"
+     },
+     "seo": {
+      "properties": {
+       "canonical": {
+        "enum": [
+         "tenant",
+         "self"
+        ],
+        "type": "string"
+       },
+       "description": {
+        "type": "string"
+       },
+       "index": {
+        "type": "boolean"
+       },
+       "title": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "target": {
+      "description": "department: {group_id}; course: {course_id}; role: {role}; academy: omit",
+      "properties": {
+       "course_id": {
+        "type": "integer"
+       },
+       "group_id": {
+        "type": "integer"
+       },
+       "role": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "theme": {
+      "properties": {
+       "accent": {
+        "type": "string"
+       },
+       "logo_alt": {
+        "type": "string"
+       },
+       "preset": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     }
+    },
+    "required": [
+     "host",
+     "key",
+     "kind",
+     "label"
+    ],
+    "type": "object"
+   },
+   "EntryPointResolution": {
+    "properties": {
+     "host": {
+      "type": "string"
+     },
+     "key": {
+      "type": "string"
+     },
+     "kind": {
+      "enum": [
+       "academy",
+       "department",
+       "course",
+       "role"
+      ],
+      "type": "string"
+     },
+     "label": {
+      "type": "string"
+     },
+     "locale": {
+      "nullable": true,
+      "type": "string"
+     },
+     "seo": {
+      "properties": {
+       "canonical": {
+        "enum": [
+         "tenant",
+         "self"
+        ],
+        "type": "string"
+       },
+       "description": {
+        "type": "string"
+       },
+       "index": {
+        "type": "boolean"
+       },
+       "title": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "target": {
+      "description": "Ids of a group, a course or a role key; never of people",
+      "properties": {
+       "course_id": {
+        "type": "integer"
+       },
+       "group_id": {
+        "type": "integer"
+       },
+       "role": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "tenant": {
+      "description": "Slug of the academy that serves the host",
+      "example": "coffee",
+      "type": "string"
+     },
+     "theme": {
+      "properties": {
+       "accent": {
+        "type": "string"
+       },
+       "logo_alt": {
+        "type": "string"
+       },
+       "preset": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     }
+    },
+    "type": "object"
+   },
+   "EntryPointUpdate": {
+    "properties": {
+     "label": {
+      "type": "string"
+     },
+     "locale": {
+      "nullable": true,
+      "type": "string"
+     },
+     "seo": {
+      "nullable": true,
+      "properties": {
+       "canonical": {
+        "enum": [
+         "tenant",
+         "self"
+        ],
+        "type": "string"
+       },
+       "description": {
+        "type": "string"
+       },
+       "index": {
+        "type": "boolean"
+       },
+       "title": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "status": {
+      "description": "active needs a verified host",
+      "enum": [
+       "active",
+       "disabled"
+      ],
+      "type": "string"
+     },
+     "target": {
+      "description": "Same shape as at creation for the entry point's kind",
+      "properties": {
+       "course_id": {
+        "type": "integer"
+       },
+       "group_id": {
+        "type": "integer"
+       },
+       "role": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "theme": {
+      "nullable": true,
+      "properties": {
+       "accent": {
+        "type": "string"
+       },
+       "logo_alt": {
+        "type": "string"
+       },
+       "preset": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     }
+    },
+    "type": "object"
+   },
    "ExamplePluginGreetingResource": {
     "properties": {
      "greeting": {
@@ -14312,6 +14734,314 @@
     "summary": "Update the specified Dictionary Word in storage",
     "tags": [
      "Admin Dictionary Words"
+    ]
+   }
+  },
+  "/api/admin/entry-points": {
+   "get": {
+    "operationId": "admin.entry-points.list",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/EntryPoint"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Entry points"
+     },
+     "403": {
+      "description": "Needs entry_points_manage"
+     },
+     "503": {
+      "description": "The platform did not answer; try again"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Entry points of this academy",
+    "tags": [
+     "Admin Entry points"
+    ]
+   },
+   "post": {
+    "operationId": "admin.entry-points.create",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/EntryPointCreate"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/EntryPoint"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Created"
+     },
+     "403": {
+      "description": "Needs entry_points_manage"
+     },
+     "422": {
+      "description": "Invalid input, a taken host or key, a target that does not exist, or the academy is at its limit"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Add an entry point (a pending host until its DNS record is verified)",
+    "tags": [
+     "Admin Entry points"
+    ]
+   }
+  },
+  "/api/admin/entry-points/audit": {
+   "get": {
+    "operationId": "admin.entry-points.audit.list",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "limit",
+      "required": false,
+      "schema": {
+       "default": 100,
+       "maximum": 500,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/EntryPointAudit"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Audit entries"
+     },
+     "403": {
+      "description": "Needs entry_points_manage"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Who changed which entry point, newest first",
+    "tags": [
+     "Admin Entry points"
+    ]
+   }
+  },
+  "/api/admin/entry-points/{entryPoint}": {
+   "delete": {
+    "operationId": "admin.entry-points.by-id.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "entryPoint",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Deleted"
+     },
+     "404": {
+      "description": "Not found in this academy"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete an entry point (its host stops serving at once)",
+    "tags": [
+     "Admin Entry points"
+    ]
+   },
+   "get": {
+    "operationId": "admin.entry-points.by-id.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "entryPoint",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/EntryPoint"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The entry point"
+     },
+     "404": {
+      "description": "Not found in this academy"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One entry point",
+    "tags": [
+     "Admin Entry points"
+    ]
+   },
+   "patch": {
+    "operationId": "admin.entry-points.by-id.update",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "entryPoint",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "$ref": "#/components/schemas/EntryPointUpdate"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/EntryPoint"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Updated"
+     },
+     "404": {
+      "description": "Not found in this academy"
+     },
+     "422": {
+      "description": "Invalid input, or activating a host that is not verified"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Change the label, target, theme, SEO or status of an entry point",
+    "tags": [
+     "Admin Entry points"
     ]
    }
   },
@@ -31210,6 +31940,188 @@
     ]
    }
   },
+  "/api/auth/handoff": {
+   "post": {
+    "description": "Needs the caller's own login token (not a scoped token). `host` must be the academy's own front or one of its active entry hosts; `challenge` is the S256 challenge of a verifier that the browser at the target host keeps. The code lives 60 seconds, works once, and is bound to this user, that host and that challenge. The response is never cached. Send the browser to the target host with the code, never the token.",
+    "operationId": "auth.handoff.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "challenge": {
+          "description": "base64url(sha256(verifier)), 43 characters",
+          "type": "string"
+         },
+         "host": {
+          "description": "Host name of the target, without a port",
+          "example": "sales.academy.example.org",
+          "type": "string"
+         }
+        },
+        "required": [
+         "host",
+         "challenge"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "code": {
+             "type": "string"
+            },
+            "expires_in": {
+             "example": 60,
+             "type": "integer"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The code"
+     },
+     "403": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The host is not a front of this academy (or has been disabled)"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Ask for a one-time code that hands this session to another host of the academy",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
+  "/api/auth/handoff/exchange": {
+   "post": {
+    "description": "Redeemed by the target host's server with the secret `verifier` whose S256 challenge asked for the code and with its own `host`. The code works once, within 60 seconds, and only for the host it was issued for; the host must still be a front of the academy. Returns a new token that belongs to the target host's session. Never call it from a page that may be logged.",
+    "operationId": "auth.handoff.exchange.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "code": {
+          "type": "string"
+         },
+         "host": {
+          "description": "Host name of the target, without a port",
+          "type": "string"
+         },
+         "verifier": {
+          "description": "43 to 128 characters of [A-Za-z0-9._~-]",
+          "type": "string"
+         }
+        },
+        "required": [
+         "code",
+         "verifier",
+         "host"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "expires_at": {
+             "format": "date-time",
+             "type": "string"
+            },
+            "token": {
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Token of the target host"
+     },
+     "400": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The code is invalid, expired, already used, for another host, or does not match the verifier"
+     },
+     "422": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Validation error"
+     }
+    },
+    "summary": "Exchange a hand-off code for a session token of the target host",
+    "tags": [
+     "Auth"
+    ]
+   }
+  },
   "/api/auth/impersonate": {
    "post": {
     "description": "User impersonate",
@@ -31304,8 +32216,23 @@
   },
   "/api/auth/logout": {
    "post": {
-    "description": "User logout",
+    "description": "User logout. With `everywhere` true every login session of the user is revoked too (one per host of the academy after a hand-off); scoped tokens of agents, CI and the CLI are not.",
     "operationId": "auth.logout.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "everywhere": {
+          "type": "boolean"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": false
+    },
     "responses": {
      "200": {
       "content": {
@@ -39565,6 +40492,72 @@
     ]
    }
   },
+  "/api/platform/entry-points/resolve": {
+   "get": {
+    "operationId": "platform.entry-points.resolve.get",
+    "parameters": [
+     {
+      "description": "A front host, without port. Give host, or tenant and key",
+      "in": "query",
+      "name": "host",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "Academy slug, with key (the /go/{key} fallback on the main host)",
+      "in": "query",
+      "name": "tenant",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "key",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/EntryPointResolution"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "An active entry point"
+     },
+     "404": {
+      "description": "Unknown, pending, disabled or malformed; also on a tenant host"
+     },
+     "429": {
+      "description": "Too many lookups from this address"
+     }
+    },
+    "summary": "The academy and entry point that serve a host (public, platform hosts only)",
+    "tags": [
+     "Platform"
+    ]
+   }
+  },
   "/api/platform/operations": {
    "get": {
     "operationId": "platform.operations.get",
@@ -44323,6 +45316,10 @@
   {
    "description": "Platform",
    "name": "Platform"
+  },
+  {
+   "description": "Admin Entry points",
+   "name": "Admin Entry points"
   },
   {
    "description": "Admin Gift Quiz Attempt",
