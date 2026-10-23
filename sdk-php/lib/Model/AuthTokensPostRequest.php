@@ -62,6 +62,7 @@ class AuthTokensPostRequest implements ModelInterface, ArrayAccess, \JsonSeriali
         'kind' => 'string',
         'name' => 'string',
         'rate_limit_per_minute' => 'int',
+        'resource_ids' => 'string[]',
         'scopes' => 'string[]'
     ];
 
@@ -78,6 +79,7 @@ class AuthTokensPostRequest implements ModelInterface, ArrayAccess, \JsonSeriali
         'kind' => null,
         'name' => null,
         'rate_limit_per_minute' => null,
+        'resource_ids' => null,
         'scopes' => null
     ];
 
@@ -92,6 +94,7 @@ class AuthTokensPostRequest implements ModelInterface, ArrayAccess, \JsonSeriali
         'kind' => false,
         'name' => false,
         'rate_limit_per_minute' => true,
+        'resource_ids' => true,
         'scopes' => false
     ];
 
@@ -186,6 +189,7 @@ class AuthTokensPostRequest implements ModelInterface, ArrayAccess, \JsonSeriali
         'kind' => 'kind',
         'name' => 'name',
         'rate_limit_per_minute' => 'rate_limit_per_minute',
+        'resource_ids' => 'resource_ids',
         'scopes' => 'scopes'
     ];
 
@@ -200,6 +204,7 @@ class AuthTokensPostRequest implements ModelInterface, ArrayAccess, \JsonSeriali
         'kind' => 'setKind',
         'name' => 'setName',
         'rate_limit_per_minute' => 'setRateLimitPerMinute',
+        'resource_ids' => 'setResourceIds',
         'scopes' => 'setScopes'
     ];
 
@@ -214,6 +219,7 @@ class AuthTokensPostRequest implements ModelInterface, ArrayAccess, \JsonSeriali
         'kind' => 'getKind',
         'name' => 'getName',
         'rate_limit_per_minute' => 'getRateLimitPerMinute',
+        'resource_ids' => 'getResourceIds',
         'scopes' => 'getScopes'
     ];
 
@@ -298,6 +304,7 @@ class AuthTokensPostRequest implements ModelInterface, ArrayAccess, \JsonSeriali
         $this->setIfExists('kind', $data ?? [], null);
         $this->setIfExists('name', $data ?? [], null);
         $this->setIfExists('rate_limit_per_minute', $data ?? [], null);
+        $this->setIfExists('resource_ids', $data ?? [], null);
         $this->setIfExists('scopes', $data ?? [], null);
     }
 
@@ -537,6 +544,40 @@ class AuthTokensPostRequest implements ModelInterface, ArrayAccess, \JsonSeriali
             }
         }
         $this->container['rate_limit_per_minute'] = $rate_limit_per_minute;
+
+        return $this;
+    }
+
+    /**
+     * Gets resource_ids
+     *
+     * @return string[]|null
+     */
+    public function getResourceIds()
+    {
+        return $this->container['resource_ids'];
+    }
+
+    /**
+     * Sets resource_ids
+     *
+     * @param string[]|null $resource_ids Limit the token to these resources, for example the id of one saved report for a BI tool: it can then call only the endpoints that name one of them
+     *
+     * @return self
+     */
+    public function setResourceIds($resource_ids)
+    {
+        if (is_null($resource_ids)) {
+            array_push($this->openAPINullablesSetToNull, 'resource_ids');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('resource_ids', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['resource_ids'] = $resource_ids;
 
         return $this;
     }

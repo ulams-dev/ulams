@@ -43,13 +43,7 @@ class ReportRunner
      */
     public function preview(array $input, ReportContext $context, ?CarbonImmutable $now = null): array
     {
-        $definition = $this->validator->validate($input);
-        $dataset = $this->registry->get($definition->dataset);
-        if (!$context->can($dataset->permission())) {
-            throw new AuthorizationException('You cannot run reports on this dataset.');
-        }
-
-        $compiled = $this->compiler->compile($definition, $dataset, $context, $now);
+        [$definition, $compiled] = $this->prepare($input, $context, $now);
         $cap = min($definition->limit ?? PHP_INT_MAX, $this->settings->previewRows());
         $result = $compiled->grouped ? $this->grouped($compiled, $cap) : $this->rows($compiled, $cap);
 
@@ -58,6 +52,86 @@ class ReportRunner
         }
 
         return ['columns' => $compiled->output] + $result;
+    }
+
+    /**
+     * Every row of a report for an export, up to `$cap`: a row-level report is read with a cursor, a grouped one is
+     * already small (its groups are capped). Permission, scope and suppression are the same as for a preview.
+     *
+     * @param array<string,mixed> $input
+     * @return array{dataset:string,columns:list<array{name:string,type:string,label:string}>,rows:iterable<array<string,mixed>>}
+     */
+    public function stream(array $input, ReportContext $context, int $cap): array
+    {
+        [$definition, $compiled] = $this->prepare($input, $context);
+        $cap = min($definition->limit ?? PHP_INT_MAX, $cap);
+
+        if ($compiled->grouped) {
+            $rows = $this->grouped($compiled, $cap)['rows'];
+        } else {
+            $query = (clone $compiled->query)->limit($cap);
+            $rows = (function () use ($query, $compiled) {
+                foreach ($query->cursor() as $row) {
+                    yield $this->shape((array) $row, $compiled->output);
+                }
+            })();
+        }
+
+        return ['dataset' => $definition->dataset, 'columns' => $compiled->output, 'rows' => $rows];
+    }
+
+    /**
+     * The output columns of a report (name, type, label) without running it: what a feed describes in its metadata.
+     * Same checks as a run: the definition must be valid and the viewer must hold the dataset's permission.
+     *
+     * @param array<string,mixed> $input
+     * @return array{columns:list<array{name:string,type:string,label:string}>,grouped:bool}
+     */
+    public function describe(array $input, ReportContext $context): array
+    {
+        [, $compiled] = $this->prepare($input, $context);
+
+        return ['columns' => $compiled->output, 'grouped' => $compiled->grouped];
+    }
+
+    /**
+     * One window of a report: `$take` rows after `$skip`, for a feed that pages. A row-level report is cut in SQL; a
+     * grouped one is already small and is sliced after suppression, so a page boundary never shows a withheld group.
+     *
+     * @param array<string,mixed> $input
+     * @return array{columns:list<array{name:string,type:string,label:string}>,grouped:bool,rows:list<array<string,mixed>>,total:?int,more:bool,dataset:string}
+     */
+    public function window(array $input, ReportContext $context, int $skip, int $take, bool $count): array
+    {
+        [$definition, $compiled] = $this->prepare($input, $context);
+        $cap = min($definition->limit ?? PHP_INT_MAX, $this->settings->exportRows());
+        $take = max(0, min($take, $cap - $skip));
+        $base = ['columns' => $compiled->output, 'grouped' => $compiled->grouped, 'dataset' => $definition->dataset];
+
+        if ($compiled->grouped) {
+            $all = $this->grouped($compiled, $cap)['rows'];
+
+            return $base + ['rows' => array_slice($all, $skip, $take), 'total' => $count ? count($all) : null, 'more' => count($all) > $skip + $take];
+        }
+
+        $fetched = $take > 0 ? (clone $compiled->query)->offset($skip)->limit($take + 1)->get()->all() : [];
+        $more = count($fetched) > $take;
+        $rows = array_map(fn ($row) => $this->shape((array) $row, $compiled->output), array_slice($fetched, 0, $take));
+        $total = $count ? min($cap, (int) DB::query()->fromSub($this->unordered($compiled), 'c')->count()) : null;
+
+        return $base + ['rows' => $rows, 'total' => $total, 'more' => $more];
+    }
+
+    /** @return array{0:\Ulams\Reporting\Definition\ReportDefinition,1:CompiledQuery} */
+    private function prepare(array $input, ReportContext $context, ?CarbonImmutable $now = null): array
+    {
+        $definition = $this->validator->validate($input);
+        $dataset = $this->registry->get($definition->dataset);
+        if (!$context->can($dataset->permission())) {
+            throw new AuthorizationException('You cannot run reports on this dataset.');
+        }
+
+        return [$definition, $this->compiler->compile($definition, $dataset, $context, $now)];
     }
 
     /** @return array{rows:list<array<string,mixed>>,meta:array<string,mixed>} */

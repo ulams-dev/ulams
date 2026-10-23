@@ -3309,7 +3309,7 @@
       }
     },
     "UpdateItem": {
-      "description": "One proposed change to one element of the course after its source changed, for the author to decide on: the element, what kind of proposal it is (update, citation update, removal, no change needed, update by hand, new section in the source, suggested new lesson), why, the old and new text with word-level marks, citation chips, warnings (possibly unsupported claim, the answer may be wrong or changed), and the controls Accept, Reject, Reset and Ask for changes with a comment field. Conflict and edited-after-analysis states explain what to do. Props come from the update proposal, never from the model.",
+      "description": "One proposed change to one element of the course after its source changed, for the author to decide on: the element, what kind of proposal it is (update, citation update, removal, no change needed, update by hand, new section in the source, suggested new lesson), why, the old and new text with word-level marks, citation chips, warnings (possibly unsupported claim, the answer may be wrong or changed), and the controls Accept, Accept in all versions (courses with variants), Reject, Reset and Ask for changes with a comment field. Conflict and edited-after-analysis states explain what to do. Props come from the update proposal, never from the model.",
       "modelSelectable": false,
       "children": false,
       "props": {
@@ -3496,6 +3496,16 @@
           "canSuggest": {
             "type": "boolean",
             "description": "Suggest a lesson is available for a new source section (AI is enabled)"
+          },
+          "acceptInGroupLabel": {
+            "type": "string",
+            "description": "Words of the action that accepts the same change in every version (variant) of the course; the action is offered only when this is set",
+            "maxLength": 80
+          },
+          "reusedNote": {
+            "type": "string",
+            "description": "Note that the change is the same as in the base course, so no extra analysis was needed",
+            "maxLength": 200
           },
           "href": {
             "type": "string",

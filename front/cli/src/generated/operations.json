@@ -733,6 +733,78 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/course-variant-groups",
+  "summary": "List the families of course variants, optionally the one a course belongs to",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-variant-groups/{group}",
+  "summary": "One family: settings, variant courses, where learners are and the placement check",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/course-variant-groups/{group}",
+  "summary": "Change the settings of a family",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-variant-groups/{group}/assignments",
+  "summary": "Who is in which variant (current assignments, with the source of each)",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/course-variant-groups/{group}/assignments",
+  "summary": "Assign learners or user groups to a variant; the learner sees it as assigned by their organisation",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-variant-groups/{group}/placement",
+  "summary": "The placement questions with their answer key and citations",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-variant-groups/{group}/placement/rebuild",
+  "summary": "Choose the placement questions again from the family's cited quiz questions (no model call)",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-variant-groups/{group}/rules",
+  "summary": "List the assignment rules of a family",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-variant-groups/{group}/rules",
+  "summary": "Create an assignment rule",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/course-variant-groups/{group}/rules/{rule}",
+  "summary": "Delete an assignment rule (learners already assigned stay)",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/course-variant-groups/{group}/rules/{rule}",
+  "summary": "Update an assignment rule",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-variant-groups/{group}/rules/{rule}/evaluate",
+  "summary": "Preview or run a rule now",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/course-versions/courses/{course}/compare",
   "summary": "Semantic diff of two versions or releases of a course: moved elements, citations, quiz answer keys and a summary",
   "tag": "Admin Course Versions"
@@ -1411,6 +1483,12 @@
  },
  {
   "method": "POST",
+  "path": "/api/admin/living-course/proposals/{proposal}/items/{item}/accept-in-group",
+  "summary": "Accept one item and the same patch in the other proposals of its group (the course's variants)",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
   "path": "/api/admin/living-course/proposals/{proposal}/items/{item}/regenerate",
   "summary": "Ask for another version of one element ({comment}); one call, at most three per item",
   "tag": "Admin Living Course"
@@ -1717,6 +1795,96 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/policies",
+  "summary": "List policies",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies",
+  "summary": "Create a policy from an uploaded document",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}",
+  "summary": "Show a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/dashboard",
+  "summary": "Policy owner dashboard",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/dashboard/export",
+  "summary": "Export the people of the policy dashboard as CSV",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/variants",
+  "summary": "List the department variants of a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/policies/{policy}/variants/{variant}/academy",
+  "summary": "Remove the academy of a department",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/variants/{variant}/academy",
+  "summary": "The academy of a department",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/variants/{variant}/academy",
+  "summary": "Create an academy of its own for a department",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/variants/generate",
+  "summary": "Generate the department courses of a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/versions",
+  "summary": "List the versions of a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/versions",
+  "summary": "Upload a new version of a policy",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/versions/{number}",
+  "summary": "Review a policy version",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/versions/{number}/approve",
+  "summary": "Approve a policy version",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/versions/{number}/reject",
+  "summary": "Reject a policy version in review",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/productables/",
   "summary": "",
   "tag": "Admin Product"
@@ -1929,6 +2097,42 @@
   "method": "POST",
   "path": "/api/admin/reporting/query",
   "summary": "Preview a report definition",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/reporting/saved",
+  "summary": "Saved reports the caller can see",
+  "tag": "Reporting"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/reporting/saved",
+  "summary": "Save a report",
+  "tag": "Reporting"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/reporting/saved/{id}",
+  "summary": "Delete a saved report",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/reporting/saved/{id}",
+  "summary": "One saved report",
+  "tag": "Reporting"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/reporting/saved/{id}",
+  "summary": "Change a saved report",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/reporting/saved/{id}/run",
+  "summary": "Run a saved report",
   "tag": "Reporting"
  },
  {
@@ -3229,6 +3433,42 @@
  },
  {
   "method": "GET",
+  "path": "/api/courses/{course}/placement",
+  "summary": "The placement questions of a course's family (no answer key); 404 when the check is off or not ready",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/courses/{course}/placement/attempts",
+  "summary": "Score a placement attempt by code and get the suggested variant with the reason (advisory)",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/{course}/variant",
+  "summary": "The signed-in learner's variant of this course's family, whether they may change it, the placement check and a hint to switch",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/courses/{course}/variant",
+  "summary": "Choose or switch variant: enrols the learner in the variant's course through the family entitlement and carries over identical completed topics",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/courses/{course}/variant/hints/{hint}/dismiss",
+  "summary": "Dismiss a hint to switch variant; hints stop for this course",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/{course}/variants",
+  "summary": "The variants of a course's family for the picker (public data), or null when it has none",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
   "path": "/api/courses/{id}",
   "summary": "Display the specified Course",
   "tag": "Courses"
@@ -3805,6 +4045,30 @@
  },
  {
   "method": "GET",
+  "path": "/api/platform/templates",
+  "summary": "List the tenant templates",
+  "tag": "Platform"
+ },
+ {
+  "method": "POST",
+  "path": "/api/platform/templates",
+  "summary": "Create a tenant template, or change the given fields of an existing one",
+  "tag": "Platform"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/platform/templates/{slug}",
+  "summary": "Remove a tenant template (tenants made from it are untouched)",
+  "tag": "Platform"
+ },
+ {
+  "method": "GET",
+  "path": "/api/platform/templates/{slug}",
+  "summary": "One tenant template",
+  "tag": "Platform"
+ },
+ {
+  "method": "GET",
   "path": "/api/platform/tenants",
   "summary": "List the tenants",
   "tag": "Platform"
@@ -3828,6 +4092,12 @@
   "tag": "Platform"
  },
  {
+  "method": "GET",
+  "path": "/api/platform/tenants/{slug}/derived",
+  "summary": "The tenants created from this one for a purpose",
+  "tag": "Platform"
+ },
+ {
   "method": "PATCH",
   "path": "/api/platform/tenants/{slug}/env",
   "summary": "Override or reset inheritable settings (AI driver, models) of a tenant",
@@ -3838,6 +4108,12 @@
   "path": "/api/platform/tenants/{slug}/token",
   "summary": "A one-day administrator token (builder:read, builder:write) for a preview academy",
   "tag": "Platform"
+ },
+ {
+  "method": "GET",
+  "path": "/api/policies/my-changes",
+  "summary": "Why I was given this training again",
+  "tag": "Policies"
  },
  {
   "method": "POST",
@@ -4018,6 +4294,24 @@
   "path": "/api/quiz-attempts/{id}/end",
   "summary": "Finish quiz attempt",
   "tag": "Gift Quiz Attempt"
+ },
+ {
+  "method": "GET",
+  "path": "/api/reporting/odata",
+  "summary": "OData service document",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/reporting/odata/{entity}",
+  "summary": "Rows of a saved report as an OData entity set",
+  "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/reporting/odata/$metadata",
+  "summary": "OData metadata document",
+  "tag": "Reporting"
  },
  {
   "method": "GET",

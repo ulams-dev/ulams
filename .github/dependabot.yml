@@ -43,7 +43,8 @@ updates:
       # scorm-again 3 removes the AICC class, makes commits synchronous, flips mastery_override to true and
       # tightens CMI validation, so SCORM playback would change; there is no automated client-side SCORM
       # playback test to prove it does not. 2.6.x still receives fixes and stays inside ^2. Revisit with a
-      # conformance test for front/src/lib/scorm-player.
+      # conformance test for front/src/lib/scorm-player. That test exists now (ADR 0197) and shows 3.4.7 still differs
+      # from 2.6 in ways settings cannot pin (docs/plans/scorm-playback-tests.md section 11): owner decision.
       - dependency-name: "scorm-again"
         update-types: [version-update:semver-major]
       # @ant-design/icons 6 pairs with antd 6; antd 5 (admin) depends on icons ^5, so a 6 in admin would load two

@@ -11,7 +11,7 @@
     "api_version": { "const": "2026-10-20" },
     "created": { "type": "integer", "minimum": 0 },
     "type": {
-      "enum": ["course.completed", "enrolment.created", "course.version_applied", "update_proposal.ready", "update_proposal.applied", "certificate.issued", "knowledge.exported", "training.assigned", "training.completed", "training.overdue", "path.completed", "certificate.revoked", "webhook.test"]
+      "enum": ["course.completed", "enrolment.created", "course.version_applied", "update_proposal.ready", "update_proposal.applied", "certificate.issued", "knowledge.exported", "training.assigned", "training.completed", "training.overdue", "path.completed", "certificate.revoked", "policy.change.approved", "policy.retraining.assigned", "webhook.test"]
     },
     "data": {
       "type": "object",
@@ -55,6 +55,12 @@
     },
     {
       "properties": { "type": { "const": "certificate.revoked" }, "data": { "properties": { "object": { "$ref": "#/$defs/certificateRevoked" } } } }
+    },
+    {
+      "properties": { "type": { "const": "policy.change.approved" }, "data": { "properties": { "object": { "$ref": "#/$defs/policyChangeApproved" } } } }
+    },
+    {
+      "properties": { "type": { "const": "policy.retraining.assigned" }, "data": { "properties": { "object": { "$ref": "#/$defs/policyRetrainingAssigned" } } } }
     },
     {
       "properties": { "type": { "const": "webhook.test" }, "data": { "properties": { "object": { "$ref": "#/$defs/test" } } } }
@@ -178,7 +184,7 @@
         "user": { "$ref": "#/$defs/user" },
         "course": { "$ref": "#/$defs/course" },
         "assignment_id": { "type": "integer" },
-        "source": { "enum": ["manual", "rule", "recertification"] },
+        "source": { "enum": ["manual", "rule", "recertification", "policy_change"] },
         "due_at": { "type": ["string", "null"], "format": "date-time" },
         "path": { "$ref": "#/$defs/trainingPath" }
       }
@@ -228,6 +234,48 @@
         "course_id": { "type": ["integer", "string"] },
         "revoked_at": { "type": "string", "format": "date-time" },
         "reason": { "type": ["string", "null"] }
+      }
+    },
+    "policyRef": {
+      "type": "object",
+      "required": ["id", "title"],
+      "properties": { "id": { "type": "string" }, "title": { "type": "string" } }
+    },
+    "policyChangeApproved": {
+      "type": "object",
+      "required": ["policy", "version", "change_class", "summary", "departments", "approved_at"],
+      "properties": {
+        "policy": { "$ref": "#/$defs/policyRef" },
+        "version": { "type": "integer", "minimum": 2 },
+        "change_class": { "enum": ["minor", "major"] },
+        "summary": { "type": "string" },
+        "departments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["department", "revoked", "reassigned"],
+            "properties": {
+              "department": { "type": "string" },
+              "revoked": { "type": "integer", "minimum": 0 },
+              "reassigned": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "approved_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "policyRetrainingAssigned": {
+      "type": "object",
+      "required": ["user", "course", "assignment_id", "kind", "policy", "version", "summary", "due_at"],
+      "properties": {
+        "user": { "$ref": "#/$defs/user" },
+        "course": { "$ref": "#/$defs/course" },
+        "assignment_id": { "type": "integer" },
+        "kind": { "enum": ["exam", "course"] },
+        "policy": { "$ref": "#/$defs/policyRef" },
+        "version": { "type": "integer", "minimum": 2 },
+        "summary": { "type": "string" },
+        "due_at": { "type": ["string", "null"], "format": "date-time" }
       }
     },
     "test": {

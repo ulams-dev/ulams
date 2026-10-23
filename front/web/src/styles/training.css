@@ -16,6 +16,7 @@
 .u-tr__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
 .u-tr__head h3 { font-size: 1.1rem; overflow-wrap: anywhere; }
 .u-tr__status { font-weight: 700; }
+.u-tr__policy { display: flex; flex-direction: column; gap: 2px; margin: 0; font-size: 0.9rem; }
 .u-tr__meta { display: flex; flex-wrap: wrap; gap: 4px 20px; margin: 0; color: var(--ulams-color-muted); font-size: 0.9rem; }
 .u-tr__facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px 24px; margin: 0; width: 100%; }
 .u-tr__facts dt { font-size: 0.75rem; color: var(--ulams-color-muted); text-transform: uppercase; letter-spacing: 0.04em; }

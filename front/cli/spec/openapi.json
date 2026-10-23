@@ -581,6 +581,14 @@
       "nullable": true,
       "type": "integer"
      },
+     "resource_ids": {
+      "description": "The resources (saved report ids) the token is limited to; null: not limited",
+      "items": {
+       "type": "string"
+      },
+      "nullable": true,
+      "type": "array"
+     },
      "revoked": {
       "type": "boolean"
      },
@@ -3978,6 +3986,49 @@
      },
      "tenant": {
       "type": "string"
+     }
+    },
+    "type": "object"
+   },
+   "PlatformTemplate": {
+    "properties": {
+     "accent": {
+      "nullable": true,
+      "type": "string"
+     },
+     "created_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "demo": {
+      "type": "boolean"
+     },
+     "env_override_keys": {
+      "description": "Names only, never values",
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "name": {
+      "type": "string"
+     },
+     "slug": {
+      "description": "Tenant templates (ADR 0141, amendment): named starting points for new tenants, applied when a tenant is created\n(`template` of `POST /api/platform/tenants`, `--template` of `ulams:tenant:create`). Same access as the platform tenant API.",
+      "example": "policy-academy",
+      "type": "string"
+     },
+     "theme": {
+      "nullable": true,
+      "type": "string"
+     },
+     "updated_at": {
+      "format": "date-time",
+      "type": "string"
+     },
+     "users": {
+      "description": "Demo students created with a tenant made from it",
+      "type": "integer"
      }
     },
     "type": "object"
@@ -9388,7 +9439,7 @@
   },
   "/api/admin/compliance/schedules": {
    "get": {
-    "description": "Scheduled reports: a compliance dataset e-mailed as CSV or JSON lines every day, week or month to\ntenant users. Permission `compliance_report`.",
+    "description": "Scheduled reports: a compliance dataset, or a saved report of the report builder, e-mailed as CSV, JSON lines or (saved\nreports) XLSX every day, week or month to tenant users. A saved report runs once per recipient with that recipient's own\npermissions. Permission `compliance_report`.",
     "operationId": "admin.compliance.schedules.get",
     "responses": {
      "200": {
@@ -9423,6 +9474,7 @@
        "schema": {
         "properties": {
          "dataset": {
+          "description": "A compliance dataset; give this or saved_report_id",
           "enum": [
            "assignments",
            "certificates",
@@ -9431,13 +9483,15 @@
           "type": "string"
          },
          "filters": {
-          "description": "course_id, user_id, status, from, to",
+          "description": "course_id, user_id, status, from, to (datasets only)",
           "type": "object"
          },
          "format": {
+          "description": "xlsx only for a saved report",
           "enum": [
            "csv",
-           "jsonl"
+           "jsonl",
+           "xlsx"
           ],
           "type": "string"
          },
@@ -9458,11 +9512,14 @@
            "type": "integer"
           },
           "type": "array"
+         },
+         "saved_report_id": {
+          "description": "A saved report the caller can see (report builder); it runs once per recipient with the recipient's own permissions",
+          "type": "string"
          }
         },
         "required": [
          "name",
-         "dataset",
          "frequency",
          "recipient_ids"
         ],
@@ -12364,6 +12421,631 @@
     "summary": "Restore an old version as a new one",
     "tags": [
      "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups": {
+   "get": {
+    "description": "Families of course variants for admins (ADR 0192, permission `course_variants_assign`): the family's settings\n(lock assigned variants, pin the course mandatory training counts, placement check, hints), who is in which variant, an\nassignment of learners or groups, and the placement questions.",
+    "operationId": "admin.course-variant-groups.get",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "course_id",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "page",
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "groups with settings and counts"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List the families of course variants, optionally the one a course belongs to",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}": {
+   "get": {
+    "operationId": "admin.course-variant-groups.by-group.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the family"
+     },
+     "404": {
+      "description": "Unknown family"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One family: settings, variant courses, where learners are and the placement check",
+    "tags": [
+     "Course Variants"
+    ]
+   },
+   "put": {
+    "operationId": "admin.course-variant-groups.by-group.put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "hints_enabled": {
+          "type": "boolean"
+         },
+         "lock_assigned": {
+          "description": "A variant assigned by an admin or a rule cannot be changed by the learner",
+          "type": "boolean"
+         },
+         "pinned_course_id": {
+          "description": "Mandatory training counts only this course of the family; null lets any variant count",
+          "nullable": true,
+          "type": "integer"
+         },
+         "placement_enabled": {
+          "type": "boolean"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the family"
+     },
+     "422": {
+      "description": "The pinned course is not in the family"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Change the settings of a family",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}/assignments": {
+   "get": {
+    "operationId": "admin.course-variant-groups.by-group.assignments.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "user_id",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "page",
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "assignments and per-variant counts"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Who is in which variant (current assignments, with the source of each)",
+    "tags": [
+     "Course Variants"
+    ]
+   },
+   "put": {
+    "operationId": "admin.course-variant-groups.by-group.assignments.put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "course_id": {
+          "type": "integer"
+         },
+         "group_ids": {
+          "description": "User groups; their members (and subgroups) are assigned",
+          "items": {
+           "type": "integer"
+          },
+          "type": "array"
+         },
+         "user_ids": {
+          "items": {
+           "type": "integer"
+          },
+          "type": "array"
+         }
+        },
+        "required": [
+         "course_id"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "assigned (learners whose variant changed) and matched"
+     },
+     "422": {
+      "description": "Not a variant of this family, or nobody selected"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Assign learners or user groups to a variant; the learner sees it as assigned by their organisation",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}/placement": {
+   "get": {
+    "operationId": "admin.course-variant-groups.by-group.placement.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "enabled, available, levels and items"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The placement questions with their answer key and citations",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}/placement/rebuild": {
+   "post": {
+    "operationId": "admin.course-variant-groups.by-group.placement.rebuild.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "items and levels counts; zero items when the family has too few suitable questions"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Choose the placement questions again from the family's cited quiz questions (no model call)",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}/rules": {
+   "get": {
+    "description": "Assignment rules of a family (the `variant` action of the enrolment rules, ADR 0192): \"a learner whose attributes match\n * all conditions is put in this variant\". Rules route learners who already have access and have no variant yet; they never\nenrol anyone and never override a learner's own choice or an admin's assignment. Permission `course_variants_assign`.",
+    "operationId": "admin.course-variant-groups.by-group.rules.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "rules in the order they are tried"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List the assignment rules of a family",
+    "tags": [
+     "Course Variants"
+    ]
+   },
+   "post": {
+    "operationId": "admin.course-variant-groups.by-group.rules.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "active": {
+          "type": "boolean"
+         },
+         "conditions": {
+          "description": "All must hold",
+          "items": {
+           "properties": {
+            "attribute": {
+             "example": "department",
+             "type": "string"
+            },
+            "operator": {
+             "enum": [
+              "equals",
+              "not_equals",
+              "in",
+              "contains",
+              "starts_with",
+              "ends_with",
+              "exists"
+             ],
+             "type": "string"
+            },
+            "value": {
+             "items": {
+              "type": "string"
+             },
+             "type": "array"
+            }
+           },
+           "type": "object"
+          },
+          "type": "array"
+         },
+         "course_id": {
+          "description": "The variant course it assigns",
+          "type": "integer"
+         },
+         "name": {
+          "type": "string"
+         },
+         "position": {
+          "type": "integer"
+         }
+        },
+        "required": [
+         "name",
+         "course_id",
+         "conditions"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the rule"
+     },
+     "422": {
+      "description": "Validation error"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create an assignment rule",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}/rules/{rule}": {
+   "delete": {
+    "operationId": "admin.course-variant-groups.by-group.rules.by-rule.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "rule",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "deleted"
+     },
+     "404": {
+      "description": "Unknown rule"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete an assignment rule (learners already assigned stay)",
+    "tags": [
+     "Course Variants"
+    ]
+   },
+   "put": {
+    "operationId": "admin.course-variant-groups.by-group.rules.by-rule.put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "rule",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the rule"
+     },
+     "404": {
+      "description": "Unknown rule"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Update an assignment rule",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/admin/course-variant-groups/{group}/rules/{rule}/evaluate": {
+   "post": {
+    "operationId": "admin.course-variant-groups.by-group.rules.by-rule.evaluate.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "group",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "rule",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "dry_run": {
+          "default": true,
+          "type": "boolean"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "count and a sample of the learners the rule would assign; assigned count when dry_run is false"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Preview or run a rule now",
+    "tags": [
+     "Course Variants"
     ]
    }
   },
@@ -18440,6 +19122,59 @@
     ]
    }
   },
+  "/api/admin/living-course/proposals/{proposal}/items/{item}/accept-in-group": {
+   "post": {
+    "operationId": "admin.living-course.proposals.by-proposal.items.by-item.accept-in-group.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "proposal",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "item",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the item and proposal, how many other items were accepted (accepted) and in which proposals"
+     },
+     "403": {
+      "description": "not allowed"
+     },
+     "404": {
+      "description": "unknown"
+     },
+     "409": {
+      "description": "not decidable now"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Accept one item and the same patch in the other proposals of its group (the course's variants)",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
   "/api/admin/living-course/proposals/{proposal}/items/{item}/regenerate": {
    "post": {
     "operationId": "admin.living-course.proposals.by-proposal.items.by-item.regenerate.post",
@@ -21012,6 +21747,945 @@
     ]
    }
   },
+  "/api/admin/policies": {
+   "get": {
+    "description": "All policies for `policy_manage`, the caller's own for `policy_owner`.",
+    "operationId": "admin.policies.get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "policies with current and pending version and department count"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List policies",
+    "tags": [
+     "Policies"
+    ]
+   },
+   "post": {
+    "description": "Stores the policy file as version 1 (a draft) and one variant per department with its audience group. Nothing is generated until `variants/generate` is called. The policy file is treated as untrusted input.",
+    "operationId": "admin.policies.post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "properties": {
+         "brief": {
+          "description": "totalMinutes, lessonMinutes, language, tone",
+          "type": "object"
+         },
+         "departments": {
+          "description": "1 to 12 departments",
+          "items": {
+           "properties": {
+            "group_id": {
+             "description": "existing audience group; a new one is created when omitted",
+             "nullable": true,
+             "type": "integer"
+            },
+            "label": {
+             "type": "string"
+            },
+            "priorExperience": {
+             "enum": [
+              "none",
+              "some",
+              "expert"
+             ],
+             "type": "string"
+            },
+            "seniority": {
+             "enum": [
+              "junior",
+              "mid",
+              "senior",
+              "mixed"
+             ],
+             "type": "string"
+            },
+            "totalMinutes": {
+             "nullable": true,
+             "type": "integer"
+            }
+           },
+           "required": [
+            "label"
+           ],
+           "type": "object"
+          },
+          "type": "array"
+         },
+         "file": {
+          "description": "Markdown, PDF or DOCX",
+          "format": "binary",
+          "type": "string"
+         },
+         "major_due_days": {
+          "default": 30,
+          "type": "integer"
+         },
+         "minor_due_days": {
+          "default": 14,
+          "type": "integer"
+         },
+         "owner_user_id": {
+          "description": "only with policy_manage; default the caller",
+          "type": "integer"
+         },
+         "title": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "title",
+         "file",
+         "departments"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the policy with its versions and variants"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Validation error or rejected file"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create a policy from an uploaded document",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}": {
+   "get": {
+    "operationId": "admin.policies.by-id.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the policy with versions, variants and the generation cost estimate"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Show a policy",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/dashboard": {
+   "get": {
+    "description": "Per department: assigned, completed, pending and overdue; per person: the course version taken, the policy version their certificate certifies and the certificate. Counts assignments of the department courses whatever created them.",
+    "operationId": "admin.policies.by-id.dashboard.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "department (variant id)",
+      "in": "query",
+      "name": "variant",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "status",
+      "schema": {
+       "enum": [
+        "assigned",
+        "overdue",
+        "completed",
+        "cancelled"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "per_page",
+      "schema": {
+       "default": 25,
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "departments and one page of people"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Policy owner dashboard",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/dashboard/export": {
+   "get": {
+    "description": "Every matching person as CSV (UTF-8, spreadsheet formulas neutralised). The export is recorded with who exported it, like the compliance exports.",
+    "operationId": "admin.policies.by-id.dashboard.export.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "variant",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "status",
+      "schema": {
+       "enum": [
+        "assigned",
+        "overdue",
+        "completed",
+        "cancelled"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "text/csv"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Export the people of the policy dashboard as CSV",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/variants": {
+   "get": {
+    "description": "Each variant carries its stage, read from the Course Builder session: waiting, ingesting, interview, outlining, outline_review, generating, apply_review, applying, applied or failed.",
+    "operationId": "admin.policies.by-id.variants.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "variants with department, group, session, course and stage"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List the department variants of a policy",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/variants/generate": {
+   "post": {
+    "description": "Starts one Course Builder session per department from the policy file, one after the other, up to the outline review. The owner then reviews, approves and applies each course in the Studio as for any generated course; every lesson and question cites the policy text. Uses AI; the call is refused when AI is switched off.",
+    "operationId": "admin.policies.by-id.variants.generate.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "variant_ids": {
+          "description": "only these departments (default: all that wait)",
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": false
+    },
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the variants requested now"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     },
+     "422": {
+      "description": "Nothing to generate"
+     },
+     "503": {
+      "description": "AI is disabled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Generate the department courses of a policy",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/variants/{variant}/academy": {
+   "delete": {
+    "description": "Deletes the academy's tenant with everything in it (database, files, settings). The platform keeps the record of who created it.",
+    "operationId": "admin.policies.by-id.variants.by-variant.academy.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "variant",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "removed"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy, department or academy"
+     },
+     "409": {
+      "description": "Being created"
+     },
+     "502": {
+      "description": "The platform could not remove it"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Remove the academy of a department",
+    "tags": [
+     "Policies"
+    ]
+   },
+   "get": {
+    "description": "The request for the department's academy and where it stands: queued, provisioning, transferring, done (with the studio, admin and front addresses of the new academy) or failed (with the reason). `available` says whether this caller may ask for one.",
+    "operationId": "admin.policies.by-id.variants.by-variant.academy.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "variant",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "academy (null when none was requested), available, themes"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy or department"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The academy of a department",
+    "tags": [
+     "Policies"
+    ]
+   },
+   "post": {
+    "description": "Queues a new tenant created from a template (the platform records it as created for this department and enforces its limit), styled with the chosen theme preset and accent, and moves the department's builder session there; the author is invited and applies and publishes the course in the academy. Asking again after a failure resumes. The policy, its certificates and its dashboard stay in this tenant.",
+    "operationId": "admin.policies.by-id.variants.by-variant.academy.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "variant",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "accent": {
+          "example": "#C2552D",
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         },
+         "template": {
+          "description": "tenant template slug; default the installation's",
+          "type": "string"
+         },
+         "theme": {
+          "description": "a theme preset",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": false
+    },
+    "responses": {
+     "202": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "queued"
+     },
+     "403": {
+      "description": "Not a platform administrator, or new sites are off"
+     },
+     "404": {
+      "description": "Unknown policy or department"
+     },
+     "409": {
+      "description": "Being created, already done, or the course is not generated yet"
+     },
+     "422": {
+      "description": "Invalid theme, accent or template"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create an academy of its own for a department",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/versions": {
+   "get": {
+    "operationId": "admin.policies.by-id.versions.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "versions, oldest first"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List the versions of a policy",
+    "tags": [
+     "Policies"
+    ]
+   },
+   "post": {
+    "description": "The file becomes the next version, in review, and a new revision of each department's source: Living Course detects what changed and proposes the update of each department's course (one proposal per department, reviewed item by item through the living-course endpoints). The first version must be approved, and no other version may wait for a decision. A file with the same text as the current version is refused.",
+    "operationId": "admin.policies.by-id.versions.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "properties": {
+         "file": {
+          "description": "Markdown, PDF or DOCX",
+          "format": "binary",
+          "type": "string"
+         }
+        },
+        "required": [
+         "file"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the version with its departments' rollouts"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     },
+     "409": {
+      "description": "Not ready for a change, or the same text"
+     },
+     "422": {
+      "description": "Rejected file"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Upload a new version of a policy",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/versions/{number}": {
+   "get": {
+    "description": "The source diff, each department's proposal and where it stands, the suggested change class with its reasons, what still blocks approval, and the pre-flight: how many certificates approving will revoke and how many people it will reassign, per department (`?class=minor|major` previews the other class).",
+    "operationId": "admin.policies.by-id.versions.by-number.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "number",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "class",
+      "schema": {
+       "enum": [
+        "minor",
+        "major"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the version with review details"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy or version"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Review a policy version",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/versions/{number}/approve": {
+   "post": {
+    "description": "First version: works once every department course is applied and published in the Studio; the courses become mandatory for the department's group, the group is enrolled through a rule on a one-course path, and the version becomes the one learners are trained on. A change: every department course is updated from its proposal and, when all are, certificates linked to the previous version are revoked and those people are given the exam (minor) or the course (major) with the policy's due days. The change class is suggested from the proposals; the owner may raise it, and may lower it only with a `reason`. A decision of the owner (or of an admin acting for an absent owner, which the audit records); nothing approves itself, and no AI decides who completes anything.",
+    "operationId": "admin.policies.by-id.versions.by-number.approve.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "number",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "change_class": {
+          "enum": [
+           "minor",
+           "major"
+          ],
+          "type": "string"
+         },
+         "overwrite": {
+          "description": "replace edits made in the admin after the last apply",
+          "type": "boolean"
+         },
+         "reason": {
+          "description": "required to approve a change as a lower class than suggested",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": false
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the version (status applying until every department is updated, then approved)"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy or version"
+     },
+     "409": {
+      "description": "Not waiting for approval, or the update conflicts with edits"
+     },
+     "422": {
+      "description": "Something blocks approval, or a lower class without a reason"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Approve a policy version",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/versions/{number}/reject": {
+   "post": {
+    "description": "The change is not adopted: its open proposals are rejected, the current version stays in force and nobody is retrained. A corrected file is uploaded as a new version.",
+    "operationId": "admin.policies.by-id.versions.by-number.reject.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "number",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "reason": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "reason"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the rejected version"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy or version"
+     },
+     "409": {
+      "description": "Only a change in review can be rejected"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Reject a policy version in review",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
   "/api/admin/productables/": {
    "get": {
     "description": "Get list of all productables",
@@ -23496,6 +25170,328 @@
      }
     ],
     "summary": "Preview a report definition",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
+  "/api/admin/reporting/saved": {
+   "get": {
+    "description": "The caller's own reports and the reports shared with one of their roles (administrators with reporting_manage see all). Each has can_edit, runnable (the caller holds the permission of its dataset) and needs_repair with the problems when its dataset or a column it uses no longer exists. Needs reporting_read.",
+    "operationId": "admin.reporting.reports.list",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Saved reports"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Saved reports the caller can see",
+    "tags": [
+     "Reporting"
+    ]
+   },
+   "post": {
+    "description": "Saves a report definition (see the query endpoint) under a name. visibility is private (the default) or roles with shared_roles naming tenant roles. The caller must hold reporting_create and the permission of the definition's dataset.",
+    "operationId": "admin.reporting.reports.create",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "definition": {
+          "description": "A report definition, as for POST /api/admin/reporting/query",
+          "type": "object"
+         },
+         "description": {
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         },
+         "shared_roles": {
+          "description": "Role names of this tenant, for example tutor",
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         },
+         "visibility": {
+          "enum": [
+           "private",
+           "roles"
+          ],
+          "type": "string"
+         }
+        },
+        "required": [
+         "name",
+         "definition"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The saved report"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Invalid definition or sharing"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Save a report",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
+  "/api/admin/reporting/saved/{id}": {
+   "delete": {
+    "operationId": "admin.reporting.reports.by-id.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Deleted"
+     },
+     "403": {
+      "description": "Not the owner"
+     },
+     "404": {
+      "description": "Not found"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete a saved report",
+    "tags": [
+     "Reporting"
+    ]
+   },
+   "get": {
+    "operationId": "admin.reporting.reports.by-id.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The saved report with its definition"
+     },
+     "404": {
+      "description": "Not found, or not visible to the caller"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One saved report",
+    "tags": [
+     "Reporting"
+    ]
+   },
+   "put": {
+    "description": "Only the owner (who holds reporting_create) or an administrator with reporting_manage. Any of name, description, visibility, shared_roles, definition and feed_enabled (the OData feed for BI tools; reporting_manage only).",
+    "operationId": "admin.reporting.reports.by-id.put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "definition": {
+          "type": "object"
+         },
+         "description": {
+          "type": "string"
+         },
+         "feed_enabled": {
+          "description": "Offer the report as a read-only OData feed (needs reporting_manage)",
+          "type": "boolean"
+         },
+         "name": {
+          "type": "string"
+         },
+         "shared_roles": {
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         },
+         "visibility": {
+          "enum": [
+           "private",
+           "roles"
+          ],
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The saved report"
+     },
+     "403": {
+      "description": "Not the owner"
+     },
+     "404": {
+      "description": "Not found"
+     },
+     "422": {
+      "description": "Invalid definition or sharing"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Change a saved report",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
+  "/api/admin/reporting/saved/{id}/run": {
+   "get": {
+    "description": "Runs the report with the caller's own permissions and scope. format=json (default) answers like the query endpoint (500 rows and the total); csv, jsonl and xlsx stream every row up to 1 000 000 (an XLSX sheet holds 1 048 575) and are recorded as exports. Groups of fewer learners than the threshold are withheld in every format. 403 when the caller lacks the permission of the dataset, 409 when the report needs repair.",
+    "operationId": "admin.reporting.reports.by-id.run",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "format",
+      "schema": {
+       "default": "json",
+       "enum": [
+        "json",
+        "csv",
+        "jsonl",
+        "xlsx"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "json: columns, rows and meta; csv, jsonl and xlsx: a file"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Not found"
+     },
+     "409": {
+      "description": "The report needs repair"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Run a saved report",
     "tags": [
      "Reporting"
     ]
@@ -31966,6 +33962,14 @@
           "nullable": true,
           "type": "integer"
          },
+         "resource_ids": {
+          "description": "Limit the token to these resources, for example the id of one saved report for a BI tool: it can then call only the endpoints that name one of them",
+          "items": {
+           "type": "string"
+          },
+          "nullable": true,
+          "type": "array"
+         },
          "scopes": {
           "description": "Scopes or @presets (read-only, author, admin, learner, ci)",
           "items": {
@@ -33067,6 +35071,11 @@
              "nullable": true,
              "type": "string"
             },
+            "course_variant": {
+             "description": "The variant of the course the holder completed (for example Expert), null for a course without variants",
+             "nullable": true,
+             "type": "string"
+            },
             "expires_at": {
              "format": "date-time",
              "nullable": true,
@@ -33095,6 +35104,11 @@
               "revoked"
              ],
              "type": "string"
+            },
+            "superseded_by_policy_version": {
+             "description": "the policy version that replaced what the certificate certified, when it was revoked for that reason",
+             "nullable": true,
+             "type": "integer"
             },
             "title": {
              "type": "string"
@@ -35547,6 +37561,310 @@
     ],
     "tags": [
      "Courses"
+    ]
+   }
+  },
+  "/api/courses/{course}/placement": {
+   "get": {
+    "description": "The optional placement check for learners (ADR 0192). Advisory only: the result suggests a variant with its reason and\nthe learner confirms it or picks another. Scored by code from cited quiz questions that already exist; nothing about\nthe learner is sent to a model. Needs access to the family.",
+    "operationId": "courses.by-course.placement.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "questions: id, type, stem, options (id, text); cited quiz questions chosen for the levels of the family"
+     },
+     "403": {
+      "description": "No access to the family"
+     },
+     "404": {
+      "description": "No placement check for this course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The placement questions of a course's family (no answer key); 404 when the check is off or not ready",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/courses/{course}/placement/attempts": {
+   "post": {
+    "operationId": "courses.by-course.placement.attempts.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "answers": {
+          "additionalProperties": {
+           "items": {
+            "type": "string"
+           },
+           "type": "array"
+          },
+          "description": "Question id to the option ids chosen",
+          "type": "object"
+         }
+        },
+        "required": [
+         "answers"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "id, scores per level, suggestedCourseId, reason; the answers are not stored"
+     },
+     "403": {
+      "description": "No access to the family"
+     },
+     "404": {
+      "description": "No placement check for this course"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Score a placement attempt by code and get the suggested variant with the reason (advisory)",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/courses/{course}/variant": {
+   "get": {
+    "operationId": "courses.by-course.variant.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "variants, current (courseId, source, reason, byOrganisation), effectiveCourseId, enrolled, canChange, lockedReason, placement, hint"
+     },
+     "404": {
+      "description": "The course has no variants"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The signed-in learner's variant of this course's family, whether they may change it, the placement check and a hint to switch",
+    "tags": [
+     "Course Variants"
+    ]
+   },
+   "put": {
+    "operationId": "courses.by-course.variant.put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "attempt_id": {
+          "description": "With source placement: the placement attempt whose suggestion is confirmed",
+          "type": "string"
+         },
+         "course_id": {
+          "description": "The variant course to move to",
+          "type": "integer"
+         },
+         "hint_id": {
+          "description": "With source hint: the hint that is accepted",
+          "type": "integer"
+         },
+         "source": {
+          "default": "self",
+          "enum": [
+           "self",
+           "placement",
+           "hint"
+          ],
+          "type": "string"
+         }
+        },
+        "required": [
+         "course_id"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the state as in GET, plus changed and carried (topics completed by carry-over)"
+     },
+     "403": {
+      "description": "No access to the family, or the variant was assigned by the organisation and the family is locked"
+     },
+     "422": {
+      "description": "Not a variant of this course, not available, or the placement attempt or hint does not match"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Choose or switch variant: enrols the learner in the variant's course through the family entitlement and carries over identical completed topics",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/courses/{course}/variant/hints/{hint}/dismiss": {
+   "post": {
+    "operationId": "courses.by-course.variant.hints.by-hint.dismiss.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "path",
+      "name": "hint",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the state as in GET"
+     },
+     "404": {
+      "description": "Unknown hint"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Dismiss a hint to switch variant; hints stop for this course",
+    "tags": [
+     "Course Variants"
+    ]
+   }
+  },
+  "/api/courses/{course}/variants": {
+   "get": {
+    "description": "Variants of a course for learners (ADR 0192, CV-5): the picker's data (public, like the course page), the learner's own\nvariant and the choice to change it, and the hint to switch. `{course}` is the default course or any variant of the\nfamily. The LMS owns who may open what; choosing needs access to the family.",
+    "operationId": "courses.by-course.variants.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "groupId, defaultCourseId and variants (courseId, title, label, level, role, isDefault, description, duration); data is null for a course without variants"
+     }
+    },
+    "summary": "The variants of a course's family for the picker (public data), or null when it has none",
+    "tags": [
+     "Course Variants"
     ]
    }
   },
@@ -39765,6 +42083,244 @@
     ]
    }
   },
+  "/api/platform/templates": {
+   "get": {
+    "operationId": "platform.templates.get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/PlatformTemplate"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Templates"
+     },
+     "403": {
+      "description": "Not a platform administrator, or the token lacks platform:read"
+     },
+     "404": {
+      "description": "The platform API is off, or this is a tenant host"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "List the tenant templates",
+    "tags": [
+     "Platform"
+    ]
+   },
+   "post": {
+    "operationId": "platform.templates.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "accent": {
+          "example": "#C2552D",
+          "type": "string"
+         },
+         "demo": {
+          "type": "boolean"
+         },
+         "env": {
+          "additionalProperties": {
+           "type": "string"
+          },
+          "description": "Inheritable settings only",
+          "example": {
+           "AI_DRIVER": "fake"
+          },
+          "type": "object"
+         },
+         "name": {
+          "type": "string"
+         },
+         "slug": {
+          "example": "policy-academy",
+          "type": "string"
+         },
+         "theme": {
+          "example": "coffee",
+          "type": "string"
+         },
+         "users": {
+          "maximum": 50,
+          "minimum": 0,
+          "type": "integer"
+         }
+        },
+        "required": [
+         "slug"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "description": "Updated"
+     },
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/PlatformTemplate"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Created"
+     },
+     "422": {
+      "description": "Invalid slug or value"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create a tenant template, or change the given fields of an existing one",
+    "tags": [
+     "Platform"
+    ]
+   }
+  },
+  "/api/platform/templates/{slug}": {
+   "delete": {
+    "operationId": "platform.templates.by-slug.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "slug": {
+             "type": "string"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Removed"
+     },
+     "404": {
+      "description": "Unknown template, or the platform API is off"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Remove a tenant template (tenants made from it are untouched)",
+    "tags": [
+     "Platform"
+    ]
+   },
+   "get": {
+    "operationId": "platform.templates.by-slug.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/PlatformTemplate"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The template"
+     },
+     "404": {
+      "description": "Unknown template, or the platform API is off"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One tenant template",
+    "tags": [
+     "Platform"
+    ]
+   }
+  },
   "/api/platform/tenants": {
    "get": {
     "operationId": "platform.tenants.get",
@@ -39824,6 +42380,10 @@
          "demo": {
           "type": "boolean"
          },
+         "derived_from": {
+          "description": "The tenant this one is created for (a department academy); needs purpose and reference, counts against its quota and is recorded",
+          "type": "string"
+         },
          "group": {
           "description": "Required with ttl_days: the repository the preview belongs to; at most TENANCY_PREVIEW_CAP (5) live previews per group",
           "type": "string"
@@ -39831,9 +42391,21 @@
          "name": {
           "type": "string"
          },
+         "purpose": {
+          "example": "policy_department",
+          "type": "string"
+         },
+         "reference": {
+          "description": "Asking again with the same reference finds the same tenant",
+          "type": "string"
+         },
          "slug": {
           "description": "2-30 lowercase letters and digits, starting with a letter",
           "example": "acme",
+          "type": "string"
+         },
+         "template": {
+          "description": "A tenant template: its theme, accent, demo flag and settings are the starting point; the fields above win",
           "type": "string"
          },
          "theme": {
@@ -39892,10 +42464,10 @@
       "description": "Queued"
      },
      "409": {
-      "description": "The tenant exists, an operation for it is in progress, or the preview limit of the group is reached (code preview_limit)"
+      "description": "The tenant exists, an operation for it is in progress, the parent's quota or the reference's tenant forbids it, or the preview limit of the group is reached (code preview_limit)"
      },
      "422": {
-      "description": "Invalid slug or option"
+      "description": "Invalid slug or option, or an unknown template"
      }
     },
     "security": [
@@ -39969,7 +42541,7 @@
       "description": "Queued"
      },
      "409": {
-      "description": "An operation for this tenant is in progress"
+      "description": "An operation for this tenant is in progress, or tenants were created from it (delete those first)"
      },
      "422": {
       "description": "confirm does not equal the slug"
@@ -40029,6 +42601,81 @@
      }
     ],
     "summary": "One tenant",
+    "tags": [
+     "Platform"
+    ]
+   }
+  },
+  "/api/platform/tenants/{slug}/derived": {
+   "get": {
+    "operationId": "platform.tenants.by-slug.derived.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "properties": {
+             "created_at": {
+              "type": "string"
+             },
+             "purpose": {
+              "type": "string"
+             },
+             "reference": {
+              "type": "string"
+             },
+             "requested_by": {
+              "nullable": true,
+              "type": "string"
+             },
+             "template": {
+              "nullable": true,
+              "type": "string"
+             },
+             "tenant": {
+              "type": "string"
+             }
+            },
+            "type": "object"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Active derived tenants with the record of who asked"
+     },
+     "404": {
+      "description": "Unknown tenant, or the platform API is off"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "The tenants created from this one for a purpose",
     "tags": [
      "Platform"
     ]
@@ -40190,6 +42837,33 @@
     "summary": "A one-day administrator token (builder:read, builder:write) for a preview academy",
     "tags": [
      "Platform"
+    ]
+   }
+  },
+  "/api/policies/my-changes": {
+   "get": {
+    "description": "For each of the caller's assignments that an approved policy change created: the policy, its new version, the source diff in one sentence, whether it is an exam or the course, and the assignment it belongs to. Only the caller's own rows.",
+    "operationId": "policies.my-changes.get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "one row per policy change assignment, newest first"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Why I was given this training again",
+    "tags": [
+     "Policies"
     ]
    }
   },
@@ -41901,6 +44575,186 @@
     "summary": "Finish quiz attempt",
     "tags": [
      "Gift Quiz Attempt"
+    ]
+   }
+  },
+  "/api/reporting/odata": {
+   "get": {
+    "description": "OData v4 service document: one entity set Report_{id} per saved report whose feed is on and that the token's user may see (a token limited to one report lists only that one). Auth: a reports:read access token as Bearer, or as the password of HTTP Basic (the user name is ignored), which is how Excel and Power BI send it.",
+    "operationId": "reporting.odata.service.get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "@odata.context": {
+           "type": "string"
+          },
+          "value": {
+           "items": {
+            "properties": {
+             "kind": {
+              "type": "string"
+             },
+             "name": {
+              "type": "string"
+             },
+             "url": {
+              "type": "string"
+             }
+            },
+            "type": "object"
+           },
+           "type": "array"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The entity sets"
+     },
+     "401": {
+      "description": "No or invalid token (with a Basic challenge)"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "OData service document",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
+  "/api/reporting/odata/$metadata": {
+   "get": {
+    "description": "The CSDL (XML) of the feed: one entity type per report with a RowNumber key and a property per output column, typed. Capabilities annotations say that only $select, $top, $skip and $count are supported.",
+    "operationId": "reporting.odata.metadata.get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/xml": {
+        "schema": {
+         "type": "string"
+        }
+       }
+      },
+      "description": "CSDL XML"
+     },
+     "401": {
+      "description": "No or invalid token"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "OData metadata document",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
+  "/api/reporting/odata/{entity}": {
+   "get": {
+    "description": "The rows of the saved report named Report_{id}, 5 000 per page with @odata.nextLink. Supports $select, $top, $skip, $count=true and $format=json. $filter, $orderby, $apply, $expand and the other options answer 501: the saved report is the filter, the grouping and the order. Groups of fewer learners than the threshold are withheld (a row with Withheld true), as in every other output. Each request is recorded as an export of channel feed.",
+    "operationId": "reporting.odata.entity-set.get",
+    "parameters": [
+     {
+      "description": "Report_ followed by the id of the saved report",
+      "in": "path",
+      "name": "entity",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "$select",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "$top",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "$skip",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "$count",
+      "schema": {
+       "type": "boolean"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "@odata.context": {
+           "type": "string"
+          },
+          "@odata.count": {
+           "type": "integer"
+          },
+          "@odata.nextLink": {
+           "type": "string"
+          },
+          "value": {
+           "items": {
+            "type": "object"
+           },
+           "type": "array"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "OData JSON: @odata.context, value, optional @odata.count and @odata.nextLink"
+     },
+     "401": {
+      "description": "No or invalid token"
+     },
+     "403": {
+      "description": "The token's user may not run this report, or the token is limited to another report"
+     },
+     "404": {
+      "description": "No such feed"
+     },
+     "409": {
+      "description": "The report needs repair"
+     },
+     "501": {
+      "description": "An unsupported query option"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Rows of a saved report as an OData entity set",
+    "tags": [
+     "Reporting"
     ]
    }
   },
@@ -44295,6 +47149,10 @@
    "name": "Admin Course Builder"
   },
   {
+   "description": "Course Variants",
+   "name": "Course Variants"
+  },
+  {
    "description": "Admin CSV",
    "name": "Admin CSV"
   },
@@ -44437,6 +47295,10 @@
   {
    "description": "Admin Permissions",
    "name": "Admin Permissions"
+  },
+  {
+   "description": "Policies",
+   "name": "Policies"
   },
   {
    "description": "Question",

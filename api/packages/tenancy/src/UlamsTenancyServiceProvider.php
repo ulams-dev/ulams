@@ -19,6 +19,7 @@ use Ulams\Tenancy\Console\SeedTenantDemoCommand;
 use Ulams\Tenancy\Console\SetTenantEnvCommand;
 use Ulams\Tenancy\Console\RecreateViewsCommand;
 use Ulams\Tenancy\Console\SyncTenantEnvCommand;
+use Ulams\Tenancy\Console\TemplateCommand;
 use Ulams\Tenancy\Console\UpgradeCommand;
 use Ulams\Tenancy\Console\WorkOnceCommand;
 use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
@@ -100,6 +101,7 @@ class UlamsTenancyServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CreateTenantCommand::class,
+                TemplateCommand::class,
                 ListTenantsCommand::class,
                 DeleteTenantCommand::class,
                 SyncTenantEnvCommand::class,

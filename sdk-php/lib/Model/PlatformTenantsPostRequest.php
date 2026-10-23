@@ -59,9 +59,13 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
     protected static $openAPITypes = [
         'accent' => 'string',
         'demo' => 'bool',
+        'derived_from' => 'string',
         'group' => 'string',
         'name' => 'string',
+        'purpose' => 'string',
+        'reference' => 'string',
         'slug' => 'string',
+        'template' => 'string',
         'theme' => 'string',
         'ttl_days' => 'int',
         'users' => 'int'
@@ -77,9 +81,13 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
     protected static $openAPIFormats = [
         'accent' => null,
         'demo' => null,
+        'derived_from' => null,
         'group' => null,
         'name' => null,
+        'purpose' => null,
+        'reference' => null,
         'slug' => null,
+        'template' => null,
         'theme' => null,
         'ttl_days' => null,
         'users' => null
@@ -93,9 +101,13 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
     protected static array $openAPINullables = [
         'accent' => false,
         'demo' => false,
+        'derived_from' => false,
         'group' => false,
         'name' => false,
+        'purpose' => false,
+        'reference' => false,
         'slug' => false,
+        'template' => false,
         'theme' => false,
         'ttl_days' => false,
         'users' => false
@@ -189,9 +201,13 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
     protected static $attributeMap = [
         'accent' => 'accent',
         'demo' => 'demo',
+        'derived_from' => 'derived_from',
         'group' => 'group',
         'name' => 'name',
+        'purpose' => 'purpose',
+        'reference' => 'reference',
         'slug' => 'slug',
+        'template' => 'template',
         'theme' => 'theme',
         'ttl_days' => 'ttl_days',
         'users' => 'users'
@@ -205,9 +221,13 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
     protected static $setters = [
         'accent' => 'setAccent',
         'demo' => 'setDemo',
+        'derived_from' => 'setDerivedFrom',
         'group' => 'setGroup',
         'name' => 'setName',
+        'purpose' => 'setPurpose',
+        'reference' => 'setReference',
         'slug' => 'setSlug',
+        'template' => 'setTemplate',
         'theme' => 'setTheme',
         'ttl_days' => 'setTtlDays',
         'users' => 'setUsers'
@@ -221,9 +241,13 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
     protected static $getters = [
         'accent' => 'getAccent',
         'demo' => 'getDemo',
+        'derived_from' => 'getDerivedFrom',
         'group' => 'getGroup',
         'name' => 'getName',
+        'purpose' => 'getPurpose',
+        'reference' => 'getReference',
         'slug' => 'getSlug',
+        'template' => 'getTemplate',
         'theme' => 'getTheme',
         'ttl_days' => 'getTtlDays',
         'users' => 'getUsers'
@@ -288,9 +312,13 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
     {
         $this->setIfExists('accent', $data ?? [], null);
         $this->setIfExists('demo', $data ?? [], null);
+        $this->setIfExists('derived_from', $data ?? [], null);
         $this->setIfExists('group', $data ?? [], null);
         $this->setIfExists('name', $data ?? [], null);
+        $this->setIfExists('purpose', $data ?? [], null);
+        $this->setIfExists('reference', $data ?? [], null);
         $this->setIfExists('slug', $data ?? [], null);
+        $this->setIfExists('template', $data ?? [], null);
         $this->setIfExists('theme', $data ?? [], null);
         $this->setIfExists('ttl_days', $data ?? [], null);
         $this->setIfExists('users', $data ?? [], null);
@@ -412,6 +440,33 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
     }
 
     /**
+     * Gets derived_from
+     *
+     * @return string|null
+     */
+    public function getDerivedFrom()
+    {
+        return $this->container['derived_from'];
+    }
+
+    /**
+     * Sets derived_from
+     *
+     * @param string|null $derived_from The tenant this one is created for (a department academy); needs purpose and reference, counts against its quota and is recorded
+     *
+     * @return self
+     */
+    public function setDerivedFrom($derived_from)
+    {
+        if (is_null($derived_from)) {
+            throw new \InvalidArgumentException('non-nullable derived_from cannot be null');
+        }
+        $this->container['derived_from'] = $derived_from;
+
+        return $this;
+    }
+
+    /**
      * Gets group
      *
      * @return string|null
@@ -466,6 +521,60 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
     }
 
     /**
+     * Gets purpose
+     *
+     * @return string|null
+     */
+    public function getPurpose()
+    {
+        return $this->container['purpose'];
+    }
+
+    /**
+     * Sets purpose
+     *
+     * @param string|null $purpose purpose
+     *
+     * @return self
+     */
+    public function setPurpose($purpose)
+    {
+        if (is_null($purpose)) {
+            throw new \InvalidArgumentException('non-nullable purpose cannot be null');
+        }
+        $this->container['purpose'] = $purpose;
+
+        return $this;
+    }
+
+    /**
+     * Gets reference
+     *
+     * @return string|null
+     */
+    public function getReference()
+    {
+        return $this->container['reference'];
+    }
+
+    /**
+     * Sets reference
+     *
+     * @param string|null $reference Asking again with the same reference finds the same tenant
+     *
+     * @return self
+     */
+    public function setReference($reference)
+    {
+        if (is_null($reference)) {
+            throw new \InvalidArgumentException('non-nullable reference cannot be null');
+        }
+        $this->container['reference'] = $reference;
+
+        return $this;
+    }
+
+    /**
      * Gets slug
      *
      * @return string
@@ -488,6 +597,33 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
             throw new \InvalidArgumentException('non-nullable slug cannot be null');
         }
         $this->container['slug'] = $slug;
+
+        return $this;
+    }
+
+    /**
+     * Gets template
+     *
+     * @return string|null
+     */
+    public function getTemplate()
+    {
+        return $this->container['template'];
+    }
+
+    /**
+     * Sets template
+     *
+     * @param string|null $template A tenant template: its theme, accent, demo flag and settings are the starting point; the fields above win
+     *
+     * @return self
+     */
+    public function setTemplate($template)
+    {
+        if (is_null($template)) {
+            throw new \InvalidArgumentException('non-nullable template cannot be null');
+        }
+        $this->container['template'] = $template;
 
         return $this;
     }

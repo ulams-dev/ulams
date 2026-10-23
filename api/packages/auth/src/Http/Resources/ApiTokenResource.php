@@ -27,6 +27,7 @@ class ApiTokenResource extends JsonResource
             'agent_name' => $meta->agent_name,
             'created_via' => $meta->created_via,
             'rate_limit_per_minute' => $meta->rate_limit_per_minute,
+            'resource_ids' => $meta->resource_ids,
             'user_id' => $token?->user_id !== null ? (int) $token->user_id : null,
             'created_at' => $token?->created_at?->toIso8601String(),
             'expires_at' => $token?->expires_at?->toIso8601String(),

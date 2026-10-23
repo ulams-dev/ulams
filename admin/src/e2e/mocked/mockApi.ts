@@ -112,7 +112,140 @@ const ok = (data: unknown, extra: Record<string, unknown> = {}) => ({
   ...extra,
 });
 
+/** A dataset of the report builder, as GET /api/admin/reporting/datasets returns it. */
+export const REPORT_DATASETS = [
+  {
+    key: 'assignments',
+    label: 'Training assignments',
+    description:
+      'One row per required-training assignment: who, which course, due date and outcome.',
+    permission: 'compliance_report',
+    subject_column: 'user_id',
+    aggregate_only: false,
+    date_columns: ['assigned_at'],
+    columns: [
+      {
+        name: 'course_title',
+        type: 'string',
+        label: 'Course',
+        filterOps: ['eq', 'neq', 'in', 'not_in', 'contains', 'is_null'],
+        groupable: true,
+        aggregatable: false,
+        personal: false,
+        enumValues: [],
+      },
+      {
+        name: 'user_id',
+        type: 'int',
+        label: 'Learner id',
+        filterOps: ['eq', 'neq', 'in', 'not_in', 'lt', 'lte', 'gt', 'gte', 'between', 'is_null'],
+        groupable: true,
+        aggregatable: true,
+        personal: false,
+        enumValues: [],
+      },
+      {
+        name: 'user_email',
+        type: 'string',
+        label: 'E-mail',
+        filterOps: ['eq', 'contains'],
+        groupable: false,
+        aggregatable: false,
+        personal: true,
+        enumValues: [],
+      },
+      {
+        name: 'status',
+        type: 'enum',
+        label: 'Status',
+        filterOps: ['eq', 'neq', 'in', 'not_in', 'is_null'],
+        groupable: true,
+        aggregatable: false,
+        personal: false,
+        enumValues: ['assigned', 'overdue', 'completed', 'cancelled'],
+      },
+      {
+        name: 'assigned_at',
+        type: 'datetime',
+        label: 'Assigned',
+        filterOps: ['lt', 'lte', 'gt', 'gte', 'between', 'is_null'],
+        groupable: true,
+        aggregatable: false,
+        personal: false,
+        enumValues: [],
+      },
+    ],
+  },
+  {
+    key: 'ai_usage',
+    label: 'AI usage',
+    description: 'One row per model call: task, model, tokens and cost in USD.',
+    permission: 'reporting_ai_usage',
+    subject_column: null,
+    aggregate_only: false,
+    date_columns: ['created_at'],
+    columns: [
+      {
+        name: 'task',
+        type: 'string',
+        label: 'Task',
+        filterOps: ['eq', 'in', 'contains'],
+        groupable: true,
+        aggregatable: false,
+        personal: false,
+        enumValues: [],
+      },
+      {
+        name: 'cost_usd',
+        type: 'decimal',
+        label: 'Cost (USD)',
+        filterOps: ['lt', 'gt', 'between'],
+        groupable: false,
+        aggregatable: true,
+        personal: false,
+        enumValues: [],
+      },
+      {
+        name: 'created_at',
+        type: 'datetime',
+        label: 'Called at',
+        filterOps: ['gte', 'between'],
+        groupable: true,
+        aggregatable: false,
+        personal: false,
+        enumValues: [],
+      },
+    ],
+  },
+];
+
+/** A saved report as the mocked API stores it. */
+export type MockSavedReport = {
+  id: string;
+  name: string;
+  description: string | null;
+  dataset: string | null;
+  visibility: 'private' | 'roles';
+  shared_roles: string[];
+  definition: Record<string, any>;
+  is_owner: boolean;
+  can_edit: boolean;
+  runnable: boolean;
+  needs_repair: boolean;
+  problems: { path: string; message: string }[];
+  last_run_at: string | null;
+};
+
 export type MockApi = {
+  /** The report builder: previews asked for, reports saved, files downloaded and reports deleted, in order. */
+  reporting: {
+    queries: Record<string, any>[];
+    saves: Record<string, any>[];
+    updates: { id: string; body: Record<string, any> }[];
+    downloads: { id: string; format: string }[];
+    deletes: string[];
+    saved: () => MockSavedReport[];
+  };
   /** Content of the saved template (JSON string), as the API would return it. */
   content: () => string;
   /** Bodies of every save (PATCH /api/admin/templates/:id), in order. */
@@ -154,6 +287,8 @@ export async function mockApi(
     siblings?: MockSibling[];
     /** Serve the Theme settings screen (adds the settings permissions) with this stored theme. */
     theme?: MockTheme;
+    /** Serve the report builder (adds reporting_read): the datasets (default REPORT_DATASETS) and the saved reports. */
+    reporting?: { datasets?: typeof REPORT_DATASETS; saved?: Partial<MockSavedReport>[] };
   } = {},
 ): Promise<MockApi> {
   const email = options.kind === 'email';
@@ -179,6 +314,7 @@ export async function mockApi(
   }
   const company = options.theme?.company ?? 'Acme Coffee';
   const state: MockApi = {
+    reporting: undefined as unknown as MockApi['reporting'], // set below, once the saved reports exist
     content: () => content,
     saves: [],
     previews: [],
@@ -190,6 +326,124 @@ export async function mockApi(
     logoUploads: [],
     logoRemovals: () => logoRemovals,
     theme: () => Object.fromEntries(themeRows.map((r) => [r.key, r.value])),
+  };
+
+  let nextSaved = 1;
+  const savedReports: MockSavedReport[] = (options.reporting?.saved ?? []).map((r) => ({
+    id: `01SAVED${String(nextSaved++).padStart(19, '0')}`,
+    name: 'Report',
+    description: null,
+    dataset: 'assignments',
+    visibility: 'private',
+    shared_roles: [],
+    definition: { dataset: 'assignments', columns: ['course_title'] },
+    is_owner: true,
+    can_edit: true,
+    runnable: true,
+    needs_repair: false,
+    problems: [],
+    last_run_at: null,
+    ...r,
+  }));
+  state.reporting = {
+    queries: [],
+    saves: [],
+    updates: [],
+    downloads: [],
+    deletes: [],
+    saved: () => savedReports,
+  };
+
+  /** What the API would answer to a definition: 422 for a column that does not exist, else a fixed small result. */
+  const answerQuery = (definition: Record<string, any>) => {
+    const dataset = (options.reporting?.datasets ?? REPORT_DATASETS).find(
+      (d) => d.key === definition.dataset,
+    );
+    const names = new Set((dataset?.columns ?? []).map((c) => c.name));
+    const unknown = [...(definition.columns ?? [])].findIndex((c: string) => !names.has(c));
+    if (!dataset || unknown >= 0) {
+      return {
+        status: 422,
+        body: {
+          success: false,
+          message: 'The given data was invalid.',
+          errors: {
+            [`columns.${unknown}`]: [
+              'Unknown column "' +
+                (definition.columns ?? [])[unknown] +
+                '" for dataset "' +
+                definition.dataset +
+                '".',
+            ],
+          },
+        },
+      };
+    }
+    if (definition.groupBy || definition.aggregates) {
+      const groups = (definition.groupBy ?? []).map((g: any) =>
+        typeof g === 'string' ? g : `${g.column}_${g.bucket}`,
+      );
+      const aggregates = (definition.aggregates ?? []).map((a: any) => a.as);
+      const columns = [...groups, ...aggregates].map((name) => ({
+        name,
+        type: aggregates.includes(name) ? 'int' : 'string',
+        label: name,
+      }));
+      const row = (label: string, n: number) =>
+        Object.fromEntries(
+          columns.map((c, i) => [c.name, i < groups.length ? (i === 0 ? label : null) : n]),
+        );
+      return {
+        status: 200,
+        body: {
+          success: true,
+          message: 'OK',
+          data: {
+            columns,
+            rows: [
+              row('Fire safety', 42),
+              row('Privacy', 31),
+              {
+                ...row('withheld (fewer than 10 learners)', 0),
+                ...Object.fromEntries(aggregates.map((a: string) => [a, null])),
+                _withheld: true,
+              },
+            ],
+          },
+          meta: {
+            mode: 'grouped',
+            total_rows: 2,
+            preview_rows: 3,
+            truncated: false,
+            withheld_groups: 2,
+            min_group_size: 10,
+          },
+        },
+      };
+    }
+    const columns = (definition.columns as string[]).map((name) => {
+      const c = dataset.columns.find((x) => x.name === name)!;
+      return { name, type: c.type, label: c.label };
+    });
+    const rows = [1, 2, 3].map((n) =>
+      Object.fromEntries(columns.map((c) => [c.name, c.type === 'int' ? n : `${c.label} ${n}`])),
+    );
+    return {
+      status: 200,
+      body: {
+        success: true,
+        message: 'OK',
+        data: { columns, rows },
+        meta: {
+          mode: 'rows',
+          total_rows: 120,
+          preview_rows: 3,
+          truncated: true,
+          withheld_groups: 0,
+          min_group_size: null,
+        },
+      },
+    };
   };
 
   const siblings = options.siblings ?? [];
@@ -265,6 +519,86 @@ export async function mockApi(
       return route.fulfill({ status: 204, headers: cors });
     }
 
+    if (options.reporting && path.startsWith('/api/admin/reporting/')) {
+      const savedId = /^\/api\/admin\/reporting\/saved\/([^/]+)(\/run)?$/.exec(path);
+      if (method === 'GET' && path === '/api/admin/reporting/datasets') {
+        return json(ok(options.reporting.datasets ?? REPORT_DATASETS));
+      }
+      if (method === 'POST' && path === '/api/admin/reporting/query') {
+        const body = request.postDataJSON();
+        state.reporting.queries.push(body);
+        const answer = answerQuery(body);
+        return json(answer.body, answer.status);
+      }
+      if (method === 'GET' && path === '/api/admin/reporting/saved') {
+        return json(ok(savedReports));
+      }
+      if (method === 'POST' && path === '/api/admin/reporting/saved') {
+        const body = request.postDataJSON();
+        state.reporting.saves.push(body);
+        if (savedReports.some((r) => r.name === body.name)) {
+          return json(
+            {
+              success: false,
+              message: 'The given data was invalid.',
+              errors: { name: ['A report with this name already exists.'] },
+            },
+            422,
+          );
+        }
+        const savedReport: MockSavedReport = {
+          id: `01SAVED${String(nextSaved++).padStart(19, '0')}`,
+          name: body.name,
+          description: body.description || null,
+          dataset: body.definition.dataset,
+          visibility: body.visibility,
+          shared_roles: body.shared_roles ?? [],
+          definition: body.definition,
+          is_owner: true,
+          can_edit: true,
+          runnable: true,
+          needs_repair: false,
+          problems: [],
+          last_run_at: null,
+        };
+        savedReports.unshift(savedReport);
+        return json(ok(savedReport), 201);
+      }
+      if (savedId && method === 'PUT') {
+        const body = request.postDataJSON();
+        state.reporting.updates.push({ id: savedId[1]!, body });
+        const found = savedReports.find((r) => r.id === savedId[1]);
+        if (!found) return json({ success: false, message: 'Not found' }, 404);
+        Object.assign(found, {
+          name: body.name ?? found.name,
+          description: body.description ?? found.description,
+          visibility: body.visibility ?? found.visibility,
+          shared_roles: body.shared_roles ?? found.shared_roles,
+          definition: body.definition ?? found.definition,
+        });
+        return json(ok(found));
+      }
+      if (savedId && method === 'DELETE') {
+        state.reporting.deletes.push(savedId[1]!);
+        savedReports.splice(
+          savedReports.findIndex((r) => r.id === savedId[1]),
+          1,
+        );
+        return json(ok(null));
+      }
+      if (savedId?.[2] && method === 'GET') {
+        const format = url.searchParams.get('format') ?? 'json';
+        state.reporting.downloads.push({ id: savedId[1]!, format });
+        return route.fulfill({
+          status: 200,
+          contentType: format === 'csv' ? 'text/csv' : 'application/x-ndjson',
+          headers: cors,
+          body:
+            format === 'csv' ? 'course_title\nFire safety\n' : '{"course_title":"Fire safety"}\n',
+        });
+      }
+    }
+
     if (method === 'GET') {
       if (path.startsWith('/storage/email/')) {
         return route.fulfill({ status: 200, contentType: 'image/png', headers: cors, body: PNG });
@@ -277,7 +611,11 @@ export async function mockApi(
             first_name: 'Ada',
             last_name: 'Admin',
             roles: ['admin'],
-            permissions: options.theme ? [...PERMISSIONS, ...SETTINGS_PERMISSIONS] : PERMISSIONS,
+            permissions: [
+              ...PERMISSIONS,
+              ...(options.theme ? SETTINGS_PERMISSIONS : []),
+              ...(options.reporting ? ['reporting_read'] : []),
+            ],
           }),
         );
       }

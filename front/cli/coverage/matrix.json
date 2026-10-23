@@ -1,5 +1,5 @@
 {
- "summary": "625/714 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "671/763 covered, 92 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -734,6 +734,78 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/course-variant-groups",
+   "summary": "List the families of course variants, optionally the one a course belongs to",
+   "command": "course-variant-groups.list",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-variant-groups/{group}",
+   "summary": "One family: settings, variant courses, where learners are and the placement check",
+   "command": "course-variant-groups.get",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/course-variant-groups/{group}",
+   "summary": "Change the settings of a family",
+   "command": "course-variant-groups.update",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-variant-groups/{group}/assignments",
+   "summary": "Who is in which variant (current assignments, with the source of each)",
+   "command": "course-variant-groups.assignments-list",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/course-variant-groups/{group}/assignments",
+   "summary": "Assign learners or user groups to a variant; the learner sees it as assigned by their organisation",
+   "command": "course-variant-groups.assignments-set",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-variant-groups/{group}/placement",
+   "summary": "The placement questions with their answer key and citations",
+   "command": "course-variant-groups.placement",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-variant-groups/{group}/placement/rebuild",
+   "summary": "Choose the placement questions again from the family's cited quiz questions (no model call)",
+   "command": "course-variant-groups.placement-rebuild",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-variant-groups/{group}/rules",
+   "summary": "List the assignment rules of a family",
+   "command": "course-variant-groups.rules-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-variant-groups/{group}/rules",
+   "summary": "Create an assignment rule",
+   "command": "course-variant-groups.rules-add",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/course-variant-groups/{group}/rules/{rule}",
+   "summary": "Update an assignment rule",
+   "command": "course-variant-groups.rules-set",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/course-variant-groups/{group}/rules/{rule}",
+   "summary": "Delete an assignment rule (learners already assigned stay)",
+   "command": "course-variant-groups.rules-delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-variant-groups/{group}/rules/{rule}/evaluate",
+   "summary": "Preview or run a rule now",
+   "command": "course-variant-groups.rules-evaluate",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/course-versions/courses/{course}/compare",
    "summary": "Semantic diff of two versions or releases of a course: moved elements, citations, quiz answer keys and a summary",
    "command": "course-versions.courses-compare",
@@ -1412,6 +1484,12 @@
    "status": "covered"
   },
   {
+   "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/accept-in-group",
+   "summary": "Accept one item and the same patch in the other proposals of its group (the course's variants)",
+   "command": "living.proposals.accept-in-group",
+   "status": "covered"
+  },
+  {
    "key": "POST /api/admin/living-course/proposals/{proposal}/items/{item}/regenerate",
    "summary": "Ask for another version of one element ({comment}); one call, at most three per item",
    "command": "living.proposals.regenerate",
@@ -1718,6 +1796,96 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/policies",
+   "summary": "List policies",
+   "command": "policies.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies",
+   "summary": "Create a policy from an uploaded document",
+   "command": "policies.create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}",
+   "summary": "Show a policy",
+   "command": "policies.get",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/dashboard",
+   "summary": "Policy owner dashboard",
+   "command": "policies.dashboard",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/dashboard/export",
+   "summary": "Export the people of the policy dashboard as CSV",
+   "command": "policies.dashboard-export",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/variants",
+   "summary": "List the department variants of a policy",
+   "command": "policies.variants",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/variants/generate",
+   "summary": "Generate the department courses of a policy",
+   "command": "policies.variants-generate",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/variants/{variant}/academy",
+   "summary": "The academy of a department",
+   "command": "policies.variants-academy-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/variants/{variant}/academy",
+   "summary": "Create an academy of its own for a department",
+   "command": "policies.variants-academy-add",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/policies/{policy}/variants/{variant}/academy",
+   "summary": "Remove the academy of a department",
+   "command": "policies.variants-academy-delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/versions",
+   "summary": "List the versions of a policy",
+   "command": "policies.versions-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/versions",
+   "summary": "Upload a new version of a policy",
+   "command": "policies.versions-add",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/versions/{number}",
+   "summary": "Review a policy version",
+   "command": "policies.versions",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/versions/{number}/approve",
+   "summary": "Approve a policy version",
+   "command": "policies.versions-approve",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/versions/{number}/reject",
+   "summary": "Reject a policy version in review",
+   "command": "policies.versions-reject",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/productables/",
    "summary": "",
    "command": "productables.list",
@@ -1931,6 +2099,42 @@
    "key": "POST /api/admin/reporting/query",
    "summary": "Preview a report definition",
    "command": "reporting.query",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reporting/saved",
+   "summary": "Saved reports the caller can see",
+   "command": "reporting.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/reporting/saved",
+   "summary": "Save a report",
+   "command": "reporting.save",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reporting/saved/{id}",
+   "summary": "One saved report",
+   "command": "reporting.show",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/reporting/saved/{id}",
+   "summary": "Change a saved report",
+   "command": "reporting.update",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/reporting/saved/{id}",
+   "summary": "Delete a saved report",
+   "command": "reporting.delete",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/reporting/saved/{id}/run",
+   "summary": "Run a saved report",
+   "command": "reporting.run",
    "status": "covered"
   },
   {
@@ -3278,6 +3482,42 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/courses/{course}/placement",
+   "summary": "The placement questions of a course's family (no answer key); 404 when the check is off or not ready",
+   "command": "my.courses-placement",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/courses/{course}/placement/attempts",
+   "summary": "Score a placement attempt by code and get the suggested variant with the reason (advisory)",
+   "command": "my.courses-placement-attempts",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses/{course}/variant",
+   "summary": "The signed-in learner's variant of this course's family, whether they may change it, the placement check and a hint to switch",
+   "command": "my.courses-variant-list",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/courses/{course}/variant",
+   "summary": "Choose or switch variant: enrols the learner in the variant's course through the family entitlement and carries over identical completed topics",
+   "command": "my.courses-variant-set",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/courses/{course}/variant/hints/{hint}/dismiss",
+   "summary": "Dismiss a hint to switch variant; hints stop for this course",
+   "command": "my.courses-variant-hints-dismiss",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/courses/{course}/variants",
+   "summary": "The variants of a course's family for the picker (public data), or null when it has none",
+   "command": "public.courses-variants",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/courses/{id}",
    "summary": "Display the specified Course",
    "command": "public.courses-get",
@@ -3806,6 +4046,30 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/platform/templates",
+   "summary": "List the tenant templates",
+   "command": "tenants.templates.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/platform/templates",
+   "summary": "Create a tenant template, or change the given fields of an existing one",
+   "command": "tenants.templates.save",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/platform/templates/{slug}",
+   "summary": "One tenant template",
+   "command": "tenants.templates.get",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/platform/templates/{slug}",
+   "summary": "Remove a tenant template (tenants made from it are untouched)",
+   "command": "tenants.templates.delete",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/platform/tenants",
    "summary": "List the tenants",
    "command": "tenants.list",
@@ -3830,6 +4094,12 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/platform/tenants/{slug}/derived",
+   "summary": "The tenants created from this one for a purpose",
+   "command": "tenants.derived",
+   "status": "covered"
+  },
+  {
    "key": "PATCH /api/platform/tenants/{slug}/env",
    "summary": "Override or reset inheritable settings (AI driver, models) of a tenant",
    "command": "tenants.set-env",
@@ -3839,6 +4109,12 @@
    "key": "POST /api/platform/tenants/{slug}/token",
    "summary": "A one-day administrator token (builder:read, builder:write) for a preview academy",
    "command": "tenants.token",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/policies/my-changes",
+   "summary": "Why I was given this training again",
+   "command": "my.policies-my-changes",
    "status": "covered"
   },
   {
@@ -4020,6 +4296,24 @@
    "summary": "Finish quiz attempt",
    "command": "my.quiz-attempts-end",
    "status": "covered"
+  },
+  {
+   "key": "GET /api/reporting/odata",
+   "summary": "OData service document",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/reporting/odata/$metadata",
+   "summary": "OData metadata document",
+   "command": "",
+   "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "GET /api/reporting/odata/{entity}",
+   "summary": "Rows of a saved report as an OData entity set",
+   "command": "",
+   "status": "excluded: not-for-cli"
   },
   {
    "key": "GET /api/scorm/assets/scorm-again.min.js",

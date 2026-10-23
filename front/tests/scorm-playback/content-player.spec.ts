@@ -7,7 +7,7 @@
 // shape of the API's field strategies and accepts POST .../track. The stored tracking is not simulated here;
 // the track requests the player sends are what the golden traces pin (order, body, headers).
 import { expect, test, type Page } from "@playwright/test";
-import { PINNED_SETTINGS, collectApiState, loadTrace } from "./helpers";
+import { LEGACY_EXPECTED, PINNED_SETTINGS, collectApiState, loadTrace, readLegacySettings, settle } from "./helpers";
 
 type Scenario = { name: string; fixture: string; variant: "fresh" | "resume" | "mastery"; query?: string };
 
@@ -75,6 +75,7 @@ async function play(page: Page, origin: string, scenario: Scenario) {
   await page.goto(launchUrl(origin, { sco }));
   await page.waitForFunction(() => (window as any).__scoDone !== null, undefined, { timeout: 30_000 });
 
+  await settle(() => page.evaluate(() => (window as any).__fetchLog.length));
   const run = await page.evaluate(collectApiState, PINNED_SETTINGS);
   const host = await page.evaluate(() => {
     const w = window as any;
@@ -93,6 +94,11 @@ for (const scenario of scenarios) {
     expect(result.ok, result.message).toBe(true);
   });
 }
+
+test("the 2.6 behaviour is set explicitly", async ({ page, baseURL }) => {
+  await play(page, baseURL as string, scenarios[0]);
+  expect(await page.evaluate(readLegacySettings, LEGACY_EXPECTED)).toEqual(LEGACY_EXPECTED);
+});
 
 test("the token never stays in the address bar or history", async ({ page, baseURL }) => {
   const trace = await play(page, baseURL as string, scenarios[0]);

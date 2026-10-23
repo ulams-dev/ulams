@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Ulams\Reporting\Services\DatasetRegistry;
 use Ulams\Reporting\Tests\Support\LearnerCallsDataset;
+use Ulams\Reporting\Tests\Support\ScopedCallsDataset;
 use Ulams\Reporting\UlamsReportingServiceProvider;
 
 /** The AI test case (users, Passport, fake driver, `ai_calls`) with the reporting package loaded. */
@@ -24,12 +25,13 @@ class TestCase extends AiTestCase
         $this->seed(ReportingPermissionSeeder::class);
     }
 
-    /** The test datasets that behave like learner datasets (`learner_calls`, and `learner_stats` which is aggregate-only). */
+    /** The test datasets that behave like learner datasets (`learner_calls`, and `learner_stats` which is aggregate-only) and `my_calls`, which shows a viewer their own rows only. */
     protected function registerLearnerDatasets(): void
     {
         $registry = $this->app->make(DatasetRegistry::class);
         $registry->register(new LearnerCallsDataset());
         $registry->register(new LearnerCallsDataset(aggregateOnly: true, key: 'learner_stats'));
+        $registry->register(new ScopedCallsDataset());
     }
 
     /** One `ai_calls` row per learner id: what the learner dataset counts as that learner's activity. */

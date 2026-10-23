@@ -60,12 +60,15 @@ interface PlatformTenantSwagger
      *         @OA\Property(property="name", type="string"), @OA\Property(property="theme", type="string", example="coffee"),
      *         @OA\Property(property="accent", type="string", example="#C2552D"), @OA\Property(property="users", type="integer", minimum=0, maximum=50),
      *         @OA\Property(property="demo", type="boolean"),
+     *         @OA\Property(property="template", type="string", description="A tenant template: its theme, accent, demo flag and settings are the starting point; the fields above win"),
+     *         @OA\Property(property="derived_from", type="string", description="The tenant this one is created for (a department academy); needs purpose and reference, counts against its quota and is recorded"),
+     *         @OA\Property(property="purpose", type="string", example="policy_department"), @OA\Property(property="reference", type="string", description="Asking again with the same reference finds the same tenant"),
      *         @OA\Property(property="ttl_days", type="integer", minimum=1, maximum=30, description="A throwaway tenant (a preview academy): deleted by ulams:tenant:reap after this many days"),
      *         @OA\Property(property="group", type="string", description="Required with ttl_days: the repository the preview belongs to; at most TENANCY_PREVIEW_CAP (5) live previews per group"))),
      *     @OA\Response(response=202, description="Queued", @OA\JsonContent(@OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
      *         @OA\Property(property="data", type="object", @OA\Property(property="operation", ref="#/components/schemas/PlatformOperation"), @OA\Property(property="tenant", ref="#/components/schemas/PlatformTenant")))),
-     *     @OA\Response(response=409, description="The tenant exists, an operation for it is in progress, or the preview limit of the group is reached (code preview_limit)"),
-     *     @OA\Response(response=422, description="Invalid slug or option"))
+     *     @OA\Response(response=409, description="The tenant exists, an operation for it is in progress, the parent's quota or the reference's tenant forbids it, or the preview limit of the group is reached (code preview_limit)"),
+     *     @OA\Response(response=422, description="Invalid slug or option, or an unknown template"))
      */
     public function store(CreatePlatformTenantRequest $request): JsonResponse;
 
@@ -98,8 +101,18 @@ interface PlatformTenantSwagger
      *     @OA\RequestBody(required=true, @OA\JsonContent(required={"confirm"}, @OA\Property(property="confirm", type="string", description="Must equal the slug"))),
      *     @OA\Response(response=202, description="Queued", @OA\JsonContent(@OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
      *         @OA\Property(property="data", type="object", @OA\Property(property="operation", ref="#/components/schemas/PlatformOperation")))),
-     *     @OA\Response(response=409, description="An operation for this tenant is in progress"),
+     *     @OA\Response(response=409, description="An operation for this tenant is in progress, or tenants were created from it (delete those first)"),
      *     @OA\Response(response=422, description="confirm does not equal the slug"))
      */
     public function destroy(DeletePlatformTenantRequest $request, string $slug): JsonResponse;
+
+    /**
+     * @OA\Get(path="/api/platform/tenants/{slug}/derived", operationId="platform.tenants.by-slug.derived.get", summary="The tenants created from this one for a purpose", tags={"Platform"}, security={{"passport": {}}},
+     *     @OA\Parameter(name="slug", in="path", required=true, @OA\Schema(type="string")),
+     *     @OA\Response(response=200, description="Active derived tenants with the record of who asked", @OA\JsonContent(@OA\Property(property="success", type="boolean"), @OA\Property(property="message", type="string"),
+     *         @OA\Property(property="data", type="array", @OA\Items(type="object", @OA\Property(property="tenant", type="string"), @OA\Property(property="template", type="string", nullable=true),
+     *             @OA\Property(property="purpose", type="string"), @OA\Property(property="reference", type="string"), @OA\Property(property="requested_by", type="string", nullable=true), @OA\Property(property="created_at", type="string"))))),
+     *     @OA\Response(response=404, description="Unknown tenant, or the platform API is off"))
+     */
+    public function derived(ListPlatformRequest $request, string $slug): JsonResponse;
 }
