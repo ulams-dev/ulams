@@ -1,8 +1,8 @@
 # reporting: datasets for the report builder
 
 The foundation of the report builder (ADR 0194, plan `docs/plans/authoring-metric-and-report-builder.md`). This
-release (milestone RB-1) is the **dataset registry**; the query compiler, saved reports, the admin screen, schedules
-for saved reports and the OData feed follow in RB-2 to RB-7.
+release has the **dataset registry** (RB-1) and the **report definition, query compiler and preview with small-group
+suppression** (RB-2); saved reports, the admin screen, schedules for saved reports and the OData feed follow in RB-3 to RB-7.
 
 - `Contracts\ReportDataset`: a set of rows a report can be built on: `key()`, `label()`, `columns()` (typed
   `Support\Column` with filter operators, `groupable`, `aggregatable`, `personal`), `dateColumns()`, `permission()`,
@@ -15,6 +15,18 @@ for saved reports and the OData feed follow in RB-2 to RB-7.
 - `GET /api/admin/reporting/datasets` (permission `reporting_read`: admin and tutor) lists the datasets the caller holds
   the dataset permission for, with every column. Token area `reports`.
 - Permissions: `reporting_read`, `reporting_ai_usage` (admin). `ReportingPermissionSeeder` runs with `PermissionsSeeder`.
+
+- `resources/schemas/report-definition/v1.json` is the shape of a report definition; `Definition\DefinitionValidator`
+  checks it, then the capabilities of the dataset's columns (operators, groupable, aggregatable, types, personal), and
+  returns a `ReportDefinition` or throws `InvalidReportDefinition` with one error per JSON pointer path.
+- `Query\QueryCompiler` wraps the dataset's `baseQuery()` as a derived table and builds the grouped or row query with
+  bound values; identifiers come from the registry, aggregate functions and date buckets from closed lists.
+  `Query\Suppression` withholds groups with fewer distinct learners than `reporting.min_group_size` (default: the
+  Learner Insights threshold, 10) plus the complementary group, counted on learners in SQL.
+- `Services\ReportRunner::preview()` is the one path that reads data for a report: permission of the dataset, scope in
+  `baseQuery()`, suppression, typed values, and the record of row-level personal columns in `compliance_exports`.
+- `POST /api/admin/reporting/query` previews a definition (500 rows and the total). A POST that only reads: token
+  `reports:read` is enough.
 
 Column names the compiler will accept come from the registry only; there is no path from user input to SQL.
 `Tests\Concerns\AssertsDatasetContract` is the check every dataset must pass (the base query selects the declared

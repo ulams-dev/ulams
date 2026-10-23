@@ -62,6 +62,14 @@ describe('trace normaliser', () => {
     assert.equal(normaliseString('P'), 'P');
   });
 
+  it('shortens long strings to a length and a hash', () => {
+    const long = 'x'.repeat(4096);
+    const short = normaliseString(long);
+    assert.match(short, /^<4096 chars sha256:[0-9a-f]{12}>$/);
+    assert.notEqual(short, normaliseString(`${long.slice(0, 4095)}y`));
+    assert.equal(normaliseString('x'.repeat(64)), 'x'.repeat(64));
+  });
+
   it('replaces listed origins', () => {
     assert.equal(normaliseString('http://127.0.0.1:4500/api/x', ['http://127.0.0.1:4500']), '<origin>/api/x');
   });
