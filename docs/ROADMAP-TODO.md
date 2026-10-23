@@ -791,11 +791,21 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 - [ ] (new) Learner routing: self-declared role and level at enrolment, an optional cited placement check, assignment by an
       admin or an enrolment rule (6.2), and an adaptive hint from Learner Insights to switch variant that the learner confirms
       (never a silent switch); progress carries over for elements that are identical in both variants
+      (partial, CV-5 part 1 of 3, waiting to merge: the API side is built. Learner endpoints `api/courses/{course}/variants` (public), `variant`, `placement`; admin
+      endpoints `api/admin/course-variant-groups` with assignment of learners and user groups and attribute rules (the `variant` action of the enrolment rules,
+      routing only learners who already have access); lock of assigned variants, pinned course, the placement check (cited quiz questions that already exist, scored by
+      code, advisory, off by default) and the hint rules (too hard, too easy; at most one a week, dismiss stops them); completion carried over through the courses
+      progress service for topics with the same element and content, quizzes retaken; variant pages open but unlisted and `variant_family` on the catalogue card;
+      open: the learner screens (CV-5 part 2) and the comparison catalogue status)
 - [ ] (new) One entitlement for the course covers all its variants (ADR 0130); certificates name the variant completed
+      (partial, CV-5 part 1 of 3, waiting to merge: a derived `family` entitlement per variant the learner uses, ended and moved with the entitlements it derives
+      from, so refunds, expiry and renewals reach every variant and `course_user` stays a projection; mandatory training accepts any variant or only the pinned
+      one, a variant uses the default course's compliance settings; open: certificates naming the variant and variant-aware Living Course (CV-5 part 3))
 - [ ] (new) Tenant isolation suite for the variant and routing endpoints; WCAG 2.2 AA for the variant picker and placement
       check; evals for variant grounding and level fit through the eval command only
-      (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #396; open: the routing endpoints,
-      the picker and the placement check (CV-5) and the evals)
+      (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #396; the routing endpoints have
+      isolation tests and are in the route-walking coverage test (CV-5 part 1, waiting to merge); open: the axe and keyboard checks of the picker and the placement
+      check (CV-5 part 2) and the evals)
 
 ---
 

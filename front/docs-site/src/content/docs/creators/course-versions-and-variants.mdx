@@ -13,11 +13,13 @@ learnerRoutes:
 import { Aside } from "@astrojs/starlight/components";
 
 <Aside type="note" title="What is built and what is coming">
-**Built:** course variants in the Course Builder: the interview question, one outline and one generation run
+**Built:** course variants in the Course Builder (the interview question, one outline and one generation run
 per audience from the same sources, each variant reviewed as a diff against the base, each approved variant
-created as its own course and grouped with the base as a family; numbered course releases and a screen that compares
-any two versions, a variant included. **Coming:** learners choosing or being routed
-to a variant, one purchase for the whole family, and variant-aware Living Course updates and certificates. Progress is tracked in the [roadmap](/roadmap/)
+created as its own course and grouped with the base as a family); numbered course releases and a screen that compares
+any two versions, a variant included; and the **routing of learners between variants through the API**: the learner's own choice, an assignment by an
+administrator or a rule, the optional placement check, hints to switch, one entitlement for the whole family, progress carried over between variants and
+mandatory training that accepts any variant. **Coming:** the learner screens for all of this (the picker on the course page and the placement check), and variant-aware Living Course updates and
+certificates that name the variant. Progress is tracked in the [roadmap](/roadmap/)
 (Phase 3.1 and Phase 4.4); the design is in `docs/plans/course-versions-and-variants.md` and ADR 0192.
 </Aside>
 
@@ -137,12 +139,29 @@ ulams course variants retire <variant> --yes
 The endpoints are in the [Course Builder API](/developers/course-builder-api/) (`sessions/{session}/variants`, `variants/{variant}`). Review a variant with
 `GET versions/{version}/diff?against=<base version>`: it is the same element diff the builder uses everywhere.
 
+### Learners and variants
+
+Learners are routed to a variant by their own choice, by an administrator or by a rule, never silently. The endpoints are in the
+[Course variants API](/developers/course-variants-api/); the learner screens are the next milestone, so today a frontend (or the `ulams` CLI) calls them.
+
+- **The picker.** The default course and every published variant of the family, each with its label, level, role and a line on who it is for, for anyone who can see the
+  course page. The base course is one of the choices, usually labelled "Intermediate".
+- **Choosing and switching.** A learner who has access to the course picks a variant and can switch later. Switching opens the other course for them, keeps the old
+  course and its progress, and **carries completion over** for lessons that are the same in both variants. Quizzes are taken again in the new variant.
+- **Assigned by your organisation.** An administrator can put learners or whole user groups in a variant, and **assignment rules** do the same by attribute
+  (for example `department` equals `Sales`). A rule only routes learners who already have access and have no variant yet; it never enrols anyone and never overrides a learner's own choice or an
+  administrator's assignment. A learner may change an assigned variant unless an administrator **locks** the course.
+- **The placement check** (optional, off by default). A short set of questions made of the quiz questions the family already has, cited and tied to objectives, scored by code. It
+  only advises: the result suggests a variant with its reason and the learner confirms it or picks another. Nothing is generated for it and nothing about the learner leaves the server.
+- **A hint to switch.** If the variant looks too hard (struggling in the first two modules) or too easy (every quiz passed first time in the first two modules and under half the
+  usual time), the learner sees a dismissible hint with the reasons. At most one per week, never an automatic switch, and dismissing it stops hints for that course. It needs Learner Insights.
+- **One purchase, all variants.** One entitlement for any course of the family opens every variant: sell or assign the default course, and learners can use any variant. A
+  refund or an expiry ends all of them, and the learner's progress is kept.
+- **Mandatory training.** An obligation on the course is fulfilled by finishing any variant, unless an administrator **pins** one; then the learner is given the pinned variant and only it counts.
+
 ### What is not built yet
 
-- **Learners choosing a variant.** A variant course is hidden from the catalogue and reachable by an administrator (or by enrolling learners in it by hand).
-  The picker on the course page, the optional placement check, assignment by an admin or an enrolment rule, the adaptive hint to switch, and carrying completed
-  lessons over when a learner switches are planned.
-- **One purchase, all variants.** A variant has no product of its own: the plan is one entitlement for the family. Until then a paid base course sells the base only.
+- **The learner screens.** The picker on the course page, the placement check and the "assigned by your organisation" notice in the learner interface are planned.
 - **Living Course for variants.** When a source changes, Living Course still proposes the update for the base course only. Proposing the matching patch for every variant
   that inherits the changed element, rebasing a variant on a newer base, and certificates that name the variant are planned.
 - **Chat edits on a variant.** The element chat edits the base course.
@@ -152,5 +171,5 @@ The endpoints are in the [Course Builder API](/developers/course-builder-api/) (
 The plan's open questions were settled with the recommended defaults. A variant is its own LMS course, so progress, completion, quizzes,
 H5P and SCORM work exactly as in any course. The cap is 6 variants per course and the operator can change it. The base course is itself
 an audience learners can pick. Mandatory training will accept any variant unless an administrator pins one, and a learner may change
-a variant an administrator assigned unless the course locks it; both belong to the learner-routing milestone. The decision record is ADR 0192
+a variant an administrator assigned unless the course locks it; both are built with the routing endpoints. The decision record is ADR 0192
 and the full list is section 18 of the plan.

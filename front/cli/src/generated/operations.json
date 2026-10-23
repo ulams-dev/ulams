@@ -721,6 +721,78 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/course-variant-groups",
+  "summary": "List the families of course variants, optionally the one a course belongs to",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-variant-groups/{group}",
+  "summary": "One family: settings, variant courses, where learners are and the placement check",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/course-variant-groups/{group}",
+  "summary": "Change the settings of a family",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-variant-groups/{group}/assignments",
+  "summary": "Who is in which variant (current assignments, with the source of each)",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/course-variant-groups/{group}/assignments",
+  "summary": "Assign learners or user groups to a variant; the learner sees it as assigned by their organisation",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-variant-groups/{group}/placement",
+  "summary": "The placement questions with their answer key and citations",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-variant-groups/{group}/placement/rebuild",
+  "summary": "Choose the placement questions again from the family's cited quiz questions (no model call)",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-variant-groups/{group}/rules",
+  "summary": "List the assignment rules of a family",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-variant-groups/{group}/rules",
+  "summary": "Create an assignment rule",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/course-variant-groups/{group}/rules/{rule}",
+  "summary": "Delete an assignment rule (learners already assigned stay)",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/course-variant-groups/{group}/rules/{rule}",
+  "summary": "Update an assignment rule",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-variant-groups/{group}/rules/{rule}/evaluate",
+  "summary": "Preview or run a rule now",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/course-versions/courses/{course}/compare",
   "summary": "Semantic diff of two versions or releases of a course: moved elements, citations, quiz answer keys and a summary",
   "tag": "Admin Course Versions"
@@ -3250,6 +3322,42 @@
   "path": "/api/courses",
   "summary": "Get a listing of the Courses.",
   "tag": "Courses"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/{course}/placement",
+  "summary": "The placement questions of a course's family (no answer key); 404 when the check is off or not ready",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/courses/{course}/placement/attempts",
+  "summary": "Score a placement attempt by code and get the suggested variant with the reason (advisory)",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/{course}/variant",
+  "summary": "The signed-in learner's variant of this course's family, whether they may change it, the placement check and a hint to switch",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/courses/{course}/variant",
+  "summary": "Choose or switch variant: enrols the learner in the variant's course through the family entitlement and carries over identical completed topics",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "POST",
+  "path": "/api/courses/{course}/variant/hints/{hint}/dismiss",
+  "summary": "Dismiss a hint to switch variant; hints stop for this course",
+  "tag": "Course Variants"
+ },
+ {
+  "method": "GET",
+  "path": "/api/courses/{course}/variants",
+  "summary": "The variants of a course's family for the picker (public data), or null when it has none",
+  "tag": "Course Variants"
  },
  {
   "method": "GET",

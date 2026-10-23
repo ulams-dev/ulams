@@ -1,0 +1,110 @@
+---
+title: Course variants API
+description: The endpoints that route learners between the variants of one course, the picker data, the learner's own variant and the choice to change it, the optional placement check, hints to switch, admin assignment and assignment rules, and how one entitlement covers the whole family.
+sidebar:
+  order: 84
+modules:
+  - course-variants
+---
+
+A course can have **variants** for different levels and roles (see [Course versions and variants](/creators/course-versions-and-variants/)).
+Each variant is an ordinary course; the variants of one course form a **family**. These endpoints decide which variant a learner is in
+and keep access, progress and mandatory training consistent across the family. Everything below is plain REST, with the same
+`{ success, data, message }` envelope as the rest of the API.
+
+`{course}` is the id of the **default course** or of any variant of the family; all of them name the same family.
+
+## For learners
+
+| Method and path | Auth | Purpose |
+|---|---|---|
+| `GET /api/courses/{course}/variants` | none | The picker: the default course and every variant that is published and not retired, with `label`, `level`, `role`, a one-line `description` ("who it is for"), `title`, `duration` and `isDefault`. `data` is `null` for a course without variants. Public data only, like the course page. |
+| `GET /api/courses/{course}/variant` | token | The signed-in learner's state in the family (below). `404` when the course has no variants. |
+| `PUT /api/courses/{course}/variant` | token | Choose or switch variant. |
+| `POST /api/courses/{course}/variant/hints/{hint}/dismiss` | token | Dismiss a hint to switch; hints stop for this course. |
+| `GET /api/courses/{course}/placement` | token | The questions of the placement check. `404` when it is off or not ready, `403` without access. |
+| `POST /api/courses/{course}/placement/attempts` | token | Score an attempt and get the suggested variant. |
+
+**The state** (`GET .../variant`) has `variants` (the picker items), `current` (`courseId`, `source`, `reason`, `byOrganisation`, `decidedAt`, or
+`null` when the learner has not chosen), `effectiveCourseId` (the course the learner is in now: the current variant, else the default course),
+`enrolled`, `canChange`, `lockedReason` (`null`, `not_enrolled` or `locked`), `placement` (`enabled`, `available`, `lastAttempt`) and `hint`.
+
+`source` says who decided: `self` (the learner), `placement` (the learner confirmed a placement suggestion), `hint` (the learner accepted a hint),
+`admin` (an administrator) or `rule` (an assignment rule). `reason` is a message key with parameters (`{ "key": "admin" }`,
+`{ "key": "rule", "params": { "name": "Sales team" } }`, `{ "key": "placement", "params": { ... } }`); the learner's app renders it in the learner's language.
+
+**Choosing.** `PUT` takes `course_id` (the variant to move to) and optionally `source` (`self`, the default, `placement` or `hint`) with `attempt_id` or
+`hint_id`. A learner needs access to the family: an entitlement for any course of it (see below) or membership of a group it is open to; otherwise
+the answer is `403`. A variant that an administrator or a rule assigned can be changed by the learner unless an administrator locked the family
+(`403`, `lockedReason: "locked"`). The answer is the state plus `changed` and `carried`. Choosing the variant the learner is already in changes nothing.
+
+Switching **enrols** the learner in the variant's course through the family entitlement, **keeps the old course and its progress** (switching back restores it),
+and **carries completion over** for topics that are the same content in both courses (the same element and the same content once applied). Quiz attempts,
+scores and H5P results are never copied, and a scored quiz is taken again in the new variant. Carry-over goes through the courses progress service, so
+completion, certificates and events behave exactly as if the learner had done the work there.
+
+## The placement check
+
+The check is **off by default** and **advisory only**. It is made of questions the family's courses already have, each cited and tied to an objective: a quiz
+question of the base course counts for the base course's level, and a question a variant added or changed counts for that variant's level. Nothing is
+generated and nothing about the learner is sent to a model: the answers are scored by code and not stored, only the score per level and the suggestion.
+
+The result suggests the highest level the learner is comfortable at (at least 70% right at every level up to it), with its reason. The learner confirms it
+(`PUT` with `source: "placement"` and the `attempt_id`) or picks another variant; no level decision is ever made for the learner (EU AI Act: no AI level placement
+decides access, routing is the learner's choice or a deterministic assignment by an administrator or a rule). An administrator switches it on per family and rebuilds the
+questions; with fewer than 6 suitable questions or fewer than two levels it is not offered.
+
+## Hints to switch
+
+Two transparent Learner Insights rules can show a **hint** with its reasons and a "Switch to ..." button (`hint` in the state). **Too hard**: the learner's course status
+is *struggling* while they have not got past the first two modules. **Too easy**: they finished the first two modules, passed every quiz there at the first
+attempt, and needed under half the cohort's median time on each module (the cohort needs at least 10 other learners). The hint is never an automatic switch, there is at
+most **one hint per learner and course per week**, and dismissing one stops hints for that course. Hints need Learner Insights to be on for the tenant and honour the
+learner's opt-out; `hints_enabled` on the family switches them off.
+
+## For administrators
+
+Permission `course_variants_assign` (granted to the `admin` role); the token scope area is `enrolments`.
+
+| Method and path | Purpose |
+|---|---|
+| `GET /api/admin/course-variant-groups?course_id=` | The families, or the one a course belongs to |
+| `GET /api/admin/course-variant-groups/{group}` | One family: settings, its courses, how many learners are in each variant and the placement check |
+| `PUT /api/admin/course-variant-groups/{group}` | Settings: `pinned_course_id`, `lock_assigned`, `placement_enabled`, `hints_enabled` |
+| `GET /api/admin/course-variant-groups/{group}/assignments` | Who is in which variant, with the source of each |
+| `PUT /api/admin/course-variant-groups/{group}/assignments` | Put learners (`user_ids`) or whole user groups (`group_ids`) in a variant (`course_id`); the learner sees "assigned by your organisation" |
+| `GET/POST .../rules`, `PUT/DELETE .../rules/{rule}`, `POST .../rules/{rule}/evaluate` | Assignment rules and their preview or run |
+| `GET .../placement`, `POST .../placement/rebuild` | The placement questions with their answer key; choose them again from the family's cited quiz questions |
+
+**Assignment by an administrator** also grants access: a learner who has none gets an entitlement for the course they are assigned to, which covers the family.
+**Rules** are the `variant` action of the enrolment rules: the same attribute conditions (`group`, a user column or a custom user field, with `equals`, `in`,
+`contains` and the other operators), all of which must hold, tried in `position` order. A rule only routes learners who **already have access** and no variant yet; it never
+enrols anyone and never overrides a learner's own choice or an administrator's assignment. Rules run when access arrives, in the daily
+`course-variants:assign-by-rules` command and when you run one with `evaluate` (`dry_run` is on by default and lists who it would assign).
+
+```bash
+curl -X PUT "$ULAMS/api/admin/course-variant-groups/$GROUP/assignments" \
+  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+  -d '{"course_id": 42, "group_ids": [7]}'
+```
+
+## One entitlement for the family
+
+The LMS owns access, and a purchase or an assignment grants it for **one course**, usually the default course. Any entitlement for a course of the family covers every variant:
+when a learner picks (or is assigned) a variant, it is opened for them with a derived entitlement of source type `family`, so `course_user` stays a projection of
+entitlements and the nightly parity check holds. A derived entitlement ends with the ones it derives from: a refund or an expiry of the order closes the
+variant courses too, and a renewal moves their end. Progress is never deleted. The commerce layer only reports orders; it never decides who may open a variant.
+
+Access through a **group** counts when the learner chooses or is assigned a variant; it is not re-checked in between.
+
+## Mandatory training
+
+Mandatory training assigned to a family is fulfilled by finishing **any variant** (and a valid certificate of any variant satisfies it at once), unless an administrator
+**pins** a variant with `pinned_course_id`: then the obligation is on that course, the learner is given it, and only it counts. A variant course uses the compliance settings
+(mandatory, validity, due days) of the family's default course unless it has its own.
+
+## Catalogue and pages
+
+Variant courses stay out of the public catalogue (`findable` is off), so a family shows once, as its default course; its card carries `variant_family` (`groupId`,
+`defaultCourseId` and `variants[]` with `courseId`, `label`, `level`, `role`, `isDefault`) so a frontend can say "Available for: Beginner, Expert". The page and the programme of a
+published, not retired variant are open to anyone who has the link, like the default course, so a learner can land on a variant and see the picker.

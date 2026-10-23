@@ -106,6 +106,8 @@ return [
     ['api/admin/course-access-enquiries*', 'enrolments'],
     ['api/admin/consultation-access-enquiries*', 'enrolments'],
     ['api/admin/tutors/*', 'enrolments'],
+    // who is in which variant of a course, assignment rules and the family's settings (ADR 0192): a kind of enrolment
+    ['api/admin/course-variant-groups*', 'enrolments'],
 
     // ---- courses -------------------------------------------------------------------------------
     ['api/admin/courses/*/clone', 'courses', ['level' => 'write']],

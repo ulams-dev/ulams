@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $level beginner | intermediate | expert
  * @property string|null $role
  * @property int $position
+ * @property \Illuminate\Support\Carbon|null $retired_at not offered to new learners
  */
 class VariantGroupMember extends Model
 {
@@ -22,5 +23,5 @@ class VariantGroupMember extends Model
 
     protected $guarded = [];
 
-    protected $casts = ['course_id' => 'integer', 'position' => 'integer'];
+    protected $casts = ['course_id' => 'integer', 'position' => 'integer', 'retired_at' => 'datetime'];
 }

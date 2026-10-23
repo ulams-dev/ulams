@@ -27,6 +27,7 @@ use Ulams\ModelFields\Database\Seeders\PermissionTableSeeder as ModelFieldsPermi
 use Ulams\Adapt\Database\Seeders\AdaptPermissionSeeder;
 use Ulams\AuthoringMetrics\Database\Seeders\AuthoringMetricsPermissionSeeder;
 use Ulams\Compliance\Database\Seeders\CompliancePermissionSeeder;
+use Ulams\CourseVariants\Database\Seeders\CourseVariantsPermissionSeeder;
 use Ulams\Interactive\Database\Seeders\InteractivePermissionSeeder;
 use Ulams\Reporting\Database\Seeders\ReportingPermissionSeeder;
 use Ulams\LiaScript\Database\Seeders\LiaScriptPermissionSeeder;
@@ -116,6 +117,7 @@ class PermissionsSeeder extends Seeder
         $this->call(AdaptPermissionSeeder::class);
         $this->call(WebhookPermissionSeeder::class);
         $this->call(CompliancePermissionSeeder::class);
+        $this->call(CourseVariantsPermissionSeeder::class);
         $this->call(AuthoringMetricsPermissionSeeder::class);
         $this->call(ReportingPermissionSeeder::class);
         $this->call(KnowledgePermissionSeeder::class);

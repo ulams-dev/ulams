@@ -85,6 +85,7 @@ return [
                     base_path('packages/video/src'),
                     base_path('packages/course-access/src'),
                     base_path('packages/course-builder/src'),
+                    base_path('packages/course-variants/src'),
                     base_path('packages/living-course/src'),
                     base_path('packages/learner-insights/src'),
                     base_path('packages/tutor/src'),

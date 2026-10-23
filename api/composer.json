@@ -131,6 +131,7 @@
       "Ulams\\CourseBuilder\\": "packages/course-builder/src",
       "Ulams\\CourseBuilder\\Database\\Seeders\\": "packages/course-builder/database/seeders",
       "Ulams\\CourseVariants\\": "packages/course-variants/src",
+      "Ulams\\CourseVariants\\Database\\Seeders\\": "packages/course-variants/database/seeders",
       "Ulams\\LivingCourse\\": "packages/living-course/src",
       "Ulams\\LivingCourse\\Database\\Seeders\\": "packages/living-course/database/seeders",
       "Ulams\\AuthoringMetrics\\": "packages/authoring-metrics/src",
