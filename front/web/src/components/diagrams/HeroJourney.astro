@@ -4,14 +4,15 @@
  * with the builder to live analytics and a course update. The captions are a list of real text, always visible; the
  * stage beside them is an illustration of the same beats and is hidden from assistive technology.
  *
- * Without JS and with reduced motion the list is the summary and the stage shows the chat. With motion allowed the
+ * Without JS and with reduced motion the list is the summary and the stage shows the block palette: the course
+ * assembled from its blocks. With motion allowed the
  * script starts once the hero is idle and in view, shows one beat at a time (opacity and transform only, every scene
  * in the same grid cell, so nothing shifts), loops, and offers Pause/Play, Previous and Next. It stops while the hero
  * is off screen or the tab is hidden. Nothing here delays the hero text.
  */
 import "./hero-journey.css";
 import Icon from "@ulams/ui/components/Icon.astro";
-import { BEATS, BEAT_MS, JOURNEY_ID, STATIC_BEAT, type HeroJourneyCopy } from "../../lib/hero-journey.ts";
+import { BEATS, BEAT_MS, BEAT_MS_LONG, BLOCK_ICONS, JOURNEY_ID, STATIC_BEAT, type HeroJourneyCopy } from "../../lib/hero-journey.ts";
 
 interface Props {
   copy: HeroJourneyCopy;
@@ -47,7 +48,7 @@ const { source, chat, draft, review, learners, analytics, change, update } = cop
         </div>
       </div>
 
-      <div class={`hj-scene hj-scene--chat${on("chat")}`} data-hj-scene="chat">
+      <div class={`hj-scene hj-scene--chat${on("chat")}`} data-hj-scene="chat" data-hj-ms={BEAT_MS_LONG.chat}>
         <ol class="hj-chat">
           {
             chat.lines.map((line, i) => (
@@ -60,16 +61,19 @@ const { source, chat, draft, review, learners, analytics, change, update } = cop
         </ol>
       </div>
 
-      <div class={`hj-scene hj-scene--draft${on("draft")}`} data-hj-scene="draft">
-        <p class="hj-card__title" data-hj-i style="--i:0"><Icon name="book" />{draft.lesson}</p>
-        {
-          draft.lines.map((line, i) => (
-            <p class="hj-draft__line" data-hj-i style={`--i:${1 + i * 2}`}>
-              {line}
-              <span class="hj-chip" data-hj-i style={`--i:${2 + i * 2}`}><Icon name="quote" />{draft.chips[i]}</span>
-            </p>
-          ))
-        }
+      <div class={`hj-scene hj-scene--draft${on("draft")}`} data-hj-scene="draft" data-hj-ms={BEAT_MS_LONG.draft}>
+        <p class="hj-card__title"><Icon name="layers" />{draft.course}</p>
+        <ol class="hj-blocks">
+          {
+            draft.blocks.map((block, i) => (
+              <li class={`hj-block hj-block--${i}`} data-hj-snap style={`--i:${i}`}>
+                <Icon name={BLOCK_ICONS[i] ?? "book"} />
+                <span>{block}</span>
+                {i === 0 && <span class="hj-chip">{draft.chip}</span>}
+              </li>
+            ))
+          }
+        </ol>
       </div>
 
       <div class={`hj-scene hj-scene--review${on("review")}`} data-hj-scene="review">
@@ -170,7 +174,7 @@ const { source, chat, draft, review, learners, analytics, change, update } = cop
     };
     const schedule = () => {
       window.clearTimeout(timer);
-      if (started && playing && visible && !document.hidden) timer = window.setTimeout(() => (show(index + 1), schedule()), ms);
+      if (started && playing && visible && !document.hidden) timer = window.setTimeout(() => (show(index + 1), schedule()), Number(scenes[index]?.dataset.hjMs) || ms);
     };
     const setPlaying = (value: boolean) => {
       playing = value;

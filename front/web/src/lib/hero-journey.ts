@@ -1,6 +1,6 @@
 /**
  * The home hero's journey: the ten-second overview of an L&D person's work with ULAMS, in eight beats that loop
- * (source → chat with the builder → cited draft → diff and approval → learners → analytics → source change →
+ * (source → chat with the builder → the course assembled from blocks → diff and approval → learners → analytics → source change →
  * update proposal). The walkthrough below the story is the detail; this is the overview, so it shares the example
  * of the how-it-works story (a privacy policy that changes from 30 to 14 days) and none of the screenshots.
  *
@@ -16,8 +16,12 @@ export const BEATS = ["source", "chat", "draft", "review", "learners", "analytic
 export type Beat = (typeof BEATS)[number];
 /** Milliseconds each beat stays on screen; the loop (8 beats) is far over the 5 s that WCAG 2.2.2 allows without a pause control. */
 export const BEAT_MS = 3400;
-/** The beat shown without JS and with reduced motion: the chat, the heart of the journey. */
-export const STATIC_BEAT: Beat = "chat";
+/** The beat shown without JS and with reduced motion: the course assembled from its blocks (the block palette). */
+export const STATIC_BEAT: Beat = "draft";
+/** Beats that need longer on screen: the blocks snap in one by one. */
+export const BEAT_MS_LONG: Partial<Record<Beat, number>> = { draft: 5200, chat: 4200 };
+/** Icons of the course blocks, in snapping order; every block type is shipped (docs/ROADMAP-TODO.md). */
+export const BLOCK_ICONS = ["quote", "quiz", "image", "puzzle", "code", "video", "compass", "medal"] as const;
 
 export interface HeroJourneyCopy {
   /** Name of the region and of the beat list. */
@@ -30,7 +34,8 @@ export interface HeroJourneyCopy {
   captions: Record<Beat, string>;
   source: { files: string[]; passages: string };
   chat: { builder: string; you: string; lines: Array<{ q: string; a: string }> };
-  draft: { lesson: string; lines: string[]; chips: string[] };
+  /** The course outline the blocks snap into: one tiny label per block (BLOCK_ICONS order) and the citation on the text block. */
+  draft: { course: string; blocks: string[]; chip: string };
   review: { removed: string; added: string; approve: string; approved: string };
   learners: { base: string; versions: string[]; routing: string; coming: string };
   analytics: { badge: string; funnel: Array<{ label: string; level: number }>; risk: string; quiz: string; quizBars: number[]; compliance: string; complianceValue: string };
@@ -47,7 +52,7 @@ const EN: HeroJourneyCopy = {
   captions: {
     source: "Drop in a policy, your docs or a Notion page.",
     chat: "The builder asks who it is for, level, tone and length.",
-    draft: "A cited outline and draft appear.",
+    draft: "The course is assembled from blocks: cited text, quiz, video and more.",
     review: "You review each change as a diff and approve it.",
     learners: "Learners take the course, or a version for their level or role.",
     analytics: "Analytics fill in: progress, at-risk learners, quiz results.",
@@ -66,7 +71,7 @@ const EN: HeroJourneyCopy = {
       { q: "One course, or versions by level or role?", a: "+ Sales version" },
     ],
   },
-  draft: { lesson: "Lesson 2 · Handling customer data", lines: ["Customer exports are deleted after 30 days.", "Only support leads can export data."], chips: ["Privacy policy § 4", "Support docs § 2"] },
+  draft: { course: "Course · Handling customer data", blocks: ["Text", "Quiz", "Diagram", "H5P interactive", "Code exercise", "Video + transcript", "Branching scenario", "Certificate"], chip: "Privacy policy § 4" },
   review: { removed: "Delete exports when a project ends.", added: "Delete customer exports after 30 days.", approve: "Approve", approved: "Approved · published" },
   learners: { base: "Course", versions: ["Beginner", "Expert", "Sales"], routing: "Routing each learner to a version", coming: "Coming" },
   analytics: {
@@ -95,7 +100,7 @@ const PL: HeroJourneyCopy = {
   captions: {
     source: "Wgraj politykę, dokumentację lub stronę Notion.",
     chat: "Kreator pyta o odbiorców, poziom, ton i długość.",
-    draft: "Powstaje konspekt i szkic z cytatami.",
+    draft: "Kurs składa się z bloków: tekst z cytatem, quiz, wideo i inne.",
     review: "Przeglądasz każdą zmianę jako diff i ją zatwierdzasz.",
     learners: "Uczący się przechodzą kurs albo wersję dla swojego poziomu lub roli.",
     analytics: "Analityka się wypełnia: postępy, zagrożeni, wyniki quizów.",
@@ -114,7 +119,7 @@ const PL: HeroJourneyCopy = {
       { q: "Jeden kurs czy wersje według poziomu lub roli?", a: "+ wersja dla sprzedaży" },
     ],
   },
-  draft: { lesson: "Lekcja 2 · Dane klientów", lines: ["Eksporty danych klientów usuwamy po 30 dniach.", "Dane eksportują tylko liderzy wsparcia."], chips: ["Polityka prywatności § 4", "Dokumentacja wsparcia § 2"] },
+  draft: { course: "Kurs · Dane klientów", blocks: ["Tekst", "Quiz", "Diagram", "Interakcja H5P", "Ćwiczenie z kodu", "Wideo + transkrypcja", "Scenariusz z wyborami", "Certyfikat"], chip: "Polityka prywatności § 4" },
   review: { removed: "Usuwaj eksporty po zakończeniu projektu.", added: "Usuwaj eksporty danych klientów po 30 dniach.", approve: "Zatwierdź", approved: "Zatwierdzone · opublikowane" },
   learners: { base: "Kurs", versions: ["Początkujący", "Ekspert", "Sprzedaż"], routing: "Kierowanie każdego do jego wersji", coming: "Wkrótce" },
   analytics: {
@@ -143,7 +148,7 @@ const ZH: HeroJourneyCopy = {
   captions: {
     source: "放入一份政策、你的文档或一个 Notion 页面。",
     chat: "生成器询问受众、水平、语气和时长。",
-    draft: "带引用的大纲和草稿随即出现。",
+    draft: "课程由一个个模块组装而成：带引用的文字、测验、视频等。",
     review: "你以差异形式审阅每处修改并批准。",
     learners: "学员学习这门课，或适合其水平或角色的版本。",
     analytics: "分析数据逐步汇集：进度、掉队学员、测验结果。",
@@ -162,7 +167,7 @@ const ZH: HeroJourneyCopy = {
       { q: "一门课，还是按水平或角色分版本？", a: "+ 销售版" },
     ],
   },
-  draft: { lesson: "第 2 课 · 处理客户数据", lines: ["客户导出数据在 30 天后删除。", "只有客服组长可以导出数据。"], chips: ["隐私政策 § 4", "客服文档 § 2"] },
+  draft: { course: "课程 · 处理客户数据", blocks: ["文字", "测验", "图示", "H5P 互动", "编程练习", "视频 + 文字稿", "分支情景", "证书"], chip: "隐私政策 § 4" },
   review: { removed: "项目结束时删除导出数据。", added: "客户导出数据在 30 天后删除。", approve: "批准", approved: "已批准 · 已发布" },
   learners: { base: "课程", versions: ["初级", "专家", "销售"], routing: "把每位学员分配到其版本", coming: "即将推出" },
   analytics: {

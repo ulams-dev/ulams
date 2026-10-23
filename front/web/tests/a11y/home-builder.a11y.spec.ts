@@ -112,7 +112,7 @@ test.describe("hero journey", () => {
         await expect(page.locator("html")).toHaveAttribute("lang", lang);
         const journey = page.locator(".u-hero #hero-journey");
         await expect(journey.locator("[data-hj-caption]:visible")).toHaveCount(CAPTIONS);
-        await expect(journey.locator('[data-hj-scene="chat"]')).toBeVisible();
+        await expect(journey.locator('[data-hj-scene="draft"] .hj-block:visible')).toHaveCount(8);
         await page.waitForTimeout(800);
         await expect(journey).not.toHaveClass(/is-live/);
         await expect(journey.locator("[data-hj-controls]")).toBeHidden();
@@ -124,10 +124,10 @@ test.describe("hero journey", () => {
 
   test.describe("without JavaScript", () => {
     test.use({ javaScriptEnabled: false });
-    test("every caption and the chat scene are readable", async ({ page }) => {
+    test("every caption and the block palette are readable", async ({ page }) => {
       await page.goto(`${base}/`);
       await expect(page.locator("#hero-journey [data-hj-caption]:visible")).toHaveCount(CAPTIONS);
-      await expect(page.locator('#hero-journey [data-hj-scene="chat"]')).toBeVisible();
+      await expect(page.locator('#hero-journey [data-hj-scene="draft"] .hj-block:visible')).toHaveCount(8);
       await expect(page.locator("#hero-journey [data-hj-controls]")).toBeHidden();
     });
   });
@@ -150,6 +150,8 @@ test.describe("hero journey", () => {
       await expect(journey).toHaveClass(/is-live/, { timeout: 5000 });
       await expect(journey.locator('[data-hj-caption][aria-current="step"]')).toHaveAttribute("data-hj-caption", "source");
       await expect(journey.locator('[data-hj-caption][aria-current="step"]')).toHaveAttribute("data-hj-caption", "chat", { timeout: 6000 });
+      await expect(journey.locator('[data-hj-caption][aria-current="step"]')).toHaveAttribute("data-hj-caption", "draft", { timeout: 6000 });
+      await expect(journey.locator('[data-hj-scene="draft"] .hj-block').last()).toBeVisible();
       await axe(page, ".u-hero");
       const toggle = journey.locator("[data-hj-toggle]");
       await toggle.focus();

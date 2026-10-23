@@ -229,6 +229,45 @@
   color: #cdd8e4;
 }
 
+/* draft: the course assembled from blocks, each snapping into its slot */
+.hj-blocks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 8px;
+  border: 1px dashed var(--ulams-color-primary, #0f2b46);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 0.6);
+  list-style: none;
+}
+.hj-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 36px;
+  padding: 6px 8px;
+  border: 1px solid var(--ulams-color-border, #e2e0da);
+  border-left: 3px solid var(--ulams-color-primary, #0f2b46);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ulams-color-header, #10283b);
+  font-size: 0.78rem;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.hj-block:nth-child(even) {
+  border-left-color: var(--ulams-color-accent, #b44a1f);
+}
+.hj-block:last-child {
+  border-left-color: #176b46;
+}
+.hj-block .hj-chip {
+  font-weight: 500;
+}
+
 /* draft */
 .hj-draft__line {
   display: flex;
@@ -503,6 +542,10 @@
     animation: hj-in 0.45s var(--ulams-ease, ease-out) both;
     animation-delay: calc(var(--i, 0) * 280ms + 150ms);
   }
+  .hj.is-live .hj-scene.is-on [data-hj-snap] {
+    animation: hj-snap 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    animation-delay: calc(var(--i, 0) * 480ms + 200ms);
+  }
   .hj.is-live .hj-scene.is-on [data-hj-grow] {
     animation: hj-grow 0.7s var(--ulams-ease, ease-out) both;
     animation-delay: calc(var(--i, 0) * 260ms + 250ms);
@@ -512,6 +555,7 @@
     animation-delay: calc(var(--i, 0) * 260ms + 250ms);
   }
   .hj.is-live.is-paused .hj-scene.is-on [data-hj-i],
+  .hj.is-live.is-paused .hj-scene.is-on [data-hj-snap],
   .hj.is-live.is-paused .hj-scene.is-on [data-hj-grow],
   .hj.is-live.is-paused .hj-scene.is-on [data-hj-rise] {
     animation: none;
@@ -520,6 +564,12 @@
     from {
       opacity: 0;
       transform: translateY(6px);
+    }
+  }
+  @keyframes hj-snap {
+    from {
+      opacity: 0;
+      transform: translate(-18px, -10px) scale(0.92);
     }
   }
   @keyframes hj-grow {

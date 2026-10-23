@@ -6,7 +6,7 @@ import { landingDocFor } from "../../src/lib/docs.ts";
 import { applyLandingStatus } from "../../src/lib/landing-status.ts";
 import { comparisonModel } from "../../src/lib/comparison.ts";
 import { workflowsModel } from "../../src/lib/workflows.ts";
-import { BEATS, BEAT_MS, JOURNEY_ID, STATIC_BEAT, heroJourneyCopy } from "../../src/lib/hero-journey.ts";
+import { BEATS, BEAT_MS, BLOCK_ICONS, JOURNEY_ID, STATIC_BEAT, heroJourneyCopy } from "../../src/lib/hero-journey.ts";
 import { LOCALES, type Locale } from "../../src/i18n/locales.ts";
 
 const shape = (value: unknown): unknown => {
@@ -36,6 +36,17 @@ describe("hero journey: copy", () => {
     const qs = heroJourneyCopy("en").chat.lines.map((l) => l.q);
     expect(qs.slice(0, 4)).toEqual(["Who is this course for?", "What is the starting level of your learners?", "What tone should the course have?", "How long should the whole course take?"]);
     expect(qs[4]).toMatch(/level or role/);
+  });
+
+  it("assembles the course from the eight shipped block types, ending with the certificate", () => {
+    expect(STATIC_BEAT).toBe("draft");
+    for (const locale of LOCALES) {
+      const { draft } = heroJourneyCopy(locale);
+      expect(draft.blocks).toHaveLength(BLOCK_ICONS.length);
+      expect(draft.chip).toContain("§");
+    }
+    expect(heroJourneyCopy("en").draft.blocks).toEqual(["Text", "Quiz", "Diagram", "H5P interactive", "Code exercise", "Video + transcript", "Branching scenario", "Certificate"]);
+    expect(heroJourneyCopy("en").captions.draft).toMatch(/blocks/);
   });
 
   it("labels the analytics as an illustration and routing to a version as coming", () => {
@@ -83,6 +94,8 @@ describe("hero journey: rendered markup", () => {
       expect(journey.querySelector(".hj-coming")!.textContent).toBe(copy.learners.coming);
       expect(journey.querySelector(".hj-badge")!.textContent).toBe(copy.analytics.badge);
       expect(journey.querySelectorAll(".hj-chat li")).toHaveLength(5);
+      // the static scene is the block palette: every block with its label, the text block with its citation
+      expect([...journey.querySelectorAll(".hj-scene.is-on .hj-block")].map((b) => b.textContent!.replace(copy.draft.chip, ""))).toEqual(copy.draft.blocks);
       expect(journey.querySelectorAll("img")).toHaveLength(0);
     });
   }
