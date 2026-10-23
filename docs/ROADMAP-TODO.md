@@ -820,6 +820,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       as a diff; the builder prompt carries the approved profile (never the raw style guide), a style check critic reports
       deviations, and a changed profile can propose a reviewed restyle; per tenant, entry point and brief
       (plan `docs/plans/style-guide-course-design.md` SG-1 to SG-5; ADR 0196 Proposed; shown as "Coming" in the policy story)
+      (partial: SG-1 done, style profile API, cited extraction, approval and `ulams style-profiles`; studio review SG-2, brief and prompt SG-3, style check SG-4, restyle SG-5 pending)
 - [ ] PWA offline mode with tested sync/conflict rules
 - [ ] Single frontend for LMS **and** Sylius commerce (catalogue, checkout, account)
 - [x] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge) (
