@@ -23391,6 +23391,323 @@
     ]
    }
   },
+  "/api/admin/reporting/saved": {
+   "get": {
+    "description": "The caller's own reports and the reports shared with one of their roles (administrators with reporting_manage see all). Each has can_edit, runnable (the caller holds the permission of its dataset) and needs_repair with the problems when its dataset or a column it uses no longer exists. Needs reporting_read.",
+    "operationId": "admin.reporting.reports.list",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Saved reports"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Saved reports the caller can see",
+    "tags": [
+     "Reporting"
+    ]
+   },
+   "post": {
+    "description": "Saves a report definition (see the query endpoint) under a name. visibility is private (the default) or roles with shared_roles naming tenant roles. The caller must hold reporting_create and the permission of the definition's dataset.",
+    "operationId": "admin.reporting.reports.create",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "definition": {
+          "description": "A report definition, as for POST /api/admin/reporting/query",
+          "type": "object"
+         },
+         "description": {
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         },
+         "shared_roles": {
+          "description": "Role names of this tenant, for example tutor",
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         },
+         "visibility": {
+          "enum": [
+           "private",
+           "roles"
+          ],
+          "type": "string"
+         }
+        },
+        "required": [
+         "name",
+         "definition"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The saved report"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Invalid definition or sharing"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Save a report",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
+  "/api/admin/reporting/saved/{id}": {
+   "delete": {
+    "operationId": "admin.reporting.reports.by-id.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "Deleted"
+     },
+     "403": {
+      "description": "Not the owner"
+     },
+     "404": {
+      "description": "Not found"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete a saved report",
+    "tags": [
+     "Reporting"
+    ]
+   },
+   "get": {
+    "operationId": "admin.reporting.reports.by-id.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The saved report with its definition"
+     },
+     "404": {
+      "description": "Not found, or not visible to the caller"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "One saved report",
+    "tags": [
+     "Reporting"
+    ]
+   },
+   "put": {
+    "description": "Only the owner (who holds reporting_create) or an administrator with reporting_manage. Any of name, description, visibility, shared_roles and definition.",
+    "operationId": "admin.reporting.reports.by-id.put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "definition": {
+          "type": "object"
+         },
+         "description": {
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         },
+         "shared_roles": {
+          "items": {
+           "type": "string"
+          },
+          "type": "array"
+         },
+         "visibility": {
+          "enum": [
+           "private",
+           "roles"
+          ],
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The saved report"
+     },
+     "403": {
+      "description": "Not the owner"
+     },
+     "404": {
+      "description": "Not found"
+     },
+     "422": {
+      "description": "Invalid definition or sharing"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Change a saved report",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
+  "/api/admin/reporting/saved/{id}/run": {
+   "get": {
+    "description": "Runs the report with the caller's own permissions and scope. format=json (default) answers like the query endpoint (500 rows and the total); csv and jsonl stream every row up to 1 000 000 and are recorded as exports. Groups of fewer learners than the threshold are withheld in every format. 403 when the caller lacks the permission of the dataset, 409 when the report needs repair.",
+    "operationId": "admin.reporting.reports.by-id.run",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "format",
+      "schema": {
+       "default": "json",
+       "enum": [
+        "json",
+        "csv",
+        "jsonl"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "json: columns, rows and meta; csv and jsonl: a file"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Not found"
+     },
+     "409": {
+      "description": "The report needs repair"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Run a saved report",
+    "tags": [
+     "Reporting"
+    ]
+   }
+  },
   "/api/admin/reports/available-for-user": {
    "get": {
     "description": "",

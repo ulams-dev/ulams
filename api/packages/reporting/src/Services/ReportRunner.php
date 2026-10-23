@@ -60,6 +60,37 @@ class ReportRunner
         return ['columns' => $compiled->output] + $result;
     }
 
+    /**
+     * Every row of a report for an export, up to `$cap`: a row-level report is read with a cursor, a grouped one is
+     * already small (its groups are capped). Permission, scope and suppression are the same as for a preview.
+     *
+     * @param array<string,mixed> $input
+     * @return array{dataset:string,columns:list<array{name:string,type:string,label:string}>,rows:iterable<array<string,mixed>>}
+     */
+    public function stream(array $input, ReportContext $context, int $cap): array
+    {
+        $definition = $this->validator->validate($input);
+        $dataset = $this->registry->get($definition->dataset);
+        if (!$context->can($dataset->permission())) {
+            throw new AuthorizationException('You cannot run reports on this dataset.');
+        }
+        $compiled = $this->compiler->compile($definition, $dataset, $context);
+        $cap = min($definition->limit ?? PHP_INT_MAX, $cap);
+
+        if ($compiled->grouped) {
+            $rows = $this->grouped($compiled, $cap)['rows'];
+        } else {
+            $query = (clone $compiled->query)->limit($cap);
+            $rows = (function () use ($query, $compiled) {
+                foreach ($query->cursor() as $row) {
+                    yield $this->shape((array) $row, $compiled->output);
+                }
+            })();
+        }
+
+        return ['dataset' => $definition->dataset, 'columns' => $compiled->output, 'rows' => $rows];
+    }
+
     /** @return array{rows:list<array<string,mixed>>,meta:array<string,mixed>} */
     private function rows(CompiledQuery $compiled, int $cap): array
     {

@@ -1094,7 +1094,10 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       `GET /api/admin/reporting/datasets`; the compliance report, export and schedules moved to the `reports` token area;
       RB-2 done: report definition schema v1, validator, query compiler with bound values and date buckets, preview
       `POST /api/admin/reporting/query` with small-group suppression (threshold 10, complementary group, counted on learners);
-      RB-3 (saved and shared reports), RB-4 (admin screen), RB-5 (schedules for saved reports), RB-7 (curated CLI and MCP set) pending)
+      RB-3 done: `saved_reports`, `GET|POST|PUT|DELETE /api/admin/reporting/saved`, sharing with tenant roles (the viewer's own
+      permissions and scope on every run), `needs_repair`, `.../saved/{id}/run` as json, csv or jsonl with the exports recorded
+      in `compliance_exports`; XLSX is not built yet (needs `maatwebsite/excel` streaming, planned with RB-5);
+      RB-4 (admin screen), RB-5 (schedules for saved reports), RB-7 (curated CLI and MCP set) pending)
 - [ ] (new) BI connector: read-only OData v4 feed per saved report for Excel, Power BI and Tableau, with a `reports:read`
       token that can be limited to one report; CSV and JSON lines URLs with recipes for Looker Studio, Metabase and
       Superset (plan `authoring-metric-and-report-builder.md` RB-6)
