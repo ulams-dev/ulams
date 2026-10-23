@@ -8,8 +8,8 @@ name: Release PR
 # with GITHUB_TOKEN starts no workflow by itself. publish.yml builds, scans, signs and moves the stable and
 # lts tags; release.yml attaches SBOMs and checksums. Nothing is released until a maintainer merges.
 #
-# Repository setting needed (owner): Settings > Actions > General > "Allow GitHub Actions to create and
-# approve pull requests". Checks do not run on the release pull request itself (it is opened with
+# Off until the owner turns it on: Settings > Actions > General > "Allow GitHub Actions to create and approve
+# pull requests", then the repository variable RELEASE_PLEASE=true. Checks do not run on the release pull request itself (it is opened with
 # GITHUB_TOKEN); it changes only CHANGELOG.md and version strings.
 
 on:
@@ -29,6 +29,7 @@ concurrency:
 
 jobs:
   release-please:
+    if: vars.RELEASE_PLEASE == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
