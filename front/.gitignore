@@ -20,3 +20,4 @@ public/firebase-messaging-sw.js
 
 # rollup-plugin-visualizer report (set ANALYZE=1 to open it)
 stats.html
+test-results/
