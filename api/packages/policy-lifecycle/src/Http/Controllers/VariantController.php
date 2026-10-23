@@ -7,13 +7,11 @@ use Illuminate\Http\Request;
 use Ulams\PolicyLifecycle\Exceptions\PolicyException;
 use Ulams\PolicyLifecycle\Http\PolicyPresenter;
 use Ulams\PolicyLifecycle\Models\PolicyVariant;
-use Ulams\PolicyLifecycle\Models\PolicyVersion;
 use Ulams\PolicyLifecycle\Services\PolicyAccess;
 use Ulams\PolicyLifecycle\Services\VariantGenerator;
-use Ulams\PolicyLifecycle\Services\VersionApprovalService;
 
 /**
- * The departmental courses of a policy and the approval of its first version.
+ * The departmental courses of a policy.
  *
  * @OA\Get(path="/api/admin/policies/{policy}/variants", operationId="admin.policies.by-id.variants.get", summary="List the department variants of a policy", tags={"Policies"}, security={{"passport": {}}},
  *     description="Each variant carries its stage, read from the Course Builder session: waiting, ingesting, interview, outlining, outline_review, generating, apply_review, applying, applied or failed.",
@@ -24,15 +22,10 @@ use Ulams\PolicyLifecycle\Services\VersionApprovalService;
  *     @OA\Parameter(name="policy", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(required=false, @OA\MediaType(mediaType="application/json", @OA\Schema(type="object", @OA\Property(property="variant_ids", type="array", description="only these departments (default: all that wait)", @OA\Items(type="string"))))),
  *     @OA\Response(response=202, description="the variants requested now", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=404, description="Unknown policy"), @OA\Response(response=422, description="Nothing to generate"), @OA\Response(response=503, description="AI is disabled"))
- * @OA\Post(path="/api/admin/policies/{policy}/versions/{number}/approve", operationId="admin.policies.by-id.versions.by-number.approve.post", summary="Approve a policy version", tags={"Policies"}, security={{"passport": {}}},
- *     description="Approves the first version once every department's course is applied and published in the Studio: the courses become mandatory for the department's group, the group is enrolled through a rule on a one-course path, and the version becomes the one learners are trained on. A decision of the owner (or of an admin acting for an absent owner, which the audit records); nothing approves itself.",
- *     @OA\Parameter(name="policy", in="path", required=true, @OA\Schema(type="string")),
- *     @OA\Parameter(name="number", in="path", required=true, @OA\Schema(type="integer")),
- *     @OA\Response(response=200, description="the approved version", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=404, description="Unknown policy or version"), @OA\Response(response=409, description="The version is not waiting for approval"), @OA\Response(response=422, description="A department course is not published yet"))
  */
 class VariantController extends PolicyApiController
 {
-    public function __construct(PolicyAccess $access, private VariantGenerator $generator, private VersionApprovalService $approvals)
+    public function __construct(PolicyAccess $access, private VariantGenerator $generator)
     {
         parent::__construct($access);
     }
@@ -55,18 +48,5 @@ class VariantController extends PolicyApiController
         }
 
         return $this->ok(collect($requested)->map(fn (PolicyVariant $v) => PolicyPresenter::variant($v->refresh(), $this->generator))->values(), 202);
-    }
-
-    public function approve(Request $request, string $policy, int $number): JsonResponse
-    {
-        $p = $this->policyFor($request, $policy);
-        $version = PolicyVersion::query()->where('policy_id', $p->id)->where('number', $number)->firstOrFail();
-        try {
-            $approved = $this->approvals->approveInitial($p, $version, $request->user());
-        } catch (PolicyException $e) {
-            return $this->fail($e);
-        }
-
-        return $this->ok(PolicyPresenter::version($approved));
     }
 }

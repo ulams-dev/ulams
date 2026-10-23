@@ -59,7 +59,12 @@ final class DashboardService
     {
         $variants = $policy->variants->filter(fn (PolicyVariant $v) => $v->course_id !== null)
             ->when(($filters['variant'] ?? null) !== null, fn ($c) => $c->filter(fn (PolicyVariant $v) => $v->id === $filters['variant']));
-        $query = Assignment::query()->with(['user', 'certificate'])->whereIn('course_id', $variants->pluck('course_id')->all() ?: [0])->latest('id');
+        $query = Assignment::query()->with(['user', 'certificate'])->latest('id')->where(function (Builder $any) use ($variants) {
+            $any->whereRaw('1 = 0');
+            foreach ($variants as $variant) {
+                $any->orWhereIn('id', $this->latestIds(array_values(array_filter([$variant->course_id, $variant->exam_course_id]))));
+            }
+        });
         match ($filters['status'] ?? null) {
             'overdue' => $query->open()->where('due_at', '<', now()),
             AssignmentStatus::ASSIGNED => $query->open()->where(fn (Builder $q) => $q->whereNull('due_at')->orWhere('due_at', '>=', now())),
@@ -77,7 +82,12 @@ final class DashboardService
      */
     public function people(Policy $policy, iterable $assignments): array
     {
-        $byCourse = $policy->variants->filter(fn (PolicyVariant $v) => $v->course_id !== null)->keyBy('course_id');
+        $byCourse = collect();
+        foreach ($policy->variants as $v) {
+            foreach (array_filter([$v->course_id, $v->exam_course_id]) as $courseId) {
+                $byCourse[$courseId] = $v;
+            }
+        }
         $versions = PolicyVersion::query()->where('policy_id', $policy->id)->pluck('number', 'id');
         $links = PolicyCertificate::query()->whereIn('fabric_pdf_id', collect($assignments)->pluck('certificate_id')->filter()->all() ?: [0])->pluck('policy_version_id', 'fabric_pdf_id');
         $releases = [];
@@ -91,7 +101,8 @@ final class DashboardService
                 'department' => $variant?->department_label,
                 'variantId' => $variant?->id,
                 'courseId' => $assignment->course_id,
-                'courseVersion' => $variant !== null ? $this->release($releases, $variant, $assignment) : null,
+                'courseVersion' => $variant !== null && (int) $assignment->course_id === (int) $variant->course_id ? $this->release($releases, $variant, $assignment) : null,
+                'exam' => $variant !== null && $variant->exam_course_id !== null && (int) $assignment->course_id === (int) $variant->exam_course_id,
                 'status' => $assignment->displayStatus(),
                 'source' => $assignment->source,
                 'assignedAt' => $assignment->assigned_at?->toIso8601String(),
@@ -119,10 +130,25 @@ final class DashboardService
         return $page;
     }
 
-    /** @return Builder<Assignment> */
+    /**
+     * The department's assignments that stand now: each person's latest assignment of the department course or of its
+     * exam course (after a minor change the exam replaces the course as what the person owes).
+     *
+     * @return Builder<Assignment>
+     */
     private function assignments(PolicyVariant $variant): Builder
     {
-        return Assignment::query()->where('course_id', $variant->course_id ?? 0);
+        return Assignment::query()->whereIn('id', $this->latestIds(array_values(array_filter([$variant->course_id, $variant->exam_course_id]))));
+    }
+
+    /**
+     * @param array<int,int> $courseIds
+     *
+     * @return Builder<Assignment> one row per person: the id of their latest assignment of these courses
+     */
+    private function latestIds(array $courseIds): Builder
+    {
+        return Assignment::query()->selectRaw('MAX(id)')->whereIn('course_id', $courseIds ?: [0])->groupBy('user_id');
     }
 
     /**

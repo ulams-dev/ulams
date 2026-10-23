@@ -25,6 +25,11 @@ final class PolicyPresenter
             'approvedBy' => $version->approved_by,
             'approvedAt' => $version->approved_at?->toIso8601String(),
             'effectiveAt' => $version->effective_at?->toIso8601String(),
+            'suggestedClass' => $version->suggested_class,
+            'classReason' => $version->class_reason,
+            'rejectedBy' => $version->rejected_by,
+            'rejectReason' => $version->reject_reason,
+            'rolledOutAt' => $version->rolled_out_at?->toIso8601String(),
             'createdAt' => $version->created_at?->toIso8601String(),
         ];
     }
@@ -42,6 +47,7 @@ final class PolicyPresenter
             'sessionId' => $session,
             'courseId' => $variant->course_id,
             'pathId' => $variant->path_id,
+            'examCourseId' => $variant->exam_course_id,
             'ruleId' => $variant->rule_id,
             'position' => $variant->position,
         ];

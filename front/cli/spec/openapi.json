@@ -22044,11 +22044,140 @@
     "tags": [
      "Policies"
     ]
+   },
+   "post": {
+    "description": "The file becomes the next version, in review, and a new revision of each department's source: Living Course detects what changed and proposes the update of each department's course (one proposal per department, reviewed item by item through the living-course endpoints). The first version must be approved, and no other version may wait for a decision. A file with the same text as the current version is refused.",
+    "operationId": "admin.policies.by-id.versions.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "properties": {
+         "file": {
+          "description": "Markdown, PDF or DOCX",
+          "format": "binary",
+          "type": "string"
+         }
+        },
+        "required": [
+         "file"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the version with its departments' rollouts"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy"
+     },
+     "409": {
+      "description": "Not ready for a change, or the same text"
+     },
+     "422": {
+      "description": "Rejected file"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Upload a new version of a policy",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/versions/{number}": {
+   "get": {
+    "description": "The source diff, each department's proposal and where it stands, the suggested change class with its reasons, what still blocks approval, and the pre-flight: how many certificates approving will revoke and how many people it will reassign, per department (`?class=minor|major` previews the other class).",
+    "operationId": "admin.policies.by-id.versions.by-number.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "number",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "in": "query",
+      "name": "class",
+      "schema": {
+       "enum": [
+        "minor",
+        "major"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the version with review details"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy or version"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Review a policy version",
+    "tags": [
+     "Policies"
+    ]
    }
   },
   "/api/admin/policies/{policy}/versions/{number}/approve": {
    "post": {
-    "description": "Approves the first version once every department's course is applied and published in the Studio: the courses become mandatory for the department's group, the group is enrolled through a rule on a one-course path, and the version becomes the one learners are trained on. A decision of the owner (or of an admin acting for an absent owner, which the audit records); nothing approves itself.",
+    "description": "First version: works once every department course is applied and published in the Studio; the courses become mandatory for the department's group, the group is enrolled through a rule on a one-course path, and the version becomes the one learners are trained on. A change: every department course is updated from its proposal and, when all are, certificates linked to the previous version are revoked and those people are given the exam (minor) or the course (major) with the policy's due days. The change class is suggested from the proposals; the owner may raise it, and may lower it only with a `reason`. A decision of the owner (or of an admin acting for an absent owner, which the audit records); nothing approves itself, and no AI decides who completes anything.",
     "operationId": "admin.policies.by-id.versions.by-number.approve.post",
     "parameters": [
      {
@@ -22068,6 +22197,33 @@
       }
      }
     ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "change_class": {
+          "enum": [
+           "minor",
+           "major"
+          ],
+          "type": "string"
+         },
+         "overwrite": {
+          "description": "replace edits made in the admin after the last apply",
+          "type": "boolean"
+         },
+         "reason": {
+          "description": "required to approve a change as a lower class than suggested",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": false
+    },
     "responses": {
      "200": {
       "content": {
@@ -22077,7 +22233,7 @@
         }
        }
       },
-      "description": "the approved version"
+      "description": "the version (status applying until every department is updated, then approved)"
      },
      "403": {
       "description": "Forbidden"
@@ -22086,10 +22242,10 @@
       "description": "Unknown policy or version"
      },
      "409": {
-      "description": "The version is not waiting for approval"
+      "description": "Not waiting for approval, or the update conflicts with edits"
      },
      "422": {
-      "description": "A department course is not published yet"
+      "description": "Something blocks approval, or a lower class without a reason"
      }
     },
     "security": [
@@ -22098,6 +22254,78 @@
      }
     ],
     "summary": "Approve a policy version",
+    "tags": [
+     "Policies"
+    ]
+   }
+  },
+  "/api/admin/policies/{policy}/versions/{number}/reject": {
+   "post": {
+    "description": "The change is not adopted: its open proposals are rejected, the current version stays in force and nobody is retrained. A corrected file is uploaded as a new version.",
+    "operationId": "admin.policies.by-id.versions.by-number.reject.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "policy",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "number",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "reason": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "reason"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the rejected version"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "Unknown policy or version"
+     },
+     "409": {
+      "description": "Only a change in review can be rejected"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Reject a policy version in review",
     "tags": [
      "Policies"
     ]

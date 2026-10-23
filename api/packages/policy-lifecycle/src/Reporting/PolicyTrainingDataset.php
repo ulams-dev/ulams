@@ -73,13 +73,13 @@ class PolicyTrainingDataset extends Dataset
         $now = now();
         $query = DB::table('policy_variants as v')
             ->join('policies as p', 'p.id', '=', 'v.policy_id')
-            ->join('compliance_assignments as a', fn ($join) => $join->on('a.course_id', '=', 'v.course_id'))
+            ->join('compliance_assignments as a', fn ($join) => $join->on('a.course_id', '=', 'v.course_id')->orOn('a.course_id', '=', 'v.exam_course_id'))
             ->leftJoin('users as u', fn ($join) => $join->on('u.id', '=', 'a.user_id')->whereNull('u.deleted_at'))
             ->leftJoin('fabric_pdfs as f', 'f.id', '=', 'a.certificate_id')
             ->leftJoin('policy_certificates as pc', 'pc.fabric_pdf_id', '=', 'f.id')
             ->leftJoin('policy_versions as pv', 'pv.id', '=', 'pc.policy_version_id')
-            // each person once per department: the latest assignment of the department's course
-            ->whereRaw('a.id = (SELECT MAX(a2.id) FROM compliance_assignments a2 WHERE a2.user_id = a.user_id AND a2.course_id = v.course_id)');
+            // each person once per department: the latest assignment of the course or of its exam
+            ->whereRaw('a.id = (SELECT MAX(a2.id) FROM compliance_assignments a2 WHERE a2.user_id = a.user_id AND (a2.course_id = v.course_id OR a2.course_id = v.exam_course_id))');
         // an owner without `policy_manage` sees only their own policies; no viewer sees nothing
         if (!$context->can(PolicyPermissionsEnum::MANAGE)) {
             $query->where('p.owner_user_id', $context->viewer?->getAuthIdentifier() ?? 0);

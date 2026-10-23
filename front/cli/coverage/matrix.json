@@ -1,5 +1,5 @@
 {
- "summary": "656/745 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "659/748 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -1828,6 +1828,18 @@
   {
    "key": "GET /api/admin/policies/{policy}/versions",
    "summary": "List the versions of a policy",
+   "command": "policies.versions-list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/versions",
+   "summary": "Upload a new version of a policy",
+   "command": "policies.versions-add",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/policies/{policy}/versions/{number}",
+   "summary": "Review a policy version",
    "command": "policies.versions",
    "status": "covered"
   },
@@ -1835,6 +1847,12 @@
    "key": "POST /api/admin/policies/{policy}/versions/{number}/approve",
    "summary": "Approve a policy version",
    "command": "policies.versions-approve",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/policies/{policy}/versions/{number}/reject",
+   "summary": "Reject a policy version in review",
+   "command": "policies.versions-reject",
    "status": "covered"
   },
   {

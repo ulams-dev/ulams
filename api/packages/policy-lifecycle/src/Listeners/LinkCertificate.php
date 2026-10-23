@@ -9,7 +9,7 @@ use Ulams\PolicyLifecycle\Models\PolicyVariant;
 use Ulams\TemplatesPdf\Events\PdfCreated;
 
 /**
- * A certificate for a department's course is tied to the policy version in force when it was issued (ADR 0140),
+ * A certificate for a department's course, or for its exam course, is tied to the policy version in force when it was issued (ADR 0140),
  * in the package's own table so templates-pdf stays unchanged. Courses that are not policy variants are ignored.
  */
 final class LinkCertificate
@@ -20,7 +20,8 @@ final class LinkCertificate
         if ($pdf->assignable_type !== Course::class || !$pdf->assignable_id || !$pdf->user_id) {
             return;
         }
-        $variant = PolicyVariant::query()->where('course_id', (int) $pdf->assignable_id)->first();
+        $courseId = (int) $pdf->assignable_id;
+        $variant = PolicyVariant::query()->where('course_id', $courseId)->orWhere('exam_course_id', $courseId)->first();
         $policy = $variant !== null ? Policy::query()->find($variant->policy_id) : null;
         if ($variant === null || $policy === null || $policy->current_version_id === null) {
             return;

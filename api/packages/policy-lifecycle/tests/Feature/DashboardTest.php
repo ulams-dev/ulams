@@ -15,55 +15,20 @@ use Ulams\Courses\Models\CourseUserPivot;
 use Ulams\Courses\Tests\Models\User;
 use Ulams\PolicyLifecycle\Models\Policy;
 use Ulams\PolicyLifecycle\Models\PolicyCertificate;
+use Ulams\PolicyLifecycle\Tests\Support\TrainsPeople;
 use Ulams\PolicyLifecycle\Tests\TestCase;
 use Ulams\TemplatesPdf\Database\Seeders\TemplatesPdfSeeder;
 use Ulams\TemplatesPdf\Models\FabricPDF;
 
 class DashboardTest extends TestCase
 {
+    use TrainsPeople;
+
     protected function setUp(): void
     {
         parent::setUp();
         Notification::fake();
         $this->seed(TemplatesPdfSeeder::class);
-    }
-
-    /**
-     * An approved policy with two engineers and one salesperson enrolled by the departments' groups.
-     *
-     * @return array{0:Policy,1:array<int,User>,2:User}
-     */
-    private function trainedPolicy($owner): array
-    {
-        $id = $this->createPolicy($owner);
-        $policy = Policy::query()->findOrFail($id);
-        $engineers = [$this->named('Ada', 'Engineer'), $this->named('Linus', 'Engineer')];
-        $seller = $this->named('Sam', 'Seller');
-        foreach ($engineers as $user) {
-            Group::query()->findOrFail($policy->variants[0]->group_id)->users()->attach($user->getKey());
-        }
-        Group::query()->findOrFail($policy->variants[1]->group_id)->users()->attach($seller->getKey());
-        $this->generateAll($owner, $id);
-        foreach ($policy->refresh()->variants as $variant) {
-            $this->reviewAndPublish($owner, Session::query()->findOrFail($variant->session_id));
-        }
-        $this->actingAs($owner, 'api')->postJson("/api/admin/policies/{$id}/versions/1/approve")->assertOk();
-
-        return [$policy->refresh(), $engineers, $seller];
-    }
-
-    private function named(string $first, string $last): User
-    {
-        $user = User::factory()->create(['first_name' => $first, 'last_name' => $last]);
-        $user->assignRole(\Ulams\Core\Enums\UserRole::STUDENT);
-
-        return $user;
-    }
-
-    private function finish(User $student, int $courseId): void
-    {
-        CourseUserPivot::query()->where('user_id', $student->getKey())->where('course_id', $courseId)->update(['finished' => true]);
-        event(new CourseFinished(CoreUser::find($student->getKey()), Course::query()->findOrFail($courseId)));
     }
 
     private function dashboard($user, Policy $policy, string $query = '')

@@ -49,4 +49,32 @@ describe("policies", () => {
     expect(r.code).not.toBe(0);
     expect(r.stdout + r.stderr).toContain("publish the course in the Studio first");
   });
+
+  it("approves a change with the class and the reason, and reviews it with a class preview", async () => {
+    let body: unknown;
+    let query: Record<string, string> = {};
+    const routes: Record<string, Handler> = {
+      "POST /api/admin/policies/01pol/versions/2/approve": (req) => ((body = req.body), ok({ number: 2, status: "applying" })),
+      "GET /api/admin/policies/01pol/versions/2": (req) => ((query = req.query), ok({ number: 2, status: "in_review", suggestion: { class: "major", reasons: [] }, preflight: { changeClass: "minor", departments: [] } })),
+    };
+
+    const approved = await runCli(["policies", "versions-approve", "01pol", "2", "--change-class", "minor", "--reason", "Wording only", "--yes", "--json"], { env, routes });
+    const review = await runCli(["policies", "versions", "01pol", "2", "--class", "minor", "--json"], { env, routes });
+
+    expect(approved.code).toBe(0);
+    expect(body).toMatchObject({ change_class: "minor", reason: "Wording only" });
+    expect(review.code).toBe(0);
+    expect(query.class).toBe("minor");
+  });
+
+  it("rejects a change with a reason", async () => {
+    let body: unknown;
+    const r = await runCli(["policies", "versions-reject", "01pol", "2", "--reason", "Sent by mistake", "--yes", "--json"], {
+      env,
+      routes: { "POST /api/admin/policies/01pol/versions/2/reject": (req) => ((body = req.body), ok({ number: 2, status: "rejected" })) },
+    });
+
+    expect(r.code).toBe(0);
+    expect(body).toEqual({ reason: "Sent by mistake" });
+  });
 });

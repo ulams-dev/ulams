@@ -30,7 +30,8 @@ env:
     gift-reports=topic-type-gift,reports,dictionaries
     commerce=cart,commerce,entitlements,vouchers,payments,invoices,consultations,consultation-access,webinar,youtube,jitsi,assign-without-account
     platform=Integrations,auth,identity,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,ai,webhooks
-    content=compliance,policy-lifecycle,reporting,templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
+    content=compliance,reporting,templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
+    policy=policy-lifecycle
 
 jobs:
   changes:
@@ -375,7 +376,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [learning, living, tasks-topics, gift-reports, commerce, platform, content]
+        shard: [learning, living, tasks-topics, gift-reports, commerce, platform, content, policy]
     defaults:
       run:
         working-directory: api

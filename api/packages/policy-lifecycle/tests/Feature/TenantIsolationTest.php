@@ -27,7 +27,10 @@ class TenantIsolationTest extends TestCase
             ['GET', "/api/admin/policies/{$id}/versions", []],
             ['GET', "/api/admin/policies/{$id}/variants", []],
             ['POST', "/api/admin/policies/{$id}/variants/generate", []],
+            ['POST', "/api/admin/policies/{$id}/versions", []],
+            ['GET', "/api/admin/policies/{$id}/versions/1", []],
             ['POST', "/api/admin/policies/{$id}/versions/1/approve", []],
+            ['POST', "/api/admin/policies/{$id}/versions/1/reject", ['reason' => 'No']],
             ['GET', "/api/admin/policies/{$id}/dashboard", []],
             ['GET', "/api/admin/policies/{$id}/dashboard/export", []],
         ];
