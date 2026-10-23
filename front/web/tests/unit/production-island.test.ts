@@ -60,9 +60,10 @@ describe("Production island", () => {
     root.querySelector<HTMLButtonElement>('[data-export="json"]')!.click();
 
     expect(save).toHaveBeenCalledTimes(2);
-    expect(save.mock.calls[0].slice(0, 2)).toEqual(["authoring-metrics-course-5.csv", "text/csv"]);
-    expect(save.mock.calls[0][2]).toMatch(/^course_id,session_id,/);
-    expect(JSON.parse(save.mock.calls[1][2])).toMatchObject({ course_id: 5, author_minutes: null });
+    const [csvCall, jsonCall] = save.mock.calls as [string, string, string][];
+    expect(csvCall!.slice(0, 2)).toEqual(["authoring-metrics-course-5.csv", "text/csv"]);
+    expect(csvCall![2]).toMatch(/^course_id,session_id,/);
+    expect(JSON.parse(jsonCall![2])).toMatchObject({ course_id: 5, author_minutes: null });
     expect(await announced()).toBe("Downloaded authoring-metrics-course-5.json");
   });
 
