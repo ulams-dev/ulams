@@ -8,6 +8,7 @@ import React, {
 import { UlamsContext } from "../../context";
 
 import { getImageApiPath, getImageCachePath } from "./utils";
+import { storagePathImage } from "@ulams/images";
 
 interface ImageProps
   extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "onError"> {
@@ -106,6 +107,28 @@ const Image = forwardRef<HTMLImageElement, ImageProps>(
       },
       [sizesPaths]
     );
+
+    // Outside the default `php` mode (VITE_ULAMS_IMAGE_SERVICE, ADR 0193) the image builder serves the file and the
+    // `imgcache` guess above is not used. Without VITE_ULAMS_IMAGE_SOURCES it stays on the PHP resizer.
+    const built = useMemo(
+      () => (path.includes(".svg") ? undefined : storagePathImage(path, imgSize, "content")),
+      [path, imgSize]
+    );
+
+    if (built) {
+      return (
+        <div className="ulams-image">
+          <img
+            loading={"lazy"}
+            ref={imgRef}
+            src={built.src}
+            srcSet={built.srcSet}
+            alt={alt}
+            {...props}
+          />
+        </div>
+      );
+    }
 
     if (path.includes(".svg")) {
       return (

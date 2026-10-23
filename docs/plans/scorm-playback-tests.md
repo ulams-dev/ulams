@@ -1,7 +1,7 @@
 # SCORM playback regression tests (unblocks scorm-again 3)
 
 Status: Proposed (2026-10-22). The owner approved the recommended defaults of section 9 on 2026-10-23
-(own MIT fixtures; scorm-again 3 keeps the 2.6 behaviour). Progress: SC-1 (#448) and SC-2 in review. ADR 0197 (Proposed) records the decision.
+(own MIT fixtures; scorm-again 3 keeps the 2.6 behaviour). Progress: SC-1 (#448), SC-2 (#449), SC-3 (#450) in review; SC-4 stopped, see section 11. ADR 0197 (Proposed) records the decision.
 
 ## 1. Goal
 
@@ -60,6 +60,12 @@ examples) and two generic `scorm.zip` files.
 - **Content player (nightly)**: a job in `nightly-conformance.yml` that seeds a tenant, uploads the fixtures through
   `POST /api/admin/scorm/upload`, launches them in the reference front and reads the stored `ScoTracking` through an
   admin endpoint or a test-only artisan command.
+  *Implemented (SC-3), deviation from the plan:* the content player is not run in the nightly conformance workflow
+  against a seeded API. `content-player.spec.ts` plays the real `player.html`/`player.js` with the vendored
+  scorm-again against the same mock server (canned launch `cmi`, recorded track requests) on every pull request
+  that touches the players, because that needs no API stack and no network and catches the same regressions in
+  the player. The PHP tracking stays covered by `ScormTrackApiTest` and `ScormContentOriginApiTest`. A seeded,
+  end-to-end nightly run remains possible later; it is not needed to unblock scorm-again 3.
 - **Golden traces**: `tests/fixtures/playback/golden/<player>/<fixture>.json` with the API call log, the commit
   bodies and the final stored tracking; timestamps and durations are normalised (`PT…` rounded, ISO dates replaced).
   `UPDATE_GOLDEN=1` rewrites them; a changed trace needs a reason in the PR description.
@@ -112,3 +118,37 @@ parser (`POST /api/admin/scorm/parse`) in PHPUnit.
 | SC-2 | React player specs in `admin` and `front` with mocked API and golden traces on 2.6.x | CI shows the traces for 1.2 and 2004 |
 | SC-3 | Content player job in the nightly conformance workflow with golden traces | the nightly run plays both packages through the reference front |
 | SC-4 | `scorm-again` 3 upgrade with explicit defaults, AICC removed, ignore rule #431 dropped | all traces unchanged on 3.x |
+
+## 11. SC-4 result (2026-10-23): scorm-again 3.4.7 cannot reproduce the 2.6 behaviour
+
+As section 4.3 requires, the upgrade stops here and the difference goes to the owner. The golden traces were run
+against scorm-again 3.4.7 (`SCORM_AGAIN_DIR=<unpacked package> yarn workspace front test:scorm`, which swaps the
+library in the React player and the vendored content-player file) after setting every changed default
+explicitly (`mastery_override: false`, `useAsynchronousCommits: true`, `throttleCommits: false`,
+AICC import removed). The settings block of every trace then matched. These differences remain, none of
+them reachable through a setting:
+
+| # | Difference in 3.4.7 | Seen by | Learner or LMS impact |
+|---|---|---|---|
+| 1 | Validation errors are specific: 403/404/405/406/407 instead of 101 for read-only, type, range and vocabulary errors | SCO | A SCO that checks `LMSGetLastError` after a rejected write sees another code; the write is rejected in both |
+| 2 | SCORM 1.2 `cmi.suspend_data` of 4097 characters is accepted (2.6 rejected it with 101) | SCO, LMS | Larger suspend data reaches the LMS; the 4096 limit of the standard is no longer enforced |
+| 3 | SCORM 1.2 `session_time` and `total_time` are normalised (`0000:01:30` becomes `00:01:30`) | SCO, LMS | The value posted to `/track` has another format; `convertTimeInHundredth` parses both |
+| 4 | SCORM 2004 `GetValue` of `cmi.location`, `cmi.suspend_data` and `cmi.score.scaled` before they are set returns "" with error 403 (2.6: error 0) | SCO | Spec-conforming; a SCO that treats a non-zero code as failure changes behaviour |
+| 5 | SCORM 2004 `cmi.total_time` reads `PT0S` at the start (2.6: empty) | SCO | Minor |
+| 6 | After a rejected write, a later successful 2004 `GetValue` still reports the old error (406) | SCO | Stale error code |
+| 7 | The `LMSCommit`/`Commit` events fire when the SCO calls Commit (2.6: late, after the commit settled), and SCORM 2004 `Commit` now fires the event at all (2.6: never in the traces) | LMS | The content player posts the whole CMI at those moments: other order, and two extra posts per 2004 session. `ScormTrackService::updateScoTracking` reads dotted keys, so a nested whole-CMI body is not what it was written for |
+| 8 | Community mode (`onScormPost`/`onScormGet`): other order of posts | LMS | Same cause as 7 |
+| 9 | `renderCommitObject(false)` reports `totalTimeSeconds` 0 (2.6: the session time) and adds `globalObjectives` | none today | Neither player sets `lmsCommitUrl`, so no commit object is sent |
+| 10 | The bundle grows from 128 KB to 595 KB (vendored `scorm-again.min.js`) | operators | Air-gapped installs carry more |
+
+Decision for the owner:
+
+1. **Stay on 2.6.x** (recommended while the LMS keeps its current tracking): the Dependabot ignore rule stays, its
+   reason now cites this section; nothing changes for learners. 2.6.x still gets fixes.
+2. **Accept 3.x**: a separate, owner-approved PR that upgrades both apps and the vendored file, sets the explicit
+   settings from `front/src/lib/scorm-player/settings.ts`, rewrites the golden traces with the differences above and
+   first makes `ScormTrackService` safe for whole-CMI commit bodies (difference 7).
+
+What this PR delivers instead: the explicit settings (a no-op on 2.6, identical goldens), the AICC import removed
+from `player.tsx`, the `SCORM_AGAIN_DIR` switch so any scorm-again release can be played against the goldens, a
+complete difference listing in a failing trace, and this analysis.

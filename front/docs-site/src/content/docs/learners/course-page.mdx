@@ -21,6 +21,7 @@ signing in. An unknown course id shows the [404 page](/learners/error-pages/).
   length, language and others from the course), the course image and up to four tutors. The
   buttons are "Start learning" (or "Continue learning") and, when the course has a free-preview
   topic, "Free preview".
+- **Versions.** A course with versions (levels or roles) shows a **Choose your version** section above the program, and a learner may see a hint to switch. See [Choosing your version](/learners/course-versions/).
 - **Program.** Every lesson with its topics, their format icons and durations. Each academy
   styles it differently: a folio for `coffee`, a timeline for `oncall`, a mission map
   ("Your mission map") for `nightsky`, concentric orbits for `gravity`, an atlas table of contents for `poland`, a timeline for `ulam`. Lessons are called chapters, modules, missions or notebooks.
@@ -36,7 +37,7 @@ progress (and gives up after 0.9 seconds, rendering the public page instead). Wh
 has access to the course:
 
 - the header shows the completion percentage;
-- the primary button reads "Continue learning" and opens the first topic that is not completed;
+- the primary button reads "Continue learning" and opens the first topic that is not completed (in the version the learner is in, when the course has [versions](/learners/course-versions/));
 - a line under the bar says what is next and how much is left, from the topic durations the API
   returns: "Next: Roasting - about 1 h 10 min left", "3 topics - about 1 h 15 min in total" before
   the first topic, or "Course complete" at 100%; without durations it counts topics;

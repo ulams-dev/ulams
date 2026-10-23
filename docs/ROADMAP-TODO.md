@@ -111,10 +111,13 @@ small commits → tests → summary.
       recommended defaults for Q1 to Q11, approved the matching spec sections (ROADMAP-PROMPT 3.1 and 4.4), and accepted that variant
       courses stay unlisted and unsold on their own until CV-5 routing exists
 
-- [ ] (partial: IMG-1 done, the `@ulams/sdk/images` URL builder, presets and unit tests; IMG-2 done, `Img.astro`, the plain `<img>` sites in `front/ui` and rich-text images on the builder with a runtime `ULAMS_IMAGE_SERVICE`; the client-side `elements/showcase.ts` and `InteractiveLesson` poster are unchanged; IMG-6a done, MyDevil fronts and the landing export in `cloudflare` mode with `deploy/mydevil/bin/check-images.sh`; IMG-3 to IMG-7 pending) (new) Decision 2026-10-22: the owner asked to replace the PHP image resize with Cloudflare Image Transformations (enabled and
+- [ ] (partial: IMG-1 done, the `@ulams/sdk/images` URL builder, presets and unit tests; IMG-2 done, `Img.astro`, the plain `<img>` sites in `front/ui` and rich-text images on the builder with a runtime `ULAMS_IMAGE_SERVICE`; the client-side `elements/showcase.ts` and `InteractiveLesson` poster are unchanged; IMG-6a done, MyDevil fronts and the landing export in `cloudflare` mode with `deploy/mydevil/bin/check-images.sh`; IMG-4 merged (#469), `IMAGES_CONTENT_URLS=api|original` for imports and the markdown helper, MyDevil on `original`, seed checks, the PHP endpoint labelled legacy and optional in its README and OpenAPI text; IMG-3 merged (#427): admin `ResponsiveImage`, `resizedImage` and `WysiwygMarkdown` on the builder with `REACT_APP_IMAGE_SERVICE` (default `php`, byte-identical URLs), unit-tested per mode, not yet seen against a real Cloudflare zone, which needs the demos' admin runtime config (IMG-6b); IMG-5 merged (#472) and IMG-6b merged (#470), IMG-7 in review) (new) Decision 2026-10-22: the owner asked to replace the PHP image resize with Cloudflare Image Transformations (enabled and
       verified on the `ulams.app` zone), then narrowed it the same day: keep `api/packages/images` and `/api/images/img` for
       self-hosters and other clients, stop PHP resizing on the hosted demos and the landing, and make the image service a deployment
       choice. Plan `docs/plans/images-cloudflare.md` and ADR 0193 were accepted by the owner on 2026-10-22 with the recommended defaults (plan section 14)
+      Note 2026-10-23 (IMG-5, merged): the legacy learner app builds avatar URLs through the shared builder with the build setting
+      `VITE_ULAMS_IMAGE_SERVICE` (default `php`, the URLs it always built; `cloudflare`, `noop`), `VITE_ULAMS_IMAGE_SOURCES` and
+      `VITE_ULAMS_IMAGE_TRANSFORM_ORIGIN`; the `Image` component keeps its `imgcache` flow only in `php`. The app is not hosted anywhere
 
 - [x] (new) Decision 2026-10-22: the owner approved `docs/plans/authoring-metric-and-report-builder.md` and accepted ADR 0194 with the recommended defaults (originally proposed 2026-10-22): authoring time and cost
       metric, report builder with saved reports and an OData BI feed, Notion integration token. Open questions Q1 to Q13 in plan
@@ -375,7 +378,7 @@ items → M1.9 conformance. Work branch: `phase-1/content-formats`. Open items: 
       runtime and tracking traces captured on 2.6.x; then `scorm-again` 3 with every changed default set to the 2.6
       behaviour, AICC removed and the Dependabot ignore rule #431 dropped (closed PR #232 explains why)
       (plan `docs/plans/scorm-playback-tests.md` SC-1 to SC-4; ADR 0197 Proposed)
-      (partial: SC-1 fixtures, trace normaliser and parser tests done; SC-2 React player specs and golden traces done; SC-3 content player and SC-4 upgrade pending)
+      (partial: SC-1 fixtures, trace normaliser and parser tests done; SC-2 React player specs and golden traces done; SC-3 content player specs done, run per pull request instead of nightly; SC-4 upgrade stopped: scorm-again 3.4.7 differs from 2.6 in ways settings cannot pin, owner decision in plan section 11)
 - [x] (new) SCORM/cmi5 content of all tenants is served from the shared `storage.localhost` origin; move
       packages and players to a per-tenant content origin (M1.1) (SCORM and cmi5 done, `<slug>.content.localhost`,
       `api/docs/content-origin.md`; run `ulams:tenant:sync-env` so existing tenants get `CONTENT_ORIGIN`)
@@ -784,15 +787,31 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       (partial: built in CV-4, PR #396: each variant outline is reviewed with the builder's outline diff against the base outline and each
       generated variant with a new `VariantReview` card (lessons kept, rewritten, added, skipped; word-level text changes) built on the existing
       `BlueprintDiff`, approved one by one, applied as its own course through the domain services, grouped as a family hidden from the catalogue
-      and published with the base; the 3.1 compare screen shows a variant against its base (CV-3, waiting to merge); open: Living Course patches for variants and rebase on a newer base (CV-5))
+      and published with the base; the 3.1 compare screen shows a variant against its base (CV-3, waiting to merge); Living Course patches for variants built in CV-5 part 3 (waiting to merge: one proposal per variant in a group, shared elements take the base patch at no model cost, only the variant's own elements analysed, accept in group, apply per variant); open: the tabbed review in the studio and rebase on a newer base)
 - [ ] (new) Learner routing: self-declared role and level at enrolment, an optional cited placement check, assignment by an
       admin or an enrolment rule (6.2), and an adaptive hint from Learner Insights to switch variant that the learner confirms
       (never a silent switch); progress carries over for elements that are identical in both variants
+      (partial, CV-5 part 1 of 3, waiting to merge: the API side is built. Learner endpoints `api/courses/{course}/variants` (public), `variant`, `placement`; admin
+      endpoints `api/admin/course-variant-groups` with assignment of learners and user groups and attribute rules (the `variant` action of the enrolment rules,
+      routing only learners who already have access); lock of assigned variants, pinned course, the placement check (cited quiz questions that already exist, scored by
+      code, advisory, off by default) and the hint rules (too hard, too easy; at most one a week, dismiss stops them); completion carried over through the courses
+      progress service for topics with the same element and content, quizzes retaken; variant pages open but unlisted and `variant_family` on the catalogue card;
+      open: the learner screens (CV-5 part 2) and the comparison catalogue status)
+      (partial: learner screens built in CV-5 part 2 (waiting to merge): the version picker on the course page (radio group, works without
+      JavaScript, read-only for visitors, locked and "assigned by your organisation" states), the dismissible hint to switch, the advisory placement
+      check with its result page, "Continue" following the learner's version, EN, PL and ZH, axe and keyboard specs; open: certificates that name the
+      variant and Living Course for variants (CV-5 part 3), and carrying the choice from the course page into enrolment or purchase)
 - [ ] (new) One entitlement for the course covers all its variants (ADR 0130); certificates name the variant completed
+      (partial, CV-5 part 1 of 3, waiting to merge: a derived `family` entitlement per variant the learner uses, ended and moved with the entitlements it derives
+      from, so refunds, expiry and renewals reach every variant and `course_user` stays a projection; mandatory training accepts any variant or only the pinned
+      one, a variant uses the default course's compliance settings; certificates name the variant (`@VarCourseVariant`, `course_variant` on the verification record) and Living Course reaches every variant (CV-5 part 3, waiting to merge))
 - [ ] (new) Tenant isolation suite for the variant and routing endpoints; WCAG 2.2 AA for the variant picker and placement
       check; evals for variant grounding and level fit through the eval command only
+      (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #396; the routing endpoints have
+      isolation tests and are in the route-walking coverage test (CV-5 part 1, waiting to merge); open: the axe and keyboard checks of the picker and the placement
+      check (CV-5 part 2) and the evals)
       (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #396; open: the routing endpoints,
-      the picker and the placement check (CV-5) and the evals)
+      the picker and the placement check (CV-5) and the evals; the axe and keyboard checks of the picker, the hint and the placement check are in CV-5 part 2, waiting to merge)
 
 ---
 
@@ -1116,7 +1135,10 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       `GET /api/admin/reporting/datasets`; the compliance report, export and schedules moved to the `reports` token area;
       RB-2 done: report definition schema v1, validator, query compiler with bound values and date buckets, preview
       `POST /api/admin/reporting/query` with small-group suppression (threshold 10, complementary group, counted on learners);
-      RB-3 (saved and shared reports), RB-4 (admin screen), RB-5 (schedules for saved reports), RB-7 (curated CLI and MCP set) pending)
+      RB-3 done: `saved_reports`, `GET|POST|PUT|DELETE /api/admin/reporting/saved`, sharing with tenant roles (the viewer's own
+      permissions and scope on every run), `needs_repair`, `.../saved/{id}/run` as json, csv or jsonl with the exports recorded
+      in `compliance_exports`; XLSX is not built yet (needs `maatwebsite/excel` streaming, planned with RB-5);
+      RB-4 (admin screen), RB-5 (schedules for saved reports), RB-7 (curated CLI and MCP set) pending)
 - [ ] (new) BI connector: read-only OData v4 feed per saved report for Excel, Power BI and Tableau, with a `reports:read`
       token that can be limited to one report; CSV and JSON lines URLs with recipes for Looker Studio, Metabase and
       Superset (plan `authoring-metric-and-report-builder.md` RB-6)
@@ -1147,6 +1169,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       Note 2026-10-22 (CAC-3, #384): partial. Folder and server sync works in both directions without a merge: `pull` stops with `SYNC_CONFLICT` when both sides changed and `push` turns
       `BASE_OUTDATED` and `STALE_PROPOSAL` into the same error; the three-way merge, conflict files and `resolve` are CAC-4, and nothing watches a Git repository yet (CAC-6, CAC-7)
 - [ ] GitHub Action + Docker image; preview deployment per PR
+      Note 2026-10-22 (branch phase-7/git-action): partial. The course action `actions/course` (validate with SARIF, diff, preview comment, push, sync pull request `ulams/sync`, unit tested entrypoint),
+      the `ulams-cli` Dockerfile (about 290 MB, not published), `ulams course init --ci github`, CI headers `ULAMS_COMMIT`/`ULAMS_CHANGE_URL` and the outgoing webhook `course.version_applied`.
+      Open: preview academies per PR (tenant TTL, reaper, one-time token), publishing the image (M6-a)
 - [ ] Git merge triggers Living Course update proposal
       Note 2026-10-22 (#437): partial. A merged pull request is recorded on the revision (commit, subject, PR number and link) and shown on the update review; `living connections check --commit`
       for CI; `ulams course sources-connect` watches `sources/**` of the course repository; a push waits (`PROPOSAL_PENDING`) while an open proposal edits the same elements; the loop test
@@ -1268,6 +1293,13 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       the hosted demo academies and the `ulams.app` landing on Cloudflare Image Transformations with `onerror=redirect` and a `noop`
       kill switch, admin and imports on demo deployments without `/api/images/img`, the PHP images API kept as an optional legacy API
       (plan `docs/plans/images-cloudflare.md`, milestones IMG-1 to IMG-7; ADR 0193 Accepted 2026-10-22; IMG-1 starts first)
+      Note 2026-10-23 (IMG-6b, merged): prepared, not applied. Storage Worker `max-age=3600` with ETag for `image/*`,
+      `deploy/mydevil/bin/set-admin-images.sh` (admin mode through `runtime-config.json`), the optional WAF rule generated from
+      `allowedCloudflareOptions()` (`deploy/mydevil/cloudflare/image-waf-rule.mjs`) and the smoke check `ULAMS_EXPECT_WAF=1`. Deploying
+      the Worker, writing the admin config on MyDevil and creating the WAF rule are owner steps (`deploy/mydevil/STAGING-NOTES.md`)
+      Note 2026-10-23 (IMG-7, in review): operators page "Image service" (`operators/image-service.mdx`: modes, settings per client, Cloudflare
+      setup, free-plan budget, kill switch, WAF rule, `IMAGES_CONTENT_URLS`, the legacy PHP API) and the creators, developers and
+      MyDevil/VPS pages that mention images now point to it. Describes IMG-3 (#427), IMG-4 (#469), IMG-5 (#472) and IMG-6b (#470), all merged
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
 - [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI

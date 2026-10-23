@@ -28,6 +28,10 @@ final class EventCatalog
             'class' => 'Ulams\Courses\Events\CourseAssigned',
             'description' => 'A learner was given access to a course (assigned by an admin or a group, or granted by an order).',
         ],
+        'course.version_applied' => [
+            'class' => 'Ulams\CourseBuilder\Events\CourseVersionApplied',
+            'description' => 'A new version of a course made with the builder reached learners (generation, chat change, Living Course update, course-as-code import, restore); sent once per release. A Git repository follows the course with it.',
+        ],
         'update_proposal.ready' => [
             'class' => 'Ulams\LivingCourse\Events\UpdateProposalReady',
             'description' => 'A Living Course update proposal is ready for review (sent once per proposal).',
@@ -126,6 +130,7 @@ final class EventCatalog
             return match ($type) {
                 'course.completed' => ['object' => self::enrolment($event, ['completed_at' => now()->toIso8601String()]), 'key' => null],
                 'enrolment.created' => ['object' => self::enrolment($event, ['created_at' => now()->toIso8601String()]), 'key' => null],
+                'course.version_applied' => self::versionApplied($event),
                 'update_proposal.ready' => self::proposalReady($event),
                 'update_proposal.applied' => self::proposalApplied($event),
                 'certificate.issued' => self::certificate($event),
@@ -158,6 +163,7 @@ final class EventCatalog
         return match ($type) {
             'course.completed' => ['user' => $user, 'course' => $course, 'completed_at' => now()->toIso8601String()],
             'enrolment.created' => ['user' => $user, 'course' => $course, 'created_at' => now()->toIso8601String()],
+            'course.version_applied' => ['course_id' => 1, 'session_id' => '01SAMPLE0SESSION00000000000', 'version_id' => '01SAMPLE0VERSION000000000000', 'number' => 3, 'release_number' => 2, 'kind' => 'update', 'origin' => 'ai', 'reason' => 'Source update r1 → r2: 3 changes', 'trigger' => 'update', 'released_at' => now()->toIso8601String()],
             'update_proposal.ready' => ['proposal_id' => '01SAMPLE0PROPOSAL0000000000', 'session_id' => '01SAMPLE0SESSION00000000000', 'course_title' => 'Sample course', 'elements' => 3, 'answer_checks' => 1, 'status' => 'ready'],
             'update_proposal.applied' => ['proposal_id' => '01SAMPLE0PROPOSAL0000000000', 'session_id' => '01SAMPLE0SESSION00000000000', 'number' => 2, 'status' => 'applied', 'counts' => ['applied' => 3]],
             'certificate.issued' => ['user' => $user, 'certificate_id' => 1, 'course_id' => 1, 'issued_at' => now()->toIso8601String()],
@@ -227,6 +233,29 @@ final class EventCatalog
         $course = $event->getCourse();
 
         return ['user' => self::person($event->getUser()), 'course' => ['id' => $course->getKey(), 'title' => (string) $course->title]] + $extra;
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string} */
+    private static function versionApplied(object $event): array
+    {
+        $version = $event->version;
+        $release = $event->release;
+
+        return [
+            'object' => [
+                'course_id' => $release->course_id,
+                'session_id' => (string) $event->session->id,
+                'version_id' => (string) $version->id,
+                'number' => (int) $version->number,
+                'release_number' => (int) $release->number,
+                'kind' => (string) $version->kind,
+                'origin' => (string) $version->origin,
+                'reason' => $version->reason !== null ? mb_substr((string) $version->reason, 0, 300) : null,
+                'trigger' => (string) $release->trigger,
+                'released_at' => $release->released_at?->toIso8601String() ?? now()->toIso8601String(),
+            ],
+            'key' => 'course.version_applied:' . $release->id,
+        ];
     }
 
     /** @return array{object:array<string,mixed>,key:?string} */

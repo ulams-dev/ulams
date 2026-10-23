@@ -257,6 +257,44 @@ The demo fronts and the landing build with `ULAMS_IMAGE_SERVICE=cloudflare` inst
 - Rollback: rebuild with `ULAMS_IMAGE_SERVICE=noop` and restart. No data change.
 - Free plan quota: 5,000 unique transformations a month; watch Images > Transformations > Analytics. Record the first count here after the first week.
 
+## Images: admin, storage cache and WAF rule (IMG-6b, ADR 0193) - owner steps
+
+Prepared in the repository; **nothing below has been applied to Cloudflare, DNS or MyDevil**. Do the steps in this order; each one is
+reversible and none changes data.
+
+1. **Storage Worker cache header** (`cloudflare/storage.worker.js`). Image objects (`content-type: image/*`) now answer
+   `cache-control: public, max-age=3600` with their `ETag` (everything else stays `max-age=300`). An hourly demo reset rewrites the same
+   keys, so a longer lifetime would show stale images. Deploy from `deploy/mydevil/cloudflare` (an empty working directory for wrangler,
+   as for the landing): `wrangler deploy -c storage.wrangler.toml`. Check:
+   `curl -sI https://staging-storage.ulams.app/<slug>/<an image key> | grep -i -E 'cache-control|etag'` shows `max-age=3600` and an ETag.
+   Rollback: deploy the previous Worker version (`wrangler rollback`).
+2. **Admin runtime config** (needs an admin build with IMG-3, `REACT_APP_IMAGE_SERVICE`). The admin is static and shared by every
+   `<slug>-staging-admin` host, so the mode is a file, not a rebuild. Smoke one admin host first:
+   `sh deploy/mydevil/bin/check-images.sh coffee-staging-admin.ulams.app https://staging-storage.ulams.app/coffee/<an image key>`
+   (the admin host must be proxied and the source must pass). Then on MyDevil:
+   `sh ~/ulams/bin/set-admin-images.sh cloudflare` (second argument: comma-separated source origins, default
+   `https://staging-storage.ulams.app`). It writes `REACT_APP_IMAGE_SERVICE` and `REACT_APP_IMAGE_SOURCES` into
+   `~/ulams/admin/runtime-config.json`, keeping other keys; a page reload picks it up. Copy the step again whenever the admin build is
+   replaced wholesale (like `.htaccess`). Rollback: `sh ~/ulams/bin/set-admin-images.sh noop` (originals) or `php` (the API resizer).
+3. **Optional WAF rule** that blocks `/cdn-cgi/image/*` requests whose option string the builder never emits, so nobody can burn the
+   5,000-a-month free quota with arbitrary widths. Apply it **after** the fronts, the landing and the admin run in `cloudflare` mode, and
+   again after every change of the presets (`front/sdk/src/images/presets.json`):
+   - Print it: `node --experimental-strip-types --no-warnings deploy/mydevil/cloudflare/image-waf-rule.mjs --expression` (the expression;
+     `--rule` prints the rule as JSON for the API, `--list` the allowed option strings). The rule is built from `allowedCloudflareOptions()`
+     in `front/sdk/src/images.ts`, so it cannot drift from what the clients emit; a test checks that.
+   - Dashboard, zone `ulams.app`: Security > WAF > Custom rules > Create rule. Name `ulams: image options`, switch to "Edit expression",
+     paste the expression, action **Block**, Deploy. (The Free plan allows 5 custom rules and has no regex, so the expression is a list of
+     `starts_with` prefixes, about 1.5 KB of the 4 KB limit.) Through the API instead: `POST /zones/<zone id>/rulesets/<id of the
+     http_request_firewall_custom ruleset>/rules` with the `--rule` JSON and a token with "Zone WAF: Edit"; do not `PUT` the whole
+     entrypoint ruleset, that replaces the rules you already have.
+   - Verify: `ULAMS_EXPECT_WAF=1 sh deploy/mydevil/bin/check-images.sh coffee.ulams.app` must print `ok` for the transformation, the
+     `onerror=redirect` fallback and `WAF rule: width=777 blocked with 403`. The smoke's own option string is one of the allowed ones.
+   - If real pages show original images or 403s on `/cdn-cgi/image/`, a client emits an option string that is not on the list: disable the
+     rule (toggle it off in the dashboard), then fix the list or the client. Rollback: disable or delete the rule.
+
+The storage Worker header and the WAF rule change what Cloudflare caches and blocks only; the pages, the API and the stored content are
+untouched.
+
 ## Admin deep links
 
 The admin is a history-routed SPA in `~/ulams/admin` (shared by every `<slug>-staging-admin` host).
