@@ -34,8 +34,18 @@ class CertificateVerificationService
             'issued_at' => $pdf->created_at?->toIso8601String(),
             'expires_at' => $pdf->expires_at?->toIso8601String(),
             'revoked_at' => $pdf->revoked_at?->toIso8601String(),
+            'superseded_by_policy_version' => self::supersededByPolicyVersion($pdf),
             'issuer' => $vars['@VarAppName'] ?? config('app.name'),
         ];
+    }
+
+    /**
+     * The policy version that replaced what a revoked certificate certified, when it was revoked for that reason
+     * (`policy_superseded:v<N>`, written by the policy lifecycle). Only this number is public, never the free text of a reason.
+     */
+    private static function supersededByPolicyVersion(FabricPDF $pdf): ?int
+    {
+        return $pdf->revoked_at !== null && preg_match('/^policy_superseded:v(\d{1,6})$/', (string) $pdf->revoked_reason, $m) ? (int) $m[1] : null;
     }
 
     public function revoke(FabricPDF $pdf, ?User $by, string $reason): FabricPDF

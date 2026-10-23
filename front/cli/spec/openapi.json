@@ -34737,6 +34737,11 @@
              ],
              "type": "string"
             },
+            "superseded_by_policy_version": {
+             "description": "the policy version that replaced what the certificate certified, when it was revoked for that reason",
+             "nullable": true,
+             "type": "integer"
+            },
             "title": {
              "type": "string"
             }
@@ -42043,6 +42048,33 @@
     "summary": "Override or reset inheritable settings (AI driver, models) of a tenant",
     "tags": [
      "Platform"
+    ]
+   }
+  },
+  "/api/policies/my-changes": {
+   "get": {
+    "description": "For each of the caller's assignments that an approved policy change created: the policy, its new version, the source diff in one sentence, whether it is an exam or the course, and the assignment it belongs to. Only the caller's own rows.",
+    "operationId": "policies.my-changes.get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "one row per policy change assignment, newest first"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Why I was given this training again",
+    "tags": [
+     "Policies"
     ]
    }
   },

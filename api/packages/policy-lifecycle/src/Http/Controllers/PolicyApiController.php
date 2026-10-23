@@ -15,6 +15,7 @@ abstract class PolicyApiController extends Controller
     {
     }
 
+
     /** The user needs `policy_manage` or `policy_owner` at all. */
     protected function guardUse(Request $request): void
     {

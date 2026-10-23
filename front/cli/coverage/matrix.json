@@ -1,5 +1,5 @@
 {
- "summary": "659/748 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "660/749 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -4043,6 +4043,12 @@
    "key": "PATCH /api/platform/tenants/{slug}/env",
    "summary": "Override or reset inheritable settings (AI driver, models) of a tenant",
    "command": "tenants.set-env",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/policies/my-changes",
+   "summary": "Why I was given this training again",
+   "command": "my.policies-my-changes",
    "status": "covered"
   },
   {

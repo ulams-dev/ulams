@@ -5,14 +5,19 @@ sidebar:
   order: 11
 modules:
   - policy-lifecycle
+learnerRoutes:
+  - /studio/policies
+  - /studio/policies/new
+  - /studio/policies/[id]
+  - /studio/policies/[id]/versions/[n]
 ---
 
 import { Aside } from "@astrojs/starlight/components";
 
 The policy lifecycle module starts from a policy document (Markdown, PDF or DOCX) and a list of departments. It prepares one
 [Course Builder](/admin/course-builder/) course for each department, every lesson and quiz question citing the policy text, and
-gives the policy owner a dashboard of who is trained. Everything is available through the API (`/api/admin/policies`) and the CLI
-(`ulams policies`); the studio screens come with a later milestone.
+gives the policy owner a dashboard of who is trained. Everything is available through the API (`/api/admin/policies`), the CLI
+(`ulams policies`) and the **Policies** screens of the Studio (`/studio/policies`, in English, Polish and Chinese).
 
 <Aside type="note">
 AI proposes, the owner approves. The module prepares each department's course up to the outline review. The owner approves the
@@ -20,6 +25,21 @@ outline, the generated lessons and the apply in the Studio, publishes the course
 decides who must take a course or whether anyone completed it. Uploaded policy text is treated as untrusted input: instructions
 inside it never change the brief, the output schema or what is published.
 </Aside>
+
+## In the Studio
+
+The Studio rail has a **Policies** entry (for people with `policy_owner` or `policy_manage`).
+
+- **Policies** lists your policies with the version in force and any version in review.
+- **New policy** takes the file, the course length and the departments (name, seniority, prior experience, optional minutes) and creates the policy; nothing is generated yet.
+- **A policy** shows each department's stage with a link to its builder session, who is trained (assigned, completed, pending, overdue, completion rate), the people with their course version, policy version and certificate (filter by department and status, page through, export as CSV), the versions, and the buttons that apply now: generate the department courses (with the cost estimate), approve version 1 (the reasons it cannot be approved yet are listed), and upload a change.
+- **A version in review** shows what changed in the policy text, how each department's course is updated (with a link to its update in the Studio), the suggested change class with its reasons, the pre-flight (certificates to revoke and people to reassign per department, which follows the class you pick), the reason field (required to lower the class), approve, and reject with a reason.
+
+Every state is written out, tables scroll sideways in a focusable region on a small screen, and everything works by keyboard; the screens are checked with axe (WCAG 2.2 AA) at desktop and phone width.
+
+## For learners
+
+A person who was given training again because of a policy change sees it on **My training**: the policy and its new version, whether they take the exam or the course, and the source diff in one sentence (`GET /api/policies/my-changes`, only their own rows). The public verification page of a certificate that a policy change replaced says which policy version replaced it.
 
 ## Permissions
 

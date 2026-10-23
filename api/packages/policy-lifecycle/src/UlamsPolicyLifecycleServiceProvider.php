@@ -10,6 +10,7 @@ use Ulams\CourseBuilder\Events\BuilderStageFinished;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
 use Ulams\LivingCourse\UlamsLivingCourseServiceProvider;
 use Ulams\PolicyLifecycle\Http\Controllers\DashboardController;
+use Ulams\PolicyLifecycle\Http\Controllers\LearnerController;
 use Ulams\PolicyLifecycle\Http\Controllers\PolicyController;
 use Ulams\PolicyLifecycle\Http\Controllers\VariantController;
 use Ulams\PolicyLifecycle\Http\Controllers\VersionController;
@@ -59,6 +60,9 @@ class UlamsPolicyLifecycleServiceProvider extends ServiceProvider
         Event::listen(BuilderStageFinished::class, [TrackRollouts::class, 'stageFinished']);
         Event::listen(CertificateRevoked::class, SendRevokedNotice::class);
         $this->registerEmailTemplates();
+
+        // the learner's own view of a policy change that reassigned them (what changed, which exam or course, when due)
+        Route::get('api/policies/my-changes', [LearnerController::class, 'mine'])->middleware('auth:api');
 
         Route::group(['prefix' => 'api/admin/policies', 'middleware' => ['auth:api']], function () {
             Route::get('/', [PolicyController::class, 'index']);

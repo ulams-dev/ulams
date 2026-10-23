@@ -811,6 +811,10 @@
             "area": "learner"
         },
         {
+            "pattern": "api/policies/*",
+            "area": "learner"
+        },
+        {
             "pattern": "api/questionnaire/*",
             "area": "learner"
         },

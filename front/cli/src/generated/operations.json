@@ -4044,6 +4044,12 @@
   "tag": "Platform"
  },
  {
+  "method": "GET",
+  "path": "/api/policies/my-changes",
+  "summary": "Why I was given this training again",
+  "tag": "Policies"
+ },
+ {
   "method": "POST",
   "path": "/api/product/{id}/pay",
   "summary": "",
