@@ -5,6 +5,7 @@ use Ulams\Identity\Http\Controllers\Admin\AuditController;
 use Ulams\Identity\Http\Controllers\Admin\ProviderController;
 use Ulams\Identity\Http\Controllers\Admin\ScimTokenController;
 use Ulams\Identity\Http\Controllers\Scim\ScimDiscoveryController;
+use Ulams\Identity\Http\Controllers\Scim\ScimGroupsController;
 use Ulams\Identity\Http\Controllers\Scim\ScimUsersController;
 use Ulams\Identity\Http\Middleware\ScimAuthenticate;
 use Ulams\Identity\Http\Controllers\SamlController;
@@ -67,5 +68,13 @@ if (config('ulams_identity.enabled')) {
         Route::put('Users/{id}', [ScimUsersController::class, 'replace']);
         Route::patch('Users/{id}', [ScimUsersController::class, 'patch']);
         Route::delete('Users/{id}', [ScimUsersController::class, 'destroy']);
+
+        Route::get('Groups', [ScimGroupsController::class, 'index']);
+        Route::post('Groups', [ScimGroupsController::class, 'store']);
+        Route::post('Groups/.search', [ScimGroupsController::class, 'search']);
+        Route::get('Groups/{id}', [ScimGroupsController::class, 'show']);
+        Route::put('Groups/{id}', [ScimGroupsController::class, 'replace']);
+        Route::patch('Groups/{id}', [ScimGroupsController::class, 'patch']);
+        Route::delete('Groups/{id}', [ScimGroupsController::class, 'destroy']);
     });
 }

@@ -27,6 +27,23 @@ interface UserGroupServiceContract
      */
     public function addMember(Group $group, User $user): Collection;
 
+    /**
+     * Add several members at once (one query per call, not one per user). Members already in the group stay;
+     * `UserAddedToGroup` is fired for each user that was added.
+     *
+     * @param iterable<User> $users
+     * @return int how many were added
+     */
+    public function addMembers(Group $group, iterable $users): int;
+
+    /**
+     * Remove several members at once; `UserRemovedFromGroup` is fired for each user that was a member.
+     *
+     * @param iterable<User> $users
+     * @return int how many were removed
+     */
+    public function removeMembers(Group $group, iterable $users): int;
+
     public function addMemberToMultipleGroups(array $groups, User $user): void;
 
     public function registerMemberToMultipleGroups(array $groups, User $user): void;

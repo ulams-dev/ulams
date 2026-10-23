@@ -59,6 +59,7 @@ use Ulams\Identity\Services\Saml\SamlXml;
  *             @OA\Property(property="next_certificate_fingerprint", type="string", nullable=true, description="A prepared key pair, already published in the metadata"))),
  *     @OA\Property(property="scim", type="object", description="SCIM 2.0 provisioning with this provider",
  *         @OA\Property(property="base_url", type="string", format="uri", description="Tenant URL to enter in the identity provider's SCIM settings"),
+ *         @OA\Property(property="group_roles", type="object", description="Display name of a SCIM group (lower case) to the role its members get", @OA\AdditionalProperties(type="string", enum={"student","tutor"})),
  *         @OA\Property(property="active_tokens", type="integer", description="Active SCIM tokens (at most two)")),
  *     @OA\Property(property="metadata_refreshed_at", type="string", format="date-time", nullable=true),
  *     @OA\Property(property="client_secret_set", type="boolean"),
@@ -77,6 +78,7 @@ use Ulams\Identity\Services\Saml\SamlXml;
  *     @OA\Property(property="trust_email", type="boolean"),
  *     @OA\Property(property="jit_enabled", type="boolean"),
  *     @OA\Property(property="default_role", type="string", enum={"student","tutor"}),
+ *     @OA\Property(property="scim", type="object", @OA\Property(property="group_roles", type="object", nullable=true, description="Display name of a SCIM group to student or tutor: members of such a group get the role while they are members (replaces the whole mapping; admin cannot be mapped)", @OA\AdditionalProperties(type="string", enum={"student","tutor"}))),
  *     @OA\Property(property="oidc", type="object",
  *         @OA\Property(property="issuer", type="string", format="uri"),
  *         @OA\Property(property="client_id", type="string"),
@@ -273,6 +275,14 @@ class ProviderController extends UlamsBaseController
             'trust_email' => ['sometimes', 'boolean'],
             'jit_enabled' => ['sometimes', 'boolean'],
             'default_role' => ['sometimes', Rule::in(['student', 'tutor'])],
+            'scim' => ['sometimes', 'array'],
+            'scim.group_roles' => ['sometimes', 'nullable', 'array', 'max:100', function (string $attribute, mixed $value, \Closure $fail): void {
+                foreach ((array) $value as $name => $role) {
+                    if (!is_string($name) || trim($name) === '' || mb_strlen($name) > 255 || !in_array($role, \Ulams\Identity\Services\Scim\GroupRoleMapper::MAPPABLE, true)) {
+                        $fail('Map the display name of a group to student or tutor; no group can grant another role.');
+                    }
+                }
+            }],
         ];
     }
 
@@ -322,6 +332,7 @@ class ProviderController extends UlamsBaseController
             'saml' => $p->protocol === IdentityProvider::SAML ? self::presentSaml($p, $request) : null,
             'scim' => [
                 'base_url' => $request->getSchemeAndHttpHost() . '/api/scim/v2',
+                'group_roles' => (object) ($p->scim_group_roles ?? []),
                 'active_tokens' => app(\Ulams\Identity\Services\Scim\ScimTokenService::class)->list($p)->filter(fn ($m) => !$m->token?->revoked && $m->token?->expires_at?->isFuture())->count(),
             ],
             'metadata_refreshed_at' => $p->metadata_refreshed_at?->toIso8601String(),

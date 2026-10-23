@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $saml_sp_cert
  * @property string|null $saml_sp_next_key encrypted at rest, never serialised
  * @property string|null $saml_sp_next_cert
+ * @property array<string,string>|null $scim_group_roles display name of a SCIM group (lower case) => role granted to its members
  */
 class IdentityProvider extends Model
 {
@@ -50,6 +51,7 @@ class IdentityProvider extends Model
         'oidc_client_secret' => 'encrypted',
         'saml' => 'array',
         'saml_idp_certs' => 'array',
+        'scim_group_roles' => 'array',
         'saml_sp_key' => 'encrypted',
         'saml_sp_next_key' => 'encrypted',
         'metadata_refreshed_at' => 'datetime',

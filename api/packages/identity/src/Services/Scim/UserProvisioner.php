@@ -34,7 +34,7 @@ use Ulams\ModelFields\Facades\ModelFields;
  */
 class UserProvisioner
 {
-    public function __construct(private readonly UserServiceContract $users, private readonly IdentityAuditLog $log)
+    public function __construct(private readonly UserServiceContract $users, private readonly IdentityAuditLog $log, private readonly GroupProvisioner $groups)
     {
     }
 
@@ -158,6 +158,8 @@ class UserProvisioner
                 $ext->forceFill(['deleted_at' => now()])->save();
             }
             IdentityLink::query()->where(['provider_id' => $provider->getKey(), 'user_id' => $user->getKey()])->delete();
+            // the person leaves the groups this provider manages along with the account (and the roles they gave)
+            $this->groups->leaveAll($provider, $user);
             $this->audit('scim.user_deleted', $provider, $user, ['behaviour' => $behaviour]);
         });
     }
@@ -229,6 +231,8 @@ class UserProvisioner
             'title' => $in['title'],
             'enterprise' => array_filter($in['enterprise'], fn ($v) => $v !== null),
             'manager' => null,
+            // roles the group mapping added (GroupRoleMapper); not the client's to set
+            'mapped_roles' => ((array) $ext->meta)['mapped_roles'] ?? [],
         ];
         if ($in['manager'] !== null) {
             if ($in['manager'] === (string) $user->getKey()) {

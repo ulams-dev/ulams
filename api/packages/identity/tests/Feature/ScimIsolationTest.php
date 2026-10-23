@@ -55,7 +55,7 @@ class ScimIsolationTest extends TestCase
             }
         }
         $covered = [];
-        foreach ($this->routes('1') as [$method, $path]) {
+        foreach ($this->routes('1', '1') as [$method, $path]) {
             $covered[] = $method . ' ' . preg_replace('#/(?:\d+|User|urn:.*)$#', '/{x}', $path);
         }
         $normalise = fn (array $list) => collect($list)->map(fn ($r) => preg_replace('#/\{x\}$#', '/{x}', $r))->unique()->sort()->values()->all();
@@ -68,8 +68,9 @@ class ScimIsolationTest extends TestCase
         $provider = $this->scimProvider();
         $this->scimToken($provider);
         $user = $this->createScimUser();
+        $group = $this->createScimGroup('Nurses', [$user['id']]);
 
-        foreach ($this->routes($user['id']) as [$method, $path, $body]) {
+        foreach ($this->routes($user['id'], $group['id']) as [$method, $path, $body]) {
             $this->scim($method, $path, $body, [], 'ulams_pat_garbage')->assertStatus(401);
             $this->app['auth']->forgetGuards();
             $response = $this->call($method, '/api/scim/v2' . $path, [], [], [], ['CONTENT_TYPE' => 'application/scim+json'], $body === null ? null : json_encode($body));
@@ -78,7 +79,8 @@ class ScimIsolationTest extends TestCase
         }
         $this->assertSame('ada@example.com', \Ulams\Auth\Models\User::query()->findOrFail($user['id'])->email);
         $this->assertTrue(\Ulams\Auth\Models\User::query()->findOrFail($user['id'])->is_active);
-        $this->assertSame(1, ExternalId::query()->count());
+        $this->assertSame('Nurses', \Ulams\Auth\Models\Group::query()->findOrFail($group['id'])->name);
+        $this->assertSame(2, ExternalId::query()->count());
     }
 
     public function testNoOtherKindOfTokenReachesAnyRoute(): void
@@ -86,6 +88,7 @@ class ScimIsolationTest extends TestCase
         $provider = $this->scimProvider();
         $this->scimToken($provider);
         $user = $this->createScimUser();
+        $group = $this->createScimGroup('Nurses', [$user['id']]);
         $admin = $this->admin();
         $service = app(PersonalAccessTokenServiceContract::class);
         $tokens = [
@@ -96,11 +99,11 @@ class ScimIsolationTest extends TestCase
         ];
 
         foreach ($tokens as $kind => $secret) {
-            foreach ($this->routes($user['id']) as [$method, $path, $body]) {
+            foreach ($this->routes($user['id'], $group['id']) as [$method, $path, $body]) {
                 $this->scim($method, $path, $body, [], $secret)->assertStatus(403);
             }
         }
-        $this->assertSame(1, ExternalId::query()->count());
+        $this->assertSame(2, ExternalId::query()->count());
         $this->assertSame(0, IdentityAudit::query()->where('action', 'scim.user_deactivated')->count());
     }
 
@@ -111,6 +114,15 @@ class ScimIsolationTest extends TestCase
         $tokenA = $this->scimToken($a);
         $tokenB = $this->scimToken($b);
         $user = $this->scim('POST', '/Users', $this->userBody(), [], $tokenA)->assertStatus(201)->json();
+        $group = $this->scim('POST', '/Groups', $this->groupBody('Nurses', [$user['id']]), [], $tokenA)->assertStatus(201)->json();
+
+        foreach ([['GET', "/Groups/{$group['id']}", null], ['PUT', "/Groups/{$group['id']}", $this->groupBody('Hacked')], ['PATCH', "/Groups/{$group['id']}", $this->patchBody([['op' => 'replace', 'path' => 'displayName', 'value' => 'Hacked']])], ['DELETE', "/Groups/{$group['id']}", null]] as [$method, $path, $body]) {
+            $this->scim($method, $path, $body, [], $tokenB)->assertStatus(404);
+        }
+        $this->assertSame('Nurses', \Ulams\Auth\Models\Group::query()->findOrFail($group['id'])->name);
+        $this->assertSame(0, $this->scim('GET', '/Groups', null, [], $tokenB)->json('totalResults'));
+        // a group of provider B cannot take a user of provider A as a member
+        $this->scim('POST', '/Groups', $this->groupBody('Spies', [$user['id']]), [], $tokenB)->assertStatus(400)->assertJsonPath('scimType', 'invalidValue');
 
         foreach ([['GET', "/Users/{$user['id']}", null], ['PUT', "/Users/{$user['id']}", $this->userBody()], ['PATCH', "/Users/{$user['id']}", $this->patchBody([['op' => 'replace', 'path' => 'active', 'value' => false]])], ['DELETE', "/Users/{$user['id']}", null]] as [$method, $path, $body]) {
             $this->scim($method, $path, $body, [], $tokenB)->assertStatus(404);
