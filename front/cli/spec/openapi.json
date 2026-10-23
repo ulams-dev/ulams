@@ -10608,6 +10608,10 @@
       "application/json": {
        "schema": {
         "properties": {
+         "allowPending": {
+          "description": "store the import although an open update proposal edits the same elements",
+          "type": "boolean"
+         },
          "baseVersionId": {
           "type": "string"
          },
@@ -10656,7 +10660,7 @@
       "description": "unknown session"
      },
      "409": {
-      "description": "BASE_OUTDATED (with the remote diff) or NO_BLUEPRINT"
+      "description": "BASE_OUTDATED (with the remote diff), PROPOSAL_PENDING (an open update proposal edits the same elements) or NO_BLUEPRINT"
      },
      "413": {
       "description": "document too large"
@@ -17908,6 +17912,22 @@
       }
      }
     ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "commit": {
+          "description": "the commit a CI job runs for (7 to 64 hex characters); recorded on the new revision",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     },
+     "required": false
+    },
     "responses": {
      "202": {
       "content": {
@@ -17921,6 +17941,9 @@
      },
      "409": {
       "description": "nothing to check"
+     },
+     "422": {
+      "description": "not a commit id"
      }
     },
     "security": [
@@ -37690,7 +37713,7 @@
   },
   "/api/living-course/webhooks/{webhookId}": {
    "post": {
-    "description": "Inbound webhooks of source hosts (ADR 0032). Public route, authenticated by the signature with the\nconnection's own secret: invalid signatures are refused and logged, duplicates answer 200 without\nwork, only pushes to the tracked branch that touch the tracked paths queue a (debounced) check.\nPayloads are never sent to the model and never stored, only their digest.",
+    "description": "Inbound webhooks of source hosts (ADR 0032). Public route, authenticated by the signature with the\nconnection's own secret: invalid signatures are refused and logged, duplicates answer 200 without\nwork, only pushes to the tracked branch that touch the tracked paths queue a (debounced) check.\nPayloads are never sent to the model and never stored, only their digest; what the revision keeps of a push is the head commit,\nits subject line and the pull request number (`ChangeNote`).",
     "operationId": "living-course.webhooks.by-webhookid.post",
     "parameters": [
      {

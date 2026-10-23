@@ -47,6 +47,7 @@ final class SourceSync
         try {
             $connector = $this->connectors->get($connection->connector);
             $fetched = $connector->fetch($connection, $latest);
+            $change = ChangeNote::take($connection->id);
             if ($fetched->unchanged) {
                 $this->succeeded($connection);
 
@@ -54,7 +55,7 @@ final class SourceSync
             }
             $documents = $this->documents($fetched->files);
             $raw = array_map(fn (FetchedFile $f) => [$f->path, $f->bytes, $f->blob], $fetched->files);
-            $revision = $this->revisions->create($connection, $source, $documents, $raw, $connection->connector, $fetched->ref, $trigger, $userId, ['connector' => $connection->connector] + $fetched->metadata);
+            $revision = $this->revisions->create($connection, $source, $documents, $raw, $connection->connector, $fetched->ref, $trigger, $userId, ['connector' => $connection->connector] + $fetched->metadata + ($change !== null ? ['change' => $change] : []));
             $processed = $this->detection->process($revision, $userId);
             $this->succeeded($connection);
 
