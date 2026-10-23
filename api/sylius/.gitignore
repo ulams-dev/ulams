@@ -63,3 +63,4 @@ phpstan.neon
 ###< liip/imagine-bundle ###
 
 /yarn.lock
+/.phpunit.cache

@@ -22,7 +22,7 @@ final class ChannelLinkController
 {
     private const PATH_SUFFIX = '/api/commerce/webhooks/sylius';
 
-    /** @param list<string> $insecureHosts hosts that may be reached over plain http (local development) */
+    /** @param string|null $insecureHosts comma-separated hosts that may be reached over plain http (local development) */
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly SecretBox $secrets,
@@ -73,8 +73,17 @@ final class ChannelLinkController
         if ($parts['scheme'] === 'https') {
             return true;
         }
-        $hosts = array_filter(array_map('trim', explode(',', (string) $this->insecureHosts)));
+        if ($parts['scheme'] !== 'http') {
+            return false;
+        }
+        $host = strtolower($parts['host']);
+        foreach (array_filter(array_map('trim', explode(',', strtolower((string) $this->insecureHosts)))) as $allowed) {
+            // ".localhost" allows every tenant host under it, "api.localhost" only that host
+            if ($host === $allowed || ($allowed[0] === '.' && str_ends_with($host, $allowed))) {
+                return true;
+            }
+        }
 
-        return $parts['scheme'] === 'http' && in_array(strtolower($parts['host']), $hosts, true);
+        return false;
     }
 }

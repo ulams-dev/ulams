@@ -153,6 +153,7 @@
       "Ulams\\BulkNotifications\\Database\\Factories\\": "packages/bulk-notifications/database/factories",
       "Ulams\\BulkNotifications\\Database\\Seeders\\": "packages/bulk-notifications/database/seeders",
       "Ulams\\Commerce\\": "packages/commerce/src",
+      "Ulams\\Commerce\\Database\\Seeders\\": "packages/commerce/database/seeders",
       "Ulams\\CommerceSylius\\": "packages/commerce-sylius/src",
       "Ulams\\Entitlements\\": "packages/entitlements/src",
       "Ulams\\Compliance\\": "packages/compliance/src",

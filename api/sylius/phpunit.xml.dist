@@ -29,12 +29,14 @@
     <testsuites>
         <testsuite name="Test Suite">
             <directory>tests</directory>
+            <directory>bundles/UlamsBridgeBundle/tests</directory>
         </testsuite>
     </testsuites>
 
     <source ignoreSuppressionOfDeprecations="true" restrictNotices="true" restrictWarnings="true">
         <include>
             <directory>src</directory>
+            <directory>bundles/UlamsBridgeBundle/src</directory>
         </include>
     </source>
 </phpunit>
