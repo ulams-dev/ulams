@@ -107,3 +107,13 @@ docker compose exec -T -e TENANCY_INTEGRATION=1 api vendor/bin/phpunit packages/
 The nightly workflow (`.github/workflows/nightly-conformance.yml`, job `tenancy`) runs it against the compose stack.
 Every route is also probed in-process on each pull request: `api/tests/Integrations/TenantIsolationCoverageTest.php`
 (ADR 0190).
+
+## Templates and tenants created for a purpose (ADR 0141, amendment)
+
+- `ulams:tenant:template <slug>` (and `/api/platform/templates`): a named starting point for new tenants (theme, accent, demo flag,
+  demo users, inheritable settings). `ulams:tenant:create --template=<slug>` applies it to a tenant that does not exist yet; options win.
+- `ulams:tenant:create --derived-from=<parent> --purpose=<purpose> --reference=<id>` records the tenant as created for another tenant
+  (a department academy of a policy): once per reference, at most `TENANCY_MAX_DERIVED_PER_PARENT` active per parent, no chains,
+  the record kept after deletion (`tenant_derivations`). `ulams:tenant:delete --with-derived` removes the derived tenants first.
+- Tables (platform database): `tenant_templates`, `tenant_derivations`.
+

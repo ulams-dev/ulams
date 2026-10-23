@@ -36,6 +36,33 @@ export interface PolicyVersionRow {
   createdAt: string | null;
 }
 
+/** The request for a department's own academy (ADR 0141, amendment). */
+export type AcademyStatus = "queued" | "provisioning" | "transferring" | "done" | "failed";
+
+export interface AcademyState {
+  status: AcademyStatus;
+  slug: string;
+  name: string;
+  theme: string | null;
+  accent: string | null;
+  template: string | null;
+  error: string | null;
+  requestedBy?: string;
+  requestedAt?: string;
+  invited?: boolean;
+  studioUrl?: string;
+  adminUrl?: string;
+  frontUrl?: string;
+}
+
+export interface AcademyAnswer {
+  academy: AcademyState | null;
+  /** This caller may ask for an academy: a platform administrator on an installation with new sites switched on. */
+  available: boolean;
+  /** Theme presets an academy can start from. */
+  themes: string[];
+}
+
 export interface PolicyVariantRow {
   id: string;
   department: string;
@@ -47,6 +74,7 @@ export interface PolicyVariantRow {
   pathId: number | null;
   ruleId: number | null;
   examCourseId: number | null;
+  academy?: AcademyState | null;
   position: number;
 }
 
@@ -69,6 +97,8 @@ export interface PolicyDetail extends PolicySummary {
   versions: PolicyVersionRow[];
   variants: PolicyVariantRow[];
   /** Present on the detail answer. */
+  academyAvailable?: boolean;
+  academyThemes?: string[];
   estimate?: { perVariant: Array<{ id: string; department: string; lessons: number; estimateMicroUsd: number }>; totalMicroUsd: number };
 }
 
@@ -166,7 +196,7 @@ export function createPoliciesClient(options: ClientOptions & { prefix?: string 
   const base = options.baseUrl.replace(/\/+$/, "") + (options.prefix ?? PREFIX);
   const doFetch = options.fetch ?? ((input: RequestInfo | URL, init?: RequestInit) => fetch(input, init));
 
-  async function call<T>(method: "GET" | "POST", path: string, body?: unknown | FormData): Promise<{ data: T; meta: Record<string, number> | null }> {
+  async function call<T>(method: "GET" | "POST" | "DELETE", path: string, body?: unknown | FormData): Promise<{ data: T; meta: Record<string, number> | null }> {
     const headers: Record<string, string> = { Accept: "application/json", ...options.headers, ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}) };
     let payload: BodyInit | undefined;
     if (body instanceof FormData) payload = body;
@@ -218,6 +248,10 @@ export function createPoliciesClient(options: ClientOptions & { prefix?: string 
       });
       return post<PolicyDetail>("/", form);
     },
+    /** The department's academy request, whether this caller may ask for one and the themes to pick from. */
+    academy: (id: string, variantId: string) => get<AcademyAnswer>(`/${id}/variants/${variantId}/academy`),
+    createAcademy: (id: string, variantId: string, body: { theme?: string; accent?: string; template?: string; name?: string } = {}) => post<AcademyAnswer>(`/${id}/variants/${variantId}/academy`, body),
+    removeAcademy: async (id: string, variantId: string): Promise<AcademyAnswer> => (await call<AcademyAnswer>("DELETE", `/${id}/variants/${variantId}/academy`)).data,
     generate: (id: string, variantIds?: string[]) => post<PolicyVariantRow[]>(`/${id}/variants/generate`, variantIds ? { variant_ids: variantIds } : {}),
     dashboard: async (id: string, filters: { variant?: string; status?: string; page?: number; perPage?: number } = {}): Promise<PolicyDashboard> => {
       const { data, meta } = await call<Omit<PolicyDashboard, "total" | "perPage" | "currentPage" | "lastPage">>("GET", `/${id}/dashboard${query({ variant: filters.variant, status: filters.status, page: filters.page, per_page: filters.perPage })}`);

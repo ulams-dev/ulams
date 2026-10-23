@@ -37,6 +37,23 @@ The Studio rail has a **Policies** entry (for people with `policy_owner` or `pol
 
 Every state is written out, tables scroll sideways in a focusable region on a small screen, and everything works by keyboard; the screens are checked with axe (WCAG 2.2 AA) at desktop and phone width.
 
+## An academy of its own for a department
+
+A department can have a separate academy: its own tenant (database, files, theme and users), created from a tenant template. On the
+policy page each department has an **Own academy** block: pick a theme preset and an accent colour, and ask. The platform creates
+the tenant from the template (`POLICY_ACADEMY_TEMPLATE`, or the `template` you send), styled for the department, records it as
+created for that department, and moves the department's reviewed builder session there; its author is invited by e-mail and applies
+and publishes the course in the academy. Asking again after a failure resumes the same tenant and does not move the course twice. **Remove the
+academy** (after a confirmation) deletes that tenant with everything in it.
+
+It is a platform operation, so it needs `TENANCY_NEW_SITES=true` and a platform administrator, like a new site for a course
+(ADR 0048); a platform limit (`TENANCY_MAX_DERIVED_PER_PARENT`, default 5) applies and its message is shown if it
+is reached. What stays here: the policy, its versions and changes, the certificates and this dashboard. What the academy has: the department's course (cited
+as before), its own learners (invite or import them there) and its own certificates, which this dashboard does not count. Departments that need
+only a look and an address of their own, without separate data, use branded entry points inside one academy instead (ADR 0195, a separate effort).
+
+API: `GET|POST|DELETE /api/admin/policies/{policy}/variants/{variant}/academy`.
+
 ## For learners
 
 A person who was given training again because of a policy change sees it on **My training**: the policy and its new version, whether they take the exam or the course, and the source diff in one sentence (`GET /api/policies/my-changes`, only their own rows). The public verification page of a certificate that a policy change replaced says which policy version replaced it.

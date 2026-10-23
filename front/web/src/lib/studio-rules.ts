@@ -142,6 +142,10 @@ export const POLICIES_RULES: Array<{ method: string; pattern: RegExp }> = [
   { method: "GET", pattern: new RegExp(`^/${PID}/versions/\\d{1,6}$`) },
   { method: "POST", pattern: new RegExp(`^/${PID}/versions/\\d{1,6}/(approve|reject)$`) },
   { method: "POST", pattern: new RegExp(`^/${PID}/variants/generate$`) },
+  // a department's own academy (ADR 0141, amendment): ask, read, remove
+  { method: "GET", pattern: new RegExp(`^/${PID}/variants/${PID}/academy$`) },
+  { method: "POST", pattern: new RegExp(`^/${PID}/variants/${PID}/academy$`) },
+  { method: "DELETE", pattern: new RegExp(`^/${PID}/variants/${PID}/academy$`) },
 ];
 
 /** `path` is relative to the BFF root, e.g. `/policies/01…/dashboard`. */

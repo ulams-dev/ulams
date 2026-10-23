@@ -139,7 +139,7 @@ test("a first version that is not ready says what is missing", async ({ page }) 
   await open(page, `/studio/policies/${B}`);
   await expect(page.locator('li[data-department="Sales"]')).toContainText("Outline ready: review it in the Studio");
   await page.getByRole("button", { name: "Approve version 1" }).click();
-  await expect(page.locator("[data-result]")).toHaveText("The policy cannot be approved yet.");
+  await expect(page.locator(".st-pol-actions [data-result]")).toHaveText("The policy cannot be approved yet.");
   await expect(page.locator("[data-blockers]")).toContainText("Sales: review and apply the course in the Studio first.");
   expect(await scan(page), "blocked").toEqual([]);
 });
@@ -193,6 +193,54 @@ test("rejecting a change needs a reason and records the decision", async ({ page
   await page.getByRole("button", { name: "Reject this version" }).click();
   await expect(page.locator("[data-state='decided']")).toContainText("This version is Rejected.");
   expect(await scan(page), "rejected").toEqual([]);
+});
+
+test("a department asks for an academy of its own, follows it, opens it and removes it after confirming", async ({ page }, info) => {
+  const slug = slugOf(info.project.name);
+  await reset(slug);
+  await open(page, `/studio/policies/${A}`, "en", slug);
+  const block = page.locator('[data-academy="Engineering"]');
+  await expect(block.getByRole("heading", { name: "Own academy" })).toBeVisible();
+  await expect(page.locator('[data-academy="Sales"]').getByLabel("Theme")).toBeVisible();
+  expect(await scan(page), "form").toEqual([]);
+
+  await block.getByLabel("Accent colour (optional)").fill("red");
+  await block.getByRole("button", { name: "Create an academy for Engineering" }).click();
+  await expect(block.locator("[data-result]")).toHaveText("Use a colour like #C2552D.");
+  await expect(block.locator("[data-result]")).toHaveAttribute("role", "alert");
+  await expect(block.getByLabel("Accent colour (optional)")).toBeFocused();
+
+  await block.getByLabel("Theme").selectOption("nightsky");
+  await block.getByLabel("Accent colour (optional)").fill("#c2552d");
+  await block.getByRole("button", { name: "Create an academy for Engineering" }).click();
+  await expect(block.locator("[data-academy-state='queued']")).toHaveText("Academy: Waiting to start");
+  await expect(block.locator("[data-academy-state='done']")).toHaveText("Academy: Ready", { timeout: 15_000 });
+  await expect(page.locator("[data-announcer]")).toContainText("Academy of Engineering: Ready.");
+  await expect(block.getByRole("link", { name: "Open the academy's studio: Engineering" })).toHaveAttribute("href", /\.app\.localhost\/studio\/s\//);
+  await expect(block.getByText("The author was invited there by e-mail.")).toBeVisible();
+  expect(await scan(page), "done").toEqual([]);
+
+  const remove = block.getByRole("button", { name: "Remove the academy" });
+  await remove.focus();
+  await page.keyboard.press("Enter");
+  await expect(block.getByRole("button", { name: /^Yes, delete .* with everything in it$/ })).toBeFocused();
+  await expect(block.getByText("This deletes the academy's database, files and settings for good.")).toBeVisible();
+  expect(await scan(page), "confirm").toEqual([]);
+  await block.getByRole("button", { name: "Keep it" }).click();
+  await expect(block.getByRole("button", { name: "Remove the academy" })).toBeFocused();
+  await page.keyboard.press("Enter");
+  await block.getByRole("button", { name: /^Yes, delete/ }).click();
+  await expect(block.locator("[data-result]")).toHaveText("The academy was removed.");
+  await expect(block.getByRole("button", { name: "Create an academy for Engineering" })).toBeVisible();
+});
+
+test("an academy in Polish and Chinese passes axe", async ({ page }) => {
+  await open(page, `/studio/policies/${A}`, "pl");
+  await expect(page.locator('[data-academy="Engineering"]').getByRole("heading", { name: "Własna akademia" })).toBeVisible();
+  expect(await scan(page), "pl").toEqual([]);
+  await open(page, `/studio/policies/${A}`, "zh");
+  await expect(page.locator('[data-academy="Engineering"]').getByRole("heading", { name: "独立学院" })).toBeVisible();
+  expect(await scan(page), "zh").toEqual([]);
 });
 
 test("failures are explained: someone else's policy, an unknown policy, and an error that retries", async ({ page }, info) => {

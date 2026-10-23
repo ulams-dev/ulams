@@ -5,7 +5,7 @@
  * (`data-policies-view`). Every state is text, states are announced, tables sit in focusable scroll regions and nothing
  * animates under reduced motion. The owner decides: nothing here approves itself.
  */
-import { ApiError, createPoliciesClient, type PoliciesClient, type PolicyDashboard, type PolicyDetail, type VersionReview } from "@ulams/sdk";
+import { ApiError, createPoliciesClient, type AcademyState, type PoliciesClient, type PolicyDashboard, type PolicyDetail, type PolicyVariantRow, type VersionReview } from "@ulams/sdk";
 import { dataTable } from "@ulams/ui/builder/insights-view.ts";
 import { h, uid } from "@ulams/ui/builder/dom.ts";
 import { announce } from "./common.ts";
@@ -213,9 +213,126 @@ export function mountPolicies(root: HTMLElement, client: PoliciesClient = polici
         variant?.sessionId ? h("p", {}, h("a", { href: `/studio/s/${variant.sessionId}`, "aria-label": fill(t.detail.openSession, { department: d.department }) }, fill(t.detail.openSession, { department: d.department }))) : null,
         h("dl", { class: "st-pol-figures" },
           figure(t.detail.assigned, f.number(d.assigned)), figure(t.detail.completed, f.number(d.completed)),
-          figure(t.detail.pending, f.number(d.pending)), figure(t.detail.overdue, f.number(d.overdue)), figure(t.detail.rate, f.percent(d.completionRate))));
+          figure(t.detail.pending, f.number(d.pending)), figure(t.detail.overdue, f.number(d.overdue)), figure(t.detail.rate, f.percent(d.completionRate))),
+        variant ? academyBlock(p, variant) : null);
     });
     return h("section", { "aria-labelledby": id }, h("h2", { id, class: "cb-h3" }, t.detail.tilesTitle), h("ul", { class: "st-pol-depts", role: "list" }, items));
+  }
+
+  // ---- a department's own academy (ADR 0141, amendment) -----------------------------------------------------------
+
+  const IN_PROGRESS = ["queued", "provisioning", "transferring"];
+
+  /** The academy of one department: ask for it (theme, accent), follow it, open it, retry or remove it. Refreshes itself while it is being made. */
+  function academyBlock(p: PolicyDetail, variant: PolicyVariantRow): HTMLElement {
+    const a = t.academy;
+    const id = uid("pol-ac");
+    let state: AcademyState | null = variant.academy ?? null;
+    let confirming = false;
+    let timer: number | undefined;
+    const section = h("section", { class: "st-pol-academy", "aria-labelledby": id, "data-academy": variant.department });
+    const result = resultLine();
+
+    const statusText = (s: AcademyState): string => fill(a.state, { status: a.statuses[s.status] ?? s.status });
+    const schedule = (): void => {
+      window.clearTimeout(timer);
+      if (state && IN_PROGRESS.includes(state.status) && section.isConnected !== false) timer = window.setTimeout(() => void refresh(), 4000);
+    };
+    async function refresh(): Promise<void> {
+      try {
+        const before = state?.status;
+        state = (await client.academy(p.id, variant.id)).academy;
+        if (state && state.status !== before) announce(fill(a.updated, { department: variant.department, status: a.statuses[state.status] ?? state.status }));
+        render();
+      } catch {
+        schedule();
+      }
+    }
+
+    function form(): HTMLElement[] {
+      const theme = select([["", a.themeDefault], ...(p.academyThemes ?? []).map((x) => [x, x] as [string, string])], "", "academy-theme");
+      const accent = h("input", { type: "text", name: "academy-accent", maxlength: "7", placeholder: "#C2552D", autocomplete: "off" }) as HTMLInputElement;
+      const button = h("button", { type: "button", class: "cb-btn", "data-action": "create-academy" }, fill(a.create, { department: variant.department })) as HTMLButtonElement;
+      button.addEventListener("click", () => {
+        if (accent.value.trim() && !/^#[0-9a-fA-F]{6}$/.test(accent.value.trim())) return say(result, a.badAccent, "alert"), accent.focus();
+        button.disabled = true;
+        say(result, a.creating);
+        client.createAcademy(p.id, variant.id, { theme: theme.value || undefined, accent: accent.value.trim() || undefined }).then(
+          (answer) => {
+            state = answer.academy;
+            say(result, a.requested);
+            render();
+          },
+          (error) => {
+            button.disabled = false;
+            say(result, apiMessage(error) ?? t.error, "alert");
+          },
+        );
+      });
+      return [field(a.theme, theme), field(a.accent, accent, a.accentHint), button];
+    }
+
+    function removal(s: AcademyState): HTMLElement {
+      if (!confirming) {
+        const open = h("button", { type: "button", class: "cb-btn cb-btn-small", "data-action": "remove-academy" }, a.remove) as HTMLButtonElement;
+        open.addEventListener("click", () => {
+          confirming = true;
+          render();
+          section.querySelector<HTMLElement>('[data-action="confirm-remove"]')?.focus();
+        });
+        return open;
+      }
+      const yes = h("button", { type: "button", class: "cb-btn cb-btn-small", "data-action": "confirm-remove" }, fill(a.confirm, { name: s.name })) as HTMLButtonElement;
+      const no = h("button", { type: "button", class: "cb-btn cb-btn-small", "data-action": "keep-academy" }, a.cancel) as HTMLButtonElement;
+      no.addEventListener("click", () => {
+        confirming = false;
+        render();
+        section.querySelector<HTMLElement>('[data-action="remove-academy"]')?.focus();
+      });
+      yes.addEventListener("click", () => {
+        yes.disabled = true;
+        no.disabled = true;
+        say(result, a.removing);
+        client.removeAcademy(p.id, variant.id).then(
+          () => {
+            state = null;
+            confirming = false;
+            render();
+            say(result, a.removed);
+          },
+          (error) => {
+            yes.disabled = false;
+            no.disabled = false;
+            say(result, apiMessage(error) ?? t.error, "alert");
+          },
+        );
+      });
+      return h("div", { class: "st-pol-confirm", role: "group", "aria-label": a.remove }, h("p", { class: "cb-muted" }, a.confirmHint), yes, no);
+    }
+
+    function render(): void {
+      const nodes: Array<HTMLElement | null> = [h("h4", { id, class: "cb-h3" }, a.title), h("p", { class: "cb-muted" }, a.intro)];
+      if (state) {
+        nodes.push(h("p", { "data-academy-state": state.status }, statusText(state)));
+        if (state.status === "failed" && state.error) nodes.push(h("p", { class: "cb-error", role: "alert" }, fill(a.failed, { error: state.error })));
+        if (state.status === "done") {
+          nodes.push(h("ul", { class: "st-pol-links" },
+            state.studioUrl ? h("li", {}, h("a", { href: state.studioUrl, "aria-label": `${a.open}: ${variant.department}` }, a.open)) : null,
+            state.adminUrl ? h("li", {}, h("a", { href: state.adminUrl, "aria-label": `${a.openAdmin}: ${variant.department}` }, a.openAdmin)) : null,
+            state.frontUrl ? h("li", {}, h("a", { href: state.frontUrl, "aria-label": `${a.openFront}: ${variant.department}` }, a.openFront)) : null));
+          if (state.invited) nodes.push(h("p", { class: "cb-muted" }, a.invited));
+        }
+        if (p.academyAvailable && state.status === "failed") nodes.push(...form());
+        if (p.academyAvailable && ["done", "failed"].includes(state.status)) nodes.push(removal(state));
+      } else if (!p.academyAvailable) nodes.push(h("p", { class: "cb-muted" }, a.notAvailable));
+      else if (!variant.sessionId) nodes.push(h("p", { class: "cb-muted" }, a.needsCourse));
+      else nodes.push(...form());
+      nodes.push(result);
+      section.replaceChildren(...(nodes.filter(Boolean) as HTMLElement[]));
+      schedule();
+    }
+    render();
+    return section;
   }
 
   const figure = (label: string, value: string): HTMLElement => h("div", {}, h("dt", {}, label), h("dd", {}, value));

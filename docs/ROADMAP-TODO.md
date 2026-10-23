@@ -1056,6 +1056,15 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       the public certificate verification page says which policy version replaced a revoked certificate. axe (WCAG 2.2 AA) and keyboard specs at desktop
       and phone width, unit tests for the model, strings parity and the BFF. Differences from the plan: the variants list is a section of the policy page
       (no separate `variants.astro`), and the style guide upload and token review are not in `new` (SG, not built). Pending: P6R-12 demo.
+      Note 2026-10-23 (P6R-11, `(new)`): separate branded academies per department created from one policy, implemented as tenant provisioning from
+      a template (ADR 0141 amendment, Proposed). Platform: tenant templates (`ulams:tenant:template`, `/api/platform/templates`, `ulams:tenant:create --template`),
+      derived tenants with a record, a per-parent quota, no chains, idempotent re-run and cleanup (`--derived-from/--purpose/--reference`, `--with-derived`,
+      `/api/platform/tenants/{slug}/derived`). Policy: `GET|POST|DELETE /api/admin/policies/{id}/variants/{variant}/academy` and an "Own academy" block per department
+      in the Studio (theme preset, accent, status, links, remove after confirming; EN, PL, ZH; axe and keyboard specs). Like "new site" it needs `TENANCY_NEW_SITES` and
+      `platform_admin`; the department's reviewed builder session is moved there (the policy, certificates and the owner dashboard stay in the policy tenant, the
+      academy's learners and certificates are the academy's). Not done: later policy changes do not reach an academy (a new transfer), department hosts inside one
+      tenant stay with EP-1 to EP-4 (#451, #455, #457), style guide tokens (SG), cross-tenant reporting of academy completions. The public "Coming" label of
+      separate branded academies can be relabelled once this is merged and operated.
 - [ ] (new) Branded entry points inside one academy: per-department, per-course and per-role hosts with their own theme,
       catalogue focus and SEO settings, resolved to the tenant by the front; access never depends on the host; per-host
       `__Host-` sessions with a one-time hand-off code between hosts; entry hosts join the trusted origins and return URLs;

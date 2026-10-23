@@ -1655,3 +1655,21 @@ a.st-ver-link {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+.st-pol-academy,
+.st-pol-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid currentColor;
+  padding-top: 8px;
+  margin-top: 8px;
+}
+.st-pol-confirm {
+  border-top: 0;
+  padding-top: 0;
+  margin-top: 0;
+}
+.st-pol-links {
+  margin: 0;
+  padding-left: 1.2rem;
+}

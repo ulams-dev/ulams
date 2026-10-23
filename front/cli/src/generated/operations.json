@@ -1818,6 +1818,24 @@
   "tag": "Policies"
  },
  {
+  "method": "DELETE",
+  "path": "/api/admin/policies/{policy}/variants/{variant}/academy",
+  "summary": "Remove the academy of a department",
+  "tag": "Policies"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/policies/{policy}/variants/{variant}/academy",
+  "summary": "The academy of a department",
+  "tag": "Policies"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/policies/{policy}/variants/{variant}/academy",
+  "summary": "Create an academy of its own for a department",
+  "tag": "Policies"
+ },
+ {
   "method": "POST",
   "path": "/api/admin/policies/{policy}/variants/generate",
   "summary": "Generate the department courses of a policy",
@@ -4015,6 +4033,30 @@
  },
  {
   "method": "GET",
+  "path": "/api/platform/templates",
+  "summary": "List the tenant templates",
+  "tag": "Platform"
+ },
+ {
+  "method": "POST",
+  "path": "/api/platform/templates",
+  "summary": "Create a tenant template, or change the given fields of an existing one",
+  "tag": "Platform"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/platform/templates/{slug}",
+  "summary": "Remove a tenant template (tenants made from it are untouched)",
+  "tag": "Platform"
+ },
+ {
+  "method": "GET",
+  "path": "/api/platform/templates/{slug}",
+  "summary": "One tenant template",
+  "tag": "Platform"
+ },
+ {
+  "method": "GET",
   "path": "/api/platform/tenants",
   "summary": "List the tenants",
   "tag": "Platform"
@@ -4035,6 +4077,12 @@
   "method": "GET",
   "path": "/api/platform/tenants/{slug}",
   "summary": "One tenant",
+  "tag": "Platform"
+ },
+ {
+  "method": "GET",
+  "path": "/api/platform/tenants/{slug}/derived",
+  "summary": "The tenants created from this one for a purpose",
   "tag": "Platform"
  },
  {
