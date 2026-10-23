@@ -48,6 +48,7 @@ final class PolicyPresenter
             'courseId' => $variant->course_id,
             'pathId' => $variant->path_id,
             'examCourseId' => $variant->exam_course_id,
+            'academy' => $variant->academy,
             'ruleId' => $variant->rule_id,
             'position' => $variant->position,
         ];

@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int|null $rule_id
  * @property int|null $exam_course_id the exam-only course (the department course's final test), made by the first minor change
  * @property string|null $exam_session_id
+ * @property array|null $academy the request for an academy of its own: status, slug, name, theme, accent, template, error, urls
  * @property int $position
  * @property \Illuminate\Support\Carbon|null $generation_requested_at
  */
@@ -36,7 +37,7 @@ class PolicyVariant extends Model
 
     protected $guarded = [];
 
-    protected $casts = ['brief' => 'array', 'group_id' => 'integer', 'course_id' => 'integer', 'path_id' => 'integer', 'rule_id' => 'integer', 'exam_course_id' => 'integer', 'position' => 'integer', 'generation_requested_at' => 'datetime'];
+    protected $casts = ['brief' => 'array', 'group_id' => 'integer', 'course_id' => 'integer', 'path_id' => 'integer', 'rule_id' => 'integer', 'exam_course_id' => 'integer', 'academy' => 'array', 'position' => 'integer', 'generation_requested_at' => 'datetime'];
 
     public function policy(): BelongsTo
     {

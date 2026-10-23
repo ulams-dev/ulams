@@ -9,6 +9,7 @@ use Ulams\Compliance\UlamsComplianceServiceProvider;
 use Ulams\CourseBuilder\Events\BuilderStageFinished;
 use Ulams\CourseBuilder\UlamsCourseBuilderServiceProvider;
 use Ulams\LivingCourse\UlamsLivingCourseServiceProvider;
+use Ulams\PolicyLifecycle\Http\Controllers\AcademyController;
 use Ulams\PolicyLifecycle\Http\Controllers\DashboardController;
 use Ulams\PolicyLifecycle\Http\Controllers\LearnerController;
 use Ulams\PolicyLifecycle\Http\Controllers\PolicyController;
@@ -40,6 +41,7 @@ class UlamsPolicyLifecycleServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->mergeConfigFrom(__DIR__ . '/config.php', 'ulams_policy_lifecycle');
         foreach ([UlamsCourseBuilderServiceProvider::class, UlamsLivingCourseServiceProvider::class, UlamsComplianceServiceProvider::class] as $provider) {
             $this->app->register($provider);
         }
@@ -68,6 +70,9 @@ class UlamsPolicyLifecycleServiceProvider extends ServiceProvider
             Route::get('{policy}/versions/{number}', [VersionController::class, 'show'])->whereNumber('number');
             Route::get('{policy}/variants', [VariantController::class, 'index']);
             Route::post('{policy}/variants/generate', [VariantController::class, 'generate']);
+            Route::get('{policy}/variants/{variant}/academy', [AcademyController::class, 'show']);
+            Route::post('{policy}/variants/{variant}/academy', [AcademyController::class, 'store']);
+            Route::delete('{policy}/variants/{variant}/academy', [AcademyController::class, 'destroy']);
             Route::post('{policy}/versions/{number}/approve', [VersionController::class, 'approve'])->whereNumber('number');
             Route::post('{policy}/versions/{number}/reject', [VersionController::class, 'reject'])->whereNumber('number');
             Route::get('{policy}/dashboard', [DashboardController::class, 'show']);
