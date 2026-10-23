@@ -111,11 +111,11 @@ small commits → tests → summary.
       recommended defaults for Q1 to Q11, approved the matching spec sections (ROADMAP-PROMPT 3.1 and 4.4), and accepted that variant
       courses stay unlisted and unsold on their own until CV-5 routing exists
 
-- [ ] (partial: IMG-1 done, the `@ulams/sdk/images` URL builder, presets and unit tests; IMG-2 done, `Img.astro`, the plain `<img>` sites in `front/ui` and rich-text images on the builder with a runtime `ULAMS_IMAGE_SERVICE`; the client-side `elements/showcase.ts` and `InteractiveLesson` poster are unchanged; IMG-6a done, MyDevil fronts and the landing export in `cloudflare` mode with `deploy/mydevil/bin/check-images.sh`; IMG-4 in review, `IMAGES_CONTENT_URLS=api|original` for imports and the markdown helper, MyDevil on `original`, seed checks, the PHP endpoint labelled legacy and optional in its README and OpenAPI text; IMG-3 done in the PR for phase-8/img-3-admin-builder: admin `ResponsiveImage`, `resizedImage` and `WysiwygMarkdown` on the builder with `REACT_APP_IMAGE_SERVICE` (default `php`, byte-identical URLs), unit-tested per mode, not yet seen against a real Cloudflare zone, which needs the demos' admin runtime config (IMG-6b); IMG-5 and IMG-6b in review, IMG-7 pending) (new) Decision 2026-10-22: the owner asked to replace the PHP image resize with Cloudflare Image Transformations (enabled and
+- [ ] (partial: IMG-1 done, the `@ulams/sdk/images` URL builder, presets and unit tests; IMG-2 done, `Img.astro`, the plain `<img>` sites in `front/ui` and rich-text images on the builder with a runtime `ULAMS_IMAGE_SERVICE`; the client-side `elements/showcase.ts` and `InteractiveLesson` poster are unchanged; IMG-6a done, MyDevil fronts and the landing export in `cloudflare` mode with `deploy/mydevil/bin/check-images.sh`; IMG-4 merged (#469), `IMAGES_CONTENT_URLS=api|original` for imports and the markdown helper, MyDevil on `original`, seed checks, the PHP endpoint labelled legacy and optional in its README and OpenAPI text; IMG-3 merged (#427): admin `ResponsiveImage`, `resizedImage` and `WysiwygMarkdown` on the builder with `REACT_APP_IMAGE_SERVICE` (default `php`, byte-identical URLs), unit-tested per mode, not yet seen against a real Cloudflare zone, which needs the demos' admin runtime config (IMG-6b); IMG-5 merged (#472) and IMG-6b merged (#470), IMG-7 in review) (new) Decision 2026-10-22: the owner asked to replace the PHP image resize with Cloudflare Image Transformations (enabled and
       verified on the `ulams.app` zone), then narrowed it the same day: keep `api/packages/images` and `/api/images/img` for
       self-hosters and other clients, stop PHP resizing on the hosted demos and the landing, and make the image service a deployment
       choice. Plan `docs/plans/images-cloudflare.md` and ADR 0193 were accepted by the owner on 2026-10-22 with the recommended defaults (plan section 14)
-      Note 2026-10-23 (IMG-5, in review): the legacy learner app builds avatar URLs through the shared builder with the build setting
+      Note 2026-10-23 (IMG-5, merged): the legacy learner app builds avatar URLs through the shared builder with the build setting
       `VITE_ULAMS_IMAGE_SERVICE` (default `php`, the URLs it always built; `cloudflare`, `noop`), `VITE_ULAMS_IMAGE_SOURCES` and
       `VITE_ULAMS_IMAGE_TRANSFORM_ORIGIN`; the `Image` component keeps its `imgcache` flow only in `php`. The app is not hosted anywhere
 
@@ -1262,10 +1262,13 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       the hosted demo academies and the `ulams.app` landing on Cloudflare Image Transformations with `onerror=redirect` and a `noop`
       kill switch, admin and imports on demo deployments without `/api/images/img`, the PHP images API kept as an optional legacy API
       (plan `docs/plans/images-cloudflare.md`, milestones IMG-1 to IMG-7; ADR 0193 Accepted 2026-10-22; IMG-1 starts first)
-      Note 2026-10-23 (IMG-6b, in review): prepared, not applied. Storage Worker `max-age=3600` with ETag for `image/*`,
+      Note 2026-10-23 (IMG-6b, merged): prepared, not applied. Storage Worker `max-age=3600` with ETag for `image/*`,
       `deploy/mydevil/bin/set-admin-images.sh` (admin mode through `runtime-config.json`), the optional WAF rule generated from
       `allowedCloudflareOptions()` (`deploy/mydevil/cloudflare/image-waf-rule.mjs`) and the smoke check `ULAMS_EXPECT_WAF=1`. Deploying
       the Worker, writing the admin config on MyDevil and creating the WAF rule are owner steps (`deploy/mydevil/STAGING-NOTES.md`)
+      Note 2026-10-23 (IMG-7, in review): operators page "Image service" (`operators/image-service.mdx`: modes, settings per client, Cloudflare
+      setup, free-plan budget, kill switch, WAF rule, `IMAGES_CONTENT_URLS`, the legacy PHP API) and the creators, developers and
+      MyDevil/VPS pages that mention images now point to it. Describes IMG-3 (#427), IMG-4 (#469), IMG-5 (#472) and IMG-6b (#470), all merged
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
 - [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI
