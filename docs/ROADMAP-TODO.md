@@ -1014,6 +1014,16 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       `__Host-` sessions with a one-time hand-off code between hosts; entry hosts join the trusted origins and return URLs;
       custom domains verified by DNS TXT, TLS through Caddy on-demand `ask` or Cloudflare custom hostnames
       (plan `docs/plans/academy-entry-points.md` EP-1 to EP-7; ADR 0195 Proposed, amends ADR 0141)
+      Note 2026-10-23: owner decided that everything labelled Coming is built and approved the plan defaults (a department host
+      never adds a learner to its group; hand-off between hosts uses a one-time code). EP-1 (PR open): `tenant_entry_points` and its
+      audit table in the platform database, `EntryPointService`, tenant admin API `/api/admin/entry-points` (permission
+      `entry_points_manage`, scope `settings`) reaching the platform through a child process, host and target validation,
+      isolation tests, `ulams entry-points` commands, PHP SDK, docs page.
+      EP-2 (PR open): public `GET /api/platform/entry-points/resolve` (platform hosts, throttled, active entry points only, no ids of
+      people), the front looks up a host no rule matches (SWR cache 60 s, misses 10 s, stale on failure, 503 instead of another academy),
+      `Astro.locals.entry`, theme override (accent, logo text, language over the academy's; preset for the look only) with `noindex`
+      for internal audiences, `/go/<key>` fallback on the academy's host. `accentCss` now also holds the accent to 4.5:1 on cards.
+      Open: EP-3 to EP-7.
 - [x] Verification URL/QR, expiry, recertification, reminders (verification endpoint and page, QR, expiry, revocation, #273; recertification and reminders, #298)
 - [x] Mandatory training with due dates and manager escalation (`api/packages/compliance`, #298)
 - [x] Compliance reports and audit export (linked to Phase 3 audit trail) (#276)

@@ -930,6 +930,42 @@
   "tag": "Admin Dictionary Words"
  },
  {
+  "method": "GET",
+  "path": "/api/admin/entry-points",
+  "summary": "Entry points of this academy",
+  "tag": "Admin Entry points"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/entry-points",
+  "summary": "Add an entry point (a pending host until its DNS record is verified)",
+  "tag": "Admin Entry points"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/entry-points/{entryPoint}",
+  "summary": "Delete an entry point (its host stops serving at once)",
+  "tag": "Admin Entry points"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/entry-points/{entryPoint}",
+  "summary": "One entry point",
+  "tag": "Admin Entry points"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/entry-points/{entryPoint}",
+  "summary": "Change the label, target, theme, SEO or status of an entry point",
+  "tag": "Admin Entry points"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/entry-points/audit",
+  "summary": "Who changed which entry point, newest first",
+  "tag": "Admin Entry points"
+ },
+ {
   "method": "POST",
   "path": "/api/admin/events/trigger-manually/{id}",
   "summary": "Manually triggered event for users",
@@ -3778,6 +3814,12 @@
   "path": "/api/pencil-spaces/login",
   "summary": "Generate a direct login link",
   "tag": "Pencil Spaces"
+ },
+ {
+  "method": "GET",
+  "path": "/api/platform/entry-points/resolve",
+  "summary": "The academy and entry point that serve a host (public, platform hosts only)",
+  "tag": "Platform"
  },
  {
   "method": "GET",

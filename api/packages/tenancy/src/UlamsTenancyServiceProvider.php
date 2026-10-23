@@ -10,6 +10,7 @@ use Illuminate\Support\ServiceProvider;
 use Ulams\Tenancy\Console\CreateTenantCommand;
 use Ulams\Tenancy\Console\DeleteTenantCommand;
 use Ulams\Tenancy\Console\EnsureTenantBucketsCommand;
+use Ulams\Tenancy\Console\EntryPointGatewayCommand;
 use Ulams\Tenancy\Console\ExportH5PServiceConfigCommand;
 use Ulams\Tenancy\Console\ListTenantsCommand;
 use Ulams\Tenancy\Console\ScheduleLoopCommand;
@@ -23,16 +24,20 @@ use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
+use Ulams\Tenancy\Services\Contracts\EntryPointGatewayContract;
 use Ulams\Tenancy\Services\Contracts\StorageIdentityProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
+use Ulams\Tenancy\Services\EntryPointService;
 use Ulams\Tenancy\Services\H5PServiceConfigExporter;
 use Ulams\Tenancy\Services\ManualDatabaseProvisioner;
 use Ulams\Tenancy\Services\NullStorageIdentityProvisioner;
 use Ulams\Tenancy\Services\MultidomainRegistry;
+use Ulams\Tenancy\Services\PlatformEntryPointGateway;
 use Ulams\Tenancy\Services\PostgresDatabaseProvisioner;
 use Ulams\Tenancy\Services\ProcessTenantCommandRunner;
 use Ulams\Tenancy\Services\S3BucketProvisioner;
 use Ulams\Tenancy\Services\SeaweedFsIdentityProvisioner;
+use Ulams\Tenancy\Support\TenantContext;
 use Ulams\Tenancy\Upgrade\DefaultUpgradeSteps;
 
 class UlamsTenancyServiceProvider extends ServiceProvider
@@ -73,6 +78,12 @@ class UlamsTenancyServiceProvider extends ServiceProvider
             (string) config(self::CONFIG_KEY . '.php_binary', 'php'),
             (int) config(self::CONFIG_KEY . '.process_timeout', 900),
         ));
+        // a tenant process reaches the platform table through a platform child process; the platform (and the
+        // tests) use the service itself
+        $this->app->singleton(EntryPointService::class);
+        $this->app->singleton(EntryPointGatewayContract::class, fn ($app) => TenantContext::isPlatform()
+            ? $app->make(EntryPointService::class)
+            : new PlatformEntryPointGateway($app->make(TenantCommandRunnerContract::class)));
         $this->app->singleton(H5PServiceConfigExporter::class, fn ($app) => new H5PServiceConfigExporter(
             $app->make(\Illuminate\Filesystem\Filesystem::class),
             rtrim($app->environmentPath(), DIRECTORY_SEPARATOR),
@@ -85,6 +96,8 @@ class UlamsTenancyServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        RateLimiter::for('ulams-entry-points-admin', fn (Request $request) => Limit::perMinute(60)->by('entry-points:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
+        RateLimiter::for('ulams-entry-resolve', fn (Request $request) => Limit::perMinute((int) config(self::CONFIG_KEY . '.entry_resolve_rate', 600))->by('entry-resolve:' . $request->ip()));
         RateLimiter::for('ulams-platform', fn (Request $request) => Limit::perMinute(60)->by('platform:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
 
         $kernel = $this->app->make(HttpKernel::class);
@@ -101,6 +114,7 @@ class UlamsTenancyServiceProvider extends ServiceProvider
                 EnsureTenantBucketsCommand::class,
             SetTenantEnvCommand::class,
                 SeedTenantDemoCommand::class,
+                EntryPointGatewayCommand::class,
                 ExportH5PServiceConfigCommand::class,
                 ScheduleLoopCommand::class,
                 WorkOnceCommand::class,

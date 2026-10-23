@@ -225,6 +225,10 @@ Platform environment variables of the tenancy package (defaults in
 | `TENANCY_PLATFORM_API` | `false` | Turn on the [platform tenant API](/operators/platform-api/) (`/api/platform/*`, `ulams tenants`). Platform hosts only. |
 | `TENANCY_NEW_SITES` | `false` | Lets an author with the `platform_admin` permission create a new site for a course from the Course Builder. |
 | `TENANCY_PLATFORM_HOST` | `api.localhost` | The host platform commands run under when a tenant's queue worker has to create a tenant. |
+| `TENANCY_MAX_ENTRY_POINTS` | `20` | Branded [entry points](/admin/entry-points/) per tenant. |
+| `TENANCY_ENTRY_PLATFORM_SUFFIXES` | `.app.localhost` | Host suffixes the platform serves for entry points (flat `{slug}-name` hosts, active at once). |
+| `TENANCY_ENTRY_TRUSTED_SUFFIXES` | empty | Development and CI only: entry point hosts under these suffixes are active without DNS verification. |
+| `TENANCY_ENTRY_CNAME_TARGET` | empty | Where the CNAME of a custom entry point domain has to point. |
 
 See also [Environment variables](/reference/environment-variables/) and
 [Artisan commands](/reference/artisan-commands/).

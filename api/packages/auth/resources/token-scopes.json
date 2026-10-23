@@ -260,6 +260,10 @@
             "area": "identity"
         },
         {
+            "pattern": "api/admin/entry-points*",
+            "area": "settings"
+        },
+        {
             "pattern": "api/admin/knowledge*",
             "area": "courses",
             "options": {
@@ -631,6 +635,10 @@
         {
             "pattern": "api/admin/lti*",
             "area": "lti"
+        },
+        {
+            "pattern": "api/platform/entry-points/resolve",
+            "area": "public"
         },
         {
             "pattern": "api/platform*",
