@@ -1,5 +1,5 @@
 {
- "summary": "620/709 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "626/715 covered, 89 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -677,6 +677,42 @@
    "key": "GET /api/admin/course-builder/sessions/{session}/versions",
    "summary": "Blueprint version history",
    "command": "builder.chat",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/style-profiles",
+   "summary": "Style profiles of the academy, newest first (filter with status, scopeType, scopeId)",
+   "command": "style-profiles.list",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/style-profiles",
+   "summary": "Propose a style profile: upload a style guide (file, MD/PDF/DOCX) to have it read and cited, or send values by hand (profile, optionally from an existing profile id)",
+   "command": "style-profiles.propose",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/course-builder/style-profiles/{profile}",
+   "summary": "A style profile with the passages it cites and its diff against the approved profile",
+   "command": "style-profiles.get",
+   "status": "covered"
+  },
+  {
+   "key": "PATCH /api/admin/course-builder/style-profiles/{profile}",
+   "summary": "Edit a suggested profile (values and name); invalid values are dropped and reported",
+   "command": "style-profiles.edit",
+   "status": "covered"
+  },
+  {
+   "key": "DELETE /api/admin/course-builder/style-profiles/{profile}",
+   "summary": "Delete a suggested or superseded profile",
+   "command": "style-profiles.delete",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/course-builder/style-profiles/{profile}/approve",
+   "summary": "Approve a suggested profile (admins); it supersedes the approved profile of its scope",
+   "command": "style-profiles.approve",
    "status": "covered"
   },
   {
