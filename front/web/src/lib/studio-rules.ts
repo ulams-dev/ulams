@@ -27,6 +27,13 @@ export const STUDIO_RULES: Array<{ method: string; pattern: RegExp }> = [
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/citations$`) },
   { method: "POST", pattern: new RegExp(`^/sessions/${ID}/outline$`) },
   { method: "POST", pattern: new RegExp(`^/sessions/${ID}/elements/${ID}/variants$`) },
+  // style profiles (ADR 0196): the API checks the permission, the creator and the admin role
+  { method: "GET", pattern: /^\/style-profiles$/ },
+  { method: "POST", pattern: /^\/style-profiles$/ },
+  { method: "GET", pattern: new RegExp(`^/style-profiles/${ID}$`) },
+  { method: "PATCH", pattern: new RegExp(`^/style-profiles/${ID}$`) },
+  { method: "DELETE", pattern: new RegExp(`^/style-profiles/${ID}$`) },
+  { method: "POST", pattern: new RegExp(`^/style-profiles/${ID}/approve$`) },
 ];
 
 export function isStudioCall(method: string, path: string): boolean {
