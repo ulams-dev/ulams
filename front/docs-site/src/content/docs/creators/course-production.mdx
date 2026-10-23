@@ -1,0 +1,35 @@
+---
+title: How a course was produced
+description: The Production page of the studio shows how long each stage of a course took, what the model calls cost and how much of what the AI wrote you kept, from the academy's own recorded runs.
+sidebar:
+  order: 43
+learnerRoutes:
+  - /studio/courses/[courseId]/production
+---
+
+Open a course you built with the Course Builder and choose **Production** in the studio navigation
+(`/studio/courses/<id>/production`). The page answers three questions about that one course, in English, Polish or
+Chinese (the language links at the top).
+
+- **How long did it take?** Every stage the Course Builder ran (the outline, the lessons, the grounding check,
+  interactive elements, quizzes, metadata, the apply step, element edits by chat and updates from sources) with its
+  time. The totals separate **generation time** (what the machine did while you waited) from **interview time** (you
+  answering questions) and **model time** (the summed time of the model calls, which is longer because lessons are
+  written in parallel). A stage says how it was measured: start to finish, whole run only (builds older than 30 days),
+  or did not finish normally.
+- **What did it cost?** The model calls that made and changed the course (build cost, including variants) and those
+  that kept it up to date (maintenance cost: proposals from sources and from learner insights), with the number of
+  calls and how many failed. Failed calls are included because they were paid for. Tutoring and personal help for
+  learners are not part of producing a course and are not counted.
+- **What became of what the AI wrote?** The modules, lessons, blocks and quiz questions the AI wrote, split into those
+  you kept as written, those the AI revised on your request, those an author edited and those from before this was
+  recorded (shown as unknown, never guessed). Elements an author wrote from scratch are listed apart. The split is a bar
+  with the same numbers in a table.
+
+**Author time** shows "Not recorded" unless your administrator turns review time on; it is never shown as zero.
+**Download CSV** and **Download JSON** save the figures of this course with the same columns as the administrator's
+export (see [Authoring metrics](/operators/authoring-metrics/)).
+
+These are your academy's own measurements. The page does not compare the course with other courses, other academies or
+any industry figure. The page is read by the author of the course and by administrators; another author's course answers
+that it belongs to someone else.

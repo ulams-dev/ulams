@@ -135,7 +135,49 @@ export type MockApi = {
   logoRemovals: () => number;
   /** The theme settings as stored now. */
   theme: () => Record<string, string>;
+  /** Query strings of every GET /api/admin/authoring-metrics/courses[/export], in order. */
+  metricRequests: string[];
 };
+
+/** One course of the authoring metrics list, as the API returns it. */
+export type MockMetric = {
+  course_id: number;
+  course_title: string | null;
+  author_minutes?: number | null;
+  ai_elements?: number;
+  accepted_unchanged?: number;
+  unknown?: number;
+};
+
+const metricRow = (m: MockMetric) => ({
+  course_id: m.course_id,
+  course_title: m.course_title,
+  session_id: `01s${String(m.course_id).padStart(23, '0')}`,
+  method_version: 1,
+  computed_at: '2026-10-22T12:00:00+00:00',
+  time: {
+    generation_seconds: 441,
+    ai_edit_seconds: 23,
+    interview_seconds: 18,
+    model_seconds: 902,
+    author_minutes: m.author_minutes ?? null,
+  },
+  cost: {
+    build_micro_usd: 284100,
+    maintenance_micro_usd: 1520000,
+    llm_calls: 27,
+    llm_calls_failed: 1,
+  },
+  counts: { lessons: 6, questions: 18, blocks: 35, cited_blocks: 35, learner_minutes_estimate: 60 },
+  elements: {
+    ai_elements: m.ai_elements ?? 59,
+    accepted_unchanged: m.accepted_unchanged ?? 49,
+    revised_on_request: m.ai_elements === 0 ? 0 : 4,
+    edited_by_author: m.ai_elements === 0 ? 0 : 6,
+    unknown: m.unknown ?? 0,
+    author_written: 2,
+  },
+});
 
 /** A template of the same event in another language, as the list endpoint returns it. */
 export type MockSibling = { id: number; locale: string | null; name: string; content?: string };
@@ -154,6 +196,8 @@ export async function mockApi(
     siblings?: MockSibling[];
     /** Serve the Theme settings screen (adds the settings permissions) with this stored theme. */
     theme?: MockTheme;
+    /** Serve Analytics > Authoring (adds its permission): the courses of the list, or a status to fail with. */
+    authoring?: { courses?: MockMetric[]; status?: number; failFirst?: boolean };
   } = {},
 ): Promise<MockApi> {
   const email = options.kind === 'email';
@@ -190,7 +234,9 @@ export async function mockApi(
     logoUploads: [],
     logoRemovals: () => logoRemovals,
     theme: () => Object.fromEntries(themeRows.map((r) => [r.key, r.value])),
+    metricRequests: [],
   };
+  let metricFailures = options.authoring?.failFirst ? 1 : 0;
 
   const siblings = options.siblings ?? [];
   const created = new Map<number, Record<string, any>>();
@@ -277,9 +323,32 @@ export async function mockApi(
             first_name: 'Ada',
             last_name: 'Admin',
             roles: ['admin'],
-            permissions: options.theme ? [...PERMISSIONS, ...SETTINGS_PERMISSIONS] : PERMISSIONS,
+            permissions: [
+              ...PERMISSIONS,
+              ...(options.theme ? SETTINGS_PERMISSIONS : []),
+              ...(options.authoring ? ['authoring_metrics_read'] : []),
+            ],
           }),
         );
+      }
+      if (options.authoring && path.startsWith('/api/admin/authoring-metrics/courses')) {
+        state.metricRequests.push(`${path.endsWith('/export') ? 'export' : 'list'}${url.search}`);
+        if (options.authoring.status) {
+          return json({ message: 'This action is unauthorized.' }, options.authoring.status);
+        }
+        if (metricFailures > 0) {
+          metricFailures -= 1;
+          return json({ message: 'The figures are temporarily unavailable.' }, 500);
+        }
+        if (path.endsWith('/export')) {
+          return route.fulfill({
+            status: 200,
+            contentType: 'text/csv',
+            headers: { ...cors, 'Access-Control-Expose-Headers': '*' },
+            body: 'course_id,session_id,method_version\n',
+          });
+        }
+        return json(ok((options.authoring.courses ?? []).map(metricRow)));
       }
       if (path === '/api/auth/refresh') {
         return json(ok({ token: TOKEN, expires_at: '2100-01-01T00:00:00Z' }));
