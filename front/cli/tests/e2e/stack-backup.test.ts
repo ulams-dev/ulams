@@ -84,7 +84,9 @@ describe.skipIf(!enabled)("backup, wipe and restore of a real Docker stack", () 
         courses: list(await invoke(["courses", "list", "--all"], admin)).map(c => [c.id, c.title]).sort(),
         catalogue: list(await invoke(["public", "courses-list", "--all"], student)).map(c => c.id).sort(),
         h5p: list(await invoke(["h5p", "contents", "--all"], admin)).map(h => [h.id, h.title]).sort(),
-        progress: list(await invoke(["my", "courses-progress"], student)).map(p => [(p.course as Json).id, (p.course as Json).title, JSON.stringify(list(p.progress).map(t => [t.topic_id, t.status]).sort())]).sort(),
+        // started or finished topics only: a not-started row can appear later when a queued job (video processing)
+        // activates a seeded topic, which is unrelated to the backup
+        progress: list(await invoke(["my", "courses-progress"], student)).map(p => [(p.course as Json).id, (p.course as Json).title, JSON.stringify(list(p.progress).filter(t => t.status).map(t => [t.topic_id, t.status]).sort())]).sort(),
         lessons: list((await invoke(["my", "courses-program", String(course.id)], student) as Json).lessons).map(l => [l.id, l.title, list(l.topics).length]),
         image: await fetchBytes(String(course.image_url), base),
       });
