@@ -13,6 +13,6 @@ ulams stack up
 What's real: lokalny trial używa symulowanych odpowiedzi AI, więc nie płacisz za żadne wywołania modelu. Prawdziwe generowanie wymaga podpięcia dostawcy. Produkcja to dodatkowo domeny, HTTPS i usługi — ale od tego jest osobna instrukcja.
 
 Instrukcja:
-[/operators/one-command-stack/](/operators/one-command-stack/)
+[/operators/one-command-stack/](https://ulams-dev.github.io/ulams/operators/one-command-stack/)
 
 Jeśli odpalisz — daj znać, jak poszło. Każdy zgłoszony problem to dla mnie prezent 🎁

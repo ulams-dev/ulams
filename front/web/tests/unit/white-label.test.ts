@@ -9,9 +9,8 @@ const sections = main.children as Node[];
 const heritage = sections.find((node) => node.component === "HeritageStory")!;
 
 describe("concise platform feature list", () => {
-  it("uses the selected Ulam portrait and heritage instead of repeating product principles", () => {
-    expect(heritage).toBeDefined();
-    expect(JSON.stringify(heritage.props)).toContain("stanislaw-ulam-stitch.png");
+  it("keeps the home page to the product: no heritage story and no separate white-label story", () => {
+    expect(heritage).toBeUndefined();
     expect(sections.some((section) => section.component === "WhiteLabelStory")).toBe(false);
   });
 
@@ -19,6 +18,6 @@ describe("concise platform feature list", () => {
     const order = sections.map((section) => section.component);
     expect(order.indexOf("Showcase")).toBeLessThan(order.indexOf("WorkflowShowcase"));
     expect(order).not.toContain("ComparisonTable");
-    expect((doc.children!.find((node) => node.component === "SiteHeader")!.props!.links as Array<{ href: string }>)[1]!.href).toBe("/comparison/");
+    expect((doc.children!.find((node) => node.component === "SiteHeader")!.props!.links as Array<{ href: string }>)[0]!.href).toBe("/comparison/");
   });
 });

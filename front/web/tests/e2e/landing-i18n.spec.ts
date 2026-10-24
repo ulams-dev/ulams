@@ -10,8 +10,8 @@ import { expect, test, type Page } from "@playwright/test";
 const port = process.env.WEB_BASE_PORT ?? "4321";
 const base = `http://app.localhost:${port}`;
 const CASES = [
-  { lang: "pl", html: "pl", path: "/pl/", h1: "Kursy z dokumentacji", title: /^ulams — otwarty LMS/, label: "PL", skip: "Przejdź do treści", coming: "Wkrótce", demos: "Dema" },
-  { lang: "zh", html: "zh-Hans", path: "/zh/", h1: "从文档构建课程", title: /^ulams — 开放的 AI 原生 LMS/, label: "中文", skip: "跳到正文", coming: "即将推出", demos: "演示" },
+  { lang: "pl", html: "pl", path: "/pl/", h1: "Kursy z Twoich dokumentów", title: /^ulams — otwarty LMS/, label: "PL", skip: "Przejdź do treści", coming: "Wkrótce", demos: "Dema" },
+  { lang: "zh", html: "zh-Hans", path: "/zh/", h1: "由你的文档生成课程", title: /^ulams — 开放的 AI 原生 LMS/, label: "中文", skip: "跳到正文", coming: "即将推出", demos: "演示" },
 ] as const;
 
 async function open(page: Page, path: string) {
@@ -85,7 +85,7 @@ for (const c of CASES) {
       } else {
         await expect(page.locator(`header nav.u-nav a[href="${comparisonHref}"]`)).toBeVisible();
       }
-      const coming = await page.locator(".u-status--coming").count();
+      const coming = await page.locator(".u-status--coming, .hj-coming").count();
       expect(coming, "public pages expose roadmap badges").toBeGreaterThan(0);
       await expect(page.locator("main")).toContainText(c.coming);
       // none of the interface strings of the components stayed English
@@ -109,7 +109,7 @@ for (const c of CASES) {
       const wide = await page.evaluate(() => {
         const limit = document.documentElement.clientWidth + 1;
         return [...document.querySelectorAll("main *")]
-          .filter((el) => !el.closest(".u-compare__scroll, .u-stage, .u-wf__panels, .u-wf__tabs, pre, .u-orb__rings") && el.getBoundingClientRect().right > limit && getComputedStyle(el).position !== "fixed")
+          .filter((el) => !el.closest(".u-compare__scroll, .u-stage, .u-wf__panels, .u-wf__tabs, .hj-tabs, .u-showcase__grid, pre, .u-orb__rings") && el.getBoundingClientRect().right > limit && getComputedStyle(el).position !== "fixed")
           .slice(0, 5)
           .map((el) => `${el.tagName.toLowerCase()}.${el.className}`);
       });
@@ -185,8 +185,11 @@ test("platform robots and sitemap list only the localized public page URLs", asy
     `${base}/course-generation/notion-page/`, `${base}/pl/course-generation/notion-page/`, `${base}/zh/course-generation/notion-page/`,
     `${base}/content-cost/`, `${base}/pl/content-cost/`, `${base}/zh/content-cost/`,
     `${base}/reporting/`, `${base}/pl/reporting/`, `${base}/zh/reporting/`,
+    `${base}/white-paper/`, `${base}/pl/white-paper/`, `${base}/zh/white-paper/`,
+    `${base}/style-guide/`, `${base}/pl/style-guide/`, `${base}/zh/style-guide/`,
+    `${base}/learning-elements/`, `${base}/pl/learning-elements/`, `${base}/zh/learning-elements/`,
   ]);
-  expect(xml.match(/hreflang="x-default"/g)).toHaveLength(24);
+  expect(xml.match(/hreflang="x-default"/g)).toHaveLength(33);
 });
 
 test("the FAQ page lists every question once, in every language, with one FAQPage", async ({ page }) => {
@@ -205,19 +208,13 @@ test("the FAQ page lists every question once, in every language, with one FAQPag
   expect(axe.violations.map((v) => v.id)).toEqual([]);
 });
 
-test("the content-cost and reporting pages and their home call-to-action bands", async ({ page }) => {
+test("the content-cost and reporting pages, linked from the home advantages", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const [prefix, lang] of [["", "en"], ["/pl", "pl"], ["/zh", "zh-Hans"]] as const) {
     await page.goto(`${base}${prefix}/`);
-    for (const [id, slug, event] of [["cost-cta", "content-cost", "cost_page_open"], ["reporting-cta", "reporting", "reporting_page_open"]] as const) {
-      const band = page.locator(`section#${id}`);
-      await expect(band.locator("h2")).toHaveCount(1);
-      await expect(band).toHaveClass(/u-cta--feature/);
-      if (id === "cost-cta") await expect(band.locator(".u-cta__stats li")).toHaveCount(4);
-      else await expect(band.locator(".u-cta__chips li")).toHaveCount(6);
-      const link = band.locator("a.u-btn").first();
-      await expect(link).toHaveAttribute("href", `${prefix}/${slug}/`);
-      await expect(link).toHaveAttribute("data-umami-event", event);
+    for (const slug of ["content-cost", "reporting"] as const) {
+      const link = page.locator(`#advantages a[href="${prefix}/${slug}/"]`);
+      await expect(link).toHaveCount(1);
       await link.click();
       await expect(page).toHaveURL(`${base}${prefix}/${slug}/`);
       await expect(page.locator("html")).toHaveAttribute("lang", lang);

@@ -82,6 +82,10 @@ export interface UiStrings {
   supportFailed: string;
   supportWhy: string;
   supportSources: string;
+  /** Self-test cards (FlipCards): the reveal button and the hidden prefix of the back. */
+  flipShow: string;
+  flipHide: string;
+  flipAnswer: string;
   supportFeedbackLabel: string;
   supportHelped: string;
   supportNotHelpful: string;
@@ -225,6 +229,9 @@ const en: UiStrings = {
   supportFailed: "We could not prepare extra help this time.",
   supportWhy: "Why am I seeing this?",
   supportSources: "Sources",
+  flipShow: "Show answer",
+  flipHide: "Hide answer",
+  flipAnswer: "Answer: ",
   supportFeedbackLabel: "Was this extra help useful?",
   supportHelped: "This helped",
   supportNotHelpful: "Not helpful",
@@ -364,6 +371,9 @@ const pl: UiStrings = {
   supportFailed: "Tym razem nie udało się przygotować dodatkowej pomocy.",
   supportWhy: "Dlaczego to widzę?",
   supportSources: "Źródła",
+  flipShow: "Pokaż odpowiedź",
+  flipHide: "Ukryj odpowiedź",
+  flipAnswer: "Odpowiedź: ",
   supportFeedbackLabel: "Czy ta pomoc była przydatna?",
   supportHelped: "To pomogło",
   supportNotHelpful: "Nie pomogło",
@@ -503,6 +513,9 @@ const zh: UiStrings = {
   supportFailed: "这次未能准备好额外帮助。",
   supportWhy: "为什么会看到这个？",
   supportSources: "来源",
+  flipShow: "显示答案",
+  flipHide: "隐藏答案",
+  flipAnswer: "答案：",
   supportFeedbackLabel: "这份额外帮助有用吗？",
   supportHelped: "有帮助",
   supportNotHelpful: "没有帮助",

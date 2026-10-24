@@ -9,11 +9,12 @@ async function open(page: Page) {
   await expect(page.locator("#agents")).toHaveCount(1);
 }
 
-test("the how-it-works story appears once, right after the hero, with no tabbed policy lifecycle", async ({ page }) => {
+test("the hero journey appears once, inside the hero, with one example tag for its pictures", async ({ page }) => {
   await open(page);
-  await expect(page.locator("#how-it-works")).toHaveCount(1);
-  await expect(page.locator("ulams-policy-story, .u-lc, #builder")).toHaveCount(0);
-  await expect(page.locator("#how-it-works .hs-visual__tag").first()).toBeVisible();
+  await expect(page.locator("#hero-journey")).toHaveCount(1);
+  await expect(page.locator(".u-hero #hero-journey")).toHaveCount(1);
+  await expect(page.locator("ulams-policy-story, .u-lc, #builder, #how-it-works")).toHaveCount(0);
+  await expect(page.locator("#hero-journey .hj-tag")).toHaveCount(1);
 });
 
 test("workflow tabs: roving tabindex, aria wiring, arrow keys, transcripts", async ({ page }) => {
@@ -68,10 +69,10 @@ test("no layout shift while the stories play", async ({ page }) => {
     await document.fonts.ready;
     (window as unknown as { __cls: number }).__cls = 0;
   });
-  for (const id of ["how-sources", "how-draft", "how-evidence", "agents"]) {
-    await page.locator(`#${id}`).scrollIntoViewIfNeeded();
-    await page.waitForTimeout(2500);
-  }
+  // the hero journey plays its first beats, then the agent examples play further down
+  await page.waitForTimeout(9000);
+  await page.locator("#agents").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(2500);
   const cls = await page.evaluate(() => (window as unknown as { __cls: number }).__cls);
   expect(cls).toBeLessThan(0.05);
 });
@@ -81,9 +82,9 @@ test.describe("reduced motion", () => {
 
   test("the story stays still and complete, while agent examples show their complete transcript", async ({ page }) => {
     await open(page);
-    await expect(page.locator("html.js-dg")).toHaveCount(0);
-    await expect(page.locator("#how-it-works [data-dg-control]:visible")).toHaveCount(0);
-    await expect(page.locator("#how-evidence")).toContainText("Mandatory training overdue");
+    await expect(page.locator("#hero-journey [data-hj-controls]")).toBeHidden();
+    await expect(page.locator("#hero-journey .hj-scene.is-on")).toHaveAttribute("data-hj-scene", "source");
+    await expect(page.locator("#hero-journey")).toContainText("Mandatory training");
     await page.locator("#agents").scrollIntoViewIfNeeded();
     await expect(page.locator("#agents ulams-story").first()).toHaveAttribute("data-static", "");
     await expect(page.locator("#agents [data-pause]")).toBeHidden();

@@ -38,12 +38,12 @@ describe("platform product hero", () => {
     ).toEqual([]);
   });
 
-  it("carries no animation of its own: the how-it-works story follows it", () => {
+  it("carries no animation in its document (the journey comes from HomeBody): the advantages and the walkthrough follow it", () => {
     expect(hero(platform).props).not.toHaveProperty("capabilities");
     expect(hero(platform).props).not.toHaveProperty("diff");
     expect(hero(platform)).not.toHaveProperty("final");
     const plan = planHomeBody(platform)!;
-    expect(plan.main.map((p) => (p.kind === "story" ? "story" : p.node.component)).slice(0, 2)).toEqual(["Hero", "story"]);
+    expect(plan.main.map((p) => (p.kind === "node" ? String(p.node.props?.id ?? p.node.component) : p.kind)).slice(0, 3)).toEqual(["Hero", "advantages", "walkthrough"]);
     expect(hero(platform).props!.primaryCta).toMatchObject({ href: "#demos" });
     expect(hero(platform).props!.secondaryCta).toMatchObject({ href: "#self-host" });
   });
@@ -54,7 +54,7 @@ describe("platform product hero", () => {
     expect(sections).not.toContain("LivingCourseStory");
     expect(sections).not.toContain("ComparisonTable");
     const header = platform.children!.find((n) => n.component === "SiteHeader")!;
-    expect((header.props!.links as Array<{ href: string }>)[1]!.href).toBe("/comparison/");
+    expect((header.props!.links as Array<{ href: string }>)[0]!.href).toBe("/comparison/");
   });
 
   it("keeps every header and footer anchor on the page", () => {

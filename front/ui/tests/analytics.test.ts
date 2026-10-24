@@ -16,6 +16,17 @@ describe("ctaEvent", () => {
     }
   });
 
+  it("names the white paper, the style guide and the case studies in every language", () => {
+    for (const prefix of ["", "/pl", "/zh"]) {
+      expect(ctaEvent(`${prefix}/white-paper/`)).toBe("white_paper_open");
+      expect(ctaEvent(`${prefix}/style-guide/`)).toBe("style_guide_open");
+      expect(ctaEvent(`${prefix}/learning-elements/`)).toBe("learning_elements_open");
+      expect(ctaEvent(`${prefix}/course-generation/docs-repo/`)).toBe("case_study_open");
+      expect(ctaEvent(`${prefix}/course-generation/notion-page/`)).toBe("case_study_open");
+    }
+    expect(ctaEvent("/course-generation/")).toBeUndefined();
+  });
+
   it("ignores other relative links", () => {
     expect(ctaEvent("/faq/")).toBeUndefined();
     expect(ctaEvent("/reporting/extra/")).toBeUndefined();

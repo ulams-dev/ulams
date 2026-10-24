@@ -23,6 +23,12 @@ small commits → tests → summary.
       (ADR 0101 Proposed; requested by owner 2026-10-12). Documentation published through PR #247 and GitHub Pages run 38295754529.
       Live landing pageview and demo_open click accepted (HTTP 200); verification browser excluded.
 
+- [ ] (new) Owner feedback 2026-10-23 on the landing preview: a builder walkthrough on the home page (the real interview
+      questions and screens, then the course and the measured run), a white paper page (/white-paper/, print stylesheet and
+      "Print / save as PDF"; no build-time PDF because api/pdf only fills pdfme templates) and a style guide (home section and
+      /style-guide/, tokens read from the stylesheets, presets, AA guard, brand-import diff, catalogue), EN/PL/ZH
+      (partial: implemented and tested on branch feat/home-builder-whitepaper-styleguide, PR open, not merged).
+
 - [x] (2026-10-12) Owner requested the complete previous feature catalogue on Comparison,
       organised by stakeholder with full descriptions and documentation links (ADR 0100 Proposed).
 - [x] (new) Current Overview/Comparison page is highlighted in desktop and mobile menus in EN/PL/ZH.

@@ -1,0 +1,106 @@
+---
+/**
+ * Body of /white-paper/ (lib/white-paper.ts): header, hero, a contents list with the print button, the sections as
+ * Markdown prose, the numbered sources and a closing call to action; footer last. The print stylesheet drops the site
+ * chrome and the controls and prints every link target, so "Print / save as PDF" gives a clean document.
+ */
+import "./white-paper.css";
+import Render from "@ulams/ui/Render.astro";
+import Icon from "@ulams/ui/components/Icon.astro";
+import type { Locale } from "../../i18n/locales.ts";
+import type { ProductShell } from "../../lib/product-pages.ts";
+import { WP_SECTIONS, whitePaperCopy, whitePaperLinks } from "../../lib/white-paper.ts";
+
+interface Props {
+  shell: ProductShell;
+  locale: Locale;
+}
+
+const { shell, locale } = Astro.props;
+const copy = whitePaperCopy(locale);
+const links = whitePaperLinks(locale);
+const sections = WP_SECTIONS.map((id) => ({ id, ...copy.sections[id] }));
+const closing = {
+  component: "CtaBand",
+  props: { id: "next", title: copy.ctaTitle, text: copy.ctaText, cta: { label: copy.secondary, href: links.demos }, secondary: { label: copy.install, href: links.install } },
+};
+---
+
+<Render doc={shell.header} />
+<main id="main" tabindex="-1" class="dg-main wp-page">
+  <Render doc={shell.hero} />
+
+  <div class="wp u-container">
+    <aside class="wp-aside" aria-label={copy.contents}>
+      <nav class="wp-toc" aria-labelledby="wp-toc-title">
+        <p class="wp-toc__title" id="wp-toc-title">{copy.contents}</p>
+        <ol role="list">
+          {
+            sections.map((section, i) => (
+              <li>
+                <a href={`#${section.id}`}>
+                  <span class="wp-toc__num" aria-hidden="true">{i + 1}</span>
+                  <span>{section.title}</span>
+                </a>
+              </li>
+            ))
+          }
+          <li>
+            <a href="#sources">
+              <span class="wp-toc__num" aria-hidden="true">{sections.length + 1}</span>
+              <span>{copy.sourcesTitle}</span>
+            </a>
+          </li>
+        </ol>
+      </nav>
+      <div class="wp-print">
+        <button class="u-btn u-btn--ghost wp-print__btn" type="button" data-wp-print data-umami-event="white_paper_print" hidden>
+          <Icon name="print" />
+          {copy.print}
+        </button>
+        <p class="wp-print__note">{copy.printNote}</p>
+        <p class="wp-print__version">{copy.version}</p>
+      </div>
+    </aside>
+
+    <article class="wp-article">
+      {
+        sections.map((section, i) => (
+          <section class="wp-section" id={section.id} aria-labelledby={`${section.id}-title`}>
+            <h2 class="wp-section__title" id={`${section.id}-title`}>
+              <span class="wp-section__num" aria-hidden="true">{i + 1}</span>
+              {section.title}
+            </h2>
+            <Render doc={{ component: "Prose", props: { markdown: section.markdown } }} />
+          </section>
+        ))
+      }
+      <section class="wp-section" id="sources" aria-labelledby="sources-title">
+        <h2 class="wp-section__title" id="sources-title">
+          <span class="wp-section__num" aria-hidden="true">{sections.length + 1}</span>
+          {copy.sourcesTitle}
+        </h2>
+        <ol class="wp-sources">
+          {copy.sources.map((source) => (
+            <li>
+              <a href={source.href}>{source.label}</a>
+              <span class="wp-sources__url">{source.href}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+    </article>
+  </div>
+
+  <div class="wp-cta">
+    <Render doc={closing} />
+  </div>
+</main>
+<Render doc={shell.footer} />
+
+<script>
+  for (const button of document.querySelectorAll<HTMLButtonElement>("[data-wp-print]")) {
+    button.hidden = false;
+    button.addEventListener("click", () => window.print());
+  }
+</script>

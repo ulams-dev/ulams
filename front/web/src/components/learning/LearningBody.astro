@@ -1,0 +1,44 @@
+---
+/**
+ * Body of /learning-elements/ (lib/learning-elements.ts): header, hero, the elements in four groups (each live,
+ * as a labelled screenshot or described, with its demo lesson), a closing call to action and the footer.
+ */
+import "./learning.css";
+import Render from "@ulams/ui/Render.astro";
+import type { Locale } from "../../i18n/locales.ts";
+import type { ProductShell } from "../../lib/product-pages.ts";
+import { ELEMENTS, GROUPS, learningCopy } from "../../lib/learning-elements.ts";
+import ElementCard from "./ElementCard.astro";
+
+interface Props {
+  shell: ProductShell;
+  locale: Locale;
+}
+
+const { shell, locale } = Astro.props;
+const copy = learningCopy(locale);
+const home = locale === "en" ? "/" : `/${locale}/`;
+const closing = { component: "CtaBand", props: { id: "next", title: copy.home.title, text: copy.body, cta: { label: copy.secondary, href: `${home}#demos` } } };
+---
+
+<Render doc={shell.header} />
+<main id="main" tabindex="-1" class="dg-main le-page">
+  <Render doc={shell.hero} />
+  {
+    GROUPS.map((group, i) => (
+      <section class={`le le--group${i % 2 ? " le--paper" : ""}`} id={group} aria-labelledby={`${group}-title`}>
+        <div class="u-container">
+          <header class="le__head le__head--start">
+            <h2 class="le__title" id={`${group}-title`}>{copy.groups[group].title}</h2>
+            <p class="le__lede">{copy.groups[group].intro}</p>
+          </header>
+          <div class="le-grid">
+            {ELEMENTS.filter((e) => e.group === group).map((element) => <ElementCard element={element} locale={locale} />)}
+          </div>
+        </div>
+      </section>
+    ))
+  }
+  <Render doc={closing} />
+</main>
+<Render doc={shell.footer} />

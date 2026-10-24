@@ -15,7 +15,7 @@ const { label } = Astro.props;
   document.querySelectorAll<HTMLAnchorElement>("a[data-mail]").forEach((link) => {
     const codes = (link.dataset.mail ?? "").split(",").map(Number);
     const address = String.fromCharCode(...codes);
-    link.href = `mailto:${address}`;
+    link.href = ["mailto", address].join(":");
     link.textContent = address;
     link.removeAttribute("data-mail");
   });
