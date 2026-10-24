@@ -84,26 +84,33 @@ describe("home story: copy", () => {
 });
 
 describe("home story: placement", () => {
-  it("goes right after the hero and before the two call-to-action blocks; the old hero story is gone", () => {
+  it("goes right after the hero, followed by the builder walkthrough, before the two call-to-action blocks; the old hero story is gone", () => {
     for (const locale of LOCALES) {
       const doc = landingDocFor("platform", locale)!;
       const plan = planHomeBody(doc)!;
       expect(plan.before.map((n) => n.component)).toEqual(["SiteHeader"]);
       expect(plan.after.map((n) => n.component)).toEqual(["SiteFooter"]);
-      const order = plan.main.map((p) => (p.kind === "story" ? "story" : p.node.component));
-      expect(order.slice(0, 3)).toEqual(["Hero", "story", "CtaBand"]);
-      const ids = plan.main.map((p) => (p.kind === "story" ? "story" : String(p.node.props?.id ?? p.node.component)));
-      expect(ids.indexOf("story")).toBeLessThan(ids.indexOf("cost-cta"));
-      expect(ids.indexOf("story")).toBeLessThan(ids.indexOf("reporting-cta"));
+      const order = plan.main.map((p) => (p.kind === "node" ? p.node.component : p.kind));
+      expect(order.slice(0, 4)).toEqual(["Hero", "story", "walkthrough", "CtaBand"]);
+      const ids = plan.main.map((p) => (p.kind === "node" ? String(p.node.props?.id ?? p.node.component) : p.kind));
+      expect(ids.slice(0, 6)).toEqual(["Hero", "story", "walkthrough", "cost-cta", "reporting-cta", "Showcase"]);
       expect(order.filter((name) => name === "story")).toHaveLength(1);
       const json = JSON.stringify(doc);
       expect(json).not.toContain('"diff"');
     }
   });
 
+  it("places the style guide after the white-label band and before the white-paper band, once", () => {
+    for (const locale of LOCALES) {
+      const ids = planHomeBody(landingDocFor("platform", locale)!)!.main.map((p) => (p.kind === "node" ? String(p.node.props?.id ?? p.node.component) : p.kind));
+      expect(ids.slice(ids.indexOf("white-label"), ids.indexOf("white-label") + 3)).toEqual(["white-label", "style-guide", "white-paper-cta"]);
+      expect(ids.filter((id) => id === "style-guide" || id === "walkthrough")).toHaveLength(2);
+    }
+  });
+
   it("puts the story first when a document has no hero, and returns null without a main landmark", () => {
     const doc: UiNode = { component: "Page", children: [{ component: "Main", children: [{ component: "Faq", props: { items: [] } }] }] };
-    expect(planHomeBody(doc)!.main[0]).toEqual({ kind: "story" });
+    expect(planHomeBody(doc)!.main.map((p) => p.kind)).toEqual(["story", "walkthrough", "node", "style-guide"]);
     expect(planHomeBody({ component: "Hero", props: { title: "x" } })).toBeNull();
   });
 });
@@ -176,6 +183,9 @@ describe("home story: rendered markup", () => {
       expect(story.querySelectorAll("a[data-umami-event]")).toHaveLength(0);
       let next = story.nextElementSibling;
       while (next && next.tagName !== "SECTION") next = next.nextElementSibling;
+      expect(next?.id).toBe("builder-walkthrough");
+      next = next!.nextElementSibling;
+      while (next && next.tagName !== "SECTION") next = next.nextElementSibling;
       expect(next?.id).toBe("cost-cta");
       for (const [id, slug, event] of [["cost-cta", "content-cost", "cost_page_open"], ["reporting-cta", "reporting", "reporting_page_open"]] as const) {
         const links = document.querySelectorAll(`main a[href="${publicPagePath(locale, slug)}"]`);
@@ -236,7 +246,7 @@ describe("home page: white label and the policy-to-proof path", () => {
       expect((band.props!.bullets as unknown[]).length).toBe(6);
       expect((band.props!.cta as { href: string }).href).toBe("#demos");
       expect(String(band.props!.note).length).toBeGreaterThan(40);
-      const order = planHomeBody(doc)!.main.map((p) => (p.kind === "story" ? "story" : String(p.node.props?.id ?? p.node.component)));
+      const order = planHomeBody(doc)!.main.map((p) => (p.kind === "node" ? String(p.node.props?.id ?? p.node.component) : p.kind));
       expect(order.indexOf("white-label")).toBeGreaterThan(order.indexOf("reporting-cta"));
       expect(order.indexOf("white-label")).toBeLessThan(order.indexOf("agents"));
     });

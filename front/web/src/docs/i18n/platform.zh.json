@@ -111,18 +111,6 @@
           }
         },
         {
-          "component": "Showcase",
-          "props": {
-            "eyebrow": "在线演示",
-            "title": "六所学院，一个平台",
-            "intro": "每个演示都是一个独立租户，有自己的主题、课程和数据，运行在同一套 ulams 之上。你可以以学员身份打开，也可以进入它的管理后台。",
-            "items": {
-              "$data": "/demos"
-            },
-            "note": "演示每小时重置一次，无需注册，系统会自动为你登录。"
-          }
-        },
-        {
           "component": "CtaBand",
           "props": {
             "id": "reporting-cta",
@@ -190,6 +178,18 @@
           }
         },
         {
+          "component": "Showcase",
+          "props": {
+            "eyebrow": "在线演示",
+            "title": "六所学院，一个平台",
+            "intro": "每个演示都是一个独立租户，有自己的主题、课程和数据，运行在同一套 ulams 之上。你可以以学员身份打开，也可以进入它的管理后台。",
+            "items": {
+              "$data": "/demos"
+            },
+            "note": "演示每小时重置一次，无需注册，系统会自动为你登录。"
+          }
+        },
+        {
           "component": "CtaBand",
           "props": {
             "id": "white-label",
@@ -241,6 +241,39 @@
             "secondary": {
               "label": "租户如何工作",
               "href": "https://ulams-dev.github.io/ulams/developers/tenancy/"
+            }
+          }
+        },
+        {
+          "component": "CtaBand",
+          "props": {
+            "id": "white-paper-cta",
+            "variant": "feature",
+            "eyebrow": "白皮书",
+            "title": "从政策到证据：ULAMS 白皮书",
+            "text": "写给培训与发展负责人和审批培训者的长文：内容的真实成本、有出处的课程如何构建并保持更新，以及目前已经提供了什么。",
+            "bullets": [
+              {
+                "title": "成本问题，附来源",
+                "text": "Chapman 的每 1 小时成品 49–716 小时，以及 Brandon Hall 关于报表的调查结果，均附链接。"
+              },
+              {
+                "title": "机制，逐步说明",
+                "text": "来源、带引用的草稿、可审阅的差异、活课程、版本和证据。"
+              },
+              {
+                "title": "架构与标准",
+                "text": "无头与多租户；SCORM、cmi5、xAPI、LTI 1.3 和 SSO，并标明仍在开发的部分。"
+              },
+              {
+                "title": "信任与《人工智能法》",
+                "text": "AI 起草，人来决定；AI 标签以及数据存放在哪里。"
+              }
+            ],
+            "note": "每个数字都有来源。ULAMS 的数字来自两次实测运行，而不是平均值。可以打印或另存为 PDF。",
+            "cta": {
+              "label": "阅读白皮书",
+              "href": "/zh/white-paper/"
             }
           }
         },
