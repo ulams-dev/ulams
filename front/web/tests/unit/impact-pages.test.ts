@@ -94,7 +94,7 @@ describe("content cost and reporting pages", () => {
 describe("home call-to-action bands", () => {
   const text = (b: { props?: Record<string, unknown> }) => JSON.stringify(b.props);
   for (const locale of LOCALES) {
-    it(`${locale}: two separate, high bands that link to the two pages`, () => {
+    it(`${locale}: two high bands, side by side after the builder walkthrough and before the demos, that link to the two pages`, () => {
       const doc = landingDocFor("platform", locale)!;
       const bands = ofType(doc, "CtaBand");
       const cost = bands.find((b) => b.props!.id === "cost-cta")!;
@@ -103,7 +103,8 @@ describe("home call-to-action bands", () => {
       expect((reporting.props!.cta as { href: string }).href).toBe(publicPagePath(locale, "reporting"));
       const main = doc.children!.find((n) => n.component === "Main")!;
       const order = main.children!.map((n) => String(n.props?.id ?? n.component));
-      expect(Math.abs(order.indexOf("cost-cta") - order.indexOf("reporting-cta"))).toBeGreaterThan(1);
+      expect(order.indexOf("reporting-cta")).toBe(order.indexOf("cost-cta") + 1);
+      expect(order.indexOf("reporting-cta")).toBeLessThan(order.indexOf("Showcase"));
       expect(order.indexOf("cost-cta")).toBeLessThan(order.indexOf("agents"));
       expect(order.indexOf("reporting-cta")).toBeLessThan(order.indexOf("agents"));
     });

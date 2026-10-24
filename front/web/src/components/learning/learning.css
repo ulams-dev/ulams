@@ -1,0 +1,234 @@
+/*
+ * Learning elements: the home section (LearningSection), the /learning-elements/ page (LearningBody) and the element
+ * cards (ElementCard). Platform tokens, grid paper on alternate bands. The live elements bring their own catalogue
+ * styles; the stage only frames them.
+ */
+.le {
+  padding-block: clamp(40px, 6vw, 88px);
+  border-bottom: 1px solid var(--ulams-color-border, #e2e0da);
+  color: var(--ulams-color-text, #233647);
+}
+.le--home,
+.le--paper {
+  background-color: var(--ulams-color-surface, #f8f6f0);
+  background-image: linear-gradient(to right, rgb(15 43 70 / 0.04) 1px, transparent 1px), linear-gradient(to bottom, rgb(15 43 70 / 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.le--group {
+  scroll-margin-top: 80px;
+}
+.le__head {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  max-width: 880px;
+  margin: 0 auto clamp(24px, 4vw, 40px);
+  text-align: center;
+}
+.le__head--start {
+  justify-items: start;
+  margin-inline: 0;
+  text-align: left;
+}
+.le__title {
+  margin: 0;
+  max-width: 26ch;
+  color: var(--ulams-color-header, #10283b);
+  font-family: var(--ulams-font-family);
+  font-size: clamp(1.9rem, 1.3rem + 2.4vw, 3rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  text-wrap: balance;
+}
+.le__lede {
+  margin: 0;
+  max-width: 66ch;
+  color: var(--ulams-color-muted, #52657a);
+  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.12rem);
+  line-height: 1.65;
+}
+.le__sub {
+  margin: clamp(20px, 3vw, 32px) 0 14px;
+  color: var(--ulams-color-header, #10283b);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.le__actions {
+  display: flex;
+  justify-content: center;
+  margin: clamp(24px, 3vw, 36px) 0 0;
+}
+
+.le-live,
+.le-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: clamp(14px, 2vw, 22px);
+  align-items: start;
+}
+.le-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr));
+}
+
+.le-card {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: clamp(16px, 2.2vw, 24px);
+  border: 1px solid var(--ulams-color-border, #e2e0da);
+  border-top: 3px solid var(--ulams-color-primary, #0f2b46);
+  border-radius: var(--ulams-radius-card, 12px);
+  background: var(--ulams-color-card-bg, #fff);
+  scroll-margin-top: 96px;
+}
+.le-card--live {
+  border-top-color: var(--ulams-color-accent, #b44a1f);
+}
+.le-card__head {
+  display: grid;
+  gap: 6px;
+}
+.le-card__title {
+  margin: 0;
+  color: var(--ulams-color-header, #10283b);
+  font-family: var(--ulams-font-family);
+  font-size: 1.3rem;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.le-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+}
+.le-tag {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.le-tag--principle {
+  border: 1px solid #e7b48f;
+  background: #fff6ec;
+  color: #6b3410;
+}
+.le-tag--live {
+  background: var(--ulams-color-accent, #b44a1f);
+  color: #fff;
+}
+.le-tag--shot,
+.le-tag--text {
+  border: 1px solid var(--ulams-color-border, #c9d0d7);
+  color: var(--ulams-color-muted, #52657a);
+}
+.le-card__purpose {
+  margin: 0;
+  color: var(--ulams-color-header, #10283b);
+  font-weight: 600;
+  line-height: 1.5;
+}
+.le-card__detail,
+.le-card__coming {
+  margin: 0;
+  color: var(--ulams-color-muted, #52657a);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+.le-card__coming {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.le-card__stage {
+  min-width: 0;
+  padding: 12px;
+  border: 1px dashed var(--ulams-color-border, #c9d0d7);
+  border-radius: 10px;
+  background: var(--ulams-color-bg, #fdfcf9);
+  overflow-wrap: anywhere;
+}
+.le-card__stage .u-section,
+.le-card__stage .u-flip,
+.le-card__stage .u-timeline {
+  padding: 0;
+}
+.le-card__stage .u-container {
+  padding-inline: 0;
+}
+.le-card__stage video {
+  max-width: 100%;
+  height: auto;
+}
+.le-card__shot {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+.le-card__shot a {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--ulams-color-border, #e2e0da);
+  border-radius: 8px;
+  cursor: zoom-in;
+}
+.le-card__shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.le-card__shot figcaption {
+  color: var(--ulams-color-muted, #52657a);
+  font-size: 0.8rem;
+}
+.le-card__try {
+  margin: 0;
+}
+.le-card__try a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--ulams-color-primary, #0f2b46);
+  font-weight: 600;
+}
+.le-card__try svg {
+  width: 16px;
+  height: 16px;
+}
+
+.le-index {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.le-index li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  padding: 12px;
+  border: 1px solid var(--ulams-color-border, #e2e0da);
+  border-radius: 10px;
+  background: var(--ulams-color-card-bg, #fff);
+}
+.le-index a {
+  color: var(--ulams-color-primary, #0f2b46);
+  font-weight: 700;
+}
+.le-index__purpose {
+  flex-basis: 100%;
+  color: var(--ulams-color-muted, #52657a);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}

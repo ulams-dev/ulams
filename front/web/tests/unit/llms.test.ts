@@ -32,6 +32,7 @@ describe("academy llms.txt", () => {
 
   it("describes the platform host separately", () => {
     expect(platformLlmsTxt("https://ulams.app")).toContain("Each academy serves its own /llms.txt");
+    for (const path of ["/white-paper/", "/style-guide/", "/course-generation/"]) expect(platformLlmsTxt("https://ulams.app")).toContain(`https://ulams.app${path}`);
   });
 });
 

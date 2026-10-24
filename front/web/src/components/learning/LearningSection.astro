@@ -1,0 +1,59 @@
+---
+/**
+ * The learning-design section of the home page (lib/learning-elements.ts): three elements live, side by side, then
+ * every element with its learning principle and one line on why it helps, each linking to its place on
+ * /learning-elements/, where the rest run live or open in a demo academy.
+ */
+import "./learning.css";
+import Icon from "@ulams/ui/components/Icon.astro";
+import { ctaEvent } from "@ulams/ui/analytics";
+import { publicPagePath, type Locale } from "../../i18n/locales.ts";
+import { ELEMENTS, HOME_LIVE, LEARNING_ID, learningCopy } from "../../lib/learning-elements.ts";
+import ElementCard from "./ElementCard.astro";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = learningCopy(locale);
+const page = publicPagePath(locale, "learning-elements");
+const live = ELEMENTS.filter((e) => HOME_LIVE.includes(e.key));
+const titleId = `${LEARNING_ID}-title`;
+---
+
+<section class="le le--home" id={LEARNING_ID} aria-labelledby={titleId}>
+  <div class="u-container">
+    <header class="le__head">
+      <p class="u-eyebrow">{copy.home.eyebrow}</p>
+      <h2 class="le__title" id={titleId}>{copy.home.title}</h2>
+      <p class="le__lede">{copy.home.lede}</p>
+    </header>
+
+    <h3 class="le__sub">{copy.home.live}</h3>
+    <div class="le-live">
+      {live.map((element) => <ElementCard element={element} locale={locale} level={4} />)}
+    </div>
+
+    <h3 class="le__sub">{copy.home.all}</h3>
+    <ul class="le-index" role="list">
+      {
+        ELEMENTS.map((element) => (
+          <li>
+            <a href={`${page}#le-${element.key}`}>{copy.elements[element.key].name}</a>
+            <span class="le-tag le-tag--principle">{copy.principles[element.principle]}</span>
+            <span class="le-index__purpose">{copy.elements[element.key].purpose}</span>
+            {element.coming && <span class="u-status u-status--coming">{copy.coming}</span>}
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="le__actions">
+      <a class="u-btn" href={page} data-umami-event={ctaEvent(page)}>
+        {copy.home.cta}
+        <Icon name="arrow" />
+      </a>
+    </p>
+  </div>
+</section>
