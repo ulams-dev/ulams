@@ -17,6 +17,7 @@ use Ulams\Tenancy\Jobs\DeleteTenantJob;
 use Ulams\Tenancy\Jobs\ProvisionTenantJob;
 use Ulams\Tenancy\Models\Tenant;
 use Ulams\Tenancy\Models\TenantOperation;
+use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
 use Ulams\Tenancy\Models\TenantTemplate;
 use Ulams\Tenancy\Services\TenantDerivations;
 use Ulams\Tenancy\Services\TenantLifecycle;
@@ -28,7 +29,7 @@ use Ulams\Tenancy\Services\TenantProvisioner;
  */
 class PlatformTenantController extends UlamsBaseController implements PlatformTenantSwagger
 {
-    public function __construct(private TenantLifecycle $lifecycle, private TenantDerivations $derivations)
+    public function __construct(private TenantLifecycle $lifecycle, private TenantDerivations $derivations, private TenantCommandRunnerContract $runner)
     {
     }
 
@@ -58,6 +59,16 @@ class PlatformTenantController extends UlamsBaseController implements PlatformTe
             return $this->sendError("Tenant '{$slug}' already exists.", 409);
         }
 
+        $ttl = isset($data['ttl_days']) ? (int) $data['ttl_days'] : null;
+        $group = $ttl !== null ? (string) $data['group'] : null;
+        if ($existing === null && $ttl !== null) {
+            $cap = (int) config('ulams_tenancy.preview_cap', 5);
+            $live = Tenant::query()->where('preview_group', $group)->whereNotNull('expires_at')->where('expires_at', '>', now())->count();
+            if ($live >= $cap) {
+                return response()->json(['success' => false, 'message' => "At most {$cap} preview academies per repository; delete one or wait for it to expire.", 'code' => 'preview_limit'], 409);
+            }
+        }
+
         $derivation = null;
         try {
             if (!empty($data['derived_from'])) {
@@ -76,6 +87,10 @@ class PlatformTenantController extends UlamsBaseController implements PlatformTe
             }
 
             return $this->sendError($e->getMessage(), $derivation === null && !empty($data['derived_from']) ? 409 : 422);
+        }
+
+        if ($ttl !== null) {
+            $tenant->forceFill(['expires_at' => now()->addDays($ttl), 'preview_group' => $group])->save();
         }
 
         $users = (int) ($data['users'] ?? (!empty($data['template']) ? (TenantTemplate::query()->where('slug', $data['template'])->value('users') ?? 5) : 5));
@@ -98,6 +113,36 @@ class PlatformTenantController extends UlamsBaseController implements PlatformTe
         }
 
         return $this->sendResponse((new TenantResource($tenant->refresh()))->resolve($request), __('Tenant settings updated'));
+    }
+
+    /**
+     * A one-day administrator token for a preview academy (kind `cli`, so it may approve its own imports), minted inside the
+     * tenant. Only throwaway tenants have one: a platform token never becomes an administrator of a real academy this way.
+     */
+    public function token(ListPlatformRequest $request, string $slug): JsonResponse
+    {
+        $tenant = $this->find($slug);
+        if (!$tenant->isPreview()) {
+            return $this->sendError('Only preview academies (created with ttl_days) hand out a token.', 409);
+        }
+        if ($tenant->status !== Tenant::STATUS_ACTIVE || $tenant->expires_at->isPast()) {
+            return $this->sendError('This preview academy is not active.', 409);
+        }
+        try {
+            $output = $this->runner->run($tenant->api_host, ['ulams:tenant:preview-token', '--no-interaction']);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return $this->sendError('The token could not be created.', 500);
+        }
+        foreach (array_reverse(preg_split('/\R/', trim($output)) ?: []) as $line) {
+            $json = json_decode($line, true);
+            if (is_array($json) && isset($json['token'])) {
+                return $this->sendResponse(['token' => $json['token'], 'expires_at' => $json['expires_at'] ?? null, 'scopes' => $json['scopes'] ?? [], 'urls' => ['api' => $tenant->apiUrl(), 'front' => $tenant->frontUrl(), 'admin' => $tenant->adminUrl()]], __('Preview token'));
+            }
+        }
+
+        return $this->sendError('The token could not be created.', 500);
     }
 
     public function destroy(DeletePlatformTenantRequest $request, string $slug): JsonResponse

@@ -60,12 +60,14 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
         'accent' => 'string',
         'demo' => 'bool',
         'derived_from' => 'string',
+        'group' => 'string',
         'name' => 'string',
         'purpose' => 'string',
         'reference' => 'string',
         'slug' => 'string',
         'template' => 'string',
         'theme' => 'string',
+        'ttl_days' => 'int',
         'users' => 'int'
     ];
 
@@ -80,12 +82,14 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
         'accent' => null,
         'demo' => null,
         'derived_from' => null,
+        'group' => null,
         'name' => null,
         'purpose' => null,
         'reference' => null,
         'slug' => null,
         'template' => null,
         'theme' => null,
+        'ttl_days' => null,
         'users' => null
     ];
 
@@ -98,12 +102,14 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
         'accent' => false,
         'demo' => false,
         'derived_from' => false,
+        'group' => false,
         'name' => false,
         'purpose' => false,
         'reference' => false,
         'slug' => false,
         'template' => false,
         'theme' => false,
+        'ttl_days' => false,
         'users' => false
     ];
 
@@ -196,12 +202,14 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
         'accent' => 'accent',
         'demo' => 'demo',
         'derived_from' => 'derived_from',
+        'group' => 'group',
         'name' => 'name',
         'purpose' => 'purpose',
         'reference' => 'reference',
         'slug' => 'slug',
         'template' => 'template',
         'theme' => 'theme',
+        'ttl_days' => 'ttl_days',
         'users' => 'users'
     ];
 
@@ -214,12 +222,14 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
         'accent' => 'setAccent',
         'demo' => 'setDemo',
         'derived_from' => 'setDerivedFrom',
+        'group' => 'setGroup',
         'name' => 'setName',
         'purpose' => 'setPurpose',
         'reference' => 'setReference',
         'slug' => 'setSlug',
         'template' => 'setTemplate',
         'theme' => 'setTheme',
+        'ttl_days' => 'setTtlDays',
         'users' => 'setUsers'
     ];
 
@@ -232,12 +242,14 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
         'accent' => 'getAccent',
         'demo' => 'getDemo',
         'derived_from' => 'getDerivedFrom',
+        'group' => 'getGroup',
         'name' => 'getName',
         'purpose' => 'getPurpose',
         'reference' => 'getReference',
         'slug' => 'getSlug',
         'template' => 'getTemplate',
         'theme' => 'getTheme',
+        'ttl_days' => 'getTtlDays',
         'users' => 'getUsers'
     ];
 
@@ -301,12 +313,14 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
         $this->setIfExists('accent', $data ?? [], null);
         $this->setIfExists('demo', $data ?? [], null);
         $this->setIfExists('derived_from', $data ?? [], null);
+        $this->setIfExists('group', $data ?? [], null);
         $this->setIfExists('name', $data ?? [], null);
         $this->setIfExists('purpose', $data ?? [], null);
         $this->setIfExists('reference', $data ?? [], null);
         $this->setIfExists('slug', $data ?? [], null);
         $this->setIfExists('template', $data ?? [], null);
         $this->setIfExists('theme', $data ?? [], null);
+        $this->setIfExists('ttl_days', $data ?? [], null);
         $this->setIfExists('users', $data ?? [], null);
     }
 
@@ -340,6 +354,14 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
         if ($this->container['slug'] === null) {
             $invalidProperties[] = "'slug' can't be null";
         }
+        if (!is_null($this->container['ttl_days']) && ($this->container['ttl_days'] > 30)) {
+            $invalidProperties[] = "invalid value for 'ttl_days', must be smaller than or equal to 30.";
+        }
+
+        if (!is_null($this->container['ttl_days']) && ($this->container['ttl_days'] < 1)) {
+            $invalidProperties[] = "invalid value for 'ttl_days', must be bigger than or equal to 1.";
+        }
+
         if (!is_null($this->container['users']) && ($this->container['users'] > 50)) {
             $invalidProperties[] = "invalid value for 'users', must be smaller than or equal to 50.";
         }
@@ -440,6 +462,33 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
             throw new \InvalidArgumentException('non-nullable derived_from cannot be null');
         }
         $this->container['derived_from'] = $derived_from;
+
+        return $this;
+    }
+
+    /**
+     * Gets group
+     *
+     * @return string|null
+     */
+    public function getGroup()
+    {
+        return $this->container['group'];
+    }
+
+    /**
+     * Sets group
+     *
+     * @param string|null $group Required with ttl_days: the repository the preview belongs to; at most TENANCY_PREVIEW_CAP (5) live previews per group
+     *
+     * @return self
+     */
+    public function setGroup($group)
+    {
+        if (is_null($group)) {
+            throw new \InvalidArgumentException('non-nullable group cannot be null');
+        }
+        $this->container['group'] = $group;
 
         return $this;
     }
@@ -602,6 +651,41 @@ class PlatformTenantsPostRequest implements ModelInterface, ArrayAccess, \JsonSe
             throw new \InvalidArgumentException('non-nullable theme cannot be null');
         }
         $this->container['theme'] = $theme;
+
+        return $this;
+    }
+
+    /**
+     * Gets ttl_days
+     *
+     * @return int|null
+     */
+    public function getTtlDays()
+    {
+        return $this->container['ttl_days'];
+    }
+
+    /**
+     * Sets ttl_days
+     *
+     * @param int|null $ttl_days A throwaway tenant (a preview academy): deleted by ulams:tenant:reap after this many days
+     *
+     * @return self
+     */
+    public function setTtlDays($ttl_days)
+    {
+        if (is_null($ttl_days)) {
+            throw new \InvalidArgumentException('non-nullable ttl_days cannot be null');
+        }
+
+        if (($ttl_days > 30)) {
+            throw new \InvalidArgumentException('invalid value for $ttl_days when calling PlatformTenantsPostRequest., must be smaller than or equal to 30.');
+        }
+        if (($ttl_days < 1)) {
+            throw new \InvalidArgumentException('invalid value for $ttl_days when calling PlatformTenantsPostRequest., must be bigger than or equal to 1.');
+        }
+
+        $this->container['ttl_days'] = $ttl_days;
 
         return $this;
     }

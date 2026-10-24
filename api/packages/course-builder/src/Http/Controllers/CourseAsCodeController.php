@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\CourseAsCode\ApprovalGuard;
 use Ulams\CourseBuilder\CourseAsCode\CourseAsCodeException;
 use Ulams\CourseBuilder\CourseAsCode\CourseExporter;
@@ -27,6 +28,15 @@ use Ulams\Courses\Models\Course;
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
  *     @OA\Response(response=200, description="the blueprint with versionId, appliedVersionId and drift", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
  *     @OA\Response(response=403, description="another author's course"), @OA\Response(response=404, description="unknown course"), @OA\Response(response=409, description="NOT_ADOPTED (no builder session) or NO_BLUEPRINT"))
+ * @OA\Post(path="/api/admin/course-as-code/courses", operationId="admin.course-as-code.courses.post", summary="Create an empty course (an approved empty blueprint) for a folder that has no course yet; the course row is made by the first apply", tags={"Admin Course-as-code"}, security={{"passport": {}}},
+ *     @OA\RequestBody(required=true, @OA\JsonContent(required={"title"}, @OA\Property(property="title", type="string"), @OA\Property(property="language", type="string", example="en"), @OA\Property(property="key", type="string", description="idempotency key: the same key returns the same course (200, existing true) instead of creating another"))),
+ *     @OA\Response(response=200, description="the course of this key already exists: its sessionId, current versionId and courseId", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
+ *     @OA\Response(response=201, description="sessionId, versionId and versionNumber to import on top of", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
+ *     @OA\Response(response=403, description="no access to the course builder"), @OA\Response(response=422, description="a missing or invalid field"))
+ * @OA\Get(path="/api/admin/course-as-code/sessions/{session}", operationId="admin.course-as-code.sessions.by-session.get", summary="Where a session stands: course id, current and applied version (poll it while an apply runs)", tags={"Admin Course-as-code"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\Response(response=200, description="courseId (null until the first apply), currentVersionId, appliedVersionId", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")),
+ *     @OA\Response(response=403, description="another author's session"), @OA\Response(response=404, description="unknown session"))
  * @OA\Post(path="/api/admin/course-as-code/sessions/{session}/imports", operationId="admin.course-as-code.sessions.by-session.imports.post", summary="Import a Blueprint v3 document as a proposed version of kind import", tags={"Admin Course-as-code"}, security={{"passport": {}}},
  *     @OA\Parameter(name="session", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(required=true, @OA\JsonContent(required={"document","baseVersionId"}, @OA\Property(property="document", type="object"), @OA\Property(property="baseVersionId", type="string"), @OA\Property(property="message", type="string"), @OA\Property(property="allowPending", type="boolean", description="store the import although an open update proposal edits the same elements"))),
@@ -82,6 +92,47 @@ class CourseAsCodeController extends Controller
         $session = $this->sessionFor($request, ($mine ?? $sessions->first())->id);
 
         return $this->guard(fn () => self::ok($this->exporter->export($session)));
+    }
+
+    /** A new, empty course for a course folder that has no course on the server yet (a preview academy): an approved empty blueprint the first import builds on. */
+    public function create(Request $request): JsonResponse
+    {
+        $this->assertCanUse($request);
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:200', 'regex:/^[^<>]*$/'],
+            'language' => ['nullable', 'string', 'regex:/^[a-z]{2}$/'],
+            'key' => ['nullable', 'string', 'regex:/^[A-Za-z0-9_.:#\/-]{1,80}$/'],
+        ]);
+        $userId = (int) $request->user()->getAuthIdentifier();
+        $key = $data['key'] ?? null;
+        if ($key !== null) {
+            // the same key asks for the same course again (a pull request pushed twice): its session comes back, nothing is created
+            $existing = Session::query()->where('author_id', $userId)->where('state->course_as_code_key', $key)->latest('created_at')->first();
+            if ($existing?->currentVersion !== null) {
+                return self::ok(['sessionId' => $existing->id, 'versionId' => $existing->current_version_id, 'versionNumber' => $existing->currentVersion->number, 'courseId' => $existing->course_id, 'existing' => true]);
+            }
+        }
+        $session = Session::query()->create(['author_id' => $userId] + ($key !== null ? ['state' => ['course_as_code_key' => $key]] : []));
+        $version = $this->versions->create($session, Blueprint::empty(trim($data['title']), $data['language'] ?? 'en'), 'content', 'author', Version::APPROVED, null, 'Created from a course repository', null, [], $userId);
+        $this->versions->setCurrent($session, $version);
+        $this->events->custom($session, null, 'course_as_code.created', array_filter($this->actor($request) + ['versionId' => $version->id], fn ($v) => $v !== null));
+
+        return self::ok(['sessionId' => $session->id, 'versionId' => $version->id, 'versionNumber' => $version->number, 'courseId' => null, 'existing' => false], 201);
+    }
+
+    /** Where a session stands: its course (made by the first apply), the current and the applied version. What a client polls while an apply runs. */
+    public function session(Request $request, string $session): JsonResponse
+    {
+        $s = $this->sessionFor($request, $session);
+
+        return self::ok([
+            'sessionId' => $s->id,
+            'courseId' => $s->course_id,
+            'status' => $s->status,
+            'currentVersionId' => $s->current_version_id,
+            'currentVersionNumber' => $s->currentVersion?->number,
+            'appliedVersionId' => $s->applied_version_id,
+        ]);
     }
 
     public function import(Request $request, string $session): JsonResponse

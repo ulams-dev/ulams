@@ -1196,7 +1196,8 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 - [ ] GitHub Action + Docker image; preview deployment per PR
       Note 2026-10-22 (branch phase-7/git-action): partial. The course action `actions/course` (validate with SARIF, diff, preview comment, push, sync pull request `ulams/sync`, unit tested entrypoint),
       the `ulams-cli` Dockerfile (about 290 MB, not published), `ulams course init --ci github`, CI headers `ULAMS_COMMIT`/`ULAMS_CHANGE_URL` and the outgoing webhook `course.version_applied`.
-      Open: preview academies per PR (tenant TTL, reaper, one-time token), publishing the image (M6-a)
+      Preview academies (branch phase-7/preview-academies): tenant TTL and group cap, hourly reaper, one-day preview token, `course.create` and session endpoints, `ulams course preview --tenant`, `preview-cleanup`.
+      Open: publishing the image (M6-a); a preview platform with a wildcard DNS host and a platform token is an owner input (stays local until the publishing gate opens)
 - [ ] Git merge triggers Living Course update proposal
       Note 2026-10-22 (#437): partial. A merged pull request is recorded on the revision (commit, subject, PR number and link) and shown on the update review; `living connections check --commit`
       for CI; `ulams course sources-connect` watches `sources/**` of the course repository; a push waits (`PROPOSAL_PENDING`) while an open proposal edits the same elements; the loop test

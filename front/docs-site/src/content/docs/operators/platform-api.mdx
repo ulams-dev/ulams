@@ -73,10 +73,11 @@ curl -s "${H[@]}" http://api.localhost/api/platform/operations/<operation id>   
 | Request | Does |
 |---|---|
 | `GET /api/platform/tenants`, `GET /api/platform/tenants/{slug}` | List, show: status, URLs, finished steps, names of the setting overrides. Never a database password, key or override value. |
-| `POST /api/platform/tenants` `{slug, name?, theme?, accent?, users?, demo?}` | Queue creation. 202 with `{operation, tenant}`. 409 if the tenant is active or an operation for it runs; a failed tenant is resumed. 422 for an invalid slug. |
+| `POST /api/platform/tenants` `{slug, name?, theme?, accent?, users?, demo?, ttl_days?, group?}` | Queue creation. 202 with `{operation, tenant}`. 409 if the tenant is active or an operation for it runs; a failed tenant is resumed. 422 for an invalid slug. |
 | `POST /api/platform/tenants` also takes `template`, and `derived_from` with `purpose` and `reference` | A tenant made from a [template](/admin/tenants/#templates-and-tenants-created-for-a-purpose), and recorded as created for another tenant and a purpose (a department academy). 409 over the parent's quota, or for a reference that already has a tenant. |
 | `GET /api/platform/tenants/{slug}/derived` | The active tenants created from this one, with who asked. |
 | `GET /api/platform/templates`, `GET /api/platform/templates/{slug}`, `POST /api/platform/templates`, `DELETE /api/platform/templates/{slug}` | Tenant templates: list, show (names of the settings only), create or change the given fields, remove. |
+| `POST /api/platform/tenants/{slug}/token` | A one-day administrator token (`builder:read`, `builder:write`, kind `cli`) for a **preview academy**, minted inside the tenant and shown once, with the tenant's addresses. 409 for a tenant that is not a preview or no longer active. |
 | `PATCH /api/platform/tenants/{slug}/env` `{set?: {KEY: value}, unset?: [KEY]}` | Override or reset inheritable settings (`ANTHROPIC_API_KEY`, `AI_DRIVER`, `AI_MODEL_*`). 422 for any other key. |
 | `DELETE /api/platform/tenants/{slug}` `{confirm: "<slug>"}` | Queue deletion. 422 unless `confirm` equals the slug; 409 while tenants created from it exist. |
 | `GET /api/platform/operations`, `GET /api/platform/operations/{id}` | Latest 50, or one: `status` (`queued`, `running`, `succeeded`, `failed`), `steps` with `name`, `status`, times and `error`, and `error`. |
@@ -85,6 +86,23 @@ Provisioning runs as a queued job on the platform queue worker (the supplied sta
 minute: `database`, `bucket`, `storage_identity`, `env`, `migrate`, `passport_keys`, `passport_client`, `permissions`, `lti_keys`,
 `demo`. A step that failed is kept on the operation; asking for the tenant again continues from it. Deletion has
 the steps `database`, `bucket`, `env`, `redis`.
+
+## Preview academies
+
+A tenant created with `ttl_days` (1 to 30) and `group` is a **throwaway preview academy**: a course repository builds a pull request into it
+(`ulams course preview --tenant`, the course action) and nobody keeps it. `expires_at` and `preview_group` appear on the tenant.
+
+- **Expiry.** `ulams:tenant:reap` runs hourly on the platform and queues the deletion of every tenant whose `expires_at` has passed (it skips
+  one that has an operation running; `--dry-run` lists them). Deleting the tenant yourself works as always, and the action does it when the pull
+  request closes.
+- **Cap.** At most `TENANCY_PREVIEW_CAP` (default 5) live previews per `group`, normally one repository; the sixth is refused with 409
+  `preview_limit`. Expired previews and ordinary tenants do not count.
+- **Token.** `POST /api/platform/tenants/{slug}/token` runs `ulams:tenant:preview-token` inside the tenant. It works only for previews, so a
+  platform token never becomes an administrator of a real academy this way. The token is a `cli` token (it may approve the imports of the
+  job that made them), lives one day and is never part of the tenant's representation.
+- **What a preview holds.** A course built from a folder, without sources: citations are dropped and every element reads as written by the
+  author. Run it on a platform that nobody uses for real academies if you do not want previews next to them; the preview hosts need the same
+  wildcard DNS as any tenant.
 
 ## Common errors
 
@@ -96,6 +114,8 @@ the steps `database`, `bucket`, `env`, `redis`.
 | 404 `Tenant not found.` | Unknown slug on `GET`, `PATCH` or `DELETE` |
 | 409 `operation_in_progress` (body has `data.operation`) | An operation for this tenant is queued or running |
 | 409 | `POST` for a tenant that is already active |
+| 409 `preview_limit` | The `group` already has `TENANCY_PREVIEW_CAP` live preview academies |
+| 409 | `token` for a tenant that is not a preview academy, or one that is not active |
 | 422 | Invalid slug, name, theme (`^[A-Za-z0-9_-]{1,40}$`), accent (`#RRGGBB`) or `users` (0 to 50, default 5); an env key that is not inheritable; `confirm` is not the slug |
 | 429 | More than 60 requests per minute |
 

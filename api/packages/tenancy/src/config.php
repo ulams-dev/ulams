@@ -132,6 +132,11 @@ return [
      */
     'platform_api' => filter_var(env('TENANCY_PLATFORM_API', false), FILTER_VALIDATE_BOOLEAN),
 
+    /*
+     * Live preview academies (tenants created with ttl_days) one group, normally one repository, may have at once.
+     */
+    'preview_cap' => (int) env('TENANCY_PREVIEW_CAP', 5),
+
     'php_binary' => env('TENANCY_PHP_BINARY', PHP_BINARY ?: 'php'),
     'process_timeout' => (int) env('TENANCY_PROCESS_TIMEOUT', 900),
 

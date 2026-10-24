@@ -63,6 +63,8 @@ Route::group([
     'middleware' => ['auth:api'],
 ], function () {
     Route::get('courses/{course}/blueprint', [CourseAsCodeController::class, 'export']);
+    Route::post('courses', [CourseAsCodeController::class, 'create']);
+    Route::get('sessions/{session}', [CourseAsCodeController::class, 'session']);
     Route::post('sessions/{session}/imports', [CourseAsCodeController::class, 'import']);
     Route::post('sessions/{session}/drift', [CourseAsCodeController::class, 'absorbDrift']);
     Route::get('versions/{version}', [CourseBuilderController::class, 'version']);

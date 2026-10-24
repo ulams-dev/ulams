@@ -13,6 +13,8 @@ use Ulams\Tenancy\Console\EnsureTenantBucketsCommand;
 use Ulams\Tenancy\Console\ExportH5PServiceConfigCommand;
 use Ulams\Tenancy\Console\ListTenantsCommand;
 use Ulams\Tenancy\Console\ScheduleLoopCommand;
+use Ulams\Tenancy\Console\PreviewTokenCommand;
+use Ulams\Tenancy\Console\ReapTenantsCommand;
 use Ulams\Tenancy\Console\SeedTenantDemoCommand;
 use Ulams\Tenancy\Console\SetTenantEnvCommand;
 use Ulams\Tenancy\Console\RecreateViewsCommand;
@@ -92,6 +94,9 @@ class UlamsTenancyServiceProvider extends ServiceProvider
         }
         RateLimiter::for('ulams-platform', fn (Request $request) => Limit::perMinute(60)->by('platform:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
 
+        // preview academies expire (plan 8.3); `schedule:run` also runs per tenant, so only the platform reaps
+        $this->callAfterResolving(\Illuminate\Console\Scheduling\Schedule::class, fn (\Illuminate\Console\Scheduling\Schedule $schedule) => $schedule->command('ulams:tenant:reap')->hourly()->withoutOverlapping()->when(fn () => \Ulams\Tenancy\Support\TenantContext::isPlatform()));
+
         $kernel = $this->app->make(HttpKernel::class);
         if (method_exists($kernel, 'prependMiddleware')) {
             $kernel->prependMiddleware(RejectUnknownHost::class);
@@ -112,6 +117,8 @@ class UlamsTenancyServiceProvider extends ServiceProvider
                 WorkOnceCommand::class,
                 UpgradeCommand::class,
                 RecreateViewsCommand::class,
+                ReapTenantsCommand::class,
+                PreviewTokenCommand::class,
             ]);
             $this->publishes([
                 __DIR__ . '/config.php' => config_path(self::CONFIG_KEY . '.php'),

@@ -10492,6 +10492,74 @@
     ]
    }
   },
+  "/api/admin/course-as-code/courses": {
+   "post": {
+    "operationId": "admin.course-as-code.courses.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "key": {
+          "description": "idempotency key: the same key returns the same course (200, existing true) instead of creating another",
+          "type": "string"
+         },
+         "language": {
+          "example": "en",
+          "type": "string"
+         },
+         "title": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "title"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the course of this key already exists: its sessionId, current versionId and courseId"
+     },
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "sessionId, versionId and versionNumber to import on top of"
+     },
+     "403": {
+      "description": "no access to the course builder"
+     },
+     "422": {
+      "description": "a missing or invalid field"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create an empty course (an approved empty blueprint) for a folder that has no course yet; the course row is made by the first apply",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
   "/api/admin/course-as-code/courses/{course}/blueprint": {
    "get": {
     "description": "Course-as-code API (ADR 0160, prefix `/api/admin/course-as-code`, `auth:api`, permission\n`course_builder_use`). It works with AI off: there is no AI gate on this route group. A push is\nalways a proposed version; a person approves it (agent tokens and MCP clients never can).",
@@ -10533,6 +10601,48 @@
      }
     ],
     "summary": "Export a course as a Blueprint v3 document (current version, drift, applied version)",
+    "tags": [
+     "Admin Course-as-code"
+    ]
+   }
+  },
+  "/api/admin/course-as-code/sessions/{session}": {
+   "get": {
+    "operationId": "admin.course-as-code.sessions.by-session.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "courseId (null until the first apply), currentVersionId, appliedVersionId"
+     },
+     "403": {
+      "description": "another author's session"
+     },
+     "404": {
+      "description": "unknown session"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Where a session stands: course id, current and applied version (poll it while an apply runs)",
     "tags": [
      "Admin Course-as-code"
     ]
@@ -42274,6 +42384,10 @@
           "description": "The tenant this one is created for (a department academy); needs purpose and reference, counts against its quota and is recorded",
           "type": "string"
          },
+         "group": {
+          "description": "Required with ttl_days: the repository the preview belongs to; at most TENANCY_PREVIEW_CAP (5) live previews per group",
+          "type": "string"
+         },
          "name": {
           "type": "string"
          },
@@ -42297,6 +42411,12 @@
          "theme": {
           "example": "coffee",
           "type": "string"
+         },
+         "ttl_days": {
+          "description": "A throwaway tenant (a preview academy): deleted by ulams:tenant:reap after this many days",
+          "maximum": 30,
+          "minimum": 1,
+          "type": "integer"
          },
          "users": {
           "maximum": 50,
@@ -42344,7 +42464,7 @@
       "description": "Queued"
      },
      "409": {
-      "description": "The tenant exists, an operation for it is in progress, or the parent's quota or the reference's tenant forbids it"
+      "description": "The tenant exists, an operation for it is in progress, the parent's quota or the reference's tenant forbids it, or the preview limit of the group is reached (code preview_limit)"
      },
      "422": {
       "description": "Invalid slug or option, or an unknown template"
@@ -42633,6 +42753,88 @@
      }
     ],
     "summary": "Override or reset inheritable settings (AI driver, models) of a tenant",
+    "tags": [
+     "Platform"
+    ]
+   }
+  },
+  "/api/platform/tenants/{slug}/token": {
+   "post": {
+    "operationId": "platform.tenants.by-slug.token.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "slug",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "properties": {
+            "expires_at": {
+             "nullable": true,
+             "type": "string"
+            },
+            "scopes": {
+             "items": {
+              "type": "string"
+             },
+             "type": "array"
+            },
+            "token": {
+             "type": "string"
+            },
+            "urls": {
+             "properties": {
+              "admin": {
+               "type": "string"
+              },
+              "api": {
+               "type": "string"
+              },
+              "front": {
+               "type": "string"
+              }
+             },
+             "type": "object"
+            }
+           },
+           "type": "object"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "The token (shown once), its expiry, scopes and the tenant's addresses"
+     },
+     "404": {
+      "description": "Unknown tenant, or the platform API is off"
+     },
+     "409": {
+      "description": "Not a preview academy, or it is not active"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "A one-day administrator token (builder:read, builder:write) for a preview academy",
     "tags": [
      "Platform"
     ]

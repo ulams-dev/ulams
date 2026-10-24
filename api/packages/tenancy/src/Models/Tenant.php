@@ -31,6 +31,8 @@ use Ulams\Tenancy\Storage\StorageCredentials;
  * @property ?array $env_overrides
  * @property ?array $steps
  * @property ?string $last_error
+ * @property ?\Illuminate\Support\Carbon $expires_at set for a throwaway tenant (a preview academy); `ulams:tenant:reap` deletes it afterwards
+ * @property ?string $preview_group the repository a preview belongs to (caps the previews per repository)
  */
 class Tenant extends Model
 {
@@ -63,6 +65,8 @@ class Tenant extends Model
         'status',
         'steps',
         'last_error',
+        'expires_at',
+        'preview_group',
     ];
 
     protected $casts = [
@@ -75,6 +79,7 @@ class Tenant extends Model
         'env_overrides' => 'encrypted:array',
         'steps' => 'array',
         'demo' => 'boolean',
+        'expires_at' => 'datetime',
     ];
 
     protected $hidden = [
@@ -95,6 +100,11 @@ class Tenant extends Model
         }
 
         return new StorageCredentials($this->storage_key, $this->storage_secret);
+    }
+
+    public function isPreview(): bool
+    {
+        return $this->expires_at !== null;
     }
 
     public function hasCompleted(string $step): bool
