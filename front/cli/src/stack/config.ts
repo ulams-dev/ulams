@@ -22,6 +22,13 @@ export const stackInput = z.object({
   gateway: z.enum(["LoadBalancer", "NodePort", "ClusterIP"]).optional(),
   node_port: z.coerce.number().int().min(30000).max(32767).optional(),
   ready_timeout: z.coerce.number().int().min(30).max(3600).default(900),
+  mail: z.enum(["log", "smtp"]).optional().describe("E-mail delivery: log (written to the API log, nothing is sent; the default) or smtp. The SMTP password comes from ULAMS_SMTP_PASSWORD or the prompt."),
+  smtp_host: z.string().regex(/^[a-zA-Z0-9.-]+$/).optional(),
+  smtp_port: z.coerce.number().int().min(1).max(65535).optional().describe("Default 587."),
+  smtp_username: z.string().min(1).max(200).optional(),
+  smtp_encryption: z.enum(["tls", "ssl", "none"]).optional().describe("Default tls (STARTTLS)."),
+  mail_from: z.string().email().optional().describe("Sender address; default no-reply@<domain>."),
+  ai: z.enum(["fake", "none", "anthropic"]).optional().describe("AI provider: fake (deterministic, development default), none (production default) or anthropic (key from ULAMS_ANTHROPIC_API_KEY or the prompt)."),
 });
 export type StackInput = z.infer<typeof stackInput>;
 export interface StackConfig {
@@ -29,7 +36,14 @@ export interface StackConfig {
   name: string; domain: string; tenant: string; adminEmail: string; httpPort: number; httpsPort: number;
   tls: "acme" | "internal"; imageRegistry: string; imageTag: string; context?: string; storageClass?: string;
   gateway: "LoadBalancer" | "NodePort" | "ClusterIP"; nodePort: number;
+  /** Outgoing e-mail; the SMTP password is SMTP_PASSWORD in credentials.json. Absent in installs made before P8-7: log. */
+  mail?: MailConfig;
+  /** AI provider; the Anthropic key is ANTHROPIC_API_KEY in credentials.json. Absent: fake in development, none in production. */
+  ai?: "fake" | "none" | "anthropic";
 }
+export interface MailConfig { mode: "log" | "smtp"; host?: string; port?: number; username?: string; encryption?: "tls" | "ssl" | "none"; from?: string; }
+export const aiOf = (c: StackConfig) => c.ai ?? (c.mode === "development" ? "fake" : "none");
+export const mailOf = (c: StackConfig): MailConfig => c.mail ?? { mode: "log" };
 export type Secrets = Record<string, string>;
 export const APP_IMAGES = ["api", "web", "admin", "h5p", "pdf", "mjml"] as const;
 export const INFRA_IMAGES = {
@@ -55,6 +69,15 @@ export function configure(input: StackInput, previous?: StackConfig): StackConfi
     imageTag: input.image_tag ?? previous?.imageTag ?? "latest", context: input.context ?? previous?.context,
     storageClass: input.storage_class ?? previous?.storageClass, gateway, nodePort,
   };
+  const mailMode = input.mail ?? previous?.mail?.mode ?? "log";
+  if (mailMode === "smtp") {
+    const before = previous?.mail?.mode === "smtp" ? previous.mail : undefined;
+    const host = input.smtp_host ?? before?.host;
+    if (!host) throw new Error("--mail smtp needs --smtp-host.");
+    config.mail = { mode: "smtp", host, port: input.smtp_port ?? before?.port ?? 587, encryption: input.smtp_encryption ?? before?.encryption ?? "tls", from: input.mail_from ?? before?.from ?? `no-reply@${domain}`, ...((input.smtp_username ?? before?.username) ? { username: input.smtp_username ?? before?.username } : {}) };
+  } else if (input.mail || previous?.mail) config.mail = { mode: "log" };
+  const ai = input.ai ?? previous?.ai;
+  if (ai) config.ai = ai;
   if (previous) for (const key of ["target", "mode", "name", "domain", "tenant", "httpPort", "httpsPort", "context"] as const) {
     if (previous[key] !== undefined && config[key] !== previous[key]) throw new Error(`Cannot change ${key} of an existing install; use another directory and project/namespace.`);
   }

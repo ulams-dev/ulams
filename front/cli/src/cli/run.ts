@@ -189,7 +189,8 @@ export async function main(deps: Deps): Promise<number> {
       debug: flags.debug ? (line) => deps.stderr(`[debug] ${redactString(line, secrets)}`) : undefined,
     });
 
-    const interactive = (flags.interactive || cmd.id === "login") && deps.stdinIsTTY && deps.stderrIsTTY;
+    // `stack up` asks its setup questions in a terminal unless --yes or --json (P8-7); other commands need --interactive.
+    const interactive = (flags.interactive || cmd.id === "login" || (cmd.id === "stack.up" && !flags.yes && !flags.json)) && deps.stdinIsTTY && deps.stderrIsTTY;
     const ctx: Ctx = {
       client,
       profile: cmd.id === "login" ? loginProfile : profile,
