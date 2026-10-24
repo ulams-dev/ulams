@@ -1308,7 +1308,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 - [ ] (new) Step-by-step Kubernetes YAML tutorial with tenant-aware manifests and validated examples
       (the landing links to existing architecture requirements until this guide is ready).
 - [ ] `docker compose up` and Helm chart with sane defaults
-- [ ] Setup wizard (admin, domain, mail, storage, AI provider or none, commerce link)
+- [ ] Setup wizard (admin, domain, mail, storage, AI provider or none, commerce link) (partial: install-time questions in `ulams stack up` and `create-ulams` for domain, admin e-mail, SMTP mail and the AI provider, with a test e-mail and a test AI call, are done in P8-7 part 1, plan phase-8-self-hosting.md; open: external S3 storage with a probe, the admin setup checklist with runtime mail and AI settings and the setup token, the commerce link)
 - [x] (new) Production reference: one VPS behind Cloudflare (tunnel, flat tenant hosts, R2, cache rules, backups to R2,
       install, upgrade, backup, restore and tenant scripts) in `deploy/vps-cloudflare/`, guide in Operators, ADR 0092.
       Prepared and validated locally with the published images and MinIO; nothing is deployed
