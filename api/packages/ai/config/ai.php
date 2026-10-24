@@ -54,6 +54,8 @@ return [
         'patch' => ['profile' => env('AI_TASK_PATCH_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
         // a suggested price for a paid course; the author always confirms it
         'price' => ['profile' => env('AI_TASK_PRICE_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 1000],
+        // `ai:test` (setup wizard, admin setup checklist): one minimal call to check key, model and network
+        'setup_check' => ['profile' => env('AI_TASK_SETUP_CHECK_PROFILE', 'light'), 'effort' => 'low', 'max_tokens' => 64],
         'grounding' => ['profile' => env('AI_TASK_GROUNDING_PROFILE', 'light'), 'effort' => 'medium', 'max_tokens' => 4000],
         // Living Course: patches for the elements affected by a source change (one call per lesson group)
         'update' => ['profile' => env('AI_TASK_UPDATE_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],

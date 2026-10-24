@@ -319,7 +319,11 @@ async function restoreFrom(ctx: Ctx, input: z.infer<typeof restoreInput>, direct
   if (input.restore_secrets) {
     if (!manifest.secrets || !manifest.files["install.json.enc"]) throw new CliError("CONFLICT", "This backup has no credentials (it was made without a passphrase).");
     const pass = await passphrase(ctx, input.passphrase_file, true);
-    const bundle = JSON.parse(decrypt(await readFile(join(source,"install.json.enc")), pass!).toString("utf8")) as Record<string,string>;
+    let bundle: Record<string,string>;
+    // AES-CBC has no integrity check: a wrong passphrase usually fails the padding, but about 1 in 256 decrypts to bytes
+    // that are not the JSON bundle.
+    try { bundle = JSON.parse(decrypt(await readFile(join(source,"install.json.enc")), pass!).toString("utf8")) as Record<string,string>; }
+    catch (error) { if (error instanceof CliError) throw error; throw new CliError("USAGE", "Wrong backup passphrase."); }
     if (!bundle["stack.json"] || !bundle["credentials.json"]) throw new CliError("CONFLICT", "The credentials archive is incomplete.");
     const restored = JSON.parse(bundle["stack.json"]) as StackConfig;
     if (restored.id !== manifest.stack.id) throw new CliError("CONFLICT", "The credentials archive belongs to another installation.");

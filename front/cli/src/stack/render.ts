@@ -1,6 +1,6 @@
 import { stringify } from "yaml";
 import { caddySnippets } from "./caddy-snippets.ts";
-import { APP_IMAGES, INFRA_IMAGES, urls, type StackConfig, type Secrets } from "./config.ts";
+import { APP_IMAGES, INFRA_IMAGES, aiOf, mailOf, urls, type StackConfig, type Secrets } from "./config.ts";
 
 const secret = (name: string) => `@secret:${name}`;
 export function environments(c: StackConfig): Record<string, Record<string, string>> {
@@ -15,7 +15,7 @@ export function environments(c: StackConfig): Record<string, Record<string, stri
     LARAVEL_DB_CONNECTION: "pgsql", LARAVEL_DB_HOST: "postgres", LARAVEL_DB_PORT: "5432", LARAVEL_DB_DATABASE: "ulams", LARAVEL_DB_USERNAME: "ulams", LARAVEL_DB_PASSWORD: secret("DB_PASSWORD"),
     LARAVEL_DB_ADMIN_DATABASE: "postgres", LARAVEL_DB_ADMIN_USERNAME: "ulams_owner", LARAVEL_DB_ADMIN_PASSWORD: secret("POSTGRES_PASSWORD"),
     LARAVEL_REDIS_HOST: "valkey", LARAVEL_REDIS_PORT: "6379", LARAVEL_REDIS_PASSWORD: secret("VALKEY_PASSWORD"),
-    LARAVEL_CACHE_DRIVER: "redis", LARAVEL_SESSION_DRIVER: "cookie", LARAVEL_QUEUE_CONNECTION: "redis", LARAVEL_QUEUE_DRIVER: "redis", LARAVEL_BROADCAST_DRIVER: "log", LARAVEL_MAIL_DRIVER: "log", LARAVEL_MJML_API_URL: "http://mjml:15500/v1",
+    LARAVEL_CACHE_DRIVER: "redis", LARAVEL_SESSION_DRIVER: "cookie", LARAVEL_QUEUE_CONNECTION: "redis", LARAVEL_QUEUE_DRIVER: "redis", LARAVEL_BROADCAST_DRIVER: "log", LARAVEL_MJML_API_URL: "http://mjml:15500/v1",
     LARAVEL_FILESYSTEM_DRIVER: "s3", LARAVEL_AWS_ACCESS_KEY_ID: secret("S3_KEY"), LARAVEL_AWS_SECRET_ACCESS_KEY: secret("S3_SECRET"), LARAVEL_AWS_DEFAULT_REGION: "us-east-1", LARAVEL_AWS_BUCKET: "ulams", LARAVEL_AWS_ENDPOINT: "http://object-store:8333", LARAVEL_AWS_URL: `${u.storage}/ulams`, LARAVEL_AWS_USE_PATH_STYLE_ENDPOINT: "true",
     LARAVEL_H5P_SERVICE_URL: "http://h5p:8080", LARAVEL_H5P_INTERNAL_TOKEN: secret("H5P_INTERNAL_TOKEN"), LARAVEL_H5P_SERVICE_CONFIG_DIR: "/var/www/html/storage/h5p-service",
     LARAVEL_PDF_SERVICE_URL: "http://pdf:3000", LARAVEL_PDF_INTERNAL_TOKEN: secret("PDF_INTERNAL_TOKEN"), LARAVEL_CONTENT_ORIGIN: `${scheme}://platform-content.${c.domain}${suffix}`,
@@ -23,8 +23,9 @@ export function environments(c: StackConfig): Record<string, Record<string, stri
     LARAVEL_TENANCY_PLATFORM_HOSTS: `api.${c.domain},api,caddy,localhost,127.0.0.1`, LARAVEL_TENANCY_SCHEME: scheme,
     LARAVEL_TENANCY_API_HOST: api, LARAVEL_TENANCY_FRONT_HOST: front, LARAVEL_TENANCY_ADMIN_HOST: admin, LARAVEL_TENANCY_CONTENT_HOST: content, LARAVEL_TENANCY_EMAIL_DOMAIN: `{slug}.${c.domain}`,
     LARAVEL_TENANCY_PORT: String(port), LARAVEL_TENANCY_STORAGE_PUBLIC_URL: u.storage, LARAVEL_TENANCY_S3_PUBLIC_READ_POLICY: "true", LARAVEL_TENANCY_S3_IDENTITY_DRIVER: "seaweedfs", LARAVEL_TENANCY_PLATFORM_API: "true", LARAVEL_TENANT_DEMO_PASSWORD: secret("TENANT_INITIAL_PASSWORD"),
-    LARAVEL_AI_DRIVER: c.mode === "development" ? "fake" : "disabled", ULAMS_WORKERS_MODE: "lean", WORKERS_LEAN_INTERVAL: "3", WORKERS_LEAN_HEAVY_INTERVAL: "3", DISABLE_HORIZON: "true", ULAMS_OPTIMIZE: c.mode === "development" ? "false" : "true",
+    ...aiEnvironment(c), ULAMS_WORKERS_MODE: "lean", WORKERS_LEAN_INTERVAL: "3", WORKERS_LEAN_HEAVY_INTERVAL: "3", DISABLE_HORIZON: "true", ULAMS_OPTIMIZE: c.mode === "development" ? "false" : "true",
   };
+  Object.assign(apiEnv, mailEnvironment(c));
   return {
     api: apiEnv,
     postgres: { PGDATA: "/var/lib/postgresql/data/pgdata", POSTGRES_DB: "postgres", POSTGRES_USER: "ulams_owner", POSTGRES_PASSWORD: secret("POSTGRES_PASSWORD") },
@@ -36,6 +37,17 @@ export function environments(c: StackConfig): Record<string, Record<string, stri
     admin: { REACT_APP_TENANT_API_HOST_PATTERN: `${admin}=>${scheme}://${api}${suffix}`, REACT_APP_API_URL: u.api },
     caddy: gatewayEnvironment(c), mjml: {},
   };
+}
+/** Outgoing e-mail of the API (P8-7): log by default, SMTP with the password from credentials.json. */
+export function mailEnvironment(c: StackConfig): Record<string,string> {
+  const mail = mailOf(c);
+  if (mail.mode !== "smtp") return { LARAVEL_MAIL_DRIVER: "log" };
+  return { LARAVEL_MAIL_DRIVER: "smtp", LARAVEL_MAIL_HOST: mail.host!, LARAVEL_MAIL_PORT: String(mail.port ?? 587), LARAVEL_MAIL_ENCRYPTION: mail.encryption === "none" ? "null" : (mail.encryption ?? "tls"), LARAVEL_MAIL_FROM_ADDRESS: mail.from!, LARAVEL_MAIL_FROM_NAME: "ULAMS", ...(mail.username ? { LARAVEL_MAIL_USERNAME: mail.username, LARAVEL_MAIL_PASSWORD: secret("SMTP_PASSWORD") } : {}) };
+}
+/** AI provider of the API (P8-7): fake, none (disabled) or anthropic with the key from credentials.json. */
+export function aiEnvironment(c: StackConfig): Record<string,string> {
+  const ai = aiOf(c);
+  return ai === "anthropic" ? { LARAVEL_AI_DRIVER: "anthropic", LARAVEL_ANTHROPIC_API_KEY: secret("ANTHROPIC_API_KEY") } : { LARAVEL_AI_DRIVER: ai === "fake" ? "fake" : "disabled" };
 }
 export function gatewayEnvironment(c: StackConfig): Record<string,string> {
   const scheme = c.mode === "development" ? "http" : "https", port = c.mode === "development" ? c.httpPort : c.httpsPort;
