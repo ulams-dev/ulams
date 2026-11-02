@@ -38,7 +38,7 @@ describe("ConfirmTokens", () => {
   it("should reject a tampered token", () => {
     const token = confirmTokens.issue("id1", { key: "value" });
     const [exp, sig] = token.split(".");
-    const tamperedToken = `${exp}.${sig.slice(0, -1)}`;
+    const tamperedToken = `${exp}.${(sig ?? "").slice(0, -1)}`;
     expect(confirmTokens.consume(tamperedToken, "id1", { key: "value" })).toBe(false);
   });
 
