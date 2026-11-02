@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { diffFields, Change } from '../../src/registry/diff';
+import { describe, it, expect } from "vitest";
+import { diffFields } from '../../src/registry/diff';
 
 describe('diffFields', () => {
   it('should return no changes for identical objects', () => {

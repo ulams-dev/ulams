@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { configDir, configFile, credentialsFile } from '../../src/config/paths';
 
 describe('config/paths', () => {
