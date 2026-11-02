@@ -6,12 +6,12 @@ describe('faqContent', () => {
 
 
   it('should return undefined for an unsupported locale', () => {
-    const content = faqContent('fr');
+    const content = faqContent('fr' as never);
     expect(content).toBeUndefined();
   });
 
   it('should return undefined for an empty locale string', () => {
-    const content = faqContent('');
+    const content = faqContent('' as never);
     expect(content).toBeUndefined();
   });
 
