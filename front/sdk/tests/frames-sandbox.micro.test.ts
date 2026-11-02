@@ -35,7 +35,7 @@ describe("Sandbox Constants", () => {
   });
 
   it("isTrustedFrameMessage correctly checks if the message is from the trusted frame", () => {
-    const frame = { postMessage: () => {} } as Window;
+    const frame = { postMessage: () => {} } as unknown as Window;
     const origin = "https://example.com";
     const expected: frames.FrameMessageCheck = { frame, origin };
     const event = { source: frame, origin };
