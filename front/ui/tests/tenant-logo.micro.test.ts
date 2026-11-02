@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { tenantLogo } from "../../web/src/lib/tenant-logo";
 
 describe("tenantLogo", () => {

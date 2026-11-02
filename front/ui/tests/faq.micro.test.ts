@@ -16,17 +16,17 @@ describe('faqContent', () => {
   });
 
   it('should return undefined for a null locale', () => {
-    const content = faqContent(null as any);
+    const content = faqContent(null as never);
     expect(content).toBeUndefined();
   });
 
   it('should return undefined for an undefined locale', () => {
-    const content = faqContent(undefined as any);
+    const content = faqContent(undefined as never);
     expect(content).toBeUndefined();
   });
 
   it('should return undefined for a non-string locale', () => {
-    const content = faqContent(123 as any);
+    const content = faqContent(123 as never);
     expect(content).toBeUndefined();
   });
 });
