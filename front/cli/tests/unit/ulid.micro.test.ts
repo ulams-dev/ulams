@@ -15,8 +15,8 @@ describe('ulid', () => {
   });
 
   it('should be time-sortable', () => {
-    const first = ulid();
-    const second = ulid();
+    const first = ulid(1_000_000);
+    const second = ulid(1_000_001);
     expect(first < second).toBe(true);
   });
 
