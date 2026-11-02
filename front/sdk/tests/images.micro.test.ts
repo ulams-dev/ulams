@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { IMAGE_PRESETS, allowedCloudflareOptions, resolveImageService } from '../src/images';
+import { IMAGE_PRESETS, resolveImageService } from '../src/images';
 
 describe('IMAGE_PRESETS', () => {
 
