@@ -12,7 +12,7 @@ describe("fetchFrameOrigins", () => {
       return new Response(JSON.stringify({ data: ["https://valid.com"] }), { status: 200 });
     };
 
-    await fetchFrameOrigins(apiUrl, fakeFetcher);
+    await fetchFrameOrigins(apiUrl, fakeFetcher as unknown as typeof fetch);
     expect(calledUrl).toBe(expectedUrl);
   });
 
@@ -22,7 +22,7 @@ describe("fetchFrameOrigins", () => {
       return new Response(JSON.stringify({ data: ["https://valid.com", 123, "https://another.com"] }), { status: 200 });
     };
 
-    const origins = await fetchFrameOrigins(apiUrl, fakeFetcher);
+    const origins = await fetchFrameOrigins(apiUrl, fakeFetcher as unknown as typeof fetch);
     expect(origins).toEqual(["https://valid.com", "https://another.com"]);
   });
 
@@ -32,7 +32,7 @@ describe("fetchFrameOrigins", () => {
       return new Response(JSON.stringify({}), { status: 200 });
     };
 
-    const origins = await fetchFrameOrigins(apiUrl, fakeFetcher);
+    const origins = await fetchFrameOrigins(apiUrl, fakeFetcher as unknown as typeof fetch);
     expect(origins).toEqual([]);
   });
 
@@ -42,7 +42,7 @@ describe("fetchFrameOrigins", () => {
       return new Response("", { status: 404 });
     };
 
-    await expect(fetchFrameOrigins(apiUrl, fakeFetcher)).rejects.toThrow("frame-origins answered 404");
+    await expect(fetchFrameOrigins(apiUrl, fakeFetcher as unknown as typeof fetch)).rejects.toThrow("frame-origins answered 404");
   });
 
   it("should handle trailing slashes in apiUrl", async () => {
@@ -55,7 +55,7 @@ describe("fetchFrameOrigins", () => {
       return new Response(JSON.stringify({ data: ["https://valid.com"] }), { status: 200 });
     };
 
-    await fetchFrameOrigins(apiUrl, fakeFetcher);
+    await fetchFrameOrigins(apiUrl, fakeFetcher as unknown as typeof fetch);
     expect(calledUrl).toBe(expectedUrl);
   });
 
@@ -65,7 +65,7 @@ describe("fetchFrameOrigins", () => {
       return new Response(JSON.stringify({ data: [] }), { status: 200 });
     };
 
-    const origins = await fetchFrameOrigins(apiUrl, fakeFetcher);
+    const origins = await fetchFrameOrigins(apiUrl, fakeFetcher as unknown as typeof fetch);
     expect(origins).toEqual([]);
   });
 
@@ -75,7 +75,7 @@ describe("fetchFrameOrigins", () => {
       return new Response(JSON.stringify({ data: "not an array" }), { status: 200 });
     };
 
-    const origins = await fetchFrameOrigins(apiUrl, fakeFetcher);
+    const origins = await fetchFrameOrigins(apiUrl, fakeFetcher as unknown as typeof fetch);
     expect(origins).toEqual([]);
   });
 
@@ -85,7 +85,7 @@ describe("fetchFrameOrigins", () => {
       return new Response(JSON.stringify({ data: null }), { status: 200 });
     };
 
-    const origins = await fetchFrameOrigins(apiUrl, fakeFetcher);
+    const origins = await fetchFrameOrigins(apiUrl, fakeFetcher as unknown as typeof fetch);
     expect(origins).toEqual([]);
   });
 
@@ -95,7 +95,7 @@ describe("fetchFrameOrigins", () => {
       return new Response(JSON.stringify({}), { status: 200 });
     };
 
-    const origins = await fetchFrameOrigins(apiUrl, fakeFetcher);
+    const origins = await fetchFrameOrigins(apiUrl, fakeFetcher as unknown as typeof fetch);
     expect(origins).toEqual([]);
   });
 });

@@ -47,7 +47,7 @@ describe("statementModel", () => {
     const longNotes = "a".repeat(2100);
     const settings = { global: { accessibilityNotes: longNotes } };
     const result = statementModel(settings, "test-slug");
-    expect(result.notes[0].length).toBe(2000);
+    expect(result.notes[0]!.length).toBe(2000);
   });
 
   it("enforcement replaces the default sentence", () => {
