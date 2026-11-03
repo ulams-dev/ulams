@@ -270,6 +270,8 @@ export type MockApi = {
   theme: () => Record<string, string>;
   /** Query strings of every GET /api/admin/authoring-metrics/courses[/export], in order. */
   metricRequests: string[];
+  /** Number of DELETE /api/admin/authoring-metrics/activity calls (recorded review time deleted). */
+  reviewTimeDeletes: () => number;
 };
 
 /** One course of the authoring metrics list, as the API returns it. */
@@ -280,6 +282,16 @@ export type MockMetric = {
   ai_elements?: number;
   accepted_unchanged?: number;
   unknown?: number;
+  /** Hours of work per learner hour of the course; omitted: no figure (author time not recorded). */
+  hours?: number;
+};
+
+/** The academy-wide figure the summary endpoint returns. */
+export type MockSummary = {
+  status: 'ok' | 'not_enough_courses' | 'author_time_not_recorded';
+  n_with_figure?: number;
+  median?: number | null;
+  ownBaseline?: number;
 };
 
 const metricRow = (m: MockMetric) => ({
@@ -302,6 +314,12 @@ const metricRow = (m: MockMetric) => ({
     llm_calls_failed: 1,
   },
   counts: { lessons: 6, questions: 18, blocks: 35, cited_blocks: 35, learner_minutes_estimate: 60 },
+  hours: {
+    work_hours: m.hours ?? null,
+    learner_hours: 1,
+    hours_per_learner_hour: m.hours ?? null,
+    reason: m.hours === undefined ? 'author_time_not_recorded' : null,
+  },
   elements: {
     ai_elements: m.ai_elements ?? 59,
     accepted_unchanged: m.accepted_unchanged ?? 49,
@@ -337,7 +355,14 @@ export async function mockApi(
       { name: string; status: string; profile: Record<string, unknown> }
     >;
     /** Serve Analytics > Authoring (adds its permission): the courses of the list, or a status to fail with. */
-    authoring?: { courses?: MockMetric[]; status?: number; failFirst?: boolean };
+    authoring?: {
+      courses?: MockMetric[];
+      status?: number;
+      failFirst?: boolean;
+      summary?: MockSummary;
+    };
+    /** Serve Settings > Authoring metrics (adds the settings permissions): the setting and the delete action, or a status to fail the delete with. */
+    reviewTime?: { deleteStatus?: number };
   } = {},
 ): Promise<MockApi> {
   const email = options.kind === 'email';
@@ -347,6 +372,7 @@ export async function mockApi(
     : JSON.stringify(options.template ?? SAMPLE_TEMPLATE);
   let uploads = 0;
   let logoRemovals = 0;
+  let reviewDeletes = 0;
   let nextSettingId = 500;
   const themeRows: MockSetting[] = [];
   const addThemeRow = (key: string, value: string | undefined, type = 'text') => {
@@ -376,6 +402,7 @@ export async function mockApi(
     logoRemovals: () => logoRemovals,
     theme: () => Object.fromEntries(themeRows.map((r) => [r.key, r.value])),
     metricRequests: [],
+    reviewTimeDeletes: () => reviewDeletes,
   };
   let metricFailures = options.authoring?.failFirst ? 1 : 0;
 
@@ -664,21 +691,43 @@ export async function mockApi(
             roles: ['admin'],
             permissions: [
               ...PERMISSIONS,
-              ...(options.theme ? SETTINGS_PERMISSIONS : []),
+              ...(options.theme || options.reviewTime ? SETTINGS_PERMISSIONS : []),
               ...(options.reporting ? ['reporting_read'] : []),
               ...(options.authoring ? ['authoring_metrics_read'] : []),
             ],
           }),
         );
       }
-      if (options.authoring && path.startsWith('/api/admin/authoring-metrics/courses')) {
-        state.metricRequests.push(`${path.endsWith('/export') ? 'export' : 'list'}${url.search}`);
+      if (options.authoring && path.startsWith('/api/admin/authoring-metrics/')) {
+        state.metricRequests.push(
+          `${path.endsWith('/export') ? 'export' : path.endsWith('/summary') ? 'summary' : 'list'}${
+            url.search
+          }`,
+        );
         if (options.authoring.status) {
           return json({ message: 'This action is unauthorized.' }, options.authoring.status);
         }
         if (metricFailures > 0) {
           metricFailures -= 1;
           return json({ message: 'The figures are temporarily unavailable.' }, 500);
+        }
+        if (path.endsWith('/summary')) {
+          const sm = options.authoring.summary ?? { status: 'author_time_not_recorded' as const };
+          return json(
+            ok({
+              status: sm.status,
+              n_courses: (options.authoring.courses ?? []).length,
+              n_with_figure: sm.n_with_figure ?? 0,
+              min_courses: 3,
+              median_hours_per_learner_hour: sm.median ?? null,
+              own_baseline: sm.ownBaseline
+                ? { hours_per_learner_hour: sm.ownBaseline, label: 'own_estimate' }
+                : null,
+              maintenance: { courses: 2, cost_micro_usd: 3040000 },
+              formula: 'x',
+              method_version: 2,
+            }),
+          );
         }
         if (path.endsWith('/export')) {
           return route.fulfill({
@@ -692,6 +741,15 @@ export async function mockApi(
       }
       if (path === '/api/auth/refresh') {
         return json(ok({ token: TOKEN, expires_at: '2100-01-01T00:00:00Z' }));
+      }
+      if (options.reviewTime && path === '/api/admin/config') {
+        return json(
+          ok({
+            authoring_metrics: {
+              review_time: { rules: ['boolean'], public: true, readonly: false, value: false },
+            },
+          }),
+        );
       }
       if (path === '/api/config') {
         return json(ok({}));
@@ -937,6 +995,18 @@ export async function mockApi(
         if (alt) addThemeRow('logoAlt', alt);
         return json(ok({ url: logoUrl, mime: type, alt }));
       }
+    }
+
+    if (
+      options.reviewTime &&
+      method === 'DELETE' &&
+      path === '/api/admin/authoring-metrics/activity'
+    ) {
+      if (options.reviewTime.deleteStatus) {
+        return json({ message: 'This action is unauthorized.' }, options.reviewTime.deleteStatus);
+      }
+      reviewDeletes += 1;
+      return json(ok({ minutes: 42, days: 6 }));
     }
 
     if (method === 'POST' && path === '/api/admin/pdfs/preview') {

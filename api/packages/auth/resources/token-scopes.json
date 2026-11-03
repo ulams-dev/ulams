@@ -286,6 +286,10 @@
             "area": "builder"
         },
         {
+            "pattern": "api/admin/authoring-metrics/activity*",
+            "area": "none"
+        },
+        {
             "pattern": "api/admin/authoring-metrics*",
             "area": "builder"
         },

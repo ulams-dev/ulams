@@ -11,6 +11,7 @@ use Ulams\AuthoringMetrics\Enums\AuthoringMetricsPermissionsEnum;
 use Ulams\AuthoringMetrics\Models\CourseMetric;
 use Ulams\AuthoringMetrics\Models\StageTiming;
 use Ulams\AuthoringMetrics\Services\CourseMetrics;
+use Ulams\AuthoringMetrics\Services\HoursPerLearnerHour;
 
 /**
  * How long a course took to produce and what it cost, from recorded runs and calls (ADR 0194, plan
@@ -31,6 +32,12 @@ use Ulams\AuthoringMetrics\Services\CourseMetrics;
  *     @OA\Parameter(name="course_id[]", in="query", description="Only these courses", @OA\Schema(type="array", @OA\Items(type="integer"))),
  *     @OA\Response(response=200, description="The file", @OA\MediaType(mediaType="text/csv", @OA\Schema(type="string", format="binary"))), @OA\Response(response=403, description="Forbidden"))
  *
+ * @OA\Get(path="/api/admin/authoring-metrics/summary", operationId="admin.authoring-metrics.summary", summary="Authoring metric of the academy", tags={"Authoring metrics"}, security={{"passport": {}}},
+ *     description="The academy's median hours of work per hour of learner time over the courses that have the figure, with how many (n). Needs recorded author time, and at least three courses, otherwise there is no median and status says why (author_time_not_recorded, not_enough_courses). Also the academy's own earlier figure when it entered one (labelled as its own estimate) and the maintenance cost, separately. The figure is the academy's own: no industry ratio is ever returned. Needs authoring_metrics_read.",
+ *     @OA\Parameter(name="from", in="query", description="Courses created on or after this date (YYYY-MM-DD)", @OA\Schema(type="string", format="date")),
+ *     @OA\Parameter(name="to", in="query", description="Courses created on or before this date (YYYY-MM-DD)", @OA\Schema(type="string", format="date")),
+ *     @OA\Response(response=200, description="status, n_courses, n_with_figure, median_hours_per_learner_hour, own_baseline, maintenance, formula", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"))
+ *
  * @OA\Get(path="/api/admin/authoring-metrics/courses/{course}", operationId="admin.authoring-metrics.courses.by-id.get", summary="Authoring metric of one course", tags={"Authoring metrics"}, security={{"passport": {}}},
  *     description="The snapshot of one course with the time of every pipeline stage (outline, lessons, quizzes, apply and the rest, each marked exact, coarse or incomplete) and the split of its AI elements. Needs authoring_metrics_read, or being the author of the course's builder session. 404 when the course was not built with the Course Builder.",
  *     @OA\Parameter(name="course", in="path", required=true, @OA\Schema(type="integer")),
@@ -48,6 +55,20 @@ class CourseMetricsController extends Controller
         $titles = DB::table('courses')->whereIn('id', $rows->pluck('course_id'))->pluck('title', 'id');
 
         return $this->ok($rows->map(fn (CourseMetric $m) => $this->snapshot($m, $titles[$m->course_id] ?? null))->all());
+    }
+
+    public function summary(Request $request): JsonResponse
+    {
+        $rows = $this->filtered($request)->get();
+        $baseline = config('authoring_metrics.baseline_hours_per_learner_hour');
+        $maintenance = $rows->filter(fn (CourseMetric $m) => (int) $m->cost_maintenance_micro_usd > 0);
+
+        return $this->ok(HoursPerLearnerHour::summarise($rows) + [
+            'own_baseline' => is_numeric($baseline) && (float) $baseline > 0 ? ['hours_per_learner_hour' => (float) $baseline, 'label' => 'own_estimate'] : null,
+            'maintenance' => ['courses' => $maintenance->count(), 'cost_micro_usd' => (int) $maintenance->sum('cost_maintenance_micro_usd')],
+            'formula' => HoursPerLearnerHour::FORMULA,
+            'method_version' => CourseMetrics::METHOD_VERSION,
+        ]);
     }
 
     /** CSV or JSON lines of the same rows; the file is the tenant's own data, so it carries no more than the list does. */
@@ -130,7 +151,7 @@ class CourseMetricsController extends Controller
             'cost_build_micro_usd' => $s['cost']['build_micro_usd'], 'cost_maintenance_micro_usd' => $s['cost']['maintenance_micro_usd'],
             'llm_calls' => $s['cost']['llm_calls'], 'llm_calls_failed' => $s['cost']['llm_calls_failed'],
             'lessons' => $s['counts']['lessons'], 'questions' => $s['counts']['questions'], 'blocks' => $s['counts']['blocks'], 'cited_blocks' => $s['counts']['cited_blocks'],
-            'learner_minutes_estimate' => $s['counts']['learner_minutes_estimate'],
+            'learner_minutes_estimate' => $s['counts']['learner_minutes_estimate'], 'hours_per_learner_hour' => $s['hours']['hours_per_learner_hour'],
             'ai_elements' => $s['elements']['ai_elements'], 'ai_accepted_unchanged' => $s['elements']['accepted_unchanged'],
             'ai_revised_on_request' => $s['elements']['revised_on_request'], 'ai_edited_by_author' => $s['elements']['edited_by_author'],
             'ai_unknown' => $s['elements']['unknown'], 'author_elements' => $s['elements']['author_written'],
@@ -141,7 +162,7 @@ class CourseMetricsController extends Controller
     private static function flatColumns(): array
     {
         return array_fill_keys(['course_id', 'session_id', 'method_version', 'computed_at', 'generation_seconds', 'ai_edit_seconds', 'interview_seconds', 'model_seconds', 'author_minutes',
-            'cost_build_micro_usd', 'cost_maintenance_micro_usd', 'llm_calls', 'llm_calls_failed', 'lessons', 'questions', 'blocks', 'cited_blocks', 'learner_minutes_estimate',
+            'cost_build_micro_usd', 'cost_maintenance_micro_usd', 'llm_calls', 'llm_calls_failed', 'lessons', 'questions', 'blocks', 'cited_blocks', 'learner_minutes_estimate', 'hours_per_learner_hour',
             'ai_elements', 'ai_accepted_unchanged', 'ai_revised_on_request', 'ai_edited_by_author', 'ai_unknown', 'author_elements'], null);
     }
 
@@ -177,6 +198,8 @@ class CourseMetricsController extends Controller
                 'lessons' => (int) $m->lessons, 'questions' => (int) $m->questions, 'blocks' => (int) $m->blocks, 'cited_blocks' => (int) $m->cited_blocks,
                 'learner_minutes_estimate' => (int) $m->learner_minutes_estimate,
             ],
+            // from the columns above; null, with the reason, unless author time was recorded
+            'hours' => HoursPerLearnerHour::forMetric($m),
             'elements' => [
                 'ai_elements' => (int) $m->ai_elements,
                 'accepted_unchanged' => (int) $m->ai_accepted_unchanged,

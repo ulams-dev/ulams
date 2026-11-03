@@ -102,6 +102,17 @@ test("elements from before provenance are called unknown, not guessed", async ({
   expect(await scan(page)).toEqual([]);
 });
 
+test("the hours figure appears only with recorded author time, with the reason otherwise, and no benchmark", async ({ page }) => {
+  await open(page, 1);
+  await expect(page.locator('[data-state="no-hours"]')).toContainText("author time is not recorded");
+  await open(page, 7);
+  await expect(page.getByText("2.38 h of work per hour of learner time")).toBeVisible();
+  await expect(page.getByText("Work: 2 h 23 min. Learner time: 1 h 0 min.")).toBeVisible();
+  const text = (await page.locator("main").innerText()).toLowerCase();
+  for (const banned of ["chapman", "industry average", "benchmark"]) expect(text).not.toContain(banned);
+  expect(await scan(page)).toEqual([]);
+});
+
 test("recorded review time and maintenance cost are shown, and a stage that did not finish says so", async ({ page }) => {
   await open(page, 7);
   await expect(page.getByText("2 h 15 min of active screen time")).toBeVisible();

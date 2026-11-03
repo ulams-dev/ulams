@@ -16,6 +16,7 @@ import UserSubmissions from '@/components/UsersSubmissions';
 import WysiwygMarkdown from '@/components/WysiwygMarkdown';
 import { useGetLocales } from '@/hooks/useLocales';
 import { useShowNotification } from '@/hooks/useMessage';
+import useReviewTime from '@/hooks/useReviewTime';
 import useValidateFormEdit from '@/hooks/useValidateFormEdit';
 import { CourseSuccessModal } from '@/pages/Courses/components/CourseSuccessModal';
 import { createCourse, getCourse, updateCourse } from '@/services/ulams/course';
@@ -57,6 +58,8 @@ export default () => {
   const params = useParams<{ course?: string; tab?: string }>();
   const intl = useIntl();
   const { course, tab = TabNames.ATTRIBUTES } = params;
+  // anonymous review time of the course being edited, when the academy records it (ADR 0194)
+  useReviewTime(course ? Number(course) : undefined);
   const isNew = course === 'new';
   const access = useAccess();
   const [data, setData] = useState<Partial<API.Course>>();

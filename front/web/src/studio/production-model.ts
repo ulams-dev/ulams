@@ -24,6 +24,7 @@ export interface CourseMetricData {
   cost: { build_micro_usd: number; maintenance_micro_usd: number; llm_calls: number; llm_calls_failed: number };
   counts: { lessons: number; questions: number; blocks: number; cited_blocks: number; learner_minutes_estimate: number };
   elements: { ai_elements: number; accepted_unchanged: number; revised_on_request: number; edited_by_author: number; unknown: number; author_written: number };
+  hours?: { work_hours: number | null; learner_hours: number; hours_per_learner_hour: number | null; reason: string | null; formula: string };
   stages?: StageRow[];
 }
 
@@ -94,6 +95,22 @@ export function totals(f: ProductionFormatter, m: CourseMetricData): Total[] {
   ];
 }
 
+/** The hours figure as a sentence, or the reason there is none; `inputs` shows what it was made from. */
+export function hoursFigure(f: ProductionFormatter, m: CourseMetricData): { value: string; inputs: string | null; figure: boolean } {
+  const t = f.t;
+  const h = m.hours;
+  if (!h || h.hours_per_learner_hour === null) {
+    return { value: h?.reason === "no_learner_minutes" ? t.hoursNoLearnerMinutes : t.hoursNotRecorded, inputs: null, figure: false };
+  }
+  const hours = (x: number): string => fill(t.durationHours, { h: f.number(Math.floor(x)), m: f.number(Math.round((x % 1) * 60)) });
+
+  return {
+    value: fill(t.hoursValue, { n: f.number(h.hours_per_learner_hour) }),
+    inputs: fill(t.hoursInputs, { work: hours(h.work_hours ?? 0), learner: hours(h.learner_hours) }),
+    figure: true,
+  };
+}
+
 export function costFigures(f: ProductionFormatter, m: CourseMetricData): Total[] {
   const t = f.t;
   return [
@@ -151,7 +168,7 @@ const FLAT = [
   ["cost_build_micro_usd", (m: CourseMetricData) => m.cost.build_micro_usd], ["cost_maintenance_micro_usd", (m: CourseMetricData) => m.cost.maintenance_micro_usd],
   ["llm_calls", (m: CourseMetricData) => m.cost.llm_calls], ["llm_calls_failed", (m: CourseMetricData) => m.cost.llm_calls_failed],
   ["lessons", (m: CourseMetricData) => m.counts.lessons], ["questions", (m: CourseMetricData) => m.counts.questions], ["blocks", (m: CourseMetricData) => m.counts.blocks], ["cited_blocks", (m: CourseMetricData) => m.counts.cited_blocks],
-  ["learner_minutes_estimate", (m: CourseMetricData) => m.counts.learner_minutes_estimate],
+  ["learner_minutes_estimate", (m: CourseMetricData) => m.counts.learner_minutes_estimate], ["hours_per_learner_hour", (m: CourseMetricData) => m.hours?.hours_per_learner_hour ?? null],
   ["ai_elements", (m: CourseMetricData) => m.elements.ai_elements], ["ai_accepted_unchanged", (m: CourseMetricData) => m.elements.accepted_unchanged], ["ai_revised_on_request", (m: CourseMetricData) => m.elements.revised_on_request],
   ["ai_edited_by_author", (m: CourseMetricData) => m.elements.edited_by_author], ["ai_unknown", (m: CourseMetricData) => m.elements.unknown], ["author_elements", (m: CourseMetricData) => m.elements.author_written],
 ] as const;

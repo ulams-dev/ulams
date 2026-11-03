@@ -10,7 +10,7 @@ import { dataTable, figureList } from "@ulams/ui/builder/insights-view.ts";
 import { h, uid } from "@ulams/ui/builder/dom.ts";
 import { announce } from "./common.ts";
 import { fill, type ProductionLocale } from "./production-i18n.ts";
-import { barText, costFigures, countFigures, elementClasses, productionFormatterFor, stageRows, toCsv, toJson, totals, type CourseMetricData } from "./production-model.ts";
+import { barText, costFigures, countFigures, elementClasses, hoursFigure, productionFormatterFor, stageRows, toCsv, toJson, totals, type CourseMetricData } from "./production-model.ts";
 
 type Fetcher = (url: string, init?: RequestInit) => Promise<Response>;
 
@@ -53,6 +53,16 @@ export function mountProduction(root: HTMLElement, fetcher: Fetcher = (url, init
     );
   }
 
+  function hoursSection(m: CourseMetricData): HTMLElement {
+    const hours = hoursFigure(f, m);
+    return card(
+      t.hoursTitle,
+      hours.figure ? figureList([{ label: t.hoursTitle, value: hours.value, note: hours.inputs ?? undefined }], t.hoursTitle) : h("p", { class: "cb-muted", "data-state": "no-hours" }, hours.value),
+      h("p", { class: "cb-muted cb-small" }, t.hoursNote),
+      h("p", { class: "cb-muted cb-small" }, t.hoursFormula),
+    );
+  }
+
   function elementsSection(m: CourseMetricData): HTMLElement {
     const rows = elementClasses(f, m);
     if (m.elements.ai_elements === 0) return card(t.elementsTitle, h("p", { class: "cb-muted" }, t.noElements));
@@ -89,6 +99,7 @@ export function mountProduction(root: HTMLElement, fetcher: Fetcher = (url, init
       h("p", { class: "cb-muted" }, t.ownFigures),
       timeSection(m),
       card(t.costTitle, figureList(costFigures(f, m).map((x) => ({ label: x.label, value: x.value, note: x.note })), t.costTitle), h("p", { class: "cb-muted cb-small" }, t.costNote)),
+      hoursSection(m),
       card(t.countsTitle, figureList(countFigures(f, m).map((x) => ({ label: x.label, value: x.value })), t.countsTitle)),
       elementsSection(m),
       exportSection(m),

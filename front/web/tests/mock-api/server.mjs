@@ -986,11 +986,12 @@ const courseMetric = (id) => {
     cost: { build_micro_usd: 284100, maintenance_micro_usd: 0, llm_calls: 27, llm_calls_failed: 1 },
     counts: { lessons: 6, questions: 18, blocks: 35, cited_blocks: 35, learner_minutes_estimate: 60 },
     elements: { ai_elements: 59, accepted_unchanged: 49, revised_on_request: 4, edited_by_author: 6, unknown: 0, author_written: 2 },
+    hours: { work_hours: null, learner_hours: 1, hours_per_learner_hour: null, reason: "author_time_not_recorded", formula: "(generation seconds + interview seconds + author minutes x 60) / (learner minutes x 60)" },
     stages: metricStages,
   };
   if (id === 2) return { ...base, time: { ...base.time, generation_seconds: 31, interview_seconds: 0, model_seconds: 0 }, cost: { build_micro_usd: 0, maintenance_micro_usd: 0, llm_calls: 0, llm_calls_failed: 0 }, elements: { ai_elements: 0, accepted_unchanged: 0, revised_on_request: 0, edited_by_author: 0, unknown: 0, author_written: 0 }, stages: [{ ...metricStages[0], stage: "generate", run_kind: "generate", seconds: 31, quality: "coarse" }] };
   if (id === 6) return { ...base, elements: { ai_elements: 59, accepted_unchanged: 0, revised_on_request: 0, edited_by_author: 0, unknown: 59, author_written: 0 } };
-  if (id === 7) return { ...base, time: { ...base.time, author_minutes: 135 }, cost: { ...base.cost, maintenance_micro_usd: 1520000 }, stages: [{ ...metricStages[5], quality: "incomplete" }] };
+  if (id === 7) return { ...base, hours: { ...base.hours, work_hours: 2.3839, hours_per_learner_hour: 2.38, reason: null }, time: { ...base.time, author_minutes: 135 }, cost: { ...base.cost, maintenance_micro_usd: 1520000 }, stages: [{ ...metricStages[5], quality: "incomplete" }] };
   return base;
 };
 const authoringMetricsRoutes = [
@@ -1007,10 +1008,28 @@ const authoringMetricsRoutes = [
   }],
 ];
 
+/**
+ * Review time (ADR 0194, AM-5): whether the tenant records it (a test switches it per tenant) and the minutes browsers
+ * reported, so a test can check what was sent and that it identifies nobody.
+ */
+const reviewOn = new Map();
+const reviewPosts = new Map();
+const reviewRoutes = [
+  ["POST", /^\/__mock\/authoring-metrics\/review$/, ({ tenant, body }) => (reviewOn.set(tenant, body?.enabled === true), reviewPosts.set(tenant, []), { enabled: reviewOn.get(tenant) })],
+  ["GET", /^\/__mock\/authoring-metrics\/activity$/, ({ tenant }) => ({ posts: reviewPosts.get(tenant) ?? [] })],
+  ["GET", /^\/api\/admin\/authoring-metrics\/activity\/status$/, ({ tenant }) => ({ enabled: reviewOn.get(tenant) === true, maxMinutesPerCall: 10, maxAgeMinutes: 15 })],
+  ["POST", /^\/api\/admin\/authoring-metrics\/activity$/, ({ tenant, body }) => {
+    if (reviewOn.get(tenant) !== true) return { __status: 404, message: "Not found" };
+    reviewPosts.set(tenant, [...(reviewPosts.get(tenant) ?? []), body]);
+    return { accepted: Array.isArray(body?.minutes) ? body.minutes.length : 0 };
+  }],
+];
+
 const routes = [
   ...styleRoutes,
   ...variantMock.routes,
   ...insightsRoutes,
+  ...reviewRoutes,
   ...courseVersionsRoutes,
   ...policyRoutes,
   ...authoringMetricsRoutes,
