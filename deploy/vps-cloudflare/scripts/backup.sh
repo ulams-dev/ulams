@@ -8,8 +8,9 @@
 #   secrets.tar.gz.enc    .env, the tunnel credentials and the Origin CA material, AES-256 encrypted
 #                         with BACKUP_PASSPHRASE (keep that passphrase and APP_KEY in a password manager:
 #                         without them a restored database cannot be read)
-# Not included: the objects in the R2 buckets of the tenants (R2 keeps them durably, but a deleted or
-# overwritten object is gone; copy them with rclone if you need point-in-time recovery).
+#   buckets.tar.gz        local trial only (install.sh --local): every ulams* bucket of the bundled SeaweedFS
+# Not included on a server: the objects in the R2 buckets of the tenants (R2 keeps them durably, but a
+# deleted or overwritten object is gone; copy them with rclone if you need point-in-time recovery).
 #
 # Run by the systemd timer ulams-backup.timer (daily); safe to run by hand. Exit status is not zero
 # when anything failed, so systemd and any monitor notice.
@@ -67,6 +68,14 @@ done
 ulams_log "volumes (api_storage, h5p_libraries)"
 docker run --rm -v "${ULAMS_PROJECT}_api_storage:/v/api_storage:ro" -v "${ULAMS_PROJECT}_h5p_libraries:/v/h5p_libraries:ro" \
   -v "$stage:/out" alpine:3.22 tar czf /out/volumes.tar.gz -C /v api_storage h5p_libraries
+
+if [[ "$ULAMS_LOCAL" == 1 ]]; then
+  ulams_log "buckets of the local SeaweedFS"
+  # shellcheck disable=SC2016 # expanded by the shell inside the rclone container
+  ULAMS_RCLONE_DIR="$stage" ulams_storage_sh 'set -e; mkdir -p /tmp/w/buckets
+    for b in $(rclone lsf s: --dirs-only | sed "s#/\$##" | grep "^ulams"); do mkdir -p "/tmp/w/buckets/$b"; rclone copy "s:$b" "/tmp/w/buckets/$b"; done
+    tar czf /data/buckets.tar.gz -C /tmp/w buckets'
+fi
 
 ulams_log "secrets (encrypted)"
 if [[ -z "$passphrase" ]]; then

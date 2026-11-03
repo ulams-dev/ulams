@@ -76,6 +76,9 @@ COPY --from=core --chown=node:node /out/core /app/h5p/core
 COPY --from=core --chown=node:node /out/editor /app/h5p/editor
 COPY --chown=node:node api/h5p/package.json api/h5p/LICENSE ./
 RUN mkdir -p /data/libraries /tmp/h5p && chown -R node:node /data /tmp/h5p
+# The runtime never runs a package manager: drop npm (and yarn) with the dependencies bundled in the base image,
+# whose advisories (brace-expansion, picomatch, ...) the base image does not fix yet. Nothing here needs them.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /opt/yarn-v* /usr/local/bin/yarn /usr/local/bin/yarnpkg
 USER node
 VOLUME ["/data/libraries"]
 EXPOSE 8080

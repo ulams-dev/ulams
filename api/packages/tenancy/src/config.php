@@ -65,6 +65,17 @@ return [
         'AI_MODEL_DEFAULT_LABEL' => env('AI_MODEL_DEFAULT_LABEL'),
         'AI_MODEL_LIGHT_LABEL' => env('AI_MODEL_LIGHT_LABEL'),
         'AI_MODEL_PREMIUM_LABEL' => env('AI_MODEL_PREMIUM_LABEL'),
+        // the tenant's commerce channel is made once with these (the base currency cannot change afterwards), ADR 0131
+        'COMMERCE_CURRENCY' => env('COMMERCE_CURRENCY'),
+        'COMMERCE_LOCALE' => env('COMMERCE_LOCALE'),
+    ],
+
+    /*
+     * Tenants created by another tenant for a purpose (a department academy of a policy, ADR 0141): at most this many active
+     * ones per parent tenant. Provisioning a database, a bucket and an object-store identity is an operator-sized action.
+     */
+    'derived' => [
+        'max_per_parent' => (int) env('TENANCY_MAX_DERIVED_PER_PARENT', 5),
     ],
 
     /*

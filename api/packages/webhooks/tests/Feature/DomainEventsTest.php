@@ -148,6 +148,21 @@ class DomainEventsTest extends TestCase
         $this->assertSame(['export_id' => '01j9z8x3v7c5qk2m4n6p8r0t1w', 'scope' => 'course', 'course_id' => 12, 'trigger' => 'auto', 'chunks' => 9, 'uncited_chunks' => 2], array_intersect_key($object, array_flip(['export_id', 'scope', 'course_id', 'trigger', 'chunks', 'uncited_chunks'])));
     }
 
+    public function testCourseVersionAppliedIsSentOncePerRelease(): void
+    {
+        $this->endpoint(['events' => ['course.version_applied']]);
+        $this->receiver([200, 200]);
+        $session = (new \Ulams\CourseBuilder\Models\Session())->forceFill(['id' => '01j9z8x3v7c5qk2m4n6p8r0t1w']);
+        $version = (new \Ulams\CourseBuilder\Models\Version())->forceFill(['id' => '01j9z8x3v7c5qk2m4n6p8r0t2x', 'number' => 4, 'kind' => 'import', 'origin' => 'author', 'reason' => 'Imported from a course repository']);
+        $release = (new \Ulams\CourseBuilder\Models\Release())->forceFill(['id' => 91, 'number' => 3, 'course_id' => 12, 'trigger' => 'import', 'released_at' => now()]);
+
+        event(new \Ulams\CourseBuilder\Events\CourseVersionApplied($session, $version, $release));
+        event(new \Ulams\CourseBuilder\Events\CourseVersionApplied($session, $version, $release));
+
+        $object = $this->sentObject('course.version_applied');
+        $this->assertSame([12, 4, 3, 'import', 'author', 'Imported from a course repository'], [$object['course_id'], $object['number'], $object['release_number'], $object['kind'], $object['origin'], $object['reason']]);
+    }
+
     private function assignment(array $attributes = []): Assignment
     {
         $assignment = new Assignment();

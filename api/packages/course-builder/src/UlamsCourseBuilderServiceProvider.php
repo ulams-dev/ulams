@@ -29,6 +29,7 @@ use Ulams\CourseBuilder\Console\BackfillReleasesCommand;
 use Ulams\CourseBuilder\Console\EvalCommand;
 use Ulams\CourseBuilder\Console\PruneEventsCommand;
 use Ulams\CourseBuilder\Console\SessionExportCommand;
+use Ulams\CourseBuilder\Console\StyleEvalCommand;
 use Ulams\CourseBuilder\Console\SessionImportCommand;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Fake\SyntheticResponders;
@@ -44,6 +45,11 @@ use Ulams\CourseBuilder\Pipeline\PriceService;
 use Ulams\CourseBuilder\Publish\LandingValidator;
 use Ulams\CourseBuilder\Publish\PublishCheck;
 use Ulams\CourseBuilder\Site\NewSite;
+use Ulams\CourseBuilder\StyleProfile\StyleCheck;
+use Ulams\CourseBuilder\StyleProfile\StyleProfileCatalogue;
+use Ulams\CourseBuilder\StyleProfile\StyleProfileResolver;
+use Ulams\CourseBuilder\StyleProfile\StyleProfileExtractor;
+use Ulams\CourseBuilder\StyleProfile\StyleProfileService;
 use Ulams\CourseBuilder\Transfer\SessionArchive;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
 use Ulams\CourseBuilder\Pipeline\VariantOutlineService;
@@ -111,6 +117,11 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         VariantService::class => VariantService::class,
         VariantOutlineService::class => VariantOutlineService::class,
         AiAssistedTopics::class => AiAssistedTopics::class,
+        StyleProfileCatalogue::class => StyleProfileCatalogue::class,
+        StyleCheck::class => StyleCheck::class,
+        StyleProfileResolver::class => StyleProfileResolver::class,
+        StyleProfileExtractor::class => StyleProfileExtractor::class,
+        StyleProfileService::class => StyleProfileService::class,
         RemovalPolicy::class => DeleteEverything::class,
         FragmentArchive::class => NoFragmentArchive::class,
         SourceHistory::class => NoSourceHistory::class,
@@ -121,6 +132,10 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/course_builder.php', 'course_builder');
         $this->mergeConfigFrom(__DIR__ . '/../config/course_as_code.php', 'course_as_code');
+        $this->app->register(UlamsCourseVariantsServiceProvider::class);
+        // what the course-variants package asks the builder for (bound after its provider registered, so ours wins)
+        $this->app->bind(\Ulams\CourseVariants\Contracts\TopicCorrespondence::class, \Ulams\CourseBuilder\Services\BuilderTopicCorrespondence::class);
+        $this->app->bind(\Ulams\CourseVariants\Contracts\PlacementSource::class, \Ulams\CourseBuilder\Services\BuilderPlacementSource::class);
         foreach ([UlamsAiServiceProvider::class, UlamsUploadsServiceProvider::class, UlamsCourseServiceProvider::class, UlamsTopicTypesServiceProvider::class, UlamsTopicTypeGiftServiceProvider::class, UlamsPagesServiceProvider::class, UlamsSettingsServiceProvider::class, UlamsCommerceServiceProvider::class, UlamsLiaScriptServiceProvider::class, UlamsH5PServiceProvider::class, UlamsInteractiveServiceProvider::class, UlamsCourseVariantsServiceProvider::class] as $provider) {
             $this->app->register($provider);
         }
@@ -150,7 +165,7 @@ class UlamsCourseBuilderServiceProvider extends ServiceProvider
         SyntheticResponders::register($this->app->make(FakeResponders::class));
 
         if ($this->app->runningInConsole()) {
-            $this->commands([BackfillReleasesCommand::class, EvalCommand::class, PruneEventsCommand::class, SessionExportCommand::class, SessionImportCommand::class]);
+            $this->commands([BackfillReleasesCommand::class, EvalCommand::class, PruneEventsCommand::class, SessionExportCommand::class, SessionImportCommand::class, StyleEvalCommand::class]);
         }
     }
 }

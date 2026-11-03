@@ -58,6 +58,9 @@ COPY --from=build --chown=node:node /repo/front/interactive-bridge /app/front/in
 COPY --from=build --chown=node:node /repo/front/ui /app/front/ui
 COPY --from=build --chown=node:node /repo/front/web/dist ./dist
 COPY --chown=node:node front/web/package.json ./
+# The runtime never runs a package manager: drop npm (and yarn) with the dependencies bundled in the base image,
+# whose advisories (brace-expansion, picomatch, ...) the base image does not fix yet. Nothing here needs them.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /opt/yarn-v* /usr/local/bin/yarn /usr/local/bin/yarnpkg
 USER node
 EXPOSE 4321
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \

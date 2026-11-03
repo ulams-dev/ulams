@@ -63,7 +63,8 @@ class ImpactAnalysisTest extends TestCase
         $this->assertSame('awaiting_analysis', $proposal->status, 'with the model enabled the AI analysis is the next step');
         $this->assertSame($session->current_version_id, $proposal->base_version_id);
 
-        $items = ProposalItem::query()->where('proposal_id', $proposal->id)->get();
+        // the order the API lists them in (Proposal::items): two blocks of a lesson can match one filter
+        $items = $proposal->items()->get();
         $manual = $items->where('kind', 'manual');
         // ratio (2.1), dose (2.2), temperature (4.1), water quality removed (4.2): objective, 2 blocks and 2 questions each; two course objectives
         $this->assertCount(22, $manual);
@@ -170,7 +171,8 @@ class ImpactAnalysisTest extends TestCase
 
         $proposal = Proposal::query()->where('session_id', $session->id)->firstOrFail();
         $this->assertSame('ready', $proposal->status, 'nothing to decide: every item is an accepted remap');
-        $items = ProposalItem::query()->where('proposal_id', $proposal->id)->get();
+        // the order the API lists them in (Proposal::items): two blocks of a lesson can match one filter
+        $items = $proposal->items()->get();
         $this->assertSame(['citation_remap'], $items->pluck('kind')->unique()->values()->all());
         $this->assertSame(['accepted'], $items->pluck('status')->unique()->values()->all());
         $this->assertCount(7, $items, 'lesson 2.1 (lesson, objective, 2 blocks, 2 questions) and course objective 2');

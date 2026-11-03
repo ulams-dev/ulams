@@ -1,0 +1,24 @@
+{
+  "@context": "/api/v2/contexts/Customer",
+  "@id": "/api/v2/admin/customers/2",
+  "@type": "Customer",
+  "ulamsUserRef": null,
+  "defaultAddress": null,
+  "user": {
+    "@id": "/api/v2/admin/shop-users/1",
+    "@type": "ShopUser",
+    "enabled": true,
+    "verified": true
+  },
+  "id": 2,
+  "email": "buyer2@example.test",
+  "firstName": "Bo",
+  "lastName": "Buyer",
+  "birthday": null,
+  "gender": "u",
+  "group": null,
+  "phoneNumber": null,
+  "subscribedToNewsletter": false,
+  "createdAt": "2026-10-23 00:46:22",
+  "fullName": "Bo Buyer"
+}

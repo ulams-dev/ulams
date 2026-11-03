@@ -1,6 +1,6 @@
 ---
 title: Monitoring and logs
-description: Health checks of every ulams container, the HTTP health endpoints to probe, where logs go, Horizon, and Sentry error tracking.
+description: Liveness and readiness probes, Prometheus metrics for the API, queues, Caddy, H5P and PDF, JSON logs with a request id, Horizon, and Sentry error tracking.
 sidebar:
   order: 11
 modules:
@@ -18,7 +18,7 @@ import { Aside } from "@astrojs/starlight/components";
 
 | Container | Built-in check | What it tests |
 |---|---|---|
-| `api` | `php artisan health:check` every 30 s | Platform database connection and Redis (`app/Providers/HealthCheckProvider.php`) |
+| `api` | `php artisan health:check` every 30 s | The readiness checks below (`app/Providers/HealthCheckProvider.php`) |
 | `h5p` | `GET http://127.0.0.1:8080/h5p/health` | Liveness and Redis (loopback host, no tenant) |
 | `pdf` | `GET http://127.0.0.1:3000/health` | Process up, fonts loaded |
 | `web` | `GET http://127.0.0.1:4321/healthz` | Process up (answers `ok`) |
@@ -27,18 +27,53 @@ import { Aside } from "@astrojs/starlight/components";
 `docker compose ps` shows the state; restart policies in the example restart crashed containers
 but not unhealthy ones. An external monitor should probe the HTTP endpoints below.
 
-## HTTP endpoints to probe
+## Liveness and readiness
 
-| URL | Answer |
-|---|---|
-| `https://api.<domain>/api/health` | 200 or 503 from the last stored `health:check` result (spatie/laravel-health) |
-| `https://api.<domain>/api/healthcheck` | JSON with each check's status |
-| `https://<slug>.api.<domain>/h5p/health` | `{ok, tenant, db, redis, s3}` for that tenant; 503 if a dependency is down, 404 for an unknown tenant |
-| `https://<slug>.app.<domain>/healthz` | `ok` from the learner front |
-| `https://<slug>.api.<domain>/api/settings` | The tenant's public settings: a cheap end-to-end check of routing, the tenant env file and its database |
+Keep the two apart: a failed liveness probe restarts a process, a failed readiness probe only takes
+it out of rotation.
 
-Probe at least the platform API, one tenant's `/h5p/health` (it covers the tenant database, Redis
-and the bucket) and the front.
+| Kind | URL | Answer |
+|---|---|---|
+| Liveness | `GET /up` on any API host (any `Host` header) | `{"status":"up"}`; touches no database, cache or storage, so a dependency outage never restarts healthy web processes |
+| Readiness | `https://api.<domain>/api/health` | 200 or 503 from the last stored `health:check` result (spatie/laravel-health); the platform scheduler refreshes it every minute |
+| Readiness, detail | `https://api.<domain>/api/healthcheck` | JSON with each check's status |
+| Readiness, tenant | `https://<slug>.api.<domain>/h5p/health` | `{ok, tenant, db, redis, s3}` for that tenant; 503 if a dependency is down, 404 for an unknown tenant |
+| Front | `https://<slug>.app.<domain>/healthz` | `ok` from the learner front |
+| Admin | `/healthz` on the admin container | `ok` |
+
+The readiness checks are the database, Redis (only when the queue or cache uses it), object storage
+(`HeadBucket` on the platform bucket), and the scheduler and queue heartbeats. The PDF and MJML renderers
+are probed too, but an outage there is a warning in the check message and in `ulams_health_check_ok`,
+never a failure: the LMS keeps working and only certificates and some e-mails wait.
+
+**Heartbeats.** `ulams:heartbeat` runs every minute from the scheduler: it records the scheduler beat and
+queues a job whose run records the queue beat. A beat older than five minutes means that part is
+dead. It fails `/api/health` only with `HEALTH_REQUIRE_HEARTBEATS=true`, which belongs on a monitoring probe,
+not on the readiness probe of web pods (a web pod must not leave the load balancer because a worker is down).
+`HEALTH_CHECK_HORIZON=true` adds the Horizon check where Horizon supervises the workers.
+
+## Prometheus metrics
+
+| Source | Where | What |
+|---|---|---|
+| API (platform) | `GET /metrics` on the platform host; scrape it through the internal listener `caddy:9180/php-metrics` | `ulams_queue_size{queue}`, `ulams_queue_oldest_job_age_seconds{queue}`, `ulams_failed_jobs`, `ulams_heartbeat_age_seconds{name}`, `ulams_tenants{status}`, `ulams_tenant_queue_size{tenant,queue}` (Redis queue), `ulams_db_connections{state}` (PostgreSQL), `ulams_health_check_ok{check}`, `ulams_ai_tokens`, `ulams_ai_cost_usd`, `ulams_ai_calls` by model, task and window (1h, 1d), `ulams_collector_up{collector}` |
+| Caddy | `caddy:9180/metrics` | Requests, latency and status codes per upstream |
+| H5P | `h5p:8080/metrics` | `ulams_h5p_http_request_duration_seconds`, event-loop lag and the default Node metrics |
+| PDF | `pdf:3000/metrics` | `ulams_pdf_http_request_duration_seconds`, `ulams_pdf_active_renders`, event-loop lag |
+
+The gauges are computed when Prometheus scrapes, nothing is stored between scrapes, and one failing
+collector shows as `ulams_collector_up == 0` without hiding the rest. `ulams_ai_*` are sliding-window gauges
+over this host's `ai_calls`, so they can fall.
+
+**Access.** The API answers `/metrics` only on the platform host, and only to a caller on a private
+address (`METRICS_ALLOWED_CIDRS`, default loopback and RFC 1918) or carrying `Authorization: Bearer
+<METRICS_TOKEN>`. A request that arrives through a gateway with `X-Forwarded-For` or `CF-Connecting-IP`
+needs the token. Everyone else gets 404. The shipped Caddyfiles also answer 404 for `/metrics` on every
+public host and expose the scrape targets only on the internal listener `:9180`, which has no `ports:` entry:
+keep it that way. Set `METRICS_TOKEN` in production.
+
+A sample scrape config, alert rules and a Grafana dashboard are in `deploy/observability/`
+(`prometheus.yml`, `alerts.yml`, `grafana-dashboard.json`).
 
 ## Workers and the scheduler
 
@@ -57,10 +92,16 @@ and the bucket) and the front.
   to the `api` container log; the Node services log JSON (pino) to stdout; Caddy logs requests
   with the H5P `_token` parameter and auth headers redacted. The example caps Docker's
   `json-file` logs at 5 x 20 MB per container.
-- Laravel application logs go to the `daily` file channel by default:
-  `storage/logs/laravel-<date>.log` for the platform and `storage/<host with dots as underscores>/logs/` for each tenant,
-  on the `api_storage` volume. Rotate or ship them; set `LOG_CHANNEL=stderr` to send them to the
-  container log instead (not the project's default).
+- **JSON logs.** The images set `LOG_CHANNEL=stderr_json`: one JSON object per line on stderr, so
+  `docker logs` and any log shipper can parse it. Besides Monolog's `message`, `level_name`, `datetime` and
+  `context`, `extra` carries `request_id`, `tenant` (`platform` or the slug), `host`, `route` and `user_id`
+  (never an e-mail address). The request id is the caller's `X-Request-Id` (ULID or UUID) or a new ULID, echoed
+  in the response; it travels in the payload of every queued job, so the worker's lines for a job share the
+  id of the request that queued it, and the API passes it to H5P and PDF, whose pino lines show it as `req.id`.
+  Find a whole story with `docker logs api | grep <id>`.
+- A bare checkout, without the image, keeps the `daily` file channel:
+  `storage/logs/laravel-<date>.log` for the platform and `storage/<host with dots as underscores>/logs/` for each
+  tenant. Set `LOG_CHANNEL=stderr_json` there to get the same lines on stderr.
 
 ## Error tracking
 

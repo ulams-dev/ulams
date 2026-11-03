@@ -51,7 +51,7 @@ describe("platform landing in final mode", () => {
   });
   it("applies the text overrides", () => {
     expect(json(final)).not.toMatch(/on the roadmap/i);
-    expect(json(final)).toContain("Helm chart coming soon.");
+    expect(json(final)).not.toMatch(/"status":"(coming|preview)"/);
   });
   it("is valid against the catalogue in both modes", () => {
     for (const mode of ["final", "actual"] as const) {
@@ -67,14 +67,16 @@ describe("comparison cells", () => {
   const ours = (mode: "final" | "actual") => applyComparisonStatus(comparisonData, mode).systems.find((s) => s.ours)!;
   it("actual: unchanged", () => {
     expect(applyComparisonStatus(comparisonData, "actual")).toBe(comparisonData);
-    expect(ours("actual").cells.scim?.value).toBe("Coming");
+    expect(ours("actual").cells.scim?.value).toBe("Yes");
+    expect(ours("actual").cells.adaptive_paths?.value).toBe("Partial");
   });
   it("final: ulams Coming and Partial read Yes, roadmap notes are dropped, other cells stay", () => {
     const cells = ours("final").cells;
-    expect(cells.scim?.value).toBe("Yes");
+    expect(cells.adaptive_paths?.value).toBe("Yes");
     expect(cells.source_sync?.value).toBe("Yes");
     expect(cells.sso?.value).toBe("Yes");
-    expect(cells.scim?.note).toBeUndefined();
+    expect(cells.scim?.value).toBe("Yes");
+    expect(cells.commerce?.note).toBeUndefined();
     expect(cells.content_library?.value).toBe("No");
     expect(cells.licence?.value).toBe(ours("actual").cells.licence?.value);
     for (const cell of Object.values(cells)) expect(cell.value).not.toBe("Coming");
