@@ -20,8 +20,10 @@ export default {
     obj.writeHttpMetadata(h);
     h.set('etag', obj.httpEtag);
     h.set('accept-ranges', 'bytes');
-    h.set('cache-control', 'public, max-age=300');
     if (!h.get('content-type')) h.set('content-type', 'application/octet-stream');
+    // Images are the source of Cloudflare Image Transformations (ADR 0193), which cache them for as long as the origin allows:
+    // one hour, revalidated with the ETag. The hourly demo reset rewrites the same keys, so a longer lifetime would show stale images.
+    h.set('cache-control', (h.get('content-type') || '').startsWith('image/') ? 'public, max-age=3600' : 'public, max-age=300');
     if (!('body' in obj)) return new Response(null, { status: obj.size === undefined ? 304 : 200, headers: h });
     return new Response(obj.body, { status: request.headers.has('range') ? 206 : 200, headers: h });
   },

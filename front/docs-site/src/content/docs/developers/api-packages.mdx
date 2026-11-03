@@ -529,8 +529,11 @@ screen `/analytics/reports`.
 
 ### [images](/reference/packages/images/)
 
-Resizes images on request (`GET /api/images/img` with the source path and size parameters), caches the result (`ImageCache`) and
-optimises it with `spatie/image-optimizer`. Used by every frontend for thumbnails.
+Optional legacy resize API: resizes images on request (`GET /api/images/img` with the source path and size parameters), caches the
+result (`ImageCache`) and optimises it with `spatie/image-optimizer`. Kept for self-hosted admins and third-party clients; the
+reference front and the hosted demos use the [image service](/operators/image-service/) instead. `images.content_urls`
+(`IMAGES_CONTENT_URLS`, `api` or `original`) decides whether course import and the markdown helper store `/api/images/img` URLs or plain
+storage URLs.
 
 ### [files](/reference/packages/files/)
 

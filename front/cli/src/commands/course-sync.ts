@@ -1,10 +1,11 @@
-import { existsSync, readdirSync, statSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, mkdirSync, readdirSync, realpathSync, statSync, writeFileSync } from "node:fs";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { z } from "zod";
 import { compareCourse, diffLines } from "./course.ts";
 import { conflictFileName, parseElement, readConflict } from "../course/conflicts.ts";
 import { readFolder, type DiskFolder } from "../course/disk.ts";
-import { gitOrigin, repoFromRemote, type GitHost } from "../course/repo.ts";
+import { githubWorkflow, WORKFLOW_FILE } from "../course/ci-github.ts";
+import { gitOrigin, gitTopLevel, repoFromRemote, type GitHost } from "../course/repo.ts";
 import { folderFromBlueprint } from "../course/from-blueprint.ts";
 import { summarize } from "../course/issues.ts";
 import { ULAMS_FILE } from "../course/layout.ts";
@@ -323,6 +324,7 @@ const init = defineCommand({
   input: z.object({
     dir: dirInput,
     fromCourse: z.string().regex(/^\d+$/, "A numeric course id.").optional().describe("Course id on the server (required: scaffolding an empty course folder comes with course creation)."),
+    ci: z.enum(["github"]).optional().describe("Also write the CI workflow for this host (.github/workflows/ulams.yml at the repository root): validate and preview on pull requests, push on merge, hourly sync pull request."),
   }),
   output: z.unknown(),
   examples: [
@@ -335,6 +337,10 @@ const init = defineCommand({
     }
     const root = resolve(i.dir ?? ".");
     checkTargetIsEmpty(root);
+    const workflow = i.ci === "github" ? ciWorkflow(root) : null;
+    if (workflow && existsSync(workflow.file)) {
+      throw new CliError("INPUT_INVALID", `${workflow.file} already exists, so init would overwrite it.`, { hint: "Rename or remove it, or run init without --ci." });
+    }
     const payload = await fetchExport(ctx, i.fromCourse);
     const doc = assertRepresentable(payload.document);
     const files = folderFromBlueprint(payload.document, {
@@ -342,22 +348,37 @@ const init = defineCommand({
       ...(ctx.flags.profile ? { profile: ctx.flags.profile } : {}),
     });
     const names = [...files.keys()].sort();
-    const data = { dir: root, courseId: payload.courseId, sessionId: payload.sessionId, versionId: payload.versionId, versionNumber: payload.versionNumber, files: names, ...(ctx.flags.dryRun ? { dryRun: true } : {}) };
+    const data = { dir: root, ...(workflow ? { workflow: workflow.file } : {}), courseId: payload.courseId, sessionId: payload.sessionId, versionId: payload.versionId, versionNumber: payload.versionNumber, files: names, ...(ctx.flags.dryRun ? { dryRun: true } : {}) };
     if (!ctx.flags.dryRun) {
       materialise(root, new Map(), files);
       writeBase(root, makeBase(doc, { sessionId: payload.sessionId, courseId: payload.courseId, versionId: payload.versionId, versionNumber: payload.versionNumber }));
+      if (workflow) {
+        mkdirSync(dirname(workflow.file), { recursive: true });
+        writeFileSync(workflow.file, workflow.text);
+      }
     }
     return present(
       ctx,
       data,
       [
         `${ctx.flags.dryRun ? "Would write" : "Wrote"} ${names.length} files to ${root} (course ${payload.courseId ?? "?"}, version ${payload.versionNumber}).`,
+        ...(workflow ? [`${ctx.flags.dryRun ? "Would write" : "Wrote"} ${workflow.file}: set the repository secrets ULAMS_URL and ULAMS_TOKEN (a ci token).`] : []),
         ...(ctx.flags.dryRun ? names.map((n) => `  ${n}`) : [`Commit ${BASE_FILE}: it records the version this folder is based on.`, "Next: edit the Markdown, `ulams course diff`, then `ulams course push`.", "To have Living Course watch this repository's sources/ folder: `ulams course sources-connect`."]),
       ],
       { warnings: driftWarnings(payload) }
     );
   },
 });
+
+/** The workflow file at the root of the repository around the folder (or in the folder itself outside a repository). */
+function ciWorkflow(root: string): { file: string; text: string } {
+  let existing = root;
+  while (!existsSync(existing) && dirname(existing) !== existing) existing = dirname(existing);
+  const real = join(realpathSync(existing), relative(existing, root));
+  const top = gitTopLevel(realpathSync(existing)) ?? real;
+  const path = relative(top, real).split(sep).join("/");
+  return { file: join(top, WORKFLOW_FILE), text: githubWorkflow({ path: path === "" ? "." : path, branch: gitOrigin(realpathSync(existing))?.branch ?? "main" }) };
+}
 
 /* ---------------------------------------------------------------- sources-connect */
 

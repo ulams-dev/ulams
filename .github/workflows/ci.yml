@@ -31,6 +31,7 @@ env:
     commerce=cart,commerce,entitlements,vouchers,payments,invoices,consultations,consultation-access,webinar,youtube,jitsi,assign-without-account
     platform=Integrations,auth,identity,core,permissions,settings,tenancy,demo,translations,model-fields,csv-users,ai,webhooks
     content=compliance,reporting,templates,templates-email,templates-pdf,templates-sms,notifications,bulk-notifications,mailerlite,files,images,pages
+    policy=policy-lifecycle
 
 jobs:
   changes:
@@ -129,6 +130,8 @@ jobs:
             deploy:
               - "deploy/**"
               - "front/docs-site/examples/**"
+              - "front/sdk/src/images.ts"
+              - "front/sdk/src/images/**"
               - ".github/**"
       # Separate call: `every` is needed for the exclusions and applies to the whole call.
       - uses: dorny/paths-filter@v4
@@ -230,7 +233,8 @@ jobs:
     needs: changes
     if: needs.changes.outputs.js == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # about 6 min of install on a cache miss plus 9-10 min of specs
+    timeout-minutes: 25
     env:
       HUSKY: "0"
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
@@ -298,8 +302,9 @@ jobs:
           retention-days: 7
 
   # SCORM playback regression (docs/plans/scorm-playback-tests.md, ADR 0197): the fixture packages played in a
-  # real browser through the legacy front's <ScormPreview> with each app's own service worker, compared with
-  # the golden traces in api/packages/scorm/tests/fixtures/playback/golden. No API stack, no network.
+  # real browser through the legacy front's <ScormPreview> (each app's own service worker) and the API content
+  # player, compared with the golden traces in api/packages/scorm/tests/fixtures/playback/golden. No API stack,
+  # no network.
   scorm-playback:
     name: SCORM playback (Playwright)
     needs: changes
@@ -321,7 +326,7 @@ jobs:
         run: node api/packages/scorm/tests/fixtures/playback/build.mjs --check
       - name: Install Chromium
         run: corepack yarn playwright install --with-deps chromium
-      - name: Play the fixtures (legacy front and admin service workers)
+      - name: Play the fixtures (React player with both service workers, API content player)
         working-directory: front
         run: corepack yarn test:scorm
       - name: Playwright report
@@ -339,7 +344,7 @@ jobs:
     needs: changes
     if: needs.changes.outputs.demo == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
     env:
       HUSKY: "0"
       COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
@@ -372,7 +377,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [learning, living, tasks-topics, gift-reports, commerce, platform, content]
+        shard: [learning, living, tasks-topics, gift-reports, commerce, platform, content, policy]
     defaults:
       run:
         working-directory: api
@@ -665,7 +670,9 @@ jobs:
           node --test scripts/check-trivyignore.test.mjs
           node scripts/check-trivyignore.mjs
       - name: Shellcheck of the supply-chain scripts
-        run: docker run --rm -v "$PWD/.github/scripts:/mnt" koalaman/shellcheck:stable -e SC1091 /mnt/trivy.sh /mnt/supply-chain.sh /mnt/release-assets.sh /mnt/test-supply-chain.sh
+        run: docker run --rm -v "$PWD/.github/scripts:/mnt" koalaman/shellcheck:stable -e SC1091 /mnt/trivy.sh /mnt/supply-chain.sh /mnt/release-assets.sh /mnt/test-supply-chain.sh /mnt/release-channels.sh /mnt/test-release-channels.sh
+      - name: Release channel rules (stable and lts tags)
+        run: sh .github/scripts/test-release-channels.sh
       - name: Trivy database cache
         uses: actions/cache@v6
         with:
@@ -786,6 +793,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
       - uses: ./.github/actions/docker-hub-mirror
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -806,7 +816,9 @@ jobs:
         run: |
           sh deploy/mydevil/test/check-host-version.sh
           sh deploy/mydevil/test/check-images.sh
-          docker run --rm -v "$PWD/deploy/mydevil:/mnt" koalaman/shellcheck:stable -e SC3045,SC2016 bin/check-host.sh bin/check-images.sh test/check-host-version.sh test/check-images.sh
+          sh deploy/mydevil/test/set-admin-images.sh
+          node --experimental-strip-types --no-warnings --test deploy/mydevil/test/image-ops.test.mjs
+          docker run --rm -v "$PWD/deploy/mydevil:/mnt" koalaman/shellcheck:stable -e SC3045,SC2016 bin/check-host.sh bin/check-images.sh bin/set-admin-images.sh test/check-host-version.sh test/check-images.sh test/set-admin-images.sh
 
   # The PHP client in sdk-php/ is generated from front/cli/spec/openapi.json (openapi-generator, pinned image):
   # regenerate and fail on any difference, then run its tests against canned answers.

@@ -50,6 +50,8 @@ internal:
 deprecated:
   - "GET /api/tags/uniqueTags"
 not-for-cli:
+  # the read-only OData feed of a saved report is read by BI tools (Excel, Power BI, Tableau), not by the CLI, which runs a saved report with `reporting run`
+  - "GET /api/reporting/odata*"
   # learner-owned data and player signals; the learner frontend calls them (Learner Insights, plan phase-4 §11.2)
   - "* /api/learner-insights/*"
   # thresholds are tenant and course settings; a CLI command comes with the studio insights page (M4.6)

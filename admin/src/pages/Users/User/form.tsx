@@ -300,7 +300,13 @@ export default ({
           <ProForm.Group>
             <ProForm.Item name="avatar" label={<FormattedMessage id="avatar" />}>
               {data.path_avatar ? (
-                <ResponsiveImage path={data.path_avatar} size={600} width={200} />
+                <ResponsiveImage
+                  path={data.path_avatar}
+                  url={data.avatar}
+                  preset="avatar"
+                  size={600}
+                  width={200}
+                />
               ) : (
                 <Typography>
                   <FormattedMessage id="avatar_placeholder" />

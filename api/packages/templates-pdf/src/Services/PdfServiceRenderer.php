@@ -42,7 +42,7 @@ class PdfServiceRenderer implements PdfRendererContract
 
     private function request(): PendingRequest
     {
-        $request = Http::timeout((int) $this->config('timeout', 30));
+        $request = Http::timeout((int) $this->config('timeout', 30))->withHeaders(\Ulams\Core\Observability\Propagation::headers());
         $token = $this->config('internal_token');
         if ($token) {
             $request = $request->withHeaders(['X-Internal-Token' => $token]);

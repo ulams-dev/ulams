@@ -46,6 +46,7 @@ final class CourseVariantService implements CourseVariantServiceContract
             );
         });
         $this->courses->update(['findable' => false], $courseId);
+        app(FamilyDirectory::class)->forget();
 
         return $member;
     }
@@ -58,6 +59,27 @@ final class CourseVariantService implements CourseVariantServiceContract
         }
         $member->delete();
         $this->courses->update(['findable' => true], $courseId);
+        app(FamilyDirectory::class)->forget();
+    }
+
+    public function setDefaultAudience(int $defaultCourseId, ?string $label, ?string $level, ?string $role): VariantGroup
+    {
+        $group = $this->family($defaultCourseId);
+        $group->forceFill([
+            'default_label' => $label !== null && trim($label) !== '' ? mb_substr(trim($label), 0, 255) : null,
+            'default_level' => $level,
+            'default_role' => $role !== null && trim($role) !== '' ? mb_substr(trim($role), 0, 64) : null,
+        ])->save();
+        app(FamilyDirectory::class)->forget();
+
+        return $group;
+    }
+
+    public function retire(int $courseId): void
+    {
+        // through the model, so the cached course pages are cleared (a mass update would leave them stale)
+        VariantGroupMember::query()->where('course_id', $courseId)->whereNull('retired_at')->get()->each(fn (VariantGroupMember $m) => $m->forceFill(['retired_at' => now()])->save());
+        app(FamilyDirectory::class)->forget();
     }
 
     public function groupForCourse(int $courseId): ?VariantGroup

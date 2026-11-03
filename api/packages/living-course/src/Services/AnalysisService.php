@@ -256,7 +256,8 @@ final class AnalysisService
     /** Finishes the run and settles the proposal once every step is done or failed. */
     public function advance(Run $run): void
     {
-        $finished = DB::transaction(function () use ($run) {
+        $settled = null;
+        $finished = DB::transaction(function () use ($run, &$settled) {
             $locked = Run::query()->lockForUpdate()->find($run->id);
             if ($locked === null || in_array($locked->status, ['cancelled', 'failed', 'finished'], true)) {
                 return false;
@@ -272,6 +273,7 @@ final class AnalysisService
             $analysed = ProposalItem::query()->where('proposal_id', $proposal->id)->whereIn('kind', ['update', 'no_change', 'remove'])->count();
             $counts['analysed'] = $analysed;
             $proposal->forceFill(['counts' => $counts, 'status' => $proposal->status === 'budget_blocked' ? 'budget_blocked' : 'ready'])->save();
+            $settled = $proposal->id;
             if ($failed === []) {
                 $locked->forceFill(['status' => 'finished', 'finished_at' => now()])->save();
             } else {
@@ -290,6 +292,13 @@ final class AnalysisService
             ]);
             $this->events->text($finished->session, $finished, 'The update proposal is ready for your review. Nothing changes in the course until you approve it.');
             $this->notifier->proposalReady($proposal);
+        }
+        // the variants that inherit an element take the base's patch, also when some groups failed: no further model call (ADR 0192)
+        if ($settled !== null) {
+            $base = Proposal::query()->find($settled);
+            if ($base !== null && $base->proposal_group !== null && $base->variant_id === null) {
+                app(VariantReuse::class)->reuse($base);
+            }
         }
     }
 

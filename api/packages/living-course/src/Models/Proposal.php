@@ -26,6 +26,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property array|null $counts
  * @property int $estimated_cost_micro_usd
  * @property int $cost_micro_usd
+ * @property string|null $variant_id the course variant this proposal is for; null for the base course (ADR 0192)
+ * @property string|null $proposal_group links the proposals made together for the base and its variants
  * @property string|null $learner_note
  * @property string|null $error
  */
@@ -69,6 +71,11 @@ class Proposal extends Model
     public function toRevision(): BelongsTo
     {
         return $this->belongsTo(Revision::class, 'to_revision_id');
+    }
+
+    public function isVariant(): bool
+    {
+        return $this->variant_id !== null;
     }
 
     public function isInsights(): bool

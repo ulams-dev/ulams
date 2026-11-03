@@ -8,10 +8,14 @@ export interface CertificateView {
   status: CertificateStatus;
   title: string | null;
   course_title: string | null;
+  /** The variant of the course the holder completed (ADR 0192); null or absent for a course without variants. */
+  course_variant?: string | null;
   holder_name: string | null;
   issued_at: string | null;
   expires_at: string | null;
   revoked_at: string | null;
+  /** The policy version that replaced what the certificate certified, when it was revoked for that reason. */
+  superseded_by_policy_version?: number | null;
   issuer: string | null;
 }
 
@@ -58,7 +62,14 @@ export function statusCopy(certificate: CertificateView): { heading: string; tex
       };
     case "expired":
       return { heading: "This certificate has expired", text: `It expired on ${formatDate(certificate.expires_at)}. The holder needs to renew it.` };
-    case "revoked":
-      return { heading: "This certificate has been revoked", text: `It was withdrawn on ${formatDate(certificate.revoked_at)} and is no longer valid.` };
+    case "revoked": {
+      const text = `It was withdrawn on ${formatDate(certificate.revoked_at)} and is no longer valid.`;
+      const version = certificate.superseded_by_policy_version;
+
+      return {
+        heading: "This certificate has been revoked",
+        text: version ? `${text} Policy version ${version} replaced the version it certified; the holder has been asked to complete the training again.` : text,
+      };
+    }
   }
 }
