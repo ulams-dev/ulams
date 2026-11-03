@@ -1,0 +1,76 @@
+---
+/**
+ * One learning element (lib/learning-elements.ts): its name, the learning principle, one line on why it helps, what
+ * ships, and the element itself: rendered live by the catalogue, a labelled real screenshot, or a description; then
+ * the demo-academy lesson where it can be tried and, when part of it is not built, a "Coming" note.
+ */
+import Render from "@ulams/ui/Render.astro";
+import Icon from "@ulams/ui/components/Icon.astro";
+import Img from "@ulams/ui/components/Img.astro";
+import { ctaEvent } from "@ulams/ui/analytics";
+import type { Locale } from "../../i18n/locales.ts";
+import { learningCopy, liveNode, type ElementDef } from "../../lib/learning-elements.ts";
+
+interface Props {
+  element: ElementDef;
+  locale: Locale;
+  /** Heading level of the element name. */
+  level?: 3 | 4;
+  /** Whether to render the live element (the home section's compact list does not). */
+  showDemo?: boolean;
+}
+
+const { element, locale, level = 3, showDemo = true } = Astro.props;
+const copy = learningCopy(locale);
+const text = copy.elements[element.key];
+const H = level === 3 ? "h3" : "h4";
+const node = showDemo && element.demo === "live" ? liveNode(element.key, locale) : null;
+const badge = element.demo === "live" ? copy.liveLabel : element.demo === "shot" ? copy.shotLabel : copy.textLabel;
+---
+
+<article class={`le-card le-card--${element.demo}`} id={`le-${element.key}`} aria-labelledby={`le-${element.key}-title`}>
+  <header class="le-card__head">
+    <H class="le-card__title" id={`le-${element.key}-title`}>{text.name}</H>
+    <p class="le-card__tags">
+      <span class="le-tag le-tag--principle"><span class="u-visually-hidden">{copy.principleLabel}: </span>{copy.principles[element.principle]}</span>
+      {showDemo && <span class={`le-tag le-tag--${element.demo}`}>{badge}</span>}
+    </p>
+  </header>
+  <p class="le-card__purpose">{text.purpose}</p>
+  <p class="le-card__detail">{text.detail}</p>
+  {
+    element.coming && text.comingNote && (
+      <p class="le-card__coming">
+        <span class="u-status u-status--coming">{copy.coming}</span>
+        {text.comingNote}
+      </p>
+    )
+  }
+  {
+    node && (
+      <div class="le-card__stage">
+        <Render doc={node} />
+      </div>
+    )
+  }
+  {
+    showDemo && element.demo === "shot" && element.shot && (
+      <figure class="le-card__shot">
+        <a href={element.shot.src} target="_blank" rel="noopener">
+          <Img src={element.shot.src} alt={text.alt ?? text.name} width={element.shot.width} height={element.shot.height} sizes="(min-width: 1000px) 560px, 100vw" preset="content" fit="contain" />
+        </a>
+        <figcaption>{copy.shotLabel}</figcaption>
+      </figure>
+    )
+  }
+  {
+    element.link && (
+      <p class="le-card__try">
+        <a href={element.link} data-umami-event={ctaEvent(element.link)}>
+          {copy.tryLabel}
+          <Icon name="arrow" />
+        </a>
+      </p>
+    )
+  }
+</article>

@@ -26,6 +26,8 @@ export interface CertificateRecord {
   status: CertificateStatus;
   title: string | null;
   course_title: string | null;
+  /** The variant of the course the holder completed; null or absent for a course without variants. */
+  course_variant?: string | null;
   holder_name: string | null;
   issued_at: string | null;
   expires_at: string | null;

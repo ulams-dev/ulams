@@ -13,6 +13,9 @@ export interface HttpClientOptions {
   /** "cli" or "mcp": sent as X-Ulams-Client (audit log, S1). */
   client: "cli" | "mcp";
   agent?: string | undefined;
+  /** The commit and change URL a CI job acts for (`ULAMS_COMMIT`, `ULAMS_CHANGE_URL`): sent as X-Ulams-Commit / X-Ulams-Change-Url for the audit trail of imports and approvals. */
+  commit?: string | undefined;
+  changeUrl?: string | undefined;
   timeoutMs?: number;
   /** Debug sink (already redacted by the client). */
   debug?: ((line: string) => void) | undefined;
@@ -154,6 +157,8 @@ export class HttpClient {
         "X-Request-Id": requestId,
       };
       if (this.opts.agent) headers["X-Ulams-Agent"] = this.opts.agent;
+      if (this.opts.commit) headers["X-Ulams-Commit"] = this.opts.commit;
+      if (this.opts.changeUrl) headers["X-Ulams-Change-Url"] = this.opts.changeUrl;
       if (options.idempotencyKey) headers["Idempotency-Key"] = options.idempotencyKey;
       const sdk = createClient({
         baseUrl: this.baseUrl,

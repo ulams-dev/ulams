@@ -15,12 +15,18 @@ use Ulams\TemplatesPdf\Models\FabricPDF;
  */
 class StepProgress
 {
+    public function __construct(private ?FamilyCourses $families = null)
+    {
+    }
+
+    /** For a course with variants, doing any of them (or only the pinned one) counts (ADR 0192). */
     public function isSatisfied(User $user, int $courseId): bool
     {
+        $courseIds = $this->families?->counting($courseId) ?? [$courseId];
         $certificates = FabricPDF::query()
             ->where('user_id', $user->getKey())
             ->where('assignable_type', Course::class)
-            ->where('assignable_id', $courseId);
+            ->whereIn('assignable_id', $courseIds);
 
         if ((clone $certificates)->exists()) {
             return (clone $certificates)
@@ -29,7 +35,7 @@ class StepProgress
                 ->exists();
         }
 
-        return CourseUserPivot::query()->where('user_id', $user->getKey())->where('course_id', $courseId)->where('finished', true)->exists()
-            || Assignment::query()->where('user_id', $user->getKey())->where('course_id', $courseId)->where('status', AssignmentStatus::COMPLETED)->exists();
+        return CourseUserPivot::query()->where('user_id', $user->getKey())->whereIn('course_id', $courseIds)->where('finished', true)->exists()
+            || Assignment::query()->where('user_id', $user->getKey())->whereIn('course_id', $courseIds)->where('status', AssignmentStatus::COMPLETED)->exists();
     }
 }

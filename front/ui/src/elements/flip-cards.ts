@@ -17,7 +17,7 @@ class UlamsFlipCards extends HTMLElement {
       const set = (open: boolean): void => {
         back.hidden = !open;
         button.setAttribute("aria-expanded", String(open));
-        button.textContent = open ? "Hide answer" : "Show answer";
+        button.textContent = open ? (this.dataset.hide ?? "") : (this.dataset.show ?? "");
       };
       button.addEventListener("click", () => set(back.hidden));
       set(false);

@@ -9,10 +9,11 @@ use Laravel\Passport\Token;
 /**
  * @property int $id
  * @property string $token_id
- * @property string $kind cli | agent | ci | integration
+ * @property string $kind cli | agent | ci | integration | scim
  * @property string|null $agent_name
  * @property string $created_via admin | cli | device
  * @property int|null $rate_limit_per_minute
+ * @property list<string>|null $resource_ids ids of the resources (saved reports) the token is limited to; null: no limit
  * @property \Illuminate\Support\Carbon|null $last_used_at
  * @property string|null $last_used_ip
  * @property-read Token $token
@@ -21,13 +22,19 @@ class ApiTokenMeta extends Model
 {
     public const KINDS = ['cli', 'agent', 'ci', 'integration'];
 
+    /**
+     * Held by the service user of one identity provider (SCIM, ADR 0121). Not creatable through the token API:
+     * it is issued only by the identity package, it is accepted only on `api/scim/*` and refused everywhere else.
+     */
+    public const KIND_SCIM = 'scim';
+
     public const CREATED_VIA = ['admin', 'cli', 'device'];
 
     protected $table = 'api_token_meta';
 
     protected $guarded = [];
 
-    protected $casts = ['last_used_at' => 'datetime', 'rate_limit_per_minute' => 'integer'];
+    protected $casts = ['last_used_at' => 'datetime', 'rate_limit_per_minute' => 'integer', 'resource_ids' => 'array'];
 
     public function token(): BelongsTo
     {

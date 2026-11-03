@@ -1,0 +1,9 @@
+node_modules
+src
+tests
+evals
+scripts
+spec
+coverage
+*.md
+!LICENSE

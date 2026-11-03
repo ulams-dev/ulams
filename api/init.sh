@@ -158,6 +158,11 @@ touch inited
 # This is required so far as docker compose run this script as root 
 chown -R www-data:www-data /var/www/html/storage
 
+# Files that root processes create later (the queue and scheduler loops, `docker compose exec api php artisan`)
+# must stay writable for php-fpm (www-data): new directories inherit the group www-data (setgid) and
+# supervisord and artisan run with umask 002, so a new file is root:www-data with mode 664 (issue #501).
+find /var/www/html/storage /var/www/html/bootstrap/cache -type d -exec chmod g+s {} +
+
 /usr/bin/supervisord -c /etc/supervisord.conf
 
 

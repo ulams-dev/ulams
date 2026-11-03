@@ -138,6 +138,10 @@ enum PERMISSIONS {
   ReportList = 'report_list',
   AuthoringMetricsRead = 'authoring_metrics_read', // read the authoring metrics of every course
 
+  /* -------- Ulams/Reporting -------- */
+
+  ReportingRead = 'reporting_read',
+
   /* -------- Ulams/Courses-Import-Export -------- */
 
   CourseExport = 'course-import-export_export',

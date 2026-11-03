@@ -1,11 +1,12 @@
-import authoringMetrics from './zh-CN/authoringMetrics';
 import codeExercises from './zh-CN/codeExercises';
 import component from './zh-CN/component';
 import globalHeader from './zh-CN/globalHeader';
+import authoringMetrics from './zh-CN/authoringMetrics';
 import insights from './zh-CN/insights';
 import menu from './zh-CN/menu';
 import pages from './zh-CN/pages';
 import pwa from './zh-CN/pwa';
+import reportBuilder from './zh-CN/reportBuilder';
 import settingDrawer from './zh-CN/settingDrawer';
 import settings from './zh-CN/settings';
 import templates from './zh-CN/templates';
@@ -28,6 +29,7 @@ export default {
   ...settings,
   ...theme,
   ...pwa,
+  ...reportBuilder,
   ...component,
   ...templates,
   ...codeExercises,
