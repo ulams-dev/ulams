@@ -23,3 +23,41 @@ export async function runProcess(binary: string, args: string[], options: Proces
     child.stdin.end(options.stdin);
   });
 }
+export interface StreamOptions extends Omit<ProcessOptions,"stdin"> { stdinFile?: string; stdoutFile?: string; }
+/**
+ * Like runProcess, but streams: stdout goes to `stdoutFile` (mode 600, sha256 and size returned) and
+ * `stdinFile` feeds stdin. Database dumps and archives are larger than the 8 MiB output buffer.
+ */
+export async function runStream(binary: string, args: string[], options: StreamOptions): Promise<{ sha256?: string; size?: number }> {
+  if (options.signal?.aborted) throw new CliError("TIMEOUT", "Stack operation cancelled; generated files and persistent data were retained.");
+  const { createReadStream, createWriteStream } = await import("node:fs");
+  const { createHash } = await import("node:crypto");
+  return new Promise((resolve,reject)=>{
+    let diagnostics = "", size = 0, settled = false;
+    const hash = createHash("sha256");
+    const fail = (error: CliError) => { if(!settled){settled = true;reject(error);} };
+    const child = spawn(binary,args,{ cwd: options.cwd, env: options.env ?? process.env, stdio: [options.stdinFile ? "pipe" : "ignore","pipe","pipe"], ...(options.signal ? { signal: options.signal } : {}) });
+    const out = options.stdoutFile ? createWriteStream(options.stdoutFile,{ mode: 0o600, flags: "wx" }) : undefined;
+    out?.on("error",error=>fail(new CliError("USAGE",`Cannot write ${options.stdoutFile}: ${error.message}`)));
+    const stdout = child.stdout!, stderr = child.stderr!;
+    stdout.on("data",(chunk: Buffer)=>{ if(out){size += chunk.length;hash.update(chunk);} });
+    if(out) stdout.pipe(out); else stdout.resume();
+    stderr.on("data", chunk=>{diagnostics = (diagnostics + String(chunk)).slice(-16000);});
+    if(options.stdinFile && child.stdin) {
+      const input = createReadStream(options.stdinFile);
+      input.on("error",error=>fail(new CliError("USAGE",`Cannot read ${options.stdinFile}: ${error.message}`)));
+      child.stdin.on("error",()=>undefined);
+      input.pipe(child.stdin);
+    }
+    child.on("error",error=>fail(new CliError(error.name === "AbortError" ? "TIMEOUT" : "USAGE", error.name === "AbortError" ? "Stack operation cancelled; data was retained." : `Cannot run ${binary}. Install the required runtime and check PATH.`, { details: { binary } })));
+    child.on("close",code=>{
+      const finish = () => {
+        if(settled)return;
+        settled = true;
+        if(code === 0) resolve(out ? { sha256: hash.digest("hex"), size } : {});
+        else reject(new CliError("SERVER_ERROR", `${binary} failed (exit ${code ?? "signal"}).`, { details: { command: args.slice(0,4), diagnostic: cleanOutput(diagnostics,options.secrets).slice(-6000) } }));
+      };
+      if(out && !out.writableFinished) out.on("finish",finish); else finish();
+    });
+  });
+}

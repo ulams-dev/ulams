@@ -33,6 +33,8 @@ interface Server {
   connection: (body: { settings?: Record<string, boolean> }) => { status: number; body: unknown };
   /** Called on every GET of the proposal, to move a running state forward. */
   onGet?: (s: Server) => void;
+  /** Answer of accept-in-group: how many items it accepted in the other proposals of the group. */
+  elsewhere?: number;
   /** Serve an open event stream (otherwise the endpoint answers 404 and the page polls). */
   sse?: boolean;
   events?: ReadableStreamDefaultController<Uint8Array>;
@@ -86,6 +88,12 @@ function stub(initial: ProposalDetail, over: Partial<Server> = {}): Server {
       const status = { accept: "accepted", reject: "rejected", reset: "pending" }[decide[2]!] as ProposalItem["status"];
       const row = setItem(decide[1]!, { status });
       return json({ item: row, proposal: summary(server.detail) });
+    }
+    const group = /^\/proposals\/[^/]+\/items\/([^/]+)\/accept-in-group$/.exec(path);
+    if (group) {
+      const row = setItem(group[1]!, { status: "accepted" });
+      server.detail = { ...server.detail, siblings: (server.detail.siblings ?? []).map((x) => ({ ...x, decisions: { ...x.decisions, accepted: (x.decisions.accepted ?? 0) + (server.elsewhere ?? 0), pending: Math.max(0, (x.decisions.pending ?? 0) - (server.elsewhere ?? 0)) } })) };
+      return json({ item: row, proposal: summary(server.detail), accepted: server.elsewhere ?? 0, proposals: [] });
     }
     const regen = /^\/proposals\/[^/]+\/items\/([^/]+)\/regenerate$/.exec(path);
     if (regen) {
@@ -676,5 +684,110 @@ describe("update review: improvement from learner insights", () => {
     expect(root.querySelector("[data-done]")!.textContent).toContain("The improvement is applied");
     expect(root.querySelector("[data-done]")!.textContent).toContain("Learners keep their progress");
     expect(root.querySelector("[data-done]")!.textContent).not.toContain("revision");
+  });
+});
+
+describe("update review: variants of a course (ADR 0192)", () => {
+  const base = { id: "pb", number: 1, status: "ready", variant: null, decisions: { pending: 2 } } as const;
+  const expert = { id: "pe", number: 2, status: "ready", variant: { id: "v1", key: "expert", label: "Expert" }, decisions: { accepted: 1, pending: 1 } } as const;
+  const grouped = (items: ProposalItem[], over: Partial<ProposalDetail> = {}) =>
+    detail(items, { number: 2, variant: { id: "v1", key: "expert", label: "Expert" }, proposalGroup: "g1", siblings: [{ ...base }], ...over });
+
+  it("looks exactly as before without a group: no badge, no navigation, no group action", async () => {
+    stub(detail(item3()));
+    const root = mount();
+    await ready(root);
+    expect(root.querySelector("[data-course-badge]")).toBeNull();
+    expect(root.querySelector("[data-group-nav]")).toBeNull();
+    expect(root.querySelector("[data-accept-in-group]")).toBeNull();
+  });
+
+  it("names the course in words and lists the versions with their status and decisions", async () => {
+    stub(grouped(item3(), { siblings: [{ ...base }, { ...expert, id: "pe2", number: 3, variant: { id: "v2", key: "novice", label: "Novice" }, status: "applied", decisions: { accepted: 2 } }] }));
+    const root = mount();
+    await ready(root);
+    expect(root.querySelector("[data-header] [data-course-badge]")?.textContent).toBe("Expert");
+    const nav = root.querySelector<HTMLElement>("[data-group-nav]")!;
+    expect(nav.getAttribute("aria-label")).toBe("Versions of this update");
+    const entries = [...nav.querySelectorAll("li")];
+    expect(entries.map((li) => li.querySelector(".st-vg-name")?.textContent)).toEqual(["Base course", "Expert", "Novice"]);
+    expect(entries[0]!.textContent).toContain("Ready to review");
+    expect(entries[0]!.textContent).toContain("0 decided, 2 undecided");
+    expect(entries[2]!.textContent).toContain("Applied");
+    expect(entries[2]!.textContent).toContain("2 decided, 0 undecided");
+    const links = [...nav.querySelectorAll("a")];
+    expect(links.map((a) => a.getAttribute("aria-current"))).toEqual([null, "page", null]);
+    expect(links[0]!.getAttribute("href")).toBe(`/studio/s/${S}/updates/pb`);
+    expect(links[1]!.textContent).toContain("(open now)");
+  });
+
+  it("calls the base proposal the base course", async () => {
+    stub(grouped(item3(), { variant: null, siblings: [{ ...expert }] }));
+    const root = mount();
+    await ready(root);
+    expect(root.querySelector("[data-header] [data-course-badge]")?.textContent).toBe("Base course");
+  });
+
+  it("offers Accept in all versions on shared kinds and a note on reused items", async () => {
+    stub(grouped([item(), item({ id: "i4", kind: "uncovered", status: "pending" }), item({ id: "i5", kind: "update", flags: { reusedFrom: "bi5" } }), question()]));
+    const root = mount();
+    await ready(root);
+    const has = (id: string) => root.querySelector(`[data-update-item="${id}"] [data-accept-in-group]`) !== null;
+    expect([has("i1"), has("i2"), has("i4"), has("i5")]).toEqual([true, true, false, true]);
+    expect(root.querySelector('[data-update-item="i5"] [data-reused-note]')?.textContent).toBe("Same change as in the base course; no extra analysis was needed.");
+    expect(root.querySelector('[data-update-item="i1"] [data-reused-note]')).toBeNull();
+  });
+
+  it("accepts in all versions, says how many others, refreshes the group and keeps the focus", async () => {
+    const s = stub(grouped(item3()), { elsewhere: 2 });
+    const root = mount();
+    await ready(root);
+    button(root.querySelector<HTMLElement>('[data-update-item="i1"]')!, "Accept in all versions").click();
+    await wait(() => expect(root.querySelector("[data-notices] [role='status']")?.textContent).toBe("Accepted here and in 2 other versions"));
+    expect(s.calls.some((c) => c.method === "POST" && c.path === `/proposals/${P}/items/i1/accept-in-group`)).toBe(true);
+    await wait(() => expect(root.querySelector('[data-update-item="i1"]')?.getAttribute("data-status")).toBe("accepted"));
+    expect(root.querySelector('[data-group-entry="pb"]')?.textContent).toContain("2 decided, 0 undecided");
+    expect(document.activeElement).toBe(root.querySelector('[data-update-item="i1"] [data-focus-target]'));
+    expect(root.querySelector('[data-update-item="i1"] [data-accept-in-group]')?.hasAttribute("hidden")).toBe(true);
+  });
+
+  it("says so when nothing else was waiting, and when saving fails", async () => {
+    const s = stub(grouped(item3()), { elsewhere: 0 });
+    const root = mount();
+    await ready(root);
+    button(root.querySelector<HTMLElement>('[data-update-item="i1"]')!, "Accept in all versions").click();
+    await wait(() => expect(root.querySelector("[data-notices] [role='status']")?.textContent).toContain("No other version had the same change"));
+    void s;
+    vi.stubGlobal("fetch", async (url: string) => (/accept-in-group/.test(url) ? new Response(JSON.stringify({ message: "This proposal is already settled." }), { status: 409 }) : new Response("{}", { status: 404 })));
+    button(root.querySelector<HTMLElement>('[data-update-item="i2"]')!, "Accept in all versions").click();
+    await wait(() => expect(root.querySelector("[data-notices] [role='alert']")?.textContent).toContain("already settled"));
+    expect(root.querySelector('[data-update-item="i2"]')?.getAttribute("data-status")).toBe("pending");
+  });
+
+  it.each([
+    ["pl", "Wersje tej aktualizacji", "Kurs bazowy", "Zaakceptuj we wszystkich wersjach", "pl"],
+    ["zh", "此更新的各个版本", "基础课程", "在所有版本中接受", "zh-Hans"],
+  ])("speaks %s in the group navigation and the group action, marked with its language", async (locale, nav, baseName, action, lang) => {
+    stub(grouped(item3()));
+    const root = mount(20, locale);
+    await ready(root);
+    const navEl = root.querySelector("[data-group-nav]")!;
+    expect(navEl.getAttribute("aria-label")).toBe(nav);
+    expect(navEl.getAttribute("lang")).toBe(lang);
+    expect(navEl.querySelector(".st-vg-name")?.textContent).toBe(baseName);
+    expect(navEl.querySelector("a")?.getAttribute("href")).toContain(`?lang=${locale}`);
+    const group = root.querySelector('[data-update-item="i1"] [data-accept-in-group]')!;
+    expect(group.textContent).toContain(action);
+    expect(group.getAttribute("lang")).toBe(lang);
+    // a variant label is the author's own text: no language is claimed for it
+    expect(root.querySelector("[data-header] [data-course-badge]")?.getAttribute("lang")).toBeNull();
+  });
+
+  it("is accessible", async () => {
+    stub(grouped([item(), item({ id: "i5", flags: { reusedFrom: "bi5" } })]));
+    const root = mount();
+    await ready(root);
+    const result = await axe.run(root, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
+    expect(result.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.html.slice(0, 120)).join(" | ")}`)).toEqual([]);
   });
 });

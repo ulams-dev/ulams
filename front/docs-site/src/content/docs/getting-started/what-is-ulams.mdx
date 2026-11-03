@@ -95,7 +95,7 @@ has its API at `coffee.localhost`, its learner site at `coffee.app.localhost` an
   See [Course versions and variants](/creators/course-versions-and-variants/).
 - **Course as code**: a course as a folder of Markdown and YAML that the CLI pulls, pushes, diffs, merges and publishes
   ([Course as code](/developers/cli-course/)).
-- **Sign-in and storage**: OpenID Connect and SAML 2.0 per tenant ([single sign-on](/operators/single-sign-on/), [SAML 2.0](/operators/single-sign-on-saml/)),
+- **Sign-in and storage**: OpenID Connect and SAML 2.0 per tenant ([single sign-on](/operators/single-sign-on/), [SAML 2.0](/operators/single-sign-on-saml/)), SCIM 2.0 provisioning of users and groups ([SCIM](/operators/scim/)),
   and bundled SeaweedFS storage with one S3 key per tenant ([storage](/operators/storage/)).
 
 ## What is planned <Badge text="Coming" variant="caution" />
@@ -109,7 +109,7 @@ has its API at `coffee.localhost`, its learner site at `coffee.app.localhost` an
   branded department and course entry points, and renewal when the policy changes.
 - **Commerce through Sylius** as a separate headless service, with the LMS keeping control of
   who has access (the LMS-side entitlements already exist).
-- **Identity**: group and role mapping from the identity provider, SCIM provisioning and HRIS import.
+- **Identity**: group and role mapping from the sign-in assertion and HRIS import (SCIM provisioning is built).
 - **Git-driven course updates**: a GitHub Action and the `ulams-cli` image, a preview academy per pull
   request, and a merge that becomes a Living Course update proposal.
 - **A plugin manifest**, the npm release of the CLI, and the `simulation` component with

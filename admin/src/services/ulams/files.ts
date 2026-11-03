@@ -1,7 +1,6 @@
 import type { AxiosRequestConfig } from '@umijs/max';
 import { request } from 'umi';
-
-declare const REACT_APP_API_URL: string;
+import { contentImageUrl } from './imageService';
 
 /**  GET /api/currentUser */
 export async function files(
@@ -47,8 +46,12 @@ export async function upload(file: File, directory: string, options?: AxiosReque
   });
 }
 
-export const resizedImage = (path: string, width = 1000) =>
-  `${window.REACT_APP_API_URL || REACT_APP_API_URL}/api/images/img?path=${path}&w=${width}`;
+/**
+ * URL to store for an uploaded image. Default (`REACT_APP_IMAGE_SERVICE` unset or `php`): the API resizer URL,
+ * exactly as before. With `cloudflare` or `noop` and a public `url`: that plain URL (see `imageService.ts`).
+ */
+export const resizedImage = (path: string, width = 1000, url?: string) =>
+  contentImageUrl({ path, url }, width);
 
 /**  GET /api/currentUser */
 export async function remove(url: string, options?: AxiosRequestConfig) {

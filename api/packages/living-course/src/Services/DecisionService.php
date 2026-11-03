@@ -3,6 +3,7 @@
 namespace Ulams\LivingCourse\Services;
 
 use Illuminate\Support\Facades\DB;
+use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\LivingCourse\Exceptions\ProposalException;
 use Ulams\LivingCourse\Models\Proposal;
@@ -56,6 +57,36 @@ final class DecisionService
         return $item->refresh();
     }
 
+    /**
+     * Accepts one item and the same patch in the other proposals of its group (the variants, or the base): the same element, the
+     * same text before and the same replacement, still undecided. One decision for the elements the variants share (ADR 0192).
+     *
+     * @return array{accepted:int,proposals:string[]} items accepted besides the given one, and the proposals they are in
+     */
+    public function acceptInGroup(Proposal $proposal, ProposalItem $item, int $userId): array
+    {
+        $item = $this->decide($proposal, $item, 'accepted', $userId);
+        $accepted = 0;
+        $in = [];
+        if ($proposal->proposal_group === null || !in_array($item->kind, ['update', 'no_change', 'remove'], true)) {
+            return ['accepted' => 0, 'proposals' => []];
+        }
+        $after = Blueprint::fingerprint($item->after);
+        $before = Blueprint::fingerprint($item->before);
+        foreach (Proposal::query()->where('proposal_group', $proposal->proposal_group)->where('id', '!=', $proposal->id)->whereIn('status', ['ready', 'analysing', 'awaiting_analysis'])->get() as $sibling) {
+            foreach (ProposalItem::query()->where('proposal_id', $sibling->id)->where('element_id', $item->element_id)->where('kind', $item->kind)->where('status', 'pending')->get() as $twin) {
+                if (Blueprint::fingerprint($twin->after) !== $after || Blueprint::fingerprint($twin->before) !== $before) {
+                    continue;
+                }
+                $this->decide($sibling, $twin, 'accepted', $userId);
+                $accepted++;
+                $in[$sibling->id] = true;
+            }
+        }
+
+        return ['accepted' => $accepted, 'proposals' => array_keys($in)];
+    }
+
     /** @return int number of items accepted */
     public function acceptAll(Proposal $proposal, int $userId): int
     {
@@ -81,11 +112,12 @@ final class DecisionService
             $proposal->forceFill(['status' => 'rejected', 'decided_by' => $userId, 'decided_at' => now()])->save();
             ProposalItem::query()->where('proposal_id', $proposal->id)->whereIn('status', ['pending', 'accepted', 'conflict', 'stale'])->where('kind', '!=', 'citation_remap')
                 ->update(['status' => 'rejected', 'decided_by' => $userId, 'decided_at' => now()]);
-            if ($proposal->isInsights()) {
-                // no source revision to acknowledge and no source staleness to settle
+            if ($proposal->isInsights() || $proposal->isVariant()) {
+                // no source revision to acknowledge and no source staleness to settle (a variant proposal belongs to a revision that
+                // only the base proposal acknowledges, ADR 0192)
                 $this->audit->record('proposal.rejected', [
                     'session_id' => $session->id, 'subject_type' => 'proposal', 'subject_id' => $proposal->id, 'actor_id' => $userId,
-                    'data' => ['number' => $proposal->number, 'kind' => $proposal->kind],
+                    'data' => ['number' => $proposal->number, 'kind' => $proposal->kind] + ($proposal->isVariant() ? ['variantId' => $proposal->variant_id] : []),
                 ]);
 
                 return;

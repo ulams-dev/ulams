@@ -1,4 +1,6 @@
 ---
+import { pageLocale, uiStrings } from "../lib/i18n.ts";
+
 interface Props {
   id?: string;
   title?: string;
@@ -6,13 +8,14 @@ interface Props {
   cards: Array<{ front: string; back: string }>;
 }
 const { id = "cards", title, intro, cards } = Astro.props;
+const t = uiStrings(pageLocale(Astro));
 ---
 
 <section class="u-flip" id={id} aria-labelledby={title ? `${id}-title` : undefined}>
   {title && <h2 class="u-h2" id={`${id}-title`}>{title}</h2>}
   {intro && <p class="u-lead">{intro}</p>}
   <!-- Without JavaScript both sides stay visible; the element turns the backs into reveal-on-demand. -->
-  <ulams-flip-cards>
+  <ulams-flip-cards data-show={t.flipShow} data-hide={t.flipHide}>
     <ul class="u-flip__list" role="list">
       {
         cards.map((card, i) => (
@@ -21,7 +24,7 @@ const { id = "cards", title, intro, cards } = Astro.props;
               {card.front}
             </p>
             <p class="u-flip__back" id={`${id}-back-${i}`} data-back>
-              <span class="u-visually-hidden">Answer: </span>
+              <span class="u-visually-hidden">{t.flipAnswer}</span>
               {card.back}
             </p>
           </li>

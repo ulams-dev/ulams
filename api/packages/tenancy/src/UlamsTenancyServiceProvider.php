@@ -18,9 +18,11 @@ use Ulams\Tenancy\Console\SeedTenantDemoCommand;
 use Ulams\Tenancy\Console\SetTenantEnvCommand;
 use Ulams\Tenancy\Console\RecreateViewsCommand;
 use Ulams\Tenancy\Console\SyncTenantEnvCommand;
+use Ulams\Tenancy\Console\TemplateCommand;
 use Ulams\Tenancy\Console\UpgradeCommand;
 use Ulams\Tenancy\Console\WorkOnceCommand;
 use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
+use Ulams\Tenancy\Observability\TenantMetrics;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
@@ -90,6 +92,9 @@ class UlamsTenancyServiceProvider extends ServiceProvider
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        if (\Ulams\Tenancy\Support\TenantContext::isPlatform()) {
+            $this->app->make(\Ulams\Core\Observability\MetricsRegistry::class)->register('tenancy', new TenantMetrics());
+        }
         RateLimiter::for('ulams-platform', fn (Request $request) => Limit::perMinute(60)->by('platform:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
 
         $kernel = $this->app->make(HttpKernel::class);
@@ -100,6 +105,7 @@ class UlamsTenancyServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CreateTenantCommand::class,
+                TemplateCommand::class,
                 CommerceChannelCommand::class,
                 ListTenantsCommand::class,
                 DeleteTenantCommand::class,

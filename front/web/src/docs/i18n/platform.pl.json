@@ -14,10 +14,6 @@
         "mark": "logo",
         "links": [
           {
-            "label": "Przegląd",
-            "href": "/pl/"
-          },
-          {
             "label": "Porównanie",
             "href": "/pl/comparison/"
           },
@@ -52,9 +48,9 @@
           "props": {
             "variant": "product",
             "eyebrow": "LMS z AI · open source",
-            "title": "Kursy z dokumentacji. Z widocznymi źródłami.",
-            "titleAccent": "Z widocznymi źródłami.",
-            "subtitle": "AI przygotowuje szkic lekcji na podstawie Twoich materiałów. Ty sprawdzasz każdą zmianę przed publikacją.",
+            "title": "Kursy z Twoich dokumentów w kilka minut. Aktualne po każdej zmianie.",
+            "titleAccent": "Aktualne po każdej zmianie.",
+            "subtitle": "ULAMS buduje kurs z cytatami z Twoich materiałów w kilka minut. Gdy dokument się zmienia, proponuje aktualizację i po Twojej zgodzie publikuje nową wersję.",
             "primaryCta": {
               "label": "Zobacz dema na żywo",
               "href": "#demos"
@@ -66,253 +62,112 @@
           }
         },
         {
-          "component": "CtaBand",
+          "component": "FeatureList",
           "props": {
-            "id": "cost-cta",
-            "variant": "feature",
-            "eyebrow": "szybsze kursy",
-            "title": "Kursy powstają znacznie szybciej: szkic z cytatami w kilka minut",
-            "text": "W naszym własnym zmierzonym przebiegu ULAMS zamienił publiczne repozytorium dokumentacji w szkic kursu z 6 lekcjami i 18 pytaniami quizowymi, z cytatem źródła przy każdym bloku, w 7 min 44 s generowania.",
-            "statsLabel": "Jeden zmierzony przebieg · szkic do przeglądu przez autora",
-            "stats": [
+            "id": "advantages",
+            "variant": "tiles",
+            "eyebrow": "dlaczego ulams",
+            "title": "Co dostaje Twój zespół",
+            "items": [
               {
-                "value": "7:44",
-                "label": "minuty generowania (7 min 44 s)",
-                "note": "konspekt 24 s · lekcje, quizy, kontrole 6 min 57 s · zastosowanie 23 s"
+                "icon": "clock",
+                "title": "Kursy w minuty, nie miesiące",
+                "text": "Jeden zmierzony przebieg: 6 lekcji i 18 pytań w 7 min 44 s za 0,28 USD. Ręcznie godzina e-learningu to 49–716 godzin pracy.",
+                "link": {
+                  "label": "Czas i koszt",
+                  "href": "/pl/content-cost/"
+                }
               },
               {
-                "value": "6 + 18",
-                "label": "lekcji + pytań quizowych",
-                "note": "z 13 fragmentów źródła"
+                "icon": "quote",
+                "title": "Każde twierdzenie z cytatem, zawsze aktualne",
+                "text": "Każdy blok prowadzi do źródła. Gdy źródło się zmienia, ULAMS wskazuje lekcje, których to dotyczy, i proponuje aktualizację do Twojego przeglądu.",
+                "link": {
+                  "label": "Zobacz prawdziwe przebiegi",
+                  "href": "/pl/course-generation/"
+                }
               },
               {
-                "value": "USD 0.28",
-                "label": "koszt modelu",
-                "note": "27 wywołań modelu"
+                "icon": "puzzle",
+                "title": "Kursy, w których się ćwiczy",
+                "text": "Quizy, fiszki, przykłady krok po kroku, przeciąganie, punkty na obrazie, symulacje i ćwiczenia z kodu. AI generuje quizy, fiszki, przykłady i aktywności H5P z Twoich źródeł, a Ty przeglądasz każde z nich.",
+                "link": {
+                  "label": "Elementy nauki",
+                  "href": "/pl/learning-elements/"
+                }
               },
               {
-                "value": "35/35",
-                "label": "bloków treści cytuje źródło",
-                "note": "autor zatwierdza przed publikacją"
+                "icon": "layers",
+                "title": "Twoja marka, white label",
+                "text": "Twój design system staje się motywem, sprawdzanym pod kątem kontrastu WCAG 2.2 AA. Subdomena, certyfikaty i SSO dla każdej akademii.",
+                "link": {
+                  "label": "Przewodnik stylu",
+                  "href": "/pl/style-guide/"
+                }
               },
               {
-                "value": "49–716",
-                "label": "godzin pracy na godzinę gotowego kursu, tworzonego ręcznie",
-                "note": "Chapman Alliance, za eLearning Industry",
-                "kind": "benchmark",
-                "href": "https://elearningindustry.com/development-costs-for-your-online-learning-start-estimating"
+                "icon": "chart",
+                "title": "Dowody dla compliance",
+                "text": "Widzisz, kto utknął, kto skończył i kto zalega ze szkoleniem obowiązkowym. Certyfikaty, terminy i eksport do audytu.",
+                "link": {
+                  "label": "Raporty",
+                  "href": "/pl/reporting/"
+                }
+              },
+              {
+                "icon": "lock",
+                "title": "Bez uzależnienia od dostawcy",
+                "text": "Licencja MIT, na Twoich serwerach. SCORM, cmi5, xAPI z wbudowanym LRS, LTI 1.3 i REST API.",
+                "link": {
+                  "label": "Self-hosting",
+                  "href": "#self-host"
+                }
               }
-            ],
-            "note": "Jeden przebieg na jednym źródle, tylko czas generowania; przegląd autora dochodzi do tego. To dwie różne miary, więc nie podajemy przelicznika przyspieszenia.",
-            "cta": {
-              "label": "Zobacz szczegóły",
-              "href": "/pl/content-cost/"
-            }
+            ]
           }
         },
         {
           "component": "Showcase",
           "props": {
             "eyebrow": "demo na żywo",
-            "title": "Sześć akademii, jedna platforma",
-            "intro": "Każde demo to osobny tenant z własnym motywem, kursem i danymi, działający na tej samej instalacji ulams. Otwórz je jako kursant albo wejdź do jego panelu admina.",
+            "title": "Wypróbuj akademię na żywo",
+            "intro": "Sześć akademii demo na jednej instalacji ulams, każda z własnym motywem i kursem.",
             "items": {
               "$data": "/demos"
             },
-            "note": "Dema resetują się co godzinę. Bez rejestracji: logujesz się automatycznie."
+            "note": "Bez rejestracji. Dema resetują się co godzinę."
           }
         },
         {
           "component": "CtaBand",
           "props": {
-            "id": "reporting-cta",
+            "id": "white-paper-cta",
             "variant": "feature",
-            "eyebrow": "pełna analityka",
-            "title": "Pełna analityka: kto utknął, kto skończył i co raportować",
-            "text": "Analityka każdego kursu, raporty zgodności i eksporty są wbudowane, a dane zostają w Twoim wdrożeniu.",
+            "eyebrow": "white paper",
+            "title": "Ile naprawdę kosztują treści szkoleniowe i jak to obniżyć",
+            "text": "Dłuższa lektura dla liderów L&D i osób, które zatwierdzają szkolenia: ile naprawdę kosztują treści, jak powstają i pozostają aktualne kursy z cytatami i co jest dostępne już dziś.",
             "bullets": [
               {
-                "title": "Kto utknął",
-                "text": "Uczestnicy zagrożeni odpadnięciem i fragmenty, które mylą."
+                "title": "Problem kosztów, ze źródłami",
+                "text": "49–716 godzin na godzinę kursu według Chapmana i wyniki Brandon Hall o raportowaniu, każde z linkiem."
               },
               {
-                "title": "Kto skończył",
-                "text": "Postępy, ukończenia i wyniki quizów, dla każdego kursu."
+                "title": "Mechanizm krok po kroku",
+                "text": "Źródła, szkic z cytatami, diff do przejrzenia, żywy kurs, wersje i dowody."
               },
               {
-                "title": "Kto jest winien szkolenie",
-                "text": "Status obowiązkowych szkoleń na potrzeby zgodności."
+                "title": "Architektura i standardy",
+                "text": "Headless i wielu najemców; SCORM, cmi5, xAPI, LTI 1.3 i SSO, z oznaczeniem tego, co dopiero powstaje."
               },
               {
-                "title": "Co wyeksportować",
-                "text": "CSV, JSON lines i ślad audytowy, na żądanie lub e-mailem."
+                "title": "Zaufanie i AI Act",
+                "text": "AI przygotowuje szkic, decydują ludzie; etykiety AI i miejsce przechowywania danych."
               }
             ],
-            "panel": {
-              "title": "Analityka kursu",
-              "label": "Ilustracja",
-              "alt": "Ilustracja panelu analityki kursu z paskami dla osób, które skończyły, są w trakcie, są zagrożone oraz dla wyników quizów. To nie są prawdziwe dane.",
-              "rows": [
-                {
-                  "label": "Ukończyli",
-                  "level": 72,
-                  "tone": "ok"
-                },
-                {
-                  "label": "W trakcie",
-                  "level": 46,
-                  "tone": "muted"
-                },
-                {
-                  "label": "Zagrożeni",
-                  "level": 18,
-                  "tone": "warn"
-                },
-                {
-                  "label": "Wyniki quizów",
-                  "level": 60,
-                  "tone": "ok"
-                }
-              ]
-            },
-            "chips": [
-              "Analityka każdego kursu",
-              "Raporty zgodności i eksport audytu",
-              "Eksport CSV i JSON lines",
-              "Raporty e-mailem według harmonogramu",
-              "Learner insights",
-              "Własny LRS xAPI"
-            ],
+            "note": "Każda liczba ma źródło. Liczby ULAMS to dwa zmierzone przebiegi, a nie średnie. Możesz go wydrukować lub zapisać jako PDF.",
             "cta": {
-              "label": "Zobacz szczegóły",
-              "href": "/pl/reporting/"
-            }
-          }
-        },
-        {
-          "component": "CtaBand",
-          "props": {
-            "id": "white-label",
-            "variant": "feature",
-            "eyebrow": "white label",
-            "title": "Twoja marka, Twoja subdomena: akademia white-label dla każdej grupy odbiorców",
-            "text": "Każda akademia to tenant z własną subdomeną, motywem i danymi. Uruchom po jednej dla klienta, działu lub grupy odbiorców, na przykład partnerów i pracowników, wszystko na jednej instalacji ULAMS.",
-            "bullets": [
-              {
-                "title": "Subdomena dla każdej akademii",
-                "text": "Każdy tenant ma własny host, bazę danych, bucket, klucze i prefiks Redis, więc token jednej akademii odrzucają wszystkie pozostałe."
-              },
-              {
-                "title": "Twój wygląd",
-                "text": "Motywy, kolor akcentu sprawdzany raportem kontrastu WCAG 2.2 AA, który nie zapisze koloru niespełniającego wymagań, oraz Twoje logo z tekstem alternatywnym."
-              },
-              {
-                "title": "Twoja tożsamość w sieci",
-                "text": "Manifest aplikacji z nazwą akademii, kolorem motywu i logo oraz dane schema.org Course na stronach kursów."
-              },
-              {
-                "title": "Twoje wiadomości i certyfikaty",
-                "text": "Każda akademia edytuje własne szablony e-mail, SMS i PDF, w tym certyfikaty, we własnej bazie danych."
-              },
-              {
-                "title": "Logowanie dla każdej akademii",
-                "text": "Każda akademia może połączyć własnego dostawcę tożsamości przez SAML 2.0 lub OpenID Connect, obok logowania przez Google i Facebooka."
-              },
-              {
-                "title": "Magazyn dla każdej akademii",
-                "text": "W dołączonym magazynie SeaweedFS każda akademia dostaje własny klucz S3 ograniczony do jej bucketu."
-              }
-            ],
-            "chips": [
-              "Motywy",
-              "Raport kontrastu AA",
-              "Logo i manifest aplikacji",
-              "Import marki jako różnica",
-              "Szablony e-mail, SMS i PDF",
-              "SAML 2.0 i OIDC",
-              "Klucz S3 na akademię",
-              "Course JSON-LD"
-            ],
-            "note": "Dziś jedna akademia na subdomenę. Subdomena lub punkt wejścia dla każdego kursu lub roli w jednej akademii, z własną marką, jest w przygotowaniu.",
-            "cta": {
-              "label": "Otwórz demo na żywo",
-              "href": "#demos"
-            },
-            "secondary": {
-              "label": "Jak działają tenanty",
-              "href": "https://ulams-dev.github.io/ulams/developers/tenancy/"
-            }
-          }
-        },
-        {
-          "component": "FeatureList",
-          "props": {
-            "variant": "tiles",
-            "eyebrow": "od polityki do dowodu",
-            "title": "Od jednej polityki do certyfikowanego, śledzonego szkolenia",
-            "intro": "Droga polityki, której trzeba nauczyć, którą trzeba zaliczyć i odnawiać, z tym, co działa dziś, i tym, co dopiero będzie.",
-            "items": [
-              {
-                "icon": "book",
-                "title": "Krótki wywiad staje się briefem kursu",
-                "text": "Autor odpowiada na pytania o odbiorców, czas trwania, poziom stanowiska i doświadczenia, sprawdza brief i dopiero potem powstaje szkic kursu."
-              },
-              {
-                "icon": "layers",
-                "title": "Twój przewodnik stylu kształtuje wygląd kursu",
-                "text": "Import marki zamienia już plik Figma, DESIGN.md ze Stitch lub przewodnik marki w motyw, który zatwierdzasz jako różnicę. Zastosowanie przewodnika stylu w wywiadzie kursu jest w przygotowaniu.",
-                "status": "coming"
-              },
-              {
-                "icon": "users",
-                "title": "Osobne kursy i akademie dla działów",
-                "text": "Osobne akademie dla działów działają dziś. Tworzenie ich z jednej polityki i powiązanie ich kursów jest w przygotowaniu.",
-                "status": "coming"
-              },
-              {
-                "icon": "medal",
-                "title": "Lekcje, test końcowy i certyfikat PDF",
-                "text": "Uczący się przechodzą lekcje, piszą test końcowy i pobierają certyfikat PDF ze stroną publicznej weryfikacji."
-              },
-              {
-                "icon": "chart",
-                "title": "Kto ukończył wymagane szkolenie",
-                "text": "Szkolenia obowiązkowe z terminami, eskalacją do przełożonego, raportami ukończenia i eksportem audytu. Ekran pulpitu właściciela polityki jest w przygotowaniu."
-              },
-              {
-                "icon": "sync",
-                "title": "Odnowienie po zmianie polityki",
-                "text": "Certyfikaty mogą wygasać i być odnawiane. Automatyczna wymiana po zatwierdzonej zmianie polityki, z nowym egzaminem lub kursem, jest w przygotowaniu.",
-                "status": "coming"
-              }
-            ]
-          }
-        },
-        {
-          "component": "HeritageStory",
-          "props": {
-            "id": "product",
-            "eyebrow": "Historia stojąca za nazwą",
-            "title": "Wiedza rośnie, gdy tworzymy ją razem.",
-            "caption": "Stanisław Ulam · portret ilustracyjny",
-            "paragraphs": [
-              "W lwowskich kawiarniach Stanisław Ulam i inni matematycy dyskutowali o problemach i zapisywali je we wspólnym zeszycie: Księdze Szkockiej. Pytania, rozwiązania i nowe pomysły rozwijały się dzięki współpracy.",
-              "Ulam później przetłumaczył ten zbiór, aby udostępnić go szerszemu gronu, i zaprosił czytelników do zgłaszania poprawek oraz dalszych wyników."
-            ],
-            "connection": "Ten duch inspiruje ULAMS: zamieniaj dokumenty organizacji we wspólną naukę, pracuj z ludźmi i agentami i rozwijaj wiedzę razem. Otwarty kod, bezpłatne korzystanie i miejsce na Twój wkład.",
-            "source": {
-              "label": "Księga Szkocka · przedmowa Ulama, Uniwersytet St Andrews",
-              "href": "https://mathshistory.st-andrews.ac.uk/HistTopics/Scottish_Book/"
-            },
-            "cta": {
-              "label": "Twórz z nami na GitHubie",
-              "href": "https://github.com/ulams-dev/ulams"
-            },
-            "image": {
-              "src": "/landing/ulam/stanislaw-ulam-stitch.png",
-              "alt": "Stanisław Ulam",
-              "width": 1024,
-              "height": 1024
+              "label": "Czytaj white paper",
+              "href": "/pl/white-paper/"
             }
           }
         },
@@ -320,10 +175,9 @@
           "component": "WorkflowShowcase",
           "props": {
             "id": "agents",
-            "eyebrow": "obsługa z dowolnego miejsca",
-            "title": "Zarządzaj akademią w panelu admina, z Claude, Claude Code lub terminala",
-            "intro": "ULAMS to standardowy LMS. Panel admina służy do kursów, osób, zapisów i raportów. Możesz też korzystać z Claude Code, Claude, Codex, OpenCode, Gemini CLI lub innego agenta zgodnego z MCP, z ULAMS CLI albo REST API. Studio zapewnia zespołowi wizualne środowisko pracy.",
-            "valueLine": "Jedna platforma: panel admina, którego zespół oczekuje, i każdy interfejs, w którym już pracuje.",
+            "eyebrow": "uruchom po swojemu",
+            "title": "Panel admina, agent AI lub terminal",
+            "intro": "Kursy, osoby, zapisy i raporty w znajomym panelu admina. Te same działania wykonasz z Claude Code, dowolnego agenta MCP, CLI lub REST API.",
             "legal": "Claude i Claude Code są produktami firmy Anthropic. ulams jest niezależny i nie jest powiązany z Anthropic ani przez nią rekomendowany.",
             "description": {
               "$data": "/workflows/description"
@@ -337,123 +191,43 @@
           }
         },
         {
-          "component": "Chips",
-          "props": {
-            "eyebrow": "standardy",
-            "title": "Dostarczaj gdziekolwiek",
-            "intro": "Standardy zamiast uzależnienia: używaj istniejących pakietów, śledź naukę gdziekolwiek, integruj przez API.",
-            "items": [
-              {
-                "label": "H5P",
-                "note": "treści interaktywne"
-              },
-              {
-                "label": "SCORM 1.2 / 2004"
-              },
-              {
-                "label": "cmi5"
-              },
-              {
-                "label": "xAPI",
-                "note": "wbudowany LRS"
-              },
-              {
-                "label": "LTI 1.3",
-                "note": "Platforma + narzędzie"
-              },
-              {
-                "label": "SAML 2.0 / OIDC",
-                "note": "logowanie dla każdej akademii"
-              },
-              {
-                "label": "OpenAPI",
-                "note": "REST API"
-              },
-              {
-                "label": "Webhooks"
-              }
-            ],
-            "research": {
-              "eyebrow": "Udokumentowane podstawy",
-              "title": "ULAM Headless Course Format",
-              "text": "ULAM Headless Course Format Mateusza Wojczala opisuje oddzielenie treści szkoleniowych od prezentacji i dostarczanie ich przez API. Ta wcześniejsza praca inspiruje podejście ULAMS do treści wielokrotnego użytku w różnych interfejsach nauki.",
-              "author": "Mateusz Wojczal",
-              "date": "2022-01-31",
-              "dateLabel": "Wersja PDF · 31 stycznia 2022",
-              "links": [
-                {
-                  "label": "Przeczytaj publikację (PDF)",
-                  "href": "https://escolalms.github.io/headless-format/paper.pdf"
-                },
-                {
-                  "label": "Repozytorium źródłowe",
-                  "href": "https://github.com/EscolaLMS/headless-format"
-                }
-              ]
-            }
-          }
-        },
-        {
           "component": "CtaBand",
           "props": {
             "id": "self-host",
             "variant": "terminal",
             "eyebrow": "self-hosting",
             "title": "Twoje serwery. Twoje dane.",
-            "text": "Uruchom cały stos jednym poleceniem na laptopie, serwerze Docker lub w Kubernetes. Własny VPS, AWS, Google Cloud albo Azure. Twoje wdrożenie, Twoje dane.",
+            "text": "Licencja MIT. Jedno polecenie uruchamia cały stos na laptopie, serwerze Docker lub w Kubernetes.",
             "code": [
               "$ npm install -g https://github.com/ulams-dev/ulams/releases/download/cli-v0.2.0/ulams-0.2.0.tgz",
               "$ ulams stack up",
-              "✓ academy, Studio, API, admin, H5P and storage",
-              "$ ulams stack up --mode production \\",
-              "  --domain learn.example.org",
-              "$ ulams stack up --target kubernetes"
+              "✓ academy, Studio, API, admin, H5P and storage"
             ],
             "cta": {
-              "label": "Zobacz na GitHubie",
-              "href": "https://github.com/ulams-dev"
-            },
-            "secondary": {
               "label": "Instrukcja instalacji",
               "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
+            },
+            "secondary": {
+              "label": "Zobacz na GitHubie",
+              "href": "https://github.com/ulams-dev"
             },
             "bullets": [
               {
                 "title": "Wypróbuj lokalnie",
-                "text": "Uruchom akademię z deterministycznym AI, bez płatnych wywołań modeli.",
+                "text": "Bez płatnych wywołań modelu: deterministyczny dostawca AI.",
                 "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               },
               {
                 "title": "Docker na serwerze",
-                "text": "Uruchom HTTPS, prywatne dane dostępowe i trwałe wolumeny.",
+                "text": "HTTPS, prywatne dane dostępowe, trwała pamięć.",
                 "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               },
               {
                 "title": "Kubernetes YAML",
-                "text": "CLI generuje manifesty, tworzy akademię i czeka na gotowość usług.",
+                "text": "Natywne manifesty; CLI czeka na gotowość.",
                 "href": "https://ulams-dev.github.io/ulams/operators/one-command-stack/"
               }
-            ],
-            "note": "Helm chart już wkrótce."
-          }
-        },
-        {
-          "component": "ContactForm",
-          "props": {
-            "id": "contact",
-            "eyebrow": "KONTAKT",
-            "title": "Napisz do zespołu ULAMS",
-            "intro": "Masz pytanie o hosting, integracje lub współpracę przy projekcie? Napisz do nas.",
-            "nameLabel": "Imię i nazwisko",
-            "emailLabel": "Twój e-mail",
-            "subjectLabel": "Temat",
-            "messageLabel": "Wiadomość",
-            "submitLabel": "Wyślij wiadomość",
-            "sendingLabel": "Wysyłanie…",
-            "successMessage": "Dziękujemy. Wiadomość trafiła do zespołu ULAMS.",
-            "errorMessage": "Nie udało się wysłać wiadomości. Spróbuj ponownie za chwilę.",
-            "note": "Wiadomość trafia do prywatnej skrzynki kontaktowej ULAMS. Nie wpisuj haseł ani wrażliwych danych osobowych.",
-            "endpoint": "https://api.ulams.app"
+            ]
           }
         },
         {
@@ -476,18 +250,6 @@
                 "a": "Tak. ULAMS jest na licencji MIT. Zapewniasz hosting; płatne wywołania AI, jeśli je włączysz, rozlicza wybrany dostawca. H5P działa jako osobna usługa na własnej licencji GPL."
               },
               {
-                "q": "Czy mogę przetestować cały stos lokalnie?",
-                "a": "Tak. Zainstaluj CLI i uruchom ulams stack up, mając Docker Compose. Tryb deweloperski używa deterministycznych odpowiedzi AI, bez płatnych wywołań modeli. Wymagany jest Node.js 22.12 lub nowszy."
-              },
-              {
-                "q": "Gdzie mogę wdrożyć platformę?",
-                "a": "Użyj Docker Compose na własnym serwerze albo manifestów Kubernetes w istniejącym klastrze. Stos może działać na VPS lub maszynie wirtualnej w AWS, Google Cloud i Azure. Produkcja wymaga DNS, HTTPS i trwałego przechowywania danych."
-              },
-              {
-                "q": "Czy agenci mogą obsługiwać ULAMS?",
-                "a": "CLI i interfejs MCP umożliwiają współpracę z agentami. Możesz używać Claude Code, Codex, OpenCode lub Gemini CLI albo integrować się bezpośrednio przez REST API."
-              },
-              {
                 "q": "Czy AI samo publikuje kurs?",
                 "a": "Nie. AI przygotowuje szkic z cytowanymi źródłami, a każda zmiana AI trafia do Ciebie jako różnica do przejrzenia. Autor sprawdza konspekt i treść, a potem zatwierdza publikację. Produkcja startuje z wyłączonym AI do czasu skonfigurowania dostawcy."
               },
@@ -496,10 +258,29 @@
                 "a": "Tak. Każda akademia (tenant) ma własną subdomenę, stronę nauki, motyw, logo i izolowaną bazę danych, więc możesz uruchomić po jednej dla klienta, działu lub grupy odbiorców. Pierwszą akademię tworzy launcher stosu; kolejne tenanty powstają w procesie tenantów platformy. Subdomena dla każdego kursu lub roli w jednej akademii nie jest gotowa."
               },
               {
-                "q": "Jak zatrzymać stos bez utraty kursów?",
-                "a": "Uruchom ulams stack down. Dane i klucze pozostają dostępne po ponownym stack up w tym samym katalogu instalacji. Dopiero stack down --purge --yes świadomie usuwa trwałe dane."
+                "q": "Czy agenci mogą obsługiwać ULAMS?",
+                "a": "CLI i interfejs MCP umożliwiają współpracę z agentami. Możesz używać Claude Code, Codex, OpenCode lub Gemini CLI albo integrować się bezpośrednio przez REST API."
               }
             ]
+          }
+        },
+        {
+          "component": "ContactForm",
+          "props": {
+            "id": "contact",
+            "eyebrow": "KONTAKT",
+            "title": "Napisz do zespołu ULAMS",
+            "intro": "Masz pytanie o hosting, integracje lub współpracę przy projekcie? Napisz do nas.",
+            "nameLabel": "Imię i nazwisko",
+            "emailLabel": "Twój e-mail",
+            "subjectLabel": "Temat",
+            "messageLabel": "Wiadomość",
+            "submitLabel": "Wyślij wiadomość",
+            "sendingLabel": "Wysyłanie…",
+            "successMessage": "Dziękujemy. Wiadomość trafiła do zespołu ULAMS.",
+            "errorMessage": "Nie udało się wysłać wiadomości. Spróbuj ponownie za chwilę.",
+            "note": "Wiadomość trafia do prywatnej skrzynki kontaktowej ULAMS. Nie wpisuj haseł ani wrażliwych danych osobowych.",
+            "endpoint": "https://api.ulams.app"
           }
         }
       ]
@@ -511,28 +292,28 @@
         "text": "Otwartoźródłowy LMS z AI. Licencja MIT.",
         "links": [
           {
-            "label": "Przegląd",
-            "href": "/pl/"
+            "label": "Budowa",
+            "href": "/pl/course-generation/"
+          },
+          {
+            "label": "Elementy nauki",
+            "href": "/pl/learning-elements/"
+          },
+          {
+            "label": "Przewodnik stylu",
+            "href": "/pl/style-guide/"
+          },
+          {
+            "label": "Raporty",
+            "href": "/pl/reporting/"
+          },
+          {
+            "label": "White paper",
+            "href": "/pl/white-paper/"
           },
           {
             "label": "Porównanie",
             "href": "/pl/comparison/"
-          },
-          {
-            "label": "Dema",
-            "href": "#demos"
-          },
-          {
-            "label": "Przepływy agentów",
-            "href": "#agents"
-          },
-          {
-            "label": "Standardy",
-            "href": "#standards"
-          },
-          {
-            "label": "Self-hosting",
-            "href": "#self-host"
           },
           {
             "label": "Dokumentacja",

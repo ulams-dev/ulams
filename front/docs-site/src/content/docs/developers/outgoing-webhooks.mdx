@@ -37,9 +37,11 @@ database. The API that manages them is `api/admin/webhooks` and needs the `webho
 | `training.overdue` | A required course passed its due date unfinished. Once per assignment | `user`, `course`, `assignment_id`, `source`, `due_at`, `path` |
 | `path.completed` | A learner finished every course of a learning path. Once per enrolment | `user`, `path` (`id`, `title`, `steps`), `enrollment_id`, `completed_at` |
 | `certificate.revoked` | A course certificate was revoked | `user`, `certificate_id`, `course_id`, `revoked_at`, `reason` |
+| `policy.change.approved` | A new policy version was approved and rolled out (the [policy lifecycle](/admin/policy-lifecycle/)). Once per version | `policy` (`id`, `title`), `version`, `change_class`, `summary`, `departments` (`department`, `revoked`, `reassigned`), `approved_at` |
+| `policy.retraining.assigned` | A learner whose certificate that change superseded was given the exam (minor change) or the course (major change). Once per person and version | `user`, `course`, `assignment_id`, `kind` (`exam` or `course`), `policy`, `version`, `summary`, `due_at` |
 | `webhook.test` | You pressed **test**. Never sent to subscribers | `message`, `test: true` |
 
-`path` in the training events is `{id, title, step, steps}` when the course is a step of a learning path the learner
+The `source` of a training event is `manual`, `rule`, `recertification` or `policy_change`. `path` in the training events is `{id, title, step, steps}` when the course is a step of a learning path the learner
 is enrolled in, otherwise `null`. `certificate_id` of `training.completed` is `null` when the certificate is created
 a moment after the course closes; the `certificate.issued` event follows with its id. `reason` of
 `certificate.revoked` is the text the admin entered, or `null`.

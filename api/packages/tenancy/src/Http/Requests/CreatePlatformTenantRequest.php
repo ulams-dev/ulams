@@ -24,6 +24,11 @@ class CreatePlatformTenantRequest extends PlatformRequest
             'accent' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'users' => ['nullable', 'integer', 'min:0', 'max:50'],
             'demo' => ['nullable', 'boolean'],
+            'template' => ['nullable', 'string', 'regex:/^[a-z][a-z0-9-]{1,38}$/'],
+            // a tenant created for another tenant (a department academy): counts against that tenant's quota and is recorded
+            'derived_from' => ['nullable', 'string', 'regex:/^[a-z][a-z0-9]{1,29}$/', 'required_with:purpose,reference'],
+            'purpose' => ['nullable', 'string', 'regex:/^[a-z][a-z0-9_]{1,31}$/', 'required_with:derived_from'],
+            'reference' => ['nullable', 'string', 'max:128', 'required_with:derived_from'],
         ];
     }
 }
