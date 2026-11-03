@@ -98,3 +98,9 @@ the cross-tenant checks (the tutor has the same suite). `tests/Feature/LlmMinimi
 request made to the model for a recognisable learner and fails when it carries an id, name, address, other
 course, signal type or status; `tests/Unit/LlmBoundaryTest.php` fails when a class outside the remediation code
 starts using the AI package.
+
+Hints to switch course variant (ADR 0192): `Variants\VariantFitSignals` implements the `FitSignals` contract of the course-variants package with two
+transparent rules, *too hard* (course status struggling while the learner has not got past the first modules) and *too easy* (the first modules finished,
+every quiz there passed at the first attempt, under half the cohort's median time on each, cohort of at least 10 other learners). The numbers are
+`learner_insights.variant_fit.modules`, `.time_ratio` and `.min_cohort` (`LEARNER_INSIGHTS_VARIANT_FIT_MODULES`, `_TIME_RATIO`, `_MIN_COHORT`). It only
+produces a hint the learner may dismiss; the limits (one a week, dismiss stops them) live in course-variants. Honours the module switch and the learner's opt-out.

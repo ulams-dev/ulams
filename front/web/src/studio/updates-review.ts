@@ -15,6 +15,8 @@ import { evidenceCard } from "@ulams/ui/builder/insights-view.ts";
 import { evidenceCardOptions, improveStrings } from "./improve-model.ts";
 import { fill, type InsightsLocale } from "./insights-i18n.ts";
 import { formatterFor } from "./insights-model.ts";
+import { VARIANT_STRINGS } from "./variants-i18n.ts";
+import { acceptedInGroupText, courseName, groupEntries } from "./variants-model.ts";
 import {
   analyseLabel,
   applyLabel,
@@ -51,6 +53,8 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
   const locale = (root.dataset.locale ?? "en") as InsightsLocale;
   const im = improveStrings(locale);
   const formatter = formatterFor(locale);
+  // the variant parts (badge, "Versions of this update", "Accept in all versions") are in the page's language too
+  const vt = VARIANT_STRINGS[locale];
 
   const header = h("div", { "data-header": "" });
   const learnerPanel = createLearnerPanel(lc, proposalId);
@@ -88,6 +92,10 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     announce(text);
   };
   const clearNotice = (): void => notices.replaceChildren();
+  /** A polite status line in the page's language; the live region itself announces it, so nothing is announced twice. */
+  const notifyLocalised = (text: string, kind: "error" | "info" = "info"): void => {
+    notices.replaceChildren(h("p", { class: kind === "error" ? "cb-error" : "cb-muted", role: kind === "error" ? "alert" : "status", lang: vt.htmlLang, "data-group-status": "" }, text));
+  };
 
   const retryButton = (label: string, run: () => void): HTMLElement => {
     const button = h("button", { type: "button", class: "cb-btn cb-btn-small" }, label);
@@ -242,10 +250,13 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     const to = p.toRevision?.number;
     const source = countsSentence(p.counts?.source);
     const d = p.decisions;
+    const course = courseName(vt, p);
     header.replaceChildren(
       h("div", { class: "st-review-head" },
         h("h2", { class: "cb-serif cb-h2" }, from && to ? `Source update: revision ${from} → ${to}` : `Source update #${p.number}`),
+        ...(course ? [h("span", { class: "st-badge st-course-badge", "data-course-badge": "", lang: p.variant?.label ? undefined : vt.htmlLang }, course)] : []),
         h("span", { class: "st-status", "data-proposal-status": p.status }, PROPOSAL_STATUS_LABEL[p.status] ?? p.status)),
+      ...groupNav(p),
       h("p", { class: "cb-muted" },
         source ? `What changed in the source: ${source}.` : "The source changed.",
         ` Proposal ${p.number}`,
@@ -255,6 +266,21 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
       learnerPanel.el,
       switchesHost
     );
+  }
+
+  /** "Versions of this update": one link per proposal of the group; the open one has aria-current="page". */
+  function groupNav(p: ProposalDetail): HTMLElement[] {
+    const entries = groupEntries(vt, p);
+    if (entries.length === 0) return [];
+    const query = locale === "en" ? "" : `?lang=${locale}`;
+    return [h("nav", { class: "st-vg", "aria-label": vt.navLabel, lang: vt.htmlLang, "data-group-nav": "" },
+      h("ul", { class: "st-vg-list" }, entries.map((e) =>
+        h("li", { "data-group-entry": e.id },
+          h("a", { class: "st-vg-link", href: `/studio/s/${sessionId}/updates/${e.id}${query}`, ...(e.isCurrent ? { "aria-current": "page" } : {}) },
+            h("span", { class: "st-vg-name" }, e.name),
+            h("span", { class: "st-vg-status", "data-entry-status": e.status }, e.statusText),
+            e.counts ? h("span", { class: "st-vg-counts cb-small" }, e.counts) : null,
+            e.isCurrent ? h("span", { class: "cb-sr" }, ` (${vt.navCurrent})`) : null)))))];
   }
 
   function renderState(): void {
@@ -408,8 +434,12 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
     );
   }
 
-  const itemSurface = (item: ProposalItem, decidable: boolean, regenerate: boolean, suggest = false): HTMLElement =>
-    surface("UpdateItem", itemProps(item, { sessionId, canDecide: decidable, canRegenerate: regenerate, canSuggest: suggest }), (action) => void onItemAction(action));
+  const itemSurface = (item: ProposalItem, decidable: boolean, regenerate: boolean, suggest = false): HTMLElement => {
+    const el = surface("UpdateItem", itemProps(item, { sessionId, canDecide: decidable, canRegenerate: regenerate, canSuggest: suggest, variants: vt, hasSiblings: (detail?.siblings?.length ?? 0) > 0 }), (action) => void onItemAction(action));
+    // the words of the group action come in the page's language, inside an English item
+    for (const part of el.querySelectorAll<HTMLElement>("[data-accept-in-group], [data-reused-note]")) part.lang = vt.htmlLang;
+    return el;
+  };
 
   function bulkToolbar(): HTMLElement {
     const slot = h("div", { "data-reject-slot": "" });
@@ -498,6 +528,17 @@ export function mountReview(root: HTMLElement, options: ReviewOptions = {}): voi
       } catch (error) {
         notify(message(error, "The decision could not be saved."), "error");
         host(itemId)?.replaceChildren(itemSurface(item, true, aiEnabled && detail.status === "ready"));
+      }
+    } else if (action.name === "accept_in_group") {
+      try {
+        const result = await lc.proposals.acceptInGroup(proposalId, itemId);
+        notifyLocalised(acceptedInGroupText(vt, result.accepted));
+        // the other proposals changed too: reload for their counts, then put the focus back on the item
+        await load();
+        host(itemId)?.querySelector<HTMLElement>("[data-focus-target]")?.focus();
+      } catch (error) {
+        notifyLocalised(message(error, vt.acceptInGroupFailed), "error");
+        host(itemId)?.replaceChildren(itemSurface(item, canDecide(detail.status, aiEnabled), aiEnabled && detail.status === "ready", aiEnabled && (detail.status === "ready" || detail.status === "no_impact")));
       }
     } else if (action.name === "suggest_lesson") {
       try {

@@ -28,6 +28,10 @@ final class EventCatalog
             'class' => 'Ulams\Courses\Events\CourseAssigned',
             'description' => 'A learner was given access to a course (assigned by an admin or a group, or granted by an order).',
         ],
+        'course.version_applied' => [
+            'class' => 'Ulams\CourseBuilder\Events\CourseVersionApplied',
+            'description' => 'A new version of a course made with the builder reached learners (generation, chat change, Living Course update, course-as-code import, restore); sent once per release. A Git repository follows the course with it.',
+        ],
         'update_proposal.ready' => [
             'class' => 'Ulams\LivingCourse\Events\UpdateProposalReady',
             'description' => 'A Living Course update proposal is ready for review (sent once per proposal).',
@@ -63,6 +67,14 @@ final class EventCatalog
         'certificate.revoked' => [
             'class' => 'Ulams\TemplatesPdf\Events\CertificateRevoked',
             'description' => 'A course certificate was revoked.',
+        ],
+        'policy.change.approved' => [
+            'class' => 'Ulams\PolicyLifecycle\Events\PolicyChangeApproved',
+            'description' => 'A new policy version was approved and rolled out to its departments; sent once per version.',
+        ],
+        'policy.retraining.assigned' => [
+            'class' => 'Ulams\PolicyLifecycle\Events\PolicyRetrainingAssigned',
+            'description' => 'A learner whose certificate an approved policy change superseded was given the exam (minor change) or the course (major change); sent once per person and version.',
         ],
     ];
 
@@ -118,6 +130,7 @@ final class EventCatalog
             return match ($type) {
                 'course.completed' => ['object' => self::enrolment($event, ['completed_at' => now()->toIso8601String()]), 'key' => null],
                 'enrolment.created' => ['object' => self::enrolment($event, ['created_at' => now()->toIso8601String()]), 'key' => null],
+                'course.version_applied' => self::versionApplied($event),
                 'update_proposal.ready' => self::proposalReady($event),
                 'update_proposal.applied' => self::proposalApplied($event),
                 'certificate.issued' => self::certificate($event),
@@ -130,6 +143,8 @@ final class EventCatalog
                 'training.overdue' => self::training($event, 'training.overdue', []),
                 'path.completed' => self::pathCompleted($event),
                 'certificate.revoked' => self::certificateRevoked($event),
+                'policy.change.approved' => self::policyChangeApproved($event),
+                'policy.retraining.assigned' => self::policyRetraining($event),
                 default => null,
             };
         } catch (Throwable $e) {
@@ -148,6 +163,7 @@ final class EventCatalog
         return match ($type) {
             'course.completed' => ['user' => $user, 'course' => $course, 'completed_at' => now()->toIso8601String()],
             'enrolment.created' => ['user' => $user, 'course' => $course, 'created_at' => now()->toIso8601String()],
+            'course.version_applied' => ['course_id' => 1, 'session_id' => '01SAMPLE0SESSION00000000000', 'version_id' => '01SAMPLE0VERSION000000000000', 'number' => 3, 'release_number' => 2, 'kind' => 'update', 'origin' => 'ai', 'reason' => 'Source update r1 → r2: 3 changes', 'trigger' => 'update', 'released_at' => now()->toIso8601String()],
             'update_proposal.ready' => ['proposal_id' => '01SAMPLE0PROPOSAL0000000000', 'session_id' => '01SAMPLE0SESSION00000000000', 'course_title' => 'Sample course', 'elements' => 3, 'answer_checks' => 1, 'status' => 'ready'],
             'update_proposal.applied' => ['proposal_id' => '01SAMPLE0PROPOSAL0000000000', 'session_id' => '01SAMPLE0SESSION00000000000', 'number' => 2, 'status' => 'applied', 'counts' => ['applied' => 3]],
             'certificate.issued' => ['user' => $user, 'certificate_id' => 1, 'course_id' => 1, 'issued_at' => now()->toIso8601String()],
@@ -156,9 +172,51 @@ final class EventCatalog
             'training.overdue' => ['user' => $user, 'course' => $course, 'assignment_id' => 1, 'source' => 'rule', 'due_at' => now()->subDay()->toIso8601String(), 'path' => null],
             'path.completed' => ['user' => $user, 'path' => ['id' => 1, 'title' => 'Onboarding', 'steps' => 4], 'enrollment_id' => 1, 'completed_at' => now()->toIso8601String()],
             'certificate.revoked' => ['user' => $user, 'certificate_id' => 1, 'course_id' => 1, 'revoked_at' => now()->toIso8601String(), 'reason' => 'Superseded by policy version 2'],
+            'policy.change.approved' => ['policy' => ['id' => '01SAMPLE0POLICY00000000000', 'title' => 'Remote work and data handling'], 'version' => 2, 'change_class' => 'minor', 'summary' => 'Sections 1 changed: §1.1 Approval and working hours.', 'departments' => [['department' => 'Engineering', 'revoked' => 12, 'reassigned' => 12]], 'approved_at' => now()->toIso8601String()],
+            'policy.retraining.assigned' => ['user' => $user, 'course' => $course, 'assignment_id' => 1, 'kind' => 'exam', 'policy' => ['id' => '01SAMPLE0POLICY00000000000', 'title' => 'Remote work and data handling'], 'version' => 2, 'summary' => 'Sections 1 changed: §1.1 Approval and working hours.', 'due_at' => now()->addDays(14)->toIso8601String()],
             'knowledge.exported' => ['export_id' => '01SAMPLE0EXPORT00000000000', 'scope' => 'course', 'course_id' => 1, 'trigger' => 'auto', 'pack_hash' => str_repeat('a', 64), 'courses' => 1, 'chunks' => 12, 'uncited_chunks' => 2, 'finished_at' => now()->toIso8601String()],
             default => ['message' => 'This is a test event from ulams.'],
         };
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string} */
+    private static function policyChangeApproved(object $event): array
+    {
+        $policy = $event->policy;
+        $version = $event->version;
+
+        return [
+            'object' => [
+                'policy' => ['id' => (string) $policy->id, 'title' => (string) $policy->title],
+                'version' => (int) $version->number,
+                'change_class' => (string) $version->change_class,
+                'summary' => (string) $version->summary,
+                'departments' => array_map(fn (array $d) => ['department' => (string) $d['department'], 'revoked' => (int) $d['revoked'], 'reassigned' => (int) $d['reassigned']], $event->departments),
+                'approved_at' => $version->approved_at?->toIso8601String() ?? now()->toIso8601String(),
+            ],
+            'key' => 'policy.change.approved:' . $version->id,
+        ];
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string} */
+    private static function policyRetraining(object $event): array
+    {
+        $assignment = $event->assignment;
+        $course = $event->getCourse();
+
+        return [
+            'object' => [
+                'user' => self::person($event->getUser()),
+                'course' => ['id' => $course->getKey(), 'title' => (string) $course->title],
+                'assignment_id' => $assignment->getKey(),
+                'kind' => (string) $event->kind,
+                'policy' => ['id' => (string) $event->policy->id, 'title' => (string) $event->policy->title],
+                'version' => (int) $event->version->number,
+                'summary' => (string) $event->summary,
+                'due_at' => $assignment->due_at?->toIso8601String(),
+            ],
+            'key' => 'policy.retraining.assigned:' . $assignment->getKey(),
+        ];
     }
 
     /** @return array{id:int|string,email:?string,name:string} */
@@ -175,6 +233,29 @@ final class EventCatalog
         $course = $event->getCourse();
 
         return ['user' => self::person($event->getUser()), 'course' => ['id' => $course->getKey(), 'title' => (string) $course->title]] + $extra;
+    }
+
+    /** @return array{object:array<string,mixed>,key:?string} */
+    private static function versionApplied(object $event): array
+    {
+        $version = $event->version;
+        $release = $event->release;
+
+        return [
+            'object' => [
+                'course_id' => $release->course_id,
+                'session_id' => (string) $event->session->id,
+                'version_id' => (string) $version->id,
+                'number' => (int) $version->number,
+                'release_number' => (int) $release->number,
+                'kind' => (string) $version->kind,
+                'origin' => (string) $version->origin,
+                'reason' => $version->reason !== null ? mb_substr((string) $version->reason, 0, 300) : null,
+                'trigger' => (string) $release->trigger,
+                'released_at' => $release->released_at?->toIso8601String() ?? now()->toIso8601String(),
+            ],
+            'key' => 'course.version_applied:' . $release->id,
+        ];
     }
 
     /** @return array{object:array<string,mixed>,key:?string} */

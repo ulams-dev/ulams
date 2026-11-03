@@ -6,7 +6,7 @@ What granted a user access to a course, with validity and a unique source (ADR 0
 
 - `entitlements` table: `subject_type`/`subject_id` (a course), `status` (`active`, `revoked`, `expired`),
   `valid_from`, `valid_until`, `source_type`, unique `source_key`, `source_ref`, revocation reason.
-- Source types: `order_item`, `admin`, `compliance`, `lti`, `wellms_order`, `migration` (written today);
+- Source types: `order_item`, `admin`, `compliance`, `lti`, `wellms_order`, `migration`, `family` (written today);
   `seat`, `group_legacy`, `voucher_legacy` (reserved, nothing writes them yet).
 - `EntitlementService`, the only writer of purchased access: `grantCourse()` (idempotent by `source_key`),
   `grantManual()`, `revoke()`, `revokeAllForUser()`, `expireDue()`, `project()` and `hasAccess()`. It reaches
@@ -21,6 +21,10 @@ What granted a user access to a course, with validity and a unique source (ADR 0
   `Course::hasUser()`), stores a report in `entitlement_parity_reports`, fails on any difference. `--latest` prints the
   last report. The access backfill lives in the `commerce` package (it reads the Wellms cart tables).
 - Access that exists without an entitlement is adopted as a `migration` entitlement before another source changes it.
+
+- `family` entitlements (ADR 0192) are derived: the course-variants package writes one for the variant a learner uses, through
+  `syncDerived()` (create, move the end, bring back after a lapse), so one entitlement for any course of a family covers every variant. They end with the
+  entitlements they derive from. `project()` announces every recomputation with the `AccessProjected` event (ids only).
 
 ## Settings
 

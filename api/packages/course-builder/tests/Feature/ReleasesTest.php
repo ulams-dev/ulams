@@ -140,6 +140,19 @@ class ReleasesTest extends TestCase
         $this->assertCount(1, $this->releases($session));
     }
 
+    public function testEveryReleaseAnnouncesItselfOnceAndANoOpApplyDoesNot(): void
+    {
+        $author = $this->author();
+        \Illuminate\Support\Facades\Event::fake([\Ulams\CourseBuilder\Events\CourseVersionApplied::class]);
+        $session = $this->toApplied($author);
+        \Illuminate\Support\Facades\Event::assertDispatchedTimes(\Ulams\CourseBuilder\Events\CourseVersionApplied::class, 1);
+        \Illuminate\Support\Facades\Event::assertDispatched(\Ulams\CourseBuilder\Events\CourseVersionApplied::class, fn ($e) => $e->release->number === 1 && $e->version->id === $session->applied_version_id && $e->session->id === $session->id);
+
+        app(ReleaseRecorder::class)->applied($session, Version::query()->findOrFail($session->applied_version_id), (int) $session->course_id);
+
+        \Illuminate\Support\Facades\Event::assertDispatchedTimes(\Ulams\CourseBuilder\Events\CourseVersionApplied::class, 1);
+    }
+
     public function testAFailedApplyWritesNoRelease(): void
     {
         $author = $this->author();
