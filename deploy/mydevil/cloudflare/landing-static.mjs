@@ -85,13 +85,13 @@ try {
   const notFound = await get("/404");
   if (notFound.status !== 404) throw new Error("Expected the dedicated 404 page.");
   writeFileSync(join(out, "404.html"), notFound.body);
-  for (const path of ["/robots.txt", "/sitemap.xml"]) {
+  for (const path of ["/robots.txt", "/sitemap.xml", "/site.webmanifest"]) {
     const response = await get(path);
     if (response.status !== 200) throw new Error(`${path}: HTTP ${response.status}`);
     writeFileSync(join(out, path.slice(1)), response.body);
   }
   writeFileSync(join(out, "_headers"), "/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n/_astro/*\n  Cache-Control: public, max-age=31536000, immutable\n/landing/*\n  Cache-Control: public, max-age=86400\n/blog/*\n  Cache-Control: public, max-age=86400\n");
-  console.log(`Exported ${pages.length} pages (${blogPages.length} of them the blog), robots.txt, sitemap.xml and assets to ${out}`);
+  console.log(`Exported ${pages.length} pages (${blogPages.length} of them the blog), robots.txt, sitemap.xml, site.webmanifest and assets to ${out}`);
 } finally {
   server.kill();
 }
