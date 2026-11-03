@@ -48269,6 +48269,10 @@
    "name": "Identity"
   },
   {
+   "description": "SCIM",
+   "name": "SCIM"
+  },
+  {
    "description": "Images",
    "name": "Images"
   },
@@ -48519,10 +48523,6 @@
   {
    "description": "Admin Webinars",
    "name": "Admin Webinars"
-  },
-  {
-   "description": "SCIM",
-   "name": "SCIM"
   }
  ]
 }
