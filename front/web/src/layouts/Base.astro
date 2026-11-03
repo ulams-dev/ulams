@@ -18,6 +18,7 @@ import { UMAMI_WEBSITE_ID, UMAMI_SCRIPT_ORIGIN, UMAMI_HOSTS, umamiEnabled } from
 import DemoBadge from "../components/DemoBadge.astro";
 import { THEME_COLOR } from "../lib/theme.ts";
 import { accentCss } from "../lib/accent.ts";
+import { visualTheme } from "../lib/entry.ts";
 import { uiStrings } from "@ulams/ui/i18n";
 
 interface Props {
@@ -44,7 +45,11 @@ interface Props {
   baseTarget?: string;
 }
 
-const { theme, title, description, lang = "en", demo, bodyClass, accent, noindex = false, baseTarget, canonical, alternates = [], ogLocale, jsonLd } = Astro.props;
+const { title, description, lang = "en", demo, bodyClass, accent, baseTarget, canonical, alternates = [], ogLocale, jsonLd } = Astro.props;
+// an entry point that is not meant for search engines (a department or role host, ADR 0195) keeps every page out of them
+const noindex = Astro.props.noindex === true || Boolean(Astro.locals.entry && !Astro.locals.entry.seo.index);
+// an entry point (ADR 0195) may dress the page in another preset; the academy's own copy and content stay
+const theme = visualTheme(Astro.props.theme, Astro.locals.entry) as ThemeName;
 const t = uiStrings(lang);
 const analyticsHost = Astro.request.headers.get("x-forwarded-host") ?? Astro.request.headers.get("host") ?? Astro.url.host;
 const tenantCss = accentCss(theme, accent);

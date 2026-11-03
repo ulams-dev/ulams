@@ -1,4 +1,5 @@
 import type { PublicSettings } from "@ulams/sdk";
+import { visualTheme, type EntryPoint } from "./entry.ts";
 import { tenantLogo } from "./tenant-logo.ts";
 import { THEME_COLOR, themeFor } from "./theme.ts";
 
@@ -30,10 +31,10 @@ interface ManifestIcon {
  * logo as an icon (before the platform icons, which stay so the app remains installable: browsers want PNG icons
  * of 192 and 512 px and a logo of any size cannot promise that).
  */
-export function tenantManifest(tenant: { slug: string }, settings: PublicSettings | null | undefined) {
+export function tenantManifest(tenant: { slug: string }, settings: PublicSettings | null | undefined, entry?: Pick<EntryPoint, "theme"> | null) {
   const name = (typeof settings?.global?.companyName === "string" && settings.global.companyName.trim()) || tenant.slug;
-  const theme = themeFor(settings?.theme?.theme, tenant.slug);
-  const color = THEME_COLOR[theme];
+  const theme = visualTheme(themeFor(settings?.theme?.theme, tenant.slug), entry);
+  const color = THEME_COLOR[theme as keyof typeof THEME_COLOR];
   const logo = tenantLogo(settings, name);
   const icons: ManifestIcon[] = [...PLATFORM_MANIFEST.icons];
   if (logo) {

@@ -14,6 +14,7 @@ import {
   CSP_ENFORCE,
   ULAMS_CONTENT_ORIGIN,
   ULAMS_STORAGE_ORIGINS,
+  ULAMS_PLATFORM_API_URL,
 } from "astro:env/server";
 import { parseSecureMode } from "./cookies.ts";
 import { parseEnforce } from "./csp.ts";
@@ -58,6 +59,11 @@ export const config = {
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean),
+  /**
+   * Public URL of the platform API (a platform host such as `http://api.localhost`). A request host that no host rule
+   * matches is looked up there as an entry point of an academy (ADR 0195). Empty = entry points are off.
+   */
+  platformApiUrl: (ULAMS_PLATFORM_API_URL ?? "").trim().replace(/\/+$/, ""),
   demoStudentEmail: DEMO_STUDENT_EMAIL || "student1@{slug}.ulams.app",
   /** Never logged or sent to the browser. */
   demoStudentPassword: DEMO_STUDENT_PASSWORD || "",

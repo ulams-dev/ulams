@@ -151,6 +151,35 @@ class TenantIsolationTest extends TestCase
         $this->request(self::A, 'DELETE', "/api/admin/identity/providers/{$id}", $tokenA);
     }
 
+    public function testEntryPointsDoNotCrossTenants(): void
+    {
+        $tokenA = $this->login(self::A);
+        $tokenB = $this->login(self::B);
+        $key = 'p' . bin2hex(random_bytes(3));
+
+        // an academy can only add hosts named after its own slug under a platform suffix
+        $refused = $this->request(self::A, 'POST', '/api/admin/entry-points', $tokenA, ['host' => 'isoprobeb-' . $key . '.app.localhost', 'key' => $key, 'kind' => 'academy', 'label' => 'Probe']);
+        $this->assertSame(422, $refused->getStatusCode(), (string) $refused->getBody());
+
+        $created = $this->request(self::A, 'POST', '/api/admin/entry-points', $tokenA, ['host' => self::A . '-' . $key . '.app.localhost', 'key' => $key, 'kind' => 'academy', 'label' => 'Probe']);
+        $this->assertSame(201, $created->getStatusCode(), (string) $created->getBody());
+        $id = json_decode((string) $created->getBody(), true)['data']['id'];
+
+        $idsOf = fn (string $tenant, string $token): array => array_column(json_decode((string) $this->request($tenant, 'GET', '/api/admin/entry-points', $token)->getBody(), true)['data'] ?? [], 'id');
+        $this->assertContains($id, $idsOf(self::A, $tokenA));
+        $this->assertNotContains($id, $idsOf(self::B, $tokenB));
+        $this->assertSame(200, $this->request(self::A, 'GET', "/api/admin/entry-points/{$id}", $tokenA)->getStatusCode());
+        $this->assertSame(404, $this->request(self::B, 'GET', "/api/admin/entry-points/{$id}", $tokenB)->getStatusCode());
+        $this->assertSame(404, $this->request(self::B, 'PATCH', "/api/admin/entry-points/{$id}", $tokenB, ['label' => 'Taken'])->getStatusCode());
+        $this->assertSame(404, $this->request(self::B, 'DELETE', "/api/admin/entry-points/{$id}", $tokenB)->getStatusCode());
+
+        // every tenant signs tokens with its own keys, so A's admin token is nothing at B
+        $this->assertSame(401, $this->request(self::B, 'GET', '/api/admin/entry-points', $tokenA)->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'GET', '/api/admin/entry-points/audit', $tokenA)->getStatusCode());
+
+        $this->request(self::A, 'DELETE', "/api/admin/entry-points/{$id}", $tokenA);
+    }
+
     public function testSamlProvidersAndTheirEndpointsDoNotCrossTenants(): void
     {
         $tokenA = $this->login(self::A);

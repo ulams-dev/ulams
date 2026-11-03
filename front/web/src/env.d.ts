@@ -4,6 +4,8 @@ declare namespace App {
   interface Locals {
     /** Tenant from the Host header; null on hosts without a tenant. */
     tenant: import("@ulams/sdk").Tenant | null;
+    /** The entry point (ADR 0195) the request is served for: its host, or the `/go/<key>` cookie on the academy's own host. Null otherwise. */
+    entry: import("./lib/entry.ts").EntryContext | null;
     /** The request is for the platform host (product landing), not a tenant. */
     platform: boolean;
     /** The browser reached the site over https (decides the `__Host-` cookie names). */
