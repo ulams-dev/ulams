@@ -53,6 +53,7 @@ The H5P service re-reads the env files every `TENANT_RELOAD_CHECK_MS` (2 s).
 | Redis protocol | `api`, `h5p` | `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`; prefixes are set per tenant |
 | Object storage | `api`, `h5p` | `FILESYSTEM_DRIVER=s3`, `AWS_*`; `TENANCY_S3_*` for bucket creation; `S3_*` on `h5p` |
 | Tenancy | `api` | `TENANCY_*` host patterns, `TENANCY_PLATFORM_HOSTS`, `TENANCY_PLATFORM_API` (off by default), `TENANT_DEMO_PASSWORD` |
+| Entry points | `api`, `web` | `TENANCY_MAX_ENTRY_POINTS`, `TENANCY_ENTRY_*` (`api`); `ULAMS_PLATFORM_API_URL` (`web`). See [Entry points](/admin/entry-points/) |
 | Content origin | `api` | `CONTENT_ORIGIN` (platform), `TENANCY_CONTENT_HOST` (tenants; `{slug}.content.<app domain>` for the same-site mode) |
 | Cookies and origins | `api`, `web` | `SESSION_COOKIE_PREFIX`, `TRUSTED_ORIGINS`, `ORIGIN_CHECK` (`api`); `ULAMS_COOKIE_SECURE`, `ULAMS_COOKIE_FALLBACK_PREFIX` (`web`) |
 | Social login | `api`, `web` | `AUTH_SOCIAL_GOOGLE_TRUSTED_DOMAINS` (`api`); `ULAMS_SOCIAL_LOGIN` (`web`); return origins come from `FRONTEND_URL`, `ADMIN_URL` and `TRUSTED_ORIGINS`. See [Social login](/operators/social-login/) |

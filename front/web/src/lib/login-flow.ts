@@ -39,6 +39,17 @@ export function isSpeculative(headers: Headers): boolean {
   return headers.get("sec-fetch-dest") === "prefetch" || /prefetch|prerender/.test(mark);
 }
 
+/** Keeps a fresh verifier (and where to go afterwards) in an httpOnly cookie of this host; the browser's half of every code exchange. */
+export function keepVerifier(ctx: Pick<Ctx, "cookies" | "locals">, cookieBase: string, verifier: string, next: string): void {
+  ctx.cookies.set(cookieName(cookieBase, ctx.locals.secure, config.cookieFallbackPrefix), encodeCookie({ verifier, next }), {
+    httpOnly: true,
+    sameSite: "lax", // the return trip is a top-level GET, which Lax cookies accompany
+    secure: ctx.locals.secure,
+    path: "/",
+    maxAge: SOCIAL_COOKIE_MAX_AGE,
+  });
+}
+
 /**
  * Starts a login. `startUrl` builds the tenant API URL from this site's callback URL and the challenge.
  * `callbackPath` is the page the API sends the browser back to.
@@ -74,19 +85,25 @@ export function beginLogin(ctx: Ctx, callbackPath: string, startUrl: (tenant: Pi
  */
 export async function finishLogin(
   ctx: Ctx,
-  redeem: (tenant: Pick<Tenant, "apiUrl">, code: string, verifier: string) => Promise<Exchange>
+  redeem: (tenant: Pick<Tenant, "apiUrl">, code: string, verifier: string) => Promise<Exchange>,
+  cookieBase: string = SOCIAL_COOKIE_BASE,
+  headers: Readonly<Record<string, string>> = SOCIAL_HEADERS
 ): Promise<Response> {
   const { url, cookies, locals, redirect } = ctx;
   const tenant = locals.tenant;
-  if (!tenant) return new Response("Not found", { status: 404, headers: SOCIAL_HEADERS });
+  if (!tenant) return new Response("Not found", { status: 404, headers });
 
   const secure = locals.secure;
-  const name = cookieName(SOCIAL_COOKIE_BASE, secure, config.cookieFallbackPrefix);
+  const name = cookieName(cookieBase, secure, config.cookieFallbackPrefix);
   const saved = decodeCookie(cookies.get(name)?.value);
   // single use on this side as well: whatever happens next, the verifier is gone
   cookies.delete(name, { path: "/", secure });
 
-  const fail = (reason: string) => withHeaders(redirect(`/login?error=${encodeURIComponent(reason)}`, 303));
+  const withOwnHeaders = (response: Response): Response => {
+    for (const [header, value] of Object.entries(headers)) response.headers.set(header, value);
+    return response;
+  };
+  const fail = (reason: string) => withOwnHeaders(redirect(`/login?error=${encodeURIComponent(reason)}`, 303));
 
   const error = url.searchParams.get("error");
   if (error) return fail(error);
@@ -99,5 +116,5 @@ export async function finishLogin(
   if (!result.complete) return fail("email_required");
 
   setSessionCookie(cookies, result.token, result.expiresAt, secure);
-  return withHeaders(redirect(saved.next, 303));
+  return withOwnHeaders(redirect(saved.next, 303));
 }

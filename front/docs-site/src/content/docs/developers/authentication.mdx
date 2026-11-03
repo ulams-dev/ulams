@@ -110,6 +110,19 @@ session cookie and redirects on. Both answer with `Cache-Control: no-store` and 
 no-referrer`.
 
 
+## Session hand-off between the hosts of an academy
+
+An academy with [entry points](/admin/entry-points/) has several fronts, each with its own `__Host-` session. The
+same one-time code primitive moves a signed-in learner between them (ADR 0195): `POST /api/auth/handoff`
+`{host, challenge}` with the learner's own token returns `{code, expires_in: 60}`; the target front's server redeems it
+with `POST /api/auth/handoff/exchange` `{code, verifier, host}` and gets a token of its own. The code is bound to the
+user, the target host and the verifier, works once, and is refused when the host is not the academy's front or an
+active entry point, on issue and on redemption. A scoped token cannot issue one, and a code of a social or single
+sign-on login cannot be redeemed here (or the other way round). The reference frontend does the three hops in
+`/handoff/begin`, `/handoff/issue` and `/handoff/complete`. `POST /api/auth/logout` with `{everywhere: true}` revokes all
+login sessions of the user (not scoped tokens).
+
+
 ## Single sign-on
 
 OpenID Connect and SAML 2.0 sign-in through the providers an admin configured for the tenant ([OpenID Connect guide](/operators/single-sign-on/), [SAML guide](/operators/single-sign-on-saml/))

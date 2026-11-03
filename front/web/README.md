@@ -65,6 +65,7 @@ the client build.
 | `ULAMS_WARM_TENANTS` | `gravity,poland,ulam,coffee,oncall,nightsky` | tenants fetched when the server starts |
 | `ULAMS_COOKIE_SECURE` | `auto` | `auto` detects https from the request / `X-Forwarded-Proto`; `true` forces Secure cookies (proxy without the header), `false` only for a plain-http trial install |
 | `ULAMS_COOKIE_FALLBACK_PREFIX` | empty | name prefix of the session cookies over plain http (dev on `*.localhost`), where the browser rejects `__Host-` |
+| `ULAMS_PLATFORM_API_URL` | empty | public URL of the platform API (a platform host, e.g. `http://api.localhost`). A host that no `ULAMS_TENANT_HOSTS` rule matches is looked up there as an [entry point](https://github.com/ulams-dev/ulams/blob/main/docs/plans/academy-entry-points.md) of an academy (theme, language, noindex); cached 60 s, 10 s for "no such host"; while the platform cannot answer, such a host gets 503. Empty = entry points off |
 | `DEMO_STUDENT_EMAIL` | `student1@{slug}.ulams.app` | fallback demo account when the tenant has no demo mode |
 | `DEMO_STUDENT_PASSWORD` | (empty) | its password; keep it in `.env` (git-ignored) |
 

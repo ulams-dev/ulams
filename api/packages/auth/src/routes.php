@@ -7,6 +7,7 @@ use Ulams\Auth\Http\Controllers\Admin\UserInterestsController;
 use Ulams\Auth\Http\Controllers\Admin\UserSettingsController;
 use Ulams\Auth\Http\Controllers\AuthApiController;
 use Ulams\Auth\Http\Controllers\DeviceAuthController;
+use Ulams\Auth\Http\Controllers\HandoffController;
 use Ulams\Auth\Http\Controllers\LoginApiController;
 use Ulams\Auth\Http\Controllers\LogoutApiController;
 use Ulams\Auth\Http\Controllers\ProfileAPIController;
@@ -66,6 +67,11 @@ Route::group(['prefix' => 'api'], function () {
             Route::post('exchange', [AuthApiController::class, 'socialExchange'])->middleware('throttle:ulams-social-exchange');
             Route::post('complete/{token}', [AuthApiController::class, 'completeSocialData']);
         });
+
+        // moving a signed-in learner between the hosts of the academy (ADR 0195): a code from the source host, redeemed
+        // by the target host's server with the verifier of the browser that asked for it
+        Route::post('handoff', [HandoffController::class, 'issue'])->middleware(['auth:api', 'throttle:ulams-handoff-issue']);
+        Route::post('handoff/exchange', [HandoffController::class, 'exchange'])->middleware('throttle:ulams-handoff-exchange');
 
         Route::group(['prefix' => 'email'], function () {
             Route::get('verify/{id}/{hash}', [AuthApiController::class, 'verifyEmail'])->name('verification.verify');

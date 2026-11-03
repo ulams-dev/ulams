@@ -16,6 +16,9 @@ browser-only:
   - "GET /api/identity/saml/*"
   - "POST /api/identity/saml/*"
   - "POST /api/identity/sso/exchange"
+  # a session handed from one host of the academy to another (ADR 0195): the front end's servers ask for the code and redeem it with the browser's verifier
+  - "POST /api/auth/handoff"
+  - "POST /api/auth/handoff/exchange"
   - "GET /api/auth/email/verify/*"
   - "GET /api/consultations/approve-term/*"
   - "GET /api/consultations/reject-term/*"
@@ -47,6 +50,8 @@ content-runtime:
 internal:
   - "GET /api/health-check"
   - "GET /api/lti/jwks"
+  # the lookup the learner front makes for an unknown host (ADR 0195): the entry points are managed with `ulams entry-points`
+  - "GET /api/platform/entry-points/resolve"
 deprecated:
   - "GET /api/tags/uniqueTags"
 not-for-cli:

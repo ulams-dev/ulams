@@ -54,6 +54,8 @@ export default defineConfig({
         ULAMS_CACHE_TTL: "600",
         ULAMS_COOKIE_SECURE: "false",
         ULAMS_SOCIAL_LOGIN: "google,facebook",
+        // entry points (ADR 0195): the platform lookup is served by the mock API (X-Ulams-Api-Host says api.localhost)
+        ULAMS_PLATFORM_API_URL: "http://api.localhost",
       },
     },
   ],

@@ -1,6 +1,6 @@
 <?php
 /**
- * DemoLoginPost200ResponseData
+ * AuthHandoffPost200ResponseData
  *
  * PHP version 7.4
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \Ulams\Sdk\ObjectSerializer;
 
 /**
- * DemoLoginPost200ResponseData Class Doc Comment
+ * AuthHandoffPost200ResponseData Class Doc Comment
  *
  * @category Class
  * @package  Ulams\Sdk
@@ -40,7 +40,7 @@ use \Ulams\Sdk\ObjectSerializer;
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class DemoLoginPost200ResponseData implements ModelInterface, ArrayAccess, \JsonSerializable
+class AuthHandoffPost200ResponseData implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class DemoLoginPost200ResponseData implements ModelInterface, ArrayAccess, \Json
       *
       * @var string
       */
-    protected static $openAPIModelName = 'demo_login_post_200_response_data';
+    protected static $openAPIModelName = 'auth_handoff_post_200_response_data';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,8 +57,8 @@ class DemoLoginPost200ResponseData implements ModelInterface, ArrayAccess, \Json
       * @var string[]
       */
     protected static $openAPITypes = [
-        'expires_at' => '\DateTime',
-        'token' => 'string'
+        'code' => 'string',
+        'expires_in' => 'int'
     ];
 
     /**
@@ -69,8 +69,8 @@ class DemoLoginPost200ResponseData implements ModelInterface, ArrayAccess, \Json
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'expires_at' => 'date-time',
-        'token' => null
+        'code' => null,
+        'expires_in' => null
     ];
 
     /**
@@ -79,8 +79,8 @@ class DemoLoginPost200ResponseData implements ModelInterface, ArrayAccess, \Json
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'expires_at' => false,
-        'token' => false
+        'code' => false,
+        'expires_in' => false
     ];
 
     /**
@@ -169,8 +169,8 @@ class DemoLoginPost200ResponseData implements ModelInterface, ArrayAccess, \Json
      * @var string[]
      */
     protected static $attributeMap = [
-        'expires_at' => 'expires_at',
-        'token' => 'token'
+        'code' => 'code',
+        'expires_in' => 'expires_in'
     ];
 
     /**
@@ -179,8 +179,8 @@ class DemoLoginPost200ResponseData implements ModelInterface, ArrayAccess, \Json
      * @var string[]
      */
     protected static $setters = [
-        'expires_at' => 'setExpiresAt',
-        'token' => 'setToken'
+        'code' => 'setCode',
+        'expires_in' => 'setExpiresIn'
     ];
 
     /**
@@ -189,8 +189,8 @@ class DemoLoginPost200ResponseData implements ModelInterface, ArrayAccess, \Json
      * @var string[]
      */
     protected static $getters = [
-        'expires_at' => 'getExpiresAt',
-        'token' => 'getToken'
+        'code' => 'getCode',
+        'expires_in' => 'getExpiresIn'
     ];
 
     /**
@@ -250,8 +250,8 @@ class DemoLoginPost200ResponseData implements ModelInterface, ArrayAccess, \Json
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('expires_at', $data ?? [], null);
-        $this->setIfExists('token', $data ?? [], null);
+        $this->setIfExists('code', $data ?? [], null);
+        $this->setIfExists('expires_in', $data ?? [], null);
     }
 
     /**
@@ -297,55 +297,55 @@ class DemoLoginPost200ResponseData implements ModelInterface, ArrayAccess, \Json
 
 
     /**
-     * Gets expires_at
+     * Gets code
      *
-     * @return \DateTime|null
+     * @return string|null
      */
-    public function getExpiresAt()
+    public function getCode()
     {
-        return $this->container['expires_at'];
+        return $this->container['code'];
     }
 
     /**
-     * Sets expires_at
+     * Sets code
      *
-     * @param \DateTime|null $expires_at expires_at
+     * @param string|null $code code
      *
      * @return self
      */
-    public function setExpiresAt($expires_at)
+    public function setCode($code)
     {
-        if (is_null($expires_at)) {
-            throw new \InvalidArgumentException('non-nullable expires_at cannot be null');
+        if (is_null($code)) {
+            throw new \InvalidArgumentException('non-nullable code cannot be null');
         }
-        $this->container['expires_at'] = $expires_at;
+        $this->container['code'] = $code;
 
         return $this;
     }
 
     /**
-     * Gets token
+     * Gets expires_in
      *
-     * @return string|null
+     * @return int|null
      */
-    public function getToken()
+    public function getExpiresIn()
     {
-        return $this->container['token'];
+        return $this->container['expires_in'];
     }
 
     /**
-     * Sets token
+     * Sets expires_in
      *
-     * @param string|null $token token
+     * @param int|null $expires_in expires_in
      *
      * @return self
      */
-    public function setToken($token)
+    public function setExpiresIn($expires_in)
     {
-        if (is_null($token)) {
-            throw new \InvalidArgumentException('non-nullable token cannot be null');
+        if (is_null($expires_in)) {
+            throw new \InvalidArgumentException('non-nullable expires_in cannot be null');
         }
-        $this->container['token'] = $token;
+        $this->container['expires_in'] = $expires_in;
 
         return $this;
     }

@@ -9,8 +9,9 @@
  * One process, one map: enough for a reference frontend. A multi-instance deployment
  * would put a shared cache (or a CDN) in front instead.
  */
-export interface SwrOptions {
-  ttlMs: number;
+export interface SwrOptions<T = unknown> {
+  /** Freshness in ms; a function of the value lets an answer such as "no such host" expire sooner than a hit. */
+  ttlMs: number | ((value: T) => number);
   maxStaleMs?: number;
 }
 
@@ -30,11 +31,12 @@ export class SwrCache {
     this.now = options.now ?? Date.now;
   }
 
-  async get<T>(key: string, fetcher: () => Promise<T>, options: SwrOptions): Promise<T> {
+  async get<T>(key: string, fetcher: () => Promise<T>, options: SwrOptions<T>): Promise<T> {
     const entry = this.entries.get(key) as Entry<T> | undefined;
     const age = entry ? this.now() - entry.storedAt : Infinity;
-    if (entry && age < options.ttlMs) return entry.value;
-    if (entry && age < options.ttlMs + (options.maxStaleMs ?? 10 * 60_000)) {
+    const ttlMs = entry ? (typeof options.ttlMs === "function" ? options.ttlMs(entry.value) : options.ttlMs) : 0;
+    if (entry && age < ttlMs) return entry.value;
+    if (entry && age < ttlMs + (options.maxStaleMs ?? 10 * 60_000)) {
       void this.refresh(key, fetcher).catch(() => undefined);
       return entry.value;
     }

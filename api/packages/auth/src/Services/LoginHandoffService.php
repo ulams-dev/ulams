@@ -133,6 +133,29 @@ class LoginHandoffService
     }
 
     /**
+     * A one-time code that hands the signed-in user's session to another host of the same academy (ADR 0195). There is
+     * no provider and no state: the caller proved who it is with its own token, and the code is bound to that user, to
+     * the target host and to the S256 challenge of the browser at the target, which holds the verifier.
+     */
+    public function issueHandoffCode(int $userId, string $host, string $challenge): string
+    {
+        $code = self::base64Url(random_bytes(32));
+
+        LoginHandoffCode::query()->create([
+            'code_hash' => hash('sha256', $code),
+            'kind' => LoginHandoffCode::KIND_HANDOFF,
+            'host' => strtolower($host),
+            'user_id' => $userId,
+            'challenge' => $challenge,
+            'remember_me' => false,
+            'payload' => null,
+            'expires_at' => now()->addSeconds(self::CODE_TTL_SECONDS),
+        ]);
+
+        return $code;
+    }
+
+    /**
      * Redeems a code. The row is burned before the verifier is looked at, so guessing verifiers
      * against a stolen code is not possible.
      *

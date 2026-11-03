@@ -1,0 +1,167 @@
+---
+title: Entry points
+description: Give one academy several branded addresses for a department, a course or a role, add them with the API or the ulams CLI, and know what each rule and permission means.
+modules:
+  - tenancy
+  - web
+learnerRoutes:
+  - /go/[key]
+  - /handoff/begin
+  - /handoff/issue
+  - /handoff/complete
+sidebar:
+  order: 41
+---
+
+import { Aside, Badge } from "@astrojs/starlight/components";
+
+An **entry point** is an extra front address of one academy, aimed at an audience: a department
+(`sales.academy.example.org`), a single course (`kubernetes.example.org`) or a role
+(`managers.academy.example.org`). Each one can have its own label, theme and search-engine settings. The
+design is in [ADR 0195](/decisions/0195-academy-entry-points-as-front-hosts/).
+
+An entry point only changes what the learner front shows first. It never grants access, and it never adds a
+learner to a group: enrolments, entitlements, groups and rules decide who can open what, on every address.
+
+<Aside type="note">
+Built so far: the table, the admin API, the `ulams entry-points` commands, the learner front serving an entry
+host in its own theme, the `/go/<key>` fallback, trusted origins and return URLs for entry hosts and the sign-in
+hand-off between addresses. The department catalogue, the course and role behaviour and DNS verification are built
+in the next steps of the
+[plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/academy-entry-points.md) and are marked
+<Badge text="Coming" variant="caution" /> below.
+</Aside>
+
+## What a visitor sees
+
+The learner front (`front/web`) maps a request host to an academy with its own host rules first
+(`ULAMS_TENANT_HOSTS`). A host that no rule matches is looked up on the platform
+(`GET /api/platform/entry-points/resolve`, public, platform hosts only) when `ULAMS_PLATFORM_API_URL` is set. For
+an active entry point the front serves the academy's pages under that host with:
+
+- the entry point's theme: its preset, its accent and its logo text over the academy's. The academy's own accent is
+  not kept when the entry point sets a preset (it was chosen for the academy's preset). Every accent goes through
+  the same contrast adjustment, on the page and on cards, so the theme passes WCAG 2.2 AA;
+- the entry point's default language, when it has one;
+- `noindex` (header and meta tag) when the entry point is not indexed: department and role hosts by default.
+
+The answer is cached for 60 seconds ("no such host" for 10 seconds), and the last answer is served while the
+platform cannot be reached. A host the platform cannot say anything about answers 503, never another academy's
+pages. Disabling or deleting an entry point stops its host within about a minute.
+
+Every host has its own session cookie (`__Host-` on https, no `Domain`), so a session never reaches a sibling
+host. Access is the same everywhere: the same API, the same academy, the same enrolments.
+
+### Without DNS: `/go/<key>`
+
+`https://<academy host>/go/sales` looks through the entry point with the key `sales` for the rest of the browser
+session: the same theme and rules, on the academy's own host. `?next=/courses/1` chooses the page to land on (a path
+of this site only). `/go/main` goes back to the academy's own pages; `main` is not a usable key. The cookie holds the
+key, never a token, and an entry point that was disabled or deleted is dropped from it on the next page.
+
+## Signing in across addresses
+
+Each address has its own session, so signing in on `sales.academy.example.org` works directly (same API, same
+accounts), and a session on one address is never visible to another. Moving between addresses while signed in uses a
+one-time code, the way social login does:
+
+1. On the target address, `/handoff/begin?from=<source host>&next=/courses/1` keeps a secret verifier in a cookie of
+   that address and sends only its SHA-256 challenge to the source address.
+2. On the source address, `/handoff/issue` asks the API for a code with the learner's own token
+   (`POST /api/auth/handoff`) and sends the browser back to the target with the code.
+3. On the target address, `/handoff/complete?code=...` redeems the code with the verifier
+   (`POST /api/auth/handoff/exchange`), sets a session of its own and goes on to `next`.
+
+The code lives 60 seconds, works once, and is bound to the learner, to the target host and to the verifier of the
+browser that asked for it, so a code taken from a URL, a log or a Referer is useless to anybody else. The API only
+issues and redeems it for the academy's own address or one of its active entry points, and checks again when the
+code is redeemed, so an entry point disabled in between gets nothing. No access token is ever put in a URL, and
+these pages are never cached and send no Referer. A scoped token (agent, CI, CLI) cannot ask for a code. The
+switcher in the header that links to these pages comes with the department catalogue
+<Badge text="Coming" variant="caution" />.
+
+**Log out everywhere** (the account page, `POST /logout?everywhere=1`, `POST /api/auth/logout` with
+`everywhere: true`) ends every login session of the learner, one per address after a hand-off. Scoped tokens are
+not touched.
+
+## Trusted origins and return URLs
+
+An active entry point is trusted like the academy's own front: the origin check of the API (browser requests with an
+`Origin`), the return URLs of social, OpenID Connect and SAML logins, and the pages that may frame interactive
+content all follow the same list, compared by exact origin (scheme, host and port). Pending and disabled entry
+points are not in it, and a disabled or deleted one leaves it at once. Nothing is configured by hand: the platform
+copies the list into the academy's own database after every change (`ulams:entry-points:publish`), and a job
+(`ulams:entry-points:reconcile`, every five minutes) repairs an academy whose copy is out of date, for example after
+a restore. When the copy cannot be updated, the admin API answers 503 after saving; repeating the request refreshes it.
+
+## Kinds
+
+| Kind | Aims at | `target` | Search engines by default |
+|---|---|---|---|
+| `academy` | the whole academy, a second brand | none | indexed |
+| `department` | a user group | `{ "group_id": 7 }` | `noindex` |
+| `course` | one course | `{ "course_id": 12 }` | indexed |
+| `role` | a role variant of courses | `{ "role": "manager" }` | `noindex` |
+
+The group and the course must exist in the academy. The kind, the host and the key cannot be changed after
+creation; to change one, delete the entry point and add a new one.
+
+## Add an entry point
+
+You need the `entry_points_manage` permission (the admin role has it). With the CLI:
+
+```bash
+ulams entry-points create --host coffee-sales.app.localhost --key sales --kind department \
+  --label "Sales academy" --target '{"group_id": 7}' --theme '{"accent": "#c2552d"}' --json
+ulams entry-points list --json
+ulams entry-points update 01j9z3k8m2x4q7r5t6v8w0y1ab --status disabled --json
+ulams entry-points audit --json
+```
+
+The same operations are `GET/POST /api/admin/entry-points`, `GET/PATCH/DELETE /api/admin/entry-points/{id}` and
+`GET /api/admin/entry-points/audit`. Scoped tokens need `settings:read` or `settings:write`.
+
+| Field | Rule |
+|---|---|
+| `host` | A DNS name in lower case: no address, port, path or credentials, at least two labels, no `content` label. It cannot be a platform host, a host of an academy, or another entry point's host. |
+| `key` | Lower case letters, digits and hyphens, up to 40, unique in the academy; `main` is reserved. The academy's own host also answers at `/go/<key>`. |
+| `label` | Up to 120 characters, shown in the header and the host switcher <Badge text="Coming" variant="caution" />. |
+| `theme` | `preset` (one of the tenant theme presets), `accent` (`#rrggbb`) and `logo_alt`. |
+| `seo` | `canonical` (`tenant`, or `self` for a course entry point only), `index`, `title` and `description`. |
+| `locale` | Optional default language, for example `pl`; it replaces the academy's default language on that host. |
+
+An academy can have 20 entry points (`TENANCY_MAX_ENTRY_POINTS`).
+
+## Status
+
+| Status | Meaning |
+|---|---|
+| `pending_dns` | A custom domain that is not verified yet. The response lists the TXT record to publish. |
+| `active` | Verified, or provided by the platform. |
+| `disabled` | Switched off by an administrator. |
+
+A host under a platform suffix (`TENANCY_ENTRY_PLATFORM_SUFFIXES`, `.app.localhost` by default) must be one
+label that starts with the academy's slug (`coffee-sales.app.localhost`) and is active at once. Any other host
+is a custom domain and starts as `pending_dns`; checking the DNS record and activating the host is
+<Badge text="Coming" variant="caution" />. Hosts under `TENANCY_ENTRY_TRUSTED_SUFFIXES` (for example
+`.example.test`) are active at once; use it in development and tests only.
+
+## Audit
+
+Every change is recorded with who made it, what changed and when (`ulams entry-points audit`). The trail is
+kept after an entry point is deleted.
+
+## Settings
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `TENANCY_MAX_ENTRY_POINTS` | `20` | Entry points per academy. |
+| `TENANCY_ENTRY_PLATFORM_SUFFIXES` | `.app.localhost` | Suffixes the platform serves itself (wildcard DNS and certificate). Comma separated. |
+| `TENANCY_ENTRY_TRUSTED_SUFFIXES` | empty | Development and CI only: any host under these suffixes is active at once. |
+| `TENANCY_ENTRY_CNAME_TARGET` | empty | Where a custom domain's CNAME has to point; shown with the DNS instructions. |
+| `TENANCY_ENTRY_RESOLVE_RATE` | `600` | Lookups per minute and address that the public resolve endpoint answers. |
+| `ULAMS_PLATFORM_API_URL` (`web`) | empty | Public URL of the platform API, for example `http://api.localhost`. Empty switches entry points off in the front. |
+
+The table lives in the platform database, which an academy's own process cannot reach. The academy API asks
+a platform process to read and write it, the way "new site" in the Course Builder asks for a new tenant, so
+the academy is always the one the request is served for and never something the request names.

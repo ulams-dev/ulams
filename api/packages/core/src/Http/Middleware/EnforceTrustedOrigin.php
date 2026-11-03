@@ -5,6 +5,7 @@ namespace Ulams\Core\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Ulams\Core\Support\EntryFronts;
 
 /**
  * Refuses POST/PUT/PATCH/DELETE whose `Origin` (or, without it, `Sec-Fetch-Site`) says the
@@ -73,7 +74,7 @@ class EnforceTrustedOrigin
             config('app.frontend_url'),
             config('ulams.core.security.admin_url'),
             config('app.url'),
-        ], (array) config('ulams.core.security.trusted_origins', []));
+        ], (array) config('ulams.core.security.trusted_origins', []), app(EntryFronts::class)->origins());
 
         $allowed = [];
         foreach ($urls as $url) {

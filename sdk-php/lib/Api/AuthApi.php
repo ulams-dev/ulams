@@ -92,6 +92,12 @@ class AuthApi
         'authEmailVerifyByIdByHashGet' => [
             'application/json',
         ],
+        'authHandoffExchangePost' => [
+            'application/json',
+        ],
+        'authHandoffPost' => [
+            'application/json',
+        ],
         'authImpersonatePost' => [
             'application/json',
         ],
@@ -2410,6 +2416,764 @@ class AuthApi
     }
 
     /**
+     * Operation authHandoffExchangePost
+     *
+     * Exchange a hand-off code for a session token of the target host
+     *
+     * @param  \Ulams\Sdk\Model\AuthHandoffExchangePostRequest $auth_handoff_exchange_post_request auth_handoff_exchange_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authHandoffExchangePost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\AuthHandoffExchangePost200Response|\Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope
+     */
+    public function authHandoffExchangePost($auth_handoff_exchange_post_request, string $contentType = self::contentTypes['authHandoffExchangePost'][0])
+    {
+        list($response) = $this->authHandoffExchangePostWithHttpInfo($auth_handoff_exchange_post_request, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation authHandoffExchangePostWithHttpInfo
+     *
+     * Exchange a hand-off code for a session token of the target host
+     *
+     * @param  \Ulams\Sdk\Model\AuthHandoffExchangePostRequest $auth_handoff_exchange_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authHandoffExchangePost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\AuthHandoffExchangePost200Response|\Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function authHandoffExchangePostWithHttpInfo($auth_handoff_exchange_post_request, string $contentType = self::contentTypes['authHandoffExchangePost'][0])
+    {
+        $request = $this->authHandoffExchangePostRequest($auth_handoff_exchange_post_request, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\AuthHandoffExchangePost200Response' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\AuthHandoffExchangePost200Response' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\AuthHandoffExchangePost200Response', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                case 400:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                case 422:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\AuthHandoffExchangePost200Response';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\AuthHandoffExchangePost200Response',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                case 400:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                case 422:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation authHandoffExchangePostAsync
+     *
+     * Exchange a hand-off code for a session token of the target host
+     *
+     * @param  \Ulams\Sdk\Model\AuthHandoffExchangePostRequest $auth_handoff_exchange_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authHandoffExchangePost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function authHandoffExchangePostAsync($auth_handoff_exchange_post_request, string $contentType = self::contentTypes['authHandoffExchangePost'][0])
+    {
+        return $this->authHandoffExchangePostAsyncWithHttpInfo($auth_handoff_exchange_post_request, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation authHandoffExchangePostAsyncWithHttpInfo
+     *
+     * Exchange a hand-off code for a session token of the target host
+     *
+     * @param  \Ulams\Sdk\Model\AuthHandoffExchangePostRequest $auth_handoff_exchange_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authHandoffExchangePost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function authHandoffExchangePostAsyncWithHttpInfo($auth_handoff_exchange_post_request, string $contentType = self::contentTypes['authHandoffExchangePost'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\AuthHandoffExchangePost200Response';
+        $request = $this->authHandoffExchangePostRequest($auth_handoff_exchange_post_request, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'authHandoffExchangePost'
+     *
+     * @param  \Ulams\Sdk\Model\AuthHandoffExchangePostRequest $auth_handoff_exchange_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authHandoffExchangePost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function authHandoffExchangePostRequest($auth_handoff_exchange_post_request, string $contentType = self::contentTypes['authHandoffExchangePost'][0])
+    {
+
+        // verify the required parameter 'auth_handoff_exchange_post_request' is set
+        if ($auth_handoff_exchange_post_request === null || (is_array($auth_handoff_exchange_post_request) && count($auth_handoff_exchange_post_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $auth_handoff_exchange_post_request when calling authHandoffExchangePost'
+            );
+        }
+
+
+        $resourcePath = '/api/auth/handoff/exchange';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($auth_handoff_exchange_post_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($auth_handoff_exchange_post_request));
+            } else {
+                $httpBody = $auth_handoff_exchange_post_request;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
+     * Operation authHandoffPost
+     *
+     * Ask for a one-time code that hands this session to another host of the academy
+     *
+     * @param  \Ulams\Sdk\Model\AuthHandoffPostRequest $auth_handoff_post_request auth_handoff_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authHandoffPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return \Ulams\Sdk\Model\AuthHandoffPost200Response|\Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope
+     */
+    public function authHandoffPost($auth_handoff_post_request, string $contentType = self::contentTypes['authHandoffPost'][0])
+    {
+        list($response) = $this->authHandoffPostWithHttpInfo($auth_handoff_post_request, $contentType);
+        return $response;
+    }
+
+    /**
+     * Operation authHandoffPostWithHttpInfo
+     *
+     * Ask for a one-time code that hands this session to another host of the academy
+     *
+     * @param  \Ulams\Sdk\Model\AuthHandoffPostRequest $auth_handoff_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authHandoffPost'] to see the possible values for this operation
+     *
+     * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
+     * @throws \InvalidArgumentException
+     * @return array of \Ulams\Sdk\Model\AuthHandoffPost200Response|\Ulams\Sdk\Model\ApiEnvelope|\Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function authHandoffPostWithHttpInfo($auth_handoff_post_request, string $contentType = self::contentTypes['authHandoffPost'][0])
+    {
+        $request = $this->authHandoffPostRequest($auth_handoff_post_request, $contentType);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            } catch (ConnectException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    (int) $e->getCode(),
+                    null,
+                    null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+
+            switch($statusCode) {
+                case 200:
+                    if ('\Ulams\Sdk\Model\AuthHandoffPost200Response' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\AuthHandoffPost200Response' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\AuthHandoffPost200Response', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                case 403:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                case 422:
+                    if ('\Ulams\Sdk\Model\ApiEnvelope' === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ('\Ulams\Sdk\Model\ApiEnvelope' !== 'string') {
+                            try {
+                                $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                            } catch (\JsonException $exception) {
+                                throw new ApiException(
+                                    sprintf(
+                                        'Error JSON decoding server response (%s)',
+                                        $request->getUri()
+                                    ),
+                                    $statusCode,
+                                    $response->getHeaders(),
+                                    $content
+                                );
+                            }
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\ApiEnvelope', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        (string) $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    (string) $response->getBody()
+                );
+            }
+
+            $returnType = '\Ulams\Sdk\Model\AuthHandoffPost200Response';
+            if ($returnType === '\SplFileObject') {
+                $content = $response->getBody(); //stream goes to serializer
+            } else {
+                $content = (string) $response->getBody();
+                if ($returnType !== 'string') {
+                    try {
+                        $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException $exception) {
+                        throw new ApiException(
+                            sprintf(
+                                'Error JSON decoding server response (%s)',
+                                $request->getUri()
+                            ),
+                            $statusCode,
+                            $response->getHeaders(),
+                            $content
+                        );
+                    }
+                }
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\AuthHandoffPost200Response',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                case 403:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+                case 422:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\Ulams\Sdk\Model\ApiEnvelope',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation authHandoffPostAsync
+     *
+     * Ask for a one-time code that hands this session to another host of the academy
+     *
+     * @param  \Ulams\Sdk\Model\AuthHandoffPostRequest $auth_handoff_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authHandoffPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function authHandoffPostAsync($auth_handoff_post_request, string $contentType = self::contentTypes['authHandoffPost'][0])
+    {
+        return $this->authHandoffPostAsyncWithHttpInfo($auth_handoff_post_request, $contentType)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation authHandoffPostAsyncWithHttpInfo
+     *
+     * Ask for a one-time code that hands this session to another host of the academy
+     *
+     * @param  \Ulams\Sdk\Model\AuthHandoffPostRequest $auth_handoff_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authHandoffPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function authHandoffPostAsyncWithHttpInfo($auth_handoff_post_request, string $contentType = self::contentTypes['authHandoffPost'][0])
+    {
+        $returnType = '\Ulams\Sdk\Model\AuthHandoffPost200Response';
+        $request = $this->authHandoffPostRequest($auth_handoff_post_request, $contentType);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    if ($returnType === '\SplFileObject') {
+                        $content = $response->getBody(); //stream goes to serializer
+                    } else {
+                        $content = (string) $response->getBody();
+                        if ($returnType !== 'string') {
+                            $content = json_decode($content);
+                        }
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        (string) $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'authHandoffPost'
+     *
+     * @param  \Ulams\Sdk\Model\AuthHandoffPostRequest $auth_handoff_post_request (required)
+     * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authHandoffPost'] to see the possible values for this operation
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    public function authHandoffPostRequest($auth_handoff_post_request, string $contentType = self::contentTypes['authHandoffPost'][0])
+    {
+
+        // verify the required parameter 'auth_handoff_post_request' is set
+        if ($auth_handoff_post_request === null || (is_array($auth_handoff_post_request) && count($auth_handoff_post_request) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $auth_handoff_post_request when calling authHandoffPost'
+            );
+        }
+
+
+        $resourcePath = '/api/auth/handoff';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+
+
+        $headers = $this->headerSelector->selectHeaders(
+            ['application/json', ],
+            $contentType,
+            $multipart
+        );
+
+        // for model (json/xml)
+        if (isset($auth_handoff_post_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($auth_handoff_post_request));
+            } else {
+                $httpBody = $auth_handoff_post_request;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $formParamValueItems = is_array($formParamValue) ? $formParamValue : [$formParamValue];
+                    foreach ($formParamValueItems as $formParamValueItem) {
+                        $multipartContents[] = [
+                            'name' => $formParamName,
+                            'contents' => $formParamValueItem
+                        ];
+                    }
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the form parameters
+                $httpBody = \GuzzleHttp\Utils::jsonEncode($formParams);
+            } else {
+                // for HTTP post (form)
+                $httpBody = ObjectSerializer::buildQuery($formParams);
+            }
+        }
+
+        // this endpoint requires Bearer (JWT) authentication (access token)
+        if (!empty($this->config->getAccessToken())) {
+            $headers['Authorization'] = 'Bearer ' . $this->config->getAccessToken();
+        }
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $operationHost = $this->config->getHost();
+        $query = ObjectSerializer::buildQuery($queryParams);
+        return new Request(
+            'POST',
+            $operationHost . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
      * Operation authImpersonatePost
      *
      * @param  int $user_id user_id (required)
@@ -3050,30 +3814,32 @@ class AuthApi
     /**
      * Operation authLogoutPost
      *
+     * @param  \Ulams\Sdk\Model\AuthLogoutPostRequest $auth_logout_post_request auth_logout_post_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authLogoutPost'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return \Ulams\Sdk\Model\ApiEnvelope
      */
-    public function authLogoutPost(string $contentType = self::contentTypes['authLogoutPost'][0])
+    public function authLogoutPost($auth_logout_post_request = null, string $contentType = self::contentTypes['authLogoutPost'][0])
     {
-        list($response) = $this->authLogoutPostWithHttpInfo($contentType);
+        list($response) = $this->authLogoutPostWithHttpInfo($auth_logout_post_request, $contentType);
         return $response;
     }
 
     /**
      * Operation authLogoutPostWithHttpInfo
      *
+     * @param  \Ulams\Sdk\Model\AuthLogoutPostRequest $auth_logout_post_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authLogoutPost'] to see the possible values for this operation
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
      * @return array of \Ulams\Sdk\Model\ApiEnvelope, HTTP status code, HTTP response headers (array of strings)
      */
-    public function authLogoutPostWithHttpInfo(string $contentType = self::contentTypes['authLogoutPost'][0])
+    public function authLogoutPostWithHttpInfo($auth_logout_post_request = null, string $contentType = self::contentTypes['authLogoutPost'][0])
     {
-        $request = $this->authLogoutPostRequest($contentType);
+        $request = $this->authLogoutPostRequest($auth_logout_post_request, $contentType);
 
         try {
             $options = $this->createHttpClientOption();
@@ -3187,14 +3953,15 @@ class AuthApi
     /**
      * Operation authLogoutPostAsync
      *
+     * @param  \Ulams\Sdk\Model\AuthLogoutPostRequest $auth_logout_post_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authLogoutPost'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function authLogoutPostAsync(string $contentType = self::contentTypes['authLogoutPost'][0])
+    public function authLogoutPostAsync($auth_logout_post_request = null, string $contentType = self::contentTypes['authLogoutPost'][0])
     {
-        return $this->authLogoutPostAsyncWithHttpInfo($contentType)
+        return $this->authLogoutPostAsyncWithHttpInfo($auth_logout_post_request, $contentType)
             ->then(
                 function ($response) {
                     return $response[0];
@@ -3205,15 +3972,16 @@ class AuthApi
     /**
      * Operation authLogoutPostAsyncWithHttpInfo
      *
+     * @param  \Ulams\Sdk\Model\AuthLogoutPostRequest $auth_logout_post_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authLogoutPost'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Promise\PromiseInterface
      */
-    public function authLogoutPostAsyncWithHttpInfo(string $contentType = self::contentTypes['authLogoutPost'][0])
+    public function authLogoutPostAsyncWithHttpInfo($auth_logout_post_request = null, string $contentType = self::contentTypes['authLogoutPost'][0])
     {
         $returnType = '\Ulams\Sdk\Model\ApiEnvelope';
-        $request = $this->authLogoutPostRequest($contentType);
+        $request = $this->authLogoutPostRequest($auth_logout_post_request, $contentType);
 
         return $this->client
             ->sendAsync($request, $this->createHttpClientOption())
@@ -3254,13 +4022,15 @@ class AuthApi
     /**
      * Create request for operation 'authLogoutPost'
      *
+     * @param  \Ulams\Sdk\Model\AuthLogoutPostRequest $auth_logout_post_request (optional)
      * @param  string $contentType The value for the Content-Type header. Check self::contentTypes['authLogoutPost'] to see the possible values for this operation
      *
      * @throws \InvalidArgumentException
      * @return \GuzzleHttp\Psr7\Request
      */
-    public function authLogoutPostRequest(string $contentType = self::contentTypes['authLogoutPost'][0])
+    public function authLogoutPostRequest($auth_logout_post_request = null, string $contentType = self::contentTypes['authLogoutPost'][0])
     {
+
 
 
         $resourcePath = '/api/auth/logout';
@@ -3281,7 +4051,14 @@ class AuthApi
         );
 
         // for model (json/xml)
-        if (count($formParams) > 0) {
+        if (isset($auth_logout_post_request)) {
+            if (stripos($headers['Content-Type'], 'application/json') !== false) {
+                # if Content-Type contains "application/json", json_encode the body
+                $httpBody = \GuzzleHttp\Utils::jsonEncode(ObjectSerializer::sanitizeForSerialization($auth_logout_post_request));
+            } else {
+                $httpBody = $auth_logout_post_request;
+            }
+        } elseif (count($formParams) > 0) {
             if ($multipart) {
                 $multipartContents = [];
                 foreach ($formParams as $formParamName => $formParamValue) {

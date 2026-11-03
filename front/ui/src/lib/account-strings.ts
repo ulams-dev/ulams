@@ -43,6 +43,7 @@ export interface AccountStrings {
   pageTitle: string;
   learner: string;
   logOut: string;
+  logOutEverywhere: string;
   myCourses: string;
   coursesFailed: string;
   tryAgain: string;
@@ -137,6 +138,7 @@ const en: AccountStrings = {
   pageTitle: "My learning — {name}",
   learner: "Learner",
   logOut: "Log out",
+  logOutEverywhere: "Log out everywhere",
   myCourses: "My courses",
   coursesFailed: "Your courses could not be loaded right now.",
   tryAgain: "Try again",
@@ -235,6 +237,7 @@ const pl: AccountStrings = {
   pageTitle: "Moja nauka — {name}",
   learner: "Uczeń",
   logOut: "Wyloguj się",
+  logOutEverywhere: "Wyloguj się wszędzie",
   myCourses: "Moje kursy",
   coursesFailed: "Nie udało się teraz wczytać Twoich kursów.",
   tryAgain: "Spróbuj ponownie",
@@ -333,6 +336,7 @@ const zh: AccountStrings = {
   pageTitle: "我的学习 — {name}",
   learner: "学员",
   logOut: "退出登录",
+  logOutEverywhere: "在所有地址退出登录",
   myCourses: "我的课程",
   coursesFailed: "暂时无法加载你的课程。",
   tryAgain: "重试",

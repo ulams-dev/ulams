@@ -29,6 +29,7 @@ export default defineConfig({
       ULAMS_SOCIAL_LOGIN: envField.string({ context: "server", access: "secret", optional: true }),
       CSP_ENFORCE: envField.string({ context: "server", access: "secret", optional: true }),
       ULAMS_CONTENT_ORIGIN: envField.string({ context: "server", access: "secret", optional: true }),
+      ULAMS_PLATFORM_API_URL: envField.string({ context: "server", access: "secret", optional: true }),
       ULAMS_STORAGE_ORIGINS: envField.string({ context: "server", access: "secret", optional: true }),
       DEMO_STUDENT_EMAIL: envField.string({ context: "server", access: "secret", optional: true }),
       DEMO_STUDENT_PASSWORD: envField.string({ context: "server", access: "secret", optional: true }),

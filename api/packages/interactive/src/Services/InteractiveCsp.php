@@ -48,7 +48,7 @@ class InteractiveCsp implements ContentHeaderProvider
     }
 
     /**
-     * The tenant's learner front and admin (and the extra first-party origins in TRUSTED_ORIGINS): the only
+     * The tenant's learner front and admin (and the extra first-party origins in TRUSTED_ORIGINS and the active entry hosts): the only
      * pages that may frame a package. Outside production, `localhost` and `*.localhost` hosts without a port
      * get `:*`, because the dev front runs on its own port (:4321), like the trusted-origin check does.
      */
@@ -56,7 +56,7 @@ class InteractiveCsp implements ContentHeaderProvider
     {
         $local = !app()->environment('production') && config('ulams.core.security.trust_localhost_outside_production', false);
         $origins = [];
-        $urls = [config('app.frontend_url'), config('ulams.core.security.admin_url'), ...(array) config('ulams.core.security.trusted_origins', [])];
+        $urls = [config('app.frontend_url'), config('ulams.core.security.admin_url'), ...(array) config('ulams.core.security.trusted_origins', []), ...app(\Ulams\Core\Support\EntryFronts::class)->origins()];
         foreach ($urls as $url) {
             $parts = parse_url((string) $url);
             if (!is_array($parts) || !isset($parts['scheme'], $parts['host']) || !in_array($parts['scheme'], ['http', 'https'], true)) {

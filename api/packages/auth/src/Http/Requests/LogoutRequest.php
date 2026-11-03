@@ -21,6 +21,9 @@ class LogoutRequest extends ExtendableRequest
      */
     public function rules()
     {
-        return [];
+        return [
+            // sign out of every host of the academy (ADR 0195): all the user's login sessions, not scoped tokens
+            'everywhere' => ['sometimes', 'boolean'],
+        ];
     }
 }
