@@ -39,6 +39,15 @@ learnerRoutes:
   - /reporting
   - /pl/reporting
   - /zh/reporting
+  - /white-paper
+  - /pl/white-paper
+  - /zh/white-paper
+  - /style-guide
+  - /pl/style-guide
+  - /zh/style-guide
+  - /learning-elements
+  - /pl/learning-elements
+  - /zh/learning-elements
   - /robots.txt
   - /sitemap.xml
   - /site.webmanifest
@@ -74,6 +83,7 @@ What learners see is described in [Learners](/learners/); this page covers the c
     - comparison.astro and pl/comparison.astro, zh/comparison.astro
     - faq.astro and pl/faq.astro, zh/faq.astro
     - content-cost.astro and reporting.astro, also under pl/ and zh/
+    - white-paper.astro, style-guide.astro and learning-elements.astro, also under pl/ and zh/
     - course-generation/ (index, microdosing-study, stablecoin-report, docs-repo, notion-page), also under pl/ and zh/
     - blog/ and pl/blog/ the blog: index and one page per post
     - sitemap.xml.ts and robots.txt.ts (platform-host only)
@@ -142,6 +152,19 @@ product claims keep their actual roadmap status, including when a local preview 
 labels elsewhere.
 
 The content-cost and reporting pages (`/content-cost/`, `/reporting/`, with `/pl/` and `/zh/` variants) are the two pages the overview's call-to-action bands link to. Their copy lives in `src/lib/impact-pages.ts`, one object per language; shipped features are plain and anything planned carries the `coming` status, and the pages claim no ULAMS savings. The home bands carry the `cost_page_open` and `reporting_page_open` Umami events.
+
+The white paper (`/white-paper/`, with `/pl/` and `/zh/` variants) is a long-form, printable page: "From policy to proof". Its copy lives in `src/lib/white-paper.ts`. Every figure has its source in the text and in the source list, and shipped and planned features are labelled from the roadmap. There is no build-time PDF: a print stylesheet and a "Print / save as PDF" button do that job.
+
+The style guide (`/style-guide/`, with `/pl/` and `/zh/` variants, plus a section on the home page) reads everything from code (`src/lib/style-guide.ts`):
+- the design tokens, from the platform stylesheet;
+- the theme presets, from `@ulams/ui/theme/presets`;
+- the AA contrast guard, from `contrastReport`;
+- the brand-import diff, from `themeDiff`;
+- the component list, from the catalogue registry.
+
+The learning-elements page (`/learning-elements/`, with `/pl/` and `/zh/` variants, plus a section on the home page after the demos) shows every learning element. Each comes with its learning principle and one line on why it helps. Elements the static page can run are live, rendered by `<Render>` from catalogue documents. The rest show a labelled real screenshot or a link to a seeded demo-academy lesson. The copy and the element list live in `src/lib/learning-elements.ts`, and the home CTA carries the `learning_elements_open` Umami event.
+
+The home page also carries a walkthrough of the Course Builder questions (`src/lib/builder-walkthrough.ts`) and the hero's L&D journey (`src/lib/hero-journey.ts`). The new links carry the `white_paper_open`, `style_guide_open` and `case_study_open` Umami events.
 
 The course-generation pages (`/course-generation/`, `/pl/course-generation/`, `/zh/course-generation/`) show four real courses built from a source (two PDFs, one Git repository and one Notion page), one page per case study (`microdosing-study`, `stablecoin-report`, `docs-repo`, `notion-page`) with a frame slider of the Course Builder steps.
 

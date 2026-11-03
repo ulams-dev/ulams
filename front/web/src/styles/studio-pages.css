@@ -1673,3 +1673,79 @@ a.st-ver-link {
   margin: 0;
   padding-left: 1.2rem;
 }
+
+/* Style page (/studio/style): upload, profiles, one profile with its values, changes and edit form */
+.st-style {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+.st-style-form p {
+  margin: 0 0 12px;
+}
+.st-style-form input[type="text"],
+.st-style-edit input[type="text"],
+.st-style-edit input[type="number"],
+.st-style-edit select {
+  min-height: 40px;
+  min-width: min(100%, 320px);
+  padding: 0 10px;
+  font: inherit;
+  max-width: 100%;
+}
+.st-style-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.st-style-part ul,
+.st-style-diff,
+.st-style-warnings ul {
+  margin: 4px 0 0;
+  padding-left: 1.1em;
+}
+.st-style-value,
+.st-style-change {
+  margin: 0 0 8px;
+  overflow-wrap: anywhere;
+}
+.st-style-kind {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.st-style-cites {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+.st-style-passage {
+  margin: 6px 0 0;
+  padding: 8px 12px;
+  border-left: 3px solid currentColor;
+  overflow-wrap: anywhere;
+}
+.st-style-json {
+  width: 100%;
+  max-width: 100%;
+  font-family: var(--ulams-studio-mono, monospace);
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+.st-style-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+/* Production page (AM-4): the element split is a bar with a written equivalent (role=img name and the table) */
+.st-prod-body { display: flex; flex-direction: column; gap: 16px; }
+.st-prod-section { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.st-prod-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.st-prod-bar { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: var(--ulams-studio-line); gap: 2px; }
+.st-prod-seg { display: block; min-width: 4px; background: var(--ulams-studio-ink); }
+.st-prod-seg-revised { background: var(--ulams-studio-muted); }
+.st-prod-seg-edited { background: repeating-linear-gradient(45deg, var(--ulams-studio-ink) 0 4px, var(--ulams-studio-sunken) 4px 8px); }
+.st-prod-seg-unknown { background: var(--ulams-studio-sunken); box-shadow: inset 0 0 0 2px var(--ulams-studio-muted); }

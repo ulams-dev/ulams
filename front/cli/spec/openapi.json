@@ -561,7 +561,8 @@
        "cli",
        "agent",
        "ci",
-       "integration"
+       "integration",
+       "scim"
       ],
       "type": "string"
      },
@@ -2676,6 +2677,32 @@
       },
       "type": "object"
      },
+     "scim": {
+      "description": "SCIM 2.0 provisioning with this provider",
+      "properties": {
+       "active_tokens": {
+        "description": "Active SCIM tokens (at most two)",
+        "type": "integer"
+       },
+       "base_url": {
+        "description": "Tenant URL to enter in the identity provider's SCIM settings",
+        "format": "uri",
+        "type": "string"
+       },
+       "group_roles": {
+        "additionalProperties": {
+         "enum": [
+          "student",
+          "tutor"
+         ],
+         "type": "string"
+        },
+        "description": "Display name of a SCIM group (lower case) to the role its members get",
+        "type": "object"
+       }
+      },
+      "type": "object"
+     },
      "slug": {
       "description": "Used in the sign-in URLs; fixed after creation",
       "type": "string"
@@ -2812,6 +2839,23 @@
        },
        "want_encrypted_assertions": {
         "type": "boolean"
+       }
+      },
+      "type": "object"
+     },
+     "scim": {
+      "properties": {
+       "group_roles": {
+        "additionalProperties": {
+         "enum": [
+          "student",
+          "tutor"
+         ],
+         "type": "string"
+        },
+        "description": "Display name of a SCIM group to student or tutor: members of such a group get the role while they are members (replaces the whole mapping; admin cannot be mapped)",
+        "nullable": true,
+        "type": "object"
        }
       },
       "type": "object"
@@ -4503,6 +4547,423 @@
     "required": [
      "topic_gift_question_id",
      "answer"
+    ],
+    "type": "object"
+   },
+   "ScimError": {
+    "properties": {
+     "detail": {
+      "type": "string"
+     },
+     "schemas": {
+      "items": {
+       "example": "urn:ietf:params:scim:api:messages:2.0:Error",
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "scimType": {
+      "enum": [
+       "invalidFilter",
+       "tooMany",
+       "uniqueness",
+       "mutability",
+       "invalidSyntax",
+       "invalidPath",
+       "noTarget",
+       "invalidValue",
+       "invalidVers",
+       "sensitive"
+      ],
+      "type": "string"
+     },
+     "status": {
+      "example": "409",
+      "type": "string"
+     }
+    },
+    "required": [
+     "schemas",
+     "status"
+    ],
+    "type": "object"
+   },
+   "ScimGroup": {
+    "properties": {
+     "displayName": {
+      "description": "Name of the group; case-insensitively unique among all groups of the academy",
+      "type": "string"
+     },
+     "externalId": {
+      "description": "The client's own id, unique per provider",
+      "type": "string"
+     },
+     "id": {
+      "readOnly": true,
+      "type": "string"
+     },
+     "members": {
+      "description": "Users of this provider (nested groups are not supported). Only members this provider provisioned are shown and changed",
+      "items": {
+       "properties": {
+        "$ref": {
+         "readOnly": true,
+         "type": "string"
+        },
+        "display": {
+         "readOnly": true,
+         "type": "string"
+        },
+        "type": {
+         "example": "User",
+         "type": "string"
+        },
+        "value": {
+         "description": "Id of the user",
+         "type": "string"
+        }
+       },
+       "type": "object"
+      },
+      "type": "array"
+     },
+     "meta": {
+      "properties": {
+       "created": {
+        "format": "date-time",
+        "type": "string"
+       },
+       "lastModified": {
+        "format": "date-time",
+        "type": "string"
+       },
+       "location": {
+        "format": "uri",
+        "type": "string"
+       },
+       "resourceType": {
+        "type": "string"
+       },
+       "version": {
+        "description": "Weak ETag of the representation",
+        "type": "string"
+       }
+      },
+      "readOnly": true,
+      "type": "object"
+     },
+     "schemas": {
+      "items": {
+       "example": "urn:ietf:params:scim:schemas:core:2.0:Group",
+       "type": "string"
+      },
+      "type": "array"
+     }
+    },
+    "required": [
+     "schemas",
+     "displayName"
+    ],
+    "type": "object"
+   },
+   "ScimGroupList": {
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ScimListResponse"
+     },
+     {
+      "properties": {
+       "Resources": {
+        "items": {
+         "$ref": "#/components/schemas/ScimGroup"
+        },
+        "type": "array"
+       }
+      },
+      "type": "object"
+     }
+    ],
+    "type": "object"
+   },
+   "ScimListResponse": {
+    "properties": {
+     "Resources": {
+      "items": {
+       "additionalProperties": true,
+       "type": "object"
+      },
+      "type": "array"
+     },
+     "itemsPerPage": {
+      "type": "integer"
+     },
+     "schemas": {
+      "items": {
+       "example": "urn:ietf:params:scim:api:messages:2.0:ListResponse",
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "startIndex": {
+      "type": "integer"
+     },
+     "totalResults": {
+      "type": "integer"
+     }
+    },
+    "required": [
+     "schemas",
+     "totalResults",
+     "Resources"
+    ],
+    "type": "object"
+   },
+   "ScimPatchOp": {
+    "properties": {
+     "Operations": {
+      "items": {
+       "properties": {
+        "op": {
+         "description": "add, replace or remove, in any letter case",
+         "type": "string"
+        },
+        "path": {
+         "description": "Attribute path, with sub-attribute, value path or schema URN prefix; required for remove",
+         "type": "string"
+        },
+        "value": {}
+       },
+       "required": [
+        "op"
+       ],
+       "type": "object"
+      },
+      "type": "array"
+     },
+     "schemas": {
+      "items": {
+       "example": "urn:ietf:params:scim:api:messages:2.0:PatchOp",
+       "type": "string"
+      },
+      "type": "array"
+     }
+    },
+    "required": [
+     "schemas",
+     "Operations"
+    ],
+    "type": "object"
+   },
+   "ScimResource": {
+    "additionalProperties": true,
+    "description": "A SCIM discovery document (ServiceProviderConfig, ResourceType or Schema)",
+    "type": "object"
+   },
+   "ScimSearchRequest": {
+    "properties": {
+     "attributes": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "count": {
+      "type": "integer"
+     },
+     "excludedAttributes": {
+      "items": {
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "filter": {
+      "type": "string"
+     },
+     "schemas": {
+      "items": {
+       "example": "urn:ietf:params:scim:api:messages:2.0:SearchRequest",
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "startIndex": {
+      "type": "integer"
+     }
+    },
+    "required": [
+     "schemas"
+    ],
+    "type": "object"
+   },
+   "ScimUser": {
+    "properties": {
+     "active": {
+      "description": "false blocks sign-in and revokes every session and token; true restores access",
+      "type": "boolean"
+     },
+     "displayName": {
+      "type": "string"
+     },
+     "emails": {
+      "description": "The address of the account; one is kept (primary, else the first, else the userName)",
+      "items": {
+       "properties": {
+        "primary": {
+         "type": "boolean"
+        },
+        "type": {
+         "example": "work",
+         "type": "string"
+        },
+        "value": {
+         "type": "string"
+        }
+       },
+       "type": "object"
+      },
+      "type": "array"
+     },
+     "externalId": {
+      "description": "The client's own id, unique per provider",
+      "type": "string"
+     },
+     "groups": {
+      "items": {
+       "properties": {
+        "$ref": {
+         "type": "string"
+        },
+        "display": {
+         "type": "string"
+        },
+        "value": {
+         "type": "string"
+        }
+       },
+       "type": "object"
+      },
+      "readOnly": true,
+      "type": "array"
+     },
+     "id": {
+      "description": "The id of the user in this academy",
+      "readOnly": true,
+      "type": "string"
+     },
+     "meta": {
+      "properties": {
+       "created": {
+        "format": "date-time",
+        "type": "string"
+       },
+       "lastModified": {
+        "format": "date-time",
+        "type": "string"
+       },
+       "location": {
+        "format": "uri",
+        "type": "string"
+       },
+       "resourceType": {
+        "type": "string"
+       },
+       "version": {
+        "description": "Weak ETag of the representation",
+        "type": "string"
+       }
+      },
+      "readOnly": true,
+      "type": "object"
+     },
+     "name": {
+      "properties": {
+       "familyName": {
+        "type": "string"
+       },
+       "formatted": {
+        "readOnly": true,
+        "type": "string"
+       },
+       "givenName": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "schemas": {
+      "items": {
+       "example": "urn:ietf:params:scim:schemas:core:2.0:User",
+       "type": "string"
+      },
+      "type": "array"
+     },
+     "title": {
+      "type": "string"
+     },
+     "urn:ietf:params:scim:schemas:extension:enterprise:2.0:User": {
+      "properties": {
+       "costCenter": {
+        "type": "string"
+       },
+       "department": {
+        "type": "string"
+       },
+       "division": {
+        "type": "string"
+       },
+       "employeeNumber": {
+        "type": "string"
+       },
+       "manager": {
+        "properties": {
+         "$ref": {
+          "readOnly": true,
+          "type": "string"
+         },
+         "displayName": {
+          "readOnly": true,
+          "type": "string"
+         },
+         "value": {
+          "description": "Id of a user of this provider",
+          "type": "string"
+         }
+        },
+        "type": "object"
+       },
+       "organization": {
+        "type": "string"
+       }
+      },
+      "type": "object"
+     },
+     "userName": {
+      "description": "Unique in the academy, case-insensitive; usually the e-mail address",
+      "type": "string"
+     }
+    },
+    "required": [
+     "schemas",
+     "userName"
+    ],
+    "type": "object"
+   },
+   "ScimUserList": {
+    "allOf": [
+     {
+      "$ref": "#/components/schemas/ScimListResponse"
+     },
+     {
+      "properties": {
+       "Resources": {
+        "items": {
+         "$ref": "#/components/schemas/ScimUser"
+        },
+        "type": "array"
+       }
+      },
+      "type": "object"
+     }
     ],
     "type": "object"
    },
@@ -6454,6 +6915,11 @@
     "name": "bearerAuth",
     "scheme": "bearer",
     "type": "http"
+   },
+   "scim": {
+    "description": "A SCIM token of one identity provider (POST /api/admin/identity/providers/{provider}/scim-tokens)",
+    "scheme": "bearer",
+    "type": "http"
    }
   }
  },
@@ -6850,6 +7316,80 @@
      }
     ],
     "summary": "Authoring metric of courses",
+    "tags": [
+     "Authoring metrics"
+    ]
+   }
+  },
+  "/api/admin/authoring-metrics/courses/export": {
+   "get": {
+    "description": "Download the snapshots as CSV or JSON lines, one row per course, with the same filters as the list. Every row carries method_version so the file says which definitions produced the numbers. Needs authoring_metrics_read.",
+    "operationId": "admin.authoring-metrics.courses.export",
+    "parameters": [
+     {
+      "description": "csv (default) or jsonl",
+      "in": "query",
+      "name": "format",
+      "schema": {
+       "enum": [
+        "csv",
+        "jsonl"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "description": "Courses created on or after this date (YYYY-MM-DD)",
+      "in": "query",
+      "name": "from",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Courses created on or before this date (YYYY-MM-DD)",
+      "in": "query",
+      "name": "to",
+      "schema": {
+       "format": "date",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Only these courses",
+      "in": "query",
+      "name": "course_id[]",
+      "schema": {
+       "items": {
+        "type": "integer"
+       },
+       "type": "array"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "text/csv": {
+        "schema": {
+         "format": "binary",
+         "type": "string"
+        }
+       }
+      },
+      "description": "The file"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Export the authoring metric",
     "tags": [
      "Authoring metrics"
     ]
@@ -7963,6 +8503,252 @@
     "summary": "Preview a code exercise as its author",
     "tags": [
      "Code exercises"
+    ]
+   }
+  },
+  "/api/admin/commerce/access-passes": {
+   "post": {
+    "description": "An access pass sells a course or a bundle for a number of days; the learner's access ends that many days after the purchase. It has no price until one is set with PUT /api/admin/commerce/products/access_pass/{id}. Needs commerce_prices_manage.",
+    "operationId": "admin.commerce.access-passes.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "days": {
+          "maximum": 3650,
+          "minimum": 1,
+          "type": "integer"
+         },
+         "name": {
+          "type": "string"
+         },
+         "subject_id": {
+          "type": "integer"
+         },
+         "subject_type": {
+          "enum": [
+           "course",
+           "bundle"
+          ],
+          "type": "string"
+         }
+        },
+        "required": [
+         "name",
+         "subject_type",
+         "subject_id",
+         "days"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The access pass"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Invalid pass"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create an access pass",
+    "tags": [
+     "Commerce"
+    ]
+   }
+  },
+  "/api/admin/commerce/bundles": {
+   "post": {
+    "description": "A bundle is bought once and grants every course in it. It has no price until one is set with PUT /api/admin/commerce/products/bundle/{id}. Needs commerce_prices_manage.",
+    "operationId": "admin.commerce.bundles.post",
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "course_ids": {
+          "items": {
+           "type": "integer"
+          },
+          "type": "array"
+         },
+         "description": {
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "name",
+         "course_ids"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The bundle"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "422": {
+      "description": "Invalid bundle"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create a bundle of courses",
+    "tags": [
+     "Commerce"
+    ]
+   }
+  },
+  "/api/admin/commerce/products": {
+   "get": {
+    "description": "One row per sellable that has a price: its type (course, bundle or access_pass), name, price in minor units, whether it is for sale, whether it is published, and the product at the commerce provider (id, variant, last sync, last sync error). Needs the permission commerce_prices_manage.",
+    "operationId": "admin.commerce.products.list",
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "List of sellables with a price"
+     },
+     "403": {
+      "description": "Forbidden"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Prices and product state of everything this tenant sells",
+    "tags": [
+     "Commerce"
+    ]
+   }
+  },
+  "/api/admin/commerce/products/{type}/{id}": {
+   "put": {
+    "description": "Records the price (minor units and an ISO currency) and whether the sellable is for sale, then queues the sync to the commerce provider. The product is enabled at the provider only while it is for sale and published. Needs commerce_prices_manage.",
+    "operationId": "admin.commerce.products.by-type.by-id.put",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "type",
+      "required": true,
+      "schema": {
+       "enum": [
+        "course",
+        "bundle",
+        "access_pass"
+       ],
+       "type": "string"
+      }
+     },
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "currency": {
+          "example": "EUR",
+          "type": "string"
+         },
+         "for_sale": {
+          "type": "boolean"
+         },
+         "price_minor": {
+          "minimum": 1,
+          "type": "integer"
+         }
+        },
+        "required": [
+         "price_minor",
+         "currency"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "The sellable with its price"
+     },
+     "403": {
+      "description": "Forbidden"
+     },
+     "404": {
+      "description": "No such sellable"
+     },
+     "422": {
+      "description": "Invalid price"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Set the price of a sellable and put it on or off sale",
+    "tags": [
+     "Commerce"
     ]
    }
   },
@@ -12043,6 +12829,343 @@
      }
     ],
     "summary": "Blueprint version history",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/style-profiles": {
+   "get": {
+    "description": "Style profiles (ADR 0196): the cited, author-approved reading of an organisation's style guide. Anyone who may use\nthe Course Builder can list, read and propose profiles (a profile belongs to the whole academy, like a theme);\nediting and deleting a suggestion is for its creator or an admin; approving is for admins, because an approved\nprofile shapes every course drafted afterwards. The style guide is an untrusted upload; its text never leaves the\nextraction call.",
+    "operationId": "admin.course-builder.style-profiles.get",
+    "parameters": [
+     {
+      "in": "query",
+      "name": "status",
+      "schema": {
+       "enum": [
+        "suggested",
+        "approved",
+        "superseded"
+       ],
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "profiles"
+     },
+     "403": {
+      "description": "no access to the Course Builder"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Style profiles of the academy, newest first (filter with status, scopeType, scopeId)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   },
+   "post": {
+    "operationId": "admin.course-builder.style-profiles.post",
+    "requestBody": {
+     "content": {
+      "multipart/form-data": {
+       "schema": {
+        "properties": {
+         "file": {
+          "format": "binary",
+          "type": "string"
+         },
+         "from": {
+          "type": "string"
+         },
+         "name": {
+          "type": "string"
+         },
+         "profile": {
+          "type": "string"
+         },
+         "scopeId": {
+          "type": "string"
+         },
+         "scopeType": {
+          "enum": [
+           "tenant",
+           "brief"
+          ],
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the suggested profile with what was dropped as warnings"
+     },
+     "422": {
+      "description": "rejected upload or invalid body"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Propose a style profile: upload a style guide (file, MD/PDF/DOCX) to have it read and cited, or send values by hand (profile, optionally from an existing profile id)",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/style-profiles/{profile}": {
+   "delete": {
+    "operationId": "admin.course-builder.style-profiles.by-profile.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "profile",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "deleted"
+     },
+     "409": {
+      "description": "approved profiles are replaced, not deleted"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Delete a suggested or superseded profile",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   },
+   "get": {
+    "operationId": "admin.course-builder.style-profiles.by-profile.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "profile",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "profile, diff, cited fragments"
+     },
+     "404": {
+      "description": "unknown"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "A style profile with the passages it cites and its diff against the approved profile",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   },
+   "patch": {
+    "operationId": "admin.course-builder.style-profiles.by-profile.patch",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "profile",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "name": {
+          "type": "string"
+         },
+         "profile": {
+          "type": "object"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "the profile"
+     },
+     "403": {
+      "description": "not the creator or an admin"
+     },
+     "409": {
+      "description": "no longer a suggestion"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Edit a suggested profile (values and name); invalid values are dropped and reported",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/style-profiles/{profile}/approve": {
+   "post": {
+    "operationId": "admin.course-builder.style-profiles.by-profile.approve.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "profile",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "approved"
+     },
+     "403": {
+      "description": "not an admin"
+     },
+     "409": {
+      "description": "not a suggestion"
+     },
+     "422": {
+      "description": "empty profile"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Approve a suggested profile (admins); it supersedes the approved profile of its scope",
+    "tags": [
+     "Admin Course Builder"
+    ]
+   }
+  },
+  "/api/admin/course-builder/style-profiles/{profile}/check": {
+   "get": {
+    "operationId": "admin.course-builder.style-profiles.by-profile.check.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "profile",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "LMS course id of a course made with the builder (a variant's course too)",
+      "in": "query",
+      "name": "course",
+      "required": true,
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "blocking, warnings and hints, each with the style guide passages it comes from"
+     },
+     "403": {
+      "description": "another author's course"
+     },
+     "404": {
+      "description": "unknown profile or course"
+     },
+     "422": {
+      "description": "course missing"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Style check: where a course departs from a profile (banned phrases, terminology, casing, landing components, image alt text; reading level and sentence length as hints). Only the author of the course or an admin; nothing is changed",
     "tags": [
      "Admin Course Builder"
     ]
@@ -16595,6 +17718,204 @@
     ]
    }
   },
+  "/api/admin/identity/providers/{provider}/scim-tokens": {
+   "get": {
+    "description": "OpenAPI description of the SCIM token endpoints of an identity provider (permission identity_scim_manage).",
+    "operationId": "identity.providers.scim-tokens.list",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "items": {
+            "$ref": "#/components/schemas/ApiToken"
+           },
+           "type": "array"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Tokens (the secret is never listed)"
+     },
+     "403": {
+      "description": "Needs identity_scim_manage"
+     },
+     "404": {
+      "description": "Not found"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "SCIM tokens of an identity provider, active and revoked",
+    "tags": [
+     "Admin Identity"
+    ]
+   },
+   "post": {
+    "operationId": "identity.providers.scim-tokens.create",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "expires_in_days": {
+          "description": "Default 365",
+          "maximum": 365,
+          "minimum": 1,
+          "type": "integer"
+         },
+         "name": {
+          "maxLength": 100,
+          "type": "string"
+         }
+        },
+        "required": [
+         "name"
+        ],
+        "type": "object"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "data": {
+           "$ref": "#/components/schemas/ApiTokenCreated"
+          },
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Created: copy the token now"
+     },
+     "403": {
+      "description": "Needs identity_scim_manage"
+     },
+     "404": {
+      "description": "Not found"
+     },
+     "422": {
+      "description": "Invalid input, or two tokens are already active"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Create a SCIM token for an identity provider (shown once; at most two active, for rotation)",
+    "tags": [
+     "Admin Identity"
+    ]
+   }
+  },
+  "/api/admin/identity/providers/{provider}/scim-tokens/{token}": {
+   "delete": {
+    "operationId": "identity.providers.scim-tokens.revoke",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "provider",
+      "required": true,
+      "schema": {
+       "format": "uuid",
+       "type": "string"
+      }
+     },
+     {
+      "description": "Id of the token",
+      "in": "path",
+      "name": "token",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "properties": {
+          "message": {
+           "type": "string"
+          },
+          "success": {
+           "type": "boolean"
+          }
+         },
+         "type": "object"
+        }
+       }
+      },
+      "description": "Revoked"
+     },
+     "403": {
+      "description": "Needs identity_scim_manage"
+     },
+     "404": {
+      "description": "Not found"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Revoke a SCIM token",
+    "tags": [
+     "Admin Identity"
+    ]
+   }
+  },
   "/api/admin/identity/providers/{provider}/sp-keys/rotate": {
    "post": {
     "operationId": "identity.providers.spkeys.rotate",
@@ -19807,6 +21128,88 @@
      }
     ],
     "summary": "Per-element staleness and the course summary",
+    "tags": [
+     "Admin Living Course"
+    ]
+   }
+  },
+  "/api/admin/living-course/sessions/{session}/style-proposals": {
+   "post": {
+    "description": "Restyle proposals (ADR 0196): after a style profile changes, an optional proposal that brings the flagged elements of a\ncourse in line with it. Without `confirmEstimate` it only says what would be rewritten and what it would cost; with it, a\nproposal of kind `style` is created and analysed. The author reviews and applies the diff on the Living Course review\nscreen; nothing changes in the course before that, and a restyle is never started by itself.",
+    "operationId": "admin.living-course.sessions.by-session.style-proposals.post",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "session",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/json": {
+       "schema": {
+        "properties": {
+         "confirmEstimate": {
+          "type": "boolean"
+         },
+         "styleProfileId": {
+          "type": "string"
+         }
+        },
+        "type": "object"
+       }
+      }
+     }
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "state estimate (what and how much) or kept_existing"
+     },
+     "201": {
+      "content": {
+       "application/json": {
+        "schema": {
+         "$ref": "#/components/schemas/ApiEnvelope"
+        }
+       }
+      },
+      "description": "proposal created and analysis started"
+     },
+     "403": {
+      "description": "not the author"
+     },
+     "404": {
+      "description": "unknown session or profile"
+     },
+     "409": {
+      "description": "no approved version"
+     },
+     "422": {
+      "description": "profile not approved, nothing to restyle, or budget"
+     },
+     "429": {
+      "description": "daily limit"
+     },
+     "503": {
+      "description": "AI disabled"
+     }
+    },
+    "security": [
+     {
+      "passport": []
+     }
+    ],
+    "summary": "Propose a restyle of the course for an approved style profile (default: the one the brief names, else the academy's). Without confirmEstimate: the estimate only",
     "tags": [
      "Admin Living Course"
     ]
@@ -44556,6 +45959,1235 @@
     ]
    }
   },
+  "/api/scim/v2/Groups": {
+   "get": {
+    "operationId": "scim.groups.list",
+    "parameters": [
+     {
+      "description": "RFC 7644 filter. Attributes: id, displayName, externalId, members.value, members[value eq ...], meta.lastModified, meta.created",
+      "in": "query",
+      "name": "filter",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "1-based, default 1",
+      "in": "query",
+      "name": "startIndex",
+      "schema": {
+       "minimum": 1,
+       "type": "integer"
+      }
+     },
+     {
+      "description": "Default 100, at most 200; 0 returns only totalResults",
+      "in": "query",
+      "name": "count",
+      "schema": {
+       "maximum": 200,
+       "minimum": 0,
+       "type": "integer"
+      }
+     },
+     {
+      "description": "Comma-separated attributes to return",
+      "in": "query",
+      "name": "attributes",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "Comma-separated attributes to leave out, for example members",
+      "in": "query",
+      "name": "excludedAttributes",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimGroupList"
+        }
+       }
+      },
+      "description": "A page of groups"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidFilter or invalidValue"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "List or filter the groups this identity provider created",
+    "tags": [
+     "SCIM"
+    ]
+   },
+   "post": {
+    "operationId": "scim.groups.create",
+    "requestBody": {
+     "content": {
+      "application/scim+json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScimGroup"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimGroup"
+        }
+       }
+      },
+      "description": "Created: Location and ETag headers set"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidSyntax or invalidValue, for example a member that is not a user of this provider"
+     },
+     "409": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "uniqueness: the displayName (also of groups this provider did not create) or externalId is used"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Create a group, optionally with members (users of this provider)",
+    "tags": [
+     "SCIM"
+    ]
+   }
+  },
+  "/api/scim/v2/Groups/.search": {
+   "post": {
+    "operationId": "scim.groups.search",
+    "requestBody": {
+     "content": {
+      "application/scim+json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScimSearchRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimGroupList"
+        }
+       }
+      },
+      "description": "A page of groups"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidSyntax or invalidFilter"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Search groups with a request body (RFC 7644 3.4.3)",
+    "tags": [
+     "SCIM"
+    ]
+   }
+  },
+  "/api/scim/v2/Groups/{id}": {
+   "delete": {
+    "operationId": "scim.groups.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "A version (ETag) from meta.version; a stale one answers 412",
+      "in": "header",
+      "name": "If-Match",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Deleted"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Not a group of this provider"
+     },
+     "412": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Stale If-Match"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Delete a group: the access it gave goes, the people stay",
+    "tags": [
+     "SCIM"
+    ]
+   },
+   "get": {
+    "operationId": "scim.groups.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "The version you have; a match answers 304",
+      "in": "header",
+      "name": "If-None-Match",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "attributes",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "excludedAttributes",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimGroup"
+        }
+       }
+      },
+      "description": "The group with its ETag"
+     },
+     "304": {
+      "description": "Not modified"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Not a group of this provider"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "One group with the members this provider provisioned",
+    "tags": [
+     "SCIM"
+    ]
+   },
+   "patch": {
+    "operationId": "scim.groups.patch",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "A version (ETag) from meta.version; a stale one answers 412",
+      "in": "header",
+      "name": "If-Match",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/scim+json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScimPatchOp"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimGroup"
+        }
+       }
+      },
+      "description": "The updated group"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidSyntax, invalidPath, invalidValue, noTarget or mutability"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Not a group of this provider"
+     },
+     "409": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "uniqueness"
+     },
+     "412": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Stale If-Match"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Rename a group and add, replace or remove members (all or none)",
+    "tags": [
+     "SCIM"
+    ]
+   },
+   "put": {
+    "operationId": "scim.groups.replace",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "A version (ETag) from meta.version; a stale one answers 412",
+      "in": "header",
+      "name": "If-Match",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/scim+json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScimGroup"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimGroup"
+        }
+       }
+      },
+      "description": "The updated group"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidValue or mutability"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Not a group of this provider"
+     },
+     "409": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "uniqueness"
+     },
+     "412": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Stale If-Match"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Replace a group (a missing members attribute keeps the membership; an empty list empties it)",
+    "tags": [
+     "SCIM"
+    ]
+   }
+  },
+  "/api/scim/v2/ResourceTypes": {
+   "get": {
+    "operationId": "scim.resource-types.list",
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimListResponse"
+        }
+       }
+      },
+      "description": "User and Group"
+     },
+     "401": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "No valid SCIM token"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "SCIM resource types",
+    "tags": [
+     "SCIM"
+    ]
+   }
+  },
+  "/api/scim/v2/ResourceTypes/{id}": {
+   "get": {
+    "operationId": "scim.resource-types.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimResource"
+        }
+       }
+      },
+      "description": "The resource type"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Unknown resource type"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "One SCIM resource type",
+    "tags": [
+     "SCIM"
+    ]
+   }
+  },
+  "/api/scim/v2/Schemas": {
+   "get": {
+    "operationId": "scim.schemas.list",
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimListResponse"
+        }
+       }
+      },
+      "description": "Schema definitions"
+     },
+     "401": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "No valid SCIM token"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "SCIM schemas (User, EnterpriseUser, Group)",
+    "tags": [
+     "SCIM"
+    ]
+   }
+  },
+  "/api/scim/v2/Schemas/{id}": {
+   "get": {
+    "operationId": "scim.schemas.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimResource"
+        }
+       }
+      },
+      "description": "The schema"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Unknown schema"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "One SCIM schema by its URN",
+    "tags": [
+     "SCIM"
+    ]
+   }
+  },
+  "/api/scim/v2/ServiceProviderConfig": {
+   "get": {
+    "description": "OpenAPI description of the SCIM 2.0 server (RFC 7643, 7644) at /api/scim/v2. It is for identity providers (Entra ID,\nOkta, Keycloak and others) and is excluded from the CLI (front/cli/spec/exclusions.yaml). Every request needs a\nSCIM bearer token (`Authorization: Bearer ulams_pat_...`) created for one identity provider; errors use the SCIM\nerror schema with `scimType`; responses are `application/scim+json` with an `ETag` header.",
+    "operationId": "scim.service-provider-config.get",
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimResource"
+        }
+       }
+      },
+      "description": "Capabilities of this SCIM server"
+     },
+     "401": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "No valid SCIM token"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "SCIM service provider configuration (RFC 7644 4)",
+    "tags": [
+     "SCIM"
+    ]
+   }
+  },
+  "/api/scim/v2/Users": {
+   "get": {
+    "operationId": "scim.users.list",
+    "parameters": [
+     {
+      "description": "RFC 7644 filter: eq ne co sw ew gt ge lt le pr, and, or, not, value paths. Attributes: id, userName, externalId, emails.value, emails[...], active, name.givenName, name.familyName, meta.lastModified, meta.created",
+      "in": "query",
+      "name": "filter",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "1-based, default 1",
+      "in": "query",
+      "name": "startIndex",
+      "schema": {
+       "minimum": 1,
+       "type": "integer"
+      }
+     },
+     {
+      "description": "Default 100, at most 200; 0 returns only totalResults",
+      "in": "query",
+      "name": "count",
+      "schema": {
+       "maximum": 200,
+       "minimum": 0,
+       "type": "integer"
+      }
+     },
+     {
+      "description": "Comma-separated attributes to return",
+      "in": "query",
+      "name": "attributes",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "Comma-separated attributes to leave out",
+      "in": "query",
+      "name": "excludedAttributes",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimUserList"
+        }
+       }
+      },
+      "description": "A page of users"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidFilter or invalidValue"
+     },
+     "401": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "No valid SCIM token"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "List or filter the users this identity provider provisioned",
+    "tags": [
+     "SCIM"
+    ]
+   },
+   "post": {
+    "operationId": "scim.users.create",
+    "requestBody": {
+     "content": {
+      "application/scim+json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScimUser"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "201": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimUser"
+        }
+       }
+      },
+      "description": "Created: Location and ETag headers set"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidSyntax or invalidValue"
+     },
+     "409": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "uniqueness: userName, externalId or e-mail already used"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Create a user (or adopt an existing account the provider is trusted for)",
+    "tags": [
+     "SCIM"
+    ]
+   }
+  },
+  "/api/scim/v2/Users/.search": {
+   "post": {
+    "operationId": "scim.users.search",
+    "requestBody": {
+     "content": {
+      "application/scim+json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScimSearchRequest"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimUserList"
+        }
+       }
+      },
+      "description": "A page of users"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidSyntax or invalidFilter"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Search users with a request body (RFC 7644 3.4.3)",
+    "tags": [
+     "SCIM"
+    ]
+   }
+  },
+  "/api/scim/v2/Users/{id}": {
+   "delete": {
+    "operationId": "scim.users.delete",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "A version (ETag) from meta.version; a stale one answers 412",
+      "in": "header",
+      "name": "If-Match",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "204": {
+      "description": "Deprovisioned"
+     },
+     "403": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Administrators cannot be changed"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Not a user of this provider"
+     },
+     "412": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Stale If-Match"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Deprovision a user: deactivate, revoke every session and token, keep the learning record (anonymise when configured)",
+    "tags": [
+     "SCIM"
+    ]
+   },
+   "get": {
+    "operationId": "scim.users.get",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "The version you have; a match answers 304",
+      "in": "header",
+      "name": "If-None-Match",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "attributes",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "in": "query",
+      "name": "excludedAttributes",
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimUser"
+        }
+       }
+      },
+      "description": "The user with its ETag"
+     },
+     "304": {
+      "description": "Not modified"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Not a user of this provider"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "One user",
+    "tags": [
+     "SCIM"
+    ]
+   },
+   "patch": {
+    "operationId": "scim.users.patch",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "A version (ETag) from meta.version; a stale one answers 412",
+      "in": "header",
+      "name": "If-Match",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/scim+json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScimPatchOp"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimUser"
+        }
+       }
+      },
+      "description": "The updated user"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidSyntax, invalidPath, invalidValue, noTarget or mutability"
+     },
+     "403": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Administrators cannot be changed"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Not a user of this provider"
+     },
+     "409": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "uniqueness"
+     },
+     "412": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Stale If-Match"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Change a user with add, replace and remove operations (all or none)",
+    "tags": [
+     "SCIM"
+    ]
+   },
+   "put": {
+    "operationId": "scim.users.replace",
+    "parameters": [
+     {
+      "in": "path",
+      "name": "id",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "description": "A version (ETag) from meta.version; a stale one answers 412",
+      "in": "header",
+      "name": "If-Match",
+      "required": false,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "requestBody": {
+     "content": {
+      "application/scim+json": {
+       "schema": {
+        "$ref": "#/components/schemas/ScimUser"
+       }
+      }
+     },
+     "required": true
+    },
+    "responses": {
+     "200": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimUser"
+        }
+       }
+      },
+      "description": "The updated user"
+     },
+     "400": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "invalidValue or mutability"
+     },
+     "403": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Administrators cannot be changed"
+     },
+     "404": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Not a user of this provider"
+     },
+     "409": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "uniqueness"
+     },
+     "412": {
+      "content": {
+       "application/scim+json": {
+        "schema": {
+         "$ref": "#/components/schemas/ScimError"
+        }
+       }
+      },
+      "description": "Stale If-Match"
+     }
+    },
+    "security": [
+     {
+      "scim": []
+     }
+    ],
+    "summary": "Replace a user (omitted attributes are cleared; an omitted active keeps the current state)",
+    "tags": [
+     "SCIM"
+    ]
+   }
+  },
   "/api/scorm/assets/scorm-again.min.js": {
    "get": {
     "operationId": "scorm.assets.scorm-again-min-js.get",
@@ -46883,6 +49515,10 @@
    "name": "Code exercises"
   },
   {
+   "description": "Commerce",
+   "name": "Commerce"
+  },
+  {
    "description": "Commerce webhooks",
    "name": "Commerce webhooks"
   },
@@ -46993,6 +49629,10 @@
   {
    "description": "Identity",
    "name": "Identity"
+  },
+  {
+   "description": "SCIM",
+   "name": "SCIM"
   },
   {
    "description": "Images",

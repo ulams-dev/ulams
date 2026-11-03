@@ -9,7 +9,7 @@ namespace Ulams\Auth\Http\Controllers\Swagger;
  *     @OA\Property(property="id", type="string"),
  *     @OA\Property(property="name", type="string"),
  *     @OA\Property(property="scopes", type="array", @OA\Items(type="string", example="courses:write")),
- *     @OA\Property(property="kind", type="string", enum={"cli","agent","ci","integration"}),
+ *     @OA\Property(property="kind", type="string", enum={"cli","agent","ci","integration","scim"}),
  *     @OA\Property(property="agent_name", type="string", nullable=true),
  *     @OA\Property(property="created_via", type="string", enum={"admin","cli","device"}),
  *     @OA\Property(property="rate_limit_per_minute", type="integer", nullable=true),

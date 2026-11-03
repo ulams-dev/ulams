@@ -12,7 +12,7 @@ What happens when the source changes:
 - ULAMS shows the diff, and finds the lessons and quiz questions that cite the changed passage
 - it proposes new versions, each one citing the passage it came from. AI proposes, you approve. Nothing in the course changes until you apply
 
-I ran this on a small on-call runbook. One commit changed "escalate after 10 minutes" to 15, and added a section. Result: 5 course elements to review (2 text blocks, 2 quiz questions, 1 objective), 2 answers flagged as changed, and the new section offered as an uncovered one. One click on "Suggest a lesson" gave a cited draft lesson. The whole check took about half a second on my laptop. The full run, with the real requests and numbers, is here: [/creators/git-sync-worked-example/](/creators/git-sync-worked-example/)
+I ran this on a small on-call runbook. One commit changed "escalate after 10 minutes" to 15, and added a section. Result: 5 course elements to review (2 text blocks, 2 quiz questions, 1 objective), 2 answers flagged as changed, and the new section offered as an uncovered one. One click on "Suggest a lesson" gave a cited draft lesson. The whole check took about half a second on my laptop. The full run, with the real requests and numbers, is here: [/creators/git-sync-worked-example/](https://ulams-dev.github.io/ulams/creators/git-sync-worked-example/)
 
 What I care about most is safety, because you point this at servers you don't control:
 
@@ -28,6 +28,6 @@ What's real:
 - all three are off by default. An admin turns them on with `LIVING_COURSE_CONNECTORS`, the image needs `git`, and Drive and Notion need an OAuth app that your installation owns. Drive and Notion live inside the living-course package
 - in my run the AI was the built-in simulation, so the cost of $0.02 is a calculation, not a bill, and it says nothing about real model quality
 
-How to switch them on: [/admin/living-course/](/admin/living-course/)
+How to switch them on: [/admin/living-course/](https://ulams-dev.github.io/ulams/admin/living-course/)
 
 Which source would you point your course at first: the repo, a Drive doc or Notion?

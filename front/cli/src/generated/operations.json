@@ -67,6 +67,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/authoring-metrics/courses/export",
+  "summary": "Export the authoring metric",
+  "tag": "Authoring metrics"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/bookmarks",
   "summary": "Get a listing of the bookmarks",
   "tag": "Admin Bookmarks"
@@ -172,6 +178,30 @@
   "path": "/api/admin/code-exercises/topics/{topic}/preview",
   "summary": "Preview a code exercise as its author",
   "tag": "Code exercises"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/commerce/access-passes",
+  "summary": "Create an access pass",
+  "tag": "Commerce"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/commerce/bundles",
+  "summary": "Create a bundle of courses",
+  "tag": "Commerce"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/commerce/products",
+  "summary": "Prices and product state of everything this tenant sells",
+  "tag": "Commerce"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/commerce/products/{type}/{id}",
+  "summary": "Set the price of a sellable and put it on or off sale",
+  "tag": "Commerce"
  },
  {
   "method": "GET",
@@ -678,6 +708,48 @@
   "tag": "Admin Course Builder"
  },
  {
+  "method": "GET",
+  "path": "/api/admin/course-builder/style-profiles",
+  "summary": "Style profiles of the academy, newest first (filter with status, scopeType, scopeId)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/style-profiles",
+  "summary": "Propose a style profile: upload a style guide (file, MD/PDF/DOCX) to have it read and cited, or send values by hand (profile, optionally from an existing profile id)",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/course-builder/style-profiles/{profile}",
+  "summary": "Delete a suggested or superseded profile",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/style-profiles/{profile}",
+  "summary": "A style profile with the passages it cites and its diff against the approved profile",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/admin/course-builder/style-profiles/{profile}",
+  "summary": "Edit a suggested profile (values and name); invalid values are dropped and reported",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/course-builder/style-profiles/{profile}/approve",
+  "summary": "Approve a suggested profile (admins); it supersedes the approved profile of its scope",
+  "tag": "Admin Course Builder"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/course-builder/style-profiles/{profile}/check",
+  "summary": "Style check: where a course departs from a profile (banned phrases, terminology, casing, landing components, image alt text; reading level and sentence length as hints). Only the author of the course or an admin; nothing is changed",
+  "tag": "Admin Course Builder"
+ },
+ {
   "method": "DELETE",
   "path": "/api/admin/course-builder/variants/{variant}",
   "summary": "Retire a variant (its course, if it has one, is kept)",
@@ -1158,6 +1230,24 @@
   "tag": "Admin Identity"
  },
  {
+  "method": "GET",
+  "path": "/api/admin/identity/providers/{provider}/scim-tokens",
+  "summary": "SCIM tokens of an identity provider, active and revoked",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/identity/providers/{provider}/scim-tokens",
+  "summary": "Create a SCIM token for an identity provider (shown once; at most two active, for rotation)",
+  "tag": "Admin Identity"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/admin/identity/providers/{provider}/scim-tokens/{token}",
+  "summary": "Revoke a SCIM token",
+  "tag": "Admin Identity"
+ },
+ {
   "method": "POST",
   "path": "/api/admin/identity/providers/{provider}/sp-keys/rotate",
   "summary": "Prepare or activate the next SAML service provider key pair",
@@ -1569,6 +1659,12 @@
   "method": "GET",
   "path": "/api/admin/living-course/sessions/{session}/staleness",
   "summary": "Per-element staleness and the course summary",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/sessions/{session}/style-proposals",
+  "summary": "Propose a restyle of the course for an approved style profile (default: the one the brief names, else the academy's). Without confirmEstimate: the estimate only",
   "tag": "Admin Living Course"
  },
  {
@@ -4294,6 +4390,120 @@
   "path": "/api/reporting/odata/$metadata",
   "summary": "OData metadata document",
   "tag": "Reporting"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/Groups",
+  "summary": "List or filter the groups this identity provider created",
+  "tag": "SCIM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/scim/v2/Groups",
+  "summary": "Create a group, optionally with members (users of this provider)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/scim/v2/Groups/.search",
+  "summary": "Search groups with a request body (RFC 7644 3.4.3)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/scim/v2/Groups/{id}",
+  "summary": "Delete a group: the access it gave goes, the people stay",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/Groups/{id}",
+  "summary": "One group with the members this provider provisioned",
+  "tag": "SCIM"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/scim/v2/Groups/{id}",
+  "summary": "Rename a group and add, replace or remove members (all or none)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/scim/v2/Groups/{id}",
+  "summary": "Replace a group (a missing members attribute keeps the membership; an empty list empties it)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/ResourceTypes",
+  "summary": "SCIM resource types",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/ResourceTypes/{id}",
+  "summary": "One SCIM resource type",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/Schemas",
+  "summary": "SCIM schemas (User, EnterpriseUser, Group)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/Schemas/{id}",
+  "summary": "One SCIM schema by its URN",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/ServiceProviderConfig",
+  "summary": "SCIM service provider configuration (RFC 7644 4)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/Users",
+  "summary": "List or filter the users this identity provider provisioned",
+  "tag": "SCIM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/scim/v2/Users",
+  "summary": "Create a user (or adopt an existing account the provider is trusted for)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "POST",
+  "path": "/api/scim/v2/Users/.search",
+  "summary": "Search users with a request body (RFC 7644 3.4.3)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "DELETE",
+  "path": "/api/scim/v2/Users/{id}",
+  "summary": "Deprovision a user: deactivate, revoke every session and token, keep the learning record (anonymise when configured)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "GET",
+  "path": "/api/scim/v2/Users/{id}",
+  "summary": "One user",
+  "tag": "SCIM"
+ },
+ {
+  "method": "PATCH",
+  "path": "/api/scim/v2/Users/{id}",
+  "summary": "Change a user with add, replace and remove operations (all or none)",
+  "tag": "SCIM"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/scim/v2/Users/{id}",
+  "summary": "Replace a user (omitted attributes are cleared; an omitted active keeps the current state)",
+  "tag": "SCIM"
  },
  {
   "method": "GET",

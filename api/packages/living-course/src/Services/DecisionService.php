@@ -112,7 +112,7 @@ final class DecisionService
             $proposal->forceFill(['status' => 'rejected', 'decided_by' => $userId, 'decided_at' => now()])->save();
             ProposalItem::query()->where('proposal_id', $proposal->id)->whereIn('status', ['pending', 'accepted', 'conflict', 'stale'])->where('kind', '!=', 'citation_remap')
                 ->update(['status' => 'rejected', 'decided_by' => $userId, 'decided_at' => now()]);
-            if ($proposal->isInsights() || $proposal->isVariant()) {
+            if ($proposal->isSourceless() || $proposal->isVariant()) {
                 // no source revision to acknowledge and no source staleness to settle (a variant proposal belongs to a revision that
                 // only the base proposal acknowledges, ADR 0192)
                 $this->audit->record('proposal.rejected', [

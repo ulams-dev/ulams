@@ -146,7 +146,7 @@ class CourseBuilderController extends Controller
     public function index(Request $request): JsonResponse
     {
         $this->assertCanUse($request);
-        $sessions = Session::query()->where('author_id', $request->user()->getKey())->latest('updated_at')->limit(100)->get();
+        $sessions = Session::query()->where('author_id', $request->user()->getKey())->where('status', '!=', Session::STYLE_GUIDE)->latest('updated_at')->limit(100)->get();
 
         return self::ok($sessions->map(fn (Session $s) => SessionState::summary($s) + ['costMicroUsd' => (int) $s->cost_micro_usd])->all());
     }
@@ -257,6 +257,9 @@ class CourseBuilderController extends Controller
                     $patch[$field] = BriefService::$normalise($patch[$field]);
                     unset($before[$field]);
                 }
+            }
+            if (array_key_exists('styleProfileId', $patch)) {
+                $patch['styleProfileId'] = BriefService::styleProfileId($patch['styleProfileId']);
             }
         } catch (InvalidArgumentException $e) {
             return self::fail($e->getMessage(), 422);

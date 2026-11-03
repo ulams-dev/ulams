@@ -658,6 +658,7 @@ export const registry = {
               title: text("Title", { maxLength: 80 }),
               text: text("Sentence", { maxLength: 240 }),
               status: oneOf(["available", "coming"], "Shipped today or on the roadmap (say so honestly)", "available"),
+              link: LINK,
             },
             ["title"]
           ),

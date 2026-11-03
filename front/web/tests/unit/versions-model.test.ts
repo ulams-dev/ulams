@@ -40,7 +40,7 @@ describe("versions strings", () => {
   });
 
   it("has a sentence for every trigger the API can send", () => {
-    expect(Object.keys(en.triggers).sort()).toEqual(["author", "chat", "generate", "import", "insights", "rebase", "restore", "update"]);
+    expect(Object.keys(en.triggers).sort()).toEqual(["author", "chat", "generate", "import", "insights", "rebase", "restore", "style", "update"]);
   });
 });
 

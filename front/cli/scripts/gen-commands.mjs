@@ -195,6 +195,13 @@ function collectParams(spec, op) {
   return out;
 }
 
+/** A binary property, or a list of them (file[]). */
+function isBinary(spec, schema) {
+  const r = deref(spec, schema);
+  if (r?.type === "file" || r?.format === "binary") return true;
+  return r?.type === "array" && isBinary(spec, r.items ?? {});
+}
+
 function bodyInfo(spec, op) {
   const rb = op.requestBody;
   if (!rb) return { mode: "none" };
@@ -209,7 +216,7 @@ function bodyInfo(spec, op) {
   const resolved = deref(spec, schema ?? {});
   const mode = json ? "json" : "multipart";
   const props = resolved?.properties;
-  const files = props ? Object.entries(props).filter(([, v]) => deref(spec, v)?.type === "file" || deref(spec, v)?.format === "binary").map(([k]) => k) : [];
+  const files = props ? Object.entries(props).filter(([, v]) => isBinary(spec, v)).map(([k]) => k) : [];
   return {
     mode,
     schema,
@@ -312,8 +319,9 @@ export function buildCommands({ spec, overrides, exclusions }) {
         for (const [name, schema] of Object.entries(body.resolved.properties)) {
           if (fields.has(name)) continue;
           const r = deref(spec, schema) ?? {};
-          const isFile = r.type === "file" || r.format === "binary";
-          let z = isFile ? `z.string().describe(${q((r.description ?? name) + " (path of a local file)")})` : zodFor(spec, schema);
+          const isFile = isBinary(spec, schema);
+          const isList = r.type === "array";
+          let z = isFile && isList ? `z.array(z.string()).describe(${q((r.description ?? name) + " (paths of local files)")})` : isFile ? `z.string().describe(${q((r.description ?? name) + " (path of a local file)")})` : zodFor(spec, schema);
           if (r.description && !z.includes(".describe(")) z += `.describe(${q(r.description)})`;
           // Updates reuse the create schema; the server validates, so a partial update must not be blocked here.
           const isUpdate = method === "put" || method === "patch" || verb === "update";

@@ -23,6 +23,12 @@ small commits → tests → summary.
       (ADR 0101 Proposed; requested by owner 2026-10-12). Documentation published through PR #247 and GitHub Pages run 38295754529.
       Live landing pageview and demo_open click accepted (HTTP 200); verification browser excluded.
 
+- [ ] (new) Owner feedback 2026-10-23 on the landing preview: a builder walkthrough on the home page (the real interview
+      questions and screens, then the course and the measured run), a white paper page (/white-paper/, print stylesheet and
+      "Print / save as PDF"; no build-time PDF because api/pdf only fills pdfme templates) and a style guide (home section and
+      /style-guide/, tokens read from the stylesheets, presets, AA guard, brand-import diff, catalogue), EN/PL/ZH
+      (partial: implemented and tested on branch feat/home-builder-whitepaper-styleguide, PR open, not merged).
+
 - [x] (2026-10-12) Owner requested the complete previous feature catalogue on Comparison,
       organised by stakeholder with full descriptions and documentation links (ADR 0100 Proposed).
 - [x] (new) Current Overview/Comparison page is highlighted in desktop and mobile menus in EN/PL/ZH.
@@ -139,6 +145,7 @@ small commits → tests → summary.
 - [ ] Move certificates (6.1) earlier if compliance is the priority segment
 - [ ] Multitenancy for the POC: one deployment, tenant per subdomain with own theme?
 - [ ] Prototype the Sylius order → entitlement flow early (highest-risk commerce piece)
+      Note 2026-10-23 (CM-3): the Sylius half is built and tested against a real Sylius 2.3 (see Phase 6.4); the item closes with the CM-7 end-to-end job
       Note 2026-10-22: the LMS half is prototyped with a fake provider (CM-1, #356); the Sylius half is not started, so the risk this item names is still open
 - [x] Add the spec file to the repo as `docs/ROADMAP-PROMPT.md`
 - [x] (new) Approve the Phase 1 and Phase 2 plans (`docs/plans/phase-1.md`, `docs/plans/phase-2.md`)
@@ -543,10 +550,11 @@ approved apply through domain services → element chat edits. Designs:
       edited, revised on request, author-written), shown in the studio and admin analytics, exportable, over the
       API, CLI and MCP, and an "hours per learner hour" figure from the tenant's own data with no benchmark claims
       (plan `docs/plans/authoring-metric-and-report-builder.md` AM-1 to AM-6; ADR 0194 Accepted 2026-10-22; market research:
-      authoring cost is the core pain) (partial: AM-1, AM-2 and AM-3 done: `authoring_stage_timings` records wall time per pipeline stage,
+      authoring cost is the core pain) (partial: AM-1 to AM-4 done: `authoring_stage_timings` records wall time per pipeline stage,
       kept beyond the 30-day event retention, with the idempotent `authoring-metrics:backfill`; element provenance is in the next item; AM-3: `authoring_course_metrics` snapshot, cost resolver and
-      `GET /api/admin/authoring-metrics/courses[/{course}]`; AM-4 (studio and admin screens, export), AM-5 (review time), AM-6
-      (CLI curation, hours per learner hour) pending)
+      `GET /api/admin/authoring-metrics/courses[/{course}]`; AM-4: studio "Production" page per course and admin Analytics > Authoring with
+      CSV and JSON lines export, EN/PL/ZH, axe and keyboard specs; tenant medians with n and the publish summary mention wait for AM-6; AM-5 (review time),
+      AM-6 (CLI curation, hours per learner hour) pending)
 - [ ] (new) Element provenance for direct author edits: the outline editor tags edited elements, AI output carries a
       content hash, so accepted vs edited AI elements can be counted (plan `authoring-metric-and-report-builder.md` AM-2) (partial: AM-2 done: `ai_hash` and
       `edited_by_author` in blueprint v3, set by generation, outline editor, LMS drift, import and element chat edits, with
@@ -655,6 +663,18 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
       accepts `secrets.token`; the form offers only OAuth, which blocked the Notion case study in #408): masked input,
       verified against Notion before saving, encrypted at rest, shown only as the last four characters, never in logs,
       events, audit entries or responses (plan `docs/plans/authoring-metric-and-report-builder.md` NT-1)
+- [ ] (new) Confluence connector plugin (Cloud first, Data Center after): a space or a page tree as a source, page
+      versions as revisions for change detection, attachments as source documents, OAuth or an API token stored like the
+      Notion token; requested by the owner on 2026-10-23 for the home-page journey, which shows Confluence only as an
+      exported file until this ships
+- [ ] (new) SharePoint and OneDrive connector plugin (Microsoft Graph): a document library, folder or site pages as a
+      source, drive item versions and delta queries for change detection, Entra ID app consent per tenant; requested by
+      the owner on 2026-10-23
+- [ ] (new) Help-center connector plugins (Zendesk Guide, Intercom Articles, Freshdesk Solutions): a help center,
+      category or section as a source, article update timestamps for change detection, an API token per tenant stored
+      like the Notion token; requested by the owner on 2026-10-23
+- [ ] (new) Box and Dropbox connector plugins: a folder as a source, file versions and change cursors for change
+      detection, OAuth per tenant like Google Drive; requested by the owner on 2026-10-23
 
 ### 3.1 Course versions with a visual diff (new)
 
@@ -840,6 +860,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       as a diff; the builder prompt carries the approved profile (never the raw style guide), a style check critic reports
       deviations, and a changed profile can propose a reviewed restyle; per tenant, entry point and brief
       (plan `docs/plans/style-guide-course-design.md` SG-1 to SG-5; ADR 0196 Proposed; shown as "Coming" in the policy story)
+      (partial: SG-1 done, style profile API, cited extraction, approval and `ulams style-profiles`; SG-2 done, studio `/studio/style` review, edit and approval, theme hand-off to the admin theme screen as a diff; SG-3 done, Course Brief v4 `styleProfileId` and the approved profile in the cached brief block of every builder prompt (tenant default and named brief profiles; the per entry point override waits for EP-2); SG-4 done, the deterministic style check in the publish summary and `GET .../style-profiles/{id}/check`, a banned phrase blocks only when the profile says so; SG-5 done, restyle proposals through Living Course (kind `style`), `course-builder:eval-style`; all five slices are in open PRs, so the box stays open until they are merged; the per entry point override waits for EP-2)
 - [ ] PWA offline mode with tested sync/conflict rules
 - [ ] Single frontend for LMS **and** Sylius commerce (catalogue, checkout, account)
 - [x] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge) (
@@ -1084,7 +1105,8 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       Open: SAML SP (ID-2), full attribute, group and role mapping, enforcement and the claim viewer (ID-3), SCIM Users and Groups
       (ID-4, ID-5), HRIS CSV import (ID-6) and the later milestones of the plan; `POST /api/identity/discover` and a test-login endpoint come with ID-3
       Note 2026-10-22 (Coming audit): SAML 2.0 login per tenant (ID-2) is merged (#392), so the Comparison matrix now shows SSO as "Yes"; mapping
-      and enforcement (ID-3), SCIM (ID-4, ID-5) and HRIS import (ID-6) stay open, and SCIM stays "Coming"
+      and enforcement (ID-3) and HRIS import (ID-6) stay open
+      Note 2026-10-23: SCIM Users (ID-4) and Groups (ID-5, branch `phase-6/id-5-scim-groups`) are built; the Comparison cell "SCIM provisioning" reads "Yes" with a note that live Entra ID and Okta tenants were not tested
 - [x] (new) Social login hardening (ID-0, #353, #357): `return_url` must be an origin of the tenant's own apps; the access token is no longer in the
       redirect URL (a one-time code, 60 s, single use, bound to the tenant host and an S256 challenge, redeemed at `POST /api/auth/social/exchange`);
       signed, server-side, single-use OAuth state; accounts linked by e-mail only for a provider-verified address in a trusted domain and never for admins,
@@ -1103,9 +1125,24 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       account linking, a hash-chained identity audit trail, an admin API with the `identity` token scope, provider buttons and a callback page in `front/web` on
       the one-time code flow; tests in `api/packages/identity/tests` (fake IdP, ID token validation, linking, isolation, audit) and a Keycloak run
       (`.github/workflows/identity-keycloak.yml`, label or nightly gated). Open in the same plan: SAML, SCIM, HRIS (see the item above)
+- [ ] (new) SCIM 2.0 Users (ID-4, #475; ticks when merged): `/api/scim/v2` with ServiceProviderConfig,
+      ResourceTypes, Schemas, Users (create, list with the full RFC 7644 filter grammar, `.search`, get, PUT, PATCH, DELETE), pagination, `ETag` and `If-Match`,
+      the SCIM error format with `scimType`; bearer tokens of kind `scim` on a per-provider service user (shown once, 365 days at most, two active for rotation,
+      accepted only on SCIM routes); a client sees only the users its provider provisioned; `active=false` and `DELETE` deactivate and revoke every token and session and
+      keep the learning record (anonymise is opt-in, nothing is hard-deleted); administrators cannot be changed; 600 requests per minute per token; audit rows;
+      ADR 0198 (Proposed); docs `operators/scim.mdx`, `developers/scim-api.mdx`. Plan section 17 lists the differences from the plan. Open: webhooks for user
+      lifecycle events (the plan's `EventCatalog` does not exist), an independent reference client in the nightly (documented manual checks until then), a check with real Entra ID and
+      Okta tenants (owner inputs), authority rules between SCIM and HRIS or manual edits (come with HRIS, ID-6) and the admin screen (ID-8)
+- [ ] (new) SCIM 2.0 Groups and roles from groups (ID-5, branch `phase-6/id-5-scim-groups`, stacked on ID-4; ticks when merged): `/api/scim/v2/Groups` with members, filters, PATCH
+      (Okta and Entra forms), ETag; groups managed by the provider that created them, display names unique across all groups, only provider-provisioned members visible; `scim.group_roles` maps a
+      group name to student or tutor (never admin) and only takes back what it granted; `DELETE` of a user leaves the groups; ADR 0199 (Proposed), docs updated, comparison cell Yes. Open: check with real Entra ID and Okta
+      tenants (owner inputs), reference client in the nightly, blocking hand edits of managed groups in the admin API (ID-8)
 
 ### 6.4 Commerce (Sylius) and extended enterprise
 - [ ] `CommerceProvider` interface (sync product, create checkout, handle order events) (partial: interface and the Wellms cart adapter shipped in `api/packages/commerce`, ADR 0049; the Sylius adapter is pending)
+      Note 2026-10-23 (CM-3): interface v2 (`ProductSpec`, core `fetchOrder`, capabilities `ReportsOrderEvents`, `ReconcilesOrders`, `InspectsCatalogue`, `ListsOrders`),
+      the Sylius adapter in `api/packages/commerce-sylius` and one contract suite run against the Wellms adapter and a real Sylius 2.3 (ADR 0133); ticks when merged.
+      `createCheckout` only builds the frontend URL until CM-5
 - [ ] Sylius adapter as default implementation
       Note 2026-10-22 (Coming audit): "Headless Sylius shop" stays "Coming". Plan `phase-6-commerce.md` CM-3 to CM-12; everything except live payment
       keys, seller legal data, the production Sylius host and staff accounts (section 17, owner inputs) can be built and tested
@@ -1118,13 +1155,23 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       Note 2026-10-22 (CM-2): all source types, the hourly expiry job, the `CourseAccessService` decorator (admin, `lti`, `compliance`), the backfill with
       parity report and the `ProductBought` shadow listener are in; ADR 0130 is Accepted. Open here: seat pools (CM-9), the admin view of the parity report (CM-8)
 - [ ] Catalogue sync: course/bundle/subscription/seat package → digital Sylius product
+      Note 2026-10-23 (CM-3): course, bundle and access pass sync (prices kept in the LMS, product enabled while for sale and published, publish/unpublish through
+      `SyncSellableJob`, `ulams:commerce:sync --check --repair`, nightly drift report, admin API `api/admin/commerce/*`, CLI `ulams commerce ...`); seat packages are CM-9,
+      subscriptions are out of this block (plan Q5)
 - [ ] Order → entitlement via signed, idempotent webhooks + reconciliation job; never grant
       access from frontend redirect
       Note 2026-10-22 (CM-1, #356): prototype only. `POST /api/commerce/webhooks/{provider}` (HMAC, timestamp, event id, tenant channel), `ApplyOrderEvent`,
       `ulams:commerce:reconcile` and `OrderFlowTest`, `OrderWebhookTest`, `CommerceTenantIsolationTest` exist, but the only provider with these capabilities is the
       test-only `FakeCommerceProvider`; there is no Sylius service or adapter yet (CM-3), so nothing has been proved against a real order
+      Note 2026-10-23 (CM-3): now proved against a real Sylius 2.3 on PostgreSQL 17 (`commerce-sylius` live suite: checkout through the Shop API, paid and refunded
+      orders through the bridge feed and through the nightly `ulams:commerce:reconcile --full` sweep, bundles, access passes, unlinked customers); the bridge bundle
+      (outbox, feed, signed delivery) is in `api/sylius` with its own tests and the compose profile `commerce`. Not yet proved: delivery over the network from the
+      bridge to a running LMS and Stripe (CM-4), the CI job and `scripts/commerce-e2e.sh` (CM-7)
 - [ ] Single login: LMS as identity source; Sylius customer linked on first checkout
 - [ ] Tenant ↔ Sylius channel (catalogue, prices, currency, locale, tax zone), created at provisioning
+      Note 2026-10-23 (CM-4): `TenantProvisioner` step `commerce_channel` (contract in `tenancy`, Sylius implementation in `commerce-sylius`), `ulams:tenant:commerce-channel`
+      and an upgrade step for existing tenants, channel disabled on tenant deletion; currency PLN/EUR by language, locale, EU countries, seller tax zone, payment methods
+      and the bridge webhook link, with the secret kept encrypted and written to the tenant env. Tested in memory and against a real Sylius; ticks when merged
 - [ ] Unified admin: prices, coupons, orders, refunds in LMS admin; native Sylius admin for
       advanced settings
 - [ ] B2B seat packages (Sylius product + LMS seat pool), invoices from Sylius
@@ -1132,6 +1179,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       Note 2026-10-22 (CM-2): partial. The access part is in: `ulams:entitlements:backfill` (dry run, all-or-nothing, idempotent) and the nightly
       `ulams:entitlements:parity`; orders and vouchers migrate in CM-10
 - [ ] EU VAT (OSS) for digital services: confirm Sylius handling, document options
+      Note 2026-10-23 (CM-4): setup done (`ulams:commerce:seed-eu-vat`: 27 zones, `e-service` category, standard rates included in price; a real checkout shows 23 % for a
+      Polish and 19 % for a German billing address). The rates in `eu-vat-rates.json` are unconfirmed seed data for the owner's accountant; the OSS return report and B2B reverse
+      charge are not built (CM-9); options for the owner are in `docs/plans/phase-6-commerce.md` section 11
 - [ ] Per-tenant branding, catalogue, sales pages
 - [ ] Partner/customer portals with scoped admins and reports
 
