@@ -403,20 +403,24 @@ const COPY: Record<Locale, HomeStoryCopy> = { en: EN, pl: PL, zh: ZH };
 /** The story in one language. */
 export const homeStory = (locale: Locale): HomeStoryCopy => COPY[locale];
 
-export type HomePart = { kind: "node"; node: UiNode } | { kind: "story" };
+export type HomePart = { kind: "node"; node: UiNode } | { kind: "story" } | { kind: "walkthrough" } | { kind: "style-guide" };
+
+/** Id of the white-label band of the home document; the style-guide section follows it. */
+export const WHITE_LABEL_ID = "white-label";
 
 export interface HomeBodyPlan {
   /** Nodes before the main landmark (the site header). */
   before: UiNode[];
-  /** Children of the main landmark, with the story right after the hero. */
+  /** Children of the main landmark: the story and the builder walkthrough right after the hero, the style guide after the white-label band. */
   main: HomePart[];
   /** Nodes after the main landmark (the site footer). */
   after: UiNode[];
 }
 
 /**
- * Splits the home document around its main landmark and places the story right after the hero (first, if there is
- * no hero). Returns null for a document without a Page > Main structure, which is then rendered as it is.
+ * Splits the home document around its main landmark and places the story, then the builder walkthrough, right after
+ * the hero (first, if there is no hero), and the style-guide section right after the white-label band (at the end
+ * when there is none). Returns null for a document without a Page > Main structure, which is then rendered as it is.
  */
 export function planHomeBody(doc: UiNode): HomeBodyPlan | null {
   const children = doc.component === "Page" ? (doc.children ?? []) : [];
@@ -425,6 +429,8 @@ export function planHomeBody(doc: UiNode): HomeBodyPlan | null {
   const sections = children[mainIndex]!.children ?? [];
   const hero = sections.findIndex((node) => node.component === "Hero");
   const main: HomePart[] = sections.map((node) => ({ kind: "node", node }));
-  main.splice(hero + 1, 0, { kind: "story" });
+  const whiteLabel = main.findIndex((part) => part.kind === "node" && part.node.props?.id === WHITE_LABEL_ID);
+  main.splice(whiteLabel < 0 ? main.length : whiteLabel + 1, 0, { kind: "style-guide" });
+  main.splice(hero + 1, 0, { kind: "story" }, { kind: "walkthrough" });
   return { before: children.slice(0, mainIndex), main, after: children.slice(mainIndex + 1) };
 }
