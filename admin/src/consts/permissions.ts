@@ -137,6 +137,10 @@ enum PERMISSIONS {
 
   ReportList = 'report_list',
 
+  /* -------- Ulams/Reporting -------- */
+
+  ReportingRead = 'reporting_read',
+
   /* -------- Ulams/Courses-Import-Export -------- */
 
   CourseExport = 'course-import-export_export',

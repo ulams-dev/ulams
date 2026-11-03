@@ -151,7 +151,7 @@ final class TokenScopes
     }
 
     /**
-     * @return array{area:string,write:bool}|null null: the route is not in the map (deny)
+     * @return array{area:string,write:bool,resource:array{param:string,prefix?:string,optional?:bool}|null}|null null: the route is not in the map (deny)
      */
     public static function requirement(string $uri, string $method): ?array
     {
@@ -171,7 +171,7 @@ final class TokenScopes
                 default => !in_array($method, ['GET', 'HEAD', 'OPTIONS'], true),
             };
 
-            return ['area' => $area, 'write' => $write];
+            return ['area' => $area, 'write' => $write, 'resource' => $options['resource'] ?? null];
         }
 
         return null;

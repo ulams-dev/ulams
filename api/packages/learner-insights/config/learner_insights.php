@@ -74,6 +74,14 @@ return [
     // POST /api/learner-insights/signals: requests per minute per learner
     'client_signals_per_minute' => (int) env('LEARNER_INSIGHTS_CLIENT_SIGNALS_PER_MINUTE', 60),
 
+    // Hints to switch course variant (ADR 0192): the first modules the two rules look at, how much faster than the cohort
+    // median a learner must be on each of them to count as "too easy", and how many other learners make a cohort.
+    'variant_fit' => [
+        'modules' => (int) env('LEARNER_INSIGHTS_VARIANT_FIT_MODULES', 2),
+        'time_ratio' => (float) env('LEARNER_INSIGHTS_VARIANT_FIT_TIME_RATIO', 0.5),
+        'min_cohort' => (int) env('LEARNER_INSIGHTS_VARIANT_FIT_MIN_COHORT', 10),
+    ],
+
     // Rules of the rule-based scorer (ADR 0058). Every value can be changed per tenant (the same keys as
     // administrable settings, `learner_insights.rules.<rule>.<param>`) and per course.
     'rules' => [

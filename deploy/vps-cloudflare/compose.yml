@@ -315,7 +315,7 @@ services:
       REACT_APP_API_URL: ${ULAMS_SCHEME:-https}://api.${ULAMS_DOMAIN}${ULAMS_PORT_SUFFIX:-}
       REACT_APP_SENTRYDSN: ${ADMIN_SENTRY_DSN:-}
     healthcheck:
-      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/ || exit 1"]
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/healthz || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3

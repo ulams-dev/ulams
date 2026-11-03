@@ -40,6 +40,7 @@ Authors and reviewers (`auth:api`, scope `living-course:read` for GET and `livin
 | `POST /api/admin/learner-insights/courses/{c}/elements/{elementKey}/improve` `{confirmEstimate?, period?}` | "Propose an improvement" (author of the session or `living_course_review`): without `confirmEstimate` the estimate and the aggregated evidence, with it a `kind = insights` proposal that is analysed (201), or the open proposal of the element (200); 404 not built with the Course Builder, 422 small group, no sources or not improvable, 429 daily limit, 503 AI off |
 | `POST proposals/{p}/analyse` `{confirmEstimate?}` | 202 started; 409 when the estimate needs confirming; 422 when budget blocked; 503 with AI off |
 | `POST proposals/{p}/items/{i}/accept`, `reject`, `reset` | Decide one item; 409 when it is not decidable now |
+| `POST proposals/{p}/items/{i}/accept-in-group` | Accept the item and the same patch in the other proposals of its group (the variants of the course, below): same element, same text before, same replacement, still undecided; answers `accepted` (how many others) and `proposals` |
 | `POST proposals/{p}/items/{i}/regenerate` `{comment}` | New suggestion for one item (one call, at most 3 per item) |
 | `POST oauth/{provider}/start` `{sessionId}` | The vendor sign-in address (`google` or `notion`); 422 when the installation has no OAuth client, 403 for another author's session |
 | `GET /api/living-course/oauth/{provider}/callback` | The vendor's redirect (no login: the encrypted, expiring state is the credential): exchanges the code, keeps the tokens server-side and redirects to `LIVING_COURSE_OAUTH_RETURN_URL` with `?grant=` (or answers with it). Connect or `PUT connections/{c}` with `secrets: {grant}` redeems it once |
@@ -53,6 +54,15 @@ Authors and reviewers (`auth:api`, scope `living-course:read` for GET and `livin
 | `GET sessions/{s}/audit/verify` | `{ok, checked, brokenId, reason}`; the chain covers the whole academy |
 
 Learners (scope `learner`): `GET /api/living-course/courses/{c}/notices` (open notices of the caller: `kind` is `topic_updated`, `question_reattempt`, `topic_retired` or `course_extended`), `POST /api/living-course/notices/{n}/dismiss` (a re-attempt notice closes when the quiz is retaken), `GET /api/living-course/courses/{c}/freshness` (topics with an update under review, only when the course shows it; never the content). Webhooks: `POST /api/living-course/webhooks/{webhookId}`, below. The typed client is `createLivingCourseClient` in `@ulams/sdk`. Settings, limits and the scheduler are in [Living Course settings](/admin/living-course/); the commands in [Build courses from the command line](/developers/cli-builder/#living-course).
+
+## Variants of a course
+
+A course with [variants](/developers/course-variants-api/) gets one proposal per variant for every source revision, all in one **proposal group** (`proposalGroup` on each; `variant` is `{id, key, label}`, null for the base; the detail of a proposal lists its `siblings`).
+
+- **One analysis for all.** The deterministic impact analysis runs on each variant's own live blueprint, so a variant that cites a changed passage gets its elements listed even when the base does not. An impacted element that is word for word the base's is marked as inheriting: it is not sent to the model, and when the base proposal's analysis has finished it takes the base's patch (`flags.reusedFrom` names the base item), at no cost. Only the elements the variant changed are analysed for it, with its audience as data, by the same cost limits (`POST proposals/{p}/analyse`, or automatically when the source analyses by itself).
+- **Review together.** Each proposal is reviewed and applied on its own; `accept-in-group` takes one decision for the elements the variants share. New sections of the source that no lesson covers are for the base proposal only.
+- **Apply.** Applying a variant proposal writes a version of kind `update` on that variant's branch, applies it to the variant's own course through the same domain services, writes that variant's release and sends the learner notices for the variant course. The base course is untouched. Only the base proposal acknowledges the source revision, so rejecting or applying a variant proposal never marks the revision as synced.
+- **Not covered yet.** Improvements from learner insights are still made for the base course only, and rebasing a variant on a newer base is not built.
 
 ## Webhook requests
 

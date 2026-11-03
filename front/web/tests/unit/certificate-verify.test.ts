@@ -31,6 +31,10 @@ describe("verifyCertificate", () => {
     expect(result).toEqual({ kind: "found", certificate: base });
     expect(fetcher).toHaveBeenCalledWith(`https://acme.example/api/certificates/verify/${base.certificate_id}`, expect.anything());
   });
+  it("passes the variant of the course through", async () => {
+    const result = await verifyCertificate(tenant, base.certificate_id, reply(200, { data: { ...base, course_variant: "Expert" } }));
+    expect(result).toEqual({ kind: "found", certificate: { ...base, course_variant: "Expert" } });
+  });
   it("tells an unknown id from an unavailable API", async () => {
     expect(await verifyCertificate(tenant, base.certificate_id, reply(404))).toEqual({ kind: "unknown" });
     expect(await verifyCertificate(tenant, base.certificate_id, reply(500))).toEqual({ kind: "unavailable" });
@@ -50,5 +54,13 @@ describe("statusCopy", () => {
     expect(statusCopy({ ...base, expires_at: null }).text).toBe("It does not expire.");
     expect(statusCopy({ ...base, status: "expired", expires_at: "2026-04-01T00:00:00+00:00" }).heading).toBe("This certificate has expired");
     expect(statusCopy({ ...base, status: "revoked", revoked_at: "2026-05-02T10:00:00+00:00" }).text).toContain("2 May 2026");
+  });
+
+  it("says which policy version replaced what a revoked certificate certified, and nothing about other revocations", () => {
+    const revoked = { ...base, status: "revoked" as const, revoked_at: "2026-05-02T10:00:00+00:00" };
+
+    expect(statusCopy({ ...revoked, superseded_by_policy_version: 3 }).text).toContain("Policy version 3 replaced the version it certified");
+    expect(statusCopy({ ...revoked, superseded_by_policy_version: null }).text).not.toContain("Policy version");
+    expect(statusCopy(revoked).text).not.toContain("Policy version");
   });
 });

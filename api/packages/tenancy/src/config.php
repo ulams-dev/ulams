@@ -68,6 +68,14 @@ return [
     ],
 
     /*
+     * Tenants created by another tenant for a purpose (a department academy of a policy, ADR 0141): at most this many active
+     * ones per parent tenant. Provisioning a database, a bucket and an object-store identity is an operator-sized action.
+     */
+    'derived' => [
+        'max_per_parent' => (int) env('TENANCY_MAX_DERIVED_PER_PARENT', 5),
+    ],
+
+    /*
      * Password of every demo user created by `ulams:tenant:create`. DEV ONLY.
      */
     'demo_password' => env('TENANT_DEMO_PASSWORD', 'secret'),

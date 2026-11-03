@@ -31,6 +31,9 @@ class CreateTokenRequest extends FormRequest
             'kind' => ['nullable', Rule::in(ApiTokenMeta::KINDS)],
             'agent_name' => ['nullable', 'string', 'max:100', new NoHtmlTags()],
             'rate_limit_per_minute' => ['nullable', 'integer', 'min:1', 'max:6000'],
+            // limits the token to these resources, for example one saved report for a BI tool (ADR 0194)
+            'resource_ids' => ['nullable', 'array', 'min:1', 'max:20'],
+            'resource_ids.*' => ['required', 'string', 'size:26', 'regex:/^[0-9A-Za-z]+$/'],
         ];
     }
 }
