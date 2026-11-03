@@ -11,14 +11,15 @@ learnerRoutes:
 
 import { Aside } from "@astrojs/starlight/components";
 
-<Aside type="note" title="What is built and what is coming">
-**Built:** reading a style guide into a style profile, with every value citing the passage it came from; the **Style**
-screen of the studio (`/studio/style`) to review, edit, approve and check a course against a profile, in English, Polish
+<Aside type="note" title="What is built">
+Reading a style guide into a style profile with every value citing its passage; the **Style** screen of the studio
+(`/studio/style`) to review, edit, approve, check a course against and restyle a course for a profile, in English, Polish
 and Chinese; handing the theme part to the admin theme screen as a diff; the approved profile in the prompt of every course
-the builder drafts, chosen per Course Brief; **the style check in the publish summary, where a banned phrase blocks
-publishing only when the profile says so**; the API and `ulams style-profiles`.
-**Coming:** restyle proposals for courses that already exist, and a profile per entry point (it arrives with entry points).
-Progress is tracked in the [roadmap](/roadmap/); the design is in `docs/plans/style-guide-course-design.md` and ADR 0196.
+the builder drafts, chosen per Course Brief; the style check in the publish summary, where a banned phrase blocks publishing
+only when the profile says so; restyle proposals through Living Course; the eval command; the API and `ulams style-profiles`.
+**Not built yet:** a profile per entry point (it arrives with entry points), and a profile picker inside the brief panel
+(set it with the API or `ulams builder brief set`). Progress is tracked in the [roadmap](/roadmap/); the design is in
+`docs/plans/style-guide-course-design.md` and ADR 0196.
 </Aside>
 
 A style guide is a document. A **style profile** is what the builder can use from it: typed values that an admin
@@ -126,6 +127,24 @@ inside images and decorative images cannot be checked from the text and are not.
 Warnings must be acknowledged before publishing, like the other warnings. To see what a *suggested* profile would flag
 before approving it, check a course against it: in the studio, open the profile and use **Check a course against this
 profile**, or run `ulams style-profiles check <profile> --course <id>`.
+
+## Restyle a course that already exists
+
+Changing a profile does not change courses by itself. For a course that was made before, open the approved profile in the
+studio and use **Restyle a course for this profile**: enter the course id, read what a restyle would rewrite and what it
+would cost, and create the proposal. It opens on the Living Course review screen, where you accept or reject each rewrite as
+a diff and apply the ones you want. It rewrites banned phrases, terms to avoid and product-name casing only, never the correct
+answer of a quiz question, and nothing reaches the course before you apply it. Details and limits:
+[Living Course, Restyle for a style profile](/admin/living-course/#restyle-for-a-style-profile). From the command line:
+`ulams living restyle <session> --confirm-estimate`.
+
+## Measuring it
+
+`php artisan course-builder:eval-style` reads a short original style guide (`resources/fixtures/style-guide.md`), scores the
+extraction against what the guide says (recall per rule and the share of values that cite a passage), writes a course from a
+source with the approved profile and reports how often each rule is followed, with the cost of every call. It runs on the
+fake driver by default and with `--live` on the real model, capped by `COURSE_BUILDER_EVAL_MONTHLY_USD`. It never touches the
+academy's approved profile. Reading level and sentence length are reported but not scored.
 
 ## From the command line
 

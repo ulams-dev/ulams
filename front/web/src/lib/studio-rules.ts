@@ -70,6 +70,8 @@ export const LIVING_COURSE_RULES: Array<{ method: string; pattern: RegExp }> = [
   // audit trail: read, verify the hash chain, export (all GET; the trail cannot be changed from here)
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/audit$`) },
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/audit/(verify|export)$`) },
+  // a restyle for an approved style profile (ADR 0196): the estimate, then the proposal (reviewed with the calls above)
+  { method: "POST", pattern: new RegExp(`^/sessions/${ID}/style-proposals$`) },
 ];
 
 /** `path` is relative to the BFF root, e.g. `/living-course/sources/{id}/revisions`. */
