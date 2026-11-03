@@ -45,7 +45,8 @@ async function entryFromCookie(tenant: Tenant, cookies: import("astro").AstroCoo
   return null;
 }
 
-const SESSION_ROUTES = /^\/(learn|bff|account)(\/|$)/;
+// the placement check (CV-5) is a learner action like the lessons: it starts the demo session too
+const SESSION_ROUTES = /^\/((learn|bff|account)(\/|$)|courses\/\d+\/placement\/?$)/;
 const STUDIO_ROUTES = /^\/studio(\/|$)/;
 
 export const onRequest = defineMiddleware(async (context, next) => {

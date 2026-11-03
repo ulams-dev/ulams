@@ -3,7 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Ulams\Tenancy\Http\Controllers\EntryPointController;
 use Ulams\Tenancy\Http\Controllers\EntryPointResolveController;
+use Ulams\Tenancy\Http\Controllers\MetricsController;
 use Ulams\Tenancy\Http\Controllers\PlatformOperationController;
+use Ulams\Tenancy\Http\Controllers\PlatformTemplateController;
 use Ulams\Tenancy\Http\Controllers\PlatformTenantController;
 use Ulams\Tenancy\Http\Middleware\EnsurePlatformApi;
 use Ulams\Tenancy\Http\Middleware\EnsurePlatformHost;
@@ -20,6 +22,11 @@ Route::group([
     Route::get('tenants/{slug}', [PlatformTenantController::class, 'show'])->where('slug', '[a-z0-9]{2,30}');
     Route::patch('tenants/{slug}/env', [PlatformTenantController::class, 'env'])->where('slug', '[a-z0-9]{2,30}');
     Route::delete('tenants/{slug}', [PlatformTenantController::class, 'destroy'])->where('slug', '[a-z0-9]{2,30}');
+    Route::get('tenants/{slug}/derived', [PlatformTenantController::class, 'derived'])->where('slug', '[a-z0-9]{2,30}');
+    Route::get('templates', [PlatformTemplateController::class, 'index']);
+    Route::post('templates', [PlatformTemplateController::class, 'store']);
+    Route::get('templates/{slug}', [PlatformTemplateController::class, 'show'])->where('slug', '[a-z][a-z0-9-]{1,38}');
+    Route::delete('templates/{slug}', [PlatformTemplateController::class, 'destroy'])->where('slug', '[a-z][a-z0-9-]{1,38}');
     Route::get('operations', [PlatformOperationController::class, 'index']);
     Route::get('operations/{id}', [PlatformOperationController::class, 'show'])->where('id', '[0-9a-z]{26}');
 });
@@ -42,3 +49,6 @@ Route::group([
 // credentials, throttled per address. Declared outside the platform tenant API group on purpose.
 Route::get('api/platform/entry-points/resolve', [EntryPointResolveController::class, 'show'])
     ->middleware([EnsurePlatformHost::class, 'throttle:ulams-entry-resolve']);
+
+// Prometheus scrape endpoint: platform host, private network or bearer token (METRICS_ALLOWED_CIDRS, METRICS_TOKEN).
+Route::get('metrics', MetricsController::class);

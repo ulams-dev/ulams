@@ -4,7 +4,7 @@ import { isMobile } from "react-device-detect";
 import { Tutor } from "@ulams/components/components/molecules/Tutor/Tutor";
 import { API } from "@ulams/sdk";
 import { APP_CONFIG } from "@/config/app";
-import { API_URL } from "@/config/index";
+import { avatarSrc } from "@ulams/images";
 import { Col } from "react-grid-system";
 
 interface CourseAuthorProps {
@@ -20,7 +20,7 @@ export const CourseAuthor: FC<CourseAuthorProps> = ({ author }) => {
         avatar={{
           alt: `${author.first_name} ${author.last_name}`,
           src: author.path_avatar
-            ? `${API_URL}/api/images/img?path=${author.path_avatar}`
+            ? avatarSrc(author)
             : APP_CONFIG.tutorPlaceholderPath,
         }}
         fullName={`${author.first_name} ${author.last_name}`}

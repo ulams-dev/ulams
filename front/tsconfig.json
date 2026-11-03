@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "target": "es5",
+    /* the shared image builder (sdk/src/images.ts) iterates Sets and URLSearchParams */
+    "downlevelIteration": true,
     "useDefineForClassFields": true,
     "lib": ["ES2021", "DOM", "DOM.Iterable"],
     "module": "ESNext",
@@ -39,6 +41,7 @@
       "@ulams/sdk": ["src/lib/sdk/index.ts"],
       "@ulams/sdk/*": ["src/lib/sdk/*"],
       "@ulams/scorm-player": ["src/lib/scorm-player/index.ts"],
+      "@ulams/images": ["src/lib/images/index.ts"],
       "@ulams/tenant": ["src/lib/tenant/resolveApiUrl.ts"],
       "@ulams/demo": ["src/lib/demo/demoMode.ts"],
       "@ulams/scorm-player/*": ["src/lib/scorm-player/*"]

@@ -319,6 +319,10 @@ the originals. Before switching a host run `sh bin/check-images.sh <host> [sourc
 (`cloudflare/landing-static.mjs`) refuses to run unless `ULAMS_IMAGE_SERVICE` is `cloudflare` or `noop` and
 `ULAMS_ADMIN_URL` is set, for staging `ULAMS_ADMIN_URL='https://{slug}-admin.ulams.app'` (the default points at
 localhost). Rollback: rebuild with `ULAMS_IMAGE_SERVICE=noop`.
+The static admin takes its mode from `runtime-config.json` (`sh bin/set-admin-images.sh cloudflare|noop|php [sources]`, no rebuild;
+`sh test/set-admin-images.sh` tests it). The storage Worker sends `max-age=3600` with an ETag for `image/*`. An optional WAF custom rule
+(`cloudflare/image-waf-rule.mjs`) blocks option strings the builder never emits; `ULAMS_EXPECT_WAF=1 sh bin/check-images.sh <host>` verifies
+it. These Cloudflare and MyDevil steps are the owner's: see "Images: admin, storage cache and WAF rule" in `STAGING-NOTES.md`.
 
 ### Resource plan (MD2: 4 GB, 70 processes)
 

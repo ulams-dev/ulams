@@ -38,6 +38,7 @@ class TestCase extends CoreTestCase
         $this->app->instance(EntryHostPublisherContract::class, new NullEntryHostPublisher());
         $this->app->forgetInstance(EntryPointService::class);
         EntryHostStore::forgetSchemaCheck();
+        (require __DIR__ . '/../database/migrations/2026_10_27_000000_create_tenant_templates_and_derivations.php')->up();
     }
 
     protected function getPackageProviders($app): array

@@ -1,0 +1,63 @@
+name: Nightly operations
+
+# Operator procedures on a real stack, too slow for every push (docs/plans/phase-8-self-hosting.md, 4.6):
+# the launcher starts a Docker stack from the published images, demo content and a learner with progress
+# go through `ulams stack backup`, `stack down --purge` (every volume deleted) and `stack restore`, and the
+# courses, media, H5P content and progress must come back unchanged (front/cli/tests/e2e/stack-backup.test.ts).
+# Runs nightly (unless the repository variable NIGHTLY_OPS is "false"), by hand, and on pull requests that
+# change the launcher. The PostgreSQL 12 to 17 upgrade test is the pg-upgrade job of nightly-conformance.yml.
+
+on:
+  schedule:
+    - cron: "15 3 * * *"
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Application image tag to run (latest resolves the newest complete release of main)
+        type: string
+        default: latest
+  pull_request:
+    paths:
+      - front/cli/src/stack/**
+      - front/cli/tests/e2e/stack-backup.test.ts
+      - .github/workflows/nightly-ops.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-ops-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backup-restore:
+    name: Stack backup, wipe and restore
+    if: github.event_name != 'schedule' || vars.NIGHTLY_OPS != 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/docker-hub-mirror
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          token: ${{ secrets.DOCKERHUB_TOKEN }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - name: Install dependencies
+        uses: ./.github/actions/setup-yarn
+      - name: Build the CLI
+        run: corepack yarn workspace ulams build
+      - name: Backup, wipe and restore
+        env:
+          ULAMS_STACK_BACKUP_E2E: "1"
+          ULAMS_STACK_E2E_IMAGE_TAG: ${{ inputs.image_tag || 'latest' }}
+        working-directory: front/cli
+        run: corepack yarn vitest run tests/e2e/stack-backup.test.ts
+      - name: Stack logs on failure
+        if: failure()
+        run: |
+          for project in $(docker compose ls --all --format json | jq -r '.[].Name' | grep '^ulams-bk-' || true); do
+            docker compose --project-name "$project" logs --no-color --tail 300 || true
+          done

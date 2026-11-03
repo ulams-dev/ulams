@@ -7,6 +7,9 @@ use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Database\Events\SchemaLoaded;
 use Illuminate\Support\Facades\Event;
 use Ulams\Core\Support\EntryFronts;
+use Ulams\Core\Observability\CoreMetrics;
+use Ulams\Core\Observability\HeartbeatCommand;
+use Ulams\Core\Observability\MetricsRegistry;
 use Ulams\Core\Support\MorphMap;
 use Ulams\Core\Support\SchemaColumns;
 use Ulams\Core\Http\Middleware\EnforceTrustedOrigin;
@@ -36,6 +39,7 @@ class UlamsServiceProvider extends ServiceProvider
     {
         // one list of entry hosts per request: the origin check, return URLs, frame ancestors and the session hand-off read it
         $this->app->singleton(EntryFronts::class);
+        $this->app->singleton(MetricsRegistry::class);
 
         // Every other class registers its own aliases (Ulams\Core\Support\MorphMap). The user model is configurable:
         // its alias is fixed and resolves to the configured class once the configuration is final.
@@ -64,13 +68,18 @@ class UlamsServiceProvider extends ServiceProvider
         Event::listen(RouteMatched::class, fn (RouteMatched $e) => $e->route->middleware(Idempotency::class));
 
         $this->loadConfig();
+        $this->app->make(MetricsRegistry::class)->register('core', new CoreMetrics());
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadMigrations();
 
         if ($this->app->runningInConsole()) {
-            $this->commands([PruneCspReportsCommand::class]);
+            $this->commands([PruneCspReportsCommand::class, HeartbeatCommand::class]);
             $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
                 $schedule->command('csp-reports:prune')->dailyAt('03:20');
+                // liveness of the scheduler and of a queue worker, and fresh results for /api/health outside the
+                // Docker HEALTHCHECK too (ADR 0021, docs/operators/monitoring)
+                $schedule->command('ulams:heartbeat')->everyMinute();
+                $schedule->command('health:check')->everyMinute();
             });
         }
 

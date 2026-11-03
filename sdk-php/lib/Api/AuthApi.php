@@ -8179,7 +8179,7 @@ class AuthApi
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Ulams\Sdk\Model\AuthTokensGet200Response|\Ulams\Sdk\Model\ScopeError
+     * @return \Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response|\Ulams\Sdk\Model\ScopeError
      */
     public function authTokensGet($include_revoked = null, string $contentType = self::contentTypes['authTokensGet'][0])
     {
@@ -8197,7 +8197,7 @@ class AuthApi
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Ulams\Sdk\Model\AuthTokensGet200Response|\Ulams\Sdk\Model\ScopeError, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response|\Ulams\Sdk\Model\ScopeError, HTTP status code, HTTP response headers (array of strings)
      */
     public function authTokensGetWithHttpInfo($include_revoked = null, string $contentType = self::contentTypes['authTokensGet'][0])
     {
@@ -8228,11 +8228,11 @@ class AuthApi
 
             switch($statusCode) {
                 case 200:
-                    if ('\Ulams\Sdk\Model\AuthTokensGet200Response' === '\SplFileObject') {
+                    if ('\Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Ulams\Sdk\Model\AuthTokensGet200Response' !== 'string') {
+                        if ('\Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -8250,7 +8250,7 @@ class AuthApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\AuthTokensGet200Response', []),
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8296,7 +8296,7 @@ class AuthApi
                 );
             }
 
-            $returnType = '\Ulams\Sdk\Model\AuthTokensGet200Response';
+            $returnType = '\Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -8329,7 +8329,7 @@ class AuthApi
                 case 200:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Ulams\Sdk\Model\AuthTokensGet200Response',
+                        '\Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -8381,7 +8381,7 @@ class AuthApi
      */
     public function authTokensGetAsyncWithHttpInfo($include_revoked = null, string $contentType = self::contentTypes['authTokensGet'][0])
     {
-        $returnType = '\Ulams\Sdk\Model\AuthTokensGet200Response';
+        $returnType = '\Ulams\Sdk\Model\IdentityProvidersScimTokensList200Response';
         $request = $this->authTokensGetRequest($include_revoked, $contentType);
 
         return $this->client
@@ -8521,7 +8521,7 @@ class AuthApi
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return \Ulams\Sdk\Model\AuthTokensPost201Response|\Ulams\Sdk\Model\ScopeError
+     * @return \Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response|\Ulams\Sdk\Model\ScopeError
      */
     public function authTokensPost($auth_tokens_post_request, string $contentType = self::contentTypes['authTokensPost'][0])
     {
@@ -8539,7 +8539,7 @@ class AuthApi
      *
      * @throws \Ulams\Sdk\ApiException on non-2xx response or if the response body is not in the expected format
      * @throws \InvalidArgumentException
-     * @return array of \Ulams\Sdk\Model\AuthTokensPost201Response|\Ulams\Sdk\Model\ScopeError, HTTP status code, HTTP response headers (array of strings)
+     * @return array of \Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response|\Ulams\Sdk\Model\ScopeError, HTTP status code, HTTP response headers (array of strings)
      */
     public function authTokensPostWithHttpInfo($auth_tokens_post_request, string $contentType = self::contentTypes['authTokensPost'][0])
     {
@@ -8570,11 +8570,11 @@ class AuthApi
 
             switch($statusCode) {
                 case 201:
-                    if ('\Ulams\Sdk\Model\AuthTokensPost201Response' === '\SplFileObject') {
+                    if ('\Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response' === '\SplFileObject') {
                         $content = $response->getBody(); //stream goes to serializer
                     } else {
                         $content = (string) $response->getBody();
-                        if ('\Ulams\Sdk\Model\AuthTokensPost201Response' !== 'string') {
+                        if ('\Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response' !== 'string') {
                             try {
                                 $content = json_decode($content, false, 512, JSON_THROW_ON_ERROR);
                             } catch (\JsonException $exception) {
@@ -8592,7 +8592,7 @@ class AuthApi
                     }
 
                     return [
-                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\AuthTokensPost201Response', []),
+                        ObjectSerializer::deserialize($content, '\Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response', []),
                         $response->getStatusCode(),
                         $response->getHeaders()
                     ];
@@ -8638,7 +8638,7 @@ class AuthApi
                 );
             }
 
-            $returnType = '\Ulams\Sdk\Model\AuthTokensPost201Response';
+            $returnType = '\Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response';
             if ($returnType === '\SplFileObject') {
                 $content = $response->getBody(); //stream goes to serializer
             } else {
@@ -8671,7 +8671,7 @@ class AuthApi
                 case 201:
                     $data = ObjectSerializer::deserialize(
                         $e->getResponseBody(),
-                        '\Ulams\Sdk\Model\AuthTokensPost201Response',
+                        '\Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response',
                         $e->getResponseHeaders()
                     );
                     $e->setResponseObject($data);
@@ -8723,7 +8723,7 @@ class AuthApi
      */
     public function authTokensPostAsyncWithHttpInfo($auth_tokens_post_request, string $contentType = self::contentTypes['authTokensPost'][0])
     {
-        $returnType = '\Ulams\Sdk\Model\AuthTokensPost201Response';
+        $returnType = '\Ulams\Sdk\Model\IdentityProvidersScimTokensCreate201Response';
         $request = $this->authTokensPostRequest($auth_tokens_post_request, $contentType);
 
         return $this->client

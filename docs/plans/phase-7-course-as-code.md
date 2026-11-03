@@ -598,6 +598,28 @@ What shipped for items 1 to 5 above (`api/packages/living-course`, `api/packages
 - **Not built here:** the `course.version_applied` webhook event, the `ulams-cli` image, the Action and the sync PR flow (next milestone), preview
   academies. The studio's update review shows "From PR #123: subject" under the header (English only, like the rest of that screen).
 
+### 8.5 As built: the Action, the image and the workflow (second Git-driven milestone)
+
+What shipped for sections 8.1, 8.2 and 8.4 (`actions/course`, `front/cli/Dockerfile`, `front/cli/src/course/ci-github.ts`,
+`.github/workflows/course-action-test.yml`; reference: `developers/cli-course`, `developers/outgoing-webhooks`):
+
+- **The action** is a composite action whose logic is `actions/course/entrypoint.mjs`: inputs to one `ulams course ...` run in the image
+  (`docker run -e ULAMS_TOKEN ...`: secrets are passed by name, never in an argument), SARIF file and outputs, job summary, one sticky pull
+  request comment (`gh pr comment --edit-last --create-if-none`) and the `ulams/sync` pull request. All side effects go through an injected
+  `io`, so `node --test actions/course/test` covers it without Docker, git or gh. Commands: `validate`, `diff`, `preview`, `push`, `pull-pr`.
+  `preview` here is the studio fallback of 8.3 (a proposed version, never approved); real preview academies are the next milestone.
+- **`init --ci github`** writes the workflow of 8.2 at the repository root (path filters when the course is a subfolder, refuses to
+  overwrite). The `push` job proposes only; `apply: true` stays a deliberate edit.
+- **`ULAMS_COMMIT` and `ULAMS_CHANGE_URL`** become `X-Ulams-Commit` and `X-Ulams-Change-Url` on every CLI request (the server already audited
+  both); the action sets them from the pull request or push event.
+- **`course.version_applied`** fires from `ReleaseRecorder::applied` through a new builder event, once per release (an apply that changes
+  nothing and variants send nothing). Payload: `course_id`, `session_id`, `version_id`, `number`, `release_number`, `kind`, `origin`,
+  `reason`, `trigger`, `released_at`. Schema, catalogue sample, docs and tests added.
+- **Image**: the bundle is built outside and copied in (no monorepo install in the image); it is about 290 MB, not under 80 MB. The release
+  workflow, multi-arch builds, provenance and tags are M6-a; nothing is published.
+- **Not built:** the sync pull request does not list the version reasons ("Source update r4 → r5"): the export carries no version list, so the
+  body shows version number, counts and files; the relay for GitHub `repository_dispatch` (documented as an option); the Marketplace entry.
+
 ## 10. M6: CLI release engineering
 
 ### 10.1 Versioning and changelog

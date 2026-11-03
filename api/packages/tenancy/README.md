@@ -132,3 +132,12 @@ point never grants access.
   the academies whose copy is out of date. `Ulams\Core\Support\EntryFronts` reads the copy (`EntryHostStore`) for the origin
   check of the API, the return URLs of the redirect logins, the frame ancestors of interactive content and the session
   hand-off (`POST /api/auth/handoff`, auth package), so an entry host is trusted everywhere or nowhere.
+## Templates and tenants created for a purpose (ADR 0141, amendment)
+
+- `ulams:tenant:template <slug>` (and `/api/platform/templates`): a named starting point for new tenants (theme, accent, demo flag,
+  demo users, inheritable settings). `ulams:tenant:create --template=<slug>` applies it to a tenant that does not exist yet; options win.
+- `ulams:tenant:create --derived-from=<parent> --purpose=<purpose> --reference=<id>` records the tenant as created for another tenant
+  (a department academy of a policy): once per reference, at most `TENANCY_MAX_DERIVED_PER_PARENT` active per parent, no chains,
+  the record kept after deletion (`tenant_derivations`). `ulams:tenant:delete --with-derived` removes the derived tenants first.
+- Tables (platform database): `tenant_templates`, `tenant_derivations`.
+

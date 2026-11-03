@@ -29,6 +29,11 @@ they share its sources and citations, keep the base element ids, and log every m
 variants (Living Course, Tutor, Learner Insights) still means the base course; the branch-aware code reads
 `EntityMapEntry::branch($sessionId, $variantId)`. Cap: `COURSE_BUILDER_MAX_VARIANTS` (default 6).
 
+Style profiles (ADR 0196, `course_builder_style_profiles`, `src/StyleProfile`): an uploaded style guide is ingested into a holder
+session (status `style_guide`, never listed, never a course), one model call (`style_profile_extract`, logged against the profile as
+subject) proposes typed values that each cite a fragment, `StyleProfileSanitizer` drops whatever is out of schema, unknown, linked or
+uncited, and an admin approves the profile (one approved profile per scope). Endpoints: `/api/admin/course-builder/style-profiles`.
+
 Everything the browser sees is an AG-UI event (`GET …/sessions/{id}/events`, SSE with resume); the
 interactive cards are A2UI v0.9 surfaces from the `@ulams/ui` builder catalogue, built by code from
 validated data. The model never writes UI markup, never calls tools and never sees the source outside

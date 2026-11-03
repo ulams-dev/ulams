@@ -9,6 +9,7 @@
 "GET /api/admin/living-course/sessions/{session}/audit/export": file-download
 "GET /api/admin/orders/export": file-download
 "GET /api/admin/payments/export": file-download
+"GET /api/admin/policies/{policy}/dashboard/export": file-download
 "GET /api/admin/quiz-attempts/export": file-download
 "GET /api/admin/stats/course/{course_id}/export": file-download
 "GET /api/admin/stats/topic/{topic_id}/export": file-download

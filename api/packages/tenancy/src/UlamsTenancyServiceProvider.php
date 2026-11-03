@@ -22,9 +22,11 @@ use Ulams\Tenancy\Console\SeedTenantDemoCommand;
 use Ulams\Tenancy\Console\SetTenantEnvCommand;
 use Ulams\Tenancy\Console\RecreateViewsCommand;
 use Ulams\Tenancy\Console\SyncTenantEnvCommand;
+use Ulams\Tenancy\Console\TemplateCommand;
 use Ulams\Tenancy\Console\UpgradeCommand;
 use Ulams\Tenancy\Console\WorkOnceCommand;
 use Ulams\Tenancy\Http\Middleware\RejectUnknownHost;
+use Ulams\Tenancy\Observability\TenantMetrics;
 use Ulams\Tenancy\Services\Contracts\BucketProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
@@ -110,6 +112,9 @@ class UlamsTenancyServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
         RateLimiter::for('ulams-entry-points-admin', fn (Request $request) => Limit::perMinute(60)->by('entry-points:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
         RateLimiter::for('ulams-entry-resolve', fn (Request $request) => Limit::perMinute((int) config(self::CONFIG_KEY . '.entry_resolve_rate', 600))->by('entry-resolve:' . $request->ip()));
+        if (\Ulams\Tenancy\Support\TenantContext::isPlatform()) {
+            $this->app->make(\Ulams\Core\Observability\MetricsRegistry::class)->register('tenancy', new TenantMetrics());
+        }
         RateLimiter::for('ulams-platform', fn (Request $request) => Limit::perMinute(60)->by('platform:' . ($request->user('api')?->getAuthIdentifier() ?? $request->ip())));
 
         // the academy's own active entry hosts are trusted origins, return URLs, frame ancestors and hand-off targets (ADR 0195)
@@ -123,6 +128,7 @@ class UlamsTenancyServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 CreateTenantCommand::class,
+                TemplateCommand::class,
                 ListTenantsCommand::class,
                 DeleteTenantCommand::class,
                 SyncTenantEnvCommand::class,
