@@ -69,6 +69,17 @@ class CertificateVerificationTest extends TestCase
             ->assertJsonPath('data.status', 'revoked');
     }
 
+    public function testACertificateSupersededByAPolicyChangeNamesTheVersionAndNothingElse(): void
+    {
+        $superseded = $this->certificate(['revoked_at' => now(), 'revoked_reason' => 'policy_superseded:v3']);
+        $freeText = $this->certificate(['revoked_at' => now(), 'revoked_reason' => 'Issued to the wrong person, see ticket 42', 'certificate_id' => 'b4a2d3e5-2222-4333-8444-555566667777']);
+
+        $this->getJson('/api/certificates/verify/' . $superseded->certificate_id)->assertOk()->assertJsonPath('data.superseded_by_policy_version', 3);
+        $other = $this->getJson('/api/certificates/verify/' . $freeText->certificate_id)->assertOk();
+        $other->assertJsonPath('data.superseded_by_policy_version', null);
+        $this->assertStringNotContainsString('ticket 42', $other->getContent());
+    }
+
     public function testUnknownIdIs404(): void
     {
         $this->getJson('/api/certificates/verify/00000000-0000-4000-8000-000000000000')->assertNotFound();

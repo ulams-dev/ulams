@@ -186,6 +186,25 @@ Without `--force` the command refuses. With it, it drops the database and role, 
 contents, the env file, the storage directory and the tenant's Redis keys. This cannot be
 undone.
 
+### Templates and tenants created for a purpose
+
+A **template** is a named starting point for new tenants: theme, accent, demo flag, demo users and inheritable settings. It
+applies only when a tenant is created (an existing tenant is never changed by it, and changing a template later does not touch
+the tenants made from it); options you pass to `ulams:tenant:create` win over it.
+
+```bash
+php artisan ulams:tenant:template policy-academy --name="Policy academy" --theme=coffee --accent="#C2552D" --users=0 --set=AI_DRIVER=fake
+php artisan ulams:tenant:create acmesales --template=policy-academy --theme=nightsky
+php artisan ulams:tenant:template policy-academy --delete
+```
+
+A tenant can also be created **for another tenant and a purpose**, which is how a department gets an academy of its own
+(`--derived-from=acme --purpose=policy_department --reference=<id in acme>`). The platform records it (who asked, for what, when;
+the row stays after the tenant is deleted), runs it once per reference (asking again resumes the same tenant), allows at most
+`TENANCY_MAX_DERIVED_PER_PARENT` active ones per parent (default 5) and refuses chains (a derived tenant cannot create tenants).
+`ulams:tenant:delete` refuses a tenant that has some, unless `--with-derived` deletes them first. Each academy is a tenant like
+any other: its own database, role, bucket and object-store key (with `TENANCY_S3_IDENTITY_DRIVER=seaweedfs`), env file and Redis prefix.
+
 ## Typical workflow
 
 <Steps>
@@ -223,6 +242,7 @@ Platform environment variables of the tenancy package (defaults in
 | `TENANT_DEMO_PASSWORD` | `secret` | Password of the seeded accounts. Development only. |
 | `TENANCY_PROCESS_TIMEOUT` | `900` | Timeout of each child `artisan` process, in seconds. |
 | `TENANCY_PLATFORM_API` | `false` | Turn on the [platform tenant API](/operators/platform-api/) (`/api/platform/*`, `ulams tenants`). Platform hosts only. |
+| `TENANCY_MAX_DERIVED_PER_PARENT` | `5` | How many active tenants one tenant may have created for a purpose (a department academy). |
 | `TENANCY_NEW_SITES` | `false` | Lets an author with the `platform_admin` permission create a new site for a course from the Course Builder. |
 | `TENANCY_PLATFORM_HOST` | `api.localhost` | The host platform commands run under when a tenant's queue worker has to create a tenant. |
 

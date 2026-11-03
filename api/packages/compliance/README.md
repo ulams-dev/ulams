@@ -47,6 +47,13 @@ and `templates-pdf` through their services and events and changes none of them.
   `tests/Feature/PathLifecycleNotificationTest.php` walks one learner through a three-step path with a frozen clock
   and asserts every e-mail and in-app notice is sent exactly once, and nothing on a rerun.
 
+## Courses with variants (ADR 0192)
+
+`FamilyCourses` makes obligations understand a family of course variants (the `course-variants` package; without it, or for a course outside a family,
+nothing changes). Finishing any variant fulfils an obligation on the family, and a valid certificate of any variant satisfies a new assignment at once,
+unless an admin pinned a variant (`pinned_course_id`): then the assignment is created on the pinned course, the learner is given it and only it counts.
+Path steps advance the same way. A variant course without compliance settings of its own uses the default course's.
+
 ## Report and audit export
 
 `ComplianceReportService` serves three datasets (registered in the `reporting` package's registry, which is also where

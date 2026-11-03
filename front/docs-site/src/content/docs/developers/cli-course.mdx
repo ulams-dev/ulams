@@ -40,7 +40,7 @@ approve only when the tenant allows it. The rules are in the
 
 | Command | What it does |
 |---|---|
-| `course init [dir] --from-course <id>` | Writes the course's current version as a folder (the folder must be empty; a README and dot files may be there) and records `.ulams/base.json`. A course that was not made with the builder is refused (`NOT_ADOPTED`). |
+| `course init [dir] --from-course <id> [--ci github]` | Writes the course's current version as a folder (the folder must be empty; a README and dot files may be there) and records `.ulams/base.json`. A course that was not made with the builder is refused (`NOT_ADOPTED`). `--ci github` also writes the CI workflow (see [GitHub Action and Docker image](#github-action-and-docker-image)). |
 | `course status` | One request plus the folder: local edits since the base, whether the server moved on (*behind*), a proposal waiting for approval, whether the current version is applied, drift (elements edited in the LMS since the last apply), open conflicts, and the next command to run. Always exits 0. |
 | `course diff` | Folder against its base: elements added, changed or removed, **offline**. `--remote` compares with the server's current version, field by field (what a push would change). `--version <id>` shows what a version on the server changes against its parent (or `--against <id>`). `--exit-code` exits 13 when there are differences. `--from <id> --to <id>` compares any two versions or releases instead (see `course compare` below). |
 | `course push [--message] [--approve] [--apply] [--allow-pending]` | Validates the folder, sends it as a proposed version based on the base, prints the diff. `--approve` approves it; `--apply` approves and applies it and waits for the apply (`--no-wait` returns at once with the run handle). A folder equal to its base sends nothing. While an open Living Course update proposal changes the same elements the push stops with `SYNC_CONFLICT` (`PROPOSAL_PENDING`); `--allow-pending` stores the push anyway. |
@@ -185,6 +185,29 @@ ulams living connections check <connection> --commit "$GITHUB_SHA"   # records t
 The loop does not run twice: an applied update proposal is pulled into Git as a pull request; merging it pushes a document equal to the
 current version, which the server answers with `unchanged` (no version, no new proposal). A sync pull request never touches `sources/`.
 
+### GitHub Action and Docker image
+
+`ulams course init --ci github` also writes `.github/workflows/ulams.yml` at the root of the repository around the folder (it refuses to
+overwrite one). It uses the course action of this repository, `ulams-dev/ulams/actions/course` (`action.yml` and the tested entrypoint
+`entrypoint.mjs`), which runs the CLI from the image `ghcr.io/ulams-dev/ulams-cli`, so the Node version of the runner does not matter.
+Set the repository secrets `ULAMS_URL` and `ULAMS_TOKEN` (a `ci` token).
+
+| Trigger | What the workflow does |
+|---|---|
+| Pull request | `validate` (SARIF for code scanning, so issues show inline), `diff` against the server in the job summary, `preview`: proposes the folder as a version (never approves) and keeps **one** pull request comment up to date. A fork has no secrets, so only `validate` runs |
+| Push to the default branch | `push`: proposes the merged course as a version; add `apply: true` only when the academy lets `ci` tokens approve (`course_as_code.ci_may_approve`), otherwise a person approves it in the studio |
+| Hourly, manual, `repository_dispatch` `ulams-course-changed` | `pull-pr`: `course pull`; when files changed, opens or updates the pull request `ulams/sync` (never stages `sources/`). A conflict fails the job with the conflict list |
+
+The action sets `ULAMS_COMMIT` and `ULAMS_CHANGE_URL`, which the CLI sends as `X-Ulams-Commit` and `X-Ulams-Change-Url`; the audit event of the
+import carries them. Studio changes reach Git through the hourly pull; the outgoing webhook `course.version_applied` (signed, see
+[outgoing webhooks](/developers/outgoing-webhooks/)) fires once per release, for a relay you run yourself (GitHub's `repository_dispatch`
+needs a GitHub token in the `Authorization` header, which a signed webhook cannot carry). Merging the sync pull request pushes the same
+content back, which the server answers with `unchanged`.
+
+The image (`front/cli/Dockerfile`, build the bundle first with `yarn workspace ulams build`) holds the CLI, `git` and production dependencies,
+runs as the non-root user `ulams` and is about 290 MB (the plan's 80 MB target was not reached: the MCP SDK and the Node base image dominate).
+Nothing is published yet; the release workflow (milestone M6-a) pushes it. The repository's own check is `.github/workflows/course-action-test.yml`.
+
 ### For agents and CI
 
 Add `--json` (or `ULAMS_OUTPUT=json`) for the usual envelope: `ok`, `data`, `error`, `warnings`. Without it a terminal gets text.
@@ -295,5 +318,5 @@ ulams course fmt && git add -A courses/
 ## Not there yet
 
 Adopting a course that was not made with the builder, downloading assets (`pull --assets`), SCORM, video and file lessons, preview
-academies and the GitHub Action are later milestones of the
+academies are later milestones of the
 [course-as-code plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-7-course-as-code.md).

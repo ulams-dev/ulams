@@ -135,7 +135,7 @@ class H5PServiceClient implements H5PServiceClientContract
 
     private function request(): PendingRequest
     {
-        $request = Http::acceptJson()->timeout((int) config('h5p.timeout', 300));
+        $request = Http::acceptJson()->timeout((int) config('h5p.timeout', 300))->withHeaders(\Ulams\Core\Observability\Propagation::headers());
         $token = config('h5p.internal_token');
         if ($token) {
             $request = $request->withHeaders(['X-Internal-Token' => $token]);

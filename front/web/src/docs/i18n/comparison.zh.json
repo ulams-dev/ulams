@@ -445,7 +445,6 @@
                     "title": "将学习者分配到变体",
                     "text": "学习者在报名时选择自己的水平和角色，可参加带引用的分级测试，也可由管理员或规则分配变体；切换变体时学习进度会保留。",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming",
                     "packages": [
                       "course-variants"
                     ]
@@ -455,6 +454,13 @@
                     "text": "为所有软件包提供统一的大语言模型访问层，含 Anthropic 驱动，以及用于测试的 fake 和 disabled 驱动。",
                     "packages": [
                       "ai"
+                    ]
+                  },
+                  {
+                    "title": "按部门划分的政策培训",
+                    "text": "上传政策并指定必须了解它的部门。课程生成器基于同一文本为每个部门准备一门带引用的课程；负责人审阅并发布课程、批准版本，并查看谁已被分配、谁已完成，以及证书对应的政策版本。",
+                    "packages": [
+                      "policy-lifecycle"
                     ]
                   }
                 ],

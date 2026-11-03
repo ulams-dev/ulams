@@ -4,6 +4,15 @@ use Ulams\Images\Enum\ConstantEnum;
 use Ulams\Images\Enum\PackageStatusEnum;
 
 return [
+    /**
+     * What imports and the topic-types markdown helper write into stored content for an image:
+     * 'api'      a /api/images/img?path=... URL (default; today's behaviour),
+     * 'original' the plain public storage URL of the file (the hosted demo tenants; the front and admin
+     *            resize at display time with their own image service).
+     * Read once per deployment (IMAGES_CONTENT_URLS), not per tenant. Existing /api/images/img URLs in
+     * content keep working in both modes.
+     */
+    'content_urls' => env('IMAGES_CONTENT_URLS', 'api'),
     'private' => [
         'rate_limit_global' => ConstantEnum::RATE_LIMIT_GLOBAL,
         'rate_limit_per_ip' => ConstantEnum::RATE_LIMIT_PER_IP,

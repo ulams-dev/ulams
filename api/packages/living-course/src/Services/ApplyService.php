@@ -25,6 +25,7 @@ use Ulams\LivingCourse\Models\Proposal;
 use Ulams\LivingCourse\Models\ProposalItem;
 use Ulams\LivingCourse\Models\Revision;
 use Ulams\LivingCourse\Models\RevisionFragment;
+use Ulams\LivingCourse\Support\ProposalBranch;
 
 /**
  * Applies the accepted items of a proposal (plan 8.3): builds a new blueprint version of kind
@@ -57,7 +58,9 @@ final class ApplyService
     public function preview(Proposal $proposal): array
     {
         $session = Session::query()->findOrFail($proposal->session_id);
-        $current = $session->currentVersion;
+        $branch = ProposalBranch::of($proposal);
+        // what learners of the proposal's course have: the base's current version, or the variant's applied one (ADR 0192)
+        $current = $branch->liveVersion();
         if ($current === null || $current->status !== Version::APPROVED) {
             throw new ProposalException('The course has no approved version to update.', 409);
         }
@@ -85,7 +88,7 @@ final class ApplyService
             $accepted[] = $item;
         }
         $document = $conflicts === [] ? $this->build($proposal, $current->document, $accepted) : null;
-        $drift = $document !== null ? $this->applier->drift($session, $document) : [];
+        $drift = $document !== null ? $this->applier->drift($session, $document, $branch->variant) : [];
 
         return ['conflicts' => $conflicts, 'drift' => $drift, 'document' => $document, 'current' => $current];
     }
@@ -130,6 +133,7 @@ final class ApplyService
         $current = $preview['current'];
         $doc = $preview['document'];
         $insights = $proposal->isInsights();
+        $variant = ProposalBranch::of($proposal)->variant;
         // an improvement from learner insights has no source revision: it reads the live fragments and promotes nothing (ADR 0181)
         $to = $insights ? null : Revision::query()->findOrFail($proposal->to_revision_id);
         $from = $insights ? null : Revision::query()->findOrFail($proposal->from_revision_id);
@@ -146,21 +150,30 @@ final class ApplyService
         $applied = $items->where('status', 'accepted')->whereIn('kind', ['update', 'remove', 'citation_remap', 'new_lesson']);
         $callIds = array_values(array_unique(array_merge(...$applied->map(fn ($i) => (array) $i->ai_call_ids)->all() ?: [[]])));
 
-        DB::transaction(function () use ($proposal, $session, $current, $doc, $to, $from, $author, $userId, $callIds, $items, $applied, $run, $insights) {
+        DB::transaction(function () use ($proposal, $session, $current, $doc, $to, $from, $author, $userId, $callIds, $items, $applied, $run, $insights, $variant) {
             $reason = $insights
                 ? 'Improvement from learner insights: ' . mb_substr((string) ($proposal->counts['targetLabel'] ?? $applied->first()?->label ?? 'course element'), 0, 160)
                 : sprintf('Source update r%d → r%d: %d change%s', $from->number, $to->number, $applied->count(), $applied->count() === 1 ? '' : 's');
-            $version = $this->versions->create($session, $doc, 'update', 'ai', Version::APPROVED, $current, $reason, null, $callIds, $userId, $insights ? $current->source_revisions : [$proposal->source_id => $to->id]);
-            $this->versions->setCurrent($session, $version);
-            if (!$insights) {
+            $version = $this->versions->create($session, $doc, 'update', 'ai', Version::APPROVED, $current, $reason, null, $callIds, $userId, $insights ? $current->source_revisions : [$proposal->source_id => $to->id], $variant?->id);
+            if ($variant !== null) {
+                $variant->forceFill(['current_version_id' => $version->id])->save();
+            } else {
+                $this->versions->setCurrent($session, $version);
+            }
+            if (!$insights && $variant === null) {
+                // only the base proposal acknowledges the source revision: a variant proposal belongs to the same revision
                 // the new text becomes the live fragments first: lesson sources and labels are rendered from them
                 $this->revisions->promote($to->refresh(), $userId);
             }
-            $courseId = $this->applier->apply($session, $version, $author, (bool) ($run->input['overwrite'] ?? false), $proposal->id);
-            $this->releases->applied($session, $version, $courseId, [], $insights ? 'insights' : 'update');
-            $this->staleness->set($session, $applied->pluck('element_id')->all(), 'in_sync');
-            if (!$insights) {
-                $this->staleness->settleOpen($session, 'dismissed');
+            $courseId = $this->applier->apply($session, $version, $author, (bool) ($run->input['overwrite'] ?? false), $proposal->id, $variant);
+            if ($variant !== null) {
+                $this->releases->appliedVariant($variant, $version, $courseId, [], 'update');
+            } else {
+                $this->releases->applied($session, $version, $courseId, [], $insights ? 'insights' : 'update');
+                $this->staleness->set($session, $applied->pluck('element_id')->all(), 'in_sync');
+                if (!$insights) {
+                    $this->staleness->settleOpen($session, 'dismissed');
+                }
             }
             $counts = (array) $proposal->counts;
             $counts['applied'] = $applied->count();
@@ -168,10 +181,11 @@ final class ApplyService
             $counts['undecided'] = $items->whereIn('status', ['pending', 'stale', 'conflict'])->whereIn('kind', ['update', 'remove', 'no_change', 'manual', 'new_lesson'])->count();
             $proposal->forceFill(['status' => 'applied', 'result_version_id' => $version->id, 'applied_at' => now(), 'counts' => $counts, 'error' => null])->save();
             $this->audit->record('proposal.applied', [
-                'session_id' => $session->id, 'subject_type' => 'proposal', 'subject_id' => $proposal->id, 'source_id' => $proposal->source_id,
+                'session_id' => $session->id, 'course_id' => $courseId, 'subject_type' => 'proposal', 'subject_id' => $proposal->id, 'source_id' => $proposal->source_id,
                 'revision_id' => $to?->id, 'origin_ref' => $to?->origin_ref, 'actor_id' => $userId, 'version_from' => $current->number, 'version_to' => $version->number,
                 'ai_call_ids' => $callIds,
                 'data' => ($insights ? ['kind' => $proposal->kind, 'evidence' => Evidence::summary((array) $proposal->evidence)] : ['from' => $from->number, 'to' => $to->number])
+                    + ($variant !== null ? ['variantId' => $variant->id] : [])
                     + ['number' => $proposal->number, 'applied' => $counts['applied'], 'rejected' => $counts['rejected'], 'undecided' => $counts['undecided'],
                     'items' => $applied->map(fn ($i) => ['element' => $i->element_id, 'kind' => $i->kind, 'class' => $i->change_class, 'before' => Blueprint::fingerprint($i->before), 'after' => $i->after !== null ? Blueprint::fingerprint($i->after) : null])->values()->all()],
             ]);

@@ -46,6 +46,9 @@ use Ulams\LivingCourse\Support\Presenter;
  * @OA\Post(path="/api/admin/living-course/proposals/{proposal}/items/{item}/reject", operationId="admin.living-course.proposals.by-proposal.items.by-item.reject.post", summary="Reject one item (keep the earlier version of the element)", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="item", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Response(response=200, description="the item", @OA\JsonContent(ref="#/components/schemas/ApiJson")), @OA\Response(response=403, description="not allowed"), @OA\Response(response=404, description="unknown"), @OA\Response(response=409, description="not decidable now"))
+ * @OA\Post(path="/api/admin/living-course/proposals/{proposal}/items/{item}/accept-in-group", operationId="admin.living-course.proposals.by-proposal.items.by-item.accept-in-group.post", summary="Accept one item and the same patch in the other proposals of its group (the course's variants)", tags={"Admin Living Course"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="item", in="path", required=true, @OA\Schema(type="string")),
+ *     @OA\Response(response=200, description="the item and proposal, how many other items were accepted (accepted) and in which proposals", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="not allowed"), @OA\Response(response=404, description="unknown"), @OA\Response(response=409, description="not decidable now"))
  * @OA\Post(path="/api/admin/living-course/proposals/{proposal}/items/{item}/reset", operationId="admin.living-course.proposals.by-proposal.items.by-item.reset.post", summary="Back to undecided", tags={"Admin Living Course"}, security={{"passport": {}}},
  *     @OA\Parameter(name="proposal", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="item", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Response(response=200, description="the item", @OA\JsonContent(ref="#/components/schemas/ApiJson")), @OA\Response(response=403, description="not allowed"), @OA\Response(response=404, description="unknown"), @OA\Response(response=409, description="not decidable now"))
@@ -88,6 +91,19 @@ class ProposalsController extends Controller
     public function reject(Request $request, string $proposal, string $item): JsonResponse
     {
         return $this->decide($request, $proposal, $item, 'rejected');
+    }
+
+    /** Accepts the item and the same patch in the other proposals of its group (the variants of the course). */
+    public function acceptInGroup(Request $request, string $proposal, string $item): JsonResponse
+    {
+        [, $p, $i] = $this->itemFor($request, $proposal, $item);
+        try {
+            $result = $this->decisions->acceptInGroup($p, $i, (int) $request->user()->getKey());
+        } catch (ProposalException $e) {
+            return self::fail($e->getMessage(), $e->status, $e->extra);
+        }
+
+        return self::ok(['item' => Presenter::item($i->refresh()), 'proposal' => Presenter::proposalSummary($p->refresh())] + $result);
     }
 
     public function reset(Request $request, string $proposal, string $item): JsonResponse
@@ -307,7 +323,11 @@ class ProposalsController extends Controller
             $groups[$i->group_key]['items'][] = Presenter::item($i, $labels);
         }
 
+        $siblings = $p->proposal_group === null ? [] : Proposal::query()->where('proposal_group', $p->proposal_group)->where('id', '!=', $p->id)->orderBy('number')->get()
+            ->map(fn (Proposal $s) => ['id' => $s->id, 'number' => $s->number, 'status' => $s->status, 'variant' => $s->variant_id !== null ? ($s->counts['variant'] ?? ['id' => $s->variant_id]) : null, 'decisions' => Presenter::proposalSummary($s)['decisions']])->all();
+
         return Presenter::proposalSummary($p) + [
+            'siblings' => $siblings,
             'steps' => $p->run_id ? \Ulams\CourseBuilder\Models\Step::query()->where('run_id', $p->run_id)->orderBy('key')->get()->map(fn ($st) => ['id' => $st->id, 'groupKey' => str_starts_with($st->key, 'group:') ? substr($st->key, 6) : $st->key, 'status' => $st->status, 'error' => $st->error])->all() : [],
             'learnerImpact' => ['learners' => $this->rules->impact($p, $p->status === 'applied' ? ['accepted'] : ['accepted']), 'note' => $this->rules->note($p)],
             'groups' => array_values($groups),

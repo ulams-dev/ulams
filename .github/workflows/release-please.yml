@@ -1,0 +1,47 @@
+name: Release PR
+
+# One version for the whole stack: images, CLI and (from P8-5) the Helm chart share vX.Y.Z
+# (docs/plans/phase-8-self-hosting.md 4.6). release-please keeps a release pull request open on main with
+# the next version and CHANGELOG.md, both from Conventional Commits since the last release
+# (release-please-config.json, .release-please-manifest.json). Merging that pull request tags vX.Y.Z and
+# creates the GitHub release; this workflow then starts "Publish images" for the tag, because a tag pushed
+# with GITHUB_TOKEN starts no workflow by itself. publish.yml builds, scans, signs and moves the stable and
+# lts tags; release.yml attaches SBOMs and checksums. Nothing is released until a maintainer merges.
+#
+# Off until the owner turns it on: Settings > Actions > General > "Allow GitHub Actions to create and approve
+# pull requests", then the repository variable RELEASE_PLEASE=true. Checks do not run on the release pull request itself (it is opened with
+# GITHUB_TOKEN); it changes only CHANGELOG.md and version strings.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  # dispatching publish.yml for the new tag
+  actions: write
+
+concurrency:
+  group: release-please
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    if: vars.RELEASE_PLEASE == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Pinned by commit (v5.0.0)
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+      - name: Publish the release images
+        if: steps.release.outputs.release_created == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.release.outputs.tag_name }}
+        run: gh workflow run publish.yml --repo "$GITHUB_REPOSITORY" --ref "$TAG"
