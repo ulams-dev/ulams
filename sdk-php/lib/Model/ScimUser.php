@@ -63,7 +63,7 @@ class ScimUser implements ModelInterface, ArrayAccess, \JsonSerializable
         'external_id' => 'string',
         'groups' => '\Ulams\Sdk\Model\ScimUserGroupsInner[]',
         'id' => 'string',
-        'meta' => '\Ulams\Sdk\Model\ScimUserMeta',
+        'meta' => '\Ulams\Sdk\Model\ScimGroupMeta',
         'name' => '\Ulams\Sdk\Model\ScimUserName',
         'schemas' => 'string[]',
         'title' => 'string',
@@ -537,7 +537,7 @@ class ScimUser implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Gets meta
      *
-     * @return \Ulams\Sdk\Model\ScimUserMeta|null
+     * @return \Ulams\Sdk\Model\ScimGroupMeta|null
      */
     public function getMeta()
     {
@@ -547,7 +547,7 @@ class ScimUser implements ModelInterface, ArrayAccess, \JsonSerializable
     /**
      * Sets meta
      *
-     * @param \Ulams\Sdk\Model\ScimUserMeta|null $meta meta
+     * @param \Ulams\Sdk\Model\ScimGroupMeta|null $meta meta
      *
      * @return self
      */

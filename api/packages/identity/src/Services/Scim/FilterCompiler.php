@@ -13,7 +13,8 @@ use Illuminate\Support\Carbon;
  * `invalidFilter` error.
  *
  * Attribute map entries (key: lower-case path, `emails.value`): `col` (SQL expression), `type`
- * (string | int | bool | datetime | const | member), `value` (const only). `string` compares case-insensitively,
+ * (string | int | bool | datetime | const | member), `value` (const only), `scope` (member only: extra SQL and bindings that
+ * limit which users count as members, so a client cannot probe users it does not manage). `string` compares case-insensitively,
  * as SCIM's default (`caseExact` false); give `exact => true` for case-exact attributes.
  */
 final class FilterCompiler
@@ -114,7 +115,7 @@ final class FilterCompiler
     {
         return match ($spec['type']) {
             'string' => fn ($w) => $w->whereRaw("({$spec['col']} IS NOT NULL AND {$spec['col']} <> '')"),
-            'member' => fn ($w) => $w->whereRaw('EXISTS (SELECT 1 FROM group_user gu WHERE gu.group_id = groups.id)'),
+            'member' => fn ($w) => $w->whereRaw('EXISTS (SELECT 1 FROM group_user gu WHERE gu.group_id = groups.id' . ($spec['scope']['sql'] ?? '') . ')', $spec['scope']['bindings'] ?? []),
             'const' => $this->constant($spec['value'] !== null && $spec['value'] !== ''),
             default => fn ($w) => $w->whereRaw("{$spec['col']} IS NOT NULL"),
         };
@@ -144,7 +145,9 @@ final class FilterCompiler
                 }
                 $not = $op === 'ne' ? 'NOT ' : '';
 
-                return fn ($w) => $w->whereRaw("{$not}EXISTS (SELECT 1 FROM group_user gu WHERE gu.group_id = groups.id AND gu.user_id = ?)", [$id]);
+                $scope = $spec['scope'] ?? ['sql' => '', 'bindings' => []];
+
+                return fn ($w) => $w->whereRaw("{$not}EXISTS (SELECT 1 FROM group_user gu WHERE gu.group_id = groups.id AND gu.user_id = ?{$scope['sql']})", [$id, ...$scope['bindings']]);
             case 'int':
                 if ($value === null && in_array($op, ['eq', 'ne'], true)) {
                     return fn ($w) => $w->whereRaw($op === 'eq' ? "{$col} IS NULL" : "{$col} IS NOT NULL");

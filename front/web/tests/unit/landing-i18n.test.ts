@@ -171,7 +171,7 @@ describe("translated comparison", () => {
       expect(values).not.toContain(tr.values.Coming);
       expect(values).not.toContain(tr.values.Partial);
       const actual = comparisonModel(comparisonData, lang);
-      expect(actual.groups[1]!.sections.flatMap((s) => s.rows.map((r) => r.cells[0]!.value))).toContain(tr.values.Coming);
+      expect(actual.groups.flatMap((g) => g.sections.flatMap((s) => s.rows.map((r) => r.cells[g.columns.findIndex((c) => c.highlight)]!.value)))).toContain(tr.values.Partial);
     });
   }
   it("English is untouched", () => {

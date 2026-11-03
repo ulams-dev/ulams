@@ -1,6 +1,6 @@
 ---
 title: SCIM 2.0 API
-description: The SCIM 2.0 server of a tenant for developers of provisioning clients - base URL and authentication, discovery documents, Users, filters, PATCH, pagination, ETag and If-Match, the error format with scimType, and what is deliberately not supported.
+description: The SCIM 2.0 server of a tenant for developers of provisioning clients - base URL and authentication, discovery documents, Users and Groups, filters, PATCH, pagination, ETag and If-Match, the error format with scimType, and what is deliberately not supported.
 sidebar:
   order: 17
 modules:
@@ -30,7 +30,7 @@ Requests and responses are `application/scim+json` (`application/json` is accept
 | Method and path | |
 |---|---|
 | `GET /ServiceProviderConfig` | Capabilities: patch yes, filter yes (max 200), etag yes, bulk, sort and changePassword no. |
-| `GET /ResourceTypes`, `/ResourceTypes/{id}` | `User` with the enterprise extension. |
+| `GET /ResourceTypes`, `/ResourceTypes/{id}` | `User` with the enterprise extension, and `Group`. |
 | `GET /Schemas`, `/Schemas/{urn}` | The supported attributes. Attributes that are not listed are ignored on input and never returned. |
 | `GET /Users` | List and filter; `filter`, `startIndex`, `count`, `attributes`, `excludedAttributes`. |
 | `POST /Users/.search` | The same with a `SearchRequest` body. |
@@ -39,15 +39,27 @@ Requests and responses are `application/scim+json` (`application/json` is accept
 | `PUT /Users/{id}` | Replace. Omitted attributes are cleared, except `active`, which keeps its value. |
 | `PATCH /Users/{id}` | `add`, `replace`, `remove`; all operations apply or none do. |
 | `DELETE /Users/{id}` | Deprovision (deactivate and unlink; `204`). |
+| `GET`, `POST /Groups`, `POST /Groups/.search`, `GET`, `PUT`, `PATCH`, `DELETE /Groups/{id}` | Groups and their members; the same filters, pagination, `ETag` and `PATCH` rules. |
 
-The `id` is the id of the account in the tenant and never changes. Groups are *Coming* (they are in the discovery documents only when they are built).
+The `id` is the id of the account (or group) in the tenant and never changes.
+
+### Groups
+
+`displayName` is required and unique among **all** groups of the tenant (case-insensitive; `409 uniqueness`), `members` are users of this provider
+(`{"value": "<user id>", "type": "User"}`; anything else is `400 invalidValue`), nested groups are not supported. A client sees, changes and deletes only
+the groups it created, and sees only the members it provisioned. `PUT` without `members` keeps the membership, with `[]` empties it. `PATCH` takes `add`, `replace`
+and `remove` on `members` (also `members[value eq "id"]`, and `remove` with the members to drop as `value`, as Entra ID sends it) and `replace` on `displayName`.
+`excludedAttributes=members` leaves the member list out of a list or a read. `DELETE` removes the group and the access it gave; the people stay. A user's
+read-only `groups` attribute lists the groups of this provider they belong to. At most 10 000 members per request. Role mapping from group names is set on the identity provider
+(`scim.group_roles`), see [SCIM provisioning](/operators/scim/#roles-from-groups).
 
 ## Filtering
 
 The grammar of RFC 7644 3.4.2.2: `eq ne co sw ew gt ge lt le pr`, `and`, `or`, `not ( ... )`, parentheses and value paths
 (`emails[type eq "work" and value co "@acme.example"]`). `not` binds tighter than `and`, which binds tighter than `or`. String comparisons are
-case-insensitive except `externalId`. Filterable attributes: `id`, `userName`, `externalId`, `emails.value`, `emails[...]`, `active`,
-`name.givenName`, `name.familyName`, `meta.lastModified`, `meta.created`. Anything else is `400 invalidFilter`. Values reach the database as bound
+case-insensitive except `externalId`. Filterable attributes of users: `id`, `userName`, `externalId`, `emails.value`, `emails[...]`, `active`,
+`name.givenName`, `name.familyName`, `meta.lastModified`, `meta.created`; of groups: `id`, `displayName`, `externalId`, `members.value` (`eq`, `ne`, `pr`; only members the provider
+provisioned count), `meta.lastModified`, `meta.created`. Anything else is `400 invalidFilter`. Values reach the database as bound
 parameters only; the column comes from a fixed map.
 
 ## PATCH
@@ -73,5 +85,5 @@ Other statuses: `401` (no valid token, with `WWW-Authenticate`), `403` (wrong to
 
 ## Not supported
 
-Bulk, sorting (`sortBy` is ignored), password changes, `/Me`, nested groups, and attributes that are not in `/Schemas`. `$ref` values are never
+Bulk, sorting (`sortBy` is ignored), password changes, `/Me`, nested groups, group `externalId` filters by value path, and attributes that are not in `/Schemas`. `$ref` values are never
 fetched: the server makes no outbound request while handling SCIM input.

@@ -61,6 +61,22 @@ trait RunsScim
         return $response->json();
     }
 
+    /** @return array<string,mixed> */
+    protected function groupBody(string $name = 'Nurses', array $members = [], array $extra = []): array
+    {
+        return array_replace([
+            'schemas' => [Schemas::GROUP],
+            'displayName' => $name,
+            'externalId' => 'g-' . $name,
+            'members' => array_map(fn ($id) => ['value' => (string) $id], $members),
+        ], $extra);
+    }
+
+    protected function createScimGroup(string $name = 'Nurses', array $members = []): array
+    {
+        return $this->scim('POST', '/Groups', $this->groupBody($name, $members))->assertStatus(201)->json();
+    }
+
     /** @param list<array<string,mixed>> $operations */
     protected function patchBody(array $operations): array
     {

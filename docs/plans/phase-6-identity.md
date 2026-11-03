@@ -666,3 +666,12 @@ Differences from the plan text, so ID-5 and later milestones start from what is 
 | - | SSRF | SCIM makes no outbound request; `$ref` and `manager.$ref` are never dereferenced. |
 | - | Takeover | Existing accounts are never claimed unless the linking rule holds; administrators and superadministrators are untouchable; the provisioned person's first sign-in link is limited to non-privileged accounts. |
 | - | Privilege | The role of a SCIM-created user is the provider's `default_role` (`student` or `tutor`); SCIM cannot grant `admin`; the service user has no role. |
+
+## 18. ID-5 as shipped
+
+- `/api/scim/v2/Groups` (POST, GET list, `.search`, GET, PUT, PATCH, DELETE) with the filters `id`, `displayName`, `externalId`, `members.value`, `meta.*`; `excludedAttributes=members` works. ADR 0199.
+- "Managed" is the external-id row of the group (`resource_type=group`); the admin API and UI do not yet block hand edits of managed groups (admin screens are ID-8; membership changes by hand are not shown to the provider and not removed by it).
+- Display names are unique across all groups (409); only members the provider provisioned are visible; `PUT` without `members` keeps the membership; nested groups and more than 10 000 members per request are refused.
+- Group-to-role mapping is `scim.group_roles` on the provider (`student` or `tutor` only), not the `group_map` of 4.4 (that belongs to sign-in mapping, ID-3). Audit actions `scim.group_*`, `role.granted_by_mapping`, `role.revoked_by_mapping`.
+- `UserGroupService::addMembers` and `removeMembers` are new; a user deprovisioned with `DELETE` leaves the groups of the provider.
+- The comparison cell "SCIM provisioning" reads Yes with a note that it was tested with Entra ID and Okta request formats, not live tenants. Still open: the live interop check (owner inputs, GitHub issue), a reference client in the nightly, attribute authority (ID-6), admin screens (ID-8).

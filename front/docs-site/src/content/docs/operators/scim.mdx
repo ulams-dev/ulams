@@ -1,6 +1,6 @@
 ---
-title: SCIM provisioning (users)
-description: Let Microsoft Entra ID, Okta or another identity provider create, update and deactivate the accounts of a tenant with SCIM 2.0 - tokens and rotation, what is mapped, how deprovisioning works and what is kept, recipes for Entra ID, Okta and Keycloak, limits, security notes and how to check conformance.
+title: SCIM provisioning
+description: Let Microsoft Entra ID, Okta or another identity provider create, update and deactivate the accounts and groups of a tenant with SCIM 2.0 - tokens and rotation, what is mapped, groups and the roles they can grant, how deprovisioning works and what is kept, recipes for Entra ID, Okta and Keycloak, limits, security notes and how to check conformance.
 sidebar:
   order: 16
 modules:
@@ -16,8 +16,9 @@ runs the instance or administers the tenant. Developers who build or debug a SCI
 [SCIM API reference](/developers/scim-api/). Sign-in itself is a separate switch:
 [OpenID Connect](/operators/single-sign-on/) or [SAML 2.0](/operators/single-sign-on-saml/).
 
-This version provisions **users**. Groups, group membership and the group-to-role mapping arrive in the next milestone of
-[the identity plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-6-identity.md) and are marked *Coming* here.
+It provisions **users and groups**: the people, their group memberships (a group gives access to what it is enrolled in), and,
+if you choose, a role for the members of a group. HR data from a file (HRIS import) and an admin screen are separate milestones of
+[the identity plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-6-identity.md).
 
 <Aside type="note">
   SCIM is optional and per identity provider. Nothing is provisioned until an administrator creates a SCIM token for a provider
@@ -37,7 +38,7 @@ This version provisions **users**. Groups, group membership and the group-to-rol
    The response carries `token` (`ulams_pat_...`). **It is shown once**: copy it into the IdP now. It lives at most 365 days.
    The provider's `scim.base_url` (in `ulams identity providers-get <id>`) is the URL to enter, `https://<tenant-api-host>/api/scim/v2`.
 3. **Enter both in the IdP** (recipes below) and run its connection test, which reads `/ServiceProviderConfig`.
-4. **Assign people** to the application in the IdP. They appear in the tenant on the next sync, as students (or as tutors when the
+4. **Assign people** (and, if you want groups, the groups) to the application in the IdP. They appear in the tenant on the next sync, as students (or as tutors when the
    provider's `default_role` is `tutor`; never as administrators).
 
 ### Rotating the token
@@ -80,6 +81,34 @@ superadministrators can never be changed, deactivated or deleted through SCIM (H
 A person provisioned by SCIM can sign in through the same provider on their first visit without `trust_email`, because the
 provider already vouched for that address when it created the account.
 
+## Groups
+
+A group pushed by the identity provider is a normal group of the tenant (it can be enrolled in courses and learning paths, and drives
+compliance rules) that is **managed by that provider**: only that provider sees it, and it can only change, fill or delete groups it created.
+
+- The `displayName` must not be used by any other group of the tenant, including groups created by hand (`409 uniqueness`): a group is
+  never taken over by name.
+- Members are users that provider provisioned. A member that is not one of them, or another group, is `400 invalidValue`.
+- A replace (`PUT`) that leaves out `members` keeps the membership; an empty list empties the group. Members an administrator added by
+  hand are neither shown to the provider nor removed by it.
+- Adding or removing a member fires the same events as the admin screen, so rules and course access follow at once. Deleting a group
+  removes the access it gave and keeps the people. A person deprovisioned with `DELETE` leaves the groups the provider manages.
+- A user shows the groups of the provider they belong to in `groups` (read-only).
+
+### Roles from groups
+
+By default membership grants nothing but what the group is enrolled in. To give the members of a group a role, map its display name to
+`student` or `tutor` on the provider (`admin` can never be mapped; a person who is an administrator is never changed):
+
+```bash
+ulams api PUT /api/admin/identity/providers/<id> --body '{"scim":{"group_roles":{"Instructors":"tutor"}}}'
+```
+
+A member of a mapped group has the role for as long as they are a member. Only roles the mapping added are taken away again when
+the membership ends, the group is renamed or deleted, or the mapping changes; a role the person already had stays. Saving a
+new mapping re-checks every person the provider provisioned. Each grant and revocation is an audit row (`role.granted_by_mapping`,
+`role.revoked_by_mapping`).
+
 ## Deprovisioning and what is kept
 
 | The IdP sends | What happens |
@@ -103,8 +132,10 @@ Every create, change, deactivation, reactivation and deletion, and every token c
 2. *Provisioning* > *Mode: Automatic*. **Tenant URL**: the `scim.base_url`. **Secret token**: the SCIM token. *Test connection*.
 3. *Mappings* > *Provision Microsoft Entra ID Users*: keep `userPrincipalName` > `userName`, `mail` > `emails[type eq "work"].value`,
    `givenName`, `surname`, `Switch([IsSoftDeleted], , "False", "True", "True", "False")` > `active`, `objectId` > `externalId`. Optional: `department`,
-   `employeeId` > `employeeNumber`, `manager`. Turn **off** *Provision Microsoft Entra ID Groups* until groups are supported.
-4. *Users and groups*: assign people, then *Provision on demand* for one user to check.
+   `employeeId` > `employeeNumber`, `manager`. Under *Provision Microsoft Entra ID Groups* keep `displayName` > `displayName`, `members` > `members`
+   and `objectId` > `externalId`, and assign the groups to the application (only assigned groups are sent).
+4. *Users and groups*: assign people and groups, then *Provision on demand* for one user to check. Entra sends the members of a group as
+   `PATCH` operations with a list in `value`, and asks `GET /Groups?excludedAttributes=members` first.
 
 Entra sends `Replace` with a capital letter, `"False"` as a string, paths such as `emails[type eq "work"].value` and
 `urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:manager`, and `replace` operations without a `path`; all of this is accepted. The
@@ -117,8 +148,9 @@ initial sync is a burst of requests: the limit is 600 per minute and token.
    supported actions: *Import New Users and Profile Updates*, *Push New Users*, *Push Profile Updates*. **Authentication mode**: *HTTP Header*,
    **Authorization** = `Bearer ulams_pat_...`. *Test connector configuration*.
 3. *To App*: enable *Create Users*, *Update User Attributes*, *Deactivate Users*.
+4. *Push Groups* tab: *Push Groups* > pick groups or a rule. Okta creates the group (`POST /Groups`), then adds and removes members with `PATCH`.
 
-Okta sends `PUT` for users and `PATCH` for groups, asks `GET /Users?filter=userName eq "..."` before it creates (both work), and
+Okta sends `PUT` for users and for renaming a group, `PATCH` for members, asks `GET /Users?filter=userName eq "..."` before it creates (both work), and
 deactivates by `active: false`.
 
 ### Keycloak
@@ -141,7 +173,8 @@ Any SCIM 2.0 client that sends `Authorization: Bearer`, supports `PATCH` and `ET
 | List size | 100 per page by default, at most 200 (`count`). Filters are limited to 1000 characters. |
 | Body | At most 1 MB. |
 | Tokens | Two active per provider, 365 days at most. |
-| Filters | `eq ne co sw ew gt ge lt le pr`, `and`, `or`, `not`, parentheses and value paths on `id`, `userName`, `externalId`, `emails.value`, `active`, `name.givenName`, `name.familyName`, `meta.lastModified`, `meta.created`. |
+| Filters | `eq ne co sw ew gt ge lt le pr`, `and`, `or`, `not`, parentheses and value paths. Users: `id`, `userName`, `externalId`, `emails.value`, `active`, `name.givenName`, `name.familyName`, `meta.lastModified`, `meta.created`. Groups: `id`, `displayName`, `externalId`, `members.value`, `meta.lastModified`, `meta.created`. |
+| Group members | At most 10 000 per request; send larger groups in several `PATCH` requests. |
 
 ## Troubleshooting
 
@@ -149,8 +182,8 @@ Any SCIM 2.0 client that sends `Authorization: Bearer`, supports `PATCH` and `ET
 |---|---|
 | `401` | The token is wrong, expired or revoked, or belongs to another tenant (check the host). |
 | `403` | The token is not a SCIM token, its provider was deleted, or the account is an administrator. |
-| `409 uniqueness` | The `userName`, `externalId` or e-mail address is already used by another resource, or by an account this provider may not adopt. |
-| `400 invalidValue` | A value is malformed (for example an `emails` value that is not an address, or a `manager.value` that is not a user of this provider). The `detail` names it. |
+| `409 uniqueness` | The `userName`, `externalId` or e-mail address is already used by another resource, or by an account this provider may not adopt; for a group, the `displayName` is used by another group. |
+| `400 invalidValue` | A value is malformed (for example an `emails` value that is not an address, a `manager.value` or group member that is not a user of this provider). The `detail` names it. |
 | `400 invalidFilter` | The filter cannot be parsed or names an attribute that cannot be filtered. |
 | `412` | `If-Match` is older than the resource: read it again (the `ETag` header) and retry. |
 | `404` | The id belongs to nobody this provider provisioned. A person it did not create is invisible to it. |
@@ -158,7 +191,7 @@ Any SCIM 2.0 client that sends `Authorization: Bearer`, supports `PATCH` and `ET
 ## Checking conformance
 
 The automated suite replays what Entra ID and Okta send (capitalised `op`, `"False"`, `replace` without a path, member removal as
-a value list, value-path filters) and checks the RFC 7644 behaviour: discovery documents, filters, pagination, `PATCH` atomicity,
+a value list and as a value path, value-path filters, `excludedAttributes=members`) and checks the RFC 7644 behaviour: discovery documents, filters, pagination, `PATCH` atomicity,
 `ETag` and `If-Match`, the error format. It runs in the `identity` PHPUnit suite on every pull request.
 
 Not yet automated: a run of an independent reference client against a live instance in the nightly pipeline. Until one is

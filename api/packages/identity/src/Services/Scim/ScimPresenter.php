@@ -2,6 +2,8 @@
 
 namespace Ulams\Identity\Services\Scim;
 
+use Illuminate\Support\Facades\DB;
+use Ulams\Auth\Models\Group;
 use Ulams\Auth\Models\User;
 use Ulams\Identity\Models\ExternalId;
 use Ulams\Identity\Models\IdentityProvider;
@@ -18,9 +20,23 @@ class ScimPresenter
         return UserMapper::toScim($user, $ext, $base, $this->groupsOf($provider, $user), $manager);
     }
 
-    /** @return list<array{0:int,1:string}> */
+    /** @return array<string,mixed> */
+    public function group(IdentityProvider $provider, Group $group, ExternalId $ext, string $base): array
+    {
+        $members = ScimDirectory::users($provider)
+            ->whereIn('users.id', DB::table('group_user')->where('group_id', $group->getKey())->select('user_id'))
+            ->orderBy('users.id')->get()
+            ->map(fn (User $u) => [(int) $u->getKey(), trim($u->first_name . ' ' . $u->last_name)])->all();
+
+        return GroupMapper::toScim($group, $ext, $base, $members);
+    }
+
+    /** @return list<array{0:int,1:string}> the groups of this provider the user is in */
     protected function groupsOf(IdentityProvider $provider, User $user): array
     {
-        return [];
+        return ScimDirectory::groups($provider)
+            ->whereIn('groups.id', DB::table('group_user')->where('user_id', $user->getKey())->select('group_id'))
+            ->orderBy('groups.id')->get()
+            ->map(fn (Group $g) => [(int) $g->getKey(), (string) $g->name])->all();
     }
 }

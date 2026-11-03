@@ -148,5 +148,6 @@ The index below is generated from each record's title and `Status:` line: run `n
 | [0196](0196-style-profile-shapes-generated-course-design.md) | A cited, author-approved style profile shapes the theme and the generated course design | Proposed |
 | [0197](0197-scorm-playback-regression-harness.md) | SCORM playback is pinned by a browser regression harness with original fixture packages and golden runtime traces | Proposed |
 | [0198](0198-scim-server-visibility-adoption-and-deprovisioning.md) | SCIM server: visibility per provider, adoption by trust, tombstones and content-hash ETags | Proposed |
+| [0199](0199-scim-groups-managed-membership-and-roles-from-groups.md) | SCIM groups: managed groups, provider-visible members and roles from group names | Proposed |
 
 <!-- END GENERATED: adr-index -->

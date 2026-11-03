@@ -67,14 +67,16 @@ describe("comparison cells", () => {
   const ours = (mode: "final" | "actual") => applyComparisonStatus(comparisonData, mode).systems.find((s) => s.ours)!;
   it("actual: unchanged", () => {
     expect(applyComparisonStatus(comparisonData, "actual")).toBe(comparisonData);
-    expect(ours("actual").cells.scim?.value).toBe("Coming");
+    expect(ours("actual").cells.scim?.value).toBe("Yes");
+    expect(ours("actual").cells.adaptive_paths?.value).toBe("Partial");
   });
   it("final: ulams Coming and Partial read Yes, roadmap notes are dropped, other cells stay", () => {
     const cells = ours("final").cells;
-    expect(cells.scim?.value).toBe("Yes");
+    expect(cells.adaptive_paths?.value).toBe("Yes");
     expect(cells.source_sync?.value).toBe("Yes");
     expect(cells.sso?.value).toBe("Yes");
-    expect(cells.scim?.note).toBeUndefined();
+    expect(cells.scim?.value).toBe("Yes");
+    expect(cells.commerce?.note).toBeUndefined();
     expect(cells.content_library?.value).toBe("No");
     expect(cells.licence?.value).toBe(ours("actual").cells.licence?.value);
     for (const cell of Object.values(cells)) expect(cell.value).not.toBe("Coming");

@@ -59,7 +59,8 @@ class IdentityProviderScim implements ModelInterface, ArrayAccess, \JsonSerializ
       */
     protected static $openAPITypes = [
         'active_tokens' => 'int',
-        'base_url' => 'string'
+        'base_url' => 'string',
+        'group_roles' => 'array<string,string>'
     ];
 
     /**
@@ -71,7 +72,8 @@ class IdentityProviderScim implements ModelInterface, ArrayAccess, \JsonSerializ
       */
     protected static $openAPIFormats = [
         'active_tokens' => null,
-        'base_url' => 'uri'
+        'base_url' => 'uri',
+        'group_roles' => null
     ];
 
     /**
@@ -81,7 +83,8 @@ class IdentityProviderScim implements ModelInterface, ArrayAccess, \JsonSerializ
       */
     protected static array $openAPINullables = [
         'active_tokens' => false,
-        'base_url' => false
+        'base_url' => false,
+        'group_roles' => false
     ];
 
     /**
@@ -171,7 +174,8 @@ class IdentityProviderScim implements ModelInterface, ArrayAccess, \JsonSerializ
      */
     protected static $attributeMap = [
         'active_tokens' => 'active_tokens',
-        'base_url' => 'base_url'
+        'base_url' => 'base_url',
+        'group_roles' => 'group_roles'
     ];
 
     /**
@@ -181,7 +185,8 @@ class IdentityProviderScim implements ModelInterface, ArrayAccess, \JsonSerializ
      */
     protected static $setters = [
         'active_tokens' => 'setActiveTokens',
-        'base_url' => 'setBaseUrl'
+        'base_url' => 'setBaseUrl',
+        'group_roles' => 'setGroupRoles'
     ];
 
     /**
@@ -191,7 +196,8 @@ class IdentityProviderScim implements ModelInterface, ArrayAccess, \JsonSerializ
      */
     protected static $getters = [
         'active_tokens' => 'getActiveTokens',
-        'base_url' => 'getBaseUrl'
+        'base_url' => 'getBaseUrl',
+        'group_roles' => 'getGroupRoles'
     ];
 
     /**
@@ -235,6 +241,21 @@ class IdentityProviderScim implements ModelInterface, ArrayAccess, \JsonSerializ
         return self::$openAPIModelName;
     }
 
+    public const GROUP_ROLES_STUDENT = 'student';
+    public const GROUP_ROLES_TUTOR = 'tutor';
+
+    /**
+     * Gets allowable values of the enum
+     *
+     * @return string[]
+     */
+    public function getGroupRolesAllowableValues()
+    {
+        return [
+            self::GROUP_ROLES_STUDENT,
+            self::GROUP_ROLES_TUTOR,
+        ];
+    }
 
     /**
      * Associative array for storing property values
@@ -253,6 +274,7 @@ class IdentityProviderScim implements ModelInterface, ArrayAccess, \JsonSerializ
     {
         $this->setIfExists('active_tokens', $data ?? [], null);
         $this->setIfExists('base_url', $data ?? [], null);
+        $this->setIfExists('group_roles', $data ?? [], null);
     }
 
     /**
@@ -347,6 +369,42 @@ class IdentityProviderScim implements ModelInterface, ArrayAccess, \JsonSerializ
             throw new \InvalidArgumentException('non-nullable base_url cannot be null');
         }
         $this->container['base_url'] = $base_url;
+
+        return $this;
+    }
+
+    /**
+     * Gets group_roles
+     *
+     * @return array<string,string>|null
+     */
+    public function getGroupRoles()
+    {
+        return $this->container['group_roles'];
+    }
+
+    /**
+     * Sets group_roles
+     *
+     * @param array<string,string>|null $group_roles Display name of a SCIM group (lower case) to the role its members get
+     *
+     * @return self
+     */
+    public function setGroupRoles($group_roles)
+    {
+        if (is_null($group_roles)) {
+            throw new \InvalidArgumentException('non-nullable group_roles cannot be null');
+        }
+        $allowedValues = $this->getGroupRolesAllowableValues();
+        if (array_diff($group_roles, $allowedValues)) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    "Invalid value for 'group_roles', must be one of '%s'",
+                    implode("', '", $allowedValues)
+                )
+            );
+        }
+        $this->container['group_roles'] = $group_roles;
 
         return $this;
     }

@@ -2,13 +2,13 @@
 
 OpenID Connect and SAML 2.0 login with per-tenant identity providers (Keycloak, Entra ID, Okta, Google, any OIDC or SAML
 provider), account creation on first sign-in, strict account linking and a hash-chained audit trail (Phase 6.3,
-milestones ID-1, ID-2 and ID-4 of `docs/plans/phase-6-identity.md`; ADR 0120, ADR 0121, ADR 0198) and a SCIM 2.0 server for users. HRIS import is a later milestone.
+milestones ID-1, ID-2 and ID-4 of `docs/plans/phase-6-identity.md`; ADR 0120, ADR 0121, ADR 0198, ADR 0199) and a SCIM 2.0 server for users. HRIS import is a later milestone.
 
 - Guides for operators: `front/docs-site/src/content/docs/operators/single-sign-on.mdx` (OpenID Connect) and
   `single-sign-on-saml.mdx`; protocol: `developers/authentication.mdx`.
 - Public routes (`/api/identity/*`, throttled per IP): providers list, `sso/{slug}/start`, `oidc/{slug}/callback`, `sso/exchange`,
   SAML `saml/{slug}/metadata`, `saml/{slug}/acs` (POST), `saml/{slug}/slo` (GET and POST); `POST saml/{slug}/logout` needs the user's token.
-- SCIM 2.0 (`/api/scim/v2/*`, `ScimAuthenticate`: only a `scim` token of one provider; 600 requests per minute per token): `ServiceProviderConfig`, `ResourceTypes`, `Schemas`, `Users` (CRUD, `.search`, filters, PATCH, ETag). Guide: `operators/scim.mdx`, reference: `developers/scim-api.mdx`.
+- SCIM 2.0 (`/api/scim/v2/*`, `ScimAuthenticate`: only a `scim` token of one provider; 600 requests per minute per token): `ServiceProviderConfig`, `ResourceTypes`, `Schemas`, `Users` and `Groups` (CRUD, `.search`, filters, PATCH, ETag). Guide: `operators/scim.mdx`, reference: `developers/scim-api.mdx`.
 - Admin routes (`/api/admin/identity/*`, permissions `identity_provider_manage`, `identity_audit_read`, `identity_scim_manage` for `providers/{id}/scim-tokens`, token scope
   `identity:read|write`): providers CRUD, audit list and chain verification. OpenAPI tags "Identity" and "Admin Identity".
 - Tables (tenant database): `identity_providers` (client secret and SAML SP private keys encrypted with the tenant `APP_KEY`), `identity_links`,
@@ -29,6 +29,7 @@ Saml\SamlXml        size, DOCTYPE, algorithm allow-lists and comment checks that
 Scim\FilterParser   RFC 7644 filter grammar to a tree; Scim\FilterCompiler turns it into bound-parameter SQL on a fixed column map
 Scim\PatchApplier   add/replace/remove on the SCIM representation (Entra and Okta quirks); nothing is written until all succeed
 Scim\UserProvisioner create, adopt, update, deactivate, delete through UserService, model fields and ManagerService
+Scim\GroupProvisioner / GroupRoleMapper  groups through UserGroupService; roles from group names (student/tutor only)
 Scim\ScimDirectory  what a provider's client can see: only the users it provisioned
 Scim\ScimTokenService service user and scoped tokens of kind `scim` (two active, shown once)
 ```

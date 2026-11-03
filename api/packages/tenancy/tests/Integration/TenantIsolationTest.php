@@ -219,13 +219,17 @@ class TenantIsolationTest extends TestCase
         $this->assertSame(201, $createdUser->getStatusCode(), (string) $createdUser->getBody());
         $userId = json_decode((string) $createdUser->getBody(), true)['id'];
         $this->assertSame(200, $this->request(self::A, 'GET', "/api/scim/v2/Users/{$userId}", $scim)->getStatusCode());
+        $createdGroup = $this->request(self::A, 'POST', '/api/scim/v2/Groups', $scim, ['schemas' => ['urn:ietf:params:scim:schemas:core:2.0:Group'], 'displayName' => 'Scim probe ' . bin2hex(random_bytes(3)), 'members' => [['value' => $userId]]]);
+        $this->assertSame(201, $createdGroup->getStatusCode(), (string) $createdGroup->getBody());
+        $groupId = json_decode((string) $createdGroup->getBody(), true)['id'];
 
         // every tenant signs tokens with its own keys: A's SCIM token is nothing at B, on every SCIM route
-        foreach (['/api/scim/v2/ServiceProviderConfig', '/api/scim/v2/Users', "/api/scim/v2/Users/{$userId}"] as $path) {
+        foreach (['/api/scim/v2/ServiceProviderConfig', '/api/scim/v2/Users', "/api/scim/v2/Users/{$userId}", '/api/scim/v2/Groups', "/api/scim/v2/Groups/{$groupId}"] as $path) {
             $this->assertSame(401, $this->request(self::B, 'GET', $path, $scim)->getStatusCode(), $path);
         }
         $this->assertSame(401, $this->request(self::B, 'POST', '/api/scim/v2/Users', $scim, ['schemas' => ['urn:ietf:params:scim:schemas:core:2.0:User'], 'userName' => $userName])->getStatusCode());
         $this->assertSame(401, $this->request(self::B, 'DELETE', "/api/scim/v2/Users/{$userId}", $scim)->getStatusCode());
+        $this->assertSame(401, $this->request(self::B, 'DELETE', "/api/scim/v2/Groups/{$groupId}", $scim)->getStatusCode());
         // an admin token of B is not a SCIM token either, and the SCIM token endpoints of A's provider do not exist at B
         $this->assertSame(403, $this->request(self::B, 'GET', '/api/scim/v2/Users', $tokenB)->getStatusCode());
         $this->assertSame(404, $this->request(self::B, 'GET', "/api/admin/identity/providers/{$id}/scim-tokens", $tokenB)->getStatusCode());
