@@ -5,6 +5,8 @@ import { compareCourse, diffLines } from "./course.ts";
 import { conflictFileName, parseElement, readConflict } from "../course/conflicts.ts";
 import { readFolder, type DiskFolder } from "../course/disk.ts";
 import { githubWorkflow, WORKFLOW_FILE } from "../course/ci-github.ts";
+import { forPreview } from "../course/preview.ts";
+import { HttpClient } from "../http/client.ts";
 import { gitOrigin, gitTopLevel, repoFromRemote, type GitHost } from "../course/repo.ts";
 import { folderFromBlueprint } from "../course/from-blueprint.ts";
 import { summarize } from "../course/issues.ts";
@@ -168,7 +170,7 @@ function translate(e: unknown): unknown {
     case "NOT_ADOPTED":
       return new CliError("CONFLICT", e.message, {
         ...keep,
-        hint: "Only courses made with the course builder can be synced for now; adopting a hand-made course arrives in a later milestone.",
+        hint: "This course was made by hand, so it has no blueprint yet. `ulams course adopt <course>` reads it into one (rich text, quizzes, H5P, LiaScript and embedded pages; nothing in the course changes), then run `ulams course init` again.",
         details: { code },
       });
     case "NO_BLUEPRINT":
@@ -316,7 +318,7 @@ const init = defineCommand({
   id: "course.init",
   summary: "Create a course folder from a course made with the builder (Markdown and YAML, bound to the course)",
   description:
-    "Reads the course's current version from the server and writes it as a course folder (ulams.yaml, course.yaml, modules/...), then records where it stands in .ulams/base.json (commit it). The folder must be empty (a README, a LICENSE and dot files may be there). Only courses made with the course builder have a blueprint (a hand-made one is refused with NOT_ADOPTED). Works with AI switched off. With --dry-run it lists the files and writes nothing.",
+    "Reads the course's current version from the server and writes it as a course folder (ulams.yaml, course.yaml, modules/...), then records where it stands in .ulams/base.json (commit it). The folder must be empty (a README, a LICENSE and dot files may be there). A course made by hand has no blueprint until `ulams course adopt <course>` has read it into one (until then it is refused with NOT_ADOPTED). Works with AI switched off. With --dry-run it lists the files and writes nothing.",
   kind: "read",
   scopes: READ,
   endpoints: ["GET /api/admin/course-as-code/courses/{course}/blueprint"],
@@ -379,6 +381,46 @@ function ciWorkflow(root: string): { file: string; text: string } {
   const path = relative(top, real).split(sep).join("/");
   return { file: join(top, WORKFLOW_FILE), text: githubWorkflow({ path: path === "" ? "." : path, branch: gitOrigin(realpathSync(existing))?.branch ?? "main" }) };
 }
+
+/* ---------------------------------------------------------------- adopt */
+
+interface AdoptResponse {
+  created: boolean;
+  courseId: number;
+  sessionId: string;
+  versionId: string;
+  versionNumber: number;
+  skipped: Array<{ topicId: number; title: string; type: string; reason: string }>;
+}
+
+const adopt = defineCommand({
+  ...builderCommand,
+  id: "course.adopt",
+  summary: "Read a course that was made by hand into a blueprint, so it can be pulled into a folder, edited in Git and pushed back",
+  description:
+    "Creates a first blueprint, an approved version, a builder session and an entity map from the live course. Nothing in the course changes: an apply right after adoption writes nothing, and the course then behaves like one made with the builder (`course init --from-course`, pull, push, releases, compare). Rich text topics become lessons (HTML becomes Markdown, split at top-level headings, written by the author, no citations), a quiz becomes the quiz of the lesson before it (only the shapes the blueprint holds: single, multiple, true/false, short answer), and H5P, LiaScript and embedded-page topics become lessons that stand for the existing topic (an apply follows their title and position, never their content). Video, audio, PDF, image, SCORM and cmi5 topics need their files to travel with the course (asset download, not built yet): they, inactive topics and unreadable questions are left out, listed with the reason, never mapped and never changed by an apply. Running it again returns the existing session. Works with AI switched off.",
+  kind: "write",
+  idempotent: true,
+  scopes: WRITE,
+  endpoints: ["POST /api/admin/course-as-code/courses/{course}/adopt"],
+  positionals: ["course"],
+  input: z.object({ course: z.string().regex(/^\d+$/, "A numeric course id.").describe("Course id on the server.") }),
+  output: z.unknown(),
+  examples: [
+    { title: "Adopt a hand-made course", argv: "course adopt 12" },
+    { title: "See what it would send", argv: "course adopt 12 --dry-run --json" },
+  ],
+  plan: async (_ctx, i) => planOf("POST", `/courses/${i.course}/adopt`),
+  async run(ctx, i) {
+    const res = await server(() => call<AdoptResponse>(ctx, "POST", "/courses/{course}/adopt", { params: { course: i.course } }));
+    const lines = [
+      res.created ? `Adopted course ${res.courseId}: version ${res.versionNumber} of session ${res.sessionId}. The course itself was not changed.` : `Course ${res.courseId} was adopted before: session ${res.sessionId}, version ${res.versionNumber}.`,
+      ...(res.skipped.length > 0 ? [`${res.skipped.length} topic${res.skipped.length === 1 ? " was" : "s were"} left out and stay as they are:`, ...res.skipped.slice(0, 8).map((s) => `  - ${s.title || s.type} (${s.type}): ${s.reason}`), ...(res.skipped.length > 8 ? [`  ... and ${res.skipped.length - 8} more (see --json)`] : [])] : []),
+      `Next: \`ulams course init ./my-course --from-course ${res.courseId}\`.`,
+    ];
+    return present(ctx, res, lines);
+  },
+});
 
 /* ---------------------------------------------------------------- sources-connect */
 
@@ -450,6 +492,162 @@ function sourcesTarget(ctx: Ctx, i: { dir?: string | undefined; host?: GitHost |
   const config = { host: repo.host, ...(repo.baseUrl ? { base_url: repo.baseUrl } : {}), repository: repo.repository, branch: repo.branch, paths };
   const body: { connector: string; config: Obj; secrets?: Obj; schedule?: string } = { connector: "git", config, ...(token ? { secrets: { token } } : {}), ...(i.schedule ? { schedule: i.schedule } : {}) };
   return { sessionId: base.sessionId, repo, paths, body };
+}
+
+/* ---------------------------------------------------------------- preview */
+
+const PLATFORM = "/api/platform";
+
+interface PlatformTenant {
+  slug: string;
+  status: string;
+  expires_at: string | null;
+  urls: { api: string; front: string; admin: string };
+}
+
+interface TenantOp {
+  id: string;
+  status: "queued" | "running" | "succeeded" | "failed";
+  error: string | null;
+}
+
+const sleepMs = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+
+const preview = defineCommand({
+  ...folderCommand,
+  id: "course.preview",
+  summary: "Show the course folder as a proposed version, or (with --tenant) in a throwaway preview academy",
+  description:
+    "Without --tenant this is a push that never approves: the folder becomes a proposed version and you review it in the studio (the fallback that works on a single academy). With --tenant <slug> the folder is built into a preview academy: the command asks a preview platform (any ulams install with TENANCY_PLATFORM_API=true; ULAMS_PREVIEW_URL and ULAMS_PREVIEW_TOKEN, a platform:write token) for a throwaway tenant, creating it when it does not exist (--ttl-days, deleted by the reaper afterwards; --group counts it against the 5 previews per repository), takes a one-day administrator token for it, creates the course there, imports the folder, approves and applies it, and prints the addresses. Preview academies have no sources, so citations are dropped and every element is marked as written by the author; the folder and your real academy are never changed. A second run with the same --tenant updates the same preview. Only throwaway tenants are accepted: a real academy is refused.",
+  kind: "write",
+  idempotent: true,
+  scopes: ["builder:write"],
+  endpoints: [
+    "POST /api/admin/course-as-code/courses",
+    "GET /api/admin/course-as-code/sessions/{session}",
+    "POST /api/admin/course-as-code/sessions/{session}/imports",
+    "POST /api/admin/course-as-code/versions/{version}/approve",
+    "POST /api/admin/course-as-code/sessions/{session}/apply",
+  ],
+  positionals: ["dir"],
+  input: z.object({
+    dir: dirInput,
+    tenant: z.string().regex(/^[a-z][a-z0-9]{1,29}$/, "2 to 30 lowercase letters and digits, starting with a letter.").optional().describe("Preview academy slug (created when missing). Without it the folder is only proposed."),
+    ttlDays: z.number().int().min(1).max(30).optional().describe("Days until the preview academy is deleted (default 7); used when it is created."),
+    group: z.string().regex(/^[a-z0-9][a-z0-9-]{0,39}$/, "Lowercase letters, digits and dashes.").optional().describe("Repository name that caps the previews (default: the folder's repository, or `course`)."),
+    message: z.string().max(500).optional().describe("Without --tenant: why, shown in the version history."),
+  }),
+  output: z.unknown(),
+  examples: [
+    { title: "A preview academy for pull request 7", argv: "course preview --tenant pr7acme --group acme-course" },
+    { title: "Only propose the folder", argv: "course preview" },
+  ],
+  plan: async (ctx, i) => {
+    if (!i.tenant) return (await push.plan?.(ctx, { dir: i.dir, message: i.message } as never)) as Plan;
+    const folder = openFolder(i.dir);
+    localDocument(ctx, folder);
+    return {
+      request: { method: "POST", path: `${PLATFORM}/tenants`, body: { slug: i.tenant, demo: true, ttl_days: i.ttlDays ?? 7, group: previewGroup(ctx, i) } },
+      then: [`POST ${PLATFORM}/tenants/${i.tenant}/token`, `POST ${COURSE_AS_CODE}/courses`, `POST ${COURSE_AS_CODE}/sessions/<session>/imports`, "POST /versions/<proposed version>/approve", `POST ${COURSE_AS_CODE}/sessions/<session>/apply`],
+      note: "Nothing is sent. The citations are dropped and every element is marked as written by the author in the preview.",
+    } as Plan;
+  },
+  async run(ctx, i) {
+    if (!i.tenant) return push.run(ctx, { dir: i.dir, message: i.message } as never);
+    const url = ctx.env.ULAMS_PREVIEW_URL?.trim();
+    const token = ctx.env.ULAMS_PREVIEW_TOKEN?.trim();
+    if (!url || !token) {
+      throw new CliError("AUTH_REQUIRED", "A preview academy needs a preview platform.", { hint: "Set ULAMS_PREVIEW_URL (the platform API address) and ULAMS_PREVIEW_TOKEN (a platform:write token), or run `ulams course preview` without --tenant." });
+    }
+    const folder = openFolder(i.dir);
+    const local = localDocument(ctx, folder);
+    const doc = forPreview(local.doc);
+    const course = (isObj(local.doc.course) ? local.doc.course : {}) as Obj;
+    const title = String(course.title ?? "Course preview").slice(0, 100) || "Course preview";
+    const language = /^[a-z]{2}$/.test(String(course.language)) ? String(course.language) : "en";
+    const group = previewGroup(ctx, i);
+    const clientOptions = { fetch: ctx.client.fetchImpl, userAgent: ctx.client.userAgent, client: "cli" as const };
+    const platform = new HttpClient({ baseUrl: url, token, ...clientOptions });
+    const pctx = { ...ctx, client: platform } as Ctx;
+    const poll = Number(ctx.env.ULAMS_POLL_MS) || 1500;
+    const deadline = Date.now() + ctx.flags.timeout * 1000;
+
+    let tenant: PlatformTenant;
+    let created = false;
+    try {
+      tenant = (await platform.call<PlatformTenant>("GET", `${PLATFORM}/tenants/{slug}`, { params: { slug: i.tenant }, idempotent: true, signal: ctx.signal })).data;
+    } catch (e) {
+      if (!(e instanceof CliError && e.code === "NOT_FOUND")) throw previewError(e);
+      const res = await platform.call<{ operation: TenantOp }>("POST", `${PLATFORM}/tenants`, { body: { slug: i.tenant, name: title, demo: true, users: 1, ttl_days: i.ttlDays ?? 7, group }, signal: ctx.signal }).catch((err) => {
+        throw previewError(err);
+      });
+      created = true;
+      for (;;) {
+        const op = (await platform.call<TenantOp>("GET", `${PLATFORM}/operations/{id}`, { params: { id: res.data.operation.id }, idempotent: true, signal: ctx.signal })).data;
+        if (op.status === "failed") throw new CliError("SERVER_ERROR", `The preview academy could not be created: ${op.error ?? "the operation failed"}`, { hint: "Run the command again to resume it, or ask the platform owner." });
+        if (op.status === "succeeded") break;
+        if (Date.now() + poll > deadline) throw new CliError("TIMEOUT", `The preview academy ${i.tenant} is still being created after ${ctx.flags.timeout}s.`, { hint: "Run the command again later: it continues with the same academy." });
+        pctx.io.stderr("waiting for the preview academy ...");
+        await sleepMs(poll);
+      }
+      tenant = (await platform.call<PlatformTenant>("GET", `${PLATFORM}/tenants/{slug}`, { params: { slug: i.tenant }, idempotent: true, signal: ctx.signal })).data;
+    }
+    if (!tenant.expires_at) {
+      throw new CliError("FORBIDDEN", `${i.tenant} is a real academy, not a preview: --tenant only accepts throwaway preview academies.`, { hint: "Pick a new slug; it is created as a preview with --ttl-days." });
+    }
+    if (tenant.status !== "active") throw new CliError("CONFLICT", `The preview academy ${i.tenant} is ${tenant.status}.`, { hint: "Run the command again in a minute." });
+
+    const granted = (await platform.call<{ token: string; urls: PlatformTenant["urls"] }>("POST", `${PLATFORM}/tenants/{slug}/token`, { params: { slug: i.tenant }, signal: ctx.signal }).catch((err) => {
+      throw previewError(err);
+    })).data;
+    const academy = new HttpClient({ baseUrl: granted.urls.api, token: granted.token, ...clientOptions });
+    const actx = { ...ctx, client: academy, profile: { ...ctx.profile, url: granted.urls.api, token: granted.token } } as Ctx;
+
+    const key = `${group}:${i.tenant}`;
+    const made = await server(() => call<{ sessionId: string; versionId: string; courseId: number | null }>(actx, "POST", "/courses", { body: { title, language, key } }));
+    const pushed = await server(() => call<ImportResponse>(actx, "POST", "/sessions/{session}/imports", { params: { session: made.sessionId }, body: { document: doc, baseVersionId: made.versionId, message: i.message ?? "Preview from a course repository" } }));
+    let applied = false;
+    let versionNumber: number | null = pushed.version?.number ?? null;
+    if (pushed.version) {
+      const approved = await approveVersion(actx, pushed.version.id);
+      versionNumber = approved.number;
+      await server(() => call(actx, "POST", "/sessions/{session}/apply", { params: { session: made.sessionId }, body: {} }));
+      for (;;) {
+        const s = await server(() => call<{ courseId: number | null; appliedVersionId: string | null }>(actx, "GET", "/sessions/{session}", { params: { session: made.sessionId } }));
+        if (s.appliedVersionId === approved.versionId && s.courseId !== null) {
+          made.courseId = s.courseId;
+          applied = true;
+          break;
+        }
+        if (Date.now() + poll > deadline) throw new CliError("TIMEOUT", `The preview is still being applied after ${ctx.flags.timeout}s.`, { hint: "Run the command again: the same preview is updated." });
+        actx.io.stderr("waiting for the preview to be applied ...");
+        await sleepMs(poll);
+      }
+    }
+    const data = { tenant: i.tenant, created, expiresAt: tenant.expires_at, urls: granted.urls, sessionId: made.sessionId, courseId: made.courseId, versionNumber, applied, unchanged: !pushed.version };
+    return present(ctx, data, [
+      `${created ? "Created" : "Updated"} the preview academy ${i.tenant} (deleted after ${tenant.expires_at}).`,
+      `Learner view: ${granted.urls.front}${made.courseId !== null ? `   course ${made.courseId}` : ""}`,
+      `Studio and admin: ${granted.urls.admin}`,
+      ...(pushed.version ? [`Version ${versionNumber}: ${countsText(pushed.counts)}.`] : ["The preview already shows this folder."]),
+      "Preview academies drop citations and mark everything as written by the author; your folder and your real academy are unchanged.",
+    ]);
+  },
+});
+
+/** The repository the preview counts against: --group, the GitHub repository name, or the folder's own name. */
+function previewGroup(ctx: Ctx, i: { group?: string | undefined; dir?: string | undefined }): string {
+  if (i.group) return i.group;
+  const fromEnv = (ctx.env.GITHUB_REPOSITORY ?? "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40);
+  return fromEnv || "course";
+}
+
+/** Platform errors in the CLI's own words: the API answers 404 when the platform API is off. */
+function previewError(e: unknown): unknown {
+  if (e instanceof CliError && e.code === "NOT_FOUND") {
+    return new CliError("FEATURE_DISABLED", "The preview platform is not available at ULAMS_PREVIEW_URL.", { status: 404, hint: "It needs a platform host of an installation that runs with TENANCY_PLATFORM_API=true." });
+  }
+  return e;
 }
 
 /* ---------------------------------------------------------------- pull */
@@ -1115,4 +1313,4 @@ const absorbDrift = defineCommand({
   },
 });
 
-export const courseSyncCommands: AnyCommand[] = [init, sourcesConnect, pull, diff, status, push, apply, publish, resolveCmd, absorbDrift];
+export const courseSyncCommands: AnyCommand[] = [init, adopt, sourcesConnect, preview, pull, diff, status, push, apply, publish, resolveCmd, absorbDrift];

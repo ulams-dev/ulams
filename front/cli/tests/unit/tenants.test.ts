@@ -38,6 +38,31 @@ describe("tenants", () => {
     expect(r.stderr).toContain("waiting for tenant-op:");
   });
 
+  it("create --ttl-days --group makes a preview academy and sends ttl_days on the wire", async () => {
+    const r = await runCli(["tenants", "create", "pr7acme", "--demo", "--ttl-days", "7", "--group", "acme-course", "--json"], { env, routes: routes() });
+    expect(r.code, r.stdout + r.stderr).toBe(0);
+    expect(r.requests.find((q) => q.method === "POST")?.body).toEqual({ slug: "pr7acme", demo: true, ttl_days: 7, group: "acme-course" });
+    const bad = await runCli(["tenants", "create", "pr7acme", "--ttl-days", "99", "--json"], { env, routes: routes() });
+    expect(bad.code).toBe(2);
+    expect(bad.requests).toHaveLength(0);
+  });
+
+  it("the preview limit of a group is a conflict (exit 6)", async () => {
+    const r = await runCli(["tenants", "create", "pr9acme", "--ttl-days", "7", "--group", "acme-course", "--json"], { env, routes: routes({ [`POST ${P}/tenants`]: { status: 409, body: { success: false, message: "At most 5 preview academies per repository.", code: "preview_limit" } } }) });
+    expect(r.code).toBe(6);
+  });
+
+  it("token hands out the one-day token of a preview once, and a real tenant is a conflict", async () => {
+    const token = { token: "ulams_pat_secret", expires_at: "2026-10-23T10:00:00+00:00", scopes: ["builder:read", "builder:write"], urls: { api: "http://pr7acme.localhost" } };
+    const r = await runCli(["tenants", "token", "pr7acme", "--json"], { env, routes: routes({ [`POST ${P}/tenants/pr7acme/token`]: ok(token) }) });
+    expect(r.code, r.stdout + r.stderr).toBe(0);
+    expect(data(r)).toMatchObject({ token: "ulams_pat_secret", scopes: ["builder:read", "builder:write"] });
+    const conflict = await runCli(["tenants", "token", "acme", "--json"], { env, routes: routes({ [`POST ${P}/tenants/acme/token`]: { status: 409, body: { success: false, message: "Only preview academies hand out a token." } } }) });
+    expect(conflict.code).toBe(6);
+    const plan = await runCli(["tenants", "token", "pr7acme", "--dry-run", "--json"], { env, routes: routes() });
+    expect(plan.requests).toHaveLength(0);
+  });
+
   it("create --no-wait returns the handle that operations wait understands", async () => {
     const r = await runCli(["tenants", "create", "acme", "--no-wait", "--json"], { env, routes: routes() });
     expect((r.json().meta as { operation: string }).operation).toBe("tenant-op:01j9z3k8m2x4q7r5t6v8w0y1ab");

@@ -120,7 +120,7 @@ final class Surfaces
         };
         $stats = Blueprint::stats($doc);
         $registry = app(\Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry::class);
-        $formats = $status === 'proposed' ? array_values(array_map(fn ($t) => ['value' => $t->key(), 'label' => $t->label(), 'description' => $t->description()], $registry->enabled())) : [];
+        $formats = $status === 'proposed' ? array_values(array_map(fn ($t) => ['value' => $t->key(), 'label' => $t->label(), 'description' => $t->description()], array_filter($registry->enabled(), fn ($t) => $t->key() !== 'embed'))) : [];
         $removed = [];
         foreach ($changes as $c) {
             if ($c['kind'] === 'removed' && in_array($c['type'], ['module', 'lesson'], true)) {

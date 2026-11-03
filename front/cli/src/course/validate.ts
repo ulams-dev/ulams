@@ -59,3 +59,9 @@ export function validateFiles(files: Files, assets: AssetLookup): ValidateResult
   }
   return { issues: loaded.sink.sorted(), doc: loaded.doc };
 }
+
+/** The problems of a finished Blueprint v3 document against the bundled schema (empty when it is valid). */
+export function documentProblems(doc: Obj): string[] {
+  const validate = blueprintValidator();
+  return validate(doc) ? [] : actionable(validate.errors ?? []).map(describe);
+}

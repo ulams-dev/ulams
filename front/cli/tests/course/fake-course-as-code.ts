@@ -30,6 +30,10 @@ export interface FakeOptions {
   publishBlocking?: string[];
   /** Open Living Course update proposals and the element ids they would change: a push that edits one waits (PROPOSAL_PENDING) unless `allowPending`. */
   pending?: Array<{ id: string; number: number; elements: string[] }>;
+  /** A course made by hand: no blueprint (NOT_ADOPTED) until `POST courses/{id}/adopt`; `skipped` is what adoption leaves out. */
+  handMade?: { skipped?: Array<{ topicId: number; title: string; type: string; reason: string }> };
+  /** A tenant with an empty course: no course exists until `POST courses` and the first apply (a preview academy). */
+  fresh?: boolean;
   /** Fail every call with this status (network and server error tests). */
   failWith?: number;
 }
@@ -72,9 +76,14 @@ export function fakeCourseAsCode(options: FakeOptions = {}) {
   const db = {
     versions,
     currentVersionId: vid(1),
-    appliedVersionId: vid(1) as string | null,
+    appliedVersionId: (options.fresh ? null : vid(1)) as string | null,
+    /** `fresh`: the course row exists once an apply has finished. */
+    courseMade: !options.fresh,
+    adopted: !options.handMade,
+    adoptCalls: 0,
+    createCalls: [] as Array<Record<string, unknown>>,
     /** What learners see: the document of the last applied version. */
-    live: JSON.parse(JSON.stringify(start)) as Obj,
+    live: (options.fresh ? {} : JSON.parse(JSON.stringify(start))) as Obj,
     published: false,
     applying: null as null | { ticks: number; versionId: string },
     calls: [] as string[],
@@ -101,6 +110,15 @@ export function fakeCourseAsCode(options: FakeOptions = {}) {
     return v;
   }
 
+  const tick = () => {
+    if (db.applying && --db.applying.ticks <= 0) {
+      db.appliedVersionId = db.applying.versionId;
+      db.live = (versions.find((v) => v.id === db.applying?.versionId) as Version).document;
+      db.applying = null;
+      db.courseMade = true;
+    }
+  };
+
   const P = "/api/admin/course-as-code";
   const handler: Handler = (req: RecordedRequest): Reply => {
     if (options.failWith) return fail(options.failWith, "The server is having a bad day.");
@@ -110,15 +128,29 @@ export function fakeCourseAsCode(options: FakeOptions = {}) {
     const body = (req.body ?? {}) as Record<string, unknown>;
     let m: RegExpMatchArray | null;
 
+    if (req.method === "POST" && (m = path.match(/^\/courses\/([^/]+)\/adopt$/))) {
+      if (m[1] !== String(courseId)) return fail(404, "Course not found.");
+      const first = !db.adopted;
+      db.adopted = true;
+      db.adoptCalls++;
+      return ok({ created: first, courseId, sessionId, versionId: current().id, versionNumber: current().number, skipped: first ? options.handMade?.skipped ?? [] : [] }, first ? 201 : 200);
+    }
     if (req.method === "GET" && (m = path.match(/^\/courses\/([^/]+)\/blueprint$/))) {
       if (m[1] !== String(courseId)) return fail(404, "Course not found.");
-      if (db.applying && --db.applying.ticks <= 0) {
-        db.appliedVersionId = db.applying.versionId;
-        db.live = (versions.find((v) => v.id === db.applying?.versionId) as Version).document;
-        db.applying = null;
-      }
+      if (!db.adopted) return fail(409, "This course was not made with the builder, so it has no blueprint yet.", "NOT_ADOPTED");
+      tick();
       const v = current();
       return ok({ courseId, sessionId, versionId: v.id, versionNumber: v.number, kind: v.kind, status: v.status, appliedVersionId: db.appliedVersionId, schemaVersion: 3, document: v.document, drift: db.drift, edits: db.edits });
+    }
+    if (req.method === "POST" && path === "/courses") {
+      db.createCalls.push(body);
+      const existing = db.createCalls.slice(0, -1).some((c) => c.key !== undefined && c.key === body.key);
+      return ok({ sessionId, versionId: current().id, versionNumber: current().number, courseId: db.courseMade ? courseId : null, existing }, existing ? 200 : 201);
+    }
+    if (req.method === "GET" && (m = path.match(/^\/sessions\/([^/]+)$/))) {
+      if (m[1] !== sessionId) return fail(404, "Session not found.");
+      tick();
+      return ok({ sessionId, courseId: db.courseMade ? courseId : null, status: "applied", currentVersionId: db.currentVersionId, currentVersionNumber: current().number, appliedVersionId: db.appliedVersionId });
     }
     if (req.method === "GET" && (m = path.match(/^\/versions\/([^/]+)$/))) {
       const v = versions.find((x) => x.id === m?.[1]);

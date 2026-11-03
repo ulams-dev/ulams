@@ -213,7 +213,10 @@ final class Checks
                 $w = "{$where} Q" . ($q + 1);
                 $errors = [...$errors, ...self::citations($question['citations'] ?? [], $known, $w, Blueprint::minCitations($question)), ...self::questionShape($question, $w)];
             }
-            $errors = [...$errors, ...$types->forLesson($lesson)->check($lesson, $where, $known)];
+            // a lesson that stands for an existing topic (adoption) has nothing of its own to check
+            if (\Ulams\CourseBuilder\ContentTypes\ReferencedTopics::entityId($lesson) === null) {
+                $errors = [...$errors, ...$types->forLesson($lesson)->check($lesson, $where, $known)];
+            }
             foreach ($lesson['flags'] ?? [] as $flag) {
                 $errors[] = "warning: {$where}: {$flag}";
             }

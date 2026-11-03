@@ -18,10 +18,13 @@ export function githubWorkflow(o: WorkflowOptions): string {
   const filter = path === "." ? "" : `\n    paths: ["${path}/**", ".github/workflows/ulams.yml"]`;
   return `# Written by \`ulams course init --ci github\`. The action runs the ulams CLI image (${ACTION}).
 # Repository secrets: ULAMS_URL (the academy API address) and ULAMS_TOKEN (a ci token, \`ulams tokens create --preset ci\`).
+# Optional, for a preview academy per pull request: ULAMS_PREVIEW_URL and ULAMS_PREVIEW_TOKEN (a platform:write token of a preview
+# platform, an ulams install with TENANCY_PLATFORM_API=true). Without them the pull request gets a proposed version instead.
 name: ulams course
 
 on:
-  pull_request:${filter}
+  pull_request:
+    types: [opened, synchronize, reopened, closed]${filter}
   push:
     branches: [${branch}]${filter}
   schedule:
@@ -37,10 +40,12 @@ concurrency:
 env:
   ULAMS_URL: \${{ secrets.ULAMS_URL }}
   ULAMS_TOKEN: \${{ secrets.ULAMS_TOKEN }}
+  ULAMS_PREVIEW_URL: \${{ secrets.ULAMS_PREVIEW_URL }}
+  ULAMS_PREVIEW_TOKEN: \${{ secrets.ULAMS_PREVIEW_TOKEN }}
 
 jobs:
   validate:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -73,6 +78,17 @@ jobs:
         with:
           command: preview
           path: ${path}
+
+  cleanup:
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      # the preview academy of the pull request goes with it (the reaper deletes it anyway when its time is up)
+      - uses: ${ACTION}
+        with:
+          command: preview-cleanup
 
   push:
     if: github.event_name == 'push'

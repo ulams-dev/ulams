@@ -11,9 +11,9 @@ final class ContentTypeRegistry
     /** @var array<string,ContentType> */
     private array $types = [];
 
-    public function __construct(RichTextType $richtext, LiaScriptType $liascript, H5pType $h5p, InteractiveType $interactive)
+    public function __construct(RichTextType $richtext, LiaScriptType $liascript, H5pType $h5p, InteractiveType $interactive, EmbedType $embed)
     {
-        foreach ([$richtext, $liascript, $h5p, $interactive] as $type) {
+        foreach ([$richtext, $liascript, $h5p, $interactive, $embed] as $type) {
             $this->types[$type->key()] = $type;
         }
     }
@@ -69,7 +69,8 @@ final class ContentTypeRegistry
     {
         $keys = ['richtext'];
         foreach ($this->enabled() as $key => $type) {
-            if ($key === 'richtext') {
+            // an embedded page is chosen by hand or comes from a course folder; the outline never suggests one
+            if ($key === 'richtext' || $key === 'embed') {
                 continue;
             }
             if ($key === 'liascript' && count($lesson['objectives'] ?? []) < 2) {

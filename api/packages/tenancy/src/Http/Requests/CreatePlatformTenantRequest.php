@@ -24,6 +24,9 @@ class CreatePlatformTenantRequest extends PlatformRequest
             'accent' => ['nullable', 'string', 'regex:/^#[0-9A-Fa-f]{6}$/'],
             'users' => ['nullable', 'integer', 'min:0', 'max:50'],
             'demo' => ['nullable', 'boolean'],
+            // a throwaway tenant (preview academy): deleted after `ttl_days`, counted per `group` against the preview cap
+            'ttl_days' => ['nullable', 'integer', 'min:1', 'max:30'],
+            'group' => ['nullable', 'string', 'regex:/^[a-z0-9][a-z0-9-]{0,39}$/', 'required_with:ttl_days'],
             'template' => ['nullable', 'string', 'regex:/^[a-z][a-z0-9-]{1,38}$/'],
             // a tenant created for another tenant (a department academy): counts against that tenant's quota and is recorded
             'derived_from' => ['nullable', 'string', 'regex:/^[a-z][a-z0-9]{1,29}$/', 'required_with:purpose,reference'],

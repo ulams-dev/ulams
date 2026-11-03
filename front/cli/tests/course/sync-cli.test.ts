@@ -139,7 +139,7 @@ describe("course init --from-course", () => {
     });
     cleanups.push(notAdopted.cleanup);
     expect(notAdopted.code).toBe(6);
-    expect(notAdopted.json()).toMatchObject({ error: { code: "CONFLICT", hint: expect.stringContaining("made with the course builder"), details: { code: "NOT_ADOPTED" } } });
+    expect(notAdopted.json()).toMatchObject({ error: { code: "CONFLICT", hint: expect.stringContaining("ulams course adopt"), details: { code: "NOT_ADOPTED" } } });
   });
 
   it("reports drift as a warning without failing", async () => {

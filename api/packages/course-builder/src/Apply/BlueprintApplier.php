@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\ContentTypes\ContentTypeRegistry;
+use Ulams\CourseBuilder\ContentTypes\ReferencedTopics;
 use Ulams\CourseBuilder\Contracts\FragmentArchive;
 use Ulams\CourseBuilder\Contracts\RemovalPolicy;
 use Ulams\CourseBuilder\Blueprint\Checks;
@@ -94,7 +95,7 @@ final class BlueprintApplier
             $add('lesson', $module['id'], array_filter(['title' => $module['title'], 'summary' => $module['summary'] ?? null]), "course:{$course['id']}", $m + 1);
             $base = 0;
             foreach ($module['lessons'] as $l => $lesson) {
-                $topics = $this->types->forLesson($lesson)->topics($lesson, $labels, $sourceTitle, (string) ($course['language'] ?? 'en'));
+                $topics = ReferencedTopics::topics($lesson) ?? $this->types->forLesson($lesson)->topics($lesson, $labels, $sourceTitle, (string) ($course['language'] ?? 'en'));
                 $extra = count($topics) - 1;
                 foreach ($topics as $topic) {
                     $primary = $topic['slot'] === 'primary';
@@ -183,7 +184,7 @@ final class BlueprintApplier
         }
         foreach (Blueprint::lessons($doc) as $item) {
             $wanted = (string) ($item['lesson']['contentType'] ?? 'richtext');
-            if ($wanted !== 'richtext' && !$this->types->for($wanted)->enabled()) {
+            if ($wanted !== 'richtext' && ReferencedTopics::entityId($item['lesson']) === null && !$this->types->for($wanted)->enabled()) {
                 $warnings[] = 'Lesson ' . $item['number'] . ': ' . $this->types->for($wanted)->label() . ' is not available on this installation right now.';
             }
         }
@@ -378,6 +379,15 @@ final class BlueprintApplier
 
     private function topic(array $item, ?int $existing, int $lessonId, string $class, int $authorId): int
     {
+        if (($item['data']['referenced'] ?? false) === true) {
+            // a lesson that stands for an existing topic (an adopted course): its content is not ours to rewrite
+            if ($existing === null) {
+                throw new BuilderException('A lesson points at an LMS topic that is not part of this course any more; remove the lesson or adopt the course again.', 409);
+            }
+
+            return $this->topics->update(['title' => (string) $item['data']['title'], 'lesson_id' => $lessonId, 'order' => $item['order'], 'active' => true], $existing)->getKey();
+        }
+
         if ($existing !== null && ($current = $this->writer->classOf($existing)) !== null && $current !== $class) {
             // the lesson changed format (rich text ⇄ LiaScript): a topic cannot change its content class
             $external = $this->writer->external($existing);

@@ -10,7 +10,7 @@ A composite GitHub Action for a course repository that holds a course folder (`u
 ```
 
 Commands: `validate` (SARIF report, no secrets needed), `diff` (course against the server, in the job summary), `preview`
-(proposes the folder as a version, never approves; one sticky pull request comment), `push` (on the default branch; `apply: true`
+(with a preview platform, `ULAMS_PREVIEW_URL` and `ULAMS_PREVIEW_TOKEN`, builds the folder into a throwaway preview academy named after the pull request; without one it proposes the folder as a version, never approving; one sticky pull request comment either way), `preview-cleanup` (deletes the pull request's preview academy when it closes; the reaper deletes it after its time anyway), `push` (on the default branch; `apply: true`
 only when the academy lets `ci` tokens approve), `pull-pr` (pulls changes made in ulams and opens or updates the pull request
 `ulams/sync`; never touches `sources/`). `ulams course init --ci github` writes a workflow that uses all of them.
 

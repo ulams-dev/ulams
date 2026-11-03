@@ -1,6 +1,6 @@
 <?php
 /**
- * PlatformTenantUrls
+ * PlatformTenantsBySlugTokenPost200ResponseData
  *
  * PHP version 7.4
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \Ulams\Sdk\ObjectSerializer;
 
 /**
- * PlatformTenantUrls Class Doc Comment
+ * PlatformTenantsBySlugTokenPost200ResponseData Class Doc Comment
  *
  * @category Class
  * @package  Ulams\Sdk
@@ -40,7 +40,7 @@ use \Ulams\Sdk\ObjectSerializer;
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class PlatformTenantUrls implements ModelInterface, ArrayAccess, \JsonSerializable
+class PlatformTenantsBySlugTokenPost200ResponseData implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class PlatformTenantUrls implements ModelInterface, ArrayAccess, \JsonSerializab
       *
       * @var string
       */
-    protected static $openAPIModelName = 'PlatformTenant_urls';
+    protected static $openAPIModelName = 'platform_tenants_by_slug_token_post_200_response_data';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,9 +57,10 @@ class PlatformTenantUrls implements ModelInterface, ArrayAccess, \JsonSerializab
       * @var string[]
       */
     protected static $openAPITypes = [
-        'admin' => 'string',
-        'api' => 'string',
-        'front' => 'string'
+        'expires_at' => 'string',
+        'scopes' => 'string[]',
+        'token' => 'string',
+        'urls' => '\Ulams\Sdk\Model\PlatformTenantsBySlugTokenPost200ResponseDataUrls'
     ];
 
     /**
@@ -70,9 +71,10 @@ class PlatformTenantUrls implements ModelInterface, ArrayAccess, \JsonSerializab
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'admin' => null,
-        'api' => null,
-        'front' => null
+        'expires_at' => null,
+        'scopes' => null,
+        'token' => null,
+        'urls' => null
     ];
 
     /**
@@ -81,9 +83,10 @@ class PlatformTenantUrls implements ModelInterface, ArrayAccess, \JsonSerializab
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'admin' => false,
-        'api' => false,
-        'front' => false
+        'expires_at' => true,
+        'scopes' => false,
+        'token' => false,
+        'urls' => false
     ];
 
     /**
@@ -172,9 +175,10 @@ class PlatformTenantUrls implements ModelInterface, ArrayAccess, \JsonSerializab
      * @var string[]
      */
     protected static $attributeMap = [
-        'admin' => 'admin',
-        'api' => 'api',
-        'front' => 'front'
+        'expires_at' => 'expires_at',
+        'scopes' => 'scopes',
+        'token' => 'token',
+        'urls' => 'urls'
     ];
 
     /**
@@ -183,9 +187,10 @@ class PlatformTenantUrls implements ModelInterface, ArrayAccess, \JsonSerializab
      * @var string[]
      */
     protected static $setters = [
-        'admin' => 'setAdmin',
-        'api' => 'setApi',
-        'front' => 'setFront'
+        'expires_at' => 'setExpiresAt',
+        'scopes' => 'setScopes',
+        'token' => 'setToken',
+        'urls' => 'setUrls'
     ];
 
     /**
@@ -194,9 +199,10 @@ class PlatformTenantUrls implements ModelInterface, ArrayAccess, \JsonSerializab
      * @var string[]
      */
     protected static $getters = [
-        'admin' => 'getAdmin',
-        'api' => 'getApi',
-        'front' => 'getFront'
+        'expires_at' => 'getExpiresAt',
+        'scopes' => 'getScopes',
+        'token' => 'getToken',
+        'urls' => 'getUrls'
     ];
 
     /**
@@ -256,9 +262,10 @@ class PlatformTenantUrls implements ModelInterface, ArrayAccess, \JsonSerializab
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('admin', $data ?? [], null);
-        $this->setIfExists('api', $data ?? [], null);
-        $this->setIfExists('front', $data ?? [], null);
+        $this->setIfExists('expires_at', $data ?? [], null);
+        $this->setIfExists('scopes', $data ?? [], null);
+        $this->setIfExists('token', $data ?? [], null);
+        $this->setIfExists('urls', $data ?? [], null);
     }
 
     /**
@@ -304,82 +311,116 @@ class PlatformTenantUrls implements ModelInterface, ArrayAccess, \JsonSerializab
 
 
     /**
-     * Gets admin
+     * Gets expires_at
      *
      * @return string|null
      */
-    public function getAdmin()
+    public function getExpiresAt()
     {
-        return $this->container['admin'];
+        return $this->container['expires_at'];
     }
 
     /**
-     * Sets admin
+     * Sets expires_at
      *
-     * @param string|null $admin admin
+     * @param string|null $expires_at expires_at
      *
      * @return self
      */
-    public function setAdmin($admin)
+    public function setExpiresAt($expires_at)
     {
-        if (is_null($admin)) {
-            throw new \InvalidArgumentException('non-nullable admin cannot be null');
+        if (is_null($expires_at)) {
+            array_push($this->openAPINullablesSetToNull, 'expires_at');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('expires_at', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
         }
-        $this->container['admin'] = $admin;
+        $this->container['expires_at'] = $expires_at;
 
         return $this;
     }
 
     /**
-     * Gets api
+     * Gets scopes
      *
-     * @return string|null
+     * @return string[]|null
      */
-    public function getApi()
+    public function getScopes()
     {
-        return $this->container['api'];
+        return $this->container['scopes'];
     }
 
     /**
-     * Sets api
+     * Sets scopes
      *
-     * @param string|null $api api
+     * @param string[]|null $scopes scopes
      *
      * @return self
      */
-    public function setApi($api)
+    public function setScopes($scopes)
     {
-        if (is_null($api)) {
-            throw new \InvalidArgumentException('non-nullable api cannot be null');
+        if (is_null($scopes)) {
+            throw new \InvalidArgumentException('non-nullable scopes cannot be null');
         }
-        $this->container['api'] = $api;
+        $this->container['scopes'] = $scopes;
 
         return $this;
     }
 
     /**
-     * Gets front
+     * Gets token
      *
      * @return string|null
      */
-    public function getFront()
+    public function getToken()
     {
-        return $this->container['front'];
+        return $this->container['token'];
     }
 
     /**
-     * Sets front
+     * Sets token
      *
-     * @param string|null $front front
+     * @param string|null $token token
      *
      * @return self
      */
-    public function setFront($front)
+    public function setToken($token)
     {
-        if (is_null($front)) {
-            throw new \InvalidArgumentException('non-nullable front cannot be null');
+        if (is_null($token)) {
+            throw new \InvalidArgumentException('non-nullable token cannot be null');
         }
-        $this->container['front'] = $front;
+        $this->container['token'] = $token;
+
+        return $this;
+    }
+
+    /**
+     * Gets urls
+     *
+     * @return \Ulams\Sdk\Model\PlatformTenantsBySlugTokenPost200ResponseDataUrls|null
+     */
+    public function getUrls()
+    {
+        return $this->container['urls'];
+    }
+
+    /**
+     * Sets urls
+     *
+     * @param \Ulams\Sdk\Model\PlatformTenantsBySlugTokenPost200ResponseDataUrls|null $urls urls
+     *
+     * @return self
+     */
+    public function setUrls($urls)
+    {
+        if (is_null($urls)) {
+            throw new \InvalidArgumentException('non-nullable urls cannot be null');
+        }
+        $this->container['urls'] = $urls;
 
         return $this;
     }
