@@ -5,17 +5,19 @@ sidebar:
   order: 43
 modules:
   - course-builder
+learnerRoutes:
+  - /studio/style
 ---
 
 import { Aside } from "@astrojs/starlight/components";
 
 <Aside type="note" title="What is built and what is coming">
-**Built:** reading a style guide into a style profile, with every value citing the passage it came from; editing and
-approving the profile; the diff against the approved profile; the API and `ulams style-profiles`. **Coming:** the
-studio screen for reviewing a profile and handing its theme to the theme screen, the profile in the prompt of every
-course the builder drafts (and per entry point and per course brief), the style check with its findings in the
-publish summary, and restyle proposals for courses that already exist. Progress is tracked in the [roadmap](/roadmap/);
-the design is in `docs/plans/style-guide-course-design.md` and ADR 0196.
+**Built:** reading a style guide into a style profile, with every value citing the passage it came from; the **Style**
+screen of the studio (`/studio/style`) to review, edit and approve it, in English, Polish and Chinese; handing the theme
+part to the admin theme screen as a diff; the diff against the approved profile; the API and `ulams style-profiles`.
+**Coming:** the profile in the prompt of every course the builder drafts (and per entry point and per course brief), the
+style check with its findings in the publish summary, and restyle proposals for courses that already exist. Progress is
+tracked in the [roadmap](/roadmap/); the design is in `docs/plans/style-guide-course-design.md` and ADR 0196.
 </Aside>
 
 A style guide is a document. A **style profile** is what the builder can use from it: typed values that an admin
@@ -52,6 +54,25 @@ fill it in by hand.
 | `examples` | up to three short approved example paragraphs |
 
 The JSON Schema is `api/packages/course-builder/resources/schemas/style-profile/v1.json`.
+
+## In the studio
+
+Open **Style** in the studio rail (`/studio/style`).
+
+1. **Upload a style guide** (Markdown, PDF or DOCX) and, if you like, name the profile. The proposal opens below the list.
+2. **Read what was dropped.** The *Dropped from the proposal* list says which values did not fit and why.
+3. **Check the changes.** *Changes against the approved profile* marks every value *Added*, *Changed* or *Removed* with a word
+   and a symbol, never by colour alone. Each value has a button for the passage of the guide it cites; it opens the text
+   inline, so a reviewer who did not upload the guide can read it.
+4. **Edit a suggestion.** Remove a value with its **×** button, set the person, the formality (1 to 5) and the longest
+   sentence, switch on *A banned phrase blocks publishing*, or edit all values as JSON. Invalid values are dropped when you
+   save and listed again.
+5. **Approve it** (admins). An approved profile is read-only; **Create a revision** copies it into a new suggestion to change a rule.
+6. **Theme.** If the profile has a preset or an accent, *Review the theme in settings* opens the admin theme screen with the
+   profile in the link. The screen shows the preset and accent as the same diff it shows for an imported brand, with the
+   contrast report, and changes the academy's theme only when an admin approves that diff.
+
+The page works with the keyboard and a screen reader, at 320 px wide and with AI switched off.
 
 ## From the command line
 

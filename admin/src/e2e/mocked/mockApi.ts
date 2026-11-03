@@ -289,6 +289,11 @@ export async function mockApi(
     theme?: MockTheme;
     /** Serve the report builder (adds reporting_read): the datasets (default REPORT_DATASETS) and the saved reports. */
     reporting?: { datasets?: typeof REPORT_DATASETS; saved?: Partial<MockSavedReport>[] };
+    /** Style profiles by id (GET /api/admin/course-builder/style-profiles/:id), for the theme hand-off from the studio. */
+    styleProfiles?: Record<
+      string,
+      { name: string; status: string; profile: Record<string, unknown> }
+    >;
   } = {},
 ): Promise<MockApi> {
   const email = options.kind === 'email';
@@ -627,6 +632,13 @@ export async function mockApi(
       }
       if (path === '/api/settings') {
         return json(ok(options.theme ? { global: { companyName: company } } : {}));
+      }
+      const profile = path.match(/^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})$/);
+      if (profile) {
+        const found = options.styleProfiles?.[profile[1]!];
+        return found
+          ? json(ok({ id: profile[1], ...found }))
+          : json({ success: false, message: 'Style profile not found.' }, 404);
       }
       if (path === '/api/admin/settings' && options.theme) {
         const rows = url.searchParams.get('group') === 'theme' ? themeRows : [];
