@@ -59,6 +59,7 @@ class AdminReportingReportsByIdPutRequest implements ModelInterface, ArrayAccess
     protected static $openAPITypes = [
         'definition' => 'object',
         'description' => 'string',
+        'feed_enabled' => 'bool',
         'name' => 'string',
         'shared_roles' => 'string[]',
         'visibility' => 'string'
@@ -74,6 +75,7 @@ class AdminReportingReportsByIdPutRequest implements ModelInterface, ArrayAccess
     protected static $openAPIFormats = [
         'definition' => null,
         'description' => null,
+        'feed_enabled' => null,
         'name' => null,
         'shared_roles' => null,
         'visibility' => null
@@ -87,6 +89,7 @@ class AdminReportingReportsByIdPutRequest implements ModelInterface, ArrayAccess
     protected static array $openAPINullables = [
         'definition' => false,
         'description' => false,
+        'feed_enabled' => false,
         'name' => false,
         'shared_roles' => false,
         'visibility' => false
@@ -180,6 +183,7 @@ class AdminReportingReportsByIdPutRequest implements ModelInterface, ArrayAccess
     protected static $attributeMap = [
         'definition' => 'definition',
         'description' => 'description',
+        'feed_enabled' => 'feed_enabled',
         'name' => 'name',
         'shared_roles' => 'shared_roles',
         'visibility' => 'visibility'
@@ -193,6 +197,7 @@ class AdminReportingReportsByIdPutRequest implements ModelInterface, ArrayAccess
     protected static $setters = [
         'definition' => 'setDefinition',
         'description' => 'setDescription',
+        'feed_enabled' => 'setFeedEnabled',
         'name' => 'setName',
         'shared_roles' => 'setSharedRoles',
         'visibility' => 'setVisibility'
@@ -206,6 +211,7 @@ class AdminReportingReportsByIdPutRequest implements ModelInterface, ArrayAccess
     protected static $getters = [
         'definition' => 'getDefinition',
         'description' => 'getDescription',
+        'feed_enabled' => 'getFeedEnabled',
         'name' => 'getName',
         'shared_roles' => 'getSharedRoles',
         'visibility' => 'getVisibility'
@@ -285,6 +291,7 @@ class AdminReportingReportsByIdPutRequest implements ModelInterface, ArrayAccess
     {
         $this->setIfExists('definition', $data ?? [], null);
         $this->setIfExists('description', $data ?? [], null);
+        $this->setIfExists('feed_enabled', $data ?? [], null);
         $this->setIfExists('name', $data ?? [], null);
         $this->setIfExists('shared_roles', $data ?? [], null);
         $this->setIfExists('visibility', $data ?? [], null);
@@ -391,6 +398,33 @@ class AdminReportingReportsByIdPutRequest implements ModelInterface, ArrayAccess
             throw new \InvalidArgumentException('non-nullable description cannot be null');
         }
         $this->container['description'] = $description;
+
+        return $this;
+    }
+
+    /**
+     * Gets feed_enabled
+     *
+     * @return bool|null
+     */
+    public function getFeedEnabled()
+    {
+        return $this->container['feed_enabled'];
+    }
+
+    /**
+     * Sets feed_enabled
+     *
+     * @param bool|null $feed_enabled Offer the report as a read-only OData feed (needs reporting_manage)
+     *
+     * @return self
+     */
+    public function setFeedEnabled($feed_enabled)
+    {
+        if (is_null($feed_enabled)) {
+            throw new \InvalidArgumentException('non-nullable feed_enabled cannot be null');
+        }
+        $this->container['feed_enabled'] = $feed_enabled;
 
         return $this;
     }

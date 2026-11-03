@@ -799,7 +799,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       (partial: built in CV-4, PR #396: each variant outline is reviewed with the builder's outline diff against the base outline and each
       generated variant with a new `VariantReview` card (lessons kept, rewritten, added, skipped; word-level text changes) built on the existing
       `BlueprintDiff`, approved one by one, applied as its own course through the domain services, grouped as a family hidden from the catalogue
-      and published with the base; the 3.1 compare screen shows a variant against its base (CV-3, waiting to merge); open: Living Course patches for variants and rebase on a newer base (CV-5))
+      and published with the base; the 3.1 compare screen shows a variant against its base (CV-3, waiting to merge); Living Course patches for variants built in CV-5 part 3 (waiting to merge: one proposal per variant in a group, shared elements take the base patch at no model cost, only the variant's own elements analysed, accept in group, apply per variant); open: the tabbed review in the studio and rebase on a newer base)
 - [ ] (new) Learner routing: self-declared role and level at enrolment, an optional cited placement check, assignment by an
       admin or an enrolment rule (6.2), and an adaptive hint from Learner Insights to switch variant that the learner confirms
       (never a silent switch); progress carries over for elements that are identical in both variants
@@ -809,15 +809,21 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       code, advisory, off by default) and the hint rules (too hard, too easy; at most one a week, dismiss stops them); completion carried over through the courses
       progress service for topics with the same element and content, quizzes retaken; variant pages open but unlisted and `variant_family` on the catalogue card;
       open: the learner screens (CV-5 part 2) and the comparison catalogue status)
+      (partial: learner screens built in CV-5 part 2 (waiting to merge): the version picker on the course page (radio group, works without
+      JavaScript, read-only for visitors, locked and "assigned by your organisation" states), the dismissible hint to switch, the advisory placement
+      check with its result page, "Continue" following the learner's version, EN, PL and ZH, axe and keyboard specs; open: certificates that name the
+      variant and Living Course for variants (CV-5 part 3), and carrying the choice from the course page into enrolment or purchase)
 - [ ] (new) One entitlement for the course covers all its variants (ADR 0130); certificates name the variant completed
       (partial, CV-5 part 1 of 3, waiting to merge: a derived `family` entitlement per variant the learner uses, ended and moved with the entitlements it derives
       from, so refunds, expiry and renewals reach every variant and `course_user` stays a projection; mandatory training accepts any variant or only the pinned
-      one, a variant uses the default course's compliance settings; open: certificates naming the variant and variant-aware Living Course (CV-5 part 3))
+      one, a variant uses the default course's compliance settings; certificates name the variant (`@VarCourseVariant`, `course_variant` on the verification record) and Living Course reaches every variant (CV-5 part 3, waiting to merge))
 - [ ] (new) Tenant isolation suite for the variant and routing endpoints; WCAG 2.2 AA for the variant picker and placement
       check; evals for variant grounding and level fit through the eval command only
       (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #396; the routing endpoints have
       isolation tests and are in the route-walking coverage test (CV-5 part 1, waiting to merge); open: the axe and keyboard checks of the picker and the placement
       check (CV-5 part 2) and the evals)
+      (partial: isolation tests for the builder's variant endpoints and the axe check of the new cards are in CV-4, PR #396; open: the routing endpoints,
+      the picker and the placement check (CV-5) and the evals; the axe and keyboard checks of the picker, the hint and the placement check are in CV-5 part 2, waiting to merge)
 
 ---
 
@@ -1020,17 +1026,57 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
         installation. Ticked because the goal holds; raise if you would rather have it left open.
 - [ ] (new) Policy lifecycle delivery: link the uploaded policy version and cited fragments to all departmental
       course variants; use departments, duration, seniority and experience from the course brief;
-      apply an uploaded style guide and provision distinct branded department domains (Coming).
+      apply an uploaded style guide and provision distinct branded department domains (Coming)
+      (partial: P6R-8 and P6R-9 done, see the notes below; style guide and branded domains pending).
 - [ ] (new) Policy owner dashboard: show assigned people by department, completed and pending training,
-      course version and issued PDF certificate; support the branded tenant learning application (Coming).
+      course version and issued PDF certificate; support the branded tenant learning application (Coming)
+      (partial: API and CSV export done in P6R-8, Studio screen in P6R-10; the branded application of a department pending).
 - [ ] (new) On an approved policy change, update affected course variants, invalidate superseded certificates,
       notify learners and policy owners with a source diff, assign a new exam for a minor change or a new
-      course for a major change, and issue a replacement PDF certificate after completion (Coming).
+      course for a major change, and issue a replacement PDF certificate after completion (Coming)
+      (partial: API, rollout, exam course, notices and certificate link done in P6R-9, Studio review and learner notices in P6R-10; demo pending).
       Note 2026-10-22 (Coming audit): the three policy lifecycle items above are planned in `docs/plans/phase-6-remaining.md` P6R-8 (package,
       variants per department, owner dashboard API), P6R-9 (approved change: rollouts, revoke and reassign, new exam or course,
       replacement certificate), P6R-10 (studio UI) and P6R-12 (demo); ADR 0140 Proposed. The branded department domains move to
       `academy-entry-points.md` (EP-1 to EP-4, ADR 0195 amends 0141) and the style guide to `style-guide-course-design.md`
       (SG-1 to SG-4, ADR 0196). These labels live in the hero story of the unmerged `feat/landing-admin-panel` branch, not on `main`
+      Note 2026-10-23 (P6R-8): package `api/packages/policy-lifecycle` (ADR 0140, now Accepted): `POST /api/admin/policies` stores the
+      policy file as version 1 and one variant per department (audience group, seniority, prior experience, duration);
+      `variants/generate` starts one Course Builder session per department, each with its own copy of the policy file as source, answers the
+      interview from the policy and department brief and stops at the outline review (AI proposes, the owner approves in the Studio);
+      `versions/1/approve` needs every department course applied and published, then makes the courses mandatory and enrols each
+      department's group through a rule on a one-course path; certificates are linked to the policy version in `policy_certificates`;
+      `GET /dashboard` and `/dashboard/export` give per-department counts and per-person course version, policy version and certificate.
+      Every step is in the Living Course audit chain. Differences from the plan: departments are sessions with their own source copy (a source
+      belongs to one session), so `policy_variants.source_id` replaces `policies.source_id`; the policy brief lives on the policy and its
+      departments because brief schema v3 was taken by course variants (ADR 0192), so no interview change; the CSV export is its own endpoint;
+      the people are also the `policy_training` dataset of the reporting registry (RB-1). Not done: policy changes (P6R-9), Studio UI
+      (P6R-10), exam-only course per department (P6R-9), style guide tokens (SG), department hosts (EP-1 to EP-4), demo (P6R-12).
+      Note 2026-10-23 (P6R-9): policy changes. `POST /api/admin/policies/{id}/versions` stores the file as version N+1 and a new revision of each
+      department's source (Living Course proposes the updates); `versions/{n}` shows the source diff, proposals, suggested class and a pre-flight of
+      certificates to revoke and people to reassign; `approve` (class suggested from the proposals, raise freely, lower with a recorded reason)
+      updates every department course and only then revokes certificates linked to the previous version (reason `policy_superseded:v<N>`) and assigns
+      the exam course (minor, 14 days) or the course (major, 30 days) with source `policy_change`, idempotently; `reject` drops a change. The exam
+      course is derived from the approved department course's final test, rebuilt after every change, published and not in the catalogue.
+      E-mails, in-app notices and webhooks `policy.change.approved` and `policy.retraining.assigned`; a revocation notice for other revocations;
+      the replacement certificate is linked to the new version. Departments whose course cites nothing that changed are not retrained. Items the model
+      could not propose (final-test questions) are the owner's to edit and block approval until decided. Not done: Studio screens and learner-side labels
+      (P6R-10), demo (P6R-12); the generic compliance "assigned" mail still goes out next to the policy notice.
+      Note 2026-10-23 (P6R-10): Studio screens `/studio/policies` (list, new policy, one policy with departments, people, versions and uploading a change,
+      review of a version with the source diff, class choice, pre-flight, approve and reject) in English, Polish and Chinese, behind the studio BFF
+      allow-list; learner side: `GET /api/policies/my-changes` and a "what changed" line on My training for assignments a policy change created, and
+      the public certificate verification page says which policy version replaced a revoked certificate. axe (WCAG 2.2 AA) and keyboard specs at desktop
+      and phone width, unit tests for the model, strings parity and the BFF. Differences from the plan: the variants list is a section of the policy page
+      (no separate `variants.astro`), and the style guide upload and token review are not in `new` (SG, not built). Pending: P6R-12 demo.
+      Note 2026-10-23 (P6R-11, `(new)`): separate branded academies per department created from one policy, implemented as tenant provisioning from
+      a template (ADR 0141 amendment, Proposed). Platform: tenant templates (`ulams:tenant:template`, `/api/platform/templates`, `ulams:tenant:create --template`),
+      derived tenants with a record, a per-parent quota, no chains, idempotent re-run and cleanup (`--derived-from/--purpose/--reference`, `--with-derived`,
+      `/api/platform/tenants/{slug}/derived`). Policy: `GET|POST|DELETE /api/admin/policies/{id}/variants/{variant}/academy` and an "Own academy" block per department
+      in the Studio (theme preset, accent, status, links, remove after confirming; EN, PL, ZH; axe and keyboard specs). Like "new site" it needs `TENANCY_NEW_SITES` and
+      `platform_admin`; the department's reviewed builder session is moved there (the policy, certificates and the owner dashboard stay in the policy tenant, the
+      academy's learners and certificates are the academy's). Not done: later policy changes do not reach an academy (a new transfer), department hosts inside one
+      tenant stay with EP-1 to EP-4 (#451, #455, #457), style guide tokens (SG), cross-tenant reporting of academy completions. The public "Coming" label of
+      separate branded academies can be relabelled once this is merged and operated.
 - [ ] (new) Branded entry points inside one academy: per-department, per-course and per-role hosts with their own theme,
       catalogue focus and SEO settings, resolved to the tenant by the front; access never depends on the host; per-host
       `__Host-` sessions with a one-time hand-off code between hosts; entry hosts join the trusted origins and return URLs;
@@ -1118,11 +1164,21 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       `POST /api/admin/reporting/query` with small-group suppression (threshold 10, complementary group, counted on learners);
       RB-3 done: `saved_reports`, `GET|POST|PUT|DELETE /api/admin/reporting/saved`, sharing with tenant roles (the viewer's own
       permissions and scope on every run), `needs_repair`, `.../saved/{id}/run` as json, csv or jsonl with the exports recorded
-      in `compliance_exports`; XLSX is not built yet (needs `maatwebsite/excel` streaming, planned with RB-5);
-      RB-4 (admin screen), RB-5 (schedules for saved reports), RB-7 (curated CLI and MCP set) pending)
+      in `compliance_exports` (XLSX came with RB-5);
+      RB-4 done: admin Analytics > Report builder (build, preview, withheld groups explained, save and share with roles, open, export
+      CSV and JSON lines, delete) in en, pl and zh with axe and keyboard browser tests; RB-5 done: a schedule can send a saved report
+      (`compliance_report_schedules.saved_report_id`), run once per recipient with their own permissions in one queued job each,
+      skipped recipients reported to the owner, XLSX through a streaming writer on `ext-zip` (no new dependency);
+      RB-6 done: read-only OData v4 feed per saved report (service document, `$metadata` with Capabilities annotations, entity sets with
+      `$select`, `$top`, `$skip`, `$count`, 5 000 rows a page, 501 for `$filter` and the rest), Basic or Bearer `reports:read` token limited
+      to one report through `api_token_meta.resource_ids`, 60 requests a minute, every read logged; not yet checked by hand in Excel or
+      Power BI; RB-7 done: curated `ulams reporting` commands (`datasets`, `query`, `list`, `show`, `run`, `save`, `update`, `delete`) and the
+      same eight MCP tools in toolset `analytics`, reads available with `--read-only`)
 - [ ] (new) BI connector: read-only OData v4 feed per saved report for Excel, Power BI and Tableau, with a `reports:read`
       token that can be limited to one report; CSV and JSON lines URLs with recipes for Looker Studio, Metabase and
-      Superset (plan `authoring-metric-and-report-builder.md` RB-6)
+      Superset (plan `authoring-metric-and-report-builder.md` RB-6) (partial: RB-6 built: feed, limited
+      tokens and the setup guides `admin/bi-connectors` for Excel, Power BI, Tableau, Looker Studio, Metabase and Superset; the feed is covered by the
+      platform's own tests only, a manual check in Excel and Power BI Desktop is still open)
 
 ### 6.6 Skills and competencies
 - [x] Competency framework; AI-suggested tags confirmed by author (`api/packages/compliance`, #286)
@@ -1283,8 +1339,8 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       MyDevil/VPS pages that mention images now point to it. Describes IMG-3 (#427), IMG-4 (#469), IMG-5 (#472) and IMG-6b (#470), all merged
 - [ ] Any AI provider (OpenAI-compatible, Anthropic, Ollama/vLLM); full function without AI
 - [ ] Air-gapped: no telemetry by default, no external CDNs, offline licence, data residency
-- [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI
-- [ ] Health checks, Prometheus metrics, structured logs, zero-downtime guidance
+- [ ] Safe migrations, stable/LTS channels, backup/restore tested in CI (partial: `ulams stack backup` / `stack restore` for Docker and Kubernetes launcher installs, with a nightly backup, wipe and restore of a real Docker stack in `nightly-ops.yml`, and SeaweedFS buckets in the VPS local-trial backup, are done in P8-6 (#497), plan phase-8-self-hosting.md; release channels are done in #498: release-please release pull requests with `CHANGELOG.md`, one `vX.Y.Z` for images and CLI, `stable` and `lts` image tags, supported versions in `SECURITY.md`, switched off until the owner sets `RELEASE_PLEASE` and picks the first version, owner issue #499; the migration safety check waits for P8-5)
+- [ ] Health checks, Prometheus metrics, structured logs, zero-downtime guidance (partial: probes, Prometheus metrics for API, queue, Caddy, H5P and PDF, and JSON logs with a request id are done in P8-4, plan phase-8-self-hosting.md; zero-downtime guidance waits for the Helm chart, P8-5)
 - [ ] SBOM, signed images, CVE scanning, hardening guide, ISO 27001 / GDPR audit docs
       Note 2026-10-22 (P8-2, #367): partial. Merged: Trivy on pull requests, in CI images and nightly against the published images (opens or updates one `security`
       issue; `.trivyignore.yaml` with a checked expiry), keyless cosign signing and verification of every digest and an SBOM attestation in `publish.yml`, SPDX SBOMs

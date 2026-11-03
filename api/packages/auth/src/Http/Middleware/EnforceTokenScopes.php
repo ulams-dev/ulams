@@ -16,7 +16,8 @@ use Ulams\Auth\Support\TokenScopes;
  *
  * GET/HEAD need `<area>:read`, everything else `<area>:write`; `*` passes. A route that is not in
  * `resources/token-scopes.php` is denied (fail closed). Scopes only narrow: the user's own
- * permissions are still checked by the route's policies.
+ * permissions are still checked by the route's policies. A token limited to resources (`resource_ids`, for example one saved
+ * report) can call only routes that name a resource in the map (`resource` option), and only one of its own.
  */
 class EnforceTokenScopes
 {
@@ -46,6 +47,13 @@ class EnforceTokenScopes
             }
         }
 
+        if ($area !== 'public' && !empty($context->meta->resource_ids) && !$this->withinResources($request, $requirement['resource'] ?? null, $context->meta->resource_ids)) {
+            return $this->deny('This token is limited to specific resources and cannot call this endpoint or resource.', 'resource_limited', []);
+        }
+
+        // what a limited token is limited to, for the endpoints that list or filter by it (the OData service document)
+        $request->attributes->set('ulams.token_resource_ids', $context->meta->resource_ids ?: null);
+
         $limit = $context->meta->rate_limit_per_minute;
         if ($limit !== null) {
             $key = EnforceKey::for($context->tokenId);
@@ -62,6 +70,35 @@ class EnforceTokenScopes
         }
 
         return $next($request);
+    }
+
+    /**
+     * A limited token passes on a route that names a resource (`param`, with an optional `prefix` the id carries in the
+     * URL) when that resource is one of its own. `optional` lets the routes of the same family that name none (a service
+     * document, a metadata document) through; they must filter what they show by the token themselves.
+     *
+     * @param array{param:string,prefix?:string,optional?:bool}|null $resource
+     * @param list<string> $allowed
+     */
+    private function withinResources(Request $request, ?array $resource, array $allowed): bool
+    {
+        if ($resource === null) {
+            return false;
+        }
+        $value = $request->route()?->parameter($resource['param']);
+        if ($value === null) {
+            return (bool) ($resource['optional'] ?? false);
+        }
+        $prefix = $resource['prefix'] ?? '';
+        $value = (string) $value;
+        if ($prefix !== '') {
+            if (!str_starts_with($value, $prefix)) {
+                return false;
+            }
+            $value = substr($value, strlen($prefix));
+        }
+
+        return in_array($value, $allowed, true);
     }
 
     /** @param list<string> $required */

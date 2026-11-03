@@ -31,6 +31,7 @@ Route::group([
     Route::get('proposals/{proposal}', [ProposalsController::class, 'show']);
     Route::post('proposals/{proposal}/analyse', [ProposalsController::class, 'analyse']);
     Route::post('proposals/{proposal}/items/{item}/accept', [ProposalsController::class, 'accept']);
+    Route::post('proposals/{proposal}/items/{item}/accept-in-group', [ProposalsController::class, 'acceptInGroup']);
     Route::post('proposals/{proposal}/items/{item}/reject', [ProposalsController::class, 'reject']);
     Route::post('proposals/{proposal}/items/{item}/reset', [ProposalsController::class, 'reset']);
     Route::post('proposals/{proposal}/items/{item}/regenerate', [ProposalsController::class, 'regenerate']);

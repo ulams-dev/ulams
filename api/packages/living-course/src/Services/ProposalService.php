@@ -3,10 +3,12 @@
 namespace Ulams\LivingCourse\Services;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Ulams\Ai\Contracts\LlmClient;
 use Ulams\CourseBuilder\Blueprint\Blueprint;
 use Ulams\CourseBuilder\Events\EventLog;
 use Ulams\CourseBuilder\Models\Session;
+use Ulams\CourseBuilder\Models\Variant;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Services\VersionService;
 use Ulams\LivingCourse\Diff\ImpactAnalyzer;
@@ -51,7 +53,7 @@ final class ProposalService
             // no generated course yet: nothing cites the source, the next build reads the live fragments
             return ['proposal' => null, 'state' => 'not_applicable'];
         }
-        $today = Proposal::query()->where('source_id', $connection->source_id)->where('created_at', '>=', now()->startOfDay())->count();
+        $today = Proposal::query()->where('source_id', $connection->source_id)->whereNull('variant_id')->where('created_at', '>=', now()->startOfDay())->count();
         if ($today >= (int) config('living_course.cost.proposals_per_source_per_day', 5) && !Proposal::query()->where('to_revision_id', $to->id)->exists()) {
             // later revisions wait for the next day; a manual check processes them then
             $to->forceFill(['metadata' => array_merge((array) $to->metadata, ['deferred' => true])])->save();
@@ -80,6 +82,8 @@ final class ProposalService
         if ($analysis['items'] === []) {
             // nothing in the course cites a changed section: accept the revision, keep the uncovered note
             $proposal = $this->persist($session, $connection, $from, $to, $current, $analysis, 'no_impact', $trigger, $userId, $elements);
+            // a variant may cite what the base does not (ADR 0192): it gets its own proposal, the revision is promoted all the same
+            $this->fanOut($proposal, $session, $connection, $from, $to, $changes, $labels, $elements, $trigger, $userId);
             $to->forceFill(['status' => 'no_impact'])->save();
             $this->audit->record('revision.no_impact', $this->ctx($session, $to, $userId) + ['data' => ['reason' => 'no course element cites a changed section', 'uncovered' => count($analysis['uncovered'])]]);
             $this->revisions->promote($to->refresh(), $userId);
@@ -90,14 +94,67 @@ final class ProposalService
         $status = $actionable === [] ? 'ready' : ($this->llm->enabled() ? 'awaiting_analysis' : 'ready');
         $proposal = $this->persist($session, $connection, $from, $to, $current, $analysis, $status, $trigger, $userId, $elements);
         $this->announce($session, $proposal);
+        $variants = $this->fanOut($proposal, $session, $connection, $from, $to, $changes, $labels, $elements, $trigger, $userId);
         if ($status === 'awaiting_analysis' && $connection->auto_analyse) {
             $this->analysis->begin($proposal, false, $userId);
             $proposal->refresh();
+        }
+        foreach ($variants as $variantProposal) {
+            $this->notifier->proposalReady($variantProposal);
         }
         $this->notifier->revisionDetected($proposal);
         $this->notifier->proposalReady($proposal);
 
         return ['proposal' => $proposal, 'state' => 'created'];
+    }
+
+    /**
+     * One proposal per variant of the course, for the same source revision (ADR 0192, CV-5): the deterministic impact analysis
+     * runs on each variant's own live blueprint, so a variant that cites a changed passage gets its elements listed even when
+     * the base does not. An impacted element that is word for word the base's is marked as inheriting: it is not analysed
+     * again, it takes the base's patch once the base's analysis has finished (`VariantReuse`), at no model cost. Only elements
+     * the variant changed need an analysis of their own. New sections of the source that no lesson covers are for the base only.
+     * The proposals share the base proposal's `proposal_group`.
+     *
+     * @param array<int,array<string,mixed>> $changes
+     * @param array<string,string> $labels
+     * @param array<string,array<string,mixed>> $baseElements
+     * @return Proposal[] the variant proposals made
+     */
+    private function fanOut(Proposal $base, Session $session, Connection $connection, Revision $from, Revision $to, array $changes, array $labels, array $baseElements, string $trigger, ?int $userId): array
+    {
+        $variants = Variant::query()->where('session_id', $session->id)->where('status', Variant::APPROVED)->whereNotNull('course_id')->whereNotNull('applied_version_id')->orderBy('position')->orderBy('created_at')->get();
+        if ($variants->isEmpty()) {
+            return [];
+        }
+        $group = $base->proposal_group ?? strtolower((string) Str::ulid());
+        $base->forceFill(['proposal_group' => $group])->save();
+        $baseItems = ProposalItem::query()->where('proposal_id', $base->id)->where('kind', 'manual')->pluck('id', 'element_id')->all();
+        $made = [];
+        foreach ($variants as $variant) {
+            $version = Version::query()->find($variant->applied_version_id);
+            if ($version === null) {
+                continue;
+            }
+            $analysis = $this->impact->analyse($version->document, $changes, $labels);
+            $analysis['uncovered'] = [];
+            if ($analysis['items'] === []) {
+                continue;
+            }
+            $elements = $this->impact->elements($version->document);
+            $inherits = [];
+            foreach ($analysis['items'] as $item) {
+                $id = $item['element_id'];
+                if ($item['kind'] === 'manual' && isset($baseItems[$id], $baseElements[$id]) && Blueprint::fingerprint($baseElements[$id]['node']) === Blueprint::fingerprint($elements[$id]['node'])) {
+                    $inherits[$id] = $baseItems[$id];
+                }
+            }
+            $actionable = array_filter($analysis['items'], fn ($i) => $i['kind'] === 'manual');
+            $status = $actionable === [] || !$this->llm->enabled() ? 'ready' : 'awaiting_analysis';
+            $made[] = $this->persist($session, $connection, $from, $to, $version, $analysis, $status, $trigger, $userId, $elements, $variant, $group, $inherits);
+        }
+
+        return $made;
     }
 
     /**
@@ -156,9 +213,9 @@ final class ProposalService
     }
 
     /** @param array<string,array<string,mixed>> $elements */
-    private function persist(Session $session, Connection $connection, Revision $from, Revision $to, Version $current, array $analysis, string $status, string $trigger, ?int $userId, array $elements): Proposal
+    private function persist(Session $session, Connection $connection, Revision $from, Revision $to, Version $current, array $analysis, string $status, string $trigger, ?int $userId, array $elements, ?Variant $variant = null, ?string $group = null, array $inherits = []): Proposal
     {
-        return DB::transaction(function () use ($session, $connection, $from, $to, $current, $analysis, $status, $trigger, $userId, $elements) {
+        return DB::transaction(function () use ($session, $connection, $from, $to, $current, $analysis, $status, $trigger, $userId, $elements, $variant, $group, $inherits) {
             Session::query()->whereKey($session->id)->lockForUpdate()->first(['id']);
             $number = (int) Proposal::query()->where('session_id', $session->id)->max('number') + 1;
             $items = $analysis['items'];
@@ -172,12 +229,16 @@ final class ProposalService
                 'status' => $status,
                 'trigger' => $trigger,
                 'created_by' => $userId,
-                'counts' => $this->counts($analysis, $to),
+                'counts' => $this->counts($analysis, $to) + ($variant !== null ? ['variant' => ['id' => $variant->id, 'key' => $variant->key, 'label' => $variant->label]] : []),
+                'variant_id' => $variant?->id,
+                'proposal_group' => $group,
             ]);
             $now = now();
             foreach ($items as $item) {
                 $el = $elements[$item['element_id']];
                 $remap = $item['kind'] === 'citation_remap';
+                $flags = ($item['signals'] === [] ? [] : ['signals' => $item['signals']])
+                    + (isset($inherits[$item['element_id']]) && !$remap ? ['inherits' => $inherits[$item['element_id']]] : []);
                 ProposalItem::query()->create([
                     'proposal_id' => $proposal->id,
                     'group_key' => $item['group_key'],
@@ -194,7 +255,7 @@ final class ProposalService
                     'change_class' => $remap ? 'none' : null,
                     'answer_check' => $item['answer_check'],
                     'status' => $remap ? 'accepted' : 'pending',
-                    'flags' => $item['signals'] === [] ? null : ['signals' => $item['signals']],
+                    'flags' => $flags === [] ? null : $flags,
                 ]);
             }
             foreach ($analysis['uncovered'] as $u) {
@@ -212,10 +273,13 @@ final class ProposalService
                     'status' => 'pending',
                 ]);
             }
-            $this->staleness->markPending($session, array_filter($items, fn ($i) => $i['kind'] === 'manual'), $proposal->id, $to->detected_at);
+            if ($variant === null) {
+                // staleness is per element id of the session: a variant shares the ids and must not overwrite the base's marks
+                $this->staleness->markPending($session, array_filter($items, fn ($i) => $i['kind'] === 'manual'), $proposal->id, $to->detected_at);
+            }
             $this->audit->record('proposal.created', $this->ctx($session, $to, $userId) + [
                 'subject_type' => 'proposal', 'subject_id' => $proposal->id, 'version_from' => $current->number,
-                'data' => ['number' => $number, 'status' => $status, 'from' => $from->number, 'to' => $to->number] + $proposal->counts,
+                'data' => ['number' => $number, 'status' => $status, 'from' => $from->number, 'to' => $to->number] + $proposal->counts + ($variant !== null ? ['variantId' => $variant->id] : []),
             ]);
 
             return $proposal;

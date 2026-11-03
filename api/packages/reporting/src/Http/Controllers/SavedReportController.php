@@ -36,22 +36,23 @@ use Ulams\Reporting\Support\ReportContext;
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Response(response=200, description="The saved report with its definition", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="Not found, or not visible to the caller"))
  * @OA\Put(path="/api/admin/reporting/saved/{id}", operationId="admin.reporting.reports.by-id.put", summary="Change a saved report", tags={"Reporting"}, security={{"passport": {}}},
- *     description="Only the owner (who holds reporting_create) or an administrator with reporting_manage. Any of name, description, visibility, shared_roles and definition.",
+ *     description="Only the owner (who holds reporting_create) or an administrator with reporting_manage. Any of name, description, visibility, shared_roles, definition and feed_enabled (the OData feed for BI tools; reporting_manage only).",
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\RequestBody(required=true, @OA\MediaType(mediaType="application/json", @OA\Schema(type="object",
  *         @OA\Property(property="name", type="string"), @OA\Property(property="description", type="string"),
  *         @OA\Property(property="visibility", type="string", enum={"private","roles"}),
  *         @OA\Property(property="shared_roles", type="array", @OA\Items(type="string")),
- *         @OA\Property(property="definition", type="object")))),
+ *         @OA\Property(property="definition", type="object"),
+ *         @OA\Property(property="feed_enabled", type="boolean", description="Offer the report as a read-only OData feed (needs reporting_manage)")))),
  *     @OA\Response(response=200, description="The saved report", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Not the owner"), @OA\Response(response=404, description="Not found"), @OA\Response(response=422, description="Invalid definition or sharing"))
  * @OA\Delete(path="/api/admin/reporting/saved/{id}", operationId="admin.reporting.reports.by-id.delete", summary="Delete a saved report", tags={"Reporting"}, security={{"passport": {}}},
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
  *     @OA\Response(response=200, description="Deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Not the owner"), @OA\Response(response=404, description="Not found"))
  * @OA\Get(path="/api/admin/reporting/saved/{id}/run", operationId="admin.reporting.reports.by-id.run", summary="Run a saved report", tags={"Reporting"}, security={{"passport": {}}},
- *     description="Runs the report with the caller's own permissions and scope. format=json (default) answers like the query endpoint (500 rows and the total); csv and jsonl stream every row up to 1 000 000 and are recorded as exports. Groups of fewer learners than the threshold are withheld in every format. 403 when the caller lacks the permission of the dataset, 409 when the report needs repair.",
+ *     description="Runs the report with the caller's own permissions and scope. format=json (default) answers like the query endpoint (500 rows and the total); csv, jsonl and xlsx stream every row up to 1 000 000 (an XLSX sheet holds 1 048 575) and are recorded as exports. Groups of fewer learners than the threshold are withheld in every format. 403 when the caller lacks the permission of the dataset, 409 when the report needs repair.",
  *     @OA\Parameter(name="id", in="path", required=true, @OA\Schema(type="string")),
- *     @OA\Parameter(name="format", in="query", @OA\Schema(type="string", enum={"json","csv","jsonl"}, default="json")),
- *     @OA\Response(response=200, description="json: columns, rows and meta; csv and jsonl: a file", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=404, description="Not found"), @OA\Response(response=409, description="The report needs repair"))
+ *     @OA\Parameter(name="format", in="query", @OA\Schema(type="string", enum={"json","csv","jsonl","xlsx"}, default="json")),
+ *     @OA\Response(response=200, description="json: columns, rows and meta; csv, jsonl and xlsx: a file", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="Forbidden"), @OA\Response(response=404, description="Not found"), @OA\Response(response=409, description="The report needs repair"))
  */
 class SavedReportController extends Controller
 {
@@ -73,6 +74,7 @@ class SavedReportController extends Controller
     public function store(Request $request): JsonResponse
     {
         $this->allow($request, ReportingPermissionsEnum::CREATE);
+        abort_if($request->boolean('feed_enabled') && !$request->user()->can(ReportingPermissionsEnum::MANAGE, 'api'), 403, 'Only an administrator who manages reports can turn the feed on.');
         $report = $this->guarded(fn () => $this->reports->create($request->user(), $this->input($request, true)));
 
         return $this->ok($this->present($report, $request), 201);
@@ -90,6 +92,7 @@ class SavedReportController extends Controller
         $this->allow($request, ReportingPermissionsEnum::READ);
         $report = $this->visible($request, $id);
         abort_unless($this->reports->canEdit($report, $request->user()), 403, 'Only the owner or an administrator who manages reports can change this report.');
+        abort_if($request->has('feed_enabled') && !$request->user()->can(ReportingPermissionsEnum::MANAGE, 'api'), 403, 'Only an administrator who manages reports can turn the feed on or off.');
         $report = $this->guarded(fn () => $this->reports->update($report, $request->user(), $this->input($request, false)));
 
         return $this->ok($this->present($report, $request));
@@ -124,7 +127,7 @@ class SavedReportController extends Controller
                 $out = fopen('php://output', 'w');
                 $this->exporter->write($report->definition, $context, $format, $out, $report->id);
                 fclose($out);
-            }, $name, ['Content-Type' => $format === 'csv' ? 'text/csv; charset=UTF-8' : 'application/x-ndjson', 'Cache-Control' => 'no-store']);
+            }, $name, ['Content-Type' => ReportExporter::MIME[$format], 'Cache-Control' => 'no-store']);
         }
 
         $result = $this->guarded(fn () => $this->runner->preview($report->definition, $context));
@@ -155,6 +158,7 @@ class SavedReportController extends Controller
             'shared_roles' => ['sometimes', 'nullable', 'array', 'max:20'],
             'shared_roles.*' => ['string', 'max:64'],
             'definition' => [$presence, 'array'],
+            'feed_enabled' => ['sometimes', 'boolean'],
         ]);
     }
 
@@ -185,6 +189,8 @@ class SavedReportController extends Controller
             'description' => $report->description,
             'dataset' => $report->definition['dataset'] ?? null,
             'visibility' => $report->visibility,
+            'feed_enabled' => $report->feed_enabled,
+            'feed' => $report->feed_enabled ? ['url' => url('/api/reporting/odata') . '/', 'entity_set' => 'Report_' . $report->id] : null,
             'shared_roles' => $report->shared_roles ?? [],
             'definition' => $report->definition,
             'definition_version' => $report->definition_version,

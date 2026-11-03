@@ -34,6 +34,7 @@ use Ulams\LiaScript\Database\Seeders\LiaScriptPermissionSeeder;
 use Ulams\CourseBuilder\Database\Seeders\CourseBuilderPermissionSeeder;
 use Ulams\LearnerInsights\Database\Seeders\LearnerInsightsPermissionSeeder;
 use Ulams\LivingCourse\Database\Seeders\LivingCoursePermissionSeeder;
+use Ulams\PolicyLifecycle\Database\Seeders\PolicyPermissionSeeder;
 use Ulams\Lti\Database\Seeders\LtiPermissionSeeder;
 use Ulams\Notifications\Database\Seeders\NotificationsPermissionsSeeder;
 use Ulams\Pages\Database\Seeders\PermissionTableSeeder as PagesPermissionTableSeeder;
@@ -117,6 +118,7 @@ class PermissionsSeeder extends Seeder
         $this->call(AdaptPermissionSeeder::class);
         $this->call(WebhookPermissionSeeder::class);
         $this->call(CompliancePermissionSeeder::class);
+        $this->call(PolicyPermissionSeeder::class);
         $this->call(CourseVariantsPermissionSeeder::class);
         $this->call(AuthoringMetricsPermissionSeeder::class);
         $this->call(ReportingPermissionSeeder::class);

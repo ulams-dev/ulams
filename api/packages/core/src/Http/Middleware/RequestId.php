@@ -4,6 +4,7 @@ namespace Ulams\Core\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,9 @@ class RequestId
         $id = is_string($given) && self::valid($given) ? $given : (string) Str::ulid();
         $request->attributes->set('ulams.request_id', $id);
         Log::withContext(['request_id' => $id]);
+        // Context travels in the payload of every job dispatched while this request runs, so the worker's
+        // log lines carry the same id (JSON logs, docs/operators/monitoring)
+        Context::add('request_id', $id);
 
         $response = $next($request);
         $response->headers->set(self::HEADER, $id);

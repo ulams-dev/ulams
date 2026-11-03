@@ -46,6 +46,11 @@ return [
     // Health and platform metadata -----------------------------------------------------------------
     ['method' => 'GET', 'uri' => 'api/name', 'kind' => 'open', 'reason' => 'Application name, read by the front end and by the tenant probe.'],
     ['method' => 'GET', 'uri' => 'api/events', 'kind' => 'open', 'reason' => 'Event catalogue of the API (names only).'],
+    ['method' => 'GET', 'uri' => 'up', 'kind' => 'open',
+        'reason' => 'Liveness probe (P8-4): answers {"status":"up"} and touches no database, cache or tenant data.'],
+    ['method' => 'GET', 'uri' => 'metrics', 'kind' => 'own-credentials', 'probe' => false,
+        'covered_by' => 'tests/Integrations/MetricsEndpointTest.php',
+        'reason' => 'Prometheus scrape endpoint: platform host only, and only for a private network or the METRICS_TOKEN bearer (404 otherwise). Not probed by the walker because the test client is on loopback, which the default allow list admits; MetricsEndpointTest covers the denials.'],
     ['method' => 'GET', 'uri' => 'api/health', 'kind' => 'open', 'reason' => 'Liveness probe for load balancers.'],
     ['method' => 'GET', 'uri' => 'api/healthcheck', 'kind' => 'open', 'reason' => 'Liveness probe (legacy path).'],
     ['method' => 'GET', 'uri' => 'api/core/health-check', 'kind' => 'open', 'reason' => 'Readiness probe for orchestrators (database and cache reachable).'],

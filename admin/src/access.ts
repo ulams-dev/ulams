@@ -88,6 +88,7 @@ export default function (initialState: {
     analyticsPermission: havePermissionsInDashboard(
       PERMISSIONS.NotificationListAll,
       PERMISSIONS.ReportList,
+      PERMISSIONS.ReportingRead,
     ),
 
     configurationPermission: havePermissionsInDashboard(
@@ -188,6 +189,8 @@ export default function (initialState: {
     reportListPermission:
       havePermissionsInDashboard(PERMISSIONS.ReportList) &&
       !haveSettingsInDashboard('hideInMenu-CoursesCategories', true),
+
+    reportingPermission: havePermissionsInDashboard(PERMISSIONS.ReportingRead),
 
     tokenManagePermission: havePermissionsInDashboard(PERMISSIONS.TokenManage),
 

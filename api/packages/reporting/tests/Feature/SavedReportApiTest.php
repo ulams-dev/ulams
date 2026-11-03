@@ -230,6 +230,29 @@ class SavedReportApiTest extends TestCase
         $this->assertSame('learner_calls', json_decode($log->filters, true)['report']['dataset']);
     }
 
+    public function testAnXlsxExportIsAValidWorkbookWithTheLabelsAsHeaders(): void
+    {
+        $this->calls('=SUM(A1)', [1, 2], ['input_tokens' => 40]);
+        $admin = $this->makeAdmin();
+        $id = $this->save($admin, ['definition' => $this->definition(['columns' => ['task', 'user_id', 'cost_usd', 'cached', 'input_tokens']])]);
+
+        $response = $this->actingAs($admin, 'api')->get("/api/admin/reporting/saved/{$id}/run?format=xlsx")->assertOk();
+        $this->assertStringContainsString('spreadsheetml.sheet', $response->headers->get('Content-Type'));
+        $this->assertStringContainsString('.xlsx', $response->headers->get('Content-Disposition'));
+        $path = tempnam(sys_get_temp_dir(), 'xlsx-api-');
+        file_put_contents($path, $response->streamedContent());
+        $sheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($path)->getActiveSheet();
+        @unlink($path);
+
+        $this->assertSame(['Task', 'Learner', 'Cost', 'Cached', 'Input tokens'], $sheet->rangeToArray('A1:E1')[0]);
+        $this->assertSame('=SUM(A1)', $sheet->getCell('A2')->getFormattedValue());
+        $this->assertSame([1, 2], [$sheet->getCell('B2')->getValue(), $sheet->getCell('B3')->getValue()]);
+        $this->assertSame(40, $sheet->getCell('E2')->getValue());
+        $this->assertFalse($sheet->getCell('D2')->getValue());
+        $log = DB::table('compliance_exports')->first();
+        $this->assertSame(['xlsx', 2, 'download'], [$log->format, $log->row_count, $log->channel]);
+    }
+
     public function testAJsonLinesExportWritesOneObjectPerRowAndHonoursTheCaps(): void
     {
         $this->calls('a', range(1, 5));
