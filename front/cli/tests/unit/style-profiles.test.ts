@@ -98,3 +98,25 @@ describe("style-profiles", () => {
     done.cleanup();
   });
 });
+
+describe("style profile scope and the brief", () => {
+  it("propose --scope brief sends scopeType and scopeId, as a form for a file too", async () => {
+    const json = await runCli(["style-profiles", "propose", "--profile", '{"voice":{"person":"we"}}', "--name", "Expert track", "--scope", "brief", "--scope-id", "expert-track", "--json"], { env, routes: { [`POST ${P}`]: ok(profile, 201) } });
+    expect(json.requests[0]?.body).toMatchObject({ name: "Expert track", scopeType: "brief", scopeId: "expert-track" });
+    json.cleanup();
+    const file = await runCli(["style-profiles", "propose", "--file", "guide.md", "--scope", "brief", "--name", "Expert", "--json"], { env, files: { "guide.md": "x" }, routes: { [`POST ${P}`]: ok(profile, 201) } });
+    expect(file.requests[0]?.form?.get("scopeType")).toBe("brief");
+    file.cleanup();
+  });
+
+  it("builder brief set --style-profile-id names a profile, and none clears it", async () => {
+    const S = "01j9z3k8m2x4q7r5t6v8w0y1ab";
+    const route = `PUT /api/admin/course-builder/sessions/${S}/brief`;
+    const set = await runCli(["builder", "brief", "set", S, "--style-profile-id", ID, "--json"], { env, routes: { [route]: ok({ brief: {}, stale: false }) } });
+    expect(set.requests[0]?.body).toEqual({ brief: { styleProfileId: ID } });
+    set.cleanup();
+    const clear = await runCli(["builder", "brief", "set", S, "--style-profile-id", "none", "--json"], { env, routes: { [route]: ok({ brief: {}, stale: false }) } });
+    expect(clear.requests[0]?.body).toEqual({ brief: { styleProfileId: null } });
+    clear.cleanup();
+  });
+});

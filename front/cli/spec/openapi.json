@@ -12576,6 +12576,16 @@
          },
          "profile": {
           "type": "string"
+         },
+         "scopeId": {
+          "type": "string"
+         },
+         "scopeType": {
+          "enum": [
+           "tenant",
+           "brief"
+          ],
+          "type": "string"
          }
         },
         "type": "object"
