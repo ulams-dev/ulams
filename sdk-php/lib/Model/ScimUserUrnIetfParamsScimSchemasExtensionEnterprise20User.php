@@ -1,6 +1,6 @@
 <?php
 /**
- * AuthTokensGet200Response
+ * ScimUserUrnIetfParamsScimSchemasExtensionEnterprise20User
  *
  * PHP version 7.4
  *
@@ -32,7 +32,7 @@ use \ArrayAccess;
 use \Ulams\Sdk\ObjectSerializer;
 
 /**
- * AuthTokensGet200Response Class Doc Comment
+ * ScimUserUrnIetfParamsScimSchemasExtensionEnterprise20User Class Doc Comment
  *
  * @category Class
  * @package  Ulams\Sdk
@@ -40,7 +40,7 @@ use \Ulams\Sdk\ObjectSerializer;
  * @link     https://openapi-generator.tech
  * @implements \ArrayAccess<string, mixed>
  */
-class AuthTokensGet200Response implements ModelInterface, ArrayAccess, \JsonSerializable
+class ScimUserUrnIetfParamsScimSchemasExtensionEnterprise20User implements ModelInterface, ArrayAccess, \JsonSerializable
 {
     public const DISCRIMINATOR = null;
 
@@ -49,7 +49,7 @@ class AuthTokensGet200Response implements ModelInterface, ArrayAccess, \JsonSeri
       *
       * @var string
       */
-    protected static $openAPIModelName = 'auth_tokens_get_200_response';
+    protected static $openAPIModelName = 'ScimUser_urn_ietf_params_scim_schemas_extension_enterprise_2_0_User';
 
     /**
       * Array of property to type mappings. Used for (de)serialization
@@ -57,9 +57,12 @@ class AuthTokensGet200Response implements ModelInterface, ArrayAccess, \JsonSeri
       * @var string[]
       */
     protected static $openAPITypes = [
-        'data' => '\Ulams\Sdk\Model\ApiToken[]',
-        'message' => 'string',
-        'success' => 'bool'
+        'cost_center' => 'string',
+        'department' => 'string',
+        'division' => 'string',
+        'employee_number' => 'string',
+        'manager' => '\Ulams\Sdk\Model\ScimUserUrnIetfParamsScimSchemasExtensionEnterprise20UserManager',
+        'organization' => 'string'
     ];
 
     /**
@@ -70,9 +73,12 @@ class AuthTokensGet200Response implements ModelInterface, ArrayAccess, \JsonSeri
       * @psalm-var array<string, string|null>
       */
     protected static $openAPIFormats = [
-        'data' => null,
-        'message' => null,
-        'success' => null
+        'cost_center' => null,
+        'department' => null,
+        'division' => null,
+        'employee_number' => null,
+        'manager' => null,
+        'organization' => null
     ];
 
     /**
@@ -81,9 +87,12 @@ class AuthTokensGet200Response implements ModelInterface, ArrayAccess, \JsonSeri
       * @var boolean[]
       */
     protected static array $openAPINullables = [
-        'data' => false,
-        'message' => false,
-        'success' => false
+        'cost_center' => false,
+        'department' => false,
+        'division' => false,
+        'employee_number' => false,
+        'manager' => false,
+        'organization' => false
     ];
 
     /**
@@ -172,9 +181,12 @@ class AuthTokensGet200Response implements ModelInterface, ArrayAccess, \JsonSeri
      * @var string[]
      */
     protected static $attributeMap = [
-        'data' => 'data',
-        'message' => 'message',
-        'success' => 'success'
+        'cost_center' => 'costCenter',
+        'department' => 'department',
+        'division' => 'division',
+        'employee_number' => 'employeeNumber',
+        'manager' => 'manager',
+        'organization' => 'organization'
     ];
 
     /**
@@ -183,9 +195,12 @@ class AuthTokensGet200Response implements ModelInterface, ArrayAccess, \JsonSeri
      * @var string[]
      */
     protected static $setters = [
-        'data' => 'setData',
-        'message' => 'setMessage',
-        'success' => 'setSuccess'
+        'cost_center' => 'setCostCenter',
+        'department' => 'setDepartment',
+        'division' => 'setDivision',
+        'employee_number' => 'setEmployeeNumber',
+        'manager' => 'setManager',
+        'organization' => 'setOrganization'
     ];
 
     /**
@@ -194,9 +209,12 @@ class AuthTokensGet200Response implements ModelInterface, ArrayAccess, \JsonSeri
      * @var string[]
      */
     protected static $getters = [
-        'data' => 'getData',
-        'message' => 'getMessage',
-        'success' => 'getSuccess'
+        'cost_center' => 'getCostCenter',
+        'department' => 'getDepartment',
+        'division' => 'getDivision',
+        'employee_number' => 'getEmployeeNumber',
+        'manager' => 'getManager',
+        'organization' => 'getOrganization'
     ];
 
     /**
@@ -256,9 +274,12 @@ class AuthTokensGet200Response implements ModelInterface, ArrayAccess, \JsonSeri
      */
     public function __construct(array $data = null)
     {
-        $this->setIfExists('data', $data ?? [], null);
-        $this->setIfExists('message', $data ?? [], null);
-        $this->setIfExists('success', $data ?? [], null);
+        $this->setIfExists('cost_center', $data ?? [], null);
+        $this->setIfExists('department', $data ?? [], null);
+        $this->setIfExists('division', $data ?? [], null);
+        $this->setIfExists('employee_number', $data ?? [], null);
+        $this->setIfExists('manager', $data ?? [], null);
+        $this->setIfExists('organization', $data ?? [], null);
     }
 
     /**
@@ -304,82 +325,163 @@ class AuthTokensGet200Response implements ModelInterface, ArrayAccess, \JsonSeri
 
 
     /**
-     * Gets data
-     *
-     * @return \Ulams\Sdk\Model\ApiToken[]|null
-     */
-    public function getData()
-    {
-        return $this->container['data'];
-    }
-
-    /**
-     * Sets data
-     *
-     * @param \Ulams\Sdk\Model\ApiToken[]|null $data data
-     *
-     * @return self
-     */
-    public function setData($data)
-    {
-        if (is_null($data)) {
-            throw new \InvalidArgumentException('non-nullable data cannot be null');
-        }
-        $this->container['data'] = $data;
-
-        return $this;
-    }
-
-    /**
-     * Gets message
+     * Gets cost_center
      *
      * @return string|null
      */
-    public function getMessage()
+    public function getCostCenter()
     {
-        return $this->container['message'];
+        return $this->container['cost_center'];
     }
 
     /**
-     * Sets message
+     * Sets cost_center
      *
-     * @param string|null $message message
+     * @param string|null $cost_center cost_center
      *
      * @return self
      */
-    public function setMessage($message)
+    public function setCostCenter($cost_center)
     {
-        if (is_null($message)) {
-            throw new \InvalidArgumentException('non-nullable message cannot be null');
+        if (is_null($cost_center)) {
+            throw new \InvalidArgumentException('non-nullable cost_center cannot be null');
         }
-        $this->container['message'] = $message;
+        $this->container['cost_center'] = $cost_center;
 
         return $this;
     }
 
     /**
-     * Gets success
+     * Gets department
      *
-     * @return bool|null
+     * @return string|null
      */
-    public function getSuccess()
+    public function getDepartment()
     {
-        return $this->container['success'];
+        return $this->container['department'];
     }
 
     /**
-     * Sets success
+     * Sets department
      *
-     * @param bool|null $success success
+     * @param string|null $department department
      *
      * @return self
      */
-    public function setSuccess($success)
+    public function setDepartment($department)
     {
-        if (is_null($success)) {
-            throw new \InvalidArgumentException('non-nullable success cannot be null');
+        if (is_null($department)) {
+            throw new \InvalidArgumentException('non-nullable department cannot be null');
         }
-        $this->container['success'] = $success;
+        $this->container['department'] = $department;
+
+        return $this;
+    }
+
+    /**
+     * Gets division
+     *
+     * @return string|null
+     */
+    public function getDivision()
+    {
+        return $this->container['division'];
+    }
+
+    /**
+     * Sets division
+     *
+     * @param string|null $division division
+     *
+     * @return self
+     */
+    public function setDivision($division)
+    {
+        if (is_null($division)) {
+            throw new \InvalidArgumentException('non-nullable division cannot be null');
+        }
+        $this->container['division'] = $division;
+
+        return $this;
+    }
+
+    /**
+     * Gets employee_number
+     *
+     * @return string|null
+     */
+    public function getEmployeeNumber()
+    {
+        return $this->container['employee_number'];
+    }
+
+    /**
+     * Sets employee_number
+     *
+     * @param string|null $employee_number employee_number
+     *
+     * @return self
+     */
+    public function setEmployeeNumber($employee_number)
+    {
+        if (is_null($employee_number)) {
+            throw new \InvalidArgumentException('non-nullable employee_number cannot be null');
+        }
+        $this->container['employee_number'] = $employee_number;
+
+        return $this;
+    }
+
+    /**
+     * Gets manager
+     *
+     * @return \Ulams\Sdk\Model\ScimUserUrnIetfParamsScimSchemasExtensionEnterprise20UserManager|null
+     */
+    public function getManager()
+    {
+        return $this->container['manager'];
+    }
+
+    /**
+     * Sets manager
+     *
+     * @param \Ulams\Sdk\Model\ScimUserUrnIetfParamsScimSchemasExtensionEnterprise20UserManager|null $manager manager
+     *
+     * @return self
+     */
+    public function setManager($manager)
+    {
+        if (is_null($manager)) {
+            throw new \InvalidArgumentException('non-nullable manager cannot be null');
+        }
+        $this->container['manager'] = $manager;
+
+        return $this;
+    }
+
+    /**
+     * Gets organization
+     *
+     * @return string|null
+     */
+    public function getOrganization()
+    {
+        return $this->container['organization'];
+    }
+
+    /**
+     * Sets organization
+     *
+     * @param string|null $organization organization
+     *
+     * @return self
+     */
+    public function setOrganization($organization)
+    {
+        if (is_null($organization)) {
+            throw new \InvalidArgumentException('non-nullable organization cannot be null');
+        }
+        $this->container['organization'] = $organization;
 
         return $this;
     }

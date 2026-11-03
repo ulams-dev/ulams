@@ -16,7 +16,8 @@
         "tokens",
         "webhooks",
         "platform",
-        "identity"
+        "identity",
+        "scim"
     ],
     "scopes": [
         "courses:read",
@@ -51,6 +52,8 @@
         "platform:write",
         "identity:read",
         "identity:write",
+        "scim:read",
+        "scim:write",
         "*"
     ],
     "presets": {
@@ -254,6 +257,10 @@
         {
             "pattern": "api/admin/webhooks*",
             "area": "webhooks"
+        },
+        {
+            "pattern": "api/scim/*",
+            "area": "scim"
         },
         {
             "pattern": "api/admin/identity*",

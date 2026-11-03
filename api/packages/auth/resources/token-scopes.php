@@ -8,7 +8,7 @@
  * patterns above general ones.
  *
  * Areas: courses, users, enrolments, settings, events, certificates, commerce, reports, lti,
- * builder, living-course, learner, tokens, webhooks, platform, identity, plus two pseudo areas:
+ * builder, living-course, learner, tokens, webhooks, platform, identity, scim, plus two pseudo areas:
  *   public  any valid scoped token may call it (identity, health, anonymous endpoints);
  *   none    never callable with a scoped token (it would mint unscoped credentials, change the
  *           account's credentials or let a scoped token widen its own rights).
@@ -71,6 +71,10 @@ return [
     // ---- webhooks ------------------------------------------------------------------------------
     // test sends and replays are POSTs, so they need webhooks:write
     ['api/admin/webhooks*', 'webhooks'],
+
+    // ---- SCIM 2.0 server: only tokens of kind `scim` (held by a provider's service user) may call it, and they may call
+    // nothing else (EnforceTokenScopes). Every other token kind is refused by the SCIM middleware of the identity package.
+    ['api/scim/*', 'scim'],
 
     // ---- identity providers and their audit trail (read = list and verify, write = change) -----
     ['api/admin/identity*', 'identity'],
