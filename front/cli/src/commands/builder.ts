@@ -503,6 +503,7 @@ export const builderCommands: AnyCommand[] = [
       totalMinutes: z.number().int().optional().describe("Target course length in minutes."),
       lessonMinutes: z.number().int().optional().describe("Target lesson length in minutes."),
       notes: z.string().optional(),
+      styleProfileId: z.string().optional().describe("Approved style profile to write with (from `ulams style-profiles list --status approved`), or `none` for the academy default."),
       perLessonQuiz: z.boolean().optional().describe("A quiz after every lesson."),
       finalTest: z.boolean().optional().describe("A final test."),
     }),
@@ -1255,6 +1256,7 @@ function variantChanges(i: { label?: string; position?: number; notes?: string }
 function briefBody(i: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = { ...((i.brief as Record<string, unknown> | undefined) ?? {}) };
   for (const key of ["audience", "level", "tone", "language", "totalMinutes", "lessonMinutes", "notes"]) if (i[key] !== undefined) out[key] = i[key];
+  if (i.styleProfileId !== undefined) out.styleProfileId = i.styleProfileId === "none" ? null : i.styleProfileId;
   const assessments: Record<string, unknown> = {};
   if (i.perLessonQuiz !== undefined) assessments.perLessonQuiz = i.perLessonQuiz;
   if (i.finalTest !== undefined) assessments.finalTest = i.finalTest;

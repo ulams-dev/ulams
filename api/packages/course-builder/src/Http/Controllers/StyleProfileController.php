@@ -5,11 +5,17 @@ namespace Ulams\CourseBuilder\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Ulams\CourseBuilder\Exceptions\BuilderException;
 use Ulams\CourseBuilder\Http\Controllers\Concerns\ResolvesSessions;
+use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\StyleProfile;
+use Ulams\CourseBuilder\Models\Variant;
+use Ulams\CourseBuilder\Models\Version;
+use Ulams\CourseBuilder\Policies\SessionPolicy;
+use Ulams\CourseBuilder\StyleProfile\StyleCheck;
 use Ulams\CourseBuilder\StyleProfile\StyleProfileService;
 use Ulams\Uploads\Exceptions\UploadRejected;
 
@@ -24,7 +30,7 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  *     @OA\Parameter(name="status", in="query", @OA\Schema(type="string", enum={"suggested", "approved", "superseded"})),
  *     @OA\Response(response=200, description="profiles", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="no access to the Course Builder"))
  * @OA\Post(path="/api/admin/course-builder/style-profiles", operationId="admin.course-builder.style-profiles.post", summary="Propose a style profile: upload a style guide (file, MD/PDF/DOCX) to have it read and cited, or send values by hand (profile, optionally from an existing profile id)", tags={"Admin Course Builder"}, security={{"passport": {}}},
- *     @OA\RequestBody(@OA\MediaType(mediaType="multipart/form-data", @OA\Schema(@OA\Property(property="file", type="string", format="binary"), @OA\Property(property="name", type="string"), @OA\Property(property="profile", type="string"), @OA\Property(property="from", type="string")))),
+ *     @OA\RequestBody(@OA\MediaType(mediaType="multipart/form-data", @OA\Schema(@OA\Property(property="file", type="string", format="binary"), @OA\Property(property="name", type="string"), @OA\Property(property="profile", type="string"), @OA\Property(property="from", type="string"), @OA\Property(property="scopeType", type="string", enum={"tenant", "brief"}), @OA\Property(property="scopeId", type="string")))),
  *     @OA\Response(response=201, description="the suggested profile with what was dropped as warnings", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=422, description="rejected upload or invalid body"))
  * @OA\Get(path="/api/admin/course-builder/style-profiles/{profile}", operationId="admin.course-builder.style-profiles.by-profile.get", summary="A style profile with the passages it cites and its diff against the approved profile", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="profile", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="profile, diff, cited fragments", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=404, description="unknown"))
@@ -33,6 +39,9 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  *     @OA\Response(response=200, description="the profile", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="not the creator or an admin"), @OA\Response(response=409, description="no longer a suggestion"))
  * @OA\Post(path="/api/admin/course-builder/style-profiles/{profile}/approve", operationId="admin.course-builder.style-profiles.by-profile.approve.post", summary="Approve a suggested profile (admins); it supersedes the approved profile of its scope", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="profile", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="approved", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="not an admin"), @OA\Response(response=409, description="not a suggestion"), @OA\Response(response=422, description="empty profile"))
+ * @OA\Get(path="/api/admin/course-builder/style-profiles/{profile}/check", operationId="admin.course-builder.style-profiles.by-profile.check.get", summary="Style check: where a course departs from a profile (banned phrases, terminology, casing, landing components, image alt text; reading level and sentence length as hints). Only the author of the course or an admin; nothing is changed", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="profile", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="course", in="query", required=true, description="LMS course id of a course made with the builder (a variant's course too)", @OA\Schema(type="integer")),
+ *     @OA\Response(response=200, description="blocking, warnings and hints, each with the style guide passages it comes from", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="another author's course"), @OA\Response(response=404, description="unknown profile or course"), @OA\Response(response=422, description="course missing"))
  * @OA\Delete(path="/api/admin/course-builder/style-profiles/{profile}", operationId="admin.course-builder.style-profiles.by-profile.delete", summary="Delete a suggested or superseded profile", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="profile", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=409, description="approved profiles are replaced, not deleted"))
  */
@@ -96,11 +105,22 @@ class StyleProfileController extends Controller
             'name' => ['nullable', 'string', 'max:255'],
             'file' => ['nullable', 'file'],
             'from' => ['nullable', 'string', 'max:26'],
+            'scopeType' => ['nullable', 'in:tenant,brief,entry_point'],
+            'scopeId' => ['nullable', 'regex:/^[a-z0-9][a-z0-9-]{0,63}$/'],
         ]);
+        // `brief` profiles are named alternatives a Course Brief can pick (scopeId is their name); entry points come with entry points
+        $scopeType = (string) $request->input('scopeType', StyleProfile::TENANT);
+        if ($scopeType === 'entry_point') {
+            return self::fail('Entry point profiles arrive with entry points: use scopeType tenant or brief.', 422, ['errors' => ['scopeType' => ['not available yet']]]);
+        }
+        $scopeId = $scopeType === StyleProfile::TENANT ? null : ((string) $request->input('scopeId') ?: (Str::slug((string) $request->input('name', '')) ?: null));
+        if ($scopeType === 'brief' && $scopeId === null) {
+            return self::fail('A brief profile needs a scopeId (its name) or a name.', 422, ['errors' => ['scopeId' => ['required for a brief profile']]]);
+        }
         $name = $request->filled('name') ? (string) $request->input('name') : null;
         if ($request->hasFile('file')) {
             try {
-                $profile = $this->profiles->createFromUpload($request->user(), $request->file('file'), $name);
+                $profile = $this->profiles->createFromUpload($request->user(), $request->file('file'), $name, $scopeType, $scopeId);
             } catch (UploadRejected $e) {
                 return self::fail($e->getMessage(), 422, ['errors' => ['file' => [$e->getMessage()]], 'reason' => $e->reason]);
             } catch (BuilderException $e) {
@@ -121,7 +141,7 @@ class StyleProfileController extends Controller
             return self::fail('Send a style guide file, or the values of a profile.', 422, ['errors' => ['file' => ['required without profile']]]);
         }
 
-        return self::ok($this->profiles->present($this->profiles->createManual($request->user(), $name, $values, $from), true), 201);
+        return self::ok($this->profiles->present($this->profiles->createManual($request->user(), $name, $values, $from, $scopeType, $scopeId), true), 201);
     }
 
     public function show(Request $request, string $profile): JsonResponse
@@ -160,6 +180,43 @@ class StyleProfileController extends Controller
         }
 
         return self::ok($this->profiles->present($approved, true));
+    }
+
+    /** The style check of one course against one profile (ADR 0196). Read-only; it never rewrites anything. */
+    public function check(Request $request, string $profile): JsonResponse
+    {
+        $this->assertCanUse($request);
+        $p = $this->profileFor($profile);
+        $request->validate(['course' => ['required', 'integer', 'min:1']]);
+        $courseId = (int) $request->query('course');
+        $variant = null;
+        $session = Session::query()->where('course_id', $courseId)->where('status', '!=', Session::STYLE_GUIDE)->first();
+        if ($session === null) {
+            $variant = Variant::query()->where('course_id', $courseId)->first();
+            $session = $variant !== null ? Session::query()->find($variant->session_id) : null;
+        }
+        if ($session === null) {
+            throw new NotFoundHttpException('That course was not made with the Course Builder.');
+        }
+        if (!(new SessionPolicy())->view($request->user(), $session)) {
+            throw new AccessDeniedHttpException('This course belongs to another author.');
+        }
+        $versionId = $variant !== null ? ($variant->applied_version_id ?? $variant->current_version_id) : ($session->applied_version_id ?? $session->current_version_id);
+        $doc = $versionId !== null ? (array) (Version::query()->find($versionId)?->document ?? []) : [];
+        if ($doc === []) {
+            throw new NotFoundHttpException('That course has no content to check yet.');
+        }
+        $report = app(StyleCheck::class)->run($doc, $p, (string) ($session->brief['language'] ?? 'en'));
+
+        return self::ok([
+            'profile' => ['id' => $p->id, 'name' => $p->name, 'status' => $p->status],
+            'course' => ['id' => $courseId, 'title' => $doc['course']['title'] ?? $session->title, 'sessionId' => $session->id, 'variantId' => $variant?->id, 'versionId' => $versionId],
+            'blocking' => $report['blocking'],
+            'warnings' => $report['warnings'],
+            'hints' => $report['hints'],
+            'counts' => ['blocking' => count($report['blocking']), 'warnings' => count($report['warnings']), 'hints' => count($report['hints'])],
+            'blocksPublishing' => $report['blocking'] !== [],
+        ]);
     }
 
     public function destroy(Request $request, string $profile): JsonResponse

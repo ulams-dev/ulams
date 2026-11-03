@@ -101,6 +101,20 @@ export interface StyleStrings {
   deleteConfirm: string;
   deleteCancel: string;
   deleted: string;
+  checkTitle: string;
+  checkIntro: string;
+  checkCourseLabel: string;
+  checkCourseHint: string;
+  checkButton: string;
+  checking: string;
+  checkSummary: string;
+  checkClean: string;
+  checkBlockingTitle: string;
+  checkWarningsTitle: string;
+  checkHintsTitle: string;
+  checkBlocksPublishing: string;
+  checkNeedCourse: string;
+  checkNotFound: string;
 }
 
 const en: StyleStrings = {
@@ -197,6 +211,20 @@ const en: StyleStrings = {
   deleteConfirm: "Yes, delete it",
   deleteCancel: "Keep it",
   deleted: "The profile was deleted.",
+  checkTitle: "Check a course against this profile",
+  checkIntro: "A check without AI that changes nothing. It works for a suggestion too, so you can see what approving it would flag. Only banned phrases of a profile that blocks them stop publishing; everything else is a warning or a hint.",
+  checkCourseLabel: "Course id",
+  checkCourseHint: "The number in the course's address in the admin app. It must be a course made with the Course Builder.",
+  checkButton: "Check the course",
+  checking: "Checking the course…",
+  checkSummary: "Check finished. Blocking: {blocking}. Warnings: {warnings}. Hints: {hints}.",
+  checkClean: "Nothing to report: the course follows this profile as far as the check can tell.",
+  checkBlockingTitle: "Blocks publishing",
+  checkWarningsTitle: "Warnings",
+  checkHintsTitle: "Hints (approximate, never blocking)",
+  checkBlocksPublishing: "This course cannot be published until the blocking items are fixed.",
+  checkNeedCourse: "Enter the id of a course first.",
+  checkNotFound: "That course was not found, or it was not made with the Course Builder.",
 };
 
 const pl: StyleStrings = {
@@ -293,6 +321,20 @@ const pl: StyleStrings = {
   deleteConfirm: "Tak, usuń",
   deleteCancel: "Zachowaj",
   deleted: "Profil został usunięty.",
+  checkTitle: "Sprawdź kurs względem tego profilu",
+  checkIntro: "Sprawdzenie bez AI, które niczego nie zmienia. Działa też dla propozycji, więc zobaczysz, co zgłosiłoby jej zatwierdzenie. Publikację zatrzymują tylko zakazane zwroty z profilu, który je blokuje; reszta to ostrzeżenia i wskazówki.",
+  checkCourseLabel: "Identyfikator kursu",
+  checkCourseHint: "Numer w adresie kursu w aplikacji administratora. To musi być kurs utworzony w Course Builderze.",
+  checkButton: "Sprawdź kurs",
+  checking: "Sprawdzanie kursu…",
+  checkSummary: "Sprawdzenie zakończone. Blokujące: {blocking}. Ostrzeżenia: {warnings}. Wskazówki: {hints}.",
+  checkClean: "Nic do zgłoszenia: kurs jest zgodny z tym profilem w zakresie, który sprawdzamy.",
+  checkBlockingTitle: "Blokuje publikację",
+  checkWarningsTitle: "Ostrzeżenia",
+  checkHintsTitle: "Wskazówki (przybliżone, nigdy nie blokują)",
+  checkBlocksPublishing: "Tego kursu nie można opublikować, dopóki nie poprawisz elementów blokujących.",
+  checkNeedCourse: "Najpierw wpisz identyfikator kursu.",
+  checkNotFound: "Nie znaleziono tego kursu albo nie powstał w Course Builderze.",
 };
 
 const zh: StyleStrings = {
@@ -389,6 +431,20 @@ const zh: StyleStrings = {
   deleteConfirm: "是，删除",
   deleteCancel: "保留",
   deleted: "配置已删除。",
+  checkTitle: "按此配置检查课程",
+  checkIntro: "不使用 AI 的检查，不会更改任何内容。对建议也有效，因此可以先看看批准它会标出什么。只有启用了阻止功能的配置中的禁用语才会阻止发布，其余都只是警告或提示。",
+  checkCourseLabel: "课程编号",
+  checkCourseHint: "管理应用中课程地址里的数字。必须是用 Course Builder 创建的课程。",
+  checkButton: "检查课程",
+  checking: "正在检查课程…",
+  checkSummary: "检查完成。阻止发布：{blocking}。警告：{warnings}。提示：{hints}。",
+  checkClean: "没有需要报告的内容：就检查所能判断的范围而言，课程符合此配置。",
+  checkBlockingTitle: "阻止发布",
+  checkWarningsTitle: "警告",
+  checkHintsTitle: "提示（近似结果，绝不阻止发布）",
+  checkBlocksPublishing: "在修复阻止发布的项目之前，无法发布此课程。",
+  checkNeedCourse: "请先输入课程编号。",
+  checkNotFound: "未找到该课程，或它不是用 Course Builder 创建的。",
 };
 
 export const STYLE_STRINGS: Record<StyleLocale, StyleStrings> = { en, pl, zh };

@@ -11,6 +11,7 @@ describe("Style profile BFF allow-list", () => {
     ["PATCH", `/style-profiles/${ID}`],
     ["DELETE", `/style-profiles/${ID}`],
     ["POST", `/style-profiles/${ID}/approve`],
+    ["GET", `/style-profiles/${ID}/check`],
   ])("forwards %s %s to the course builder API", (method, path) => {
     expect(isStudioCall(method, path)).toBe(true);
     expect(isLivingCourseCall(method, path)).toBe(false);
@@ -24,6 +25,8 @@ describe("Style profile BFF allow-list", () => {
     ["PATCH", "/style-profiles"],
     ["PUT", `/style-profiles/${ID}`],
     ["GET", `/style-profiles/${ID}/approve`],
+    ["POST", `/style-profiles/${ID}/check`],
+    ["GET", `/style-profiles/${ID}/check/x`],
     ["POST", `/style-profiles/${ID}/reject`],
     ["POST", `/style-profiles/${ID}/approve/x`],
     ["GET", "/style-profiles/short"],
