@@ -446,7 +446,6 @@
                     "title": "Learners routed to a variant",
                     "text": "Learners pick their level and role at enrolment, take an optional cited placement check, or are assigned a variant by an admin or a rule; progress carries over when they switch.",
                     "href": "https://ulams-dev.github.io/ulams/creators/course-versions-and-variants/",
-                    "status": "coming",
                     "packages": [
                       "course-variants"
                     ]
@@ -456,6 +455,13 @@
                     "text": "One access layer to large language models for every package, with an Anthropic driver and fake and disabled drivers for tests.",
                     "packages": [
                       "ai"
+                    ]
+                  },
+                  {
+                    "title": "Policy training by department",
+                    "text": "Upload a policy and name the departments that must know it. The Course Builder prepares one cited course per department from the same text; the owner reviews and publishes them, approves the version and sees who is assigned, who finished and which policy version their certificate certifies.",
+                    "packages": [
+                      "policy-lifecycle"
                     ]
                   }
                 ],

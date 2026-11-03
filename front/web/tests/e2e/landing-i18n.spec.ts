@@ -185,8 +185,11 @@ test("platform robots and sitemap list only the localized public page URLs", asy
     `${base}/course-generation/notion-page/`, `${base}/pl/course-generation/notion-page/`, `${base}/zh/course-generation/notion-page/`,
     `${base}/content-cost/`, `${base}/pl/content-cost/`, `${base}/zh/content-cost/`,
     `${base}/reporting/`, `${base}/pl/reporting/`, `${base}/zh/reporting/`,
+    `${base}/white-paper/`, `${base}/pl/white-paper/`, `${base}/zh/white-paper/`,
+    `${base}/style-guide/`, `${base}/pl/style-guide/`, `${base}/zh/style-guide/`,
+    `${base}/learning-elements/`, `${base}/pl/learning-elements/`, `${base}/zh/learning-elements/`,
   ]);
-  expect(xml.match(/hreflang="x-default"/g)).toHaveLength(24);
+  expect(xml.match(/hreflang="x-default"/g)).toHaveLength(33);
 });
 
 test("the FAQ page lists every question once, in every language, with one FAQPage", async ({ page }) => {

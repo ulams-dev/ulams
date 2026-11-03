@@ -28,6 +28,7 @@ class AssignmentService
         private CourseSettings $settings,
         private CourseAccessServiceContract $access,
         private ProgressResetter $resetter,
+        private ?FamilyCourses $families = null,
     ) {
     }
 
@@ -44,6 +45,11 @@ class AssignmentService
         ?User $by = null,
         ?FabricPDF $recertifies = null,
     ): Assignment {
+        // a family with a pinned variant: the obligation is on that course (ADR 0192)
+        $pinned = $this->families?->assignedCourse($course->getKey());
+        if ($pinned !== null && $pinned !== $course->getKey()) {
+            $course = Course::query()->findOrFail($pinned);
+        }
         $dueAt ??= ($days = $this->settings->for($course->getKey())->default_due_days) ? now()->addDays($days) : null;
         $created = false;
 
@@ -107,7 +113,7 @@ class AssignmentService
         return FabricPDF::query()
             ->where('user_id', $user->getKey())
             ->where('assignable_type', Course::class)
-            ->where('assignable_id', $course->getKey())
+            ->whereIn('assignable_id', $this->families?->counting($course->getKey()) ?? [$course->getKey()])
             ->whereNull('revoked_at')
             ->where(fn ($query) => $query->whereNull('expires_at')->orWhere('expires_at', '>', now()))
             ->latest('id')

@@ -4,6 +4,7 @@ namespace Ulams\LivingCourse\Analysis;
 
 use Ulams\Ai\Dto\ContentBlock;
 use Ulams\CourseBuilder\Models\Session;
+use Ulams\CourseBuilder\Models\Variant;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Pipeline\PatchService;
 use Ulams\CourseBuilder\Pipeline\PromptContext;
@@ -62,7 +63,9 @@ final class UpdateRequest implements AnalysisRequest
         $order = array_flip(array_keys($this->elements));
         $items = ProposalItem::query()->where('proposal_id', $this->proposal->id)->where('group_key', $groupKey)
             ->whereIn('kind', ['manual', 'update', 'no_change', 'remove'])
-            ->when($only !== null, fn ($q) => $q->whereIn('element_id', $only))->get()->all();
+            ->when($only !== null, fn ($q) => $q->whereIn('element_id', $only))->get()
+            // a variant element that is the base's takes the base's patch instead of a call of its own (ADR 0192)
+            ->reject(fn (ProposalItem $i) => $i->kind === 'manual' && !empty($i->flags['inherits']))->values()->all();
         usort($items, fn (ProposalItem $a, ProposalItem $b) => ($order[$a->element_id] ?? 0) <=> ($order[$b->element_id] ?? 0));
 
         return $items;
@@ -79,6 +82,9 @@ final class UpdateRequest implements AnalysisRequest
     {
         $groups = [];
         foreach (ProposalItem::query()->where('proposal_id', $this->proposal->id)->where('kind', 'manual')->get() as $i) {
+            if (!empty($i->flags['inherits'])) {
+                continue;
+            }
             $g = &$groups[$i->group_key];
             $g ??= ['key' => $i->group_key, 'items' => 0, 'major' => 0];
             $g['items']++;
@@ -154,6 +160,12 @@ final class UpdateRequest implements AnalysisRequest
             $input['grounding_feedback'] = $feedback;
         }
         $text = 'Review the elements of task_input against the source changes and return one item per element.';
+        $variant = $this->proposal->variant_id !== null ? Variant::query()->find($this->proposal->variant_id) : null;
+        if ($variant !== null) {
+            // a variant of the course for one audience: its elements are written for it and keep its level (data, not instructions)
+            $input['audience'] = array_filter(['label' => $variant->label, 'level' => $variant->level, 'role' => $variant->role, 'notes' => $variant->audience_brief['notes'] ?? null]);
+            $text .= ' This course is a variant for the audience in task_input.audience: keep every replacement at that audience\'s level and depth.';
+        }
         if ($authorRequest !== null) {
             $text = '<author_request>' . PromptContext::esc($authorRequest) . "</author_request>\nThe author asked for a different result for the element in task_input. " . $text;
         }

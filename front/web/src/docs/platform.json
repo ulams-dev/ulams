@@ -111,18 +111,6 @@
           }
         },
         {
-          "component": "Showcase",
-          "props": {
-            "eyebrow": "live demos",
-            "title": "Six academies, one platform",
-            "intro": "Each demo is a separate tenant with its own theme, course and data, running on the same ulams install. Open it as a learner or step into its admin.",
-            "items": {
-              "$data": "/demos"
-            },
-            "note": "Demos reset every hour. No sign-up: you are logged in automatically."
-          }
-        },
-        {
           "component": "CtaBand",
           "props": {
             "id": "reporting-cta",
@@ -190,6 +178,18 @@
           }
         },
         {
+          "component": "Showcase",
+          "props": {
+            "eyebrow": "live demos",
+            "title": "Six academies, one platform",
+            "intro": "Each demo is a separate tenant with its own theme, course and data, running on the same ulams install. Open it as a learner or step into its admin.",
+            "items": {
+              "$data": "/demos"
+            },
+            "note": "Demos reset every hour. No sign-up: you are logged in automatically."
+          }
+        },
+        {
           "component": "CtaBand",
           "props": {
             "id": "white-label",
@@ -241,6 +241,39 @@
             "secondary": {
               "label": "How tenants work",
               "href": "https://ulams-dev.github.io/ulams/developers/tenancy/"
+            }
+          }
+        },
+        {
+          "component": "CtaBand",
+          "props": {
+            "id": "white-paper-cta",
+            "variant": "feature",
+            "eyebrow": "white paper",
+            "title": "From policy to proof: the ULAMS white paper",
+            "text": "A long read for L&D leads and the people who sign off on training: what content really costs, how cited courses are built and kept current, and what is shipped today.",
+            "bullets": [
+              {
+                "title": "The cost problem, with sources",
+                "text": "Chapman's 49–716 hours per finished hour and Brandon Hall's reporting findings, each linked."
+              },
+              {
+                "title": "The mechanism, step by step",
+                "text": "Sources, cited draft, reviewable diff, living course, variants and evidence."
+              },
+              {
+                "title": "Architecture and standards",
+                "text": "Headless and multi-tenant; SCORM, cmi5, xAPI, LTI 1.3 and SSO, with what is still coming labelled."
+              },
+              {
+                "title": "Trust and the AI Act",
+                "text": "AI drafts, people decide; AI labels and where your data lives."
+              }
+            ],
+            "note": "Every figure is sourced. The ULAMS figures are two measured runs, not averages. Print it or save it as a PDF.",
+            "cta": {
+              "label": "Read the white paper",
+              "href": "/white-paper/"
             }
           }
         },

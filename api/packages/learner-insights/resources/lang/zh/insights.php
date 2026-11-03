@@ -10,5 +10,7 @@ return [
         'abandoned_element' => '“:label”已打开 :days 天，期间你在学习其他部分',
         'replays' => '本周你已回看“:label” :count 次',
         'revisits' => '本周你已回到“:label” :count 次',
+        'variant_too_hard' => '前 :modules 个模块对你来说有些吃力；这门课程的较简单版本可能更适合你',
+        'variant_too_easy' => '前 :modules 个模块的所有检测你都一次通过，且只用了通常约 :percent% 的时间；更进阶的版本可能更适合你',
     ],
 ];

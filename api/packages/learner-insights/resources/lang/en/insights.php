@@ -10,5 +10,7 @@ return [
         'abandoned_element' => '":label" has been open for :days days while you worked on other parts',
         'replays' => 'You replayed ":label" :count times this week',
         'revisits' => 'You came back to ":label" :count times this week',
+        'variant_too_hard' => 'You are finding the first :modules modules hard; an easier version of this course may suit you better',
+        'variant_too_easy' => 'You passed every check in the first :modules modules at the first attempt and needed about :percent% of the usual time; a more advanced version may suit you better',
     ],
 ];
