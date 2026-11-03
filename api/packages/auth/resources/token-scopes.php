@@ -87,6 +87,8 @@ return [
     ['api/admin/course-builder*', 'builder'],
     ['api/admin/course-as-code*', 'builder'],
     ['api/admin/course-versions*', 'builder'],
+    // review time is reported by a person's browser: a scoped token (an agent, a script) must not be able to inflate it
+    ['api/admin/authoring-metrics/activity*', 'none'],
     ['api/admin/authoring-metrics*', 'builder'],
     ['api/admin/living-course*', 'living-course'],
     // policy lifecycle (ADR 0140): the owner dashboard and its export are reports, everything else prepares and approves training

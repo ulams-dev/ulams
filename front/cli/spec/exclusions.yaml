@@ -2,6 +2,10 @@
 # `ulams api` can still call them; they do not count as coverage.
 inbound-webhook: []
 browser-only:
+  # review time is reported by a person's browser and a scoped token is refused on purpose (ADR 0194): a script cannot inflate it
+  - "GET /api/admin/authoring-metrics/activity/status"
+  - "POST /api/admin/authoring-metrics/activity"
+  - "DELETE /api/admin/authoring-metrics/activity"
   # the SSE event log of one streamed tutor answer (ADR 0105); the learner widget reads it, a command would have nothing to wait for
   - "GET /api/tutor/runs/*"
   - "GET /api/certificates/verify/*"

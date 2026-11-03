@@ -1,0 +1,52 @@
+---
+import Studio from "../../layouts/Studio.astro";
+import { pickReviewLocale, REVIEW_LOCALES, REVIEW_STRINGS } from "../../studio/review-time-i18n.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+const locale = pickReviewLocale(Astro.url.searchParams.get("lang"), Astro.request.headers.get("accept-language"));
+const t = REVIEW_STRINGS[locale];
+const LANGUAGE_NAME: Record<string, string> = { en: "English", pl: "Polski", zh: "简体中文" };
+const sections: Array<{ title: string; items: string[] }> = [
+  { title: t.measuredTitle, items: t.measured },
+  { title: t.storedTitle, items: t.stored },
+  { title: t.notStoredTitle, items: t.notStored },
+  { title: t.shownTitle, items: t.shown },
+];
+---
+
+<Studio title={t.pageTitle} crumb={t.pageTitle} active="sessions">
+  <main id="main" class="st-page" tabindex="-1" lang={t.htmlLang}>
+    <div class="st-ins-head">
+      <h1 class="cb-serif cb-h2" style="flex:1">{t.heading}</h1>
+      <nav class="st-ins-lang" aria-label={t.languageLabel}>
+        {
+          REVIEW_LOCALES.map((code) => (
+            <a href={`?lang=${code}`} lang={REVIEW_STRINGS[code].htmlLang} hreflang={REVIEW_STRINGS[code].htmlLang} aria-current={code === locale ? "true" : undefined}>
+              {LANGUAGE_NAME[code]}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+    <p>{t.intro}</p>
+    {
+      sections.map((s, i) => (
+        <section class="cb-card" aria-labelledby={`rt-${i}`}>
+          <h2 class="cb-h3" id={`rt-${i}`}>{s.title}</h2>
+          <ul>{s.items.map((item) => <li>{item}</li>)}</ul>
+        </section>
+      ))
+    }
+    <section class="cb-card" aria-labelledby="rt-retention">
+      <h2 class="cb-h3" id="rt-retention">{t.retentionTitle}</h2>
+      <p>{t.retention}</p>
+    </section>
+    <section class="cb-card" aria-labelledby="rt-control">
+      <h2 class="cb-h3" id="rt-control">{t.controlTitle}</h2>
+      <p>{t.control}</p>
+      <p class="cb-muted">{t.smallTeams}</p>
+    </section>
+    <p><a href="/studio">{t.back}</a></p>
+  </main>
+</Studio>

@@ -49,6 +49,11 @@ export function announce(text: string): void {
 
 
 export function updateTopBar(state: Partial<BuilderState>): void {
+  // a session that has a course: review time can be counted for it (it starts only when the academy records it)
+  if (state.session?.courseId) {
+    document.body.dataset.reviewCourse = String(state.session.courseId);
+    window.dispatchEvent(new CustomEvent("ulams:review-course", { detail: state.session.courseId }));
+  }
   const pill = document.querySelector<HTMLElement>("[data-status-pill]");
   if (pill && state.session) pill.textContent = STATUS_LABEL[state.session.status] ?? state.session.status;
   const crumb = document.querySelector<HTMLElement>("[data-crumb]");
