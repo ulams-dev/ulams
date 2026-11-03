@@ -23,6 +23,12 @@ small commits → tests → summary.
       (ADR 0101 Proposed; requested by owner 2026-10-12). Documentation published through PR #247 and GitHub Pages run 38295754529.
       Live landing pageview and demo_open click accepted (HTTP 200); verification browser excluded.
 
+- [ ] (new) Owner feedback 2026-10-23 on the landing preview: a builder walkthrough on the home page (the real interview
+      questions and screens, then the course and the measured run), a white paper page (/white-paper/, print stylesheet and
+      "Print / save as PDF"; no build-time PDF because api/pdf only fills pdfme templates) and a style guide (home section and
+      /style-guide/, tokens read from the stylesheets, presets, AA guard, brand-import diff, catalogue), EN/PL/ZH
+      (partial: implemented and tested on branch feat/home-builder-whitepaper-styleguide, PR open, not merged).
+
 - [x] (2026-10-12) Owner requested the complete previous feature catalogue on Comparison,
       organised by stakeholder with full descriptions and documentation links (ADR 0100 Proposed).
 - [x] (new) Current Overview/Comparison page is highlighted in desktop and mobile menus in EN/PL/ZH.
@@ -655,6 +661,18 @@ M3.8 evals and E2E. Designs: `front/docs/design/stitch/living-course/`.
       accepts `secrets.token`; the form offers only OAuth, which blocked the Notion case study in #408): masked input,
       verified against Notion before saving, encrypted at rest, shown only as the last four characters, never in logs,
       events, audit entries or responses (plan `docs/plans/authoring-metric-and-report-builder.md` NT-1)
+- [ ] (new) Confluence connector plugin (Cloud first, Data Center after): a space or a page tree as a source, page
+      versions as revisions for change detection, attachments as source documents, OAuth or an API token stored like the
+      Notion token; requested by the owner on 2026-10-23 for the home-page journey, which shows Confluence only as an
+      exported file until this ships
+- [ ] (new) SharePoint and OneDrive connector plugin (Microsoft Graph): a document library, folder or site pages as a
+      source, drive item versions and delta queries for change detection, Entra ID app consent per tenant; requested by
+      the owner on 2026-10-23
+- [ ] (new) Help-center connector plugins (Zendesk Guide, Intercom Articles, Freshdesk Solutions): a help center,
+      category or section as a source, article update timestamps for change detection, an API token per tenant stored
+      like the Notion token; requested by the owner on 2026-10-23
+- [ ] (new) Box and Dropbox connector plugins: a folder as a source, file versions and change cursors for change
+      detection, OAuth per tenant like Google Drive; requested by the owner on 2026-10-23
 
 ### 3.1 Course versions with a visual diff (new)
 
@@ -840,6 +858,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       as a diff; the builder prompt carries the approved profile (never the raw style guide), a style check critic reports
       deviations, and a changed profile can propose a reviewed restyle; per tenant, entry point and brief
       (plan `docs/plans/style-guide-course-design.md` SG-1 to SG-5; ADR 0196 Proposed; shown as "Coming" in the policy story)
+      (partial: SG-1 done, style profile API, cited extraction, approval and `ulams style-profiles`; studio review SG-2, brief and prompt SG-3, style check SG-4, restyle SG-5 pending)
 - [ ] PWA offline mode with tested sync/conflict rules
 - [ ] Single frontend for LMS **and** Sylius commerce (catalogue, checkout, account)
 - [x] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge) (
