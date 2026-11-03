@@ -89,7 +89,10 @@ export default function (initialState: {
       PERMISSIONS.NotificationListAll,
       PERMISSIONS.ReportList,
       PERMISSIONS.ReportingRead,
+      PERMISSIONS.AuthoringMetricsRead,
     ),
+
+    authoringMetricsPermission: havePermissionsInDashboard(PERMISSIONS.AuthoringMetricsRead),
 
     configurationPermission: havePermissionsInDashboard(
       PERMISSIONS.FileList,

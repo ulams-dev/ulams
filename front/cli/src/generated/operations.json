@@ -67,6 +67,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/authoring-metrics/courses/export",
+  "summary": "Export the authoring metric",
+  "tag": "Authoring metrics"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/bookmarks",
   "summary": "Get a listing of the bookmarks",
   "tag": "Admin Bookmarks"

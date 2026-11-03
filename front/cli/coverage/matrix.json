@@ -62,6 +62,12 @@
    "status": "covered"
   },
   {
+   "key": "GET /api/admin/authoring-metrics/courses/export",
+   "summary": "Export the authoring metric",
+   "command": "authoring-metrics.export",
+   "status": "covered"
+  },
+  {
    "key": "GET /api/admin/authoring-metrics/courses/{course}",
    "summary": "Authoring metric of one course",
    "command": "authoring-metrics.get",
