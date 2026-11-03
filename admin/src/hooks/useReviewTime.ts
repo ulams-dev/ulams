@@ -17,13 +17,13 @@ const environment = (): ReviewEnvironment => ({
   beacon: () => false,
   fetch: (async (url: string, init?: RequestInit) => {
     try {
-      const response = await request(url, {
+      const response = (await request(url, {
         method: 'POST',
         data: JSON.parse(String(init?.body ?? '{}')),
         getResponse: true,
         skipErrorHandler: true,
-      });
-      return { status: response.response.status, ok: true };
+      })) as { status?: number; response?: { status?: number } };
+      return { status: response.response?.status ?? response.status ?? 200, ok: true };
     } catch (error) {
       const status = (error as { response?: { status?: number } }).response?.status ?? 0;
       return { status, ok: false };

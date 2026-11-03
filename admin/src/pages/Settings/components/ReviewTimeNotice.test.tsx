@@ -21,7 +21,9 @@ jest.mock('@/services/authoringMetrics', () => ({ deleteRecordedReviewTime: () =
 
 import ReviewTimeNotice from './ReviewTimeNotice';
 
-beforeEach(() => mockDelete.mockReset());
+beforeEach(() => {
+  mockDelete.mockReset();
+});
 
 describe('ReviewTimeNotice', () => {
   it('says what is measured, stored, shown and kept', () => {

@@ -1,0 +1,11 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Ulams\Bridge\:
+        resource: '../../bundles/UlamsBridgeBundle/src/'
+        exclude:
+            - '../../bundles/UlamsBridgeBundle/src/Entity/'
+            - '../../bundles/UlamsBridgeBundle/src/UlamsBridgeBundle.php'
+            - '../../bundles/UlamsBridgeBundle/src/Resources/'

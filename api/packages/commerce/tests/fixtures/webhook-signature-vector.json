@@ -1,0 +1,6 @@
+{
+  "secret": "whsec_vector_secret_for_tests_only_0123",
+  "timestamp": 1790000000,
+  "body": "{\"version\":\"v1\",\"id\":\"01HZXVECTOR0000000000000000\",\"type\":\"order.paid\",\"channel_code\":\"acme\",\"order_id\":\"tok\",\"sequence\":1}",
+  "header": "t=1790000000,v1=4a0caa9f4f33103cdf0c876ecc5141404a07da12fb57b022b59fe584aca16427"
+}
