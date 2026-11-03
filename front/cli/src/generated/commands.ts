@@ -1721,8 +1721,8 @@ export const generatedCommands: AnyCommand[] = [
     endpoints: ["POST /api/admin/file/upload"],
     mcp: { toolset: "file" },
     examples: [{"title":"Upload files using multipart form-data","argv":"file upload --file[] text --target text --json"}],
-    input: z.looseObject({ "file[]": z.array(z.string()), "target": z.string() }),
-    request: {"method":"POST","path":"/api/admin/file/upload","pathParams":[],"queryParams":[],"bodyMode":"multipart","bodyFields":["file[]","target"]},
+    input: z.looseObject({ "file[]": z.array(z.string()).describe("file[] (paths of local files)"), "target": z.string() }),
+    request: {"method":"POST","path":"/api/admin/file/upload","pathParams":[],"queryParams":[],"bodyMode":"multipart","bodyFields":["file[]","target"],"files":{"file[]":"file[]"}},
   }),
   httpCommand({
     id: "groups.create",
