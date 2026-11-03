@@ -520,6 +520,13 @@
         access: 'reportingPermission',
         component: './ReportBuilder',
       },
+      {
+        name: 'authoring',
+        icon: 'experiment',
+        path: '/analytics/authoring',
+        access: 'authoringMetricsPermission',
+        component: './AuthoringMetrics',
+      },
     ],
   },
   {

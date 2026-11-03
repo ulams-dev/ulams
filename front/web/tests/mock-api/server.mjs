@@ -897,7 +897,7 @@ const styleRoutes = [
     const created = {
       id: styleId(state.next++), name, scope: { type: "tenant", id: null }, status: "suggested", sourceId: from ? from.sourceId : "s9", createdBy: 1, approvedBy: null, approvedAt: null, createdAt: "2026-10-23T08:00:00+00:00",
       warnings: from ? [] : ["AI is off on this installation: fill the profile in by hand."],
-      profile: from ? structuredClone(from.profile) : { schemaVersion: 1 },
+      profile: from ? JSON.parse(JSON.stringify(from.profile)) : { schemaVersion: 1 },
     };
     state.list.unshift(created);
     return styleDetail(tenant, created);
@@ -939,7 +939,7 @@ const styleRoutes = [
     if (course === 14) return { __status: 404, message: "That course was not made with the Course Builder." };
     if (course === 15) return { __status: 403, message: "This course belongs to another author." };
     const cite = [{ id: STYLE_F2, label: "§2 Terminology" }];
-    const base = { profile: { id: p.id, name: p.name, status: p.status }, course: { id: course, title: "Brewing", sessionId: "s", variantId: null, versionId: "v" } };
+    const base = { profile: { id: p.id, name: p.name, status: p.status }, course: { id: course, title: "Brewing", sessionId: course === 13 ? "01stylesession000000000002" : "01stylesession000000000001", variantId: null, versionId: "v" } };
     if (course === 13) return { ...base, blocking: [], warnings: [], hints: [], counts: { blocking: 0, warnings: 0, hints: 0 }, blocksPublishing: false };
     return {
       ...base,
@@ -949,6 +949,15 @@ const styleRoutes = [
       counts: { blocking: 1, warnings: 1, hints: 1 },
       blocksPublishing: true,
     };
+  }],
+  // a restyle of a course (Living Course): session ...01 has something to restyle, ...02 has not, and a created proposal is remembered
+  ["POST", /^\/api\/admin\/living-course\/sessions\/([0-9a-z]{26})\/style-proposals$/, ({ tenant, match, body }) => {
+    const state = styleOf(tenant);
+    if (match[1] === "01stylesession000000000002") return { __status: 422, message: "Nothing in this course departs from the style profile in a way a rewrite can fix, so there is nothing to restyle.", code: "nothing_to_restyle" };
+    if (state.restyle) return { state: "kept_existing", proposal: { id: state.restyle, kind: "style" } };
+    if (!body?.confirmEstimate) return { state: "estimate", profile: { id: body?.styleProfileId, name: "Academy v1" }, elements: 4, findings: 6, skipped: 1, answerKeys: 1, estimateMicroUsd: 120000 };
+    state.restyle = "01styleproposal000000000001";
+    return { state: "started", runId: null, proposal: { id: state.restyle, kind: "style", status: "ready" } };
   }],
   ["DELETE", /^\/api\/admin\/course-builder\/style-profiles\/([0-9a-z]{26})$/, ({ tenant, match }) => {
     const state = styleOf(tenant);
@@ -960,12 +969,51 @@ const styleRoutes = [
   }],
 ];
 
+/**
+ * Authoring metrics (ADR 0194): the production figures of a course. Course 1 is the measured run (outline 24 s, lessons
+ * to quizzes 6 min 57 s, apply 23 s), 2 an older build with whole-run times only and nothing the AI wrote yet, 3 was not
+ * made with the builder (404), 4 is another author's (403), 5 fails once and then works, 6 has elements from before
+ * provenance was recorded, 7 has recorded review time.
+ */
+const metricsFails = new Map();
+const metricStages = [
+  ["outline", "outline", 24], ["generate", "lessons", 190], ["generate", "grounding", 40], ["generate", "interactions", 60], ["generate", "quizzes", 127], ["apply", "apply", 23],
+].map(([kind, stage, seconds], i) => ({ run_id: `01r${"0".repeat(22)}${i}`, run_kind: kind, stage, started_at: "2026-10-20T09:00:00+00:00", finished_at: "2026-10-20T09:03:10+00:00", seconds, quality: "exact" }));
+const courseMetric = (id) => {
+  const base = {
+    course_id: id, session_id: `01s${"0".repeat(22)}${id}`, method_version: 1, computed_at: "2026-10-22T12:00:00+00:00",
+    time: { generation_seconds: 464, ai_edit_seconds: 0, interview_seconds: 18, model_seconds: 902, author_minutes: null },
+    cost: { build_micro_usd: 284100, maintenance_micro_usd: 0, llm_calls: 27, llm_calls_failed: 1 },
+    counts: { lessons: 6, questions: 18, blocks: 35, cited_blocks: 35, learner_minutes_estimate: 60 },
+    elements: { ai_elements: 59, accepted_unchanged: 49, revised_on_request: 4, edited_by_author: 6, unknown: 0, author_written: 2 },
+    stages: metricStages,
+  };
+  if (id === 2) return { ...base, time: { ...base.time, generation_seconds: 31, interview_seconds: 0, model_seconds: 0 }, cost: { build_micro_usd: 0, maintenance_micro_usd: 0, llm_calls: 0, llm_calls_failed: 0 }, elements: { ai_elements: 0, accepted_unchanged: 0, revised_on_request: 0, edited_by_author: 0, unknown: 0, author_written: 0 }, stages: [{ ...metricStages[0], stage: "generate", run_kind: "generate", seconds: 31, quality: "coarse" }] };
+  if (id === 6) return { ...base, elements: { ai_elements: 59, accepted_unchanged: 0, revised_on_request: 0, edited_by_author: 0, unknown: 59, author_written: 0 } };
+  if (id === 7) return { ...base, time: { ...base.time, author_minutes: 135 }, cost: { ...base.cost, maintenance_micro_usd: 1520000 }, stages: [{ ...metricStages[5], quality: "incomplete" }] };
+  return base;
+};
+const authoringMetricsRoutes = [
+  ["POST", /^\/__mock\/authoring-metrics\/reset$/, ({ tenant }) => (metricsFails.delete(`${tenant}:5`), { reset: true })],
+  ["GET", /^\/api\/admin\/authoring-metrics\/courses\/(\d+)$/, ({ match, tenant }) => {
+    const id = Number(match[1]);
+    if (id === 3) return { __status: 404, message: "Not found" };
+    if (id === 4) return { __status: 403, message: "This action is unauthorized." };
+    if (id === 5 && !metricsFails.get(`${tenant}:5`)) {
+      metricsFails.set(`${tenant}:5`, true);
+      return { __status: 500, message: "The figures are temporarily unavailable." };
+    }
+    return insightsTitles[id] ? courseMetric(id) : { __status: 404, message: "Not found" };
+  }],
+];
+
 const routes = [
   ...styleRoutes,
   ...variantMock.routes,
   ...insightsRoutes,
   ...courseVersionsRoutes,
   ...policyRoutes,
+  ...authoringMetricsRoutes,
   ...improveRoutes,
   ...groupRoutes,
   ["POST", /^\/api\/code-exercises\/launches\/(\d+)$/, ({ tenant, match }) => {

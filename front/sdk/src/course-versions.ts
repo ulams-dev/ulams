@@ -7,8 +7,8 @@
  */
 import { ApiError, type ClientOptions } from "./client.ts";
 
-/** What started a release (`trigger`): generation, author edit, chat edit, source update, insights improvement, course-as-code push, undo/restore, variant rebase. */
-export type ReleaseTrigger = "generate" | "author" | "chat" | "update" | "insights" | "import" | "restore" | "rebase";
+/** What started a release (`trigger`): generation, author edit, chat edit, source update, insights improvement, style restyle, course-as-code push, undo/restore, variant rebase. */
+export type ReleaseTrigger = "generate" | "author" | "chat" | "update" | "insights" | "style" | "import" | "restore" | "rebase";
 
 export interface ReleaseChangeCounts {
   added: number;

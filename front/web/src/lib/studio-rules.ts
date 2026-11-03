@@ -70,6 +70,8 @@ export const LIVING_COURSE_RULES: Array<{ method: string; pattern: RegExp }> = [
   // audit trail: read, verify the hash chain, export (all GET; the trail cannot be changed from here)
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/audit$`) },
   { method: "GET", pattern: new RegExp(`^/sessions/${ID}/audit/(verify|export)$`) },
+  // a restyle for an approved style profile (ADR 0196): the estimate, then the proposal (reviewed with the calls above)
+  { method: "POST", pattern: new RegExp(`^/sessions/${ID}/style-proposals$`) },
 ];
 
 /** `path` is relative to the BFF root, e.g. `/living-course/sources/{id}/revisions`. */
@@ -166,4 +168,25 @@ export function isPoliciesCall(method: string, path: string): boolean {
 /** The API path of an allowed policies call (`path` as for `isPoliciesCall`). */
 export function policiesTarget(path: string): string {
   return `/api/admin/policies${path.slice(POLICIES_PREFIX.length)}`;
+}
+
+/**
+ * Authoring metrics (/api/admin/authoring-metrics, ADR 0194): the production figures of one course, for its author or an
+ * administrator. The browser reaches them as /studio/api/authoring-metrics/…. Read-only, one course at a time: the list
+ * and the export are for administrators and live in the admin. The API checks who may read; this list keeps the BFF from
+ * being an open proxy.
+ */
+export const AUTHORING_METRICS_PREFIX = "/authoring-metrics";
+export const AUTHORING_METRICS_RULES: Array<{ method: string; pattern: RegExp }> = [{ method: "GET", pattern: /^\/courses\/\d{1,10}$/ }];
+
+/** `path` is relative to the BFF root, e.g. `/authoring-metrics/courses/3`. */
+export function isAuthoringMetricsCall(method: string, path: string): boolean {
+  if (!path.startsWith(`${AUTHORING_METRICS_PREFIX}/`)) return false;
+  const rest = path.slice(AUTHORING_METRICS_PREFIX.length);
+  return AUTHORING_METRICS_RULES.some((r) => r.method === method.toUpperCase() && r.pattern.test(rest));
+}
+
+/** The API path of an allowed authoring-metrics call (`path` as for `isAuthoringMetricsCall`). */
+export function authoringMetricsTarget(path: string): string {
+  return `/api/admin/authoring-metrics${path.slice(AUTHORING_METRICS_PREFIX.length)}`;
 }

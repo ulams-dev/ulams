@@ -67,6 +67,12 @@
  },
  {
   "method": "GET",
+  "path": "/api/admin/authoring-metrics/courses/export",
+  "summary": "Export the authoring metric",
+  "tag": "Authoring metrics"
+ },
+ {
+  "method": "GET",
   "path": "/api/admin/bookmarks",
   "summary": "Get a listing of the bookmarks",
   "tag": "Admin Bookmarks"
@@ -1689,6 +1695,12 @@
   "method": "GET",
   "path": "/api/admin/living-course/sessions/{session}/staleness",
   "summary": "Per-element staleness and the course summary",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/sessions/{session}/style-proposals",
+  "summary": "Propose a restyle of the course for an approved style profile (default: the one the brief names, else the academy's). Without confirmEstimate: the estimate only",
   "tag": "Admin Living Course"
  },
  {

@@ -39,6 +39,7 @@ class TestCase extends CoreTestCase
         $this->app->forgetInstance(EntryPointService::class);
         EntryHostStore::forgetSchemaCheck();
         (require __DIR__ . '/../database/migrations/2026_10_27_000000_create_tenant_templates_and_derivations.php')->up();
+        (require __DIR__ . '/../database/migrations/2026_10_29_000000_add_commerce_channel_to_tenants_table.php')->up();
     }
 
     protected function getPackageProviders($app): array

@@ -550,10 +550,11 @@ approved apply through domain services → element chat edits. Designs:
       edited, revised on request, author-written), shown in the studio and admin analytics, exportable, over the
       API, CLI and MCP, and an "hours per learner hour" figure from the tenant's own data with no benchmark claims
       (plan `docs/plans/authoring-metric-and-report-builder.md` AM-1 to AM-6; ADR 0194 Accepted 2026-10-22; market research:
-      authoring cost is the core pain) (partial: AM-1, AM-2 and AM-3 done: `authoring_stage_timings` records wall time per pipeline stage,
+      authoring cost is the core pain) (partial: AM-1 to AM-4 done: `authoring_stage_timings` records wall time per pipeline stage,
       kept beyond the 30-day event retention, with the idempotent `authoring-metrics:backfill`; element provenance is in the next item; AM-3: `authoring_course_metrics` snapshot, cost resolver and
-      `GET /api/admin/authoring-metrics/courses[/{course}]`; AM-4 (studio and admin screens, export), AM-5 (review time), AM-6
-      (CLI curation, hours per learner hour) pending)
+      `GET /api/admin/authoring-metrics/courses[/{course}]`; AM-4: studio "Production" page per course and admin Analytics > Authoring with
+      CSV and JSON lines export, EN/PL/ZH, axe and keyboard specs; tenant medians with n and the publish summary mention wait for AM-6; AM-5 (review time),
+      AM-6 (CLI curation, hours per learner hour) pending)
 - [ ] (new) Element provenance for direct author edits: the outline editor tags edited elements, AI output carries a
       content hash, so accepted vs edited AI elements can be counted (plan `authoring-metric-and-report-builder.md` AM-2) (partial: AM-2 done: `ai_hash` and
       `edited_by_author` in blueprint v3, set by generation, outline editor, LMS drift, import and element chat edits, with
@@ -859,7 +860,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       as a diff; the builder prompt carries the approved profile (never the raw style guide), a style check critic reports
       deviations, and a changed profile can propose a reviewed restyle; per tenant, entry point and brief
       (plan `docs/plans/style-guide-course-design.md` SG-1 to SG-5; ADR 0196 Proposed; shown as "Coming" in the policy story)
-      (partial: SG-1 done, style profile API, cited extraction, approval and `ulams style-profiles`; SG-2 done, studio `/studio/style` review, edit and approval, theme hand-off to the admin theme screen as a diff; SG-3 done, Course Brief v4 `styleProfileId` and the approved profile in the cached brief block of every builder prompt (tenant default and named brief profiles; the per entry point override waits for EP-2); SG-4 done, the deterministic style check in the publish summary and `GET .../style-profiles/{id}/check`, a banned phrase blocks only when the profile says so; restyle SG-5 pending)
+      (partial: SG-1 done, style profile API, cited extraction, approval and `ulams style-profiles`; SG-2 done, studio `/studio/style` review, edit and approval, theme hand-off to the admin theme screen as a diff; SG-3 done, Course Brief v4 `styleProfileId` and the approved profile in the cached brief block of every builder prompt (tenant default and named brief profiles; the per entry point override waits for EP-2); SG-4 done, the deterministic style check in the publish summary and `GET .../style-profiles/{id}/check`, a banned phrase blocks only when the profile says so; SG-5 done, restyle proposals through Living Course (kind `style`), `course-builder:eval-style`; all five slices are in open PRs, so the box stays open until they are merged; the per entry point override waits for EP-2)
 - [ ] PWA offline mode with tested sync/conflict rules
 - [ ] Single frontend for LMS **and** Sylius commerce (catalogue, checkout, account)
 - [x] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge) (
@@ -1182,6 +1183,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       bridge to a running LMS and Stripe (CM-4), the CI job and `scripts/commerce-e2e.sh` (CM-7)
 - [ ] Single login: LMS as identity source; Sylius customer linked on first checkout
 - [ ] Tenant ↔ Sylius channel (catalogue, prices, currency, locale, tax zone), created at provisioning
+      Note 2026-10-23 (CM-4): `TenantProvisioner` step `commerce_channel` (contract in `tenancy`, Sylius implementation in `commerce-sylius`), `ulams:tenant:commerce-channel`
+      and an upgrade step for existing tenants, channel disabled on tenant deletion; currency PLN/EUR by language, locale, EU countries, seller tax zone, payment methods
+      and the bridge webhook link, with the secret kept encrypted and written to the tenant env. Tested in memory and against a real Sylius; ticks when merged
 - [ ] Unified admin: prices, coupons, orders, refunds in LMS admin; native Sylius admin for
       advanced settings
 - [ ] B2B seat packages (Sylius product + LMS seat pool), invoices from Sylius
@@ -1189,6 +1193,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       Note 2026-10-22 (CM-2): partial. The access part is in: `ulams:entitlements:backfill` (dry run, all-or-nothing, idempotent) and the nightly
       `ulams:entitlements:parity`; orders and vouchers migrate in CM-10
 - [ ] EU VAT (OSS) for digital services: confirm Sylius handling, document options
+      Note 2026-10-23 (CM-4): setup done (`ulams:commerce:seed-eu-vat`: 27 zones, `e-service` category, standard rates included in price; a real checkout shows 23 % for a
+      Polish and 19 % for a German billing address). The rates in `eu-vat-rates.json` are unconfirmed seed data for the owner's accountant; the OSS return report and B2B reverse
+      charge are not built (CM-9); options for the owner are in `docs/plans/phase-6-commerce.md` section 11
 - [ ] Per-tenant branding, catalogue, sales pages
 - [ ] Partner/customer portals with scoped admins and reports
 

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Ulams\Core\Support\EntryFronts;
+use Ulams\Tenancy\Console\CommerceChannelCommand;
 use Ulams\Tenancy\Console\CreateTenantCommand;
 use Ulams\Tenancy\Console\DeleteTenantCommand;
 use Ulams\Tenancy\Console\EnsureTenantBucketsCommand;
@@ -32,6 +33,7 @@ use Ulams\Tenancy\Services\Contracts\DatabaseProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
 use Ulams\Tenancy\Services\Contracts\EntryHostPublisherContract;
 use Ulams\Tenancy\Services\Contracts\EntryPointGatewayContract;
+use Ulams\Tenancy\Services\Contracts\CommerceChannelProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\StorageIdentityProvisionerContract;
 use Ulams\Tenancy\Services\Contracts\TenantCommandRunnerContract;
 use Ulams\Tenancy\Services\EntryHostPublisher;
@@ -39,6 +41,7 @@ use Ulams\Tenancy\Services\EntryHostStore;
 use Ulams\Tenancy\Services\EntryPointService;
 use Ulams\Tenancy\Services\H5PServiceConfigExporter;
 use Ulams\Tenancy\Services\ManualDatabaseProvisioner;
+use Ulams\Tenancy\Services\NullCommerceChannelProvisioner;
 use Ulams\Tenancy\Services\NullStorageIdentityProvisioner;
 use Ulams\Tenancy\Services\MultidomainRegistry;
 use Ulams\Tenancy\Services\PlatformEntryPointGateway;
@@ -55,6 +58,8 @@ class UlamsTenancyServiceProvider extends ServiceProvider
 
     public $singletons = [
         DomainRegistryContract::class => MultidomainRegistry::class,
+        // the commerce adapter (commerce-sylius) rebinds this when a provider with channels is configured
+        CommerceChannelProvisionerContract::class => NullCommerceChannelProvisioner::class,
     ];
 
     public function register(): void
@@ -129,6 +134,7 @@ class UlamsTenancyServiceProvider extends ServiceProvider
             $this->commands([
                 CreateTenantCommand::class,
                 TemplateCommand::class,
+                CommerceChannelCommand::class,
                 ListTenantsCommand::class,
                 DeleteTenantCommand::class,
                 SyncTenantEnvCommand::class,
