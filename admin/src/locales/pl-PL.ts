@@ -1,4 +1,3 @@
-import authoringMetrics from './pl-PL/authoringMetrics';
 import bulkNotifications from './pl-PL/bulkNotifications';
 import codeExercises from './pl-PL/codeExercises';
 import component from './pl-PL/component';
@@ -7,11 +6,13 @@ import courses from './pl-PL/courses';
 import events from './pl-PL/events';
 import fabric from './pl-PL/fabric';
 import globalHeader from './pl-PL/globalHeader';
+import authoringMetrics from './pl-PL/authoringMetrics';
 import insights from './pl-PL/insights';
 import menu from './pl-PL/menu';
 import notifications from './pl-PL/notifications';
 import pages from './pl-PL/pages';
 import pwa from './pl-PL/pwa';
+import reportBuilder from './pl-PL/reportBuilder';
 import settingDrawer from './pl-PL/settingDrawer';
 import settings from './pl-PL/settings';
 import templates from './pl-PL/templates';
@@ -107,6 +108,7 @@ export default {
   ...settings,
   ...theme,
   ...pwa,
+  ...reportBuilder,
   ...component,
   ...pages,
   ...notifications,

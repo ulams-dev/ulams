@@ -16,7 +16,8 @@
         "tokens",
         "webhooks",
         "platform",
-        "identity"
+        "identity",
+        "scim"
     ],
     "scopes": [
         "courses:read",
@@ -51,6 +52,8 @@
         "platform:write",
         "identity:read",
         "identity:write",
+        "scim:read",
+        "scim:write",
         "*"
     ],
     "presets": {
@@ -256,6 +259,10 @@
             "area": "webhooks"
         },
         {
+            "pattern": "api/scim/*",
+            "area": "scim"
+        },
+        {
             "pattern": "api/admin/identity*",
             "area": "identity"
         },
@@ -289,6 +296,14 @@
         {
             "pattern": "api/admin/living-course*",
             "area": "living-course"
+        },
+        {
+            "pattern": "api/admin/policies/*/dashboard*",
+            "area": "reports"
+        },
+        {
+            "pattern": "api/admin/policies*",
+            "area": "builder"
         },
         {
             "pattern": "api/living-course/courses/*/notices",
@@ -348,6 +363,10 @@
         },
         {
             "pattern": "api/admin/tutors/*",
+            "area": "enrolments"
+        },
+        {
+            "pattern": "api/admin/course-variant-groups*",
             "area": "enrolments"
         },
         {
@@ -617,8 +636,43 @@
             }
         },
         {
+            "pattern": "api/admin/reporting/saved/*/run",
+            "area": "reports",
+            "options": {
+                "methods": [
+                    "GET"
+                ],
+                "resource": {
+                    "param": "id"
+                }
+            }
+        },
+        {
+            "pattern": "api/admin/reporting/saved/*",
+            "area": "reports",
+            "options": {
+                "methods": [
+                    "GET"
+                ],
+                "resource": {
+                    "param": "id"
+                }
+            }
+        },
+        {
             "pattern": "api/admin/reporting*",
             "area": "reports"
+        },
+        {
+            "pattern": "api/reporting/odata*",
+            "area": "reports",
+            "options": {
+                "resource": {
+                    "param": "entity",
+                    "prefix": "Report_",
+                    "optional": true
+                }
+            }
         },
         {
             "pattern": "api/admin/stats*",
@@ -800,6 +854,10 @@
         },
         {
             "pattern": "api/compliance/*",
+            "area": "learner"
+        },
+        {
+            "pattern": "api/policies/*",
             "area": "learner"
         },
         {

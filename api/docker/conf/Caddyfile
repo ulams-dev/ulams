@@ -1,3 +1,10 @@
+# Caddy's own Prometheus metrics (served by the internal listener on :9180 at the end of this file)
+{
+	servers {
+		metrics
+	}
+}
+
 # Content origin (docs/content-origin.md): serves package files read-only, with a CSP of its own and
 # nothing else (no API, no cookies). Third-party SCORM/cmi5/Adapt/LiaScript JavaScript runs here,
 # never on the API, front or admin origins. Files come from the tenant API (GET /api/content/...),
@@ -154,6 +161,13 @@ http://*.localhost {
 
     # Provide Zstd and Gzip compression
     encode zstd gzip
+
+    # Never serve Prometheus metrics on a public host: the API's /metrics is for the internal listener below
+    # (docs/operators/monitoring). The PHP side also refuses requests that carry forwarding headers.
+    @metrics path /metrics
+    handle @metrics {
+        respond "Not found" 404
+    }
 
     # H5P core sends the access token as ?_token= on its AJAX calls (it cannot set
     # headers): keep it, the Authorization header and the internal token out of the log.
@@ -354,4 +368,24 @@ http://*.localhost {
     }
 }
 
-
+# Prometheus scrape targets (internal listener, not published; never add a `ports:` entry for it).
+# /metrics: Caddy's own request, latency and status metrics (enabled by `servers { metrics }`).
+# /php-metrics: the platform API's gauges (queues, failed jobs, heartbeats, tenants, AI usage), served only
+# to private addresses or with METRICS_TOKEN. Other services expose their own /metrics (h5p:8080, pdf:3000).
+http://:9180 {
+    handle /metrics {
+        metrics
+    }
+    handle /php-metrics {
+        rewrite * /metrics
+        reverse_proxy api:9000 {
+            header_up Host api.localhost
+            transport fastcgi {
+                env SCRIPT_FILENAME /var/www/html/index.php
+            }
+        }
+    }
+    handle {
+        respond "Not found" 404
+    }
+}

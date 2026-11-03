@@ -9,6 +9,8 @@ use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Variant;
 use Ulams\CourseBuilder\Models\Version;
 use Ulams\CourseBuilder\Pipeline\BriefService;
+use Ulams\CourseBuilder\StyleProfile\StyleCheck;
+use Ulams\CourseBuilder\StyleProfile\StyleProfileResolver;
 use Ulams\Pages\Models\Page;
 
 /**
@@ -19,8 +21,12 @@ use Ulams\Pages\Models\Page;
  */
 final class PublishCheck
 {
-    public function __construct(private readonly BlueprintApplier $applier, private readonly LandingValidator $landing)
-    {
+    public function __construct(
+        private readonly BlueprintApplier $applier,
+        private readonly LandingValidator $landing,
+        private readonly StyleProfileResolver $styles,
+        private readonly StyleCheck $styleCheck,
+    ) {
     }
 
     /** @return array{blocking:array<int,array<string,string>>,warnings:array<int,array<string,string>>,facts:array<string,mixed>} */
@@ -99,6 +105,31 @@ final class PublishCheck
                 }
             }
         }
+        // the style check (ADR 0196): a banned phrase blocks only when the approved profile says so; the rest warns or hints
+        $style = null;
+        $profile = $this->styles->profileFor($session);
+        if ($profile !== null) {
+            $report = ['blocking' => [], 'warnings' => [], 'hints' => []];
+            $documents = [['doc' => $doc, 'prefix' => '']];
+            foreach (Variant::query()->where('session_id', $session->id)->where('status', Variant::APPROVED)->whereNotNull('course_id')->orderBy('position')->get() as $variant) {
+                $applied = $variant->applied_version_id !== null ? Version::query()->find($variant->applied_version_id) : null;
+                if ($applied !== null) {
+                    $documents[] = ['doc' => $applied->document, 'prefix' => "Variant “{$variant->label}”: "];
+                }
+            }
+            foreach ($documents as $item) {
+                if ($item['doc'] === []) {
+                    continue;
+                }
+                $found = $this->styleCheck->run($item['doc'], $profile, (string) ($brief['language'] ?? 'en'), $item['prefix']);
+                foreach (['blocking', 'warnings', 'hints'] as $kind) {
+                    $report[$kind] = [...$report[$kind], ...$found[$kind]];
+                }
+            }
+            $blocking = [...$blocking, ...$report['blocking']];
+            $warnings = [...$warnings, ...$report['warnings']];
+            $style = ['profile' => ['id' => $profile->id, 'name' => $profile->name], 'hints' => $report['hints'], 'blocking' => count($report['blocking']), 'warnings' => count($report['warnings'])];
+        }
         $adjusted = null;
         if (isset($brief['theme']['accent'], $brief['theme']['preset'])) {
             $result = AccentContrast::adjust((string) $brief['theme']['accent'], (string) $brief['theme']['preset']);
@@ -134,6 +165,7 @@ final class PublishCheck
                 'counts' => $stats,
                 'applyNotes' => (array) $session->stateValue('applyNotes', []),
                 'landingValid' => $landingErrors === [],
+                'style' => $style,
             ],
         ];
     }

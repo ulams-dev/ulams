@@ -17,6 +17,9 @@ api/packages/demo/src/Support/DemoBaseline.php ulams.app
 api/packages/tenancy/src/Console/SeedTenantDemoCommand.php ulams.app
 front/src/lib/components/utils/components/authbtn/index.tsx ulams.app
 front/web/src/data/ coffee.ulams.app
+# Learning-elements catalogue links to the live demo academies (public showcase pages, not API endpoints)
+front/web/src/lib/learning-elements.ts coffee.ulams.app
+front/web/src/lib/learning-elements.ts gravity.ulams.app
 
 # Example values in OpenAPI docblocks (rendered as examples in the API reference)
 api/packages/auth/src/Http/Controllers/Swagger/ ulams.app

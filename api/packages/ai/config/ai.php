@@ -66,6 +66,8 @@ return [
         'variant_outline' => ['profile' => env('AI_TASK_VARIANT_OUTLINE_PROFILE', 'light'), 'effort' => 'medium', 'max_tokens' => 8000],
         'variant_lesson' => ['profile' => env('AI_TASK_VARIANT_LESSON_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 32000],
         'new_lesson' => ['profile' => env('AI_TASK_NEW_LESSON_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 16000],
+        // Style profile (ADR 0196): one call reads an uploaded style guide into a typed, cited profile the author approves
+        'style_profile_extract' => ['profile' => env('AI_TASK_STYLE_PROFILE_EXTRACT_PROFILE', 'default'), 'effort' => 'medium', 'max_tokens' => 8000],
     ],
     'task_defaults' => ['profile' => 'default', 'effort' => 'medium', 'max_tokens' => 8000],
 

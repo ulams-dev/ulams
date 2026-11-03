@@ -49,6 +49,7 @@ class TokenController extends UlamsBaseController implements TokenSwagger
                 $request->header('X-Ulams-Client') === 'cli' ? 'cli' : 'admin',
                 isset($data['rate_limit_per_minute']) ? (int) $data['rate_limit_per_minute'] : null,
                 TokenContext::resolve($request)?->scopes,
+                $data['resource_ids'] ?? null,
             );
         } catch (InvalidArgumentException $e) {
             return $this->sendError($e->getMessage(), 422);

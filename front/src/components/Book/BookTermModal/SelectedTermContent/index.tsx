@@ -7,7 +7,7 @@ import { APP_CONFIG } from "@/config/app";
 import ModalTitle from "@/components/Common/StyledTitle/ModalTitle";
 import InfoBox from "@/components/InfoBox";
 import { Tutor } from "@ulams/components/components/molecules/Tutor/Tutor";
-import { API_URL } from "@/config/index";
+import { avatarSrc } from "@ulams/images";
 
 interface Props {
   consultation: API.Consultation;
@@ -45,9 +45,7 @@ const SelectedTermContent = ({
               mobile={isMobile}
               avatar={{
                 alt: `${teacher?.first_name} ${teacher?.last_name}`,
-                src:
-                  `${API_URL}/api/images/img?path=${teacher?.path_avatar}` ||
-                  "",
+                src: avatarSrc(teacher),
               }}
               title={<></>}
               fullName={`${teacher?.first_name} ${teacher?.last_name}`}

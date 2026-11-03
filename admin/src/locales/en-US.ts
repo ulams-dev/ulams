@@ -4,15 +4,16 @@ import globalHeader from './en-US/globalHeader';
 import menu from './en-US/menu';
 import pages from './en-US/pages';
 import pwa from './en-US/pwa';
+import reportBuilder from './en-US/reportBuilder';
 import settingDrawer from './en-US/settingDrawer';
 import settings from './en-US/settings';
 import theme from './en-US/theme';
 
-import authoringMetrics from './en-US/authoringMetrics';
 import consultations from './en-US/consultations';
 import courses from './en-US/courses';
 import events from './en-US/events';
 import fabric from './en-US/fabric';
+import authoringMetrics from './en-US/authoringMetrics';
 import insights from './en-US/insights';
 import notifications from './en-US/notifications';
 import templates from './en-US/templates';
@@ -58,6 +59,7 @@ export default {
   ...settings,
   ...theme,
   ...pwa,
+  ...reportBuilder,
   ...component,
   ...pages,
 

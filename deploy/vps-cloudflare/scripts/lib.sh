@@ -209,6 +209,22 @@ ulams_rclone() {
     rclone/rclone:1.75.2 "$@"
 }
 
+# ulams_storage_sh SCRIPT: a shell in the rclone image, remote "s:" = the bundled SeaweedFS of a local trial
+# (S3_ENDPOINT with the platform keys S3_KEY/S3_SECRET, never the BACKUP_* keys); ULAMS_RCLONE_DIR at /data,
+# run as the calling user so the files it writes there stay removable
+ulams_storage_sh() {
+  local mounts=()
+  [[ -z "${ULAMS_RCLONE_DIR:-}" ]] || mounts=(-v "$ULAMS_RCLONE_DIR:/data")
+  RCLONE_CONFIG_S_ENDPOINT="$(ulams_env_get "$ULAMS_ENV_FILE" S3_ENDPOINT)" \
+    RCLONE_CONFIG_S_ACCESS_KEY_ID="$(ulams_env_get "$ULAMS_ENV_FILE" S3_KEY)" \
+    RCLONE_CONFIG_S_SECRET_ACCESS_KEY="$(ulams_env_get "$ULAMS_ENV_FILE" S3_SECRET)" \
+    docker run --rm -i --network "${ULAMS_PROJECT}_default" --user "$(id -u):$(id -g)" \
+    -e RCLONE_CONFIG=/dev/null -e RCLONE_CONFIG_S_TYPE=s3 -e RCLONE_CONFIG_S_PROVIDER=SeaweedFS \
+    -e RCLONE_CONFIG_S_REGION=us-east-1 -e RCLONE_CONFIG_S_ENDPOINT -e RCLONE_CONFIG_S_ACCESS_KEY_ID \
+    -e RCLONE_CONFIG_S_SECRET_ACCESS_KEY ${mounts[@]+"${mounts[@]}"} \
+    --entrypoint sh rclone/rclone:1.75.2 -c "$1"
+}
+
 # A local trial (install.sh --local) records itself in .env, so every script finds its project
 if [[ "$ULAMS_LOCAL" != 1 && -f "$ULAMS_ENV_FILE" && "$(ulams_env_get "$ULAMS_ENV_FILE" ULAMS_LOCAL_MODE)" == 1 ]]; then
   ULAMS_LOCAL=1
