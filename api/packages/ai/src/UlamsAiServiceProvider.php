@@ -46,11 +46,13 @@ class UlamsAiServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        // `ai:test` on the fake driver (development stacks) answers without a cassette
+        $this->app->make(FakeResponders::class)->register(Console\AiTestCommand::TASK, fn () => ['ok' => true]);
         if ($this->app->bound(\Ulams\Core\Observability\MetricsRegistry::class)) {
             $this->app->make(\Ulams\Core\Observability\MetricsRegistry::class)->register('ai', new Observability\AiMetrics());
         }
         if ($this->app->runningInConsole()) {
-            $this->commands([AiUsageCommand::class]);
+            $this->commands([AiUsageCommand::class, Console\AiTestCommand::class]);
         }
     }
 

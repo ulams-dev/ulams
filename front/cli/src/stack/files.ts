@@ -1,10 +1,12 @@
 import { mkdir, readdir, readFile, writeFile, rename, lstat, unlink } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { CliError } from "../errors.ts";
-import { configure, createSecrets, type StackConfig, type StackInput, type Secrets, stackInput } from "./config.ts";
+import { aiOf, configure, createSecrets, mailOf, type StackConfig, type StackInput, type Secrets, stackInput } from "./config.ts";
 import { compose, caddyfile, initSql, yaml } from "./render.ts";
 import { kubernetes } from "./kubernetes.ts";
 
+/** Secrets the operator supplies (never generated); all others are generated once by createSecrets. */
+export const OPTIONAL_SECRETS = ["SMTP_PASSWORD","ANTHROPIC_API_KEY"];
 export const installDirectory = (directory?: string) => resolve(directory ?? "ulams-stack");
 async function exists(path: string) {return lstat(path).then(()=>true,()=>false);}
 export async function readConfig(directory: string): Promise<StackConfig|undefined> {
@@ -50,14 +52,24 @@ export async function withInstall<T>(directory: string, run: ()=>Promise<T>): Pr
   try{await writeFile(lock,String(process.pid),{flag:"wx",mode:0o600});}catch{throw new CliError("CONFLICT","Another operation owns this stack lock. Wait for it to finish; after a crash, verify no stack command is running before removing .stack.lock.");}
   try{return await run();}finally{await unlink(lock).catch(()=>undefined);}
 }
-export async function renderInstall(directory: string, input: StackInput): Promise<{config:StackConfig;secrets:Secrets}> {
+/**
+ * @param provided optional secrets from the environment or the prompts (SMTP_PASSWORD, ANTHROPIC_API_KEY); they
+ * replace stored values, so a new key can be set on resume without touching the generated ones.
+ */
+export async function renderInstall(directory: string, input: StackInput, provided: Secrets = {}): Promise<{config:StackConfig;secrets:Secrets}> {
   const previous = await readConfig(directory);
   const config = configure(input,previous);
-  // Write ownership metadata before other files, so an interrupted render can resume safely.
-  await atomicWrite(directory,"stack.json",JSON.stringify(config,null,2)+"\n");
   const hasCredentials = await exists(join(directory,"credentials.json"));
   if(previous?.credentialsReady && !hasCredentials)throw new CliError("CONFLICT","Credentials are missing from an existing install. Restore them from backup; generating new APP_KEY/Passport keys would invalidate persistent data.");
-  const secrets = hasCredentials ? await readSecrets(directory) : createSecrets();
+  const supplied = Object.fromEntries(Object.entries(provided).filter(([key, value]) => OPTIONAL_SECRETS.includes(key) && value));
+  const stored = hasCredentials ? await readSecrets(directory) : undefined;
+  // Checked before anything is written, so a rejected choice leaves the install as it was.
+  const known = { ...stored, ...supplied };
+  if (aiOf(config) === "anthropic" && !known.ANTHROPIC_API_KEY) throw new CliError("USAGE","--ai anthropic needs an API key: set ULAMS_ANTHROPIC_API_KEY (it is stored in credentials.json, never in a flag).");
+  if (mailOf(config).mode === "smtp" && mailOf(config).username && !known.SMTP_PASSWORD) throw new CliError("USAGE","SMTP with --smtp-username needs the password: set ULAMS_SMTP_PASSWORD (it is stored in credentials.json, never in a flag).");
+  // Write ownership metadata before other files, so an interrupted render can resume safely.
+  await atomicWrite(directory,"stack.json",JSON.stringify(config,null,2)+"\n");
+  const secrets = { ...(stored ?? createSecrets()), ...supplied };
   await atomicWrite(directory,"credentials.json",JSON.stringify(secrets,null,2)+"\n");
   config.credentialsReady = true;
   await atomicWrite(directory,"stack.json",JSON.stringify(config,null,2)+"\n");

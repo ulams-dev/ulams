@@ -85,6 +85,29 @@ Production enables HTTPS, uses unique persisted secrets and disables the fake AI
 
 AI is disabled until an operator configures a real provider. Email is logged until SMTP is configured. This starter makes those defaults explicit; it does not send real email or select a paid model automatically. Follow [AI provider configuration](/developers/llm-layer/) and [email configuration](/operators/email/) before onboarding users.
 
+### Setup questions, e-mail and AI
+
+On a new install in a terminal, `stack up` (and `npx create-ulams`, which runs it) asks for what you did not pass as a flag:
+
+- the domain (production only);
+- the platform admin e-mail;
+- e-mail delivery: `log` or SMTP host, port, encryption, user name, password and sender;
+- the AI provider: `fake` (deterministic, development default), `none` (production default) or `anthropic`.
+
+Press Enter to keep the default in brackets. With `--yes`, `--json` or no terminal it asks nothing and uses the flags and defaults. The same choices as flags:
+
+```bash
+ULAMS_SMTP_PASSWORD='…' ULAMS_ANTHROPIC_API_KEY='…' ulams stack up --mode production --domain learn.example.org \
+  --mail smtp --smtp-host smtp.example.org --smtp-username mailer --mail-from no-reply@learn.example.org \
+  --ai anthropic --yes
+```
+
+Passwords and keys are never flags: they come from `ULAMS_SMTP_PASSWORD` and `ULAMS_ANTHROPIC_API_KEY` or a hidden prompt, and are stored only in `credentials.json` (and the Kubernetes Secret). A later `stack up` keeps the choices; pass a flag or set the variable again to change one.
+
+After provisioning, `stack up` checks what you configured: a test e-mail to the platform admin over SMTP (`php artisan ulams:mail:test <address>`) and one minimal AI call (`php artisan ai:test`, logged with your other AI usage). The result shows under `checks`. A failed check does not stop the stack: fix the setting and run `stack up` again.
+
+The bundled SeaweedFS object store is the storage in this version. OpenAI-compatible providers and Ollama join the AI choices with the next release of the CLI.
+
 ## Kubernetes
 
 For a local cluster, the CLI creates the namespace, private Secret, four PVCs, StatefulSets, Services and an ingress NetworkPolicy. It starts a loopback port forward automatically:

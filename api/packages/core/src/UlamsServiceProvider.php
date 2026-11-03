@@ -70,7 +70,7 @@ class UlamsServiceProvider extends ServiceProvider
         $this->loadMigrations();
 
         if ($this->app->runningInConsole()) {
-            $this->commands([PruneCspReportsCommand::class, HeartbeatCommand::class]);
+            $this->commands([PruneCspReportsCommand::class, HeartbeatCommand::class, Console\MailTestCommand::class]);
             $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
                 $schedule->command('csp-reports:prune')->dailyAt('03:20');
                 // liveness of the scheduler and of a queue worker, and fresh results for /api/health outside the

@@ -6,6 +6,8 @@ import type { Ctx } from "../registry/types.ts";
 import { urls, type StackConfig, type StackInput, type Secrets } from "./config.ts";
 import { atomicWrite, installDirectory, readConfig, readSecrets, renderInstall, withInstall } from "./files.ts";
 import { resolveImageTag } from "./images.ts";
+import { askSetup, secretsFromEnv, wizardApplies } from "./wizard.ts";
+import { aiOf, mailOf } from "./config.ts";
 import { runProcess } from "./process.ts";
 
 export const composeArgs = (directory:string,c:StackConfig) => ["compose","--project-name",c.name,"--env-file",join(directory,".env"),"-f",join(directory,"compose.yaml")];
@@ -51,12 +53,12 @@ export async function stackPlan(input:StackInput) {
   const directory = installDirectory(input.directory), prior = await readConfig(directory);
   const { configure } = await import("./config.ts");
   const config = configure(input,prior);
-  return { directory,target:config.target,mode:config.mode,project:config.name,academy:{slug:config.tenant,name:input.academy_name ?? "Your academy",theme:input.theme ?? "coffee",demoStudents:input.users ?? 1},urls:urls(config), note:"Generate private credentials once, render configuration, launch services, provision the academy and wait for readiness. No existing data is removed." };
+  return { directory,target:config.target,mode:config.mode,project:config.name,mail:mailOf(config),ai:aiOf(config),academy:{slug:config.tenant,name:input.academy_name ?? "Your academy",theme:input.theme ?? "coffee",demoStudents:input.users ?? 1},urls:urls(config), note:"Generate private credentials once, render configuration, launch services, provision the academy and wait for readiness. No existing data is removed." };
 }
 export async function stackRender(ctx:Ctx,input:StackInput) {
   const directory=installDirectory(input.directory);
   return withInstall(directory,async()=>{
-    const {config}=await renderInstall(directory,input);
+    const {config}=await renderInstall(directory,input,secretsFromEnv(ctx));
     return {directory,target:config.target,mode:config.mode,urls:urls(config),files:["compose.yaml","Caddyfile",".env","kubernetes.yaml","kubernetes-secret.yaml","credentials.json"],credentials:credentialsHint(directory,config)};
   });
 }
@@ -64,7 +66,9 @@ const bootstrapCode = "require 'vendor/autoload.php'; $app=require 'bootstrap/ap
 export async function stackUp(ctx:Ctx,input:StackInput) {
   const directory=installDirectory(input.directory);
   return withInstall(directory,async()=>{
-    const initial = await renderInstall(directory,input);
+    let provided = secretsFromEnv(ctx);
+    if(wizardApplies(ctx,await readConfig(directory)))({input,secrets:provided}=await askSetup(ctx,input,provided));
+    const initial = await renderInstall(directory,input,provided);
     let c = initial.config;
     const s = initial.secrets;
     const opts = options(ctx,directory,s);
@@ -86,7 +90,7 @@ export async function stackUp(ctx:Ctx,input:StackInput) {
       c.imageTag=await resolveImageTag(c.imageTag,AbortSignal.any([ctx.signal,AbortSignal.timeout(120000)]));
     } else if(c.imageTag === "latest")throw new CliError("USAGE","Custom image registries require an explicit --image-tag.");
     await atomicWrite(directory,"stack.json",JSON.stringify(c,null,2)+"\n");
-    ({config:c}=await renderInstall(directory,{...input,image_tag:c.imageTag,context:c.context}));
+    ({config:c}=await renderInstall(directory,{...input,image_tag:c.imageTag,context:c.context},provided));
     ctx.io.stderr(`Starting persistent services from ${c.imageRegistry}:${c.imageTag}…`);
     if(c.target === "docker"){
       await runProcess("docker",[...composeArgs(directory,c),"config","--quiet"],opts);
@@ -100,6 +104,16 @@ export async function stackUp(ctx:Ctx,input:StackInput) {
     await exec(["php","artisan","ulams:tenant:create",c.tenant,`--name=${input.academy_name ?? "Your academy"}`,`--theme=${input.theme ?? "coffee"}`,`--users=${input.users ?? 1}`,"--demo=off","--no-interaction"]);
     await exec(["php","artisan","ulams:h5p:export-config","--no-interaction"]);
     await exec(["php","artisan","health:check"]);
+    // Setup checks (P8-7): a test e-mail to the platform admin over SMTP and one minimal AI call. A failure is reported,
+    // not fatal: the stack runs, and the settings can be fixed and the same command repeated.
+    const checks:Record<string,{ok:boolean;message:string}>={};
+    const check=async(name:string,args:string[])=>{
+      try{checks[name]={ok:true,message:(await exec(args)).trim().split("\n").pop() ?? ""};}
+      catch(error){checks[name]={ok:false,message:error instanceof CliError ? String((error.details as {diagnostic?:string}|undefined)?.diagnostic ?? error.message).trim().split("\n").slice(-2).join(" ") : String(error)};}
+      ctx.io.stderr(`${checks[name]!.ok ? "OK" : "FAILED"} ${name}: ${checks[name]!.message}`);
+    };
+    if(mailOf(c).mode === "smtp")await check("mail",["php","artisan","ulams:mail:test",c.adminEmail]);
+    if(aiOf(c) === "anthropic")await check("ai",["php","artisan","ai:test"]);
     let caFile: string | undefined;
     if(c.mode === "production" && c.tls === "internal") {
       const pem = c.target === "docker" ? await runProcess("docker",[...composeArgs(directory,c),"exec","-T","caddy","cat","/data/caddy/pki/authorities/local/root.crt"],opts) : await runProcess("kubectl",[...kubectlArgs(c),"exec","statefulset/application","-c","caddy","--","cat","/data/caddy/pki/authorities/local/root.crt"],opts);
@@ -117,7 +131,7 @@ export async function stackUp(ctx:Ctx,input:StackInput) {
     let localForward:Record<string,unknown>|undefined;
     if(c.target === "kubernetes" && c.gateway === "ClusterIP")localForward=await portForward(ctx,directory,c);
     ctx.io.stderr("ULAMS is ready. Credentials are saved privately; no password is printed.");
-    return {ready:true,directory,target:c.target,mode:c.mode,imageTag:c.imageTag,urls:urls(c),credentials:credentialsHint(directory,c),...(caFile?{caFile}:{}),...(localForward?{localForward}:{}),...(c.target === "kubernetes" ? {namespace:c.name,context:c.context,gateway:c.gateway}: {})};
+    return {ready:true,directory,target:c.target,mode:c.mode,imageTag:c.imageTag,urls:urls(c),mail:mailOf(c).mode,ai:aiOf(c),...(Object.keys(checks).length?{checks}:{}),credentials:credentialsHint(directory,c),...(caFile?{caFile}:{}),...(localForward?{localForward}:{}),...(c.target === "kubernetes" ? {namespace:c.name,context:c.context,gateway:c.gateway}: {})};
   });
 }
 async function portForward(ctx:Ctx,directory:string,c:StackConfig) {
