@@ -12,7 +12,8 @@ export default {
   authoring_metrics_downloaded: '已下载 {name}',
   authoring_metrics_export_failed: '无法下载文件。',
   authoring_metrics_loading: '正在加载数据…',
-  authoring_metrics_forbidden: '你需要读取课程制作指标的权限。作者可以在工作室中查看自己课程的数据。',
+  authoring_metrics_forbidden:
+    '你需要读取课程制作指标的权限。作者可以在工作室中查看自己课程的数据。',
   authoring_metrics_error: '无法加载数据。',
   authoring_metrics_retry: '重试',
   authoring_metrics_empty: '此期间内还没有用课程构建器制作且有数据的课程。',
