@@ -68,5 +68,6 @@ export default {
     'Propozycja z profilu stylu „{name}”, który nie jest jeszcze zatwierdzony. Nic się nie zmieni, dopóki nie zatwierdzisz motywu poniżej.',
   'theme.profile_missing':
     'Nie udało się odczytać profilu stylu z linku. Sprawdź, czy nadal istnieje i czy masz dostęp do Course Buildera.',
-  'theme.profile_no_theme': 'Profil stylu nie ma części dotyczącej motywu, więc nie ma czego proponować.',
+  'theme.profile_no_theme':
+    'Profil stylu nie ma części dotyczącej motywu, więc nie ma czego proponować.',
 };

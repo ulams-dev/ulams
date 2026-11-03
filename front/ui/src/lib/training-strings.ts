@@ -40,6 +40,11 @@ export interface TrainingStrings {
   cont: string;
   review: string;
   viewCertificate: string;
+  /** A policy change gave this training again: `{policy}`, `{version}`, `{kind}` (the exam or the course) and `{summary}` are replaced. */
+  policyChanged: string;
+  policyKindExam: string;
+  policyKindCourse: string;
+  policyWhatChanged: string;
   pathsHeading: string;
   pathsEmpty: string;
   stepDone: string;
@@ -146,6 +151,10 @@ const en: TrainingStrings = {
   cont: "Continue",
   review: "Review",
   viewCertificate: "View certificate",
+  policyChanged: "Policy \"{policy}\" changed (version {version}). Your earlier certificate was replaced: {kind}.",
+  policyKindExam: "take the exam",
+  policyKindCourse: "retake the course",
+  policyWhatChanged: "What changed: {summary}",
   pathsHeading: "Learning paths",
   pathsEmpty: "You are not on a learning path. Paths you are enrolled in appear here.",
   stepDone: "Done",
@@ -239,6 +248,10 @@ const pl: TrainingStrings = {
   cont: "Kontynuuj",
   review: "Powtórz",
   viewCertificate: "Zobacz certyfikat",
+  policyChanged: "Polityka „{policy}” się zmieniła (wersja {version}). Twój wcześniejszy certyfikat został zastąpiony: {kind}.",
+  policyKindExam: "rozwiąż egzamin",
+  policyKindCourse: "przejdź kurs ponownie",
+  policyWhatChanged: "Co się zmieniło: {summary}",
   pathsHeading: "Ścieżki nauki",
   pathsEmpty: "Nie jesteś na żadnej ścieżce nauki. Ścieżki, do których jesteś zapisany, pojawią się tutaj.",
   stepDone: "Ukończony",
@@ -332,6 +345,10 @@ const zh: TrainingStrings = {
   cont: "继续",
   review: "复习",
   viewCertificate: "查看证书",
+  policyChanged: "政策“{policy}”已变更（第 {version} 版）。你之前的证书已被取代：{kind}。",
+  policyKindExam: "请参加考试",
+  policyKindCourse: "请重新学习课程",
+  policyWhatChanged: "变更内容：{summary}",
   pathsHeading: "学习路径",
   pathsEmpty: "你没有加入任何学习路径。已加入的路径会显示在这里。",
   stepDone: "已完成",

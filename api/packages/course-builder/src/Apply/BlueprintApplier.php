@@ -484,8 +484,11 @@ final class BlueprintApplier
         $previous = Auth::user();
         Auth::setUser($author);
         try {
-            app(\Ulams\CourseVariants\Services\Contracts\CourseVariantServiceContract::class)
-                ->addMember((int) $session->course_id, (int) $variant->course_id, $variant->key, $variant->label, $variant->level, $variant->role, (int) $variant->position);
+            $families = app(\Ulams\CourseVariants\Services\Contracts\CourseVariantServiceContract::class);
+            $families->addMember((int) $session->course_id, (int) $variant->course_id, $variant->key, $variant->label, $variant->level, $variant->role, (int) $variant->position);
+            // how the base course is named in the picker: its level when the brief has one (usually "Intermediate")
+            $level = \Ulams\CourseBuilder\Pipeline\BriefService::LEVEL_OF_BRIEF[$session->brief['level'] ?? ''] ?? null;
+            $families->setDefaultAudience((int) $session->course_id, $level !== null ? ucfirst($level) : null, $level, null);
         } finally {
             $previous !== null ? Auth::setUser($previous) : Auth::forgetUser();
         }

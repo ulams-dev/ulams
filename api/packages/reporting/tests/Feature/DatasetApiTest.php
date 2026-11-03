@@ -5,6 +5,7 @@ namespace Ulams\Reporting\Tests\Feature;
 use Illuminate\Support\Facades\Route;
 use Ulams\Core\Tests\Concerns\ForeignTenantToken;
 use Ulams\Core\Tests\CreatesUsers;
+use Ulams\Reporting\Models\SavedReport;
 use Ulams\Reporting\Tests\TestCase;
 
 /** GET /api/admin/reporting/datasets: who may list, what comes back, tenant isolation (ADR 0190). */
@@ -52,26 +53,39 @@ class DatasetApiTest extends TestCase
         $this->assertSame($listed, $routes, 'a new route of the package must be added to routeProvider with its isolation checks');
     }
 
+    /** @return array<string, array{0:string,1:string,2:array<string,mixed>,3:bool}> method, uri, body, and whether the call can be repeated */
     public static function routeProvider(): array
     {
+        $definition = ['dataset' => 'ai_usage', 'columns' => ['task']];
+
         return [
-            'datasets' => ['GET', 'api/admin/reporting/datasets', []],
-            'query' => ['POST', 'api/admin/reporting/query', ['dataset' => 'ai_usage', 'columns' => ['task']]],
+            'datasets' => ['GET', 'api/admin/reporting/datasets', [], true],
+            'query' => ['POST', 'api/admin/reporting/query', $definition, true],
+            'saved list' => ['GET', 'api/admin/reporting/saved', [], true],
+            'saved create' => ['POST', 'api/admin/reporting/saved', ['name' => 'r', 'definition' => $definition], true],
+            'saved show' => ['GET', 'api/admin/reporting/saved/{id}', [], true],
+            'saved update' => ['PUT', 'api/admin/reporting/saved/{id}', ['name' => 'renamed'], true],
+            'saved run' => ['GET', 'api/admin/reporting/saved/{id}/run', [], true],
+            'saved delete' => ['DELETE', 'api/admin/reporting/saved/{id}', [], false],
         ];
     }
 
     #[\PHPUnit\Framework\Attributes\DataProvider('routeProvider')]
-    public function testATokenOfAnotherTenantIsRejectedOnEveryRoute(string $method, string $uri, array $body): void
+    public function testATokenOfAnotherTenantIsRejectedOnEveryRoute(string $method, string $uri, array $body, bool $repeatable): void
     {
         $admin = $this->makeAdmin();
+        $id = $this->actingAs($admin, 'api')->postJson('/api/admin/reporting/saved', ['name' => 'saved', 'definition' => ['dataset' => 'ai_usage', 'columns' => ['task']]])->assertCreated()->json('data.id');
+        \Illuminate\Support\Facades\Auth::forgetGuards();
+        $uri = '/' . str_replace('{id}', $id, $uri);
         $token = $admin->createToken('test')->accessToken;
 
-        $this->sendAs($token, $method, "/{$uri}", $body)->assertOk();
-        $this->sendAs(null, $method, "/{$uri}", $body)->assertUnauthorized();
+        $this->sendAs(null, $method, $uri, $body)->assertUnauthorized();
 
         $this->switchToTenantWithOwnKeys();
 
-        $this->sendAs($token, $method, "/{$uri}", $body)->assertUnauthorized();
-        $this->sendAs($admin->createToken('test')->accessToken, $method, "/{$uri}", $body)->assertOk();
+        // the token of tenant A is not valid on tenant B, so nothing happens and the report stays
+        $this->sendAs($token, $method, $uri, $body)->assertUnauthorized();
+        $this->assertSame(1, SavedReport::query()->count());
+        $this->sendAs($admin->createToken('test')->accessToken, $method, $uri, $body)->assertSuccessful();
     }
 }

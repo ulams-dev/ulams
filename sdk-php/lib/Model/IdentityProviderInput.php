@@ -66,6 +66,7 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         'oidc' => '\Ulams\Sdk\Model\IdentityProviderInputOidc',
         'protocol' => 'string',
         'saml' => '\Ulams\Sdk\Model\IdentityProviderInputSaml',
+        'scim' => '\Ulams\Sdk\Model\IdentityProviderInputScim',
         'slug' => 'string',
         'trust_email' => 'bool'
     ];
@@ -87,6 +88,7 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         'oidc' => null,
         'protocol' => null,
         'saml' => null,
+        'scim' => null,
         'slug' => null,
         'trust_email' => null
     ];
@@ -106,6 +108,7 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         'oidc' => false,
         'protocol' => false,
         'saml' => false,
+        'scim' => false,
         'slug' => false,
         'trust_email' => false
     ];
@@ -205,6 +208,7 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         'oidc' => 'oidc',
         'protocol' => 'protocol',
         'saml' => 'saml',
+        'scim' => 'scim',
         'slug' => 'slug',
         'trust_email' => 'trust_email'
     ];
@@ -224,6 +228,7 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         'oidc' => 'setOidc',
         'protocol' => 'setProtocol',
         'saml' => 'setSaml',
+        'scim' => 'setScim',
         'slug' => 'setSlug',
         'trust_email' => 'setTrustEmail'
     ];
@@ -243,6 +248,7 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         'oidc' => 'getOidc',
         'protocol' => 'getProtocol',
         'saml' => 'getSaml',
+        'scim' => 'getScim',
         'slug' => 'getSlug',
         'trust_email' => 'getTrustEmail'
     ];
@@ -343,6 +349,7 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
         $this->setIfExists('oidc', $data ?? [], null);
         $this->setIfExists('protocol', $data ?? [], null);
         $this->setIfExists('saml', $data ?? [], null);
+        $this->setIfExists('scim', $data ?? [], null);
         $this->setIfExists('slug', $data ?? [], null);
         $this->setIfExists('trust_email', $data ?? [], null);
     }
@@ -666,6 +673,33 @@ class IdentityProviderInput implements ModelInterface, ArrayAccess, \JsonSeriali
             throw new \InvalidArgumentException('non-nullable saml cannot be null');
         }
         $this->container['saml'] = $saml;
+
+        return $this;
+    }
+
+    /**
+     * Gets scim
+     *
+     * @return \Ulams\Sdk\Model\IdentityProviderInputScim|null
+     */
+    public function getScim()
+    {
+        return $this->container['scim'];
+    }
+
+    /**
+     * Sets scim
+     *
+     * @param \Ulams\Sdk\Model\IdentityProviderInputScim|null $scim scim
+     *
+     * @return self
+     */
+    public function setScim($scim)
+    {
+        if (is_null($scim)) {
+            throw new \InvalidArgumentException('non-nullable scim cannot be null');
+        }
+        $this->container['scim'] = $scim;
 
         return $this;
     }

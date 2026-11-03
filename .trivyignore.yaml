@@ -196,3 +196,6 @@ vulnerabilities:
   - id: GHSA-wq5f-xc86-pv6w
     statement: "Accepted until the owner dependency moves (reviewed 2026-10-22, yarn.lock, fix available): sharp 0.32.6 (@capacitor/assets) and 0.34.5 (Astro 7 image service, exact-pinned by front/web and front/docs-site) need 0.35; sharp 0.35 is held back until Astro supports it. Processes images we author at build time."
     expired_at: 2027-04-30
+  - id: CVE-2026-118664
+    statement: "Accepted until the owner dependency moves (reviewed 2026-11-02, yarn.lock, fix available): decode-uri-component 0.2.2 (CommonJS) is required by query-string 6.14 and 0.4.1 by query-string 9.2.1; the only fixed release is 0.5.1, which is ESM-only like 0.4.1, and no query-string release accepts it (latest 10.0.0 pulls other majors). Forcing 0.5.1 under the CommonJS query-string 6 would break require(). Used to parse URL query strings in admin and front tooling; the finding is a denial of service on malformed percent-encoded input."
+    expired_at: 2027-04-30

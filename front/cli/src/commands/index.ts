@@ -14,6 +14,7 @@ import { livingCommands } from "./living.ts";
 import { curatedCommands } from "./curated.ts";
 import { mcp } from "./mcp.ts";
 import { operationCommands } from "./operations.ts";
+import { reportingCommands } from "./reporting.ts";
 import { tenantCommands } from "./tenants.ts";
 import { stackCommands } from "./stack.ts";
 import { styleProfileCommands } from "./style-profiles.ts";
@@ -45,5 +46,6 @@ export const handWritten: AnyCommand[] = [
   ...courseFolderCommands,
   ...courseSyncCommands,
   ...livingCommands,
+  ...reportingCommands,
   ...tenantCommands,
 ];

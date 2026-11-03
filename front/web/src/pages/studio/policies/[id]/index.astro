@@ -1,0 +1,14 @@
+---
+import PoliciesShell from "../../../../components/PoliciesShell.astro";
+import { pickPoliciesLocale, POLICIES_STRINGS } from "../../../../studio/policies-i18n.ts";
+
+if (!Astro.locals.tenant) return Astro.redirect("/tenants");
+const id = Astro.params.id ?? "";
+if (!/^[0-9a-z]{26}$/.test(id)) return new Response("Not found", { status: 404 });
+const locale = pickPoliciesLocale(Astro.url.searchParams.get("lang"), Astro.request.headers.get("accept-language"));
+const t = POLICIES_STRINGS[locale];
+const suffix = locale === "en" ? "" : `?lang=${locale}`;
+---
+
+<PoliciesShell title={`${t.detail.pageTitle} · Course Builder`} heading={t.detail.pageTitle} locale={locale} view="policy" policy={id} />
+<p class="st-pol-new"><a href={`/studio/policies${suffix}`}>{t.detail.back}</a></p>

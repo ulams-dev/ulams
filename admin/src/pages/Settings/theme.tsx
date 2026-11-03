@@ -8,6 +8,7 @@ import {
   publicSettings,
   updateSettings,
 } from '@/services/ulams/settings';
+import { getStyleProfile, isStyleProfileId } from '@/services/ulams/style-profile';
 import {
   logoProblem,
   refusal,
@@ -17,7 +18,6 @@ import {
   uploadLogo,
   type ThemeValues,
 } from '@/services/ulams/theme';
-import { getStyleProfile, isStyleProfileId } from '@/services/ulams/style-profile';
 import {
   proposeBrandTheme,
   proposeFromStyleTheme,
@@ -137,7 +137,9 @@ export default function ThemeSettings() {
 
   // A style profile in the link proposes its theme as the same diff the brand importer shows; nothing is saved until approved.
   const profileId =
-    typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('styleProfile');
+    typeof window === 'undefined'
+      ? null
+      : new URLSearchParams(window.location.search).get('styleProfile');
   useEffect(() => {
     if (!loaded || !isStyleProfileId(profileId)) return;
     let cancelled = false;
@@ -454,13 +456,22 @@ export default function ThemeSettings() {
           <h3 id="theme-import">{t('section_import')}</h3>
           <div aria-live="polite" data-testid="style-profile-note">
             {fromProfile && 'name' in fromProfile && (
-              <p>{t(fromProfile.status === 'approved' ? 'profile_from_approved' : 'profile_from_suggested', { name: fromProfile.name })}</p>
+              <p>
+                {t(
+                  fromProfile.status === 'approved'
+                    ? 'profile_from_approved'
+                    : 'profile_from_suggested',
+                  { name: fromProfile.name },
+                )}
+              </p>
             )}
             {fromProfile && 'problem' in fromProfile && (
               <Alert
                 type="warning"
                 showIcon
-                message={t(fromProfile.problem === 'missing' ? 'profile_missing' : 'profile_no_theme')}
+                message={t(
+                  fromProfile.problem === 'missing' ? 'profile_missing' : 'profile_no_theme',
+                )}
               />
             )}
           </div>

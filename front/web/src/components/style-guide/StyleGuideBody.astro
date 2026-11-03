@@ -1,0 +1,225 @@
+---
+/**
+ * Body of /style-guide/ (lib/style-guide.ts): header, hero, the design tokens read from the platform stylesheet, the
+ * component catalogue with live examples rendered by the catalogue, the theme presets with the AA guard and the
+ * brand-import diff, white label per academy, and links to the documentation. Footer last.
+ */
+import "./style-guide.css";
+import Render from "@ulams/ui/Render.astro";
+import Icon from "@ulams/ui/components/Icon.astro";
+import { ctaEvent } from "@ulams/ui/analytics";
+import type { Locale } from "../../i18n/locales.ts";
+import type { ProductShell } from "../../lib/product-pages.ts";
+import {
+  CATALOGUE_DOCS,
+  CATALOGUE_REFERENCE,
+  COMPONENT_DOCS,
+  TENANCY_DOCS,
+  THEME_DOCS,
+  catalogueGroups,
+  componentDocs,
+  fill,
+  liveExamples,
+  styleGuideCopy,
+  tokenModel,
+} from "../../lib/style-guide.ts";
+import ThemeShowcase from "./ThemeShowcase.astro";
+
+interface Props {
+  shell: ProductShell;
+  locale: Locale;
+}
+
+const { shell, locale } = Astro.props;
+const copy = styleGuideCopy(locale);
+const tokens = tokenModel();
+const groups = catalogueGroups();
+const examples = liveExamples(locale);
+const TEXT_TOKENS = new Set(["primary", "accent", "header", "text", "muted", "positive", "warn", "error", "info"]);
+const docs = [
+  { label: copy.docs.theme, href: THEME_DOCS },
+  { label: copy.docs.tenancy, href: TENANCY_DOCS },
+  { label: copy.docs.reference, href: CATALOGUE_REFERENCE },
+  { label: copy.docs.playground, href: CATALOGUE_DOCS },
+  { label: copy.docs.extend, href: COMPONENT_DOCS },
+];
+---
+
+<Render doc={shell.header} />
+<main id="main" tabindex="-1" class="dg-main sg-page">
+  <Render doc={shell.hero} />
+
+  <section class="sg-section" id="tokens" aria-labelledby="tokens-title">
+    <div class="u-container">
+      <header class="sg__head sg__head--start">
+        <h2 class="sg__title" id="tokens-title">{copy.tokens.title}</h2>
+        <p class="sg__lede">{copy.tokens.intro}</p>
+      </header>
+
+      <section class="sg-part" aria-labelledby="tokens-colour">
+        <h3 class="sg-part__title" id="tokens-colour">{copy.tokens.colours}</h3>
+        <ul class="sg-tokens" role="list">
+          {
+            tokens.colours.map((colour) => (
+              <li>
+                <span class="sg-swatch sg-swatch--lg" style={`background:${colour.value}`} aria-hidden="true" />
+                <span class="sg-tokens__name">{copy.tokens.colourNames[colour.key]}</span>
+                <code>{colour.name}</code>
+                <code>{colour.value}</code>
+                {TEXT_TOKENS.has(colour.key) && colour.onPage !== null && <span class="sg-tokens__ratio">{fill(copy.tokens.onPage, { ratio: colour.onPage })}</span>}
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section class="sg-part" aria-labelledby="tokens-type">
+        <h3 class="sg-part__title" id="tokens-type">{copy.tokens.type}</h3>
+        <p class="sg-part__intro">{copy.tokens.typeIntro}</p>
+        <ul class="sg-type" role="list">
+          {
+            tokens.type.map((step) => (
+              <li>
+                <p class="sg-type__meta">
+                  <span>{copy.tokens.typeNames[step.key]}</span>
+                  <code>{step.selector}</code>
+                  <code>{step.size}</code>
+                </p>
+                <p class={`sg-type__sample sg-type__sample--${step.key}`} style={`font-family:${step.family};font-size:${step.size}`}>
+                  {copy.tokens.specimens[step.key]}
+                </p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <div class="sg-pair">
+        <section class="sg-part" aria-labelledby="tokens-radius">
+          <h3 class="sg-part__title" id="tokens-radius">{copy.tokens.radii}</h3>
+          <ul class="sg-radii" role="list">
+            {
+              tokens.radii.map((radius) => (
+                <li>
+                  <span class="sg-radii__box" style={`border-radius:${radius.value}`} aria-hidden="true" />
+                  <code>{radius.name}</code>
+                  <code>{radius.value}</code>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+        <section class="sg-part" aria-labelledby="tokens-space">
+          <h3 class="sg-part__title" id="tokens-space">{copy.tokens.space}</h3>
+          <ul class="sg-space" role="list">
+            {
+              tokens.space.map((space) => (
+                <li>
+                  <code>{space.name}</code>
+                  <code>{space.value}</code>
+                  <span class="sg-space__bar" style={`width:min(100%, ${space.value})`} aria-hidden="true" />
+                </li>
+              ))
+            }
+          </ul>
+          <h3 class="sg-part__title" id="tokens-fonts">{copy.tokens.fonts}</h3>
+          <ul class="sg-fonts" role="list" aria-labelledby="tokens-fonts">
+            {
+              tokens.fonts.map((font) => (
+                <li>
+                  <span style={`font-family:var(${font.name})`}>{font.family}</span>
+                  <code>{font.name}</code>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="sg-section sg-section--paper" id="components" aria-labelledby="components-title">
+    <div class="u-container">
+      <header class="sg__head sg__head--start">
+        <h2 class="sg__title" id="components-title">{copy.components.title}</h2>
+        <p class="sg__lede">{copy.components.intro}</p>
+      </header>
+      <div class="sg-groups">
+        {
+          groups.map((group) => (
+            <section class="sg-part" aria-labelledby={`components-${group.category}`}>
+              <h3 class="sg-part__title" id={`components-${group.category}`}>
+                {copy.components.categories[group.category]}
+                <span class="sg-count">{fill(copy.components.count, { n: group.names.length })}</span>
+              </h3>
+              <ul class="sg-names" role="list">
+                {group.names.map((name) => (
+                  <li>
+                    <a href={componentDocs(name)} data-umami-event={ctaEvent(componentDocs(name))}><code>{name}</code></a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))
+        }
+      </div>
+      <p class="sg__actions sg__actions--start">
+        <a class="u-btn" href={CATALOGUE_DOCS} data-umami-event={ctaEvent(CATALOGUE_DOCS)}>{copy.components.playground}<Icon name="arrow" /></a>
+        <a class="u-btn u-btn--ghost" href={CATALOGUE_REFERENCE} data-umami-event={ctaEvent(CATALOGUE_REFERENCE)}>{copy.components.reference}</a>
+      </p>
+
+      <section class="sg-part" aria-labelledby="components-live">
+        <h3 class="sg-part__title" id="components-live">{copy.components.live}</h3>
+        <p class="sg-part__intro">{copy.components.liveIntro}</p>
+        <ul class="sg-live" role="list">
+          {
+            examples.map((node) => (
+              <li class="sg-live__item">
+                <p class="sg-live__name"><code>{node.component}</code></p>
+                <div class="sg-live__stage">
+                  <Render doc={node} />
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+    </div>
+  </section>
+
+  <section class="sg-section" id="themes" aria-label={copy.presets.title}>
+    <div class="u-container">
+      <ThemeShowcase copy={copy} level={2} prefix="sg-page" />
+    </div>
+  </section>
+
+  <section class="sg-section sg-section--paper" id="white-label" aria-labelledby="white-label-title">
+    <div class="u-container">
+      <header class="sg__head sg__head--start">
+        <h2 class="sg__title" id="white-label-title">{copy.whiteLabel.title}</h2>
+        <p class="sg__lede">{copy.whiteLabel.intro}</p>
+      </header>
+      <ul class="sg-items" role="list">
+        {
+          copy.whiteLabel.items.map((item) => (
+            <li>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <h2 class="sg-part__title sg-docs__title" id="docs-title">{copy.docs.title}</h2>
+      <ul class="sg-docs" role="list" aria-labelledby="docs-title">
+        {
+          docs.map((link) => (
+            <li>
+              <a href={link.href} data-umami-event={ctaEvent(link.href)}>{link.label}<Icon name="arrow" /></a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</main>
+<Render doc={shell.footer} />

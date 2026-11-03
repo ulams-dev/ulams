@@ -287,10 +287,10 @@
           "checkedAt": "2026-10-22"
         },
         "scim": {
-          "value": "Coming",
-          "note": "SCIM 2.0 Users and Groups are planned (identity plan ID-4, ID-5)",
-          "source": "https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-6-identity.md",
-          "checkedAt": "2026-10-22"
+          "value": "Yes",
+          "note": "Users and groups; deactivation ends every session. Tested with Entra ID and Okta requests, not yet against live tenants",
+          "source": "https://github.com/ulams-dev/ulams/blob/main/api/packages/identity/src/routes.php",
+          "checkedAt": "2026-10-23"
         },
         "authoring_tool": {
           "value": "Yes",

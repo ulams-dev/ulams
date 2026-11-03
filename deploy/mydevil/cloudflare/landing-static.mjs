@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Export the product pages (overview, comparison, FAQ, content cost, reporting, course generation and its case studies, in three languages), the blog (English and Polish) and their SEO routes from the production Astro build.
+// Export the product pages (overview, comparison, FAQ, content cost, reporting, course generation and its case studies, learning elements, style guide and white paper, in three languages), the blog (English and Polish) and their SEO routes from the production Astro build.
 // Build and run this with the production env of the front, then pass a new output directory and the public host.
 // ULAMS_IMAGE_SERVICE must be `cloudflare` (images become same-host /cdn-cgi/image URLs; check the host first with
 // bin/check-images.sh) or `noop` (original images); `astro` would leave /_image URLs that a static host cannot serve.
@@ -40,6 +40,9 @@ const pages = [
   "/course-generation/stablecoin-report/", "/pl/course-generation/stablecoin-report/", "/zh/course-generation/stablecoin-report/",
   "/course-generation/docs-repo/", "/pl/course-generation/docs-repo/", "/zh/course-generation/docs-repo/",
   "/course-generation/notion-page/", "/pl/course-generation/notion-page/", "/zh/course-generation/notion-page/",
+  "/learning-elements/", "/pl/learning-elements/", "/zh/learning-elements/",
+  "/style-guide/", "/pl/style-guide/", "/zh/style-guide/",
+  "/white-paper/", "/pl/white-paper/", "/zh/white-paper/",
   ...blogPages,
 ];
 const get = (path) => new Promise((done, reject) => {
@@ -82,13 +85,13 @@ try {
   const notFound = await get("/404");
   if (notFound.status !== 404) throw new Error("Expected the dedicated 404 page.");
   writeFileSync(join(out, "404.html"), notFound.body);
-  for (const path of ["/robots.txt", "/sitemap.xml"]) {
+  for (const path of ["/robots.txt", "/sitemap.xml", "/site.webmanifest"]) {
     const response = await get(path);
     if (response.status !== 200) throw new Error(`${path}: HTTP ${response.status}`);
     writeFileSync(join(out, path.slice(1)), response.body);
   }
   writeFileSync(join(out, "_headers"), "/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n/_astro/*\n  Cache-Control: public, max-age=31536000, immutable\n/landing/*\n  Cache-Control: public, max-age=86400\n/blog/*\n  Cache-Control: public, max-age=86400\n");
-  console.log(`Exported ${pages.length} pages (${blogPages.length} of them the blog), robots.txt, sitemap.xml and assets to ${out}`);
+  console.log(`Exported ${pages.length} pages (${blogPages.length} of them the blog), robots.txt, sitemap.xml, site.webmanifest and assets to ${out}`);
 } finally {
   server.kill();
 }

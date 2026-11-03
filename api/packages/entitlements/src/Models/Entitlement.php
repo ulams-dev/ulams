@@ -53,9 +53,17 @@ class Entitlement extends Model
     /** A Wellms voucher that granted access. Reserved for the cutover (CM-10). */
     public const SOURCE_VOUCHER_LEGACY = 'voucher_legacy';
 
+    /**
+     * Derived from the entitlement a user holds for another course of the same family of course variants (ADR 0192):
+     * one entitlement covers every variant. Written and kept in step by the course-variants package only; it ends with
+     * the entitlements it derives from.
+     */
+    public const SOURCE_FAMILY = 'family';
+
     public const SOURCE_TYPES = [
         self::SOURCE_ORDER_ITEM, self::SOURCE_SEAT, self::SOURCE_ADMIN, self::SOURCE_COMPLIANCE, self::SOURCE_LTI,
         self::SOURCE_GROUP_LEGACY, self::SOURCE_WELLMS_ORDER, self::SOURCE_MIGRATION, self::SOURCE_VOUCHER_LEGACY,
+        self::SOURCE_FAMILY,
     ];
 
     /** Sources that are written by a person or a process through `CourseAccessService`, not by an order. */

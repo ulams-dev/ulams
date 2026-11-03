@@ -12,6 +12,7 @@ use Ulams\LivingCourse\Events\SourceCheckFailing;
 use Ulams\LivingCourse\Events\SourceRevisionDetected;
 use Ulams\LivingCourse\Events\UpdateProposalApplied;
 use Ulams\LivingCourse\Events\UpdateProposalReady;
+use Ulams\LivingCourse\Support\ProposalBranch;
 use Ulams\LivingCourse\Models\Connection;
 use Ulams\LivingCourse\Models\LearnerNotice;
 use Ulams\LivingCourse\Models\Proposal;
@@ -91,19 +92,21 @@ final class Notifier
     public function learnersNotified(Proposal $proposal): int
     {
         $session = Session::query()->find($proposal->session_id);
-        if ($session === null || $session->course_id === null) {
+        $courseId = $session !== null ? ProposalBranch::of($proposal)->courseId() : null;
+        if ($session === null || $courseId === null) {
             return 0;
         }
-        $title = $this->courseTitle($session);
+        // a variant course is its own course for learners (ADR 0192): its title, its learners
+        $title = (string) Course::query()->whereKey($courseId)->value('title') ?: $this->courseTitle($session);
         $sent = 0;
         $users = LearnerNotice::query()->where('proposal_id', $proposal->id)->where('status', 'open')->distinct()->pluck('user_id');
         $model = config('auth.providers.users.model');
         foreach ($model::query()->whereIn('id', $users)->get() as $user) {
-            $key = "living_course:digest:{$session->course_id}:{$user->getKey()}";
+            $key = "living_course:digest:{$courseId}:{$user->getKey()}";
             if (!Cache::add($key, 1, now()->addDays((int) config('living_course.learner_email_digest_days', 7)))) {
                 continue;
             }
-            CourseContentUpdated::dispatch($user, ['courseId' => (int) $session->course_id, 'courseTitle' => $title, 'proposalId' => $proposal->id]);
+            CourseContentUpdated::dispatch($user, ['courseId' => $courseId, 'courseTitle' => $title, 'proposalId' => $proposal->id]);
             $sent++;
         }
 

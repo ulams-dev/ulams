@@ -20,7 +20,7 @@ use Ulams\Courses\Models\CourseUserPivot;
  */
 class PathEnrollmentService
 {
-    public function __construct(private AssignmentService $assignments, private StepProgress $progress)
+    public function __construct(private AssignmentService $assignments, private StepProgress $progress, private ?FamilyCourses $families = null)
     {
     }
 
@@ -56,7 +56,7 @@ class PathEnrollmentService
         PathEnrollment::query()
             ->whereNull('completed_at')
             ->where('user_id', $user->getKey())
-            ->whereHas('path.steps', fn ($query) => $query->where('course_id', $course->getKey()))
+            ->whereHas('path.steps', fn ($query) => $query->whereIn('course_id', $this->families?->fulfilledBy($course->getKey()) ?? [$course->getKey()]))
             ->each(fn (PathEnrollment $enrollment) => $this->advanceEnrollment($enrollment));
     }
 

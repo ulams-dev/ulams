@@ -1,6 +1,6 @@
 import { tenantFetch } from "../../../lib/api-transport.ts";
 import type { APIRoute } from "astro";
-import { clearAuthorCookie, courseVersionsTarget, insightsTarget, isCourseVersionsCall, isInsightsCall, isLivingCourseCall, isStudioCall, LIVING_COURSE_PREFIX } from "../../../lib/studio.ts";
+import { clearAuthorCookie, courseVersionsTarget, insightsTarget, isCourseVersionsCall, isInsightsCall, isPoliciesCall, policiesTarget, isLivingCourseCall, isStudioCall, LIVING_COURSE_PREFIX } from "../../../lib/studio.ts";
 
 /**
  * Studio BFF: the browser calls /studio/api/…; the server adds the author's token (httpOnly
@@ -16,7 +16,8 @@ export const ALL: APIRoute = async ({ params, request, locals, cookies, url }) =
   const living = isLivingCourseCall(request.method, path);
   const insights = isInsightsCall(request.method, path);
   const versions = isCourseVersionsCall(request.method, path);
-  if (!tenant || !(living || insights || versions || isStudioCall(request.method, path))) return json(404, { message: "Not found" });
+  const policies = isPoliciesCall(request.method, path);
+  if (!tenant || !(living || insights || versions || policies || isStudioCall(request.method, path))) return json(404, { message: "Not found" });
   if (!locals.authorToken) return json(401, { message: "Sign in to use the Course Builder." });
 
   const isStream = path.endsWith("/events");
@@ -35,7 +36,7 @@ export const ALL: APIRoute = async ({ params, request, locals, cookies, url }) =
 
   let upstream: Response;
   try {
-    const target = living ? `/api/admin/living-course${path.slice(LIVING_COURSE_PREFIX.length)}` : insights ? insightsTarget(path) : versions ? courseVersionsTarget(path) : `/api/admin/course-builder${path}`;
+    const target = living ? `/api/admin/living-course${path.slice(LIVING_COURSE_PREFIX.length)}` : insights ? insightsTarget(path) : versions ? courseVersionsTarget(path) : policies ? policiesTarget(path) : `/api/admin/course-builder${path}`;
     upstream = await tenantFetch(tenant)(`${tenant.apiUrl}${target}${url.search}`, {
       method: request.method,
       headers,
