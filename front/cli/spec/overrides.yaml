@@ -28,6 +28,13 @@ operations:
   "GET /api/admin/authoring-metrics/courses/export": { id: authoring.export, mcp: { toolset: analytics }, output: file, summary: "Download the authoring metric as CSV or JSON lines (use --out)" }
   "GET /api/admin/authoring-metrics/summary": { id: authoring.summary, mcp: { toolset: analytics }, summary: "Hours of work per learner hour across the academy: the median and how many courses it rests on", description: "The academy's own figure: the median over the courses that have recorded author time, with n. There is no median below three courses, and then status says why (author_time_not_recorded or not_enough_courses): do not estimate it. own_baseline is the figure the academy entered itself and is its own estimate. No industry ratio is involved." }
   "GET /api/admin/authoring-metrics/courses/{course}": { id: authoring.course, mcp: { toolset: analytics }, summary: "Authoring metric of one course: time per stage, cost, the split of AI elements and the hours figure" }
+  # --- commerce catalogue (prices, bundles, access passes, ADR 0130)
+  "GET /api/admin/commerce/products": { id: commerce.products-list, summary: "Prices and product state of everything this tenant sells" }
+  "PUT /api/admin/commerce/products/{type}/{id}": { id: commerce.products-set-price, idempotent: true, summary: "Set the price of a course, bundle or access pass and put it on or off sale" }
+  "POST /api/admin/commerce/bundles": { id: commerce.bundles-create, summary: "Create a bundle of courses" }
+  "POST /api/admin/commerce/access-passes": { id: commerce.access-passes-create, summary: "Create an access pass: a course or bundle for a number of days" }
+  # --- report builder (ADR 0194): a preview reads data through a POST, so it is a read
+  "POST /api/admin/reporting/query": { id: reporting.query, kind: read, idempotent: true, summary: "Preview a report definition: rows or groups, with small groups withheld" }
   # --- compliance (certificates, required training, reports)
   "GET /api/admin/compliance/managers": { id: compliance.managers-list }
   "PUT /api/admin/compliance/managers/{user}": { id: compliance.managers-set, summary: "Set or clear (manager_id null) the manager that overdue training escalates to" }

@@ -132,9 +132,9 @@ final class ApplyService
         $userId = (int) $run->user_id;
         $current = $preview['current'];
         $doc = $preview['document'];
-        $insights = $proposal->isInsights();
+        $insights = $proposal->isSourceless();
         $variant = ProposalBranch::of($proposal)->variant;
-        // an improvement from learner insights has no source revision: it reads the live fragments and promotes nothing (ADR 0181)
+        // an improvement from learner insights or a restyle has no source revision: it reads the live fragments and promotes nothing (ADR 0181)
         $to = $insights ? null : Revision::query()->findOrFail($proposal->to_revision_id);
         $from = $insights ? null : Revision::query()->findOrFail($proposal->from_revision_id);
 
@@ -151,9 +151,11 @@ final class ApplyService
         $callIds = array_values(array_unique(array_merge(...$applied->map(fn ($i) => (array) $i->ai_call_ids)->all() ?: [[]])));
 
         DB::transaction(function () use ($proposal, $session, $current, $doc, $to, $from, $author, $userId, $callIds, $items, $applied, $run, $insights, $variant) {
-            $reason = $insights
+            $reason = $proposal->isStyle()
+                ? 'Restyle for the style profile ' . mb_substr((string) ($proposal->counts['styleProfileName'] ?? 'of the academy'), 0, 160) . sprintf(': %d change%s', $applied->count(), $applied->count() === 1 ? '' : 's')
+                : ($insights
                 ? 'Improvement from learner insights: ' . mb_substr((string) ($proposal->counts['targetLabel'] ?? $applied->first()?->label ?? 'course element'), 0, 160)
-                : sprintf('Source update r%d → r%d: %d change%s', $from->number, $to->number, $applied->count(), $applied->count() === 1 ? '' : 's');
+                : sprintf('Source update r%d → r%d: %d change%s', $from->number, $to->number, $applied->count(), $applied->count() === 1 ? '' : 's'));
             $version = $this->versions->create($session, $doc, 'update', 'ai', Version::APPROVED, $current, $reason, null, $callIds, $userId, $insights ? $current->source_revisions : [$proposal->source_id => $to->id], $variant?->id);
             if ($variant !== null) {
                 $variant->forceFill(['current_version_id' => $version->id])->save();
@@ -169,7 +171,7 @@ final class ApplyService
             if ($variant !== null) {
                 $this->releases->appliedVariant($variant, $version, $courseId, [], 'update');
             } else {
-                $this->releases->applied($session, $version, $courseId, [], $insights ? 'insights' : 'update');
+                $this->releases->applied($session, $version, $courseId, [], $proposal->isStyle() ? 'style' : ($insights ? 'insights' : 'update'));
                 $this->staleness->set($session, $applied->pluck('element_id')->all(), 'in_sync');
                 if (!$insights) {
                     $this->staleness->settleOpen($session, 'dismissed');
@@ -184,7 +186,7 @@ final class ApplyService
                 'session_id' => $session->id, 'course_id' => $courseId, 'subject_type' => 'proposal', 'subject_id' => $proposal->id, 'source_id' => $proposal->source_id,
                 'revision_id' => $to?->id, 'origin_ref' => $to?->origin_ref, 'actor_id' => $userId, 'version_from' => $current->number, 'version_to' => $version->number,
                 'ai_call_ids' => $callIds,
-                'data' => ($insights ? ['kind' => $proposal->kind, 'evidence' => Evidence::summary((array) $proposal->evidence)] : ['from' => $from->number, 'to' => $to->number])
+                'data' => ($proposal->isStyle() ? ['kind' => $proposal->kind, 'styleProfileId' => $proposal->counts['styleProfileId'] ?? null] : ($insights ? ['kind' => $proposal->kind, 'evidence' => Evidence::summary((array) $proposal->evidence)] : ['from' => $from->number, 'to' => $to->number]))
                     + ($variant !== null ? ['variantId' => $variant->id] : [])
                     + ['number' => $proposal->number, 'applied' => $counts['applied'], 'rejected' => $counts['rejected'], 'undecided' => $counts['undecided'],
                     'items' => $applied->map(fn ($i) => ['element' => $i->element_id, 'kind' => $i->kind, 'class' => $i->change_class, 'before' => Blueprint::fingerprint($i->before), 'after' => $i->after !== null ? Blueprint::fingerprint($i->after) : null])->values()->all()],
@@ -204,7 +206,7 @@ final class ApplyService
     {
         $remap = [];
         $removedFragments = [];
-        if (!$proposal->isInsights()) {
+        if (!$proposal->isSourceless()) {
             foreach (FragmentChange::query()->where('to_revision_id', $proposal->to_revision_id)->where('kind', 'moved')->get() as $c) {
                 $remap[$c->old_fragment_id] = $c->new_fragment_id;
             }

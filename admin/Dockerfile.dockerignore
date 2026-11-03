@@ -17,3 +17,5 @@ front
 !front/sdk/src/images.ts
 !front/sdk/src/images
 !front/ui/catalogue/learner-layout-manifest.json
+!front/web/src/studio/review-time.ts
+!front/web/src/studio/review-time-model.ts

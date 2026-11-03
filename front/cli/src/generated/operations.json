@@ -204,6 +204,30 @@
   "tag": "Code exercises"
  },
  {
+  "method": "POST",
+  "path": "/api/admin/commerce/access-passes",
+  "summary": "Create an access pass",
+  "tag": "Commerce"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/commerce/bundles",
+  "summary": "Create a bundle of courses",
+  "tag": "Commerce"
+ },
+ {
+  "method": "GET",
+  "path": "/api/admin/commerce/products",
+  "summary": "Prices and product state of everything this tenant sells",
+  "tag": "Commerce"
+ },
+ {
+  "method": "PUT",
+  "path": "/api/admin/commerce/products/{type}/{id}",
+  "summary": "Set the price of a sellable and put it on or off sale",
+  "tag": "Commerce"
+ },
+ {
   "method": "GET",
   "path": "/api/admin/compliance/assignments",
   "summary": "List required-training assignments",
@@ -1659,6 +1683,12 @@
   "method": "GET",
   "path": "/api/admin/living-course/sessions/{session}/staleness",
   "summary": "Per-element staleness and the course summary",
+  "tag": "Admin Living Course"
+ },
+ {
+  "method": "POST",
+  "path": "/api/admin/living-course/sessions/{session}/style-proposals",
+  "summary": "Propose a restyle of the course for an approved style profile (default: the one the brief names, else the academy's). Without confirmEstimate: the estimate only",
   "tag": "Admin Living Course"
  },
  {

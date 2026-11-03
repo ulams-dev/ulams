@@ -184,7 +184,9 @@ class PlatformApiTest extends TestCase
 
         $operation->refresh();
         $this->assertSame(TenantOperation::SUCCEEDED, $operation->status);
-        $this->assertSame(array_fill(0, count(TenantProvisioner::STEPS), 'succeeded'), array_column($operation->steps, 'status'));
+        // without a commerce provider the channel step is skipped (and not recorded on the tenant)
+        $expected = array_map(fn (string $step) => $step === 'commerce_channel' ? 'skipped' : 'succeeded', TenantProvisioner::STEPS);
+        $this->assertSame($expected, array_column($operation->steps, 'status'));
         $this->assertNotNull($operation->finished_at);
         $this->assertSame(Tenant::STATUS_ACTIVE, $tenant->refresh()->status);
         $this->assertSame(['migrate', 'passport:keys', 'passport:client', 'db:seed', 'ulams:lti:rotate-keys', 'ulams:tenant:seed-demo'], $this->runner->commands());

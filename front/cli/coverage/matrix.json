@@ -1,5 +1,5 @@
 {
- "summary": "680/794 covered, 114 excluded, 0 missing, 5 routes missing from the spec",
+ "summary": "685/799 covered, 114 excluded, 0 missing, 5 routes missing from the spec",
  "operations": [
   {
    "key": "GET /api/admin/adapt",
@@ -204,6 +204,30 @@
    "summary": "Preview a code exercise as its author",
    "command": "",
    "status": "excluded: not-for-cli"
+  },
+  {
+   "key": "POST /api/admin/commerce/access-passes",
+   "summary": "Create an access pass",
+   "command": "commerce.access-passes-create",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/commerce/bundles",
+   "summary": "Create a bundle of courses",
+   "command": "commerce.bundles-create",
+   "status": "covered"
+  },
+  {
+   "key": "GET /api/admin/commerce/products",
+   "summary": "Prices and product state of everything this tenant sells",
+   "command": "commerce.products-list",
+   "status": "covered"
+  },
+  {
+   "key": "PUT /api/admin/commerce/products/{type}/{id}",
+   "summary": "Set the price of a sellable and put it on or off sale",
+   "command": "commerce.products-set-price",
+   "status": "covered"
   },
   {
    "key": "GET /api/admin/compliance/assignments",
@@ -1661,6 +1685,12 @@
    "key": "GET /api/admin/living-course/sessions/{session}/staleness",
    "summary": "Per-element staleness and the course summary",
    "command": "living.staleness",
+   "status": "covered"
+  },
+  {
+   "key": "POST /api/admin/living-course/sessions/{session}/style-proposals",
+   "summary": "Propose a restyle of the course for an approved style profile (default: the one the brief names, else the academy's). Without confirmEstimate: the estimate only",
+   "command": "living.restyle",
    "status": "covered"
   },
   {

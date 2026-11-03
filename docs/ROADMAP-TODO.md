@@ -145,6 +145,7 @@ small commits → tests → summary.
 - [ ] Move certificates (6.1) earlier if compliance is the priority segment
 - [ ] Multitenancy for the POC: one deployment, tenant per subdomain with own theme?
 - [ ] Prototype the Sylius order → entitlement flow early (highest-risk commerce piece)
+      Note 2026-10-23 (CM-3): the Sylius half is built and tested against a real Sylius 2.3 (see Phase 6.4); the item closes with the CM-7 end-to-end job
       Note 2026-10-22: the LMS half is prototyped with a fake provider (CM-1, #356); the Sylius half is not started, so the risk this item names is still open
 - [x] Add the spec file to the repo as `docs/ROADMAP-PROMPT.md`
 - [x] (new) Approve the Phase 1 and Phase 2 plans (`docs/plans/phase-1.md`, `docs/plans/phase-2.md`)
@@ -862,7 +863,7 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       as a diff; the builder prompt carries the approved profile (never the raw style guide), a style check critic reports
       deviations, and a changed profile can propose a reviewed restyle; per tenant, entry point and brief
       (plan `docs/plans/style-guide-course-design.md` SG-1 to SG-5; ADR 0196 Proposed; shown as "Coming" in the policy story)
-      (partial: SG-1 done, style profile API, cited extraction, approval and `ulams style-profiles`; SG-2 done, studio `/studio/style` review, edit and approval, theme hand-off to the admin theme screen as a diff; SG-3 done, Course Brief v4 `styleProfileId` and the approved profile in the cached brief block of every builder prompt (tenant default and named brief profiles; the per entry point override waits for EP-2); SG-4 done, the deterministic style check in the publish summary and `GET .../style-profiles/{id}/check`, a banned phrase blocks only when the profile says so; restyle SG-5 pending)
+      (partial: SG-1 done, style profile API, cited extraction, approval and `ulams style-profiles`; SG-2 done, studio `/studio/style` review, edit and approval, theme hand-off to the admin theme screen as a diff; SG-3 done, Course Brief v4 `styleProfileId` and the approved profile in the cached brief block of every builder prompt (tenant default and named brief profiles; the per entry point override waits for EP-2); SG-4 done, the deterministic style check in the publish summary and `GET .../style-profiles/{id}/check`, a banned phrase blocks only when the profile says so; SG-5 done, restyle proposals through Living Course (kind `style`), `course-builder:eval-style`; all five slices are in open PRs, so the box stays open until they are merged; the per entry point override waits for EP-2)
 - [ ] PWA offline mode with tested sync/conflict rules
 - [ ] Single frontend for LMS **and** Sylius commerce (catalogue, checkout, account)
 - [x] Web components (my courses, continue, catalogue, quiz, tutor, certificate badge) (
@@ -1142,6 +1143,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
 
 ### 6.4 Commerce (Sylius) and extended enterprise
 - [ ] `CommerceProvider` interface (sync product, create checkout, handle order events) (partial: interface and the Wellms cart adapter shipped in `api/packages/commerce`, ADR 0049; the Sylius adapter is pending)
+      Note 2026-10-23 (CM-3): interface v2 (`ProductSpec`, core `fetchOrder`, capabilities `ReportsOrderEvents`, `ReconcilesOrders`, `InspectsCatalogue`, `ListsOrders`),
+      the Sylius adapter in `api/packages/commerce-sylius` and one contract suite run against the Wellms adapter and a real Sylius 2.3 (ADR 0133); ticks when merged.
+      `createCheckout` only builds the frontend URL until CM-5
 - [ ] Sylius adapter as default implementation
       Note 2026-10-22 (Coming audit): "Headless Sylius shop" stays "Coming". Plan `phase-6-commerce.md` CM-3 to CM-12; everything except live payment
       keys, seller legal data, the production Sylius host and staff accounts (section 17, owner inputs) can be built and tested
@@ -1154,13 +1158,23 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       Note 2026-10-22 (CM-2): all source types, the hourly expiry job, the `CourseAccessService` decorator (admin, `lti`, `compliance`), the backfill with
       parity report and the `ProductBought` shadow listener are in; ADR 0130 is Accepted. Open here: seat pools (CM-9), the admin view of the parity report (CM-8)
 - [ ] Catalogue sync: course/bundle/subscription/seat package → digital Sylius product
+      Note 2026-10-23 (CM-3): course, bundle and access pass sync (prices kept in the LMS, product enabled while for sale and published, publish/unpublish through
+      `SyncSellableJob`, `ulams:commerce:sync --check --repair`, nightly drift report, admin API `api/admin/commerce/*`, CLI `ulams commerce ...`); seat packages are CM-9,
+      subscriptions are out of this block (plan Q5)
 - [ ] Order → entitlement via signed, idempotent webhooks + reconciliation job; never grant
       access from frontend redirect
       Note 2026-10-22 (CM-1, #356): prototype only. `POST /api/commerce/webhooks/{provider}` (HMAC, timestamp, event id, tenant channel), `ApplyOrderEvent`,
       `ulams:commerce:reconcile` and `OrderFlowTest`, `OrderWebhookTest`, `CommerceTenantIsolationTest` exist, but the only provider with these capabilities is the
       test-only `FakeCommerceProvider`; there is no Sylius service or adapter yet (CM-3), so nothing has been proved against a real order
+      Note 2026-10-23 (CM-3): now proved against a real Sylius 2.3 on PostgreSQL 17 (`commerce-sylius` live suite: checkout through the Shop API, paid and refunded
+      orders through the bridge feed and through the nightly `ulams:commerce:reconcile --full` sweep, bundles, access passes, unlinked customers); the bridge bundle
+      (outbox, feed, signed delivery) is in `api/sylius` with its own tests and the compose profile `commerce`. Not yet proved: delivery over the network from the
+      bridge to a running LMS and Stripe (CM-4), the CI job and `scripts/commerce-e2e.sh` (CM-7)
 - [ ] Single login: LMS as identity source; Sylius customer linked on first checkout
 - [ ] Tenant ↔ Sylius channel (catalogue, prices, currency, locale, tax zone), created at provisioning
+      Note 2026-10-23 (CM-4): `TenantProvisioner` step `commerce_channel` (contract in `tenancy`, Sylius implementation in `commerce-sylius`), `ulams:tenant:commerce-channel`
+      and an upgrade step for existing tenants, channel disabled on tenant deletion; currency PLN/EUR by language, locale, EU countries, seller tax zone, payment methods
+      and the bridge webhook link, with the secret kept encrypted and written to the tenant env. Tested in memory and against a real Sylius; ticks when merged
 - [ ] Unified admin: prices, coupons, orders, refunds in LMS admin; native Sylius admin for
       advanced settings
 - [ ] B2B seat packages (Sylius product + LMS seat pool), invoices from Sylius
@@ -1168,6 +1182,9 @@ builder). Related: the Phase 6.1 policy lifecycle items (departmental course var
       Note 2026-10-22 (CM-2): partial. The access part is in: `ulams:entitlements:backfill` (dry run, all-or-nothing, idempotent) and the nightly
       `ulams:entitlements:parity`; orders and vouchers migrate in CM-10
 - [ ] EU VAT (OSS) for digital services: confirm Sylius handling, document options
+      Note 2026-10-23 (CM-4): setup done (`ulams:commerce:seed-eu-vat`: 27 zones, `e-service` category, standard rates included in price; a real checkout shows 23 % for a
+      Polish and 19 % for a German billing address). The rates in `eu-vat-rates.json` are unconfirmed seed data for the owner's accountant; the OSS return report and B2B reverse
+      charge are not built (CM-9); options for the owner are in `docs/plans/phase-6-commerce.md` section 11
 - [ ] Per-tenant branding, catalogue, sales pages
 - [ ] Partner/customer portals with scoped admins and reports
 
