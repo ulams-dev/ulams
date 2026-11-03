@@ -1,8 +1,9 @@
 # 0140. Policy lifecycle as a package orchestrating Living Course, Course Builder and compliance
 
-- Status: Proposed
+- Status: Accepted (2026-10-23)
 - Date: 2026-10-21
 - Plan: `docs/plans/phase-6-remaining.md` (4.3); spec `docs/ROADMAP-PROMPT.md` 6.1.1
+- Accepted by the owner with the plan's defaults (2026-10-23). Implementation note (P6R-8): each department is its own builder session with its own copy of the policy file as a source (a source belongs to one session), so every department cites the same policy text; `policies.source_id` of the plan became `policy_variants.source_id`, and the policy brief (duration, seniority, prior experience) lives on the policy and its departments because brief schema v3 was taken by course variants (ADR 0192).
 
 ## Context and problem statement
 

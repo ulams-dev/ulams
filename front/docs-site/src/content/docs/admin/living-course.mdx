@@ -79,6 +79,26 @@ Analysis is estimated before it starts. At or below `LIVING_COURSE_AUTO_ANALYSE_
 | `living-course:eval` | Runs the update fixtures end to end (`--fixtures=all` or `coffee,git,injection`) and writes a report; `--live` calls the real model, capped by `--max-usd` (default 1), `--record` stores the answers for CI replay, `--author=<user id>`. |
 | `gift:snapshot-max-scores` | Stores the maximum score on existing quiz results. |
 
+## Restyle for a style profile
+
+A third kind of proposal besides source updates and improvements from learner insights: after an admin approves a new or
+changed [style profile](/creators/style-profiles/), an author may ask for a **restyle** of a course that already exists.
+It is optional and never starts by itself.
+
+- The proposal has no source revision. It holds one item for every element the style check flags for a rule a rewrite can
+  fix: a banned phrase, a term to avoid or a product name in the wrong casing. Reading level, landing components and image
+  rules are not part of it, and a quiz question whose correct option is flagged is left to you: **the answer key is never
+  restyled**.
+- One model call per lesson (`style_restyle`, model from configuration, logged with tokens and cost against the proposal)
+  rewrites the flagged elements, with the approved profile and the findings in the prompt and the style guide itself never
+  in it. The call is grounded like any update: a rewrite with an unsupported claim is left for you to edit by hand.
+- Ask for the estimate first (`POST sessions/{session}/style-proposals`, or `ulams living restyle <session>`), then confirm
+  (`confirmEstimate`, or `--confirm-estimate`). Review the diff on the Living Course review screen, accept or reject items,
+  and apply. Rejecting the proposal, or an item, leaves the course as it was.
+- Applying writes a new course version (`Restyle for the style profile …`, release trigger `style`) with the usual audit
+  entry. Source revisions and the synced source are untouched.
+- One open restyle per course at a time, and three new ones per course per day (`living_course.cost.style_proposals_per_session_per_day`).
+
 ## Audit
 
 The audit trail is append-only (a database trigger refuses updates and deletes) and hash-chained. Admins can export it as CSV or JSON and verify the chain from the studio or with `GET /api/admin/living-course/audit/verify`.

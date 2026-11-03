@@ -403,28 +403,37 @@ const COPY: Record<Locale, HomeStoryCopy> = { en: EN, pl: PL, zh: ZH };
 /** The story in one language. */
 export const homeStory = (locale: Locale): HomeStoryCopy => COPY[locale];
 
-export type HomePart = { kind: "node"; node: UiNode } | { kind: "story" };
+export type HomePart = { kind: "node"; node: UiNode } | { kind: "story" } | { kind: "walkthrough" } | { kind: "style-guide" } | { kind: "learning" };
+
+/** Id of the white-label band of the home document; the style-guide section follows it. */
+export const WHITE_LABEL_ID = "white-label";
 
 export interface HomeBodyPlan {
   /** Nodes before the main landmark (the site header). */
   before: UiNode[];
-  /** Children of the main landmark, with the story right after the hero. */
+  /** Children of the main landmark, with the builder walkthrough after the advantages grid. */
   main: HomePart[];
   /** Nodes after the main landmark (the site footer). */
   after: UiNode[];
 }
 
+/** Id of the advantages grid on the home page; the builder walkthrough follows it. */
+export const ADVANTAGES_ID = "advantages";
+
 /**
- * Splits the home document around its main landmark and places the story right after the hero (first, if there is
- * no hero). Returns null for a document without a Page > Main structure, which is then rendered as it is.
+ * Splits the home document around its main landmark and places the builder walkthrough right after the advantages grid
+ * (right after the hero when the grid is missing, first when both are). The how-it-works story, the learning elements
+ * and the style guide have their own pages; the hero journey and the advantages link to them, so the home page does
+ * not repeat them. Returns null for a document without a Page > Main structure, which is then rendered as it is.
  */
 export function planHomeBody(doc: UiNode): HomeBodyPlan | null {
   const children = doc.component === "Page" ? (doc.children ?? []) : [];
   const mainIndex = children.findIndex((node) => node.component === "Main");
   if (mainIndex < 0) return null;
   const sections = children[mainIndex]!.children ?? [];
-  const hero = sections.findIndex((node) => node.component === "Hero");
   const main: HomePart[] = sections.map((node) => ({ kind: "node", node }));
-  main.splice(hero + 1, 0, { kind: "story" });
+  const advantages = sections.findIndex((node) => node.props?.id === ADVANTAGES_ID);
+  const anchor = advantages >= 0 ? advantages : sections.findIndex((node) => node.component === "Hero");
+  main.splice(anchor + 1, 0, { kind: "walkthrough" });
   return { before: children.slice(0, mainIndex), main, after: children.slice(mainIndex + 1) };
 }

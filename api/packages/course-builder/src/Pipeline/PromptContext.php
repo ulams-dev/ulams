@@ -8,11 +8,14 @@ use Ulams\CourseBuilder\Ingestion\SourceIngestor;
 use Ulams\CourseBuilder\Models\Fragment;
 use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\Source;
+use Ulams\CourseBuilder\Models\StyleProfile;
+use Ulams\CourseBuilder\StyleProfile\StyleProfileResolver;
 
 /**
  * Builds the user turn, stable parts first (ADR 0009 caching layout):
  * 1. the source document as fragment-marked text, marked untrusted (cached, 1 h);
- * 2. the brief and the approved outline (cached; shared by every lesson call of a run);
+ * 2. the brief, the approved style profile when there is one (typed data, never the style guide) and the approved outline
+ *    (cached; shared by every lesson call of a run);
  * 3. the instruction for this element with its machine-readable input (not cached).
  *
  * Source text is only ever placed here, inside `<source_document untrusted="true">`, never in the
@@ -22,6 +25,10 @@ final class PromptContext
 {
     /** @var array<string,array<int,Fragment>> */
     private array $fragments = [];
+
+    public function __construct(private readonly StyleProfileResolver $styles)
+    {
+    }
 
     /** @return Fragment[] */
     public function fragments(Session $session): array
@@ -102,9 +109,16 @@ final class PromptContext
     }
 
     /** Brief + outline, the second cache breakpoint. */
-    public function contextBlock(Session $session, ?array $outline = null): ContentBlock
+    /** `$style` pins the profile (a restyle names the one it is about); otherwise the one the brief or the academy resolves to. */
+    public function contextBlock(Session $session, ?array $outline = null, ?StyleProfile $style = null): ContentBlock
     {
-        $text = '<course_brief>' . json_encode(self::contentBrief((array) $session->brief), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "</course_brief>\n";
+        // the profile travels as its own element; the brief only names it
+        $brief = array_diff_key(self::contentBrief((array) $session->brief), ['styleProfileId' => true]);
+        $text = '<course_brief>' . json_encode($brief, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "</course_brief>\n";
+        $values = $style !== null ? StyleProfileResolver::promptForProfile($style) : $this->styles->promptFor($session);
+        if ($values !== null) {
+            $text .= '<style_profile>' . json_encode($values, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "</style_profile>\n";
+        }
         if ($outline !== null) {
             $text .= '<approved_outline>' . json_encode(self::compactOutline($outline), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</approved_outline>';
         }

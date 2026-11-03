@@ -96,6 +96,17 @@ describe("required training", () => {
     expect([row(1), row(3), row(5), row(22)]).toEqual(["Po terminie o 1 dzień", "Po terminie o 3 dni", "Po terminie o 5 dni", "Po terminie o 22 dni"]);
   });
 
+  it("says why an assignment exists when an approved policy change created it, in the learner's language", () => {
+    const change = { assignmentId: 7, policy: { id: "p", title: "Remote work" }, version: 2, kind: "exam" as const, summary: "Sections 1 changed: §1.1 Approval.", dueAt: null, status: "assigned" };
+    const rows = assignmentRows([assignment({ id: 7 }), assignment({ id: 8 })], "en", NOW, new Map(), [change]);
+    const by = Object.fromEntries(rows.map((r) => [r.id, r]));
+
+    expect(by[7]!.policy).toEqual({ text: 'Policy "Remote work" changed (version 2). Your earlier certificate was replaced: take the exam.', summary: "What changed: Sections 1 changed: §1.1 Approval." });
+    expect(by[8]!.policy).toBeNull();
+    expect(assignmentRows([assignment({ id: 7 })], "pl", NOW, new Map(), [{ ...change, kind: "course" }])[0]!.policy!.text).toContain("przejdź kurs ponownie");
+    expect(assignmentRows([assignment({ id: 7 })], "zh", NOW, new Map(), [{ ...change, summary: null }])[0]!.policy).toMatchObject({ summary: null });
+  });
+
   it("handles a missing course and a missing due date", () => {
     const [row] = assignmentRows([assignment({ course: null, due_at: null })], "en", NOW);
     expect(row!.title).toBe("");
@@ -188,9 +199,10 @@ describe("paths, skills and the account summary", () => {
       paths: [],
       certificates: [cert({}), cert({ id: 10, status: "revoked" })],
       skills: null,
+      policyChanges: null,
     };
     expect(accountSummary(data, NOW)).toEqual({ dueThisMonth: 1, overdue: 1, certificates: 1, skills: null });
-    expect(accountSummary({ assignments: null, paths: null, certificates: null, skills: null }, NOW)).toEqual({ dueThisMonth: 0, overdue: 0, certificates: null, skills: null });
+    expect(accountSummary({ assignments: null, paths: null, certificates: null, skills: null, policyChanges: null }, NOW)).toEqual({ dueThisMonth: 0, overdue: 0, certificates: null, skills: null });
   });
 
   it("only accepts known team filters", () => {

@@ -1,0 +1,271 @@
+---
+/**
+ * The placement check of a course family (CV-5): a few cited questions of the family's courses, scored by code, that
+ * suggest a version. Advisory only: the result says what we suggest and why, and the learner confirms it or chooses
+ * another version; no timer, answers are not stored. Only for an enrolled learner of a family whose check is on.
+ * Plain forms (they work without JavaScript); the result is the last attempt, shown after the redirect.
+ */
+import Base from "../../../layouts/Base.astro";
+import Render from "@ulams/ui/Render.astro";
+import { getCourse, getSettings, getSiteModel } from "../../../lib/data.ts";
+import { chromeFor, withSessionLink } from "../../../lib/docs.ts";
+import { themeFor } from "../../../lib/theme.ts";
+import { learnerPageLocale } from "../../../lib/locale.ts";
+import { accountStrings } from "@ulams/ui/account-strings";
+import { fill, levelInSentence, levelName, variantStrings } from "@ulams/ui/variant-strings";
+import { getPlacementQuestions, getVariantState, isMultiple, orderedScores, placementResult } from "../../../lib/variants.ts";
+
+const tenant = Astro.locals.tenant;
+if (!tenant) return Astro.redirect("/tenants");
+const id = Number(Astro.params.id);
+if (!Number.isInteger(id) || id <= 0) return Astro.rewrite("/404");
+
+const [course, settings, site] = await Promise.all([getCourse(tenant, id).catch(() => null), getSettings(tenant).catch(() => null), getSiteModel(tenant, id)]);
+if (!course) return Astro.rewrite("/404");
+const theme = themeFor(settings?.theme?.theme, tenant.slug);
+const chrome = chromeFor(theme);
+const locale = learnerPageLocale(course.language, settings);
+Astro.locals.uiLocale = locale;
+const t = variantStrings(locale);
+const lang = locale === "en" ? undefined : locale;
+const token = Astro.locals.token;
+const back = `/courses/${id}`;
+
+// "needs-login", "needs-enrol", "unavailable", "failed" or the page itself
+const state = token ? await getVariantState(tenant, token, id) : null;
+const failed = Astro.url.searchParams.has("failed");
+let problem: string | null = null;
+if (!token) problem = t.placementSignIn;
+else if (!state || !state.placement.available) problem = t.placementUnavailable;
+else if (!state.enrolled) problem = t.placementNeedsEnrol;
+
+const showResult = !problem && Astro.url.searchParams.has("result") && state?.placement.lastAttempt;
+const result = showResult && state ? placementResult(state, state.placement.lastAttempt!) : null;
+const questions = !problem && !result && token ? await getPlacementQuestions(tenant, token, id) : [];
+if (!problem && !result && questions.length === 0) problem = t.placementUnavailable;
+Astro.response.headers.set("Cache-Control", "private, no-store");
+const levelText = (level: string) => levelName(locale, level);
+---
+
+<Base theme={theme} accent={settings?.theme?.accent} lang={locale} title={`${t.placementTitle} — ${course.title}`} demo={{ adminUrl: tenant.adminUrl, slug: tenant.slug }}>
+  {chrome.header && <Render doc={withSessionLink(chrome.header, Boolean(token), accountStrings(locale).myLearning)} data={site} />}
+  <main id="main" tabindex="-1" class="u-container u-placement" lang={lang}>
+    <h1 class="u-placement__title">{t.placementTitle}</h1>
+    <p class="u-placement__course" lang={course.language ?? undefined}>{course.title}</p>
+
+    {
+      problem ? (
+        <>
+          <p class="u-placement__note" data-placement-problem>{problem}</p>
+          <p>
+            {!token ? <a class="u-btn" href={`/login?next=${encodeURIComponent(`${back}/placement`)}`}>{accountStrings(locale).signIn}</a> : <a class="u-btn" href={`${back}#variants`}>{t.backToCourse}</a>}
+          </p>
+        </>
+      ) : result ? (
+        <section class="u-placement__result" aria-labelledby="placement-result" data-placement-result>
+          <h2 id="placement-result" tabindex="-1">{t.placementResultTitle}</h2>
+          {
+            result.kind === "suggestion" ? (
+              <>
+                <p class="u-placement__suggest">{fill(t.placementSuggest, { label: result.suggested.label })}</p>
+                <p>
+                  {result.level
+                    ? fill(t.placementReason, { correct: result.correct, total: result.total, level: levelInSentence(locale, result.level), label: result.suggested.label })
+                    : ""}
+                </p>
+              </>
+            ) : (
+              <p class="u-placement__suggest">{t.placementNoSuggestion}</p>
+            )
+          }
+          {
+            orderedScores(result.attempt).length > 0 && (
+              <>
+                <h3 class="u-placement__sub" id="placement-scores">{t.scoresHeading}</h3>
+                <ul class="u-placement__scores" aria-labelledby="placement-scores">
+                  {orderedScores(result.attempt).map((row) => <li>{fill(t.scoreLine, { level: levelText(row.level), correct: row.correct, total: row.total })}</li>)}
+                </ul>
+              </>
+            )
+          }
+          <p class="u-placement__advisory">{t.placementAdvisory}</p>
+          {result.kind === "suggestion" && result.alreadyUsing && <p><strong>{t.placementAlreadyUsing}</strong></p>}
+          <div class="u-placement__actions">
+            {
+              result.kind === "suggestion" && !result.alreadyUsing && state!.canChange && (
+                <form method="post" action={`/learn/${id}/variant`}>
+                  <input type="hidden" name="action" value="placement" />
+                  <input type="hidden" name="course_id" value={result.suggested.courseId} />
+                  <input type="hidden" name="attempt_id" value={result.attempt.id} />
+                  <input type="hidden" name="next" value={back} />
+                  <button class="u-btn" type="submit">{t.usePlacement}</button>
+                </form>
+              )
+            }
+            <a class="u-btn u-btn--ghost" href={`${back}#variants`}>{t.chooseAnother}</a>
+            <a class="u-btn u-btn--link" href={`${back}/placement`}>{t.retake}</a>
+          </div>
+        </section>
+      ) : (
+        <>
+          <p class="u-placement__lead">{t.placementLead}</p>
+          <p class="u-placement__advisory">{t.placementAdvisory}</p>
+          <p class="u-placement__note">{t.placementNoTimer}</p>
+          {failed && <p class="u-placement__error" id="placement-failed" role="alert" tabindex="-1">{t.placementFailed}</p>}
+          <form method="post" action={`/learn/${id}/placement`} class="u-placement__form">
+            {questions.map((question, index) => (
+              <fieldset class="u-placement__question" aria-describedby={`pq-${question.id}-hint`}>
+                <legend>
+                  <span class="u-placement__count">{fill(t.questionOf, { n: index + 1, total: questions.length })}</span>
+                  <span class="u-placement__stem">{question.stem}</span>
+                </legend>
+                <p class="u-placement__hint" id={`pq-${question.id}-hint`}>{isMultiple(question) ? t.chooseMany : t.chooseOne}</p>
+                <div class="u-placement__options">
+                  {question.options.map((option) => (
+                    <label class="u-placement__option">
+                      <input type={isMultiple(question) ? "checkbox" : "radio"} name={`q-${question.id}`} value={option.id} />
+                      <span>{option.text}</span>
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            ))}
+            <div class="u-placement__actions">
+              <button class="u-btn" type="submit">{t.placementSubmit}</button>
+              <a class="u-btn u-btn--ghost" href={`${back}#variants`}>{t.backToCourse}</a>
+            </div>
+          </form>
+        </>
+      )
+    }
+  </main>
+  {chrome.footer && <Render doc={chrome.footer} data={site} />}
+</Base>
+
+<style>
+  main:focus {
+    outline: none;
+  }
+  .u-placement {
+    display: grid;
+    gap: 16px;
+    padding-block: clamp(24px, 5vw, 56px);
+    max-width: 52rem;
+  }
+  .u-placement__title {
+    margin: 0;
+  }
+  .u-placement__course,
+  .u-placement__lead,
+  .u-placement__note,
+  .u-placement__hint {
+    margin: 0;
+    color: var(--ulams-color-muted);
+  }
+  .u-placement__advisory {
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid var(--ulams-color-border);
+    border-left: 4px solid var(--ulams-color-info);
+    border-radius: var(--ulams-radius);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-placement__error {
+    margin: 0;
+    padding: 12px 14px;
+    border: 1px solid var(--ulams-color-error);
+    border-radius: var(--ulams-radius);
+    font-weight: 600;
+  }
+  .u-placement__form {
+    display: grid;
+    gap: 20px;
+  }
+  .u-placement__question {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 16px;
+    min-width: 0;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius-card);
+    background: var(--ulams-color-card-bg);
+  }
+  .u-placement__question legend {
+    display: grid;
+    gap: 4px;
+    padding: 0 4px;
+    max-width: 100%;
+  }
+  .u-placement__count {
+    font-size: 0.875rem;
+    color: var(--ulams-color-muted);
+  }
+  .u-placement__stem {
+    font-weight: 700;
+    overflow-wrap: anywhere;
+  }
+  .u-placement__options {
+    display: grid;
+    gap: 8px;
+  }
+  .u-placement__option {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--ulams-color-border);
+    border-radius: var(--ulams-radius);
+    cursor: pointer;
+    overflow-wrap: anywhere;
+  }
+  .u-placement__option input {
+    flex: none;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    accent-color: var(--ulams-color-primary);
+  }
+  .u-placement__option:has(input:checked) {
+    border-color: var(--ulams-color-primary);
+    box-shadow: inset 0 0 0 1px var(--ulams-color-primary);
+  }
+  .u-placement__option:has(input:focus-visible) {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+  .u-placement__result {
+    display: grid;
+    gap: 14px;
+  }
+  .u-placement__result h2:focus,
+  .u-placement__error:focus {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 4px;
+  }
+  .u-placement__suggest {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+  .u-placement__sub {
+    margin: 0;
+    font-size: 1rem;
+  }
+  .u-placement__scores {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+  .u-placement__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+  .u-placement a:focus-visible,
+  .u-placement .u-btn:focus-visible {
+    outline: 3px solid var(--ulams-color-primary);
+    outline-offset: 2px;
+  }
+</style>

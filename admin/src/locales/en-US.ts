@@ -4,10 +4,12 @@ import globalHeader from './en-US/globalHeader';
 import menu from './en-US/menu';
 import pages from './en-US/pages';
 import pwa from './en-US/pwa';
+import reportBuilder from './en-US/reportBuilder';
 import settingDrawer from './en-US/settingDrawer';
 import settings from './en-US/settings';
 import theme from './en-US/theme';
 
+import authoringMetrics from './en-US/authoringMetrics';
 import consultations from './en-US/consultations';
 import courses from './en-US/courses';
 import events from './en-US/events';
@@ -57,6 +59,7 @@ export default {
   ...settings,
   ...theme,
   ...pwa,
+  ...reportBuilder,
   ...component,
   ...pages,
 
@@ -165,6 +168,7 @@ export default {
   ...codeExercises,
   ...courses,
   ...insights,
+  ...authoringMetrics,
   ...events,
   branding: 'Branding',
   product_details: 'Product details',

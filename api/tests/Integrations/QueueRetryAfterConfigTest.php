@@ -7,6 +7,7 @@ use ReflectionClass;
 use Tests\TestCase;
 use Ulams\Adapt\Jobs\BuildAdaptSource;
 use Ulams\CourseBuilder\Jobs\MoveToNewSiteJob;
+use Ulams\PolicyLifecycle\Jobs\ProvisionAcademyJob;
 use Ulams\CourseBuilder\Jobs\RunJob;
 use Ulams\CourseBuilder\Jobs\StepJob;
 use Ulams\Tenancy\Jobs\DeleteTenantJob;
@@ -36,6 +37,8 @@ class QueueRetryAfterConfigTest extends TestCase
         RunJob::class => ['packages/course-builder/config/course_builder.php', 'queue_connection', 'queue'],
         StepJob::class => ['packages/course-builder/config/course_builder.php', 'queue_connection', 'queue'],
         MoveToNewSiteJob::class => ['packages/course-builder/config/course_builder.php', 'queue_connection', 'queue'],
+        // the department academy runs on the builder's long queue like a new site (ADR 0141, amendment)
+        ProvisionAcademyJob::class => ['packages/course-builder/config/course_builder.php', 'queue_connection', 'queue'],
         AnalyseGroupJob::class => ['packages/living-course/config/living_course.php', 'queue_connection', 'queue'],
         CheckSourceJob::class => ['packages/living-course/config/living_course.php', 'queue_connection', 'queue'],
         ProgressRulesJob::class => ['packages/living-course/config/living_course.php', 'queue_connection', 'queue'],

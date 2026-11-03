@@ -192,6 +192,31 @@ export function proposeBrandTheme(input: string): BrandProposal | null {
   return { theme, accent: accentColour.hex, renderedAccent: adjusted.value, checks, notes, settings: { theme: { theme, accent: accentColour.hex } }, colours };
 }
 
+/**
+ * The theme part of an approved or suggested style profile (ADR 0196) as the same proposal the brand importer makes, so
+ * the theme screen shows it as a diff the admin approves. The profile's preset is used when it names one (otherwise the
+ * closest preset to its accent, as the importer does); a profile with a preset and no accent proposes the preset alone,
+ * keeping the tenant's current accent. Returns null when the profile carries neither.
+ */
+export function proposeFromStyleTheme(theme: { preset?: string; accent?: string } | null | undefined, current: { accent?: string } | null | undefined = null): BrandProposal | null {
+  const preset = theme?.preset && theme.preset in THEME_PRESETS ? (theme.preset as TenantThemeName) : undefined;
+  const accent = theme?.accent && parseColour(theme.accent) ? toHex(parseColour(theme.accent)!) : undefined;
+  if (!preset && !accent) return null;
+  if (!preset) return proposeBrandTheme(JSON.stringify({ accent }));
+  const chosen = THEME_PRESETS[preset];
+  const hex = accent ?? (current?.accent && parseColour(current.accent) ? toHex(parseColour(current.accent)!) : chosen.accent);
+  const rgb = parseColour(hex)!;
+  const bg = parseColour(chosen.bg)!;
+  const adjusted = adjustAccent(hex, chosen.bg)!;
+  const notes = [`Preset ${chosen.label} taken from the style profile.`, accent ? `Accent ${hex} taken from the style profile.` : `The style profile sets no accent: ${hex} is kept.`];
+  if (adjusted.adjusted) notes.push(`The accent is too weak for text on this background: it renders as ${adjusted.value}. Pick a darker brand colour to keep it exactly.`);
+  const checks: BrandCheck[] = [
+    { label: `Brand accent on the ${chosen.label} background`, ratio: round(contrast(rgb, bg)), required: 5, pass: contrast(rgb, bg) >= 5 },
+    { label: "Accent as rendered (after the automatic adjustment)", ratio: round(contrast(parseColour(adjusted.value)!, bg)), required: 4.5, pass: contrast(parseColour(adjusted.value)!, bg) >= 4.5 },
+  ];
+  return { theme: preset, accent: hex, renderedAccent: adjusted.value, checks, notes, settings: { theme: { theme: preset, accent: hex } }, colours: accent ? [{ name: "style profile accent", hex }] : [] };
+}
+
 const round = (n: number) => Math.round(n * 100) / 100;
 
 export interface ThemeChange {

@@ -125,3 +125,12 @@ point never grants access.
   Under `TENANCY_ENTRY_PLATFORM_SUFFIXES` a host is one `{slug}-name` label and active at once; elsewhere it is a
   custom domain, `pending_dns` until verified. `TENANCY_ENTRY_TRUSTED_SUFFIXES` is for development and CI.
 - `TENANCY_MAX_ENTRY_POINTS` (20) limits them per tenant. CLI: `ulams entry-points list|get|create|update|delete|audit`.
+## Templates and tenants created for a purpose (ADR 0141, amendment)
+
+- `ulams:tenant:template <slug>` (and `/api/platform/templates`): a named starting point for new tenants (theme, accent, demo flag,
+  demo users, inheritable settings). `ulams:tenant:create --template=<slug>` applies it to a tenant that does not exist yet; options win.
+- `ulams:tenant:create --derived-from=<parent> --purpose=<purpose> --reference=<id>` records the tenant as created for another tenant
+  (a department academy of a policy): once per reference, at most `TENANCY_MAX_DERIVED_PER_PARENT` active per parent, no chains,
+  the record kept after deletion (`tenant_derivations`). `ulams:tenant:delete --with-derived` removes the derived tenants first.
+- Tables (platform database): `tenant_templates`, `tenant_derivations`.
+

@@ -41,6 +41,19 @@ return [
         'slo_ttl' => 600,
     ],
 
+    // SCIM 2.0 server (ID-4, ID-5): /api/scim/v2 with a bearer token per identity provider.
+    'scim' => [
+        // Requests per minute and token. Entra ID bursts on the first sync, hence the generous default.
+        'rate_limit' => (int) env('IDENTITY_SCIM_RATE', 600),
+        // `deactivate` keeps the account and the learning record; `anonymise` soft-deletes and masks personal data.
+        'delete_behaviour' => env('IDENTITY_SCIM_DELETE', 'deactivate'),
+        'default_count' => 100,
+        'max_count' => 200,
+        'max_body_bytes' => 1048576,
+        // Published as documentationUri in ServiceProviderConfig when set (the URL of this deployment's documentation).
+        'docs_url' => env('ULAMS_DOCS_URL'),
+    ],
+
     // Development only: lets discovery, token and JWKS URLs be http:// and private addresses (Keycloak in compose).
     // Never switch this on in production: it lifts the SSRF guard for provider URLs.
     'allow_insecure_urls' => (bool) env('IDENTITY_ALLOW_INSECURE_URLS', false),

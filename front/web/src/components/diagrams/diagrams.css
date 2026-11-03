@@ -1212,6 +1212,11 @@
   .js-dg .dg.is-armed .dg-cite__link i {
     transition-delay: calc(8 * var(--dg-gap));
   }
+  /* replay: jump back to the hidden state without a transition (diagrams.ts rewind) */
+  .js-dg .dg.is-rewinding *,
+  .js-dg .dg.is-rewinding *::before {
+    transition: none !important;
+  }
   .js-dg .dg.is-armed:not(.is-played) [data-dg-step] {
     opacity: 0;
     transform: translateY(12px);

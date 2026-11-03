@@ -8,7 +8,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use Ulams\Commerce\CommerceManager;
-use Ulams\Commerce\Contracts\FetchesOrders;
+use Ulams\Commerce\Contracts\ReportsOrderEvents;
 use Ulams\Commerce\Jobs\ApplyOrderEvent;
 use Ulams\Commerce\Services\OrderEventIntake;
 use Ulams\Commerce\Support\OrderEventEnvelope;
@@ -38,7 +38,7 @@ class OrderWebhookController extends Controller
     {
         $secrets = array_values(array_filter([config('commerce.webhook.secret'), config('commerce.webhook.previous_secret')], fn ($s) => is_string($s) && $s !== ''));
         $channel = (string) config('commerce.channel');
-        if (!$this->commerce->has($provider) || !$this->commerce->provider($provider) instanceof FetchesOrders || $secrets === [] || $channel === '') {
+        if (!$this->commerce->has($provider) || !$this->commerce->provider($provider) instanceof ReportsOrderEvents || $secrets === [] || $channel === '') {
             return $this->refuse(404, 'Unknown provider.');
         }
 
