@@ -2238,6 +2238,28 @@
                   ],
                   "description": "Shipped today or on the roadmap (say so honestly)",
                   "default": "available"
+                },
+                "link": {
+                  "type": "object",
+                  "properties": {
+                    "label": {
+                      "type": "string",
+                      "description": "Visible text",
+                      "maxLength": 80
+                    },
+                    "href": {
+                      "type": "string",
+                      "format": "href",
+                      "description": "Target URL",
+                      "maxLength": 2048
+                    }
+                  },
+                  "required": [
+                    "label",
+                    "href"
+                  ],
+                  "description": "A link or call to action",
+                  "additionalProperties": false
                 }
               },
               "required": [
