@@ -9,6 +9,10 @@ import { build } from 'vite';
 const here = dirname(fileURLToPath(import.meta.url));
 const front = resolve(here, '..', '..');
 
+// SCORM_AGAIN_DIR=/path/to/an/unpacked/scorm-again/package runs the specs against another scorm-again
+// (React player and vendored content-player file) without touching package.json, to evaluate an upgrade.
+export const scormAgainDir = process.env.SCORM_AGAIN_DIR ? resolve(process.env.SCORM_AGAIN_DIR) : null;
+
 export async function buildHarness(app) {
   const outDir = join(front, 'test-results', 'scorm-playback', app);
   await build({
@@ -17,6 +21,7 @@ export async function buildHarness(app) {
     logLevel: 'warn',
     base: './',
     plugins: [react()],
+    resolve: scormAgainDir ? { alias: { 'scorm-again': scormAgainDir } } : {},
     // the page lives under tests/ but imports from src/ and node_modules
     server: { fs: { allow: [front, resolve(front, '..')] } },
     build: { outDir, emptyOutDir: true, sourcemap: false, minify: false, target: 'es2020' },

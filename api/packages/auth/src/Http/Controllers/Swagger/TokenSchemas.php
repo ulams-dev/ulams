@@ -18,6 +18,7 @@ namespace Ulams\Auth\Http\Controllers\Swagger;
  *     @OA\Property(property="expires_at", type="string", format="date-time"),
  *     @OA\Property(property="last_used_at", type="string", format="date-time", nullable=true),
  *     @OA\Property(property="last_used_ip", type="string", nullable=true),
+ *     @OA\Property(property="resource_ids", type="array", nullable=true, description="The resources (saved report ids) the token is limited to; null: not limited", @OA\Items(type="string")),
  *     @OA\Property(property="revoked", type="boolean"))
  *
  * @OA\Schema(schema="ApiTokenCreated", allOf={@OA\Schema(ref="#/components/schemas/ApiToken")},

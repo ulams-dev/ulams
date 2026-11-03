@@ -67,6 +67,7 @@ class ApiToken implements ModelInterface, ArrayAccess, \JsonSerializable
         'last_used_ip' => 'string',
         'name' => 'string',
         'rate_limit_per_minute' => 'int',
+        'resource_ids' => 'string[]',
         'revoked' => 'bool',
         'scopes' => 'string[]',
         'user_id' => 'int'
@@ -90,6 +91,7 @@ class ApiToken implements ModelInterface, ArrayAccess, \JsonSerializable
         'last_used_ip' => null,
         'name' => null,
         'rate_limit_per_minute' => null,
+        'resource_ids' => null,
         'revoked' => null,
         'scopes' => null,
         'user_id' => null
@@ -111,6 +113,7 @@ class ApiToken implements ModelInterface, ArrayAccess, \JsonSerializable
         'last_used_ip' => true,
         'name' => false,
         'rate_limit_per_minute' => true,
+        'resource_ids' => true,
         'revoked' => false,
         'scopes' => false,
         'user_id' => true
@@ -212,6 +215,7 @@ class ApiToken implements ModelInterface, ArrayAccess, \JsonSerializable
         'last_used_ip' => 'last_used_ip',
         'name' => 'name',
         'rate_limit_per_minute' => 'rate_limit_per_minute',
+        'resource_ids' => 'resource_ids',
         'revoked' => 'revoked',
         'scopes' => 'scopes',
         'user_id' => 'user_id'
@@ -233,6 +237,7 @@ class ApiToken implements ModelInterface, ArrayAccess, \JsonSerializable
         'last_used_ip' => 'setLastUsedIp',
         'name' => 'setName',
         'rate_limit_per_minute' => 'setRateLimitPerMinute',
+        'resource_ids' => 'setResourceIds',
         'revoked' => 'setRevoked',
         'scopes' => 'setScopes',
         'user_id' => 'setUserId'
@@ -254,6 +259,7 @@ class ApiToken implements ModelInterface, ArrayAccess, \JsonSerializable
         'last_used_ip' => 'getLastUsedIp',
         'name' => 'getName',
         'rate_limit_per_minute' => 'getRateLimitPerMinute',
+        'resource_ids' => 'getResourceIds',
         'revoked' => 'getRevoked',
         'scopes' => 'getScopes',
         'user_id' => 'getUserId'
@@ -362,6 +368,7 @@ class ApiToken implements ModelInterface, ArrayAccess, \JsonSerializable
         $this->setIfExists('last_used_ip', $data ?? [], null);
         $this->setIfExists('name', $data ?? [], null);
         $this->setIfExists('rate_limit_per_minute', $data ?? [], null);
+        $this->setIfExists('resource_ids', $data ?? [], null);
         $this->setIfExists('revoked', $data ?? [], null);
         $this->setIfExists('scopes', $data ?? [], null);
         $this->setIfExists('user_id', $data ?? [], null);
@@ -759,6 +766,40 @@ class ApiToken implements ModelInterface, ArrayAccess, \JsonSerializable
             }
         }
         $this->container['rate_limit_per_minute'] = $rate_limit_per_minute;
+
+        return $this;
+    }
+
+    /**
+     * Gets resource_ids
+     *
+     * @return string[]|null
+     */
+    public function getResourceIds()
+    {
+        return $this->container['resource_ids'];
+    }
+
+    /**
+     * Sets resource_ids
+     *
+     * @param string[]|null $resource_ids The resources (saved report ids) the token is limited to; null: not limited
+     *
+     * @return self
+     */
+    public function setResourceIds($resource_ids)
+    {
+        if (is_null($resource_ids)) {
+            array_push($this->openAPINullablesSetToNull, 'resource_ids');
+        } else {
+            $nullablesSetToNull = $this->getOpenAPINullablesSetToNull();
+            $index = array_search('resource_ids', $nullablesSetToNull);
+            if ($index !== FALSE) {
+                unset($nullablesSetToNull[$index]);
+                $this->setOpenAPINullablesSetToNull($nullablesSetToNull);
+            }
+        }
+        $this->container['resource_ids'] = $resource_ids;
 
         return $this;
     }

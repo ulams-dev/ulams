@@ -115,13 +115,104 @@ export const tenantCommands: AnyCommand[] = [
       accent: z.string().optional().describe("Accent colour, e.g. #C2552D."),
       users: z.number().int().min(0).max(50).optional().describe("Number of demo students (default 5)."),
       demo: z.boolean().optional().describe("Demo mode: login without a password, hourly reset."),
+      template: z.string().optional().describe("A tenant template (`tenants templates list`): its theme, accent, demo flag and settings are the starting point; the options here win."),
+      derivedFrom: z.string().optional().describe("The tenant this one is created for (a department academy); needs --purpose and --reference, counts against its quota and is recorded."),
+      purpose: z.string().optional().describe("What it is for, for example policy_department (with --derived-from)."),
+      reference: z.string().optional().describe("What it is for in the parent, for example an id (with --derived-from); asking again with the same reference finds the same tenant."),
     }),
     output: z.unknown(),
     examples: [{ title: "A demo tenant", argv: 'tenants create acme --name "Acme Academy" --theme coffee --accent "#C2552D" --users 3 --demo --json' }],
-    plan: async (_ctx, i) => planOf("POST", `${P}/tenants`, i),
+    plan: async (_ctx, i) => planOf("POST", `${P}/tenants`, createBody(i)),
     async run(ctx, i) {
-      const res = await platform<{ operation: Operation; tenant: unknown }>(ctx, "POST", `${P}/tenants`, { body: i });
+      const res = await platform<{ operation: Operation; tenant: unknown }>(ctx, "POST", `${P}/tenants`, { body: createBody(i) });
       return started(ctx, res.data);
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "tenants.derived",
+    summary: "The tenants created from this one for a purpose (department academies), with who asked",
+    kind: "read",
+    scopes: READ,
+    endpoints: [`GET ${P}/tenants/{slug}/derived`],
+    positionals: ["slug"],
+    input: z.object({ slug: slugInput }),
+    output: z.unknown(),
+    examples: [{ title: "Academies of a tenant", argv: "tenants derived acme --json" }],
+    async run(ctx, i) {
+      return { data: (await platform(ctx, "GET", `${P}/tenants/{slug}/derived`, { params: { slug: i.slug } })).data };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "tenants.templates.list",
+    summary: "List the tenant templates: named starting points for new tenants",
+    kind: "read",
+    scopes: READ,
+    endpoints: [`GET ${P}/templates`],
+    input: z.object({}),
+    output: z.unknown(),
+    examples: [{ title: "Templates", argv: "tenants templates list --json" }],
+    async run(ctx) {
+      return { data: (await platform(ctx, "GET", `${P}/templates`)).data };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "tenants.templates.get",
+    summary: "Show one tenant template (the names of its settings, never their values)",
+    kind: "read",
+    scopes: READ,
+    endpoints: [`GET ${P}/templates/{slug}`],
+    positionals: ["slug"],
+    input: z.object({ slug: z.string().describe("Template slug.") }),
+    output: z.unknown(),
+    examples: [{ title: "A template", argv: "tenants templates get policy-academy --json" }],
+    async run(ctx, i) {
+      return { data: (await platform(ctx, "GET", `${P}/templates/{slug}`, { params: { slug: i.slug } })).data };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "tenants.templates.save",
+    summary: "Create a tenant template, or change the given fields of an existing one",
+    description: "A template applies only when a tenant is created; it never changes an existing tenant. Settings are the inheritable ones (--override AI_DRIVER=fake); anything else is refused (exit 7).",
+    kind: "write",
+    idempotent: true,
+    scopes: WRITE,
+    endpoints: [`POST ${P}/templates`],
+    positionals: ["slug"],
+    input: z.object({
+      slug: z.string().describe("Template slug: 2 to 39 lowercase letters, digits and hyphens, starting with a letter."),
+      name: z.string().optional().describe("Display name."),
+      theme: z.string().optional().describe("Front theme preset."),
+      accent: z.string().optional().describe("Accent colour, e.g. #C2552D."),
+      users: z.number().int().min(0).max(50).optional().describe("Demo students created with a tenant made from it."),
+      demo: z.boolean().optional().describe("Demo mode for tenants made from it."),
+      override: z.array(z.string()).optional().describe("KEY=value of an inheritable setting; repeat for several."),
+    }),
+    output: z.unknown(),
+    examples: [{ title: "A template for department academies", argv: 'tenants templates save policy-academy --name "Policy academy" --theme coffee --users 0 --json' }],
+    plan: async (_ctx, i) => planOf("POST", `${P}/templates`, templateBody(i)),
+    async run(ctx, i) {
+      return { data: (await platform(ctx, "POST", `${P}/templates`, { body: templateBody(i) })).data };
+    },
+  }),
+  defineCommand({
+    ...common,
+    id: "tenants.templates.delete",
+    summary: "Remove a tenant template (tenants made from it are untouched)",
+    kind: "destructive",
+    idempotent: false,
+    scopes: WRITE,
+    endpoints: [`DELETE ${P}/templates/{slug}`],
+    positionals: ["slug"],
+    input: z.object({ slug: z.string().describe("Template slug.") }),
+    output: z.unknown(),
+    examples: [{ title: "Remove", argv: "tenants templates delete policy-academy --yes --json" }],
+    plan: async (_ctx, i) => planOf("DELETE", `${P}/templates/${i.slug}`),
+    async run(ctx, i) {
+      return { data: (await platform(ctx, "DELETE", `${P}/templates/{slug}`, { params: { slug: i.slug } })).data };
     },
   }),
   defineCommand({
@@ -203,6 +294,17 @@ export const tenantCommands: AnyCommand[] = [
     },
   }),
 ];
+
+const createBody = (i: { slug: string; name?: string; theme?: string; accent?: string; users?: number; demo?: boolean; template?: string; derivedFrom?: string; purpose?: string; reference?: string }): Record<string, unknown> => {
+  const { derivedFrom, ...rest } = i;
+  return { ...rest, ...(derivedFrom !== undefined ? { derived_from: derivedFrom } : {}) };
+};
+
+const templateBody = (i: { slug: string; name?: string; theme?: string; accent?: string; users?: number; demo?: boolean; override?: string[] }): Record<string, unknown> => {
+  const { override, ...rest } = i;
+  const env = parseOverrides(override);
+  return { ...rest, ...(Object.keys(env).length ? { env } : {}) };
+};
 
 function parseOverrides(pairs: string[] | undefined): Record<string, string> {
   const out: Record<string, string> = {};
