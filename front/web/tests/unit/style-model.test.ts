@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { STYLE_LOCALES, STYLE_STRINGS, fill } from "../../src/studio/style-i18n.ts";
-import { changeLabel, changeRows, hasTheme, profileRows, styleFormatterFor, themeLinkFor, valueSections, valueText, withEdits, withoutItem, type StyleProfile } from "../../src/studio/style-model.ts";
+import { checkGroups, changeLabel, changeRows, hasTheme, profileRows, styleFormatterFor, themeLinkFor, valueSections, valueText, withEdits, withoutItem, type StyleProfile } from "../../src/studio/style-model.ts";
 
 const F1 = "frg_aaaaaaaaaaaa";
 const F2 = "frg_bbbbbbbbbbbb";
@@ -109,5 +109,13 @@ describe("style model", () => {
     expect(next.banned?.blocking).toBe(true);
     expect(p.voice?.person).toBe("you");
     expect(withEdits(p, { person: "", formality: "", sentenceLength: "", blocking: false }).voice).toBeUndefined();
+  });
+
+  it("groups a check report with blocking first and leaves empty groups out", () => {
+    const f = styleFormatterFor("en");
+    const finding = (code: string) => ({ code, rule: code, severity: "warning", message: code, citations: [] });
+    const report = { profile: { id: "x", name: "N", status: "approved" }, course: { id: 1, title: null }, blocking: [finding("a")], warnings: [], hints: [finding("h")], counts: { blocking: 1, warnings: 0, hints: 1 }, blocksPublishing: true };
+    expect(checkGroups(f, report).map((g) => [g.key, g.title, g.findings.length])).toEqual([["blocking", "Blocks publishing", 1], ["hints", "Hints (approximate, never blocking)", 1]]);
+    expect(checkGroups(styleFormatterFor("pl"), { ...report, blocking: [], hints: [] })).toEqual([]);
   });
 });

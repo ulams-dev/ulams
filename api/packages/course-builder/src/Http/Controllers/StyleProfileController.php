@@ -10,7 +10,12 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Ulams\CourseBuilder\Exceptions\BuilderException;
 use Ulams\CourseBuilder\Http\Controllers\Concerns\ResolvesSessions;
+use Ulams\CourseBuilder\Models\Session;
 use Ulams\CourseBuilder\Models\StyleProfile;
+use Ulams\CourseBuilder\Models\Variant;
+use Ulams\CourseBuilder\Models\Version;
+use Ulams\CourseBuilder\Policies\SessionPolicy;
+use Ulams\CourseBuilder\StyleProfile\StyleCheck;
 use Ulams\CourseBuilder\StyleProfile\StyleProfileService;
 use Ulams\Uploads\Exceptions\UploadRejected;
 
@@ -34,6 +39,9 @@ use Ulams\Uploads\Exceptions\UploadRejected;
  *     @OA\Response(response=200, description="the profile", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="not the creator or an admin"), @OA\Response(response=409, description="no longer a suggestion"))
  * @OA\Post(path="/api/admin/course-builder/style-profiles/{profile}/approve", operationId="admin.course-builder.style-profiles.by-profile.approve.post", summary="Approve a suggested profile (admins); it supersedes the approved profile of its scope", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="profile", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="approved", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="not an admin"), @OA\Response(response=409, description="not a suggestion"), @OA\Response(response=422, description="empty profile"))
+ * @OA\Get(path="/api/admin/course-builder/style-profiles/{profile}/check", operationId="admin.course-builder.style-profiles.by-profile.check.get", summary="Style check: where a course departs from a profile (banned phrases, terminology, casing, landing components, image alt text; reading level and sentence length as hints). Only the author of the course or an admin; nothing is changed", tags={"Admin Course Builder"}, security={{"passport": {}}},
+ *     @OA\Parameter(name="profile", in="path", required=true, @OA\Schema(type="string")), @OA\Parameter(name="course", in="query", required=true, description="LMS course id of a course made with the builder (a variant's course too)", @OA\Schema(type="integer")),
+ *     @OA\Response(response=200, description="blocking, warnings and hints, each with the style guide passages it comes from", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=403, description="another author's course"), @OA\Response(response=404, description="unknown profile or course"), @OA\Response(response=422, description="course missing"))
  * @OA\Delete(path="/api/admin/course-builder/style-profiles/{profile}", operationId="admin.course-builder.style-profiles.by-profile.delete", summary="Delete a suggested or superseded profile", tags={"Admin Course Builder"}, security={{"passport": {}}},
  *     @OA\Parameter(name="profile", in="path", required=true, @OA\Schema(type="string")), @OA\Response(response=200, description="deleted", @OA\JsonContent(ref="#/components/schemas/ApiEnvelope")), @OA\Response(response=409, description="approved profiles are replaced, not deleted"))
  */
@@ -172,6 +180,43 @@ class StyleProfileController extends Controller
         }
 
         return self::ok($this->profiles->present($approved, true));
+    }
+
+    /** The style check of one course against one profile (ADR 0196). Read-only; it never rewrites anything. */
+    public function check(Request $request, string $profile): JsonResponse
+    {
+        $this->assertCanUse($request);
+        $p = $this->profileFor($profile);
+        $request->validate(['course' => ['required', 'integer', 'min:1']]);
+        $courseId = (int) $request->query('course');
+        $variant = null;
+        $session = Session::query()->where('course_id', $courseId)->where('status', '!=', Session::STYLE_GUIDE)->first();
+        if ($session === null) {
+            $variant = Variant::query()->where('course_id', $courseId)->first();
+            $session = $variant !== null ? Session::query()->find($variant->session_id) : null;
+        }
+        if ($session === null) {
+            throw new NotFoundHttpException('That course was not made with the Course Builder.');
+        }
+        if (!(new SessionPolicy())->view($request->user(), $session)) {
+            throw new AccessDeniedHttpException('This course belongs to another author.');
+        }
+        $versionId = $variant !== null ? ($variant->applied_version_id ?? $variant->current_version_id) : ($session->applied_version_id ?? $session->current_version_id);
+        $doc = $versionId !== null ? (array) (Version::query()->find($versionId)?->document ?? []) : [];
+        if ($doc === []) {
+            throw new NotFoundHttpException('That course has no content to check yet.');
+        }
+        $report = app(StyleCheck::class)->run($doc, $p, (string) ($session->brief['language'] ?? 'en'));
+
+        return self::ok([
+            'profile' => ['id' => $p->id, 'name' => $p->name, 'status' => $p->status],
+            'course' => ['id' => $courseId, 'title' => $doc['course']['title'] ?? $session->title, 'sessionId' => $session->id, 'variantId' => $variant?->id, 'versionId' => $versionId],
+            'blocking' => $report['blocking'],
+            'warnings' => $report['warnings'],
+            'hints' => $report['hints'],
+            'counts' => ['blocking' => count($report['blocking']), 'warnings' => count($report['warnings']), 'hints' => count($report['hints'])],
+            'blocksPublishing' => $report['blocking'] !== [],
+        ]);
     }
 
     public function destroy(Request $request, string $profile): JsonResponse

@@ -13,12 +13,12 @@ import { Aside } from "@astrojs/starlight/components";
 
 <Aside type="note" title="What is built and what is coming">
 **Built:** reading a style guide into a style profile, with every value citing the passage it came from; the **Style**
-screen of the studio (`/studio/style`) to review, edit and approve it, in English, Polish and Chinese; handing the theme
-part to the admin theme screen as a diff; the diff against the approved profile; **the approved profile in the prompt of
-every course the builder drafts, chosen per Course Brief**; the API and `ulams style-profiles`.
-**Coming:** the style check with its findings in the publish summary, restyle proposals for courses that already exist,
-and a profile per entry point (it arrives with entry points). Progress is tracked in the [roadmap](/roadmap/); the design
-is in `docs/plans/style-guide-course-design.md` and ADR 0196.
+screen of the studio (`/studio/style`) to review, edit, approve and check a course against a profile, in English, Polish
+and Chinese; handing the theme part to the admin theme screen as a diff; the approved profile in the prompt of every course
+the builder drafts, chosen per Course Brief; **the style check in the publish summary, where a banned phrase blocks
+publishing only when the profile says so**; the API and `ulams style-profiles`.
+**Coming:** restyle proposals for courses that already exist, and a profile per entry point (it arrives with entry points).
+Progress is tracked in the [roadmap](/roadmap/); the design is in `docs/plans/style-guide-course-design.md` and ADR 0196.
 </Aside>
 
 A style guide is a document. A **style profile** is what the builder can use from it: typed values that an admin
@@ -101,6 +101,32 @@ To keep more than one profile in use (for example an expert track beside the aca
 `--scope brief` (`scopeType: brief`, named by `scopeId`). Approving a brief profile replaces only the approved profile of the
 same name, never the academy default.
 
+## The style check
+
+The check is deterministic: no model is called, nothing is rewritten, and it cannot grade anyone or decide who gets access.
+It reports; you decide. It runs on the course that is about to be published (and on each approved variant), against the
+profile the brief names, else the academy's, and its findings appear in the **publish summary** next to the other checks.
+Every finding names the style guide passage it comes from.
+
+| Rule | Looks at | Result |
+|---|---|---|
+| Banned phrases | lessons, quiz questions, final test, the course's title and description | **blocks publishing** when the profile's *A banned phrase blocks publishing* switch is on, otherwise a warning |
+| Terminology | the same text: a term to avoid, or a product name in the wrong casing | warning |
+| Components | the landing page: a component the profile does not allow | warning |
+| Images | Markdown images without alternative text, when the profile requires it | warning |
+| Reading level | each lesson, per language: English by the Flesch-Kincaid grade, Polish by the Pisarek index, Chinese by sentence length in characters | hint |
+| Sentence length | each lesson, when more than a fifth of the sentences are longer than the profile's target | hint |
+
+Matching is on whole words and phrases, ignoring case (a name with capitals must match its casing exactly); a Polish or other
+inflected form is a different word. The readability formulas are approximate, and short texts (under three sentences or
+30 words) are not judged, so reading level and sentence length are **hints only**: they are listed on the check result
+(`hints`, and `facts.style.hints` of the publish check) and never need acknowledging or block anything. Image rules about text
+inside images and decorative images cannot be checked from the text and are not.
+
+Warnings must be acknowledged before publishing, like the other warnings. To see what a *suggested* profile would flag
+before approving it, check a course against it: in the studio, open the profile and use **Check a course against this
+profile**, or run `ulams style-profiles check <profile> --course <id>`.
+
 ## From the command line
 
 ```bash
@@ -111,6 +137,7 @@ ulams style-profiles approve <profile>                        # admins; replaces
 ulams style-profiles propose --from <profile> --profile '{"terminology":[{"use":"participant","avoid":["learner"]}]}'
 ulams style-profiles propose --file ./expert-guide.md --scope brief --name "Expert track"   # a named alternative a brief can pick
 ulams builder brief set <session> --style-profile-id <profile>   # none: back to the academy default
+ulams style-profiles check <profile> --course 12                 # blocking, warnings and hints, with the guide passages
 ulams style-profiles list --status approved
 ulams style-profiles delete <profile> --yes                   # a suggestion or a superseded profile, never the approved one
 ```

@@ -120,3 +120,21 @@ describe("style profile scope and the brief", () => {
     clear.cleanup();
   });
 });
+
+describe("style-profiles check", () => {
+  it("sends the course id and returns the findings", async () => {
+    const report = { profile: { id: ID, name: "Northwind", status: "approved" }, course: { id: 12 }, blocking: [{ code: "style_banned", message: "x", citations: [] }], warnings: [], hints: [], counts: { blocking: 1, warnings: 0, hints: 0 }, blocksPublishing: true };
+    const r = await runCli(["style-profiles", "check", ID, "--course", "12", "--json"], { env, routes: { [`GET ${P}/${ID}/check`]: ok(report) } });
+    expect(r.code).toBe(0);
+    expect(r.requests[0]?.query).toEqual({ course: "12" });
+    expect(data(r)).toMatchObject({ blocksPublishing: true, counts: { blocking: 1 } });
+    r.cleanup();
+  });
+
+  it("needs a course", async () => {
+    const r = await runCli(["style-profiles", "check", ID, "--json"], { env, routes: {} });
+    expect(r.code).toBe(2);
+    expect(r.requests).toHaveLength(0);
+    r.cleanup();
+  });
+});
