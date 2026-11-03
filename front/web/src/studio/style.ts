@@ -10,6 +10,8 @@ import { announce } from "./common.ts";
 import { fill, type StyleLocale } from "./style-i18n.ts";
 import {
   changeRows,
+  checkGroups,
+  type CheckReport,
   hasTheme,
   profileRows,
   styleFormatterFor,
@@ -181,13 +183,13 @@ export function mountStyle(root: HTMLElement): void {
 
   // ---- the detail ------------------------------------------------------------------------------------------------
 
-  function citationButtons(item: { citations: Array<{ id: string; label: string }>; own: boolean }, region: HTMLElement): HTMLElement {
+  function citationButtons(item: { citations: Array<{ id: string; label: string }>; own: boolean }, region: HTMLElement, from: StyleProfile | null = selected): HTMLElement {
     if (item.own) return h("span", { class: "cb-muted st-style-own" }, t.ownValue);
     return h("span", { class: "st-style-cites" },
       h("span", { class: "cb-muted" }, `${t.citedBy} `),
       item.citations.map((c) => {
         const passageId = uid("st-style-passage");
-        const passage = h("blockquote", { class: "st-style-passage", id: passageId, hidden: true }, selected?.fragments?.[c.id]?.preview ?? t.noPassage);
+        const passage = h("blockquote", { class: "st-style-passage", id: passageId, hidden: true }, from?.fragments?.[c.id]?.preview ?? t.noPassage);
         const button = h("button", { type: "button", class: "cb-btn cb-btn-small st-style-cite", "aria-expanded": "false", "aria-controls": passageId, "aria-label": fill(t.showPassage, { label: c.label }), "data-cite": c.id }, c.label) as HTMLButtonElement;
         button.addEventListener("click", () => {
           const open = passage.hidden;
@@ -271,6 +273,7 @@ export function mountStyle(root: HTMLElement): void {
         link ? h("a", { class: "cb-btn", href: link }, t.themeLink) : h("p", { class: "cb-muted" }, t.themeNoAdmin)));
     }
 
+    parts.push(checkSection(p, headingId));
     if (editable) parts.push(editForm(p));
 
     const actions = h("div", { class: "st-style-actions" });
@@ -282,6 +285,59 @@ export function mountStyle(root: HTMLElement): void {
 
     detailBox.replaceChildren(...(parts.filter(Boolean) as Node[]));
     heading.focus();
+  }
+
+  /** The style check of one course against this profile: read-only, so it works for a suggestion too. */
+  function checkSection(p: StyleProfile, headingId: string): HTMLElement {
+    const courseId = uid("st-style-course");
+    const input = h("input", { type: "number", id: courseId, min: "1", step: "1", inputmode: "numeric", "aria-describedby": `${courseId}-h` }) as HTMLInputElement;
+    const button = h("button", { type: "submit", class: "cb-btn" }, t.checkButton) as HTMLButtonElement;
+    const result = h("div", { class: "st-style-check-result", "data-check-result": "", "aria-live": "polite" });
+    const form = h("form", { class: "st-style-check", "data-check": "", novalidate: true },
+      h("p", { class: "cb-muted" }, t.checkIntro),
+      h("p", {}, h("label", { for: courseId }, t.checkCourseLabel), h("br"), input, h("br"), h("span", { id: `${courseId}-h`, class: "cb-muted" }, t.checkCourseHint)),
+      h("p", {}, button), result);
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const course = Number.parseInt(input.value, 10);
+      if (!Number.isInteger(course) || course < 1) {
+        result.replaceChildren(h("p", { class: "cb-error", role: "alert" }, t.checkNeedCourse));
+        return;
+      }
+      button.disabled = true;
+      result.replaceChildren(h("p", { class: "cb-muted", role: "status" }, t.checking));
+      call<CheckReport>("GET", `/${p.id}/check?course=${course}`)
+        .then((report) => {
+          renderReport(result, p, report);
+          const summary = fill(t.checkSummary, { blocking: report.counts.blocking, warnings: report.counts.warnings, hints: report.counts.hints });
+          announce(summary);
+        })
+        .catch((error) => {
+          const text = error instanceof StyleError && error.status === 404 ? t.checkNotFound : error instanceof StyleError && error.status === 403 ? t.forbidden : error instanceof StyleError && error.message ? error.message : t.error;
+          result.replaceChildren(h("p", { class: "cb-error", role: "alert" }, text));
+        })
+        .finally(() => (button.disabled = false));
+    });
+    return h("section", { class: "st-style-checkbox", "aria-labelledby": `${headingId}-k` }, h("h3", { id: `${headingId}-k`, class: "cb-h3" }, t.checkTitle), form);
+  }
+
+  function renderReport(box: HTMLElement, p: StyleProfile, report: CheckReport): void {
+    const groups = checkGroups(f, report);
+    const summary = fill(t.checkSummary, { blocking: report.counts.blocking, warnings: report.counts.warnings, hints: report.counts.hints });
+    const nodes: Node[] = [h("p", { "data-check-summary": "" }, summary)];
+    if (groups.length === 0) nodes.push(h("p", { class: "cb-muted" }, t.checkClean));
+    if (report.blocksPublishing) nodes.push(h("p", { class: "cb-error", "data-blocks": "" }, t.checkBlocksPublishing));
+    nodes.push(
+      ...groups.map((g) =>
+        h("div", { class: "st-style-findings", "data-findings": g.key },
+          h("h4", { class: "cb-h3" }, `${g.title}: ${g.findings.length}`),
+          h("ul", {}, g.findings.map((finding) => {
+            const passages = h("div", { class: "st-style-passages" });
+            const own = { citations: finding.citations, own: finding.citations.length === 0 };
+            return h("li", { class: "st-style-finding", "data-code": finding.code }, h("span", {}, finding.message), finding.quote ? h("q", { class: "cb-muted" }, ` ${finding.quote}`) : null, " ",
+              finding.citations.length ? citationButtons(own, passages, p) : null, passages);
+          })))));
+    box.replaceChildren(...nodes);
   }
 
   function editForm(p: StyleProfile): HTMLElement {

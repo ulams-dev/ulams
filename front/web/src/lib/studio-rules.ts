@@ -34,6 +34,7 @@ export const STUDIO_RULES: Array<{ method: string; pattern: RegExp }> = [
   { method: "PATCH", pattern: new RegExp(`^/style-profiles/${ID}$`) },
   { method: "DELETE", pattern: new RegExp(`^/style-profiles/${ID}$`) },
   { method: "POST", pattern: new RegExp(`^/style-profiles/${ID}/approve$`) },
+  { method: "GET", pattern: new RegExp(`^/style-profiles/${ID}/check$`) },
 ];
 
 export function isStudioCall(method: string, path: string): boolean {

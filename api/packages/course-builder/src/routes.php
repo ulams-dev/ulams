@@ -95,6 +95,7 @@ Route::group([
     Route::post('style-profiles', [StyleProfileController::class, 'store']);
     Route::get('style-profiles/{profile}', [StyleProfileController::class, 'show']);
     Route::patch('style-profiles/{profile}', [StyleProfileController::class, 'update']);
+    Route::get('style-profiles/{profile}/check', [StyleProfileController::class, 'check']);
     Route::post('style-profiles/{profile}/approve', [StyleProfileController::class, 'approve']);
     Route::delete('style-profiles/{profile}', [StyleProfileController::class, 'destroy']);
 });
