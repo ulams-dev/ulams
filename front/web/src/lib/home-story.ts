@@ -411,29 +411,29 @@ export const WHITE_LABEL_ID = "white-label";
 export interface HomeBodyPlan {
   /** Nodes before the main landmark (the site header). */
   before: UiNode[];
-  /** Children of the main landmark: the story and the builder walkthrough right after the hero, the style guide after the white-label band. */
+  /** Children of the main landmark, with the builder walkthrough after the advantages grid. */
   main: HomePart[];
   /** Nodes after the main landmark (the site footer). */
   after: UiNode[];
 }
 
+/** Id of the advantages grid on the home page; the builder walkthrough follows it. */
+export const ADVANTAGES_ID = "advantages";
+
 /**
- * Splits the home document around its main landmark and places the story, then the builder walkthrough, right after
- * the hero (first, if there is no hero), the learning elements right after the demos and the style-guide section right
- * after the white-label band (each at the end when its anchor is missing). Returns null for a document without a Page > Main structure, which is then rendered as it is.
+ * Splits the home document around its main landmark and places the builder walkthrough right after the advantages grid
+ * (right after the hero when the grid is missing, first when both are). The how-it-works story, the learning elements
+ * and the style guide have their own pages; the hero journey and the advantages link to them, so the home page does
+ * not repeat them. Returns null for a document without a Page > Main structure, which is then rendered as it is.
  */
 export function planHomeBody(doc: UiNode): HomeBodyPlan | null {
   const children = doc.component === "Page" ? (doc.children ?? []) : [];
   const mainIndex = children.findIndex((node) => node.component === "Main");
   if (mainIndex < 0) return null;
   const sections = children[mainIndex]!.children ?? [];
-  const hero = sections.findIndex((node) => node.component === "Hero");
   const main: HomePart[] = sections.map((node) => ({ kind: "node", node }));
-  const whiteLabel = main.findIndex((part) => part.kind === "node" && part.node.props?.id === WHITE_LABEL_ID);
-  main.splice(whiteLabel < 0 ? main.length : whiteLabel + 1, 0, { kind: "style-guide" });
-  // the learning elements follow the demos: what the demo courses are made of
-  const demos = main.findIndex((part) => part.kind === "node" && part.node.component === "Showcase");
-  main.splice(demos < 0 ? main.length : demos + 1, 0, { kind: "learning" });
-  main.splice(hero + 1, 0, { kind: "story" }, { kind: "walkthrough" });
+  const advantages = sections.findIndex((node) => node.props?.id === ADVANTAGES_ID);
+  const anchor = advantages >= 0 ? advantages : sections.findIndex((node) => node.component === "Hero");
+  main.splice(anchor + 1, 0, { kind: "walkthrough" });
   return { before: children.slice(0, mainIndex), main, after: children.slice(mainIndex + 1) };
 }

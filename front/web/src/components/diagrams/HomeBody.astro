@@ -52,7 +52,7 @@ type HeroProps = ComponentProps<typeof Hero>;
           ) : part.kind === "story" ? (
             <HomeStory copy={copy} status={status} />
           ) : part.kind === "walkthrough" ? (
-            <BuilderWalkthrough copy={walkthrough} steps={steps} locale={locale} />
+            <BuilderWalkthrough copy={walkthrough} steps={steps} locale={locale} result={false} />
           ) : part.kind === "learning" ? (
             <LearningSection locale={locale} />
           ) : (

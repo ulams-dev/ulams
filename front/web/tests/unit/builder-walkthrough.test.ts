@@ -83,11 +83,14 @@ describe("builder walkthrough: frames", () => {
 });
 
 const COMPONENT = "../../src/components/diagrams/HomeBody.astro";
+const WALKTHROUGH = "../../src/components/diagrams/BuilderWalkthrough.astro";
 let container: AstroContainer;
 let HomeBody: unknown;
+let Walkthrough: unknown;
 beforeAll(async () => {
   container = await AstroContainer.create();
   HomeBody = ((await import(/* @vite-ignore */ COMPONENT)) as { default: unknown }).default;
+  Walkthrough = ((await import(/* @vite-ignore */ WALKTHROUGH)) as { default: unknown }).default;
 });
 
 async function render(locale: Locale): Promise<Document> {
@@ -125,17 +128,24 @@ describe("builder walkthrough: rendered markup", () => {
       for (const button of section.querySelectorAll("button")) expect(button.getAttribute("type")).toBe("button");
     });
 
-    it(`${locale}: the result shows the course, the run and the two case studies with their Umami event`, async () => {
+    it(`${locale}: on the home page only the two case studies follow the steps, with their Umami event`, async () => {
       const document = await render(locale);
       const section = document.getElementById(WALKTHROUGH_ID)!;
+      expect(section.querySelector(".wt-result")).toBeNull();
+      const links = [...section.querySelectorAll<HTMLAnchorElement>(".wt-more .wt-cases a")];
+      expect(links.map((a) => a.getAttribute("href"))).toEqual([publicPagePath(locale, "case-docs-repo"), publicPagePath(locale, "case-notion")]);
+      for (const link of links) expect(link.getAttribute("data-umami-event")).toBe("case_study_open");
+    });
+
+    it(`${locale}: with the result, it shows the course, the run and the two case studies`, async () => {
+      const html = await container.renderToString(Walkthrough as never, { props: { copy: walkthroughCopy(locale), steps: walkthroughSteps(locale), locale } });
+      const section = new JSDOM(`<!doctype html><html><body>${html}</body></html>`).window.document.getElementById(WALKTHROUGH_ID)!;
       const copy = walkthroughCopy(locale);
       expect([...section.querySelectorAll(".wt-facts dd")].map((dd) => dd.textContent)).toEqual(copy.result.facts.map((f) => f.value));
       expect(section.querySelector(".wt-badge")!.textContent).toBe(copy.result.badge);
       expect(section.querySelectorAll(".wt-modules ul li")).toHaveLength(6);
       expect(section.querySelector(".wt-modules")!.getAttribute("lang")).toBe("en");
-      const links = [...section.querySelectorAll<HTMLAnchorElement>(".wt-cases a")];
-      expect(links.map((a) => a.getAttribute("href"))).toEqual([publicPagePath(locale, "case-docs-repo"), publicPagePath(locale, "case-notion")]);
-      for (const link of links) expect(link.getAttribute("data-umami-event")).toBe("case_study_open");
+      expect(section.querySelectorAll(".wt-result .wt-cases a")).toHaveLength(2);
     });
   }
 });

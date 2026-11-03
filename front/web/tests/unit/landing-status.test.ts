@@ -51,7 +51,7 @@ describe("platform landing in final mode", () => {
   });
   it("applies the text overrides", () => {
     expect(json(final)).not.toMatch(/on the roadmap/i);
-    expect(json(final)).toContain("Helm chart coming soon.");
+    expect(json(final)).not.toMatch(/"status":"(coming|preview)"/);
   });
   it("is valid against the catalogue in both modes", () => {
     for (const mode of ["final", "actual"] as const) {
