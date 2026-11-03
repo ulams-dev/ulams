@@ -1,0 +1,199 @@
+---
+title: SCIM provisioning
+description: Let Microsoft Entra ID, Okta or another identity provider create, update and deactivate the accounts and groups of a tenant with SCIM 2.0 - tokens and rotation, what is mapped, groups and the roles they can grant, how deprovisioning works and what is kept, recipes for Entra ID, Okta and Keycloak, limits, security notes and how to check conformance.
+sidebar:
+  order: 16
+modules:
+  - identity
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+With SCIM 2.0 (RFC 7643 and 7644) the identity provider (IdP) of an organisation keeps the accounts of a tenant up to date
+by itself: it creates a person when they join, changes their name, e-mail address, department or manager, and
+**deactivates** them when they leave, which also ends every session and API token they have. This page is for the person who
+runs the instance or administers the tenant. Developers who build or debug a SCIM client want the
+[SCIM API reference](/developers/scim-api/). Sign-in itself is a separate switch:
+[OpenID Connect](/operators/single-sign-on/) or [SAML 2.0](/operators/single-sign-on-saml/).
+
+It provisions **users and groups**: the people, their group memberships (a group gives access to what it is enrolled in), and,
+if you choose, a role for the members of a group. HR data from a file (HRIS import) and an admin screen are separate milestones of
+[the identity plan](https://github.com/ulams-dev/ulams/blob/main/docs/plans/phase-6-identity.md).
+
+<Aside type="note">
+  SCIM is optional and per identity provider. Nothing is provisioned until an administrator creates a SCIM token for a provider
+  and enters it, with the tenant's SCIM URL, in the IdP.
+</Aside>
+
+## Set it up
+
+1. **Add an identity provider** for the organisation (see the sign-in pages above). Set `email_domains` to its domains. Turn
+   on `trust_email` if the IdP should be allowed to take over accounts that already exist (below).
+2. **Create a SCIM token** (permission `identity_scim_manage`, which administrators have):
+
+   ```bash
+   ulams identity scim-tokens-create <provider-id> --name "Okta production" --expires-in-days 365
+   ```
+
+   The response carries `token` (`ulams_pat_...`). **It is shown once**: copy it into the IdP now. It lives at most 365 days.
+   The provider's `scim.base_url` (in `ulams identity providers-get <id>`) is the URL to enter, `https://<tenant-api-host>/api/scim/v2`.
+3. **Enter both in the IdP** (recipes below) and run its connection test, which reads `/ServiceProviderConfig`.
+4. **Assign people** (and, if you want groups, the groups) to the application in the IdP. They appear in the tenant on the next sync, as students (or as tutors when the
+   provider's `default_role` is `tutor`; never as administrators).
+
+### Rotating the token
+
+At most two tokens are active for a provider, so a secret can be replaced without a gap:
+
+1. create the second token,
+2. enter it in the IdP and check that a sync succeeds (the token list shows `last_used_at`),
+3. revoke the first: `ulams identity scim-tokens-revoke <provider-id> <token-id>`.
+
+A revoked or expired token is refused at once (HTTP 401). Deleting the provider revokes its tokens; the accounts stay.
+Every token belongs to the provider it was created for and to this tenant only: a token of another provider sees none of the
+users, and a token of another tenant is not even a valid token (each tenant signs with its own keys). A SCIM token works on
+the SCIM endpoints and nowhere else; no other kind of token works on them.
+
+## What is mapped
+
+| SCIM attribute | In the tenant |
+|---|---|
+| `userName` | Unique login name of the tenant, compared case-insensitively. Usually the e-mail address. |
+| `emails` (primary, else the first) | The e-mail address of the account. Without `emails` the `userName` must be an address. |
+| `name.givenName`, `name.familyName` | First and last name. |
+| `active` | `false` deactivates the account; `true` restores it. Entra ID's `"True"` / `"False"` strings are accepted. |
+| `externalId` | The IdP's own id, unique per provider. |
+| `displayName`, `title`, enterprise `employeeNumber`, `department`, `organization`, `division`, `costCenter` | Kept and returned unchanged. When the tenant has a [custom user field](/admin/users/) named `employee_id`, `department`, `organization`, `division`, `cost_center` or `job_title`, the value is also written there, where the [compliance](/admin/compliance/) rules read it. A field is never created for you. |
+| enterprise `manager.value` | The id (SCIM `id`) of another user of the same provider; the manager link is kept for [escalation](/admin/compliance/) when that module is installed. |
+| `id` | The id of the account in the tenant. Read-only. |
+
+Everything else (phone numbers, addresses, photos, roles, entitlements) is ignored on input and never returned. The
+`/Schemas` endpoint lists exactly what is supported.
+
+### Existing accounts
+
+A user who already has an account is **not** taken over silently. If the e-mail address belongs to an account this
+provider did not provision, the IdP gets `409 uniqueness`, and nothing changes. The account is adopted (linked and then managed
+by SCIM) only when all of these are true: the provider has `trust_email` on, the address is in the provider's `email_domains`,
+the address is verified, the account is active and it is neither an administrator nor a tutor. Administrators and
+superadministrators can never be changed, deactivated or deleted through SCIM (HTTP 403).
+
+A person provisioned by SCIM can sign in through the same provider on their first visit without `trust_email`, because the
+provider already vouched for that address when it created the account.
+
+## Groups
+
+A group pushed by the identity provider is a normal group of the tenant (it can be enrolled in courses and learning paths, and drives
+compliance rules) that is **managed by that provider**: only that provider sees it, and it can only change, fill or delete groups it created.
+
+- The `displayName` must not be used by any other group of the tenant, including groups created by hand (`409 uniqueness`): a group is
+  never taken over by name.
+- Members are users that provider provisioned. A member that is not one of them, or another group, is `400 invalidValue`.
+- A replace (`PUT`) that leaves out `members` keeps the membership; an empty list empties the group. Members an administrator added by
+  hand are neither shown to the provider nor removed by it.
+- Adding or removing a member fires the same events as the admin screen, so rules and course access follow at once. Deleting a group
+  removes the access it gave and keeps the people. A person deprovisioned with `DELETE` leaves the groups the provider manages.
+- A user shows the groups of the provider they belong to in `groups` (read-only).
+
+### Roles from groups
+
+By default membership grants nothing but what the group is enrolled in. To give the members of a group a role, map its display name to
+`student` or `tutor` on the provider (`admin` can never be mapped; a person who is an administrator is never changed):
+
+```bash
+ulams api PUT /api/admin/identity/providers/<id> --body '{"scim":{"group_roles":{"Instructors":"tutor"}}}'
+```
+
+A member of a mapped group has the role for as long as they are a member. Only roles the mapping added are taken away again when
+the membership ends, the group is renamed or deleted, or the mapping changes; a role the person already had stays. Saving a
+new mapping re-checks every person the provider provisioned. Each grant and revocation is an audit row (`role.granted_by_mapping`,
+`role.revoked_by_mapping`).
+
+## Deprovisioning and what is kept
+
+| The IdP sends | What happens |
+|---|---|
+| `active: false` (PATCH or PUT) | The account is deactivated. Every login session, personal access token and CLI login of the person is revoked immediately; password, SSO and social sign-in are refused. Learning records, certificates and enrolments are untouched. |
+| `active: true` | Access is restored. Old tokens stay revoked: the person signs in again. |
+| `DELETE /Users/{id}` | Same as `active: false`, and the link between the account and the provider is removed. The IdP sees the user as gone (404); if it provisions the same `userName` again, the same account is reactivated. |
+
+**Nothing is hard-deleted.** To anonymise on `DELETE` instead (the account is soft-deleted and its personal data masked by the
+existing deletion rules; the learning record stays but loses the name), set `IDENTITY_SCIM_DELETE=anonymise` for the
+deployment. Use it only if your data-retention policy requires it: it cannot be undone.
+
+Every create, change, deactivation, reactivation and deletion, and every token created or revoked, is written to the tamper-evident
+[identity audit trail](/operators/single-sign-on/#audit-trail) with the provider and the changed attribute names (never values).
+
+## Identity provider recipes
+
+### Microsoft Entra ID
+
+1. *Enterprise applications* > *New application* > *Create your own application* (non-gallery).
+2. *Provisioning* > *Mode: Automatic*. **Tenant URL**: the `scim.base_url`. **Secret token**: the SCIM token. *Test connection*.
+3. *Mappings* > *Provision Microsoft Entra ID Users*: keep `userPrincipalName` > `userName`, `mail` > `emails[type eq "work"].value`,
+   `givenName`, `surname`, `Switch([IsSoftDeleted], , "False", "True", "True", "False")` > `active`, `objectId` > `externalId`. Optional: `department`,
+   `employeeId` > `employeeNumber`, `manager`. Under *Provision Microsoft Entra ID Groups* keep `displayName` > `displayName`, `members` > `members`
+   and `objectId` > `externalId`, and assign the groups to the application (only assigned groups are sent).
+4. *Users and groups*: assign people and groups, then *Provision on demand* for one user to check. Entra sends the members of a group as
+   `PATCH` operations with a list in `value`, and asks `GET /Groups?excludedAttributes=members` first.
+
+Entra sends `Replace` with a capital letter, `"False"` as a string, paths such as `emails[type eq "work"].value` and
+`urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:manager`, and `replace` operations without a `path`; all of this is accepted. The
+initial sync is a burst of requests: the limit is 600 per minute and token.
+
+### Okta
+
+1. *Applications* > *Create App Integration* > *SWA* or *SAML/OIDC* app (enable SCIM provisioning on its *General* tab, *SCIM 2.0*).
+2. *Provisioning* > *Integration*: **SCIM connector base URL** = `scim.base_url`, **Unique identifier field for users** = `userName`,
+   supported actions: *Import New Users and Profile Updates*, *Push New Users*, *Push Profile Updates*. **Authentication mode**: *HTTP Header*,
+   **Authorization** = `Bearer ulams_pat_...`. *Test connector configuration*.
+3. *To App*: enable *Create Users*, *Update User Attributes*, *Deactivate Users*.
+4. *Push Groups* tab: *Push Groups* > pick groups or a rule. Okta creates the group (`POST /Groups`), then adds and removes members with `PATCH`.
+
+Okta sends `PUT` for users and for renaming a group, `PATCH` for members, asks `GET /Users?filter=userName eq "..."` before it creates (both work), and
+deactivates by `active: false`.
+
+### Keycloak
+
+Keycloak has no SCIM provisioning client built in, so there is nothing to enter. If you use Keycloak as the identity provider,
+add a community SCIM client extension that pushes users to an endpoint with a bearer token, point it at `scim.base_url` and
+use the same token and mapping as above. Sign-in through Keycloak ([OpenID Connect](/operators/single-sign-on/) or
+[SAML](/operators/single-sign-on-saml/)) works without it.
+
+### Other identity providers
+
+Any SCIM 2.0 client that sends `Authorization: Bearer`, supports `PATCH` and `ETag`/`If-Match` works. Check the connection with
+`GET /api/scim/v2/ServiceProviderConfig`. Not supported (and advertised as such): bulk requests, sorting and password changes.
+
+## Limits
+
+| | |
+|---|---|
+| Requests | 600 per minute and token (`IDENTITY_SCIM_RATE`), then `429` with `Retry-After`. |
+| List size | 100 per page by default, at most 200 (`count`). Filters are limited to 1000 characters. |
+| Body | At most 1 MB. |
+| Tokens | Two active per provider, 365 days at most. |
+| Filters | `eq ne co sw ew gt ge lt le pr`, `and`, `or`, `not`, parentheses and value paths. Users: `id`, `userName`, `externalId`, `emails.value`, `active`, `name.givenName`, `name.familyName`, `meta.lastModified`, `meta.created`. Groups: `id`, `displayName`, `externalId`, `members.value`, `meta.lastModified`, `meta.created`. |
+| Group members | At most 10 000 per request; send larger groups in several `PATCH` requests. |
+
+## Troubleshooting
+
+| Answer | Meaning |
+|---|---|
+| `401` | The token is wrong, expired or revoked, or belongs to another tenant (check the host). |
+| `403` | The token is not a SCIM token, its provider was deleted, or the account is an administrator. |
+| `409 uniqueness` | The `userName`, `externalId` or e-mail address is already used by another resource, or by an account this provider may not adopt; for a group, the `displayName` is used by another group. |
+| `400 invalidValue` | A value is malformed (for example an `emails` value that is not an address, a `manager.value` or group member that is not a user of this provider). The `detail` names it. |
+| `400 invalidFilter` | The filter cannot be parsed or names an attribute that cannot be filtered. |
+| `412` | `If-Match` is older than the resource: read it again (the `ETag` header) and retry. |
+| `404` | The id belongs to nobody this provider provisioned. A person it did not create is invisible to it. |
+
+## Checking conformance
+
+The automated suite replays what Entra ID and Okta send (capitalised `op`, `"False"`, `replace` without a path, member removal as
+a value list and as a value path, value-path filters, `excludedAttributes=members`) and checks the RFC 7644 behaviour: discovery documents, filters, pagination, `PATCH` atomicity,
+`ETag` and `If-Match`, the error format. It runs in the `identity` PHPUnit suite on every pull request.
+
+Not yet automated: a run of an independent reference client against a live instance in the nightly pipeline. Until one is
+added, check a new deployment by hand with Microsoft's SCIM validator (*Provisioning* > *Provision on demand* in Entra ID, or the
+standalone validator) and Okta's *SCIM 2.0 test* runner against `scim.base_url`, using a throwaway provider and token.

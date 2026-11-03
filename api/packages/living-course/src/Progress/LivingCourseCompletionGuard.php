@@ -4,8 +4,7 @@ namespace Ulams\LivingCourse\Progress;
 
 use Illuminate\Support\Facades\DB;
 use Ulams\Core\Models\User;
-use Ulams\CourseBuilder\Models\EntityMapEntry;
-use Ulams\CourseBuilder\Models\Session;
+use Ulams\LivingCourse\Support\ProposalBranch;
 use Ulams\Courses\Enum\ProgressStatus;
 use Ulams\Courses\Models\Course;
 use Ulams\Courses\Models\Topic;
@@ -20,8 +19,8 @@ final class LivingCourseCompletionGuard implements CourseCompletionGuardContract
 {
     public function mayUnfinish(Course $course, User $user): bool
     {
-        $session = Session::withTrashed()->where('course_id', $course->getKey())->first();
-        if ($session === null) {
+        $branch = ProposalBranch::ofCourse((int) $course->getKey());
+        if ($branch === null) {
             return true;
         }
         $active = Topic::query()->whereIn('lesson_id', $course->lessons()->select('id'))->where('active', true)->pluck('id')->all();
@@ -30,7 +29,7 @@ final class LivingCourseCompletionGuard implements CourseCompletionGuardContract
         if ($missing === []) {
             return true;
         }
-        $added = EntityMapEntry::query()->where('session_id', $session->id)->whereIn('entity_type', ['topic', 'quiz_topic'])->whereIn('entity_id', $missing)->whereNotNull('added_by_proposal_id')->pluck('entity_id')->all();
+        $added = $branch->entries()->whereIn('entity_type', ['topic', 'quiz_topic'])->whereIn('entity_id', $missing)->whereNotNull('added_by_proposal_id')->pluck('entity_id')->all();
 
         return count($added) !== count($missing);
     }

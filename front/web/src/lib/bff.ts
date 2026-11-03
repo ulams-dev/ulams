@@ -30,6 +30,13 @@ export const BFF_RULES: BffRule[] = [
   { method: "GET", pattern: /^\/api\/living-course\/courses\/\d+\/notices$/ },
   { method: "POST", pattern: /^\/api\/living-course\/notices\/\d+\/dismiss$/ },
   { method: "GET", pattern: /^\/api\/living-course\/courses\/\d+\/freshness$/ },
+  // Course variants (CV-5): the learner's own variant in the family, the choice to change it, the hint to switch and the
+  // placement check. The API scopes every call to the caller; the public picker data is read on the server instead.
+  { method: "GET", pattern: /^\/api\/courses\/\d+\/variant$/ },
+  { method: "PUT", pattern: /^\/api\/courses\/\d+\/variant$/, writesProgress: true },
+  { method: "POST", pattern: /^\/api\/courses\/\d+\/variant\/hints\/\d+\/dismiss$/ },
+  { method: "GET", pattern: /^\/api\/courses\/\d+\/placement$/ },
+  { method: "POST", pattern: /^\/api\/courses\/\d+\/placement\/attempts$/ },
   // Learner Insights: the learner's own extra help (the API scopes every call to the caller)
   { method: "GET", pattern: /^\/api\/learner-insights\/courses\/\d+\/topics\/\d+\/support$/ },
   { method: "POST", pattern: /^\/api\/learner-insights\/assignments\/[0-9A-Za-z]{26}\/(feedback|hide|reflection)$/ },

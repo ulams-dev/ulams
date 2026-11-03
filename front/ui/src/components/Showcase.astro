@@ -52,12 +52,12 @@ const { eyebrow, title, intro, note, items, id = "demos" } = Astro.props;
                 </dl>
               )}
               <div class="u-demo-card__actions">
-                <a class="u-btn u-btn--sm" href={item.primary.href} data-umami-event={ctaEvent(item.primary.href)} aria-label={`${item.primary.label}: ${item.title}`}>
+                <a class="u-btn u-btn--sm u-demo-card__primary" href={item.primary.href} data-umami-event={ctaEvent(item.primary.href)} aria-label={`${item.primary.label}: ${item.title}`}>
                   {item.primary.label}
                   <Icon name="arrow" />
                 </a>
                 {item.secondary && (
-                  <a class="u-btn u-btn--sm u-btn--ghost" href={item.secondary.href} data-umami-event={ctaEvent(item.secondary.href)} aria-label={`${item.secondary.label}: ${item.title}`}>
+                  <a class="u-demo-card__secondary" href={item.secondary.href} data-umami-event={ctaEvent(item.secondary.href)} aria-label={`${item.secondary.label}: ${item.title}`}>
                     {item.secondary.label}
                   </a>
                 )}
@@ -79,6 +79,21 @@ const { eyebrow, title, intro, note, items, id = "demos" } = Astro.props;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
     gap: 22px;
+  }
+  /* Phones: one row that scrolls sideways instead of six stacked cards. */
+  @media (max-width: 640px) {
+    .u-showcase__grid {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: 82%;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 12px;
+      gap: 14px;
+    }
+    .u-showcase__grid > li {
+      scroll-snap-align: start;
+    }
   }
   .u-demo-card {
     --swatch: #5b5bf0;
@@ -183,8 +198,39 @@ const { eyebrow, title, intro, note, items, id = "demos" } = Astro.props;
   .u-demo-card__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    align-items: center;
+    gap: 10px 18px;
     margin-top: 6px;
+  }
+  /* The whole card opens the learner view; the admin link stays a separate, quieter target above it. */
+  .u-demo-card .u-demo-card__primary {
+    position: static;
+    transform: none;
+  }
+  .u-demo-card .u-demo-card__primary::after {
+    display: none;
+  }
+  .u-demo-card__primary::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+  }
+  .u-demo-card__secondary {
+    position: relative;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ulams-color-muted);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .u-demo-card__secondary:hover {
+    color: var(--ulams-color-text);
   }
   .u-showcase__note {
     display: flex;

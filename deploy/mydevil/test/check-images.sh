@@ -13,7 +13,12 @@ cat > "$tmp/curl" <<'EOS'
 for last; do :; done
 url="$last"
 case "$url" in
-  */cdn-cgi/image/*onerror=redirect/*)
+  */cdn-cgi/image/width=777*)
+    case "$MODE" in
+      nowaf) printf 'HTTP/2 200\r\nContent-Type: image/avif\r\nCF-Resized: internal=ok\r\n\r\n' ;;
+      *) printf 'HTTP/2 403\r\ncontent-type: text/html\r\n\r\n' ;;
+    esac ;;
+  */cdn-cgi/image/*onerror=redirect/*ulams-smoke-missing*)
     case "$MODE" in
       noredirect) printf 'HTTP/2 404\r\ncontent-type: text/plain\r\n\r\n' ;;
       *) printf 'HTTP/2 302\r\nLocation: %s\r\n\r\n' "${url#*onerror=redirect/}" ;;
@@ -57,6 +62,10 @@ expect "no cf-resized header" 1 nocfresized coffee.ulams.app
 expect "no onerror redirect" 1 noredirect coffee.ulams.app
 expect "no image on the page" 1 good nopage.example
 expect "no arguments" 2 good
+expect "WAF rule check is off by default" 0 nowaf coffee.ulams.app
+ULAMS_EXPECT_WAF=1 expect "WAF rule blocks an unknown width" 0 good coffee.ulams.app
+contains "WAF rule reported" "WAF rule: width=777 blocked with 403"
+ULAMS_EXPECT_WAF=1 expect "WAF rule missing" 1 nowaf coffee.ulams.app
 
 # landing-static.mjs refuses a build whose image mode is not cloudflare or noop (usage and host checks come first)
 if command -v node >/dev/null 2>&1; then

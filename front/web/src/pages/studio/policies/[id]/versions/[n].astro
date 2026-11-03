@@ -1,0 +1,15 @@
+---
+import PoliciesShell from "../../../../../components/PoliciesShell.astro";
+import { fill, pickPoliciesLocale, POLICIES_STRINGS } from "../../../../../studio/policies-i18n.ts";
+
+if (!Astro.locals.tenant) return Astro.redirect("/tenants");
+const id = Astro.params.id ?? "";
+const n = Astro.params.n ?? "";
+if (!/^[0-9a-z]{26}$/.test(id) || !/^[1-9]\d{0,5}$/.test(n)) return new Response("Not found", { status: 404 });
+const locale = pickPoliciesLocale(Astro.url.searchParams.get("lang"), Astro.request.headers.get("accept-language"));
+const t = POLICIES_STRINGS[locale];
+const suffix = locale === "en" ? "" : `?lang=${locale}`;
+---
+
+<PoliciesShell title={`${fill(t.review.heading, { n })} · ${t.review.pageTitle}`} heading={fill(t.review.heading, { n })} locale={locale} view="version" policy={id} version={Number(n)} />
+<p class="st-pol-new"><a href={`/studio/policies/${id}${suffix}`}>{t.review.back}</a></p>
