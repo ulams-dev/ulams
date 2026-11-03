@@ -72,7 +72,10 @@ const AuthoringMetrics: React.FC = () => {
         name={name}
         value={filter[name] ?? ''}
         onChange={(event) =>
-          setFilter({ ...filter, [name]: event.target.value === '' ? undefined : event.target.value })
+          setFilter({
+            ...filter,
+            [name]: event.target.value === '' ? undefined : event.target.value,
+          })
         }
       />
     </label>
@@ -88,7 +91,9 @@ const AuthoringMetrics: React.FC = () => {
       );
     }
     if (state.mode === 'forbidden') {
-      return <Alert type="warning" showIcon role="alert" message={t('authoring_metrics_forbidden')} />;
+      return (
+        <Alert type="warning" showIcon role="alert" message={t('authoring_metrics_forbidden')} />
+      );
     }
     if (state.mode === 'error') {
       return (
@@ -132,7 +137,8 @@ const AuthoringMetrics: React.FC = () => {
                 <tr key={m.course_id} data-course={m.course_id}>
                   <th scope="row">
                     <Link to={`/courses/list/${m.course_id}`}>
-                      {m.course_title ?? t('authoring_metrics_course_fallback', { id: m.course_id })}
+                      {m.course_title ??
+                        t('authoring_metrics_course_fallback', { id: m.course_id })}
                     </Link>
                   </th>
                   <td>{duration(m.time.generation_seconds + m.time.ai_edit_seconds, t)}</td>
@@ -184,7 +190,9 @@ const AuthoringMetrics: React.FC = () => {
           {field('from')}
           {field('to')}
           <Button onClick={() => void download('csv')}>{t('authoring_metrics_export_csv')}</Button>
-          <Button onClick={() => void download('jsonl')}>{t('authoring_metrics_export_jsonl')}</Button>
+          <Button onClick={() => void download('jsonl')}>
+            {t('authoring_metrics_export_jsonl')}
+          </Button>
         </form>
         <div role="status" aria-live="polite" className="authoring-metrics__notice">
           {notice}

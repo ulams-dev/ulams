@@ -19,7 +19,9 @@ jest.mock('umi', () => ({
       ),
     formatNumber: (n: number) => `${Math.round(n * 100)}%`,
   }),
-  Link: ({ to, children }: { to: string; children: React.ReactNode }) => <a href={to}>{children}</a>,
+  Link: ({ to, children }: { to: string; children: React.ReactNode }) => (
+    <a href={to}>{children}</a>
+  ),
 }));
 jest.mock('@/services/authoringMetrics', () => ({
   courseMetrics: (...args: unknown[]) => mockList(...args),
@@ -39,10 +41,28 @@ import AuthoringMetrics from './index';
 const row = (over: Record<string, unknown> = {}) => ({
   course_id: 12,
   course_title: 'Coffee brewing basics',
-  time: { generation_seconds: 441, ai_edit_seconds: 23, interview_seconds: 18, model_seconds: 900, author_minutes: null },
-  cost: { build_micro_usd: 284100, maintenance_micro_usd: 1520000, llm_calls: 27, llm_calls_failed: 1 },
+  time: {
+    generation_seconds: 441,
+    ai_edit_seconds: 23,
+    interview_seconds: 18,
+    model_seconds: 900,
+    author_minutes: null,
+  },
+  cost: {
+    build_micro_usd: 284100,
+    maintenance_micro_usd: 1520000,
+    llm_calls: 27,
+    llm_calls_failed: 1,
+  },
   counts: { lessons: 6, questions: 18, blocks: 35, cited_blocks: 35, learner_minutes_estimate: 60 },
-  elements: { ai_elements: 59, accepted_unchanged: 49, revised_on_request: 4, edited_by_author: 6, unknown: 0, author_written: 2 },
+  elements: {
+    ai_elements: 59,
+    accepted_unchanged: 49,
+    revised_on_request: 4,
+    edited_by_author: 6,
+    unknown: 0,
+    author_written: 2,
+  },
   ...over,
 });
 
@@ -56,16 +76,23 @@ describe('AuthoringMetrics', () => {
     mockList.mockResolvedValue({ data: [row()] });
     render(<AuthoringMetrics />);
 
-    expect(await screen.findByRole('link', { name: 'Coffee brewing basics' })).toHaveAttribute('href', '/courses/list/12');
+    expect(await screen.findByRole('link', { name: 'Coffee brewing basics' })).toHaveAttribute(
+      'href',
+      '/courses/list/12',
+    );
     expect(screen.getByText('7 min 44 s')).toBeInTheDocument();
     expect(screen.getByText('Not recorded')).toBeInTheDocument();
     expect(screen.getByText('$0.2841')).toBeInTheDocument();
     expect(screen.getByText('$1.52')).toBeInTheDocument();
-    expect(screen.getByText('Kept: 49 (83%), revised on request: 4, edited: 6, unknown: 0')).toBeInTheDocument();
+    expect(
+      screen.getByText('Kept: 49 (83%), revised on request: 4, edited: 6, unknown: 0'),
+    ).toBeInTheDocument();
   });
 
   it('writes recorded author time and names a course without a title', async () => {
-    mockList.mockResolvedValue({ data: [row({ course_title: null, time: { ...row().time, author_minutes: 135 } })] });
+    mockList.mockResolvedValue({
+      data: [row({ course_title: null, time: { ...row().time, author_minutes: 135 } })],
+    });
     render(<AuthoringMetrics />);
 
     expect(await screen.findByRole('link', { name: 'Course 12' })).toBeInTheDocument();
@@ -74,14 +101,20 @@ describe('AuthoringMetrics', () => {
   });
 
   it('says so when the AI wrote nothing yet and when there are no courses', async () => {
-    mockList.mockResolvedValueOnce({ data: [row({ elements: { ...row().elements, ai_elements: 0 } })] });
+    mockList.mockResolvedValueOnce({
+      data: [row({ elements: { ...row().elements, ai_elements: 0 } })],
+    });
     const { unmount } = render(<AuthoringMetrics />);
     expect(await screen.findByText('Nothing yet')).toBeInTheDocument();
     unmount();
 
     mockList.mockResolvedValueOnce({ data: [] });
     render(<AuthoringMetrics />);
-    expect(await screen.findByText('No course built with the Course Builder has figures in this period yet.')).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        'No course built with the Course Builder has figures in this period yet.',
+      ),
+    ).toBeInTheDocument();
   });
 
   it('sends the dates to the API', async () => {
@@ -89,7 +122,9 @@ describe('AuthoringMetrics', () => {
     render(<AuthoringMetrics />);
     await screen.findByText(/No course built/);
 
-    fireEvent.change(screen.getByLabelText('Courses created from'), { target: { value: '2026-10-01' } });
+    fireEvent.change(screen.getByLabelText('Courses created from'), {
+      target: { value: '2026-10-01' },
+    });
 
     await waitFor(() => expect(mockList).toHaveBeenLastCalledWith({ from: '2026-10-01' }));
   });
@@ -105,7 +140,9 @@ describe('AuthoringMetrics', () => {
   });
 
   it('retries after an error', async () => {
-    mockList.mockRejectedValueOnce({ response: { status: 500 } }).mockResolvedValueOnce({ data: [row()] });
+    mockList
+      .mockRejectedValueOnce({ response: { status: 500 } })
+      .mockResolvedValueOnce({ data: [row()] });
     render(<AuthoringMetrics />);
 
     fireEvent.click(await screen.findByRole('button', { name: 'Try again' }));
@@ -123,7 +160,9 @@ describe('AuthoringMetrics', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Download CSV' }));
 
-    await waitFor(() => expect(screen.getByText('Downloaded authoring-metrics.csv')).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText('Downloaded authoring-metrics.csv')).toBeInTheDocument(),
+    );
     expect(mockExport).toHaveBeenCalledWith('csv', {});
   });
 

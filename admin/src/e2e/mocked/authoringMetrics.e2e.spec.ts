@@ -19,7 +19,10 @@ const COURSES: MockMetric[] = [
 ];
 
 const scan = async (page: Page) => {
-  const result = await new AxeBuilder({ page }).include('.authoring-metrics').withTags(WCAG).analyze();
+  const result = await new AxeBuilder({ page })
+    .include('.authoring-metrics')
+    .withTags(WCAG)
+    .analyze();
   return result.violations.map((v) => ({
     id: v.id,
     impact: v.impact,
@@ -44,7 +47,9 @@ test.describe('Analytics > Authoring', () => {
     await expect(table.locator('tbody tr').first()).toContainText('Not recorded');
     await expect(table.locator('tbody tr').first()).toContainText('$0.2841');
     await expect(table.locator('tbody tr').first()).toContainText('$1.52');
-    await expect(table.locator('tbody tr').first()).toContainText('Kept: 49 (83%), revised on request: 4, edited: 6, unknown: 0');
+    await expect(table.locator('tbody tr').first()).toContainText(
+      'Kept: 49 (83%), revised on request: 4, edited: 6, unknown: 0',
+    );
     await expect(table.locator('tbody tr').nth(1)).toContainText('2 h 15 min');
     await expect(table.locator('tbody tr').nth(2)).toContainText('Course 14');
     await expect(table.locator('tbody tr').nth(2)).toContainText('Nothing yet');
@@ -66,10 +71,13 @@ test.describe('Analytics > Authoring', () => {
     await expect(page.locator('table.authoring-metrics__table')).toBeVisible();
     const text = (await page.locator('.authoring-metrics').innerText()).toLowerCase();
     expect(text).toContain('not compared with another academy');
-    for (const banned of ['chapman', 'benchmark', 'industry average', '716']) expect(text).not.toContain(banned);
+    for (const banned of ['chapman', 'benchmark', 'industry average', '716'])
+      expect(text).not.toContain(banned);
   });
 
-  test('the date filter is sent to the API and the files are downloaded by keyboard', async ({ page }) => {
+  test('the date filter is sent to the API and the files are downloaded by keyboard', async ({
+    page,
+  }) => {
     const state = await open(page, { authoring: { courses: COURSES } });
     await expect(page.locator('table.authoring-metrics__table')).toBeVisible();
     await page.getByLabel('Courses created from').fill('2026-10-01');
@@ -78,25 +86,37 @@ test.describe('Analytics > Authoring', () => {
 
     const csv = page.getByRole('button', { name: 'Download CSV' });
     await csv.focus();
-    const [download] = await Promise.all([page.waitForEvent('download'), page.keyboard.press('Enter')]);
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.keyboard.press('Enter'),
+    ]);
     expect(download.suggestedFilename()).toBe('authoring-metrics.csv');
-    await expect(page.getByRole('status').filter({ hasText: 'Downloaded authoring-metrics.csv' })).toBeVisible();
+    await expect(
+      page.getByRole('status').filter({ hasText: 'Downloaded authoring-metrics.csv' }),
+    ).toBeVisible();
     expect(state.metricRequests.at(-1)).toBe('export?from=2026-10-01&to=2026-10-31&format=csv');
 
-    const [lines] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Download JSON lines' }).click()]);
+    const [lines] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByRole('button', { name: 'Download JSON lines' }).click(),
+    ]);
     expect(lines.suggestedFilename()).toBe('authoring-metrics.jsonl');
     expect(await scan(page)).toEqual([]);
   });
 
   test('an empty period says so', async ({ page }) => {
     await open(page, { authoring: { courses: [] } });
-    await expect(page.locator('[data-state="empty"]')).toContainText('No course built with the Course Builder has figures in this period yet.');
+    await expect(page.locator('[data-state="empty"]')).toContainText(
+      'No course built with the Course Builder has figures in this period yet.',
+    );
     expect(await scan(page)).toEqual([]);
   });
 
   test('a refusal is a sentence', async ({ page }) => {
     await open(page, { authoring: { status: 403 } });
-    await expect(page.getByRole('alert')).toContainText('You need the permission to read authoring metrics');
+    await expect(page.getByRole('alert')).toContainText(
+      'You need the permission to read authoring metrics',
+    );
     expect(await scan(page)).toEqual([]);
   });
 
@@ -111,14 +131,18 @@ test.describe('Analytics > Authoring', () => {
   test('Polish and Chinese strings', async ({ page }) => {
     await open(page, { authoring: { courses: COURSES }, locale: 'pl-PL' });
     await expect(page.getByRole('heading', { name: 'Metryki tworzenia kursów' })).toBeVisible();
-    await expect(page.locator('table.authoring-metrics__table tbody tr').first()).toContainText('Nie zapisano');
+    await expect(page.locator('table.authoring-metrics__table tbody tr').first()).toContainText(
+      'Nie zapisano',
+    );
     expect(await scan(page), 'pl').toEqual([]);
   });
 
   test('Chinese strings', async ({ page }) => {
     await open(page, { authoring: { courses: COURSES }, locale: 'zh-CN' });
     await expect(page.getByRole('heading', { name: '课程制作指标' })).toBeVisible();
-    await expect(page.locator('table.authoring-metrics__table tbody tr').first()).toContainText('未记录');
+    await expect(page.locator('table.authoring-metrics__table tbody tr').first()).toContainText(
+      '未记录',
+    );
     expect(await scan(page), 'zh').toEqual([]);
   });
 });
