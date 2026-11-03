@@ -32,7 +32,9 @@ export async function buildForm(fs: FsPort, req: BuiltRequest, input: Record<str
         throw new CliError("INPUT_INVALID", `Cannot read the file for --${inputKey}: ${path}`, { hint: "Pass the path of an existing local file." });
       }
       const name = path.split(/[\\/]/).pop() ?? "file";
-      form.append(Array.isArray(value) || paths.length > 1 ? `${field}[${i}]` : field, new Blob([bytes as BlobPart]), name);
+      // "file[]" is already a list field name: Laravel reads every append of it as file.0, file.1, ...
+      const listed = Array.isArray(value) || paths.length > 1;
+      form.append(listed && !field.endsWith("[]") ? `${field}[${i}]` : field, new Blob([bytes as BlobPart]), name);
     }
   }
   return form;

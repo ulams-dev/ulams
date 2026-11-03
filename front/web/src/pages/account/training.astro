@@ -26,7 +26,7 @@ const t = trainingStrings(locale);
 Astro.response.headers.set("Cache-Control", "private, no-store");
 
 const percent = new Map((progress ?? []).map((entry) => [entry.course.id, completion(entry)]));
-const required = data.assignments ? assignmentRows(data.assignments, locale, now, percent) : null;
+const required = data.assignments ? assignmentRows(data.assignments, locale, now, percent, data.policyChanges ?? []) : null;
 const paths = data.paths ? pathRows(data.paths, locale) : null;
 const origin = siteOrigin(Astro.request.headers, Astro.locals.secure, Astro.url.origin);
 const certificates = data.certificates ? data.certificates.map((c) => certificateRow(c, locale, now, { webOrigin: origin, apiUrl: tenant.apiUrl })) : null;
@@ -52,6 +52,12 @@ const certificates = data.certificates ? data.certificates.map((c) => certificat
                 <span>{r.dueText}</span>
                 {r.completedText && <span>{r.completedText}</span>}
               </p>
+              {r.policy && (
+                <p class="u-tr__policy" data-policy-change>
+                  <span>{r.policy.text}</span>
+                  {r.policy.summary && <span>{r.policy.summary}</span>}
+                </p>
+              )}
               {(r.action || r.certificate) && (
                 <p class="u-tr__actions">
                   {r.action && <a class="u-btn u-btn--sm" href={r.action.href} aria-label={`${r.action.label}: ${r.title}`}>{r.action.label}</a>}

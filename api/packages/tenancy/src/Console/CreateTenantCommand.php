@@ -7,6 +7,8 @@ use InvalidArgumentException;
 use Throwable;
 use Ulams\Tenancy\Models\Tenant;
 use Ulams\Tenancy\Services\Contracts\DomainRegistryContract;
+use Ulams\Tenancy\Models\TenantTemplate;
+use Ulams\Tenancy\Services\TenantDerivations;
 use Ulams\Tenancy\Services\TenantLifecycle;
 use Ulams\Tenancy\Services\TenantProvisioner;
 use Ulams\Tenancy\Support\StorageOwnership;
@@ -20,7 +22,12 @@ class CreateTenantCommand extends Command
         {--name= : Display name (APP_NAME and the global.companyName setting)}
         {--theme= : Front theme preset key, coffee, oncall, nightsky, gravity, poland or ulam}
         {--accent= : Accent colour, e.g. #C2552D}
-        {--users=5 : Number of demo students}
+        {--users= : Number of demo students (default: that of the template, else 5)}
+        {--template= : Slug of a tenant template: its theme, accent, demo flag and settings are the starting point of a new tenant (the options here win)}
+        {--derived-from= : Slug of the tenant this one is created for (a department academy); needs --purpose and --reference, counts against its quota and is recorded}
+        {--purpose= : What the tenant is for, e.g. policy_department (with --derived-from)}
+        {--reference= : What it is for, e.g. an id in the parent tenant (with --derived-from); asking again with the same reference finds the same tenant}
+        {--requested-by= : Who asked, for the record (with --derived-from)}
         {--demo= : Demo mode (DEMO_MODE: login without password, hourly reset): on or off}
         {--db-password= : Password of a database you created yourself (TENANCY_DATABASE_PROVISIONER=manual), at least 16 characters}
         {--redo=* : Step to run again even if recorded as done: database, bucket, storage_identity, env, migrate, passport_keys, passport_client, permissions or demo}';
@@ -40,17 +47,36 @@ class CreateTenantCommand extends Command
         }
 
         $slug = (string) $this->argument('slug');
+        $derivation = null;
         try {
+            if ($this->option('derived-from') !== null && $this->option('derived-from') !== '') {
+                $derivation = app(TenantDerivations::class)->register(
+                    $slug,
+                    (string) $this->option('derived-from'),
+                    (string) $this->option('purpose'),
+                    (string) $this->option('reference'),
+                    $this->option('template') ?: null,
+                    $this->option('requested-by') ?: null,
+                );
+            } elseif ($this->option('purpose') || $this->option('reference')) {
+                throw new InvalidArgumentException('--purpose and --reference go with --derived-from.');
+            }
             $tenant = $this->resolveTenant($slug);
         } catch (InvalidArgumentException $exception) {
+            if ($derivation?->wasRecentlyCreated) {
+                $derivation->delete();
+            }
             $this->error($exception->getMessage());
 
             return self::FAILURE;
         }
+        $users = $this->option('users') !== null
+            ? (int) $this->option('users')
+            : (int) (($this->option('template') ? TenantTemplate::query()->where('slug', $this->option('template'))->value('users') : null) ?? 5);
 
         $this->info("Provisioning tenant {$tenant->slug} ({$tenant->api_host})");
         try {
-            $provisioner->provision($tenant, (int) $this->option('users'), function (string $step, string $state) {
+            $provisioner->provision($tenant, $users, function (string $step, string $state) {
                 match ($state) {
                     'skipped' => $this->line("  <comment>skip</comment>  {$step} (already done)"),
                     'running' => $this->line("  <info>run</info>   {$step}"),
@@ -74,7 +100,7 @@ class CreateTenantCommand extends Command
             ['Demo mode', $tenant->demo ? 'on (login without password, reset hourly)' : 'off'],
             ['Admin user', TenantNaming::adminEmail($tenant)],
             ['Tutor', 'tutor@' . TenantNaming::emailDomain($tenant)],
-            ['Students', 'student1..' . (int) $this->option('users') . '@' . TenantNaming::emailDomain($tenant)],
+            ['Students', 'student1..' . $users . '@' . TenantNaming::emailDomain($tenant)],
             ['Password', 'TENANT_DEMO_PASSWORD (dev only)'],
         ]);
 
@@ -88,6 +114,7 @@ class CreateTenantCommand extends Command
             'theme' => $this->option('theme'),
             'accent' => $this->option('accent'),
             'demo' => $this->option('demo'),
+            'template' => $this->option('template'),
             'db_password' => $this->option('db-password'),
         ], (array) $this->option('redo'));
     }

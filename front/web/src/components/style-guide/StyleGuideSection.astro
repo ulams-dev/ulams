@@ -1,0 +1,73 @@
+---
+/**
+ * The design-system section of the home page, right after the white-label band (lib/home-story.ts `planHomeBody`):
+ * the theme presets, the AA contrast guard and the brand-import diff from the real modules, the platform colour
+ * tokens from the stylesheet, and a few catalogue components, with a link to the full style guide.
+ */
+import "./style-guide.css";
+import Icon from "@ulams/ui/components/Icon.astro";
+import { ctaEvent } from "@ulams/ui/analytics";
+import { publicPagePath, type Locale } from "../../i18n/locales.ts";
+import { CATALOGUE_DOCS, HOME_COMPONENTS, STYLE_GUIDE_ID, componentDocs, styleGuideCopy, tokenModel } from "../../lib/style-guide.ts";
+import ThemeShowcase from "./ThemeShowcase.astro";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = styleGuideCopy(locale);
+const tokens = tokenModel();
+const colours = tokens.colours.filter((c) => ["primary", "accent", "header", "text", "muted", "bg", "surface", "border"].includes(c.key));
+const titleId = `${STYLE_GUIDE_ID}-title`;
+const pageHref = publicPagePath(locale, "style-guide");
+---
+
+<section class="sg sg--home" id={STYLE_GUIDE_ID} aria-labelledby={titleId}>
+  <div class="u-container">
+    <header class="sg__head">
+      <p class="u-eyebrow">{copy.home.eyebrow}</p>
+      <h2 class="sg__title" id={titleId}>{copy.home.title}</h2>
+      <p class="sg__lede">{copy.home.lede}</p>
+    </header>
+
+    <ThemeShowcase copy={copy} level={3} prefix="sg-home" />
+
+    <div class="sg-strip">
+      <div class="sg-strip__part">
+        <h3 class="sg-strip__title">{copy.home.tokens}</h3>
+        <ul class="sg-tokens sg-tokens--compact" role="list">
+          {
+            colours.map((colour) => (
+              <li>
+                <span class="sg-swatch sg-swatch--lg" style={`background:${colour.value}`} aria-hidden="true" />
+                <span class="sg-tokens__name">{copy.tokens.colourNames[colour.key]}</span>
+                <code>{colour.value}</code>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+      <div class="sg-strip__part">
+        <h3 class="sg-strip__title">{copy.home.components}</h3>
+        <ul class="sg-names" role="list">
+          {
+            HOME_COMPONENTS.map((name) => (
+              <li>
+                <a href={componentDocs(name)} data-umami-event={ctaEvent(componentDocs(name))}><code>{name}</code></a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+
+    <p class="sg__actions">
+      <a class="u-btn" href={pageHref} data-umami-event={ctaEvent(pageHref)}>
+        {copy.home.cta}
+        <Icon name="arrow" />
+      </a>
+      <a class="u-btn u-btn--ghost" href={CATALOGUE_DOCS} data-umami-event={ctaEvent(CATALOGUE_DOCS)}>{copy.home.docs}</a>
+    </p>
+  </div>
+</section>

@@ -4,11 +4,8 @@ import { JSDOM } from "jsdom";
 import { beforeAll, describe, expect, it } from "vitest";
 import type { UiNode } from "@ulams/ui/render-core";
 import { landingDocFor } from "../../src/lib/docs.ts";
-import { applyLandingStatus } from "../../src/lib/landing-status.ts";
-import { comparisonModel } from "../../src/lib/comparison.ts";
-import { workflowsModel } from "../../src/lib/workflows.ts";
-import { homeStory, planHomeBody, STEP_KEYS, STORY_ID } from "../../src/lib/home-story.ts";
-import { LOCALES, publicPagePath, type Locale } from "../../src/i18n/locales.ts";
+import { ADVANTAGES_ID, homeStory, planHomeBody, STEP_KEYS, STORY_ID } from "../../src/lib/home-story.ts";
+import { LOCALES, type Locale } from "../../src/i18n/locales.ts";
 
 const ofType = (node: UiNode, name: string): UiNode[] => [...(node.component === name ? [node] : []), ...(node.children ?? []).flatMap((c) => ofType(c, name))];
 
@@ -62,15 +59,16 @@ describe("home story: copy", () => {
     expect(homeStory("en").draft.run.badge).toBe("One measured run · draft for your review");
   });
 
-  it("states the same run figures as the faster-courses block after it, and claims no speed-up ratio", () => {
+  it("states the same run time and cost as the speed tile on the home page, and claims no speed-up ratio", () => {
     for (const locale of LOCALES) {
       const copy = homeStory(locale);
-      const band = JSON.stringify(ofType(landingDocFor("platform", locale)!, "CtaBand").find((b) => b.props!.id === "cost-cta")!.props);
-      for (const fact of copy.draft.run.facts) {
-        const value = fact.value.replace(/^0,28 USD$|^0\.28 美元$/, "0.28");
-        expect(band, `${locale}: ${fact.value}`).toContain(value);
-      }
+      const tile = JSON.stringify((ofType(landingDocFor("platform", locale)!, "FeatureList").find((l) => l.props!.id === "advantages")!.props!.items as unknown[])[0]);
+      const time = copy.draft.run.facts.find((f) => /7/.test(f.value) && /44/.test(f.value))!.value.replace(/\s+/g, " ");
+      expect(tile.replace(/\s+/g, " "), `${locale}: ${time}`).toMatch(/7\s*(min|分)\s*44\s*(s|秒)/);
+      expect(tile).toMatch(/0[.,]28/);
+      expect(time).toMatch(/44/);
       expect(JSON.stringify(copy)).not.toMatch(RATIO);
+      expect(tile).not.toMatch(RATIO);
     }
   });
 
@@ -83,58 +81,55 @@ describe("home story: copy", () => {
   });
 });
 
-describe("home story: placement", () => {
-  it("goes right after the hero and before the two call-to-action blocks; the old hero story is gone", () => {
+describe("home page: placement", () => {
+  const ids = (doc: UiNode) => planHomeBody(doc)!.main.map((p) => (p.kind === "node" ? String(p.node.props?.id ?? p.node.component) : p.kind));
+
+  it("places the builder walkthrough right after the advantages, once; the story, learning elements and style guide live on their own pages", () => {
     for (const locale of LOCALES) {
       const doc = landingDocFor("platform", locale)!;
       const plan = planHomeBody(doc)!;
       expect(plan.before.map((n) => n.component)).toEqual(["SiteHeader"]);
       expect(plan.after.map((n) => n.component)).toEqual(["SiteFooter"]);
-      const order = plan.main.map((p) => (p.kind === "story" ? "story" : p.node.component));
-      expect(order.slice(0, 3)).toEqual(["Hero", "story", "CtaBand"]);
-      const ids = plan.main.map((p) => (p.kind === "story" ? "story" : String(p.node.props?.id ?? p.node.component)));
-      expect(ids.indexOf("story")).toBeLessThan(ids.indexOf("cost-cta"));
-      expect(ids.indexOf("story")).toBeLessThan(ids.indexOf("reporting-cta"));
-      expect(order.filter((name) => name === "story")).toHaveLength(1);
-      const json = JSON.stringify(doc);
-      expect(json).not.toContain('"diff"');
+      expect(ids(doc)).toEqual(["Hero", ADVANTAGES_ID, "walkthrough", "Showcase", "white-paper-cta", "agents", "self-host", "faq", "contact"]);
+      expect(JSON.stringify(doc)).not.toContain('"diff"');
     }
   });
 
-  it("puts the story first when a document has no hero, and returns null without a main landmark", () => {
-    const doc: UiNode = { component: "Page", children: [{ component: "Main", children: [{ component: "Faq", props: { items: [] } }] }] };
-    expect(planHomeBody(doc)!.main[0]).toEqual({ kind: "story" });
+  it("puts the walkthrough after the hero without an advantages grid, first without a hero, and returns null without a main landmark", () => {
+    const main = (children: UiNode[]): UiNode => ({ component: "Page", children: [{ component: "Main", children }] });
+    expect(ids(main([{ component: "Hero", props: { title: "x" } }, { component: "Faq", props: { items: [] } }]))).toEqual(["Hero", "walkthrough", "Faq"]);
+    expect(planHomeBody(main([{ component: "Faq", props: { items: [] } }]))!.main.map((p) => p.kind)).toEqual(["walkthrough", "node"]);
     expect(planHomeBody({ component: "Hero", props: { title: "x" } })).toBeNull();
   });
 });
 
 // tsc has no types for .astro files (astro check covers them), so the component is imported by a plain string
-const COMPONENT = "../../src/components/diagrams/HomeBody.astro";
+const COMPONENT = "../../src/components/diagrams/HomeStory.astro";
 let container: AstroContainer;
-let HomeBody: unknown;
+let HomeStory: unknown;
 beforeAll(async () => {
   container = await AstroContainer.create();
-  HomeBody = ((await import(/* @vite-ignore */ COMPONENT)) as { default: unknown }).default;
+  HomeStory = ((await import(/* @vite-ignore */ COMPONENT)) as { default: unknown }).default;
 });
 
+const STATUS: Record<Locale, { available: string; coming: string }> = {
+  en: { available: "Available", coming: "Coming" },
+  pl: { available: "Dostępne", coming: "Wkrótce" },
+  zh: { available: "已上线", coming: "即将推出" },
+};
 async function render(locale: Locale): Promise<Document> {
-  const doc = applyLandingStatus(landingDocFor("platform", locale)!, "actual");
-  const data = { demos: [], demoCount: 0, comparison: comparisonModel(), workflows: workflowsModel("actual", locale) };
-  const html = await container.renderToString(HomeBody as never, { props: { doc, data, locale } });
-  return new JSDOM(`<!doctype html><html><body>${html}</body></html>`).window.document;
+  const html = await container.renderToString(HomeStory as never, { props: { copy: homeStory(locale), status: STATUS[locale] } });
+  return new JSDOM(`<!doctype html><html><body><main id="main">${html}</main></body></html>`).window.document;
 }
 
 describe("home story: rendered markup", () => {
   for (const locale of LOCALES) {
-    it(`${locale}: one main landmark; the story follows the hero with a heading, a step list and six captioned steps`, async () => {
+    it(`${locale}: the story has a heading, a step list and six captioned steps`, async () => {
       const document = await render(locale);
       const copy = homeStory(locale);
-      expect(document.querySelectorAll("main#main")).toHaveLength(1);
       const story = document.querySelector(`main section#${STORY_ID}`)!;
       expect(story).not.toBeNull();
-      expect(story.previousElementSibling?.classList.contains("u-hero")).toBe(true);
       expect(document.getElementById(story.getAttribute("aria-labelledby")!)!.tagName).toBe("H2");
-      expect(document.querySelector(".u-hero ulams-policy-story, .policy-story")).toBeNull();
       // the step list links every step
       const rail = [...story.querySelectorAll("nav.hs-rail a")];
       expect(rail.map((a) => a.getAttribute("href"))).toEqual(STEP_KEYS.map((key) => `#${copy[key].id}`));
@@ -158,7 +153,7 @@ describe("home story: rendered markup", () => {
       expect(story.querySelector(".hs-again h3")!.textContent).toBe(copy.again.title);
     });
 
-    it(`${locale}: figures and evidence labels are real text outside the pictures; the links stay on the blocks below`, async () => {
+    it(`${locale}: figures and evidence labels are real text outside the pictures`, async () => {
       const document = await render(locale);
       const copy = homeStory(locale);
       const draft = document.getElementById(copy.draft.id)!;
@@ -171,18 +166,7 @@ describe("home story: rendered markup", () => {
       expect(learners.querySelectorAll(".hs-status .u-status--available")).toHaveLength(1);
       expect(learners.querySelectorAll(".hs-status .u-status--coming")).toHaveLength(1);
       expect(document.getElementById(copy.living.id)!.querySelector(".hs-step__label .u-status--available")).not.toBeNull();
-      // the story does not repeat the blocks' buttons: each detail page has one link, on its block, with its Umami event
-      const story = document.querySelector(`#${STORY_ID}`)!;
-      expect(story.querySelectorAll("a[data-umami-event]")).toHaveLength(0);
-      let next = story.nextElementSibling;
-      while (next && next.tagName !== "SECTION") next = next.nextElementSibling;
-      expect(next?.id).toBe("cost-cta");
-      for (const [id, slug, event] of [["cost-cta", "content-cost", "cost_page_open"], ["reporting-cta", "reporting", "reporting_page_open"]] as const) {
-        const links = document.querySelectorAll(`main a[href="${publicPagePath(locale, slug)}"]`);
-        expect(links).toHaveLength(1);
-        expect(links[0]!.closest("section")!.id).toBe(id);
-        expect(links[0]!.getAttribute("data-umami-event")).toBe(event);
-      }
+      expect(document.querySelector(`#${STORY_ID}`)!.querySelectorAll("a[data-umami-event]")).toHaveLength(0);
       const text = document.querySelector(`#${STORY_ID}`)!.textContent!;
       expect(text).not.toMatch(DECIMAL_MINUTES);
       expect(text).not.toMatch(RATIO);
@@ -228,23 +212,23 @@ describe("home story: styles", () => {
   });
 });
 
-describe("home page: white label and the policy-to-proof path", () => {
+describe("home page: advantages", () => {
   for (const locale of LOCALES) {
-    it(`${locale}: has the white-label band with six points and says a per-course subdomain is not built`, () => {
-      const doc = landingDocFor("platform", locale)!;
-      const band = ofType(doc, "CtaBand").find((b) => b.props!.id === "white-label")!;
-      expect((band.props!.bullets as unknown[]).length).toBe(6);
-      expect((band.props!.cta as { href: string }).href).toBe("#demos");
-      expect(String(band.props!.note).length).toBeGreaterThan(40);
-      const order = planHomeBody(doc)!.main.map((p) => (p.kind === "story" ? "story" : String(p.node.props?.id ?? p.node.component)));
-      expect(order.indexOf("white-label")).toBeGreaterThan(order.indexOf("reporting-cta"));
-      expect(order.indexOf("white-label")).toBeLessThan(order.indexOf("agents"));
-    });
-    it(`${locale}: labels what is not built in the policy-to-proof list`, () => {
-      const list = ofType(landingDocFor("platform", locale)!, "FeatureList")[0]!;
-      const items = list.props!.items as Array<{ status?: string }>;
+    it(`${locale}: six tiles, each with a link to its detail page, and the white-label tile names the subdomain`, () => {
+      const list = ofType(landingDocFor("platform", locale)!, "FeatureList").find((l) => l.props!.id === ADVANTAGES_ID)!;
+      const items = list.props!.items as Array<{ title: string; text: string; link: { href: string } }>;
       expect(items).toHaveLength(6);
-      expect(items.filter((i) => i.status === "coming")).toHaveLength(3);
+      const prefix = locale === "en" ? "" : `/${locale}`;
+      expect(items.map((i) => i.link.href)).toEqual([
+        `${prefix}/content-cost/`,
+        `${prefix}/course-generation/`,
+        `${prefix}/learning-elements/`,
+        `${prefix}/style-guide/`,
+        `${prefix}/reporting/`,
+        "#self-host",
+      ]);
+      expect(items[3]!.text).toMatch(/SSO/);
+      expect(items[3]!.text).toMatch(/WCAG 2\.2 AA/);
     });
   }
 });

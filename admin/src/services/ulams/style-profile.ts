@@ -2,7 +2,12 @@ import type { AxiosRequestConfig } from '@umijs/max';
 import { request } from 'umi';
 
 /** The part of a style profile (ADR 0196) the theme screen reads: the theme tokens the admin may accept as a diff. */
-export type StyleProfileTheme = { preset?: string; accent?: string; secondary?: string; fonts?: string[] };
+export type StyleProfileTheme = {
+  preset?: string;
+  accent?: string;
+  secondary?: string;
+  fonts?: string[];
+};
 
 export type StyleProfileSummary = {
   id: string;

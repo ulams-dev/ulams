@@ -1,0 +1,231 @@
+---
+/**
+ * "The builder asks, you get a course" (lib/builder-walkthrough.ts): the real Course Builder screens with the
+ * questions it asks and what the author decides, then the course the measured run produced (or, with
+ * `result={false}`, only the links to the case studies).
+ *
+ * The server markup shows every step, one after another, with its caption as real text: that is the state without JS.
+ * The script turns the step list into controls that show one step at a time (keyboard: the links, the Previous and
+ * Next buttons, and Left/Right on them); nothing plays on its own, so reduced motion only drops the fade.
+ */
+import "./builder-walkthrough.css";
+import Icon from "@ulams/ui/components/Icon.astro";
+import Img from "@ulams/ui/components/Img.astro";
+import { ctaEvent } from "@ulams/ui/analytics";
+import { publicPagePath, type Locale } from "../../i18n/locales.ts";
+import { WALKTHROUGH_ID, stepStatus, type WalkStep, type WalkthroughCopy } from "../../lib/builder-walkthrough.ts";
+
+interface Props {
+  copy: WalkthroughCopy;
+  steps: WalkStep[];
+  locale: Locale;
+  /** Show the course the measured run produced; without it only the links to the case studies follow the steps. */
+  result?: boolean;
+}
+
+const { copy, steps, locale, result = true } = Astro.props;
+const titleId = `${WALKTHROUGH_ID}-title`;
+const resultId = `${WALKTHROUGH_ID}-result`;
+const total = steps.length;
+---
+
+<section class="wt" id={WALKTHROUGH_ID} aria-labelledby={titleId} data-wt data-wt-status={copy.status}>
+  <div class="u-container">
+    <header class="wt__head">
+      <p class="u-eyebrow">{copy.eyebrow}</p>
+      <h2 class="wt__title" id={titleId}>{copy.title}</h2>
+      <p class="wt__lede">{copy.lede}</p>
+    </header>
+
+    <nav class="wt-steps" aria-label={copy.stepsLabel}>
+      <ol role="list">
+        {
+          steps.map((step, i) => (
+            <li>
+              <a href={`#${step.id}`} data-wt-link={i}>
+                <span class="wt-steps__num" aria-hidden="true">{i + 1}</span>
+                <span>{step.label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+
+    <div class="wt-controls" data-wt-controls hidden>
+      <button class="wt-controls__btn" type="button" data-wt-prev>
+        <Icon name="back" />
+        <span>{copy.previous}</span>
+      </button>
+      <p class="wt-controls__status" data-wt-out aria-live="polite">{stepStatus(copy.status, 1, total)}</p>
+      <button class="wt-controls__btn" type="button" data-wt-next>
+        <span>{copy.next}</span>
+        <Icon name="chevron" />
+      </button>
+    </div>
+
+    <ol class="wt__panels" role="list">
+      {
+        steps.map((step, i) => (
+          <li class="wt-panel" id={step.id} data-wt-panel aria-labelledby={`${step.id}-title`} tabindex="-1">
+            <div class="wt-panel__copy">
+              <p class="wt-panel__label">
+                <span class="wt-panel__num" aria-hidden="true">{i + 1}</span>
+                <span class="wt-panel__of">{stepStatus(copy.status, i + 1, total)}</span>
+              </p>
+              <h3 class="wt-panel__title" id={`${step.id}-title`}>{step.title}</h3>
+              {step.asks.length > 0 && (
+                <div class="wt-asks">
+                  <p class="wt-asks__label"><Icon name="chat" />{copy.asksLabel}</p>
+                  <ul role="list">
+                    {step.asks.map((question) => <li>{question}</li>)}
+                  </ul>
+                </div>
+              )}
+              <div class="wt-decide">
+                <p class="wt-decide__label">{copy.decideLabel}</p>
+                <p>{step.decide}</p>
+              </div>
+            </div>
+            <figure class="wt-shot">
+              <a class="wt-shot__link" href={step.image.src} aria-label={`${copy.open}: ${step.alt}`}>
+                <Img src={step.image.src} alt={step.alt} width={step.image.width} height={step.image.height} sizes="(min-width: 1000px) 720px, 100vw" preset="content" fit="cover" />
+              </a>
+              <figcaption>
+                <span class="wt-shot__from">{copy.from[step.run]}</span>
+                <span>{step.caption}</span>
+              </figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ol>
+
+    {
+      result ? (
+        <div class="wt-result" role="group" aria-labelledby={resultId}>
+          <div class="wt-result__course">
+            <h3 class="wt-result__title" id={resultId}>{copy.result.title}</h3>
+            <p class="wt-badge">{copy.result.badge}</p>
+            <p class="wt-course" lang="en">{copy.result.course}</p>
+            <p class="wt-note">{copy.result.courseNote}</p>
+            <ol class="wt-modules" role="list" lang="en">
+              {
+                copy.result.modules.map((module) => (
+                  <li>
+                    <p class="wt-modules__title">{module.title}</p>
+                    <ul role="list">
+                      {module.lessons.map((lesson) => (
+                        <li><Icon name="book" />{lesson}</li>
+                      ))}
+                    </ul>
+                  </li>
+                ))
+              }
+            </ol>
+            <p class="wt-quiz"><Icon name="quiz" />{copy.result.quiz}</p>
+            <p class="wt-cites__label">{copy.result.citesLabel}</p>
+            <ul class="wt-cites" role="list" lang="en">
+              {copy.result.cites.map((cite) => <li><Icon name="quote" />{cite}</li>)}
+            </ul>
+          </div>
+          <div class="wt-result__run">
+            <dl class="wt-facts">
+              {
+                copy.result.facts.map((fact) => (
+                  <div>
+                    <dt>{fact.label}</dt>
+                    <dd>{fact.value}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+            <p class="wt-note">{copy.result.note}</p>
+            <ul class="wt-cases" role="list">
+              {
+                copy.result.cases.map((item, i) => {
+                  const href = publicPagePath(locale, item.page);
+                  return (
+                    <li>
+                      <a class={i === 0 ? "u-btn" : "u-btn u-btn--ghost"} href={href} data-umami-event={ctaEvent(href)}>
+                        {item.label}
+                        <Icon name="arrow" />
+                      </a>
+                    </li>
+                  );
+                })
+              }
+            </ul>
+          </div>
+        </div>
+      ) : (
+        <div class="wt-more">
+          <ul class="wt-cases" role="list">
+            {
+              copy.result.cases.map((item, i) => {
+                const href = publicPagePath(locale, item.page);
+                return (
+                  <li>
+                    <a class={i === 0 ? "u-btn" : "u-btn u-btn--ghost"} href={href} data-umami-event={ctaEvent(href)}>
+                      {item.label}
+                      <Icon name="arrow" />
+                    </a>
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<script>
+  /** One step at a time once the script runs; the links, Previous/Next and Left/Right move between steps. */
+  for (const root of document.querySelectorAll<HTMLElement>("[data-wt]")) {
+    if (root.dataset.wtReady) continue;
+    root.dataset.wtReady = "1";
+    const panels = [...root.querySelectorAll<HTMLElement>("[data-wt-panel]")];
+    const links = [...root.querySelectorAll<HTMLAnchorElement>("[data-wt-link]")];
+    const prev = root.querySelector<HTMLButtonElement>("[data-wt-prev]");
+    const next = root.querySelector<HTMLButtonElement>("[data-wt-next]");
+    const out = root.querySelector<HTMLElement>("[data-wt-out]");
+    const template = root.dataset.wtStatus ?? "{n} / {total}";
+    const total = panels.length;
+    let index = 0;
+
+    const show = (target: number, focusPanel = false) => {
+      index = Math.max(0, Math.min(total - 1, target));
+      panels.forEach((panel, i) => (panel.hidden = i !== index));
+      links.forEach((link, i) => (i === index ? link.setAttribute("aria-current", "step") : link.removeAttribute("aria-current")));
+      prev?.setAttribute("aria-disabled", String(index === 0));
+      next?.setAttribute("aria-disabled", String(index === total - 1));
+      if (out) out.textContent = template.replace("{n}", String(index + 1)).replace("{total}", String(total));
+      if (focusPanel) panels[index]?.focus({ preventScroll: true });
+    };
+
+    links.forEach((link, i) =>
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        show(i);
+      }),
+    );
+    prev?.addEventListener("click", () => show(index - 1));
+    next?.addEventListener("click", () => show(index + 1));
+    root.addEventListener("keydown", (event) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest("[data-wt-link], [data-wt-prev], [data-wt-next]")) return;
+      if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+        event.preventDefault();
+        show(index + (event.key === "ArrowRight" ? 1 : -1));
+        if (target.matches("[data-wt-link]")) links[index]?.focus();
+      }
+    });
+
+    const fromHash = panels.findIndex((panel) => `#${panel.id}` === window.location.hash);
+    root.querySelector<HTMLElement>("[data-wt-controls]")!.hidden = false;
+    root.classList.add("is-ready");
+    show(fromHash >= 0 ? fromHash : 0, fromHash >= 0);
+  }
+</script>

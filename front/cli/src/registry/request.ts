@@ -25,7 +25,11 @@ export function buildRequest(spec: RequestSpec, input: Record<string, unknown>):
     if (value !== undefined && value !== null) query[name] = value as string | number | boolean;
   }
   const built: BuiltRequest = { method: spec.method, path: spec.path, params, query };
-  if (spec.bodyMode === "json") {
+  // A JSON body that also documents multipart (courses.create: image, poster, video) goes out as multipart
+  // as soon as a file is given; JSON cannot carry a file, so the path would be sent as plain text.
+  const hasFile = Boolean(spec.files) && Object.keys(spec.files!).some((key) => input[key] !== undefined && input[key] !== null && input[key] !== "");
+  const bodyMode = spec.bodyMode === "json" && hasFile && !spec.wholeBody ? "multipart" : spec.bodyMode;
+  if (bodyMode === "json") {
     if (spec.wholeBody) built.body = input.body;
     else {
       // Declared fields plus any extra keys: the spec is not complete, so unknown keys are sent too.
@@ -34,7 +38,7 @@ export function buildRequest(spec: RequestSpec, input: Record<string, unknown>):
       for (const [name, value] of Object.entries(input)) if (value !== undefined && !skip.has(name)) body[name] = value;
       built.body = body;
     }
-  } else if (spec.bodyMode === "multipart") {
+  } else if (bodyMode === "multipart") {
     const form: Record<string, unknown> = {};
     const skip = new Set([...spec.pathParams, ...spec.queryParams, "out"]);
     for (const [name, value] of Object.entries(input)) {

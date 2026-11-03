@@ -1,0 +1,135 @@
+---
+title: Image service
+description: Choose how ulams resizes images - Cloudflare Image Transformations, Astro's sharp, the originals, or the optional PHP resize API - per deployment, with the settings, the free-plan budget, the kill switch and the optional WAF rule.
+sidebar:
+  order: 9
+modules:
+  - api
+  - images
+  - web
+  - admin
+  - front
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+Every image the clients show is built by **one URL builder with one set of presets** (`@ulams/sdk/images`, ADR 0193).
+How the URL is resolved is a deployment setting, not a code change. If you change no setting, nothing changes: the
+reference front keeps using Astro's sharp, the admin and the legacy learner app keep calling the PHP resize API.
+
+## The four modes
+
+| Mode | What an image URL becomes | Needs | Default for |
+|---|---|---|---|
+| `astro` | `/_image?href=...&w=...` (Astro, sharp) | `sharp` on the front server | the reference front (`front/web`, `@ulams/ui`) |
+| `php` | `<api>/api/images/img?path=<path>&w=<w>` | the `images` API package (kept) | the admin and the legacy learner app |
+| `cloudflare` | `/cdn-cgi/image/<options>/<source URL>` on the page's own host | the host proxied by a Cloudflare zone with Image Transformations enabled | the hosted demos and the `ulams.app` landing (set explicitly) |
+| `noop` | the original file, a plain `src`, no `srcset` | nothing | the kill switch; hosts with neither sharp nor Cloudflare |
+
+A client that does not support a mode (`astro` exists only in the Astro fronts, `php` only where a client knows the API
+URL and the storage path) falls back to `noop` and logs one console warning.
+
+Whatever the mode, these are never transformed and come back as the original: `data:` and `blob:` URLs, SVG, GIF (to keep
+the animation), files from an origin that is not listed as an allowed source, and URLs with a signature or credentials in
+the query string. A signed or private file never reaches a shared edge cache.
+
+Presets keep the number of distinct widths small: `content` 360, 640, 960, 1280, 1600 at quality 78; `richText` 960
+and 1280, a single `src`; `card` 240 and 480; `avatar` 96, 192, 600 at quality 80; `logo` 160 and 320 at quality 85. A
+width is always one of the preset's, and never above the file's own width. The list lives in one file,
+`front/sdk/src/images/presets.json`.
+
+## Where each client reads its mode
+
+| Client | Setting | Read | Default |
+|---|---|---|---|
+| Reference front and `@ulams/ui` (SSR) | `ULAMS_IMAGE_SERVICE`: `cloudflare`, `astro`, `noop`; `ULAMS_IMAGE_SOURCES`: comma-separated public storage origins whose files may be transformed (default: `ULAMS_STORAGE_ORIGINS`, the origins the CSP already allows) | on every request | `astro` |
+| Landing export for Cloudflare Pages | the same variable, at build time (`cloudflare/landing-static.mjs` refuses to run unless it is `cloudflare` or `noop`) | build | none: you must choose |
+| Admin | `REACT_APP_IMAGE_SERVICE`: `php`, `cloudflare`, `noop`; `REACT_APP_IMAGE_SOURCES`; `REACT_APP_IMAGE_TRANSFORM_ORIGIN`, in `runtime-config.json` or the build environment | on page load | `php` |
+| Legacy learner app (`front`) | `VITE_ULAMS_IMAGE_SERVICE`: `php`, `cloudflare`, `noop`; `VITE_ULAMS_IMAGE_SOURCES`; `VITE_ULAMS_IMAGE_TRANSFORM_ORIGIN` | build | `php` |
+| API (content written by imports) | `IMAGES_CONTENT_URLS`: `api` or `original` | per deployment, not per tenant | `api` |
+
+In the containers, the admin reads `REACT_APP_*` from `/runtime-config.json` written at start
+([Admin and front images](/operators/images/#settings)). On a static host such as MyDevil, write the same two keys into
+`runtime-config.json` next to the admin build; `deploy/mydevil/bin/set-admin-images.sh cloudflare|noop|php` does it without
+touching other keys.
+
+## Which mode to choose
+
+- **Docker, Kubernetes or a VPS with no Cloudflare in front:** leave the defaults. The front resizes with sharp, the
+  admin with the PHP API. Use `noop` on the front if you do not want the CPU cost, and `noop` in the admin if full-size
+  avatars are acceptable.
+- **Behind a Cloudflare zone (the [VPS reference](/operators/vps-cloudflare/) or any proxied zone):** enable Transformations on
+  the zone and set `ULAMS_IMAGE_SERVICE=cloudflare` and `REACT_APP_IMAGE_SERVICE=cloudflare`. Resizing and AVIF/WebP conversion happen
+  at the edge, with no PHP or Node CPU.
+- **Shared hosting without sharp and without Cloudflare** (for example [MyDevil](/operators/install-mydevil/)): `noop`, or `php` for
+  the admin. Sharp has no FreeBSD binary.
+
+## Cloudflare Image Transformations
+
+An image becomes
+`https://<page host>/cdn-cgi/image/width=<w>,quality=<q>,format=auto,fit=scale-down,onerror=redirect/<source URL>`.
+`format=auto` returns AVIF or WebP according to the browser's `Accept` header; `fit=scale-down` never enlarges;
+`onerror=redirect` sends the browser to the original when a transformation fails, so a page never shows a broken image and
+keeps its declared width and height. The options come in a fixed order, so equal requests produce equal URLs and one
+cache entry.
+
+Set up, once per zone:
+
+1. In the zone, **Images > Transformations**: enable them for the zone.
+2. Keep the **sources** setting at its default (the same zone only). A source on another registrable domain must be listed
+   there, and `onerror=redirect` then no longer applies across zones. Never allow any origin: third parties would use your quota.
+3. Make sure every host that serves pages is **proxied** (orange cloud). A DNS-only host answers 404 on `/cdn-cgi/image/`.
+4. Check each host before switching it:
+   `sh deploy/mydevil/bin/check-images.sh <host> [source image URL]`. It expects a 200 with `image/avif` or `image/webp` and a
+   `cf-resized` header, and a redirect to the source for a missing file. A source that is served by a Cloudflare Worker can fail
+   with error 9524; a `pages.dev` host always fails (use the custom domain).
+5. Set the mode, then restart the front (or reload the admin).
+
+<Aside type="note" title="Free plan budget">
+Images Free allows 5,000 unique transformations a month (one source with one option string; repeats are not counted again).
+Over the limit, cached transformations keep working, new ones fail with error 9422 and nothing is charged, and
+`onerror=redirect` serves the original. Paid is $0.50 per 1,000. The hosted demos stay well under: roughly 380 for the
+landing, 1,000 to 2,000 for the demo tenants (stable across their hourly resets, because seeded files keep their URLs) and a few
+hundred for the admin. Look at Images > Transformations > Analytics once a month (top configurations and origins).
+</Aside>
+
+### The kill switch
+
+Set the mode to `noop`: `ULAMS_IMAGE_SERVICE=noop` for the front (read per request; restart the process), `REACT_APP_IMAGE_SERVICE=noop`
+for the admin, or rebuild the landing with `noop`. Originals are served and nothing else changes. Do **not** disable
+Transformations on the zone as a kill switch: the `/cdn-cgi/image/` URLs already in cached pages would then fail.
+
+### Optional WAF rule
+
+A Cloudflare custom rule can block every `/cdn-cgi/image/*` request whose option string the builder never emits, so nobody can
+spend your quota with arbitrary widths. The rule is generated from the presets, so it cannot drift from the clients:
+
+```bash
+node --experimental-strip-types --no-warnings deploy/mydevil/cloudflare/image-waf-rule.mjs --expression
+```
+
+Create it in the zone under Security > WAF > Custom rules with the action **Block**, and recreate it whenever the presets change.
+The Free plan has no regular expressions in custom rules, so the expression is a list of `starts_with` prefixes (about 1.5 KB of
+the 4 KB limit). Verify with `ULAMS_EXPECT_WAF=1 sh deploy/mydevil/bin/check-images.sh <host>`, which also checks that a width the
+builder never emits (777) answers 403. Rollback: disable or delete the rule.
+
+### Cache lifetime of the sources
+
+Transformed images are cached at the edge for as long as the origin allows. The storage Worker of the MyDevil staging setup
+sends `cache-control: public, max-age=3600` with an `ETag` for `image/*` (5 minutes for everything else). An hourly demo reset
+rewrites the same keys, so a longer lifetime would show stale images after a content change.
+
+## Stored content: `IMAGES_CONTENT_URLS`
+
+Course import and the topic-types markdown helper used to write `/api/images/img?path=...` URLs into stored content. With
+`IMAGES_CONTENT_URLS=original` they write the plain public storage URL instead and the front resizes at display time; the admin
+editor also stores the uploaded file's URL unless its mode is `php`. The default is `api` (unchanged). The value is read once
+per deployment, not per tenant, so set it where every tenant is a demo (the MyDevil `.env.example` does). URLs that are already in
+content keep working in both modes, and old exports still import.
+
+## The PHP resize API stays
+
+`GET` and `POST /api/images/img` remain an **optional legacy resize API**, kept for self-hosted admins and third-party clients; prefer a
+CDN or the front's image service. Its routes, the `image_caches` table, its settings and the optimiser binaries in the PHP image are
+unchanged, and it is not marked deprecated. On the hosted demos nothing calls it any more, so its cache stays empty.
+See [Performance](/developers/performance/#images) for its limits.

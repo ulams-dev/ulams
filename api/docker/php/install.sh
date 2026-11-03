@@ -33,6 +33,9 @@ retry() {
     done
 }
 
+# The upstream image lags Alpine security fixes (curl, libcurl, openssl, ...): pick up the patched packages at every build.
+retry apk upgrade --no-cache
+
 # Runtime tools used by the app and by the container scripts:
 # - bash: init.sh, queue.sh, scheduler.sh, broadcast.sh, domains.sh
 # - supervisor: runs php-fpm, Horizon, queue workers and the scheduler

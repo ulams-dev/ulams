@@ -81,6 +81,16 @@ class TokenScopeMapCoverageTest extends TestCase
             $this->assertSame('certificates', TokenScopes::requirement($uri, 'GET')['area'], $uri);
         }
         $this->assertFalse(TokenScopes::requirement('api/admin/reporting/datasets', 'GET')['write']);
+        $this->assertFalse(TokenScopes::requirement('api/admin/reporting/saved/{id}/run', 'GET')['write'], 'running a saved report reads');
+        $this->assertTrue(TokenScopes::requirement('api/admin/reporting/saved', 'POST')['write']);
+        $this->assertTrue(TokenScopes::requirement('api/admin/reporting/saved/{id}', 'DELETE')['write']);
+        $feed = TokenScopes::requirement('api/reporting/odata/{entity}', 'GET');
+        $this->assertSame(['reports', false], [$feed['area'], $feed['write']]);
+        $this->assertSame(['param' => 'entity', 'prefix' => 'Report_', 'optional' => true], $feed['resource'], 'a limited token names its report in the entity set');
+        $this->assertSame(['param' => 'id'], TokenScopes::requirement('api/admin/reporting/saved/{id}/run', 'GET')['resource']);
+        $this->assertSame(['param' => 'id'], TokenScopes::requirement('api/admin/reporting/saved/{id}', 'GET')['resource']);
+        $this->assertNull(TokenScopes::requirement('api/admin/reporting/saved/{id}', 'PUT')['resource'], 'a limited token cannot change the report');
+        $this->assertNull(TokenScopes::requirement('api/admin/reporting/datasets', 'GET')['resource']);
         $this->assertFalse(TokenScopes::requirement('api/admin/reporting/query', 'POST')['write'], 'a preview changes nothing: reports:read is enough');
     }
 
