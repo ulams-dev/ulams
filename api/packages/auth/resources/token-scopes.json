@@ -617,6 +617,10 @@
             "area": "commerce"
         },
         {
+            "pattern": "api/admin/commerce*",
+            "area": "commerce"
+        },
+        {
             "pattern": "api/commerce/webhooks/*",
             "area": "public"
         },

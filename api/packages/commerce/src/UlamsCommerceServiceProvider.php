@@ -15,9 +15,13 @@ use Ulams\Cart\Events\ProductAttached;
 use Ulams\Cart\Events\ProductBought;
 use Ulams\Commerce\Console\BackfillAccessCommand;
 use Ulams\Commerce\Console\ReconcileCommand;
+use Ulams\Commerce\Console\SyncCommand;
+use Ulams\Commerce\Listeners\SyncCatalogueOnCourseChange;
+use Ulams\Courses\Events\CourseStatusChanged;
 use Ulams\Commerce\Contracts\CommerceProvider;
 use Ulams\Commerce\Listeners\RecordWellmsPurchase;
 use Ulams\Commerce\Providers\WellmsCartProvider;
+use Ulams\Commerce\Services\ProductLinkStore;
 use Ulams\Entitlements\UlamsEntitlementsServiceProvider;
 
 /**
@@ -37,7 +41,7 @@ class UlamsCommerceServiceProvider extends ServiceProvider
 
         $this->app->singleton(CommerceManager::class, function (Container $app) {
             $manager = new CommerceManager($app);
-            $manager->extend(WellmsCartProvider::KEY, fn (Container $c) => new WellmsCartProvider($c->make(ProductServiceContract::class)));
+            $manager->extend(WellmsCartProvider::KEY, fn (Container $c) => new WellmsCartProvider($c->make(ProductServiceContract::class), $c->make(ProductLinkStore::class)));
 
             return $manager;
         });
@@ -47,6 +51,7 @@ class UlamsCommerceServiceProvider extends ServiceProvider
     public function boot(): void
     {
         RateLimiter::for('commerce-webhook', fn (Request $request) => Limit::perMinute((int) config('commerce.webhook.rate_limit'))->by('commerce-webhook:' . $request->route('provider') . ':' . $request->ip()));
+        Event::listen(CourseStatusChanged::class, [SyncCatalogueOnCourseChange::class, 'handle']);
         Event::listen(ProductBought::class, [RecordWellmsPurchase::class, 'handleBought']);
         Event::listen(ProductAttached::class, [RecordWellmsPurchase::class, 'handleAttached']);
         $this->loadRoutesFrom(__DIR__ . '/routes.php');
@@ -57,10 +62,14 @@ class UlamsCommerceServiceProvider extends ServiceProvider
             if (config('commerce.reconcile.schedule')) {
                 $schedule->command('ulams:commerce:reconcile')->everyFiveMinutes()->withoutOverlapping();
             }
+            if (config('commerce.reconcile.nightly')) {
+                $schedule->command('ulams:commerce:reconcile', ['--full' => true])->dailyAt('03:10')->withoutOverlapping();
+                $schedule->command('ulams:commerce:sync', ['--check' => true, '--repair' => true])->dailyAt('03:40')->withoutOverlapping();
+            }
         });
 
         if ($this->app->runningInConsole()) {
-            $this->commands([ReconcileCommand::class, BackfillAccessCommand::class]);
+            $this->commands([ReconcileCommand::class, BackfillAccessCommand::class, SyncCommand::class]);
             $this->publishes([__DIR__ . '/config.php' => config_path(self::CONFIG_KEY . '.php')], self::CONFIG_KEY . '.config');
         }
     }
